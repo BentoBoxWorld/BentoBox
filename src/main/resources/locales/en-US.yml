@@ -611,34 +611,34 @@ commands:
       description: reset your island name
       success: '&a Successfully reset your island name.'
     team:
-      description: manage your team
+      description: "manage your team"
       gui:
         titles:
-          team-panel: Team Management
+          team-panel: "Team Management"
         buttons:
           status:
-            name: Status
-            description: The status of the team
+            name: "Status"
+            description: "The status of the team"
           rank-filter:
-            name: Rank Filter
-            description: &a Click to cycle ranks
+            name: "Rank Filter"
+            description: "&a Click to cycle ranks"
+          invitation: "Invitation"
         tips:
+          LEFT:
+            name: "&b Left Click"
+          RIGHT:
+            name: "&b Right Click"
           SHIFT_RIGHT:
-            name: &b Right Shift
-            reject: &a click to reject
-            kick: |
-              &a click
-              &a to kick player
-            leave: |
-              &a click
-              &a to leave team
+            name: "&b Shift Right Click"
+            reject: "&a to reject"
+            kick: "&a to kick player"
+            leave: "&a to leave team"
           SHIFT_LEFT:
-            name: &b Left Shift
-            accept: &a click to accept         
+            name: "&b Shift Left Click"
+            accept: "&a to accept "        
             setowner: |
-              &a click to
-              &a set owner to
-              &a this player
+              &a to set owner
+              &a to this player
       info:
         description: display detailed info about your team
         member-layout:

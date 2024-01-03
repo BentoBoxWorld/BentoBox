@@ -172,6 +172,10 @@ public class IslandTeamCommand extends CompositeCommand {
     }
 
     private PanelItem createRankButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+        // If there is no island, the do not show this icon
+        if (island == null) {
+            return this.getBlankBorder();
+        }
         PanelItemBuilder builder = new PanelItemBuilder();
         builder.name(user.getTranslation("commands.island.team.gui.buttons.rank-filter.name"));
         builder.icon(Material.AMETHYST_SHARD);
@@ -230,12 +234,12 @@ public class IslandTeamCommand extends CompositeCommand {
      */
     private PanelItem createInvitedButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
         PanelItemBuilder builder = new PanelItemBuilder();
-        if (isInvited(user.getUniqueId())) {
+        if (isInvited(user.getUniqueId()) && user.hasPermission(this.acceptCommand.getPermission())) {
             Invite invite = getInvite(user.getUniqueId());
             User inviter = User.getInstance(invite.getInviter());
             String name = inviter.getName();
             builder.icon(inviter.getName());
-            builder.name("Invitation");
+            builder.name(user.getTranslation("commands.island.team.gui.buttons.invitation"));
             builder.description(switch (invite.getType()) {
             case COOP ->
                 List.of(user.getTranslation("commands.island.team.invite.name-has-invited-you.coop", TextVariables.NAME,
@@ -254,7 +258,7 @@ public class IslandTeamCommand extends CompositeCommand {
                             + user.getTranslation(ar.tooltip()))
                     .toList());
             builder.clickHandler((panel, user, clickType, clickSlot) -> {
-                if (clickType.equals(ClickType.SHIFT_LEFT)) {
+                if (clickType.equals(ClickType.SHIFT_LEFT) && user.hasPermission(this.acceptCommand.getPermission())) {
                     // Accept
                     switch (invite.getType()) {
                     case COOP -> this.acceptCommand.acceptCoopInvite(user, invite);
@@ -263,9 +267,8 @@ public class IslandTeamCommand extends CompositeCommand {
                     }
                     user.closeInventory();
                 }
-                if (clickType.equals(ClickType.SHIFT_RIGHT)) {
+                if (clickType.equals(ClickType.SHIFT_RIGHT) && user.hasPermission(this.rejectCommand.getPermission())) {
                     // Reject
-                    BentoBox.getInstance().logDebug("Reject");
                     this.rejectCommand.execute(user, "", List.of());
                     user.closeInventory();
                 }
@@ -399,19 +402,31 @@ public class IslandTeamCommand extends CompositeCommand {
         // Make button description depending on viewer
         List<String> desc = new ArrayList<>();
         int userRank = Objects.requireNonNull(island).getRank(user);
-        if (userRank >= island.getRankCommand(this.getLabel() + " kick") && !user.equals(member)) {
-            // Add the tooltip for kicking
+        // Add the tooltip for kicking
+        if (user.hasPermission(this.kickCommand.getPermission())
+                && userRank >= island.getRankCommand(this.getLabel() + " kick") && !user.equals(member)) {
             actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("kick"))
-                    .map(ar -> user.getTranslation("commands.island.team.gui.tips." + ar.clickType().name()) + " "
-                            + user.getTranslation(ar.tooltip()))
-                    .findFirst().map(user::getTranslation).ifPresent(desc::add);
+                    .map(ar -> user.getTranslation("commands.island.team.gui.tips." + ar.clickType().name() + ".name")
+                            + " " + user.getTranslation(ar.tooltip()))
+                    .findFirst().ifPresent(desc::add);
         }
-        if (!user.equals(member) && userRank >= RanksManager.OWNER_RANK && targetRank >= RanksManager.MEMBER_RANK) {
+        // Set Owner
+        if (user.hasPermission(this.setOwnerCommand.getPermission()) && !user.equals(member)
+                && userRank >= RanksManager.OWNER_RANK && targetRank >= RanksManager.MEMBER_RANK) {
             // Add the tooltip for setowner
             actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("setowner"))
-                    .map(ar -> user.getTranslation("commands.island.team.gui.tips." + ar.clickType().name()) + " "
-                            + user.getTranslation(ar.tooltip()))
-                    .findFirst().map(user::getTranslation).ifPresent(desc::add);
+                    .map(ar -> user.getTranslation("commands.island.team.gui.tips." + ar.clickType().name() + ".name")
+                            + " " + user.getTranslation(ar.tooltip()))
+                    .findFirst().ifPresent(desc::add);
+        }
+        // Leave
+        if (user.hasPermission(this.leaveCommand.getPermission()) && user.equals(member)
+                && userRank < RanksManager.OWNER_RANK) {
+            // Add the tooltip for leave
+            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("leave"))
+                    .map(ar -> user.getTranslation("commands.island.team.gui.tips." + ar.clickType().name() + ".name")
+                            + " " + user.getTranslation(ar.tooltip()))
+                    .findFirst().ifPresent(desc::add);
         }
         if (member != null) {
             if (member.isOnline()) {
@@ -424,8 +439,8 @@ public class IslandTeamCommand extends CompositeCommand {
             } else {
                 // Offline player
                 desc.add(0, user.getTranslation(ref));
-                desc.add(1, offlinePlayerStatus(user, Bukkit.getOfflinePlayer(member.getUniqueId())));
-                return new PanelItemBuilder().icon(member.getName()).name(member.getDisplayName())
+                return new PanelItemBuilder().icon(member.getName())
+                        .name(offlinePlayerStatus(user, Bukkit.getOfflinePlayer(member.getUniqueId())))
                         .description(desc)
                         .clickHandler((panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member,
                                 actions))
@@ -443,7 +458,8 @@ public class IslandTeamCommand extends CompositeCommand {
                 switch (action.actionType().toUpperCase(Locale.ENGLISH)) {
                 case "KICK" -> {
                     // Kick the player, or uncoop, or untrust
-                    if (!member.equals(clicker) && rank >= island.getRankCommand(this.getLabel() + " kick")) {
+                    if (clicker.hasPermission(this.kickCommand.getPermission()) && !member.equals(clicker)
+                            && rank >= island.getRankCommand(this.getLabel() + " kick")) {
                         clicker.closeInventory();
                         removePlayer(clicker, member);
                         clicker.getPlayer().playSound(clicker.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
@@ -451,13 +467,15 @@ public class IslandTeamCommand extends CompositeCommand {
                 }
                 case "SETOWNER" -> {
                     // Make the player the leader of the island
-                    if (!member.equals(clicker) && clicker.getUniqueId().equals(island.getOwner())) {
+                    if (clicker.hasPermission(this.setOwnerCommand.getPermission()) && !member.equals(clicker)
+                            && clicker.getUniqueId().equals(island.getOwner())) {
                         clicker.closeInventory();
                         this.setOwnerCommand.setOwner(clicker, member.getUniqueId());
                     }
                 }
                 case "LEAVE" -> {
-                    if (member.equals(clicker) && !clicker.getUniqueId().equals(island.getOwner())) {
+                    if (clicker.hasPermission(this.leaveCommand.getPermission()) && member.equals(clicker)
+                            && !clicker.getUniqueId().equals(island.getOwner())) {
                         clicker.closeInventory();
                         leaveCommand.leave(clicker);
                     }
@@ -539,6 +557,18 @@ public class IslandTeamCommand extends CompositeCommand {
      * @return string
      */
     private String offlinePlayerStatus(User user2, OfflinePlayer offlineMember) {
+        String lastSeen = lastSeen(offlineMember);
+        if (island.getMemberSet(RanksManager.MEMBER_RANK, true).contains(offlineMember.getUniqueId())) {
+            return user.getTranslation("commands.island.team.info.member-layout.offline", TextVariables.NAME,
+                    offlineMember.getName(), "[last_seen]", lastSeen);
+        } else {
+            // This will prevent anyone that is trusted or below to not have a last-seen status
+            return user.getTranslation("commands.island.team.info.member-layout.offline-not-last-seen",
+                    TextVariables.NAME, offlineMember.getName());
+        }
+    }
+
+    private String lastSeen(OfflinePlayer offlineMember) {
         // A bit of handling for the last joined date
         Instant lastJoined = Instant.ofEpochMilli(offlineMember.getLastPlayed());
         Instant now = Instant.now();
@@ -556,15 +586,7 @@ public class IslandTeamCommand extends CompositeCommand {
             lastSeen = user.getTranslation(reference, TextVariables.NUMBER, String.valueOf(duration.toDays()),
                     TextVariables.UNIT, user.getTranslation("commands.island.team.info.last-seen.days"));
         }
-
-        if (island.getMemberSet(RanksManager.MEMBER_RANK, true).contains(offlineMember.getUniqueId())) {
-            return user.getTranslation("commands.island.team.info.member-layout.offline", TextVariables.NAME,
-                    offlineMember.getName(), "[last_seen]", lastSeen);
-        } else {
-            // This will prevent anyone that is trusted or below to not have a last-seen status
-            return user.getTranslation("commands.island.team.info.member-layout.offline-not-last-seen",
-                    TextVariables.NAME, offlineMember.getName());
-        }
+        return lastSeen;
     }
 
     private boolean fireEvent(User user, Island island) {

@@ -120,11 +120,11 @@ team_panel:
           # The click-type is the same as the bukkit {@link org.bukkit.event.inventory.ClickType}. UNKNOWN is the default.
           click-type: SHIFT_RIGHT
           # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
-          tooltip: commands.island.team.gui.tips.shift-right.kick
+          tooltip: commands.island.team.gui.tips.SHIFT_RIGHT.kick
         leave:
           click-type: SHIFT_RIGHT
-          tooltip: commands.island.team.gui.tips.shift-right.leave
+          tooltip: commands.island.team.gui.tips.SHIFT_RIGHT.leave
         setowner:
           click-type: SHIFT_LEFT
-          tooltip: commands.island.team.gui.tips.shift-left.setowner
+          tooltip: commands.island.team.gui.tips.SHIFT_LEFT.setowner
           
