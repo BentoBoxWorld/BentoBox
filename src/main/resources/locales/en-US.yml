@@ -623,16 +623,20 @@ commands:
             name: Rank Filter
             description: &a Click to cycle ranks
         tips:
-          shift-right:
+          SHIFT_RIGHT:
+            name: &b Right Shift
+            reject: &a click to reject
             kick: |
-              &a Shift-right click
+              &a click
               &a to kick player
             leave: |
-              &a Shift-right click
+              &a click
               &a to leave team
-          shift-left:
+          SHIFT_LEFT:
+            name: &b Left Shift
+            accept: &a click to accept         
             setowner: |
-              &a Shift-left to
+              &a click to
               &a set owner to
               &a this player
       info:

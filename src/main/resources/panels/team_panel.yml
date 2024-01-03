@@ -17,7 +17,7 @@ team_panel:
     title: "&b&r"  # Empty text
   # This tag indicates which rows in the panel must be shown. The panel will be sized vertically accordingly. This does not include the borders.
   # This can be a list and rows must be between 1 and 6, if used.
-  force-shown: [1, 2]
+  force-shown: []
   # The content section contains details of each item/button in the panel. The numbers indicate the rows and then then columns of each item.
   content:
     # Row number
@@ -49,6 +49,18 @@ team_panel:
           cycle-down:
             click-type: RIGHT
             tooltip: commands.island.team.gui.tips.right-click.rank   
+      5:
+        # Invited button - this appears if you have been invited to join a team
+        data:
+          type: INVITED
+          name: commands.island.team.gui.buttons.invited
+        actions:
+          accept:
+            click-type: SHIFT_LEFT
+            tooltip: commands.island.team.gui.tips.SHIFT_LEFT.accept
+          reject:
+            click-type: SHIFT_RIGHT
+            tooltip: commands.island.team.gui.tips.SHIFT_RIGHT.reject
     2:
       2: member_button
       3: member_button

@@ -17,9 +17,11 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -32,6 +34,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord.ActionRecords;
+import world.bentobox.bentobox.api.panels.reader.PanelTemplateRecord.TemplateItem;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -67,6 +70,14 @@ public class IslandTeamCommand extends CompositeCommand {
 
     private IslandTeamUntrustCommand unTrustCommand;
 
+    private @Nullable TemplateItem border;
+
+    private @Nullable TemplateItem background;
+
+    private IslandTeamInviteAcceptCommand acceptCommand;
+
+    private IslandTeamInviteRejectCommand rejectCommand;
+
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
         inviteMap = new HashMap<>();
@@ -82,8 +93,8 @@ public class IslandTeamCommand extends CompositeCommand {
         leaveCommand = new IslandTeamLeaveCommand(this);
         setOwnerCommand = new IslandTeamSetownerCommand(this);
         kickCommand = new IslandTeamKickCommand(this);
-        new IslandTeamInviteAcceptCommand(this);
-        new IslandTeamInviteRejectCommand(this);
+        acceptCommand = new IslandTeamInviteAcceptCommand(this);
+        rejectCommand = new IslandTeamInviteRejectCommand(this);
         if (RanksManager.getInstance().rankExists(RanksManager.COOP_RANK_REF)) {
             new IslandTeamCoopCommand(this);
             uncoopCommand = new IslandTeamUncoopCommand(this);
@@ -105,6 +116,11 @@ public class IslandTeamCommand extends CompositeCommand {
         // Player issuing the command must have an island
         island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
         if (island == null) {
+            if (isInvited(user.getUniqueId())) {
+                // Player has an invite, so show the invite
+                build();
+                return true;
+            }
             user.sendMessage("general.errors.no-island");
             return false;
         }
@@ -146,10 +162,11 @@ public class IslandTeamCommand extends CompositeCommand {
 
         panelBuilder.registerTypeBuilder("STATUS", this::createStatusButton);
         panelBuilder.registerTypeBuilder("MEMBER", this::createMemberButton);
-        panelBuilder.registerTypeBuilder("INVITE", this::createInviteButton);
+        panelBuilder.registerTypeBuilder("INVITED", this::createInvitedButton);
         panelBuilder.registerTypeBuilder("RANK", this::createRankButton);
         //panelBuilder.registerTypeBuilder("KICK", this::createKickButton);
-
+        border = panelBuilder.getPanelTemplate().border();
+        background = panelBuilder.getPanelTemplate().background();
         // Register unknown type builder.
         panelBuilder.build();
     }
@@ -203,24 +220,61 @@ public class IslandTeamCommand extends CompositeCommand {
 
         return builder.build();
     }
+
     /**
-     * Create invite button panel item.
+     * Create invited button panel item.
      *
      * @param template the template
      * @param slot     the slot
      * @return the panel item
      */
-    private PanelItem createInviteButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+    private PanelItem createInvitedButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
         PanelItemBuilder builder = new PanelItemBuilder();
-        // Player issuing the command must have an island
-        Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
-        if (island == null) {
-            return builder.icon(Material.BARRIER).name(user.getTranslation("general.errors.no-island")).build();
+        if (isInvited(user.getUniqueId())) {
+            Invite invite = getInvite(user.getUniqueId());
+            User inviter = User.getInstance(invite.getInviter());
+            String name = inviter.getName();
+            builder.icon(inviter.getName());
+            builder.name("Invitation");
+            builder.description(switch (invite.getType()) {
+            case COOP ->
+                List.of(user.getTranslation("commands.island.team.invite.name-has-invited-you.coop", TextVariables.NAME,
+                        name));
+            case TRUST ->
+                List.of(user.getTranslation("commands.island.team.invite.name-has-invited-you.trust",
+                        TextVariables.NAME, name));
+            default ->
+                List.of(user.getTranslation("commands.island.team.invite.name-has-invited-you", TextVariables.NAME,
+                        name), user.getTranslation("commands.island.team.invite.accept.confirmation"));
+            });
+            // Add all the tool tips
+            builder.description(template.actions().stream()
+                    .map(ar -> user.getTranslation("commands.island.team.gui.tips." + ar.clickType().name() + ".name")
+                            + " "
+                            + user.getTranslation(ar.tooltip()))
+                    .toList());
+            builder.clickHandler((panel, user, clickType, clickSlot) -> {
+                if (clickType.equals(ClickType.SHIFT_LEFT)) {
+                    // Accept
+                    switch (invite.getType()) {
+                    case COOP -> this.acceptCommand.acceptCoopInvite(user, invite);
+                    case TRUST -> this.acceptCommand.acceptTrustInvite(user, invite);
+                    default -> this.acceptCommand.acceptTeamInvite(user, invite);
+                    }
+                    user.closeInventory();
+                }
+                if (clickType.equals(ClickType.SHIFT_RIGHT)) {
+                    // Reject
+                    BentoBox.getInstance().logDebug("Reject");
+                    this.rejectCommand.execute(user, "", List.of());
+                    user.closeInventory();
+                }
+                return true;
+            });
+        } else {
+            return this.getBlankBorder();
         }
-        // The player must be able to invite a player
-
-        return builder.icon(user.getName()).name(user.getTranslation("commands.island.team.gui.buttons.status.name"))
-                .description(showMembers()).build();
+        return builder.build();
     }
 
     /**
@@ -235,11 +289,22 @@ public class IslandTeamCommand extends CompositeCommand {
         // Player issuing the command must have an island
         Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
         if (island == null) {
-            return builder.icon(Material.BARRIER).name(user.getTranslation("general.errors.no-island")).build();
+            return getBlankBorder();
         }
 
         return builder.icon(user.getName()).name(user.getTranslation("commands.island.team.gui.buttons.status.name"))
                 .description(showMembers()).build();
+    }
+
+    private PanelItem getBlankBorder() {
+        return new PanelItemBuilder().icon(Objects.requireNonNullElse(border.icon(), new ItemStack(Material.BARRIER)))
+                .name((Objects.requireNonNullElse(border.title(), ""))).build();
+    }
+
+    private PanelItem getBlankBackground() {
+        return new PanelItemBuilder()
+                .icon(Objects.requireNonNullElse(background.icon(), new ItemStack(Material.BARRIER)))
+                .name((Objects.requireNonNullElse(background.title(), ""))).build();
     }
 
     /**
@@ -253,8 +318,7 @@ public class IslandTeamCommand extends CompositeCommand {
         // Player issuing the command must have an island
         Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
         if (island == null) {
-            return new PanelItemBuilder().icon(Material.BARRIER).name(user.getTranslation("general.errors.no-island"))
-                    .build();
+            return this.getBlankBackground();
         }
         return switch (rank) {
         case RanksManager.OWNER_RANK -> ownerView(template, slot);
@@ -337,12 +401,16 @@ public class IslandTeamCommand extends CompositeCommand {
         int userRank = Objects.requireNonNull(island).getRank(user);
         if (userRank >= island.getRankCommand(this.getLabel() + " kick") && !user.equals(member)) {
             // Add the tooltip for kicking
-            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("kick")).map(ActionRecords::tooltip)
+            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("kick"))
+                    .map(ar -> user.getTranslation("commands.island.team.gui.tips." + ar.clickType().name()) + " "
+                            + user.getTranslation(ar.tooltip()))
                     .findFirst().map(user::getTranslation).ifPresent(desc::add);
         }
         if (!user.equals(member) && userRank >= RanksManager.OWNER_RANK && targetRank >= RanksManager.MEMBER_RANK) {
             // Add the tooltip for setowner
-            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("setowner")).map(ActionRecords::tooltip)
+            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("setowner"))
+                    .map(ar -> user.getTranslation("commands.island.team.gui.tips." + ar.clickType().name()) + " "
+                            + user.getTranslation(ar.tooltip()))
                     .findFirst().map(user::getTranslation).ifPresent(desc::add);
         }
         if (member != null) {

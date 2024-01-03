@@ -23,7 +23,6 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
 
     private static final String INVALID_INVITE = "commands.island.team.invite.errors.invalid-invite";
     private final IslandTeamCommand itc;
-    private UUID playerUUID;
 
     public IslandTeamInviteAcceptCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "accept");
@@ -39,7 +38,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        playerUUID = user.getUniqueId();
+        UUID playerUUID = user.getUniqueId();
         // Check if player has been invited
         if (!itc.isInvited(playerUUID)) {
             user.sendMessage("commands.island.team.invite.errors.none-invited-you");
@@ -79,7 +78,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Get the invite
-        Invite invite = itc.getInvite(playerUUID);
+        Invite invite = itc.getInvite(user.getUniqueId());
         switch (invite.getType()) {
         case COOP -> askConfirmation(user, () -> acceptCoopInvite(user, invite));
         case TRUST -> askConfirmation(user, () -> acceptTrustInvite(user, invite));
@@ -89,9 +88,9 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         return true;
     }
 
-    private void acceptTrustInvite(User user, Invite invite) {
+    void acceptTrustInvite(User user, Invite invite) {
         // Remove the invite
-        itc.removeInvite(playerUUID);
+        itc.removeInvite(user.getUniqueId());
         User inviter = User.getInstance(invite.getInviter());
         Island island = invite.getIsland();
         if (island != null) {
@@ -115,9 +114,9 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         }
     }
 
-    private void acceptCoopInvite(User user, Invite invite) {
+    void acceptCoopInvite(User user, Invite invite) {
         // Remove the invite
-        itc.removeInvite(playerUUID);
+        itc.removeInvite(user.getUniqueId());
         User inviter = User.getInstance(invite.getInviter());
         Island island = invite.getIsland();
         if (island != null) {
@@ -141,11 +140,11 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         }
     }
 
-    private void acceptTeamInvite(User user, Invite invite) {
+    void acceptTeamInvite(User user, Invite invite) {
         // Remove the invite
-        itc.removeInvite(playerUUID);
+        itc.removeInvite(user.getUniqueId());
         // Get the player's island - may be null if the player has no island
-        Set<Island> islands = getIslands().getIslands(getWorld(), playerUUID);
+        Set<Island> islands = getIslands().getIslands(getWorld(), user.getUniqueId());
         // Get the team's island
         Island teamIsland = invite.getIsland();
         if (teamIsland == null) {
@@ -158,11 +157,11 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             return;
         }
         // Remove player as owner of the old island
-        getIslands().removePlayer(getWorld(), playerUUID);
+        getIslands().removePlayer(getWorld(), user.getUniqueId());
         // Remove money inventory etc. for leaving
         cleanPlayer(user);
         // Add the player as a team member of the new island
-        getIslands().setJoinTeam(teamIsland, playerUUID);
+        getIslands().setJoinTeam(teamIsland, user.getUniqueId());
         // Move player to team's island
         getIslands().homeTeleportAsync(getWorld(), user.getPlayer()).thenRun(() -> {
             // Delete the old islands
@@ -178,7 +177,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         });
         // Reset deaths
         if (getIWM().isTeamJoinDeathReset(getWorld())) {
-            getPlayers().setDeaths(getWorld(), playerUUID, 0);
+            getPlayers().setDeaths(getWorld(), user.getUniqueId(), 0);
         }
         user.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
         User inviter = User.getInstance(invite.getInviter());
@@ -188,7 +187,8 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         }
         getIslands().save(teamIsland);
         // Fire event
-        TeamEvent.builder().island(teamIsland).reason(TeamEvent.Reason.JOINED).involvedPlayer(playerUUID).build();
+        TeamEvent.builder().island(teamIsland).reason(TeamEvent.Reason.JOINED).involvedPlayer(user.getUniqueId())
+                .build();
         IslandEvent.builder().island(teamIsland).involvedPlayer(user.getUniqueId()).admin(false)
                 .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(teamIsland.getRank(user), RanksManager.MEMBER_RANK)
                 .build();
