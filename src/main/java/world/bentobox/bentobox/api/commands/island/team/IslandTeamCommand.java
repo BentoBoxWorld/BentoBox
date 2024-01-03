@@ -8,17 +8,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -56,6 +57,16 @@ public class IslandTeamCommand extends CompositeCommand {
 
     private int rank = RanksManager.OWNER_RANK;
 
+    private IslandTeamKickCommand kickCommand;
+
+    private IslandTeamLeaveCommand leaveCommand;
+
+    private IslandTeamSetownerCommand setOwnerCommand;
+
+    private IslandTeamUncoopCommand uncoopCommand;
+
+    private IslandTeamUntrustCommand unTrustCommand;
+
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
         inviteMap = new HashMap<>();
@@ -68,24 +79,24 @@ public class IslandTeamCommand extends CompositeCommand {
         setDescription("commands.island.team.description");
         // Register commands
         new IslandTeamInviteCommand(this);
-        new IslandTeamLeaveCommand(this);
-        new IslandTeamSetownerCommand(this);
-        new IslandTeamKickCommand(this);
+        leaveCommand = new IslandTeamLeaveCommand(this);
+        setOwnerCommand = new IslandTeamSetownerCommand(this);
+        kickCommand = new IslandTeamKickCommand(this);
         new IslandTeamInviteAcceptCommand(this);
         new IslandTeamInviteRejectCommand(this);
         if (RanksManager.getInstance().rankExists(RanksManager.COOP_RANK_REF)) {
             new IslandTeamCoopCommand(this);
-            new IslandTeamUncoopCommand(this);
+            uncoopCommand = new IslandTeamUncoopCommand(this);
         }
         if (RanksManager.getInstance().rankExists(RanksManager.TRUSTED_RANK_REF)) {
             new IslandTeamTrustCommand(this);
-            new IslandTeamUntrustCommand(this);
+            unTrustCommand = new IslandTeamUntrustCommand(this);
         }
         new IslandTeamPromoteCommand(this, "promote");
         new IslandTeamPromoteCommand(this, "demote");
 
         // Panels
-        getPlugin().saveResource("panels/team_panel.yml", false);
+        getPlugin().saveResource("panels/team_panel.yml", true);
     }
 
     @Override
@@ -145,18 +156,46 @@ public class IslandTeamCommand extends CompositeCommand {
 
     private PanelItem createRankButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
         PanelItemBuilder builder = new PanelItemBuilder();
-        builder.name("Rank");
+        builder.name(user.getTranslation("commands.island.team.gui.buttons.rank-filter.name"));
         builder.icon(Material.AMETHYST_SHARD);
-        builder.description("Rank shown = " + user.getTranslation(RanksManager.getInstance().getRank(rank)));
-        builder.clickHandler((panel, user, clickType, clickSlot) -> {
-            BentoBox.getInstance().logDebug("Rank = " + rank);
-            if (clickType.equals(ClickType.RIGHT)) {
-                rank = RanksManager.getInstance().getRankDownValue(rank);
-
-            } else {
-                rank = RanksManager.getInstance().getRankUpValue(rank);
+        // Create description
+        RanksManager.getInstance().getRanks().forEach((reference, score) -> {
+            if (rank == RanksManager.OWNER_RANK && score > RanksManager.VISITOR_RANK
+                    && score <= RanksManager.OWNER_RANK) {
+                builder.description(user.getTranslation("protection.panel.flag-item.allowed-rank")
+                        + user.getTranslation(reference));
+            } else if (score > RanksManager.VISITOR_RANK && score < rank) {
+                builder.description(user.getTranslation("protection.panel.flag-item.blocked-rank")
+                        + user.getTranslation(reference));
+            } else if (score <= RanksManager.OWNER_RANK && score > rank) {
+                builder.description(user.getTranslation("protection.panel.flag-item.blocked-rank")
+                        + user.getTranslation(reference));
+            } else if (score == rank) {
+                builder.description(user.getTranslation("protection.panel.flag-item.allowed-rank")
+                        + user.getTranslation(reference));
             }
-            BentoBox.getInstance().logDebug("New Rank = " + rank);
+        });
+        builder.description(user.getTranslation("commands.island.team.gui.buttons.rank-filter.description"));
+        builder.clickHandler((panel, user, clickType, clickSlot) -> {
+            if (clickType.equals(ClickType.LEFT)) {
+                rank = RanksManager.getInstance().getRankDownValue(rank);
+                if (rank <= RanksManager.VISITOR_RANK) {
+                    rank = RanksManager.OWNER_RANK;
+                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+                } else {
+                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                }
+            }
+            if (clickType.equals(ClickType.RIGHT)) {
+                rank = RanksManager.getInstance().getRankUpValue(rank);
+                if (rank >= RanksManager.OWNER_RANK) {
+                    rank = RanksManager.getInstance().getRankUpValue(RanksManager.VISITOR_RANK);
+                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+                } else {
+                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                }
+            }
+
             // Update panel after click
             build();
             return true;
@@ -279,35 +318,48 @@ public class IslandTeamCommand extends CompositeCommand {
     }
 
     /**
-     * Shows a member's head
-     * @param rank - the rank to show
+     * Shows a member's head. The clicks available will depend on who is viewing.
+     * @param targetRank - the rank to show
      * @param slot - the slot number
      * @param actions - actions that need to apply to this member button as provided by the template
      * @return panel item
      */
-    private PanelItem getMemberButton(int rank, int slot, List<ActionRecords> actions) {
+    private PanelItem getMemberButton(int targetRank, int slot, List<ActionRecords> actions) {
         if (slot == 0 && island.getOwner() != null) {
             // Owner
             return getMemberButton(RanksManager.OWNER_RANK, 1, actions);
         }
-        long count = island.getMemberSet(rank, false).size();
-        String ref = RanksManager.getInstance().getRank(rank);
-        User player = island.getMemberSet(rank, false).stream().sorted().skip(slot - 1L).limit(1L)
+        String ref = RanksManager.getInstance().getRank(targetRank);
+        User member = island.getMemberSet(targetRank, false).stream().sorted().skip(slot - 1L).limit(1L)
                 .map(User::getInstance).findFirst().orElse(null);
-        if (player != null) {
-            if (player.isOnline()) {
-                return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName())
-                        .description(
-                                user.getTranslation("commands.island.team.info.rank-layout.generic", TextVariables.RANK,
-                                        user.getTranslation(ref), TextVariables.NUMBER, String.valueOf(count)))
-                        .clickHandler((panel, user, clickType, i) -> clickListener(panel, user, clickType, i, player,
+        // Make button description depending on viewer
+        List<String> desc = new ArrayList<>();
+        int userRank = Objects.requireNonNull(island).getRank(user);
+        if (userRank >= island.getRankCommand(this.getLabel() + " kick") && !user.equals(member)) {
+            // Add the tooltip for kicking
+            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("kick")).map(ActionRecords::tooltip)
+                    .findFirst().map(user::getTranslation).ifPresent(desc::add);
+        }
+        if (!user.equals(member) && userRank >= RanksManager.OWNER_RANK && targetRank >= RanksManager.MEMBER_RANK) {
+            // Add the tooltip for setowner
+            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("setowner")).map(ActionRecords::tooltip)
+                    .findFirst().map(user::getTranslation).ifPresent(desc::add);
+        }
+        if (member != null) {
+            if (member.isOnline()) {
+                desc.add(0, user.getTranslation(ref));
+                return new PanelItemBuilder().icon(member.getName()).name(member.getDisplayName())
+                        .description(desc)
+                        .clickHandler((panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member,
                                 actions))
                         .build();
             } else {
                 // Offline player
-                return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName())
-                        .description(offlinePlayerStatus(user, Bukkit.getOfflinePlayer(player.getUniqueId())))
-                        .clickHandler((panel, user, clickType, i) -> clickListener(panel, user, clickType, i, player,
+                desc.add(0, user.getTranslation(ref));
+                desc.add(1, offlinePlayerStatus(user, Bukkit.getOfflinePlayer(member.getUniqueId())));
+                return new PanelItemBuilder().icon(member.getName()).name(member.getDisplayName())
+                        .description(desc)
+                        .clickHandler((panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member,
                                 actions))
                         .build();
             }
@@ -315,25 +367,47 @@ public class IslandTeamCommand extends CompositeCommand {
         return null;
     }
 
-    private boolean clickListener(Panel panel, User user, ClickType clickType, int i, User player,
+    private boolean clickListener(Panel panel, User clicker, ClickType clickType, int i, User member,
             List<ActionRecords> actions) {
+        int rank = Objects.requireNonNull(island).getRank(clicker);
         for (ItemTemplateRecord.ActionRecords action : actions) {
             if (clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN) {
                 switch (action.actionType().toUpperCase(Locale.ENGLISH)) {
                 case "KICK" -> {
-                    // Kick the player
-                    if (!player.equals(user)) {
-                        this.user.closeInventory();
-                        BentoBox.getInstance()
-                                .logDebug(this.getTopLabel() + " " + this.getLabel() + " kick " + player.getName());
-                        user.performCommand(this.getTopLabel() + " " + this.getLabel() + " kick " + player.getName());
+                    // Kick the player, or uncoop, or untrust
+                    if (!member.equals(clicker) && rank >= island.getRankCommand(this.getLabel() + " kick")) {
+                        clicker.closeInventory();
+                        removePlayer(clicker, member);
+                        clicker.getPlayer().playSound(clicker.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
                     }
-
+                }
+                case "SETOWNER" -> {
+                    // Make the player the leader of the island
+                    if (!member.equals(clicker) && clicker.getUniqueId().equals(island.getOwner())) {
+                        clicker.closeInventory();
+                        this.setOwnerCommand.setOwner(clicker, member.getUniqueId());
+                    }
+                }
+                case "LEAVE" -> {
+                    if (member.equals(clicker) && !clicker.getUniqueId().equals(island.getOwner())) {
+                        clicker.closeInventory();
+                        leaveCommand.leave(clicker);
+                    }
                 }
                 }
             }
         }
         return true;
+    }
+
+    private void removePlayer(User clicker, User member) {
+        // If member then kick, if coop, uncoop, if trusted, then untrust
+        switch (island.getRank(member)) {
+        case RanksManager.COOP_RANK -> this.uncoopCommand.unCoopCmd(user, member.getUniqueId());
+        case RanksManager.TRUSTED_RANK -> this.unTrustCommand.unTrustCmd(user, member.getUniqueId());
+        default -> kickCommand.kick(clicker, member.getUniqueId());
+        }
+
     }
 
     private List<String> showMembers() {

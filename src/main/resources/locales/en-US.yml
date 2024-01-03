@@ -619,10 +619,22 @@ commands:
           status:
             name: Status
             description: The status of the team
+          rank-filter:
+            name: Rank Filter
+            description: &a Click to cycle ranks
         tips:
-          click-to-view: Click to view
-          right-click-to-kick: Right click to kick player - requires confirmation
-          click-to-invite: Click to invite a team member
+          shift-right:
+            kick: |
+              &a Shift-right click
+              &a to kick player
+            leave: |
+              &a Shift-right click
+              &a to leave team
+          shift-left:
+            setowner: |
+              &a Shift-left to
+              &a set owner to
+              &a this player
       info:
         description: display detailed info about your team
         member-layout:

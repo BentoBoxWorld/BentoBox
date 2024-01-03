@@ -68,7 +68,7 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
         return unTrustCmd(user, targetUUID);
     }
 
-    private boolean unTrustCmd(User user, UUID targetUUID) {
+    protected boolean unTrustCmd(User user, UUID targetUUID) {
         // Player cannot untrust themselves
         if (user.getUniqueId().equals(targetUUID)) {
             user.sendMessage("commands.island.team.untrust.cannot-untrust-yourself");

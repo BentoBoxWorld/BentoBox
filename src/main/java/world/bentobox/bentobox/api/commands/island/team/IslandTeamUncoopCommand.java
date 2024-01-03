@@ -68,7 +68,7 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
         return unCoopCmd(user, targetUUID);
     }
 
-    private boolean unCoopCmd(User user, UUID targetUUID) {
+    protected boolean unCoopCmd(User user, UUID targetUUID) {
         // Player cannot uncoop themselves
         if (user.getUniqueId().equals(targetUUID)) {
             user.sendMessage("commands.island.team.uncoop.cannot-uncoop-yourself");

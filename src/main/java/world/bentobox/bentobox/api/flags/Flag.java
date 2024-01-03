@@ -430,7 +430,6 @@ public class Flag implements Comparable<Flag> {
             // Protection flag
             pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
                     TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
-            plugin.getRanksManager();
             RanksManager.getInstance().getRanks().forEach((reference, score) -> {
                 if (score > RanksManager.BANNED_RANK && score < island.getFlag(this)) {
                     pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));

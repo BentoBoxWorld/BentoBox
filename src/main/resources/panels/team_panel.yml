@@ -21,7 +21,7 @@ team_panel:
   # The content section contains details of each item/button in the panel. The numbers indicate the rows and then then columns of each item.
   content:
     # Row number
-    0:
+    1:
       # Column number
       1:
         # The data section is a key-value list of data relavent for this button. It is interpreted by the code implemented the panel.
@@ -38,14 +38,17 @@ team_panel:
             # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
             tooltip: commands.island.team.gui.tips.click-to-view
       3:
-        # Change rank
+        # Rank filter
         data:
           type: RANK
+          name: commands.island.team.gui.buttons.rank-filter
         actions:
-          add:
+          cycle-up:
             click-type: LEFT
-            tooltip: commands.island.team.gui.tips.click-to-change-rank
-      
+            tooltip: commands.island.team.gui.tips.right-click.rank
+          cycle-down:
+            click-type: RIGHT
+            tooltip: commands.island.team.gui.tips.right-click.rank   
     2:
       2: member_button
       3: member_button
@@ -103,6 +106,13 @@ team_panel:
         # Each action has an arbitrary descriptive name to define it. 
         kick:
           # The click-type is the same as the bukkit {@link org.bukkit.event.inventory.ClickType}. UNKNOWN is the default.
-          click-type: RIGHT
+          click-type: SHIFT_RIGHT
           # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
-          tooltip: commands.island.team.gui.tips.right-click-to-kick
+          tooltip: commands.island.team.gui.tips.shift-right.kick
+        leave:
+          click-type: SHIFT_RIGHT
+          tooltip: commands.island.team.gui.tips.shift-right.leave
+        setowner:
+          click-type: SHIFT_LEFT
+          tooltip: commands.island.team.gui.tips.shift-left.setowner
+          

@@ -84,7 +84,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         }
     }
 
-    private void kick(User user, UUID targetUUID) {
+    protected void kick(User user, UUID targetUUID) {
         User target = User.getInstance(targetUUID);
         Island oldIsland = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID)); // Should never be
         // null because of

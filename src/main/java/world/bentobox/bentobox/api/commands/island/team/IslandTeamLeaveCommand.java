@@ -65,7 +65,7 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
 
     }
 
-    private void leave(User user) {
+    protected void leave(User user) {
         Island island = getIslands().getIsland(getWorld(), user);
         if (island == null) {
             user.sendMessage("general.errors.no-island");
