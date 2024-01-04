@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.panels.LanguagePanel;
+import world.bentobox.bentobox.panels.customizable.LanguagePanel;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -46,7 +46,7 @@ public class IslandLanguageCommand extends CompositeCommand {
                 return false;
             }
         } else {
-            LanguagePanel.openPanel(user);
+            LanguagePanel.openPanel(this, user);
         }
         return true;
     }
