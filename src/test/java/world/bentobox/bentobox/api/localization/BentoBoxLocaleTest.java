@@ -50,6 +50,7 @@ public class BentoBoxLocaleTest {
         ItemFactory itemFactory = mock(ItemFactory.class);
         bannerMeta = mock(BannerMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
+        when(itemFactory.createItemStack(any())).thenThrow(IllegalArgumentException.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
 
         Locale locale = Locale.US;
