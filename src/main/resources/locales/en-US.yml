@@ -1736,19 +1736,15 @@ panel:
 
 # This section contains values for BentoBox panels.
 panels:
-  # The section of translations used in Language Panel
-  language:
-    title: "&2&l Select your language"
+  # The section of translations used in Island Creation Panel
+  island_creation:
+    title: "&2&l Pick an island"
     buttons:
-      # This button is used for displaying different locales that are available in language selection panel.
-      language:
-        name: "&f&l [name]"
+      # This button is used for displaying blueprint bundle in the island creation panel.
+      bundle:
+        name: "&l [name]"
         description: |-
-          [authors]
-          |[selected]
-        authors: "&7 Authors: "
-        author: "&7 - &b [name]"
-        selected: "&a Currently selected."
+          [description]
   # The set of common buttons used in multiple panels.
   buttons:
     # Button that is used in multi-page GUIs which allows to return to previous page.
