@@ -1576,15 +1576,6 @@ protection:
       setting-active: '&a Active'
       setting-disabled: '&c Disabled'
 
-language:
-  panel-title: Select your language
-  description:
-    selected: '&a Currently selected.'
-    click-to-select: '&e Click &a to select.'
-    authors: '&a Authors:'
-    author: '&3 - &b [name]'
-  edited: '&a Changed your language to &e [lang]&a .'
-
 management:
   panel:
     title: BentoBox Management
