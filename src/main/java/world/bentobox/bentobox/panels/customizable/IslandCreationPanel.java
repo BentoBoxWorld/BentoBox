@@ -359,7 +359,7 @@ public class IslandCreationPanel
             return null;
         }
 
-        final String reference = "panels.buttons.bundle.";
+        final String reference = "panels.island_creation.buttons.bundle.";
 
         // Get settings for island.
         PanelItemBuilder builder = new PanelItemBuilder();
