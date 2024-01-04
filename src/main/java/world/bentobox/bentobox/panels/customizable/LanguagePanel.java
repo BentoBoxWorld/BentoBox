@@ -352,7 +352,7 @@ public class LanguagePanel
             return null;
         }
 
-        final String reference = "panels.buttons.language.";
+        final String reference = "panels.language.buttons.language.";
 
         // Get settings for island.
         PanelItemBuilder builder = new PanelItemBuilder();

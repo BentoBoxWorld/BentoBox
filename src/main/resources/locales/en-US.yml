@@ -1576,15 +1576,6 @@ protection:
       setting-active: '&a Active'
       setting-disabled: '&c Disabled'
 
-language:
-  panel-title: Select your language
-  description:
-    selected: '&a Currently selected.'
-    click-to-select: '&e Click &a to select.'
-    authors: '&a Authors:'
-    author: '&3 - &b [name]'
-  edited: '&a Changed your language to &e [lang]&a .'
-
 management:
   panel:
     title: BentoBox Management
@@ -1747,14 +1738,14 @@ panel:
 panels:
   # The section of translations used in Language Panel
   language:
-    title: "&a&l Select your language"
+    title: "&2&l Select your language"
     buttons:
       # This button is used for displaying different locales that are available in language selection panel.
       language:
         name: "&f&l [name]"
         description: |-
           [authors]
-          [selected]
+          |[selected]
         authors: "&7 Authors: "
         author: "&7 - &b [name]"
         selected: "&a Currently selected."
