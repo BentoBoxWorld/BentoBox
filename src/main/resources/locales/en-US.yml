@@ -710,6 +710,8 @@ commands:
         gui:
            titles:
              team-invite-panel: "Invite Players"
+           button:
+             already-invited: "&c Invited already"
            tips:
              LEFT:
                name: "&b Left Click"

@@ -8,7 +8,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -17,6 +19,7 @@ import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
@@ -37,6 +40,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
     private @Nullable TemplateItem border;
     private @Nullable TemplateItem background;
     private User user;
+    private int page = 0; // This number by 35
+    private static final int PER_PAGE = 35;
 
     public IslandTeamInviteCommand(IslandTeamCommand parent) {
         super(parent, "invite");
@@ -50,7 +55,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         setDescription("commands.island.team.invite.description");
         setConfigurableRankCommand();
         // Panels
-        getPlugin().saveResource("panels/team_invite_panel.yml", true);
+        getPlugin().saveResource("panels/team_invite_panel.yml", false);
     }
 
 
@@ -227,19 +232,53 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         panelBuilder.user(user);
         panelBuilder.world(user.getWorld());
 
-        panelBuilder.template("team_panel", new File(getPlugin().getDataFolder(), "panels"));
+        panelBuilder.template("team_invite_panel", new File(getPlugin().getDataFolder(), "panels"));
 
         panelBuilder.parameters("[name]", user.getName(), "[display_name]", user.getDisplayName());
 
         panelBuilder.registerTypeBuilder("PROSPECT", this::createProspectButton);
-        //panelBuilder.registerTypeBuilder("INVITED", this::createInvitedButton);
-        //panelBuilder.registerTypeBuilder("RANK", this::createRankButton);
-        //panelBuilder.registerTypeBuilder("INVITE", this::createInviteButton);
+        panelBuilder.registerTypeBuilder("PREVIOUS", this::createPreviousButton);
+        panelBuilder.registerTypeBuilder("NEXT", this::createNextButton);
         border = panelBuilder.getPanelTemplate().border();
         background = panelBuilder.getPanelTemplate().background();
         // Register unknown type builder.
         panelBuilder.build();
 
+    }
+
+    private PanelItem createNextButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+        long count = getWorld().getPlayers().stream().filter(player -> user.getPlayer().canSee(player))
+                .filter(player -> !player.equals(user.getPlayer())).count();
+        if (count > page * PER_PAGE) {
+            // We need to show a next button
+            return new PanelItemBuilder().name(user.getTranslation("protection.panel.next")).icon(Material.ARROW)
+                    .clickHandler((panel, user, clickType, clickSlot) -> {
+                        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                        page++;
+                        build(user);
+                        return true;
+                    }).build();
+        }
+        return getBlankBorder();
+    }
+
+    private PanelItem createPreviousButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+        if (page > 0) {
+            // We need to show a next button
+            return new PanelItemBuilder().name(user.getTranslation("protection.panel.previous")).icon(Material.ARROW)
+                    .clickHandler((panel, user, clickType, clickSlot) -> {
+                        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                        page--;
+                        build(user);
+                        return true;
+                    }).build();
+        }
+        return getBlankBorder();
+    }
+
+    private PanelItem getBlankBorder() {
+        return new PanelItemBuilder().icon(Objects.requireNonNullElse(border.icon(), new ItemStack(Material.BARRIER)))
+                .name((Objects.requireNonNullElse(border.title(), ""))).build();
     }
 
     /**
@@ -255,20 +294,48 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         if (island == null) {
             return this.getBlankBackground();
         }
-        // TODO: THERE"S A BUG HERE
-        return user.getWorld().getPlayers().stream()
-                .filter(player -> !getIslands().inTeam(getWorld(), player.getUniqueId())).skip(slot.slot() - 1)
-                .limit(1L)
-                .findFirst().map(this::getProspect).orElse(this.getBlankBackground());
+        if (page < 0) {
+            page = 0;
+        }
+        return getWorld().getPlayers().stream().filter(player -> user.getPlayer().canSee(player))
+                .filter(player -> !player.equals(user.getPlayer())).skip(slot.slot() + page * PER_PAGE).findFirst()
+                .map(player -> getProspect(player, template)).orElse(this.getBlankBackground());
     }
 
-    private PanelItem getProspect(Player player) {
-        return new PanelItemBuilder().icon(player.getName()).build();
+    private PanelItem getProspect(Player player, ItemTemplateRecord template) {
+        // Check if the prospect has already been invited
+        if (this.itc.isInvited(player.getUniqueId())
+                && user.getUniqueId().equals(this.itc.getInvite(player.getUniqueId()).getInviter())) {
+            return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName())
+                    .description(user.getTranslation("commands.island.team.invite.gui.button.already-invited")).build();
+        }
+        List<String> desc = template.actions().stream().map(ar -> user
+                .getTranslation("commands.island.team.invite.gui.tips." + ar.clickType().name() + ".name")
+                + " " + user.getTranslation(ar.tooltip())).toList();
+        return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName()).description(desc)
+                .clickHandler(
+                        (panel, user, clickType, clickSlot) -> clickHandler(panel, user, clickType, clickSlot, player))
+                .build();
     }
 
-    private PanelItem getBlankBorder() {
-        return new PanelItemBuilder().icon(Objects.requireNonNullElse(border.icon(), new ItemStack(Material.BARRIER)))
-                .name((Objects.requireNonNullElse(border.title(), ""))).build();
+    private boolean clickHandler(Panel panel, User user, ClickType clickType, int clickSlot, Player player) {
+        if (clickType.equals(ClickType.LEFT)) {
+            user.closeInventory();
+            if (this.canExecute(user, this.getLabel(), List.of(player.getName()))) {
+                this.execute(user, getLabel(), List.of(player.getName()));
+            }
+        } else if (clickType.equals(ClickType.RIGHT)) {
+            user.closeInventory();
+            if (this.itc.getCoopCommand().canExecute(user, this.getLabel(), List.of(player.getName()))) {
+                this.itc.getCoopCommand().execute(user, getLabel(), List.of(player.getName()));
+            }
+        } else if (clickType.equals(ClickType.SHIFT_LEFT)) {
+            user.closeInventory();
+            if (this.itc.getTrustCommand().canExecute(user, this.getLabel(), List.of(player.getName()))) {
+                this.itc.getTrustCommand().execute(user, getLabel(), List.of(player.getName()));
+            }
+        }
+        return true;
     }
 
     private PanelItem getBlankBackground() {

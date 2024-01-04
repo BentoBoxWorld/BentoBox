@@ -1,5 +1,5 @@
 # Name of panel used for indentification in the code - must be the same name as the filename.
-team_panel:
+team_invite_panel:
   # Title of the panel shown to the user. This is a reference and the reference will be translatable in the locale file
   title: commands.island.team.invite.gui.titles.team-invite-panel
   # The type of panel to show. Options are INVENTORY, HOPPER, DROPPER. INVENTORY is that standard chest inventory and
@@ -21,6 +21,32 @@ team_panel:
   # The content section contains details of each item/button in the panel. The numbers indicate the rows and then then columns of each item.
   content:
     # Row number
+    1:
+      2:
+        data:
+          type: PREVIOUS
+        # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
+        # click-types.
+        actions:
+          # Each action has an arbitrary descriptive name to define it. 
+          view:
+            # The click-type is the same as the bukkit {@link org.bukkit.event.inventory.ClickType}. UNKNOWN is the default.
+            click-type: LEFT
+            # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
+            tooltip: commands.island.team.invite.gui.tips.previous
+      8:
+        data:
+          type: NEXT
+        # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
+        # click-types.
+        actions:
+          # Each action has an arbitrary descriptive name to define it. 
+          view:
+            # The click-type is the same as the bukkit {@link org.bukkit.event.inventory.ClickType}. UNKNOWN is the default.
+            click-type: LEFT
+            # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
+            tooltip: commands.island.team.invite.gui.tips.next
+ 
     2:
       2: prospect_button
       3: prospect_button

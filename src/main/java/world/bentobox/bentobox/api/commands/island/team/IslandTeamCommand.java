@@ -21,7 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -80,6 +79,10 @@ public class IslandTeamCommand extends CompositeCommand {
 
     private IslandTeamInviteCommand inviteCommand;
 
+    private IslandTeamCoopCommand coopCommand;
+
+    private IslandTeamTrustCommand trustCommand;
+
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
         inviteMap = new HashMap<>();
@@ -98,18 +101,18 @@ public class IslandTeamCommand extends CompositeCommand {
         acceptCommand = new IslandTeamInviteAcceptCommand(this);
         rejectCommand = new IslandTeamInviteRejectCommand(this);
         if (RanksManager.getInstance().rankExists(RanksManager.COOP_RANK_REF)) {
-            new IslandTeamCoopCommand(this);
+            coopCommand = new IslandTeamCoopCommand(this);
             uncoopCommand = new IslandTeamUncoopCommand(this);
         }
         if (RanksManager.getInstance().rankExists(RanksManager.TRUSTED_RANK_REF)) {
-            new IslandTeamTrustCommand(this);
+            trustCommand = new IslandTeamTrustCommand(this);
             unTrustCommand = new IslandTeamUntrustCommand(this);
         }
         new IslandTeamPromoteCommand(this, "promote");
         new IslandTeamPromoteCommand(this, "demote");
 
         // Panels
-        getPlugin().saveResource("panels/team_panel.yml", true);
+        getPlugin().saveResource("panels/team_panel.yml", false);
     }
 
     @Override
@@ -665,5 +668,19 @@ public class IslandTeamCommand extends CompositeCommand {
      */
     public void removeInvite(@NonNull UUID invitee) {
         inviteMap.remove(invitee);
+    }
+
+    /**
+     * @return the coopCommand
+     */
+    protected IslandTeamCoopCommand getCoopCommand() {
+        return coopCommand;
+    }
+
+    /**
+     * @return the trustCommand
+     */
+    protected IslandTeamTrustCommand getTrustCommand() {
+        return trustCommand;
     }
 }
