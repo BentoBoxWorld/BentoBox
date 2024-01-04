@@ -78,6 +78,8 @@ public class IslandTeamCommand extends CompositeCommand {
 
     private IslandTeamInviteRejectCommand rejectCommand;
 
+    private IslandTeamInviteCommand inviteCommand;
+
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
         inviteMap = new HashMap<>();
@@ -89,7 +91,7 @@ public class IslandTeamCommand extends CompositeCommand {
         setOnlyPlayer(true);
         setDescription("commands.island.team.description");
         // Register commands
-        new IslandTeamInviteCommand(this);
+        inviteCommand = new IslandTeamInviteCommand(this);
         leaveCommand = new IslandTeamLeaveCommand(this);
         setOwnerCommand = new IslandTeamSetownerCommand(this);
         kickCommand = new IslandTeamKickCommand(this);
@@ -164,11 +166,29 @@ public class IslandTeamCommand extends CompositeCommand {
         panelBuilder.registerTypeBuilder("MEMBER", this::createMemberButton);
         panelBuilder.registerTypeBuilder("INVITED", this::createInvitedButton);
         panelBuilder.registerTypeBuilder("RANK", this::createRankButton);
-        //panelBuilder.registerTypeBuilder("KICK", this::createKickButton);
+        panelBuilder.registerTypeBuilder("INVITE", this::createInviteButton);
         border = panelBuilder.getPanelTemplate().border();
         background = panelBuilder.getPanelTemplate().background();
         // Register unknown type builder.
         panelBuilder.build();
+    }
+
+    private PanelItem createInviteButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+        if (island == null || !user.hasPermission(this.inviteCommand.getPermission())
+                || island.getRank(user) < island.getRankCommand(this.getLabel() + " invite")) {
+            return this.getBlankBorder();
+        }
+        PanelItemBuilder builder = new PanelItemBuilder();
+        builder.icon(Material.PLAYER_HEAD);
+        builder.name(user.getTranslation("commands.island.team.gui.buttons.invite.name"));
+        builder.clickHandler((panel, user, clickType, clickSlot) -> {
+            if (clickType.equals(ClickType.LEFT)) {
+                user.closeInventory();
+                this.inviteCommand.build(user);
+            }
+            return true;
+        });
+        return builder.build();
     }
 
     private PanelItem createRankButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {

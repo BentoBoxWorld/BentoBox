@@ -1,11 +1,15 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -13,6 +17,12 @@ import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.api.panels.TemplatedPanel;
+import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
+import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
+import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
+import world.bentobox.bentobox.api.panels.reader.PanelTemplateRecord.TemplateItem;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -24,6 +34,9 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
     private final IslandTeamCommand itc;
     private @Nullable User invitedPlayer;
+    private @Nullable TemplateItem border;
+    private @Nullable TemplateItem background;
+    private User user;
 
     public IslandTeamInviteCommand(IslandTeamCommand parent) {
         super(parent, "invite");
@@ -36,6 +49,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         setOnlyPlayer(true);
         setDescription("commands.island.team.invite.description");
         setConfigurableRankCommand();
+        // Panels
+        getPlugin().saveResource("panels/team_invite_panel.yml", true);
     }
 
 
@@ -65,6 +80,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         Type inviteType = getInviteType(playerUUID);
 
         if (inviteType != null) {
+            // TODO: send to team command to present invite
             String name = getPlayers().getName(playerUUID);
             switch (inviteType) {
             case COOP ->  user.sendMessage("commands.island.team.invite.name-has-invited-you.coop", TextVariables.NAME, name);
@@ -73,7 +89,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             }
             return true;
         }
-
+        build(user);
         showHelp(this, user);
         return false;
     }
@@ -204,4 +220,60 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         return Optional.of(Util.tabLimit(options, lastArg));
     }
 
+    public void build(User user) {
+        this.user = user;
+        // Start building panel.
+        TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
+        panelBuilder.user(user);
+        panelBuilder.world(user.getWorld());
+
+        panelBuilder.template("team_panel", new File(getPlugin().getDataFolder(), "panels"));
+
+        panelBuilder.parameters("[name]", user.getName(), "[display_name]", user.getDisplayName());
+
+        panelBuilder.registerTypeBuilder("PROSPECT", this::createProspectButton);
+        //panelBuilder.registerTypeBuilder("INVITED", this::createInvitedButton);
+        //panelBuilder.registerTypeBuilder("RANK", this::createRankButton);
+        //panelBuilder.registerTypeBuilder("INVITE", this::createInviteButton);
+        border = panelBuilder.getPanelTemplate().border();
+        background = panelBuilder.getPanelTemplate().background();
+        // Register unknown type builder.
+        panelBuilder.build();
+
+    }
+
+    /**
+     * Create member button panel item.
+     *
+     * @param template the template
+     * @param slot     the slot
+     * @return the panel item
+     */
+    private PanelItem createProspectButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+        // Player issuing the command must have an island
+        Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
+        if (island == null) {
+            return this.getBlankBackground();
+        }
+        // TODO: THERE"S A BUG HERE
+        return user.getWorld().getPlayers().stream()
+                .filter(player -> !getIslands().inTeam(getWorld(), player.getUniqueId())).skip(slot.slot() - 1)
+                .limit(1L)
+                .findFirst().map(this::getProspect).orElse(this.getBlankBackground());
+    }
+
+    private PanelItem getProspect(Player player) {
+        return new PanelItemBuilder().icon(player.getName()).build();
+    }
+
+    private PanelItem getBlankBorder() {
+        return new PanelItemBuilder().icon(Objects.requireNonNullElse(border.icon(), new ItemStack(Material.BARRIER)))
+                .name((Objects.requireNonNullElse(border.title(), ""))).build();
+    }
+
+    private PanelItem getBlankBackground() {
+        return new PanelItemBuilder()
+                .icon(Objects.requireNonNullElse(background.icon(), new ItemStack(Material.BARRIER)))
+                .name((Objects.requireNonNullElse(background.title(), ""))).build();
+    }
 }

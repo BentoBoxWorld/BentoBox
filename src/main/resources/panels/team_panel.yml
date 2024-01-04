@@ -13,7 +13,7 @@ team_panel:
   border:
     # The border of each panel may be shown as a different item.
     # It can be used to provide a contrast to items in the panel.
-    icon: BLACK_STAINED_GLASS_PANE
+    icon: BLUE_STAINED_GLASS_PANE
     title: "&b&r"  # Empty text
   # This tag indicates which rows in the panel must be shown. The panel will be sized vertically accordingly. This does not include the borders.
   # This can be a list and rows must be between 1 and 6, if used.
@@ -61,6 +61,15 @@ team_panel:
           reject:
             click-type: SHIFT_RIGHT
             tooltip: commands.island.team.gui.tips.SHIFT_RIGHT.reject
+      7:
+        # Invite button
+        data:
+          type: INVITE
+          name: commands.island.team.gui.buttons.invite
+        actions:
+          invite:
+            click-type: LEFT
+            tooltip: commands.island.team.gui.tips.LEFT.invite
     2:
       2: member_button
       3: member_button

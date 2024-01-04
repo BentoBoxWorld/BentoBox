@@ -623,9 +623,12 @@ commands:
             name: "Rank Filter"
             description: "&a Click to cycle ranks"
           invitation: "Invitation"
+          invite:
+            name: "Invite player"
         tips:
           LEFT:
             name: "&b Left Click"
+            invite: "&a to invite a player"
           RIGHT:
             name: "&b Right Click"
           SHIFT_RIGHT:
@@ -704,6 +707,21 @@ commands:
         to-accept-or-reject: '&a Do /[label] team accept to accept, or /[label] team
           reject to reject'
         you-will-lose-your-island: '&c WARNING! You will lose your island if you accept!'
+        gui:
+           titles:
+             team-invite-panel: "Invite Players"
+           tips:
+             LEFT:
+               name: "&b Left Click"
+               invite: |
+                 &a to invite a player
+                 &a to join your team
+             RIGHT:
+               name: "&b Right Click"
+               coop: "&a to coop player"
+             SHIFT_LEFT:
+               name: "&b Shift Left Click"
+               trust: "&a to trust a player"
         errors:
           cannot-invite-self: '&c You cannot invite yourself!'
           cooldown: '&c You cannot invite that person for another [number] seconds.'
