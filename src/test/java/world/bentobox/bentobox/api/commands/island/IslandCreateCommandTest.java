@@ -54,7 +54,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.managers.island.NewIsland.Builder;
-import world.bentobox.bentobox.panels.IslandCreationPanel;
+import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
 
 /**
  * @author tastybento
