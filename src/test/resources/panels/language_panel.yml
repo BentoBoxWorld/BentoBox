@@ -1,0 +1,29 @@
+# This is default language selection panel. It is used in all situations when gamemode addon does not have specified their
+# of panel.
+language_panel:
+  title: panels.language.title  # The title of panel or link to the localization location.
+  type: INVENTORY                       # The type of inventory: INVENTORY, DROPPER, HOPPER
+  force-shown: []                       # Allow to specify (1-6, 1-3, 1) which rows must be showed regardless of empty elements.
+  content:                              # Allow to define buttons in your panel.
+    1:
+      1: language_button               # String values are expected to be `reusables` that are defined at the end of this file.
+      2: language_button
+      3: language_button
+      4: language_button
+      5: language_button
+      6: language_button
+      7: language_button
+      8: language_button
+      9: language_button
+  reusable:                                             # List of reoccurring buttons in the panels.
+    language_button:                                    # The ID of the button
+      # icon: GRASS_BLOCK
+      title: panels.language.buttons.language.name
+      description: panels.language.buttons.language.description
+      data:
+        type: LOCALE
+        # lang_id: default                            # Specifying lang_id will force to show the requested locale if it is available.
+      actions:
+        select:
+          click-type: UNKNOWN
+          tooltip: panels.tips.click-to-choose
