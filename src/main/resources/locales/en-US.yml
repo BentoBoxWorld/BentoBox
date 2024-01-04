@@ -1747,7 +1747,7 @@ panel:
 panels:
   # The section of translations used in Island Creation Panel
   island_creation:
-    title: "&a&l Pick an island"
+    title: "&2&l Pick an island"
     buttons:
       # This button is used for displaying blueprint bundle in the island creation panel.
       bundle:
