@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -73,7 +74,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
 
     }
 
-    protected boolean setOwner(User user, @Nullable UUID targetUUID2) {
+    protected boolean setOwner(User user, @NonNull UUID targetUUID2) {
         // Fire event so add-ons can run commands, etc.
         Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
         // Fire event so add-ons can run commands, etc.

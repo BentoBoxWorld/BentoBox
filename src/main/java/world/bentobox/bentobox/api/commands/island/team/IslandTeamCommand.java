@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -403,13 +404,9 @@ public class IslandTeamCommand extends CompositeCommand {
         if (slot.slot() > subOwnerCount + memberCount + trustedCount
                 && slot.slot() < subOwnerCount + memberCount + trustedCount + coopCount + 1) {
             // Show coops
-            PanelItem item = getMemberButton(RanksManager.COOP_RANK, slot.slot(), template.actions());
-            if (item != null) {
-                return item;
-            }
-
+            return getMemberButton(RanksManager.COOP_RANK, slot.slot(), template.actions());
         }
-        return new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name("&b&r").build();
+        return this.getBlankBackground();
 
     }
 
@@ -426,8 +423,12 @@ public class IslandTeamCommand extends CompositeCommand {
             return getMemberButton(RanksManager.OWNER_RANK, 1, actions);
         }
         String ref = RanksManager.getInstance().getRank(targetRank);
-        User member = island.getMemberSet(targetRank, false).stream().sorted().skip(slot - 1L).limit(1L)
-                .map(User::getInstance).findFirst().orElse(null);
+        Optional<User> opMember = island.getMemberSet(targetRank, false).stream().sorted().skip(slot - 1L).limit(1L)
+                .map(User::getInstance).findFirst();
+        if (opMember.isEmpty()) {
+            return this.getBlankBackground();
+        }
+        User member = opMember.get();
         // Make button description depending on viewer
         List<String> desc = new ArrayList<>();
         int userRank = Objects.requireNonNull(island).getRank(user);
@@ -457,26 +458,21 @@ public class IslandTeamCommand extends CompositeCommand {
                             + " " + user.getTranslation(ar.tooltip()))
                     .findFirst().ifPresent(desc::add);
         }
-        if (member != null) {
-            if (member.isOnline()) {
-                desc.add(0, user.getTranslation(ref));
-                return new PanelItemBuilder().icon(member.getName()).name(member.getDisplayName())
-                        .description(desc)
-                        .clickHandler((panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member,
-                                actions))
-                        .build();
-            } else {
-                // Offline player
-                desc.add(0, user.getTranslation(ref));
-                return new PanelItemBuilder().icon(member.getName())
-                        .name(offlinePlayerStatus(user, Bukkit.getOfflinePlayer(member.getUniqueId())))
-                        .description(desc)
-                        .clickHandler((panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member,
-                                actions))
-                        .build();
-            }
+        if (member.isOnline()) {
+            desc.add(0, user.getTranslation(ref));
+            return new PanelItemBuilder().icon(member.getName()).name(member.getDisplayName()).description(desc)
+                    .clickHandler(
+                            (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
+                    .build();
+        } else {
+            // Offline player
+            desc.add(0, user.getTranslation(ref));
+            return new PanelItemBuilder().icon(member.getName())
+                    .name(offlinePlayerStatus(user, Bukkit.getOfflinePlayer(member.getUniqueId()))).description(desc)
+                    .clickHandler(
+                            (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
+                    .build();
         }
-        return null;
     }
 
     private boolean clickListener(Panel panel, User clicker, ClickType clickType, int i, User member,

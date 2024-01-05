@@ -40,8 +40,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
     private @Nullable TemplateItem border;
     private @Nullable TemplateItem background;
     private User user;
-    private int page = 0; // This number by 35
-    private static final int PER_PAGE = 35;
+    private long page = 0; // This number by 35
+    private static final long PER_PAGE = 35;
 
     public IslandTeamInviteCommand(IslandTeamCommand parent) {
         super(parent, "invite");
