@@ -116,7 +116,7 @@ public class IslandTeamCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         this.user = user;
         // Player issuing the command must have an island
         island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
@@ -146,8 +146,14 @@ public class IslandTeamCommand extends CompositeCommand {
                 user.sendMessage("commands.island.team.invite.errors.island-is-full");
             }
         }
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
         // Show members of island
         showMembers().forEach(user::sendRawMessage);
+        // Show the panel
         build();
         return true;
     }
