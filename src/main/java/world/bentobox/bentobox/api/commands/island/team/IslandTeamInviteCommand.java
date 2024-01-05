@@ -9,13 +9,16 @@ import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
+import world.bentobox.bentobox.api.commands.island.team.conversations.InviteNamePrompt;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -239,6 +242,9 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         panelBuilder.registerTypeBuilder("PROSPECT", this::createProspectButton);
         panelBuilder.registerTypeBuilder("PREVIOUS", this::createPreviousButton);
         panelBuilder.registerTypeBuilder("NEXT", this::createNextButton);
+        panelBuilder.registerTypeBuilder("SEARCH", this::createSearchButton);
+
+        // Stash the backgrounds for later use
         border = panelBuilder.getPanelTemplate().border();
         background = panelBuilder.getPanelTemplate().background();
         // Register unknown type builder.
@@ -246,12 +252,26 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
     }
 
+    private PanelItem createSearchButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+        checkTemplate(template);
+        return new PanelItemBuilder().name(user.getTranslation(template.title())).icon(template.icon())
+                .clickHandler((panel, user, clickType, clickSlot) -> {
+                    user.closeInventory();
+                    new ConversationFactory(BentoBox.getInstance()).withLocalEcho(false).withTimeout(90)
+                            .withModality(false)
+                            .withFirstPrompt(new InviteNamePrompt(user, this))
+                            .buildConversation(user.getPlayer()).begin();
+                    return true;
+                }).build();
+    }
+
     private PanelItem createNextButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+        checkTemplate(template);
         long count = getWorld().getPlayers().stream().filter(player -> user.getPlayer().canSee(player))
                 .filter(player -> !player.equals(user.getPlayer())).count();
         if (count > page * PER_PAGE) {
             // We need to show a next button
-            return new PanelItemBuilder().name(user.getTranslation("protection.panel.next")).icon(Material.ARROW)
+            return new PanelItemBuilder().name(user.getTranslation(template.title())).icon(template.icon())
                     .clickHandler((panel, user, clickType, clickSlot) -> {
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
                         page++;
@@ -262,10 +282,21 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         return getBlankBorder();
     }
 
+    private void checkTemplate(ItemTemplateRecord template) {
+        if (template.icon() == null) {
+            getPlugin().logError("Icon in template is missing or unknown! " + template.toString());
+        }
+        if (template.title() == null) {
+            getPlugin().logError("Title in template is missing! " + template.toString());
+        }
+
+    }
+
     private PanelItem createPreviousButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+        checkTemplate(template);
         if (page > 0) {
             // We need to show a next button
-            return new PanelItemBuilder().name(user.getTranslation("protection.panel.previous")).icon(Material.ARROW)
+            return new PanelItemBuilder().name(user.getTranslation(template.title())).icon(template.icon())
                     .clickHandler((panel, user, clickType, clickSlot) -> {
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
                         page--;

@@ -23,6 +23,8 @@ team_invite_panel:
     # Row number
     1:
       2:
+        title: "protection.panel.previous"
+        icon: ARROW
         data:
           type: PREVIOUS
         # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
@@ -34,7 +36,18 @@ team_invite_panel:
             click-type: LEFT
             # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
             tooltip: commands.island.team.invite.gui.tips.previous
+      5:
+        title: "commands.island.team.invite.gui.button.search"
+        icon: PLAYER_HEAD
+        data:
+          type: SEARCH
+        actions:
+          search:
+            click-type: LEFT
+            tooltip: commands.island.team.invite.gui.tips.search
       8:
+        title: "protection.panel.next"
+        icon: ARROW
         data:
           type: NEXT
         # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different

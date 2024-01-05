@@ -625,6 +625,10 @@ commands:
           invitation: "Invitation"
           invite:
             name: "Invite player"
+            description: |
+              &a Players must be in the
+              &a same world as you to be
+              &a shown in the list.
         tips:
           LEFT:
             name: "&b Left Click"
@@ -708,22 +712,25 @@ commands:
           reject to reject'
         you-will-lose-your-island: '&c WARNING! You will lose your island if you accept!'
         gui:
-           titles:
-             team-invite-panel: "Invite Players"
-           button:
-             already-invited: "&c Invited already"
-           tips:
-             LEFT:
-               name: "&b Left Click"
-               invite: |
-                 &a to invite a player
-                 &a to join your team
-             RIGHT:
-               name: "&b Right Click"
-               coop: "&a to coop player"
-             SHIFT_LEFT:
-               name: "&b Shift Left Click"
-               trust: "&a to trust a player"
+          titles:
+            team-invite-panel: "Invite Players"
+          button:
+            already-invited: "&c Invited already"
+            search: "&a Search for a player"
+          enter-name: "&a Enter name:" 
+          tips:
+            LEFT:
+              name: "&b Left Click"
+              search: "&a Enter the player's name"
+              invite: |
+                &a to invite a player
+                &a to join your team
+            RIGHT:
+              name: "&b Right Click"
+              coop: "&a to coop player"
+            SHIFT_LEFT:
+              name: "&b Shift Left Click"
+              trust: "&a to trust a player"
         errors:
           cannot-invite-self: '&c You cannot invite yourself!'
           cooldown: '&c You cannot invite that person for another [number] seconds.'

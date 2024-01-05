@@ -152,8 +152,6 @@ public class IslandTeamCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // Show members of island
-        showMembers().forEach(user::sendRawMessage);
         // Show the panel
         build();
         return true;
@@ -191,6 +189,7 @@ public class IslandTeamCommand extends CompositeCommand {
         PanelItemBuilder builder = new PanelItemBuilder();
         builder.icon(Material.PLAYER_HEAD);
         builder.name(user.getTranslation("commands.island.team.gui.buttons.invite.name"));
+        builder.description(user.getTranslation("commands.island.team.gui.buttons.invite.description"));
         builder.clickHandler((panel, user, clickType, clickSlot) -> {
             if (clickType.equals(ClickType.LEFT)) {
                 user.closeInventory();
