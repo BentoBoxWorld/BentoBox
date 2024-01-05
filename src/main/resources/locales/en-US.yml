@@ -722,6 +722,7 @@ commands:
             LEFT:
               name: "&b Left Click"
               search: "&a Enter the player's name"
+              back: "&a Back"
               invite: |
                 &a to invite a player
                 &a to join your team

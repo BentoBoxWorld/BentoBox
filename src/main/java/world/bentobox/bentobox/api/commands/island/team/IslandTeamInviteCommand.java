@@ -44,6 +44,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
     private @Nullable TemplateItem background;
     private User user;
     private long page = 0; // This number by 35
+    private boolean inviteCmd;
     private static final long PER_PAGE = 35;
 
     public IslandTeamInviteCommand(IslandTeamCommand parent) {
@@ -74,32 +75,15 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         }
 
         if (args.size() != 1) {
-            return handleCommandWithNoArgs(user);
+            this.inviteCmd = true;
+            build(user);
+            return true;
         }
 
         Island island = islandsManager.getIsland(getWorld(), user);
         int rank = Objects.requireNonNull(island).getRank(user);
 
         return checkRankAndInvitePlayer(user, island, rank, args.get(0));
-    }
-
-    private boolean handleCommandWithNoArgs(User user) {
-        UUID playerUUID = user.getUniqueId();
-        Type inviteType = getInviteType(playerUUID);
-
-        if (inviteType != null) {
-            // TODO: send to team command to present invite
-            String name = getPlayers().getName(playerUUID);
-            switch (inviteType) {
-            case COOP ->  user.sendMessage("commands.island.team.invite.name-has-invited-you.coop", TextVariables.NAME, name);
-            case TRUST -> user.sendMessage("commands.island.team.invite.name-has-invited-you.trust", TextVariables.NAME, name);
-            default -> user.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, name);
-            }
-            return true;
-        }
-        build(user);
-        showHelp(this, user);
-        return false;
     }
 
     private boolean checkRankAndInvitePlayer(User user, Island island, int rank, String playerName) {
@@ -149,14 +133,6 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         }
 
         return true;
-    }
-
-    private Type getInviteType(UUID playerUUID) {
-        if (itc.isInvited(playerUUID)) {
-            Invite invite = itc.getInvite(playerUUID);
-            return invite.getType();
-        }
-        return null;
     }
 
     private boolean canInvitePlayer(User user, User invitedPlayer) {
@@ -228,7 +204,11 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         return Optional.of(Util.tabLimit(options, lastArg));
     }
 
-    public void build(User user) {
+    /**
+     * Build the invite panel
+     * @param user use of the panel
+     */
+    void build(User user) {
         this.user = user;
         // Start building panel.
         TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
@@ -243,13 +223,25 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         panelBuilder.registerTypeBuilder("PREVIOUS", this::createPreviousButton);
         panelBuilder.registerTypeBuilder("NEXT", this::createNextButton);
         panelBuilder.registerTypeBuilder("SEARCH", this::createSearchButton);
-
+        panelBuilder.registerTypeBuilder("BACK", this::createBackButton);
         // Stash the backgrounds for later use
         border = panelBuilder.getPanelTemplate().border();
         background = panelBuilder.getPanelTemplate().background();
         // Register unknown type builder.
         panelBuilder.build();
 
+    }
+
+    private PanelItem createBackButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+        checkTemplate(template);
+        return new PanelItemBuilder().name(user.getTranslation(template.title())).icon(template.icon())
+                .clickHandler((panel, user, clickType, clickSlot) -> {
+                    user.closeInventory();
+                    if (!inviteCmd) {
+                        this.itc.build();
+                    }
+                    return true;
+                }).build();
     }
 
     private PanelItem createSearchButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {

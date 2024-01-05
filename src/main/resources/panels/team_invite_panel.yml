@@ -59,7 +59,6 @@ team_invite_panel:
             click-type: LEFT
             # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
             tooltip: commands.island.team.invite.gui.tips.next
- 
     2:
       2: prospect_button
       3: prospect_button
@@ -100,6 +99,21 @@ team_invite_panel:
       6: prospect_button
       7: prospect_button
       8: prospect_button
+      9:
+        title: "commands.island.team.invite.gui.tips.LEFT.back"
+        icon: OAK_DOOR
+        data:
+          type: BACK
+        # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
+        # click-types.
+        actions:
+          # Each action has an arbitrary descriptive name to define it. 
+          back:
+            # The click-type is the same as the bukkit {@link org.bukkit.event.inventory.ClickType}. UNKNOWN is the default.
+            click-type: LEFT
+            # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
+            tooltip: commands.island.team.invite.gui.tips.LEFT.back
+      
   # This is where reusable buttons are defined.
   reusable:
     # This is the name of the button that is referenced

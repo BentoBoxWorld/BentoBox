@@ -238,9 +238,9 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecuteNoTarget() {
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
-        // Show help
-        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
+        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+        // Show panel
+        verify(p).openInventory(any(Inventory.class));
     }
 
     /**

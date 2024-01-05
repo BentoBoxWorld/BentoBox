@@ -160,7 +160,7 @@ public class IslandTeamCommand extends CompositeCommand {
     /**
      * This method builds this GUI.
      */
-    private void build() {
+    void build() {
         // Start building panel.
         TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
         panelBuilder.user(user);
