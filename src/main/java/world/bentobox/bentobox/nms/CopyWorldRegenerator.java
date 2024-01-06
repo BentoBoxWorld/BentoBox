@@ -3,6 +3,7 @@ package world.bentobox.bentobox.nms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -184,6 +185,8 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         double baseZ = toChunk.getZ() << 4;
         int minHeight = toChunk.getWorld().getMinHeight();
         int maxHeight = toChunk.getWorld().getMaxHeight();
+        Optional<SlimefunHook> slimefunHook = plugin.getHooks().getHook("Slimefun").map(SlimefunHook.class::cast);
+        Optional<ItemsAdderHook> itemsAdderHook = plugin.getHooks().getHook("ItemsAdder").map(ItemsAdderHook.class::cast);
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 if (limitBox != null && !limitBox.contains(baseX + x, 0, baseZ + z)) {
@@ -197,10 +200,8 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     }
                     // Delete any 3rd party blocks
                     Location loc = new Location(toChunk.getWorld(), baseX + x, y, baseZ + z);
-                    plugin.getHooks().getHook("Slimefun")
-                            .ifPresent(hook -> ((SlimefunHook) hook).clearBlockInfo(loc, true));
-                    plugin.getHooks().getHook("ItemsAdder")
-                            .ifPresent(hook -> ((ItemsAdderHook) hook).clearBlockInfo(loc));
+                    slimefunHook.ifPresent(hook -> hook.clearBlockInfo(loc, true));
+                    itemsAdderHook.ifPresent(hook -> hook.clearBlockInfo(loc));
                 }
             }
         }
