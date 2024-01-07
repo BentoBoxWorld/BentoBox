@@ -35,7 +35,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         if (!getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
@@ -74,7 +74,13 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                     getPlayers().getName(targetUUID));
             return false;
         }
+        return true;
+    }
 
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
+        // Get target
+        UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (!getSettings().isKickConfirmation()) {
             kick(user, targetUUID);
             return true;

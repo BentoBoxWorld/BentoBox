@@ -113,7 +113,9 @@ public class IslandTeamCommand extends CompositeCommand {
         new IslandTeamPromoteCommand(this, "demote");
 
         // Panels
-        getPlugin().saveResource("panels/team_panel.yml", false);
+        if (!new File(getPlugin().getDataFolder() + File.separator + "panels", "team_panel.yml").exists()) {
+            getPlugin().saveResource("panels/team_panel.yml", false);
+        }
     }
 
     @Override
@@ -288,6 +290,8 @@ public class IslandTeamCommand extends CompositeCommand {
                     .toList());
             builder.clickHandler((panel, user, clickType, clickSlot) -> {
                 if (clickType.equals(ClickType.SHIFT_LEFT) && user.hasPermission(this.acceptCommand.getPermission())) {
+                    getPlugin().log("Invite accepted: " + user.getName() + " accepted " + invite.getType()
+                            + " invite to island at " + island.getCenter());
                     // Accept
                     switch (invite.getType()) {
                     case COOP -> this.acceptCommand.acceptCoopInvite(user, invite);
@@ -298,6 +302,8 @@ public class IslandTeamCommand extends CompositeCommand {
                 }
                 if (clickType.equals(ClickType.SHIFT_RIGHT) && user.hasPermission(this.rejectCommand.getPermission())) {
                     // Reject
+                    getPlugin().log("Invite rejected: " + user.getName() + " rejected " + invite.getType()
+                            + " invite.");
                     this.rejectCommand.execute(user, "", List.of());
                     user.closeInventory();
                 }
@@ -474,34 +480,53 @@ public class IslandTeamCommand extends CompositeCommand {
         }
     }
 
-    private boolean clickListener(Panel panel, User clicker, ClickType clickType, int i, User member,
+    private boolean clickListener(Panel panel, User clickingUser, ClickType clickType, int i, User target,
             List<ActionRecords> actions) {
-        int rank = Objects.requireNonNull(island).getRank(clicker);
+        int rank = Objects.requireNonNull(island).getRank(clickingUser);
         for (ItemTemplateRecord.ActionRecords action : actions) {
-            if (clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN) {
+            if (clickType.equals(action.clickType())) {
                 switch (action.actionType().toUpperCase(Locale.ENGLISH)) {
                 case "KICK" -> {
                     // Kick the player, or uncoop, or untrust
-                    if (clicker.hasPermission(this.kickCommand.getPermission()) && !member.equals(clicker)
+                    if (clickingUser.hasPermission(this.kickCommand.getPermission()) && !target.equals(clickingUser)
                             && rank >= island.getRankCommand(this.getLabel() + " kick")) {
-                        clicker.closeInventory();
-                        removePlayer(clicker, member);
-                        clicker.getPlayer().playSound(clicker.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
+                        getPlugin().log("Kick: " + clickingUser.getName() + " kicked " + target.getName()
+                                + " from island at " + island.getCenter());
+                        clickingUser.closeInventory();
+                        if (removePlayer(clickingUser, target)) {
+                            clickingUser.getPlayer().playSound(clickingUser.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F,
+                                    1F);
+                            getPlugin().log("Kick: success");
+                        } else {
+                            getPlugin().log("Kick: failed");
+                        }
                     }
                 }
                 case "SETOWNER" -> {
                     // Make the player the leader of the island
-                    if (clicker.hasPermission(this.setOwnerCommand.getPermission()) && !member.equals(clicker)
-                            && clicker.getUniqueId().equals(island.getOwner())) {
-                        clicker.closeInventory();
-                        this.setOwnerCommand.setOwner(clicker, member.getUniqueId());
+                    if (clickingUser.hasPermission(this.setOwnerCommand.getPermission()) && !target.equals(clickingUser)
+                            && clickingUser.getUniqueId().equals(island.getOwner())) {
+                        getPlugin().log("Set Owner: " + clickingUser.getName() + " trying to make " + target.getName()
+                                + " owner of island at " + island.getCenter());
+                        clickingUser.closeInventory();
+                        if (this.setOwnerCommand.setOwner(clickingUser, target.getUniqueId())) {
+                            getPlugin().log("Set Owner: success");
+                        } else {
+                            getPlugin().log("Set Owner: failed");
+                        }
                     }
                 }
                 case "LEAVE" -> {
-                    if (clicker.hasPermission(this.leaveCommand.getPermission()) && member.equals(clicker)
-                            && !clicker.getUniqueId().equals(island.getOwner())) {
-                        clicker.closeInventory();
-                        leaveCommand.leave(clicker);
+                    if (clickingUser.hasPermission(this.leaveCommand.getPermission()) && target.equals(clickingUser)
+                            && !clickingUser.getUniqueId().equals(island.getOwner())) {
+                        getPlugin().log("Leave: " + clickingUser.getName() + " trying to leave island at "
+                                + island.getCenter());
+                        clickingUser.closeInventory();
+                        if (leaveCommand.leave(clickingUser)) {
+                            getPlugin().log("Leave: success");
+                        } else {
+                            getPlugin().log("Leave: failed");
+                        }
                     }
                 }
                 }
@@ -510,13 +535,19 @@ public class IslandTeamCommand extends CompositeCommand {
         return true;
     }
 
-    private void removePlayer(User clicker, User member) {
+    private boolean removePlayer(User clicker, User member) {
         // If member then kick, if coop, uncoop, if trusted, then untrust
-        switch (island.getRank(member)) {
+        return switch (island.getRank(member)) {
         case RanksManager.COOP_RANK -> this.uncoopCommand.unCoopCmd(user, member.getUniqueId());
         case RanksManager.TRUSTED_RANK -> this.unTrustCommand.unTrustCmd(user, member.getUniqueId());
-        default -> kickCommand.kick(clicker, member.getUniqueId());
+        default -> {
+            if (kickCommand.canExecute(user, kickCommand.getLabel(), List.of(member.getName()))) {
+                yield kickCommand.execute(user, kickCommand.getLabel(), List.of(member.getName()));
+            } else {
+                yield false;
+            }
         }
+        };
 
     }
 

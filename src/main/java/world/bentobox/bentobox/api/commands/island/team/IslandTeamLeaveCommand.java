@@ -65,17 +65,17 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
 
     }
 
-    protected void leave(User user) {
+    protected boolean leave(User user) {
         Island island = getIslands().getIsland(getWorld(), user);
         if (island == null) {
             user.sendMessage("general.errors.no-island");
-            return;
+            return false;
         }
         // Fire event
         IslandBaseEvent event = TeamEvent.builder().island(island).reason(TeamEvent.Reason.LEAVE)
                 .involvedPlayer(user.getUniqueId()).build();
         if (event.isCancelled()) {
-            return;
+            return false;
         }
         UUID ownerUUID = island.getOwner();
         if (ownerUUID != null) {
@@ -103,5 +103,6 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
         IslandEvent.builder().island(island).involvedPlayer(user.getUniqueId()).admin(false)
                 .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(island.getRank(user), RanksManager.VISITOR_RANK)
                 .build();
+        return true;
     }
 }

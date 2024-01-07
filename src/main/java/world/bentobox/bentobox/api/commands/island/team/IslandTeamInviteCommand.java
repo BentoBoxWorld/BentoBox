@@ -59,7 +59,9 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         setDescription("commands.island.team.invite.description");
         setConfigurableRankCommand();
         // Panels
-        getPlugin().saveResource("panels/team_invite_panel.yml", false);
+        if (!new File(getPlugin().getDataFolder() + File.separator + "panels", "team_invite_panel.yml").exists()) {
+            getPlugin().saveResource("panels/team_invite_panel.yml", false);
+        }
     }
 
 
@@ -250,8 +252,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
                 .clickHandler((panel, user, clickType, clickSlot) -> {
                     user.closeInventory();
                     new ConversationFactory(BentoBox.getInstance()).withLocalEcho(false).withTimeout(90)
-                            .withModality(false)
-                            .withFirstPrompt(new InviteNamePrompt(user, this))
+                            .withModality(false).withFirstPrompt(new InviteNamePrompt(user, this))
                             .buildConversation(user.getPlayer()).begin();
                     return true;
                 }).build();
@@ -345,17 +346,34 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         if (clickType.equals(ClickType.LEFT)) {
             user.closeInventory();
             if (this.canExecute(user, this.getLabel(), List.of(player.getName()))) {
+                getPlugin().log("Invite sent to: " + player.getName() + " by " + user.getName() + " to join island in "
+                        + getWorld().getName());
                 this.execute(user, getLabel(), List.of(player.getName()));
+            } else {
+                getPlugin().log("Invite failed: " + player.getName() + " by " + user.getName() + " to join island in "
+                        + getWorld().getName());
             }
         } else if (clickType.equals(ClickType.RIGHT)) {
             user.closeInventory();
             if (this.itc.getCoopCommand().canExecute(user, this.getLabel(), List.of(player.getName()))) {
+                getPlugin().log("Coop: " + player.getName() + " cooped " + user.getName() + " to island in "
+                        + getWorld().getName());
                 this.itc.getCoopCommand().execute(user, getLabel(), List.of(player.getName()));
+            } else {
+                getPlugin().log(
+                        "Coop failed: " + player.getName() + "'s coop to " + user.getName() + " failed for island in "
+                        + getWorld().getName());
             }
         } else if (clickType.equals(ClickType.SHIFT_LEFT)) {
             user.closeInventory();
             if (this.itc.getTrustCommand().canExecute(user, this.getLabel(), List.of(player.getName()))) {
+                getPlugin().log("Trust: " + player.getName() + " trusted " + user.getName() + " to island in "
+                        + getWorld().getName());
                 this.itc.getTrustCommand().execute(user, getLabel(), List.of(player.getName()));
+            } else {
+                getPlugin().log("Trust failed: " + player.getName() + "'s trust failed for " + user.getName()
+                        + " for island in "
+                        + getWorld().getName());
             }
         }
         return true;

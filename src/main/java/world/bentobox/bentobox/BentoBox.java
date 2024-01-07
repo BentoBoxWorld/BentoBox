@@ -1,5 +1,6 @@
 package world.bentobox.bentobox;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -465,8 +466,12 @@ public class BentoBox extends JavaPlugin implements Listener {
         }
 
         log("Saving default panels...");
-        this.saveResource("panels/island_creation_panel.yml", false);
-        this.saveResource("panels/language_panel.yml", false);
+        if (!new File(getDataFolder() + File.separator + "panels", "island_creation_panel.yml").exists()) {
+            this.saveResource("panels/island_creation_panel.yml", false);
+        }
+        if (!new File(getDataFolder() + File.separator + "panels", "language_panel.yml").exists()) {
+            this.saveResource("panels/language_panel.yml", false);
+        }
         return true;
     }
 
