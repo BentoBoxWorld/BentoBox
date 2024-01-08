@@ -80,8 +80,6 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private Player targetPlayer;
 
-    private RanksManager rm;
-
     @Before
     public void setUp() throws Exception {
         super.setUp();

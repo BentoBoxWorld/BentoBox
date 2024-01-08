@@ -185,7 +185,7 @@ public class CycleClickTest {
         when(island.getFlag(any())).thenReturn(RanksManager.MEMBER_RANK);
         // Set up up and down ranks
         PowerMockito.mockStatic(RanksManager.class);
-        when(RanksManager.getInstance().getInstance()).thenReturn(rm);
+        when(RanksManager.getInstance()).thenReturn(rm);
         when(rm.getRankUpValue(eq(RanksManager.VISITOR_RANK))).thenReturn(RanksManager.COOP_RANK);
         when(rm.getRankUpValue(eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
         when(rm.getRankUpValue(eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.MEMBER_RANK);
