@@ -79,7 +79,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         // Register island if it exists
         if (!island.map(i -> {
             // Island exists
-            getIslands().setOwner(user, targetUUID, i);
+            getIslands().setOwner(user, targetUUID, i, RanksManager.VISITOR_RANK);
             if (i.isSpawn()) {
                 getIslands().clearSpawn(i.getWorld());
             }
@@ -111,7 +111,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                     user.sendMessage("commands.admin.register.cannot-make-island");
                     return;
                 }
-                getIslands().setOwner(user, targetUUID, i);
+                getIslands().setOwner(user, targetUUID, i, RanksManager.VISITOR_RANK);
                 i.setReserved(true);
                 i.getCenter().getBlock().setType(Material.BEDROCK);
                 user.sendMessage("commands.admin.register.reserved-island", TextVariables.XYZ, Util.xyz(i.getCenter().toVector()),

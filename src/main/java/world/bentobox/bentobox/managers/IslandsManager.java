@@ -1515,9 +1515,9 @@ public class IslandsManager {
                             Location sp = spawn.get(w).getSpawnPoint(w.getEnvironment());
                             if (sp != null) {
                                 PaperLib.teleportAsync(p, sp);
-                            } else {
+                    } else {
                                 plugin.logWarning("Spawn exists but its location is null!");
-                            }
+                    }
                         }
                     }
                 });
@@ -1630,7 +1630,7 @@ public class IslandsManager {
      *                   owner
      */
     public void setOwner(World world, User user, UUID targetUUID) {
-        setOwner(user, targetUUID, getIsland(world, user.getUniqueId()));
+        setOwner(user, targetUUID, getIsland(world, user.getUniqueId()), RanksManager.SUB_OWNER_RANK);
     }
 
     /**
@@ -1639,11 +1639,14 @@ public class IslandsManager {
      * @param user       previous owner
      * @param targetUUID new owner
      * @param island     island to register
+     * @param rank      rank to which to set old owner.
      */
-    public void setOwner(User user, UUID targetUUID, Island island) {
+    public void setOwner(User user, UUID targetUUID, Island island, int rank) {
         islandCache.setOwner(island, targetUUID);
         // Set old owner as sub-owner on island.
-        island.setRank(user, RanksManager.SUB_OWNER_RANK);
+        if (rank > RanksManager.VISITOR_RANK) {
+            island.setRank(user, rank);
+        }
 
         user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]",
                 plugin.getPlayers().getName(targetUUID));
