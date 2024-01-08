@@ -38,6 +38,7 @@ team_invite_panel:
             tooltip: commands.island.team.invite.gui.tips.previous
       5:
         title: "commands.island.team.invite.gui.button.search"
+        description: "commands.island.team.invite.gui.button.searching"
         icon: PLAYER_HEAD
         data:
           type: SEARCH

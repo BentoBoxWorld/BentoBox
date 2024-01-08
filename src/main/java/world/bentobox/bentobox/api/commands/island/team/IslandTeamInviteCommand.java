@@ -18,7 +18,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
-import world.bentobox.bentobox.api.commands.island.team.conversations.InviteNamePrompt;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -46,6 +45,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
     private long page = 0; // This number by 35
     private boolean inviteCmd;
     private static final long PER_PAGE = 35;
+    private String searchName = "";
 
     public IslandTeamInviteCommand(IslandTeamCommand parent) {
         super(parent, "invite");
@@ -210,7 +210,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
      * Build the invite panel
      * @param user use of the panel
      */
-    public void build(User user) {
+    void build(User user) {
         this.user = user;
         // Start building panel.
         TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
@@ -248,14 +248,21 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
     private PanelItem createSearchButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
         checkTemplate(template);
-        return new PanelItemBuilder().name(user.getTranslation(template.title())).icon(template.icon())
+        PanelItemBuilder pib = new PanelItemBuilder().name(user.getTranslation(template.title())).icon(template.icon())
                 .clickHandler((panel, user, clickType, clickSlot) -> {
                     user.closeInventory();
                     new ConversationFactory(BentoBox.getInstance()).withLocalEcho(false).withTimeout(90)
                             .withModality(false).withFirstPrompt(new InviteNamePrompt(user, this))
                             .buildConversation(user.getPlayer()).begin();
                     return true;
-                }).build();
+                });
+        if (!this.searchName.isBlank()) {
+            pib.description(user.getTranslation(Objects
+                    .requireNonNullElse(template.description(),
+                            "commands.island.team.invite.gui.button.searching"),
+                    TextVariables.NAME, searchName));
+        }
+        return pib.build();
     }
 
     private PanelItem createNextButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
@@ -322,6 +329,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             page = 0;
         }
         return getWorld().getPlayers().stream().filter(player -> user.getPlayer().canSee(player))
+                .filter(player -> this.searchName.isBlank() ? true
+                        : player.getName().toLowerCase().contains(searchName.toLowerCase()))
                 .filter(player -> !player.equals(user.getPlayer())).skip(slot.slot() + page * PER_PAGE).findFirst()
                 .map(player -> getProspect(player, template)).orElse(this.getBlankBackground());
     }
@@ -383,5 +392,12 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         return new PanelItemBuilder()
                 .icon(Objects.requireNonNullElse(background.icon(), new ItemStack(Material.BARRIER)))
                 .name((Objects.requireNonNullElse(background.title(), ""))).build();
+    }
+
+    /**
+     * @param searchName the searchName to set
+     */
+    void setSearchName(String searchName) {
+        this.searchName = searchName;
     }
 }

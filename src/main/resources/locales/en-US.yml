@@ -717,6 +717,9 @@ commands:
           button:
             already-invited: "&c Invited already"
             search: "&a Search for a player"
+            searching: |
+              &b Searching for
+              &c [name]
           enter-name: "&a Enter name:" 
           tips:
             LEFT:
