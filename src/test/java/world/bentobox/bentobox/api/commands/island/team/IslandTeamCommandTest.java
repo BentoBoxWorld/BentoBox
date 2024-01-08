@@ -31,7 +31,6 @@ import com.google.common.collect.ImmutableSet;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
-import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -123,10 +122,6 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
 
-        // RanksManager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
         // Command under test
         tc = new IslandTeamCommand(ic);
     }
@@ -153,33 +148,23 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoIsland() {
+    public void testCanExecuteUserStringListOfStringNoIsland() {
         when(im.getPrimaryIsland(world, uuid)).thenReturn(null);
-        assertFalse(tc.execute(user, "team", Collections.emptyList()));
+        assertFalse(tc.canExecute(user, "team", Collections.emptyList()));
         verify(user).sendMessage(eq("general.errors.no-island"));
     }
 
     /**
-     * Test method for
-     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringIslandIsNotFull() {
-        assertTrue(tc.execute(user, "team", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.island.team.invite.you-can-invite"), eq(TextVariables.NUMBER), eq("3"));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringIslandIsFull() {
+    public void testCanExecuteUserStringListOfStringIslandIsFull() {
         // Max members
         when(im.getMaxMembers(eq(island), eq(RanksManager.MEMBER_RANK))).thenReturn(0);
-        assertTrue(tc.execute(user, "team", Collections.emptyList()));
+        assertTrue(tc.canExecute(user, "team", Collections.emptyList()));
         verify(user).sendMessage(eq("commands.island.team.invite.errors.island-is-full"));
     }
 

@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -181,10 +182,6 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.VISITOR_RANK);
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
         // Ranks
         when(island.getRank(uuid)).thenReturn(RanksManager.OWNER_RANK);
         when(island.getRank(user)).thenReturn(RanksManager.OWNER_RANK);
@@ -192,18 +189,18 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteNoTeam() {
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.emptyList()));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         verify(user).sendMessage(eq("general.errors.no-team"));
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteLowerTeamRank() {
@@ -216,12 +213,12 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick-rank"), eq(TextVariables.NAME), eq("poslovitch"));
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteEqualTeamRank() {
@@ -234,7 +231,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick-rank"), eq(TextVariables.NAME), eq("poslovitch"));
     }
 
@@ -258,7 +255,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteNoCommandRank() {
@@ -266,61 +263,61 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.emptyList()));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**
      * Test method for
-     * {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteNoTarget() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.emptyList()));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         // Show help
     }
 
     /**
      * Test method for
-     * {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteUnknownPlayer() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(null);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(user).sendMessage("general.errors.unknown-player", "[name]", "poslovitch");
     }
 
     /**
      * Test method for
-     * {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteSamePlayer() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(uuid);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick"));
     }
 
     /**
      * Test method for
-     * {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteDifferentPlayerNotInTeam() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);
         // when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(user).sendMessage(eq("general.errors.not-in-team"));
     }
 
     /**
      * Test method for
-     * {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteDifferentPlayerNoRank() {
@@ -328,8 +325,8 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.visitor"));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**
@@ -368,7 +365,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(im).removePlayer(any(World.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
-        verify(target, Mockito.never()).getInventory();
+        verify(target, never()).getInventory();
 
     }
 

@@ -43,7 +43,6 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.util.Util;
 
@@ -87,8 +86,6 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
 
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
@@ -189,7 +186,7 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
         verify(user).sendMessage("commands.admin.info.deaths", "[number]", "0");
         verify(user).sendMessage("commands.admin.info.resets-left", "[number]", "0", "[total]", "0");
         verify(user).sendMessage("commands.admin.info.team-members-title");
-        verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "ranks.owner");
+        verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "");
         verify(user).sendMessage("commands.admin.info.island-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.protection-range", "[range]", "100");
         verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "-100,0,-100", "[xz2]", "99,0,99");
@@ -206,7 +203,7 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
         verify(user).sendMessage("commands.admin.info.deaths", "[number]", "0");
         verify(user).sendMessage("commands.admin.info.resets-left", "[number]", "0", "[total]", "0");
         verify(user).sendMessage("commands.admin.info.team-members-title");
-        verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "ranks.owner");
+        verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "");
         verify(user).sendMessage("commands.admin.info.island-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.protection-range", "[range]", "100");
         verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "-100,0,-100", "[xz2]", "99,0,99");

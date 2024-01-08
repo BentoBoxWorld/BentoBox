@@ -8,6 +8,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 
 public class IslandBanlistCommand extends CompositeCommand {
 
@@ -40,7 +41,8 @@ public class IslandBanlistCommand extends CompositeCommand {
         island = getIslands().getIsland(getWorld(), user.getUniqueId());
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
         return true;

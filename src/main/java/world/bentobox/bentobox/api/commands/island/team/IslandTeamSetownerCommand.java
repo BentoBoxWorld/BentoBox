@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -69,19 +70,24 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        return setOwner(user, targetUUID);
+
+    }
+
+    protected boolean setOwner(User user, @NonNull UUID targetUUID2) {
         // Fire event so add-ons can run commands, etc.
         Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent e = TeamEvent.builder().island(island).reason(TeamEvent.Reason.SETOWNER)
-                .involvedPlayer(targetUUID).build();
+                .involvedPlayer(targetUUID2).build();
         if (e.isCancelled()) {
             return false;
         }
-        getIslands().setOwner(getWorld(), user, targetUUID);
+        getIslands().setOwner(getWorld(), user, targetUUID2);
         // Call the event for the new owner
-        IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(false)
+        IslandEvent.builder().island(island).involvedPlayer(targetUUID2).admin(false)
                 .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(island.getRank(User.getInstance(targetUUID)), RanksManager.OWNER_RANK).build();
+                .rankChange(island.getRank(User.getInstance(targetUUID2)), RanksManager.OWNER_RANK).build();
         // Call the event for the previous owner
         IslandEvent.builder().island(island).involvedPlayer(user.getUniqueId()).admin(false)
                 .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(RanksManager.OWNER_RANK, RanksManager.SUB_OWNER_RANK)

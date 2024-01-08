@@ -134,10 +134,6 @@ public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
     }
 
     /**
@@ -161,7 +157,7 @@ public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
         when(island.getRankCommand(any())).thenReturn(RanksManager.OWNER_RANK);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**

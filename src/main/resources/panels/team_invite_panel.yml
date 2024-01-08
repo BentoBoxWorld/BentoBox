@@ -1,0 +1,144 @@
+# Name of panel used for indentification in the code - must be the same name as the filename.
+team_invite_panel:
+  # Title of the panel shown to the user. This is a reference and the reference will be translatable in the locale file
+  title: commands.island.team.invite.gui.titles.team-invite-panel
+  # The type of panel to show. Options are INVENTORY, HOPPER, DROPPER. INVENTORY is that standard chest inventory and
+  # the others refer to the inventories shown for those items.
+  type: INVENTORY
+  # The background of the panel. These items will be shown if other items are not there. STAINED_GLASS_PANEs give a good effect.
+  background:
+    icon: BLACK_STAINED_GLASS_PANE
+    # Each item may have text applied to it, but usually for background items, nothing is shown.
+    title: "&b&r" # Empty text. This is using the Bukkit chat color coding with &'s. 
+  border:
+    # The border of each panel may be shown as a different item.
+    # It can be used to provide a contrast to items in the panel.
+    icon: BLUE_STAINED_GLASS_PANE
+    title: "&b&r"  # Empty text
+  # This tag indicates which rows in the panel must be shown. The panel will be sized vertically accordingly. This does not include the borders.
+  # This can be a list and rows must be between 1 and 6, if used.
+  force-shown: []
+  # The content section contains details of each item/button in the panel. The numbers indicate the rows and then then columns of each item.
+  content:
+    # Row number
+    1:
+      2:
+        title: "protection.panel.previous"
+        icon: ARROW
+        data:
+          type: PREVIOUS
+        # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
+        # click-types.
+        actions:
+          # Each action has an arbitrary descriptive name to define it. 
+          view:
+            # The click-type is the same as the bukkit {@link org.bukkit.event.inventory.ClickType}. UNKNOWN is the default.
+            click-type: LEFT
+            # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
+            tooltip: commands.island.team.invite.gui.tips.previous
+      5:
+        title: "commands.island.team.invite.gui.button.search"
+        description: "commands.island.team.invite.gui.button.searching"
+        icon: PLAYER_HEAD
+        data:
+          type: SEARCH
+        actions:
+          search:
+            click-type: LEFT
+            tooltip: commands.island.team.invite.gui.tips.search
+      8:
+        title: "protection.panel.next"
+        icon: ARROW
+        data:
+          type: NEXT
+        # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
+        # click-types.
+        actions:
+          # Each action has an arbitrary descriptive name to define it. 
+          view:
+            # The click-type is the same as the bukkit {@link org.bukkit.event.inventory.ClickType}. UNKNOWN is the default.
+            click-type: LEFT
+            # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
+            tooltip: commands.island.team.invite.gui.tips.next
+    2:
+      2: prospect_button
+      3: prospect_button
+      4: prospect_button
+      5: prospect_button
+      6: prospect_button
+      7: prospect_button
+      8: prospect_button
+    3:
+      2: prospect_button
+      3: prospect_button
+      4: prospect_button
+      5: prospect_button
+      6: prospect_button
+      7: prospect_button
+      8: prospect_button
+    4:
+      2: prospect_button
+      3: prospect_button
+      4: prospect_button
+      5: prospect_button
+      6: prospect_button
+      7: prospect_button
+      8: prospect_button
+    5:
+      2: prospect_button
+      3: prospect_button
+      4: prospect_button
+      5: prospect_button
+      6: prospect_button
+      7: prospect_button
+      8: prospect_button
+    6:
+      2: prospect_button
+      3: prospect_button
+      4: prospect_button
+      5: prospect_button
+      6: prospect_button
+      7: prospect_button
+      8: prospect_button
+      9:
+        title: "commands.island.team.invite.gui.tips.LEFT.back"
+        icon: OAK_DOOR
+        data:
+          type: BACK
+        # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
+        # click-types.
+        actions:
+          # Each action has an arbitrary descriptive name to define it. 
+          back:
+            # The click-type is the same as the bukkit {@link org.bukkit.event.inventory.ClickType}. UNKNOWN is the default.
+            click-type: LEFT
+            # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
+            tooltip: commands.island.team.invite.gui.tips.LEFT.back
+      
+  # This is where reusable buttons are defined.
+  reusable:
+    # This is the name of the button that is referenced
+    prospect_button:
+      # If the icon for a button is not defined, it defaults to AIR and so effectively will not be shown.
+      # icons are usually not defined if the icon is going to be dynamically set in the panel, e.g. in this case the material will vary
+      #icon: STONE
+      title: commands.island.team.invite.gui.buttons.member.name
+      description: commands.island.team.invite.gui.buttons.member.description
+      data:
+        type: PROSPECT
+      # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
+        # click-types.
+      actions:
+        # Each action has an arbitrary descriptive name to define it. 
+        invite:
+          # The click-type is the same as the bukkit {@link org.bukkit.event.inventory.ClickType}. UNKNOWN is the default.
+          click-type: LEFT
+          # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
+          tooltip: commands.island.team.invite.gui.tips.LEFT.invite
+        coop:
+          click-type: RIGHT
+          tooltip: commands.island.team.invite.gui.tips.RIGHT.coop
+        trust:
+          click-type: SHIFT_LEFT
+          tooltip: commands.island.team.invite.gui.tips.SHIFT_LEFT.trust
+          

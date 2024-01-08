@@ -1,0 +1,139 @@
+# Name of panel used for indentification in the code - must be the same name as the filename.
+team_panel:
+  # Title of the panel shown to the user. This is a reference and the reference will be translatable in the locale file
+  title: commands.island.team.gui.titles.team-panel
+  # The type of panel to show. Options are INVENTORY, HOPPER, DROPPER. INVENTORY is that standard chest inventory and
+  # the others refer to the inventories shown for those items.
+  type: INVENTORY
+  # The background of the panel. These items will be shown if other items are not there. STAINED_GLASS_PANEs give a good effect.
+  background:
+    icon: BLACK_STAINED_GLASS_PANE
+    # Each item may have text applied to it, but usually for background items, nothing is shown.
+    title: "&b&r" # Empty text. This is using the Bukkit chat color coding with &'s. 
+  border:
+    # The border of each panel may be shown as a different item.
+    # It can be used to provide a contrast to items in the panel.
+    icon: BLUE_STAINED_GLASS_PANE
+    title: "&b&r"  # Empty text
+  # This tag indicates which rows in the panel must be shown. The panel will be sized vertically accordingly. This does not include the borders.
+  # This can be a list and rows must be between 1 and 6, if used.
+  force-shown: []
+  # The content section contains details of each item/button in the panel. The numbers indicate the rows and then then columns of each item.
+  content:
+    # Row number
+    1:
+      # Column number
+      1:
+        # The data section is a key-value list of data relavent for this button. It is interpreted by the code implemented the panel.
+        # The convention is to specify the type and the panel tab that will open if pressed. These are Enums in the code.
+        data:
+          type: STATUS
+        # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
+        # click-types.
+        actions:
+          # Each action has an arbitrary descriptive name to define it. 
+          view:
+            # The click-type is the same as the bukkit {@link org.bukkit.event.inventory.ClickType}. UNKNOWN is the default.
+            click-type: UNKNOWN
+            # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
+            tooltip: commands.island.team.gui.tips.click-to-view
+      3:
+        # Rank filter
+        data:
+          type: RANK
+          name: commands.island.team.gui.buttons.rank-filter
+        actions:
+          cycle-up:
+            click-type: LEFT
+            tooltip: commands.island.team.gui.tips.right-click.rank
+          cycle-down:
+            click-type: RIGHT
+            tooltip: commands.island.team.gui.tips.right-click.rank   
+      5:
+        # Invited button - this appears if you have been invited to join a team
+        data:
+          type: INVITED
+          name: commands.island.team.gui.buttons.invited
+        actions:
+          accept:
+            click-type: SHIFT_LEFT
+            tooltip: commands.island.team.gui.tips.SHIFT_LEFT.accept
+          reject:
+            click-type: SHIFT_RIGHT
+            tooltip: commands.island.team.gui.tips.SHIFT_RIGHT.reject
+      7:
+        # Invite button
+        data:
+          type: INVITE
+          name: commands.island.team.gui.buttons.invite
+        actions:
+          invite:
+            click-type: LEFT
+            tooltip: commands.island.team.gui.tips.LEFT.invite
+    2:
+      2: member_button
+      3: member_button
+      4: member_button
+      5: member_button
+      6: member_button
+      7: member_button
+      8: member_button
+    3:
+      2: member_button
+      3: member_button
+      4: member_button
+      5: member_button
+      6: member_button
+      7: member_button
+      8: member_button
+    4:
+      2: member_button
+      3: member_button
+      4: member_button
+      5: member_button
+      6: member_button
+      7: member_button
+      8: member_button
+    5:
+      2: member_button
+      3: member_button
+      4: member_button
+      5: member_button
+      6: member_button
+      7: member_button
+      8: member_button
+    6:
+      2: member_button
+      3: member_button
+      4: member_button
+      5: member_button
+      6: member_button
+      7: member_button
+      8: member_button
+  # This is where reusable buttons are defined.
+  reusable:
+    # This is the name of the button that is referenced
+    member_button:
+      # If the icon for a button is not defined, it defaults to AIR and so effectively will not be shown.
+      # icons are usually not defined if the icon is going to be dynamically set in the panel, e.g. in this case the material will vary
+      #icon: STONE
+      title: commands.island.team.gui.buttons.member.name
+      description: commands.island.team.gui.buttons.member.description
+      data:
+        type: MEMBER
+      # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
+        # click-types.
+      actions:
+        # Each action has an arbitrary descriptive name to define it. 
+        kick:
+          # The click-type is the same as the bukkit {@link org.bukkit.event.inventory.ClickType}. UNKNOWN is the default.
+          click-type: SHIFT_RIGHT
+          # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
+          tooltip: commands.island.team.gui.tips.SHIFT_RIGHT.kick
+        leave:
+          click-type: SHIFT_RIGHT
+          tooltip: commands.island.team.gui.tips.SHIFT_RIGHT.leave
+        setowner:
+          click-type: SHIFT_LEFT
+          tooltip: commands.island.team.gui.tips.SHIFT_LEFT.setowner
+          

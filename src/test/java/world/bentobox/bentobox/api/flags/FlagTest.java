@@ -57,7 +57,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, RanksManager.class })
 public class FlagTest {
 
     private Flag f;
@@ -376,8 +376,9 @@ public class FlagTest {
         when(im.getIslandAt(any(Location.class))).thenReturn(oL);
         when(plugin.getIslands()).thenReturn(im);
 
+        PowerMockito.mockStatic(RanksManager.class);
         RanksManager rm = mock(RanksManager.class);
-        when(plugin.getRanksManager()).thenReturn(rm);
+        when(RanksManager.getInstance()).thenReturn(rm);
         when(rm.getRank(RanksManager.VISITOR_RANK)).thenReturn("Visitor");
         when(rm.getRank(RanksManager.OWNER_RANK)).thenReturn("Owner");
 

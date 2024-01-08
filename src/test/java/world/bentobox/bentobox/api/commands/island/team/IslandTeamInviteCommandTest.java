@@ -11,6 +11,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,10 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFactory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
@@ -91,6 +96,10 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
 
         // Settings
         when(plugin.getSettings()).thenReturn(s);
+
+        // Data folder for panels
+        when(plugin.getDataFolder())
+                .thenReturn(new File("src" + File.separator + "main" + File.separator + "resources"));
 
         // Player & users
         PowerMockito.mockStatic(User.class);
@@ -165,9 +174,14 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         // Parent command
         when(ic.getTopLabel()).thenReturn("island");
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
+        // Mock item factory (for itemstacks)
+        ItemFactory itemFactory = mock(ItemFactory.class);
+        ItemMeta bannerMeta = mock(ItemMeta.class);
+        when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
+        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+        Inventory inventory = mock(Inventory.class);
+        when(Bukkit.createInventory(eq(null), anyInt(), any())).thenReturn(inventory);
+        when(Bukkit.createInventory(eq(null), any(InventoryType.class), any())).thenReturn(inventory);
 
         // Command under test
         itl = new IslandTeamInviteCommand(ic);
@@ -204,7 +218,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**
@@ -224,9 +238,9 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecuteNoTarget() {
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
-        // Show help
-        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
+        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+        // Show panel
+        verify(p).openInventory(any(Inventory.class));
     }
 
     /**

@@ -131,7 +131,7 @@ public class DefaultPasteUtil {
             Inventory ih = holder.getInventory();
             // Double chests are pasted as two blocks so inventory is filled twice.
             // This code stops over-filling for the first block.
-            bpBlock.getInventory().forEach(ih::setItem);
+            bpBlock.getInventory().forEach((slot, item) -> ih.setItem(slot, item));
         }
         // Mob spawners
         else if (bs instanceof CreatureSpawner spawner) {

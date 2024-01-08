@@ -217,7 +217,7 @@
             <version>3.11.1</version>
             <scope>test</scope>
         </dependency>
-        <!-- Spigot API -->
+         <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>

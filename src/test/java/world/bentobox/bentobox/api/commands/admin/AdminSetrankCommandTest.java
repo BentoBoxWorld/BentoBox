@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -57,7 +56,6 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private PlayersManager pm;
 
-    private RanksManager rm;
     private AdminSetrankCommand c;
 
     private UUID targetUUID;
@@ -70,10 +68,6 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
     public void setUp() throws Exception {
         super.setUp();
         Util.setPlugin(plugin);
-
-        // Ranks Manager
-        rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
 
         // Players Manager
         when(plugin.getPlayers()).thenReturn(pm);
@@ -212,8 +206,7 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(island.getCenter()).thenReturn(location);
         assertTrue(c.execute(user, "", Arrays.asList("tastybento", "member")));
-        verify(user).sendMessage(eq("commands.admin.setrank.rank-set"), eq("[from]"), eq("ranks.sub-owner"), eq("[to]"),
-                eq("ranks.member"), eq("[name]"), eq(null));
+        verify(user).sendMessage("commands.admin.setrank.rank-set", "[from]", "", "[to]", "", "[name]", null);
     }
 
     /**

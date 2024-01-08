@@ -55,7 +55,8 @@ public class IslandTeamTrustCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user);
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
         // Get target player

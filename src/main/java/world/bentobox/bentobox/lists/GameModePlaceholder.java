@@ -289,7 +289,9 @@ public enum GameModePlaceholder {
      * Returns the rank this player has on his island.
      * @since 1.5.0
      */
-    RANK("rank", (addon, user, island) -> (island == null || user == null) ? "" : user.getTranslation(addon.getPlugin().getRanksManager().getRank(island.getRank(user)))),
+    RANK("rank",
+            (addon, user, island) -> (island == null || user == null) ? ""
+                    : user.getTranslation(RanksManager.getInstance().getRank(island.getRank(user)))),
     /**
      * Returns how many times this player reset his island.
      * @since 1.5.0

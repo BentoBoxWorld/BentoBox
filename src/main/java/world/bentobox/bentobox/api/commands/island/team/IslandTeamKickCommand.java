@@ -35,7 +35,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         if (!getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
@@ -45,7 +45,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
-                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
         // If args are not right, show help
@@ -74,7 +74,13 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                     getPlayers().getName(targetUUID));
             return false;
         }
+        return true;
+    }
 
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
+        // Get target
+        UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (!getSettings().isKickConfirmation()) {
             kick(user, targetUUID);
             return true;
@@ -84,7 +90,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         }
     }
 
-    private void kick(User user, UUID targetUUID) {
+    protected void kick(User user, UUID targetUUID) {
         User target = User.getInstance(targetUUID);
         Island oldIsland = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID)); // Should never be
         // null because of

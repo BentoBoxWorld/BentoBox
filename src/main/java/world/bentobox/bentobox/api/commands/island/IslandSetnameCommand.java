@@ -10,6 +10,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 
 
 /**
@@ -51,7 +52,8 @@ public class IslandSetnameCommand extends CompositeCommand {
         // Check command rank.
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
 

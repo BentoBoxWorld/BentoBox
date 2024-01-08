@@ -32,7 +32,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 
 /**
@@ -69,11 +68,6 @@ public class DefaultPlayerCommandTest extends RanksManagerBeforeClassTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        // RanksManager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
-        // Addon
 
         // User
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());

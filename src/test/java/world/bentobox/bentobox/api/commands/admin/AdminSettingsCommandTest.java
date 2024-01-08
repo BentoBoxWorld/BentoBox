@@ -52,7 +52,6 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.util.Util;
 
@@ -175,10 +174,6 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(Bukkit.getPluginManager()).thenReturn(pluginManager);
         FlagsManager fm = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(fm);
-
-        // RnksManager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
 
         asc = new AdminSettingsCommand(ac);
 

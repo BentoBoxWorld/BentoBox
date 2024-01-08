@@ -169,11 +169,11 @@ public class IslandInfo {
             if (owner.equals(u)) {
                 user.sendMessage("commands.admin.info.team-owner-format", TextVariables.NAME,
                         plugin.getPlayers().getName(u), "[rank]",
-                        user.getTranslation(plugin.getRanksManager().getRank(i)));
+                        user.getTranslation(RanksManager.getInstance().getRank(i)));
             } else if (i > RanksManager.VISITOR_RANK) {
                 user.sendMessage("commands.admin.info.team-member-format", TextVariables.NAME,
                         plugin.getPlayers().getName(u), "[rank]",
-                        user.getTranslation(plugin.getRanksManager().getRank(i)));
+                        user.getTranslation(RanksManager.getInstance().getRank(i)));
             }
         });
     }

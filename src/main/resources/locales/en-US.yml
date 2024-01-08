@@ -108,8 +108,7 @@ commands:
       status:
         description: displays the status of the purge
         status: '&b [purged] &a islands purged out of &b [purgeable] &7(&b[percentage]
-          %&7)&a.'
-    
+          %&7)&a.' 
     team:
       description: manage teams
       add:
@@ -612,7 +611,41 @@ commands:
       description: reset your island name
       success: '&a Successfully reset your island name.'
     team:
-      description: manage your team
+      description: "manage your team"
+      gui:
+        titles:
+          team-panel: "Team Management"
+        buttons:
+          status:
+            name: "Status"
+            description: "The status of the team"
+          rank-filter:
+            name: "Rank Filter"
+            description: "&a Click to cycle ranks"
+          invitation: "Invitation"
+          invite:
+            name: "Invite player"
+            description: |
+              &a Players must be in the
+              &a same world as you to be
+              &a shown in the list.
+        tips:
+          LEFT:
+            name: "&b Left Click"
+            invite: "&a to invite a player"
+          RIGHT:
+            name: "&b Right Click"
+          SHIFT_RIGHT:
+            name: "&b Shift Right Click"
+            reject: "&a to reject"
+            kick: "&a to kick player"
+            leave: "&a to leave team"
+          SHIFT_LEFT:
+            name: "&b Shift Left Click"
+            accept: "&a to accept "        
+            setowner: |
+              &a to set owner
+              &a to this player
       info:
         description: display detailed info about your team
         member-layout:
@@ -678,6 +711,30 @@ commands:
         to-accept-or-reject: '&a Do /[label] team accept to accept, or /[label] team
           reject to reject'
         you-will-lose-your-island: '&c WARNING! You will lose your island if you accept!'
+        gui:
+          titles:
+            team-invite-panel: "Invite Players"
+          button:
+            already-invited: "&c Invited already"
+            search: "&a Search for a player"
+            searching: |
+              &b Searching for
+              &c [name]
+          enter-name: "&a Enter name:" 
+          tips:
+            LEFT:
+              name: "&b Left Click"
+              search: "&a Enter the player's name"
+              back: "&a Back"
+              invite: |
+                &a to invite a player
+                &a to join your team
+            RIGHT:
+              name: "&b Right Click"
+              coop: "&a to coop player"
+            SHIFT_LEFT:
+              name: "&b Shift Left Click"
+              trust: "&a to trust a player"
         errors:
           cannot-invite-self: '&c You cannot invite yourself!'
           cooldown: '&c You cannot invite that person for another [number] seconds.'

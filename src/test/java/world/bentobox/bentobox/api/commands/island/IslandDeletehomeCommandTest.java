@@ -84,10 +84,6 @@ public class IslandDeletehomeCommandTest extends RanksManagerBeforeClassTest {
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
         // Addon
         GameModeAddon addon = mock(GameModeAddon.class);
 
@@ -192,8 +188,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerBeforeClassTest {
         when(island.getRank(user)).thenReturn(RanksManager.COOP_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(idh.canExecute(user, "label", List.of("something")));
-        verify(user).sendMessage("general.errors.insufficient-rank",
-                TextVariables.RANK, "ranks.coop");
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**

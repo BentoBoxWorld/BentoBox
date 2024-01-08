@@ -24,7 +24,6 @@ public class AdminSetrankCommand extends CompositeCommand {
     private int rankValue;
     private @Nullable UUID targetUUID;
     private @Nullable UUID ownerUUID;
-    private RanksManager rm;
 
     public AdminSetrankCommand(CompositeCommand adminCommand) {
         super(adminCommand, "setrank");
@@ -36,7 +35,6 @@ public class AdminSetrankCommand extends CompositeCommand {
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.setrank.parameters");
         setDescription("commands.admin.setrank.description");
-        rm = getPlugin().getRanksManager();
     }
 
     @Override
@@ -53,7 +51,7 @@ public class AdminSetrankCommand extends CompositeCommand {
             return false;
         }
         // Get rank
-        rankValue = rm.getRanks().entrySet().stream()
+        rankValue = RanksManager.getInstance().getRanks().entrySet().stream()
                 .filter(r -> user.getTranslation(r.getKey()).equalsIgnoreCase(args.get(1))).findFirst()
                 .map(Map.Entry::getValue).orElse(-999);
         if (rankValue < RanksManager.BANNED_RANK) {
@@ -121,8 +119,8 @@ public class AdminSetrankCommand extends CompositeCommand {
             ownerName = target.getName();
         }
         user.sendMessage("commands.admin.setrank.rank-set",
-                "[from]", user.getTranslation(rm.getRank(currentRank)),
-                "[to]", user.getTranslation(rm.getRank(rankValue)),
+                "[from]", user.getTranslation(RanksManager.getInstance().getRank(currentRank)), "[to]",
+                user.getTranslation(RanksManager.getInstance().getRank(rankValue)),
                 TextVariables.NAME, ownerName);
         return true;
     }
@@ -136,7 +134,7 @@ public class AdminSetrankCommand extends CompositeCommand {
 
         // Return the ranks
         if (args.size() == 3) {
-            return Optional.of(getPlugin().getRanksManager().getRanks()
+            return Optional.of(RanksManager.getInstance().getRanks()
                     .entrySet().stream()
                     .filter(entry -> entry.getValue() > RanksManager.VISITOR_RANK)
                     .map(entry -> user.getTranslation(entry.getKey())).toList());

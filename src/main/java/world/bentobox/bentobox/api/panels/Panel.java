@@ -38,8 +38,8 @@ public class Panel implements HeadRequester, InventoryHolder {
      * <br>
      * The current list of inventories that cannot be created are:<br>
      * <blockquote>
-     *     {@link Type#INVENTORY}, {@link Type#HOPPER} and
-     *     {@link Type#DROPPER}
+     *     {@link Type#INVENTORY}, {@link Type#HOPPER},
+     *     {@link Type#DROPPER}, {@link Type#ANVIL}
      * </blockquote>
      *
      * These relate to the Bukkit inventories with INVENTORY being the standard CHEST inventory.
@@ -47,7 +47,7 @@ public class Panel implements HeadRequester, InventoryHolder {
      * @since 1.7.0
      */
     public enum Type {
-        INVENTORY, HOPPER, DROPPER
+        INVENTORY, HOPPER, DROPPER, ANVIL
     }
 
     public Panel() {
@@ -92,6 +92,7 @@ public class Panel implements HeadRequester, InventoryHolder {
         case INVENTORY -> inventory = Bukkit.createInventory(null, fixSize(size), name);
         case HOPPER -> inventory = Bukkit.createInventory(null, InventoryType.HOPPER, name);
         case DROPPER -> inventory = Bukkit.createInventory(null, InventoryType.DROPPER, name);
+        case ANVIL -> inventory = Bukkit.createInventory(null, InventoryType.ANVIL, name);
         }
 
         // Fill the inventory and return

@@ -55,7 +55,7 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
-                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
         // Get target player
@@ -68,7 +68,7 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
         return unTrustCmd(user, targetUUID);
     }
 
-    private boolean unTrustCmd(User user, UUID targetUUID) {
+    protected boolean unTrustCmd(User user, UUID targetUUID) {
         // Player cannot untrust themselves
         if (user.getUniqueId().equals(targetUUID)) {
             user.sendMessage("commands.island.team.untrust.cannot-untrust-yourself");

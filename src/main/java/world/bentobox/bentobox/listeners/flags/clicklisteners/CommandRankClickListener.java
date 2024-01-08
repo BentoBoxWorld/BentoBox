@@ -66,7 +66,7 @@ public class CommandRankClickListener implements ClickHandler {
         // Check if user has rank enough on the island
         //Island island = plugin.getIslands().getIsland(panel.getWorld().orElse(user.getWorld()), user.getUniqueId());
         if (!island.isAllowed(user, Flags.CHANGE_SETTINGS)) {
-            String rank = user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user)));
+            String rank = user.getTranslation(RanksManager.getInstance().getRank(Objects.requireNonNull(island).getRank(user)));
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, rank);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
@@ -114,7 +114,7 @@ public class CommandRankClickListener implements ClickHandler {
         // TODO: use specific layout
         String d = user.getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION, "");
         pib.description(d);
-        plugin.getRanksManager().getRanks().forEach((reference, score) -> {
+        RanksManager.getInstance().getRanks().forEach((reference, score) -> {
             if (score >= RanksManager.MEMBER_RANK && score < island.getRankCommand(c)) {
                 pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
             } else if (score <= RanksManager.OWNER_RANK && score > island.getRankCommand(c)) {

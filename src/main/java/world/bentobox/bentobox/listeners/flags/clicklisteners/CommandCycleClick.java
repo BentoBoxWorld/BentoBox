@@ -38,20 +38,19 @@ public class CommandCycleClick implements ClickHandler {
         World world = panel.getWorld().orElse(user.getWorld());
         Island island = plugin.getIslands().getIsland(world, user.getUniqueId());
         if (island != null && island.getOwner() != null && island.isAllowed(user, Flags.CHANGE_SETTINGS)) {
-            RanksManager rm = plugin.getRanksManager();
             int currentRank = island.getRankCommand(command);
             if (click.equals(ClickType.LEFT)) {
                 if (currentRank == RanksManager.OWNER_RANK) {
                     island.setRankCommand(command, RanksManager.MEMBER_RANK);
                 } else {
-                    island.setRankCommand(command, rm.getRankUpValue(currentRank));
+                    island.setRankCommand(command, RanksManager.getInstance().getRankUpValue(currentRank));
                 }
                 user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
             } else if (click.equals(ClickType.RIGHT)) {
                 if (currentRank == RanksManager.MEMBER_RANK) {
                     island.setRankCommand(command, RanksManager.OWNER_RANK);
                 } else {
-                    island.setRankCommand(command, rm.getRankDownValue(currentRank));
+                    island.setRankCommand(command, RanksManager.getInstance().getRankDownValue(currentRank));
                 }
                 user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
             }

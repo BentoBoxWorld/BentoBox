@@ -22,6 +22,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.common.base.Enums;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.util.ItemParser;
 
@@ -83,6 +84,7 @@ public class TemplateReader
     {
         if (!panelLocation.exists())
         {
+            BentoBox.getInstance().logError("Panel Template reader: Folder does not exist");
             // Return null because folder does not exist.
             return null;
         }
@@ -91,6 +93,7 @@ public class TemplateReader
 
         if (!file.exists())
         {
+            BentoBox.getInstance().logError(file.getAbsolutePath() + " does not exist for panel template");
             // Return as file does not exist.
             return null;
         }
@@ -117,6 +120,8 @@ public class TemplateReader
         }
         catch (IOException | InvalidConfigurationException e)
         {
+            BentoBox.getInstance().logError("Error loading template");
+            BentoBox.getInstance().logStacktrace(e);
             rec = null;
         }
 
@@ -133,6 +138,7 @@ public class TemplateReader
     {
         if (configurationSection == null)
         {
+            BentoBox.getInstance().logError("No configuration section!");
             // No data to return.
             return null;
         }
