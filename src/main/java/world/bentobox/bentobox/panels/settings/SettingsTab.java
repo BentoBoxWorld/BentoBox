@@ -44,6 +44,7 @@ public class SettingsTab implements Tab, ClickHandler {
     protected User user;
     protected World world;
     protected Island island;
+    protected TabbedPanel parent;
 
     /**
      * Show a tab of settings
@@ -51,9 +52,9 @@ public class SettingsTab implements Tab, ClickHandler {
      * @param island - the island
      * @param type - flag type
      */
-    public SettingsTab(User user, Island island, Type type) {
+    public SettingsTab(User user, Type type) {
         this.user = user;
-        this.island = island;
+        this.island = parent.getIsland();
         this.type = type;
         this.world = island.getWorld();
     }
@@ -124,7 +125,9 @@ public class SettingsTab implements Tab, ClickHandler {
             plugin.getPlayers().setFlagsDisplayMode(user.getUniqueId(), plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId()).getNext());
             flags = getFlags();
         }
-        return flags.stream().map((f -> f.toPanelItem(plugin, user, island, plugin.getIWM().getHiddenFlags(world).contains(f.getID())))).toList();
+        return flags.stream().map(
+                (f -> f.toPanelItem(plugin, user, island, plugin.getIWM().getHiddenFlags(world).contains(f.getID()))))
+                .toList();
     }
 
     @Override
@@ -221,6 +224,16 @@ public class SettingsTab implements Tab, ClickHandler {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
         }
         return true;
+    }
+
+    @Override
+    public TabbedPanel getParentPanel() {
+        return parent;
+    }
+
+    @Override
+    public void setParentPanel(TabbedPanel parent) {
+        this.parent = parent;
     }
 
 }

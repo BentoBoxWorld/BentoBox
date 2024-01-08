@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.util.heads.HeadRequester;
@@ -30,6 +31,7 @@ public class Panel implements HeadRequester, InventoryHolder {
     private User user;
     private String name;
     private World world;
+    private Island island;
 
     /**
      * Various types of Panels that can be created that use InventoryTypes.
@@ -232,6 +234,20 @@ public class Panel implements HeadRequester, InventoryHolder {
      */
     public void setWorld(World world) {
         this.world = world;
+    }
+
+    /**
+     * @return the island
+     */
+    public Island getIsland() {
+        return island;
+    }
+
+    /**
+     * @param island the island to set
+     */
+    protected void setIsland(Island island) {
+        this.island = island;
     }
 
 }
