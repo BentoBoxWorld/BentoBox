@@ -48,8 +48,10 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
     private final User user;
     private final EntityLimitTabType type;
     private final World world;
+    private TabbedPanel parent;
 
     /**
+     * @param parent - tabbed panel that owns this panel
      * @param user - user viewing the tab
      * @param type - type of tab to show - Geo limit or Mob limit
      * @param world - world where this tab is being used
@@ -60,7 +62,6 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
         this.type = type;
         this.world = world;
     }
-
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
@@ -138,6 +139,16 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
             }
         }
         return pib.build();
+    }
+
+    @Override
+    public TabbedPanel getParentPanel() {
+        return parent;
+    }
+
+    @Override
+    public void setParentPanel(TabbedPanel parent) {
+        this.parent = parent;
     }
 
 }

@@ -47,9 +47,9 @@ public class IslandSettingsCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         new TabbedPanelBuilder()
         .user(user)
+                .island(island)
         .world(island.getWorld())
-        .tab(1, new SettingsTab(user, island, Flag.Type.PROTECTION))
-        .tab(2, new SettingsTab(user, island, Flag.Type.SETTING))
+                .tab(1, new SettingsTab(user, Flag.Type.PROTECTION)).tab(2, new SettingsTab(user, Flag.Type.SETTING))
         .startingSlot(1)
         .size(54)
         .hideIfEmpty()
