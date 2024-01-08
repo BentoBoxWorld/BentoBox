@@ -61,6 +61,7 @@ public class TemplatedPanel extends Panel {
         case INVENTORY -> this.populateInventoryPanel(new PanelItem[6][9]);
         case HOPPER -> this.populateInventoryPanel(new PanelItem[1][5]);
         case DROPPER -> this.populateInventoryPanel(new PanelItem[3][3]);
+        case ANVIL -> this.populateInventoryPanel(new PanelItem[4][9]);
         };
 
         super.makePanel(this.user.getTranslation(this.panelTemplate.title(), this.parameters), items,

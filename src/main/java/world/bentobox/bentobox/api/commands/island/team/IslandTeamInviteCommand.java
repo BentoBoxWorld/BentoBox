@@ -210,7 +210,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
      * Build the invite panel
      * @param user use of the panel
      */
-    void build(User user) {
+    public void build(User user) {
         this.user = user;
         // Start building panel.
         TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();

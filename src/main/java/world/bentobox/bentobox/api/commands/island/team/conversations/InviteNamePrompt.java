@@ -2,11 +2,13 @@ package world.bentobox.bentobox.api.commands.island.team.conversations;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.eclipse.jdt.annotation.NonNull;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand;
 import world.bentobox.bentobox.api.user.User;
 
@@ -36,8 +38,12 @@ public class InviteNamePrompt extends StringPrompt {
     @Override
     public Prompt acceptInput(@NonNull ConversationContext context, String input) {
         if (itic.canExecute(user, itic.getLabel(), List.of(input))) {
-            itic.execute(user, itic.getLabel(), List.of(input));
+            if (itic.execute(user, itic.getLabel(), List.of(input))) {
+                return Prompt.END_OF_CONVERSATION;
+            }
         }
+        // Return to the GUI but give a second for the error to show
+        Bukkit.getScheduler().runTaskLater(BentoBox.getInstance(), () -> itic.build(user), 20L);
         return Prompt.END_OF_CONVERSATION;
     }
 
