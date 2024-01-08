@@ -1,7 +1,8 @@
 package world.bentobox.bentobox.managers;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -18,18 +19,18 @@ public class HooksManager {
     /**
      * List of successfully registered hooks.
      */
-    private final List<Hook> hooks;
+    private final Map<String, Hook> hooks;
 
     public HooksManager(BentoBox plugin) {
         this.plugin = plugin;
-        this.hooks = new ArrayList<>();
+        this.hooks = new HashMap<>();
     }
 
     public void registerHook(@NonNull Hook hook) {
         if (hook.isPluginAvailable()) {
             plugin.log("Hooking with " + hook.getPluginName() + "...");
             if (hook.hook()) {
-                hooks.add(hook);
+                hooks.put(hook.getPluginName(), hook);
             } else {
                 plugin.logError("Could not hook with " + hook.getPluginName() + ((hook.getFailureCause() != null) ? " because: " + hook.getFailureCause() : "") + ". Skipping...");
             }
@@ -43,10 +44,10 @@ public class HooksManager {
      * @return list of successfully registered hooks.
      */
     public List<Hook> getHooks() {
-        return hooks;
+        return List.copyOf(hooks.values());
     }
 
     public Optional<Hook> getHook(String pluginName) {
-        return hooks.stream().filter(hook -> hook.getPluginName().equals(pluginName)).findFirst();
+        return Optional.ofNullable(hooks.get(pluginName));
     }
 }
