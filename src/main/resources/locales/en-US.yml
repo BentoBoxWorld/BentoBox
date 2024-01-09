@@ -1069,8 +1069,8 @@ protection:
     CREEPER_DAMAGE:
       description: |
         &a Toggle creeper
-        &a damage protection
-      name: Creeper damage protection
+        &a damage.
+      name: Creeper damage
     CREEPER_GRIEFING:
       description: |
         &a Toggle creeper griefing
