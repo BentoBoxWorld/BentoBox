@@ -609,7 +609,6 @@ public class IslandsManager {
                     this.setPrimaryIsland(user.getUniqueId(), island);
                     return "";
                 }).orElse(homeName);
-
         // Try the home location first
         Location defaultHome = getHomeLocation(world, user);
         Location namedHome = homeName.isBlank() ? null : getHomeLocation(world, user, name);
@@ -899,7 +898,8 @@ public class IslandsManager {
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull UUID uuid, String name) {
-        return getIslands(world, uuid).stream().map(is -> is.getHome(name)).filter(Objects::nonNull).findFirst()
+        return getIslands(world, uuid).stream().filter(is -> is.getHomes().containsKey(name))
+                .map(is -> is.getHome(name)).findFirst()
                 .orElse(null);
     }
 

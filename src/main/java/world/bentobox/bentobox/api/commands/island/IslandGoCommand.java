@@ -15,7 +15,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
-import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
  * @author tastybento
@@ -76,23 +75,14 @@ public class IslandGoCommand extends DelayedTeleportCommand {
             } else {
                 IslandInfo info = names.get(name);
                 getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
-                if (info.islandName) {
-                    this.delayCommand(user, () -> new SafeSpotTeleport.Builder(getPlugin())
-                            .entity(user.getPlayer())
-                            .location(getIslands().getHomeLocation(info.island))
-                            .thenRun(() -> user.sendMessage("general.success"))
-                            .build());
-                } else {
-                    this.delayCommand(user, () -> new SafeSpotTeleport.Builder(getPlugin())
-                            .entity(user.getPlayer())
-                            .location(getIslands().getHomeLocation(info.island, name))
-                            .thenRun(() -> user.sendMessage("general.success"))
-                            .build());
+                if (!info.islandName) {
+                    this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), name)
+                            .thenAccept((r) -> getIslands().setPrimaryIsland(user.getUniqueId(), info.island)));
+                    return true;
                 }
             }
-        } else {
-            this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer()));
         }
+        this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer()));
         return true;
     }
 
