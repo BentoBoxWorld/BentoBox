@@ -6,6 +6,7 @@ import java.util.TreeMap;
 
 import org.bukkit.World;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.Tab;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
@@ -62,6 +63,7 @@ public class TabbedPanelBuilder {
      */
     public TabbedPanelBuilder world(World world) {
         this.world = world;
+        BentoBox.getInstance().logDebug("World set in builder is " + world.getName());
         return this;
     }
 

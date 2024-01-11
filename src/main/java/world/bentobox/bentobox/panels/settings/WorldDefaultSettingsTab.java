@@ -71,7 +71,7 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
     public @NonNull List<PanelItem> getPanelItems() {
         // Different description and click handlers
         return getFlags().stream().map(f -> {
-            PanelItem i = f.toPanelItem(plugin, user, null, false);
+            PanelItem i = f.toPanelItem(plugin, user, this.getParentPanel().getWorld().orElse(null), island, false);
             // Replace the click handler with WorldToggleClick
             i.setClickHandler(new WorldToggleClick(f.getID()));
             // Replace the description
