@@ -54,9 +54,8 @@ public class SettingsTab implements Tab, ClickHandler {
      */
     public SettingsTab(User user, Type type) {
         this.user = user;
-        this.island = parent.getIsland();
         this.type = type;
-        this.world = island.getWorld();
+        // Island and world are set when the parent is set.
     }
 
     /**
@@ -234,6 +233,9 @@ public class SettingsTab implements Tab, ClickHandler {
     @Override
     public void setParentPanel(TabbedPanel parent) {
         this.parent = parent;
+        this.island = parent.getIsland();
+        this.world = island.getWorld();
+
     }
 
 }
