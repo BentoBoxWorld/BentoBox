@@ -194,8 +194,14 @@ public class IslandCache {
     public Set<Island> getIslands(@NonNull World world, @NonNull UUID uuid) {
         World w = Util.getWorld(world);
         if (w == null) {
+            BentoBox.getInstance().logDebug("The world was " + world.getName() + " but now is null");
             return new HashSet<>();
         }
+        BentoBox.getInstance().logDebug("The world was " + world.getName() + " and is now " + w.getName());
+        BentoBox.getInstance().logDebug("This player's islands in this world are:");
+        islandsByUUID.get(uuid).stream().filter(i -> w.equals(i.getWorld()))
+                .forEach(i -> BentoBox.getInstance().logDebug(i));
+
         return islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).stream().filter(i -> w.equals(i.getWorld()))
                 .collect(Collectors.toSet());
     }
