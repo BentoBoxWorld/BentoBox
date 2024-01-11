@@ -234,7 +234,7 @@ public class SettingsTab implements Tab, ClickHandler {
     public void setParentPanel(TabbedPanel parent) {
         this.parent = parent;
         this.island = parent.getIsland();
-        this.world = island.getWorld();
+        this.world = parent.getWorld().orElse(this.world);
 
     }
 
