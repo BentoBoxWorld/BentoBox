@@ -1722,19 +1722,9 @@ public class Island implements DataObject, MetaDataAble {
      */
     @NonNull
     public Location getHome(final String nameToLookFor) {
-        BentoBox.getInstance().logDebug("name:" + nameToLookFor);
-        final String name2 = "hole";
-        getHomes().forEach((n, location) -> {
-            BentoBox.getInstance()
-                    .logDebug("Home '" + n + "' > " + location + " same as '" + name2 + "'? "
-                            + name2.equals(n) + " " + name2.equalsIgnoreCase(n) + " "
-                            + n.equals(name2) + " " + n.equalsIgnoreCase(name2));
-        });
-        BentoBox.getInstance().logDebug("name:" + nameToLookFor);
-        return getHomes().entrySet().stream().filter(en -> en.getKey().equalsIgnoreCase(name2))
+        return getHomes().entrySet().stream().filter(en -> en.getKey().equalsIgnoreCase(nameToLookFor))
                 .map(Entry::getValue)
                 .findFirst().orElse(getProtectionCenter());
-        //return Objects.requireNonNullElse(l, getProtectionCenter());
     }
 
     /**

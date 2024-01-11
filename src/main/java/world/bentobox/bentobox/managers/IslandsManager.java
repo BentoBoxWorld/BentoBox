@@ -335,7 +335,6 @@ public class IslandsManager {
      */
     @NonNull
     public Set<Island> getIslands(@NonNull World world, UUID uniqueId) {
-        BentoBox.getInstance().logDebug("Asking the cache");
         return islandCache.getIslands(world, uniqueId);
     }
 
@@ -610,28 +609,20 @@ public class IslandsManager {
                     this.setPrimaryIsland(user.getUniqueId(), island);
                     return "";
                 }).orElse(homeName);
-        BentoBox.getInstance().logDebug("The name is now = " + name);
         // Try the home location first
-        //Location defaultHome = getHomeLocation(world, user);
-        //BentoBox.getInstance().logDebug("defaulthome has been got = " + name);
-        Location namedHome = homeName.isBlank() ? null : getHomeLocation(world, user, name);  // TODO This is where the bug is.
-        BentoBox.getInstance().logDebug("The namedHome location is = " + namedHome);
-        //Location l = namedHome != null ? namedHome : defaultHome;
-        Location l = namedHome;
+        Location defaultHome = getHomeLocation(world, user);
+        Location namedHome = homeName.isBlank() ? null : getHomeLocation(world, user, name);
+        Location l = namedHome != null ? namedHome : defaultHome;
         if (l != null) {
             Util.getChunkAtAsync(l).thenRun(() -> {
                 // Check if it is safe
                 if (isSafeLocation(l)) {
-                    BentoBox.getInstance().logDebug("Safe location found! " + l);
                     result.complete(l);
                     return;
                 }
-                BentoBox.getInstance().logDebug(l + " is not a safe location");
                 // To cover slabs, stairs and other half blocks, try one block above
                 Location lPlusOne = l.clone().add(new Vector(0, 1, 0));
-                BentoBox.getInstance().logDebug("Trying " + lPlusOne);
                 if (isSafeLocation(lPlusOne)) {
-                    BentoBox.getInstance().logDebug("This is safer " + lPlusOne);
                     // Adjust the home location accordingly
                     setHomeLocation(user, lPlusOne, name);
                     result.complete(lPlusOne);
@@ -648,7 +639,6 @@ public class IslandsManager {
     }
 
     private void tryIsland(CompletableFuture<Location> result, Location islandLoc, @NonNull User user, String name) {
-        BentoBox.getInstance().logDebug("We are trying to find another safe location on island at = " + islandLoc);
         Util.getChunkAtAsync(islandLoc).thenRun(() -> {
             World w = islandLoc.getWorld();
             if (isSafeLocation(islandLoc)) {
@@ -681,7 +671,6 @@ public class IslandsManager {
                     }
                 }
             }
-            BentoBox.getInstance().logDebug("Nothing found!");
             result.complete(null);
         });
 
@@ -895,7 +884,6 @@ public class IslandsManager {
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull User user, String name) {
-        BentoBox.getInstance().logDebug("getHomeLocation user name = " + name);
         return getHomeLocation(world, user.getUniqueId(), name);
     }
 
@@ -1084,7 +1072,6 @@ public class IslandsManager {
      * @since 1.16.0
      */
     public CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player, String name) {
-        BentoBox.getInstance().logDebug("homeTeleportAsync name = " + name);
         return homeTeleportAsync(world, player, name, false);
     }
 
@@ -1120,9 +1107,7 @@ public class IslandsManager {
         user.sendMessage("commands.island.go.teleport");
         goingHome.add(user.getUniqueId());
         readyPlayer(player);
-        BentoBox.getInstance().logDebug("Home name = " + name);
         this.getAsyncSafeHomeLocation(world, user, name).thenAccept(home -> {
-            BentoBox.getInstance().logDebug("Got a result from getAsyncSafeHomeLocation: " + home);
             Island island = getIsland(world, user);
             if (home == null) {
                 // Try to fix this teleport location and teleport the player if possible
