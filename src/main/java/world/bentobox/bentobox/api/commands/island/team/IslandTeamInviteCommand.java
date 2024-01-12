@@ -13,6 +13,7 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
@@ -27,6 +28,7 @@ import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
+import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord.ActionRecords;
 import world.bentobox.bentobox.api.panels.reader.PanelTemplateRecord.TemplateItem;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -347,11 +349,17 @@ public class IslandTeamInviteCommand extends CompositeCommand {
                 + " " + user.getTranslation(ar.tooltip())).toList();
         return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName()).description(desc)
                 .clickHandler(
-                        (panel, user, clickType, clickSlot) -> clickHandler(panel, user, clickType, clickSlot, player))
+                        (panel, user, clickType, clickSlot) -> clickHandler(panel, user, clickType, clickSlot, player,
+                                template.actions()))
                 .build();
     }
 
-    private boolean clickHandler(Panel panel, User user, ClickType clickType, int clickSlot, Player player) {
+    private boolean clickHandler(Panel panel, User user, ClickType clickType, int clickSlot, Player player,
+            @NonNull List<ActionRecords> list) {
+        if (!list.stream().anyMatch(ar -> clickType.equals(ar.clickType()))) {
+            // If the click type is not in the template, don't do anything
+            return true;
+        }
         if (clickType.equals(ClickType.LEFT)) {
             user.closeInventory();
             if (this.canExecute(user, this.getLabel(), List.of(player.getName()))) {
