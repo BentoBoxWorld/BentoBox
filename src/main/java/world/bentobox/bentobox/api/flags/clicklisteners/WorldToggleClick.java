@@ -26,7 +26,6 @@ public class WorldToggleClick implements ClickHandler {
 
     /**
      * @param id - the flag ID that this click listener is associated with
-     * @param world 
      */
     public WorldToggleClick(String id) {
         this.id = id;
