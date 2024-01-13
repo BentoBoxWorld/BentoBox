@@ -1,7 +1,5 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
-import java.util.Objects;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.World;
