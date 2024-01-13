@@ -77,6 +77,7 @@ public class WorldToggleClickTest {
 
         // Panel
         when(panel.getInventory()).thenReturn(mock(Inventory.class));
+        when(panel.getWorld()).thenReturn(Optional.of(world));
 
         // User
         // Sometimes use Mockito.withSettings().verboseLogging()
