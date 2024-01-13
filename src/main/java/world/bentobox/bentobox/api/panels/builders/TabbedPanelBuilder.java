@@ -6,7 +6,6 @@ import java.util.TreeMap;
 
 import org.bukkit.World;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.Tab;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
