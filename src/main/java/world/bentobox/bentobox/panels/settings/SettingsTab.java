@@ -238,8 +238,7 @@ public class SettingsTab implements Tab, ClickHandler {
         BentoBox.getInstance().logDebug("Setting the parent panel ");
         this.parent = parent;
         this.island = parent.getIsland();
-        this.world = parent.getWorld().orElse(null);
-        BentoBox.getInstance().logDebug("World set is " + this.getWorld());
+        this.world = parent.getWorld().orElse(this.world);
     }
 
 }

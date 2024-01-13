@@ -193,6 +193,10 @@ public class IslandTeamCommand extends CompositeCommand {
         builder.name(user.getTranslation("commands.island.team.gui.buttons.invite.name"));
         builder.description(user.getTranslation("commands.island.team.gui.buttons.invite.description"));
         builder.clickHandler((panel, user, clickType, clickSlot) -> {
+            if (!template.actions().stream().anyMatch(ar -> clickType.equals(ar.clickType()))) {
+                // If the click type is not in the template, don't do anything
+                return true;
+            }
             if (clickType.equals(ClickType.LEFT)) {
                 user.closeInventory();
                 this.inviteCommand.build(user);
@@ -229,6 +233,10 @@ public class IslandTeamCommand extends CompositeCommand {
         });
         builder.description(user.getTranslation("commands.island.team.gui.buttons.rank-filter.description"));
         builder.clickHandler((panel, user, clickType, clickSlot) -> {
+            if (!template.actions().stream().anyMatch(ar -> clickType.equals(ar.clickType()))) {
+                // If the click type is not in the template, don't do anything
+                return true;
+            }
             if (clickType.equals(ClickType.LEFT)) {
                 rank = RanksManager.getInstance().getRankDownValue(rank);
                 if (rank <= RanksManager.VISITOR_RANK) {
@@ -289,6 +297,10 @@ public class IslandTeamCommand extends CompositeCommand {
                             + user.getTranslation(ar.tooltip()))
                     .toList());
             builder.clickHandler((panel, user, clickType, clickSlot) -> {
+                if (!template.actions().stream().anyMatch(ar -> clickType.equals(ar.clickType()))) {
+                    // If the click type is not in the template, don't do anything
+                    return true;
+                }
                 if (clickType.equals(ClickType.SHIFT_LEFT) && user.hasPermission(this.acceptCommand.getPermission())) {
                     getPlugin().log("Invite accepted: " + user.getName() + " accepted " + invite.getType()
                             + " invite to island at " + island.getCenter());
@@ -482,6 +494,10 @@ public class IslandTeamCommand extends CompositeCommand {
 
     private boolean clickListener(Panel panel, User clickingUser, ClickType clickType, int i, User target,
             List<ActionRecords> actions) {
+        if (!actions.stream().anyMatch(ar -> clickType.equals(ar.clickType()))) {
+            // If the click type is not in the template, don't do anything
+            return true;
+        }
         int rank = Objects.requireNonNull(island).getRank(clickingUser);
         for (ItemTemplateRecord.ActionRecords action : actions) {
             if (clickType.equals(action.clickType())) {
