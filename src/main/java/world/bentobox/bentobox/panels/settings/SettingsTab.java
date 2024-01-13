@@ -65,7 +65,6 @@ public class SettingsTab implements Tab, ClickHandler {
      * @param type - flag type
      */
     public SettingsTab(World world, User user, Type type) {
-        BentoBox.getInstance().logDebug("World set in consturctor to " + world);
         this.world = world;
         this.user = user;
         this.type = type;
@@ -125,7 +124,6 @@ public class SettingsTab implements Tab, ClickHandler {
             plugin.getPlayers().setFlagsDisplayMode(user.getUniqueId(), plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId()).getNext());
             flags = getFlags();
         }
-        BentoBox.getInstance().logDebug("Getting the panel items");
         return flags.stream().map(
                 (f -> f.toPanelItem(plugin, user, world, island,
                         plugin.getIWM().getHiddenFlags(world).contains(f.getID()))))
@@ -235,7 +233,6 @@ public class SettingsTab implements Tab, ClickHandler {
 
     @Override
     public void setParentPanel(TabbedPanel parent) {
-        BentoBox.getInstance().logDebug("Setting the parent panel ");
         this.parent = parent;
         this.island = parent.getIsland();
         this.world = parent.getWorld().orElse(this.world);

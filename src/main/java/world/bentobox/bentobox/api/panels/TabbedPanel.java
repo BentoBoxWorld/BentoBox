@@ -47,8 +47,6 @@ public class TabbedPanel extends Panel implements PanelListener {
         this.setWorld(tpb.getWorld());
         // Set island context in Panel
         this.setIsland(tpb.getIsland());
-        BentoBox.getInstance()
-                .logDebug("World set in when built is " + this.getWorld().map(w -> w.getName()).orElse("NO WORLD"));
     }
 
     /* (non-Javadoc)

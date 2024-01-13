@@ -63,7 +63,6 @@ public class TabbedPanelBuilder {
      */
     public TabbedPanelBuilder world(World world) {
         this.world = world;
-        BentoBox.getInstance().logDebug("World set in builder is " + world.getName());
         return this;
     }
 

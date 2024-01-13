@@ -681,11 +681,11 @@ public class Flag implements Comparable<Flag> {
         public Flag build() {
             // If no clickHandler has been set, then apply default ones
             if (clickHandler == null) {
-                switch (type) {
-                case SETTING -> clickHandler = new IslandToggleClick(id);
-                case WORLD_SETTING -> clickHandler = new WorldToggleClick(id);
-                default -> clickHandler = new CycleClick(id);
-                }
+                clickHandler = switch (type) {
+                case SETTING -> new IslandToggleClick(id);
+                case WORLD_SETTING -> new WorldToggleClick(id);
+                default -> new CycleClick(id);
+                };
             }
 
             return new Flag(this);
