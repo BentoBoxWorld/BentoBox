@@ -383,7 +383,7 @@ public class FlagTest {
         when(rm.getRank(RanksManager.OWNER_RANK)).thenReturn("Owner");
 
 
-        PanelItem pi = f.toPanelItem(plugin, user, island, false);
+        PanelItem pi = f.toPanelItem(plugin, user, world, island, false);
 
         verify(user).getTranslation("protection.flags.flagID.name");
         verify(user).getTranslation(eq("protection.panel.flag-item.name-layout"), any());

@@ -125,7 +125,8 @@ public class SettingsTab implements Tab, ClickHandler {
             flags = getFlags();
         }
         return flags.stream().map(
-                (f -> f.toPanelItem(plugin, user, island, plugin.getIWM().getHiddenFlags(world).contains(f.getID()))))
+                (f -> f.toPanelItem(plugin, user, world, island,
+                        plugin.getIWM().getHiddenFlags(world).contains(f.getID()))))
                 .toList();
     }
 
@@ -134,8 +135,8 @@ public class SettingsTab implements Tab, ClickHandler {
         Map<Integer, PanelItem> icons = new HashMap<>();
         // Add the lock icon - we want it to be displayed no matter the tab
         if (island != null) {
-            icons.put(4, Flags.CHANGE_SETTINGS.toPanelItem(plugin, user, island, false));
-            icons.put(5, Flags.LOCK.toPanelItem(plugin, user, island, false));
+            icons.put(4, Flags.CHANGE_SETTINGS.toPanelItem(plugin, user, world, island, false));
+            icons.put(5, Flags.LOCK.toPanelItem(plugin, user, world, island, false));
         }
         // Add the mode icon
         switch (plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId())) {
@@ -235,7 +236,6 @@ public class SettingsTab implements Tab, ClickHandler {
         this.parent = parent;
         this.island = parent.getIsland();
         this.world = parent.getWorld().orElse(this.world);
-
     }
 
 }

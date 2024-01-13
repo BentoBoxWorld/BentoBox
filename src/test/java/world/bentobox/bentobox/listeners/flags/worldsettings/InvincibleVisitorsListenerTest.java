@@ -144,7 +144,7 @@ public class InvincibleVisitorsListenerTest {
         when(flag.isSetForWorld(any())).thenReturn(false);
         PanelItem item = mock(PanelItem.class);
         when(item.getItem()).thenReturn(mock(ItemStack.class));
-        when(flag.toPanelItem(any(), eq(user), any(), eq(false))).thenReturn(item);
+        when(flag.toPanelItem(any(), eq(user), any(), any(), eq(false))).thenReturn(item);
         when(fm.getFlag(anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 

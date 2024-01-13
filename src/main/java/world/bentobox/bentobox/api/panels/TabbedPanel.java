@@ -43,6 +43,7 @@ public class TabbedPanel extends Panel implements PanelListener {
      */
     public TabbedPanel(TabbedPanelBuilder tpb) {
         this.tpb = tpb;
+        // Set world
         this.setWorld(tpb.getWorld());
         // Set island context in Panel
         this.setIsland(tpb.getIsland());

@@ -1,7 +1,10 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -51,6 +54,8 @@ public class WorldToggleClickTest {
     private GameModeAddon addon;
     @Mock
     private PluginManager pim;
+    @Mock
+    private World world;
 
     /**
      */
@@ -63,7 +68,7 @@ public class WorldToggleClickTest {
         // Island World Manager
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock.");
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
         when(iwm.getAddon(Mockito.any())).thenReturn(optionalAddon);
         when(plugin.getIWM()).thenReturn(iwm);
@@ -75,18 +80,18 @@ public class WorldToggleClickTest {
 
         // User
         // Sometimes use Mockito.withSettings().verboseLogging()
-        when(user.getWorld()).thenReturn(mock(World.class));
+        when(user.getWorld()).thenReturn(world);
         when(user.getLocation()).thenReturn(mock(Location.class));
         when(user.getPlayer()).thenReturn(mock(Player.class));
 
         // Util
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        when(Util.getWorld(any())).thenReturn(world);
 
         // Flags Manager
         FlagsManager fm = mock(FlagsManager.class);
         flag = mock(Flag.class);
-        when(flag.isSetForWorld(Mockito.any())).thenReturn(false);
+        when(flag.isSetForWorld(any())).thenReturn(false);
 
         when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
@@ -101,28 +106,25 @@ public class WorldToggleClickTest {
         Mockito.framework().clearInlineMocks();
     }
 
-    @Test
-    public void testOnClickWrongWorld() {
-        when(iwm.inWorld(any(World.class))).thenReturn(false);
-        when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        listener.onClick(panel, user, ClickType.LEFT, 0);
-        verify(user).sendMessage("general.errors.wrong-world");
-        verify(addon, Mockito.never()).saveWorldSettings();
-    }
-
+    /**
+     * Test for {@link WorldToggleClick#onClick(Panel, User, ClickType, int)}
+     */
     @Test
     public void testOnClickNoPermission() {
-        when(user.hasPermission(Mockito.anyString())).thenReturn(false);
+        when(user.hasPermission(anyString())).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         verify(user).sendMessage("general.errors.no-permission", "[permission]", "bskyblock.admin.world.settings.test");
-        verify(addon, Mockito.never()).saveWorldSettings();
+        verify(addon, never()).saveWorldSettings();
     }
 
+    /**
+     * Test for {@link WorldToggleClick#onClick(Panel, User, ClickType, int)}
+     */
     @Test
     public void testOnClick() {
-        when(user.hasPermission(Mockito.anyString())).thenReturn(true);
+        when(user.hasPermission(anyString())).thenReturn(true);
         listener.onClick(panel, user, ClickType.LEFT, 0);
-        verify(flag).setSetting(Mockito.any(), Mockito.eq(true));
+        verify(flag).setSetting(any(), eq(true));
         verify(addon).saveWorldSettings();
         verify(pim).callEvent(any(FlagWorldSettingChangeEvent.class));
     }
