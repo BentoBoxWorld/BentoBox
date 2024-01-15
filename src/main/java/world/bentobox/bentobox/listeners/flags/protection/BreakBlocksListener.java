@@ -21,7 +21,6 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -81,7 +80,6 @@ public class BreakBlocksListener extends FlagListener {
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
         Material m = e.getClickedBlock().getType();
-        BentoBox.getInstance().logDebug(m);
         // Check for berry picking
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK && (e.getClickedBlock().getType() == Material.CAVE_VINES || e.getClickedBlock().getType() == Material.CAVE_VINES_PLANT)) {
             if (!((CaveVinesPlant) e.getClickedBlock().getBlockData()).isBerries()) {

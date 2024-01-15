@@ -674,6 +674,7 @@ public final class Flags {
     /**
      * Crop Planting
      * Controls who gets to plant crops on tilled soil.
+     * Listener is {@link PlaceBlockListener}
      * @since 1.23.0
      */
     public static final Flag CROP_PLANTING = new Flag.Builder("CROP_PLANTING", Material.PUMPKIN_SEEDS).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
