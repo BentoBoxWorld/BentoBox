@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.CaveVinesPlant;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EnderCrystal;
@@ -20,6 +21,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -76,14 +78,27 @@ public class BreakBlocksListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e)
     {
-        // Only handle hitting things
-        if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getClickedBlock() == null)
-        {
-            return;
-        }
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
         Material m = e.getClickedBlock().getType();
+        BentoBox.getInstance().logDebug(m);
+        // Check for berry picking
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK && (e.getClickedBlock().getType() == Material.CAVE_VINES || e.getClickedBlock().getType() == Material.CAVE_VINES_PLANT)) {
+            if (!((CaveVinesPlant) e.getClickedBlock().getBlockData()).isBerries()) {
+                    return;
+                }
+                this.checkIsland(e, p, l, Flags.HARVEST);
+            return;
+        }
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock().getType() == Material.SWEET_BERRY_BUSH) {
+            this.checkIsland(e, p, l, Flags.HARVEST);
+            return;
+        }
+        // Only handle hitting things
+        if (!(e.getAction() == Action.LEFT_CLICK_BLOCK) || e.getClickedBlock() == null)
+        {
+            return;
+        }
         switch (m)
         {
         case CAKE -> this.checkIsland(e, p, l, Flags.BREAK_BLOCKS);

@@ -666,6 +666,7 @@ public final class Flags {
     /**
      * Harvest Setting
      * Controls who gets to harvest any crop related contents. e.g. Wheat, Sugar Cane, melon blocks, not stems, pumpkin blocks, etc.
+     * Listener is {@link BreakBlocksListener}
      * @since 1.23.0
      */
     public static final Flag HARVEST = new Flag.Builder("HARVEST", Material.PUMPKIN).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
