@@ -51,7 +51,6 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
     private TabbedPanel parent;
 
     /**
-     * @param parent - tabbed panel that owns this panel
      * @param user - user viewing the tab
      * @param type - type of tab to show - Geo limit or Mob limit
      * @param world - world where this tab is being used

@@ -330,7 +330,7 @@ public class IslandsManager {
      * the team island is returned.
      * 
      * @param world world to check
-     * @param uuid  user's uuid
+     * @param uniqueId  user's uuid
      * @return List of islands or empty list if none found for user
      */
     @NonNull

@@ -1715,7 +1715,7 @@ public class Island implements DataObject, MetaDataAble {
     /**
      * Get the location of a named home
      * 
-     * @param name home name case insensitive (name is forced to lower case)
+     * @param nameToLookFor home name case insensitive (name is forced to lower case)
      * @return the home location or if none found the protection center of the
      *         island is returned.
      * @since 1.16.0

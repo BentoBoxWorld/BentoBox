@@ -49,7 +49,6 @@ public class SettingsTab implements Tab, ClickHandler {
     /**
      * Show a tab of settings
      * @param user - user who is viewing the tab
-     * @param island - the island
      * @param type - flag type
      */
     public SettingsTab(User user, Type type) {
