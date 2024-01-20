@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
@@ -716,11 +717,14 @@ public class AddonsManager {
      * @return list of DataObjects
      * @since 1.5.0
      */
-    public List<Class<?>> getDataObjects() {
+    @SuppressWarnings("unchecked")
+    public Set<Class<? extends DataObject>> getDataObjects() {
         return classes.values().stream().filter(DataObject.class::isAssignableFrom)
                 // Do not include config files
-                .filter(c -> !ConfigObject.class.isAssignableFrom(c)).toList();
+                .filter(c -> !ConfigObject.class.isAssignableFrom(c)).map(c -> (Class<? extends DataObject>) c)
+                .collect(Collectors.toSet());
     }
+
 
     /**
      * Notifies all addons that BentoBox has loaded all addons
