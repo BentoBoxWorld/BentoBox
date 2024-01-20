@@ -681,6 +681,7 @@ public final class Flags {
 
     /**
      * Sign edit protection
+     * Listener is {@link BlockInteractionListener}
      * @since 1.24.0
      */
     public static final Flag SIGN_EDITING = new Flag.Builder("SIGN_EDITING", Material.DARK_OAK_SIGN).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
