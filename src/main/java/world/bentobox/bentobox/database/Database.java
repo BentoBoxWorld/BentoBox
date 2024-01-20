@@ -3,7 +3,9 @@ package world.bentobox.bentobox.database;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
@@ -12,6 +14,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.database.objects.DataObject;
 
 /**
  * Handy class to store and load Java POJOs in the Database
@@ -24,15 +27,19 @@ public class Database<T> {
     private final AbstractDatabaseHandler<T> handler;
     private final Logger logger;
     private static DatabaseSetup databaseSetup = DatabaseSetup.getDatabase();
+    private static final Set<Class<? extends DataObject>> dataObjects = new HashSet<>();
 
     /**
      * Construct a database
      * @param plugin - plugin
      * @param type - to store this type
      */
+    @SuppressWarnings("unchecked")
     public Database(BentoBox plugin, Class<T> type)  {
         this.logger = plugin.getLogger();
         handler = databaseSetup.getHandler(type);
+        // Log any database classes
+        dataObjects.add((Class<? extends DataObject>) type);
     }
 
     /**
@@ -40,9 +47,12 @@ public class Database<T> {
      * @param addon - addon requesting
      * @param type - to store this type
      */
+    @SuppressWarnings("unchecked")
     public Database(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
         handler = databaseSetup.getHandler(type);
+        // Log any database classes
+        dataObjects.add((Class<? extends DataObject>) type);
     }
 
     /**
@@ -147,6 +157,13 @@ public class Database<T> {
      */
     public void close() {
         handler.close();
+    }
+
+    /**
+     * @return the dataobjects
+     */
+    public static Set<Class<? extends DataObject>> getDataobjects() {
+        return dataObjects;
     }
 
 
