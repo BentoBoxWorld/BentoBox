@@ -21,7 +21,7 @@ language_panel:
       8: language_button
     3:
       1:
-        icon: TIPPED_ARROW:INSTANT_HEAL::::1                 # The icon for button
+        icon: tipped_arrow{CustomPotionColor:11546150}       # The icon for button
         title: panels.buttons.previous.name                  # The name of button, or link to the localization.
         description: panels.buttons.previous.description     # The description of button, or link to the localization.
         data:
@@ -39,7 +39,7 @@ language_panel:
       7: language_button
       8: language_button
       9:
-        icon: TIPPED_ARROW:JUMP::::1
+        icon: tipped_arrow{CustomPotionColor:8439583}
         title: panels.buttons.next.name
         description: panels.buttons.next.description
         data:
