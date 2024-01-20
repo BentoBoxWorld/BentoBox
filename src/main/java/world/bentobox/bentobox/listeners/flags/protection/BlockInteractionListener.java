@@ -210,7 +210,8 @@ public class BlockInteractionListener extends FlagListener
             return true;
         }
 
-        if (Tag.SIGNS.isTagged(type) && block.getState() instanceof Sign sign && !sign.isWaxed()) {
+        if ((Tag.ALL_HANGING_SIGNS.isTagged(type) || Tag.SIGNS.isTagged(type)) && block.getState() instanceof Sign sign
+                && !sign.isWaxed()) {
             // If waxed, then sign cannot be edited otherwise check
             this.checkIsland(e, player, loc, Flags.SIGN_EDITING);
             return true;

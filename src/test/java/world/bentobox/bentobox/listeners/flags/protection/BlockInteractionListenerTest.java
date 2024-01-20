@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -19,6 +20,8 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -117,6 +120,12 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         clickedBlocks.put(Material.CAKE, Flags.CAKE);
         clickedBlocks.put(Material.BEEHIVE, Flags.HIVE);
         clickedBlocks.put(Material.BEE_NEST, Flags.HIVE);
+        clickedBlocks.put(Material.ACACIA_WALL_HANGING_SIGN, Flags.SIGN_EDITING);
+        when(Tag.ALL_HANGING_SIGNS.isTagged(Material.ACACIA_HANGING_SIGN)).thenReturn(true);
+        clickedBlocks.put(Material.DARK_OAK_SIGN, Flags.SIGN_EDITING);
+        when(Tag.SIGNS.isTagged(Material.DARK_OAK_SIGN)).thenReturn(true);
+        clickedBlocks.put(Material.CHERRY_WALL_SIGN, Flags.SIGN_EDITING);
+        when(Tag.SIGNS.isTagged(Material.CHERRY_WALL_SIGN)).thenReturn(true);
     }
 
 
@@ -193,6 +202,10 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
     public void testOnPlayerInteractNothingInHandNotAllowed() {
         int count = 0;
         int worldSettingCount = 0;
+        // Make all block states a sign. Right now, only the sign check cares, so fix in the future if required
+        Sign sign = mock(Sign.class);
+        when(sign.isWaxed()).thenReturn(false);
+        when(clickedBlock.getState()).thenReturn(sign);
         for (Material bm : clickedBlocks.keySet()) {
             when(clickedBlock.getType()).thenReturn(bm);
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
