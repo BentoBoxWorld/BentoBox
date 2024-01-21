@@ -312,7 +312,11 @@ public enum GameModePlaceholder {
      * Returns whether this player is on his island and has a rank greater than VISITOR_RANK
      * @since 1.13.0
      */
-    ON_ISLAND("on_island", (addon, user, island) -> String.valueOf(addon.getIslands().userIsOnIsland(addon.getOverWorld(), user))),
+    ON_ISLAND("on_island",
+            (addon, user,
+                    island) -> String.valueOf(addon.getIslands().userIsOnIsland(addon.getOverWorld(), user)
+                            || addon.getIslands().userIsOnIsland(addon.getNetherWorld(), user)
+                            || addon.getIslands().userIsOnIsland(addon.getEndWorld(), user))),
     /**
      * Returns whether this player is an owner of their island
      * @since 1.14.0

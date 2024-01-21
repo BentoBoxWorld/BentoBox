@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -166,6 +167,40 @@ public class GameModePlaceholderTest {
         assertEquals("", GameModePlaceholder.RANK.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.RESETS.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.RESETS_LEFT.getReplacer().onReplace(addon, user, island));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
+     */
+    @Test
+    public void testGetReplacerPlayerOnIsland() {
+        @Nullable
+        World netherWorld = mock(World.class);
+        when(addon.getNetherWorld()).thenReturn(netherWorld);
+        @Nullable
+        World endWorld = mock(World.class);
+        when(addon.getEndWorld()).thenReturn(endWorld);
+        // Not on island
+        when(im.userIsOnIsland(world, user)).thenReturn(false);
+        when(im.userIsOnIsland(netherWorld, user)).thenReturn(false);
+        when(im.userIsOnIsland(endWorld, user)).thenReturn(false);
+        assertEquals("false", GameModePlaceholder.ON_ISLAND.getReplacer().onReplace(addon, user, island));
+        // Put player on island
+        when(im.userIsOnIsland(world, user)).thenReturn(true);
+        when(im.userIsOnIsland(netherWorld, user)).thenReturn(false);
+        when(im.userIsOnIsland(endWorld, user)).thenReturn(false);
+        assertEquals("true", GameModePlaceholder.ON_ISLAND.getReplacer().onReplace(addon, user, island));
+        // Nether
+        when(im.userIsOnIsland(world, user)).thenReturn(false);
+        when(im.userIsOnIsland(netherWorld, user)).thenReturn(true);
+        when(im.userIsOnIsland(endWorld, user)).thenReturn(false);
+        assertEquals("true", GameModePlaceholder.ON_ISLAND.getReplacer().onReplace(addon, user, island));
+        // End
+        when(im.userIsOnIsland(world, user)).thenReturn(false);
+        when(im.userIsOnIsland(netherWorld, user)).thenReturn(false);
+        when(im.userIsOnIsland(endWorld, user)).thenReturn(true);
+        assertEquals("true", GameModePlaceholder.ON_ISLAND.getReplacer().onReplace(addon, user, island));
+
     }
 
     /**
