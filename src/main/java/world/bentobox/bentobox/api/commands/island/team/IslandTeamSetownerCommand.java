@@ -42,8 +42,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         }
         // Can use if in a team
         Island is = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
-        boolean inTeam = is.getMemberSet().contains(user.getUniqueId());
-        if (!inTeam) {
+        if (is == null || !is.getMemberSet().contains(user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
         }
@@ -99,6 +98,9 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+        if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()) == null) {
+            return Optional.empty();
+        }
         return Optional.of(Util.tabLimit(
                 getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).getMemberSet().stream()
                         .filter(uuid -> !user.getUniqueId().equals(uuid)).map(getPlayers()::getName).toList(),

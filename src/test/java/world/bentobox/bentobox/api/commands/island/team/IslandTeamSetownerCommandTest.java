@@ -178,6 +178,16 @@ public class IslandTeamSetownerCommandTest {
         assertFalse(its.canExecute(user, "", List.of("gibby")));
         verify(user).sendMessage("general.errors.not-owner");
     }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testCanExecuteUserStringListOfStringNotInTeamNoIsland() {
+        when(im.getPrimaryIsland(any(), any())).thenReturn(null);
+        assertFalse(its.canExecute(user, "", List.of("gibby")));
+        verify(user).sendMessage("general.errors.no-team");
+    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
@@ -308,6 +318,16 @@ public class IslandTeamSetownerCommandTest {
         when(pm.getName(any())).thenReturn("tastybento");
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(target));
         assertEquals("tastybento", its.tabComplete(user, "", List.of()).get().get(0));
+    }
+    
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testTabCompleteUserStringListOfStringMemberNoIsland() {
+        when(im.getPrimaryIsland(any(), any())).thenReturn(null);
+        assertTrue(its.tabComplete(user, "", List.of()).isEmpty());
     }
 
 }
