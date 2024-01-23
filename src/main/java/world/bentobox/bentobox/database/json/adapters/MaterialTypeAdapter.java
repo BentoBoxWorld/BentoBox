@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.bukkit.Material;
 
+import com.google.common.base.Enums;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -34,7 +35,9 @@ public final class MaterialTypeAdapter extends TypeAdapter<Material>
         Arrays.stream(Material.values()).forEach(mat -> this.materialMap.put(mat.name(), mat));
 
         // Put in renamed material values.
-        this.materialMap.put("GRASS", Material.SHORT_GRASS);
+        if (Enums.getIfPresent(Material.class, "SHORT_GRASS").isPresent()) {
+            this.materialMap.put("GRASS", Material.SHORT_GRASS);
+        }
     }
 
     @Override
