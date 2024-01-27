@@ -218,6 +218,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
 
         // Reset the XP
         if (getIWM().isOnJoinResetXP(getWorld())) {
+            // Player collected XP (displayed)
+            user.getPlayer().setLevel(0);
+            user.getPlayer().setExp(0);
+            // Player total XP (not displayed)
             user.getPlayer().setTotalExperience(0);
         }
 

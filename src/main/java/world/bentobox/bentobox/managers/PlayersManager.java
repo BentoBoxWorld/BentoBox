@@ -489,6 +489,10 @@ public class PlayersManager {
 
         // Reset the XP
         if (plugin.getIWM().isOnLeaveResetXP(world) && target.isPlayer()) {
+            // Player collected XP (displayed)
+            target.getPlayer().setLevel(0);
+            target.getPlayer().setExp(0);
+            // Player total XP (not displayed)
             target.getPlayer().setTotalExperience(0);
         }
         // Save player
