@@ -1149,7 +1149,10 @@ public class IslandTest {
      */
     @Test
     public void testGetHome() {
-        assertEquals(i.getProtectionCenter(), i.getHome("default"));
+        Location home = i.getHome("default");
+        assertEquals(0.5D, home.getX(), 0.0D);
+        assertEquals(0.0D, home.getY(), 0.0D);
+        assertEquals(0.5D, home.getZ(), 0.0D);
     }
 
     /**
