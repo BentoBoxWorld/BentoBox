@@ -1724,7 +1724,7 @@ public class Island implements DataObject, MetaDataAble {
     public Location getHome(final String nameToLookFor) {
         return getHomes().entrySet().stream().filter(en -> en.getKey().equalsIgnoreCase(nameToLookFor))
                 .map(Entry::getValue)
-                .findFirst().orElse(getProtectionCenter());
+                .findFirst().orElse(getProtectionCenter().clone().add(new Vector(0.5D, 0D, 0.5D)));
     }
 
     /**
