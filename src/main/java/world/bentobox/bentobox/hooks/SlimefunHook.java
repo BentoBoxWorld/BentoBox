@@ -28,7 +28,9 @@ public class SlimefunHook extends Hook {
     }
 
     public void clearBlockInfo(Location location, boolean destroy) {
-        BlockStorage.clearBlockInfo(location, destroy);
+        if (BlockStorage.hasBlockInfo(location)) {
+            BlockStorage.clearBlockInfo(location, destroy);
+        }
     }
 
 
