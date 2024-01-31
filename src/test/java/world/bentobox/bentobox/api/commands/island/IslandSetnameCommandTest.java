@@ -137,11 +137,6 @@ public class IslandSetnameCommandTest {
         // Placeholder manager
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
-        // Ranks Manager
-        rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
-
         // Test
         isc = new IslandSetnameCommand(ic);
     }

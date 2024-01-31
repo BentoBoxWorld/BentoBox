@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,19 +16,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
-import org.junit.After;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -38,6 +36,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -45,8 +44,8 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
-public class AdminSetrankCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
+public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private CompositeCommand ac;
@@ -57,23 +56,18 @@ public class AdminSetrankCommandTest {
     @Mock
     private PlayersManager pm;
 
-    private RanksManager rm;
     private AdminSetrankCommand c;
 
     private UUID targetUUID;
+    @Mock
+    private @NonNull Location location;
 
     /**
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         Util.setPlugin(plugin);
-
-        // Ranks Manager
-        rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
 
         // Players Manager
         when(plugin.getPlayers()).thenReturn(pm);
@@ -93,7 +87,8 @@ public class AdminSetrankCommandTest {
         when(Util.getUUID(anyString())).thenCallRealMethod();
 
         // Translations
-        when(user.getTranslation(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Command
         c = new AdminSetrankCommand(ac);
@@ -105,15 +100,8 @@ public class AdminSetrankCommandTest {
     }
 
     /**
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#AdminSetrankCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#AdminSetrankCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
     public void testAdminSetrankCommand() {
@@ -121,7 +109,8 @@ public class AdminSetrankCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -133,7 +122,8 @@ public class AdminSetrankCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteNoArgs() {
@@ -142,7 +132,8 @@ public class AdminSetrankCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteOneArg() {
@@ -151,14 +142,13 @@ public class AdminSetrankCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteUnknownPlayer() {
         assertFalse(c.canExecute(user, "", Arrays.asList("tastybento", "member")));
-        verify(user).sendMessage("general.errors.unknown-player",
-                "[name]",
-                "tastybento");
+        verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
     }
 
     /**
@@ -203,9 +193,9 @@ public class AdminSetrankCommandTest {
         assertTrue(c.canExecute(user, "", Arrays.asList("tastybento", "ranks.member")));
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfString() {
@@ -214,18 +204,14 @@ public class AdminSetrankCommandTest {
         Island island = mock(Island.class);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(island.getCenter()).thenReturn(location);
         assertTrue(c.execute(user, "", Arrays.asList("tastybento", "member")));
-        verify(user).sendMessage(eq("commands.admin.setrank.rank-set"),
-                eq("[from]"),
-                eq("ranks.sub-owner"),
-                eq("[to]"),
-                eq("ranks.member"),
-                eq("[name]"),
-                eq(null));
+        verify(user).sendMessage("commands.admin.setrank.rank-set", "[from]", "", "[to]", "", "[name]", null);
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testTabCompleteUserStringListOfString() {

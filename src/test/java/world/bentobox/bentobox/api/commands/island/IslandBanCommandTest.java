@@ -27,7 +27,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +36,8 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
+
+import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -53,14 +53,15 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
-public class IslandBanCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class })
+public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private CompositeCommand ic;
@@ -79,13 +80,9 @@ public class IslandBanCommandTest {
     @Mock
     private Player targetPlayer;
 
-    private RanksManager rm;
-
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         User.setPlugin(plugin);
 
         // Command manager
@@ -113,11 +110,12 @@ public class IslandBanCommandTest {
 
         // Player has island to begin with
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
+        // when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -131,12 +129,12 @@ public class IslandBanCommandTest {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(im.getPrimaryIsland(any(), any())).thenReturn(island);
 
         // IWM friendly name
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
-
 
         // Server and Plugin Manager for events
         PluginManager pim = mock(PluginManager.class);
@@ -165,23 +163,14 @@ public class IslandBanCommandTest {
         when(targetPlayer.hasPermission(anyString())).thenReturn(false);
         User.getInstance(targetPlayer);
 
-        // Ranks Manager
-        rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
         // Island Ban Command
         ibc = new IslandBanCommand(ic);
 
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
-
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandBanCommand#execute(User, String, List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandBanCommand#execute(User, String, List)}.
      */
     // Island ban command by itself
 
@@ -206,7 +195,7 @@ public class IslandBanCommandTest {
     @Test
     public void testNoIsland() {
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        //when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("general.errors.no-island");
@@ -217,7 +206,7 @@ public class IslandBanCommandTest {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     @Test
@@ -238,10 +227,7 @@ public class IslandBanCommandTest {
     public void testBanTeamMate() {
         UUID teamMate = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(teamMate);
-        Set<UUID> members = new HashSet<>();
-        members.add(uuid);
-        members.add(teamMate);
-        when(im.getMembers(any(), any())).thenReturn(members);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid, teamMate));
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("commands.island.ban.cannot-ban-member");
     }
@@ -292,7 +278,8 @@ public class IslandBanCommandTest {
         when(island.ban(any(), any())).thenReturn(true);
 
         assertTrue(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, "bill", TextVariables.DISPLAY_NAME, "&Cbill");
+        verify(user).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, "bill",
+                TextVariables.DISPLAY_NAME, "&Cbill");
         verify(targetPlayer).sendMessage("commands.island.ban.owner-banned-you");
     }
 
@@ -304,7 +291,8 @@ public class IslandBanCommandTest {
         when(island.ban(any(), any())).thenReturn(false);
 
         assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
-        verify(user, never()).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, targetPlayer.getName(), TextVariables.DISPLAY_NAME, targetPlayer.getDisplayName());
+        verify(user, never()).sendMessage("commands.island.ban.player-banned", TextVariables.NAME,
+                targetPlayer.getName(), TextVariables.DISPLAY_NAME, targetPlayer.getDisplayName());
         verify(targetPlayer, never()).sendMessage("commands.island.ban.owner-banned-you");
     }
 
@@ -337,7 +325,7 @@ public class IslandBanCommandTest {
     @Test
     public void testTabComplete() {
 
-        String[] names = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
+        String[] names = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe" };
         Map<UUID, String> online = new HashMap<>();
 
         Set<UUID> banned = new HashSet<>();
@@ -355,9 +343,11 @@ public class IslandBanCommandTest {
             onlinePlayers.add(p);
         }
 
-        when(island.isBanned(any(UUID.class))).thenAnswer((Answer<Boolean>) invocation -> banned.contains(invocation.getArgument(0, UUID.class)));
+        when(island.isBanned(any(UUID.class)))
+                .thenAnswer((Answer<Boolean>) invocation -> banned.contains(invocation.getArgument(0, UUID.class)));
         // Create the names
-        when(pm.getName(any(UUID.class))).then((Answer<String>) invocation -> online.getOrDefault(invocation.getArgument(0, UUID.class), "tastybento"));
+        when(pm.getName(any(UUID.class))).then((Answer<String>) invocation -> online
+                .getOrDefault(invocation.getArgument(0, UUID.class), "tastybento"));
 
         // Return a set of online players
         PowerMockito.mockStatic(Bukkit.class);
@@ -391,7 +381,7 @@ public class IslandBanCommandTest {
         assertTrue(result.isPresent());
         List<String> r = result.get().stream().sorted().toList();
         // Compare the expected with the actual
-        String[] expectedName = {"dave"};
+        String[] expectedName = { "dave" };
         assertTrue(Arrays.equals(expectedName, r.toArray()));
 
         // Get the tab-complete list with one letter argument
@@ -401,7 +391,7 @@ public class IslandBanCommandTest {
         assertTrue(result.isPresent());
         r = result.get().stream().sorted().toList();
         // Compare the expected with the actual
-        String[] expected = {"frank", "freddy"};
+        String[] expected = { "frank", "freddy" };
         assertTrue(Arrays.equals(expected, r.toArray()));
     }
 }

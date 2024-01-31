@@ -884,8 +884,8 @@ protection:
       name: Wiadomości wejścia / wyjścia
       now-entering: Wchodzisz na wyspę [name]
       now-leaving: Wychodzisz z wyspy [name]
-      now-entering-your-island: '&a Wchodzisz na swoją wyspę.'
-      now-leaving-your-island: '&a Opuszczasz swoją wyspę.'
+      now-entering-your-island: '&a Wchodzisz na swoją wyspę: &b [name]'
+      now-leaving-your-island: '&a Opuszczasz swoją wyspę: &b [name]'
     EXPERIENCE_BOTTLE_THROWING:
       name: Rzucanie butelkami z doświadczeniem
       description: Przełącz rzucanie butelkami z doświadczeniem

@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.api.commands.admin.team;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -15,6 +14,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Sets the owner of an island.
+ * 
  * @author tastybento
  */
 public class AdminTeamSetownerCommand extends CompositeCommand {
@@ -47,8 +47,8 @@ public class AdminTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }
-
-        UUID previousOwnerUUID = getIslands().getOwner(getWorld(), targetUUID);
+        Island island = getIslands().getPrimaryIsland(getWorld(), targetUUID);
+        UUID previousOwnerUUID = island.getOwner();
         if (targetUUID.equals(previousOwnerUUID)) {
             user.sendMessage("commands.admin.team.setowner.already-owner", TextVariables.NAME, args.get(0));
             return false;
@@ -58,24 +58,16 @@ public class AdminTeamSetownerCommand extends CompositeCommand {
         User target = User.getInstance(targetUUID);
 
         // Fire event so add-ons know
-        Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID));
         // Call the setowner event
-        TeamEvent.builder()
-        .island(island)
-        .reason(TeamEvent.Reason.SETOWNER)
-        .involvedPlayer(targetUUID)
-        .admin(true)
-        .build();
+        TeamEvent.builder().island(island).reason(TeamEvent.Reason.SETOWNER).involvedPlayer(targetUUID).admin(true)
+                .build();
 
         // Call the rank change event for the new island owner
-        // We need to call it BEFORE the actual change, in order to retain the player's previous rank.
-        IslandEvent.builder()
-        .island(island)
-        .involvedPlayer(targetUUID)
-        .admin(true)
-        .reason(IslandEvent.Reason.RANK_CHANGE)
-        .rankChange(island.getRank(target), RanksManager.OWNER_RANK)
-        .build();
+        // We need to call it BEFORE the actual change, in order to retain the player's
+        // previous rank.
+        IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(true)
+                .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(island.getRank(target), RanksManager.OWNER_RANK)
+                .build();
 
         // Make new owner
         getIslands().setOwner(getWorld(), user, targetUUID);
@@ -84,13 +76,9 @@ public class AdminTeamSetownerCommand extends CompositeCommand {
         // Call the rank change event for the old island owner
         if (previousOwnerUUID != null) {
             // We need to call it AFTER the actual change.
-            IslandEvent.builder()
-            .island(island)
-            .involvedPlayer(previousOwnerUUID)
-            .admin(true)
-            .reason(IslandEvent.Reason.RANK_CHANGE)
-            .rankChange(RanksManager.OWNER_RANK, island.getRank(previousOwnerUUID))
-            .build();
+            IslandEvent.builder().island(island).involvedPlayer(previousOwnerUUID).admin(true)
+                    .reason(IslandEvent.Reason.RANK_CHANGE)
+                    .rankChange(RanksManager.OWNER_RANK, island.getRank(previousOwnerUUID)).build();
         }
         return true;
     }

@@ -65,10 +65,11 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class})
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class JoinLeaveListenerTest {
 
-    private static final String[] NAMES = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
+    private static final String[] NAMES = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry",
+            "ian", "joe" };
 
     @Mock
     private BentoBox plugin;
@@ -154,7 +155,7 @@ public class JoinLeaveListenerTest {
         // islands manager
         when(plugin.getIslands()).thenReturn(im);
         // player is owner of their island
-        when(im.isOwner(any(), any())).thenReturn(true);
+        // when(im.isOwner(any(), any())).thenReturn(true);
 
         // Island
         island = new Island(location, uuid, 50);
@@ -162,6 +163,7 @@ public class JoinLeaveListenerTest {
 
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(im.getIslands()).thenReturn(Collections.singletonList(island));
         Map<UUID, Integer> memberMap = new HashMap<>();
 
         memberMap.put(uuid, RanksManager.OWNER_RANK);
@@ -200,15 +202,18 @@ public class JoinLeaveListenerTest {
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
         // Util translate color codes (used in user translate methods)
-        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(Util.translateColorCodes(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // user text
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
-        when(lm.get(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(lm.get(any(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
-        when(phm.replacePlaceholders(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(phm.replacePlaceholders(any(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         jll = new JoinLeaveListener(plugin);
     }
@@ -222,7 +227,8 @@ public class JoinLeaveListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
      */
     @Test
     public void testOnPlayerJoinNotKnownNoAutoCreate() {
@@ -260,7 +266,8 @@ public class JoinLeaveListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
      */
     @Test
     public void testOnPlayerJoinRangeChangeTooLargePerm() {
@@ -279,7 +286,8 @@ public class JoinLeaveListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
      */
     @Test
     public void testOnPlayerJoinRangeChangeSmallerPerm() {
@@ -298,7 +306,8 @@ public class JoinLeaveListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
      */
     @Test
     public void testOnPlayerJoinRangeChangeSmallIncreasePerm() {
@@ -317,7 +326,8 @@ public class JoinLeaveListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
      */
     @Test
     public void testOnPlayerJoinRangeChangeSamePerm() {
@@ -329,7 +339,8 @@ public class JoinLeaveListenerTest {
         jll.onPlayerJoin(event);
         // Verify
         verify(player, never()).sendMessage(eq("commands.admin.setrange.range-updated"));
-        // Verify that the island protection range is not changed if it is already at that value
+        // Verify that the island protection range is not changed if it is already at
+        // that value
         assertEquals(50, island.getProtectionRange());
         // Verify log
         verify(plugin, never()).log("Island protection range changed from 50 to 10 for tastybento due to permission.");
@@ -350,7 +361,8 @@ public class JoinLeaveListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerSwitchWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerSwitchWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
      */
     @Test
     public void testOnPlayerSwitchWorld() {
@@ -378,9 +390,9 @@ public class JoinLeaveListenerTest {
         verify(pm, never()).save(any());
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent)}.
      */
     @Test
     public void testOnPlayerQuit() {

@@ -1009,8 +1009,8 @@ protection:
       name: Ieejas/Izejas ziņa
       now-entering: "&bTu ieej [name] salā"
       now-leaving: "&bTu pamet [name] salu"
-      now-entering-your-island: "&a Tu ieej savā salā."
-      now-leaving-your-island: "&a Tu pamet savu salu."
+      now-entering-your-island: "&a Tu ieej savā salā: &b [name]"
+      now-leaving-your-island: "&a Tu pamet savu salu: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       description: Pārslēdz pieredzes pudeļu mešanu
       hint: Pieredžu pudeļu mešana nav atļauta

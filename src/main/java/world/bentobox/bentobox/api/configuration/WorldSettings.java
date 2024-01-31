@@ -13,6 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.eclipse.jdt.annotation.NonNull;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -549,6 +550,7 @@ public interface WorldSettings extends ConfigObject {
      * Returns all aliases for main admin command.
      * It is assumed that all aliases are split with whitespace between them.
      * String cannot be empty.
+     * The first command listed is the "label" in the API, and after that are the aliases
      * Default value: {@code getFriendlyName() + "admin"} (to retain backward compatibility).
      * @return String value
      * @since 1.13.0
@@ -563,6 +565,7 @@ public interface WorldSettings extends ConfigObject {
      * Returns all aliases for main player command.
      * It is assumed that all aliases are split with whitespace between them.
      * String cannot be empty.
+     * The first command listed is the "label" in the API, and after that are the aliases
      * Default value: {@code getFriendlyName()} (to retain backward compatibility).
      * @return String value
      * @since 1.13.0
@@ -631,5 +634,14 @@ public interface WorldSettings extends ConfigObject {
      */
     default boolean isCheckForBlocks() {
         return true;
+    }
+
+    /**
+     * Get the number of concurrent islands a player can have in the world
+     * @return 1 by default
+     * @since 2.0.0
+     */
+    default int getConcurrentIslands() {
+        return BentoBox.getInstance().getSettings().getIslandNumber();
     }
 }

@@ -52,7 +52,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class LockAndBanListenerTest {
 
     private static final Integer PROTECTION_RANGE = 200;
@@ -116,7 +116,7 @@ public class LockAndBanListenerTest {
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        // when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -392,7 +392,6 @@ public class LockAndBanListenerTest {
      * Island lock tests
      */
 
-
     @Test
     public void testTeleportToLockedIsland() {
         // Make player
@@ -602,7 +601,6 @@ public class LockAndBanListenerTest {
         assertFalse(e.isCancelled());
     }
 
-
     @Test
     public void testPlayerMoveIntoLockedIslandAsMember() {
         // Make player
@@ -693,7 +691,6 @@ public class LockAndBanListenerTest {
         assertFalse(e.isCancelled());
     }
 
-
     @Test
     public void testPlayerMoveInsideLockedIslandAsMember() {
         // Make player
@@ -725,7 +722,8 @@ public class LockAndBanListenerTest {
         when(player2.getUniqueId()).thenReturn(uuid2);
 
         // Player 1 is not a member, player 2 is an island member
-        when(island.isAllowed(any(User.class), any())).thenAnswer((Answer<Boolean>) invocation -> invocation.getArgument(0, User.class).getUniqueId().equals(uuid2));
+        when(island.isAllowed(any(User.class), any())).thenAnswer(
+                (Answer<Boolean>) invocation -> invocation.getArgument(0, User.class).getUniqueId().equals(uuid2));
 
         // Create vehicle and put two players in it. One is a member, the other is not
         Vehicle vehicle = mock(Vehicle.class);

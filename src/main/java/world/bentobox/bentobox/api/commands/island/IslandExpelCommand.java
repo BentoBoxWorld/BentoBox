@@ -16,6 +16,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -59,7 +60,8 @@ public class IslandExpelCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user);
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
         // Get target player
@@ -74,7 +76,7 @@ public class IslandExpelCommand extends CompositeCommand {
             return false;
         }
         // Or team member
-        if (getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
+        if (island.getMemberSet().contains(targetUUID)) {
             user.sendMessage("commands.island.expel.cannot-expel-member");
             return false;
         }
@@ -90,53 +92,48 @@ public class IslandExpelCommand extends CompositeCommand {
             return false;
         }
         // Cannot ban ops
-        if (target.isOp() ||
-                target.hasPermission(this.getPermissionPrefix() + "admin.noexpel") ||
-                target.hasPermission(this.getPermissionPrefix() + "mod.bypassexpel")) {
+        if (target.isOp() || target.hasPermission(this.getPermissionPrefix() + "admin.noexpel")
+                || target.hasPermission(this.getPermissionPrefix() + "mod.bypassexpel")) {
             user.sendMessage(CANNOT_EXPEL);
             return false;
         }
         return true;
     }
 
-
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Finished error checking - expel player
         Island island = getIslands().getIsland(getWorld(), user);
         // Fire event
-        IslandBaseEvent expelEvent = IslandEvent.builder()
-                .island(island)
-                .involvedPlayer(target.getUniqueId())
-                .admin(false)
-                .reason(IslandEvent.Reason.EXPEL)
-                .build();
+        IslandBaseEvent expelEvent = IslandEvent.builder().island(island).involvedPlayer(target.getUniqueId())
+                .admin(false).reason(IslandEvent.Reason.EXPEL).build();
         if (expelEvent.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(expelEvent.isCancelled())) {
             user.sendMessage(CANNOT_EXPEL);
             return false;
         }
 
-        target.sendMessage("commands.island.expel.player-expelled-you", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
+        target.sendMessage("commands.island.expel.player-expelled-you", TextVariables.NAME, user.getName(),
+                TextVariables.DISPLAY_NAME, user.getDisplayName());
         island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
         if (getIslands().hasIsland(getWorld(), target) || getIslands().inTeam(getWorld(), target.getUniqueId())) {
             // Success
-            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
+            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME,
+                    target.getDisplayName());
             // Teleport home
             getIslands().homeTeleportAsync(getWorld(), target.getPlayer());
             return true;
-        } else if (getIslands().getSpawn(getWorld()).isPresent()){
+        } else if (getIslands().getSpawn(getWorld()).isPresent()) {
             // Success
-            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
+            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME,
+                    target.getDisplayName());
             getIslands().spawnTeleport(getWorld(), target.getPlayer());
             return true;
         } else if (getIWM().getAddon(getWorld())
-                .map(gm -> gm.getPlayerCommand()
-                        .map(pc -> pc.getSubCommand("create").isPresent())
-                        .orElse(false))
-                .orElse(false)
-                && target.performCommand(this.getTopLabel() + " create")) {
+                .map(gm -> gm.getPlayerCommand().map(pc -> pc.getSubCommand("create").isPresent()).orElse(false))
+                .orElse(false) && target.performCommand(this.getTopLabel() + " create")) {
             getAddon().logWarning("Expel: " + target.getName() + " had no island, so one was created");
-            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
+            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME,
+                    target.getDisplayName());
             return true;
         }
 
@@ -149,15 +146,15 @@ public class IslandExpelCommand extends CompositeCommand {
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         Island island = getIslands().getIsland(getWorld(), user);
         if (island != null) {
-            List<String> options = island.getPlayersOnIsland().stream()
-                    .filter(p -> !p.equals(user.getPlayer())) // Not self
+            List<String> options = island.getPlayersOnIsland().stream().filter(p -> !p.equals(user.getPlayer())) // Not
+                    // self
                     .filter(p -> user.getPlayer().canSee(p)) // Not invisible
                     .filter(p -> !p.isOp()) // Not op
                     .filter(p -> !p.hasPermission(this.getPermissionPrefix() + "admin.noexpel"))
-                    .filter(p -> !p.hasPermission(this.getPermissionPrefix() + "mod.bypassexpel"))
-                    .map(Player::getName).toList();
+                    .filter(p -> !p.hasPermission(this.getPermissionPrefix() + "mod.bypassexpel")).map(Player::getName)
+                    .toList();
 
-            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

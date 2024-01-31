@@ -377,12 +377,13 @@ public class Flag implements Comparable<Flag> {
      * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
      * @param plugin - plugin
      * @param user - user that will see this flag
+     * @param world - the world this flag is being shown for. If island is present, then world is the same as the island.
      * @param island - target island, if any
      * @param invisible - true if this flag is not visible to players
      * @return - PanelItem for this flag or null if item is invisible to user
      */
     @Nullable
-    public PanelItem toPanelItem(BentoBox plugin, User user, @Nullable Island island, boolean invisible) {
+    public PanelItem toPanelItem(BentoBox plugin, User user, World world, @Nullable Island island, boolean invisible) {
         // Invisibility
         if (!user.isOp() && invisible) {
             return null;
@@ -400,12 +401,13 @@ public class Flag implements Comparable<Flag> {
         return switch (getType()) {
         case PROTECTION -> createProtectionFlag(plugin, user, island, pib).build();
         case SETTING -> createSettingFlag(user, island, pib).build();
-        case WORLD_SETTING -> createWorldSettingFlag(user, pib).build();
+        case WORLD_SETTING -> createWorldSettingFlag(user, world, pib).build();
         };
     }
 
-    private PanelItemBuilder createWorldSettingFlag(User user, PanelItemBuilder pib) {
-        String worldSetting = this.isSetForWorld(user.getWorld()) ? user.getTranslation("protection.panel.flag-item.setting-active")
+    private PanelItemBuilder createWorldSettingFlag(User user, World world, PanelItemBuilder pib) {
+        String worldSetting = this.isSetForWorld(world)
+                ? user.getTranslation("protection.panel.flag-item.setting-active")
                 : user.getTranslation("protection.panel.flag-item.setting-disabled");
         pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
                 , "[setting]", worldSetting));
@@ -430,7 +432,7 @@ public class Flag implements Comparable<Flag> {
             // Protection flag
             pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
                     TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
-            plugin.getRanksManager().getRanks().forEach((reference, score) -> {
+            RanksManager.getInstance().getRanks().forEach((reference, score) -> {
                 if (score > RanksManager.BANNED_RANK && score < island.getFlag(this)) {
                     pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
                 } else if (score <= RanksManager.OWNER_RANK && score > island.getFlag(this)) {
@@ -679,11 +681,11 @@ public class Flag implements Comparable<Flag> {
         public Flag build() {
             // If no clickHandler has been set, then apply default ones
             if (clickHandler == null) {
-                switch (type) {
-                case SETTING -> clickHandler = new IslandToggleClick(id);
-                case WORLD_SETTING -> clickHandler = new WorldToggleClick(id);
-                default -> clickHandler = new CycleClick(id);
-                }
+                clickHandler = switch (type) {
+                case SETTING -> new IslandToggleClick(id);
+                case WORLD_SETTING -> new WorldToggleClick(id);
+                default -> new CycleClick(id);
+                };
             }
 
             return new Flag(this);

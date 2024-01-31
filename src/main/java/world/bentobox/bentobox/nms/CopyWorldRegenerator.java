@@ -3,6 +3,7 @@ package world.bentobox.bentobox.nms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -38,6 +39,8 @@ import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
+import world.bentobox.bentobox.hooks.ItemsAdderHook;
+import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.util.MyBiomeGrid;
 
 /**
@@ -117,6 +120,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     }
 
     private CompletableFuture<Void> regenerateChunk(@Nullable IslandDeletion di, World world, int chunkX, int chunkZ) {
+
         CompletableFuture<Chunk> seedWorldFuture = getSeedWorldChunk(world, chunkX, chunkZ);
 
         // Set up a future to get the chunk requests using Paper's Lib. If Paper is used, this should be done async
@@ -181,6 +185,8 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         double baseZ = toChunk.getZ() << 4;
         int minHeight = toChunk.getWorld().getMinHeight();
         int maxHeight = toChunk.getWorld().getMaxHeight();
+        Optional<SlimefunHook> slimefunHook = plugin.getHooks().getHook("Slimefun").map(SlimefunHook.class::cast);
+        Optional<ItemsAdderHook> itemsAdderHook = plugin.getHooks().getHook("ItemsAdder").map(ItemsAdderHook.class::cast);
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 if (limitBox != null && !limitBox.contains(baseX + x, 0, baseZ + z)) {
@@ -192,6 +198,10 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
                         toChunk.getBlock(x, y, z).setBiome(fromChunk.getBlock(x, y, z).getBiome());
                     }
+                    // Delete any 3rd party blocks
+                    Location loc = new Location(toChunk.getWorld(), baseX + x, y, baseZ + z);
+                    slimefunHook.ifPresent(hook -> hook.clearBlockInfo(loc, true));
+                    itemsAdderHook.ifPresent(hook -> hook.clearBlockInfo(loc));
                 }
             }
         }
@@ -371,6 +381,12 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
                         chunk.getBlock(x, y, z).setBiome(biomeGrid.getBiome(x, y, z));
                     }
+                    // Delete any 3rd party blocks
+                    Location loc = new Location(chunk.getWorld(), baseX + x, y, baseZ + z);
+                    plugin.getHooks().getHook("Slimefun")
+                            .ifPresent(sf -> ((SlimefunHook) sf).clearBlockInfo(loc, true));
+                    plugin.getHooks().getHook("ItemsAdder")
+                            .ifPresent(hook -> ((ItemsAdderHook) hook).clearBlockInfo(loc));
                 }
             }
         }

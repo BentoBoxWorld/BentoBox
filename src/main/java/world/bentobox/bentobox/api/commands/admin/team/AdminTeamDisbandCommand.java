@@ -46,31 +46,23 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }
-        if (!getIslands().getOwner(getWorld(), targetUUID).equals(targetUUID)) {
-            user.sendMessage("commands.admin.team.disband.use-disband-owner", "[owner]", getPlayers().getName(getIslands().getOwner(getWorld(), targetUUID)));
+        Island island = getIslands().getPrimaryIsland(getWorld(), targetUUID);
+        if (!targetUUID.equals(island.getOwner())) {
+            user.sendMessage("commands.admin.team.disband.use-disband-owner", "[owner]",
+                    getPlayers().getName(island.getOwner()));
             return false;
         }
         // Disband team
-        Island island = getIslands().getIsland(getWorld(), targetUUID);
-        getIslands().getMembers(getWorld(), targetUUID).forEach(m -> {
+        island.getMemberSet().forEach(m -> {
             User mUser = User.getInstance(m);
             mUser.sendMessage("commands.admin.team.disband.disbanded");
             // The owner gets to keep the island
             if (!m.equals(targetUUID)) {
-                getIslands().setLeaveTeam(getWorld(), m);
-                TeamEvent.builder()
-                .island(island)
-                .reason(TeamEvent.Reason.KICK)
-                .involvedPlayer(m)
-                .admin(true)
-                .build();
-                IslandEvent.builder()
-                .island(island)
-                .involvedPlayer(targetUUID)
-                .admin(true)
-                .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(island.getRank(mUser), RanksManager.VISITOR_RANK)
-                .build();
+                getIslands().removePlayer(island, m);
+                TeamEvent.builder().island(island).reason(TeamEvent.Reason.KICK).involvedPlayer(m).admin(true).build();
+                IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(true)
+                        .reason(IslandEvent.Reason.RANK_CHANGE)
+                        .rankChange(island.getRank(mUser), RanksManager.VISITOR_RANK).build();
             }
         });
         user.sendMessage("commands.admin.team.disband.success", TextVariables.NAME, args.get(0));

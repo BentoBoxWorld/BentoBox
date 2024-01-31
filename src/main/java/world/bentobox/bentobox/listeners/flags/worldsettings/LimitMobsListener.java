@@ -1,8 +1,10 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 
@@ -19,7 +21,14 @@ public class LimitMobsListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMobSpawn(CreatureSpawnEvent e) {
-        if (getIWM().inWorld(e.getLocation()) && getIWM().getMobLimitSettings(e.getLocation().getWorld()).contains(e.getEntityType().name())) {
+        check(e, e.getEntityType());
+        if (e.getSpawnReason().equals(SpawnReason.JOCKEY) ) {
+            e.getEntity().getPassengers().forEach(pass -> check(e, pass.getType()));
+        }
+    }
+
+    private void check(CreatureSpawnEvent e, EntityType type) {
+        if (getIWM().inWorld(e.getLocation()) && getIWM().getMobLimitSettings(e.getLocation().getWorld()).contains(type.name())) {
             e.setCancelled(true);
         }
     }

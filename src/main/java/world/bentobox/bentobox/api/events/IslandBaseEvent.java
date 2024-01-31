@@ -33,40 +33,53 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
     }
 
     /**
-     * @param island - island
+     * @param island     - island
      * @param playerUUID - the player's UUID
-     * @param admin - true if ths is due to an admin event
-     * @param location - the location
+     * @param admin      - true if ths is due to an admin event
+     * @param location   - the location
      */
     public IslandBaseEvent(Island island, UUID playerUUID, boolean admin, Location location) {
         super();
         this.island = island;
         this.playerUUID = playerUUID;
         this.admin = admin;
-        this.location = location;
+        if (location != null) {
+            this.location = location;
+        } else if (island != null) {
+            this.location = island.getCenter();
+        } else {
+            this.location = null;
+        }
         rawEvent = null;
     }
 
     /**
-     * @param island - island
+     * @param island     - island
      * @param playerUUID - the player's UUID
-     * @param admin - true if ths is due to an admin event
-     * @param location - the location
-     * @param rawEvent - the raw event
+     * @param admin      - true if ths is due to an admin event
+     * @param location   - the location
+     * @param rawEvent   - the raw event
      */
     public IslandBaseEvent(Island island, UUID playerUUID, boolean admin, Location location, Event rawEvent) {
         super();
         this.island = island;
         this.playerUUID = playerUUID;
         this.admin = admin;
-        this.location = location;
+        if (location != null) {
+            this.location = location;
+        } else if (island != null) {
+            this.location = island.getCenter();
+        } else {
+            this.location = null;
+        }
         this.rawEvent = rawEvent;
     }
 
     /**
-     * @return the island involved in this event. This may be null in the case of deleted islands, so use location instead
+     * @return the island involved in this event. This may be null in the case of
+     *         deleted islands, so use location instead
      */
-    public Island getIsland(){
+    public Island getIsland() {
         return island;
     }
 
@@ -94,6 +107,7 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
     /**
      * @return the location
      */
+    @Nullable
     public Location getLocation() {
         return location;
     }
@@ -118,6 +132,7 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
 
     /**
      * Get new event if this event is deprecated
+     * 
      * @return optional newEvent or empty if there is none
      */
     public Optional<IslandBaseEvent> getNewEvent() {
@@ -126,6 +141,7 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
 
     /**
      * Set the newer event so it can be obtained if this event is deprecated
+     * 
      * @param newEvent the newEvent to set
      */
     public void setNewEvent(IslandBaseEvent newEvent) {

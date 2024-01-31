@@ -973,9 +973,9 @@ protection:
       island: '[name] 的島嶼'
       name: '&a&l進出島嶼提示'
       now-entering: '&a您已進入 &b[name] &a。'
-      now-entering-your-island: '&a您已進入自己的島嶼。'
+      now-entering-your-island: '&a您已進入自己的島嶼。 &b [name]'
       now-leaving: '&6您已離開 &b[name] &a。'
-      now-leaving-your-island: '&6您已離開自己的島嶼。'
+      now-leaving-your-island: '&6您已離開自己的島嶼。 &b [name]'
     EXPERIENCE_BOTTLE_THROWING:
       name: '&a&l投擲經驗瓶'
       description: 允許/禁止 在島上扔經驗瓶

@@ -62,7 +62,7 @@ import world.bentobox.bentobox.managers.island.NewIsland;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, NewIsland.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class })
 public class IslandResetCommandTest {
 
     @Mock
@@ -122,7 +122,8 @@ public class IslandResetCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.isOnline()).thenReturn(true);
         when(user.getPlayer()).thenReturn(p);
-        when(user.getTranslation(any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -132,7 +133,7 @@ public class IslandResetCommandTest {
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        // when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -186,7 +187,8 @@ public class IslandResetCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(lm.get(Mockito.any(), Mockito.any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
@@ -198,9 +200,9 @@ public class IslandResetCommandTest {
         irc = new IslandResetCommand(ic);
     }
 
-
     /**
-     * Test method for {@link IslandResetCommand#canExecute(User, String, java.util.List)}
+     * Test method for
+     * {@link IslandResetCommand#canExecute(User, String, java.util.List)}
      */
     @Test
     public void testNoIsland() {
@@ -218,7 +220,7 @@ public class IslandResetCommandTest {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
+        //when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
 
@@ -305,7 +307,8 @@ public class IslandResetCommandTest {
     }
 
     /**
-     * Test method for {@link IslandResetCommand#canExecute(User, String, java.util.List)}
+     * Test method for
+     * {@link IslandResetCommand#canExecute(User, String, java.util.List)}
      */
     @Test
     public void testNoPaste() throws Exception {
@@ -345,7 +348,7 @@ public class IslandResetCommandTest {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
+        //when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Give the user some resets
@@ -415,7 +418,7 @@ public class IslandResetCommandTest {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
+        //when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Give the user some resets

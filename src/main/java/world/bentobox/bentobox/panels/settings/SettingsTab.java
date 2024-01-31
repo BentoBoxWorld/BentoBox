@@ -44,18 +44,17 @@ public class SettingsTab implements Tab, ClickHandler {
     protected User user;
     protected World world;
     protected Island island;
+    protected TabbedPanel parent;
 
     /**
      * Show a tab of settings
      * @param user - user who is viewing the tab
-     * @param island - the island
      * @param type - flag type
      */
-    public SettingsTab(User user, Island island, Type type) {
+    public SettingsTab(User user, Type type) {
         this.user = user;
-        this.island = island;
         this.type = type;
-        this.world = island.getWorld();
+        // Island and world are set when the parent is set.
     }
 
     /**
@@ -124,7 +123,10 @@ public class SettingsTab implements Tab, ClickHandler {
             plugin.getPlayers().setFlagsDisplayMode(user.getUniqueId(), plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId()).getNext());
             flags = getFlags();
         }
-        return flags.stream().map((f -> f.toPanelItem(plugin, user, island, plugin.getIWM().getHiddenFlags(world).contains(f.getID())))).toList();
+        return flags.stream().map(
+                (f -> f.toPanelItem(plugin, user, world, island,
+                        plugin.getIWM().getHiddenFlags(world).contains(f.getID()))))
+                .toList();
     }
 
     @Override
@@ -132,8 +134,8 @@ public class SettingsTab implements Tab, ClickHandler {
         Map<Integer, PanelItem> icons = new HashMap<>();
         // Add the lock icon - we want it to be displayed no matter the tab
         if (island != null) {
-            icons.put(4, Flags.CHANGE_SETTINGS.toPanelItem(plugin, user, island, false));
-            icons.put(5, Flags.LOCK.toPanelItem(plugin, user, island, false));
+            icons.put(4, Flags.CHANGE_SETTINGS.toPanelItem(plugin, user, world, island, false));
+            icons.put(5, Flags.LOCK.toPanelItem(plugin, user, world, island, false));
         }
         // Add the mode icon
         switch (plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId())) {
@@ -221,6 +223,18 @@ public class SettingsTab implements Tab, ClickHandler {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
         }
         return true;
+    }
+
+    @Override
+    public TabbedPanel getParentPanel() {
+        return parent;
+    }
+
+    @Override
+    public void setParentPanel(TabbedPanel parent) {
+        this.parent = parent;
+        this.island = parent.getIsland();
+        this.world = parent.getWorld().orElse(this.world);
     }
 
 }

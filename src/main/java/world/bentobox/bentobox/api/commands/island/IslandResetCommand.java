@@ -16,9 +16,8 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.managers.island.NewIsland.Builder;
-import world.bentobox.bentobox.panels.IslandCreationPanel;
+import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
 import world.bentobox.bentobox.util.Util;
-
 
 /**
  * @author tastybento
@@ -33,8 +32,9 @@ public class IslandResetCommand extends ConfirmableCommand {
 
     /**
      * Creates the island reset command
+     * 
      * @param islandCommand - parent command
-     * @param noPaste - true if resetting should not paste a new island
+     * @param noPaste       - true if resetting should not paste a new island
      */
     public IslandResetCommand(CompositeCommand islandCommand, boolean noPaste) {
         super(islandCommand, "reset", "restart");
@@ -93,7 +93,8 @@ public class IslandResetCommand extends ConfirmableCommand {
         } else {
             // Show panel after confirmation
             if (getPlugin().getSettings().isResetConfirmation()) {
-                this.askConfirmation(user, user.getTranslation("commands.island.reset.confirmation"), () -> selectBundle(user, label));
+                this.askConfirmation(user, user.getTranslation("commands.island.reset.confirmation"),
+                        () -> selectBundle(user, label));
             } else {
                 selectBundle(user, label);
             }
@@ -103,6 +104,7 @@ public class IslandResetCommand extends ConfirmableCommand {
 
     /**
      * Either selects the bundle to use or asks the user to choose.
+     * 
      * @since 1.5.1
      */
     private void selectBundle(@NonNull User user, @NonNull String label) {
@@ -117,6 +119,7 @@ public class IslandResetCommand extends ConfirmableCommand {
 
     /**
      * Reset island
+     * 
      * @param user user
      * @param name name of Blueprint Bundle
      * @return true if successful
@@ -124,19 +127,15 @@ public class IslandResetCommand extends ConfirmableCommand {
     private boolean resetIsland(User user, String name) {
         // Get the player's old island
         Island oldIsland = getIslands().getIsland(getWorld(), user);
-        if (oldIsland != null) {
-            deleteOldIsland(user, oldIsland);
-        }
+        deleteOldIsland(user, oldIsland);
+
         user.sendMessage("commands.island.create.creating-island");
         // Create new island and then delete the old one
         try {
-            Builder builder = NewIsland.builder()
-                    .player(user)
-                    .reason(Reason.RESET)
-                    .addon(getAddon())
-                    .oldIsland(oldIsland)
-                    .name(name);
-            if (noPaste) builder.noPaste();
+            Builder builder = NewIsland.builder().player(user).reason(Reason.RESET).addon(getAddon())
+                    .oldIsland(oldIsland).name(name);
+            if (noPaste)
+                builder.noPaste();
             builder.build();
         } catch (IOException e) {
             getPlugin().logError("Could not create island for player. " + e.getMessage());
@@ -149,13 +148,8 @@ public class IslandResetCommand extends ConfirmableCommand {
 
     private void deleteOldIsland(User user, Island oldIsland) {
         // Fire island preclear event
-        IslandEvent.builder()
-        .involvedPlayer(user.getUniqueId())
-        .reason(Reason.PRECLEAR)
-        .island(oldIsland)
-        .oldIsland(oldIsland)
-        .location(oldIsland.getCenter())
-        .build();
+        IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
+                .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
 
         // Reset the island
 
@@ -168,33 +162,33 @@ public class IslandResetCommand extends ConfirmableCommand {
 
     /**
      * Kicks the members (incl. owner) of the island.
+     * 
      * @since 1.7.0
      */
     private void kickMembers(Island island) {
         /*
-         * We cannot assume the island owner can run /[cmd] team kick (it might be disabled, or there could be permission restrictions...)
-         * Therefore, we need to do it manually.
-         * Plus, a more specific team event (TeamDeleteEvent) is called by this method.
+         * We cannot assume the island owner can run /[cmd] team kick (it might be
+         * disabled, or there could be permission restrictions...) Therefore, we need to
+         * do it manually. Plus, a more specific team event (TeamDeleteEvent) is called
+         * by this method.
          */
         island.getMemberSet().forEach(memberUUID -> {
 
             User member = User.getInstance(memberUUID);
-            // Send a "you're kicked" message if the member is not the island owner (send before removing!)
+            // Send a "you're kicked" message if the member is not the island owner (send
+            // before removing!)
             if (!memberUUID.equals(island.getOwner())) {
-                member.sendMessage("commands.island.reset.kicked-from-island", TextVariables.GAMEMODE, getAddon().getDescription().getName());
+                member.sendMessage("commands.island.reset.kicked-from-island", TextVariables.GAMEMODE,
+                        getAddon().getDescription().getName());
             }
             // Remove player
-            getIslands().removePlayer(getWorld(), memberUUID);
+            getIslands().removePlayer(island, memberUUID);
 
             // Clean player
             getPlayers().cleanLeavingPlayer(getWorld(), member, false, island);
 
             // Fire event
-            TeamEvent.builder()
-            .island(island)
-            .reason(TeamEvent.Reason.DELETE)
-            .involvedPlayer(memberUUID)
-            .build();
+            TeamEvent.builder().island(island).reason(TeamEvent.Reason.DELETE).involvedPlayer(memberUUID).build();
         });
     }
 }

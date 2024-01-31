@@ -23,6 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -46,7 +47,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminTeamAddCommandTest {
 
     private BentoBox plugin;
@@ -56,6 +57,8 @@ public class AdminTeamAddCommandTest {
     private IslandsManager im;
     private PlayersManager pm;
     private UUID notUUID;
+    @Mock
+    private Island island;
 
     /**
      */
@@ -77,7 +80,7 @@ public class AdminTeamAddCommandTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -94,8 +97,8 @@ public class AdminTeamAddCommandTest {
         im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        when(im.isOwner(any(), any())).thenReturn(true);
-        when(im.getOwner(any(), any())).thenReturn(uuid);
+        when(island.getOwner()).thenReturn(uuid);
+        when(im.getPrimaryIsland(any(), any())).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -157,7 +160,7 @@ public class AdminTeamAddCommandTest {
     @Test
     public void testExecuteUnknownPlayer() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
-        String[] name = {"tastybento", "poslovich"};
+        String[] name = { "tastybento", "poslovich" };
 
         // Unknown owner
         when(pm.getUUID(eq("tastybento"))).thenReturn(null);
@@ -178,7 +181,7 @@ public class AdminTeamAddCommandTest {
     @Test
     public void testExecuteTargetTargetInTeam() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
-        String[] name = {"tastybento", "poslovich"};
+        String[] name = { "tastybento", "poslovich" };
 
         when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
         when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
@@ -189,14 +192,13 @@ public class AdminTeamAddCommandTest {
         verify(user).sendMessage(eq("commands.island.team.invite.errors.already-on-team"));
     }
 
-
     /**
      * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteAddNoIsland() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
-        String[] name = {"tastybento", "poslovich"};
+        String[] name = { "tastybento", "poslovich" };
 
         when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
         when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
@@ -215,19 +217,17 @@ public class AdminTeamAddCommandTest {
     @Test
     public void testExecuteAddNotOwner() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
-        String[] name = {"tastybento", "poslovich"};
+        String[] name = { "tastybento", "poslovich" };
 
         when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
         when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
 
         // Has island, has team, but not an owner
-        when(im.hasIsland(any(),eq(uuid))).thenReturn(true);
-        when(im.inTeam(any(),eq(uuid))).thenReturn(true);
-        when(im.getOwner(any(),eq(uuid))).thenReturn(notUUID);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         // Island
-        Island island = mock(Island.class);
-        when(im.getIsland(any(), eq(uuid))).thenReturn(island);
+        when(island.getOwner()).thenReturn(notUUID);
 
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         verify(user).sendMessage("commands.admin.team.add.name-not-owner", "[name]", "tastybento");
@@ -240,15 +240,14 @@ public class AdminTeamAddCommandTest {
     @Test
     public void testExecuteAddTargetHasIsland() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
-        String[] name = {"tastybento", "poslovich"};
+        String[] name = { "tastybento", "poslovich" };
 
         when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
         when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
 
         // Has island, has team, is owner
-        when(im.hasIsland(any(),eq(uuid))).thenReturn(true);
-        when(im.inTeam(any(),eq(uuid))).thenReturn(true);
-        when(im.getOwner(any(), eq(uuid))).thenReturn(uuid);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         // Target has island
         when(im.hasIsland(any(), eq(notUUID))).thenReturn(true);
@@ -264,7 +263,7 @@ public class AdminTeamAddCommandTest {
     @Test
     public void testExecuteAddTargetHasIslandNoTeam() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
-        String[] name = {"tastybento", "poslovich"};
+        String[] name = { "tastybento", "poslovich" };
 
         when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
         when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
@@ -282,12 +281,13 @@ public class AdminTeamAddCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamAddCommand#execute(User, String, List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteSuccess() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
-        String[] name = {"tastybento", "poslovich"};
+        String[] name = { "tastybento", "poslovich" };
 
         when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
         when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);

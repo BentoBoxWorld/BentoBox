@@ -3,9 +3,7 @@
 // Copyright - 2021
 //
 
-
 package world.bentobox.bentobox.api.panels.reader;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,13 +27,32 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * @since 1.17.3
  */
-public record ItemTemplateRecord(@Nullable ItemStack icon,
+public record ItemTemplateRecord(
+        /**
+         * ItemStack of the Item
+         */
+        @Nullable ItemStack icon,
+        /**
+         * Title of the item
+         */
         @Nullable String title,
+        /**
+         * Lore message of the item
+         */
         @Nullable String description,
+        /**
+         * List of Actions for a button
+         */
         @NonNull List<ActionRecords> actions,
+        /**
+         * DataMap that links additional objects for a button.
+         */
         @NonNull Map<String, Object> dataMap,
-        @Nullable ItemTemplateRecord fallback)
-{
+        /**
+         * FallBack item if current one is not possible to generate.
+         */
+        @Nullable ItemTemplateRecord fallback) {
+
     /**
      * Instantiates a new Item template record without actions and data map.
      *
@@ -44,38 +61,31 @@ public record ItemTemplateRecord(@Nullable ItemStack icon,
      * @param description the description
      * @param fallback the fallback
      */
-    public ItemTemplateRecord(ItemStack icon, String title, String description, ItemTemplateRecord fallback)
-    {
+    public ItemTemplateRecord(ItemStack icon, String title, String description, ItemTemplateRecord fallback) {
         this(icon, title, description, new ArrayList<>(6), new HashMap<>(0), fallback);
     }
-
 
     /**
      * This method adds given object associated with key into data map.
      * @param key Key value of object.
      * @param data Data that is associated with a key.
      */
-    public void addData(String key, Object data)
-    {
+    public void addData(String key, Object data) {
         this.dataMap.put(key, data);
     }
-
 
     /**
      * Add action to the actions list.
      *
      * @param actionData the action data
      */
-    public void addAction(ActionRecords actionData)
-    {
+    public void addAction(ActionRecords actionData) {
         this.actions.add(actionData);
     }
-
 
     // ---------------------------------------------------------------------
     // Section: Classes
     // ---------------------------------------------------------------------
-
 
     /**
      * The Action Records holds data about each action.
@@ -85,5 +95,22 @@ public record ItemTemplateRecord(@Nullable ItemStack icon,
      * @param content the content of the action
      * @param tooltip the tooltip of action
      */
-    public record ActionRecords(ClickType clickType, String actionType, String content, String tooltip) {}
+    public record ActionRecords(
+            /**
+             * the click type
+             */
+            ClickType clickType,
+            /**
+             * the string that represents action type
+             */
+            String actionType,
+            /**
+             * the content of the action
+             */
+            String content,
+            /**
+             * the tooltip of action
+             */
+            String tooltip) {
+    }
 }

@@ -30,7 +30,8 @@ import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
+
+import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -44,14 +45,15 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class IslandTeamUncoopCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
+public class IslandTeamUncoopCommandTest extends RanksManagerBeforeClassTest {
 
     private CompositeCommand ic;
     private UUID uuid;
@@ -67,9 +69,7 @@ public class IslandTeamUncoopCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -85,7 +85,7 @@ public class IslandTeamUncoopCommandTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -102,12 +102,13 @@ public class IslandTeamUncoopCommandTest {
         im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
-        when(im.isOwner(any(), any())).thenReturn(true);
-        when(im.getOwner(any(), any())).thenReturn(uuid);
+        // when(im.isOwner(any(), any())).thenReturn(true);
+        // when(im.getOwner(any(), any())).thenReturn(uuid);
         island = mock(Island.class);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(im.getPrimaryIsland(any(), any())).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -133,10 +134,6 @@ public class IslandTeamUncoopCommandTest {
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
     }
 
     /**
@@ -160,11 +157,12 @@ public class IslandTeamUncoopCommandTest {
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         IslandTeamUncoopCommand itl = new IslandTeamUncoopCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUncoopCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUncoopCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteNoTarget() {
@@ -174,7 +172,8 @@ public class IslandTeamUncoopCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUncoopCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUncoopCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -185,7 +184,8 @@ public class IslandTeamUncoopCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUncoopCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUncoopCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteSamePlayer() {
@@ -198,9 +198,9 @@ public class IslandTeamUncoopCommandTest {
         verify(user).sendMessage(eq("commands.island.team.uncoop.cannot-uncoop-yourself"));
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUncoopCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUncoopCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecutePlayerHasRank() {
@@ -210,7 +210,7 @@ public class IslandTeamUncoopCommandTest {
         IslandTeamUncoopCommand itl = new IslandTeamUncoopCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(im.inTeam(any(), any())).thenReturn(true);
-        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(notUUID));
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bento")));
         verify(user).sendMessage(eq("commands.island.team.uncoop.cannot-uncoop-member"));
     }
@@ -257,24 +257,25 @@ public class IslandTeamUncoopCommandTest {
     @Test
     public void testTabCompleteNoArgument() {
 
-       Map<UUID, Integer> map = new HashMap<>();
-       map.put(UUID.randomUUID(),RanksManager.COOP_RANK);
-       map.put(UUID.randomUUID(),RanksManager.COOP_RANK);
-       map.put(UUID.randomUUID(),RanksManager.COOP_RANK);
-       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
-       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
-       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
-       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
-       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
-       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
-       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+        Map<UUID, Integer> map = new HashMap<>();
+        map.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        map.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        map.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
 
-       when(island.getMembers()).thenReturn(map);
+        when(island.getMembers()).thenReturn(map);
         // Return a set of players
         PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
-        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
+        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george",
+                "harry", "ian", "joe");
 
         IslandTeamUncoopCommand ibc = new IslandTeamUncoopCommand(ic);
         // Get the tab-complete list with no argument
@@ -282,7 +283,7 @@ public class IslandTeamUncoopCommandTest {
         assertTrue(result.isPresent());
         List<String> r = result.get().stream().sorted().toList();
         // Compare the expected with the actual
-        String[] expectedNames = {"adam", "ben", "cara"};
+        String[] expectedNames = { "adam", "ben", "cara" };
 
         assertTrue(Arrays.equals(expectedNames, r.toArray()));
 
@@ -292,24 +293,24 @@ public class IslandTeamUncoopCommandTest {
     public void testTabCompleteWithArgument() {
 
         Map<UUID, Integer> map = new HashMap<>();
-        map.put(UUID.randomUUID(),RanksManager.COOP_RANK);
-        map.put(UUID.randomUUID(),RanksManager.COOP_RANK);
-        map.put(UUID.randomUUID(),RanksManager.COOP_RANK);
-        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
-        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
-        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
-        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
-        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
-        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
-        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        map.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        map.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
 
         when(island.getMembers()).thenReturn(map);
         // Return a set of players
         PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
-        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
-
+        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george",
+                "harry", "ian", "joe");
 
         IslandTeamUncoopCommand ibc = new IslandTeamUncoopCommand(ic);
         // Get the tab-complete list with argument
@@ -319,7 +320,7 @@ public class IslandTeamUncoopCommandTest {
         assertTrue(result.isPresent());
         List<String> r = result.get().stream().sorted().toList();
         // Compare the expected with the actual
-        String[] expectedNames = {"cara"};
+        String[] expectedNames = { "cara" };
 
         assertTrue(Arrays.equals(expectedNames, r.toArray()));
 

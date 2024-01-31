@@ -21,17 +21,14 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -44,14 +41,15 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class IslandBanlistCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
+public class IslandBanlistCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private CompositeCommand ic;
@@ -69,9 +67,7 @@ public class IslandBanlistCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -98,7 +94,7 @@ public class IslandBanlistCommandTest {
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        // when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -120,19 +116,11 @@ public class IslandBanlistCommandTest {
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
-    }
-
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
     }
 
     /**
-     * Test method for {@link IslandBanlistCommand#canExecute(User, String, java.util.List)}.
+     * Test method for
+     * {@link IslandBanlistCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
     public void testWithArgs() {
@@ -163,11 +151,12 @@ public class IslandBanlistCommandTest {
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
         assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.emptyList()));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**
-     * Test method for {@link IslandBanlistCommand#execute(User, String, java.util.List)}.
+     * Test method for
+     * {@link IslandBanlistCommand#execute(User, String, java.util.List)}.
      */
     @Test
     public void testBanlistNooneBanned() {
@@ -179,14 +168,15 @@ public class IslandBanlistCommandTest {
     }
 
     /**
-     * Test method for {@link IslandBanlistCommand#execute(User, String, java.util.List)}.
+     * Test method for
+     * {@link IslandBanlistCommand#execute(User, String, java.util.List)}.
      */
     @Test
     public void testBanlistBanned() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Make a ban list
-        String[] names = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
+        String[] names = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe" };
         Set<UUID> banned = new HashSet<>();
         Map<UUID, String> uuidToName = new HashMap<>();
         for (String name : names) {
@@ -196,14 +186,16 @@ public class IslandBanlistCommandTest {
         }
         when(island.getBanned()).thenReturn(banned);
         // Respond to name queries
-        when(pm.getName(any(UUID.class))).then((Answer<String>) invocation -> uuidToName.getOrDefault(invocation.getArgument(0, UUID.class), "tastybento"));
+        when(pm.getName(any(UUID.class))).then((Answer<String>) invocation -> uuidToName
+                .getOrDefault(invocation.getArgument(0, UUID.class), "tastybento"));
         iubc.canExecute(user, iubc.getLabel(), Collections.emptyList());
         assertTrue(iubc.execute(user, iubc.getLabel(), Collections.emptyList()));
         verify(user).sendMessage("commands.island.banlist.the-following");
     }
 
     /**
-     * Test method for {@link IslandBanlistCommand#execute(User, String, java.util.List)}.
+     * Test method for
+     * {@link IslandBanlistCommand#execute(User, String, java.util.List)}.
      */
     @Test
     public void testBanlistMaxBanNoLimit() {

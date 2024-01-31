@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.database.objects;
 
 import static org.junit.Assert.assertEquals;
@@ -9,6 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -24,8 +24,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +54,7 @@ import world.bentobox.bentobox.util.Pair;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class})
+@PrepareForTest({ Bukkit.class })
 public class IslandTest {
 
     private static final int DISTANCE = 400;
@@ -74,9 +74,6 @@ public class IslandTest {
     @Mock
     private CommandsManager cm;
 
-
-    /**
-     */
     @Before
     public void setUp() throws Exception {
         // Set up plugin
@@ -88,6 +85,7 @@ public class IslandTest {
 
         // Location
         when(location.clone()).thenReturn(location);
+        when(location.toVector()).thenReturn(new Vector(0, 0, 0));
         when(world.getName()).thenReturn("bskyblock_world");
         when(location.getWorld()).thenReturn(world);
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
@@ -107,13 +105,7 @@ public class IslandTest {
         // Commands manager
         when(plugin.getCommandsManager()).thenReturn(cm);
 
-        i = new Island(new Island(location, uuid , 100));
-    }
-
-    /**
-     */
-    @After
-    public void tearDown() throws Exception {
+        i = new Island(new Island(location, uuid, 100));
     }
 
     /**
@@ -451,7 +443,7 @@ public class IslandTest {
      */
     @Test
     public void testInIslandSpaceIntInt() {
-        assertTrue(i.inIslandSpace(0,0));
+        assertTrue(i.inIslandSpace(0, 0));
     }
 
     /**
@@ -480,7 +472,8 @@ public class IslandTest {
         i.setWorld(world);
         when(location.getWorld()).thenReturn(world);
         assertNotNull(i.getBoundingBox());
-        assertEquals("BoundingBox [minX=-" + DISTANCE + ".0, minY=0.0, minZ=-" + DISTANCE + ".0, maxX=" + DISTANCE + ".0, maxY=0.0, maxZ=" + DISTANCE + ".0]", i.getBoundingBox().toString());
+        assertEquals("BoundingBox [minX=-" + DISTANCE + ".0, minY=0.0, minZ=-" + DISTANCE + ".0, maxX=" + DISTANCE
+                + ".0, maxY=0.0, maxZ=" + DISTANCE + ".0]", i.getBoundingBox().toString());
     }
 
     /**
@@ -564,7 +557,8 @@ public class IslandTest {
     public void testGetProtectionBoundingBox() {
         i.setWorld(world);
         assertNotNull(i.getProtectionBoundingBox());
-        assertEquals("BoundingBox [minX=-100.0, minY=0.0, minZ=-100.0, maxX=100.0, maxY=0.0, maxZ=100.0]", i.getProtectionBoundingBox().toString());
+        assertEquals("BoundingBox [minX=-100.0, minY=0.0, minZ=-100.0, maxX=100.0, maxY=0.0, maxZ=100.0]",
+                i.getProtectionBoundingBox().toString());
     }
 
     /**
@@ -811,8 +805,7 @@ public class IslandTest {
      */
     @Test
     public void testToggleFlagFlagBoolean() {
-        Flag f = Flags.values().stream().filter(Flag::hasSubflags)
-                .filter(fl -> fl.getType().equals(Type.SETTING))
+        Flag f = Flags.values().stream().filter(Flag::hasSubflags).filter(fl -> fl.getType().equals(Type.SETTING))
                 .findFirst().orElse(null);
         if (f != null) {
             i.toggleFlag(f, true);
@@ -1156,7 +1149,10 @@ public class IslandTest {
      */
     @Test
     public void testGetHome() {
-        assertNull(i.getHome("default"));
+        Location home = i.getHome("default");
+        assertEquals(0.5D, home.getX(), 0.0D);
+        assertEquals(0.0D, home.getY(), 0.0D);
+        assertEquals(0.5D, home.getZ(), 0.0D);
     }
 
     /**
@@ -1174,6 +1170,18 @@ public class IslandTest {
     @Test
     public void testAddHome() {
         i.addHome("backyard", location);
+        assertEquals(location, i.getHome("backyard"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.objects.Island#addHome(java.lang.String, org.bukkit.Location)}.
+     */
+    @Test
+    public void testAddHomeOutsideIsland() {
+        when(location.toVector()).thenReturn(new Vector(1000000, 0, 10000000));
+        i.addHome("backyard", location);
+        // Check there is a warning about this home being outside of the island
+        verify(plugin, times(3)).logWarning(anyString());
         assertEquals(location, i.getHome("backyard"));
     }
 

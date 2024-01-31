@@ -52,7 +52,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class })
 public class IslandNearCommandTest {
 
     @Mock
@@ -109,7 +109,8 @@ public class IslandNearCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.isOnline()).thenReturn(true);
         when(user.getPlayer()).thenReturn(p);
-        when(user.getTranslation(any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -122,10 +123,9 @@ public class IslandNearCommandTest {
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getIslandDistance(any())).thenReturn(400);
 
-
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        // when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
         Optional<Island> optionalIsland = Optional.of(island);
         when(im.getIslandAt(any(Location.class))).thenReturn(optionalIsland);
@@ -136,7 +136,8 @@ public class IslandNearCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(lm.get(Mockito.any(), Mockito.any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
@@ -153,7 +154,6 @@ public class IslandNearCommandTest {
         when(block.getLocation()).thenReturn(location);
         when(island.getName()).thenReturn("Island name");
 
-
         // The command
         inc = new IslandNearCommand(ic);
     }
@@ -167,7 +167,8 @@ public class IslandNearCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -179,12 +180,13 @@ public class IslandNearCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteWithArgsShowHelp() {
         assertFalse(inc.canExecute(user, "near", Collections.singletonList("fghjk")));
-        verify(user).sendMessage(eq("commands.help.header"), eq(TextVariables.LABEL), eq("BSkyBlock"));
+        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
     }
 
     /**
@@ -228,24 +230,21 @@ public class IslandNearCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringAllFourPoints() {
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.island.near.the-following-islands"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.north"),
-                eq(TextVariables.NAME), eq("Island name"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.east"),
-                eq(TextVariables.NAME), eq("Island name"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.south"),
-                eq(TextVariables.NAME), eq("Island name"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.west"),
-                eq(TextVariables.NAME), eq("Island name"));
+        verify(user).sendMessage("commands.island.near.the-following-islands");
+        verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.north",
+                TextVariables.NAME, "Island name");
+        verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.east",
+                TextVariables.NAME, "Island name");
+        verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.south",
+                TextVariables.NAME, "Island name");
+        verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.west",
+                TextVariables.NAME, "Island name");
     }
 
     /**
@@ -257,19 +256,12 @@ public class IslandNearCommandTest {
         when(island.isUnowned()).thenReturn(true);
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
         verify(user).sendMessage(eq("commands.island.near.the-following-islands"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.north"),
-                eq(TextVariables.NAME), eq("commands.admin.info.unowned"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.east"),
-                eq(TextVariables.NAME), eq("commands.admin.info.unowned"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.south"),
-                eq(TextVariables.NAME), eq("commands.admin.info.unowned"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.west"),
-                eq(TextVariables.NAME), eq("commands.admin.info.unowned"));
+        verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.north", TextVariables.NAME, "commands.admin.info.unowned");
+        verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.east", TextVariables.NAME, "commands.admin.info.unowned");
+        verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.south", TextVariables.NAME, "commands.admin.info.unowned");
+        verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.west", TextVariables.NAME, "commands.admin.info.unowned");
     }
+
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
@@ -277,19 +269,19 @@ public class IslandNearCommandTest {
     public void testExecuteUserStringListOfStringNoName() {
         when(island.getName()).thenReturn("");
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.island.near.the-following-islands"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.north"),
-                eq(TextVariables.NAME), eq("tastybento"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.east"),
-                eq(TextVariables.NAME), eq("tastybento"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.south"),
-                eq(TextVariables.NAME), eq("tastybento"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.west"),
-                eq(TextVariables.NAME), eq("tastybento"));
+        verify(user).sendMessage("commands.island.near.the-following-islands");
+        verify(user).sendMessage("commands.island.near.syntax",
+                "[direction]", "commands.island.near.north",
+                TextVariables.NAME, "tastybento");
+        verify(user).sendMessage("commands.island.near.syntax",
+                "[direction]", "commands.island.near.east",
+                TextVariables.NAME, "tastybento");
+        verify(user).sendMessage("commands.island.near.syntax",
+                "[direction]", "commands.island.near.south",
+                TextVariables.NAME, "tastybento");
+        verify(user).sendMessage("commands.island.near.syntax",
+                "[direction]", "commands.island.near.west",
+                TextVariables.NAME, "tastybento");
     }
 
     /**
@@ -299,9 +291,9 @@ public class IslandNearCommandTest {
     public void testExecuteUserStringListOfStringNoIslands() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.island.near.the-following-islands"));
+        verify(user).sendMessage("commands.island.near.the-following-islands");
         verify(user, never()).sendMessage(any(), any(), any(), any(), any());
-        verify(user).sendMessage(eq("commands.island.near.no-neighbors"));
+        verify(user).sendMessage("commands.island.near.no-neighbors");
     }
 
 }

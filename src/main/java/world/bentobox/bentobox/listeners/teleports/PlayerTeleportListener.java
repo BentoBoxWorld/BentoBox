@@ -301,7 +301,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
 
         // Find the distance from edge of island's protection and set the search radius
         this.getIsland(event.getTo()).ifPresent(island ->
-        event.setSearchRadius(this.calculateSearchRadius(event.getTo(), island)));
+            event.setSearchRadius(this.calculateSearchRadius(event.getTo(), island)));
 
         // Check if there is an island there or not
         if (this.isPastingMissingIslands(overWorld) &&
@@ -327,7 +327,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             return;
         }
 
-        if (environment.equals(World.Environment.THE_END))
+        if (World.Environment.THE_END.equals(environment))
         {
             // Prevent death from hitting the ground while calculating location.
             event.getPlayer().setVelocity(new Vector(0,0,0));
@@ -374,14 +374,14 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
         Location spawnPoint = toWorld.getSpawnLocation();
 
         // If going to the nether and nether portals are active then just teleport to approx location
-        if (environment.equals(World.Environment.NETHER) &&
+        if (World.Environment.NETHER.equals(environment) &&
                 this.plugin.getIWM().getWorldSettings(overWorld).isMakeNetherPortals())
         {
             spawnPoint = event.getFrom().toVector().toLocation(toWorld);
         }
 
         // If spawn is set as 0,63,0 in the End then move it to 100, 50 ,0.
-        if (environment.equals(World.Environment.THE_END) && spawnPoint.getBlockX() == 0 && spawnPoint.getBlockZ() == 0)
+        if (World.Environment.THE_END.equals(environment) && spawnPoint.getBlockX() == 0 && spawnPoint.getBlockZ() == 0)
         {
             // Set to the default end spawn
             spawnPoint = new Location(toWorld, 100, 50, 0);
@@ -413,7 +413,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
      */
     private void handleFromStandardNetherOrEnd(PlayerPortalEvent event, World overWorld, World.Environment environment)
     {
-        if (environment.equals(World.Environment.NETHER) &&
+        if (World.Environment.NETHER.equals(environment) &&
                 this.plugin.getIWM().getWorldSettings(overWorld).isMakeNetherPortals())
         {
             // Set to location directly to the from location.

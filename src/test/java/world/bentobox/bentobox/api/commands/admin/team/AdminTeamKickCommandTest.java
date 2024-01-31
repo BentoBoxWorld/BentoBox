@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,7 +51,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminTeamKickCommandTest {
 
     @Mock
@@ -89,7 +88,7 @@ public class AdminTeamKickCommandTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -105,12 +104,11 @@ public class AdminTeamKickCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
 
-
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        when(im.isOwner(any(),any())).thenReturn(true);
-        when(im.getOwner(any(),any())).thenReturn(uuid);
+        // when(im.isOwner(any(),any())).thenReturn(true);
+        // when(im.getOwner(any(),any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -168,7 +166,7 @@ public class AdminTeamKickCommandTest {
     public void testCanExecutePlayerNotInTeam() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         when(pm.getUUID(any())).thenReturn(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(new HashSet<>());
+        // when(im.getMembers(any(), any())).thenReturn(new HashSet<>());
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         verify(user).sendMessage(eq("commands.admin.team.kick.not-in-team"));
     }

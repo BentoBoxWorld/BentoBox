@@ -43,7 +43,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminSetspawnCommandTest {
 
     private CompositeCommand ac;
@@ -62,7 +62,6 @@ public class AdminSetspawnCommandTest {
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
-
 
         // Player
         Player p = mock(Player.class);
@@ -85,15 +84,13 @@ public class AdminSetspawnCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
 
-
         // Player has island to begin with
         im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        when(im.isOwner(any(),any())).thenReturn(true);
-        when(im.getOwner(any(),any())).thenReturn(uuid);
+        // when(im.isOwner(any(),any())).thenReturn(true);
+        // when(im.getOwner(any(),any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
-
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
@@ -105,7 +102,8 @@ public class AdminSetspawnCommandTest {
         when(lm.get(any(), any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Return the reference (USE THIS IN THE FUTURE)
-        when(user.getTranslation(Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(Mockito.anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Plugin Manager
         PluginManager pim = mock(PluginManager.class);
@@ -116,13 +114,16 @@ public class AdminSetspawnCommandTest {
         when(settings.getConfirmationTime()).thenReturn(10);
         when(plugin.getSettings()).thenReturn(settings);
     }
+
     @After
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
     }
+
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#AdminSetspawnCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#AdminSetspawnCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
     public void testAdminSetspawnCommand() {
@@ -131,7 +132,8 @@ public class AdminSetspawnCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -142,7 +144,8 @@ public class AdminSetspawnCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfString() {
@@ -166,7 +169,8 @@ public class AdminSetspawnCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringAlreadySpawn() {

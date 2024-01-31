@@ -15,7 +15,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +23,6 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -34,14 +32,15 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
-public class DefaultPlayerCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class })
+public class DefaultPlayerCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     GameModeAddon addon;
@@ -54,7 +53,6 @@ public class DefaultPlayerCommandTest {
     private IslandsManager im;
     @Mock
     private @Nullable Island island;
-
 
     class PlayerCommand extends DefaultPlayerCommand {
 
@@ -69,11 +67,7 @@ public class DefaultPlayerCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
-        // Addon
+        super.setUp();
 
         // User
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
@@ -100,14 +94,8 @@ public class DefaultPlayerCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#DefaultPlayerCommand(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#DefaultPlayerCommand(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
     public void testDefaultPlayerCommand() {
@@ -115,7 +103,8 @@ public class DefaultPlayerCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -127,7 +116,8 @@ public class DefaultPlayerCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringUnknownCommand() {
@@ -136,14 +126,17 @@ public class DefaultPlayerCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNullUser() {
         assertFalse(dpc.execute(null, "label", List.of()));
     }
+
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringEmptyArgsHasIsland() {

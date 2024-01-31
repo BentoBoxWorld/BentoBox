@@ -17,6 +17,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Command to coop another player
+ * 
  * @author tastybento
  *
  */
@@ -47,7 +48,8 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             return false;
         }
         // Player issuing the command must have an island or be in a team
-        if (!getIslands().inTeam(getWorld(), user.getUniqueId()) && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId())
+                && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
@@ -55,7 +57,8 @@ public class IslandTeamCoopCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user);
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
         // Get target player
@@ -73,11 +76,13 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.coop.cannot-coop-yourself");
             return false;
         }
-        if (getIslands().getMembers(getWorld(), user.getUniqueId(), RanksManager.COOP_RANK).contains(targetUUID)) {
+        if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).getMemberSet(RanksManager.COOP_RANK)
+                .contains(targetUUID)) {
             user.sendMessage("commands.island.team.coop.already-has-rank");
             return false;
         }
-        if (itc.isInvited(targetUUID) && itc.getInviter(targetUUID).equals(user.getUniqueId()) && itc.getInvite(targetUUID).getType().equals(Type.COOP)) {
+        if (itc.isInvited(targetUUID) && user.getUniqueId().equals(itc.getInviter(targetUUID))
+                && itc.getInvite(targetUUID) != null && itc.getInvite(targetUUID).getType().equals(Type.COOP)) {
             // Prevent spam
             user.sendMessage("commands.island.team.invite.errors.you-have-already-invited");
             return false;
@@ -92,21 +97,27 @@ public class IslandTeamCoopCommand extends CompositeCommand {
         if (island != null) {
             if (getPlugin().getSettings().isInviteConfirmation()) {
                 // Put the invited player (key) onto the list with inviter (value)
-                // If someone else has invited a player, then this invite will overwrite the previous invite!
-                itc.addInvite(Invite.Type.COOP, user.getUniqueId(), target.getUniqueId());
+                // If someone else has invited a player, then this invite will overwrite the
+                // previous invite!
+                itc.addInvite(Invite.Type.COOP, user.getUniqueId(), target.getUniqueId(), island);
                 user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName());
                 // Send message to online player
-                target.sendMessage("commands.island.team.coop.name-has-invited-you", TextVariables.NAME, user.getName());
-                target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
+                target.sendMessage("commands.island.team.coop.name-has-invited-you", TextVariables.NAME,
+                        user.getName());
+                target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL,
+                        getTopLabel());
             } else {
-                if (island.getMemberSet(RanksManager.COOP_RANK, false).size() >= getIslands().getMaxMembers(island, RanksManager.COOP_RANK)) {
+                if (island.getMemberSet(RanksManager.COOP_RANK, false).size() >= getIslands().getMaxMembers(island,
+                        RanksManager.COOP_RANK)) {
                     user.sendMessage("commands.island.team.coop.is-full");
                     return false;
                 }
 
                 island.setRank(target, RanksManager.COOP_RANK);
-                user.sendMessage("commands.island.team.coop.success", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
-                target.sendMessage("commands.island.team.coop.you-are-a-coop-member", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
+                user.sendMessage("commands.island.team.coop.success", TextVariables.NAME, target.getName(),
+                        TextVariables.DISPLAY_NAME, target.getDisplayName());
+                target.sendMessage("commands.island.team.coop.you-are-a-coop-member", TextVariables.NAME,
+                        user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
             }
             return true;
         } else {
@@ -118,7 +129,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (lastArg.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

@@ -49,7 +49,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
 public class AdminTeleportCommandTest {
 
     @Mock
@@ -78,7 +78,6 @@ public class AdminTeleportCommandTest {
     @Mock
     private PlaceholdersManager phm;
 
-
     /**
      */
     @Before
@@ -96,7 +95,7 @@ public class AdminTeleportCommandTest {
         when(user.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(p.getUniqueId()).thenReturn(uuid);
@@ -124,7 +123,6 @@ public class AdminTeleportCommandTest {
         when(netherWorld.getEnvironment()).thenReturn(Environment.NETHER);
         when(endWorld.getEnvironment()).thenReturn(Environment.THE_END);
 
-
         // Island World Manager
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getNetherWorld(any())).thenReturn(netherWorld);
@@ -133,8 +131,8 @@ public class AdminTeleportCommandTest {
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        when(im.isOwner(any(),any())).thenReturn(true);
-        when(im.getOwner(any(),any())).thenReturn(uuid);
+        // when(im.isOwner(any(),any())).thenReturn(true);
+        // when(im.getOwner(any(),any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -152,7 +150,8 @@ public class AdminTeleportCommandTest {
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
 
-        when(user.getTranslation(anyString(),anyString(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString(), anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Island location
         Location location = mock(Location.class);
@@ -172,7 +171,7 @@ public class AdminTeleportCommandTest {
 
         when(island.getCenter()).thenReturn(location);
         when(location.clone()).thenReturn(location);
-        when(location.toVector()).thenReturn(new Vector(0,0,0));
+        when(location.toVector()).thenReturn(new Vector(0, 0, 0));
         when(island.getProtectionCenter()).thenReturn(location);
         // Util
         PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
@@ -193,12 +192,12 @@ public class AdminTeleportCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfString() {
-        AdminTeleportCommand c = new AdminTeleportCommand(ac,"tp");
-        assertEquals("tp",c.getLabel());
-        c = new AdminTeleportCommand(ac,"tpnether");
-        assertEquals("tpnether",c.getLabel());
-        c = new AdminTeleportCommand(ac,"tpend");
-        assertEquals("tpend",c.getLabel());
+        AdminTeleportCommand c = new AdminTeleportCommand(ac, "tp");
+        assertEquals("tp", c.getLabel());
+        c = new AdminTeleportCommand(ac, "tpnether");
+        assertEquals("tpnether", c.getLabel());
+        c = new AdminTeleportCommand(ac, "tpend");
+        assertEquals("tpend", c.getLabel());
     }
 
     /**
@@ -206,14 +205,14 @@ public class AdminTeleportCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringEmptyArgs() {
-        AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tp");
+        AdminTeleportCommand atc = new AdminTeleportCommand(ac, "tp");
         assertFalse(atc.canExecute(user, "tp", new ArrayList<>()));
         verify(user).sendMessage(eq("commands.help.header"), eq(TextVariables.LABEL), eq(null));
     }
 
     @Test
     public void testExecuteUserStringListOfStringUnknownTarget() {
-        AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tp");
+        AdminTeleportCommand atc = new AdminTeleportCommand(ac, "tp");
         assertFalse(atc.canExecute(user, "tp", List.of("tastybento")));
         verify(user).sendMessage(eq("general.errors.unknown-player"), eq(TextVariables.NAME), eq("tastybento"));
     }

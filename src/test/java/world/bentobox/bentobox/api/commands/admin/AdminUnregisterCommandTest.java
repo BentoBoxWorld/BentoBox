@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -27,6 +28,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -49,20 +51,25 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
-
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminUnregisterCommandTest {
 
+    @Mock
     private CompositeCommand ac;
+    @Mock
     private User user;
+    @Mock
     private IslandsManager im;
+    @Mock
     private PlayersManager pm;
     private UUID notUUID;
+    @Mock
+    private World world;
 
     /**
      */
@@ -84,12 +91,10 @@ public class AdminUnregisterCommandTest {
 
         // Player
         Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -98,24 +103,21 @@ public class AdminUnregisterCommandTest {
         User.setPlugin(plugin);
 
         // Parent command has no aliases
-        ac = mock(CompositeCommand.class);
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
+        when(ac.getWorld()).thenReturn(world);
 
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
 
-
         // Player has island to begin with
-        im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        when(im.isOwner(any(),any())).thenReturn(true);
-        when(im.getOwner(any(),any())).thenReturn(uuid);
+        // when(im.isOwner(any(),any())).thenReturn(true);
+        // when(im.getOwner(any(),any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        pm = mock(PlayersManager.class);
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
@@ -143,7 +145,8 @@ public class AdminUnregisterCommandTest {
     }
 
     /**
-     * Test method for {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
+     * Test method for
+     * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
     public void testExecuteNoTarget() {
@@ -153,24 +156,26 @@ public class AdminUnregisterCommandTest {
     }
 
     /**
-     * Test method for {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
+     * Test method for
+     * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
         AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
-        String[] name = {"tastybento"};
+        String[] name = { "tastybento" };
         when(pm.getUUID(any())).thenReturn(null);
         assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
         verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
     }
 
     /**
-     * Test method for {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
+     * Test method for
+     * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
     public void testExecutePlayerNoIsland() {
         AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
-        String[] name = {"tastybento"};
+        String[] name = { "tastybento" };
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
@@ -207,7 +212,7 @@ public class AdminUnregisterCommandTest {
         @Nullable
         Location center = mock(Location.class);
         when(oldIsland.getCenter()).thenReturn(center);
-        when(center.toVector()).thenReturn(new Vector(1,2,3));
+        when(center.toVector()).thenReturn(new Vector(1, 2, 3));
         // Members
         UUID uuid1 = UUID.randomUUID();
         UUID uuid2 = UUID.randomUUID();
@@ -225,11 +230,12 @@ public class AdminUnregisterCommandTest {
         AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
         UUID targetUUID = UUID.randomUUID();
         itl.unregisterPlayer(user, "name", targetUUID);
-        verify(user).sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, "1,2,3", TextVariables.NAME, "name");
+        verify(user).sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, "1,2,3",
+                TextVariables.NAME, "name");
         assertTrue(map.isEmpty());
-        verify(im).removePlayer(any(), eq(uuid1));
-        verify(im).removePlayer(any(), eq(uuid2));
-        verify(im).removePlayer(any(), eq(uuid3));
-        verify(im, never()).removePlayer(any(), eq(uuid4));
+        verify(im).removePlayer(any(World.class), eq(uuid1));
+        verify(im).removePlayer(any(World.class), eq(uuid2));
+        verify(im).removePlayer(any(World.class), eq(uuid3));
+        verify(im, never()).removePlayer(any(World.class), eq(uuid4));
     }
 }

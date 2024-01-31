@@ -976,9 +976,9 @@ protection:
       island: "[name]"
       name: Giriş/çıkış mesajları
       now-entering: "&d[name] &badasına girdin!"
-      now-entering-your-island: "&aAdana giriş yaptın."
+      now-entering-your-island: "&aAdana giriş yaptın: &b [name]"
       now-leaving: "&d[name] &badasından çıktın!"
-      now-leaving-your-island: "&aAdandan çıktın."
+      now-leaving-your-island: "&aAdandan çıktın: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: XP şisesi fırlatması
       description: XP şişe fırlatılmasını değiş.

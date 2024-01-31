@@ -36,12 +36,11 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminRangeDisplayCommandTest {
 
     private CompositeCommand ac;
     private User user;
-
 
     /**
      */
@@ -63,7 +62,7 @@ public class AdminRangeDisplayCommandTest {
         when(user.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
         UUID notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -80,13 +79,10 @@ public class AdminRangeDisplayCommandTest {
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
-
         // Player has island to begin with
         IslandsManager im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
-        when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
-        when(im.getOwner(Mockito.any(),Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -103,7 +99,7 @@ public class AdminRangeDisplayCommandTest {
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
         Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer );
+        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer);
         when(plugin.getLocalesManager()).thenReturn(lm);
     }
 
@@ -114,7 +110,8 @@ public class AdminRangeDisplayCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecutePlayerDisplayArgs() {
@@ -130,7 +127,8 @@ public class AdminRangeDisplayCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecutePlayeShowArgs() {
@@ -147,7 +145,8 @@ public class AdminRangeDisplayCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecutePlayeHideArgs() {

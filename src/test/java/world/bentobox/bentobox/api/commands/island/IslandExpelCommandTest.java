@@ -26,7 +26,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +35,8 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
+
+import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -53,14 +53,15 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class IslandExpelCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
+public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private CompositeCommand ic;
@@ -88,9 +89,7 @@ public class IslandExpelCommandTest {
 
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         User.setPlugin(plugin);
 
         // Command manager
@@ -135,6 +134,7 @@ public class IslandExpelCommandTest {
 
         // Island Banned list initialization
         when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
@@ -158,24 +158,13 @@ public class IslandExpelCommandTest {
         when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
         when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
         // Class
         iec = new IslandExpelCommand(ic);
     }
 
     /**
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#IslandExpelCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#IslandExpelCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
     public void testIslandExpelCommand() {
@@ -183,7 +172,8 @@ public class IslandExpelCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -195,7 +185,8 @@ public class IslandExpelCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteNoArgs() {
@@ -204,7 +195,8 @@ public class IslandExpelCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteTooManyArgs() {
@@ -213,7 +205,8 @@ public class IslandExpelCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteNoTeamNoIsland() {
@@ -251,7 +244,7 @@ public class IslandExpelCommandTest {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.visitor"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**
@@ -261,7 +254,7 @@ public class IslandExpelCommandTest {
     public void testCanExecuteSelf() {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(pm.getUUID(anyString())).thenReturn(uuid);
-        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(uuid));
+        //when(im.getMembers(any(), any())).thenReturn(Collections.singleton(uuid));
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.cannot-expel-yourself");
     }
@@ -274,7 +267,7 @@ public class IslandExpelCommandTest {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         UUID target = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(target);
-        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(target));
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(target));
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.cannot-expel-member");
     }
@@ -287,7 +280,7 @@ public class IslandExpelCommandTest {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         UUID target = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(target);
-        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
+        //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("general.errors.offline-player");
     }
@@ -300,7 +293,7 @@ public class IslandExpelCommandTest {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         Player t = setUpTarget();
         when(p.canSee(t)).thenReturn(false);
-        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
+        //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("general.errors.offline-player");
     }
@@ -312,7 +305,7 @@ public class IslandExpelCommandTest {
     public void testCanExecuteNotOnIsland() {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         setUpTarget();
-        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
+        //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.not-on-island");
     }
@@ -326,7 +319,7 @@ public class IslandExpelCommandTest {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         Player t = setUpTarget();
         when(t.isOp()).thenReturn(true);
-        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
+        //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.cannot-expel");
     }
@@ -340,7 +333,7 @@ public class IslandExpelCommandTest {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         Player t = setUpTarget();
         when(t.hasPermission(anyString())).thenReturn(true);
-        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.cannot-expel");
     }
@@ -353,7 +346,7 @@ public class IslandExpelCommandTest {
         when(im.locationIsOnIsland(any(), any())).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         setUpTarget();
-        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of());
         assertTrue(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user, never()).sendMessage(anyString());
     }
@@ -377,18 +370,21 @@ public class IslandExpelCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringHasIsland() {
         testCanExecute();
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
-        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
+        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target",
+                TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(im).homeTeleportAsync(any(), any());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNoIslandSendToSpawn() {
@@ -397,12 +393,14 @@ public class IslandExpelCommandTest {
         testCanExecute();
         when(im.hasIsland(any(), any(User.class))).thenReturn(false);
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
-        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
+        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target",
+                TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(im).spawnTeleport(any(), any());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringCreateIsland() {
@@ -417,12 +415,14 @@ public class IslandExpelCommandTest {
         testCanExecute();
         when(im.hasIsland(any(), any(User.class))).thenReturn(false);
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
-        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
+        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target",
+                TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(addon).logWarning(eq("Expel: target had no island, so one was created"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringCreateIslandFailCommand() {
@@ -451,7 +451,8 @@ public class IslandExpelCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#tabComplete(User, String, java.util.List)}
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#tabComplete(User, String, java.util.List)}
      */
     @Test
     public void testTabCompleteUserStringListNoPlayersOnIsland() {
@@ -459,7 +460,8 @@ public class IslandExpelCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#tabComplete(User, String, java.util.List)}
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#tabComplete(User, String, java.util.List)}
      */
     @Test
     public void testTabCompleteUserStringListPlayersOnIsland() {

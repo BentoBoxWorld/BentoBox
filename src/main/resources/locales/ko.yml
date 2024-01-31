@@ -870,9 +870,9 @@ protection:
       island: "[name]의 섬"
       name: 출입 메시지
       now-entering: "&b [name]&a으로 진입했습니다 ."
-      now-entering-your-island: "&a 자신의 섬으로 왔습니다."
+      now-entering-your-island: "&a 자신의 섬으로 왔습니다. &b [name]"
       now-leaving: "&b [name]&a에서 떠나는 중입니다 ."
-      now-leaving-your-island: "&a 자신의 섬에서 떠나는 중입니다"
+      now-leaving-your-island: "&a 자신의 섬에서 떠나는 중입니다. &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: 경험치병 던지기
       description: 경험치병을 던질수 있는지여부를 설정합니다

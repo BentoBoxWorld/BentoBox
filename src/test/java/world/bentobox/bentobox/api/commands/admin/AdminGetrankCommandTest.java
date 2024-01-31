@@ -47,7 +47,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, RanksManager.class })
 public class AdminGetrankCommandTest {
 
     private static final String[] NAMES = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
@@ -80,7 +80,8 @@ public class AdminGetrankCommandTest {
         Util.setPlugin(plugin);
 
         // Ranks Manager
-        when(plugin.getRanksManager()).thenReturn(rm);
+        PowerMockito.mockStatic(RanksManager.class, Mockito.RETURNS_MOCKS);
+        when(RanksManager.getInstance()).thenReturn(rm);
 
         // Players Manager
         when(plugin.getPlayers()).thenReturn(pm);

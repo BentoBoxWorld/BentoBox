@@ -23,7 +23,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +32,6 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -45,7 +43,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -53,8 +51,8 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
-public class AdminInfoCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
+public class AdminInfoCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private CompositeCommand ic;
@@ -84,13 +82,10 @@ public class AdminInfoCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
-        when(plugin.getRanksManager()).thenReturn(new RanksManager());
 
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
@@ -115,16 +110,19 @@ public class AdminInfoCommandTest {
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Return the same string
-        when(phm.replacePlaceholders(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(phm.replacePlaceholders(any(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
         // Translate
-        when(user.getTranslation(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-        when(user.getTranslation(anyString(), anyString(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString(), anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Island manager
         island = new Island(location, uuid, 100);
         island.setRange(400);
-        when(location.toVector()).thenReturn(new Vector(1,2,3));
+        when(location.toVector()).thenReturn(new Vector(1, 2, 3));
         when(plugin.getIslands()).thenReturn(im);
         Optional<Island> optionalIsland = Optional.of(island);
         when(im.getIslandAt(any())).thenReturn(optionalIsland);
@@ -134,17 +132,8 @@ public class AdminInfoCommandTest {
         when(plugin.getPlayers()).thenReturn(pm);
         when(pm.getUUID(any())).thenReturn(uuid);
 
-
         // Command
         iic = new AdminInfoCommand(ic);
-    }
-
-    /**
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
     }
 
     /**
@@ -201,7 +190,7 @@ public class AdminInfoCommandTest {
         verify(user).sendMessage("commands.admin.info.deaths", "[number]", "0");
         verify(user).sendMessage("commands.admin.info.resets-left", "[number]", "0", "[total]", "0");
         verify(user).sendMessage("commands.admin.info.team-members-title");
-        verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "ranks.owner");
+        verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "");
         verify(user).sendMessage("commands.admin.info.island-protection-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.island-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.island-coords", "[xz1]", "-400,0,-400", "[xz2]", "400,0,400");
@@ -223,7 +212,7 @@ public class AdminInfoCommandTest {
         verify(user).sendMessage("commands.admin.info.deaths", "[number]", "0");
         verify(user).sendMessage("commands.admin.info.resets-left", "[number]", "0", "[total]", "0");
         verify(user).sendMessage("commands.admin.info.team-members-title");
-        verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "ranks.owner");
+        verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "");
         verify(user).sendMessage("commands.admin.info.island-protection-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.island-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.island-coords", "[xz1]", "-400,0,-400", "[xz2]", "400,0,400");

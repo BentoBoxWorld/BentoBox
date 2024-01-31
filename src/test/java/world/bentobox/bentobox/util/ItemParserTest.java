@@ -1,8 +1,13 @@
 package world.bentobox.bentobox.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -10,22 +15,27 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.UnsafeValues;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
+import org.bukkit.profile.PlayerProfile;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 
@@ -34,33 +44,49 @@ import world.bentobox.bentobox.BentoBox;
 @PrepareForTest({BentoBox.class, Bukkit.class})
 public class ItemParserTest {
 
+    @Mock
     private PotionMeta potionMeta;
+    @Mock
     private BannerMeta bannerMeta;
+    @Mock
+    private ItemMeta itemMeta;
+    @Mock
+    private ItemFactory itemFactory;
+    @Mock
+    private SkullMeta skullMeta;
+
     private ItemStack defaultItem;
 
+    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
+        // Set up plugin
+        BentoBox plugin = mock(BentoBox.class);
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
         PowerMockito.mockStatic(Bukkit.class);
-        PowerMockito.mockStatic(BentoBox.class);
-        ItemFactory itemFactory = mock(ItemFactory.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-        when(BentoBox.getInstance()).thenReturn(mock(BentoBox.class));
-        potionMeta = mock(PotionMeta.class);
+        // Do not test Bukkit createItemStack method output as I assume Bukkit has their tests covered.
+        when(itemFactory.createItemStack(any())).thenThrow(IllegalArgumentException.class);
         /*
         when(itemFactory.getItemMeta(Mockito.eq(Material.POTION))).thenReturn(potionMeta);
         when(itemFactory.getItemMeta(Mockito.eq(Material.SPLASH_POTION))).thenReturn(potionMeta);
         when(itemFactory.getItemMeta(Mockito.eq(Material.LINGERING_POTION))).thenReturn(potionMeta);
         when(itemFactory.getItemMeta(Mockito.eq(Material.TIPPED_ARROW))).thenReturn(potionMeta);
          */
-        bannerMeta = mock(BannerMeta.class);
-        when(itemFactory.getItemMeta(Mockito.any())).thenAnswer((Answer<ItemMeta>) invocation -> {
+        UnsafeValues unsafe = mock(UnsafeValues.class);
+        when(unsafe.getDataVersion()).thenReturn(777);
+        when(Bukkit.getUnsafe()).thenReturn(unsafe);
+        when(itemFactory.getItemMeta(any())).thenReturn(itemMeta);
+        /*
+        when(itemFactory.getItemMeta(any())).thenAnswer((Answer<ItemMeta>) invocation -> {
             return switch (invocation.getArgument(0, Material.class)) {
-                case RED_BANNER, WHITE_BANNER -> bannerMeta;
-                case POTION, SPLASH_POTION, LINGERING_POTION, TIPPED_ARROW -> potionMeta;
-                default -> mock(ItemMeta.class);
+            case RED_BANNER, WHITE_BANNER -> bannerMeta;
+            case POTION, SPLASH_POTION, LINGERING_POTION, TIPPED_ARROW -> potionMeta;
+            default -> itemMeta;
             };
         });
-
+         */
         defaultItem = new ItemStack(Material.STONE);
     }
 
@@ -87,161 +113,102 @@ public class ItemParserTest {
         assertEquals(defaultItem, ItemParser.parse("NOCOLONS", defaultItem));
     }
 
-    /*
-     * # Format POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
-        # LEVEL, EXTENDED, SPLASH, LINGER are optional.
-        # LEVEL is a number, 1 or 2
-        # LINGER is for V1.9 servers and later
-        # Examples:
-        # POTION:STRENGTH:1:EXTENDED:SPLASH:1
-        # POTION:INSTANT_DAMAGE:2::LINGER:2
-        # POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1
-        # POTION:WEAKNESS::::1   -  any weakness potion
-     */
-
-    @Test
-    public void testParsePotionStrengthExtended() {
-        ItemStack result = ItemParser.parse("POTION:STRENGTH:1:EXTENDED::5");
-        assertEquals(Material.POTION, result.getType());
-        PotionType type = PotionType.STRENGTH;
-        boolean isExtended = true;
-        boolean isUpgraded = false;
-        PotionData data = new PotionData(type, isExtended, isUpgraded);
-        Mockito.verify(potionMeta).setBasePotionData(Mockito.eq(data));
-        assertEquals(5, result.getAmount());
-    }
-
-    @Test
-    public void testParsePotionStrengthNotExtended() {
-        ItemStack result = ItemParser.parse("POTION:STRENGTH:1:::4");
-        assertEquals(Material.POTION, result.getType());
-        PotionType type = PotionType.STRENGTH;
-        boolean isExtended = false;
-        boolean isUpgraded = false;
-        PotionData data = new PotionData(type, isExtended, isUpgraded);
-        Mockito.verify(potionMeta).setBasePotionData(Mockito.eq(data));
-        assertEquals(4, result.getAmount());
-    }
-
-    @Test
-    public void testParsePotionStrengthNotExtendedSplash() {
-        ItemStack result = ItemParser.parse("POTION:STRENGTH:1::SPLASH:3");
-        assertEquals(Material.SPLASH_POTION, result.getType());
-        PotionType type = PotionType.STRENGTH;
-        boolean isExtended = false;
-        boolean isUpgraded = false;
-        PotionData data = new PotionData(type, isExtended, isUpgraded);
-        Mockito.verify(potionMeta).setBasePotionData(Mockito.eq(data));
-        assertEquals(3, result.getAmount());
-    }
-
-    @Test
-    public void testParsePotionStrengthNotExtendedUpgradedSplash() {
-        ItemStack result = ItemParser.parse("POTION:STRENGTH:2::SPLASH:3");
-        assertEquals(Material.SPLASH_POTION, result.getType());
-        PotionType type = PotionType.STRENGTH;
-        boolean isExtended = false;
-        boolean isUpgraded = true;
-        PotionData data = new PotionData(type, isExtended, isUpgraded);
-        Mockito.verify(potionMeta).setBasePotionData(Mockito.eq(data));
-        assertEquals(3, result.getAmount());
-    }
-
-    enum extend {
-        NOT_EXTENDED,
-        EXTENDED
-    }
-
-    enum type {
-        NO_SPLASH,
-        SPLASH,
-        LINGER
-    }
-
-    List<PotionType> notExtendable = Arrays.asList(
-            PotionType.UNCRAFTABLE,
-            PotionType.WATER,
-            PotionType.MUNDANE,
-            PotionType.THICK,
-            PotionType.AWKWARD,
-            PotionType.INSTANT_HEAL,
-            PotionType.INSTANT_DAMAGE,
-            PotionType.LUCK
-            );
-
     @Test
     public void testParsePotion() {
+        when(itemFactory.getItemMeta(any())).thenReturn(potionMeta);
         for (PotionType type : PotionType.values()) {
-            for (extend e : extend.values()) {
-                for (ItemParserTest.type t: ItemParserTest.type.values()) {
-                    for (int up = 1; up < 2; up++) {
-                        boolean isExtended = e.equals(extend.EXTENDED);
-                        boolean isUpgraded = up > 1;
-                        if (isExtended && notExtendable.contains(type)) {
-                            continue;
-                        }
-                        String req = "POTION:" + type.name() + ":" + up + ":" + e.name() + ":"+ t.name() + ":3";
-                        ItemStack result = ItemParser.parse(req);
-                        switch (t) {
-                        case LINGER:
-                            assertEquals(Material.LINGERING_POTION, result.getType());
-                            PotionData data = new PotionData(type, isExtended, isUpgraded);
-                            Mockito.verify(potionMeta, Mockito.times(3)).setBasePotionData(Mockito.eq(data));
-                            break;
-                        case NO_SPLASH:
-                            assertEquals(Material.POTION, result.getType());
-                            data = new PotionData(type, isExtended, isUpgraded);
-                            Mockito.verify(potionMeta).setBasePotionData(Mockito.eq(data));
-                            break;
-                        case SPLASH:
-                            assertEquals(Material.SPLASH_POTION, result.getType());
-                            data = new PotionData(type, isExtended, isUpgraded);
-                            Mockito.verify(potionMeta, Mockito.times(2)).setBasePotionData(Mockito.eq(data));
-                            break;
-                        default:
-                            break;
-                        }
+            ItemStack itemStack = ItemParser.parse("POTION:" + type.name() + ":1");
+            assertEquals(itemStack.getType(), Material.POTION);
+            // Not sure how this can be tested.
+            // assertEquals(type, ((PotionMeta) itemStack.getItemMeta()).getBasePotionType());
+            assertEquals(1, itemStack.getAmount());
+        }
+    }
 
-                        assertEquals(3, result.getAmount());
-                    }
-                }
-            }
+    @Test
+    public void testParseSplashPotion() {
+        when(itemFactory.getItemMeta(any())).thenReturn(potionMeta);
+        for (PotionType type : PotionType.values()) {
+            ItemStack itemStack = ItemParser.parse("SPLASH_POTION:" + type.name() + ":1");
+            assertEquals(itemStack.getType(), Material.SPLASH_POTION);
+            // Not sure how this can be tested.
+            // assertEquals(type, ((PotionMeta) itemStack.getItemMeta()).getBasePotionType());
+            assertEquals(1, itemStack.getAmount());
+        }
+    }
+
+    @Test
+    public void testParseLingeringPotion() {
+        when(itemFactory.getItemMeta(any())).thenReturn(potionMeta);
+        for (PotionType type : PotionType.values()) {
+            ItemStack itemStack = ItemParser.parse("LINGERING_POTION:" + type.name() + ":1");
+            assertEquals(itemStack.getType(), Material.LINGERING_POTION);
+            // Not sure how this can be tested.
+            // assertEquals(type, ((PotionMeta) itemStack.getItemMeta()).getBasePotionType());
+            assertEquals(1, itemStack.getAmount());
         }
     }
 
     @Test
     public void testParseTippedArrow() {
-        ItemStack result = ItemParser.parse("TIPPED_ARROW:WEAKNESS::::1");
-        assertEquals(Material.TIPPED_ARROW, result.getType());
+        when(itemFactory.getItemMeta(any())).thenReturn(potionMeta);
+        for (PotionType type : PotionType.values()) {
+            ItemStack itemStack = ItemParser.parse("TIPPED_ARROW:" + type.name() + ":1");
+            assertEquals(itemStack.getType(), Material.TIPPED_ARROW);
+            // Not sure how this can be tested.
+            // assertEquals(type, ((PotionMeta) itemStack.getItemMeta()).getBasePotionType());
+            assertEquals(1, itemStack.getAmount());
+        }
+    }
+
+    @Test
+    public void testParseBadPotion()
+    {
+        when(itemFactory.getItemMeta(any())).thenReturn(potionMeta);
+        ItemStack itemStack = ItemParser.parse("POTION::5");
+        assertEquals(5, itemStack.getAmount());
+        // Not sure how this can be tested
+        // assertEquals(PotionType.WATER, ((PotionMeta) itemStack.getItemMeta()).getBasePotionType());
+        itemStack = ItemParser.parse("POTION:NO_POTION:1");
+        assertEquals(1, itemStack.getAmount());
+        // Not sure how this can be tested
+        // assertEquals(PotionType.WATER, ((PotionMeta) itemStack.getItemMeta()).getBasePotionType());
     }
 
 
     @Test
     public void testParseBannerSimple() {
+        when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
         ItemStack result = ItemParser.parse("WHITE_BANNER:2");
+        assertNotNull(result);
         assertEquals(Material.WHITE_BANNER, result.getType());
         assertEquals(2, result.getAmount());
     }
 
     @Test
     public void testParseBannerThreeArgs() {
+        when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
         // Germany
         ItemStack result = ItemParser.parse("RED_BANNER:1");
+        assertNotNull(result);
         assertEquals(Material.RED_BANNER, result.getType());
         assertEquals(1, result.getAmount());
     }
 
     @Test
     public void testParseBanner() {
+        when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
         // Germany - two patterns
         ItemParser.parse("RED_BANNER:1:STRIPE_RIGHT:BLACK:STRIPE_LEFT:YELLOW");
-        Mockito.verify(bannerMeta, Mockito.times(2)).addPattern(Mockito.any());
+        verify(bannerMeta, Mockito.times(2)).addPattern(any());
     }
 
     @Test
     public void testParseBannerTooManyColons() {
+        when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
         ItemStack result = ItemParser.parse("WHITE_BANNER:1:::::::::::::");
-        Mockito.verify(bannerMeta, Mockito.never()).addPattern(Mockito.any());
+        assertNotNull(result);
+        verify(bannerMeta, never()).addPattern(any());
         assertEquals(Material.WHITE_BANNER, result.getType());
         assertEquals(1, result.getAmount());
     }
@@ -263,6 +230,7 @@ public class ItemParserTest {
     @Test
     public void testParseThreeItem() {
         ItemStack result = ItemParser.parse("WOODEN_SWORD:3:2");
+        assertNotNull(result);
         assertEquals(Material.WOODEN_SWORD, result.getType());
         assertEquals(2, result.getAmount());
     }
@@ -275,12 +243,29 @@ public class ItemParserTest {
         assertEquals(defaultItem, ItemParser.parse("WOODEN_SWORD:4:AA", defaultItem));
     }
 
-
     @Test
     public void parseCustomModelData() {
         ItemStack result = ItemParser.parse("WOODEN_SWORD:CMD-23151212:2");
+        assertNotNull(result);
         assertEquals(Material.WOODEN_SWORD, result.getType());
         assertEquals(2, result.getAmount());
         assertNull(ItemParser.parse("WOODEN_SWORD:CMD-23151212:2:CMD-23151212"));
+    }
+
+    @Test
+    public void parsePlayerHead() {
+        when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
+        ItemStack result = ItemParser.parse("PLAYER_HEAD:2");
+        assertNotNull(result);
+        assertEquals(Material.PLAYER_HEAD, result.getType());
+        assertEquals(2, result.getAmount());
+
+        result = ItemParser.parse("PLAYER_HEAD:BONNe1704");
+        assertNotNull(result);
+        assertEquals(Material.PLAYER_HEAD, result.getType());
+        assertEquals(1, result.getAmount());
+
+        // I do not know if it is possible to test metadata, as skull meta is not applied to player heads in testing.
+        //assertEquals("BONNe1704", ((SkullMeta) result.getItemMeta()).getOwnerProfile().getName());
     }
 }

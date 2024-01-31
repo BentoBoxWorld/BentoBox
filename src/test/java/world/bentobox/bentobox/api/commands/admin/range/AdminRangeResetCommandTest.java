@@ -46,7 +46,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminRangeResetCommandTest {
 
     private CompositeCommand ac;
@@ -56,7 +56,6 @@ public class AdminRangeResetCommandTest {
     private PlayersManager pm;
     @Mock
     private PluginManager pim;
-
 
     /**
      */
@@ -78,7 +77,7 @@ public class AdminRangeResetCommandTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         UUID notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -97,13 +96,10 @@ public class AdminRangeResetCommandTest {
         when(iwm.getIslandProtectionRange(Mockito.any())).thenReturn(200);
         when(plugin.getIWM()).thenReturn(iwm);
 
-
         // Player has island to begin with
         im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
-        when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
-        when(im.getOwner(Mockito.any(),Mockito.any())).thenReturn(uuid);
         Island island = mock(Island.class);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
@@ -124,7 +120,7 @@ public class AdminRangeResetCommandTest {
         LocalesManager lm = mock(LocalesManager.class);
         Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
 
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer );
+        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer);
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // Addon
@@ -138,7 +134,8 @@ public class AdminRangeResetCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeResetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeResetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteConsoleNoArgs() {
@@ -151,24 +148,25 @@ public class AdminRangeResetCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeResetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeResetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecutePlayerNoArgs() {
         AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
         arc.execute(user, "", new ArrayList<>());
         // Show help
-        Mockito.verify(user).sendMessage("commands.help.header","[label]","BSkyBlock");
+        Mockito.verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeResetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeResetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
         AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
-        String[] name = {"tastybento"};
+        String[] name = { "tastybento" };
         arc.execute(user, "", Arrays.asList(name));
         Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
     }

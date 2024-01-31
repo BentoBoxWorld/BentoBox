@@ -14,16 +14,16 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +34,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+
+import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -53,7 +55,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminTeamDisbandCommandTest {
 
     @Mock
@@ -72,6 +74,8 @@ public class AdminTeamDisbandCommandTest {
     @Mock
     private PluginManager pim;
     private UUID notUUID;
+    @Mock
+    private @Nullable Island island;
 
     /**
      */
@@ -91,7 +95,7 @@ public class AdminTeamDisbandCommandTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -112,13 +116,13 @@ public class AdminTeamDisbandCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
 
-
         // Player has island to begin with
         im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        when(im.isOwner(any(),any())).thenReturn(true);
-        when(im.getOwner(any(),any())).thenReturn(uuid);
+        when(island.getOwner()).thenReturn(uuid);
+        when(im.getIsland(any(World.class), any(UUID.class))).thenReturn(island);
+        when(im.getPrimaryIsland(any(), any())).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -138,7 +142,8 @@ public class AdminTeamDisbandCommandTest {
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
-        when(phm.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(phm.replacePlaceholders(any(), any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         when(plugin.getLocalesManager()).thenReturn(lm);
 
@@ -170,7 +175,7 @@ public class AdminTeamDisbandCommandTest {
     @Test
     public void testExecuteUnknownPlayer() {
         AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        String[] name = {"tastybento"};
+        String[] name = { "tastybento" };
         when(pm.getUUID(any())).thenReturn(null);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
@@ -182,9 +187,9 @@ public class AdminTeamDisbandCommandTest {
     @Test
     public void testExecutePlayerNotInTeam() {
         AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        String[] name = {"tastybento"};
+        String[] name = { "tastybento" };
         when(pm.getUUID(any())).thenReturn(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(new HashSet<>());
+        // when(im.getMembers(any(), any())).thenReturn(new HashSet<>());
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         verify(user).sendMessage(eq("general.errors.not-in-team"));
     }
@@ -200,7 +205,7 @@ public class AdminTeamDisbandCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(any())).thenReturn(notUUID);
 
-        when(im.getOwner(any(), eq(notUUID))).thenReturn(uuid);
+        //when(im.getOwner(any(), eq(notUUID))).thenReturn(uuid);
         when(pm.getName(any())).thenReturn("owner");
 
         AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
@@ -214,23 +219,19 @@ public class AdminTeamDisbandCommandTest {
     @Test
     public void testExecuteSuccess() {
         when(im.inTeam(any(), any())).thenReturn(true);
-        Island is = mock(Island.class);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(is);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         String[] name = {"tastybento"};
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(pm.getName(any())).thenReturn(name[0]);
         // Owner
-        when(im.getOwner(any(), eq(notUUID))).thenReturn(notUUID);
+        when(island.getOwner()).thenReturn(notUUID);
         // Members
-        Set<UUID> members = new HashSet<>();
-        members.add(uuid);
-        members.add(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(members);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid, notUUID));
 
         AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        verify(im, never()).setLeaveTeam(any(), eq(notUUID));
-        verify(im).setLeaveTeam(any(), eq(uuid));
+        verify(im, never()).removePlayer(island, notUUID);
+        verify(im).removePlayer(island, uuid);
         verify(user).sendMessage("commands.admin.team.disband.success", TextVariables.NAME, name[0]);
         verify(p).sendMessage("commands.admin.team.disband.disbanded");
         verify(p2).sendMessage("commands.admin.team.disband.disbanded");

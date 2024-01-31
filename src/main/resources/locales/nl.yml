@@ -976,9 +976,9 @@ protection:
       island: Het eiland van [name]
       name: Berichten invoeren / verlaten
       now-entering: "&a Voer nu &b [name] in &a."
-      now-entering-your-island: "&a Nu betreedt u uw eiland."
+      now-entering-your-island: "&a Nu betreedt u uw eiland: &b [name]"
       now-leaving: "&a Nu weggaan &b [name] &a."
-      now-leaving-your-island: "&a Verlaat nu je eiland."
+      now-leaving-your-island: "&a Verlaat nu je eiland: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: Ervaar het gooien van flessen
       description: Wissel met het werpen van ervaringsflessen.

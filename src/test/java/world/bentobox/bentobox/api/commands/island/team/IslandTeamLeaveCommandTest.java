@@ -18,6 +18,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +38,8 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
 /**
@@ -44,7 +47,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class IslandTeamLeaveCommandTest {
 
     @Mock
@@ -66,6 +69,8 @@ public class IslandTeamLeaveCommandTest {
     private PlayersManager pm;
     @Mock
     private World world;
+    @Mock
+    private @Nullable Island island;
 
     /**
      */
@@ -90,6 +95,7 @@ public class IslandTeamLeaveCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.getName()).thenReturn("tastybento");
+        User.setPlugin(plugin);
 
         // Parent command has no aliases
         ic = mock(CompositeCommand.class);
@@ -99,8 +105,9 @@ public class IslandTeamLeaveCommandTest {
         when(ic.getWorld()).thenReturn(world);
 
         // Player has island to begin with
-        when(im.hasIsland(any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.isOwner(any(), any())).thenReturn(true);
+        when(island.getOwner()).thenReturn(UUID.randomUUID());
+        when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
+        // when(im.isOwner(any(), any())).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -120,10 +127,17 @@ public class IslandTeamLeaveCommandTest {
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Island
-        Island island = mock(Island.class);
         when(island.getUniqueId()).thenReturn("uniqueid");
-        when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
+        when(im.getIsland(world, user)).thenReturn(island);
 
+        // Locales
+        LocalesManager lm = mock(LocalesManager.class);
+        when(lm.get(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
+        when(plugin.getLocalesManager()).thenReturn(lm);
+        PlaceholdersManager phm = mock(PlaceholdersManager.class);
+        when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
+        // Placeholder manager
+        when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
     }
 
@@ -139,10 +153,12 @@ public class IslandTeamLeaveCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteInOwner() {
+    public void testExecuteIsOwner() {
+        when(island.getOwner()).thenReturn(uuid);
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         verify(user).sendMessage(eq("commands.island.team.leave.cannot-leave"));
@@ -154,14 +170,10 @@ public class IslandTeamLeaveCommandTest {
     @Test
     public void testExecuteNoConfirmation() {
         when(s.isLeaveConfirmation()).thenReturn(false);
-        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
-        // Add a team owner - null
-        when(im.getOwner(any(), any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        verify(im).setLeaveTeam(any(), eq(uuid));
+        verify(im).removePlayer(island,uuid);
         verify(user).sendMessage(eq("commands.island.team.leave.success"));
     }
 
@@ -173,11 +185,6 @@ public class IslandTeamLeaveCommandTest {
         when(s.isLeaveConfirmation()).thenReturn(true);
         // 3 second timeout
         when(s.getConfirmationTime()).thenReturn(3);
-        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
-        // Add a team owner - null
-        when(im.getOwner(any(), any())).thenReturn(null);
-
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Confirmation required
@@ -193,10 +200,6 @@ public class IslandTeamLeaveCommandTest {
         when(iwm.isLeaversLoseReset(any())).thenReturn(true);
 
         when(s.isLeaveConfirmation()).thenReturn(false);
-        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
-        // Add a team owner - null
-        when(im.getOwner(any(), any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
@@ -213,17 +216,13 @@ public class IslandTeamLeaveCommandTest {
         when(pm.getResetsLeft(any(),any(UUID.class))).thenReturn(100);
 
         when(s.isLeaveConfirmation()).thenReturn(false);
-        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
-        // Add a team owner - null
-        when(im.getOwner(any(), any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        verify(im).setLeaveTeam(any(), eq(uuid));
-        verify(user).sendMessage(eq("commands.island.team.leave.success"));
+        verify(im).removePlayer(island, uuid);
+        verify(user).sendMessage("commands.island.team.leave.success");
         verify(pm).addReset(eq(world), eq(uuid));
-        verify(user).sendMessage(eq("commands.island.reset.resets-left"), eq(TextVariables.NUMBER), eq("100"));
+        verify(user).sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, "100");
     }
 
     /**

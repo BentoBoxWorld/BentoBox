@@ -909,9 +909,9 @@ protection:
       island: Isla de [name]
       name: Mensaje de Entrada/Salida
       now-entering: "&bEntrando a [name]"
-      now-entering-your-island: "&a Ahora entrando en tu isla."
+      now-entering-your-island: "&a Ahora entrando en tu isla: &b [name]"
       now-leaving: "&bSaliendo de [name]"
-      now-leaving-your-island: "&a Ahora saliendo de tu isla."
+      now-leaving-your-island: "&a Ahora saliendo de tu isla: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: Lanzamiento de botellas de experiencia
       description: Modificar lanzamiento de experiencia.

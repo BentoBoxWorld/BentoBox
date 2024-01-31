@@ -52,7 +52,7 @@ import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, RanksManager.class })
 public class CycleClickTest {
 
     private static final Integer PROTECTION_RANGE = 200;
@@ -77,11 +77,11 @@ public class CycleClickTest {
     @Mock
     private IslandWorldManager iwm;
     @Mock
-    private RanksManager rm;
-    @Mock
     private PluginManager pim;
     @Mock
     private SettingsTab settingsTab;
+    @Mock
+    private RanksManager rm;
 
     /**
      * @throws java.lang.Exception - exception
@@ -113,7 +113,7 @@ public class CycleClickTest {
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        // when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -181,12 +181,11 @@ public class CycleClickTest {
         when(fm.getFlag(anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
-        // Ranks Manager
-        when(plugin.getRanksManager()).thenReturn(rm);
-
         // Provide a current rank value - member
         when(island.getFlag(any())).thenReturn(RanksManager.MEMBER_RANK);
         // Set up up and down ranks
+        PowerMockito.mockStatic(RanksManager.class);
+        when(RanksManager.getInstance()).thenReturn(rm);
         when(rm.getRankUpValue(eq(RanksManager.VISITOR_RANK))).thenReturn(RanksManager.COOP_RANK);
         when(rm.getRankUpValue(eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
         when(rm.getRankUpValue(eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.MEMBER_RANK);
@@ -212,7 +211,6 @@ public class CycleClickTest {
         // Active tab
         when(panel.getActiveTab()).thenReturn(settingsTab);
         when(settingsTab.getIsland()).thenReturn(island);
-
 
     }
 
@@ -311,18 +309,5 @@ public class CycleClickTest {
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
-    @Test
-    public void testNotOwner() {
-        UUID u = UUID.randomUUID();
-        when(island.getOwner()).thenReturn(u);
-        verify(plugin, Mockito.never()).getRanksManager();
-
-    }
-
-    @Test
-    public void testNullIsland() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
-        verify(plugin, Mockito.never()).getRanksManager();
-    }
 
 }

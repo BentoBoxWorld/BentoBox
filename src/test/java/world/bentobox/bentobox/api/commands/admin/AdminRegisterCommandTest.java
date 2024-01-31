@@ -44,13 +44,12 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
-
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminRegisterCommandTest {
 
     @Mock
@@ -86,7 +85,7 @@ public class AdminRegisterCommandTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -101,12 +100,11 @@ public class AdminRegisterCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
 
-
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        when(im.isOwner(any(),any())).thenReturn(true);
-        when(im.getOwner(any(),any())).thenReturn(uuid);
+        // when(im.isOwner(any(),any())).thenReturn(true);
+        // when(im.getOwner(any(),any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -142,7 +140,8 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+     * Test method for
+     * {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
     public void testExecuteNoTarget() {
@@ -152,7 +151,8 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+     * Test method for
+     * {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -163,7 +163,8 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+     * Test method for
+     * {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
     public void testExecutePlayerHasIsland() {

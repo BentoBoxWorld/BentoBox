@@ -978,9 +978,9 @@ protection:
       island: đảo của [name]
       name: Thông báo Vào/Ra
       now-entering: "&a Đang vào &b [name]&a ."
-      now-entering-your-island: "&a Đang vào đảo của bạn."
+      now-entering-your-island: "&a Đang vào đảo của bạn: &b [name]"
       now-leaving: "&a Đang rời &b [name]&a ."
-      now-leaving-your-island: "&a Đang rời đảo của bạn."
+      now-leaving-your-island: "&a Đang rời đảo của bạn: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: Quăng bình kinh nghiệm
       description: Bật/Tắt quăng bình kinh nghiệm.

@@ -46,7 +46,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminRangeSetCommandTest {
 
     private CompositeCommand ac;
@@ -56,7 +56,6 @@ public class AdminRangeSetCommandTest {
     private PlayersManager pm;
     @Mock
     private PluginManager pim;
-
 
     /**
      */
@@ -78,7 +77,7 @@ public class AdminRangeSetCommandTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         UUID notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -97,13 +96,10 @@ public class AdminRangeSetCommandTest {
         when(iwm.getIslandProtectionRange(Mockito.any())).thenReturn(200);
         when(plugin.getIWM()).thenReturn(iwm);
 
-
         // Player has island to begin with
         im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
-        when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
-        when(im.getOwner(Mockito.any(),Mockito.any())).thenReturn(uuid);
         Island island = mock(Island.class);
         when(island.getRange()).thenReturn(50);
         when(island.getProtectionRange()).thenReturn(50);
@@ -126,7 +122,7 @@ public class AdminRangeSetCommandTest {
         LocalesManager lm = mock(LocalesManager.class);
         Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
 
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer );
+        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer);
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // Addon
@@ -140,7 +136,8 @@ public class AdminRangeSetCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteConsoleNoArgs() {
@@ -153,24 +150,25 @@ public class AdminRangeSetCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecutePlayerNoArgs() {
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         arc.execute(user, "", new ArrayList<>());
         // Show help
-        Mockito.verify(user).sendMessage("commands.help.header","[label]","BSkyBlock");
+        Mockito.verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
-        String[] args = {"tastybento", "100"};
+        String[] args = { "tastybento", "100" };
         arc.execute(user, "", Arrays.asList(args));
         Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", args[0]);
     }

@@ -17,6 +17,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 public class IslandBanCommand extends CompositeCommand {
@@ -45,7 +46,8 @@ public class IslandBanCommand extends CompositeCommand {
         }
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island or be in a team
-        if (!getIslands().inTeam(getWorld(), user.getUniqueId()) && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId())
+                && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
@@ -53,7 +55,8 @@ public class IslandBanCommand extends CompositeCommand {
         Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), user));
         int rank = island.getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
         // Get target player
@@ -67,7 +70,7 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("commands.island.ban.cannot-ban-yourself");
             return false;
         }
-        if (getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
+        if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).getMemberSet().contains(targetUUID)) {
             user.sendMessage("commands.island.ban.cannot-ban-member");
             return false;
         }
@@ -97,25 +100,26 @@ public class IslandBanCommand extends CompositeCommand {
         Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), issuer.getUniqueId()));
 
         // Check if player can ban any more players
-        int banLimit = issuer.getPermissionValue(getPermissionPrefix() + "ban.maxlimit", getIWM().getBanLimit(getWorld()));
+        int banLimit = issuer.getPermissionValue(getPermissionPrefix() + "ban.maxlimit",
+                getIWM().getBanLimit(getWorld()));
         if (banLimit <= -1 || island.getBanned().size() < banLimit) {
             // Run the event
-            IslandBaseEvent banEvent = IslandEvent.builder()
-                    .island(island)
-                    .involvedPlayer(target.getUniqueId())
-                    .admin(false)
-                    .reason(IslandEvent.Reason.BAN)
-                    .build();
-            if (banEvent.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(banEvent.isCancelled()) ) {
+            IslandBaseEvent banEvent = IslandEvent.builder().island(island).involvedPlayer(target.getUniqueId())
+                    .admin(false).reason(IslandEvent.Reason.BAN).build();
+            if (banEvent.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(banEvent.isCancelled())) {
                 // Banning was blocked due to an event cancellation. Fail silently.
                 return false;
             }
             // Event is not cancelled
             if (island.ban(issuer.getUniqueId(), target.getUniqueId())) {
-                issuer.sendMessage("commands.island.ban.player-banned", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
-                target.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, issuer.getName(), TextVariables.DISPLAY_NAME, issuer.getDisplayName());
-                // If the player is online, has an island and on the banned island, move them home immediately
-                if (target.isOnline() && getIslands().hasIsland(getWorld(), target.getUniqueId()) && island.onIsland(target.getLocation())) {
+                issuer.sendMessage("commands.island.ban.player-banned", TextVariables.NAME, target.getName(),
+                        TextVariables.DISPLAY_NAME, target.getDisplayName());
+                target.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, issuer.getName(),
+                        TextVariables.DISPLAY_NAME, issuer.getDisplayName());
+                // If the player is online, has an island and on the banned island, move them
+                // home immediately
+                if (target.isOnline() && getIslands().hasIsland(getWorld(), target.getUniqueId())
+                        && island.onIsland(target.getLocation())) {
                     getIslands().homeTeleportAsync(getWorld(), target.getPlayer());
                     island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
                 }
@@ -130,7 +134,7 @@ public class IslandBanCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (lastArg.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
@@ -139,8 +143,7 @@ public class IslandBanCommand extends CompositeCommand {
         if (island != null) {
             List<String> options = Bukkit.getOnlinePlayers().stream()
                     .filter(p -> !p.getUniqueId().equals(user.getUniqueId()))
-                    .filter(p -> !island.isBanned(p.getUniqueId()))
-                    .filter(p -> user.getPlayer().canSee(p))
+                    .filter(p -> !island.isBanned(p.getUniqueId())).filter(p -> user.getPlayer().canSee(p))
                     .map(Player::getName).toList();
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {

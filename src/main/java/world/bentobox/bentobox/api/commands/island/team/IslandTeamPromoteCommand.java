@@ -17,6 +17,8 @@ import world.bentobox.bentobox.util.Util;
 
 public class IslandTeamPromoteCommand extends CompositeCommand {
 
+    private User target;
+
     public IslandTeamPromoteCommand(CompositeCommand islandTeamCommand, String string) {
         super(islandTeamCommand, string);
     }
@@ -35,53 +37,72 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         this.setConfigurableRankCommand();
     }
 
-    @Override
-    public boolean execute(User user, String label, List<String> args) {
-        if (!getIslands().inTeam(getWorld(), user.getUniqueId())) {
-            user.sendMessage("general.errors.no-team");
-            return true;
-        }
-        // Check rank to use command
-        Island island = getIslands().getIsland(getWorld(), user);
-        int rank = Objects.requireNonNull(island).getRank(user);
-        if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
-            return false;
-        }
 
+    @Override
+    public boolean canExecute(User user, String label, List<String> args) {
         // If args are not right, show help
         if (args.size() != 1) {
             showHelp(this, user);
             return false;
         }
-        // Get target
-        User target = getPlayers().getUser(args.get(0));
-        if (target == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
-            return true;
+
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId())) {
+            user.sendMessage("general.errors.no-team");
+            return false;
         }
-        // Check if the user is not trying to promote/ demote himself
-        if (target == user) {
-            user.sendMessage("commands.island.team.demote.errors.cant-demote-yourself");
-            return true;
-        }
-        if (!inTeam(getWorld(), target) || !Objects.requireNonNull(getOwner(getWorld(), user), "Island has no owner!").equals(getOwner(getWorld(), target))) {
-            user.sendMessage("general.errors.not-in-team");
-            return true;
+        // Check rank to use command
+        Island island = getIslands().getIsland(getWorld(), user);
+        int rank = Objects.requireNonNull(island).getRank(user);
+        if (rank < island.getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
+            return false;
         }
 
+        // Get target
+        target = getPlayers().getUser(args.get(0));
+        if (target == null) {
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            return false;
+        }
+        // Check if the user is not trying to promote/ demote himself
+        if (target.equals(user)) {
+            if (this.getLabel().equals("promote")) {
+                user.sendMessage("commands.island.team.promote.errors.cant-promote-yourself");
+            } else {
+                user.sendMessage("commands.island.team.demote.errors.cant-demote-yourself");
+            }
+
+            return false;
+        }
+        // Check that user is not trying to promote above their own rank
+        // Check that user is not trying to demote ranks higher than them
+        if (island.getRank(target) >= island.getRank(user)) {
+            if (this.getLabel().equals("promote")) {
+                user.sendMessage("commands.island.team.promote.errors.cant-promote");
+            } else {
+                user.sendMessage("commands.island.team.demote.errors.cant-demote");
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
         return change(user, target);
     }
 
     private boolean change(User user, User target) {
-        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
+        Island island = getIslands().getIsland(getWorld(), user);
         int currentRank = island.getRank(target);
         if (this.getLabel().equals("promote")) {
-            int nextRank = getPlugin().getRanksManager().getRankUpValue(currentRank);
+            int nextRank = RanksManager.getInstance().getRankUpValue(currentRank);
             // Stop short of owner
             if (nextRank != RanksManager.OWNER_RANK && nextRank > currentRank) {
-                getIslands().getIsland(getWorld(), user.getUniqueId()).setRank(target, nextRank);
-                String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(nextRank));
+                island.setRank(target, nextRank);
+                String rankName = user.getTranslation(RanksManager.getInstance().getRank(nextRank));
                 user.sendMessage("commands.island.team.promote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());
                 IslandEvent.builder()
                 .island(island)
@@ -97,11 +118,11 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             }
         } else {
             // Demote
-            int prevRank = getPlugin().getRanksManager().getRankDownValue(currentRank);
+            int prevRank = RanksManager.getInstance().getRankDownValue(currentRank);
             // Lowest is Member
             if (prevRank >= RanksManager.MEMBER_RANK && prevRank < currentRank) {
-                getIslands().getIsland(getWorld(), user.getUniqueId()).setRank(target, prevRank);
-                String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(prevRank));
+                island.setRank(target, prevRank);
+                String rankName = user.getTranslation(RanksManager.getInstance().getRank(prevRank));
                 user.sendMessage("commands.island.team.demote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());
                 IslandEvent.builder()
                 .island(island)
@@ -120,7 +141,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
+        Island island = getIslands().getIsland(getWorld(), user);
         if (island != null) {
             List<String> options = island.getMemberSet().stream()
                     .map(Bukkit::getOfflinePlayer)

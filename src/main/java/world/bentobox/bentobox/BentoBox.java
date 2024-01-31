@@ -1,5 +1,7 @@
 package world.bentobox.bentobox;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +24,10 @@ import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.DatabaseSetup;
+import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.MyWorldsHook;
+import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
 import world.bentobox.bentobox.listeners.BannedCommands;
@@ -31,6 +35,7 @@ import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
+import world.bentobox.bentobox.listeners.PrimaryIslandListener;
 import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
 import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
 import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
@@ -68,7 +73,6 @@ public class BentoBox extends JavaPlugin implements Listener {
     private AddonsManager addonsManager;
     private FlagsManager flagsManager;
     private IslandWorldManager islandWorldManager;
-    private RanksManager ranksManager;
     private BlueprintsManager blueprintsManager;
     private HooksManager hooksManager;
     private PlaceholdersManager placeholdersManager;
@@ -136,7 +140,6 @@ public class BentoBox extends JavaPlugin implements Listener {
             return;
         }
         islandsManager = new IslandsManager(this);
-        ranksManager = new RanksManager();
 
         // Start head getter
         headGetter = new HeadGetter(this);
@@ -230,6 +233,12 @@ public class BentoBox extends JavaPlugin implements Listener {
         hooksManager.registerHook(new MyWorldsHook());
         islandWorldManager.registerWorldsToMultiverse(true);
 
+        // Register Slimefun
+        hooksManager.registerHook(new SlimefunHook());
+
+        // Register ItemsAdder
+        hooksManager.registerHook(new ItemsAdderHook(this));
+
         // TODO: re-enable after implementation
         //hooksManager.registerHook(new DynmapHook());
         // TODO: re-enable after rework
@@ -251,6 +260,8 @@ public class BentoBox extends JavaPlugin implements Listener {
                 // Tell all addons that everything is loaded
                 isLoaded = true;
                 this.addonsManager.allLoaded();
+                // Run ready commands
+                settings.getReadyCommands().forEach(cmd -> Bukkit.getServer().dispatchCommand(getServer().getConsoleSender(), cmd));
                 // Fire plugin ready event - this should go last after everything else
                 Bukkit.getPluginManager().callEvent(new BentoBoxReadyEvent());
                 instance.log("All blueprints loaded.");
@@ -306,6 +317,8 @@ public class BentoBox extends JavaPlugin implements Listener {
         // Island Delete Manager
         islandDeletionManager = new IslandDeletionManager(this);
         manager.registerEvents(islandDeletionManager, this);
+        // Primary Island Listener
+        manager.registerEvents(new PrimaryIslandListener(this), this);
     }
 
     @Override
@@ -328,10 +341,14 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onServerStop(ServerCommandEvent e) {
+        /* This is no longer needed as with https://github.com/Multiverse/Multiverse-Core/releases/tag/4.3.12 (or maybe earlier) the issue
+         * is fixed where the generator was not remembered across reboots.
+         */
+        /*
         if (islandWorldManager != null && (e.getCommand().equalsIgnoreCase("stop") || e.getCommand().equalsIgnoreCase("restart"))) {
             // Unregister any MV worlds            if () {
-            islandWorldManager.registerWorldsToMultiverse(false);
-        }
+            //islandWorldManager.registerWorldsToMultiverse(false);
+        }*/
     }
 
     /**
@@ -410,9 +427,11 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     /**
      * @return the ranksManager
+     * @deprecated Just use {@code RanksManager.getInstance()}
      */
+    @Deprecated(since = "2.0.0")
     public RanksManager getRanksManager() {
-        return ranksManager;
+        return RanksManager.getInstance();
     }
 
     /**
@@ -445,6 +464,17 @@ public class BentoBox extends JavaPlugin implements Listener {
             logError("Settings did not load correctly - disabling plugin - please check config.yml");
             getPluginLoader().disablePlugin(this);
             return false;
+        }
+
+        log("Saving default panels...");
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "island_creation_panel.yml"))) {
+            log("Saving default island_creation_panel...");
+            this.saveResource("panels/island_creation_panel.yml", false);
+        }
+
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "language_panel.yml"))) {
+            log("Saving default language_panel...");
+            this.saveResource("panels/language_panel.yml", false);
         }
         return true;
     }

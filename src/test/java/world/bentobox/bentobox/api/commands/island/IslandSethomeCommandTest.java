@@ -14,12 +14,14 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +50,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class IslandSethomeCommandTest {
 
     @Mock
@@ -64,6 +66,8 @@ public class IslandSethomeCommandTest {
     private IslandWorldManager iwm;
     @Mock
     private WorldSettings ws;
+    @Mock
+    private @NonNull World world;
 
     /**
      */
@@ -88,17 +92,19 @@ public class IslandSethomeCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.getName()).thenReturn("tastybento");
-        when(user.getWorld()).thenReturn(mock(World.class));
+        when(user.getWorld()).thenReturn(world);
         when(user.getTranslation(anyString())).thenAnswer(i -> i.getArgument(0, String.class));
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ic.getTopLabel()).thenReturn("island");
         when(ic.getPermissionPrefix()).thenReturn("bskyblock.");
+        when(ic.getWorld()).thenReturn(world);
 
-        // No island for player to begin with (set it later in the tests)
-        when(im.hasIsland(any(), any(User.class))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        // Island for player to begin with
+        when(im.hasIsland(world, user)).thenReturn(true);
+        // when(im.isOwner(world, uuid)).thenReturn(true);
+        when(im.getIslands(world, user)).thenReturn(Set.of(island));
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -143,7 +149,8 @@ public class IslandSethomeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#IslandSethomeCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#IslandSethomeCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
     public void testIslandSethomeCommand() {
@@ -152,7 +159,8 @@ public class IslandSethomeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -168,7 +176,7 @@ public class IslandSethomeCommandTest {
     @Test
     public void testCanExecuteNoIsland() {
         // Player doesn't have an island
-        when(im.getIsland(any(), eq(user))).thenReturn(null);
+        when(im.getIsland(world, user)).thenReturn(null);
 
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertFalse(isc.canExecute(user, "island", Collections.emptyList()));
@@ -188,7 +196,8 @@ public class IslandSethomeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecute() {
@@ -199,7 +208,8 @@ public class IslandSethomeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfString() {

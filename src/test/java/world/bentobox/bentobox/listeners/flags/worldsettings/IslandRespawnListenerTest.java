@@ -20,6 +20,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -41,6 +42,7 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -51,7 +53,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class })
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class })
 public class IslandRespawnListenerTest {
 
     @Mock
@@ -66,6 +68,8 @@ public class IslandRespawnListenerTest {
     private Location safeLocation;
     @Mock
     private Server server;
+    @Mock
+    private Island island;
 
     /**
      */
@@ -77,6 +81,7 @@ public class IslandRespawnListenerTest {
 
         // World
         when(world.getUID()).thenReturn(UUID.randomUUID());
+        when(world.getEnvironment()).thenReturn(Environment.NORMAL);
         when(server.getWorld(any(UUID.class))).thenReturn(world);
 
         // Settings
@@ -105,14 +110,17 @@ public class IslandRespawnListenerTest {
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
         GameModeAddon gma = mock(GameModeAddon.class);
-        Optional<GameModeAddon> opGma = Optional.of(gma );
+        Optional<GameModeAddon> opGma = Optional.of(gma);
         when(iwm.getAddon(any())).thenReturn(opGma);
-
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        when(plugin.getIslands()).thenReturn(im);
         safeLocation = mock(Location.class);
         when(safeLocation.getWorld()).thenReturn(world);
-        when(im.getSafeHomeLocation(any(), any(), Mockito.anyString())).thenReturn(safeLocation);
+        when(island.getSpawnPoint(Environment.NORMAL)).thenReturn(safeLocation);
+        when(im.getPrimaryIsland(any(), any())).thenReturn(island);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        when(plugin.getIslands()).thenReturn(im);
+
+        // when(im.getSafeHomeLocation(any(), any(),
+        // Mockito.anyString())).thenReturn(safeLocation);
 
         // Sometimes use Mockito.withSettings().verboseLogging()
         User.setPlugin(plugin);
@@ -138,7 +146,8 @@ public class IslandRespawnListenerTest {
     }
 
     /**
-     * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     * Test method for
+     * {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
     public void testOnPlayerDeathNoFlag() {
@@ -189,7 +198,8 @@ public class IslandRespawnListenerTest {
     }
 
     /**
-     * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     * Test method for
+     * {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
     public void testOnPlayerDeath() {
@@ -200,7 +210,8 @@ public class IslandRespawnListenerTest {
     }
 
     /**
-     * Test method for {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * Test method for
+     * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
     public void testOnPlayerRespawn() {
@@ -223,7 +234,8 @@ public class IslandRespawnListenerTest {
     }
 
     /**
-     * Test method for {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * Test method for
+     * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
     public void testOnPlayerRespawnWithoutDeath() {
@@ -237,7 +249,6 @@ public class IslandRespawnListenerTest {
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }
-
 
     /**
      * Test method for {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
@@ -262,7 +273,8 @@ public class IslandRespawnListenerTest {
     }
 
     /**
-     * Test method for {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * Test method for
+     * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
     public void testOnPlayerRespawnFlagNotSet() {

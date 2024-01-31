@@ -22,6 +22,7 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
 
 /**
  * Create and paste a new island
+ * 
  * @author tastybento
  *
  */
@@ -51,9 +52,7 @@ public class NewIsland {
             this.locationStrategy = new DefaultNewIslandLocationStrategy();
         }
         // Fire pre-create event
-        IslandBaseEvent event = IslandEvent.builder()
-                .involvedPlayer(user.getUniqueId())
-                .reason(Reason.PRECREATE)
+        IslandBaseEvent event = IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECREATE)
                 .build();
         if (event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled())) {
             // Do nothing
@@ -71,6 +70,7 @@ public class NewIsland {
 
     /**
      * Start building a new island
+     * 
      * @return New island builder object
      */
     public static Builder builder() {
@@ -79,6 +79,7 @@ public class NewIsland {
 
     /**
      * Build a new island for a player
+     * 
      * @author tastybento
      */
     public static class Builder {
@@ -97,7 +98,6 @@ public class NewIsland {
             return this;
         }
 
-
         public Builder player(User player) {
             this.user2 = player;
             return this;
@@ -105,7 +105,9 @@ public class NewIsland {
 
         /**
          * Sets the reason
-         * @param reason reason, can only be {@link Reason#CREATE} or {@link Reason#RESET}.
+         * 
+         * @param reason reason, can only be {@link Reason#CREATE} or
+         *               {@link Reason#RESET}.
          */
         public Builder reason(Reason reason) {
             if (!reason.equals(Reason.CREATE) && !reason.equals(Reason.RESET)) {
@@ -117,6 +119,7 @@ public class NewIsland {
 
         /**
          * Set the addon
+         * 
          * @param addon a game mode addon
          */
         public Builder addon(GameModeAddon addon) {
@@ -165,8 +168,10 @@ public class NewIsland {
 
     /**
      * Makes an island.
+     * 
      * @param oldIsland old island that is being replaced, if any
-     * @throws IOException - if an island cannot be made. Message is the tag to show the user.
+     * @throws IOException - if an island cannot be made. Message is the tag to show
+     *                     the user.
      */
     public void newIsland(Island oldIsland) throws IOException {
         // Find the new island location
@@ -177,14 +182,10 @@ public class NewIsland {
         // Clean up the user
         cleanUpUser(next);
         // Fire event
-        IslandBaseEvent event = IslandEvent.builder()
-                .involvedPlayer(user.getUniqueId())
-                .reason(reason)
-                .island(island)
+        IslandBaseEvent event = IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(reason).island(island)
                 .location(island.getCenter())
                 .blueprintBundle(plugin.getBlueprintsManager().getBlueprintBundles(addon).get(name))
-                .oldIsland(oldIsland)
-                .build();
+                .oldIsland(oldIsland).build();
         if (event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled())) {
             // Do nothing
             return;
@@ -198,8 +199,10 @@ public class NewIsland {
             // Do nothing of other cases
         }
         }
-
-        // Run task to run after creating the island in one tick if island is not being pasted
+        // Set the player's primary island
+        plugin.getIslands().setPrimaryIsland(user.getUniqueId(), island);
+        // Run task to run after creating the island in one tick if island is not being
+        // pasted
         if (noPaste) {
             Bukkit.getScheduler().runTask(plugin, () -> postCreationTask(oldIsland));
         } else {
@@ -216,6 +219,7 @@ public class NewIsland {
 
     /**
      * Tasks to run after the new island has been created
+     * 
      * @param oldIsland - old island that will be deleted
      */
     private void postCreationTask(Island oldIsland) {
@@ -225,7 +229,8 @@ public class NewIsland {
         }
         // Stop the player from falling or moving if they are
         if (user.isOnline()) {
-            if (reason.equals(Reason.RESET) || (reason.equals(Reason.CREATE) && plugin.getIWM().isTeleportPlayerToIslandUponIslandCreation(world))) {
+            if (reason.equals(Reason.RESET) || (reason.equals(Reason.CREATE)
+                    && plugin.getIWM().isTeleportPlayerToIslandUponIslandCreation(world))) {
                 user.getPlayer().setVelocity(new Vector(0, 0, 0));
                 user.getPlayer().setFallDistance(0F);
                 // Teleport player after this island is built
@@ -243,29 +248,31 @@ public class NewIsland {
     }
 
     /**
-     * Cleans up a user before moving them to a new island.
-     * Removes any old home locations. Sets the next home location. Resets deaths.
-     * Checks range permissions and saves the player to the database.
+     * Cleans up a user before moving them to a new island. Resets deaths. Checks
+     * range permissions and saves the player to the database.
+     * 
      * @param loc - the new island location
      */
     private void cleanUpUser(Location loc) {
-        // Set home location
-        plugin.getIslands().setHomeLocation(user, new Location(loc.getWorld(), loc.getX() + 0.5D, loc.getY(), loc.getZ() + 0.5D));
         // Reset deaths
         if (plugin.getIWM().isDeathsResetOnNewIsland(world)) {
             plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);
         }
         // Check if owner has a different range permission than the island size
-        island.setProtectionRange(user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld())
-                .map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getProtectionRange()));
+        island.setProtectionRange(user.getPermissionValue(
+                plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("")
+                        + "island.range",
+                island.getProtectionRange()));
         // Save the player so that if the server crashes weird things won't happen
         plugin.getPlayers().save(user.getUniqueId());
     }
 
     /**
      * Get the next island location and add it to the island grid
+     * 
      * @return location of new island
-     * @throws IOException - if there are no unoccupied spots or the island could not be added to the grid
+     * @throws IOException - if there are no unoccupied spots or the island could
+     *                     not be added to the grid
      */
     private Location makeNextIsland() throws IOException {
         // If the reservation fails, then we need to make a new island anyway
@@ -286,6 +293,7 @@ public class NewIsland {
 
     /**
      * Get the reserved island location
+     * 
      * @return reserved island location, or null if none found
      */
     private Location checkReservedIsland() {
@@ -297,9 +305,6 @@ public class NewIsland {
                 // Clear the reservation
                 island.setReserved(false);
                 return l;
-            } else {
-                // This should never happen unless we allow another way to paste over islands without reserving
-                plugin.logError("New island for user " + user.getName() + " was not reserved!");
             }
         }
         return null;
@@ -307,19 +312,15 @@ public class NewIsland {
 
     private void tidyUp(Island oldIsland) {
         // Delete old island
-        if (oldIsland != null && !plugin.getSettings().isKeepPreviousIslandOnReset()) {
+        if (oldIsland != null) {
             // Delete the old island
             plugin.getIslands().deleteIsland(oldIsland, true, user.getUniqueId());
         }
 
         // Fire exit event
-        IslandEvent.builder()
-        .involvedPlayer(user.getUniqueId())
-        .reason(reason == Reason.RESET ? Reason.RESETTED : Reason.CREATED)
-        .island(island)
-        .location(island.getCenter())
-        .oldIsland(oldIsland)
-        .build();
+        IslandEvent.builder().involvedPlayer(user.getUniqueId())
+                .reason(reason == Reason.RESET ? Reason.RESETTED : Reason.CREATED).island(island)
+                .location(island.getCenter()).oldIsland(oldIsland).build();
 
     }
 }

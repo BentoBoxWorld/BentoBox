@@ -16,6 +16,7 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
+ * Tells the rank of the player
  * @author tastybento
  *
  */
@@ -82,10 +83,10 @@ public class AdminGetrankCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Get rank
-        RanksManager rm = getPlugin().getRanksManager();
         User target = User.getInstance(targetUUID);
         int currentRank = island.getRank(target);
-        user.sendMessage("commands.admin.getrank.rank-is", TextVariables.RANK, user.getTranslation(rm.getRank(currentRank)),
+        user.sendMessage("commands.admin.getrank.rank-is", TextVariables.RANK,
+                user.getTranslation(RanksManager.getInstance().getRank(currentRank)),
                 TextVariables.NAME, getPlayers().getName(island.getOwner()));
         return true;
     }

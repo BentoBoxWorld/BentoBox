@@ -1,0 +1,71 @@
+# This is default island creation panel. It is used in all situations when gamemode addon does not have specified their
+# of panel.
+island_creation_panel:
+  title: panels.island_creation.title  # The title of panel or link to the localization location.
+  type: INVENTORY                     # The type of inventory: INVENTORY, DROPPER, HOPPER
+  background:                         # The item that will be displayed in empty spots. This section can be removed.
+    icon: BLACK_STAINED_GLASS_PANE    # The icon of background item
+    title: "&b&r" # Empty text        # The text of background item
+  border:                             # The item that will be displayed around the inventory. This section can be removed.
+    icon: BLACK_STAINED_GLASS_PANE    # The icon of background item
+    title: "&b&r"  # Empty text       # The text of background item
+  force-shown: []                     # Allow to specify (1-6, 1-3, 1) which rows must be showed regardless of empty elements.
+  content:                            # Allow to define buttons in your panel.
+    2:
+      2: blueprint_bundle_button      # String values are expected to be `reusables` that are defined at the end of this file.
+      3: blueprint_bundle_button
+      4: blueprint_bundle_button
+      5: blueprint_bundle_button
+      6: blueprint_bundle_button
+      7: blueprint_bundle_button
+      8: blueprint_bundle_button
+    3:
+      1:
+        icon: tipped_arrow{CustomPotionColor:11546150}       # The icon for button
+        title: panels.buttons.previous.name                  # The name of button, or link to the localization.
+        description: panels.buttons.previous.description     # The description of button, or link to the localization.
+        data:
+          type: PREVIOUS                                     # Indicates what button is doing. Available values depends on panel
+          indexing: true                                     # Parameter for button.
+        actions:                                             # List of actions that button can do. Available values depends on button
+          previous:
+            click-type: UNKNOWN                              # UNKNOWN means that any click type is respected.
+            tooltip: panels.tips.click-to-previous           # Tooltips are always generated an empty line bellow description/title. Not required.
+      2: blueprint_bundle_button
+      3: blueprint_bundle_button
+      4: blueprint_bundle_button
+      5: blueprint_bundle_button
+      6: blueprint_bundle_button
+      7: blueprint_bundle_button
+      8: blueprint_bundle_button
+      9:
+        icon: tipped_arrow{CustomPotionColor:8439583}
+        title: panels.buttons.next.name
+        description: panels.buttons.next.description
+        data:
+          type: NEXT
+          indexing: true
+        actions:
+          next:
+            click-type: UNKNOWN
+            tooltip: panels.tips.click-to-next
+    4:
+      2: blueprint_bundle_button
+      3: blueprint_bundle_button
+      4: blueprint_bundle_button
+      5: blueprint_bundle_button
+      6: blueprint_bundle_button
+      7: blueprint_bundle_button
+      8: blueprint_bundle_button
+  reusable:                                             # List of reoccurring buttons in the panels.
+    blueprint_bundle_button:                            # The ID of the button
+      # icon: GRASS_BLOCK
+      title: panels.island_creation.buttons.bundle.name
+      description: panels.island_creation.buttons.bundle.description
+      data:
+        type: BUNDLE
+        # unique_id: default                            # Specifying unique_id will force to show the requested bundle if it is available.
+      actions:
+        select:
+          click-type: UNKNOWN
+          tooltip: panels.tips.click-to-choose

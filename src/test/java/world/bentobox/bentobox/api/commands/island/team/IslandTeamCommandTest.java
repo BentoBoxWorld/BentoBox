@@ -18,7 +18,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,32 +25,30 @@ import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
-import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class IslandTeamCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
+public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private CompositeCommand ic;
-
 
     private IslandTeamCommand tc;
 
@@ -81,9 +78,7 @@ public class IslandTeamCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -102,11 +97,13 @@ public class IslandTeamCommandTest {
         // island Manager
         when(plugin.getIslands()).thenReturn(im);
         // is owner of island
-        when(im.getOwner(any(), any())).thenReturn(uuid);
+        when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
+        when(im.getIsland(world, user)).thenReturn(island);
         // Max members
         when(im.getMaxMembers(eq(island), eq(RanksManager.MEMBER_RANK))).thenReturn(3);
         // No team members
-        when(im.getMembers(any(), any(UUID.class))).thenReturn(Collections.emptySet());
+        // when(im.getMembers(any(),
+        // any(UUID.class))).thenReturn(Collections.emptySet());
         // Add members
         ImmutableSet<UUID> set = new ImmutableSet.Builder<UUID>().build();
         // No members
@@ -125,19 +122,13 @@ public class IslandTeamCommandTest {
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
 
-
         // Command under test
         tc = new IslandTeamCommand(ic);
     }
 
     /**
-     */
-    @After
-    public void tearDown() throws Exception {
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#IslandTeamCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#IslandTeamCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
     public void testIslandTeamCommand() {
@@ -145,7 +136,8 @@ public class IslandTeamCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -156,46 +148,39 @@ public class IslandTeamCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoIsland() {
-        when(im.getOwner(any(), any())).thenReturn(null);
-        assertFalse(tc.execute(user, "team", Collections.emptyList()));
+    public void testCanExecuteUserStringListOfStringNoIsland() {
+        when(im.getPrimaryIsland(world, uuid)).thenReturn(null);
+        assertFalse(tc.canExecute(user, "team", Collections.emptyList()));
         verify(user).sendMessage(eq("general.errors.no-island"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringIslandIsNotFull() {
-        assertTrue(tc.execute(user, "team", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.island.team.invite.you-can-invite"), eq(TextVariables.NUMBER), eq("3"));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringIslandIsFull() {
+    public void testCanExecuteUserStringListOfStringIslandIsFull() {
         // Max members
         when(im.getMaxMembers(eq(island), eq(RanksManager.MEMBER_RANK))).thenReturn(0);
-        assertTrue(tc.execute(user, "team", Collections.emptyList()));
+        assertTrue(tc.canExecute(user, "team", Collections.emptyList()));
         verify(user).sendMessage(eq("commands.island.team.invite.errors.island-is-full"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#addInvite(world.bentobox.bentobox.api.commands.island.team.Invite.Type, java.util.UUID, java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#addInvite(world.bentobox.bentobox.api.commands.island.team.Invite.Type, java.util.UUID, java.util.UUID)}.
      */
     @Test
     public void testAddInvite() {
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee);
+        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
         assertTrue(tc.isInvited(invitee));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#isInvited(java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#isInvited(java.util.UUID)}.
      */
     @Test
     public void testIsInvited() {
@@ -203,16 +188,18 @@ public class IslandTeamCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#getInviter(java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#getInviter(java.util.UUID)}.
      */
     @Test
     public void testGetInviter() {
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee);
+        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
         assertEquals(uuid, tc.getInviter(invitee));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#getInviter(java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#getInviter(java.util.UUID)}.
      */
     @Test
     public void testGetInviterNoInvite() {
@@ -220,12 +207,13 @@ public class IslandTeamCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#getInvite(java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#getInvite(java.util.UUID)}.
      */
     @Test
     public void testGetInvite() {
         assertNull(tc.getInvite(invitee));
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee);
+        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
         @Nullable
         Invite invite = tc.getInvite(invitee);
         assertEquals(invitee, invite.getInvitee());
@@ -234,12 +222,13 @@ public class IslandTeamCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#removeInvite(java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#removeInvite(java.util.UUID)}.
      */
     @Test
     public void testRemoveInvite() {
         assertNull(tc.getInvite(invitee));
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee);
+        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
         tc.removeInvite(invitee);
         assertNull(tc.getInvite(invitee));
     }

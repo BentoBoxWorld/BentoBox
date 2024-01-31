@@ -143,8 +143,15 @@ public final class Flags {
     public static final Flag ITEM_FRAME = new Flag.Builder("ITEM_FRAME", Material.ITEM_FRAME).mode(Flag.Mode.ADVANCED).build();
     public static final Flag CAKE = new Flag.Builder("CAKE", Material.CAKE).build();
     public static final Flag HIVE = new Flag.Builder("HIVE", Material.HONEY_BOTTLE).type(Type.PROTECTION).build();
+    public static final Flag CARTOGRAPHY = new Flag.Builder("CARTOGRAPHY", Material.CARTOGRAPHY_TABLE).build();
+    public static final Flag GRINDSTONE = new Flag.Builder("GRINDSTONE", Material.GRINDSTONE).build();
+    public static final Flag SMITHING = new Flag.Builder("SMITHING", Material.SMITHING_TABLE).build();
+    public static final Flag STONECUTTING = new Flag.Builder("STONECUTTING", Material.STONECUTTER).build();
+    public static final Flag LOOM = new Flag.Builder("LOOM", Material.LOOM).build();
+
     public static final Flag CONTAINER = new Flag.Builder("CONTAINER", Material.CHEST).mode(Flag.Mode.BASIC)
-            .subflags(BREWING, BARREL, CHEST, COMPOSTER, FLOWER_POT, SHULKER_BOX, TRAPPED_CHEST, FURNACE, JUKEBOX, DISPENSER, DROPPER, HOPPER, ITEM_FRAME, HIVE)
+            .subflags(BREWING, BARREL, CHEST, COMPOSTER, FLOWER_POT, SHULKER_BOX, TRAPPED_CHEST, FURNACE, JUKEBOX, DISPENSER,
+                    DROPPER, HOPPER, ITEM_FRAME, HIVE)
             .build();
 
     /**
@@ -659,6 +666,7 @@ public final class Flags {
     /**
      * Harvest Setting
      * Controls who gets to harvest any crop related contents. e.g. Wheat, Sugar Cane, melon blocks, not stems, pumpkin blocks, etc.
+     * Listener is {@link BreakBlocksListener}
      * @since 1.23.0
      */
     public static final Flag HARVEST = new Flag.Builder("HARVEST", Material.PUMPKIN).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
@@ -666,12 +674,14 @@ public final class Flags {
     /**
      * Crop Planting
      * Controls who gets to plant crops on tilled soil.
+     * Listener is {@link PlaceBlockListener}
      * @since 1.23.0
      */
     public static final Flag CROP_PLANTING = new Flag.Builder("CROP_PLANTING", Material.PUMPKIN_SEEDS).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
 
     /**
      * Sign edit protection
+     * Listener is {@link BlockInteractionListener}
      * @since 1.24.0
      */
     public static final Flag SIGN_EDITING = new Flag.Builder("SIGN_EDITING", Material.DARK_OAK_SIGN).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();

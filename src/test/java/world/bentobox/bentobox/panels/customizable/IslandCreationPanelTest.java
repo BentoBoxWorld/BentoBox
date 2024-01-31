@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.panels;
+package world.bentobox.bentobox.panels.customizable;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -7,18 +7,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
 import org.junit.Before;
@@ -43,14 +43,13 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.managers.island.NewIsland.Builder;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class })
 public class IslandCreationPanelTest {
 
     @Mock
@@ -59,8 +58,6 @@ public class IslandCreationPanelTest {
     private IslandsManager im;
     @Mock
     private IslandWorldManager iwm;
-    @Mock
-    private Builder builder;
     @Mock
     private BentoBox plugin;
     @Mock
@@ -78,6 +75,10 @@ public class IslandCreationPanelTest {
     @Mock
     private BlueprintBundle bb3;
 
+    /**
+     * Location of the resources folder
+     */
+    private final Path resourcePath = Paths.get("src","test","resources");
 
     /**
      */
@@ -101,14 +102,25 @@ public class IslandCreationPanelTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.hasPermission(anyString())).thenReturn(true);
-        when(user.getTranslation(any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
         // Set up user already
         User.getInstance(player);
 
         // Addon
         GameModeAddon addon = mock(GameModeAddon.class);
+        when(addon.getDataFolder()).thenReturn(resourcePath.toFile());
 
+        when(user.getTranslation(any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(any(World.class), any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(user.getTranslation(any(String.class), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslationOrNothing(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+
+        when(user.getTranslation(any(World.class), eq("panels.island_creation.buttons.bundle.name"), any())).
+            thenAnswer((Answer<String>) invocation -> invocation.getArgument(3, String.class));
+        when(user.getTranslation(any(World.class), eq("panels.island_creation.buttons.bundle.description"), any())).
+            thenAnswer((Answer<String>) invocation -> invocation.getArgument(3, String.class));
+        when(plugin.getDescription()).thenAnswer((Answer<PluginDescriptionFile>) invocation ->
+            new PluginDescriptionFile("BentoBox", "1.0", "world.bentobox.bentobox"));
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -118,15 +130,15 @@ public class IslandCreationPanelTest {
         when(ic.getUsage()).thenReturn("");
         when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
         when(ic.getAddon()).thenReturn(addon);
-
+        World world = mock(World.class);
+        when(ic.getWorld()).thenReturn(world);
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        // when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
-
 
         PlayersManager pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
@@ -150,7 +162,6 @@ public class IslandCreationPanelTest {
 
         // Bundles manager
         when(plugin.getBlueprintsManager()).thenReturn(bpm);
-
 
         // Bundles
         Map<String, BlueprintBundle> map = new HashMap<>();
@@ -187,42 +198,42 @@ public class IslandCreationPanelTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.panels.IslandCreationPanel#openPanel(world.bentobox.bentobox.api.commands.CompositeCommand, world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.panels.customizable.IslandCreationPanel#openPanel(world.bentobox.bentobox.api.commands.CompositeCommand, world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
     public void testOpenPanel() {
         IslandCreationPanel.openPanel(ic, user, "");
-        // Check for slot being set to 0
-        verify(bb2).setSlot(eq(0));
-        verify(bb3).setSlot(eq(0));
+
         // Set correctly
-        verify(inv).setItem(eq(5), any());
+        verify(inv).setItem(eq(0), any());
+        verify(inv).setItem(eq(1), any());
         verify(meta).setDisplayName(eq("test"));
         verify(meta).setLocalizedName(eq("test"));
-        verify(meta).setLore(eq(Collections.singletonList("A description")));
+        verify(meta).setLore(eq(List.of("A description", "", "panels.tips.click-to-choose")));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.panels.IslandCreationPanel#openPanel(world.bentobox.bentobox.api.commands.CompositeCommand, world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.panels.customizable.IslandCreationPanel#openPanel(world.bentobox.bentobox.api.commands.CompositeCommand, world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
     public void testOpenPanelSameSlot() {
         when(bb2.getSlot()).thenReturn(5);
         when(bb3.getSlot()).thenReturn(5);
         IslandCreationPanel.openPanel(ic, user, "");
-        verify(inv).setItem(eq(5), any());
+        verify(inv).setItem(eq(0), any());
+        verify(inv).setItem(eq(1), any());
         verify(meta).setDisplayName(eq("test"));
         verify(meta).setLocalizedName(eq("test"));
-        verify(meta).setLore(eq(Collections.singletonList("A description")));
+        verify(meta).setLore(eq(List.of("A description", "", "panels.tips.click-to-choose")));
         verify(inv).setItem(eq(0), any());
         verify(meta).setDisplayName(eq("test2"));
         verify(meta).setLocalizedName(eq("test2"));
-        verify(meta).setLore(eq(Collections.singletonList("A description 2")));
+        verify(meta).setLore(eq(List.of("A description 2", "", "panels.tips.click-to-choose")));
         verify(inv).setItem(eq(1), any());
         verify(meta).setDisplayName(eq("test3"));
         verify(meta).setLocalizedName(eq("test3"));
-        verify(meta).setLore(eq(Collections.singletonList("A description 3")));
-
+        verify(meta).setLore(eq(List.of("A description 3", "", "panels.tips.click-to-choose")));
     }
 
 }

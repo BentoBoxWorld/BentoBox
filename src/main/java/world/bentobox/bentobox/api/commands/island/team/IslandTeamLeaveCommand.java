@@ -32,7 +32,7 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.no-team");
             return false;
         }
-        if (getIslands().hasIsland(getWorld(), user.getUniqueId())) {
+        if (user.getUniqueId().equals(getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).getOwner())) {
             user.sendMessage("commands.island.team.leave.cannot-leave");
             return false;
         }
@@ -65,29 +65,32 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
 
     }
 
-    private void leave(User user) {
+    protected boolean leave(User user) {
         Island island = getIslands().getIsland(getWorld(), user);
+        if (island == null) {
+            user.sendMessage("general.errors.no-island");
+            return false;
+        }
         // Fire event
-        IslandBaseEvent event = TeamEvent.builder()
-                .island(island)
-                .reason(TeamEvent.Reason.LEAVE)
-                .involvedPlayer(user.getUniqueId())
-                .build();
+        IslandBaseEvent event = TeamEvent.builder().island(island).reason(TeamEvent.Reason.LEAVE)
+                .involvedPlayer(user.getUniqueId()).build();
         if (event.isCancelled()) {
-            return;
+            return false;
         }
-        UUID ownerUUID = getIslands().getOwner(getWorld(), user.getUniqueId());
+        UUID ownerUUID = island.getOwner();
         if (ownerUUID != null) {
-            User.getInstance(ownerUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
+            User.getInstance(ownerUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME,
+                    user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
         }
-        getIslands().setLeaveTeam(getWorld(), user.getUniqueId());
+        getIslands().removePlayer(island, user.getUniqueId());
         // Clean the player
         getPlayers().cleanLeavingPlayer(getWorld(), user, false, island);
 
         // Add cooldown for this player and target
         if (getSettings().getInviteCooldown() > 0 && getParent() != null) {
             // Get the invite class from the parent
-            getParent().getSubCommand("invite").ifPresent(c -> c.setCooldown(island.getUniqueId(), user.getUniqueId().toString(), getSettings().getInviteCooldown() * 60));
+            getParent().getSubCommand("invite").ifPresent(c -> c.setCooldown(island.getUniqueId(),
+                    user.getUniqueId().toString(), getSettings().getInviteCooldown() * 60));
         }
         // Remove reset if required
         if (getIWM().isLeaversLoseReset(getWorld())) {
@@ -97,12 +100,9 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
             showResets(user);
         }
         user.sendMessage("commands.island.team.leave.success");
-        IslandEvent.builder()
-        .island(island)
-        .involvedPlayer(user.getUniqueId())
-        .admin(false)
-        .reason(IslandEvent.Reason.RANK_CHANGE)
-        .rankChange(island.getRank(user), RanksManager.VISITOR_RANK)
-        .build();
+        IslandEvent.builder().island(island).involvedPlayer(user.getUniqueId()).admin(false)
+                .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(island.getRank(user), RanksManager.VISITOR_RANK)
+                .build();
+        return true;
     }
 }

@@ -37,7 +37,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#getDefaultLanguage()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#getDefaultLanguage()}.
      */
     @Test
     public void testGetDefaultLanguage() {
@@ -45,7 +46,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setDefaultLanguage(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setDefaultLanguage(java.lang.String)}.
      */
     @Test
     public void testSetDefaultLanguage() {
@@ -63,7 +65,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setUseEconomy(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setUseEconomy(boolean)}.
      */
     @Test
     public void testSetUseEconomy() {
@@ -80,7 +83,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setDatabaseType(world.bentobox.bentobox.database.DatabaseSetup.DatabaseType)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setDatabaseType(world.bentobox.bentobox.database.DatabaseSetup.DatabaseType)}.
      */
     @Test
     public void testSetDatabaseType() {
@@ -97,7 +101,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setDatabaseHost(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setDatabaseHost(java.lang.String)}.
      */
     @Test
     public void testSetDatabaseHost() {
@@ -133,7 +138,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setDatabasePort(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setDatabasePort(int)}.
      */
     @Test
     public void testSetDatabasePort() {
@@ -150,7 +156,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setDatabaseName(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setDatabaseName(java.lang.String)}.
      */
     @Test
     public void testSetDatabaseName() {
@@ -159,7 +166,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#getDatabaseUsername()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#getDatabaseUsername()}.
      */
     @Test
     public void testGetDatabaseUsername() {
@@ -167,7 +175,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setDatabaseUsername(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setDatabaseUsername(java.lang.String)}.
      */
     @Test
     public void testSetDatabaseUsername() {
@@ -176,7 +185,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#getDatabasePassword()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#getDatabasePassword()}.
      */
     @Test
     public void testGetDatabasePassword() {
@@ -184,7 +194,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setDatabasePassword(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setDatabasePassword(java.lang.String)}.
      */
     @Test
     public void testSetDatabasePassword() {
@@ -193,7 +204,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#getDatabaseBackupPeriod()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#getDatabaseBackupPeriod()}.
      */
     @Test
     public void testGetDatabaseBackupPeriod() {
@@ -201,7 +213,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setDatabaseBackupPeriod(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setDatabaseBackupPeriod(int)}.
      */
     @Test
     public void testSetDatabaseBackupPeriod() {
@@ -218,7 +231,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setFakePlayers(java.util.Set)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setFakePlayers(java.util.Set)}.
      */
     @Test
     public void testSetFakePlayers() {
@@ -227,7 +241,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isClosePanelOnClickOutside()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#isClosePanelOnClickOutside()}.
      */
     @Test
     public void testIsClosePanelOnClickOutside() {
@@ -235,7 +250,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setClosePanelOnClickOutside(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setClosePanelOnClickOutside(boolean)}.
      */
     @Test
     public void testSetClosePanelOnClickOutside() {
@@ -253,7 +269,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setInviteCooldown(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setInviteCooldown(int)}.
      */
     @Test
     public void testSetInviteCooldown() {
@@ -270,7 +287,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setCoopCooldown(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setCoopCooldown(int)}.
      */
     @Test
     public void testSetCoopCooldown() {
@@ -287,7 +305,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setTrustCooldown(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setTrustCooldown(int)}.
      */
     @Test
     public void testSetTrustCooldown() {
@@ -321,7 +340,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setResetCooldown(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setResetCooldown(int)}.
      */
     @Test
     public void testSetResetCooldown() {
@@ -330,7 +350,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#getConfirmationTime()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#getConfirmationTime()}.
      */
     @Test
     public void testGetConfirmationTime() {
@@ -338,7 +359,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setConfirmationTime(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setConfirmationTime(int)}.
      */
     @Test
     public void testSetConfirmationTime() {
@@ -347,7 +369,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isKickConfirmation()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#isKickConfirmation()}.
      */
     @Test
     public void testIsKickConfirmation() {
@@ -355,7 +378,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setKickConfirmation(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setKickConfirmation(boolean)}.
      */
     @Test
     public void testSetKickConfirmation() {
@@ -365,7 +389,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isLeaveConfirmation()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#isLeaveConfirmation()}.
      */
     @Test
     public void testIsLeaveConfirmation() {
@@ -373,7 +398,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setLeaveConfirmation(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setLeaveConfirmation(boolean)}.
      */
     @Test
     public void testSetLeaveConfirmation() {
@@ -384,7 +410,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isResetConfirmation()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#isResetConfirmation()}.
      */
     @Test
     public void testIsResetConfirmation() {
@@ -392,7 +419,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setResetConfirmation(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setResetConfirmation(boolean)}.
      */
     @Test
     public void testSetResetConfirmation() {
@@ -411,7 +439,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setNameMinLength(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setNameMinLength(int)}.
      */
     @Test
     public void testSetNameMinLength() {
@@ -429,7 +458,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setNameMaxLength(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setNameMaxLength(int)}.
      */
     @Test
     public void testSetNameMaxLength() {
@@ -448,7 +478,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setNameUniqueness(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setNameUniqueness(boolean)}.
      */
     @Test
     public void testSetNameUniqueness() {
@@ -494,61 +525,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isEnableAutoOwnershipTransfer()}.
-     */
-    @Test
-    public void testIsEnableAutoOwnershipTransfer() {
-        assertFalse(s.isEnableAutoOwnershipTransfer());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setEnableAutoOwnershipTransfer(boolean)}.
-     */
-    @Test
-    public void testSetEnableAutoOwnershipTransfer() {
-        assertFalse(s.isEnableAutoOwnershipTransfer());
-        s.setEnableAutoOwnershipTransfer(true);
-        assertTrue(s.isEnableAutoOwnershipTransfer());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.Settings#getAutoOwnershipTransferInactivityThreshold()}.
-     */
-    @Test
-    public void testGetAutoOwnershipTransferInactivityThreshold() {
-        assertEquals(30, s.getAutoOwnershipTransferInactivityThreshold());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setAutoOwnershipTransferInactivityThreshold(int)}.
-     */
-    @Test
-    public void testSetAutoOwnershipTransferInactivityThreshold() {
-        assertEquals(30, s.getAutoOwnershipTransferInactivityThreshold());
-        s.setAutoOwnershipTransferInactivityThreshold(1234);
-        assertEquals(1234, s.getAutoOwnershipTransferInactivityThreshold());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isAutoOwnershipTransferIgnoreRanks()}.
-     */
-    @Test
-    public void testIsAutoOwnershipTransferIgnoreRanks() {
-        assertFalse(s.isAutoOwnershipTransferIgnoreRanks());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setAutoOwnershipTransferIgnoreRanks(boolean)}.
-     */
-    @Test
-    public void testSetAutoOwnershipTransferIgnoreRanks() {
-        assertFalse(s.isAutoOwnershipTransferIgnoreRanks());
-        s.setAutoOwnershipTransferIgnoreRanks(true);
-        assertTrue(s.isAutoOwnershipTransferIgnoreRanks());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isLogCleanSuperFlatChunks()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#isLogCleanSuperFlatChunks()}.
      */
     @Test
     public void testIsLogCleanSuperFlatChunks() {
@@ -556,7 +534,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setLogCleanSuperFlatChunks(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setLogCleanSuperFlatChunks(boolean)}.
      */
     @Test
     public void testSetLogCleanSuperFlatChunks() {
@@ -566,7 +545,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isResetCooldownOnCreate()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#isResetCooldownOnCreate()}.
      */
     @Test
     public void testIsResetCooldownOnCreate() {
@@ -574,7 +554,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setResetCooldownOnCreate(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setResetCooldownOnCreate(boolean)}.
      */
     @Test
     public void testSetResetCooldownOnCreate() {
@@ -584,7 +565,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isGithubDownloadData()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#isGithubDownloadData()}.
      */
     @Test
     public void testIsGithubDownloadData() {
@@ -592,7 +574,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setGithubDownloadData(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setGithubDownloadData(boolean)}.
      */
     @Test
     public void testSetGithubDownloadData() {
@@ -602,7 +585,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#getGithubConnectionInterval()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#getGithubConnectionInterval()}.
      */
     @Test
     public void testGetGithubConnectionInterval() {
@@ -610,7 +594,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setGithubConnectionInterval(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setGithubConnectionInterval(int)}.
      */
     @Test
     public void testSetGithubConnectionInterval() {
@@ -620,7 +605,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isCheckBentoBoxUpdates()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#isCheckBentoBoxUpdates()}.
      */
     @Test
     public void testIsCheckBentoBoxUpdates() {
@@ -628,7 +614,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setCheckBentoBoxUpdates(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setCheckBentoBoxUpdates(boolean)}.
      */
     @Test
     public void testSetCheckBentoBoxUpdates() {
@@ -638,7 +625,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isCheckAddonsUpdates()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#isCheckAddonsUpdates()}.
      */
     @Test
     public void testIsCheckAddonsUpdates() {
@@ -646,7 +634,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setCheckAddonsUpdates(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setCheckAddonsUpdates(boolean)}.
      */
     @Test
     public void testSetCheckAddonsUpdates() {
@@ -656,7 +645,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isLogGithubDownloadData()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#isLogGithubDownloadData()}.
      */
     @Test
     public void testIsLogGithubDownloadData() {
@@ -664,7 +654,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setLogGithubDownloadData(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setLogGithubDownloadData(boolean)}.
      */
     @Test
     public void testSetLogGithubDownloadData() {
@@ -711,7 +702,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isInviteConfirmation()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#isInviteConfirmation()}.
      */
     @Test
     public void testIsInviteConfirmation() {
@@ -719,7 +711,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setInviteConfirmation(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setInviteConfirmation(boolean)}.
      */
     @Test
     public void testSetInviteConfirmation() {
@@ -737,7 +730,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setDatabasePrefix(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setDatabasePrefix(java.lang.String)}.
      */
     @Test
     public void testSetDatabasePrefix() {
@@ -747,7 +741,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#isKeepPreviousIslandOnReset()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#isKeepPreviousIslandOnReset()}.
      */
     @Test
     public void testIsKeepPreviousIslandOnReset() {
@@ -755,7 +750,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setKeepPreviousIslandOnReset(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setKeepPreviousIslandOnReset(boolean)}.
      */
     @Test
     public void testSetKeepPreviousIslandOnReset() {
@@ -765,7 +761,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#getMongodbConnectionUri()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#getMongodbConnectionUri()}.
      */
     @Test
     public void testGetMongodbConnectionUri() {
@@ -773,7 +770,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setMongodbConnectionUri(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setMongodbConnectionUri(java.lang.String)}.
      */
     @Test
     public void testSetMongodbConnectionUri() {
@@ -783,7 +781,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#getPanelFillerMaterial()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#getPanelFillerMaterial()}.
      */
     @Test
     public void testGetPanelFillerMaterial() {
@@ -791,7 +790,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setPanelFillerMaterial(org.bukkit.Material)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setPanelFillerMaterial(org.bukkit.Material)}.
      */
     @Test
     public void testSetPanelFillerMaterial() {
@@ -801,7 +801,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#getPlayerHeadCacheTime()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#getPlayerHeadCacheTime()}.
      */
     @Test
     public void testGetPlayerHeadCacheTime() {
@@ -809,7 +810,8 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.Settings#setPlayerHeadCacheTime(long)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.Settings#setPlayerHeadCacheTime(long)}.
      */
     @Test
     public void testSetPlayerHeadCacheTime() {

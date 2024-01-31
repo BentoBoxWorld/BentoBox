@@ -289,7 +289,9 @@ public enum GameModePlaceholder {
      * Returns the rank this player has on his island.
      * @since 1.5.0
      */
-    RANK("rank", (addon, user, island) -> (island == null || user == null) ? "" : user.getTranslation(addon.getPlugin().getRanksManager().getRank(island.getRank(user)))),
+    RANK("rank",
+            (addon, user, island) -> (island == null || user == null) ? ""
+                    : user.getTranslation(RanksManager.getInstance().getRank(island.getRank(user)))),
     /**
      * Returns how many times this player reset his island.
      * @since 1.5.0
@@ -310,7 +312,11 @@ public enum GameModePlaceholder {
      * Returns whether this player is on his island and has a rank greater than VISITOR_RANK
      * @since 1.13.0
      */
-    ON_ISLAND("on_island", (addon, user, island) -> String.valueOf(addon.getIslands().userIsOnIsland(addon.getOverWorld(), user))),
+    ON_ISLAND("on_island",
+            (addon, user,
+                    island) -> String.valueOf(addon.getIslands().userIsOnIsland(addon.getOverWorld(), user)
+                            || addon.getIslands().userIsOnIsland(addon.getNetherWorld(), user)
+                            || addon.getIslands().userIsOnIsland(addon.getEndWorld(), user))),
     /**
      * Returns whether this player is an owner of their island
      * @since 1.14.0

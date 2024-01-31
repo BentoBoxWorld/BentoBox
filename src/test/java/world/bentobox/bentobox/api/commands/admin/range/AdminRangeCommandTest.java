@@ -35,12 +35,11 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminRangeCommandTest {
 
     private CompositeCommand ac;
     private User user;
-
 
     /**
      */
@@ -62,7 +61,7 @@ public class AdminRangeCommandTest {
         when(user.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
         UUID notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -81,13 +80,10 @@ public class AdminRangeCommandTest {
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
-
         // Player has island to begin with
         IslandsManager im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
-        when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
-        when(im.getOwner(Mockito.any(),Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -104,7 +100,7 @@ public class AdminRangeCommandTest {
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
         Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer );
+        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer);
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // Addon
@@ -132,7 +128,7 @@ public class AdminRangeCommandTest {
         AdminRangeCommand arc = new AdminRangeCommand(ac);
         arc.execute(user, "", new ArrayList<>());
         // Show help"
-        Mockito.verify(user).sendMessage("commands.help.header","[label]","BSkyBlock");
+        Mockito.verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
     }
 
 }

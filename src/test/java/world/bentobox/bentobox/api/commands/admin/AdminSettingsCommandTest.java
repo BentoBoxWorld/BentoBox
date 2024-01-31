@@ -29,7 +29,6 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +38,6 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -54,7 +52,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -62,8 +60,8 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class})
-public class AdminSettingsCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
+public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
 
     private AdminSettingsCommand asc;
     @Mock
@@ -96,9 +94,7 @@ public class AdminSettingsCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         Util.setPlugin(plugin);
 
         // Command manager
@@ -109,7 +105,7 @@ public class AdminSettingsCommandTest {
         when(user.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -137,9 +133,12 @@ public class AdminSettingsCommandTest {
         when(lm.get(any(), any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
 
-        when(user.getTranslation(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-        when(user.getTranslation(anyString(), anyString(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-        when(user.getTranslation(anyString(), anyString(), anyString(), anyString(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString(), anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString(), anyString(), anyString(), anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
@@ -176,21 +175,7 @@ public class AdminSettingsCommandTest {
         FlagsManager fm = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(fm);
 
-        // RnksManager
-        when(plugin.getRanksManager()).thenReturn(new RanksManager());
-
-
-
         asc = new AdminSettingsCommand(ac);
-
-    }
-
-    /**
-     */
-    @After
-    public void tearDown() throws Exception {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
 
     }
 
@@ -297,7 +282,7 @@ public class AdminSettingsCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringArgs() {
-        assertTrue(asc.execute(user, "", Arrays.asList("blah","blah")));
+        assertTrue(asc.execute(user, "", Arrays.asList("blah", "blah")));
         verify(user).sendMessage("general.success");
     }
 
@@ -306,7 +291,7 @@ public class AdminSettingsCommandTest {
      */
     @Test
     public void testTabCompleteUserStringListOfStringTwoArgs() {
-        Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b","WORLD_TNT"));
+        Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b", "WORLD_TNT"));
         assertFalse(r.isEmpty());
         assertEquals("WORLD_TNT_DAMAGE", r.get().get(0));
     }
@@ -316,7 +301,7 @@ public class AdminSettingsCommandTest {
      */
     @Test
     public void testTabCompleteUserStringListOfStringThreeArgs() {
-        Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b","WORLD_TNT", "BEACO"));
+        Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b", "WORLD_TNT", "BEACO"));
         assertFalse(r.isEmpty());
         assertEquals("BEACON", r.get().get(0));
     }
@@ -326,7 +311,7 @@ public class AdminSettingsCommandTest {
      */
     @Test
     public void testTabCompleteUserStringListOfStringFourArgs() {
-        Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b","b", "PVP_OVERWORLD", "t"));
+        Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b", "b", "PVP_OVERWORLD", "t"));
         assertFalse(r.isEmpty());
         // TODO - finish this.
     }

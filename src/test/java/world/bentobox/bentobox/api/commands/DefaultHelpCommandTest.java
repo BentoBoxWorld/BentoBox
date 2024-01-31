@@ -33,7 +33,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, CommandEvent.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, CommandEvent.class })
 public class DefaultHelpCommandTest {
 
     private User user;
@@ -70,15 +70,13 @@ public class DefaultHelpCommandTest {
         CompositeCommand ic = mock(CompositeCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
 
-
         // No island for player to begin with (set it later in the tests)
         IslandsManager im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        // when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Has team
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
-
 
         PlayersManager pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
@@ -150,13 +148,8 @@ public class DefaultHelpCommandTest {
         Mockito.verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
         Mockito.verify(user).getTranslationOrNothing("parameters");
         Mockito.verify(user).getTranslation("description");
-        Mockito.verify(user).sendMessage(
-                "commands.help.syntax-no-parameters",
-                "[usage]",
-                "island",
-                "[description]",
-                "the main island command"
-                );
+        Mockito.verify(user).sendMessage("commands.help.syntax-no-parameters", "[usage]", "island", "[description]",
+                "the main island command");
         Mockito.verify(user).sendMessage("commands.help.end");
     }
 
@@ -178,13 +171,8 @@ public class DefaultHelpCommandTest {
         // There are no header or footer shown
         Mockito.verify(user).getTranslationOrNothing("parameters");
         Mockito.verify(user).getTranslation("description");
-        Mockito.verify(user).sendMessage(
-                "commands.help.syntax-no-parameters",
-                "[usage]",
-                "island",
-                "[description]",
-                "the main island command"
-                );
+        Mockito.verify(user).sendMessage("commands.help.syntax-no-parameters", "[usage]", "island", "[description]",
+                "the main island command");
     }
 
     /**
@@ -207,14 +195,7 @@ public class DefaultHelpCommandTest {
         // There are no header or footer shown
         Mockito.verify(user).getTranslation("commands.help.parameters");
         Mockito.verify(user).getTranslation("commands.help.description");
-        Mockito.verify(user).sendMessage(
-                "commands.help.syntax",
-                "[usage]",
-                "island",
-                "[parameters]",
-                "help-parameters",
-                "[description]",
-                "the help command"
-                );
+        Mockito.verify(user).sendMessage("commands.help.syntax", "[usage]", "island", "[parameters]", "help-parameters",
+                "[description]", "the help command");
     }
 }

@@ -17,40 +17,34 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class DyeListener extends FlagListener {
 
-	/**
-	 * Prevent dying signs.
-	 * @param e - event
-	 */
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onPlayerInteract(final PlayerInteractEvent e)
-	{
-		if (e.getClickedBlock() == null || e.getItem() == null)
-		{
-			return;
-		}
+    /**
+     * Prevent dying signs.
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlayerInteract(final PlayerInteractEvent e) {
+        if (e.getClickedBlock() == null || e.getItem() == null) {
+            return;
+        }
 
-		if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) &&
-			e.getClickedBlock().getType().name().contains("SIGN") &&
-			(e.getItem().getType().name().contains("DYE") || e.getItem().getType().equals(Material.GLOW_INK_SAC)))
-		{
-			this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.DYE);
-		}
-	}
+        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getClickedBlock().getType().name().contains("SIGN")
+                && (e.getItem().getType().name().contains("DYE")
+                        || e.getItem().getType().equals(Material.GLOW_INK_SAC))) {
+            this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.DYE);
+        }
+    }
 
+    /**
+     * Prevents from interacting with sheep.
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlayerInteract(final SheepDyeWoolEvent e) {
+        if (e.getPlayer() == null) {
+            // Sheep is not dyed by the player.
+            return;
+        }
 
-	/**
-	 * Prevents from interacting with sheep.
-	 * @param e - event
-	 */
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onPlayerInteract(final SheepDyeWoolEvent e)
-	{
-		if (e.getPlayer() == null)
-		{
-			// Sheep is not dyed by the player.
-			return;
-		}
-
-		this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.DYE);
-	}
+        this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.DYE);
+    }
 }

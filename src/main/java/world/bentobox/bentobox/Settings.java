@@ -1,11 +1,17 @@
 package world.bentobox.bentobox;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.bukkit.Material;
+
+import com.google.common.collect.ImmutableList;
 
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
@@ -13,38 +19,17 @@ import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.configuration.StoreAt;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 
-
 /**
  * All the plugin settings are here
  *
  * @author tastybento
  */
-@StoreAt(filename="config.yml") // Explicitly call out what name this should have.
+@StoreAt(filename = "config.yml") // Explicitly call out what name this should have.
 @ConfigComment("BentoBox v[version] configuration file.")
 @ConfigComment("")
-@ConfigComment("This configuration file contains settings that mainly apply to or manage the following elements:")
-@ConfigComment(" * Data storage")
-@ConfigComment(" * Gamemodes (commands, ...)")
-@ConfigComment(" * Internet connectivity (web-based content-enriched features, ...)")
-@ConfigComment("")
-@ConfigComment("Note that this configuration file is dynamic:")
-@ConfigComment(" * It gets updated with the newest settings and comments after BentoBox loaded its settings from it.")
-@ConfigComment(" * Upon updating BentoBox, new settings will be automatically added into this configuration file.")
-@ConfigComment("    * Said settings are distinguishable by a dedicated comment, which looks like this:")
-@ConfigComment("       Added since X.Y.Z.")
-@ConfigComment("    * They are provided with default values that should not cause issues on live production servers.")
-@ConfigComment(" * You can however edit this file while the server is online.")
-@ConfigComment("   You will therefore need to run the following command in order to take the changes into account: /bentobox reload.")
-@ConfigComment("")
-@ConfigComment("Here are a few pieces of advice before you get started:")
-@ConfigComment(" * You should check out our Wiki, which may provide you useful tips or insights about BentoBox's features.")
-@ConfigComment("    Link: https://github.com/BentoBoxWorld/BentoBox/wiki")
-@ConfigComment(" * You should edit this configuration file while the server is offline.")
-@ConfigComment(" * Moreover, whenever you update BentoBox, you should do so on a test server first.")
-@ConfigComment("    This will allow you to configure the new settings beforehand instead of applying them inadvertently on a live production server.")
 public class Settings implements ConfigObject {
 
-    /*      GENERAL     */
+    /* GENERAL */
     @ConfigComment("Default language for new players.")
     @ConfigComment("This is the filename in the locale folder without .yml.")
     @ConfigComment("If this does not exist, the default en-US will be used.")
@@ -56,10 +41,17 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.use-economy")
     private boolean useEconomy = true;
 
+    /* COMMANDS */
+    @ConfigComment("Console commands to run when BentoBox has loaded all worlds and addons.")
+    @ConfigComment("Commands are run as the console.")
+    @ConfigComment("e.g. set aliases for worlds in Multiverse here, or anything you need to")
+    @ConfigComment("run after the plugin is fully loaded.")
+    @ConfigEntry(path = "general.ready-commands", since = "1.24.2")
+    private List<String> readyCommands = new ArrayList<>();
+
     // Database
-    @ConfigComment("JSON, MYSQL, MARIADB, MONGODB, SQLITE, POSTGRESQL and YAML(deprecated).")
+    @ConfigComment("JSON, MYSQL, MARIADB, MONGODB, SQLITE, and POSTGRESQL.")
     @ConfigComment("Transition database options are:")
-    @ConfigComment("  YAML2JSON, YAML2MARIADB, YAML2MYSQL, YAML2MONGODB, YAML2SQLITE")
     @ConfigComment("  JSON2MARIADB, JSON2MYSQL, JSON2MONGODB, JSON2SQLITE, JSON2POSTGRESQL")
     @ConfigComment("  MYSQL2JSON, MARIADB2JSON, MONGODB2JSON, SQLITE2JSON, POSTGRESQL2JSON")
     @ConfigComment("If you need others, please make a feature request.")
@@ -70,7 +62,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("   SQLite versions 3.28 or later")
     @ConfigComment("   PostgreSQL versions 9.4 or later")
     @ConfigComment("Transition options enable migration from one database type to another. Use /bbox migrate.")
-    @ConfigComment("YAML and JSON are file-based databases.")
+    @ConfigComment("JSON is a file-based database.")
     @ConfigComment("MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).")
     @ConfigComment("BentoBox uses HikariCP for connecting with SQL databases.")
     @ConfigComment("If you use MONGODB, you must also run the BSBMongo plugin (not addon).")
@@ -197,6 +189,12 @@ public class Settings implements ConfigObject {
     /*
      * Island
      */
+    // Number of islands
+    @ConfigComment("The default number of concurrent islands a player may have.")
+    @ConfigComment("This may be overridden by individual game mode config settings.")
+    @ConfigEntry(path = "island.concurrent-islands")
+    private int islandNumber = 1;
+
     // Cooldowns
     @ConfigComment("How long a player must wait until they can rejoin a team island after being kicked in minutes.")
     @ConfigComment("This slows the effectiveness of players repeating challenges")
@@ -286,25 +284,6 @@ public class Settings implements ConfigObject {
     @ConfigComment("A setting of 0 will leave island blocks (not recommended).")
     @ConfigEntry(path = "island.delete-speed", since = "1.7.0")
     private int deleteSpeed = 1;
-
-    // Automated ownership transfer
-    @ConfigComment("Toggles the automated ownership transfer.")
-    @ConfigComment("It automatically transfers the ownership of an island to one of its members in case the current owner is inactive.")
-    @ConfigComment("More precisely, it transfers the ownership of the island to the player who's active, whose rank is the highest")
-    @ConfigComment("and who's been part of the island the longest time.")
-    @ConfigComment("Setting this to 'false' will disable the feature.")
-    @ConfigEntry(path = "island.automated-ownership-transfer.enable", hidden = true)
-    private boolean enableAutoOwnershipTransfer = false;
-
-    @ConfigComment("Time in days since the island owner's last disconnection before they are considered inactive.")
-    @ConfigEntry(path = "island.automated-ownership-transfer.inactivity-threshold", hidden = true)
-    private int autoOwnershipTransferInactivityThreshold = 30;
-
-    @ConfigComment("Ranks are being considered when transferring the island ownership to one of its member.")
-    @ConfigComment("Ignoring ranks will result in the island ownership being transferred to the player who's active and")
-    @ConfigComment("who's been member of the island the longest time.")
-    @ConfigEntry(path = "island.automated-ownership-transfer.ignore-ranks", hidden = true)
-    private boolean autoOwnershipTransferIgnoreRanks = false;
 
     // Island deletion related settings
     @ConfigComment("Toggles whether islands, when players are resetting them, should be kept in the world or deleted.")
@@ -402,6 +381,7 @@ public class Settings implements ConfigObject {
 
     /**
      * This method returns the useSSL value.
+     * 
      * @return the value of useSSL.
      * @since 1.12.0
      */
@@ -411,6 +391,7 @@ public class Settings implements ConfigObject {
 
     /**
      * This method sets the useSSL value.
+     * 
      * @param useSSL the useSSL new value.
      * @since 1.12.0
      */
@@ -630,30 +611,6 @@ public class Settings implements ConfigObject {
         this.deleteSpeed = deleteSpeed;
     }
 
-    public boolean isEnableAutoOwnershipTransfer() {
-        return enableAutoOwnershipTransfer;
-    }
-
-    public void setEnableAutoOwnershipTransfer(boolean enableAutoOwnershipTransfer) {
-        this.enableAutoOwnershipTransfer = enableAutoOwnershipTransfer;
-    }
-
-    public int getAutoOwnershipTransferInactivityThreshold() {
-        return autoOwnershipTransferInactivityThreshold;
-    }
-
-    public void setAutoOwnershipTransferInactivityThreshold(int autoOwnershipTransferInactivityThreshold) {
-        this.autoOwnershipTransferInactivityThreshold = autoOwnershipTransferInactivityThreshold;
-    }
-
-    public boolean isAutoOwnershipTransferIgnoreRanks() {
-        return autoOwnershipTransferIgnoreRanks;
-    }
-
-    public void setAutoOwnershipTransferIgnoreRanks(boolean autoOwnershipTransferIgnoreRanks) {
-        this.autoOwnershipTransferIgnoreRanks = autoOwnershipTransferIgnoreRanks;
-    }
-
     public boolean isLogCleanSuperFlatChunks() {
         return logCleanSuperFlatChunks;
     }
@@ -725,7 +682,8 @@ public class Settings implements ConfigObject {
      * @return the clearRadius
      */
     public int getClearRadius() {
-        if (clearRadius < 0) clearRadius = 0;
+        if (clearRadius < 0)
+            clearRadius = 0;
         return clearRadius;
     }
 
@@ -733,7 +691,8 @@ public class Settings implements ConfigObject {
      * @param clearRadius the clearRadius to set. Cannot be negative.
      */
     public void setClearRadius(int clearRadius) {
-        if (clearRadius < 0) clearRadius = 0;
+        if (clearRadius < 0)
+            clearRadius = 0;
         this.clearRadius = clearRadius;
     }
 
@@ -757,7 +716,8 @@ public class Settings implements ConfigObject {
      * @return the databasePrefix
      */
     public String getDatabasePrefix() {
-        if (databasePrefix == null) databasePrefix = "";
+        if (databasePrefix == null)
+            databasePrefix = "";
         return databasePrefix.isEmpty() ? "" : databasePrefix.replaceAll("[^a-zA-Z0-9]", "_");
     }
 
@@ -770,7 +730,9 @@ public class Settings implements ConfigObject {
 
     /**
      * Returns whether islands, when reset, should be kept or deleted.
-     * @return {@code true} if islands, when reset, should be kept; {@code false} otherwise.
+     * 
+     * @return {@code true} if islands, when reset, should be kept; {@code false}
+     *         otherwise.
      * @since 1.13.0
      */
     public boolean isKeepPreviousIslandOnReset() {
@@ -779,7 +741,9 @@ public class Settings implements ConfigObject {
 
     /**
      * Sets whether islands, when reset, should be kept or deleted.
-     * @param keepPreviousIslandOnReset {@code true} if islands, when reset, should be kept; {@code false} otherwise.
+     * 
+     * @param keepPreviousIslandOnReset {@code true} if islands, when reset, should
+     *                                  be kept; {@code false} otherwise.
      * @since 1.13.0
      */
     public void setKeepPreviousIslandOnReset(boolean keepPreviousIslandOnReset) {
@@ -787,10 +751,13 @@ public class Settings implements ConfigObject {
     }
 
     /**
-     * Returns a MongoDB client connection URI to override default connection options.
+     * Returns a MongoDB client connection URI to override default connection
+     * options.
      *
      * @return mongodb client connection.
-     * @see <a href="https://docs.mongodb.com/manual/reference/connection-string/">MongoDB Documentation</a>
+     * @see <a href=
+     *      "https://docs.mongodb.com/manual/reference/connection-string/">MongoDB
+     *      Documentation</a>
      * @since 1.14.0
      */
     public String getMongodbConnectionUri() {
@@ -799,6 +766,7 @@ public class Settings implements ConfigObject {
 
     /**
      * Set the MongoDB client connection URI.
+     * 
      * @param mongodbConnectionUri connection URI.
      * @since 1.14.0
      */
@@ -807,8 +775,11 @@ public class Settings implements ConfigObject {
     }
 
     /**
-     * Returns the Material of the item to preferably use when one needs to fill gaps in Panels.
-     * @return the Material of the item to preferably use when one needs to fill gaps in Panels.
+     * Returns the Material of the item to preferably use when one needs to fill
+     * gaps in Panels.
+     * 
+     * @return the Material of the item to preferably use when one needs to fill
+     *         gaps in Panels.
      * @since 1.14.0
      */
     public Material getPanelFillerMaterial() {
@@ -816,37 +787,38 @@ public class Settings implements ConfigObject {
     }
 
     /**
-     * Sets the Material of the item to preferably use when one needs to fill gaps in Panels.
-     * @param panelFillerMaterial the Material of the item to preferably use when one needs to fill gaps in Panels.
+     * Sets the Material of the item to preferably use when one needs to fill gaps
+     * in Panels.
+     * 
+     * @param panelFillerMaterial the Material of the item to preferably use when
+     *                            one needs to fill gaps in Panels.
      * @since 1.14.0
      */
     public void setPanelFillerMaterial(Material panelFillerMaterial) {
         this.panelFillerMaterial = panelFillerMaterial;
     }
 
-
     /**
-     * Method Settings#getPlayerHeadCacheTime returns the playerHeadCacheTime of this object.
+     * Method Settings#getPlayerHeadCacheTime returns the playerHeadCacheTime of
+     * this object.
      *
      * @return the playerHeadCacheTime (type long) of this object.
      * @since 1.14.1
      */
-    public long getPlayerHeadCacheTime()
-    {
+    public long getPlayerHeadCacheTime() {
         return playerHeadCacheTime;
     }
 
-
     /**
-     * Method Settings#setPlayerHeadCacheTime sets new value for the playerHeadCacheTime of this object.
+     * Method Settings#setPlayerHeadCacheTime sets new value for the
+     * playerHeadCacheTime of this object.
+     * 
      * @param playerHeadCacheTime new value for this object.
      * @since 1.14.1
      */
-    public void setPlayerHeadCacheTime(long playerHeadCacheTime)
-    {
+    public void setPlayerHeadCacheTime(long playerHeadCacheTime) {
         this.playerHeadCacheTime = playerHeadCacheTime;
     }
-
 
     /**
      * Is use cache server boolean.
@@ -854,11 +826,9 @@ public class Settings implements ConfigObject {
      * @return the boolean
      * @since 1.16.0
      */
-    public boolean isUseCacheServer()
-    {
+    public boolean isUseCacheServer() {
         return useCacheServer;
     }
-
 
     /**
      * Sets use cache server.
@@ -866,11 +836,9 @@ public class Settings implements ConfigObject {
      * @param useCacheServer the use cache server
      * @since 1.16.0
      */
-    public void setUseCacheServer(boolean useCacheServer)
-    {
+    public void setUseCacheServer(boolean useCacheServer) {
         this.useCacheServer = useCacheServer;
     }
-
 
     /**
      * Gets heads per call.
@@ -878,11 +846,9 @@ public class Settings implements ConfigObject {
      * @return the heads per call
      * @since 1.16.0
      */
-    public int getHeadsPerCall()
-    {
+    public int getHeadsPerCall() {
         return headsPerCall;
     }
-
 
     /**
      * Sets heads per call.
@@ -890,11 +856,9 @@ public class Settings implements ConfigObject {
      * @param headsPerCall the heads per call
      * @since 1.16.0
      */
-    public void setHeadsPerCall(int headsPerCall)
-    {
+    public void setHeadsPerCall(int headsPerCall) {
         this.headsPerCall = headsPerCall;
     }
-
 
     /**
      * Gets ticks between calls.
@@ -902,11 +866,9 @@ public class Settings implements ConfigObject {
      * @return the ticks between calls
      * @since 1.16.0
      */
-    public long getTicksBetweenCalls()
-    {
+    public long getTicksBetweenCalls() {
         return ticksBetweenCalls;
     }
-
 
     /**
      * Sets ticks between calls.
@@ -914,8 +876,7 @@ public class Settings implements ConfigObject {
      * @param ticksBetweenCalls the ticks between calls
      * @since 1.16.0
      */
-    public void setTicksBetweenCalls(long ticksBetweenCalls)
-    {
+    public void setTicksBetweenCalls(long ticksBetweenCalls) {
         this.ticksBetweenCalls = ticksBetweenCalls;
     }
 
@@ -933,7 +894,6 @@ public class Settings implements ConfigObject {
         this.minPortalSearchRadius = minPortalSearchRadius;
     }
 
-
     /**
      * Gets safe spot search vertical range.
      *
@@ -942,7 +902,6 @@ public class Settings implements ConfigObject {
     public int getSafeSpotSearchVerticalRange() {
         return safeSpotSearchVerticalRange;
     }
-
 
     /**
      * Sets safe spot search vertical range.
@@ -953,7 +912,6 @@ public class Settings implements ConfigObject {
         this.safeSpotSearchVerticalRange = safeSpotSearchVerticalRange;
     }
 
-
     /**
      * Is slow deletion boolean.
      *
@@ -962,7 +920,6 @@ public class Settings implements ConfigObject {
     public boolean isSlowDeletion() {
         return slowDeletion;
     }
-
 
     /**
      * Sets slow deletion.
@@ -973,69 +930,88 @@ public class Settings implements ConfigObject {
         this.slowDeletion = slowDeletion;
     }
 
-
     /**
      * Gets maximum pool size.
      *
      * @return the maximum pool size
      */
-    public int getMaximumPoolSize()
-    {
+    public int getMaximumPoolSize() {
         return maximumPoolSize;
     }
-    
-    
+
     /**
      * Gets safe spot search range.
      *
      * @return the safe spot search range
      */
-    public int getSafeSpotSearchRange()
-    {
+    public int getSafeSpotSearchRange() {
         return safeSpotSearchRange;
     }
-
 
     /**
      * Sets maximum pool size.
      *
      * @param maximumPoolSize the maximum pool size
      */
-    public void setMaximumPoolSize(int maximumPoolSize)
-    {
+    public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
     }
-
 
     /**
      * Gets custom pool properties.
      *
      * @return the custom pool properties
      */
-    public Map<String, String> getCustomPoolProperties()
-    {
+    public Map<String, String> getCustomPoolProperties() {
         return customPoolProperties;
     }
-
 
     /**
      * Sets custom pool properties.
      *
      * @param customPoolProperties the custom pool properties
      */
-    public void setCustomPoolProperties(Map<String, String> customPoolProperties)
-    {
+    public void setCustomPoolProperties(Map<String, String> customPoolProperties) {
         this.customPoolProperties = customPoolProperties;
     }
-
 
     /**
      * Sets safe spot search range.
      *
      * @param safeSpotSearchRange the safe spot search range
      */
-    public void setSafeSpotSearchRange(int safeSpotSearchRange)
-    {
+    public void setSafeSpotSearchRange(int safeSpotSearchRange) {
         this.safeSpotSearchRange = safeSpotSearchRange;
     }
+
+    /**
+     * @return an immutable list of readyCommands
+     */
+    public List<String> getReadyCommands() {
+        return ImmutableList.copyOf(Objects.requireNonNullElse(readyCommands, Collections.emptyList()));
+    }
+
+    /**
+     * @param readyCommands the readyCommands to set
+     */
+    public void setReadyCommands(List<String> readyCommands) {
+        this.readyCommands = readyCommands;
+    }
+
+    /**
+     * @return the islandNumber
+     * @since 2.0.0
+     */
+    public int getIslandNumber() {
+        return islandNumber;
+    }
+
+    /**
+     * @param islandNumber the islandNumber to set
+     * @since 2.0.0
+     */
+    public void setIslandNumber(int islandNumber) {
+        this.islandNumber = islandNumber;
+    }
+
 }

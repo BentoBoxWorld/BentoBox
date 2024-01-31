@@ -18,6 +18,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Command to untrust a player
+ * 
  * @author tastybento
  *
  */
@@ -44,7 +45,8 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
             return false;
         }
         // Player issuing the command must have an island or be in a team
-        if (!getIslands().inTeam(getWorld(), user.getUniqueId()) && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId())
+                && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
@@ -52,7 +54,8 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user);
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
         // Get target player
@@ -65,13 +68,13 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
         return unTrustCmd(user, targetUUID);
     }
 
-    private boolean unTrustCmd(User user, UUID targetUUID) {
+    protected boolean unTrustCmd(User user, UUID targetUUID) {
         // Player cannot untrust themselves
         if (user.getUniqueId().equals(targetUUID)) {
             user.sendMessage("commands.island.team.untrust.cannot-untrust-yourself");
             return false;
         }
-        if (getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
+        if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).getMemberSet().contains(targetUUID)) {
             user.sendMessage("commands.island.team.untrust.cannot-untrust-member");
             return false;
         }
@@ -83,21 +86,19 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
         }
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
-            island.removeMember(targetUUID);
-            user.sendMessage("commands.island.team.untrust.success", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
-            target.sendMessage("commands.island.team.untrust.you-are-no-longer-trusted", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
+            getIslands().removePlayer(island, targetUUID);
+            user.sendMessage("commands.island.team.untrust.success", TextVariables.NAME, target.getName(),
+                    TextVariables.DISPLAY_NAME, target.getDisplayName());
+            target.sendMessage("commands.island.team.untrust.you-are-no-longer-trusted", TextVariables.NAME,
+                    user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
             // Set cooldown
             if (getSettings().getTrustCooldown() > 0 && getParent() != null) {
-                getParent().getSubCommand("trust").ifPresent(subCommand ->
-                subCommand.setCooldown(island.getUniqueId(), targetUUID.toString(), getSettings().getTrustCooldown() * 60));
+                getParent().getSubCommand("trust").ifPresent(subCommand -> subCommand.setCooldown(island.getUniqueId(),
+                        targetUUID.toString(), getSettings().getTrustCooldown() * 60));
             }
-            IslandEvent.builder()
-            .island(island)
-            .involvedPlayer(targetUUID)
-            .admin(false)
-            .reason(IslandEvent.Reason.RANK_CHANGE)
-            .rankChange(RanksManager.TRUSTED_RANK, RanksManager.VISITOR_RANK)
-            .build();
+            IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(false)
+                    .reason(IslandEvent.Reason.RANK_CHANGE)
+                    .rankChange(RanksManager.TRUSTED_RANK, RanksManager.VISITOR_RANK).build();
             return true;
         } else {
             // Should not happen
@@ -112,9 +113,8 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
         if (island != null) {
             List<String> options = island.getMembers().entrySet().stream()
                     .filter(e -> e.getValue() == RanksManager.TRUSTED_RANK)
-                    .map(e -> Bukkit.getOfflinePlayer(e.getKey()))
-                    .map(OfflinePlayer::getName).toList();
-            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+                    .map(e -> Bukkit.getOfflinePlayer(e.getKey())).map(OfflinePlayer::getName).toList();
+            String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

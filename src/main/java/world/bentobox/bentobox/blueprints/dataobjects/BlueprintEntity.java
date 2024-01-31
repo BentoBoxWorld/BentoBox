@@ -78,7 +78,8 @@ public class BlueprintEntity {
         if (e instanceof AbstractHorse horse) {
             if (domestication != null) horse.setDomestication(domestication);
             if (inventory != null) {
-                inventory.forEach(horse.getInventory()::setItem);
+                inventory.forEach((index, item) -> horse.getInventory().setItem(index.intValue(), item));
+
             }
         }
         if (style != null && e instanceof Horse horse) {

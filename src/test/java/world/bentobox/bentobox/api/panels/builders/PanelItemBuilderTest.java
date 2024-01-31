@@ -38,9 +38,8 @@ import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class})
+@PrepareForTest({ Bukkit.class })
 public class PanelItemBuilderTest {
-
 
     @SuppressWarnings("deprecation")
     @Before
@@ -103,8 +102,8 @@ public class PanelItemBuilderTest {
         builder.icon("tastybento");
         PanelItem item = builder.build();
         assertNotNull(item.getItem().getType());
-        SkullMeta skullMeta = (SkullMeta)item.getItem().getItemMeta();
-        assertEquals("tastybento",skullMeta.getOwner());
+        SkullMeta skullMeta = (SkullMeta) item.getItem().getItemMeta();
+        assertEquals("tastybento", skullMeta.getOwner());
         assertEquals(Material.PLAYER_HEAD, item.getItem().getType());
     }
 
@@ -113,7 +112,7 @@ public class PanelItemBuilderTest {
         PanelItemBuilder builder = new PanelItemBuilder();
         builder.name("test");
         PanelItem item = builder.build();
-        assertEquals("test",item.getName());
+        assertEquals("test", item.getName());
     }
 
     @Test
