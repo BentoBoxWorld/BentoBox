@@ -109,6 +109,10 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
         // Reset the XP
         if (getIWM().isOnLeaveResetXP(getWorld())) {
+            // Player collected XP (displayed)
+            target.getPlayer().setLevel(0);
+            target.getPlayer().setExp(0);
+            // Player total XP (not displayed)
             target.getPlayer().setTotalExperience(0);
         }
 

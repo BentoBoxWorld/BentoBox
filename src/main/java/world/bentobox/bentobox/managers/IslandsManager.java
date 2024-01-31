@@ -1177,6 +1177,10 @@ public class IslandsManager {
 
             // Reset the XP
             if (plugin.getIWM().isOnJoinResetXP(world)) {
+                // Player collected XP (displayed)
+                user.getPlayer().setLevel(0);
+                user.getPlayer().setExp(0);
+                // Player total XP (not displayed)
                 user.getPlayer().setTotalExperience(0);
             }
 
