@@ -198,15 +198,23 @@ public class AddonsManager {
         Addon addon;
         try {
             Plugin pladdon = Bukkit.getPluginManager().loadPlugin(f);
-            if (pladdon instanceof Pladdon pl) {
+            if (pladdon != null && pladdon instanceof Pladdon pl) {
                 addon = pl.getAddon();
                 addon.setDescription(AddonClassLoader.asDescription(data));
                 // Mark pladdon as enabled.
                 pl.setEnabled();
                 pladdons.put(addon, pladdon);
             } else {
-                plugin.logError("Could not load pladdon!");
-                return new PladdonData(null, false);
+                // Try to load it as an addon
+                BentoBox.getInstance()
+                        .log("Failed to load " + f.getName() + ", trying to load it as a BentoBox addon");
+                // Addon not pladdon
+                AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f,
+                        this.getClass().getClassLoader());
+                // Get the addon itself
+                addon = addonClassLoader.getAddon();
+                // Add to the list of loaders
+                loaders.put(addon, addonClassLoader);
             }
         } catch (Exception ex) {
             // Addon not pladdon
