@@ -134,11 +134,8 @@ public class CommandRankClickListener implements ClickHandler {
                 .filter(c -> c.testPermission(user.getSender())) // Only allow them to see commands they have permission to see
                 .flatMap(c -> getCmdRecursively("/", c).stream())
                 .filter(label -> user.isOp() || !hiddenItems.contains(CommandCycleClick.COMMAND_RANK_PREFIX + label))
+                .limit(49) // Silently limit to 49
                 .toList();
-        if (result.size() > 49) {
-            plugin.logError("Number of rank setting commands is too big for GUI");
-            result.subList(49, result.size()).clear();
-        }
         return result;
     }
 
