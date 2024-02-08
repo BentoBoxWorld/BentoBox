@@ -448,9 +448,13 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         Map<Object, Object> result = new HashMap<>();
         for (Entry<Object, Object> object : value.entrySet()) {
             // Serialize all key and values
-            String key = (String)serialize(object.getKey());
-            key = key.replace("\\.", ":dot:");
-            result.put(key, serialize(object.getValue()));
+            if (serialize(object.getKey()) instanceof String key) {
+                key = key.replace("\\.", ":dot:");
+                result.put(key, serialize(object.getValue()));
+            } else {
+                plugin.logWarning("Map key in config file could not be serialized, skipping. Entry is "
+                        + object.getKey() + ": " + object.getValue());
+            }
         }
         // Save the list in the config file
         config.set(storageLocation, result);
