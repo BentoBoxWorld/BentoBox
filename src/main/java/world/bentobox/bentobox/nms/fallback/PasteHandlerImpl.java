@@ -18,7 +18,7 @@ public class PasteHandlerImpl implements PasteHandler {
     @Override
     public CompletableFuture<Void> pasteBlocks(Island island, World world, Map<Location, BlueprintBlock> blockMap) {
         return blockMap.entrySet().stream()
-                .map(entry -> DefaultPasteUtil.setBlock(island, entry.getKey(), entry.getValue()))
+                .map(entry -> setBlock(island, entry.getKey(), entry.getValue()))
                 .collect(
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
@@ -37,5 +37,10 @@ public class PasteHandlerImpl implements PasteHandler {
                                 list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))
                         )
                 );
+    }
+
+    @Override
+    public CompletableFuture<Void> setBlock(Island island, Location location, BlueprintBlock bpBlock) {
+        return DefaultPasteUtil.setBlock(island, location, bpBlock);
     }
 }
