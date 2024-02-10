@@ -51,7 +51,7 @@ public class DynmapHook extends Hook {
         }
     }
 
-    public void registerMarkerSet(@NonNull GameModeAddon addon) {
+    private void registerMarkerSet(@NonNull GameModeAddon addon) {
         String name = addon.getDescription().getName();
         if (getMarkerSet(addon) == null) {
             // From the javadoc: createMarkerSet(String id, String label, Set<MarkerIcon> allowedIcons, boolean persistent)
@@ -66,7 +66,7 @@ public class DynmapHook extends Hook {
     }
 
     @Nullable
-    public MarkerSet getMarkerSet(@NonNull GameModeAddon addon) {
+    private MarkerSet getMarkerSet(@NonNull GameModeAddon addon) {
         if (markerSets.containsKey(addon)) {
             return markerSets.get(addon);
         } else {

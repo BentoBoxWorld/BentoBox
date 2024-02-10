@@ -26,6 +26,7 @@ softdepend:
   - LuckPerms
   - HolographicDisplays
   - EconomyPlus
+  - BlueMap
 
 libraries:
   - mysql:mysql-connector-java:${mysql.version}

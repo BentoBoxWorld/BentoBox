@@ -24,6 +24,7 @@ import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.DatabaseSetup;
+import world.bentobox.bentobox.hooks.BlueMapHook;
 import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.MyWorldsHook;
@@ -238,6 +239,9 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // Register ItemsAdder
         hooksManager.registerHook(new ItemsAdderHook(this));
+
+        // BlueMap
+        hooksManager.registerHook(new BlueMapHook());
 
         // TODO: re-enable after implementation
         //hooksManager.registerHook(new DynmapHook());
