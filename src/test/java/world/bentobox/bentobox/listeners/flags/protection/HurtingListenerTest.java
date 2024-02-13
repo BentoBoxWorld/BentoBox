@@ -77,7 +77,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnEntityDamageMonsteronMonster() {
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, enderman, null, 0);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, enderman, null, null, 0);
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
         assertFalse(e.isCancelled());
@@ -88,7 +88,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnEntityDamagePlayeronMonster() {
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, enderman, null, 0);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, enderman, null, null, 0);
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
         assertTrue(e.isCancelled());
@@ -101,7 +101,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnEntityDamagePlayeronMonsterOp() {
         when(player.isOp()).thenReturn(true);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, enderman, null, 0);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, enderman, null, null, 0);
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
         assertFalse(e.isCancelled());
