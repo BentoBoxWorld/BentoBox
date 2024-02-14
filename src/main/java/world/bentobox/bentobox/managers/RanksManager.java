@@ -69,13 +69,13 @@ public class RanksManager {
     public void loadRanksFromDatabase() {
         // Set up the database handler to store and retrieve Island classes
         handler = new Database<>(BentoBox.getInstance(), Ranks.class);
-        if (!handler.objectExists(Ranks.ID)) {
+        if (!handler.objectExists("BentoBox-Ranks")) {
             // Make the initial object
             DEFAULT_RANKS.forEach((ref, rank) -> ranksPut(ref, rank));
             save();
         } else {
             // Load the ranks from the database
-            Objects.requireNonNull(handler.loadObject(Ranks.ID)).getRankReference()
+            Objects.requireNonNull(handler.loadObject("BentoBox-Ranks")).getRankReference()
                     .forEach((rankRef, rankValue) -> ranksPut(rankRef, rankValue));
         }
 

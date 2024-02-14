@@ -12,7 +12,8 @@ import com.google.gson.annotations.Expose;
 @Table(name = "Ranks")
 public class Ranks implements DataObject {
 
-    public static final String ID = "BentoBox-Ranks";
+    @Expose
+    public String uniqueId = "BentoBox-Ranks";
 
     public Ranks(Map<String, Integer> rankReference) {
         super();
@@ -24,12 +25,12 @@ public class Ranks implements DataObject {
 
     @Override
     public String getUniqueId() {
-        return ID;
+        return uniqueId;
     }
 
     @Override
     public void setUniqueId(String uniqueId) {
-        // Nothing to do
+        this.uniqueId = uniqueId;
     }
 
     public Map<String, Integer> getRankReference() {
