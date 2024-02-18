@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -167,6 +169,26 @@ public class PlaceholdersManager {
                 return "";
             });
         }
+        // Counts
+        // Number of online members
+        registerPlaceholder(addon, "island_online_members_count", user -> {
+            if (user == null)
+                return "";
+            Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
+            return island != null
+                    ? String.valueOf(island.getMemberSet(RanksManager.MEMBER_RANK).stream()
+                            .map(Bukkit::getOfflinePlayer).filter(OfflinePlayer::isOnline).count())
+                    : "";
+        });
+        // Number of online members of visited island
+        registerPlaceholder(addon, "visited_island_online_members_count", user -> {
+            if (user == null)
+                return "";
+            return plugin.getIslands().getIslandAt(user.getLocation())
+                    .map(island -> String.valueOf(island.getMemberSet(RanksManager.MEMBER_RANK).stream()
+                            .map(Bukkit::getOfflinePlayer).filter(OfflinePlayer::isOnline).count()))
+                    .orElse("");
+        });
     }
 
     /**

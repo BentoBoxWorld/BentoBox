@@ -77,7 +77,7 @@ public class PlaceholdersManagerTest {
     public void testRegisterGameModePlaceholdersAllDefaults() {
         pm.registerDefaultPlaceholders(addon);
         // + 300 because we register team member placeholders up to 50 members
-        verify(hook, times(GameModePlaceholder.values().length + 300)).registerPlaceholder(any(), anyString(), any());
+        verify(hook, times(GameModePlaceholder.values().length + 302)).registerPlaceholder(any(), anyString(), any());
     }
 
     /**
@@ -91,6 +91,7 @@ public class PlaceholdersManagerTest {
         pm.registerDefaultPlaceholders(addon);
 
         // 3 less registrations for this addon
-        verify(hook, times(GameModePlaceholder.values().length - 3 + 300)).registerPlaceholder(any(), anyString(), any());
+        verify(hook, times(GameModePlaceholder.values().length - 3 + 302)).registerPlaceholder(any(), anyString(),
+                any());
     }
 }
