@@ -44,15 +44,6 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (getIslands().hasIsland(getWorld(), targetUUID)) {
-            user.sendMessage("general.errors.player-has-island");
-            return false;
-        }
-        if (getIslands().inTeam(getWorld(), targetUUID)) {
-            user.sendMessage("commands.admin.register.cannot-register-team-player");
-            return false;
-        }
-
         // Check if this spot is still being deleted
         Location closestIsland = Util.getClosestIsland(user.getLocation());
         if (getPlugin().getIslandDeletionManager().inDeletion(closestIsland)) {
@@ -60,74 +51,60 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             return false;
         }
         // Check if island is owned
-        Optional<Island> island = getIslands().getIslandAt(user.getLocation());
-        if (island.filter(Island::isOwned)
-                .filter(i -> !i.getOwner().equals(targetUUID))
-                .isPresent()) {
+        Optional<Island> opIsland = getIslands().getIslandAt(user.getLocation());
+        if (opIsland.isEmpty()) {
+            // Reserve spot
+            this.askConfirmation(user, user.getTranslation("commands.admin.register.no-island-here"),
+                    () -> reserve(user, args.get(0), targetUUID, closestIsland));
+            return false;
+        }
+        Island island = opIsland.get();
+        if (targetUUID.equals(island.getOwner())) {
             user.sendMessage("commands.admin.register.already-owned");
             return false;
         }
         // Check if island is spawn
-        if (island.map(Island::isSpawn).orElse(false)) {
+        if (island.isSpawn()) {
             askConfirmation(user, user.getTranslation("commands.admin.register.island-is-spawn"), () -> register(user, args.get(0), targetUUID, island, closestIsland));
             return false;
         }
-        return register(user, args.get(0),targetUUID, island, closestIsland);
+
+        register(user, args.get(0), targetUUID, island, closestIsland);
+        return true;
     }
 
-    private boolean register(User user, String targetName, UUID targetUUID, Optional<Island> island, Location closestIsland) {
-        // Register island if it exists
-        if (!island.map(i -> {
-            // Island exists
-            getIslands().setOwner(user, targetUUID, i, RanksManager.VISITOR_RANK);
-            if (i.isSpawn()) {
-                getIslands().clearSpawn(i.getWorld());
-            }
-            user.sendMessage("commands.admin.register.registered-island", TextVariables.XYZ, Util.xyz(i.getCenter().toVector()),
-                    TextVariables.NAME, targetName);
-            user.sendMessage("general.success");
-            // Build and call event
-            IslandEvent.builder()
-            .island(i)
-            .location(i.getCenter())
-            .reason(IslandEvent.Reason.REGISTERED)
-            .involvedPlayer(targetUUID)
-            .admin(true)
-            .build();
-            IslandEvent.builder()
-            .island(i)
-            .involvedPlayer(targetUUID)
-            .admin(true)
-            .reason(IslandEvent.Reason.RANK_CHANGE)
-            .rankChange(RanksManager.VISITOR_RANK, RanksManager.OWNER_RANK)
-            .build();
-            return true;
-        }).orElse(false)) {
-            // Island does not exist - this is a reservation
-            this.askConfirmation(user, user.getTranslation("commands.admin.register.no-island-here"), () -> {
-                // Make island here
-                Island i = getIslands().createIsland(closestIsland, targetUUID);
-                if (i == null) {
-                    user.sendMessage("commands.admin.register.cannot-make-island");
-                    return;
-                }
-                getIslands().setOwner(user, targetUUID, i, RanksManager.VISITOR_RANK);
-                i.setReserved(true);
-                i.getCenter().getBlock().setType(Material.BEDROCK);
-                user.sendMessage("commands.admin.register.reserved-island", TextVariables.XYZ, Util.xyz(i.getCenter().toVector()),
-                        TextVariables.NAME, targetName);
-                // Build and fire event
-                IslandEvent.builder()
-                .island(i)
-                .location(i.getCenter())
-                .reason(IslandEvent.Reason.RESERVED)
-                .involvedPlayer(targetUUID)
-                .admin(true)
-                .build();
-            });
-            return false;
+    private void reserve(User user, String targetName, UUID targetUUID, Location closestIsland) {
+        // Island does not exist - this is a reservation
+        // Make island here
+        Island i = getIslands().createIsland(closestIsland, targetUUID);
+        if (i == null) {
+            user.sendMessage("commands.admin.register.cannot-make-island");
+            return;
         }
-        return true;
+        getIslands().setOwner(user, targetUUID, i, RanksManager.VISITOR_RANK);
+        i.setReserved(true);
+        i.getCenter().getBlock().setType(Material.BEDROCK);
+        user.sendMessage("commands.admin.register.reserved-island", TextVariables.XYZ,
+                Util.xyz(i.getCenter().toVector()), TextVariables.NAME, targetName);
+        // Build and fire event
+        IslandEvent.builder().island(i).location(i.getCenter()).reason(IslandEvent.Reason.RESERVED)
+                .involvedPlayer(targetUUID).admin(true).build();
+    }
+
+    private void register(User user, String targetName, UUID targetUUID, Island i, Location closestIsland) {
+        // Island exists
+        getIslands().setOwner(user, targetUUID, i, RanksManager.VISITOR_RANK);
+        if (i.isSpawn()) {
+            getIslands().clearSpawn(i.getWorld());
+        }
+        user.sendMessage("commands.admin.register.registered-island", TextVariables.XYZ,
+                Util.xyz(i.getCenter().toVector()), TextVariables.NAME, targetName);
+        user.sendMessage("general.success");
+        // Build and call event
+        IslandEvent.builder().island(i).location(i.getCenter()).reason(IslandEvent.Reason.REGISTERED)
+                .involvedPlayer(targetUUID).admin(true).build();
+        IslandEvent.builder().island(i).involvedPlayer(targetUUID).admin(true).reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(RanksManager.VISITOR_RANK, RanksManager.OWNER_RANK).build();
     }
 
     @Override
