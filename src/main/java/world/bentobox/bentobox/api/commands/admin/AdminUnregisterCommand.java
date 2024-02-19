@@ -57,10 +57,15 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         } else if (args.size() == 1) {
-            // They need to specify which island
-            user.sendMessage("commands.admin.unregister.errors.player-has-more-than-one-island");
-            user.sendMessage("commands.admin.unregister.errors.specify-island-location");
-            return false;
+            if (islands.size() == 1) {
+                targetIsland = islands.values().iterator().next();
+                return true;
+            } else {
+                // They need to specify which island
+                user.sendMessage("commands.admin.unregister.errors.player-has-more-than-one-island");
+                user.sendMessage("commands.admin.unregister.errors.specify-island-location");
+                return false;
+            }
         } else if (args.size() != 2) {
             // Check if the name given works
             user.sendMessage("commands.admin.unregister.errors.specify-island-location");
