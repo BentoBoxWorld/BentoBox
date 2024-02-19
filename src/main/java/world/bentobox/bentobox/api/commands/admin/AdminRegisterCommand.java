@@ -2,11 +2,13 @@ package world.bentobox.bentobox.api.commands.admin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
@@ -18,6 +20,10 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminRegisterCommand extends ConfirmableCommand {
+
+    private Island island;
+    private Location closestIsland;
+    private @Nullable UUID targetUUID;
 
     public AdminRegisterCommand(CompositeCommand parent) {
         super(parent, "register");
@@ -32,20 +38,20 @@ public class AdminRegisterCommand extends ConfirmableCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         // If args are not right, show help
         if (args.size() != 1) {
             showHelp(this, user);
             return false;
         }
         // Get target
-        UUID targetUUID = Util.getUUID(args.get(0));
+        targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
         // Check if this spot is still being deleted
-        Location closestIsland = Util.getClosestIsland(user.getLocation());
+        closestIsland = Util.getClosestIsland(user.getLocation());
         if (getPlugin().getIslandDeletionManager().inDeletion(closestIsland)) {
             user.sendMessage("commands.admin.register.in-deletion");
             return false;
@@ -55,25 +61,38 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         if (opIsland.isEmpty()) {
             // Reserve spot
             this.askConfirmation(user, user.getTranslation("commands.admin.register.no-island-here"),
-                    () -> reserve(user, args.get(0), targetUUID, closestIsland));
+                    () -> reserve(user, args.get(0)));
             return false;
         }
-        Island island = opIsland.get();
+        island = opIsland.get();
         if (targetUUID.equals(island.getOwner())) {
             user.sendMessage("commands.admin.register.already-owned");
             return false;
         }
         // Check if island is spawn
         if (island.isSpawn()) {
-            askConfirmation(user, user.getTranslation("commands.admin.register.island-is-spawn"), () -> register(user, args.get(0), targetUUID, island, closestIsland));
+            askConfirmation(user, user.getTranslation("commands.admin.register.island-is-spawn"),
+                    () -> register(user, args.get(0)));
             return false;
         }
 
-        register(user, args.get(0), targetUUID, island, closestIsland);
         return true;
     }
 
-    private void reserve(User user, String targetName, UUID targetUUID, Location closestIsland) {
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
+        register(user, args.get(0));
+        return true;
+    }
+
+    /**
+     * Reserve a spot for a target
+     * @param user user doing the reserving
+     * @param targetName target name
+     */
+    void reserve(User user, String targetName) {
+        Objects.requireNonNull(closestIsland);
+        Objects.requireNonNull(targetUUID);
         // Island does not exist - this is a reservation
         // Make island here
         Island i = getIslands().createIsland(closestIsland, targetUUID);
@@ -91,20 +110,29 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                 .involvedPlayer(targetUUID).admin(true).build();
     }
 
-    private void register(User user, String targetName, UUID targetUUID, Island i, Location closestIsland) {
+    /**
+     * Register the island to a target
+     * @param user user doing the registering
+     * @param targetName name of target
+     */
+    void register(User user, String targetName) {
+        Objects.requireNonNull(closestIsland);
+        Objects.requireNonNull(targetUUID);
+        Objects.requireNonNull(island);
         // Island exists
-        getIslands().setOwner(user, targetUUID, i, RanksManager.VISITOR_RANK);
-        if (i.isSpawn()) {
-            getIslands().clearSpawn(i.getWorld());
+        getIslands().setOwner(user, targetUUID, island, RanksManager.VISITOR_RANK);
+        if (island.isSpawn()) {
+            getIslands().clearSpawn(island.getWorld());
         }
         user.sendMessage("commands.admin.register.registered-island", TextVariables.XYZ,
-                Util.xyz(i.getCenter().toVector()), TextVariables.NAME, targetName);
+                Util.xyz(island.getCenter().toVector()), TextVariables.NAME, targetName);
         user.sendMessage("general.success");
         // Build and call event
-        IslandEvent.builder().island(i).location(i.getCenter()).reason(IslandEvent.Reason.REGISTERED)
+        IslandEvent.builder().island(island).location(island.getCenter()).reason(IslandEvent.Reason.REGISTERED)
                 .involvedPlayer(targetUUID).admin(true).build();
-        IslandEvent.builder().island(i).involvedPlayer(targetUUID).admin(true).reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(RanksManager.VISITOR_RANK, RanksManager.OWNER_RANK).build();
+        IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(true)
+                .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(RanksManager.VISITOR_RANK, RanksManager.OWNER_RANK)
+                .build();
     }
 
     @Override
