@@ -170,7 +170,7 @@ commands:
       cannot-make-island: "&c島はここに配置できません。申し訳ありません。考えられるエラーについては、コンソールをご覧ください。"
       island-is-spawn: "&6島が生成されます。本気ですか？もう一度コマンドを入力して確認します。"
     unregister:
-      parameters: "<所有者>"
+      parameters: "<所有者> [x,y,z]"
       description: 島から所有者を登録解除するが、島のブロックを維持する
       unregistered-island: "[xyz]で島から未登録のプレーヤー。"
     info:

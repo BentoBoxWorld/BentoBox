@@ -36,6 +36,9 @@ import world.bentobox.bentobox.util.Util;
  */
 public class BlueprintPaster {
 
+    /**
+     * This tracks the stages of pasting from loading the chunk, pasting blocks, attachments, entities and then finishing.
+     */
     enum PasteState {
         CHUNK_LOAD,
         CHUNK_LOADING,

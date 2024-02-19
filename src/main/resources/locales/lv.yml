@@ -385,7 +385,7 @@ commands:
         uz spēlētāja salu no atkritnes."
     unregister:
       description: atreģistrē īpašnieku no salas paturot salas blokus
-      parameters: "<īpašnieks>"
+      parameters: "<īpašnieks> [x,y,z]"
       unregistered-island: "&aSpēlētājs atreģistrēts no salas ar koordinātēm [xyz]."
     version:
       description: attaino BentoBox un papildinājumu versijas

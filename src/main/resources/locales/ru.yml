@@ -185,7 +185,7 @@ commands:
       island-is-spawn: "&6Остров является спавном. Вы уверены? Введите команду снова
         для подтверждения."
     unregister:
-      parameters: "<owner>"
+      parameters: "<owner> [x,y,z]"
       description: разрегистрирует остров, но сохраняет блоки на острове
       unregistered-island: "&aИгрок [name] разрегистрирован с острова на координатах
         [xyz]."

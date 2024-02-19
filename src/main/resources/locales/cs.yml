@@ -179,7 +179,7 @@ commands:
       island-is-spawn: "&6 Ostrov je spawn. Jsi si jistý? Potvrď opětovným zadáním
         příkazu."
     unregister:
-      parameters: "<owner>"
+      parameters: <owner> [x,y,z]
       description: odregistrovat vlastníka z ostrova, ale zachovat bloky ostrova
       unregistered-island: "&a Hráč odregistrován z ostrova [xyz]."
     info:

@@ -188,7 +188,7 @@ commands:
       island-is-spawn: "&6 Die Insel ist der Spawn. Bist du sicher? Gib den Befehl
         zur Bestätigung noch einmal ein."
     unregister:
-      parameters: "<owner>"
+      parameters: "<owner> [x,y,z]"
       description: Besitzer von Insel entfernen, aber Inselblöcke behalten
       unregistered-island: "&a Unregistrierter Spieler von der Insel bei [xyz]."
     info:

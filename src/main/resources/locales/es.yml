@@ -190,7 +190,7 @@ commands:
       island-is-spawn: "&6La isla está spawneada. ¿Estás seguro? Ingrese el comando
         nuevamente para confirmar."
     unregister:
-      parameters: "<owner>"
+      parameters: "<owner> [x,y,z]"
       description: Desregistrar propietario de isla, pero mantener bloques de islas
       unregistered-island: "&aRemover jugador de la isla registrada en [xyz]."
     info:

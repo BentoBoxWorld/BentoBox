@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import com.google.gson.annotations.Expose;
 
 /**
+ * Represents a block to be pasted
  * @author tastybento
  * @since 1.5.0
  */
@@ -19,8 +20,14 @@ public class BlueprintBlock {
 
     @Expose
     private String blockData;
+    /**
+     * Front of sign
+     */
     @Expose
     private List<String> signLines;
+    /**
+     * Back of sign
+     */
     @Expose
     private List<String> signLines2;
     @Expose
@@ -37,8 +44,14 @@ public class BlueprintBlock {
      */
     @Expose
     private List<Pattern> bannerPatterns;
+    /**
+     * Front of sign
+     */
     @Expose
     private boolean glowingText;
+    /**
+     * Back of sign
+     */
     @Expose
     private boolean glowingText2;
 

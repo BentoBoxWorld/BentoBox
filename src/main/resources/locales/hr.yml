@@ -182,7 +182,7 @@ commands:
       island-is-spawn: "&6 Otok je mrijest. Jesi li siguran? Ponovno unesite naredbu
         za potvrdu."
     unregister:
-      parameters: "<vlasnik>"
+      parameters: "<vlasnik> [x,y,z]"
       description: odjaviti vlasnika s otoka, ali zadržati otočne blokove
       unregistered-island: "&a Neregistrirano [name] otoka na [xyz]."
     info:

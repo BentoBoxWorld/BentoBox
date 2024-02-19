@@ -190,7 +190,7 @@ commands:
       island-is-spawn: "&6 A sziget spawn. biztos vagy ebben? A megerősítéshez írja
         be újra a parancsot."
     unregister:
-      parameters: "<tulajdonos>"
+      parameters: "<tulajdonos> [x,y,z]"
       description: törölje a tulajdonos regisztrációját a szigetről, de tartsa meg
         a szigettömböket
       unregistered-island: "&a Nem regisztrált [name] a következő szigetről: [xyz]."
