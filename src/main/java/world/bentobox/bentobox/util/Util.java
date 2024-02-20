@@ -99,9 +99,6 @@ public class Util {
         int dist = plugin.getIWM().getIslandDistance(location.getWorld()) * 2;
         long x = Math.round((double) location.getBlockX() / dist) * dist + plugin.getIWM().getIslandXOffset(location.getWorld());
         long z = Math.round((double) location.getBlockZ() / dist) * dist + plugin.getIWM().getIslandZOffset(location.getWorld());
-        if (location.getBlockX() == x && location.getBlockZ() == z) {
-            return location;
-        }
         int y = plugin.getIWM().getIslandHeight(location.getWorld());
         return new Location(location.getWorld(), x, y, z);
     }

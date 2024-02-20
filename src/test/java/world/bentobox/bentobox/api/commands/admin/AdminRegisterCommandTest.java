@@ -95,6 +95,8 @@ public class AdminRegisterCommandTest {
         Settings settings = new Settings();
         // Settings
         when(plugin.getSettings()).thenReturn(settings);
+        // World
+        when(ac.getWorld()).thenReturn(world);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -112,6 +114,7 @@ public class AdminRegisterCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getWorld()).thenReturn(world);
         when(user.getTranslation(anyString()))
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         User.getInstance(p);
@@ -183,6 +186,17 @@ public class AdminRegisterCommandTest {
     public void testCanExecuteNoTarget() {
         assertFalse(itl.canExecute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
+    }
+
+    /**
+     * Test method for
+     * {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
+     */
+    @Test
+    public void testCanExecuteWrongWorld() {
+        when(user.getWorld()).thenReturn(mock(World.class));
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
+        verify(user).sendMessage("general.errors.wrong-world");
     }
 
     /**

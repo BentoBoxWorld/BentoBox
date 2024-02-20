@@ -192,13 +192,13 @@ commands:
         for possible errors.'
       island-is-spawn: '&6 Island is spawn. Are you sure? Enter command again to confirm.'
     unregister:
-      parameters: <owner> [x,y,z]
-      description: unregister owner from island, but keep island blocks
+      parameters: "<owner> [x,y,z]"
+      description: "unregister owner from island, but keep island blocks"
       unregistered-island: '&a Unregistered [name] from island at [xyz].'
       errors:
         unknown-island-location: "&c Unknown island location"
         specify-island-location: "&c Specify island location in x,y,z format"
-        player-has-more-than-one-island: "&c Player has more than one island"
+        player-has-more-than-one-island: "&c Player has more than one island. Specify which one."
     info:
       parameters: <player>
       description: get info on where you are or player's island

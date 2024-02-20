@@ -44,6 +44,11 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             showHelp(this, user);
             return false;
         }
+        // Check world
+        if (!getWorld().equals(user.getWorld())) {
+            user.sendMessage("general.errors.wrong-world");
+            return false;
+        }
         // Get target
         targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {

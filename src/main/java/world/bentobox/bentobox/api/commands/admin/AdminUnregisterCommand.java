@@ -13,6 +13,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -104,10 +105,13 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         .reason(IslandEvent.Reason.RANK_CHANGE)
         .rankChange(RanksManager.OWNER_RANK, RanksManager.VISITOR_RANK)
         .build();
+        targetIsland.setOwner(null);
         // Remove all island members
         targetIsland.getMemberSet().forEach(m -> getIslands().removePlayer(targetIsland, m));
         // Remove all island players that reference this island
         targetIsland.getMembers().clear();
+        targetIsland.log(new LogEntry.Builder("UNREGISTER").data("player", targetUUID.toString())
+                .data("admin", user.getUniqueId().toString()).build());
         getIslands().save(targetIsland);
         user.sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, Util.xyz(targetIsland.getCenter().toVector()),
                 TextVariables.NAME, getPlayers().getName(targetUUID));

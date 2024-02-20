@@ -266,6 +266,7 @@ public class AdminUnregisterCommandTest {
         itl.unregisterIsland(user);
         verify(user).sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, "1,2,3",
                 TextVariables.NAME, "name");
+        verify(island).setOwner(null);
     }
 
     /**
