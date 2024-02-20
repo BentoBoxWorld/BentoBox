@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.commands.admin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -81,9 +82,8 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (targetIsland == null || targetUUID == null) {
-            return true;
-        }
+        Objects.requireNonNull(targetIsland);
+        Objects.requireNonNull(targetUUID);
         // Everything's fine, we can set the island as spawn :)
         askConfirmation(user, () -> unregisterIsland(user));
         return true;
