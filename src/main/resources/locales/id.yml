@@ -190,7 +190,7 @@ commands:
       island-is-spawn: "&6 Pulau muncul. Apa kamu yakin? Masukkan perintah lagi untuk
         mengonfirmasi."
     unregister:
-      parameters: "<pemilik>"
+      parameters: "<pemilik> [x,y,z]"
       description: batalkan pendaftaran pemilik dari pulau, tetapi pertahankan blok
         pulau
       unregistered-island: "&a [name] tidak terdaftar dari pulau di [xyz]."

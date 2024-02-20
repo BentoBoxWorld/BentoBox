@@ -176,7 +176,7 @@ commands:
         &c所处位置为出生点岛屿， 您确定要将玩家注册到这个岛屿上？
         &6请再次输入命令以确认。
     unregister:
-      parameters: "<owner>"
+      parameters: "<owner> [x,y,z]"
       description: 注销岛主身份， 但保留岛屿资源。
       unregistered-island: "&a已将岛主 &b[name] &a从位于 &b[xyz] &a的岛屿注销。"
     info:

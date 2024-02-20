@@ -173,7 +173,7 @@ commands:
       island-is-spawn: '&6 Essa ilha é o spawn. Você tem certeza? Digite o comando
         novamente para confirmar.'
     unregister:
-      parameters: <dono>
+      parameters: "<dono> [x,y,z]"
       description: desregistrar dono da ilha, mas manter os blocos
       unregistered-island: '&a [name] desregistrado da ilha em [xyz].'
     info:

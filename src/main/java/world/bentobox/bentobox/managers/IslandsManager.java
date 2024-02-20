@@ -326,16 +326,45 @@ public class IslandsManager {
     }
 
     /**
-     * Gets all the islands for this player in this world. If they are in a team,
-     * the team island is returned.
+     * Gets all the islands for this player in this world including team islands.
      * 
      * @param world world to check
-     * @param uniqueId  user's uuid
+     * @param uniqueId  user's UUID
      * @return List of islands or empty list if none found for user
      */
     @NonNull
     public Set<Island> getIslands(@NonNull World world, UUID uniqueId) {
         return islandCache.getIslands(world, uniqueId);
+    }
+
+    /**
+     * Gets all the islands for this player in this world that this player owns.
+     * 
+     * @param world world to check
+     * @param uniqueId  user's UUID
+     * @return List of islands or empty list if none found for user
+     * @since 2.1.0
+     */
+    @NonNull
+    public Set<Island> getOwnedIslands(@NonNull World world, @NonNull User user) {
+        if (user.getUniqueId() == null) {
+            return Collections.emptySet();
+        }
+        return getOwnedIslands(world, user.getUniqueId());
+    }
+
+    /**
+     * Gets all the islands for this player in this world that this player owns.
+     * 
+     * @param world world to check
+     * @param uniqueId  user's UUID
+     * @return List of islands or empty list if none found for user
+     * @since 2.1.0
+     */
+    @NonNull
+    public Set<Island> getOwnedIslands(@NonNull World world, @NonNull UUID uniqueId) {
+        return islandCache.getIslands(world, uniqueId).stream().filter(island -> uniqueId.equals(island.getOwner()))
+                .collect(Collectors.toSet());
     }
 
     /**

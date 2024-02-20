@@ -187,7 +187,7 @@ commands:
       island-is-spawn: "&6 Insula este reprodusă. Esti sigur? Introduceți din nou
         comanda pentru a confirma."
     unregister:
-      parameters: "<proprietar>"
+      parameters: "<proprietar> [x,y,z]"
       description: anulați înregistrarea proprietarului de pe insulă, dar păstrați
         blocurile de insule
       unregistered-island: "&a [name] neînregistrat de pe insulă la [xyz]."

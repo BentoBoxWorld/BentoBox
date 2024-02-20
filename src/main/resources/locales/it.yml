@@ -364,7 +364,7 @@ commands:
       title: "&d=========== Isole nel Cestino ==========="
     unregister:
       description: dissocia un proprietario dall'isola, ma mantenendo i blocchi dell'isola
-      parameters: "<owner>"
+      parameters: "<owner> [x,y,z]"
       unregistered-island: "&aDisassociato il giocatore dall'isola a [xyz]."
     version:
       description: mostra le versioni di BentoBox e degli addons

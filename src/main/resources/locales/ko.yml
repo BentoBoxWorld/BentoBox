@@ -164,7 +164,7 @@ commands:
       cannot-make-island: "&c 섬은 이곳에 만들수 없습니다. 죄송합니다. 콘솔을 참고해주세요."
       island-is-spawn: "&6 섬이 생성되었습니다. 정말로 하시겠습니까? 명령어를 한번더 입력해주세요."
     unregister:
-      parameters: "<주인>"
+      parameters: "<주인> [x,y,z]"
       description: 섬을 주인없는 섬으로 만들지만 섬은 유지됩니다
       unregistered-island: "&a [xyz]에 있는 [name]의 섬을 주인 없는 섬으로 만들었습니다."
     info:

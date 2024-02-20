@@ -171,6 +171,7 @@ public class PlaceholdersManager {
         }
         // Counts
         // Number of online members
+        // {@since 2.1.0}
         registerPlaceholder(addon, "island_online_members_count", user -> {
             if (user == null)
                 return "";
