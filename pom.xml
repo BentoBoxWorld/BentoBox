@@ -297,6 +297,12 @@
             <version>${myworlds.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.BlueMap-Minecraft</groupId>
+            <artifactId>BlueMapAPI</artifactId>
+            <version>v2.6.2</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Shaded APIs -->
         <dependency>
             <groupId>com.github.TheBusyBiscuit</groupId>
