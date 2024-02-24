@@ -20,6 +20,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -97,6 +98,8 @@ public class NewIslandTest {
     private final UUID uuid = UUID.randomUUID();
     @Mock
     private BlueprintsManager bpm;
+    @Mock
+    private @NonNull Location location2;
 
     /**
      */
@@ -129,6 +132,8 @@ public class NewIslandTest {
         when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(20);
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getWorld()).thenReturn(world);
+        when(user.getLocation()).thenReturn(location);
 
         // Events
         PowerMockito.mockStatic(IslandEvent.class);
@@ -147,9 +152,11 @@ public class NewIslandTest {
 
         // Location and blocks
         when(island.getWorld()).thenReturn(world);
+        when(island.getCenter()).thenReturn(location2);
         when(location.getWorld()).thenReturn(world);
         when(world.getMaxHeight()).thenReturn(5);
         when(location.getBlock()).thenReturn(block);
+        when(location.distance(any())).thenReturn(320D);
         when(block.getType()).thenReturn(Material.AIR);
         when(block.isEmpty()).thenReturn(true);
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(block);
@@ -163,6 +170,7 @@ public class NewIslandTest {
         // Bukkit Scheduler
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
+        when(Bukkit.getViewDistance()).thenReturn(10);
 
         // Addon
         when(addon.getOverWorld()).thenReturn(world);
@@ -250,12 +258,32 @@ public class NewIslandTest {
      * {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
      */
     @Test
-    public void testBuilderNoOldIslandPaste() throws Exception {
+    public void testBuilderNoOldIslandPasteNoNMS() throws Exception {
+        when(location.distance(any())).thenReturn(30D);
         NewIsland.builder().addon(addon).name(NAME).player(user).reason(Reason.CREATE).build();
         // Verifications
         verify(im).save(eq(island));
         verify(island).setFlagsDefaults();
-        verify(bpm).paste(eq(addon), eq(island), eq(NAME), any(Runnable.class));
+        verify(bpm).paste(eq(addon), eq(island), eq(NAME), any(Runnable.class), eq(false));
+        verify(builder, times(2)).build();
+        verify(bpb).getUniqueId();
+        verify(ice).getBlueprintBundle();
+        verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
+        verify(im, never()).setHomeLocation(eq(user), any());
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
+     */
+    @Test
+    public void testBuilderNoOldIslandPasteWithNMS() throws Exception {
+        NewIsland.builder().addon(addon).name(NAME).player(user).reason(Reason.CREATE).build();
+        PowerMockito.mockStatic(Bukkit.class);
+        // Verifications
+        verify(im).save(eq(island));
+        verify(island).setFlagsDefaults();
+        verify(bpm).paste(eq(addon), eq(island), eq(NAME), any(Runnable.class), eq(true));
         verify(builder, times(2)).build();
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();

@@ -445,7 +445,7 @@ public class BlueprintsManager {
      * @param name   - bundle name
      */
     public void paste(GameModeAddon addon, Island island, String name) {
-        paste(addon, island, name, null);
+        paste(addon, island, name, null, true);
     }
 
     /**
@@ -455,9 +455,10 @@ public class BlueprintsManager {
      * @param island - the island
      * @param name   - name of bundle to paste
      * @param task   - task to run after pasting is completed
+     * @param useNMS - true to use NMS pasting
      * @return true if okay, false is there is a problem
      */
-    public boolean paste(GameModeAddon addon, Island island, String name, Runnable task) {
+    public boolean paste(GameModeAddon addon, Island island, String name, Runnable task, boolean useNMS) {
         if (validate(addon, name) == null) {
             plugin.logError("Tried to paste '" + name + "' but the bundle is not loaded!");
             return false;
@@ -478,7 +479,9 @@ public class BlueprintsManager {
         }
         // Paste
         if (bp != null) {
-            new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste().thenAccept(b -> pasteNether(addon, bb, island).thenAccept(b2 ->
+            new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste(useNMS)
+                    .thenAccept(b -> pasteNether(addon, bb, island).thenAccept(
+                            b2 ->
             pasteEnd(addon, bb, island).thenAccept(message -> sendMessage(island)).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, task))));
         }
         return true;
