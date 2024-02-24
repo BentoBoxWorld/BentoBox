@@ -71,7 +71,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
         User target = User.getInstance(targetUUID);
         target.sendMessage("commands.admin.team.kick.admin-kicked");
 
-        getIslands().removePlayer(getWorld(), targetUUID);
+        getIslands().removePlayer(island, targetUUID);
         user.sendMessage("commands.admin.team.kick.success", TextVariables.NAME, target.getName(), "[owner]", getPlayers().getName(island.getOwner()));
 
         // Fire event so add-ons know

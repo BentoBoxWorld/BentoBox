@@ -210,7 +210,7 @@ public class AdminTeamKickCommandTest {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList(name)));
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList(name)));
-        verify(im).removePlayer(eq(world), eq(notUUID));
+        verify(im).removePlayer(is, notUUID);
         verify(user).sendMessage(eq("commands.admin.team.kick.success"), eq(TextVariables.NAME), eq(name), eq("[owner]"), anyString());
         // Offline so event will be called 4 times
         verify(pim, times(4)).callEvent(any());

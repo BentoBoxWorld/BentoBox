@@ -156,7 +156,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.team.invite.errors.island-is-full");
             return;
         }
-        // Remove player as owner of the old island
+        // Remove the player's other islands
         getIslands().removePlayer(getWorld(), user.getUniqueId());
         // Remove money inventory etc. for leaving
         cleanPlayer(user);
