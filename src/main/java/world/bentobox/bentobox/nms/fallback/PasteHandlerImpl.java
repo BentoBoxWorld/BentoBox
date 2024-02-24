@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
@@ -17,6 +18,7 @@ import world.bentobox.bentobox.util.DefaultPasteUtil;
 public class PasteHandlerImpl implements PasteHandler {
     @Override
     public CompletableFuture<Void> pasteBlocks(Island island, World world, Map<Location, BlueprintBlock> blockMap) {
+        BentoBox.getInstance().logDebug("fallback paste");
         return blockMap.entrySet().stream()
                 .map(entry -> setBlock(island, entry.getKey(), entry.getValue()))
                 .collect(

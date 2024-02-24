@@ -11,6 +11,7 @@ import org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData;
 import net.minecraft.core.BlockPosition;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.Chunk;
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.nms.PasteHandler;
@@ -30,6 +31,7 @@ public class PasteHandlerImpl implements PasteHandler {
      */
     @Override
     public CompletableFuture<Void> setBlock(Island island, Location location, BlueprintBlock bpBlock) {
+        BentoBox.getInstance().logDebug("nms paste");
         return Util.getChunkAtAsync(location).thenRun(() -> {
             Block block = location.getBlock();
             // Set the block data - default is AIR
