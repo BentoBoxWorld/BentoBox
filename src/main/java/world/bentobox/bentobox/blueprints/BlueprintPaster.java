@@ -133,7 +133,7 @@ public class BlueprintPaster {
      * The main pasting method
      */
     public CompletableFuture<Boolean> paste() {
-        return this.paste(false);
+        return this.paste(true);
     }
 
     /**
