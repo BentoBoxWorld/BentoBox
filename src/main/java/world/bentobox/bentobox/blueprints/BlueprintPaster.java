@@ -58,6 +58,7 @@ public class BlueprintPaster {
 
     private final BentoBox plugin;
     private final PasteHandler paster = Util.getPasteHandler();
+    private final PasteHandler fallback = new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl();
     private final World world;
     // The minimum block position (x,y,z)
     private Location pos1;
@@ -127,10 +128,20 @@ public class BlueprintPaster {
             Iterator<Entry<Vector, BlueprintBlock>> it2,
             Iterator<Entry<Vector, List<BlueprintEntity>>> it3,
             int pasteSpeed) {}
+
     /**
      * The main pasting method
      */
     public CompletableFuture<Boolean> paste() {
+        return this.paste(true);
+    }
+
+    /**
+     * Paste the clipboard
+     * @param useNMS if true, NMS pasting will be used, otherwise Bukkit API
+     * @return Future boolean where true is success
+     */
+    public CompletableFuture<Boolean> paste(boolean useNMS) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
         // Iterators for the various maps to paste
         final Map<Vector, BlueprintBlock> blocks = blueprint.getBlocks() == null ? Collections.emptyMap() : blueprint.getBlocks();
@@ -148,12 +159,12 @@ public class BlueprintPaster {
         Bits bits = new Bits(blocks, attached, entities,
                 blocks.entrySet().iterator(), attached.entrySet().iterator(), entities.entrySet().iterator(),
                 plugin.getSettings().getPasteSpeed());
-        pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> pasterTask(result, owner, bits), 0L, 1L);
+        pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> pasterTask(result, owner, bits, useNMS), 0L, 1L);
 
         return result;
     }
 
-    private void pasterTask(CompletableFuture<Boolean> result, Optional<User> owner, Bits bits) {
+    private void pasterTask(CompletableFuture<Boolean> result, Optional<User> owner, Bits bits, boolean useNMS) {
         if (!currentTask.isDone()) return;
 
         final int pasteSpeed = plugin.getSettings().getPasteSpeed();
@@ -163,10 +174,10 @@ public class BlueprintPaster {
             loadChunk();
         }
         else if (pasteState.equals(PasteState.BLOCKS) || pasteState.equals(PasteState.ATTACHMENTS)) {
-            pasteBlocks(bits, count, owner, pasteSpeed);
+            pasteBlocks(bits, count, owner, pasteSpeed, useNMS);
         }
         else if (pasteState.equals(PasteState.ENTITIES)) {
-            pasteEntities(bits, count, owner, pasteSpeed);
+            pasteEntities(bits, count, owner, pasteSpeed, useNMS);
         }
         else if (pasteState.equals(PasteState.DONE)) {
             // All done. Cancel task
@@ -188,7 +199,7 @@ public class BlueprintPaster {
         result.complete(true);      
     }
 
-    private void pasteEntities(Bits bits, int count, Optional<User> owner, int pasteSpeed) {
+    private void pasteEntities(Bits bits, int count, Optional<User> owner, int pasteSpeed, boolean useNMS) {
         if (bits.it3().hasNext()) {
             Map<Location, List<BlueprintEntity>> entityMap = new HashMap<>();
             // Paste entities
@@ -206,7 +217,8 @@ public class BlueprintPaster {
                 count++;
             }
             if (!entityMap.isEmpty()) {
-                currentTask = paster.pasteEntities(island, world, entityMap);
+                currentTask = useNMS ? paster.pasteEntities(island, world, entityMap)
+                        : fallback.pasteEntities(island, world, entityMap);
             }
         } else {
             pasteState = PasteState.DONE;
@@ -222,7 +234,7 @@ public class BlueprintPaster {
 
     }
 
-    private void pasteBlocks(Bits bits, int count, Optional<User> owner, int pasteSpeed) {
+    private void pasteBlocks(Bits bits, int count, Optional<User> owner, int pasteSpeed, boolean useNMS) {
         Iterator<Entry<Vector, BlueprintBlock>> it = pasteState.equals(PasteState.BLOCKS) ? bits.it : bits.it2;
         if (it.hasNext()) {
             Map<Location, BlueprintBlock> blockMap = new HashMap<>();
@@ -241,7 +253,8 @@ public class BlueprintPaster {
                 count++;
             }
             if (!blockMap.isEmpty()) {
-                currentTask = paster.pasteBlocks(island, world, blockMap);
+                currentTask = useNMS ? paster.pasteBlocks(island, world, blockMap)
+                        : fallback.pasteBlocks(island, world, blockMap);
             }
         } else {
             if (pasteState.equals(PasteState.BLOCKS)) {
