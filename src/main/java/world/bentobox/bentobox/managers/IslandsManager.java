@@ -1919,7 +1919,9 @@ public class IslandsManager {
      * @param user  - admin calling
      * @param world - game world to check
      * @return CompletableFuture boolean - true when done
+     * @deprecated Not compatible with multi-islands. Will be removed.
      */
+    @Deprecated
     public CompletableFuture<Boolean> checkTeams(User user, World world) {
         CompletableFuture<Boolean> r = new CompletableFuture<>();
         user.sendMessage("commands.admin.team.fix.scanning");
