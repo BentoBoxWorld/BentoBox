@@ -469,44 +469,6 @@ public class IslandsManager {
     }
 
     /**
-     * Returns a set of island member UUID's for the island of playerUUID of rank
-     * <tt>minimumRank</tt> and above. This includes the owner of the island. If
-     * there is no island, this set will be empty.
-     *
-     * @param world       - world to check
-     * @param playerUUID  - the player's UUID
-     * @param minimumRank - the minimum rank to be included in the set.
-     * @return Set of team UUIDs
-     * @deprecated This will be removed in 2.0 because it is ambiguous when a user
-     *             has more than one island in the world.
-     */
-
-    @Deprecated(since = "2.0", forRemoval = true)
-    @NonNull
-    public Set<UUID> getMembers(@NonNull World world, @NonNull UUID playerUUID, int minimumRank) {
-        return islandCache.getMembers(world, playerUUID, minimumRank);
-    }
-
-    /**
-     * Returns a set of island member UUID's for the island of playerUUID. Only
-     * includes players of rank {@link RanksManager#MEMBER_RANK} and above. This
-     * includes the owner of the island. If there is no island, this set will be
-     * empty.
-     *
-     * @param world      - world to check
-     * @param playerUUID - the player's UUID
-     * @return Set of team UUIDs
-     * @deprecated This will be removed in 2.0 because it is ambiguous when a user
-     *             has more than one island in the world.
-     */
-
-    @Deprecated(since = "2.0", forRemoval = true)
-    @NonNull
-    public Set<UUID> getMembers(@NonNull World world, @NonNull UUID playerUUID) {
-        return islandCache.getMembers(world, playerUUID, RanksManager.MEMBER_RANK);
-    }
-
-    /**
      * Gets the maximum number of island members allowed on this island. Will update
      * the value based on world settings or island owner permissions (if online). If
      * the island is unowned, then this value will be 0. The number given for
@@ -703,101 +665,6 @@ public class IslandsManager {
             result.complete(null);
         });
 
-    }
-
-    /**
-     * Determines a safe teleport spot on player's island or the team island they
-     * belong to.
-     *
-     * @param world - world to check, not null
-     * @param user  - the player, not null
-     * @param name  - named home location. Blank means default.
-     * @return Location of a safe teleport spot or {@code null} if one cannot be
-     *         found or if the world is not an island world.
-     * @deprecated This will be removed in 2.0 because it is ambiguous when a user
-     *             has more than one island in the world.
-     */
-
-    @Deprecated(since = "2.0", forRemoval = true)
-    @Nullable
-    public Location getSafeHomeLocation(@NonNull World world, @NonNull User user, String name) {
-        // Check if the world is a gamemode world
-        if (!plugin.getIWM().inWorld(world)) {
-            return null;
-        }
-        // Try the named home location first
-        Location l = getHomeLocation(world, user, name);
-        if (l == null) {
-            // Get the default home, which may be null too, but that's okay
-            name = "";
-            l = getHomeLocation(world, user, name);
-        }
-        // Check if it is safe
-        if (l != null) {
-            if (isSafeLocation(l)) {
-                return l;
-            }
-            // To cover slabs, stairs and other half blocks, try one block above
-            Location lPlusOne = l.clone();
-            lPlusOne.add(new Vector(0, 1, 0));
-            if (isSafeLocation(lPlusOne)) {
-                // Adjust the home location accordingly
-                setHomeLocation(user, lPlusOne, name);
-                return lPlusOne;
-            }
-        }
-        // Home location either isn't safe, or does not exist so try the island
-        // location
-        if (inTeam(world, user.getUniqueId())) {
-            l = getIslandLocation(world, user.getUniqueId());
-            if (l != null && isSafeLocation(l)) {
-                setHomeLocation(user, l, name);
-                return l;
-            } else {
-                // try owner's home
-                UUID owner = getOwner(world, user.getUniqueId());
-                if (owner != null) {
-                    Location tlh = getHomeLocation(world, owner);
-                    if (tlh != null && isSafeLocation(tlh)) {
-                        setHomeLocation(user, tlh, name);
-                        return tlh;
-                    }
-                }
-            }
-        } else {
-            l = getIslandLocation(world, user.getUniqueId());
-            if (l != null && isSafeLocation(l)) {
-                setHomeLocation(user, l, name);
-                return l.clone().add(new Vector(0.5D, 0, 0.5D));
-            }
-        }
-        if (l == null) {
-            plugin.logWarning(user.getName() + " player has no island in world " + world.getName() + "!");
-            return null;
-        }
-        // If these island locations are not safe, then we need to get creative
-        // Try the default location
-        Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
-        if (isSafeLocation(dl)) {
-            setHomeLocation(user, dl, name);
-            return dl;
-        }
-        // Try just above the bedrock
-        dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
-        if (isSafeLocation(dl)) {
-            setHomeLocation(user, dl, name);
-            return dl;
-        }
-        // Try all the way up to the sky
-        for (int y = l.getBlockY(); y < 255; y++) {
-            final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
-            if (isSafeLocation(n)) {
-                setHomeLocation(user, n, name);
-                return n;
-            }
-        }
-        // Unsuccessful
-        return null;
     }
 
     /**
@@ -1035,22 +902,6 @@ public class IslandsManager {
     @Nullable
     public Location getSpawnPoint(@NonNull World world) {
         return spawn.containsKey(world) ? spawn.get(world).getSpawnPoint(world.getEnvironment()) : null;
-    }
-
-    /**
-     * Provides UUID of this player's island owner or null if it does not exist
-     * 
-     * @param world      world to check
-     * @param playerUUID the player's UUID
-     * @return island owner's UUID or null if player has no island
-     * @deprecated This will be removed in 2.0 because it is ambiguous when a user
-     *             has more than one island in the world.
-     */
-
-    @Deprecated(since = "2.0", forRemoval = true)
-    @Nullable
-    public UUID getOwner(@NonNull World world, @NonNull UUID playerUUID) {
-        return islandCache.getOwner(world, playerUUID);
     }
 
     /**
