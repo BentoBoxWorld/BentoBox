@@ -240,16 +240,16 @@ public class AdminUnregisterCommandTest {
      * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testExecutePlayerSuccessMultiIsland() {
+    public void testCanExecutePlayerSuccessMultiIsland() {
         assertTrue(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "1,2,3")));
         assertTrue(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "4,5,6")));
     }
 
     /**
-     * Test method for {@link AdminUnregisterCommand#execute(User, String, java.util.List)}.
+     * Test method for {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testExecuteSuccessOneIsland() {
+    public void testCanExecuteSuccessOneIsland() {
         when(im.getOwnedIslands(world, uuid)).thenReturn(Set.of(island));
         itl.canExecute(user, itl.getLabel(), List.of("tastybento"));
         assertTrue(itl.execute(user, itl.getLabel(), List.of("tastybento")));
@@ -262,7 +262,7 @@ public class AdminUnregisterCommandTest {
      */
     @Test
     public void testUnregisterIsland() {
-        this.testExecuteSuccessOneIsland();
+        this.testCanExecuteSuccessOneIsland();
         itl.unregisterIsland(user);
         verify(user).sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, "1,2,3",
                 TextVariables.NAME, "name");
@@ -274,9 +274,19 @@ public class AdminUnregisterCommandTest {
      */
     @Test
     public void testUnregisterIslandMulti() {
-        this.testExecutePlayerSuccessMultiIsland();
+        this.testCanExecutePlayerSuccessMultiIsland();
         itl.unregisterIsland(user);
         verify(user).sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, "4,5,6",
                 TextVariables.NAME, "name");
+    }
+
+    /**
+     * Test method for
+     * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
+     */
+    @Test
+    public void testCanExecuteHelp() {
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "help")));
+        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, null);
     }
 }

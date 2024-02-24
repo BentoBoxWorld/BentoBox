@@ -73,6 +73,10 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
             user.sendMessage("commands.admin.unregister.errors.specify-island-location");
             return false;
         } else if (!islands.containsKey(args.get(1))) {
+            if (args.get(1).equalsIgnoreCase("help")) {
+                this.showHelp(this, user);
+                return false;
+            }
             user.sendMessage("commands.admin.unregister.errors.unknown-island-location");
             return false;
         }
@@ -126,7 +130,7 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         } else if (args.size() == 2) {
             List<String> options = new ArrayList<>(Util.getOnlinePlayerList(user));
             return Optional.of(Util.tabLimit(options, lastArg));
-        } else {
+        } else if (args.size() > 2) {
             // Find out which user
             UUID uuid = getPlayers().getUUID(args.get(1));
             if (uuid != null) {
