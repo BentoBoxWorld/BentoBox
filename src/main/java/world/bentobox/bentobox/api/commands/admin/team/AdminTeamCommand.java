@@ -32,7 +32,7 @@ public class AdminTeamCommand extends CompositeCommand
 
         new AdminTeamAddCommand(this);
         new AdminTeamDisbandCommand(this);
-        new AdminTeamFixCommand(this);
+
         new AdminTeamKickCommand(this);
         new AdminTeamSetownerCommand(this);
     }
