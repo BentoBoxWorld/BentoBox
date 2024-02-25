@@ -114,9 +114,10 @@ public class IslandRespawnListenerTest {
         when(iwm.getAddon(any())).thenReturn(opGma);
         safeLocation = mock(Location.class);
         when(safeLocation.getWorld()).thenReturn(world);
-        when(island.getSpawnPoint(Environment.NORMAL)).thenReturn(safeLocation);
+        when(im.getHomeLocation(eq(world), any(UUID.class))).thenReturn(safeLocation);
         when(im.getPrimaryIsland(any(), any())).thenReturn(island);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        when(im.isSafeLocation(safeLocation)).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
 
         // when(im.getSafeHomeLocation(any(), any(),
