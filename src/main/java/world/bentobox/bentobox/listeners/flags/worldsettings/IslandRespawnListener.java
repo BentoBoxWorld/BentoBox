@@ -55,7 +55,7 @@ public class IslandRespawnListener extends FlagListener {
      * 
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         final UUID worldUUID = respawn.remove(e.getPlayer().getUniqueId());
         if (worldUUID == null) {
@@ -67,11 +67,11 @@ public class IslandRespawnListener extends FlagListener {
             return; // world no longer available
         }
         World w = Util.getWorld(world);
+
         String ownerName = e.getPlayer().getName();
         if (w != null) {
-            final Location respawnLocation = getIslands().getPrimaryIsland(world, e.getPlayer().getUniqueId())
-                    .getSpawnPoint(world.getEnvironment());
-            if (respawnLocation != null) {
+            final Location respawnLocation = getIslands().getHomeLocation(world, e.getPlayer().getUniqueId());
+            if (respawnLocation != null && getIslands().isSafeLocation(respawnLocation)) {
                 e.setRespawnLocation(respawnLocation);
                 // Get the island owner name
                 Island island = BentoBox.getInstance().getIslands().getIsland(w, User.getInstance(e.getPlayer()));
