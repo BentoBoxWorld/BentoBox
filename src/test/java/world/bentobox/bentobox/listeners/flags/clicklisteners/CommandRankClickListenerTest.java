@@ -116,6 +116,7 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         // Tab
         when(tab.getIsland()).thenReturn(island);
         // User
+        when(user.isOp()).thenReturn(true);
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.hasPermission(anyString())).thenReturn(true);
         when(user.getPlayer()).thenReturn(player);
@@ -137,6 +138,7 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         when(cc.isConfigurableRankCommand()).thenReturn(true);
         when(cc.getName()).thenReturn("test");
         when(cc.getSubCommands()).thenReturn(Collections.emptyMap());
+        when(cc.testPermission(any())).thenReturn(true); // All commands are allowed
         map.put("test", cc);
         when(cm.getCommands()).thenReturn(map);
         crcl = new CommandRankClickListener();
@@ -157,6 +159,7 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testOnClickNoPermission() {
+        when(user.isOp()).thenReturn(false);
         when(user.hasPermission(anyString())).thenReturn(false);
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         verify(user).sendMessage("general.errors.no-permission", TextVariables.PERMISSION, "oneblock.settings.COMMAND_RANKS");
@@ -207,11 +210,12 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
             when(cc.getName()).thenReturn("test" + i);
             when(cc.getSubCommands()).thenReturn(Collections.emptyMap());
             map.put("test" + i, cc);
+            when(cc.testPermission(any())).thenReturn(true);
         }
         when(cm.getCommands()).thenReturn(map);
 
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
-        verify(plugin).logError("Number of rank setting commands is too big for GUI");
+        verify(user).getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION, "");
     }
 
     /**

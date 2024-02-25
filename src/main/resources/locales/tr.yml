@@ -186,7 +186,7 @@ commands:
       island-is-spawn: "&6Başlangıç adası, buna emin misiniz ?Kabul etmek için komutu
         tekrar girin!"
     unregister:
-      parameters: "<owner>"
+      parameters: "<owner> [x,y,z]"
       description: Oyuncuyu adadan siler ama ada silinmez.
       unregistered-island: "&aOyuncu başarıyla &e[xyz] &akoordinatlarındaki adadan
         silindi!"

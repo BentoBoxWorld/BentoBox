@@ -5,6 +5,7 @@ import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.user.User;
@@ -18,6 +19,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 public class CommandCycleClick implements ClickHandler {
 
+    protected static final String COMMAND_RANK_PREFIX = "COMMAND_RANK:";
     private final BentoBox plugin = BentoBox.getInstance();
     private final String command;
     private final CommandRankClickListener commandRankClickListener;
@@ -53,6 +55,8 @@ public class CommandCycleClick implements ClickHandler {
                     island.setRankCommand(command, RanksManager.getInstance().getRankDownValue(currentRank));
                 }
                 user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+            } else if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
+                leftShiftClick(user);
             }
             // Apply change to panel
             panel.getInventory().setItem(slot, commandRankClickListener.getPanelItem(command, user, world).getItem());
@@ -63,6 +67,24 @@ public class CommandCycleClick implements ClickHandler {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
         }
         return true;
+    }
+
+    /**
+     * Adds or removes the command rank from visibility by non-Ops
+     * @param user - the Op requesting the change
+     */
+    private void leftShiftClick(User user) {
+        String configSetting = COMMAND_RANK_PREFIX + command;
+        if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(configSetting)) {
+            plugin.getIWM().getHiddenFlags(user.getWorld()).add(configSetting);
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
+        } else {
+            plugin.getIWM().getHiddenFlags(user.getWorld()).remove(configSetting);
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
+        }
+        // Save changes
+        plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
+
     }
 
 }

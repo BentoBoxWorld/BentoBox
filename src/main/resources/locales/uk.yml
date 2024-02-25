@@ -185,7 +185,7 @@ commands:
         консоль для можливих помилок."
       island-is-spawn: "&6 Острів ікру. Ти впевнений? Введіть команду ще раз для підтвердження."
     unregister:
-      parameters: "<owner>"
+      parameters: "<owner> [x,y,z]"
       description: скасувати реєстрацію власника з острова, але зберегти блоки острова
       unregistered-island: "&a Незареєстрований [name] з острова на [xyz]."
     info:

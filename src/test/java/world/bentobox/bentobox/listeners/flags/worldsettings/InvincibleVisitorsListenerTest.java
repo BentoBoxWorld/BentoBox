@@ -247,7 +247,7 @@ public class InvincibleVisitorsListenerTest {
     @Test
     public void testOnVisitorGetDamageNotPlayer() {
         LivingEntity le = mock(LivingEntity.class);
-        EntityDamageEvent e = new EntityDamageEvent(le, EntityDamageEvent.DamageCause.CRAMMING, 0D);
+        EntityDamageEvent e = new EntityDamageEvent(le, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -256,7 +256,7 @@ public class InvincibleVisitorsListenerTest {
     public void testOnVisitorGetDamageNotInWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, 0D);
+        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -265,14 +265,14 @@ public class InvincibleVisitorsListenerTest {
     public void testOnVisitorGetDamageNotInIvSettings() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.BLOCK_EXPLOSION, 0D);
+        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.BLOCK_EXPLOSION, null, 0D);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
     }
 
     @Test
     public void testOnVisitorGetDamageNotVisitor() {
-        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, 0D);
+        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
         when(im.userIsOnIsland(any(), any())).thenReturn(true);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
@@ -280,7 +280,7 @@ public class InvincibleVisitorsListenerTest {
 
     @Test
     public void testOnVisitorGetDamageNotVoid() {
-        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, 0D);
+        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
         verify(player, never()).setGameMode(eq(GameMode.SPECTATOR));
@@ -290,7 +290,7 @@ public class InvincibleVisitorsListenerTest {
     @Test
     public void testOnVisitorGetDamageNPC() {
         when(player.hasMetadata(eq("NPC"))).thenReturn(true);
-        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, 0D);
+        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -299,7 +299,7 @@ public class InvincibleVisitorsListenerTest {
     @Test
     public void testOnVisitorGetDamageVoidIslandHere() {
         when(im.getIslandAt(any())).thenReturn(optionalIsland);
-        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, 0D);
+        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, null, 0D);
         // Player should be teleported to this island
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
@@ -310,7 +310,7 @@ public class InvincibleVisitorsListenerTest {
     public void testOnVisitorGetDamageVoidNoIslandHerePlayerHasNoIsland() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
-        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, 0D);
+        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, null, 0D);
         // Player should die
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
@@ -323,7 +323,7 @@ public class InvincibleVisitorsListenerTest {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         // Player has an island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, 0D);
+        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, null, 0D);
         // Player should be teleported to their island
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());

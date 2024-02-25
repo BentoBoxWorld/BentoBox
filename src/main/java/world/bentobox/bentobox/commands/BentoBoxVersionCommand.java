@@ -43,6 +43,7 @@ public class BentoBoxVersionCommand extends CompositeCommand {
         user.sendMessage("commands.bentobox.version.server",
                 TextVariables.NAME, serverSoftware.equals(ServerSoftware.UNKNOWN) ? user.getTranslation("general.invalid") + " (" + serverSoftware.getName() + ")" : serverSoftware.toString(),
                         TextVariables.VERSION, serverVersion != null ? serverVersion.toString() : user.getTranslation("general.invalid"));
+        user.sendRawMessage("(" + Bukkit.getVersion() + ")");
         user.sendMessage("commands.bentobox.version.plugin-version", TextVariables.VERSION, getPlugin().getDescription().getVersion());
         user.sendMessage("commands.bentobox.version.database", "[database]", getSettings().getDatabaseType().toString());
         user.sendMessage("commands.bentobox.version.loaded-game-worlds");

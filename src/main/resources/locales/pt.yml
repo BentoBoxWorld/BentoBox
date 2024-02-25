@@ -192,7 +192,7 @@ commands:
       island-is-spawn: "&6 Ilha é spawn. Você tem certeza? Digite o comando novamente
         para confirmar."
     unregister:
-      parameters: "<proprietário>"
+      parameters: "<proprietário> [x,y,z]"
       description: Remover o registro de dono da ilha, mas manter os blocos da ilha
       unregistered-island: "&a Registro removido de [name] de ilha em [xyz]."
     info:

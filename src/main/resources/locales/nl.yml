@@ -186,7 +186,7 @@ commands:
       island-is-spawn: "&6 Eiland wordt uitgezet. Weet je het zeker? Voer de opdracht
         nogmaals in om te bevestigen."
     unregister:
-      parameters: "<eigenaar>"
+      parameters: "<eigenaar> [x,y,z]"
       description: de registratie van de eigenaar van het eiland ongedaan maken, maar
         eilandblokken behouden
       unregistered-island: "&a niet-geregistreerde [name] van het eiland op [xyz]."

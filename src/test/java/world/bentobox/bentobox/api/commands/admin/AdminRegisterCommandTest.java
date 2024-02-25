@@ -3,19 +3,24 @@ package world.bentobox.bentobox.api.commands.admin;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -26,12 +31,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -42,6 +49,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -49,7 +57,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class AdminRegisterCommandTest {
 
     @Mock
@@ -61,10 +69,19 @@ public class AdminRegisterCommandTest {
     private IslandsManager im;
     @Mock
     private PlayersManager pm;
+    @Mock
+    private Island is;
+    @Mock
+    private Location loc;
 
     private UUID notUUID;
 
     private IslandDeletionManager idm;
+    private AdminRegisterCommand itl;
+    @Mock
+    private World world;
+    @Mock
+    private Block block;
 
     /**
      */
@@ -74,6 +91,12 @@ public class AdminRegisterCommandTest {
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         Util.setPlugin(plugin);
+
+        Settings settings = new Settings();
+        // Settings
+        when(plugin.getSettings()).thenReturn(settings);
+        // World
+        when(ac.getWorld()).thenReturn(world);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -91,7 +114,15 @@ public class AdminRegisterCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getWorld()).thenReturn(world);
+        when(user.getTranslation(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        User.getInstance(p);
         User.setPlugin(plugin);
+
+        // Util
+        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
 
         // Parent command has no aliases
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -131,6 +162,14 @@ public class AdminRegisterCommandTest {
         PluginManager pim = mock(PluginManager.class);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
+        // Island
+        when(is.getWorld()).thenReturn(world);
+        when(is.getCenter()).thenReturn(loc);
+        when(im.createIsland(any(), eq(uuid))).thenReturn(is);
+        when(loc.getBlock()).thenReturn(block);
+
+        // DUT
+        itl = new AdminRegisterCommand(ac);
     }
 
     @After
@@ -141,81 +180,75 @@ public class AdminRegisterCommandTest {
 
     /**
      * Test method for
-     * {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+     * {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testExecuteNoTarget() {
-        AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+    public void testCanExecuteNoTarget() {
+        assertFalse(itl.canExecute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
 
     /**
      * Test method for
-     * {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+     * {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testExecuteUnknownPlayer() {
-        AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        when(pm.getUUID(any())).thenReturn(null);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("general.errors.unknown-player"), eq("[name]"), eq("tastybento"));
+    public void testCanExecuteWrongWorld() {
+        when(user.getWorld()).thenReturn(mock(World.class));
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
+        verify(user).sendMessage("general.errors.wrong-world");
     }
 
     /**
      * Test method for
-     * {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+     * {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testExecutePlayerHasIsland() {
-        AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        when(pm.getUUID(any())).thenReturn(notUUID);
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        when(im.inTeam(any(), any())).thenReturn(false);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("general.errors.player-has-island"));
+    public void testCanExecuteUnknownPlayer() {
+        when(pm.getUUID(any())).thenReturn(null);
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento2")));
+        verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tastybento2");
     }
 
     /**
-     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+     * Test method for
+     * {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testExecuteInTeam() {
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
-        when(im.inTeam(any(), any())).thenReturn(true);
-        when(pm.getUUID(any())).thenReturn(notUUID);
-        AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage("commands.admin.register.cannot-register-team-player");
+    public void testCanExecuteNoIsland() {
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
+        verify(user).getTranslation("commands.admin.register.no-island-here");
     }
 
+
     /**
-     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+     * Test method for {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testExecuteAlreadyOwnedIsland() {
+    public void testCanExecuteAlreadyOwnedIsland() {
         when(im.inTeam(any(), any())).thenReturn(false);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(pm.getUUID(any())).thenReturn(notUUID);
         Location loc = mock(Location.class);
-
+        when(loc.toVector()).thenReturn(new Vector(1, 2, 3));
         // Island has owner
-        Island is = mock(Island.class);
         when(is.getOwner()).thenReturn(uuid);
         when(is.isOwned()).thenReturn(true);
+        when(is.getCenter()).thenReturn(loc);
         Optional<Island> opi = Optional.of(is);
         when(im.getIslandAt(any())).thenReturn(opi);
         when(user.getLocation()).thenReturn(loc);
-        AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
+
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
         verify(user).sendMessage("commands.admin.register.already-owned");
     }
 
     /**
-     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+     * Test method for {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testExecuteInDeletionIsland() {
+    public void testCanExecuteInDeletionIsland() {
         when(idm.inDeletion(any())).thenReturn(true);
         when(im.inTeam(any(), any())).thenReturn(false);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
@@ -223,25 +256,20 @@ public class AdminRegisterCommandTest {
         Location loc = mock(Location.class);
 
         // Island has owner
-        Island is = mock(Island.class);
         when(is.getOwner()).thenReturn(uuid);
         Optional<Island> opi = Optional.of(is);
         when(im.getIslandAt(any())).thenReturn(opi);
         when(user.getLocation()).thenReturn(loc);
-        AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
+
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
         verify(user).sendMessage("commands.admin.register.in-deletion");
     }
 
     /**
-     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+     * Test method for {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testExecuteSuccess() {
-        when(im.inTeam(any(), any())).thenReturn(false);
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
-        Island is = mock(Island.class);
-        Location loc = mock(Location.class);
+    public void testCanExecuteSuccess() {
         when(loc.toVector()).thenReturn(new Vector(123,123,432));
         when(is.getCenter()).thenReturn(loc);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(is);
@@ -250,11 +278,48 @@ public class AdminRegisterCommandTest {
         when(user.getLocation()).thenReturn(loc);
         when(pm.getUUID(any())).thenReturn(notUUID);
 
-        AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        // Add other verifications
-        verify(user).sendMessage(eq("commands.admin.register.registered-island"), eq(TextVariables.XYZ), eq("123,123,432"), eq("[name]"), eq("tastybento"));
-        verify(user).sendMessage(eq("general.success"));
+        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
+    }
+
+    /**
+     * Test method for {@link AdminRegisterCommand#register(User, String)}.
+     */
+    @Test
+    public void testRegister() {
+        testCanExecuteSuccess();
+        when(is.isSpawn()).thenReturn(true);
+        itl.register(user, "tastybento");
+        verify(im).setOwner(user, uuid, is, RanksManager.VISITOR_RANK);
+        verify(im).clearSpawn(world);
+        verify(user).sendMessage("commands.admin.register.registered-island", TextVariables.XYZ, "", TextVariables.NAME,
+                "tastybento");
+        verify(user).sendMessage("general.success");
+    }
+
+    /**
+     * Test method for {@link AdminRegisterCommand#reserve(User, String)}.
+     */
+    @Test
+    public void testReserveCannotMakeIsland() {
+        when(im.createIsland(any(), eq(uuid))).thenReturn(null);
+        testCanExecuteNoIsland();
+        itl.reserve(user, "tastybento");
+        verify(im).createIsland(any(), eq(uuid));
+        verify(user).sendMessage("commands.admin.register.cannot-make-island");
+    }
+
+    /**
+     * Test method for {@link AdminRegisterCommand#reserve(User, String)}.
+     */
+    @Test
+    public void testReserveCanMakeIsland() {
+        testCanExecuteNoIsland();
+        itl.reserve(user, "tastybento");
+        verify(im).createIsland(any(), eq(uuid));
+        verify(user, never()).sendMessage("commands.admin.register.cannot-make-island");
+        verify(block).setType(Material.BEDROCK);
+        verify(user).sendMessage("commands.admin.register.reserved-island", TextVariables.XYZ, "", TextVariables.NAME,
+                "tastybento");
     }
 
 }

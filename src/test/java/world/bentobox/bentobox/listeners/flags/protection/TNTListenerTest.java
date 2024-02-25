@@ -299,7 +299,8 @@ public class TNTListenerTest extends AbstractCommonSetup {
 
     @Test
     public void testOnEntityExplosion() {
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, 20D);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, null,
+                20D);
         listener.onExplosion(e);
         assertTrue(e.isCancelled());
     }
@@ -309,7 +310,8 @@ public class TNTListenerTest extends AbstractCommonSetup {
         Flags.WORLD_TNT_DAMAGE.setDefaultSetting(false);
         assertFalse(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, 20D);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, null,
+                20D);
         listener.onExplosion(e);
         assertTrue(e.isCancelled());
     }
@@ -319,7 +321,8 @@ public class TNTListenerTest extends AbstractCommonSetup {
         Flags.WORLD_TNT_DAMAGE.setDefaultSetting(true);
         assertTrue(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, 20D);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, null,
+                20D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
     }
@@ -327,7 +330,8 @@ public class TNTListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnEntityExplosionWrongWorld() {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, 20D);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, null,
+                20D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
     }

@@ -187,7 +187,7 @@ commands:
         &c所處位置為出生點島嶼， 您確定要將玩家注冊到這個島嶼上？
         &6請再次輸入命令以確認。
     unregister:
-      parameters: "<owner>"
+      parameters: "<owner> [x,y,z]"
       description: "將島主註銷但保留方塊"
       unregistered-island: "&a已將位於 [xyz] 的島嶼的玩家註銷。"
     info:

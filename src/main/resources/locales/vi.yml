@@ -180,7 +180,7 @@ commands:
       island-is-spawn: "&6 Đảo là điểm triệu hồi. Bạn chắc chứ? Nhập lần nữa để xác
         nhận."
     unregister:
-      parameters: "<chủ>"
+      parameters: "<chủ> [x,y,z]"
       description: hủy đăng kí chủ đảo khỏi đảo này. nhưng giữ lại tài nguyên đảo
       unregistered-island: "&a Đã hủy đăng kí [name] khỏi đảo tại [xyz]."
     info:

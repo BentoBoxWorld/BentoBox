@@ -174,7 +174,7 @@ commands:
       island-is-spawn: '&6 Ta wyspa jest wyspą spawnu. Jesteś pewny? Wpisz ponownie
         tę komendę.'
     unregister:
-      parameters: <właściciel>
+      parameters: "<właściciel> [x,y,z]"
       description: wyrejestruj właściciela z wyspy, ale zachowaj bloki wyspy
       unregistered-island: '&aWyrejestrowano gracza z wyspy [xyz].'
     info:

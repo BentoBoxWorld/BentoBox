@@ -252,7 +252,8 @@ public class PVPListenerTest {
     public void testOnEntityDamageNotPlayer() {
         Entity damager = mock(Zombie.class);
         Entity damagee = mock(Creeper.class);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
@@ -265,7 +266,8 @@ public class PVPListenerTest {
     @Test
     public void testOnEntityDamageSelfDamage() {
         Entity damager = mock(Player.class);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damager, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damager,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
@@ -281,7 +283,8 @@ public class PVPListenerTest {
         when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
         // PVP is not allowed
         when(island.isAllowed(any())).thenReturn(false);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
@@ -304,21 +307,22 @@ public class PVPListenerTest {
         when(damagee.getWorld()).thenReturn(world);
         when(damager.getLocation()).thenReturn(loc);
         when(damagee.getLocation()).thenReturn(loc);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
 
         // Different attack type
-        e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK,
+        e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
 
         // Wrong world
-        e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         wrongWorld();
@@ -346,13 +350,14 @@ public class PVPListenerTest {
         when(iwm.getIvSettings(world)).thenReturn(visitorProtectionList);
         // This player is on their island, i.e., not a visitor
 
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
         // Wrong world
-        e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         wrongWorld();
@@ -376,7 +381,8 @@ public class PVPListenerTest {
         // This player is a visitor
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
 
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
@@ -403,7 +409,8 @@ public class PVPListenerTest {
         // This player is a visitor
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
 
-        EntityDamageByEntityEvent e  = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         wrongWorld();
@@ -431,7 +438,8 @@ public class PVPListenerTest {
         // This player is a visitor
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
         // Damage is not entity attack
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.THORNS,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.THORNS, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
@@ -458,13 +466,14 @@ public class PVPListenerTest {
         // This player is a visitor
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
 
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
         // Wrong world
-        e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         wrongWorld();
@@ -489,7 +498,8 @@ public class PVPListenerTest {
     @Test
     public void testOnEntityDamagePVPNotAllowed() {
         // No visitor protection
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
@@ -504,7 +514,8 @@ public class PVPListenerTest {
      */
     @Test
     public void testOnEntityDamagePVPNotAllowedInvVisitor() {
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
 
@@ -525,7 +536,8 @@ public class PVPListenerTest {
     public void testOnEntityDamageOnPVPAllowed() {
         // PVP is allowed
         when(island.isAllowed(any())).thenReturn(true);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
@@ -552,7 +564,8 @@ public class PVPListenerTest {
         when(p.getShooter()).thenReturn(player);
         when(p.getLocation()).thenReturn(loc);
         when(p.getWorld()).thenReturn(world);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
@@ -580,7 +593,8 @@ public class PVPListenerTest {
         Projectile p = mock(Projectile.class);
         when(p.getShooter()).thenReturn(player);
         when(p.getLocation()).thenReturn(loc);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
@@ -598,7 +612,8 @@ public class PVPListenerTest {
         when(p.getLocation()).thenReturn(loc);
         // PVP is allowed
         when(island.isAllowed(any())).thenReturn(true);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
@@ -626,7 +641,8 @@ public class PVPListenerTest {
         when(p.getLocation()).thenReturn(loc);
         // PVP is allowed
         when(island.isAllowed(any())).thenReturn(true);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
@@ -646,7 +662,8 @@ public class PVPListenerTest {
         when(p.getLocation()).thenReturn(loc);
         // PVP is allowed
         when(island.isAllowed(any())).thenReturn(true);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
@@ -1126,7 +1143,8 @@ public class PVPListenerTest {
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
-        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player, DamageCause.ENTITY_ATTACK, 0);
+        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player, DamageCause.ENTITY_ATTACK, null,
+                0);
         listener.onEntityDamage(en);
         assertFalse(en.isCancelled());
     }
@@ -1142,7 +1160,7 @@ public class PVPListenerTest {
         EntityShootBowEvent e = new EntityShootBowEvent(player, bow, null, arrow, EquipmentSlot.HAND, 1F, false);
         listener.onPlayerShootFireworkEvent(e);
         // Now damage
-        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(arrow, player, DamageCause.ENTITY_ATTACK, 0);
+        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(arrow, player, DamageCause.ENTITY_ATTACK, null, 0);
         listener.onEntityDamage(en);
         assertFalse(en.isCancelled());
     }
@@ -1163,7 +1181,8 @@ public class PVPListenerTest {
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
-        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player, DamageCause.ENTITY_EXPLOSION, 0);
+        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player, DamageCause.ENTITY_EXPLOSION,
+                null, 0);
         listener.onEntityDamage(en);
         assertFalse(en.isCancelled());
     }
@@ -1185,7 +1204,8 @@ public class PVPListenerTest {
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
-        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player2, DamageCause.ENTITY_EXPLOSION, 0);
+        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player2, DamageCause.ENTITY_EXPLOSION,
+                null, 0);
         listener.onEntityDamage(en);
         assertTrue(en.isCancelled());
     }
@@ -1206,7 +1226,8 @@ public class PVPListenerTest {
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
-        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player2, DamageCause.ENTITY_EXPLOSION, 0);
+        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player2, DamageCause.ENTITY_EXPLOSION,
+                null, 0);
         listener.onEntityDamage(en);
         assertFalse(en.isCancelled());
     }

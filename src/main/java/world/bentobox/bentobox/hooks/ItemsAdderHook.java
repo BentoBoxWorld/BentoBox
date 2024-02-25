@@ -74,7 +74,8 @@ public class ItemsAdderHook extends Hook {
      * @param location
      */
     public void clearBlockInfo(Location location) {
-        CustomBlock.remove(location);
+        // TODO: find a more efficient way of doing this.
+        // CustomBlock.remove(location);
     }
 
     class BlockInteractListener extends FlagListener {

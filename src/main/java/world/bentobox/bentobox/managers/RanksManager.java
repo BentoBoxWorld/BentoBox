@@ -69,16 +69,20 @@ public class RanksManager {
     public void loadRanksFromDatabase() {
         // Set up the database handler to store and retrieve Island classes
         handler = new Database<>(BentoBox.getInstance(), Ranks.class);
-        if (!handler.objectExists(Ranks.ID)) {
+        if (!handler.objectExists("BentoBox-Ranks")) {
             // Make the initial object
             DEFAULT_RANKS.forEach((ref, rank) -> ranksPut(ref, rank));
-            handler.saveObject(new Ranks(ranks));
+            save();
         } else {
             // Load the ranks from the database
-            Objects.requireNonNull(handler.loadObject(Ranks.ID)).getRankReference()
+            Objects.requireNonNull(handler.loadObject("BentoBox-Ranks")).getRankReference()
                     .forEach((rankRef, rankValue) -> ranksPut(rankRef, rankValue));
         }
 
+    }
+
+    private void save() {
+        handler.saveObject(new Ranks(ranks));
     }
 
     /**
@@ -101,7 +105,6 @@ public class RanksManager {
             return false;
         }
         ranksPut(reference, value);
-
         return true;
     }
 
@@ -110,6 +113,7 @@ public class RanksManager {
         // Sort
         ranks = ranks.entrySet().stream().sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        save();
     }
 
     /**
@@ -118,8 +122,11 @@ public class RanksManager {
      * @return true if removed
      */
     public boolean removeRank(String reference) {
-        return ranks.remove(reference) != null;
-
+        boolean result = ranks.remove(reference) != null;
+        if (result) {
+            save();
+        }
+        return result;
     }
 
     /**
