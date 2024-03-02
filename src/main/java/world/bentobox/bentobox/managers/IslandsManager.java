@@ -1520,7 +1520,7 @@ public class IslandsManager {
     /**
      * Sets this target as the owner for this island
      * 
-     * @param user       previous owner
+     * @param user       user making the change
      * @param targetUUID new owner
      * @param island     island to register
      * @param rank      rank to which to set old owner.
@@ -1528,8 +1528,8 @@ public class IslandsManager {
     public void setOwner(User user, UUID targetUUID, Island island, int rank) {
         islandCache.setOwner(island, targetUUID);
         // Set old owner as sub-owner on island.
-        if (rank > RanksManager.VISITOR_RANK) {
-            island.setRank(user, rank);
+        if (rank > RanksManager.VISITOR_RANK && island.getOwner() != null) {
+            island.setRank(island.getOwner(), rank);
         }
 
         user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]",

@@ -144,6 +144,8 @@ commands:
         parameters: <player>
         description: transfers island ownership to the player
         already-owner: '&c [name] is already the owner of this island!'
+        must-be-on-island: '&c You must be on the island to set the owner'
+        confirmation: '&a Are you sure you want to set [name] to be the owner of the island at [xyz]?'
         success: '&b [name]&a  is now the owner of this island.'
     range:
       description: admin island range command
