@@ -90,7 +90,10 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         }
     }
 
-    protected void kick(User user, UUID targetUUID) {
+    protected boolean kick(User user, UUID targetUUID) {
+        if (targetUUID == null) {
+            return false;
+        }
         User target = User.getInstance(targetUUID);
         Island oldIsland = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID)); // Should never be
         // null because of
@@ -99,7 +102,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         IslandBaseEvent event = TeamEvent.builder().island(oldIsland).reason(TeamEvent.Reason.KICK)
                 .involvedPlayer(targetUUID).build();
         if (event.isCancelled()) {
-            return;
+            return false;
         }
         target.sendMessage("commands.island.team.kick.player-kicked", TextVariables.GAMEMODE,
                 getAddon().getDescription().getName(), TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME,
@@ -121,6 +124,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             getParent().getSubCommand("invite").ifPresent(c -> c.setCooldown(oldIsland.getUniqueId(),
                     targetUUID.toString(), getSettings().getInviteCooldown() * 60));
         }
+        return true;
     }
 
     @Override

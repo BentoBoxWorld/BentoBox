@@ -557,7 +557,7 @@ public class IslandTeamCommand extends CompositeCommand {
         case RanksManager.TRUSTED_RANK -> this.unTrustCommand.unTrustCmd(user, member.getUniqueId());
         default -> {
             if (kickCommand.canExecute(user, kickCommand.getLabel(), List.of(member.getName()))) {
-                yield kickCommand.execute(user, kickCommand.getLabel(), List.of(member.getName()));
+                yield kickCommand.kick(clicker, member.getUniqueId());
             } else {
                 yield false;
             }
