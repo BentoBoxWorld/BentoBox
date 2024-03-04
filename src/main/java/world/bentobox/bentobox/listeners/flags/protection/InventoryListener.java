@@ -28,7 +28,6 @@ import org.bukkit.inventory.BeaconInventory;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.CartographyInventory;
 import org.bukkit.inventory.ChiseledBookshelfInventory;
-import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.FurnaceInventory;
@@ -184,9 +183,6 @@ public class InventoryListener extends FlagListener
             return true;
         } else if (e.getInventory() instanceof ChiseledBookshelfInventory) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.BOOKSHELF);
-            return true;
-        } else if (e.getInventory() instanceof CraftingInventory) {
-            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.CRAFTING);
             return true;
         } else if (e.getInventory() instanceof DoubleChestInventory) {
             checkInvHolder(e.getInventory().getLocation(), e, player);
