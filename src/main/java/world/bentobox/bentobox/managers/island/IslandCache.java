@@ -18,6 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -353,6 +354,7 @@ public class IslandCache {
         if (newOwnerUUID != null) {
             islandsByUUID.computeIfAbsent(newOwnerUUID, k -> new HashSet<>()).add(island);
         }
+        island.setRank(newOwnerUUID, RanksManager.OWNER_RANK);
         islandsByLocation.put(island.getCenter(), island);
         islandsById.put(island.getUniqueId(), island);
     }

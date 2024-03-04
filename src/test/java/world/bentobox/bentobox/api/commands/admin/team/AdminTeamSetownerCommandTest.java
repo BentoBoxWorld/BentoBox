@@ -1,38 +1,45 @@
 package world.bentobox.bentobox.api.commands.admin.team;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -40,6 +47,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -53,16 +61,19 @@ public class AdminTeamSetownerCommandTest {
 
     @Mock
     private CompositeCommand ac;
-    private UUID uuid;
+    private UUID uuid = UUID.randomUUID();
     @Mock
     private User user;
     @Mock
     private IslandsManager im;
     @Mock
     private PlayersManager pm;
-    private UUID notUUID;
+    private UUID notUUID = UUID.randomUUID();
     @Mock
     private Island island;
+    private AdminTeamSetownerCommand itl;
+    @Mock
+    private @NonNull Location location;
 
     /**
      */
@@ -73,23 +84,39 @@ public class AdminTeamSetownerCommandTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         Util.setPlugin(plugin);
 
+        Settings settings = new Settings();
+        // Settings
+        when(plugin.getSettings()).thenReturn(settings);
+
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Player
         Player p = mock(Player.class);
+        when(p.getUniqueId()).thenReturn(uuid);
+        when(p.getName()).thenReturn("tastybento");
+        User.getInstance(p);
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
-        notUUID = UUID.randomUUID();
-        while (notUUID.equals(uuid)) {
-            notUUID = UUID.randomUUID();
-        }
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getTranslation(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString(), anyString(), anyString(), anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
+
+        // Locales & Placeholders
+        LocalesManager lm = mock(LocalesManager.class);
+        when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        PlaceholdersManager phm = mock(PlaceholdersManager.class);
+        when(plugin.getPlaceholdersManager()).thenReturn(phm);
+        when(phm.replacePlaceholders(any(), any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+
+        when(plugin.getLocalesManager()).thenReturn(lm);
 
         // Parent command has no aliases
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -97,11 +124,17 @@ public class AdminTeamSetownerCommandTest {
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
+        @NonNull
+        WorldSettings worldSettings = new TestWorldSettings();
+        when(iwm.getWorldSettings(any())).thenReturn(worldSettings);
 
+        // Location
+        when(location.toVector()).thenReturn(new Vector(1, 2, 3));
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(island.getOwner()).thenReturn(uuid);
+        when(island.getCenter()).thenReturn(location);
         when(im.getPrimaryIsland(any(), any())).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
@@ -115,14 +148,12 @@ public class AdminTeamSetownerCommandTest {
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
-        // Locales
-        LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(any(), any())).thenReturn("mock translation");
-        when(plugin.getLocalesManager()).thenReturn(lm);
-
         // Plugin Manager
         PluginManager pim = mock(PluginManager.class);
         when(Bukkit.getPluginManager()).thenReturn(pim);
+
+        // DUT
+        itl = new AdminTeamSetownerCommand(ac);
 
     }
 
@@ -133,56 +164,45 @@ public class AdminTeamSetownerCommandTest {
     }
 
     /**
-     * Test method for {@link AdminTeamSetownerCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetownerCommand#canExecute(User, String, List)}.
      */
     @Test
     public void testExecuteNoTarget() {
-        AdminTeamSetownerCommand itl = new AdminTeamSetownerCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+        assertFalse(itl.canExecute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
+        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "commands.help.console");
     }
 
     /**
-     * Test method for {@link AdminTeamSetownerCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetownerCommand#setup()}
+     */
+    @Test
+    public void testSetup() {
+        assertEquals("commands.admin.team.setowner.description", itl.getDescription());
+        assertEquals("commands.admin.team.setowner.parameters", itl.getParameters());
+        assertTrue(itl.isOnlyPlayer());
+        assertEquals("mod.team.setowner", itl.getPermission());
+    }
+
+    /**
+     * Test method for {@link AdminTeamSetownerCommand#canExecute(User, String, List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
-        AdminTeamSetownerCommand itl = new AdminTeamSetownerCommand(ac);
-        String[] name = { "tastybento" };
-        when(pm.getUUID(any())).thenReturn(null);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
+        verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
     }
 
     /**
-     * Test method for {@link AdminTeamSetownerCommand#execute(User, String, List)}.
-     */
-    @Test
-    public void testExecutePlayerNotInTeam() {
-        AdminTeamSetownerCommand itl = new AdminTeamSetownerCommand(ac);
-        String[] name = { "tastybento" };
-        when(pm.getUUID(any())).thenReturn(notUUID);
-        // when(im.getMembers(any(), any())).thenReturn(new HashSet<>());
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        verify(user).sendMessage(eq("general.errors.not-in-team"));
-    }
-
-    /**
-     * Test method for {@link AdminTeamSetownerCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetownerCommand#canExecute(User, String, List)}.
      */
     @Test
     public void testExecuteMakeOwnerAlreadyOwner() {
-        when(im.inTeam(any(), any())).thenReturn(true);
-        Island is = mock(Island.class);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(is);
-        String[] name = {"tastybento"};
-        when(pm.getUUID(any())).thenReturn(notUUID);
-        when(pm.getName(any())).thenReturn(name[0]);
-        when(island.getOwner()).thenReturn(notUUID);
-
-        AdminTeamSetownerCommand itl = new AdminTeamSetownerCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        verify(user).sendMessage("commands.admin.team.setowner.already-owner", TextVariables.NAME, name[0]);
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
+        when(island.getOwner()).thenReturn(uuid);
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
+        verify(user).sendMessage("commands.admin.team.setowner.already-owner", TextVariables.NAME, "tastybento");
     }
 
     /**
@@ -190,28 +210,44 @@ public class AdminTeamSetownerCommandTest {
      */
     @Test
     public void testExecuteSuccess() {
-        // Player is a team member, not an owner
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
-        when(im.hasIsland(any(), any(User.class))).thenReturn(false);
-        when(im.inTeam(any(), any())).thenReturn(true);
-        Island is = mock(Island.class);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(is);
-        String[] name = {"tastybento"};
-        when(pm.getUUID(any())).thenReturn(notUUID);
-        when(pm.getName(any())).thenReturn(name[0]);
-        // Owner
-        //when(im.getOwner(any(), eq(notUUID))).thenReturn(uuid);
-        when(pm.getName(eq(uuid))).thenReturn("owner");
-        // Members
-        Set<UUID> members = new HashSet<>();
-        members.add(uuid);
-        members.add(notUUID);
-        //when(im.getMembers(any(), any())).thenReturn(members);
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
+        when(island.getOwner()).thenReturn(notUUID);
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
 
-        AdminTeamSetownerCommand itl = new AdminTeamSetownerCommand(ac);
-        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
+        assertTrue(itl.execute(user, itl.getLabel(), List.of("tastybento")));
         // Add other verifications
-        verify(im).setOwner(any(), eq(user), eq(notUUID));
-        verify(user).sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, name[0]);
+        verify(user).getTranslation("commands.admin.team.setowner.confirmation", TextVariables.NAME, "tastybento",
+                TextVariables.XYZ, "1,2,3");
+    }
+
+    /**
+     * Test method for {@link AdminTeamSetownerCommand#changeOwner(User)}
+     */
+    @Test
+    public void testChangeOwner() {
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
+        when(island.getOwner()).thenReturn(notUUID);
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
+
+        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
+        itl.changeOwner(user);
+        // Add other verifications
+        verify(user).sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, "tastybento");
+    }
+
+    /**
+     * Test method for {@link AdminTeamSetownerCommand#changeOwner(User)}
+     */
+    @Test
+    public void testChangeOwnerNoOwner() {
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
+        when(island.getOwner()).thenReturn(null);
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
+
+        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
+        itl.changeOwner(user);
+        // Add other verifications
+        verify(user).sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, "tastybento");
     }
 }
