@@ -1526,11 +1526,16 @@ public class IslandsManager {
      * @param rank      rank to which to set old owner.
      */
     public void setOwner(User user, UUID targetUUID, Island island, int rank) {
-        islandCache.setOwner(island, targetUUID);
-        // Set old owner as sub-owner on island.
+        // Demote the old owner
+        if (rank >= RanksManager.OWNER_RANK) {
+            plugin.logWarning("Setowner: previous owner's rank cannot be higher than SubOwner");
+            rank = RanksManager.SUB_OWNER_RANK;
+        }
         if (rank > RanksManager.VISITOR_RANK && island.getOwner() != null) {
             island.setRank(island.getOwner(), rank);
         }
+        // Make the new owner
+        islandCache.setOwner(island, targetUUID);
 
         user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]",
                 plugin.getPlayers().getName(targetUUID));

@@ -5,8 +5,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -54,10 +57,6 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (!getIslands().inTeam(getWorld(), targetUUID)) {
-            user.sendMessage("general.errors.not-in-team");
-            return false;
-        }
         // Check that user is on an island
         Optional<Island> opIsland = getIslands().getIslandAt(user.getLocation());
         if (opIsland.isEmpty()) {
@@ -83,7 +82,7 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
 
     }
 
-    private void changeOwner(User user) {
+    protected void changeOwner(User user) {
         User target = User.getInstance(targetUUID);
         // Fire event so add-ons know
         // Call the setowner event
@@ -101,6 +100,18 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
         getIslands().setOwner(user, targetUUID, island, RanksManager.MEMBER_RANK);
         user.sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, target.getName());
 
+        // Report if this made player have more islands than expected
+        // Get how many islands this player has
+        int num = this.getIslands().getNumberOfConcurrentIslands(targetUUID, getWorld());
+        int max = target.getPermissionValue(
+                this.getIWM().getAddon(getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.number",
+                this.getIWM().getWorldSettings(getWorld()).getConcurrentIslands());
+        if (num > max) {
+            // You cannot make an island
+            user.sendMessage("commands.admin.team.setowner.extra-islands", TextVariables.NUMBER, String.valueOf(num),
+                    "[max]", String.valueOf(max));
+        }
+
         // Call the rank change event for the old island owner
         if (previousOwnerUUID != null) {
             // We need to call it AFTER the actual change.
@@ -109,5 +120,12 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
                     .rankChange(RanksManager.OWNER_RANK, island.getRank(previousOwnerUUID)).build();
         }
 
+    }
+
+    @Override
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+        List<String> options = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+        return Optional.of(Util.tabLimit(options, lastArg));
     }
 }

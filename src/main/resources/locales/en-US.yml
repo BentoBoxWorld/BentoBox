@@ -147,6 +147,7 @@ commands:
         must-be-on-island: '&c You must be on the island to set the owner'
         confirmation: '&a Are you sure you want to set [name] to be the owner of the island at [xyz]?'
         success: '&b [name]&a  is now the owner of this island.'
+        extra-islands: '&c Warning: this player now owns [number] islands. This is more than allowed by settings or perms: [max].'
     range:
       description: admin island range command
       invalid-value:
