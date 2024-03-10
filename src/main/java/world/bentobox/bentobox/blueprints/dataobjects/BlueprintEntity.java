@@ -24,6 +24,19 @@ import com.google.gson.annotations.Expose;
  */
 public class BlueprintEntity {
 
+    public record MythicMobRecord(String type, String displayName, double level, float power, String stance) {
+    };
+
+    // GSON can serialize records, but the record class needs to be know in advance. So this breaks out the record entries
+    @Expose
+    String MMtype;
+    @Expose
+    Double MMLevel;
+    @Expose
+    String MMStance;
+    @Expose
+    Float MMpower;
+
     @Expose
     private DyeColor color;
     @Expose
@@ -50,7 +63,6 @@ public class BlueprintEntity {
     private Integer experience;
     @Expose
     private Villager.Type villagerType;
-    
 
     /**
      * @since 1.8.0
@@ -85,7 +97,6 @@ public class BlueprintEntity {
         if (style != null && e instanceof Horse horse) {
             horse.setStyle(style);
         }
-
     }
     
     /**
@@ -269,6 +280,25 @@ public class BlueprintEntity {
      */
     public void setDomestication(Integer domestication) {
         this.domestication = domestication;
+    }
+
+    /**
+     * @return the mythicMobsRecord
+     */
+    public MythicMobRecord getMythicMobsRecord() {
+        return new MythicMobRecord(this.MMtype, this.getCustomName(), this.MMLevel, this.MMpower, this.MMStance);
+    }
+
+    /**
+     * @param mythicMobsRecord the mythicMobsRecord to set
+     * @since 2.1.0
+     */
+    public void setMythicMobsRecord(MythicMobRecord mmr) {
+        this.setCustomName(mmr.displayName());
+        this.MMtype = mmr.type();
+        this.MMLevel = mmr.level();
+        this.MMStance = mmr.stance();
+        this.MMpower = mmr.power();
     }
     
 }

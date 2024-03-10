@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -33,6 +35,7 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
@@ -128,13 +131,20 @@ public class BlueprintClipboardManagerTest {
         blueprintFolder = new File("blueprints");
         // Clear any residual files
         tearDown();
+        // Set up plugin
+        BentoBox plugin = mock(BentoBox.class);
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        // Hooks
+        HooksManager hooksManager = mock(HooksManager.class);
+        when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
+        when(plugin.getHooks()).thenReturn(hooksManager);
+
         PowerMockito.mockStatic(Bukkit.class);
         BlockData blockData = mock(BlockData.class);
         when(Bukkit.createBlockData(any(Material.class))).thenReturn(blockData);
         when(blockData.getAsString()).thenReturn("test123");
         when(server.getBukkitVersion()).thenReturn("version");
         when(Bukkit.getServer()).thenReturn(server);
-
     }
 
     /**

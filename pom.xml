@@ -189,6 +189,12 @@
             <id>MG-Dev Jenkins CI Maven Repository</id>
             <url>https://ci.mg-dev.eu/plugin/repository/everything</url>
         </repository>
+        <!-- For MythicMobs -->
+        <repository>
+            <id>nexus</id>
+            <name>Lumine Releases</name>
+            <url>https://mvn.lumine.io/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -295,6 +301,12 @@
             <groupId>com.bergerkiller.bukkit</groupId>
             <artifactId>MyWorlds</artifactId>
             <version>${myworlds.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.lumine</groupId>
+            <artifactId>Mythic-Dist</artifactId>
+            <version>5.3.5</version>  
             <scope>provided</scope>
         </dependency>
         <!-- Shaded APIs -->

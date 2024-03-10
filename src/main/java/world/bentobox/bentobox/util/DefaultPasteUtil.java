@@ -33,6 +33,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.hooks.MythicMobsHook;
 import world.bentobox.bentobox.nms.PasteHandler;
 
 /**
@@ -172,29 +173,46 @@ public class DefaultPasteUtil {
     public static CompletableFuture<Void> setEntity(Island island, Location location, List<BlueprintEntity> list) {
         World world = location.getWorld();
         assert world != null;
-        return Util.getChunkAtAsync(location).thenRun(() -> list.stream().filter(k -> k.getType() != null).forEach(k -> {
-            LivingEntity e = (LivingEntity) location.getWorld().spawnEntity(location, k.getType());
-            if (k.getCustomName() != null) {
-                String customName = k.getCustomName();
+        return Util.getChunkAtAsync(location).thenRun(() -> list.stream().filter(k -> k.getType() != null)
+                .forEach(k -> spawnBlueprintEntity(k, location, island)));
+    }
 
-                if (island != null) {
-                    // Parse any placeholders in the entity's name, if the owner's connected (he should)
-                    Optional<Player> owner = Optional.ofNullable(island.getOwner())
-                            .map(User::getInstance)
-                            .map(User::getPlayer);
-                    if (owner.isPresent()) {
-                        // Parse for the player's name first (in case placeholders might need it)
-                        customName = customName.replace(TextVariables.NAME, owner.get().getName());
-                        // Now parse the placeholders
-                        customName = plugin.getPlaceholdersManager().replacePlaceholders(owner.get(), customName);
-                    }
+    /**
+     * Spawn an entity
+     * @param k the blueprint entity definition
+     * @param location location
+     * @param island island
+     * @return true if Bukkit entity spawned, false if MythicMob entity spawned
+     */
+    static boolean spawnBlueprintEntity(BlueprintEntity k, Location location, Island island) {
+        if (k.getMythicMobsRecord() != null && plugin.getHooks().getHook("MythicMobs")
+                .filter(mmh -> mmh instanceof MythicMobsHook)
+                .map(mmh -> ((MythicMobsHook) mmh).spawnMythicMob(k.getMythicMobsRecord(), location))
+                .orElse(false)) {
+            // MythicMob has spawned.
+            return false;
+        }
+        LivingEntity e = (LivingEntity) location.getWorld().spawnEntity(location, k.getType());
+        if (k.getCustomName() != null) {
+            String customName = k.getCustomName();
+
+            if (island != null) {
+                // Parse any placeholders in the entity's name, if the owner's connected (he should)
+                Optional<Player> owner = Optional.ofNullable(island.getOwner()).map(User::getInstance)
+                        .map(User::getPlayer);
+                if (owner.isPresent()) {
+                    // Parse for the player's name first (in case placeholders might need it)
+                    customName = customName.replace(TextVariables.NAME, owner.get().getName());
+                    // Now parse the placeholders
+                    customName = plugin.getPlaceholdersManager().replacePlaceholders(owner.get(), customName);
                 }
-
-                // Actually set the custom name
-                e.setCustomName(customName);
             }
-            k.configureEntity(e);
-        }));
+
+            // Actually set the custom name
+            e.setCustomName(customName);
+        }
+        k.configureEntity(e);
+        return true;
     }
 
     /**

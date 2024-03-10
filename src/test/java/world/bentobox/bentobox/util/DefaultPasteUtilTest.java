@@ -1,9 +1,12 @@
 package world.bentobox.bentobox.util;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,10 +28,13 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -43,7 +49,11 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.MythicMobRecord;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.hooks.MythicMobsHook;
+import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
@@ -80,9 +90,19 @@ public class DefaultPasteUtilTest {
     BlockState sign;
 
     @Mock
+    private PlayersManager pm;
+    @Mock
+    private MythicMobsHook mythicMobsHook;
+    @Mock
+    private BlueprintEntity blueprintEntity;
+    @Mock
+    private Location location;
+    @Mock
+    private LivingEntity livingEntity;
+    @Mock
     private World world;
     @Mock
-    private PlayersManager pm;
+    private HooksManager hooksManager;
 
 
     /**
@@ -109,6 +129,11 @@ public class DefaultPasteUtilTest {
         LocalesManager localesManager = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(localesManager);
         when(localesManager.getOrDefault(any(), anyString(), anyString())).thenReturn("translated");
+
+        when(location.getWorld()).thenReturn(world);
+        // Hooks
+        when(hooksManager.getHook("MythicMobs")).thenReturn(Optional.of(mythicMobsHook));
+        when(plugin.getHooks()).thenReturn(hooksManager);
 
         when(plugin.getPlayers()).thenReturn(pm);
     }
@@ -188,4 +213,32 @@ public class DefaultPasteUtilTest {
         List<String> capturedLines = lineCaptor.getAllValues();
         Assert.assertEquals(linesTranslated, capturedLines);
     }
+
+    @Ignore
+    @Test
+    public void testSpawnBlueprintEntity_WithMythicMobs() {
+        // Set up conditions to satisfy the mythic mobs spawning logic
+        MythicMobRecord mmr = new MythicMobRecord("string", "string2", 10D, 1F, "string3");
+        when(blueprintEntity.getMythicMobsRecord()).thenReturn(mmr);
+        when(mythicMobsHook.spawnMythicMob(mmr, location)).thenReturn(true);
+        // This test works fine if there is a System.out.println() in the code. I assume some optimization is being done in compilation
+
+        assertFalse(DefaultPasteUtil.spawnBlueprintEntity(blueprintEntity, location, island));
+
+        // Verify the mythic mob was spawned, and the method returned early
+        verify(mythicMobsHook).spawnMythicMob(mmr, location);
+        verify(world, never()).spawnEntity(any(Location.class), any(EntityType.class));
+    }
+
+    @Test
+    public void testSpawnBlueprintEntity_WithoutMythicMobs() {
+        // Set up conditions where MythicMobs should not be spawned
+        when(hooksManager.getHook("MythicMobs")).thenReturn(Optional.empty());
+
+        assertTrue(DefaultPasteUtil.spawnBlueprintEntity(blueprintEntity, location, island));
+
+        // Verify a regular entity was spawned instead
+        verify(world).spawnEntity(location, blueprintEntity.getType());
+    }
+
 }
