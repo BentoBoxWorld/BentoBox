@@ -214,8 +214,11 @@ public class BlueprintClipboardManager {
     }
 
     private void unzipFiles(final ZipInputStream zipInputStream, final Path unzipFilePath) throws IOException {
-        if (!unzipFilePath.toFile().getCanonicalPath().startsWith(blueprintFolder.getCanonicalPath())) {
-            throw new IOException("Entry is outside of the target directory");
+        // Prevent directory traversal attacks by normalizing the path
+        if (!unzipFilePath.startsWith(blueprintFolder.getCanonicalFile().toPath().normalize())) {
+            throw new IOException(
+                    "Blueprint file is trying to write outside of the target directory! Blocked attempt to write to "
+                            + unzipFilePath.toString());
         }
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(unzipFilePath.toFile().getCanonicalPath()))) {
             byte[] bytesIn = new byte[1024];
