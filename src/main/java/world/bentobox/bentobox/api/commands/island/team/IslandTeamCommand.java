@@ -520,7 +520,8 @@ public class IslandTeamCommand extends CompositeCommand {
                 case "SETOWNER" -> {
                     // Make the player the leader of the island
                     if (clickingUser.hasPermission(this.setOwnerCommand.getPermission()) && !target.equals(clickingUser)
-                            && clickingUser.getUniqueId().equals(island.getOwner())) {
+                            && clickingUser.getUniqueId().equals(island.getOwner())
+                            && island.getRank(target) >= RanksManager.MEMBER_RANK) {
                         getPlugin().log("Set Owner: " + clickingUser.getName() + " trying to make " + target.getName()
                                 + " owner of island at " + island.getCenter());
                         clickingUser.closeInventory();
