@@ -341,7 +341,7 @@ public class IslandsManager {
      * Gets all the islands for this player in this world that this player owns.
      * 
      * @param world world to check
-     * @param uniqueId  user's UUID
+     * @param user user
      * @return List of islands or empty list if none found for user
      * @since 2.1.0
      */

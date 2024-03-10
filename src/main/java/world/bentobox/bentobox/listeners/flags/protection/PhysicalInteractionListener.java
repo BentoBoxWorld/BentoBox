@@ -15,7 +15,7 @@ import world.bentobox.bentobox.lists.Flags;
 
 
 /**
- * Listener for {@link Flags#CROP_TRAMPLE, Flags#PRESSURE_PLATE, Flags#TURTLE_EGGS, Flags#BUTTON}
+ * Listener for {@link Flags#CROP_TRAMPLE}, {@link Flags#PRESSURE_PLATE}, {@link Flags#TURTLE_EGGS}, {@link Flags#BUTTON}
  * @author tastybento
  *
  */

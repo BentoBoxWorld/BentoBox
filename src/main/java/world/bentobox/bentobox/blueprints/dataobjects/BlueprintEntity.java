@@ -290,7 +290,7 @@ public class BlueprintEntity {
     }
 
     /**
-     * @param mythicMobsRecord the mythicMobsRecord to set
+     * @param mmr the mythicMobsRecord to set
      * @since 2.1.0
      */
     public void setMythicMobsRecord(MythicMobRecord mmr) {

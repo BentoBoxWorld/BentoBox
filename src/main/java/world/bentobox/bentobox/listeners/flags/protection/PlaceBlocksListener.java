@@ -20,6 +20,7 @@ import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
+ * Provides protection for placing blocks.
  * @author tastybento
  */
 public class PlaceBlocksListener extends FlagListener
