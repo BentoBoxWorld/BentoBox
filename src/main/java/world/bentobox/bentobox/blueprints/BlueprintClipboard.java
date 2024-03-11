@@ -78,14 +78,14 @@ public class BlueprintClipboard {
     public BlueprintClipboard(@NonNull Blueprint blueprint) {
         this.blueprint = blueprint;
         // MythicMobs
-        mmh = plugin.getHooks().getHook("MythicMobs").filter(hook -> hook instanceof MythicMobsHook)
-                .map(h -> (MythicMobsHook) h);
+        mmh = plugin.getHooks().getHook("MythicMobs").filter(MythicMobsHook.class::isInstance)
+                .map(MythicMobsHook.class::cast);
     }
 
     public BlueprintClipboard() {
         // MythicMobs
-        mmh = plugin.getHooks().getHook("MythicMobs").filter(hook -> hook instanceof MythicMobsHook)
-                .map(h -> (MythicMobsHook) h);
+        mmh = plugin.getHooks().getHook("MythicMobs").filter(MythicMobsHook.class::isInstance)
+                .map(MythicMobsHook.class::cast);
     }
 
     /**
