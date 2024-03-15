@@ -102,6 +102,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
         when(pm.getUser("target")).thenReturn(target);
         when(target.getName()).thenReturn("target");
         when(target.getDisplayName()).thenReturn("Target");
+        when(target.getUniqueId()).thenReturn(uuid);
 
         // Managers
         when(plugin.getIslands()).thenReturn(im);
