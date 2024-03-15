@@ -15,6 +15,9 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
+/**
+ * Handle promotion and demotion
+ */
 public class IslandTeamPromoteCommand extends CompositeCommand {
 
     private User target;
@@ -45,7 +48,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             showHelp(this, user);
             return false;
         }
-
+        // Check if the user has a team
         if (!getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
@@ -63,6 +66,11 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         target = getPlayers().getUser(args.get(0));
         if (target == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            return false;
+        }
+        // Check that target is a member of this island
+        if (!island.getMemberSet().contains(target.getUniqueId())) {
+            user.sendMessage("commands.island.team.promote.errors.must-be-member");
             return false;
         }
         // Check if the user is not trying to promote/ demote himself
@@ -100,7 +108,8 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         if (this.getLabel().equals("promote")) {
             int nextRank = RanksManager.getInstance().getRankUpValue(currentRank);
             // Stop short of owner
-            if (nextRank != RanksManager.OWNER_RANK && nextRank > currentRank) {
+            if (nextRank < RanksManager.OWNER_RANK && currentRank >= RanksManager.MEMBER_RANK
+                    && nextRank > currentRank) {
                 island.setRank(target, nextRank);
                 String rankName = user.getTranslation(RanksManager.getInstance().getRank(nextRank));
                 user.sendMessage("commands.island.team.promote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());

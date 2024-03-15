@@ -786,6 +786,7 @@ commands:
         errors:
           cant-demote-yourself: '&c You can''t demote yourself!'
           cant-demote: '&c You can''t demote higher ranks!'
+          must-be-member: '&c Player must be an island member!'
         failure: '&c Player cannot be demoted any further!'
         success: '&a Demoted [name] to [rank]'
       promote:
@@ -794,6 +795,7 @@ commands:
         errors:
           cant-promote-yourself: '&c You can''t promote yourself!'
           cant-promote: '&c You can''t promote above your rank!'
+          must-be-member: '&c Player must be an island member!'
         failure: '&c Player cannot be promoted any further!'
         success: '&a Promoted [name] to [rank]'
       setowner:
