@@ -132,6 +132,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ic.getWorld()).thenReturn(world);
+        when(ic.getPlugin()).thenReturn(plugin);
 
         // Island
         islandUUID = UUID.randomUUID();

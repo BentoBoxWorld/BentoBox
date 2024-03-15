@@ -118,7 +118,8 @@ public class IslandTeamInviteGUI {
 
     private PanelItem createNextButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
         checkTemplate(template);
-        long count = itic.getWorld().getPlayers().stream().filter(player -> user.getPlayer().canSee(player))
+        System.out.println(itc);
+        long count = itc.getWorld().getPlayers().stream().filter(player -> user.getPlayer().canSee(player))
                 .filter(player -> !player.equals(user.getPlayer())).count();
         if (count > page * PER_PAGE) {
             // We need to show a next button
@@ -172,14 +173,14 @@ public class IslandTeamInviteGUI {
      */
     private PanelItem createProspectButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
         // Player issuing the command must have an island
-        Island island = plugin.getIslands().getPrimaryIsland(itic.getWorld(), user.getUniqueId());
+        Island island = plugin.getIslands().getPrimaryIsland(itc.getWorld(), user.getUniqueId());
         if (island == null) {
             return this.getBlankBackground();
         }
         if (page < 0) {
             page = 0;
         }
-        return itic.getWorld().getPlayers().stream().filter(player -> user.getPlayer().canSee(player))
+        return itc.getWorld().getPlayers().stream().filter(player -> user.getPlayer().canSee(player))
                 .filter(player -> this.searchName.isBlank() ? true
                         : player.getName().toLowerCase().contains(searchName.toLowerCase()))
                 .filter(player -> !player.equals(user.getPlayer())).skip(slot.slot() + page * PER_PAGE).findFirst()
@@ -213,33 +214,33 @@ public class IslandTeamInviteGUI {
             user.closeInventory();
             if (itic.canExecute(user, itic.getLabel(), List.of(player.getName()))) {
                 plugin.log("Invite sent to: " + player.getName() + " by " + user.getName() + " to join island in "
-                        + itic.getWorld().getName());
+                        + itc.getWorld().getName());
                 itic.execute(user, itic.getLabel(), List.of(player.getName()));
             } else {
                 plugin.log("Invite failed: " + player.getName() + " by " + user.getName() + " to join island in "
-                        + itic.getWorld().getName());
+                        + itc.getWorld().getName());
             }
         } else if (clickType.equals(ClickType.RIGHT)) {
             user.closeInventory();
             if (this.itc.getCoopCommand().canExecute(user, itic.getLabel(), List.of(player.getName()))) {
                 plugin.log("Coop: " + player.getName() + " cooped " + user.getName() + " to island in "
-                        + itic.getWorld().getName());
+                        + itc.getWorld().getName());
                 this.itc.getCoopCommand().execute(user, itic.getLabel(), List.of(player.getName()));
             } else {
                 plugin.log(
                         "Coop failed: " + player.getName() + "'s coop to " + user.getName() + " failed for island in "
-                                + itic.getWorld().getName());
+                                + itc.getWorld().getName());
             }
         } else if (clickType.equals(ClickType.SHIFT_LEFT)) {
             user.closeInventory();
             if (this.itc.getTrustCommand().canExecute(user, itic.getLabel(), List.of(player.getName()))) {
                 plugin.log("Trust: " + player.getName() + " trusted " + user.getName() + " to island in "
-                        + itic.getWorld().getName());
+                        + itc.getWorld().getName());
                 this.itc.getTrustCommand().execute(user, itic.getLabel(), List.of(player.getName()));
             } else {
                 plugin.log("Trust failed: " + player.getName() + "'s trust failed for " + user.getName()
                         + " for island in "
-                        + itic.getWorld().getName());
+                        + itc.getWorld().getName());
             }
         }
         return true;

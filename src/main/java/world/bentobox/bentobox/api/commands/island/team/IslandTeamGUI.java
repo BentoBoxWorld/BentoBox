@@ -289,8 +289,8 @@ public class IslandTeamGUI {
         if (island == null) {
             return this.getBlankBackground();
         }
-
-        Optional<User> opMember = island.getMemberSet().stream().map(User::getInstance)
+        int minimumRank = RanksManager.getInstance().getRankUpValue(RanksManager.VISITOR_RANK); // Get the rank above Visitor.
+        Optional<User> opMember = island.getMemberSet(minimumRank).stream().map(User::getInstance)
                 .filter((User usr) -> rankView == RanksManager.OWNER_RANK || island.getRank(usr) == rankView) // If rankView is owner then show all ranks
                 .sorted(Comparator.comparingInt((User usr) -> island.getRank(usr)).reversed()) // Show owner on left, then descending ranks
                 .skip(slot.slot()) // Get the head for this slot
