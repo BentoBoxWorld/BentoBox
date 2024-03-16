@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
@@ -59,6 +60,11 @@ public class CycleClick implements PanelItem.ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user2, ClickType click, int slot) {
+        if (panel.getWorld().isEmpty()) {
+            plugin.logError("Panel " + panel.getName()
+                    + " has no world associated with it. Please report this bug to the author.");
+            return true;
+        }
         // This click listener is used with TabbedPanel and SettingsTabs only
         TabbedPanel tp = (TabbedPanel)panel;
         SettingsTab st = (SettingsTab)tp.getActiveTab();
@@ -67,7 +73,7 @@ public class CycleClick implements PanelItem.ClickHandler {
         this.user = user2;
         changeOccurred = false;
         // Permission prefix
-        String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld()));
+        String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(panel.getWorld().get()));
         String reqPerm = prefix + "settings." + id;
         String allPerms = prefix + "settings.*";
         if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)
@@ -91,7 +97,7 @@ public class CycleClick implements PanelItem.ClickHandler {
                     rightClick(flag, currentRank);
 
                 } else if (click.equals(ClickType.SHIFT_LEFT) && user2.isOp()) {
-                    leftShiftClick(flag);
+                    leftShiftClick(flag, panel.getWorld().get());
                 }
             });
         } else {
@@ -149,16 +155,16 @@ public class CycleClick implements PanelItem.ClickHandler {
 
     }
 
-    private void leftShiftClick(Flag flag) {
-        if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
-            plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
+    private void leftShiftClick(Flag flag, World world) {
+        if (!plugin.getIWM().getHiddenFlags(world).contains(flag.getID())) {
+            plugin.getIWM().getHiddenFlags(world).add(flag.getID());
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
         } else {
-            plugin.getIWM().getHiddenFlags(user.getWorld()).remove(flag.getID());
+            plugin.getIWM().getHiddenFlags(world).remove(flag.getID());
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
         }
         // Save changes
-        plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
+        plugin.getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
 
     }
 
