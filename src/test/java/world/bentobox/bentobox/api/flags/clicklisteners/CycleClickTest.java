@@ -1,28 +1,35 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +66,8 @@ public class CycleClickTest {
     private static final Integer X = 600;
     private static final Integer Y = 120;
     private static final Integer Z = 10000;
+    private static final int SLOT = 5;
+    private static final String LOCK = "LOCK";
     @Mock
     private BentoBox plugin;
     private UUID uuid;
@@ -82,6 +91,9 @@ public class CycleClickTest {
     private SettingsTab settingsTab;
     @Mock
     private RanksManager rm;
+    private List<String> hiddenFlags;
+    @Mock
+    private @NonNull Player p;
 
     /**
      * @throws java.lang.Exception - exception
@@ -99,9 +111,7 @@ public class CycleClickTest {
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
 
-        // Player
-        Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
+        // User
         User.setPlugin(plugin);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
@@ -178,6 +188,7 @@ public class CycleClickTest {
         when(im.getIslandAt(any())).thenReturn(opIsland);
 
         FlagsManager fm = mock(FlagsManager.class);
+        when(flag.getID()).thenReturn(LOCK);
         when(fm.getFlag(anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
@@ -210,8 +221,13 @@ public class CycleClickTest {
 
         // Active tab
         when(panel.getActiveTab()).thenReturn(settingsTab);
+        when(panel.getWorld()).thenReturn(Optional.of(world));
+        when(panel.getName()).thenReturn("name");
         when(settingsTab.getIsland()).thenReturn(island);
 
+        // Hidden flags
+        hiddenFlags = new ArrayList<>();
+        when(iwm.getHiddenFlags(world)).thenReturn(hiddenFlags);
     }
 
     @After
@@ -222,25 +238,28 @@ public class CycleClickTest {
     @Test
     public void testNoPremission() {
         when(user.hasPermission(anyString())).thenReturn(false);
-        CycleClick udc = new CycleClick("LOCK");
+        CycleClick udc = new CycleClick(LOCK);
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, 5));
         verify(user).sendMessage(eq("general.errors.no-permission"), eq("[permission]"), eq("bskyblock.settings.LOCK"));
     }
 
     @Test
     public void testUpDownClick() {
-        CycleClick udc = new CycleClick("LOCK");
+        CycleClick udc = new CycleClick(LOCK);
         assertNotNull(udc);
     }
 
+    /**
+     * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
+     */
     @Test
     public void testOnLeftClick() {
         final int SLOT = 5;
-        CycleClick udc = new CycleClick("LOCK");
+        CycleClick udc = new CycleClick(LOCK);
         // Rank starts at member
         // Click left
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
-        verify(island).setFlag(eq(flag), eq(RanksManager.OWNER_RANK));
+        verify(island).setFlag(flag, RanksManager.OWNER_RANK);
         // Check rollover
         // Clicking when Owner should go to Visitor
         when(island.getFlag(any())).thenReturn(RanksManager.OWNER_RANK);
@@ -249,65 +268,114 @@ public class CycleClickTest {
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
+    /**
+     * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
+     */
     @Test
     public void testOnLeftClickSetMinMax() {
         // Provide a current rank value - coop
         when(island.getFlag(any())).thenReturn(RanksManager.COOP_RANK);
         final int SLOT = 5;
-        CycleClick udc = new CycleClick("LOCK", RanksManager.COOP_RANK, RanksManager.MEMBER_RANK);
+        CycleClick udc = new CycleClick(LOCK, RanksManager.COOP_RANK, RanksManager.MEMBER_RANK);
         // Rank starts at member
         // Click left
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
-        verify(island).setFlag(eq(flag), eq(RanksManager.TRUSTED_RANK));
+        verify(island).setFlag(flag, RanksManager.TRUSTED_RANK);
         // Check rollover
         // Clicking when Member should go to Coop
         when(island.getFlag(any())).thenReturn(RanksManager.MEMBER_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
-        verify(island).setFlag(eq(flag), eq(RanksManager.COOP_RANK));
+        verify(island).setFlag(flag, RanksManager.COOP_RANK);
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
+    /**
+     * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
+     */
     @Test
     public void testOnRightClick() {
         final int SLOT = 5;
-        CycleClick udc = new CycleClick("LOCK");
+        CycleClick udc = new CycleClick(LOCK);
         // Rank starts at member
         // Right click - down rank to Trusted
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
-        verify(island).setFlag(eq(flag), eq(RanksManager.TRUSTED_RANK));
+        verify(island).setFlag(flag, RanksManager.TRUSTED_RANK);
         // Check rollover
         // Clicking when Visitor should go to Owner
         when(island.getFlag(any())).thenReturn(RanksManager.VISITOR_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
-        verify(island).setFlag(eq(flag), eq(RanksManager.OWNER_RANK));
+        verify(island).setFlag(flag, RanksManager.OWNER_RANK);
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
+    /**
+     * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
+     */
     @Test
     public void testOnRightClickMinMaxSet() {
         // Provide a current rank value - coop
         when(island.getFlag(any())).thenReturn(RanksManager.TRUSTED_RANK);
         final int SLOT = 5;
-        CycleClick udc = new CycleClick("LOCK", RanksManager.COOP_RANK, RanksManager.MEMBER_RANK);
+        CycleClick udc = new CycleClick(LOCK, RanksManager.COOP_RANK, RanksManager.MEMBER_RANK);
         // Rank starts at member
         // Right click
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
-        verify(island).setFlag(eq(flag), eq(RanksManager.COOP_RANK));
+        verify(island).setFlag(flag, RanksManager.COOP_RANK);
         // Check rollover
         // Clicking when Coop should go to Member
         when(island.getFlag(any())).thenReturn(RanksManager.COOP_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
-        verify(island).setFlag(eq(flag), eq(RanksManager.MEMBER_RANK));
+        verify(island).setFlag(flag, RanksManager.MEMBER_RANK);
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
+    /**
+     * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
+     */
     @Test
     public void testAllClicks() {
         // Test all possible click types
-        CycleClick udc = new CycleClick("LOCK");
+        CycleClick udc = new CycleClick(LOCK);
         Arrays.asList(ClickType.values()).forEach(c -> assertTrue(udc.onClick(panel, user, c, 0)));
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
+    @Test
+    public void testNoWorld() {
+        CycleClick udc = new CycleClick(LOCK);
+        when(panel.getWorld()).thenReturn(Optional.empty());
+        assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
+        verify(plugin).logError("Panel name has no world associated with it. Please report this bug to the author.");
+    }
 
+    /**
+     * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
+     */
+    @Test
+    public void testOnShiftLeftClickNotOp() {
+        CycleClick udc = new CycleClick(LOCK);
+        // Click shift left
+        assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
+        verify(user, never()).sendMessage(anyString());
+    }
+
+    /**
+     * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
+     */
+    @Test
+    public void testOnShiftLeftClickIsOp() {
+        when(user.isOp()).thenReturn(true);
+        CycleClick udc = new CycleClick(LOCK);
+        // Click shift left
+        assertTrue(hiddenFlags.isEmpty());
+        assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
+        assertFalse(hiddenFlags.isEmpty());
+        assertEquals(LOCK, hiddenFlags.get(0));
+        // Click shift left again to remove flag
+        assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
+        assertTrue(hiddenFlags.isEmpty());
+        // Verify sounds
+        verify(p).playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
+        verify(p).playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
+    }
 }
