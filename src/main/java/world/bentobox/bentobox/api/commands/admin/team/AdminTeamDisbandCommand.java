@@ -82,7 +82,7 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
 
     private Map<String, Island> getIslandsXYZ(UUID target) {
         return getIslands().getOwnedIslands(getWorld(), target).stream().filter(is -> is.getMemberSet().size() > 1) // Filter for teams
-                .collect(Collectors.toMap(island -> Util.xyz(island.getCenter().toVector()), island -> island));
+                .collect(Collectors.toMap(is -> Util.xyz(island.getCenter().toVector()), is -> is));
     }
 
     @Override
