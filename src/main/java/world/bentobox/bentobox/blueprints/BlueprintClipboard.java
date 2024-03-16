@@ -330,7 +330,7 @@ public class BlueprintClipboard {
             }
 
             mmh.filter(mm -> mm.isMythicMob(entity)).map(mm -> mm.getMythicMob(entity))
-                    .ifPresent(mmr -> bpe.setMythicMobsRecord(mmr));
+                    .ifPresent(bpe::setMythicMobsRecord);
 
             bpEnts.add(bpe);
         }
