@@ -25,7 +25,7 @@ import com.google.gson.annotations.Expose;
 public class BlueprintEntity {
 
     public record MythicMobRecord(String type, String displayName, double level, float power, String stance) {
-    };
+    }
 
     // GSON can serialize records, but the record class needs to be know in advance. So this breaks out the record entries
     @Expose
