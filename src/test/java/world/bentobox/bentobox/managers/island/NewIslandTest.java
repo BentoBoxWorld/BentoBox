@@ -281,7 +281,7 @@ public class NewIslandTest {
         NewIsland.builder().addon(addon).name(NAME).player(user).reason(Reason.CREATE).build();
         PowerMockito.mockStatic(Bukkit.class);
         // Verifications
-        verify(im).save(eq(island));
+        verify(im).save(island);
         verify(island).setFlagsDefaults();
         verify(bpm).paste(eq(addon), eq(island), eq(NAME), any(Runnable.class), eq(true));
         verify(builder, times(2)).build();
