@@ -3,6 +3,8 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -118,7 +120,6 @@ public class IslandTeamInviteGUI {
 
     private PanelItem createNextButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
         checkTemplate(template);
-        System.out.println(itc);
         long count = itc.getWorld().getPlayers().stream().filter(player -> user.getPlayer().canSee(player))
                 .filter(player -> !player.equals(user.getPlayer())).count();
         if (count > page * PER_PAGE) {
@@ -173,18 +174,27 @@ public class IslandTeamInviteGUI {
      */
     private PanelItem createProspectButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
         // Player issuing the command must have an island
-        Island island = plugin.getIslands().getPrimaryIsland(itc.getWorld(), user.getUniqueId());
-        if (island == null) {
+        Island is = plugin.getIslands().getPrimaryIsland(itc.getWorld(), user.getUniqueId());
+        if (is == null) {
             return this.getBlankBackground();
         }
         if (page < 0) {
             page = 0;
         }
-        return itc.getWorld().getPlayers().stream().filter(player -> user.getPlayer().canSee(player))
-                .filter(player -> this.searchName.isBlank() ? true
-                        : player.getName().toLowerCase().contains(searchName.toLowerCase()))
-                .filter(player -> !player.equals(user.getPlayer())).skip(slot.slot() + page * PER_PAGE).findFirst()
-                .map(player -> getProspect(player, template)).orElse(this.getBlankBackground());
+        // Stream of all players that the user can see
+        Stream<Player> visiblePlayers = itc.getWorld().getPlayers().stream().filter(user.getPlayer()::canSee);
+
+        // Filter players based on searchName if it's not blank, and ensure they're not the user
+        Stream<Player> filteredPlayers = visiblePlayers
+                .filter(player -> this.searchName.isBlank()
+                        || player.getName().toLowerCase().contains(searchName.toLowerCase()))
+                .filter(player -> !player.equals(user.getPlayer()));
+
+        // Skipping to the correct pagination slot, then finding the first player
+        Optional<Player> playerOptional = filteredPlayers.skip(slot.slot() + page * PER_PAGE).findFirst();
+
+        // Map the player to a prospect or return a blank background if not found
+        return playerOptional.map(player -> getProspect(player, template)).orElse(this.getBlankBackground());
     }
 
     private PanelItem getProspect(Player player, ItemTemplateRecord template) {
@@ -199,14 +209,13 @@ public class IslandTeamInviteGUI {
                 + " " + user.getTranslation(ar.tooltip())).toList();
         return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName()).description(desc)
                 .clickHandler(
-                        (panel, user, clickType, clickSlot) -> clickHandler(panel, user, clickType, clickSlot, player,
+                        (panel, user, clickType, clickSlot) -> clickHandler(user, clickType, player,
                                 template.actions()))
                 .build();
     }
 
-    private boolean clickHandler(Panel panel, User user, ClickType clickType, int clickSlot, Player player,
-            @NonNull List<ActionRecords> list) {
-        if (!list.stream().anyMatch(ar -> clickType.equals(ar.clickType()))) {
+    private boolean clickHandler(User user, ClickType clickType, Player player, @NonNull List<ActionRecords> list) {
+        if (list.stream().noneMatch(ar -> clickType.equals(ar.clickType()))) {
             // If the click type is not in the template, don't do anything
             return true;
         }
@@ -262,12 +271,10 @@ public class IslandTeamInviteGUI {
 
         @Override
         public Prompt acceptInput(@NonNull ConversationContext context, String input) {
-            // TODO remove this and pass the options back to the GUI
-            if (itic.canExecute(user, itic.getLabel(), List.of(input))) {
-                if (itic.execute(user, itic.getLabel(), List.of(input))) {
+            if (itic.canExecute(user, itic.getLabel(), List.of(input))
+                    && itic.execute(user, itic.getLabel(), List.of(input))) {
                     return Prompt.END_OF_CONVERSATION;
                 }
-            }
             // Set the search item to what was entered
             searchName = input;
             // Return to the GUI but give a second for the error to show
