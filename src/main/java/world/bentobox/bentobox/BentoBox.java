@@ -27,6 +27,7 @@ import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.MyWorldsHook;
+import world.bentobox.bentobox.hooks.MythicMobsHook;
 import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
@@ -184,6 +185,9 @@ public class BentoBox extends JavaPlugin implements Listener {
     private void completeSetup(long loadTime) {
         final long enableStart = System.currentTimeMillis();
         hooksManager.registerHook(new VaultHook());
+
+        // MythicMobs
+        hooksManager.registerHook(new MythicMobsHook());
 
         hooksManager.registerHook(new PlaceholderAPIHook());
         // Setup the Placeholders manager

@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -43,6 +44,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
+import world.bentobox.bentobox.hooks.MythicMobsHook;
 
 /**
  * The clipboard provides the holding spot for an active blueprint that is being
@@ -67,6 +69,7 @@ public class BlueprintClipboard {
     private final Map<Vector, BlueprintBlock> bpAttachable = new LinkedHashMap<>();
     private final Map<Vector, BlueprintBlock> bpBlocks = new LinkedHashMap<>();
     private final BentoBox plugin = BentoBox.getInstance();
+    private Optional<MythicMobsHook> mmh;
 
     /**
      * Create a clipboard for blueprint
@@ -74,9 +77,16 @@ public class BlueprintClipboard {
      */
     public BlueprintClipboard(@NonNull Blueprint blueprint) {
         this.blueprint = blueprint;
+        // MythicMobs
+        mmh = plugin.getHooks().getHook("MythicMobs").filter(MythicMobsHook.class::isInstance)
+                .map(MythicMobsHook.class::cast);
     }
 
-    public BlueprintClipboard() { }
+    public BlueprintClipboard() {
+        // MythicMobs
+        mmh = plugin.getHooks().getHook("MythicMobs").filter(MythicMobsHook.class::isInstance)
+                .map(MythicMobsHook.class::cast);
+    }
 
     /**
      * Copy the blocks between pos1 and pos2 into the clipboard for a user.
@@ -285,6 +295,7 @@ public class BlueprintClipboard {
         List<BlueprintEntity> bpEnts = new ArrayList<>();
         for (LivingEntity entity: entities) {
             BlueprintEntity bpe = new BlueprintEntity();
+
             bpe.setType(entity.getType());
             bpe.setCustomName(entity.getCustomName());
             if (entity instanceof Villager villager) {
@@ -317,6 +328,10 @@ public class BlueprintClipboard {
             if (entity instanceof Horse horse) {
                 bpe.setStyle(horse.getStyle());
             }
+
+            mmh.filter(mm -> mm.isMythicMob(entity)).map(mm -> mm.getMythicMob(entity))
+                    .ifPresent(bpe::setMythicMobsRecord);
+
             bpEnts.add(bpe);
         }
         return bpEnts;

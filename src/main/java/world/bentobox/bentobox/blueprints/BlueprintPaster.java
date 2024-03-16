@@ -237,25 +237,7 @@ public class BlueprintPaster {
     private void pasteBlocks(Bits bits, int count, Optional<User> owner, int pasteSpeed, boolean useNMS) {
         Iterator<Entry<Vector, BlueprintBlock>> it = pasteState.equals(PasteState.BLOCKS) ? bits.it : bits.it2;
         if (it.hasNext()) {
-            Map<Location, BlueprintBlock> blockMap = new HashMap<>();
-            // Paste blocks
-            while (count < pasteSpeed) {
-                if (!it.hasNext()) {
-                    break;
-                }
-                Entry<Vector, BlueprintBlock> entry = it.next();
-                Location pasteTo = location.clone().add(entry.getKey());
-                // pos1 and pos2 update
-                updatePos(pasteTo);
-
-                BlueprintBlock block = entry.getValue();
-                blockMap.put(pasteTo, block);
-                count++;
-            }
-            if (!blockMap.isEmpty()) {
-                currentTask = useNMS ? paster.pasteBlocks(island, world, blockMap)
-                        : fallback.pasteBlocks(island, world, blockMap);
-            }
+            pasteBlocksNow(it, count, pasteSpeed, useNMS);
         } else {
             if (pasteState.equals(PasteState.BLOCKS)) {
                 // Blocks done
@@ -268,6 +250,29 @@ public class BlueprintPaster {
                     owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.entities", TextVariables.NUMBER, String.valueOf(bits.entities.size())));
                 }
             }
+        }
+
+    }
+
+    private void pasteBlocksNow(Iterator<Entry<Vector, BlueprintBlock>> it, int count, int pasteSpeed, boolean useNMS) {
+        Map<Location, BlueprintBlock> blockMap = new HashMap<>();
+        // Paste blocks
+        while (count < pasteSpeed) {
+            if (!it.hasNext()) {
+                break;
+            }
+            Entry<Vector, BlueprintBlock> entry = it.next();
+            Location pasteTo = location.clone().add(entry.getKey());
+            // pos1 and pos2 update
+            updatePos(pasteTo);
+
+            BlueprintBlock block = entry.getValue();
+            blockMap.put(pasteTo, block);
+            count++;
+        }
+        if (!blockMap.isEmpty()) {
+            currentTask = useNMS ? paster.pasteBlocks(island, world, blockMap)
+                    : fallback.pasteBlocks(island, world, blockMap);
         }
 
     }

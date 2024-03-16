@@ -37,6 +37,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -193,6 +194,20 @@ public class IslandSethomeCommandTest {
         assertFalse(isc.canExecute(user, "island", Collections.emptyList()));
         verify(user, never()).sendMessage("general.errors.no-island");
         verify(user).sendMessage("commands.island.sethome.must-be-on-your-island");
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testCanExecuteTooManyHomes() {
+        when(im.getMaxHomes(island)).thenReturn(10);
+        when(im.getNumberOfHomesIfAdded(eq(island), anyString())).thenReturn(11);
+        IslandSethomeCommand isc = new IslandSethomeCommand(ic);
+        assertFalse(isc.canExecute(user, "island", Collections.emptyList()));
+        verify(user).sendMessage("commands.island.sethome.too-many-homes", TextVariables.NUMBER, "10");
+        verify(user).sendMessage("commands.island.sethome.homes-are");
     }
 
     /**

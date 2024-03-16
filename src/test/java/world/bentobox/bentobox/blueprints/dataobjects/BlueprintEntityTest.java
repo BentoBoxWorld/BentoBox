@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.blueprints.dataobjects;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -25,6 +26,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.MythicMobRecord;
 
 /**
  * @author tastybento
@@ -84,10 +87,10 @@ public class BlueprintEntityTest {
 
         blueprint.configureEntity(villager);
 
-        Assert.assertEquals(Profession.LIBRARIAN, villager.getProfession());
-        Assert.assertEquals(100, villager.getVillagerExperience());
-        Assert.assertEquals(2, villager.getVillagerLevel());
-        Assert.assertEquals(Villager.Type.PLAINS, villager.getVillagerType());
+        assertEquals(Profession.LIBRARIAN, villager.getProfession());
+        assertEquals(100, villager.getVillagerExperience());
+        assertEquals(2, villager.getVillagerLevel());
+        assertEquals(Villager.Type.PLAINS, villager.getVillagerType());
     }
 
     @Test
@@ -99,7 +102,7 @@ public class BlueprintEntityTest {
 
         blueprint.configureEntity(sheep);
 
-        Assert.assertEquals(DyeColor.BLUE, sheep.getColor());
+        assertEquals(DyeColor.BLUE, sheep.getColor());
     }
 
     @Test
@@ -147,7 +150,7 @@ public class BlueprintEntityTest {
 
         blueprint.configureEntity(horse);
 
-        Assert.assertEquals(50, horse.getDomestication());
+        assertEquals(50, horse.getDomestication());
     }
 
     @Test
@@ -159,7 +162,7 @@ public class BlueprintEntityTest {
 
         blueprint.configureEntity(horse);
 
-        Assert.assertEquals(Style.WHITE_DOTS, horse.getStyle());
+        assertEquals(Style.WHITE_DOTS, horse.getStyle());
     }
 
     @Test
@@ -167,13 +170,13 @@ public class BlueprintEntityTest {
         BlueprintEntity blueprint = new BlueprintEntity();
 
         blueprint.setColor(DyeColor.RED);
-        Assert.assertEquals(DyeColor.RED, blueprint.getColor());
+        assertEquals(DyeColor.RED, blueprint.getColor());
 
         blueprint.setType(EntityType.CREEPER);
-        Assert.assertEquals(EntityType.CREEPER, blueprint.getType());
+        assertEquals(EntityType.CREEPER, blueprint.getType());
 
         blueprint.setCustomName("My Entity");
-        Assert.assertEquals("My Entity", blueprint.getCustomName());
+        assertEquals("My Entity", blueprint.getCustomName());
 
         blueprint.setTamed(true);
         Assert.assertTrue(blueprint.getTamed());
@@ -185,27 +188,35 @@ public class BlueprintEntityTest {
         Assert.assertFalse(blueprint.getAdult());
 
         blueprint.setDomestication(75);
-        Assert.assertEquals(75, blueprint.getDomestication().intValue());
+        assertEquals(75, blueprint.getDomestication().intValue());
 
         Map<Integer, ItemStack> inventory = new HashMap<>();
         inventory.put(1, new ItemStack(Material.DIAMOND));
         blueprint.setInventory(inventory);
-        Assert.assertEquals(inventory, blueprint.getInventory());
+        assertEquals(inventory, blueprint.getInventory());
 
         blueprint.setStyle(Style.WHITE);
-        Assert.assertEquals(Style.WHITE, blueprint.getStyle());
+        assertEquals(Style.WHITE, blueprint.getStyle());
 
         blueprint.setLevel(5);
-        Assert.assertEquals(5, blueprint.getLevel().intValue());
+        assertEquals(5, blueprint.getLevel().intValue());
 
         blueprint.setProfession(Profession.FARMER);
-        Assert.assertEquals(Profession.FARMER, blueprint.getProfession());
+        assertEquals(Profession.FARMER, blueprint.getProfession());
 
         blueprint.setExperience(500);
-        Assert.assertEquals(500, blueprint.getExperience().intValue());
+        assertEquals(500, blueprint.getExperience().intValue());
 
         blueprint.setVillagerType(Villager.Type.TAIGA);
-        Assert.assertEquals(Villager.Type.TAIGA, blueprint.getVillagerType());
+        assertEquals(Villager.Type.TAIGA, blueprint.getVillagerType());
+    }
+
+    @Test
+    public void testMythicMobs() {
+        BlueprintEntity blueprint = new BlueprintEntity();
+        MythicMobRecord mmr = new MythicMobRecord("string", "string2", 10D, 1F, "string3");
+        blueprint.setMythicMobsRecord(mmr);
+        assertEquals(mmr, blueprint.getMythicMobsRecord());
     }
 
 }

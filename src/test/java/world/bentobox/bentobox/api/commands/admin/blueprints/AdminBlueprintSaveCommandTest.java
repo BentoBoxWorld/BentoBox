@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -41,6 +42,7 @@ import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
+import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 
 /**
@@ -58,7 +60,7 @@ public class AdminBlueprintSaveCommandTest {
     private GameModeAddon addon;
     @Mock
     private User user;
-    private BlueprintClipboard clip = new BlueprintClipboard();
+    private BlueprintClipboard clip;
     private UUID uuid = UUID.randomUUID();
     private File blueprintsFolder;
     @Mock
@@ -72,6 +74,12 @@ public class AdminBlueprintSaveCommandTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        // Hooks
+        HooksManager hooksManager = mock(HooksManager.class);
+        when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
+        when(plugin.getHooks()).thenReturn(hooksManager);
+
+        clip = new BlueprintClipboard();
 
         // Blueprints Manager
         when(plugin.getBlueprintsManager()).thenReturn(bm);
@@ -108,7 +116,6 @@ public class AdminBlueprintSaveCommandTest {
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
 
         absc = new AdminBlueprintSaveCommand(ac);
     }

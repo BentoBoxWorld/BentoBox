@@ -40,6 +40,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
+import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 
 /**
@@ -72,6 +73,11 @@ public class AdminBlueprintLoadCommandTest {
     public void setUp() throws Exception {
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+        // Hooks
+        HooksManager hooksManager = mock(HooksManager.class);
+        when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
+        when(plugin.getHooks()).thenReturn(hooksManager);
 
         // Blueprints Manager
         when(plugin.getBlueprintsManager()).thenReturn(bm);
