@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.island;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
@@ -14,7 +13,7 @@ import world.bentobox.bentobox.util.Util;
 
 public class IslandHomesCommand extends ConfirmableCommand {
 
-    private Set<Island> islands;
+    private List<Island> islands;
 
     public IslandHomesCommand(CompositeCommand islandCommand) {
         super(islandCommand, "homes");

@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -104,8 +104,7 @@ public class IslandSethomeCommandTest {
 
         // Island for player to begin with
         when(im.hasIsland(world, user)).thenReturn(true);
-        // when(im.isOwner(world, uuid)).thenReturn(true);
-        when(im.getIslands(world, user)).thenReturn(Set.of(island));
+        when(im.getIslands(world, user)).thenReturn(List.of(island));
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team

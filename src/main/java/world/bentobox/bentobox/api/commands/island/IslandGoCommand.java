@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.DelayedTeleportCommand;
@@ -41,7 +40,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
             user.sendMessage("commands.island.go.teleport");
             return false;
         }
-        Set<Island> islands = getIslands().getIslands(getWorld(), user.getUniqueId());
+        List<Island> islands = getIslands().getIslands(getWorld(), user.getUniqueId());
         if (islands.isEmpty()) {
             user.sendMessage("general.errors.no-island");
             return false;
@@ -86,7 +85,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         return true;
     }
 
-    private boolean checkReserved(User user, Set<Island> islands) {
+    private boolean checkReserved(User user, List<Island> islands) {
         for (Island island : islands) {
             if (island.isReserved()) {
                 // Send player to create an island
