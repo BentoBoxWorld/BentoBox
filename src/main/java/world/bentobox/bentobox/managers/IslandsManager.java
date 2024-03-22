@@ -321,7 +321,7 @@ public class IslandsManager {
      * @return List of islands or empty list if none found for user
      */
     @NonNull
-    public Set<Island> getIslands(@NonNull World world, @NonNull User user) {
+    public List<Island> getIslands(@NonNull World world, @NonNull User user) {
         return getIslands(world, user.getUniqueId());
     }
 
@@ -333,7 +333,7 @@ public class IslandsManager {
      * @return List of islands or empty list if none found for user
      */
     @NonNull
-    public Set<Island> getIslands(@NonNull World world, UUID uniqueId) {
+    public List<Island> getIslands(@NonNull World world, UUID uniqueId) {
         return islandCache.getIslands(world, uniqueId);
     }
 

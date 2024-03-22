@@ -77,7 +77,6 @@ public class IslandSetnameCommandTest {
     private IslandSetnameCommand isc;
     @Mock
     private @NonNull World world;
-    private RanksManager rm;
     private Settings settings;
     @Mock
     private PluginManager pim;

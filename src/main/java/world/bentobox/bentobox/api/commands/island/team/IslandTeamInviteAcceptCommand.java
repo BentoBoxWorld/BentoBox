@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -144,7 +143,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Remove the invite
         itc.removeInvite(user.getUniqueId());
         // Get the player's island - may be null if the player has no island
-        Set<Island> islands = getIslands().getIslands(getWorld(), user.getUniqueId());
+        List<Island> islands = getIslands().getIslands(getWorld(), user.getUniqueId());
         // Get the team's island
         Island teamIsland = invite.getIsland();
         if (teamIsland == null) {

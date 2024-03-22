@@ -1,10 +1,13 @@
 package world.bentobox.bentobox.managers.island;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -170,7 +173,7 @@ public class IslandCache {
      */
     @Nullable
     public Island get(@NonNull World world, @NonNull UUID uuid) {
-        Set<Island> islands = getIslands(world, uuid);
+        List<Island> islands = getIslands(world, uuid);
         if (islands.isEmpty()) {
             return null;
         }
@@ -190,15 +193,16 @@ public class IslandCache {
      * 
      * @param world world to check. Includes nether and end worlds.
      * @param uuid  player's UUID
-     * @return list of island or empty list if none
+     * @return list of island or empty list if none sorted from oldest to youngest
      */
-    public Set<Island> getIslands(@NonNull World world, @NonNull UUID uuid) {
+    public List<Island> getIslands(@NonNull World world, @NonNull UUID uuid) {
         World w = Util.getWorld(world);
         if (w == null) {
-            return new HashSet<>();
+            return new ArrayList<>();
         }
-        return islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).stream().filter(i -> w.equals(i.getWorld()))
-                .collect(Collectors.toSet());
+        return islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).stream().filter(island -> w.equals(island.getWorld()))
+                .sorted(Comparator.comparingLong(Island::getCreatedDate))
+                .collect(Collectors.toList());
     }
 
     /**
