@@ -31,4 +31,5 @@ public class AdminRangeCommand extends CompositeCommand {
         showHelp(this, user);
         return true;
     }
+
 }

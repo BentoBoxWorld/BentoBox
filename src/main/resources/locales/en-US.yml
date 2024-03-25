@@ -166,7 +166,7 @@ commands:
           &a Green Particles &f show the default protected range if the island protection range differs from it.
         showing: '&2 Showing range indicators'
       set:
-        parameters: <player> <range>
+        parameters: <player> <range> [island location]
         description: sets the island protected range
         success: '&a Set island protection range to &b [number]&a .'
       reset:
@@ -175,12 +175,12 @@ commands:
         success: '&a Reset island protection range to &b [number]&a .'
       add:
         description: increases the island protected range
-        parameters: <player> <range>
+        parameters: <player> <range> [island location]
         success: '&a Successfully increased &b [name]&a ''s island protected range
           to &b [total] &7 (&b +[number]&7 )&a .'
       remove:
         description: decreases the island protected range
-        parameters: <player> <range>
+        parameters: <player> <range> [island location]
         success: '&a Successfully decreased &b [name]&a ''s island protected range
           to &b [total] &7 (&b -[number]&7 )&a .'
     register:
