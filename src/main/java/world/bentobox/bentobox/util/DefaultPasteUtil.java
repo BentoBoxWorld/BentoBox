@@ -81,8 +81,10 @@ public class DefaultPasteUtil {
      */
     public static BlockData createBlockData(BlueprintBlock block) {
         try {
-            return Bukkit.createBlockData(block.getBlockData());
+            return Material.STONE.createBlockData();
+            //return Bukkit.createBlockData(block.getBlockData());
         } catch (Exception e) {
+            BentoBox.getInstance().logStacktrace(e);
             return convertBlockData(block);
         }
     }

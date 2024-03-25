@@ -1,23 +1,18 @@
 package world.bentobox.bentobox.api.commands.admin.range;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 import org.eclipse.jdt.annotation.NonNull;
 
-import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @since 1.10.0
  * @author Poslovitch
  */
-public class AdminRangeAddCommand extends CompositeCommand {
+public class AdminRangeAddCommand extends AbstractAdminRangeCommand {
 
     public AdminRangeAddCommand(AdminRangeCommand parent) {
         super(parent, "add");
@@ -32,53 +27,28 @@ public class AdminRangeAddCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, @NonNull List<String> args) {
-        if (args.size() != 2) {
-            showHelp(this, user);
-            return false;
-        }
+        int newRange = targetIsland.getProtectionRange() + Integer.parseInt(args.get(1));
 
-        UUID targetUUID = Util.getUUID(args.get(0));
-        if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+        if (newRange > targetIsland.getRange()) {
+            user.sendMessage("commands.admin.range.invalid-value.too-high", TextVariables.NUMBER,
+                    String.valueOf(targetIsland.getRange()));
             return false;
-        }
-
-        if (!(getIslands().hasIsland(getWorld(), targetUUID) || getIslands().inTeam(getWorld(), targetUUID))) {
-            user.sendMessage("general.errors.player-has-no-island");
-            return false;
-        }
-
-        if (!Util.isInteger(args.get(1), true) || Integer.parseInt(args.get(1)) < 0) {
-            user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
-            return false;
-        }
-
-        Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID));
-        int newRange = island.getProtectionRange() + Integer.parseInt(args.get(1));
-
-        if (newRange > island.getRange()) {
-            user.sendMessage("commands.admin.range.invalid-value.too-high", TextVariables.NUMBER, String.valueOf(island.getRange()));
-            return false;
-        } else if (newRange == island.getProtectionRange()) {
+        } else if (newRange == targetIsland.getProtectionRange()) {
             user.sendMessage("commands.admin.range.invalid-value.same-as-before", TextVariables.NUMBER, args.get(1));
             return false;
         }
 
         // Get old range for event
-        int oldRange = island.getProtectionRange();
+        int oldRange = targetIsland.getProtectionRange();
 
         // Well, now it can be applied without taking any risks!
-        island.setProtectionRange(newRange);
+        targetIsland.setProtectionRange(newRange);
 
         // Call Protection Range Change event. Does not support cancelling.
         IslandEvent.builder()
-        .island(island)
-        .location(island.getCenter())
-        .reason(IslandEvent.Reason.RANGE_CHANGE)
-        .involvedPlayer(targetUUID)
-        .admin(true)
-        .protectionRange(newRange, oldRange)
-        .build();
+                .island(targetIsland).location(targetIsland.getCenter())
+                .reason(IslandEvent.Reason.RANGE_CHANGE).involvedPlayer(targetUUID).admin(true)
+                .protectionRange(newRange, oldRange).build();
 
         user.sendMessage("commands.admin.range.add.success",
                 TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1),
@@ -86,4 +56,6 @@ public class AdminRangeAddCommand extends CompositeCommand {
 
         return true;
     }
+
+
 }
