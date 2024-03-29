@@ -83,7 +83,6 @@ public class DefaultPasteUtil {
         try {
             return Bukkit.createBlockData(block.getBlockData());
         } catch (Exception e) {
-            BentoBox.getInstance().logStacktrace(e);
             return convertBlockData(block);
         }
     }
