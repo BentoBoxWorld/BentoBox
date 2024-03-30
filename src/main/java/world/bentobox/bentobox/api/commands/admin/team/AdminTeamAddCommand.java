@@ -54,7 +54,7 @@ public class AdminTeamAddCommand extends CompositeCommand {
             new IslandInfo(island).showMembers(user);
             return false;
         }
-        if (getIWM().getWorldSettings(getWorld()).isTeamMembersDropIsland() && island.inTeam(targetUUID)) {
+        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands() && island.inTeam(targetUUID)) {
             user.sendMessage("commands.island.team.invite.errors.already-on-team");
             return false;
         }

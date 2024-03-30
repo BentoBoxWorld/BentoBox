@@ -61,7 +61,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             }
 
             // Check if player is already in a team
-            if (getIWM().getWorldSettings(getWorld()).isTeamMembersDropIsland()
+            if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()
                     && getIslands().inTeam(getWorld(), playerUUID)) {
                 user.sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
                 return false;
@@ -82,8 +82,14 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         switch (invite.getType()) {
         case COOP -> askConfirmation(user, () -> acceptCoopInvite(user, invite));
         case TRUST -> askConfirmation(user, () -> acceptTrustInvite(user, invite));
-        default -> askConfirmation(user, user.getTranslation("commands.island.team.invite.accept.confirmation"),
-                () -> acceptTeamInvite(user, invite));
+        default -> {
+            if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()) {
+                askConfirmation(user, user.getTranslation("commands.island.team.invite.accept.confirmation"),
+                        () -> acceptTeamInvite(user, invite));
+            } else {
+                acceptTeamInvite(user, invite);
+            }
+        }
         }
         return true;
     }
@@ -156,7 +162,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.team.invite.errors.island-is-full");
             return;
         }
-        if (getIWM().getWorldSettings(getWorld()).isTeamMembersDropIsland()) {
+        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()) {
             // Remove the player's other islands
             getIslands().removePlayer(getWorld(), user.getUniqueId());
         }
@@ -166,7 +172,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         getIslands().setJoinTeam(teamIsland, user.getUniqueId());
         // Move player to team's island
         getIslands().homeTeleportAsync(getWorld(), user.getPlayer()).thenRun(() -> {
-            if (getIWM().getWorldSettings(getWorld()).isTeamMembersDropIsland()) {
+            if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()) {
                 // Delete the old islands
                 islands.forEach(island -> getIslands().deleteIsland(island, true, user.getUniqueId()));
             }
