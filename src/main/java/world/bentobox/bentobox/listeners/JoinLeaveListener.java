@@ -219,7 +219,7 @@ public class JoinLeaveListener implements Listener {
                 .filter(island -> island.getMembers().containsKey(event.getPlayer().getUniqueId())).forEach(island -> {
                     // Are there any online players still for this island?
                     if (Bukkit.getOnlinePlayers().stream().filter(p -> !event.getPlayer().equals(p))
-                            .noneMatch(p -> island.getMemberSet().contains(p.getUniqueId()))) {
+                            .noneMatch(p -> island.inTeam(p.getUniqueId()))) {
                         // No, there are no more players online on this island
                         // Tell players they are being removed
                         island.getMembers().entrySet().stream().filter(e -> e.getValue() == RanksManager.COOP_RANK)

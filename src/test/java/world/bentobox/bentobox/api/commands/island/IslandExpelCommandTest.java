@@ -40,6 +40,7 @@ import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -140,6 +141,8 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
 
         // IWM friendly name
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+        TestWorldSettings worldSettings = new TestWorldSettings();
+        when(iwm.getWorldSettings(any())).thenReturn(worldSettings);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Server and Plugin Manager for events
@@ -268,6 +271,7 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         UUID target = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(target);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(target));
+        when(island.inTeam(target)).thenReturn(true);
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.cannot-expel-member");
     }

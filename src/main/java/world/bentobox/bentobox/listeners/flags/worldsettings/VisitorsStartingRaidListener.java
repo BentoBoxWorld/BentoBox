@@ -49,7 +49,7 @@ public class VisitorsStartingRaidListener extends FlagListener
 
         Optional<Island> island = this.getIslands().getProtectedIslandAt(event.getPlayer().getLocation());
 
-        if (island.isPresent() && !island.get().getMemberSet().contains(event.getPlayer().getUniqueId()))
+        if (island.isPresent() && !island.get().inTeam(event.getPlayer().getUniqueId()))
         {
             event.setCancelled(true);
             this.report(User.getInstance(event.getPlayer()),

@@ -39,7 +39,9 @@ import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -170,6 +172,9 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         // IWM friendly name
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+        @NonNull
+        WorldSettings ws = new TestWorldSettings();
+        when(iwm.getWorldSettings(world)).thenReturn(ws);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Parent command

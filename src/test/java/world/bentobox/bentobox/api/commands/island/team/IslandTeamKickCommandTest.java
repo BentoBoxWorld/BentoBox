@@ -211,7 +211,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(pm.getName(notUUID)).thenReturn("poslovitch");
 
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
-
+        when(island.inTeam(notUUID)).thenReturn(true);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick-rank"), eq(TextVariables.NAME), eq("poslovitch"));
@@ -229,7 +229,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(pm.getName(notUUID)).thenReturn("poslovitch");
 
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
-
+        when(island.inTeam(notUUID)).thenReturn(true);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick-rank"), eq(TextVariables.NAME), eq("poslovitch"));

@@ -61,7 +61,8 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             }
 
             // Check if player is already in a team
-            if (getIslands().inTeam(getWorld(), playerUUID)) {
+            if (getIWM().getWorldSettings(getWorld()).isTeamMembersDropIsland()
+                    && getIslands().inTeam(getWorld(), playerUUID)) {
                 user.sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
                 return false;
             }
@@ -155,17 +156,20 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.team.invite.errors.island-is-full");
             return;
         }
-        // Remove the player's other islands
-        getIslands().removePlayer(getWorld(), user.getUniqueId());
+        if (getIWM().getWorldSettings(getWorld()).isTeamMembersDropIsland()) {
+            // Remove the player's other islands
+            getIslands().removePlayer(getWorld(), user.getUniqueId());
+        }
         // Remove money inventory etc. for leaving
         cleanPlayer(user);
         // Add the player as a team member of the new island
         getIslands().setJoinTeam(teamIsland, user.getUniqueId());
         // Move player to team's island
         getIslands().homeTeleportAsync(getWorld(), user.getPlayer()).thenRun(() -> {
-            // Delete the old islands
-            islands.forEach(island -> getIslands().deleteIsland(island, true, user.getUniqueId()));
-
+            if (getIWM().getWorldSettings(getWorld()).isTeamMembersDropIsland()) {
+                // Delete the old islands
+                islands.forEach(island -> getIslands().deleteIsland(island, true, user.getUniqueId()));
+            }
             // Put player back into normal mode
             user.setGameMode(getIWM().getDefaultGameMode(getWorld()));
 

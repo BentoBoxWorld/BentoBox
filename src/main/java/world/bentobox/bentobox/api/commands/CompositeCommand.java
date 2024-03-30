@@ -524,6 +524,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param world - the world to check
      * @param user  - the User
      * @return true if player is in a team
+     * @see Consider checking the island itself {@link Island#inTeam(UUID)}
      */
     protected boolean inTeam(World world, User user) {
         return plugin.getIslands().inTeam(world, user.getUniqueId());

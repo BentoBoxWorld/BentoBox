@@ -105,7 +105,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         }
 
         // Player cannot invite someone already on a team
-        if (getIslands().inTeam(getWorld(), invitedPlayerUUID)) {
+        if (getIWM().getWorldSettings(getWorld()).isTeamMembersDropIsland()
+                && getIslands().inTeam(getWorld(), invitedPlayerUUID)) {
             user.sendMessage("commands.island.team.invite.errors.already-on-team");
             return false;
         }
@@ -170,7 +171,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         // Send message to online player
         invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
         invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
-        if (getIslands().hasIsland(getWorld(), invitedPlayer.getUniqueId())) {
+        if (getIWM().getWorldSettings(getWorld()).isTeamMembersDropIsland()
+                && getIslands().hasIsland(getWorld(), invitedPlayer.getUniqueId())) {
             invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
         }
         return true;

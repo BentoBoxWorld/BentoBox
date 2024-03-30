@@ -76,7 +76,7 @@ public class IslandExpelCommand extends CompositeCommand {
             return false;
         }
         // Or team member
-        if (island.getMemberSet().contains(targetUUID)) {
+        if (island.inTeam(targetUUID)) {
             user.sendMessage("commands.island.expel.cannot-expel-member");
             return false;
         }

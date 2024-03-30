@@ -70,7 +70,7 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("commands.island.ban.cannot-ban-yourself");
             return false;
         }
-        if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).getMemberSet().contains(targetUUID)) {
+        if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).inTeam(targetUUID)) {
             user.sendMessage("commands.island.ban.cannot-ban-member");
             return false;
         }

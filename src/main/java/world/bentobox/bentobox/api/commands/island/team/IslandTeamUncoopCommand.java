@@ -74,7 +74,7 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.uncoop.cannot-uncoop-yourself");
             return false;
         }
-        if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).getMemberSet().contains(targetUUID)) {
+        if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).inTeam(targetUUID)) {
             user.sendMessage("commands.island.team.uncoop.cannot-uncoop-member");
             return false;
         }

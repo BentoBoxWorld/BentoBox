@@ -63,7 +63,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.team.kick.cannot-kick");
             return false;
         }
-        if (!getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).getMemberSet().contains(targetUUID)) {
+        if (!getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).inTeam(targetUUID)) {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }

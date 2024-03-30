@@ -38,6 +38,7 @@ import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -119,7 +120,8 @@ public class IslandTeamSetownerCommandTest {
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
+        when(im.inTeam(world, uuid)).thenReturn(true);
+        when(island.inTeam(uuid)).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -128,6 +130,8 @@ public class IslandTeamSetownerCommandTest {
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Island World Manager
+        TestWorldSettings worldSettings = new TestWorldSettings();
+        when(iwm.getWorldSettings(any())).thenReturn(worldSettings);
         when(plugin.getIWM()).thenReturn(iwm);
         @NonNull
         WorldSettings ws = mock(WorldSettings.class);
@@ -194,7 +198,7 @@ public class IslandTeamSetownerCommandTest {
      */
     @Test
     public void testCanExecuteUserStringListOfStringNotInTeam() {
-        when(island.getMemberSet()).thenReturn(ImmutableSet.of());
+        when(island.inTeam(uuid)).thenReturn(false);
         assertFalse(its.canExecute(user, "", List.of("gibby")));
         verify(user).sendMessage("general.errors.no-team");
     }
@@ -267,6 +271,7 @@ public class IslandTeamSetownerCommandTest {
         UUID target = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(target);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid, target));
+        when(island.inTeam(any())).thenReturn(true);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         assertTrue(its.canExecute(user, "", List.of("tastybento")));
         assertTrue(its.execute(user, "", List.of("tastybento")));
@@ -282,7 +287,7 @@ public class IslandTeamSetownerCommandTest {
         when(im.inTeam(any(), any())).thenReturn(true);
         UUID target = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(target);
-        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid, target));
+        when(island.inTeam(any())).thenReturn(true);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         assertTrue(its.canExecute(user, "", List.of("tastybento")));
         assertTrue(its.execute(user, "", List.of("tastybento")));
