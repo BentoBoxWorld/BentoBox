@@ -165,12 +165,13 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()) {
             // Remove the player's other islands
             getIslands().removePlayer(getWorld(), user.getUniqueId());
+            // Remove money inventory etc. for leaving
+            cleanPlayer(user);
         }
-        // Remove money inventory etc. for leaving
-        cleanPlayer(user);
         // Add the player as a team member of the new island
         getIslands().setJoinTeam(teamIsland, user.getUniqueId());
         // Move player to team's island
+        getIslands().setPrimaryIsland(user.getUniqueId(), teamIsland);
         getIslands().homeTeleportAsync(getWorld(), user.getPlayer()).thenRun(() -> {
             if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()) {
                 // Delete the old islands
@@ -184,9 +185,11 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             Util.runCommands(user, ownerName, getIWM().getOnJoinCommands(getWorld()), "join");
 
         });
-        // Reset deaths
-        if (getIWM().isTeamJoinDeathReset(getWorld())) {
-            getPlayers().setDeaths(getWorld(), user.getUniqueId(), 0);
+        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()) {
+            // Reset deaths
+            if (getIWM().isTeamJoinDeathReset(getWorld())) {
+                getPlayers().setDeaths(getWorld(), user.getUniqueId(), 0);
+            }
         }
         user.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
         User inviter = User.getInstance(invite.getInviter());
