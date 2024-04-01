@@ -167,6 +167,10 @@ public class IslandCreateCommandTest {
         when(builder.build()).thenReturn(mock(Island.class));
 
         // Bundles manager
+
+        @NonNull
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        when(bpm.getBlueprintBundles(addon)).thenReturn(map);
         when(plugin.getBlueprintsManager()).thenReturn(bpm);
 
         // IslandCreationPanel

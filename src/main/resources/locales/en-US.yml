@@ -414,6 +414,12 @@ commands:
         slot-instructions: |
           &a Left click to increment
           &a Right click to decrement
+        times: |
+          &a Max concurrent uses by player
+          &a Left click to increment
+          &a Right click to decrement
+        unlimited-times: &a Unlimited
+        maximum-times: &a Max [number] times
     resetflags:
       parameters: '[flag]'
       description: Reset all islands to default flag settings in config.yml
@@ -547,6 +553,7 @@ commands:
         an administrator.'
       creating-island: '&a Finding a spot for your island...'
       you-cannot-make: '&c You cannot make any more islands!'
+      max-uses: "&c You cannot make any more of that type of island!"
       you-cannot-make-team: '&c Team members cannot make islands in the same world as their team island.'
       pasting:
         estimated-time: '&a Estimated time: &b [number] &a seconds.'
@@ -1811,6 +1818,8 @@ panels:
         name: "&l [name]"
         description: |-
           [description]
+        uses: "&a Used [number]/[max]"
+        unlimited: "&a Unlimited uses allowed"
   # The section of translations used in Language Panel
   language:
     title: "&2&l Select your language"
