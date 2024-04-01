@@ -199,7 +199,7 @@ public class BlueprintManagementPanel {
         }
         if (plugin.getSettings().getIslandNumber() > 1) {
             // Number of times allowed
-            pb.item(42, getTimesIcon(addon, bb));
+            pb.item(42, getTimesIcon(bb));
         }
         // Preferred slot
         pb.item(40, getSlotIcon(addon, bb));
@@ -213,7 +213,7 @@ public class BlueprintManagementPanel {
 
     }
 
-    private PanelItem getTimesIcon(GameModeAddon addon2, BlueprintBundle bb) {
+    private PanelItem getTimesIcon(BlueprintBundle bb) {
         return new PanelItemBuilder().icon(Material.CLOCK).name(t("times"))
                 .description(bb.getTimes() == 0 ? t("unlimited-times")
                         : t("maximum-times", TextVariables.NUMBER, String.valueOf(bb.getTimes())))
@@ -227,7 +227,7 @@ public class BlueprintManagementPanel {
                     }
                     // Save
                     plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
-                    panel.getInventory().setItem(42, getTimesIcon(addon, bb).getItem());
+                    panel.getInventory().setItem(42, getTimesIcon(bb).getItem());
                     return true;
                 }).build();
     }

@@ -114,12 +114,10 @@ public class IslandCreateCommand extends CompositeCommand {
     private boolean checkMaxUses(User user, String name) {
         if (getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon()).containsKey(name)) {
             int maxTimes = getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon()).get(name).getTimes();
-            if (maxTimes > 0) {
-                // Check how many times this player has used this bundle
-                if (getBundleUses(user, name) >= maxTimes) {
-                    user.sendMessage("commands.island.create.max-uses");
-                    return true;
-                }
+            // Check how many times this player has used this bundle
+            if (maxTimes > 0 && getBundleUses(user, name) >= maxTimes) {
+                user.sendMessage("commands.island.create.max-uses");
+                return true;
             }
         }
         return false;
