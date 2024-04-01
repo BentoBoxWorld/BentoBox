@@ -111,7 +111,7 @@ public class IslandResetCommand extends ConfirmableCommand {
         // Show panel only if there are multiple bundles available
         if (getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon()).size() > 1) {
             // Show panel - once the player selected a bundle, this will re-run this command
-            IslandCreationPanel.openPanel(this, user, label);
+            IslandCreationPanel.openPanel(this, user, label, true);
         } else {
             resetIsland(user, BlueprintsManager.DEFAULT_BUNDLE_NAME);
         }

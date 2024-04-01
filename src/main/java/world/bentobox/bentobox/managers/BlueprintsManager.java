@@ -40,6 +40,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
@@ -484,6 +485,8 @@ public class BlueprintsManager {
                             b2 ->
             pasteEnd(addon, bb, island).thenAccept(message -> sendMessage(island)).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, task))));
         }
+        // Set the bundle name
+        island.putMetaData("bundle", new MetaDataValue(name));
         return true;
 
     }

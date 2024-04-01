@@ -77,10 +77,21 @@ public class BlueprintManagementPanel {
         environmentToBlueprint = Map.of(World.Environment.NORMAL, normalBlueprint, World.Environment.NETHER, netherBlueprint, World.Environment.THE_END, endBlueprint);
     }
 
+    /**
+     * Translate "commands.admin.blueprint.management." + t reference
+     * @param t - end of reference
+     * @return translation
+     */
     private String t(String t) {
         return user.getTranslation("commands.admin.blueprint.management." + t);
     }
 
+    /**
+     * Translate "commands.admin.blueprint.management." + t + vars reference
+     * @param t end of reference
+     * @param vars any other parameters
+     * @return transmation
+     */
     private String t(String t, String... vars) {
         return user.getTranslation("commands.admin.blueprint.management." + t, vars);
     }
@@ -186,6 +197,10 @@ public class BlueprintManagementPanel {
             // Toggle permission - default is always allowed
             pb.item(39, getPermissionIcon(addon, bb));
         }
+        if (plugin.getSettings().getIslandNumber() > 1) {
+            // Number of times allowed
+            pb.item(42, getTimesIcon(bb));
+        }
         // Preferred slot
         pb.item(40, getSlotIcon(addon, bb));
         // Panel has a Back icon.
@@ -196,6 +211,25 @@ public class BlueprintManagementPanel {
 
         pb.build();
 
+    }
+
+    private PanelItem getTimesIcon(BlueprintBundle bb) {
+        return new PanelItemBuilder().icon(Material.CLOCK).name(t("times"))
+                .description(bb.getTimes() == 0 ? t("unlimited-times")
+                        : t("maximum-times", TextVariables.NUMBER, String.valueOf(bb.getTimes())))
+                .clickHandler((panel, u, clickType, slot) -> {
+                    // Left click up, right click down
+                    u.getPlayer().playSound(u.getLocation(), Sound.UI_BUTTON_CLICK, 1F, 1F);
+                    if (clickType == ClickType.LEFT) {
+                        bb.setTimes(bb.getTimes() + 1);
+                    } else if (clickType == ClickType.RIGHT && bb.getTimes() > 0) {
+                        bb.setTimes(bb.getTimes() - 1);
+                    }
+                    // Save
+                    plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
+                    panel.getInventory().setItem(42, getTimesIcon(bb).getItem());
+                    return true;
+                }).build();
     }
 
     /**
