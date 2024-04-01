@@ -7,6 +7,7 @@
 package world.bentobox.bentobox.panels.customizable;
 
 
+import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
@@ -38,6 +39,94 @@ import world.bentobox.bentobox.util.Util;
 public class IslandCreationPanel
 {
     // ---------------------------------------------------------------------
+    // Section: Constants
+    // ---------------------------------------------------------------------
+
+    /**
+     * This constant is used for button to indicate that it is Blueprint Bundle type.
+     */
+    private static final String BUNDLES = "BUNDLE";
+
+    /**
+     * This constant is used for button to indicate that it is previous page type.
+     */
+    private static final String PREVIOUS = "PREVIOUS";
+
+    /**
+     * This constant is used for button to indicate that it is next page type.
+     */
+    private static final String NEXT = "NEXT";
+
+    /**
+     * This constant is used for indicating that pages should contain numbering.
+     */
+    private static final String INDEXING = "indexing";
+
+    /**
+     * This constant stores value for SELECT action that is used in panels.
+     */
+    private static final String SELECT_ACTION = "SELECT";
+
+    /**
+     * This constant stores value for COMMAND action that is used in panels.
+     */
+    private static final String COMMANDS_ACTION = "COMMANDS";
+
+    /**
+     * This constant stores value for ERROR message that will be displayed upon failing to run creation commands.
+     */
+    private static final String ISLAND_CREATION_COMMANDS = "ISLAND_CREATION_COMMANDS";
+
+    /**
+     * Button reference
+     */
+    private static final String BUNDLE_BUTTON_REF = "panels.island_creation.buttons.bundle.";
+
+    // ---------------------------------------------------------------------
+    // Section: Variables
+    // ---------------------------------------------------------------------
+
+    /**
+     * This variable allows to access plugin object.
+     */
+    private final BentoBox plugin;
+
+    /**
+     * This variable stores main command that was triggered.
+     */
+    private final CompositeCommand mainCommand;
+
+    /**
+     * This variable holds user who opens panel. Without it panel cannot be opened.
+     */
+    private final User user;
+
+    /**
+     * This variable holds world where panel is opened. Without it panel cannot be opened.
+     */
+    private final String mainLabel;
+
+    /**
+     * This variable stores filtered elements.
+     */
+    private final List<BlueprintBundle> elementList;
+
+    /**
+     * This variable holds current pageIndex for multi-page island choosing.
+     */
+    private int pageIndex;
+
+    /**
+     * The world that this command applies to
+     */
+    private final World world;
+
+    /**
+     * true if this panel has been called by a reset command. Changes how the count of used islands is done.
+     */
+    private final boolean reset;
+
+    // ---------------------------------------------------------------------
     // Section: Constructor
     // ---------------------------------------------------------------------
 
@@ -48,20 +137,22 @@ public class IslandCreationPanel
      * @param command CompositeCommand object
      * @param label The main command label
      * @param user User who opens panel
+     * @param reset 
      */
     private IslandCreationPanel(@NonNull CompositeCommand command,
-        @NonNull User user,
-        @NonNull String label)
+            @NonNull User user, @NonNull String label, boolean reset)
     {
         this.plugin = BentoBox.getInstance();
         this.user = user;
         this.mainLabel = label;
+        this.world = command.getWorld();
+        this.reset = reset;
 
         this.elementList = this.plugin.getBlueprintsManager().getBlueprintBundles(command.getAddon()).values().stream().
-            sorted(Comparator.comparingInt(BlueprintBundle::getSlot).thenComparing(BlueprintBundle::getUniqueId)).
-            filter(bundle -> !bundle.isRequirePermission() ||
-                this.user.hasPermission(command.getPermissionPrefix() + "island.create." + bundle.getUniqueId())).
-            toList();
+                sorted(Comparator.comparingInt(BlueprintBundle::getSlot).thenComparing(BlueprintBundle::getUniqueId))
+                .filter(bundle -> !bundle.isRequirePermission() || this.user
+                        .hasPermission(command.getPermissionPrefix() + "island.create." + bundle.getUniqueId()))
+                .toList();
 
         this.mainCommand = command;
     }
@@ -83,7 +174,7 @@ public class IslandCreationPanel
         {
             this.plugin.logError("There are no available phases for selection!");
             this.user.sendMessage("no-phases",
-                TextVariables.GAMEMODE, this.plugin.getDescription().getName());
+                    TextVariables.GAMEMODE, this.plugin.getDescription().getName());
             return;
         }
 
@@ -126,8 +217,8 @@ public class IslandCreationPanel
     private boolean doesCustomPanelExists(GameModeAddon addon, String name)
     {
         return addon.getDataFolder().exists() &&
-            new File(addon.getDataFolder(), "panels").exists() &&
-            new File(addon.getDataFolder(), "panels" + File.separator + name + ".yml").exists();
+                new File(addon.getDataFolder(), "panels").exists()
+                && new File(addon.getDataFolder(), "panels" + File.separator + name + ".yml").exists();
     }
 
 
@@ -149,7 +240,7 @@ public class IslandCreationPanel
         int size = this.elementList.size();
 
         if (size <= slot.amountMap().getOrDefault(BUNDLES, 1) ||
-            1.0 * size / slot.amountMap().getOrDefault(BUNDLES, 1) <= this.pageIndex + 1)
+                1.0 * size / slot.amountMap().getOrDefault(BUNDLES, 1) <= this.pageIndex + 1)
         {
             // There are no next elements
             return null;
@@ -179,7 +270,7 @@ public class IslandCreationPanel
         if (template.description() != null)
         {
             builder.description(this.user.getTranslation(this.mainCommand.getWorld(), template.description(),
-                TextVariables.NUMBER, String.valueOf(nextPageIndex)));
+                    TextVariables.NUMBER, String.valueOf(nextPageIndex)));
         }
 
         // Add ClickHandler
@@ -187,7 +278,7 @@ public class IslandCreationPanel
         {
             template.actions().forEach(action -> {
                 if ((clickType == action.clickType() ||
-                    action.clickType() == ClickType.UNKNOWN) && NEXT.equalsIgnoreCase(action.actionType()))
+                        action.clickType() == ClickType.UNKNOWN) && NEXT.equalsIgnoreCase(action.actionType()))
                 {
                     // Next button ignores click type currently.
                     this.pageIndex++;
@@ -202,10 +293,10 @@ public class IslandCreationPanel
 
         // Collect tooltips.
         List<String> tooltips = template.actions().stream().
-            filter(action -> action.tooltip() != null).
-            map(action -> this.user.getTranslation(this.mainCommand.getWorld(), action.tooltip())).
-            filter(text -> !text.isBlank()).
-            collect(Collectors.toCollection(() -> new ArrayList<>(template.actions().size())));
+                filter(action -> action.tooltip() != null)
+                .map(action -> this.user.getTranslation(this.mainCommand.getWorld(), action.tooltip()))
+                .filter(text -> !text.isBlank())
+                .collect(Collectors.toCollection(() -> new ArrayList<>(template.actions().size())));
 
         // Add tooltips.
         if (!tooltips.isEmpty())
@@ -259,16 +350,15 @@ public class IslandCreationPanel
         if (template.description() != null)
         {
             builder.description(this.user.getTranslation(this.mainCommand.getWorld(), template.description(),
-                TextVariables.NUMBER, String.valueOf(previousPageIndex)));
+                    TextVariables.NUMBER, String.valueOf(previousPageIndex)));
         }
 
-        // Add ClickHandler
         // Add ClickHandler
         builder.clickHandler((panel, user, clickType, i) ->
         {
             template.actions().forEach(action -> {
                 if ((clickType == action.clickType() ||
-                    action.clickType() == ClickType.UNKNOWN) && PREVIOUS.equalsIgnoreCase(action.actionType()))
+                        action.clickType() == ClickType.UNKNOWN) && PREVIOUS.equalsIgnoreCase(action.actionType()))
                 {
                     // Next button ignores click type currently.
                     this.pageIndex--;
@@ -283,10 +373,10 @@ public class IslandCreationPanel
 
         // Collect tooltips.
         List<String> tooltips = template.actions().stream().
-            filter(action -> action.tooltip() != null).
-            map(action -> this.user.getTranslation(this.mainCommand.getWorld(), action.tooltip())).
-            filter(text -> !text.isBlank()).
-            collect(Collectors.toCollection(() -> new ArrayList<>(template.actions().size())));
+                filter(action -> action.tooltip() != null)
+                .map(action -> this.user.getTranslation(this.mainCommand.getWorld(), action.tooltip()))
+                .filter(text -> !text.isBlank())
+                .collect(Collectors.toCollection(() -> new ArrayList<>(template.actions().size())));
 
         // Add tooltips.
         if (!tooltips.isEmpty())
@@ -310,7 +400,7 @@ public class IslandCreationPanel
     {
         if (this.elementList.isEmpty())
         {
-            // Does not contain any sticks.
+            // Does not contain any blueprints.
             return null;
         }
 
@@ -332,9 +422,8 @@ public class IslandCreationPanel
         {
             // Try to find bundle with requested ID. if not found, use already collected bundle.
             blueprintBundle = this.elementList.stream().
-                filter(bundle -> bundle.getUniqueId().equals(template.dataMap().get("unique_id"))).
-                findFirst().
-                orElse(blueprintBundle);
+                    filter(bundle -> bundle.getUniqueId().equals(template.dataMap().get("unique_id"))).findFirst()
+                    .orElse(blueprintBundle);
         }
 
         return this.createBundleButton(template, blueprintBundle);
@@ -359,8 +448,6 @@ public class IslandCreationPanel
             return null;
         }
 
-        final String reference = "panels.island_creation.buttons.bundle.";
-
         // Get settings for island.
         PanelItemBuilder builder = new PanelItemBuilder();
 
@@ -376,72 +463,92 @@ public class IslandCreationPanel
         if (template.title() != null)
         {
             builder.name(this.user.getTranslation(this.mainCommand.getWorld(), template.title(),
-                TextVariables.NAME, bundle.getDisplayName()));
+                    TextVariables.NAME, bundle.getDisplayName()));
         }
         else
         {
-            builder.name(this.user.getTranslation(reference + "name",
-                TextVariables.NAME, bundle.getDisplayName()));
+            builder.name(this.user.getTranslation(BUNDLE_BUTTON_REF + "name",
+                    TextVariables.NAME, bundle.getDisplayName()));
         }
 
         if (template.description() != null)
         {
             builder.description(this.user.getTranslation(this.mainCommand.getWorld(), template.description(),
-                TextVariables.DESCRIPTION, String.join("\n", bundle.getDescription())));
+                    TextVariables.DESCRIPTION, String.join("\n", bundle.getDescription())));
         }
         else
         {
-            builder.description(this.user.getTranslation(reference + "description",
-                TextVariables.DESCRIPTION, String.join("\n", bundle.getDescription())));
+            builder.description(this.user.getTranslation(BUNDLE_BUTTON_REF + "description",
+                    TextVariables.DESCRIPTION, String.join("\n", bundle.getDescription())));
+        }
+        boolean usedUp = false;
+        if (plugin.getSettings().getIslandNumber() > 1) {
+            // Show how many times this bundle can be used
+            int maxTimes = bundle.getTimes();
+            if (maxTimes > 0) {
+                long uses = plugin.getIslands().getIslands(world, user).stream()
+                        .filter(is -> is.getMetaData("bundle")
+                                .map(mdv -> bundle.getDisplayName().equalsIgnoreCase(mdv.asString())
+                                        && !(reset && is.isPrimary())) // If this is a reset, then ignore the use of the island being reset
+                                .orElse(false))
+                        .count();
+                builder.description(this.user.getTranslation(BUNDLE_BUTTON_REF + "uses", TextVariables.NUMBER,
+                        String.valueOf(uses), "[max]", String.valueOf(maxTimes)));
+                if (uses >= maxTimes) {
+                    usedUp = true;
+                }
+            } else {
+                builder.description(this.user.getTranslation(BUNDLE_BUTTON_REF + "unlimited"));
+            }
         }
 
-        List<ItemTemplateRecord.ActionRecords> actions = template.actions().stream().
-            filter(action -> SELECT_ACTION.equalsIgnoreCase(action.actionType()) ||
-                COMMANDS_ACTION.equalsIgnoreCase(action.actionType())).
-            toList();
+        if (usedUp) {
+            if (plugin.getSettings().isHideUsedBlueprints()) {
+                // Do not show used up blueprints
+                return null;
+            }
+        } else {
+            List<ItemTemplateRecord.ActionRecords> actions = template.actions().stream()
+                    .filter(action -> SELECT_ACTION.equalsIgnoreCase(action.actionType())
+                            || COMMANDS_ACTION.equalsIgnoreCase(action.actionType()))
+                    .toList();
+            // Add ClickHandler
+            builder.clickHandler((panel, user, clickType, i) -> {
+                actions.forEach(action -> {
+                    if (clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
+                    {
+                        if (SELECT_ACTION.equalsIgnoreCase(action.actionType())) {
+                            user.closeInventory();
+                            this.mainCommand.execute(user, this.mainLabel,
+                                    Collections.singletonList(bundle.getUniqueId()));
+                        } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())) {
+                            Util.runCommands(user,
+                                    Arrays.stream(action.content()
+                                            .replaceAll(Pattern.quote(TextVariables.LABEL),
+                                                    this.mainCommand.getTopLabel())
+                                            .split("\n")).toList(),
+                                    ISLAND_CREATION_COMMANDS);
+                        }
+                    }
+                });
 
-        // Add ClickHandler
-        builder.clickHandler((panel, user, clickType, i) ->
-        {
-            actions.forEach(action -> {
-                if (clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
-                {
-                    if (SELECT_ACTION.equalsIgnoreCase(action.actionType()))
-                    {
-                        user.closeInventory();
-                        this.mainCommand.execute(user, this.mainLabel, Collections.singletonList(bundle.getUniqueId()));
-                    }
-                    else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType()))
-                    {
-                        Util.runCommands(user,
-                            Arrays.stream(action.content().
-                                    replaceAll(Pattern.quote(TextVariables.LABEL), this.mainCommand.getTopLabel()).
-                                    split("\n")).
-                                toList(),
-                            ISLAND_CREATION_COMMANDS);
-                    }
-                }
+                // Always return true.
+                return true;
             });
 
-            // Always return true.
-            return true;
-        });
+            // Collect tooltips.
+            List<String> tooltips = actions.stream().filter(action -> action.tooltip() != null)
+                    .map(action -> this.user.getTranslation(this.mainCommand.getWorld(), action.tooltip()))
+                    .filter(text -> !text.isBlank())
+                    .collect(Collectors.toCollection(() -> new ArrayList<>(actions.size())));
 
-        // Collect tooltips.
-        List<String> tooltips = actions.stream().
-            filter(action -> action.tooltip() != null).
-            map(action -> this.user.getTranslation(this.mainCommand.getWorld(), action.tooltip())).
-            filter(text -> !text.isBlank()).
-            collect(Collectors.toCollection(() -> new ArrayList<>(actions.size())));
-
-        // Add tooltips.
-        if (!tooltips.isEmpty())
-        {
-            // Empty line and tooltips.
-            builder.description("");
-            builder.description(tooltips);
+            // Add tooltips.
+            if (!tooltips.isEmpty()) {
+                // Empty line and tooltips.
+                builder.description("");
+                builder.description(tooltips);
+            }
         }
-
         return builder.build();
     }
 
@@ -458,87 +565,13 @@ public class IslandCreationPanel
      * @param command CompositeCommand object
      * @param label The main command label
      * @param user User who opens panel
+     * @param reset true if this is an island reset
      */
     public static void openPanel(@NonNull CompositeCommand command,
-        @NonNull User user,
-        @NonNull String label)
+            @NonNull User user, @NonNull String label, boolean reset)
     {
-        new IslandCreationPanel(command, user, label).build();
+        new IslandCreationPanel(command, user, label, reset).build();
     }
 
 
-// ---------------------------------------------------------------------
-// Section: Constants
-// ---------------------------------------------------------------------
-
-
-    /**
-     * This constant is used for button to indicate that it is Blueprint Bundle type.
-     */
-    private static final String BUNDLES = "BUNDLE";
-
-    /**
-     * This constant is used for button to indicate that it is previous page type.
-     */
-    private static final String PREVIOUS = "PREVIOUS";
-
-    /**
-     * This constant is used for button to indicate that it is next page type.
-     */
-    private static final String NEXT = "NEXT";
-
-    /**
-     * This constant is used for indicating that pages should contain numbering.
-     */
-    private static final String INDEXING = "indexing";
-
-    /**
-     * This constant stores value for SELECT action that is used in panels.
-     */
-    private static final String SELECT_ACTION = "SELECT";
-
-    /**
-     * This constant stores value for COMMAND action that is used in panels.
-     */
-    private static final String COMMANDS_ACTION = "COMMANDS";
-
-    /**
-     * This constant stores value for ERROR message that will be displayed upon failing to run creation commands.
-     */
-    private static final String ISLAND_CREATION_COMMANDS = "ISLAND_CREATION_COMMANDS";
-
-// ---------------------------------------------------------------------
-// Section: Variables
-// ---------------------------------------------------------------------
-
-
-    /**
-     * This variable allows to access plugin object.
-     */
-    private final BentoBox plugin;
-
-    /**
-     * This variable stores main command that was triggered.
-     */
-    private final CompositeCommand mainCommand;
-
-    /**
-     * This variable holds user who opens panel. Without it panel cannot be opened.
-     */
-    private final User user;
-
-    /**
-     * This variable holds world where panel is opened. Without it panel cannot be opened.
-     */
-    private final String mainLabel;
-
-    /**
-     * This variable stores filtered elements.
-     */
-    private final List<BlueprintBundle> elementList;
-
-    /**
-     * This variable holds current pageIndex for multi-page island choosing.
-     */
-    private int pageIndex;
 }

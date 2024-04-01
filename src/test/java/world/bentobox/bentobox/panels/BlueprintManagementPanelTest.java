@@ -32,6 +32,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
@@ -123,6 +124,9 @@ public class BlueprintManagementPanelTest {
         // Blueprint
         when(blueprint.getName()).thenReturn("blueprint name");
 
+        // Settings
+        Settings settings = new Settings();
+        when(plugin.getSettings()).thenReturn(settings);
 
         // Set up
         bmp = new BlueprintManagementPanel(plugin, user, addon);
