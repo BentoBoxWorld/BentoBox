@@ -75,7 +75,7 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
             island = islands.values().iterator().next();
         }
         // Check that the target owns the island
-        if (!island.getOwner().equals(targetUUID)) {
+        if (island.getOwner() == null || !island.getOwner().equals(targetUUID)) {
             user.sendMessage("general.errors.player-is-not-owner", TextVariables.NAME, args.get(0));
             return false;
         }
