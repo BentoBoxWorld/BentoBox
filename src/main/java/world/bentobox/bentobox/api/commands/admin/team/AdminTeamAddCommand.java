@@ -49,7 +49,7 @@ public class AdminTeamAddCommand extends CompositeCommand {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
-        if (getIslands().inTeam(getWorld(), ownerUUID) && island != null && !ownerUUID.equals(island.getOwner())) {
+        if (getIslands().inTeam(getWorld(), ownerUUID) && !ownerUUID.equals(island.getOwner())) {
             user.sendMessage("commands.admin.team.add.name-not-owner", TextVariables.NAME, args.get(0));
             new IslandInfo(island).showMembers(user);
             return false;
