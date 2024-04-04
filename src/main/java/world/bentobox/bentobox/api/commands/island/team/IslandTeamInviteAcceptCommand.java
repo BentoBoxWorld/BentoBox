@@ -185,11 +185,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             Util.runCommands(user, ownerName, getIWM().getOnJoinCommands(getWorld()), "join");
 
         });
-        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()) {
+        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()
+                && getIWM().isTeamJoinDeathReset(getWorld())) {
             // Reset deaths
-            if (getIWM().isTeamJoinDeathReset(getWorld())) {
-                getPlayers().setDeaths(getWorld(), user.getUniqueId(), 0);
-            }
+            getPlayers().setDeaths(getWorld(), user.getUniqueId(), 0);
         }
         user.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
         User inviter = User.getInstance(invite.getInviter());
