@@ -33,6 +33,7 @@ import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -119,6 +120,11 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
 
         // In team
         when(im.inTeam(world, uuid)).thenReturn(true);
+        when(island.inTeam(uuid)).thenReturn(true);
+
+        // IWM
+        TestWorldSettings worldSettings = new TestWorldSettings();
+        when(iwm.getWorldSettings(any())).thenReturn(worldSettings);
 
         // Ranks
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.SUB_OWNER_RANK); // Allow sub owners

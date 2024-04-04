@@ -211,6 +211,7 @@ public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(im.inTeam(any(), any())).thenReturn(true);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
+        when(island.inTeam(notUUID)).thenReturn(true);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bento")));
         verify(user).sendMessage(eq("commands.island.team.untrust.cannot-untrust-member"));
     }

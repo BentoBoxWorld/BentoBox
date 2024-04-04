@@ -79,6 +79,10 @@ public class JoinLeaveListener implements Listener {
             plugin.logWarning("Player that just logged in has no name! " + playerUUID);
         }
 
+        // Set the primary island to the player's location if this is their island
+        plugin.getIslands().getIslandAt(user.getLocation()).filter(i -> user.getUniqueId().equals(i.getOwner()))
+                .ifPresent(i -> plugin.getIslands().setPrimaryIsland(playerUUID, i));
+
         // If mobs have to be removed when a player joins, then wipe all the mobs on his
         // island.
         if (plugin.getIslands().locationIsOnIsland(event.getPlayer(), user.getLocation())
@@ -219,7 +223,7 @@ public class JoinLeaveListener implements Listener {
                 .filter(island -> island.getMembers().containsKey(event.getPlayer().getUniqueId())).forEach(island -> {
                     // Are there any online players still for this island?
                     if (Bukkit.getOnlinePlayers().stream().filter(p -> !event.getPlayer().equals(p))
-                            .noneMatch(p -> island.getMemberSet().contains(p.getUniqueId()))) {
+                            .noneMatch(p -> island.inTeam(p.getUniqueId()))) {
                         // No, there are no more players online on this island
                         // Tell players they are being removed
                         island.getMembers().entrySet().stream().filter(e -> e.getValue() == RanksManager.COOP_RANK)

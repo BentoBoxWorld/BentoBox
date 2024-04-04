@@ -830,6 +830,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Builder<UUID> members = new ImmutableSet.Builder<>();
         members.add(uuid);
         when(is.getMemberSet()).thenReturn(members.build());
+        when(is.inTeam(uuid)).thenReturn(true);
 
         when(player.getUniqueId()).thenReturn(uuid);
 
@@ -842,10 +843,12 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         // No members
         Builder<UUID> mem = new ImmutableSet.Builder<>();
         when(is.getMemberSet()).thenReturn(mem.build());
+        when(is.inTeam(uuid)).thenReturn(false);
         assertFalse(im.locationIsOnIsland(player, location));
 
         // Not on island
         when(is.getMemberSet()).thenReturn(members.build());
+        when(is.inTeam(uuid)).thenReturn(true);
         when(is.onIsland(any())).thenReturn(false);
         assertFalse(im.locationIsOnIsland(player, location));
     }

@@ -685,8 +685,10 @@ commands:
         already-has-rank: '&c Player already has a rank!'
         you-are-a-coop-member: '&2 You were cooped by &b[name]&a.'
         success: '&a You cooped &b [name]&a.'
-        name-has-invited-you: '&a [name] has invited you to join as a coop member
-          of their island.'
+        name-has-invited-you: |
+          &a [name] has invited you
+          &a to join as a coop member
+          &a of their island.
       uncoop:
         description: remove a coop rank from player
         parameters: <player>
@@ -703,8 +705,10 @@ commands:
         description: give a player trusted rank on your island
         parameters: <player>
         trust-in-yourself: '&c Trust in yourself!'
-        name-has-invited-you: '&a [name] has invited you to join as a trusted member
-          of their island.'
+        name-has-invited-you: |
+          &a [name] has invited you
+          &a to join as a trusted member
+          &a of their island.
         player-already-trusted: '&c Player is already trusted!'
         you-are-trusted: '&2 You are trusted by &b [name]&a !'
         success: '&a You trusted &b [name]&a .'
@@ -721,10 +725,14 @@ commands:
         description: invite a player to join your island
         invitation-sent: '&a Invitation sent to &b[name]&a.'
         removing-invite: '&c Removing invite.'
-        name-has-invited-you: '&a [name] has invited you to join their island.'
+        name-has-invited-you: |
+          &a [name] has invited you
+          &a to join their island.
         to-accept-or-reject: '&a Do /[label] team accept to accept, or /[label] team
           reject to reject'
-        you-will-lose-your-island: '&c WARNING! You will lose all your islands if you accept!'
+        you-will-lose-your-island: |
+          &c WARNING! You will lose all
+          &c your islands if you accept!
         gui:
           titles:
             team-invite-panel: "Invite Players"
@@ -765,9 +773,10 @@ commands:
           you-joined-island: '&a You joined an island! Use &b/[label] team &a to see
             the other members.'
           name-joined-your-island: '&a [name] joined your island!'
-          confirmation: |-
-            &c Are you sure you want to accept this invite?
-            &c&l You will &n LOSE ALL &r&c&l your islands!
+          confirmation: |
+            &c Are you sure you
+            &c want to accept this
+            &c invite?
         reject:
           description: reject an invitation
           you-rejected-invite: '&a You rejected the invitation to join an island.'

@@ -644,4 +644,12 @@ public interface WorldSettings extends ConfigObject {
     default int getConcurrentIslands() {
         return BentoBox.getInstance().getSettings().getIslandNumber();
     }
+
+    /**
+     * Remove islands when players join a team and not allow players to have other islands if they are in a team.
+     * @return true or false
+     */
+    default boolean isDisallowTeamMemberIslands() {
+        return true;
+    }
 }

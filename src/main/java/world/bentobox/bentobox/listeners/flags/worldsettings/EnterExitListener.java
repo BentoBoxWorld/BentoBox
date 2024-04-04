@@ -107,7 +107,7 @@ public class EnterExitListener extends FlagListener {
             // Leave messages are always specific to this world
             String islandMessage = user.getTranslation(island.getWorld(), ISLAND_MESSAGE, TextVariables.NAME, getPlugin().getPlayers().getName(island.getOwner()));
             // Send specific message if the player is member of this island
-            if (island.getMemberSet().contains(user.getUniqueId())) {
+            if (island.inTeam(user.getUniqueId())) {
                 user.notify(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.now-leaving-your-island", TextVariables.NAME, (island.getName() != null) ? island.getName() : islandMessage);
             } else {
                 user.notify(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.now-leaving", TextVariables.NAME, (island.getName() != null) ? island.getName() : islandMessage);
@@ -135,7 +135,7 @@ public class EnterExitListener extends FlagListener {
             // Enter messages are always specific to this world
             String islandMessage = user.getTranslation(island.getWorld(), ISLAND_MESSAGE, TextVariables.NAME, getPlugin().getPlayers().getName(island.getOwner()));
             // Send specific message if the player is member of this island
-            if (island.getMemberSet().contains(user.getUniqueId())) {
+            if (island.inTeam(user.getUniqueId())) {
                 user.notify(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.now-entering-your-island", TextVariables.NAME, (island.getName() != null) ? island.getName() : islandMessage);
             } else {
                 user.notify(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.now-entering", TextVariables.NAME, (island.getName() != null) ? island.getName() : islandMessage);

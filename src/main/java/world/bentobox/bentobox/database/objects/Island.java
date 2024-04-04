@@ -1950,6 +1950,25 @@ public class Island implements DataObject, MetaDataAble {
         setChanged();
     }
 
+    /**
+     * Check if a player is in this island's team
+     * @param playerUUID player's UUID
+     * @return true if in team
+     * @since 2.3.0
+     */
+    public boolean inTeam(UUID playerUUID) {
+        return this.getMemberSet().contains(playerUUID);
+    }
+
+    /**
+     * Check if this island has a team
+     * @return true if this island has a team
+     * @since 2.3.0
+     */
+    public boolean hasTeam() {
+        return this.getMemberSet().size() > 1;
+    }
+
     /*
      * (non-Javadoc)
      * 

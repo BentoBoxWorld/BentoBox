@@ -51,7 +51,8 @@ public class IslandCreateCommand extends CompositeCommand {
             }
         }
         // Check if this player is on a team in this world
-        if (getIslands().inTeam(getWorld(), user.getUniqueId()) && island != null
+        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()
+                && getIslands().inTeam(getWorld(), user.getUniqueId()) && island != null
                 && !user.getUniqueId().equals(island.getOwner())) {
             // Team members who are not owners cannot make additional islands
             user.sendMessage("commands.island.create.you-cannot-make-team");

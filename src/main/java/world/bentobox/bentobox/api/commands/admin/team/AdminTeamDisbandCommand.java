@@ -52,10 +52,7 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (!getIslands().inTeam(getWorld(), targetUUID)) {
-            user.sendMessage("general.errors.player-is-not-owner", TextVariables.NAME, args.get(0));
-            return false;
-        }
+
         // Find the island the player is an owner of
         Map<String, Island> islands = getIslandsXYZ(targetUUID);
         if (islands.isEmpty()) {
@@ -76,6 +73,11 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
         } else {
             // Get the only island
             island = islands.values().iterator().next();
+        }
+        // Check that the target owns the island
+        if (island.getOwner() == null || !island.getOwner().equals(targetUUID)) {
+            user.sendMessage("general.errors.player-is-not-owner", TextVariables.NAME, args.get(0));
+            return false;
         }
         return true;
     }

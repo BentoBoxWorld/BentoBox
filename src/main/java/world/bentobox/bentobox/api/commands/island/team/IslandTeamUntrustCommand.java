@@ -74,7 +74,7 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.untrust.cannot-untrust-yourself");
             return false;
         }
-        if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).getMemberSet().contains(targetUUID)) {
+        if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).inTeam(targetUUID)) {
             user.sendMessage("commands.island.team.untrust.cannot-untrust-member");
             return false;
         }
