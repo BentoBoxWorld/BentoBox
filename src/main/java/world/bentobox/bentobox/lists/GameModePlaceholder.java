@@ -17,6 +17,9 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
+/**
+ * Common Game Mode Placeholders
+ */
 public enum GameModePlaceholder {
 
     /* World-related */
