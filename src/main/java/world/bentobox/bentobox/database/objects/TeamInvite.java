@@ -1,17 +1,16 @@
-package world.bentobox.bentobox.api.commands.island.team;
+package world.bentobox.bentobox.database.objects;
 
 import java.util.Objects;
 import java.util.UUID;
 
-import world.bentobox.bentobox.database.objects.Island;
+import com.google.gson.annotations.Expose;
 
 /**
- * Represents an invite
- * @author tastybento
- * @since 1.8.0
+ * Data object for team invites
  */
-public class Invite {
-
+@Table(name = "TeamInvites")
+public class TeamInvite implements DataObject {
+    
     /**
      * Type of invitation
      *
@@ -22,22 +21,38 @@ public class Invite {
         TRUST
     }
 
-    private final Type type;
-    private final UUID inviter;
-    private final UUID invitee;
-    private final Island island;
-
+    @Expose
+    private Type type;
+    @Expose
+    private UUID inviter;
+    @Expose
+    private Island island;
+    
+    @Expose
+    private String uniqueId;
+    
     /**
      * @param type - invitation type, e.g., coop, team, trust
      * @param inviter - UUID of inviter
      * @param invitee - UUID of invitee
      * @param island - the island this invite is for
      */
-    public Invite(Type type, UUID inviter, UUID invitee, Island island) {
+    public TeamInvite(Type type, UUID inviter, UUID invitee, Island island) {
         this.type = type;
+        this.uniqueId = invitee.toString();
         this.inviter = inviter;
-        this.invitee = invitee;
         this.island = island;
+    }
+
+    @Override
+    public String getUniqueId() {
+        // Inviter
+        return this.uniqueId;
+    }
+
+    @Override
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     /**
@@ -48,17 +63,17 @@ public class Invite {
     }
 
     /**
+     * @return the invitee
+     */
+    public UUID getInvitee() {
+        return UUID.fromString(uniqueId);
+    }
+
+    /**
      * @return the inviter
      */
     public UUID getInviter() {
         return inviter;
-    }
-
-    /**
-     * @return the invitee
-     */
-    public UUID getInvitee() {
-        return invitee;
     }
 
     /**
@@ -73,7 +88,7 @@ public class Invite {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(invitee, inviter, type);
+        return Objects.hash(inviter, uniqueId, type);
     }
 
     /* (non-Javadoc)
@@ -87,9 +102,10 @@ public class Invite {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Invite other)) {
+        if (!(obj instanceof TeamInvite other)) {
             return false;
         }
-        return Objects.equals(invitee, other.invitee) && Objects.equals(inviter, other.inviter) && type == other.type;
+        return Objects.equals(inviter, other.inviter) && Objects.equals(uniqueId, other.getUniqueId())
+                && type == other.type;
     }
 }

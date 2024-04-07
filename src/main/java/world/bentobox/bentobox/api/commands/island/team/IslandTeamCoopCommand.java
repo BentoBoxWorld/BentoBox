@@ -8,10 +8,10 @@ import java.util.UUID;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -99,7 +99,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
                 // Put the invited player (key) onto the list with inviter (value)
                 // If someone else has invited a player, then this invite will overwrite the
                 // previous invite!
-                itc.addInvite(Invite.Type.COOP, user.getUniqueId(), target.getUniqueId(), island);
+                itc.addInvite(Type.COOP, user.getUniqueId(), target.getUniqueId(), island);
                 user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName());
                 // Send message to online player
                 target.sendMessage("commands.island.team.coop.name-has-invited-you", TextVariables.NAME,

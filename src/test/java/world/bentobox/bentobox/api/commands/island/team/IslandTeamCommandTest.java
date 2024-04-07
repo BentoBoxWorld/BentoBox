@@ -30,9 +30,10 @@ import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.TeamInvite;
+import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -174,7 +175,7 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testAddInvite() {
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
+        tc.addInvite(Type.TEAM, uuid, invitee, island);
         assertTrue(tc.isInvited(invitee));
     }
 
@@ -193,7 +194,7 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testGetInviter() {
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
+        tc.addInvite(Type.TEAM, uuid, invitee, island);
         assertEquals(uuid, tc.getInviter(invitee));
     }
 
@@ -213,9 +214,9 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
     @Test
     public void testGetInvite() {
         assertNull(tc.getInvite(invitee));
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
+        tc.addInvite(Type.TEAM, uuid, invitee, island);
         @Nullable
-        Invite invite = tc.getInvite(invitee);
+        TeamInvite invite = tc.getInvite(invitee);
         assertEquals(invitee, invite.getInvitee());
         assertEquals(Type.TEAM, invite.getType());
         assertEquals(uuid, invite.getInviter());
@@ -228,7 +229,7 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
     @Test
     public void testRemoveInvite() {
         assertNull(tc.getInvite(invitee));
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
+        tc.addInvite(Type.TEAM, uuid, invitee, island);
         tc.removeInvite(invitee);
         assertNull(tc.getInvite(invitee));
     }
