@@ -54,6 +54,18 @@ public class IslandCache {
         grids = new HashMap<>();
     }
 
+    public void updateIsland(@NonNull Island island) {
+        if (island.getCenter() != null || island.getWorld() != null) {
+            islandsByLocation.put(island.getCenter(), island);
+            islandsById.put(island.getUniqueId(), island);
+            // Only add islands to this map if they are owned
+            if (island.isOwned()) {
+                islandsByUUID.computeIfAbsent(island.getOwner(), k -> new HashSet<>()).add(island);
+                island.getMemberSet().forEach(member -> addPlayer(member, island));
+            }
+        }
+    }
+
     /**
      * Adds an island to the grid
      * 
@@ -62,12 +74,7 @@ public class IslandCache {
      */
     public boolean addIsland(@NonNull Island island) {
         if (island.getCenter() == null || island.getWorld() == null) {
-            /*
-             * Special handling - return true. The island will not be quarantined, but just
-             * not loaded This can occur when a gamemode is removed temporarily from the
-             * server TODO: have an option to remove these when the purge command is added
-             */
-            return true;
+            return false;
         }
         if (addToGrid(island)) {
             islandsByLocation.put(island.getCenter(), island);
@@ -122,8 +129,10 @@ public class IslandCache {
         islandsById.remove(island.getUniqueId());
         removeFromIslandsByUUID(island);
         // Remove from grid
-        grids.putIfAbsent(island.getWorld(), new IslandGrid());
-        return grids.get(island.getWorld()).removeFromGrid(island);
+        if (grids.containsKey(island.getWorld())) {
+            return grids.get(island.getWorld()).removeFromGrid(island);
+        }
+        return false;
     }
 
     private void removeFromIslandsByUUID(Island island) {
@@ -144,12 +153,11 @@ public class IslandCache {
      * 
      * @param uniqueId - island unique ID
      */
-    public void deleteIslandFromCache(@NonNull String uniqueId) {
-        islandsById.remove(uniqueId);
-        islandsByLocation.values().removeIf(i -> i.getUniqueId().equals(uniqueId));
-        for (Set<Island> set : islandsByUUID.values()) {
-            set.removeIf(i -> i.getUniqueId().equals(uniqueId));
+    public boolean deleteIslandFromCache(@NonNull String uniqueId) {
+        if (islandsById.containsKey(uniqueId)) {
+            return deleteIslandFromCache(islandsById.get(uniqueId));
         }
+        return false;
     }
 
     /**

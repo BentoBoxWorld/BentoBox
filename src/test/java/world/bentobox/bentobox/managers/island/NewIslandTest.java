@@ -205,7 +205,7 @@ public class NewIslandTest {
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland)
                 .build();
         // Verifications
-        verify(im).save(eq(island));
+        verify(im).updateIsland(eq(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -224,7 +224,7 @@ public class NewIslandTest {
         when(builder.build()).thenReturn(ire);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.RESET).oldIsland(oldIsland).build();
         // Verifications
-        verify(im).save(eq(island));
+        verify(im).updateIsland(eq(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -243,7 +243,7 @@ public class NewIslandTest {
     public void testBuilderNoOldIsland() throws Exception {
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).build();
         // Verifications
-        verify(im).save(eq(island));
+        verify(im).updateIsland(eq(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -262,7 +262,7 @@ public class NewIslandTest {
         when(location.distance(any())).thenReturn(30D);
         NewIsland.builder().addon(addon).name(NAME).player(user).reason(Reason.CREATE).build();
         // Verifications
-        verify(im).save(eq(island));
+        verify(im).updateIsland(eq(island));
         verify(island).setFlagsDefaults();
         verify(bpm).paste(eq(addon), eq(island), eq(NAME), any(Runnable.class), eq(false));
         verify(builder, times(2)).build();
@@ -281,7 +281,7 @@ public class NewIslandTest {
         NewIsland.builder().addon(addon).name(NAME).player(user).reason(Reason.CREATE).build();
         PowerMockito.mockStatic(Bukkit.class);
         // Verifications
-        verify(im).save(island);
+        verify(im).updateIsland(island);
         verify(island).setFlagsDefaults();
         verify(bpm).paste(eq(addon), eq(island), eq(NAME), any(Runnable.class), eq(true));
         verify(builder, times(2)).build();
@@ -299,7 +299,7 @@ public class NewIslandTest {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
         // Verifications
-        verify(im).save(eq(island));
+        verify(im).updateIsland(eq(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -320,7 +320,7 @@ public class NewIslandTest {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
         // Verifications
-        verify(im).save(eq(island));
+        verify(im).updateIsland(eq(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -342,7 +342,7 @@ public class NewIslandTest {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
         // Verifications
-        verify(im).save(eq(island));
+        verify(im).updateIsland(eq(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();

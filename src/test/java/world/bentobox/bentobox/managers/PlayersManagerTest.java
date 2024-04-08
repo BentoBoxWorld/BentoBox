@@ -598,43 +598,6 @@ public class PlayersManagerTest {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#saveAll()}.
-     */
-    @Test
-    public void testSaveAll() {
-        pm.setHandler(db);
-        pm.addPlayer(uuid);
-        pm.saveAll();
-        verify(db).saveObjectAsync(any());
-    }
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#saveAll(boolean)}.
-     */
-    @Test
-    public void testSaveAllBoolean() {
-        pm.setHandler(db);
-        pm.addPlayer(uuid);
-        pm.saveAll(true);
-        assertTrue(pm.isSaveTaskRunning());
-    }
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#save(java.util.UUID)}.
-     */
-    @Test
-    public void testSave() {
-        pm.setHandler(db);
-        // Add a player
-        pm.addPlayer(uuid);
-        pm.save(uuid);
-        verify(db).saveObjectAsync(any());
-    }
-
-    /**
-     * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#setPlayerName(world.bentobox.bentobox.api.user.User)}.
      */
     @Test

@@ -970,7 +970,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#save(Island)}.
+     * {@link world.bentobox.bentobox.managers.IslandsManager#updateIsland(Island)}.
      */
     @Test
     public void testSave() {

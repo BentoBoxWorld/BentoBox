@@ -13,6 +13,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.TeamInvite;
 import world.bentobox.bentobox.database.objects.TeamInvite.Type;
+import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -197,7 +198,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME,
                     user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
         }
-        getIslands().save(teamIsland);
+        IslandsManager.updateIsland(teamIsland);
         // Fire event
         TeamEvent.builder().island(teamIsland).reason(TeamEvent.Reason.JOINED).involvedPlayer(user.getUniqueId())
                 .build();

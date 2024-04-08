@@ -1106,15 +1106,6 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setChanged(boolean)}.
-     */
-    @Test
-    public void testSetChangedBoolean() {
-        i.setChanged(false);
-        assertFalse(i.isChanged());
-    }
-
-    /**
      * Test method for {@link world.bentobox.bentobox.database.objects.Island#getProtectionCenter()}.
      */
     @Test

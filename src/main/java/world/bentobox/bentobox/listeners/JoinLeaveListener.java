@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners;
 
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -74,7 +75,6 @@ public class JoinLeaveListener implements Listener {
         // Set the player's name (it may have changed), but only if it isn't empty
         if (!user.getName().isEmpty()) {
             players.setPlayerName(user);
-            players.save(playerUUID);
         } else {
             plugin.logWarning("Player that just logged in has no name! " + playerUUID);
         }
@@ -181,8 +181,10 @@ public class JoinLeaveListener implements Listener {
                 user.getPlayer().getInventory().clear();
             }
 
-            playerData.getPendingKicks().remove(world.getName());
-            players.save(user.getUniqueId());
+            Set<String> kicks = playerData.getPendingKicks();
+            kicks.remove(world.getName());
+            playerData.setPendingKicks(kicks);
+
         }
     }
 
@@ -236,7 +238,6 @@ public class JoinLeaveListener implements Listener {
                 });
         // Remove any coop associations from the player logging out
         plugin.getIslands().clearRank(RanksManager.COOP_RANK, event.getPlayer().getUniqueId());
-        players.save(event.getPlayer().getUniqueId());
         User.removePlayer(event.getPlayer());
     }
 }

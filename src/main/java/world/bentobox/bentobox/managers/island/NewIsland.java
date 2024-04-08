@@ -217,7 +217,7 @@ public class NewIsland {
         // Register metrics
         plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
         // Save island
-        plugin.getIslands().save(island);
+        plugin.getIslands().updateIsland(island);
     }
 
     /**
@@ -266,8 +266,6 @@ public class NewIsland {
                 plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("")
                         + "island.range",
                 island.getProtectionRange()));
-        // Save the player so that if the server crashes weird things won't happen
-        plugin.getPlayers().save(user.getUniqueId());
     }
 
     /**

@@ -206,11 +206,11 @@ public class AdminSettingsCommand extends CompositeCommand {
                 switch (f.getType()) {
                 case PROTECTION -> {
                     island.setFlag(f, rank);
-                    getIslands().save(island);
+                    getIslands().updateIsland(island);
                 }
                 case SETTING -> {
                     island.setSettingsFlag(f, activeState);
-                    getIslands().save(island);
+                    getIslands().updateIsland(island);
                 }
                 case WORLD_SETTING -> f.setSetting(getWorld(), activeState);
                 default -> {

@@ -236,7 +236,6 @@ public class JoinLeaveListenerTest {
         jll.onPlayerJoin(event);
         // Verify
         verify(pm, times(2)).addPlayer(any());
-        verify(pm, times(2)).save(any());
         verify(player, never()).sendMessage(anyString());
         // Verify resets
         verify(pm).setResets(eq(world), any(), eq(0));
@@ -245,7 +244,6 @@ public class JoinLeaveListenerTest {
         verify(chest).clear();
         verify(inv).clear();
         assertTrue(set.isEmpty());
-        verify(pm, times(2)).save(any());
     }
 
     /**
@@ -262,7 +260,6 @@ public class JoinLeaveListenerTest {
         verify(chest, never()).clear();
         verify(inv, never()).clear();
         assertFalse(set.isEmpty());
-        verify(pm).save(any());
     }
 
     /**
@@ -356,7 +353,6 @@ public class JoinLeaveListenerTest {
         jll.onPlayerJoin(event);
         // Verify
         verify(pm, times(2)).addPlayer(any());
-        verify(pm, times(2)).save(any());
         verify(player).sendMessage(eq("commands.island.create.on-first-login"));
     }
 
@@ -372,7 +368,6 @@ public class JoinLeaveListenerTest {
         verify(chest).clear();
         verify(inv).clear();
         assertTrue(set.isEmpty());
-        verify(pm).save(any());
     }
 
     /**
@@ -387,7 +382,6 @@ public class JoinLeaveListenerTest {
         verify(chest, never()).clear();
         verify(inv, never()).clear();
         assertFalse(set.isEmpty());
-        verify(pm, never()).save(any());
     }
 
     /**

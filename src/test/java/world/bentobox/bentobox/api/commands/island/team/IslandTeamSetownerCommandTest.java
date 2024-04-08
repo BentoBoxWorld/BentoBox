@@ -276,7 +276,7 @@ public class IslandTeamSetownerCommandTest {
         assertTrue(its.canExecute(user, "", List.of("tastybento")));
         assertTrue(its.execute(user, "", List.of("tastybento")));
         verify(im).setOwner(any(), eq(user), eq(target));
-        verify(im).save(island);
+        verify(im).updateIsland(island);
     }
 
     /**
@@ -292,7 +292,7 @@ public class IslandTeamSetownerCommandTest {
         assertTrue(its.canExecute(user, "", List.of("tastybento")));
         assertTrue(its.execute(user, "", List.of("tastybento")));
         verify(im).setOwner(any(), eq(user), eq(target));
-        verify(im).save(island);
+        verify(im).updateIsland(island);
     }
 
     /**

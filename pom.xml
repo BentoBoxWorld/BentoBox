@@ -195,6 +195,11 @@
             <name>Lumine Releases</name>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
         </repository>
+        <!-- For Multipaper -->
+        <repository>
+            <id>clojars</id>
+            <url>https://repo.clojars.org/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -364,6 +369,13 @@
             <version>3.6.1</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Multipaper -->
+        <dependency>
+            <groupId>com.github.puregero</groupId>
+            <artifactId>multilib</artifactId>
+            <version>1.1.12</version>
+            <scope>compile</scope>
+         </dependency>
     </dependencies>
 
     <build>
@@ -486,9 +498,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.1-SNAPSHOT</version>
+                <version>3.4.0</version>
                 <configuration>
                     <minimizeJar>true</minimizeJar>
+                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
@@ -500,9 +513,13 @@
                         </relocation>
                         <relocation>
                             <pattern>io.papermc.lib</pattern>
-                            <shadedPattern>world.bentobox.bentobox.paperlib</shadedPattern> <!-- Replace this -->
+                            <shadedPattern>world.bentobox.bentobox.paperlib</shadedPattern>
                         </relocation>
-                    </relocations>
+                        <relocation>
+                            <pattern>com.github.puregero.multilib</pattern>
+                            <shadedPattern>world.bentobox.bentobox.multilib</shadedPattern>
+                        </relocation>
+                        </relocations>
                     <artifactSet>
                         <excludes>
                             <exclude>org.apache.maven.shared:*</exclude>
