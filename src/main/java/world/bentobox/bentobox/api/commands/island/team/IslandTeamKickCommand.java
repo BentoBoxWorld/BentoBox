@@ -95,7 +95,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             return false;
         }
         User target = User.getInstance(targetUUID);
-        Island oldIsland = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID)); // Should never be
+        Island oldIsland = Objects.requireNonNull(getIslands().getIsland(getWorld(), user)); // Should never be
         // null because of
         // checks above
         // Fire event
