@@ -108,7 +108,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                 getAddon().getDescription().getName(), TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME,
                 user.getDisplayName());
 
-        getIslands().removePlayer(getWorld(), targetUUID);
+        getIslands().removePlayer(oldIsland, targetUUID);
         // Clean the target player
         getPlayers().cleanLeavingPlayer(getWorld(), target, true, oldIsland);
 
