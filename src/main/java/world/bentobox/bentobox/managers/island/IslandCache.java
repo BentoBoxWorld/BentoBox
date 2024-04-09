@@ -60,7 +60,6 @@ public class IslandCache {
      * @param island island
      */
     public void updateIsland(@NonNull Island island) {
-        BentoBox.getInstance().logDebug("sign editing value = " + island.getFlag(Flags.SIGN_EDITING));
         if (islandsByLocation.put(island.getCenter(), island) == null) {
             BentoBox.getInstance().logDebug("islandsByLocation failed to update");
         }
