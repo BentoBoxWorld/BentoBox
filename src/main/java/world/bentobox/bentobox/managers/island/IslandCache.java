@@ -21,7 +21,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -353,6 +352,7 @@ public class IslandCache {
             islandSet.remove(island);
         }
         island.removeMember(uuid);
+        island.removePrimary(uuid);
     }
 
     /**
