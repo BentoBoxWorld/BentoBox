@@ -62,7 +62,7 @@ import world.bentobox.bentobox.managers.island.NewIsland;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class, IslandsManager.class })
 public class IslandResetCommandTest {
 
     @Mock
@@ -97,6 +97,7 @@ public class IslandResetCommandTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);

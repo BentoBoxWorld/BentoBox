@@ -65,7 +65,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, IslandsManager.class })
 public class JoinLeaveListenerTest {
 
     private static final String[] NAMES = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry",
@@ -111,6 +111,8 @@ public class JoinLeaveListenerTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 

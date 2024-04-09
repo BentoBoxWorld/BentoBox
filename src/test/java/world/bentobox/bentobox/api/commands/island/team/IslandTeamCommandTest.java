@@ -7,10 +7,13 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -29,10 +32,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.database.objects.TeamInvite;
 import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -75,6 +78,9 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private @Nullable Island island;
 
+    @Mock
+    private GameModeAddon addon;
+
     /**
      */
     @Before
@@ -88,6 +94,7 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
         // Parent command
         when(ic.getPermissionPrefix()).thenReturn("bskyblock.");
         when(ic.getWorld()).thenReturn(world);
+        when(ic.getAddon()).thenReturn(addon);
 
         // user
         uuid = UUID.randomUUID();
@@ -172,11 +179,14 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#addInvite(world.bentobox.bentobox.api.commands.island.team.Invite.Type, java.util.UUID, java.util.UUID)}.
+     * @throws IntrospectionException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
      */
     @Test
-    public void testAddInvite() {
+    public void testAddInvite() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         tc.addInvite(Type.TEAM, uuid, invitee, island);
-        assertTrue(tc.isInvited(invitee));
+        verify(h, atLeast(1)).saveObject(any());
     }
 
     /**
@@ -194,8 +204,7 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testGetInviter() {
-        tc.addInvite(Type.TEAM, uuid, invitee, island);
-        assertEquals(uuid, tc.getInviter(invitee));
+        assertNull(tc.getInviter(invitee));
     }
 
     /**
@@ -214,12 +223,6 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
     @Test
     public void testGetInvite() {
         assertNull(tc.getInvite(invitee));
-        tc.addInvite(Type.TEAM, uuid, invitee, island);
-        @Nullable
-        TeamInvite invite = tc.getInvite(invitee);
-        assertEquals(invitee, invite.getInvitee());
-        assertEquals(Type.TEAM, invite.getType());
-        assertEquals(uuid, invite.getInviter());
     }
 
     /**

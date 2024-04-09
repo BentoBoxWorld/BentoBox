@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -54,7 +55,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, IslandsManager.class })
 public class AdminUnregisterCommandTest {
 
     private UUID uuid = UUID.randomUUID();
@@ -83,6 +84,7 @@ public class AdminUnregisterCommandTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);

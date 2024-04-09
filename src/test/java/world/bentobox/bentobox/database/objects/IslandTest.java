@@ -46,6 +46,7 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
+import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Pair;
 
@@ -54,7 +55,7 @@ import world.bentobox.bentobox.util.Pair;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class })
+@PrepareForTest({ Bukkit.class, IslandsManager.class })
 public class IslandTest {
 
     private static final int DISTANCE = 400;
@@ -104,6 +105,9 @@ public class IslandTest {
 
         // Commands manager
         when(plugin.getCommandsManager()).thenReturn(cm);
+
+        // Islands Manager
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         i = new Island(new Island(location, uuid, 100));
     }

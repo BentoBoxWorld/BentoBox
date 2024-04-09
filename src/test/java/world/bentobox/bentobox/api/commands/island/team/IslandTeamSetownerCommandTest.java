@@ -54,7 +54,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, IslandsManager.class })
 public class IslandTeamSetownerCommandTest {
 
     @Mock
@@ -84,6 +84,8 @@ public class IslandTeamSetownerCommandTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -276,7 +278,8 @@ public class IslandTeamSetownerCommandTest {
         assertTrue(its.canExecute(user, "", List.of("tastybento")));
         assertTrue(its.execute(user, "", List.of("tastybento")));
         verify(im).setOwner(any(), eq(user), eq(target));
-        verify(im).updateIsland(island);
+        PowerMockito.verifyStatic(IslandsManager.class);
+        IslandsManager.updateIsland(island);
     }
 
     /**
@@ -292,7 +295,8 @@ public class IslandTeamSetownerCommandTest {
         assertTrue(its.canExecute(user, "", List.of("tastybento")));
         assertTrue(its.execute(user, "", List.of("tastybento")));
         verify(im).setOwner(any(), eq(user), eq(target));
-        verify(im).updateIsland(island);
+        PowerMockito.verifyStatic(IslandsManager.class);
+        IslandsManager.updateIsland(island);
     }
 
     /**

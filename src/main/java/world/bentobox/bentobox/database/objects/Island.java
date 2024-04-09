@@ -1026,7 +1026,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param center the center to set
      */
     public void setCenter(@NonNull Location center) {
-        if (!center.getWorld().equals(this.center.getWorld()) || !center.equals(this.center)) {
+        if (this.center == null || !center.getWorld().equals(this.center.getWorld()) || !center.equals(this.center)) {
             this.world = center.getWorld();
             this.center = center;
             BentoBox.getInstance().logDebug("setCenter");

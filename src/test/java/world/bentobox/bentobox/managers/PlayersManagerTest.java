@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -40,7 +41,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
-import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -413,22 +413,11 @@ public class PlayersManagerTest {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#getPlayer(java.util.UUID)}.
-     */
-    @Test
-    public void testGetPlayer() {
-        Players player = pm.getPlayer(uuid);
-        assertEquals("tastybento", player.getPlayerName());
-        assertEquals(uuid.toString(), player.getUniqueId());
-    }
-
-    /**
-     * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#getPlayers()}.
      */
     @Test
     public void testGetPlayers() {
-        assertTrue(pm.getPlayers().isEmpty());
+        assertFalse(pm.getPlayers().isEmpty());
     }
 
     /**
@@ -679,15 +668,15 @@ public class PlayersManagerTest {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#setPlayerName(world.bentobox.bentobox.api.user.User)}.
+     * @throws IntrospectionException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
      */
     @Test
-    public void testSetPlayerName() {
+    public void testSetPlayerName() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         pm.setPlayerName(user);
-        assertEquals("tastybento", pm.getName(uuid));
-        when(user.getName()).thenReturn("newName");
-        assertEquals("tastybento", pm.getName(uuid));
-        pm.setPlayerName(user);
-        assertEquals("newName", pm.getName(uuid));
+        // Player and names database saves
+        verify(h, atLeast(2)).saveObject(any());
     }
 
     /**

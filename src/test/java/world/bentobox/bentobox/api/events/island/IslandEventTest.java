@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -28,13 +29,14 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
+import world.bentobox.bentobox.managers.IslandsManager;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class, IslandsManager.class })
 public class IslandEventTest {
 
     private Island island;
@@ -47,11 +49,18 @@ public class IslandEventTest {
     private IslandDeletion deletedIslandInfo;
     @Mock
     private PluginManager pim;
+    @Mock
+    private BentoBox plugin;
 
     /**
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+
+        // Set up plugin
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
         uuid = UUID.randomUUID();
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class);

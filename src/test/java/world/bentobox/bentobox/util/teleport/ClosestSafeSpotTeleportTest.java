@@ -58,7 +58,7 @@ import world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport.PositionDat
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Util.class, Bukkit.class})
+@PrepareForTest({ Util.class, Bukkit.class, IslandsManager.class })
 public class ClosestSafeSpotTeleportTest {
 
     // Class under test
@@ -102,6 +102,9 @@ public class ClosestSafeSpotTeleportTest {
      */
     @Before
     public void setUp() throws Exception {
+        // IslandsManager static
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+
         // Setup instance
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // IWM
