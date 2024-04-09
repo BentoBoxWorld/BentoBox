@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -39,6 +40,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -60,6 +62,7 @@ import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.util.Util;
@@ -240,6 +243,18 @@ public class PlayersManagerTest {
         when(tamed.getOwner()).thenReturn(p);
         when(world.getEntitiesByClass(Tameable.class)).thenReturn(list);
 
+        // Loading objects
+        Object players = new Players();
+        when(h.loadObject(anyString())).thenReturn(players);
+        // Set up names database
+        List<Object> names = new ArrayList<>();
+        Names name = new Names();
+        name.setUniqueId("tastybento");
+        name.setUuid(uuid);
+        names.add(name);
+        when(h.loadObjects()).thenReturn(names);
+        when(h.objectExists(anyString())).thenReturn(true);
+
         // Class under test
         pm = new PlayersManager(plugin);
     }
@@ -269,13 +284,8 @@ public class PlayersManagerTest {
      */
     @Test
     public void testAddPlayer() {
-
-        pm.addPlayer(null);
-        // Add twice
-        assertFalse(pm.isKnown(uuid));
         pm.addPlayer(uuid);
         assertTrue(pm.isKnown(uuid));
-        pm.addPlayer(uuid);
     }
 
     /**
@@ -442,9 +452,16 @@ public class PlayersManagerTest {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#setResets(World, UUID, int)}.
+     * @throws IntrospectionException 
+     * @throws NoSuchMethodException 
+     * @throws ClassNotFoundException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     @Test
-    public void testGetSetResetsLeft() {
+    public void testGetSetResetsLeft() throws InstantiationException, IllegalAccessException, InvocationTargetException,
+            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         // Add a player
         pm.addPlayer(uuid);
         assertEquals(0, pm.getResets(world, uuid));
@@ -455,9 +472,16 @@ public class PlayersManagerTest {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#getUser(java.lang.String)}.
+     * @throws IntrospectionException 
+     * @throws NoSuchMethodException 
+     * @throws ClassNotFoundException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     @Test
-    public void testGetUserString() {
+    public void testGetUserString() throws InstantiationException, IllegalAccessException, InvocationTargetException,
+            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         User user = pm.getUser("random");
         assertNull(user);
         pm.addPlayer(uuid);

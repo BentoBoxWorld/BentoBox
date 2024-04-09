@@ -26,7 +26,7 @@ public class TeamInvite implements DataObject {
     @Expose
     private UUID inviter;
     @Expose
-    private Island island;
+    private String islandID;
     
     @Expose
     private String uniqueId;
@@ -35,13 +35,13 @@ public class TeamInvite implements DataObject {
      * @param type - invitation type, e.g., coop, team, trust
      * @param inviter - UUID of inviter
      * @param invitee - UUID of invitee
-     * @param island - the island this invite is for
+     * @param island - the unique ID of the island this invite is for
      */
-    public TeamInvite(Type type, UUID inviter, UUID invitee, Island island) {
+    public TeamInvite(Type type, UUID inviter, UUID invitee, String islandID) {
         this.type = type;
         this.uniqueId = invitee.toString();
         this.inviter = inviter;
-        this.island = island;
+        this.islandID = islandID;
     }
 
     @Override
@@ -77,10 +77,10 @@ public class TeamInvite implements DataObject {
     }
 
     /**
-     * @return the island
+     * @return the islandID
      */
-    public Island getIsland() {
-        return island;
+    public String getIslandID() {
+        return islandID;
     }
 
     /* (non-Javadoc)
@@ -108,4 +108,5 @@ public class TeamInvite implements DataObject {
         return Objects.equals(inviter, other.inviter) && Objects.equals(uniqueId, other.getUniqueId())
                 && type == other.type;
     }
+
 }

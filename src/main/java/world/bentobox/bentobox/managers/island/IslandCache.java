@@ -186,13 +186,13 @@ public class IslandCache {
             return null;
         }
         for (Island island : islands) {
-            if (island.isPrimary()) {
+            if (island.isPrimary(uuid)) {
                 return island;
             }
         }
         // If there is no primary set, then set one - it doesn't matter which.
         Island result = islands.iterator().next();
-        result.setPrimary(true);
+        result.setPrimary(uuid);
         return result;
     }
 
@@ -221,7 +221,10 @@ public class IslandCache {
      */
     public void setPrimaryIsland(@NonNull UUID uuid, @NonNull Island island) {
         for (Island is : getIslands(island.getWorld(), uuid)) {
-            is.setPrimary(island.equals(is));
+            is.removePrimary(uuid);
+            if (is.equals(island)) {
+                is.setPrimary(uuid);
+            }
         }
     }
 

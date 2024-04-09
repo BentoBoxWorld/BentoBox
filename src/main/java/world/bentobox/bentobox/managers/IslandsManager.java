@@ -508,6 +508,7 @@ public class IslandsManager {
         if (island.getOwner() == null) {
             // No owner, no rank settings
             island.setMaxMembers(null);
+            BentoBox.getInstance().logDebug("getMaxMembers no owner, no rank settings");
             updateIsland(island);
             return 0;
         }
@@ -529,8 +530,12 @@ public class IslandsManager {
             islandMax = owner.getPermissionValue(plugin.getIWM().getPermissionPrefix(island.getWorld()) + perm,
                     islandMax);
         }
-        island.setMaxMembers(rank, islandMax == worldDefault ? null : islandMax);
-        updateIsland(island);
+        Integer change = islandMax == worldDefault ? null : islandMax;
+        if (island.getMaxMembers().get(rank) != change) {
+            island.setMaxMembers(rank, change);
+            BentoBox.getInstance().logDebug("getMaxMembers");
+            updateIsland(island);
+        }
         return islandMax;
     }
 
@@ -568,8 +573,12 @@ public class IslandsManager {
         }
         // If the island maxHomes is just the same as the world default, then set to
         // null
-        island.setMaxHomes(islandMax == plugin.getIWM().getMaxHomes(island.getWorld()) ? null : islandMax);
-        updateIsland(island);
+        Integer change = islandMax == plugin.getIWM().getMaxHomes(island.getWorld()) ? null : islandMax;
+        if (island.getMaxHomes() != change) {
+            island.setMaxHomes(change);
+            BentoBox.getInstance().logDebug("getMaxHomes");
+            updateIsland(island);
+        }
         return islandMax;
     }
 
@@ -757,8 +766,9 @@ public class IslandsManager {
      * @since 1.16.0
      */
     public boolean setHomeLocation(@Nullable Island island, Location location, String name) {
-        if (island != null) {
+        if (island != null && (island.getHome(name) == null || !island.getHome(name).equals(location))) {
             island.addHome(name, location);
+            BentoBox.getInstance().logDebug("setHomeLocation");
             updateIsland(island);
             return true;
         }
@@ -1166,9 +1176,11 @@ public class IslandsManager {
      * @param spawn the Island to set as spawn. Must not be null.
      */
     public void setSpawn(@NonNull Island spawn) {
-        spawns.put(Util.getWorld(spawn.getWorld()), spawn);
-        // Tell other servers
-        MultiLib.notify("bentobox-setspawn", spawn.getWorld().getUID().toString() + "," + spawn.getUniqueId());
+        if (spawn.getWorld() != null) {
+            spawns.put(Util.getWorld(spawn.getWorld()), spawn);
+            // Tell other servers
+            MultiLib.notify("bentobox-setspawn", spawn.getWorld().getUID().toString() + "," + spawn.getUniqueId());
+        }
     }
 
 
@@ -1468,6 +1480,7 @@ public class IslandsManager {
         teamIsland.addMember(playerUUID);
         islandCache.addPlayer(playerUUID, teamIsland);
         // Save the island
+        BentoBox.getInstance().logDebug("setJoinTeam");
         updateIsland(teamIsland);
     }
 

@@ -136,7 +136,7 @@ public class IslandTeamCommand extends CompositeCommand {
      * @since 1.8.0
      */
     public void addInvite(TeamInvite.Type type, @NonNull UUID inviter, @NonNull UUID invitee, @NonNull Island island) {
-        handler.saveObjectAsync(new TeamInvite(type, inviter, invitee, island));
+        handler.saveObjectAsync(new TeamInvite(type, inviter, invitee, island.getUniqueId()));
     }
 
     /**

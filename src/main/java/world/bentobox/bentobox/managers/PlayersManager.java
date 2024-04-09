@@ -3,6 +3,7 @@ package world.bentobox.bentobox.managers;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -98,17 +99,18 @@ public class PlayersManager {
      * Adds a player to the database. If the UUID does not exist, a new player is made
      * @param playerUUID - the player's UUID
      */
-    public Players addPlayer(UUID playerUUID) {
-            // If the player is in the database, load it, otherwise create a new player
-            if (handler.objectExists(playerUUID.toString())) {
-                Players player = handler.loadObject(playerUUID.toString());
-                if (player != null) {
-                    return player;
-                }
+    public Players addPlayer(@NonNull UUID playerUUID) {
+        Objects.requireNonNull(playerUUID);
+        // If the player is in the database, load it, otherwise create a new player
+        if (handler.objectExists(playerUUID.toString())) {
+            Players player = handler.loadObject(playerUUID.toString());
+            if (player != null) {
+                return player;
             }
-            Players player = new Players(plugin, playerUUID);
-            handler.saveObject(player);
-            return player;
+        }
+        Players player = new Players(plugin, playerUUID);
+        handler.saveObject(player);
+        return player;
     }
 
     /**
@@ -119,7 +121,7 @@ public class PlayersManager {
      * @return true if player is known, otherwise false
      */
     public boolean isKnown(UUID uniqueID) {
-        return handler.objectExists(uniqueID.toString());
+        return uniqueID == null ? false : handler.objectExists(uniqueID.toString());
     }
 
     /**

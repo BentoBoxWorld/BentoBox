@@ -13,7 +13,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.TeamInvite;
 import world.bentobox.bentobox.database.objects.TeamInvite.Type;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -100,7 +99,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Remove the invite
         itc.removeInvite(user.getUniqueId());
         User inviter = User.getInstance(invite.getInviter());
-        Island island = invite.getIsland();
+        Island island = getIslands().getIslandById(invite.getIslandID()).orElse(null);
         if (island != null) {
             if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() > getIslands().getMaxMembers(island,
                     RanksManager.TRUSTED_RANK)) {
@@ -126,7 +125,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Remove the invite
         itc.removeInvite(user.getUniqueId());
         User inviter = User.getInstance(invite.getInviter());
-        Island island = invite.getIsland();
+        Island island = getIslands().getIslandById(invite.getIslandID()).orElse(null);
         if (island != null) {
             if (island.getMemberSet(RanksManager.COOP_RANK, false).size() > getIslands().getMaxMembers(island,
                     RanksManager.COOP_RANK)) {
@@ -154,7 +153,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Get the player's island - may be null if the player has no island
         List<Island> islands = getIslands().getIslands(getWorld(), user.getUniqueId());
         // Get the team's island
-        Island teamIsland = invite.getIsland();
+        Island teamIsland = getIslands().getIslandById(invite.getIslandID()).orElse(null);
         if (teamIsland == null) {
             user.sendMessage(INVALID_INVITE);
             return;
@@ -198,7 +197,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME,
                     user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
         }
-        IslandsManager.updateIsland(teamIsland);
+        //IslandsManager.updateIsland(teamIsland);
         // Fire event
         TeamEvent.builder().island(teamIsland).reason(TeamEvent.Reason.JOINED).involvedPlayer(user.getUniqueId())
                 .build();

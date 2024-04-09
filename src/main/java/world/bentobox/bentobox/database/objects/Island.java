@@ -41,7 +41,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
 import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
@@ -57,7 +56,7 @@ import world.bentobox.bentobox.util.Util;
 public class Island implements DataObject, MetaDataAble {
 
     @Expose
-    private boolean primary;
+    private Set<UUID> primaries = new HashSet<>();
 
     /**
      * Set to true if this data object has been changed since being loaded from the
@@ -290,7 +289,7 @@ public class Island implements DataObject, MetaDataAble {
         this.updatedDate = island.getUpdatedDate();
         this.world = island.getWorld();
         this.bonusRanges.addAll(island.getBonusRanges());
-        this.primary = island.primary;
+        this.primaries.addAll(island.getPrimaries());
         this.setChanged();
     }
 
@@ -1699,7 +1698,7 @@ public class Island implements DataObject, MetaDataAble {
     public void setChanged() {
         this.setUpdatedDate(System.currentTimeMillis());
         this.changed = true;
-        IslandsManager.updateIsland(this);
+        //IslandsManager.updateIsland(this);
     }
 
     /**
@@ -1997,18 +1996,28 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
+     * @param userID user UUID
      * @return the primary
      */
-    public boolean isPrimary() {
-        return primary;
+    public boolean isPrimary(UUID userID) {
+        return getPrimaries().contains(userID);
     }
 
     /**
      * @param primary the primary to set
      */
-    public void setPrimary(boolean primary) {
-        if (this.primary != primary) {
-            this.primary = primary;
+    public void setPrimary(UUID userID) {
+        if (getPrimaries().add(userID)) {
+            setChanged();
+        }
+    }
+
+    /**
+     * Remove the primary island
+     * @param userID user UUID
+     */
+    public void removePrimary(UUID userID) {
+        if (getPrimaries().remove(userID)) {
             setChanged();
         }
     }
@@ -2048,5 +2057,22 @@ public class Island implements DataObject, MetaDataAble {
                 + spawnPoint + ", doNotLoad=" + doNotLoad + ", cooldowns=" + cooldowns + ", commandRanks="
                 + commandRanks + ", reserved=" + reserved + ", metaData=" + metaData + ", homes=" + homes
                 + ", maxHomes=" + maxHomes + "]";
+    }
+
+    /**
+     * @return the primaries
+     */
+    public Set<UUID> getPrimaries() {
+        if (primaries == null) {
+            primaries = new HashSet<>();
+        }
+        return primaries;
+    }
+
+    /**
+     * @param primaries the primaries to set
+     */
+    public void setPrimaries(Set<UUID> primaries) {
+        this.primaries = primaries;
     }
 }
