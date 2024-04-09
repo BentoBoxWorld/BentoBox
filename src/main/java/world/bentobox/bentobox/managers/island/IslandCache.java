@@ -21,6 +21,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -54,15 +55,26 @@ public class IslandCache {
         grids = new HashMap<>();
     }
 
+    /**
+     * Replace the island we have with this one
+     * @param island island
+     */
     public void updateIsland(@NonNull Island island) {
-        if (island.getCenter() != null || island.getWorld() != null) {
-            islandsByLocation.put(island.getCenter(), island);
-            islandsById.put(island.getUniqueId(), island);
-            // Only add islands to this map if they are owned
-            if (island.isOwned()) {
-                islandsByUUID.computeIfAbsent(island.getOwner(), k -> new HashSet<>()).add(island);
-                island.getMemberSet().forEach(member -> addPlayer(member, island));
+        BentoBox.getInstance().logDebug("sign editing value = " + island.getFlag(Flags.SIGN_EDITING));
+        if (islandsByLocation.put(island.getCenter(), island) == null) {
+            BentoBox.getInstance().logDebug("islandsByLocation failed to update");
+        }
+        if (islandsById.put(island.getUniqueId(), island) == null) {
+            BentoBox.getInstance().logDebug("islandsById failed to update");
+        }
+
+        // Only add islands to this map if they are owned
+        if (island.getOwner() != null) {
+            Set<Island> set = islandsByUUID.computeIfAbsent(island.getOwner(), k -> new HashSet<>());
+            if (!set.remove(island)) {
+                BentoBox.getInstance().logDebug("islandsByUUID failed to remove");
             }
+            set.add(island);
         }
     }
 
@@ -107,7 +119,7 @@ public class IslandCache {
      * @return true if successfully added, false if not
      */
     private boolean addToGrid(@NonNull Island newIsland) {
-        return grids.computeIfAbsent(newIsland.getWorld(), k -> new IslandGrid()).addToGrid(newIsland);
+        return grids.computeIfAbsent(newIsland.getWorld(), k -> new IslandGrid(this)).addToGrid(newIsland);
     }
 
     public void clear() {
@@ -220,8 +232,13 @@ public class IslandCache {
      * @param island island to make primary
      */
     public void setPrimaryIsland(@NonNull UUID uuid, @NonNull Island island) {
+        if (island.getPrimaries().contains(uuid)) {
+            return;
+        }
         for (Island is : getIslands(island.getWorld(), uuid)) {
-            is.removePrimary(uuid);
+            if (is.getPrimaries().contains(uuid)) {
+                is.removePrimary(uuid);
+            }
             if (is.equals(island)) {
                 is.setPrimary(uuid);
             }
@@ -396,7 +413,7 @@ public class IslandCache {
     public void removeIsland(@NonNull Island island) {
         islandsByLocation.values().removeIf(island::equals);
         islandsById.values().removeIf(island::equals);
-        islandsByUUID.values().removeIf(island::equals);
+        islandsByUUID.values().forEach(s -> s.removeIf(island::equals));
         World w = Util.getWorld(island.getWorld());
         if (w == null) {
             return;
