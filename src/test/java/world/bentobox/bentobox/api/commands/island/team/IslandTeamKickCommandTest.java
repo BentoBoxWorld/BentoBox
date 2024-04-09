@@ -250,7 +250,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(im).removePlayer(any(World.class), eq(notUUID));
+        verify(im).removePlayer(any(Island.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
     }
 
@@ -343,7 +343,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(im).removePlayer(any(World.class), eq(notUUID));
+        verify(im).removePlayer(any(Island.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
     }
 
@@ -363,7 +363,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(im).removePlayer(any(World.class), eq(notUUID));
+        verify(im).removePlayer(any(Island.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
         verify(target, never()).getInventory();
 
@@ -389,7 +389,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(im).removePlayer(any(World.class), eq(notUUID));
+        verify(im).removePlayer(any(Island.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
         verify(target, Mockito.never()).getInventory();
         verify(pm).cleanLeavingPlayer(any(), any(User.class), eq(true), eq(island));
