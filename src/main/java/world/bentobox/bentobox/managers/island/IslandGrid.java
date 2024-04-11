@@ -3,7 +3,6 @@ package world.bentobox.bentobox.managers.island;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
@@ -57,31 +56,23 @@ class IslandGrid {
      * @return true if island existed and was deleted, false if there was nothing to delete
      */
     public boolean removeFromGrid(Island island) {
-        // Remove from grid
-        if (island != null) {
-            int x = island.getMinX();
-            int z = island.getMinZ();
-            if (grid.containsKey(x)) {
-                TreeMap<Integer, String> zEntry = grid.get(x);
-                if (zEntry.containsKey(z)) {
-                    // Island exists - delete it
-                    zEntry.remove(z);
-                    grid.put(x, zEntry);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+        String id = island.getUniqueId();
+        boolean removed = grid.values().stream()
+                .anyMatch(innerMap -> innerMap.values().removeIf(innerValue -> innerValue.equals(id)));
 
+        grid.values().removeIf(TreeMap::isEmpty);
+
+        return removed;
+    }
+    
     /**
-     * Retrieves the island located at the specified x and z coordinates, covering both the protected area
-     * and the full island space. Returns null if no island exists at the given location.
-     *
-     * @param x the x coordinate of the location
-     * @param z the z coordinate of the location
-     * @return the Island at the specified location, or null if no island is found
-     */
+    * Retrieves the island located at the specified x and z coordinates, covering both the protected area
+    * and the full island space. Returns null if no island exists at the given location.
+    *
+    * @param x the x coordinate of the location
+    * @param z the z coordinate of the location
+    * @return the Island at the specified location, or null if no island is found
+    */
     public Island getIslandAt(int x, int z) {
         // Attempt to find the closest x-coordinate entry that does not exceed 'x'
         Entry<Integer, TreeMap<Integer, String>> xEntry = grid.floorEntry(x);

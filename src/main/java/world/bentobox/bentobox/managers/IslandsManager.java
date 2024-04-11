@@ -119,14 +119,6 @@ public class IslandsManager {
                 islandCache.addIsland(island);
             }
         });
-        // Remove islands
-        MultiLib.onString(plugin, "bentobox-deleteIsland", id -> {
-            BentoBox.getInstance().logDebug("Delete island " + id);
-            Island island = handler.loadObject(id);
-            if (island != null) {
-                islandCache.removeIsland(island);
-            }
-        });
         // Set or clear spawn
         MultiLib.onString(plugin, "bentobox-setspawn", sp -> {
             String[] split = sp.split(",");
@@ -275,6 +267,7 @@ public class IslandsManager {
      * @param involvedPlayer - player related to the island deletion, if any
      */
     public void deleteIsland(@NonNull Island island, boolean removeBlocks, @Nullable UUID involvedPlayer) {
+        BentoBox.getInstance().logDebug("Deleting island " + island.getUniqueId() + " remove blocks = " + removeBlocks);
         // Fire event
         IslandBaseEvent event = IslandEvent.builder().island(island).involvedPlayer(involvedPlayer)
                 .reason(Reason.DELETE).build();
@@ -284,19 +277,18 @@ public class IslandsManager {
         // Set the owner of the island to no one.
         island.setOwner(null);
         island.setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
+        island.setDeleted(true);
         if (removeBlocks) {
             // Remove island from the cache
             islandCache.deleteIslandFromCache(island);
-            // Delete the island
-            handler.deleteObject(island);
-            // Inform other servers
-            MultiLib.notify("bentobox-deletedIsland", island.getUniqueId());
             // Remove players from island
             removePlayersFromIsland(island);
             if (!plugin.getSettings().isKeepPreviousIslandOnReset()) {
                 // Remove blocks from world
                 plugin.getIslandDeletionManager().getIslandChunkDeletionManager().add(new IslandDeletion(island));
             }
+            // Delete the island from the database
+            handler.deleteObject(island);
         }
     }
 
