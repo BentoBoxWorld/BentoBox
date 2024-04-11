@@ -56,24 +56,51 @@ public class IslandCache {
 
     /**
      * Replace the island we have with this one
-     * @param island island
+     * @param newIsland island
      */
-    public void updateIsland(@NonNull Island island) {
-        if (islandsByLocation.put(island.getCenter(), island) == null) {
-            BentoBox.getInstance().logDebug("islandsByLocation failed to update");
+    public void updateIsland(@NonNull Island newIsland) {
+        // Get the old island
+        Island oldIsland = islandsById.get(newIsland.getUniqueId());
+        Set<UUID> newMembers = newIsland.getMembers().keySet();
+        if (oldIsland != null) {
+            Set<UUID> oldMembers = oldIsland.getMembers().keySet();
+            // Remove any members who are not in the new island
+            for (UUID oldMember : oldMembers) {
+                if (!newMembers.contains(oldMember)) {
+                    BentoBox.getInstance().logDebug("Removing a member from the team " + oldMember);
+                    // Member has been removed - remove island
+                    if (islandsByUUID.computeIfAbsent(oldMember, k -> new HashSet<>()).remove(oldIsland)) {
+                        BentoBox.getInstance().logDebug("removed");
+                    } else {
+                        BentoBox.getInstance().logDebug("not removed!");
+                    }
+                    ;
+                }
+            }
         }
-        if (islandsById.put(island.getUniqueId(), island) == null) {
+        // Update the members with the new island object
+        BentoBox.getInstance().logDebug("Updating island. New members are:");
+        newMembers.forEach(BentoBox.getInstance()::logDebug);
+        for (UUID newMember : newMembers) {
+            Set<Island> set = islandsByUUID.computeIfAbsent(newMember, k -> new HashSet<>());
+            if (set.remove(oldIsland)) {
+                BentoBox.getInstance().logDebug("removed old island for " + newMember);
+            } else {
+                BentoBox.getInstance().logDebug("Did not remove old island for " + newMember);
+            }
+            set.add(newIsland);
+            BentoBox.getInstance().logDebug("Added island to set");
+            islandsByUUID.put(newMember, set);
+        }
+
+        if (islandsByLocation.put(newIsland.getCenter(), newIsland) == null) {
+            BentoBox.getInstance().logDebug("islandsByLocation failed to update");
+
+        }
+        if (islandsById.put(newIsland.getUniqueId(), newIsland) == null) {
             BentoBox.getInstance().logDebug("islandsById failed to update");
         }
 
-        // Only add islands to this map if they are owned
-        if (island.getOwner() != null) {
-            Set<Island> set = islandsByUUID.computeIfAbsent(island.getOwner(), k -> new HashSet<>());
-            if (!set.remove(island)) {
-                BentoBox.getInstance().logDebug("islandsByUUID failed to remove");
-            }
-            set.add(island);
-        }
     }
 
     /**
@@ -192,17 +219,22 @@ public class IslandCache {
     @Nullable
     public Island get(@NonNull World world, @NonNull UUID uuid) {
         List<Island> islands = getIslands(world, uuid);
+        BentoBox.getInstance().logDebug("Getting islands for " + uuid + " and there are " + islands.size());
         if (islands.isEmpty()) {
             return null;
         }
         for (Island island : islands) {
             if (island.isPrimary(uuid)) {
+                BentoBox.getInstance().logDebug("Primary island found");
+                island.getMembers().keySet().forEach(BentoBox.getInstance()::logDebug);
                 return island;
             }
         }
+        BentoBox.getInstance().logDebug("No Primary island set");
         // If there is no primary set, then set one - it doesn't matter which.
         Island result = islands.iterator().next();
         result.setPrimary(uuid);
+        result.getMembers().keySet().forEach(BentoBox.getInstance()::logDebug);
         return result;
     }
 
@@ -347,6 +379,7 @@ public class IslandCache {
      * @param uuid   uuid of member to remove
      */
     public void removePlayer(@NonNull Island island, @NonNull UUID uuid) {
+        BentoBox.getInstance().logDebug("Removing the player " + uuid);
         Set<Island> islandSet = islandsByUUID.get(uuid);
         if (islandSet != null) {
             islandSet.remove(island);

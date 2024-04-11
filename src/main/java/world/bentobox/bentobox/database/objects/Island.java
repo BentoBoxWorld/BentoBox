@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -1016,8 +1017,9 @@ public class Island implements DataObject, MetaDataAble {
      * @param playerUUID - uuid of player
      */
     public void removeMember(UUID playerUUID) {
+        BentoBox.getInstance().logDebug("removeMember - island ");
         if (members.remove(playerUUID) != null) {
-            BentoBox.getInstance().logDebug("removeMember");
+            BentoBox.getInstance().logDebug("removeMember done");
             setChanged();
         }
     }
@@ -1237,19 +1239,33 @@ public class Island implements DataObject, MetaDataAble {
      * @param rank rank value
      * @since 1.1
      */
-    public void setRank(@Nullable UUID uuid, int rank) {
+    public void setRank(@Nullable UUID uuid, int newRank) {
+        // Early return if the UUID is null, to avoid unnecessary processing.
         if (uuid == null) {
-            return; // Defensive code
+            return;
         }
-        members.compute(uuid, (key, value) -> {
-            if (value == null || !value.equals(rank)) {
-                setChanged(); // Call setChanged only if the value is updated.
-                BentoBox.getInstance().logDebug("Set rank for " + uuid + " to " + rank);
-                return rank;
+
+        // Use an AtomicBoolean to track if the member's rank has been changed.
+        AtomicBoolean isRankChanged = new AtomicBoolean(false);
+
+        // Attempt to update the member's rank, if necessary.
+        members.compute(uuid, (key, existingRank) -> {
+            // If the member does not exist or their rank is different, update the rank.
+            if (existingRank == null || existingRank != newRank) {
+                isRankChanged.set(true);
+                return newRank; // Update the rank.
             }
-            return value;
+            // No change needed; return the existing rank.
+            return existingRank;
         });
+
+        // If the rank was changed, notify the change and log the update.
+        if (isRankChanged.get()) {
+            setChanged(); // Notify that a change has occurred.
+            BentoBox.getInstance().logDebug("Set rank for UUID " + uuid + " to " + newRank);
+        }
     }
+
 
     /**
      * @param ranks the ranks to set
@@ -2060,8 +2076,9 @@ public class Island implements DataObject, MetaDataAble {
      * @param userID user UUID
      */
     public void removePrimary(UUID userID) {
+        BentoBox.getInstance().logDebug("Removing primary ");
         if (getPrimaries().remove(userID)) {
-            BentoBox.getInstance().logDebug("removePrimary");
+            BentoBox.getInstance().logDebug("removePrimary done");
             setChanged();
         }
     }
@@ -2127,9 +2144,6 @@ public class Island implements DataObject, MetaDataAble {
         return Objects.hash(uniqueId);
     }
 
-    /**
-     * Islands are equal if they have the same uniqueId
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -2141,5 +2155,6 @@ public class Island implements DataObject, MetaDataAble {
         Island other = (Island) obj;
         return Objects.equals(uniqueId, other.uniqueId);
     }
+
 
 }

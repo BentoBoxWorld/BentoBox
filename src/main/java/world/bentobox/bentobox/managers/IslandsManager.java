@@ -508,7 +508,6 @@ public class IslandsManager {
         if (island.getOwner() == null) {
             // No owner, no rank settings
             island.setMaxMembers(null);
-            BentoBox.getInstance().logDebug("getMaxMembers no owner, no rank settings");
             updateIsland(island);
             return 0;
         }
@@ -533,7 +532,6 @@ public class IslandsManager {
         Integer change = islandMax == worldDefault ? null : islandMax;
         if (island.getMaxMembers().get(rank) != change) {
             island.setMaxMembers(rank, change);
-            BentoBox.getInstance().logDebug("getMaxMembers");
             updateIsland(island);
         }
         return islandMax;
@@ -576,7 +574,6 @@ public class IslandsManager {
         Integer change = islandMax == plugin.getIWM().getMaxHomes(island.getWorld()) ? null : islandMax;
         if (island.getMaxHomes() != change) {
             island.setMaxHomes(change);
-            BentoBox.getInstance().logDebug("getMaxHomes");
             updateIsland(island);
         }
         return islandMax;
@@ -768,7 +765,6 @@ public class IslandsManager {
     public boolean setHomeLocation(@Nullable Island island, Location location, String name) {
         if (island != null && (island.getHome(name) == null || !island.getHome(name).equals(location))) {
             island.addHome(name, location);
-            BentoBox.getInstance().logDebug("setHomeLocation");
             updateIsland(island);
             return true;
         }
