@@ -1476,7 +1476,6 @@ public class IslandsManager {
         teamIsland.addMember(playerUUID);
         islandCache.addPlayer(playerUUID, teamIsland);
         // Save the island
-        BentoBox.getInstance().logDebug("setJoinTeam");
         updateIsland(teamIsland);
     }
 
@@ -1625,7 +1624,6 @@ public class IslandsManager {
             island.clearChanged();
             handler.saveObjectAsync(island)
                     .thenAccept(b -> MultiLib.notify("bentobox-updateIsland", island.getUniqueId()));
-            BentoBox.getInstance().logDebug("Saved island " + island.getUniqueId());
         }
     }
 

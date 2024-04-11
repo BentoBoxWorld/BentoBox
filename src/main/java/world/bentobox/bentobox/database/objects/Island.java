@@ -292,7 +292,6 @@ public class Island implements DataObject, MetaDataAble {
         this.world = island.getWorld();
         this.bonusRanges.addAll(island.getBonusRanges());
         this.primaries.addAll(island.getPrimaries());
-        BentoBox.getInstance().logDebug("Constructor copy");
         this.setChanged();
     }
 
@@ -309,7 +308,6 @@ public class Island implements DataObject, MetaDataAble {
     public void addMember(@NonNull UUID playerUUID) {
         if (getRank(playerUUID) != RanksManager.MEMBER_RANK) {
             setRank(playerUUID, RanksManager.MEMBER_RANK);
-            BentoBox.getInstance().logDebug("Add member");
             setChanged();
         }
     }
@@ -330,7 +328,6 @@ public class Island implements DataObject, MetaDataAble {
             setRank(target, RanksManager.BANNED_RANK);
             log(new LogEntry.Builder("BAN").data("player", target.toString()).data("issuer", issuer.toString())
                     .build());
-            BentoBox.getInstance().logDebug("Ban");
             setChanged();
         }
         return true;
@@ -620,7 +617,6 @@ public class Island implements DataObject, MetaDataAble {
     public int getMaxEverProtectionRange() {
         if (maxEverProtectionRange > this.getRange()) {
             maxEverProtectionRange = this.getRange();
-            BentoBox.getInstance().logDebug("get max ever protect");
             setChanged();
         }
         return Math.max(this.getProtectionRange(), maxEverProtectionRange);
@@ -640,7 +636,6 @@ public class Island implements DataObject, MetaDataAble {
         if (maxEverProtectionRange > this.range) {
             this.maxEverProtectionRange = this.range;
         }
-        BentoBox.getInstance().logDebug("setMaxEverProtectionRange");
         setChanged();
     }
 
@@ -1017,9 +1012,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param playerUUID - uuid of player
      */
     public void removeMember(UUID playerUUID) {
-        BentoBox.getInstance().logDebug("removeMember - island ");
         if (members.remove(playerUUID) != null) {
-            BentoBox.getInstance().logDebug("removeMember done");
             setChanged();
         }
     }
@@ -1031,7 +1024,6 @@ public class Island implements DataObject, MetaDataAble {
         if (this.center == null || !center.getWorld().equals(this.center.getWorld()) || !center.equals(this.center)) {
             this.world = center.getWorld();
             this.center = center;
-            BentoBox.getInstance().logDebug("setCenter");
             setChanged();
         }
     }
@@ -1042,7 +1034,6 @@ public class Island implements DataObject, MetaDataAble {
     public void setCreatedDate(long createdDate) {
         if (this.createdDate != createdDate) {
             this.createdDate = createdDate;
-            BentoBox.getInstance().logDebug("setCreatedDate");
             setChanged();
         }
     }
@@ -1069,7 +1060,6 @@ public class Island implements DataObject, MetaDataAble {
     public void setFlag(Flag flag, int value, boolean doSubflags) {
         if (flags.containsKey(flag.getID()) && flags.get(flag.getID()) != value) {
             flags.put(flag.getID(), value);
-            BentoBox.getInstance().logDebug("setFlag " + flag);
             setChanged();
         }
         // Subflag support
@@ -1084,7 +1074,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setFlags(Map<String, Integer> flags) {
         this.flags = flags;
-        BentoBox.getInstance().logDebug("setFlags ");
         setChanged();
     }
 
@@ -1110,7 +1099,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setMembers(Map<UUID, Integer> members) {
         this.members = members;
-        BentoBox.getInstance().logDebug("setMembers");
         setChanged();
     }
 
@@ -1124,7 +1112,6 @@ public class Island implements DataObject, MetaDataAble {
     public void setName(String name) {
         if (name == null || !name.equals(this.name)) {
             this.name = (name != null && !name.equals("")) ? name : null;
-            BentoBox.getInstance().logDebug("setName");
             setChanged();
         }
     }
@@ -1151,7 +1138,6 @@ public class Island implements DataObject, MetaDataAble {
             }
         }
         setRank(owner, RanksManager.OWNER_RANK);
-        BentoBox.getInstance().logDebug("setOwner");
         setChanged();
     }
 
@@ -1162,7 +1148,6 @@ public class Island implements DataObject, MetaDataAble {
         if (this.protectionRange != protectionRange) {
             this.protectionRange = protectionRange;
             this.updateMaxEverProtectionRange();
-            BentoBox.getInstance().logDebug("setProtectionRange");
             setChanged();
         }
     }
@@ -1198,7 +1183,6 @@ public class Island implements DataObject, MetaDataAble {
     public void setPurgeProtected(boolean purgeProtected) {
         if (this.purgeProtected != purgeProtected) {
             this.purgeProtected = purgeProtected;
-            BentoBox.getInstance().logDebug("setPurgeProtected");
             setChanged();
         }
     }
@@ -1216,7 +1200,6 @@ public class Island implements DataObject, MetaDataAble {
     public void setRange(int range) {
         if (this.range != range) {
             this.range = range;
-            BentoBox.getInstance().logDebug("setRange");
             setChanged();
         }
     }
@@ -1262,7 +1245,6 @@ public class Island implements DataObject, MetaDataAble {
         // If the rank was changed, notify the change and log the update.
         if (isRankChanged.get()) {
             setChanged(); // Notify that a change has occurred.
-            BentoBox.getInstance().logDebug("Set rank for UUID " + uuid + " to " + newRank);
         }
     }
 
@@ -1272,7 +1254,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setRanks(Map<UUID, Integer> ranks) {
         members = ranks;
-        BentoBox.getInstance().logDebug("setRanks");
         setChanged();
     }
 
@@ -1297,7 +1278,6 @@ public class Island implements DataObject, MetaDataAble {
             setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
         }
         log(new LogEntry.Builder("SPAWN").data("value", String.valueOf(isSpawn)).build());
-        BentoBox.getInstance().logDebug("setSpawn");
         setChanged();
     }
 
@@ -1319,7 +1299,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setSpawnPoint(Map<Environment, Location> spawnPoint) {
         this.spawnPoint = spawnPoint;
-        BentoBox.getInstance().logDebug("setSpawnPoint");
         setChanged();
     }
 
@@ -1340,7 +1319,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setWorld(World world) {
         this.world = world;
-        BentoBox.getInstance().logDebug("setWorld");
         setChanged();
     }
 
@@ -1365,7 +1343,6 @@ public class Island implements DataObject, MetaDataAble {
         if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
             setSettingsFlag(flag, newToggleValue, doSubflags);
         }
-        BentoBox.getInstance().logDebug("toggleFlag " + flag);
         setChanged();
     }
 
@@ -1397,7 +1374,6 @@ public class Island implements DataObject, MetaDataAble {
                 flag.getSubflags().forEach(subflag -> setSettingsFlag(subflag, state, true));
             }
         }
-        BentoBox.getInstance().logDebug("setSettingsFlag " + flag);
         setChanged();
     }
 
@@ -1435,7 +1411,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void removeRank(Integer rank) {
         if (members.values().removeIf(rank::equals)) {
-            BentoBox.getInstance().logDebug("removeRank");
             setChanged();
         }
     }
@@ -1456,7 +1431,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void log(LogEntry logEntry) {
         history.add(logEntry);
-        BentoBox.getInstance().logDebug("log");
         setChanged();
     }
 
@@ -1467,7 +1441,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setHistory(List<LogEntry> history) {
         this.history = history;
-        BentoBox.getInstance().logDebug("setHistory");
         setChanged();
     }
 
@@ -1483,7 +1456,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setDoNotLoad(boolean doNotLoad) {
         this.doNotLoad = doNotLoad;
-        BentoBox.getInstance().logDebug("setDoNotLoad");
         setChanged();
     }
 
@@ -1499,7 +1471,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-        BentoBox.getInstance().logDebug("setDeleted");
         setChanged();
     }
 
@@ -1590,7 +1561,6 @@ public class Island implements DataObject, MetaDataAble {
             return true;
         }
         if (cooldowns.remove(flag.getID()) != null) {
-            BentoBox.getInstance().logDebug("isCooldown");
             setChanged();
         }
         return false;
@@ -1603,7 +1573,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setCooldown(Flag flag) {
         cooldowns.put(flag.getID(), flag.getCooldown() * 1000L + System.currentTimeMillis());
-        BentoBox.getInstance().logDebug("setCooldown");
         setChanged();
     }
 
@@ -1619,7 +1588,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setCooldowns(Map<String, Long> cooldowns) {
         this.cooldowns = cooldowns;
-        BentoBox.getInstance().logDebug("setCooldowns");
         setChanged();
     }
 
@@ -1635,7 +1603,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setCommandRanks(Map<String, Integer> commandRanks) {
         this.commandRanks = commandRanks;
-        BentoBox.getInstance().logDebug("setCommandRanks");
         setChanged();
     }
 
@@ -1707,7 +1674,6 @@ public class Island implements DataObject, MetaDataAble {
     public void setReserved(boolean reserved) {
         if (this.reserved != reserved) {
             this.reserved = reserved;
-            BentoBox.getInstance().logDebug("setReserved");
             setChanged();
         }
     }
@@ -1731,7 +1697,6 @@ public class Island implements DataObject, MetaDataAble {
     @Override
     public void setMetaData(Map<String, MetaDataValue> metaData) {
         this.metaData = metaData;
-        BentoBox.getInstance().logDebug("setMetaData");
         setChanged();
     }
 
@@ -1787,7 +1752,6 @@ public class Island implements DataObject, MetaDataAble {
         }
         this.location = location;
         this.updateMaxEverProtectionRange();
-        BentoBox.getInstance().logDebug("setProtectionCenter");
         setChanged();
     }
 
@@ -1846,7 +1810,6 @@ public class Island implements DataObject, MetaDataAble {
             }
         }
         getHomes().put(name.toLowerCase(), location);
-        BentoBox.getInstance().logDebug("addHome");
         setChanged();
     }
 
@@ -1917,7 +1880,6 @@ public class Island implements DataObject, MetaDataAble {
     public void setMaxHomes(@Nullable Integer maxHomes) {
         if (this.maxHomes != maxHomes) {
             this.maxHomes = maxHomes;
-            BentoBox.getInstance().logDebug("setMaxHomes");
             setChanged();
         }
     }
@@ -1940,7 +1902,6 @@ public class Island implements DataObject, MetaDataAble {
     public void setMaxMembers(Map<Integer, Integer> maxMembers) {
         if (this.maxMembers != maxMembers) {
             this.maxMembers = maxMembers;
-            BentoBox.getInstance().logDebug("setMaxMembers");
             setChanged();
         }
     }
@@ -1991,7 +1952,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setBonusRanges(List<BonusRangeRecord> bonusRanges) {
         this.bonusRanges = bonusRanges;
-        BentoBox.getInstance().logDebug("setBonusRanges");
         setChanged();
     }
 
@@ -2028,7 +1988,6 @@ public class Island implements DataObject, MetaDataAble {
     public void addBonusRange(String id, int range, String message) {
         this.getBonusRanges().add(new BonusRangeRecord(id, range, message));
         setMaxEverProtectionRange(this.getProtectionRange());
-        BentoBox.getInstance().logDebug("addBonusRange");
         setChanged();
     }
 
@@ -2039,7 +1998,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void clearBonusRange(String id) {
         if (this.getBonusRanges().removeIf(r -> r.getUniqueId().equals(id))) {
-            BentoBox.getInstance().logDebug("clearBonusRange");
             setChanged();
         }
     }
@@ -2049,7 +2007,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void clearAllBonusRanges() {
         this.getBonusRanges().clear();
-        BentoBox.getInstance().logDebug("clearAllBonusRanges");
         setChanged();
     }
 
@@ -2066,7 +2023,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setPrimary(UUID userID) {
         if (getPrimaries().add(userID)) {
-            BentoBox.getInstance().logDebug("setPrimary");
             setChanged();
         }
     }
@@ -2076,9 +2032,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param userID user UUID
      */
     public void removePrimary(UUID userID) {
-        BentoBox.getInstance().logDebug("Removing primary ");
         if (getPrimaries().remove(userID)) {
-            BentoBox.getInstance().logDebug("removePrimary done");
             setChanged();
         }
     }
@@ -2135,7 +2089,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setPrimaries(Set<UUID> primaries) {
         this.primaries = primaries;
-        BentoBox.getInstance().logDebug("setPrimaries");
         setChanged();
     }
 

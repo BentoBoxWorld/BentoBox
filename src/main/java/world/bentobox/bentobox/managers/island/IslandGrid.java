@@ -34,10 +34,8 @@ class IslandGrid {
             TreeMap<Integer, String> zEntry = grid.get(island.getMinX());
             if (zEntry.containsKey(island.getMinZ())) {
                 if (island.getUniqueId().equals(zEntry.get(island.getMinZ()))) {
-                    BentoBox.getInstance().logDebug("I already know about this island");
                     return true;
                 }
-                BentoBox.getInstance().logDebug("Overlapping island");
                 return false;
             } else {
                 // Add island
