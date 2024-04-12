@@ -38,6 +38,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import com.github.puregero.multilib.MultiLib;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
@@ -48,6 +50,7 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.lists.Flags;
@@ -110,6 +113,13 @@ public class IslandsManager {
             if (island != null) {
                 islandCache.updateIsland(island);
             }
+        });
+
+        // Delete island blocks
+        MultiLib.onString(plugin, "bentobox-deleteIsland", id -> {
+            BentoBox.getInstance().logDebug("Delete island blocks");
+            IslandDeletion idd = getGson().fromJson(id, IslandDeletion.class);
+            plugin.getIslandDeletionManager().getIslandChunkDeletionManager().add(idd);
         });
         // List for new islands
         MultiLib.onString(plugin, "bentobox-newIsland", id -> {
@@ -285,11 +295,30 @@ public class IslandsManager {
             removePlayersFromIsland(island);
             if (!plugin.getSettings().isKeepPreviousIslandOnReset()) {
                 // Remove blocks from world
-                plugin.getIslandDeletionManager().getIslandChunkDeletionManager().add(new IslandDeletion(island));
+                IslandDeletion id = new IslandDeletion(island);
+                plugin.getIslandDeletionManager().getIslandChunkDeletionManager().add(id);
+                // Tell other servers
+                MultiLib.notify("bentobox-deleteIsland", getGson().toJson(id));
             }
             // Delete the island from the database
             handler.deleteObject(island);
         }
+    }
+
+    private Gson getGson() {
+
+        // Build the Gson
+
+        // excludeFieldsWithoutExposeAnnotation - this means that every field to be stored should use @Expose
+        // enableComplexMapKeySerialization - forces GSON to use TypeAdapters even for Map keys
+        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+                .enableComplexMapKeySerialization().setPrettyPrinting();
+        // Register adapter factory
+        builder.registerTypeAdapterFactory(new BentoboxTypeAdapterFactory(plugin));
+        // Allow characters like < or > without escaping them
+        builder.disableHtmlEscaping();
+
+        return builder.create();
     }
 
     /**
