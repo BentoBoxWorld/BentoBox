@@ -286,6 +286,9 @@ public class BlueprintEntity {
      * @return the mythicMobsRecord
      */
     public MythicMobRecord getMythicMobsRecord() {
+        if (this.MMtype == null || this.MMLevel == null || this.MMpower == null || this.MMStance == null) {
+            return null;
+        }
         return new MythicMobRecord(this.MMtype, this.getCustomName(), this.MMLevel, this.MMpower, this.MMStance);
     }
 
