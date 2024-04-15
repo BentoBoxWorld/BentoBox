@@ -228,6 +228,7 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
         UUID teamMate = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(teamMate);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid, teamMate));
+        when(island.inTeam(teamMate)).thenReturn(true);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("commands.island.ban.cannot-ban-member");
     }

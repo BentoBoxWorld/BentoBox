@@ -44,17 +44,17 @@ public class AdminTeamAddCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
             return false;
         }
-        if (!getIslands().hasIsland(getWorld(), ownerUUID)) {
+        Island island = getIslands().getPrimaryIsland(getWorld(), ownerUUID);
+        if (island == null || !getIslands().hasIsland(getWorld(), ownerUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
-        Island island = getIslands().getPrimaryIsland(getWorld(), ownerUUID);
-        if (getIslands().inTeam(getWorld(), ownerUUID) && island != null && !ownerUUID.equals(island.getOwner())) {
+        if (getIslands().inTeam(getWorld(), ownerUUID) && !ownerUUID.equals(island.getOwner())) {
             user.sendMessage("commands.admin.team.add.name-not-owner", TextVariables.NAME, args.get(0));
             new IslandInfo(island).showMembers(user);
             return false;
         }
-        if (getIslands().inTeam(getWorld(), targetUUID)) {
+        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands() && island.inTeam(targetUUID)) {
             user.sendMessage("commands.island.team.invite.errors.already-on-team");
             return false;
         }

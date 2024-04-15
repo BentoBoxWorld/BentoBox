@@ -119,6 +119,9 @@ public class BlueprintPaster {
         Vector off = bp.getBedrock() != null ? bp.getBedrock() : new Vector(0,0,0);
         // Calculate location for pasting
         this.location = island.getProtectionCenter().toVector().subtract(off).toLocation(world);
+        // Ensure the y coordinate is within the world limits
+        int y = Math.min(world.getMaxHeight() - 1, Math.max(world.getMinHeight(), location.getBlockY()));
+        location.setY(y);
     }
 
     private record Bits(Map<Vector, BlueprintBlock> blocks,

@@ -121,6 +121,7 @@ public class AdminDeleteCommandTest {
 
         // Island
         when(island.getOwner()).thenReturn(uuid);
+        when(island.hasTeam()).thenReturn(true);
 
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
@@ -190,6 +191,7 @@ public class AdminDeleteCommandTest {
     public void testExecuteOwner() {
 
         when(im.inTeam(any(),any())).thenReturn(true);
+        when(island.inTeam(notUUID)).thenReturn(true);
         //when(im.getOwner(any(), any())).thenReturn(notUUID);
         String[] name = {"tastybento"};
         when(pm.getUUID(any())).thenReturn(notUUID);
@@ -203,6 +205,7 @@ public class AdminDeleteCommandTest {
      */
     @Test
     public void testcanExecuteSuccessUUID() {
+        when(island.hasTeam()).thenReturn(false);
         when(im.inTeam(any(), any())).thenReturn(false);
         //when(im.getOwner(any(), any())).thenReturn(uuid);
         Island is = mock(Island.class);
@@ -243,6 +246,7 @@ public class AdminDeleteCommandTest {
      */
     @Test
     public void testCanExecuteSuccess() {
+        when(island.hasTeam()).thenReturn(false);
         when(im.inTeam(any(), any())).thenReturn(false);
         //when(im.getOwner(any(), any())).thenReturn(uuid);
         Island is = mock(Island.class);

@@ -195,6 +195,12 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.concurrent-islands")
     private int islandNumber = 1;
 
+    @ConfigComment("Hide used blueprints.")
+    @ConfigComment("Blueprints can have a maximum use when players have concurrent islands.")
+    @ConfigComment("If this is true, then ones that are used up will not be shown in the island create menu.")
+    @ConfigEntry(path = "island.hide-used-blueprints", since = "2.3.0")
+    private boolean hideUsedBlueprints = false;
+
     // Cooldowns
     @ConfigComment("How long a player must wait until they can rejoin a team island after being kicked in minutes.")
     @ConfigComment("This slows the effectiveness of players repeating challenges")
@@ -1012,6 +1018,20 @@ public class Settings implements ConfigObject {
      */
     public void setIslandNumber(int islandNumber) {
         this.islandNumber = islandNumber;
+    }
+
+    /**
+     * @return the hideUsedBlueprints
+     */
+    public boolean isHideUsedBlueprints() {
+        return hideUsedBlueprints;
+    }
+
+    /**
+     * @param hideUsedBlueprints the hideUsedBlueprints to set
+     */
+    public void setHideUsedBlueprints(boolean hideUsedBlueprints) {
+        this.hideUsedBlueprints = hideUsedBlueprints;
     }
 
 }

@@ -61,6 +61,11 @@ public class BlueprintBundle implements DataObject {
     @Expose
     private int slot = 0;
 
+    /**
+     * Number of times this bundle can be used by a single player. 0 = unlimited
+     */
+    @Expose
+    private int times = 0;
 
 
     /**
@@ -186,6 +191,20 @@ public class BlueprintBundle implements DataObject {
      */
     public void setSlot(int slot) {
         this.slot = slot;
+    }
+
+    /**
+     * @return the times
+     */
+    public int getTimes() {
+        return times;
+    }
+
+    /**
+     * @param times the times to set
+     */
+    public void setTimes(int times) {
+        this.times = times;
     }
 
 }

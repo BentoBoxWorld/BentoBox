@@ -203,7 +203,7 @@ public class IslandCreationPanelTest {
      */
     @Test
     public void testOpenPanel() {
-        IslandCreationPanel.openPanel(ic, user, "");
+        IslandCreationPanel.openPanel(ic, user, "", false);
 
         // Set correctly
         verify(inv).setItem(eq(0), any());
@@ -220,7 +220,7 @@ public class IslandCreationPanelTest {
     public void testOpenPanelSameSlot() {
         when(bb2.getSlot()).thenReturn(5);
         when(bb3.getSlot()).thenReturn(5);
-        IslandCreationPanel.openPanel(ic, user, "");
+        IslandCreationPanel.openPanel(ic, user, "", false);
         verify(inv).setItem(eq(0), any());
         verify(inv).setItem(eq(1), any());
         verify(meta).setDisplayName(eq("test"));

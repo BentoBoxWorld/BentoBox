@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +32,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -123,6 +126,9 @@ public class AdminTeamAddCommandTest {
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+        @NonNull
+        WorldSettings ws = new TestWorldSettings();
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Addon
@@ -187,7 +193,7 @@ public class AdminTeamAddCommandTest {
         when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
 
         when(im.inTeam(any(), eq(notUUID))).thenReturn(true);
-
+        when(island.inTeam(notUUID)).thenReturn(true);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         verify(user).sendMessage(eq("commands.island.team.invite.errors.already-on-team"));
     }

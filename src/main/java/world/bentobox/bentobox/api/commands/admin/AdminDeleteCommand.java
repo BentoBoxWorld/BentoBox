@@ -46,7 +46,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         }
 
         // Team members should be kicked before deleting otherwise the whole team will become weird
-        if (getIslands().inTeam(getWorld(), targetUUID) && user.getUniqueId().equals(island.getOwner())) {
+        if (island.hasTeam() && user.getUniqueId().equals(island.getOwner())) {
             user.sendMessage("commands.admin.delete.cannot-delete-owner");
             return false;
         }

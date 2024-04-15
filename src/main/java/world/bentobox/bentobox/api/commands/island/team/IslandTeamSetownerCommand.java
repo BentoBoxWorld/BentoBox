@@ -42,7 +42,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         }
         // Can use if in a team
         Island is = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
-        if (is == null || !is.getMemberSet().contains(user.getUniqueId())) {
+        if (is == null || !is.inTeam(user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
         }
@@ -60,7 +60,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.setowner.errors.cant-transfer-to-yourself");
             return false;
         }
-        if (!is.getMemberSet().contains(targetUUID)) {
+        if (!is.inTeam(targetUUID)) {
             user.sendMessage("commands.island.team.setowner.errors.target-is-not-member");
             return false;
         }

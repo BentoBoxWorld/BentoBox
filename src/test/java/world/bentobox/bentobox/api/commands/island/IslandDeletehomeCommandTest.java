@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -115,7 +114,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerBeforeClassTest {
         when(island.onIsland(any())).thenReturn(true);
         when(im.getIsland(world, uuid)).thenReturn(island);
         when(im.getIsland(world, user)).thenReturn(island);
-        when(im.getIslands(world, uuid)).thenReturn(Set.of(island));
+        when(im.getIslands(world, uuid)).thenReturn(List.of(island));
         @NotNull
         Map<String, Location> homeMap = new HashMap<>();
         homeMap.put("Home", null);

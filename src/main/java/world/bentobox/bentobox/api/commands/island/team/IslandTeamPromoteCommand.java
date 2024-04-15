@@ -69,7 +69,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             return false;
         }
         // Check that target is a member of this island
-        if (!island.getMemberSet().contains(target.getUniqueId())) {
+        if (!island.inTeam(target.getUniqueId())) {
             user.sendMessage("commands.island.team.promote.errors.must-be-member");
             return false;
         }

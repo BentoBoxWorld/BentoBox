@@ -18,10 +18,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
 import world.bentobox.bentobox.lists.GameModePlaceholder;
@@ -43,9 +47,17 @@ public class PlaceholdersManagerTest {
     private HooksManager hm;
     @Mock
     private PlaceholderAPIHook hook;
+    @Mock
+    private IslandWorldManager iwm;
+    private Settings settings;
 
     @Before
     public void setUp() throws Exception {
+        // Set up plugin
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        settings = new Settings();
+        when(plugin.getSettings()).thenReturn(settings);
+
         // Addon
         @NonNull
         AddonDescription desc = new AddonDescription.Builder("main", "bskyblock", "1.0").build();
@@ -60,6 +72,13 @@ public class PlaceholdersManagerTest {
         Optional<Hook> optionalHook = Optional.of(hook);
         when(hm.getHook(eq("PlaceholderAPI"))).thenReturn(optionalHook);
         when(hook.isPlaceholder(any(), any())).thenReturn(false);
+
+        // World settings
+
+        @NonNull
+        WorldSettings ws = new TestWorldSettings();
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        when(plugin.getIWM()).thenReturn(iwm);
 
         // Placeholder manager
         pm = new PlaceholdersManager(plugin);
@@ -77,7 +96,7 @@ public class PlaceholdersManagerTest {
     public void testRegisterGameModePlaceholdersAllDefaults() {
         pm.registerDefaultPlaceholders(addon);
         // + 300 because we register team member placeholders up to 50 members
-        verify(hook, times(GameModePlaceholder.values().length + 302)).registerPlaceholder(any(), anyString(), any());
+        verify(hook, times(GameModePlaceholder.values().length + 304)).registerPlaceholder(any(), anyString(), any());
     }
 
     /**
@@ -91,7 +110,7 @@ public class PlaceholdersManagerTest {
         pm.registerDefaultPlaceholders(addon);
 
         // 3 less registrations for this addon
-        verify(hook, times(GameModePlaceholder.values().length - 3 + 302)).registerPlaceholder(any(), anyString(),
+        verify(hook, times(GameModePlaceholder.values().length - 3 + 304)).registerPlaceholder(any(), anyString(),
                 any());
     }
 }

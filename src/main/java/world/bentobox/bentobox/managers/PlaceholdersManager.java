@@ -3,6 +3,9 @@ package world.bentobox.bentobox.managers;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -13,6 +16,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -72,6 +76,50 @@ public class PlaceholdersManager {
         .forEach(placeholder -> registerPlaceholder(addon, placeholder.getPlaceholder(), new DefaultPlaceholder(addon, placeholder)));
         // Register team member placeholders
         registerTeamMemberPlaceholders(addon);
+        // Register potential island names and member info
+        registerOwnedIslandPlaceholders(addon);
+    }
+
+    private void registerOwnedIslandPlaceholders(@NonNull GameModeAddon addon) {
+        int maxIslands = plugin.getIWM().getWorldSettings(addon.getOverWorld()).getConcurrentIslands();
+        IntStream.range(0, maxIslands).forEach(i -> registerPlaceholder(addon, "island_name_" + (i + 1), user -> {
+            if (user == null)
+                return "";
+
+            AtomicInteger generatedCount = new AtomicInteger(1); // To increment within lambda
+            return plugin.getIslands().getIslands(addon.getOverWorld(), user).stream().map(island -> {
+                IslandName islandName = getIslandName(island, user, generatedCount.get());
+                if (islandName.generatated()) {
+                    generatedCount.getAndIncrement(); // Increment if the name was generated
+                    }
+                return islandName.name;
+            }).skip(i) // Skip to the island at index 'i'
+                    .findFirst() // Take the first island after skipping, effectively the (i+1)th
+                    .orElse(""); // Default to empty string if no island is found
+        }));
+
+        // Island_memberlist
+        IntStream.range(0, maxIslands)
+                .forEach(i -> registerPlaceholder(addon, "island_memberlist_" + (i + 1), user -> user == null ? ""
+                        : plugin.getIslands().getIslands(addon.getOverWorld(), user).stream().skip(i).findFirst()
+                                .map(island -> island.getMemberSet().stream()
+                                        .map(addon.getPlayers()::getName).collect(Collectors.joining(",")))
+                                .orElse("")));
+    }
+
+    private record IslandName(String name, boolean generatated) {
+    }
+
+    private IslandName getIslandName(Island island, User user, int index) {
+        if (island.getName() != null && !island.getName().isBlank()) {
+            // Name has been set
+            return new IslandName(island.getName(), false);
+        } else {
+            // Name has not been set
+            return new IslandName(user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
+                    user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index, true);
+        }
+
     }
 
     private void registerTeamMemberPlaceholders(@NonNull GameModeAddon addon) {

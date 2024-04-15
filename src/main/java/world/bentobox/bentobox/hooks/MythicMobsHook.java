@@ -55,6 +55,9 @@ public class MythicMobsHook extends Hook {
      * @return true if spawn is successful
      */
     public boolean spawnMythicMob(MythicMobRecord mmr, Location spawnLocation) {
+        if (!this.isPluginAvailable()) {
+            return false;
+        }
         return MythicBukkit.inst().getMobManager().getMythicMob(mmr.type()).map(mob -> {
             // A delay is required before spawning, I assume because the blocks are pasted using NMS
             Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {

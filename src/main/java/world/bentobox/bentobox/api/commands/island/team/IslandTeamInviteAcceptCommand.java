@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -62,7 +61,8 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             }
 
             // Check if player is already in a team
-            if (getIslands().inTeam(getWorld(), playerUUID)) {
+            if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()
+                    && getIslands().inTeam(getWorld(), playerUUID)) {
                 user.sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
                 return false;
             }
@@ -82,8 +82,14 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         switch (invite.getType()) {
         case COOP -> askConfirmation(user, () -> acceptCoopInvite(user, invite));
         case TRUST -> askConfirmation(user, () -> acceptTrustInvite(user, invite));
-        default -> askConfirmation(user, user.getTranslation("commands.island.team.invite.accept.confirmation"),
-                () -> acceptTeamInvite(user, invite));
+        default -> {
+            if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()) {
+                askConfirmation(user, user.getTranslation("commands.island.team.invite.accept.confirmation"),
+                        () -> acceptTeamInvite(user, invite));
+            } else {
+                acceptTeamInvite(user, invite);
+            }
+        }
         }
         return true;
     }
@@ -144,7 +150,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Remove the invite
         itc.removeInvite(user.getUniqueId());
         // Get the player's island - may be null if the player has no island
-        Set<Island> islands = getIslands().getIslands(getWorld(), user.getUniqueId());
+        List<Island> islands = getIslands().getIslands(getWorld(), user.getUniqueId());
         // Get the team's island
         Island teamIsland = invite.getIsland();
         if (teamIsland == null) {
@@ -156,17 +162,21 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.team.invite.errors.island-is-full");
             return;
         }
-        // Remove the player's other islands
-        getIslands().removePlayer(getWorld(), user.getUniqueId());
-        // Remove money inventory etc. for leaving
-        cleanPlayer(user);
+        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()) {
+            // Remove the player's other islands
+            getIslands().removePlayer(getWorld(), user.getUniqueId());
+            // Remove money inventory etc. for leaving
+            cleanPlayer(user);
+        }
         // Add the player as a team member of the new island
         getIslands().setJoinTeam(teamIsland, user.getUniqueId());
         // Move player to team's island
+        getIslands().setPrimaryIsland(user.getUniqueId(), teamIsland);
         getIslands().homeTeleportAsync(getWorld(), user.getPlayer()).thenRun(() -> {
-            // Delete the old islands
-            islands.forEach(island -> getIslands().deleteIsland(island, true, user.getUniqueId()));
-
+            if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()) {
+                // Delete the old islands
+                islands.forEach(island -> getIslands().deleteIsland(island, true, user.getUniqueId()));
+            }
             // Put player back into normal mode
             user.setGameMode(getIWM().getDefaultGameMode(getWorld()));
 
@@ -175,8 +185,9 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             Util.runCommands(user, ownerName, getIWM().getOnJoinCommands(getWorld()), "join");
 
         });
-        // Reset deaths
-        if (getIWM().isTeamJoinDeathReset(getWorld())) {
+        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()
+                && getIWM().isTeamJoinDeathReset(getWorld())) {
+            // Reset deaths
             getPlayers().setDeaths(getWorld(), user.getUniqueId(), 0);
         }
         user.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());

@@ -51,7 +51,8 @@ public class IslandCreateCommand extends CompositeCommand {
             }
         }
         // Check if this player is on a team in this world
-        if (getIslands().inTeam(getWorld(), user.getUniqueId()) && island != null
+        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()
+                && getIslands().inTeam(getWorld(), user.getUniqueId()) && island != null
                 && !user.getUniqueId().equals(island.getOwner())) {
             // Team members who are not owners cannot make additional islands
             user.sendMessage("commands.island.create.you-cannot-make-team");
@@ -86,20 +87,47 @@ public class IslandCreateCommand extends CompositeCommand {
                 user.sendMessage("commands.island.create.unknown-blueprint");
                 return false;
             }
+            // Check perm
             if (!getPlugin().getBlueprintsManager().checkPerm(getAddon(), user, Util.sanitizeInput(args.get(0)))) {
+                return false;
+            }
+            // Check maximum uses
+            if (checkMaxUses(user, name)) {
                 return false;
             }
             // Make island
             return makeIsland(user, name);
         } else {
+            if (getPlugin().getSettings().getIslandNumber() > 1
+                    && checkMaxUses(user, BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
+                return false;
+            }
             // Show panel only if there are multiple bundles available
             if (getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon()).size() > 1) {
                 // Show panel
-                IslandCreationPanel.openPanel(this, user, label);
+                IslandCreationPanel.openPanel(this, user, label, false);
                 return true;
             }
             return makeIsland(user, BlueprintsManager.DEFAULT_BUNDLE_NAME);
         }
+    }
+
+    private boolean checkMaxUses(User user, String name) {
+        if (getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon()).containsKey(name)) {
+            int maxTimes = getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon()).get(name).getTimes();
+            // Check how many times this player has used this bundle
+            if (maxTimes > 0 && getBundleUses(user, name) >= maxTimes) {
+                user.sendMessage("commands.island.create.max-uses");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private long getBundleUses(User user, String name) {
+        return getIslands().getIslands(getWorld(), user).stream()
+                .filter(is -> is.getMetaData("bundle").map(mdv -> name.equalsIgnoreCase(mdv.asString())).orElse(false))
+                .count();
     }
 
     private boolean makeIsland(User user, String name) {

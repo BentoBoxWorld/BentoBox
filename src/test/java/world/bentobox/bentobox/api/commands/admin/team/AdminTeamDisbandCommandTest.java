@@ -205,7 +205,7 @@ public class AdminTeamDisbandCommandTest {
     public void testExecutePlayerNotInTeam() {
         when(Util.getUUID("tastybento")).thenReturn(notUUID);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
-        verify(user).sendMessage("general.errors.player-is-not-owner", "[name]", "tastybento");
+        verify(user).sendMessage("general.errors.player-has-no-island");
     }
 
     /**

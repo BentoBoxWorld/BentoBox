@@ -31,6 +31,7 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -142,6 +143,8 @@ public class IslandTeamInviteAcceptCommandTest {
         // IWM friendly name
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+        TestWorldSettings worldSettings = new TestWorldSettings();
+        when(iwm.getWorldSettings(any())).thenReturn(worldSettings);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Invite

@@ -321,7 +321,7 @@ public class IslandsManager {
      * @return List of islands or empty list if none found for user
      */
     @NonNull
-    public Set<Island> getIslands(@NonNull World world, @NonNull User user) {
+    public List<Island> getIslands(@NonNull World world, @NonNull User user) {
         return getIslands(world, user.getUniqueId());
     }
 
@@ -333,7 +333,7 @@ public class IslandsManager {
      * @return List of islands or empty list if none found for user
      */
     @NonNull
-    public Set<Island> getIslands(@NonNull World world, UUID uniqueId) {
+    public List<Island> getIslands(@NonNull World world, UUID uniqueId) {
         return islandCache.getIslands(world, uniqueId);
     }
 
@@ -1319,7 +1319,7 @@ public class IslandsManager {
             return false;
         }
         // Get the player's island
-        return getIslandAt(loc).filter(i -> i.onIsland(loc)).map(i -> i.getMemberSet().contains(player.getUniqueId()))
+        return getIslandAt(loc).filter(i -> i.onIsland(loc)).map(i -> i.inTeam(player.getUniqueId()))
                 .orElse(false);
     }
 
@@ -1389,7 +1389,7 @@ public class IslandsManager {
                 .filter(p -> p.getGameMode().equals(plugin.getIWM().getDefaultGameMode(island.getWorld())))
                 .filter(p -> island.onIsland(p.getLocation())).forEach(p -> {
                     // Teleport island players to their island home
-                    if (!island.getMemberSet().contains(p.getUniqueId())
+                    if (!island.inTeam(p.getUniqueId())
                             && (hasIsland(w, p.getUniqueId()) || inTeam(w, p.getUniqueId()))) {
                         homeTeleportAsync(w, p);
                     } else {
@@ -1493,16 +1493,17 @@ public class IslandsManager {
     }
 
     /**
-     * Checks if a player is in a team in this world. Note that the player may have
+     * Checks if a player is in any team in this world. Note that the player may have
      * multiple islands in the world, any one of which may have a team.
      * 
      * @param world      - world
      * @param playerUUID - player's UUID
      * @return true if in team, false if not
+     * @see Consider checking the island itself {@link Island#inTeam(UUID)}
      */
     public boolean inTeam(World world, @NonNull UUID playerUUID) {
         return this.islandCache.getIslands(world, playerUUID).stream()
-                .anyMatch(island -> island.getMemberSet().size() > 1 && island.getMemberSet().contains(playerUUID));
+                .anyMatch(island -> island.getMemberSet().size() > 1 && island.inTeam(playerUUID));
     }
 
     /**

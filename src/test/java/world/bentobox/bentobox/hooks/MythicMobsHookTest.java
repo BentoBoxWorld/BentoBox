@@ -156,7 +156,17 @@ public class MythicMobsHookTest {
      * Test method for {@link world.bentobox.bentobox.hooks.MythicMobsHook#spawnMythicMob(world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.MythicMobRecord, org.bukkit.Location)}.
      */
     @Test
-    public void testSpawnMythicMob() {
+    public void testSpawnMythicMobNoPLugin() {
+        MythicMobRecord mmr = hook.getMythicMob(entity);
+        assertFalse(hook.spawnMythicMob(mmr, location));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.hooks.MythicMobsHook#spawnMythicMob(world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.MythicMobRecord, org.bukkit.Location)}.
+     */
+    @Test
+    public void testSpawnMythicMobHasPlugin() {
+        when(mythicMobs.isEnabled()).thenReturn(true);
         MythicMobRecord mmr = hook.getMythicMob(entity);
         assertTrue(hook.spawnMythicMob(mmr, location));
         verify(mm).getMythicMob("GIANT");

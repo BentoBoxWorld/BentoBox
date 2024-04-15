@@ -14,8 +14,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -189,7 +189,7 @@ public class IslandHomesCommandTest {
      */
     @Test
     public void testCanExecute() {
-        when(im.getIslands(world, user)).thenReturn(Set.of(island));
+        when(im.getIslands(world, user)).thenReturn(List.of(island));
         IslandHomesCommand isc = new IslandHomesCommand(ic);
         assertTrue(isc.canExecute(user, "island", Collections.emptyList()));
         verify(user, never()).sendMessage("general.errors.no-island");
@@ -200,7 +200,7 @@ public class IslandHomesCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfString() {
-        when(im.getIslands(world, user)).thenReturn(Set.of(island));
+        when(im.getIslands(world, user)).thenReturn(List.of(island));
         IslandHomesCommand isc = new IslandHomesCommand(ic);
         assertTrue(isc.canExecute(user, "island", Collections.emptyList()));
         assertTrue(isc.execute(user, "island", Collections.emptyList()));

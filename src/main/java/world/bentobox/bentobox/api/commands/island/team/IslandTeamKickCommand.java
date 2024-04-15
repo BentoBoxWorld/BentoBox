@@ -63,7 +63,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.team.kick.cannot-kick");
             return false;
         }
-        if (!getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).getMemberSet().contains(targetUUID)) {
+        if (!getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).inTeam(targetUUID)) {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }
@@ -95,7 +95,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             return false;
         }
         User target = User.getInstance(targetUUID);
-        Island oldIsland = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID)); // Should never be
+        Island oldIsland = Objects.requireNonNull(getIslands().getIsland(getWorld(), user)); // Should never be
         // null because of
         // checks above
         // Fire event
@@ -108,7 +108,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                 getAddon().getDescription().getName(), TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME,
                 user.getDisplayName());
 
-        getIslands().removePlayer(getWorld(), targetUUID);
+        getIslands().removePlayer(oldIsland, targetUUID);
         // Clean the target player
         getPlayers().cleanLeavingPlayer(getWorld(), target, true, oldIsland);
 

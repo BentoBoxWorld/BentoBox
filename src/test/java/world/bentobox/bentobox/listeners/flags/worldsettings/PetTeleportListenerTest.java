@@ -47,6 +47,8 @@ public class PetTeleportListenerTest extends AbstractCommonSetup {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        // Island
+        when(this.island.inTeam(uuid)).thenReturn(true);
         when(tamed.isTamed()).thenReturn(true);
         when(tamed.getOwner()).thenReturn(tamer);
         when(tamer.getUniqueId()).thenReturn(uuid);
