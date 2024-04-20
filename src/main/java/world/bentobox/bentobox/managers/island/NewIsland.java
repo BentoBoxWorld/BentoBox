@@ -217,7 +217,6 @@ public class NewIsland {
         island.setFlagsDefaults();
         // Register metrics
         plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
-        plugin.getIslands();
         // Save island
         IslandsManager.updateIsland(island);
     }
