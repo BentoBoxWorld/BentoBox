@@ -21,6 +21,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 
+import com.github.puregero.multilib.MultiLib;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.request.AddonRequestHandler;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -45,6 +47,8 @@ public abstract class Addon {
 
     protected Addon() {
         state = State.DISABLED;
+        // If the config is updated, update the config.
+        MultiLib.onString(getPlugin(), "bentobox-config-update", v -> this.reloadConfig());
     }
 
     /**
@@ -220,6 +224,7 @@ public abstract class Addon {
      * @since 1.13.0
      */
     public void reloadConfig() {
+        BentoBox.getInstance().logDebug("Config reloaded");
         config = loadYamlFile();
     }
 

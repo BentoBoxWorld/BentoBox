@@ -144,7 +144,6 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getIWM()).thenReturn(iwm);
         // Players manager
         when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getFlagsDisplayMode(any())).thenReturn(Mode.BASIC);
         //Island Manager
         when(plugin.getIslands()).thenReturn(im);
         // Island - player has island

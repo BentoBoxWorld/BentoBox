@@ -206,11 +206,9 @@ public class AdminSettingsCommand extends CompositeCommand {
                 switch (f.getType()) {
                 case PROTECTION -> {
                     island.setFlag(f, rank);
-                    getIslands().updateIsland(island);
                 }
                 case SETTING -> {
                     island.setSettingsFlag(f, activeState);
-                    getIslands().updateIsland(island);
                 }
                 case WORLD_SETTING -> f.setSetting(getWorld(), activeState);
                 default -> {
@@ -226,7 +224,6 @@ public class AdminSettingsCommand extends CompositeCommand {
             user.sendMessage("general.errors.use-in-game");
             return false;
         }
-        getPlayers().setFlagsDisplayMode(user.getUniqueId(), Mode.EXPERT);
         if (args.isEmpty()) {
             new TabbedPanelBuilder()
             .user(user)

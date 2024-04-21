@@ -1,9 +1,11 @@
 package world.bentobox.bentobox.panels.settings;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
@@ -16,6 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
@@ -46,6 +49,8 @@ public class SettingsTab implements Tab, ClickHandler {
     protected Island island;
     protected TabbedPanel parent;
 
+    private Map<UUID, Flag.Mode> currentMode = new HashMap<>();
+
     /**
      * Show a tab of settings
      * @param user - user who is viewing the tab
@@ -73,6 +78,7 @@ public class SettingsTab implements Tab, ClickHandler {
      * @return list of flags that will be shown in this panel
      */
     protected List<Flag> getFlags() {
+        long m = System.currentTimeMillis();
         // Get a list of flags of the correct type and sort by the translated names
         List<Flag> flags = plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(type))
                 // We're stripping colors to avoid weird sorting issues
@@ -81,9 +87,10 @@ public class SettingsTab implements Tab, ClickHandler {
         // Remove any that are not for this game mode
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> !f.getGameModes().isEmpty() && !f.getGameModes().contains(gm)));
         // Remove any that are the wrong rank or that will be on the top row
-        Flag.Mode mode = plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId());
+        Flag.Mode mode = currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC);
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> f.getMode().isGreaterThan(mode) ||
                 f.getMode().equals(Flag.Mode.TOP_ROW)));
+        BentoBox.getInstance().logDebug("Time to get flags = " + (System.currentTimeMillis() - m));
         return flags;
     }
 
@@ -116,17 +123,33 @@ public class SettingsTab implements Tab, ClickHandler {
     @Override
     @NonNull
     public List<@Nullable PanelItem> getPanelItems() {
+        long m = System.currentTimeMillis();
+        BentoBox.getInstance().logDebug("Get panel items");
         List<Flag> flags = getFlags();
+        BentoBox.getInstance().logDebug("Time for getFlags = " + (System.currentTimeMillis() - m));
         int i = 0;
         // Jump past empty tabs
         while (flags.isEmpty() && i++ < Flag.Mode.values().length) {
-            plugin.getPlayers().setFlagsDisplayMode(user.getUniqueId(), plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId()).getNext());
+            currentMode.put(user.getUniqueId(), currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC).getNext());
             flags = getFlags();
         }
-        return flags.stream().map(
+
+        List<@Nullable PanelItem> result = new ArrayList<>();
+        for (Flag f : flags) {
+            boolean x = plugin.getIWM().getHiddenFlags(world).contains(f.getID());
+            //BentoBox.getInstance().logDebug("Time for x = " + (System.currentTimeMillis() - m));
+            PanelItem pi = f.toPanelItem(plugin, user, world, island, x);
+            ///BentoBox.getInstance().logDebug("Time for pi = " + (System.currentTimeMillis() - m));
+            result.add(pi);
+        }
+        /*
+        List<@Nullable PanelItem> result = flags.stream().map(
                 (f -> f.toPanelItem(plugin, user, world, island,
                         plugin.getIWM().getHiddenFlags(world).contains(f.getID()))))
                 .toList();
+                */
+        BentoBox.getInstance().logDebug("Time for getpanelitems end = " + (System.currentTimeMillis() - m));
+        return result;
     }
 
     @Override
@@ -138,7 +161,7 @@ public class SettingsTab implements Tab, ClickHandler {
             icons.put(5, Flags.LOCK.toPanelItem(plugin, user, world, island, false));
         }
         // Add the mode icon
-        switch (plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId())) {
+        switch (currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC)) {
         case ADVANCED -> icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
                 .name(user.getTranslation(PROTECTION_PANEL + "mode.advanced.name"))
                 .description(user.getTranslation(PROTECTION_PANEL + "mode.advanced.description"), "",
@@ -215,13 +238,15 @@ public class SettingsTab implements Tab, ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
+        long m = System.currentTimeMillis();
         // Cycle the mode
-        plugin.getPlayers().setFlagsDisplayMode(user.getUniqueId(), plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId()).getNext());
+        currentMode.put(user.getUniqueId(), currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC).getNext());
         if (panel instanceof TabbedPanel tp) {
             tp.setActivePage(0);
             tp.refreshPanel();
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
         }
+        BentoBox.getInstance().logDebug("Time for onClick = " + (System.currentTimeMillis() - m));
         return true;
     }
 

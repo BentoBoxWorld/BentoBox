@@ -1711,6 +1711,7 @@ public class Island implements DataObject, MetaDataAble {
      * Indicates the fields have been changed. Used to optimize saving on shutdown and notify other servers
      */
     public void setChanged() {
+        BentoBox.getInstance().logDebug("Island changed");
         this.setUpdatedDate(System.currentTimeMillis());
         this.changed = true;
         IslandsManager.updateIsland(this);

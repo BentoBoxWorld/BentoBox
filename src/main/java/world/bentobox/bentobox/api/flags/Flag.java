@@ -384,6 +384,7 @@ public class Flag implements Comparable<Flag> {
      */
     @Nullable
     public PanelItem toPanelItem(BentoBox plugin, User user, World world, @Nullable Island island, boolean invisible) {
+        long m = System.currentTimeMillis();
         // Invisibility
         if (!user.isOp() && invisible) {
             return null;
@@ -394,10 +395,12 @@ public class Flag implements Comparable<Flag> {
                 .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
                 .clickHandler(clickHandler)
                 .invisible(invisible);
+        BentoBox.getInstance().logDebug("Time for pib = " + (System.currentTimeMillis() - m));
         if (hasSubPanel()) {
             pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             return pib.build();
         }
+        BentoBox.getInstance().logDebug("Type = " + getType());
         return switch (getType()) {
         case PROTECTION -> createProtectionFlag(plugin, user, island, pib).build();
         case SETTING -> createSettingFlag(user, island, pib).build();
@@ -428,20 +431,24 @@ public class Flag implements Comparable<Flag> {
     }
 
     private PanelItemBuilder createProtectionFlag(BentoBox plugin, User user, Island island, PanelItemBuilder pib) {
+        long m = System.currentTimeMillis();
+        BentoBox.getInstance().logDebug("Protection flag");
         if (island != null) {
+            int y = island.getFlag(this);
             // Protection flag
             pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
                     TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             RanksManager.getInstance().getRanks().forEach((reference, score) -> {
-                if (score > RanksManager.BANNED_RANK && score < island.getFlag(this)) {
+                if (score > RanksManager.BANNED_RANK && score < y) {
                     pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
-                } else if (score <= RanksManager.OWNER_RANK && score > island.getFlag(this)) {
+                } else if (score <= RanksManager.OWNER_RANK && score > y) {
                     pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank") + user.getTranslation(reference));
-                } else if (score == island.getFlag(this)) {
+                } else if (score == y) {
                     pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
                 }
             });
         }
+        BentoBox.getInstance().logDebug("Protection flag " + (System.currentTimeMillis() - m));
         return pib;
     }
 

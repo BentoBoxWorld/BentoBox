@@ -74,6 +74,7 @@ public class TabbedPanel extends Panel implements PanelListener {
      * @param page - the page of the tab to show (if multi paged)
      */
     public void openPanel(int activeTab, int page) {
+        long m = System.currentTimeMillis();
         if (!tpb.getTabs().containsKey(activeTab)) {
             // Request to open a non-existent tab
             throw new InvalidParameterException("Attempt to open a non-existent tab in a tabbed panel. Missing tab #" + activeTab);
@@ -84,11 +85,12 @@ public class TabbedPanel extends Panel implements PanelListener {
         }
         this.activeTab = activeTab;
         this.activePage = page;
+        BentoBox.getInstance().logDebug("Time 1 " + (System.currentTimeMillis() - m));
         // The items in the panel
         TreeMap<Integer, PanelItem> items = new TreeMap<>();
         // Get the tab
         Tab tab = tpb.getTabs().get(activeTab);
-
+        BentoBox.getInstance().logDebug("Time 2 " + (System.currentTimeMillis() - m));
         // Remove any tabs that have no items, if required
         if (tpb.isHideIfEmpty()) {
             tpb.getTabs().values().removeIf(t -> !t.equals(tab) && t.getPanelItems().stream().noneMatch(Objects::nonNull));
@@ -96,15 +98,16 @@ public class TabbedPanel extends Panel implements PanelListener {
 
         // Set up the tabbed header
         setupHeader(tab, items);
-
+        BentoBox.getInstance().logDebug("Time 3 " + (System.currentTimeMillis() - m));
         // Show the active tab
         if (tpb.getTabs().containsKey(activeTab)) {
             List<PanelItem> panelItems = tab.getPanelItems();
             // Adds the flag items
             panelItems.stream().filter(Objects::nonNull).skip(page * ITEMS_PER_PAGE).limit(page * ITEMS_PER_PAGE + ITEMS_PER_PAGE).forEach(i -> items.put(items.lastKey() + 1, i));
-
+            BentoBox.getInstance().logDebug("Time 4 " + (System.currentTimeMillis() - m));
             // set up the footer
             setupFooter(items);
+            BentoBox.getInstance().logDebug("Time 5 " + (System.currentTimeMillis() - m));
             // Add forward and backward icons
             if (page > 0) {
                 // Previous page icon
@@ -114,6 +117,7 @@ public class TabbedPanel extends Panel implements PanelListener {
                     return true;
                 }).build());
             }
+            BentoBox.getInstance().logDebug("Time 6 " + (System.currentTimeMillis() - m));
             if ((page + 1) * ITEMS_PER_PAGE < panelItems.stream().filter(Objects::nonNull).count()) {
                 // Next page icon
                 items.put(52, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation(PROTECTION_PANEL + "next")).clickHandler((panel, user1, clickType, slot1) -> {
@@ -122,11 +126,14 @@ public class TabbedPanel extends Panel implements PanelListener {
                     return true;
                 }).build());
             }
+            BentoBox.getInstance().logDebug("Time 7 " + (System.currentTimeMillis() - m));
         } else {
             throw new InvalidParameterException("Unknown tab slot number " + activeTab);
         }
+        BentoBox.getInstance().logDebug("Time 8 " + (System.currentTimeMillis() - m));
         // Show it to the player
         this.makePanel(tab.getName(), items, tpb.getSize(), tpb.getUser(), this);
+        BentoBox.getInstance().logDebug("Time 9 " + (System.currentTimeMillis() - m));
     }
 
     /**

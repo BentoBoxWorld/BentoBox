@@ -384,15 +384,6 @@ public class PlayersManagerTest {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#getFlagsDisplayMode(java.util.UUID)}.
-     */
-    @Test
-    public void testGetFlagsDisplayMode() {
-        assertEquals(Mode.BASIC, pm.getFlagsDisplayMode(uuid));
-    }
-
-    /**
-     * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#getLocale(java.util.UUID)}.
      */
     @Test
@@ -632,16 +623,6 @@ public class PlayersManagerTest {
         pm.setDeaths(world, uuid, 50);
         assertEquals(50, pm.getDeaths(world, uuid));
 
-    }
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#setFlagsDisplayMode(java.util.UUID, world.bentobox.bentobox.api.flags.Flag.Mode)}.
-     */
-    @Test
-    public void testSetFlagsDisplayMode() {
-        pm.setFlagsDisplayMode(uuid, Mode.ADVANCED);
-        assertEquals(Mode.ADVANCED, pm.getFlagsDisplayMode(uuid));
     }
 
     /**

@@ -1641,11 +1641,14 @@ public class IslandsManager {
      * @param island - island
      */
     public static void updateIsland(Island island) {
+        long m = System.currentTimeMillis();
+
         if (handler.objectExists(island.getUniqueId())) {
             island.clearChanged();
             handler.saveObjectAsync(island)
                     .thenAccept(b -> MultiLib.notify("bentobox-updateIsland", island.getUniqueId()));
         }
+        BentoBox.getInstance().logDebug("Island update " + (System.currentTimeMillis() - m));
     }
 
     /**
