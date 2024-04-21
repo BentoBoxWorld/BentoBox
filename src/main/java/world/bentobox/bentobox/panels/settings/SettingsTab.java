@@ -123,16 +123,18 @@ public class SettingsTab implements Tab, ClickHandler {
     @Override
     @NonNull
     public List<@Nullable PanelItem> getPanelItems() {
-        long m = System.currentTimeMillis();
+
         BentoBox.getInstance().logDebug("Get panel items");
         List<Flag> flags = getFlags();
-        BentoBox.getInstance().logDebug("Time for getFlags = " + (System.currentTimeMillis() - m));
         int i = 0;
         // Jump past empty tabs
         while (flags.isEmpty() && i++ < Flag.Mode.values().length) {
             currentMode.put(user.getUniqueId(), currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC).getNext());
             flags = getFlags();
         }
+        long m = System.currentTimeMillis();
+
+        // TODO This is taking too long!!!
 
         List<@Nullable PanelItem> result = new ArrayList<>();
         for (Flag f : flags) {

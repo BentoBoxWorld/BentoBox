@@ -384,6 +384,7 @@ public class Flag implements Comparable<Flag> {
      */
     @Nullable
     public PanelItem toPanelItem(BentoBox plugin, User user, World world, @Nullable Island island, boolean invisible) {
+        // TODO: Why is this taking long
         long m = System.currentTimeMillis();
         // Invisibility
         if (!user.isOp() && invisible) {
@@ -435,9 +436,11 @@ public class Flag implements Comparable<Flag> {
         BentoBox.getInstance().logDebug("Protection flag");
         if (island != null) {
             int y = island.getFlag(this);
+            BentoBox.getInstance().logDebug("Protection flag getFlag time " + (System.currentTimeMillis() - m));
             // Protection flag
             pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
                     TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
+            BentoBox.getInstance().logDebug("Protection flag description time " + (System.currentTimeMillis() - m));
             RanksManager.getInstance().getRanks().forEach((reference, score) -> {
                 if (score > RanksManager.BANNED_RANK && score < y) {
                     pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
@@ -448,7 +451,7 @@ public class Flag implements Comparable<Flag> {
                 }
             });
         }
-        BentoBox.getInstance().logDebug("Protection flag " + (System.currentTimeMillis() - m));
+        BentoBox.getInstance().logDebug("Protection flag time " + (System.currentTimeMillis() - m));
         return pib;
     }
 
