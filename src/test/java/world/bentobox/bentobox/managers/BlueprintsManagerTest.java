@@ -45,6 +45,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.github.puregero.multilib.MultiLib;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
@@ -62,7 +64,7 @@ import world.bentobox.bentobox.database.objects.Island;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, BlueprintPaster.class} )
+@PrepareForTest({ Bukkit.class, BentoBox.class, BlueprintPaster.class, MultiLib.class })
 public class BlueprintsManagerTest {
 
     public static int BUFFER_SIZE = 10240;
@@ -95,10 +97,12 @@ public class BlueprintsManagerTest {
     private int times;
     @Mock
     private Server server;
-    /**
-     */
+
     @Before
     public void setUp() throws Exception {
+        // Multilib
+        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
+
         // Make the addon
         dataFolder = new File("dataFolder");
         jarFile = new File("addon.jar");

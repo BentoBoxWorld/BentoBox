@@ -2,7 +2,9 @@ package world.bentobox.bentobox.managers;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -14,7 +16,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
@@ -27,10 +28,9 @@ public class PlayersManager {
     private final BentoBox plugin;
     private Database<Players> handler;
     private final Database<Names> names;
+    private final Map<UUID, Players> playerCache = new HashMap<>();
 
     private final Set<UUID> inTeleport; // this needs databasing
-
-    private boolean isSaveTaskRunning;
 
     /**
      * Provides a memory cache of online player information
@@ -56,17 +56,6 @@ public class PlayersManager {
         this.handler = handler;
     }
 
-    /**
-     * Load all players - not normally used as to load all players into memory will be wasteful
-     */
-    public void load(){
-        inTeleport.clear();
-    }
-
-    public boolean isSaveTaskRunning() {
-        return isSaveTaskRunning;
-    }
-
     public void shutdown(){
         handler.close();
     }
@@ -78,28 +67,17 @@ public class PlayersManager {
      */
     @Nullable
     public Players getPlayer(UUID uuid){
-        return addPlayer(uuid);
+        if (!playerCache.containsKey(uuid)) {
+            playerCache.put(uuid, addPlayer(uuid));
+        }
+        return playerCache.get(uuid);
     }
-
-    /**
-     * Returns an <strong>unmodifiable collection</strong> of all the players that are <strong>currently in the cache</strong>.
-     * @return unmodifiable collection containing every player in the cache.
-     * @since 1.1
-     */
-    @NonNull
-    public Collection<Players> getPlayers() {
-        return Collections.unmodifiableCollection(handler.loadObjects());
-    }
-
-    /*
-     * Cache control methods
-     */
 
     /**
      * Adds a player to the database. If the UUID does not exist, a new player is made
      * @param playerUUID - the player's UUID
      */
-    public Players addPlayer(@NonNull UUID playerUUID) {
+    private Players addPlayer(@NonNull UUID playerUUID) {
         Objects.requireNonNull(playerUUID);
         // If the player is in the database, load it, otherwise create a new player
         if (handler.objectExists(playerUUID.toString())) {
@@ -111,6 +89,16 @@ public class PlayersManager {
         Players player = new Players(plugin, playerUUID);
         handler.saveObject(player);
         return player;
+    }
+
+    /**
+     * Returns an <strong>unmodifiable collection</strong> of all the players that are <strong>currently in the cache</strong>.
+     * @return unmodifiable collection containing every player in the cache.
+     * @since 1.1
+     */
+    @NonNull
+    public Collection<Players> getPlayers() {
+        return Collections.unmodifiableCollection(handler.loadObjects());
     }
 
     /**
@@ -149,7 +137,7 @@ public class PlayersManager {
      * @param user - the User
      */
     public void setPlayerName(@NonNull User user) {
-        Players player = addPlayer(user.getUniqueId());
+        Players player = getPlayer(user.getUniqueId());
         player.setPlayerName(user.getName());
         handler.saveObject(player);
         Names newName = new Names(user.getName(), user.getUniqueId());
@@ -180,7 +168,7 @@ public class PlayersManager {
      * @return number of resets
      */
     public int getResets(World world, UUID playerUUID) {
-        return addPlayer(playerUUID).getResets(world);
+        return getPlayer(playerUUID).getResets(world);
     }
 
     /**
@@ -192,7 +180,7 @@ public class PlayersManager {
      * @see #getResets(World, UUID)
      */
     public int getResetsLeft(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
+        getPlayer(playerUUID);
         if (plugin.getIWM().getResetLimit(world) == -1) {
             return -1;
         } else {
@@ -208,7 +196,7 @@ public class PlayersManager {
      * @param resets number of resets to set
      */
     public void setResets(World world, UUID playerUUID, int resets) {
-        Players p = addPlayer(playerUUID);
+        Players p = getPlayer(playerUUID);
         p.setResets(world, resets);
         handler.saveObject(p);
     }
@@ -219,7 +207,7 @@ public class PlayersManager {
      * @return name of the locale this player uses
      */
     public String getLocale(UUID playerUUID) {
-        return addPlayer(playerUUID).getLocale();
+        return getPlayer(playerUUID).getLocale();
     }
 
     /**
@@ -228,7 +216,7 @@ public class PlayersManager {
      * @param localeName - locale name, e.g., en-US
      */
     public void setLocale(UUID playerUUID, String localeName) {
-        Players p = addPlayer(playerUUID);
+        Players p = getPlayer(playerUUID);
         p.setLocale(localeName);
         handler.saveObject(p);
     }
@@ -239,7 +227,7 @@ public class PlayersManager {
      * @param playerUUID - the player's UUID
      */
     public void addDeath(World world, UUID playerUUID) {
-        Players p = addPlayer(playerUUID);
+        Players p = getPlayer(playerUUID);
         p.addDeath(world);
         handler.saveObject(p);
     }
@@ -251,7 +239,7 @@ public class PlayersManager {
      * @param deaths - number of deaths
      */
     public void setDeaths(World world, UUID playerUUID, int deaths) {
-        Players p = addPlayer(playerUUID);
+        Players p = getPlayer(playerUUID);
         p.setDeaths(world, deaths);
         handler.saveObject(p);
     }
@@ -263,7 +251,7 @@ public class PlayersManager {
      * @return number of deaths
      */
     public int getDeaths(World world, UUID playerUUID) {
-        return addPlayer(playerUUID).getDeaths(world);
+        return getPlayer(playerUUID).getDeaths(world);
     }
 
     /**
@@ -315,31 +303,9 @@ public class PlayersManager {
      * @param playerUUID player's UUID
      */
     public void addReset(World world, UUID playerUUID) {
-        Players p = addPlayer(playerUUID);
+        Players p = getPlayer(playerUUID);
         p.addReset(world);
         handler.saveObject(p);
-    }
-
-    /**
-     * Sets the Flags display mode for the Settings Panel for this player.
-     * @param playerUUID player's UUID
-     * @param displayMode the {@link Flag.Mode} to set
-     * @since 1.6.0
-     */
-    public void setFlagsDisplayMode(UUID playerUUID, Flag.Mode displayMode) {
-        Players p = addPlayer(playerUUID);
-        p.setFlagsDisplayMode(displayMode);
-        handler.saveObject(p);
-    }
-
-    /**
-     * Returns the Flags display mode for the Settings Panel for this player.
-     * @param playerUUID player's UUID
-     * @return the {@link Flag.Mode display mode} for the Flags in the Settings Panel.
-     * @since 1.6.0
-     */
-    public Flag.Mode getFlagsDisplayMode(UUID playerUUID) {
-        return addPlayer(playerUUID).getFlagsDisplayMode();
     }
 
     /**

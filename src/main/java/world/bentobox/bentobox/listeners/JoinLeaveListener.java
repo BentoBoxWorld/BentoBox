@@ -62,7 +62,7 @@ public class JoinLeaveListener implements Listener {
 
         // Make sure the player is loaded into the cache or create the player if they
         // don't exist
-        players.addPlayer(playerUUID);
+        players.getPlayer(playerUUID);
 
         // Reset island resets if required
         plugin.getIWM().getOverWorlds().stream()
@@ -110,7 +110,7 @@ public class JoinLeaveListener implements Listener {
     private void firstTime(User user) {
         // Make sure the player is loaded into the cache or create the player if they
         // don't exist
-        players.addPlayer(user.getUniqueId());
+        players.getPlayer(user.getUniqueId());
 
         plugin.getIWM().getOverWorlds().stream().filter(w -> plugin.getIWM().isCreateIslandOnFirstLoginEnabled(w))
                 .forEach(w -> {

@@ -419,7 +419,7 @@ public class BentoBox extends JavaPlugin implements Listener {
      * @return the ranksManager
      * @deprecated Just use {@code RanksManager.getInstance()}
      */
-    @Deprecated(since = "2.0.0")
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public RanksManager getRanksManager() {
         return RanksManager.getInstance();
     }

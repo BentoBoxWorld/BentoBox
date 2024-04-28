@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
@@ -16,6 +17,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
@@ -46,16 +48,7 @@ public class SettingsTab implements Tab, ClickHandler {
     protected Island island;
     protected TabbedPanel parent;
 
-    /**
-     * Show a tab of settings
-     * @param user - user who is viewing the tab
-     * @param type - flag type
-     */
-    public SettingsTab(User user, Type type) {
-        this.user = user;
-        this.type = type;
-        // Island and world are set when the parent is set.
-    }
+    private Map<UUID, Flag.Mode> currentMode = new HashMap<>();
 
     /**
      * Show a tab of settings
@@ -70,6 +63,21 @@ public class SettingsTab implements Tab, ClickHandler {
     }
 
     /**
+     * Show a tab of settings
+     * @param world - world
+     * @param user - user who is viewing the tab
+     * @param type - flag type
+     * @param defaultMode - the default mode to show
+     * @since 2.4.0
+     */
+    public SettingsTab(World world, User user, Type type, Flag.Mode defaultMode) {
+        this.world = world;
+        this.user = user;
+        this.type = type;
+        currentMode.put(user.getUniqueId(), defaultMode);
+    }
+
+    /**
      * @return list of flags that will be shown in this panel
      */
     protected List<Flag> getFlags() {
@@ -81,7 +89,7 @@ public class SettingsTab implements Tab, ClickHandler {
         // Remove any that are not for this game mode
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> !f.getGameModes().isEmpty() && !f.getGameModes().contains(gm)));
         // Remove any that are the wrong rank or that will be on the top row
-        Flag.Mode mode = plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId());
+        Flag.Mode mode = currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC);
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> f.getMode().isGreaterThan(mode) ||
                 f.getMode().equals(Flag.Mode.TOP_ROW)));
         return flags;
@@ -120,13 +128,14 @@ public class SettingsTab implements Tab, ClickHandler {
         int i = 0;
         // Jump past empty tabs
         while (flags.isEmpty() && i++ < Flag.Mode.values().length) {
-            plugin.getPlayers().setFlagsDisplayMode(user.getUniqueId(), plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId()).getNext());
+            currentMode.put(user.getUniqueId(), currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC).getNext());
             flags = getFlags();
         }
-        return flags.stream().map(
+        List<@Nullable PanelItem> result = flags.stream().map(
                 (f -> f.toPanelItem(plugin, user, world, island,
                         plugin.getIWM().getHiddenFlags(world).contains(f.getID()))))
                 .toList();
+        return result;
     }
 
     @Override
@@ -137,8 +146,9 @@ public class SettingsTab implements Tab, ClickHandler {
             icons.put(4, Flags.CHANGE_SETTINGS.toPanelItem(plugin, user, world, island, false));
             icons.put(5, Flags.LOCK.toPanelItem(plugin, user, world, island, false));
         }
+
         // Add the mode icon
-        switch (plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId())) {
+        switch (currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC)) {
         case ADVANCED -> icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
                 .name(user.getTranslation(PROTECTION_PANEL + "mode.advanced.name"))
                 .description(user.getTranslation(PROTECTION_PANEL + "mode.advanced.description"), "",
@@ -161,7 +171,8 @@ public class SettingsTab implements Tab, ClickHandler {
                 .clickHandler(this)
                 .build());
         }
-        // Add the reset everything to default - it's only in the player's settings panel
+
+        // Add the reset everything to default - it's only in the player's settings panel 
         if (island != null && user.getUniqueId().equals(island.getOwner())) {
             icons.put(8, new PanelItemBuilder().icon(Material.TNT)
                     .name(user.getTranslation(PROTECTION_PANEL + "reset-to-default.name"))
@@ -216,7 +227,7 @@ public class SettingsTab implements Tab, ClickHandler {
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
         // Cycle the mode
-        plugin.getPlayers().setFlagsDisplayMode(user.getUniqueId(), plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId()).getNext());
+        currentMode.put(user.getUniqueId(), currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC).getNext());
         if (panel instanceof TabbedPanel tp) {
             tp.setActivePage(0);
             tp.refreshPanel();

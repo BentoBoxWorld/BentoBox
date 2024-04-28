@@ -8,6 +8,8 @@ import org.bukkit.generator.ChunkGenerator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import com.github.puregero.multilib.MultiLib;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.util.Util;
@@ -129,7 +131,10 @@ public abstract class GameModeAddon extends Addon {
      * in-game and need to be saved.
      * @since 1.4.0
      */
-    public abstract void saveWorldSettings();
+    public void saveWorldSettings() {
+        // Inform other servers
+        MultiLib.notify("bentobox-config-update", "");
+    }
     
     /**
      * Defines if the game mode uses the latest {@link ChunkGenerator} API or 

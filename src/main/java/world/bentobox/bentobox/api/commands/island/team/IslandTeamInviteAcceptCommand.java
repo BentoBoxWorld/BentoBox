@@ -197,7 +197,6 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME,
                     user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
         }
-        //IslandsManager.updateIsland(teamIsland);
         // Fire event
         TeamEvent.builder().island(teamIsland).reason(TeamEvent.Reason.JOINED).involvedPlayer(user.getUniqueId())
                 .build();

@@ -220,8 +220,6 @@ public class JoinLeaveListenerTest {
         jll = new JoinLeaveListener(plugin);
     }
 
-    /**
-     */
     @After
     public void tearDown() {
         User.clearUsers();
@@ -237,7 +235,7 @@ public class JoinLeaveListenerTest {
         PlayerJoinEvent event = new PlayerJoinEvent(player, "");
         jll.onPlayerJoin(event);
         // Verify
-        verify(pm, times(2)).addPlayer(any());
+        verify(pm, times(3)).getPlayer(any());
         verify(player, never()).sendMessage(anyString());
         // Verify resets
         verify(pm).setResets(eq(world), any(), eq(0));
@@ -354,7 +352,7 @@ public class JoinLeaveListenerTest {
         PlayerJoinEvent event = new PlayerJoinEvent(player, "");
         jll.onPlayerJoin(event);
         // Verify
-        verify(pm, times(2)).addPlayer(any());
+        verify(pm, times(3)).getPlayer(any());
         verify(player).sendMessage(eq("commands.island.create.on-first-login"));
     }
 

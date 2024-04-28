@@ -96,6 +96,11 @@ public class IslandCache {
 
     }
 
+    /**
+     * TODO REMOVE THIS DEBUG METHOD
+     * @param island1 island1
+     * @param island2 island 2
+     */
     public void compareIslands(Island island1, Island island2) {
         if (island1 == null || island2 == null) {
             BentoBox.getInstance().logDebug("One or both islands are null. Cannot compare.");
