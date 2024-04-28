@@ -1,10 +1,13 @@
 package world.bentobox.bentobox.panels.settings;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -74,8 +77,6 @@ public class SettingsTab implements Tab, ClickHandler {
      * @return list of flags that will be shown in this panel
      */
     protected List<Flag> getFlags() {
-        return plugin.getFlagsManager().getFlags();
-        /*
         // Get a list of flags of the correct type and sort by the translated names
         List<Flag> flags = plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(type))
                 // We're stripping colors to avoid weird sorting issues
@@ -87,7 +88,7 @@ public class SettingsTab implements Tab, ClickHandler {
         Flag.Mode mode = currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC);
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> f.getMode().isGreaterThan(mode) ||
                 f.getMode().equals(Flag.Mode.TOP_ROW)));
-        return flags;*/
+        return flags;
     }
 
     /**
