@@ -52,17 +52,6 @@ public class SettingsTab implements Tab, ClickHandler {
 
     /**
      * Show a tab of settings
-     * @param user - user who is viewing the tab
-     * @param type - flag type
-     */
-    public SettingsTab(User user, Type type) {
-        this.user = user;
-        this.type = type;
-        // Island and world are set when the parent is set.
-    }
-
-    /**
-     * Show a tab of settings
      * @param world - world
      * @param user - user who is viewing the tab
      * @param type - flag type
@@ -71,6 +60,21 @@ public class SettingsTab implements Tab, ClickHandler {
         this.world = world;
         this.user = user;
         this.type = type;
+    }
+
+    /**
+     * Show a tab of settings
+     * @param world - world
+     * @param user - user who is viewing the tab
+     * @param type - flag type
+     * @param defaultMode - the default mode to show
+     * @since 2.4.0
+     */
+    public SettingsTab(World world, User user, Type type, Flag.Mode defaultMode) {
+        this.world = world;
+        this.user = user;
+        this.type = type;
+        currentMode.put(user.getUniqueId(), defaultMode);
     }
 
     /**
