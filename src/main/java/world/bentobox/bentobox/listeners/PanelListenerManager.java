@@ -61,6 +61,7 @@ public class PanelListenerManager implements Listener {
                     // Refresh
                     l.refreshPanel();
                 });
+
             } else {
                 // Wrong name - delete this panel
                 openPanels.remove(user.getUniqueId());

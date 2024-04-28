@@ -69,7 +69,6 @@ public class PlayersManager {
     public Players getPlayer(UUID uuid){
         if (!playerCache.containsKey(uuid)) {
             playerCache.put(uuid, addPlayer(uuid));
-            BentoBox.getInstance().logDebug("Not in cache");
         }
         return playerCache.get(uuid);
     }
@@ -138,7 +137,7 @@ public class PlayersManager {
      * @param user - the User
      */
     public void setPlayerName(@NonNull User user) {
-        Players player = addPlayer(user.getUniqueId());
+        Players player = getPlayer(user.getUniqueId());
         player.setPlayerName(user.getName());
         handler.saveObject(player);
         Names newName = new Names(user.getName(), user.getUniqueId());
@@ -169,7 +168,7 @@ public class PlayersManager {
      * @return number of resets
      */
     public int getResets(World world, UUID playerUUID) {
-        return addPlayer(playerUUID).getResets(world);
+        return getPlayer(playerUUID).getResets(world);
     }
 
     /**
@@ -181,7 +180,7 @@ public class PlayersManager {
      * @see #getResets(World, UUID)
      */
     public int getResetsLeft(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
+        getPlayer(playerUUID);
         if (plugin.getIWM().getResetLimit(world) == -1) {
             return -1;
         } else {
@@ -197,7 +196,7 @@ public class PlayersManager {
      * @param resets number of resets to set
      */
     public void setResets(World world, UUID playerUUID, int resets) {
-        Players p = addPlayer(playerUUID);
+        Players p = getPlayer(playerUUID);
         p.setResets(world, resets);
         handler.saveObject(p);
     }
@@ -208,7 +207,7 @@ public class PlayersManager {
      * @return name of the locale this player uses
      */
     public String getLocale(UUID playerUUID) {
-        return addPlayer(playerUUID).getLocale();
+        return getPlayer(playerUUID).getLocale();
     }
 
     /**
@@ -217,7 +216,7 @@ public class PlayersManager {
      * @param localeName - locale name, e.g., en-US
      */
     public void setLocale(UUID playerUUID, String localeName) {
-        Players p = addPlayer(playerUUID);
+        Players p = getPlayer(playerUUID);
         p.setLocale(localeName);
         handler.saveObject(p);
     }
@@ -228,7 +227,7 @@ public class PlayersManager {
      * @param playerUUID - the player's UUID
      */
     public void addDeath(World world, UUID playerUUID) {
-        Players p = addPlayer(playerUUID);
+        Players p = getPlayer(playerUUID);
         p.addDeath(world);
         handler.saveObject(p);
     }
@@ -240,7 +239,7 @@ public class PlayersManager {
      * @param deaths - number of deaths
      */
     public void setDeaths(World world, UUID playerUUID, int deaths) {
-        Players p = addPlayer(playerUUID);
+        Players p = getPlayer(playerUUID);
         p.setDeaths(world, deaths);
         handler.saveObject(p);
     }
@@ -252,7 +251,7 @@ public class PlayersManager {
      * @return number of deaths
      */
     public int getDeaths(World world, UUID playerUUID) {
-        return addPlayer(playerUUID).getDeaths(world);
+        return getPlayer(playerUUID).getDeaths(world);
     }
 
     /**
@@ -304,7 +303,7 @@ public class PlayersManager {
      * @param playerUUID player's UUID
      */
     public void addReset(World world, UUID playerUUID) {
-        Players p = addPlayer(playerUUID);
+        Players p = getPlayer(playerUUID);
         p.addReset(world);
         handler.saveObject(p);
     }

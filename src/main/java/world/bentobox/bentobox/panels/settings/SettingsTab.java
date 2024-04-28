@@ -1,14 +1,10 @@
 package world.bentobox.bentobox.panels.settings;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -78,7 +74,8 @@ public class SettingsTab implements Tab, ClickHandler {
      * @return list of flags that will be shown in this panel
      */
     protected List<Flag> getFlags() {
-        long m = System.currentTimeMillis();
+        return plugin.getFlagsManager().getFlags();
+        /*
         // Get a list of flags of the correct type and sort by the translated names
         List<Flag> flags = plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(type))
                 // We're stripping colors to avoid weird sorting issues
@@ -90,8 +87,7 @@ public class SettingsTab implements Tab, ClickHandler {
         Flag.Mode mode = currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC);
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> f.getMode().isGreaterThan(mode) ||
                 f.getMode().equals(Flag.Mode.TOP_ROW)));
-        BentoBox.getInstance().logDebug("Time to get flags = " + (System.currentTimeMillis() - m));
-        return flags;
+        return flags;*/
     }
 
     /**
@@ -123,8 +119,6 @@ public class SettingsTab implements Tab, ClickHandler {
     @Override
     @NonNull
     public List<@Nullable PanelItem> getPanelItems() {
-
-        BentoBox.getInstance().logDebug("Get panel items");
         List<Flag> flags = getFlags();
         int i = 0;
         // Jump past empty tabs
@@ -132,25 +126,10 @@ public class SettingsTab implements Tab, ClickHandler {
             currentMode.put(user.getUniqueId(), currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC).getNext());
             flags = getFlags();
         }
-        long m = System.currentTimeMillis();
-
-        // TODO This is taking too long!!!
-
-        List<@Nullable PanelItem> result = new ArrayList<>();
-        for (Flag f : flags) {
-            boolean x = plugin.getIWM().getHiddenFlags(world).contains(f.getID());
-            //BentoBox.getInstance().logDebug("Time for x = " + (System.currentTimeMillis() - m));
-            PanelItem pi = f.toPanelItem(plugin, user, world, island, x);
-            ///BentoBox.getInstance().logDebug("Time for pi = " + (System.currentTimeMillis() - m));
-            result.add(pi);
-        }
-        /*
         List<@Nullable PanelItem> result = flags.stream().map(
                 (f -> f.toPanelItem(plugin, user, world, island,
                         plugin.getIWM().getHiddenFlags(world).contains(f.getID()))))
                 .toList();
-                */
-        BentoBox.getInstance().logDebug("Time for getpanelitems end = " + (System.currentTimeMillis() - m));
         return result;
     }
 
@@ -162,6 +141,7 @@ public class SettingsTab implements Tab, ClickHandler {
             icons.put(4, Flags.CHANGE_SETTINGS.toPanelItem(plugin, user, world, island, false));
             icons.put(5, Flags.LOCK.toPanelItem(plugin, user, world, island, false));
         }
+
         // Add the mode icon
         switch (currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC)) {
         case ADVANCED -> icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
@@ -186,7 +166,8 @@ public class SettingsTab implements Tab, ClickHandler {
                 .clickHandler(this)
                 .build());
         }
-        // Add the reset everything to default - it's only in the player's settings panel
+
+        // Add the reset everything to default - it's only in the player's settings panel 
         if (island != null && user.getUniqueId().equals(island.getOwner())) {
             icons.put(8, new PanelItemBuilder().icon(Material.TNT)
                     .name(user.getTranslation(PROTECTION_PANEL + "reset-to-default.name"))
@@ -240,7 +221,6 @@ public class SettingsTab implements Tab, ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
-        long m = System.currentTimeMillis();
         // Cycle the mode
         currentMode.put(user.getUniqueId(), currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC).getNext());
         if (panel instanceof TabbedPanel tp) {
@@ -248,7 +228,6 @@ public class SettingsTab implements Tab, ClickHandler {
             tp.refreshPanel();
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
         }
-        BentoBox.getInstance().logDebug("Time for onClick = " + (System.currentTimeMillis() - m));
         return true;
     }
 

@@ -280,16 +280,6 @@ public class PlayersManagerTest {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#addPlayer(java.util.UUID)}.
-     */
-    @Test
-    public void testAddPlayer() {
-        pm.addPlayer(uuid);
-        assertTrue(pm.isKnown(uuid));
-    }
-
-    /**
-     * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#addReset(org.bukkit.World, java.util.UUID)}.
      */
     @Test
@@ -443,7 +433,7 @@ public class PlayersManagerTest {
     public void testGetSetResetsLeft() throws InstantiationException, IllegalAccessException, InvocationTargetException,
             ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         // Add a player
-        pm.addPlayer(uuid);
+        pm.getPlayer(uuid);
         assertEquals(0, pm.getResets(world, uuid));
         pm.setResets(world, uuid, 20);
         assertEquals(20, pm.getResets(world, uuid));
@@ -464,7 +454,7 @@ public class PlayersManagerTest {
             ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         User user = pm.getUser("random");
         assertNull(user);
-        pm.addPlayer(uuid);
+        pm.getPlayer(uuid);
         user = pm.getUser("tastybento");
         assertEquals("tastybento", user.getName());
     }
@@ -485,7 +475,7 @@ public class PlayersManagerTest {
      */
     @Test
     public void testGetUUID() {
-        pm.addPlayer(uuid);
+        pm.getPlayer(uuid);
         assertEquals(uuid, pm.getUUID("tastybento"));
         assertNull(pm.getUUID("unknown"));
     }
@@ -498,7 +488,7 @@ public class PlayersManagerTest {
     public void testGetUUIDOfflinePlayer() {
         pm.setHandler(db);
         // Add a player to the cache
-        pm.addPlayer(uuid);
+        pm.getPlayer(uuid);
         UUID uuidResult = pm.getUUID("tastybento");
         assertEquals(uuid, uuidResult);
     }
@@ -511,7 +501,7 @@ public class PlayersManagerTest {
     public void testGetUUIDUnknownPlayer() {
         pm.setHandler(db);
         // Add a player to the cache
-        pm.addPlayer(uuid);
+        pm.getPlayer(uuid);
         // Unknown player should return null
         assertNull(pm.getUUID("tastybento123"));
     }
@@ -541,8 +531,8 @@ public class PlayersManagerTest {
     @Test
     public void testIsKnown() {
 
-        pm.addPlayer(uuid);
-        pm.addPlayer(notUUID);
+        pm.getPlayer(uuid);
+        pm.getPlayer(notUUID);
 
         assertFalse(pm.isKnown(null));
         assertTrue(pm.isKnown(uuid));
@@ -551,21 +541,11 @@ public class PlayersManagerTest {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#isSaveTaskRunning()}.
+     * {@link world.bentobox.bentobox.managers.PlayersManager#setHandler(Database)}
      */
     @Test
-    public void testIsSaveTaskRunning() {
-        assertFalse(pm.isSaveTaskRunning());
-    }
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#load()}.
-     */
-    @Test
-    public void testLoad() {
+    public void testSetHandler() {
         pm.setHandler(db);
-        pm.load();
     }
 
     /**
@@ -608,7 +588,7 @@ public class PlayersManagerTest {
     public void testSetandGetPlayerName() {
         pm.setHandler(db);
         // Add a player
-        pm.addPlayer(uuid);
+        pm.getPlayer(uuid);
         assertEquals("tastybento", pm.getName(user.getUniqueId()));
         pm.setPlayerName(user);
         assertEquals(user.getName(), pm.getName(user.getUniqueId()));

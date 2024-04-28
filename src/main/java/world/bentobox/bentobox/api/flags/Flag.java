@@ -384,29 +384,28 @@ public class Flag implements Comparable<Flag> {
      */
     @Nullable
     public PanelItem toPanelItem(BentoBox plugin, User user, World world, @Nullable Island island, boolean invisible) {
-        // TODO: Why is this taking long
-        long m = System.currentTimeMillis();
         // Invisibility
         if (!user.isOp() && invisible) {
             return null;
         }
-        // Start the flag conversion
         PanelItemBuilder pib = new PanelItemBuilder()
                 .icon(ItemParser.parse(user.getTranslationOrNothing(this.getIconReference()), new ItemStack(icon)))
-                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
+                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME,
+                        user.getTranslation(getNameReference())))
                 .clickHandler(clickHandler)
                 .invisible(invisible);
-        BentoBox.getInstance().logDebug("Time for pib = " + (System.currentTimeMillis() - m));
         if (hasSubPanel()) {
             pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             return pib.build();
         }
-        BentoBox.getInstance().logDebug("Type = " + getType());
+
         return switch (getType()) {
         case PROTECTION -> createProtectionFlag(plugin, user, island, pib).build();
         case SETTING -> createSettingFlag(user, island, pib).build();
         case WORLD_SETTING -> createWorldSettingFlag(user, world, pib).build();
+
         };
+
     }
 
     private PanelItemBuilder createWorldSettingFlag(User user, World world, PanelItemBuilder pib) {
@@ -432,16 +431,15 @@ public class Flag implements Comparable<Flag> {
     }
 
     private PanelItemBuilder createProtectionFlag(BentoBox plugin, User user, Island island, PanelItemBuilder pib) {
-        long m = System.currentTimeMillis();
-        BentoBox.getInstance().logDebug("Protection flag");
         if (island != null) {
             int y = island.getFlag(this);
-            BentoBox.getInstance().logDebug("Protection flag getFlag time " + (System.currentTimeMillis() - m));
             // Protection flag
+
             pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
                     TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
-            BentoBox.getInstance().logDebug("Protection flag description time " + (System.currentTimeMillis() - m));
+
             RanksManager.getInstance().getRanks().forEach((reference, score) -> {
+
                 if (score > RanksManager.BANNED_RANK && score < y) {
                     pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
                 } else if (score <= RanksManager.OWNER_RANK && score > y) {
@@ -451,7 +449,7 @@ public class Flag implements Comparable<Flag> {
                 }
             });
         }
-        BentoBox.getInstance().logDebug("Protection flag time " + (System.currentTimeMillis() - m));
+
         return pib;
     }
 
@@ -479,7 +477,7 @@ public class Flag implements Comparable<Flag> {
     public Set<Flag> getSubflags() {
         return subflags;
     }
-    
+
     /**
      * Set the name of this flag for a specified locale. This enables the flag's name to be assigned via API. It will not be stored anywhere
      * and must be rewritten using this call every time the flag is built.
@@ -492,7 +490,7 @@ public class Flag implements Comparable<Flag> {
     public boolean setTranslatedName(Locale locale, String name) {
         return BentoBox.getInstance().getLocalesManager().setTranslation(locale, getNameReference(), name);
     }
-    
+
     /**
      * Set the name of this flag for a specified locale. This enables the flag's name to be assigned via API. It will not be stored anywhere
      * and must be rewritten using this call every time the flag is built.

@@ -224,7 +224,6 @@ public abstract class Addon {
      * @since 1.13.0
      */
     public void reloadConfig() {
-        BentoBox.getInstance().logDebug("Config reloaded");
         config = loadYamlFile();
     }
 

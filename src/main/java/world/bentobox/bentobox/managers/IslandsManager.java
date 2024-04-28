@@ -108,7 +108,6 @@ public class IslandsManager {
 
         // Listen for Island Updates
         MultiLib.onString(plugin, "bentobox-updateIsland", id -> {
-            BentoBox.getInstance().logDebug("Updating island " + id);
             Island island = handler.loadObject(id);
             if (island != null) {
                 islandCache.updateIsland(island);
@@ -117,13 +116,11 @@ public class IslandsManager {
 
         // Delete island blocks
         MultiLib.onString(plugin, "bentobox-deleteIsland", id -> {
-            BentoBox.getInstance().logDebug("Delete island blocks");
             IslandDeletion idd = getGson().fromJson(id, IslandDeletion.class);
             plugin.getIslandDeletionManager().getIslandChunkDeletionManager().add(idd);
         });
         // List for new islands
         MultiLib.onString(plugin, "bentobox-newIsland", id -> {
-            BentoBox.getInstance().logDebug("New island " + id);
             Island island = handler.loadObject(id);
             if (island != null) {
                 islandCache.addIsland(island);
@@ -139,7 +136,6 @@ public class IslandsManager {
                 World world = Bukkit.getWorld(split[0]);
                 if (world != null) {
                     getIslandById(split[1]).ifPresent(i -> this.setSpawn(i));
-                    BentoBox.getInstance().logDebug("Setting spawn for world " + world);
                 }
             }
 
@@ -277,7 +273,6 @@ public class IslandsManager {
      * @param involvedPlayer - player related to the island deletion, if any
      */
     public void deleteIsland(@NonNull Island island, boolean removeBlocks, @Nullable UUID involvedPlayer) {
-        BentoBox.getInstance().logDebug("Deleting island " + island.getUniqueId() + " remove blocks = " + removeBlocks);
         // Fire event
         IslandBaseEvent event = IslandEvent.builder().island(island).involvedPlayer(involvedPlayer)
                 .reason(Reason.DELETE).build();
@@ -1641,14 +1636,11 @@ public class IslandsManager {
      * @param island - island
      */
     public static void updateIsland(Island island) {
-        long m = System.currentTimeMillis();
-
         if (handler.objectExists(island.getUniqueId())) {
             island.clearChanged();
             handler.saveObjectAsync(island)
                     .thenAccept(b -> MultiLib.notify("bentobox-updateIsland", island.getUniqueId()));
         }
-        BentoBox.getInstance().logDebug("Island update " + (System.currentTimeMillis() - m));
     }
 
     /**

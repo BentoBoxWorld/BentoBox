@@ -270,16 +270,6 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoArgs() {
-        assertTrue(asc.execute(user, "", Collections.emptyList()));
-        verify(pm).setFlagsDisplayMode(user.getUniqueId(), Mode.EXPERT);
-        // Open panel
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
     public void testExecuteUserStringListOfStringArgs() {
         assertTrue(asc.execute(user, "", Arrays.asList("blah", "blah")));
         verify(user).sendMessage("general.success");

@@ -70,7 +70,6 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
      */
     @Override
     public @NonNull List<PanelItem> getPanelItems() {
-        BentoBox.getInstance().logDebug("Get world default settings");
         // Different description and click handlers
         return getFlags().stream().map(f -> {
             PanelItem i = f.toPanelItem(plugin, user, world, island, false);
