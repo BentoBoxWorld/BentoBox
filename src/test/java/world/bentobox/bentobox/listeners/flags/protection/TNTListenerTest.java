@@ -77,7 +77,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(block.getWorld()).thenReturn(world);
 
         // Entity
-        when(entity.getType()).thenReturn(EntityType.PRIMED_TNT);
+        when(entity.getType()).thenReturn(EntityType.TNT);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getLocation()).thenReturn(location);
 

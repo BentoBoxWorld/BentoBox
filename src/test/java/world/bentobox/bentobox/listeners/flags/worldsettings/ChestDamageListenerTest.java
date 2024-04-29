@@ -185,7 +185,7 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
     public void testOnExplosionChestDamageNotAllowed() {
         Flags.CHEST_DAMAGE.setSetting(world, false);
         Entity entity = mock(Entity.class);
-        when(entity.getType()).thenReturn(EntityType.PRIMED_TNT);
+        when(entity.getType()).thenReturn(EntityType.TNT);
         List<Block> list = new ArrayList<>();
         Block chest = mock(Block.class);
         when(chest.getType()).thenReturn(Material.CHEST);
@@ -217,7 +217,7 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
     public void testOnExplosionChestDamageAllowed() {
         Flags.CHEST_DAMAGE.setSetting(world, true);
         Entity entity = mock(Entity.class);
-        when(entity.getType()).thenReturn(EntityType.PRIMED_TNT);
+        when(entity.getType()).thenReturn(EntityType.TNT);
         List<Block> list = new ArrayList<>();
         Block chest = mock(Block.class);
         when(chest.getType()).thenReturn(Material.CHEST);

@@ -145,6 +145,7 @@ public class ItemParser {
                 ItemParser.setCustomModelData(returnValue, customModelData);
             }
         } catch (Exception exception) {
+            exception.printStackTrace();
             BentoBox.getInstance().logError("Could not parse item " + text + " " + exception.getLocalizedMessage());
             returnValue = defaultItemStack;
         }
@@ -261,7 +262,8 @@ public class ItemParser {
         boolean isUpgraded = !part[2].isEmpty() && !part[2].equalsIgnoreCase("1");
         boolean isExtended = part[3].equalsIgnoreCase("EXTENDED");
         PotionData data = new PotionData(type, isExtended, isUpgraded);
-        potionMeta.setBasePotionData(data);
+        // TODO: Set extended and u[graded settings.
+        potionMeta.setBasePotionType(type);
         result.setItemMeta(potionMeta);
         result.setAmount(Integer.parseInt(part[5]));
         return result;
@@ -285,7 +287,7 @@ public class ItemParser {
     private static ItemStack parsePotion(String[] part) {
         if (part.length == 6) {
             BentoBox.getInstance().logWarning("The old potion parsing detected for " + part[0] +
-                ". Please update your configs, as SPIGOT changed potion types.");
+                    ". Please update your configs, as SPIGOT changed potion types.");
             return parsePotionOld(part);
         }
 
@@ -314,7 +316,7 @@ public class ItemParser {
 
         if (result.getItemMeta() instanceof PotionMeta meta) {
             PotionType potionType = Enums.getIfPresent(PotionType.class, part[1].toUpperCase(Locale.ENGLISH)).
-                or(PotionType.WATER);
+                    or(PotionType.WATER);
             meta.setBasePotionType(potionType);
             result.setItemMeta(meta);
         }
@@ -340,7 +342,17 @@ public class ItemParser {
             BannerMeta meta = (BannerMeta) result.getItemMeta();
             if (meta != null) {
                 for (int i = 2; i < part.length; i += 2) {
-                    meta.addPattern(new Pattern(DyeColor.valueOf(part[i + 1]), PatternType.valueOf(part[i])));
+                    PatternType pt = Enums.getIfPresent(PatternType.class, part[i]).orNull();
+                    if (pt == null) {
+                        // Try to convert old to new
+                        if (part[i].trim().equals("STRIPE_SMALL")) {
+                            pt = PatternType.SMALL_STRIPES;
+                        }
+                    }
+                    DyeColor dc = Enums.getIfPresent(DyeColor.class, part[i + 1]).orNull();
+                    if (pt != null && dc != null) {
+                        meta.addPattern(new Pattern(dc, pt));
+                    }
                 }
                 result.setItemMeta(meta);
             }
