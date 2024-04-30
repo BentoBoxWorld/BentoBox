@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.admin.range;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -11,11 +10,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 
-import com.google.common.base.Enums;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author Poslovitch
@@ -26,10 +24,9 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
     private static final String DISPLAY = "display";
     private static final String SHOW = "show";
     private static final String HIDE = "hide";
-    public static final Particle PARTICLE = Enums.getIfPresent(Particle.class, "RESTONE").toJavaUtil()
-            .orElse(Enums.getIfPresent(Particle.class, "DUST").orNull());
-    private static final Particle PARTICLE2 = Enums.getIfPresent(Particle.class, "VILLAGER_HAPPY").toJavaUtil()
-            .orElse(Enums.getIfPresent(Particle.class, "HAPPY_VILLAGER").orNull());
+    public static final Particle PARTICLE = Util.findFirstMatchingEnum(Particle.class, "REDSTONE", "DUST");
+    private static final Particle PARTICLE2 = Util.findFirstMatchingEnum(Particle.class, "VILLAGER_HAPPY",
+            "HAPPY_VILLAGER");
 
     // Map of users to which ranges must be displayed
     private final Map<User, Integer> displayRanges = new HashMap<>();

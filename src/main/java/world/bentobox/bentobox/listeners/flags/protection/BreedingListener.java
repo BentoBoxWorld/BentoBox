@@ -20,6 +20,7 @@ import com.google.common.base.Enums;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Handles breeding protection
@@ -40,12 +41,8 @@ public class BreedingListener extends FlagListener {
         bi.put(EntityType.HORSE, Arrays.asList(Material.GOLDEN_APPLE, Material.GOLDEN_CARROT));
         bi.put(EntityType.DONKEY, Arrays.asList(Material.GOLDEN_APPLE, Material.GOLDEN_CARROT));
         bi.put(EntityType.COW, Collections.singletonList(Material.WHEAT));
-        if (Enums.getIfPresent(EntityType.class, "MUSHROOM_COW").isPresent()) {
-            bi.put(Enums.getIfPresent(EntityType.class, "MUSHROOM_COW").get(),
-                    Collections.singletonList(Material.WHEAT));
-        } else {
-            bi.put(EntityType.MOOSHROOM, Collections.singletonList(Material.WHEAT));
-        }
+        bi.put(Util.findFirstMatchingEnum(EntityType.class, "MUSHROOM_COW", "MOOSHROOM"),
+                Collections.singletonList(Material.WHEAT));
         bi.put(EntityType.SHEEP, Collections.singletonList(Material.WHEAT));
         bi.put(EntityType.PIG, Arrays.asList(Material.CARROT, Material.POTATO, Material.BEETROOT));
         bi.put(EntityType.CHICKEN, Arrays.asList(Material.WHEAT_SEEDS, Material.PUMPKIN_SEEDS, Material.MELON_SEEDS, Material.BEETROOT_SEEDS));

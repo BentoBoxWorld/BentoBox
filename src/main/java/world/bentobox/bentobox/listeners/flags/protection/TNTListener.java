@@ -17,10 +17,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.google.common.base.Enums;
-
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Protects islands from visitors blowing things up
@@ -28,9 +27,9 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class TNTListener extends FlagListener {
 
-    private static final EntityType PRIMED_TNT = Enums.getIfPresent(EntityType.class, "PRIMED_TNT").or(EntityType.TNT);
-    private static final EntityType MINECART_TNT = Enums.getIfPresent(EntityType.class, "PMINECART_TNT)")
-            .or(EntityType.TNT_MINECART);
+    private static final EntityType PRIMED_TNT = Util.findFirstMatchingEnum(EntityType.class, "PRIMED_TNT", "TNT");
+    private static final EntityType MINECART_TNT = Util.findFirstMatchingEnum(EntityType.class, "MINECART_TNT",
+            "TNT_MINECART");
 
     /**
      * Contains {@link EntityType}s that generates an explosion.
