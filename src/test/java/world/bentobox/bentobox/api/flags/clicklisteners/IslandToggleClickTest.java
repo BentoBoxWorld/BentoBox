@@ -92,6 +92,7 @@ public class IslandToggleClickTest {
         when(user.getUniqueId()).thenReturn(uuid);
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         FlagsManager fm = mock(FlagsManager.class);
         when(flag.isSetForWorld(any())).thenReturn(false);

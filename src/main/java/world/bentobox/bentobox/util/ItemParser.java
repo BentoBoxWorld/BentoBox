@@ -145,7 +145,6 @@ public class ItemParser {
                 ItemParser.setCustomModelData(returnValue, customModelData);
             }
         } catch (Exception exception) {
-            exception.printStackTrace();
             BentoBox.getInstance().logError("Could not parse item " + text + " " + exception.getLocalizedMessage());
             returnValue = defaultItemStack;
         }

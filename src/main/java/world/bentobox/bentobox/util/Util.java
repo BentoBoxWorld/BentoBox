@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.util;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -815,15 +816,19 @@ public class Util {
      * @param values an array of string values which are potential matches for the enum constants
      * @param <T> the type parameter of the enum
      * @return the first matching enum constant if a match is found; otherwise, returns null
+     * @throws IOException 
      * @throws NullPointerException if either {@code enumClass} or {@code values} are null
      */
     public static <T extends Enum<T>> T findFirstMatchingEnum(Class<T> enumClass, String... values) {
+        if (enumClass == null || values == null) {
+            return null;
+        }
         for (String value : values) {
             Optional<T> enumConstant = Enums.getIfPresent(enumClass, value.toUpperCase());
             if (enumConstant.isPresent()) {
                 return enumConstant.get();
             }
         }
-        return null; // Return null or throw an exception if no match is found
+        return null; // Return null if no match is found
     }
 }

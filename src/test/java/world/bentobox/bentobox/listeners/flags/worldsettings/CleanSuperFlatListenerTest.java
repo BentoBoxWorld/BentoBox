@@ -82,6 +82,7 @@ public class CleanSuperFlatListenerTest {
 
         PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Regenerator
         when(Util.getRegenerator()).thenReturn(regenerator);
 
