@@ -113,6 +113,10 @@ public class IslandInfo {
         if (island.getPurgeProtected()) {
             user.sendMessage("commands.admin.info.purge-protected");
         }
+        // Show bundle info if available
+        island.getMetaData("bundle").ifPresent(mdv -> {
+            user.sendMessage("commands.admin.info.bundle", TextVariables.NAME, mdv.asString());
+        });
         // Fire info event to allow other addons to add to info
         IslandEvent.builder().island(island).location(island.getCenter()).reason(IslandEvent.Reason.INFO)
                 .involvedPlayer(user.getUniqueId()).addon(addon).admin(true).build();
