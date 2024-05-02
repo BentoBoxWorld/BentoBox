@@ -230,6 +230,7 @@ commands:
       banned-players: 'Banned players:'
       banned-format: '&c [name]'
       unowned: '&c Unowned'
+      bundle: '&a Blueprint Bundle used to create island: &b [name]'
     switch:
       description: switch on/off protection bypass
       op: '&c Ops can always bypass protection. Deop to use command.'
