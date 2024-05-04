@@ -94,6 +94,7 @@ public class OfflineRedstoneListenerTest {
         // Util
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // World Settings
         when(iwm.inWorld(any(World.class))).thenReturn(true);

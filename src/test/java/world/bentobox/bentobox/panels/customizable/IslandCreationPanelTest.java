@@ -209,7 +209,6 @@ public class IslandCreationPanelTest {
         verify(inv).setItem(eq(0), any());
         verify(inv).setItem(eq(1), any());
         verify(meta).setDisplayName(eq("test"));
-        verify(meta).setLocalizedName(eq("test"));
         verify(meta).setLore(eq(List.of("A description", "", "panels.tips.click-to-choose")));
     }
 
@@ -224,15 +223,12 @@ public class IslandCreationPanelTest {
         verify(inv).setItem(eq(0), any());
         verify(inv).setItem(eq(1), any());
         verify(meta).setDisplayName(eq("test"));
-        verify(meta).setLocalizedName(eq("test"));
         verify(meta).setLore(eq(List.of("A description", "", "panels.tips.click-to-choose")));
         verify(inv).setItem(eq(0), any());
         verify(meta).setDisplayName(eq("test2"));
-        verify(meta).setLocalizedName(eq("test2"));
         verify(meta).setLore(eq(List.of("A description 2", "", "panels.tips.click-to-choose")));
         verify(inv).setItem(eq(1), any());
         verify(meta).setDisplayName(eq("test3"));
-        verify(meta).setLocalizedName(eq("test3"));
         verify(meta).setLore(eq(List.of("A description 3", "", "panels.tips.click-to-choose")));
     }
 

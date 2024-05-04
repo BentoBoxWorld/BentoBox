@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerUnleashEntityEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
@@ -42,7 +43,8 @@ public class LeashListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerLeashHitch(final HangingPlaceEvent e) {
-        if (e.getEntity().getType().equals(EntityType.LEASH_HITCH)) {
+        EntityType LEASH_HITCH = Util.findFirstMatchingEnum(EntityType.class, "LEASH_HITCH", "LEASH_KNOT");
+        if (e.getEntity().getType().equals(LEASH_HITCH)) {
             checkIsland(e, e.getPlayer(), e.getEntity().getLocation(), Flags.LEASH);
         }
     }

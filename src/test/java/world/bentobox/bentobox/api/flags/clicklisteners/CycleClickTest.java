@@ -215,6 +215,7 @@ public class CycleClickTest {
         // Util
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Event
         when(Bukkit.getPluginManager()).thenReturn(pim);

@@ -66,6 +66,11 @@ public class OfflineGrowthListenerTest {
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
+        // Util
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+
         // Owner
         UUID uuid = UUID.randomUUID();
 
@@ -91,9 +96,6 @@ public class OfflineGrowthListenerTest {
         when(block.getWorld()).thenReturn(world);
         when(block.getLocation()).thenReturn(inside);
         when(block.getType()).thenReturn(Material.KELP);
-
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(world);
 
         // World Settings
         when(iwm.inWorld(any(World.class))).thenReturn(true);

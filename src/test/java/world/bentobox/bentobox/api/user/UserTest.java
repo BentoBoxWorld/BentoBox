@@ -842,9 +842,10 @@ public class UserTest {
         User.clearUsers();
         User p = User.getInstance(player);
         try {
-            p.spawnParticle(Particle.REDSTONE, 4, 0.0d, 0.0d, 0.0d);
+            p.spawnParticle(Particle.DUST, 4, 0.0d, 0.0d, 0.0d);
         } catch (Exception e) {
-            assertEquals("A non-null DustOptions must be provided when using Particle.REDSTONE as particle.", e.getMessage());
+            assertEquals("A non-null DustOptions must be provided when using Particle.DUST as particle.",
+                    e.getMessage());
         }
     }
 
@@ -878,8 +879,8 @@ public class UserTest {
 
         User p = User.getInstance(player);
         DustOptions dust = mock(DustOptions.class);
-        p.spawnParticle(Particle.REDSTONE, dust, 0.0d, 0.0d, 0.0d);
-        verify(player).spawnParticle(Particle.REDSTONE, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
+        p.spawnParticle(Particle.DUST, dust, 0.0d, 0.0d, 0.0d);
+        verify(player).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
 
     }
 
@@ -896,8 +897,8 @@ public class UserTest {
 
         User p = User.getInstance(player);
         DustOptions dust = mock(DustOptions.class);
-        p.spawnParticle(Particle.REDSTONE, dust, 0.0d, 0.0d, 0.0d);
-        verify(player).spawnParticle(Particle.REDSTONE, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
+        p.spawnParticle(Particle.DUST, dust, 0.0d, 0.0d, 0.0d);
+        verify(player).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
 
     }
 
@@ -914,8 +915,8 @@ public class UserTest {
 
         User p = User.getInstance(player);
         DustOptions dust = mock(DustOptions.class);
-        p.spawnParticle(Particle.REDSTONE, dust, 0, 0, 0);
-        verify(player).spawnParticle(Particle.REDSTONE, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
+        p.spawnParticle(Particle.DUST, dust, 0, 0, 0);
+        verify(player).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
 
     }
 

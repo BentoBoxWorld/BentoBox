@@ -13,6 +13,7 @@ import org.bukkit.Particle;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author Poslovitch
@@ -23,6 +24,9 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
     private static final String DISPLAY = "display";
     private static final String SHOW = "show";
     private static final String HIDE = "hide";
+    public static final Particle PARTICLE = Util.findFirstMatchingEnum(Particle.class, "REDSTONE", "DUST");
+    private static final Particle PARTICLE2 = Util.findFirstMatchingEnum(Particle.class, "VILLAGER_HAPPY",
+            "HAPPY_VILLAGER");
 
     // Map of users to which ranges must be displayed
     private final Map<User, Integer> displayRanges = new HashMap<>();
@@ -76,11 +80,11 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
                 // Draw the default protected area if island protected zone is different
                 if (island.getProtectionRange() != getPlugin().getIWM().getIslandProtectionRange(getWorld())) {
-                    drawZone(user, Particle.VILLAGER_HAPPY, null, island, getPlugin().getIWM().getIslandProtectionRange(getWorld()));
+                    drawZone(user, PARTICLE2, null, island, getPlugin().getIWM().getIslandProtectionRange(getWorld()));
                 }
 
                 // Draw the island area
-                drawZone(user, Particle.REDSTONE, new Particle.DustOptions(Color.GRAY, 1.0F), island, island.getRange());
+                drawZone(user, PARTICLE, new Particle.DustOptions(Color.GRAY, 1.0F), island, island.getRange());
             });
         }, 20, 30));
     }

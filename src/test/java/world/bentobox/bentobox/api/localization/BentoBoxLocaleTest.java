@@ -55,7 +55,7 @@ public class BentoBoxLocaleTest {
 
         Locale locale = Locale.US;
         YamlConfiguration config = new YamlConfiguration();
-        config.set("meta.banner", "WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE");
+        config.set("meta.banner", "WHITE_BANNER:1:SMALL_STRIPES:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE");
         List<String> authors = new ArrayList<>();
         authors.add("tastybento");
         authors.add("tastybento2");

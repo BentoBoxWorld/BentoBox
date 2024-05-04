@@ -155,6 +155,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         PowerMockito.mockStatic(Util.class);
         when(Util.getUUID(anyString())).thenReturn(uuid);
         when(Util.tabLimit(any(), any())).thenCallRealMethod();
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Settings
         Settings settings = new Settings();

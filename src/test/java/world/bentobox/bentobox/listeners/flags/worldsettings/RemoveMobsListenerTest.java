@@ -97,6 +97,7 @@ public class RemoveMobsListenerTest {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // World Settings
         IslandWorldManager iwm = mock(IslandWorldManager.class);
