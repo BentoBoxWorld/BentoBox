@@ -100,6 +100,10 @@ public class TestBentoBox extends AbstractCommonSetup {
         when(ownerOfIsland.getUniqueId()).thenReturn(uuid);
         when(visitorToIsland.getUniqueId()).thenReturn(VISITOR_UUID);
 
+        // Util
+        PowerMockito.mockStatic(Util.class);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+
         island.setOwner(uuid);
         island.setProtectionRange(100);
         island.setCenter(location);

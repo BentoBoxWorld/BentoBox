@@ -160,6 +160,7 @@ public class IslandGoCommandTest {
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         PowerMockito.mockStatic(Util.class);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);

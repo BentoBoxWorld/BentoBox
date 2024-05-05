@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.util;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +42,9 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.common.base.Enums;
+import com.google.common.base.Optional;
 
 import io.papermc.lib.PaperLib;
 import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
@@ -800,5 +804,31 @@ public class Util {
         return ChatColor.stripColor(
                 Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).
                 toLowerCase();
+    }
+
+    /**
+     * Attempts to find the first matching enum constant from an array of possible string representations.
+     * This method sequentially checks each string against the enum constants of the specified enum class
+     * by normalizing the string values to uppercase before comparison, enhancing the likelihood of a match
+     * if the enum constants are defined in uppercase.
+     *
+     * @param enumClass the Class object of the enum type to be checked against
+     * @param values an array of string values which are potential matches for the enum constants
+     * @param <T> the type parameter of the enum
+     * @return the first matching enum constant if a match is found; otherwise, returns null
+     * @throws IOException 
+     * @throws NullPointerException if either {@code enumClass} or {@code values} are null
+     */
+    public static <T extends Enum<T>> T findFirstMatchingEnum(Class<T> enumClass, String... values) {
+        if (enumClass == null || values == null) {
+            return null;
+        }
+        for (String value : values) {
+            Optional<T> enumConstant = Enums.getIfPresent(enumClass, value.toUpperCase());
+            if (enumConstant.isPresent()) {
+                return enumConstant.get();
+            }
+        }
+        return null; // Return null if no match is found
     }
 }

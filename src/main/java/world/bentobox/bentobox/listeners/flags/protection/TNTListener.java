@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -17,21 +18,38 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import com.google.common.base.Enums;
+import com.google.common.base.Optional;
+
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Protects islands from visitors blowing things up
  * @author tastybento
  */
 public class TNTListener extends FlagListener {
-
     /**
      * Contains {@link EntityType}s that generates an explosion.
      * @since 1.5.0
      */
-    private static final List<EntityType> TNT_TYPES = List.of(EntityType.PRIMED_TNT, EntityType.MINECART_TNT);
+    private static final List<EntityType> TNT_TYPES = List.of(
+            findFirstMatchingEnum(EntityType.class, "PRIMED_TNT", "TNT"),
+            findFirstMatchingEnum(EntityType.class, "MINECART_TNT", "TNT_MINECART"));
 
+    private static <T extends Enum<T>> T findFirstMatchingEnum(Class<T> enumClass, String... values) {
+        if (enumClass == null || values == null) {
+            return null;
+        }
+        for (String value : values) {
+            Optional<T> enumConstant = Enums.getIfPresent(enumClass, value.toUpperCase());
+            if (enumConstant.isPresent()) {
+                return enumConstant.get();
+            }
+        }
+        return null; // Return null if no match is found
+    }
     /**
      * Contains {@link Material}s that can be used to prime a TNT.
      * @since 1.5.0

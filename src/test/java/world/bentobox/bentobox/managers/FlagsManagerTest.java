@@ -87,6 +87,9 @@ public class FlagsManagerTest {
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
         //PowerMockito.mockStatic(Flags.class);
 
+        // Util
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+
     }
 
     @After

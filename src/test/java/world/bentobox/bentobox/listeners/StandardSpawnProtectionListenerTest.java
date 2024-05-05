@@ -134,6 +134,7 @@ public class StandardSpawnProtectionListenerTest {
 
         // Util translate color codes (used in user translate methods)
         when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Set up class
         ssp = new StandardSpawnProtectionListener(plugin);

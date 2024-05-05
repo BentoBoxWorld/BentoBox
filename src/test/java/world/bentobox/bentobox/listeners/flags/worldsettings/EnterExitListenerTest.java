@@ -102,6 +102,11 @@ public class EnterExitListenerTest {
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
 
+        // Util
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+
         // Player
         Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
@@ -188,9 +193,6 @@ public class EnterExitListenerTest {
 
         // Listener
         listener = new EnterExitListener();
-
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(world);
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);

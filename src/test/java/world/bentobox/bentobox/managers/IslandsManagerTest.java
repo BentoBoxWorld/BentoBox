@@ -242,6 +242,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         // Worlds translate to world
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Island
         when(island.getOwner()).thenReturn(uuid);

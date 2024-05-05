@@ -137,6 +137,7 @@ public class InvincibleVisitorsListenerTest {
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
         when(Util.prettifyText(anyString())).thenCallRealMethod();
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Util translate color codes (used in user translate methods)
         when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         FlagsManager fm = mock(FlagsManager.class);

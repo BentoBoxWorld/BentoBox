@@ -1,8 +1,10 @@
 package world.bentobox.bentobox.hooks;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -264,29 +266,57 @@ public class LangUtilsHook extends Hook {
         if (hooked) {
             return LanguageHelper.getPotionName(potionType, getUserLocale(user));
         }
+        return generalPotionName(potionType);
+    }
+
+    private static String generalPotionName(PotionType potionType) {
         return switch (potionType) {
-        case UNCRAFTABLE -> "Uncraftable Potion";
         case WATER -> "Water Bottle";
         case MUNDANE -> "Mundane Potion";
         case THICK -> "Thick Potion";
         case AWKWARD -> "Awkward Potion";
         case NIGHT_VISION -> "Potion of Night Vision";
         case INVISIBILITY -> "Potion of Invisibility";
-        case JUMP -> "Potion of Leaping";
         case FIRE_RESISTANCE -> "Potion of Fire Resistance";
-        case SPEED -> "Potion of Swiftness";
         case SLOWNESS -> "Potion of Slowness";
         case WATER_BREATHING -> "Potion of Water Breathing";
-        case INSTANT_HEAL -> "Potion of Healing";
-        case INSTANT_DAMAGE -> "Potion of Harming";
         case POISON -> "Potion of Poison";
-        case REGEN -> "Potion of Regeneration";
         case STRENGTH -> "Potion of Strength";
         case WEAKNESS -> "Potion of Weakness";
         case LUCK -> "Potion of Luck";
         case TURTLE_MASTER -> "Potion of the Turtle Master";
         case SLOW_FALLING -> "Potion of Slow Falling";
-        default -> "Unknown Potion";
+        case HARMING -> "Potion of Harming";
+        case HEALING -> "Potion of Healing";
+        case INFESTED -> "Infested Potion";
+        case LEAPING -> "Potion of Leaping";
+        case LONG_FIRE_RESISTANCE -> "Potion of Long Fire Resistance";
+        case LONG_INVISIBILITY -> "Potion of Long Invisibility";
+        case LONG_NIGHT_VISION -> "Potion of Long Night Vision";
+        case LONG_POISON -> "Potion of Long Poison";
+        case LONG_REGENERATION -> "Potion of Long Regeneration";
+        case LONG_SLOWNESS -> "Potion of Long Slowness";
+        case LONG_SLOW_FALLING -> "Potion of Long Slow Falling";
+        case LONG_STRENGTH -> "Potion of Long Strength";
+        case LONG_SWIFTNESS -> "Potion of Long Swiftness";
+        case LONG_TURTLE_MASTER -> "Potion of Long Turtle Master";
+        case LONG_WATER_BREATHING -> "Potion of Long Water Breathing";
+        case LONG_WEAKNESS -> "Potion of Long Weakness";
+        case OOZING -> "Potion of Oozing";
+        case REGENERATION -> "Potion of Regeneration";
+        case STRONG_HARMING -> "Potion of Strong Harming";
+        case STRONG_HEALING -> "Potion of Strong Healing";
+        case STRONG_LEAPING -> "Potion of Strong Leaping";
+        case STRONG_POISON -> "Potion of Strong Poison";
+        case STRONG_REGENERATION -> "Potion of Strong Regeneration";
+        case STRONG_SLOWNESS -> "Potion of Strong Slowness";
+        case STRONG_STRENGTH -> "Potion of Strong Strength";
+        case STRONG_SWIFTNESS -> "Potion of Swiftness"; 
+        case STRONG_TURTLE_MASTER -> "Potion of Strong Turtle Master";
+        case SWIFTNESS -> "Potion of Swiftness"; 
+        case WEAVING -> "Potion of Weaving"; 
+        case WIND_CHARGED -> "Potion of Wind Charged"; 
+        default -> "Potion (Unknown)";
         };
 
     }
@@ -302,30 +332,7 @@ public class LangUtilsHook extends Hook {
         if (hooked) {
             return LanguageHelper.getSplashPotionName(potionType, getUserLocale(user));
         }
-        return switch (potionType) {
-        case UNCRAFTABLE -> "Splash Uncraftable Potion";
-        case WATER -> "Splash Water Bottle";
-        case MUNDANE -> "Mundane Splash Potion";
-        case THICK -> "Thick Splash Potion";
-        case AWKWARD -> "Awkward Splash Potion";
-        case NIGHT_VISION -> "Splash Potion of Night Vision";
-        case INVISIBILITY -> "Splash Potion of Invisibility";
-        case JUMP -> "Splash Potion of Leaping";
-        case FIRE_RESISTANCE -> "Splash Potion of Fire Resistance";
-        case SPEED -> "Splash Potion of Swiftness";
-        case SLOWNESS -> "Splash Potion of Slowness";
-        case WATER_BREATHING -> "Splash Potion of Water Breathing";
-        case INSTANT_HEAL -> "Splash Potion of Healing";
-        case INSTANT_DAMAGE -> "Splash Potion of Harming";
-        case POISON -> "Splash Potion of Poison";
-        case REGEN -> "Splash Potion of Regeneration";
-        case STRENGTH -> "Splash Potion of Strength";
-        case WEAKNESS -> "Splash Potion of Weakness";
-        case LUCK -> "Splash Potion of Luck";
-        case TURTLE_MASTER -> "Splash Potion of the Turtle Master";
-        case SLOW_FALLING -> "Splash Potion of Slow Falling";
-        default -> "Unknown Splash Potion";
-        };
+        return "Splash" + generalPotionName(potionType);
     }
 
     /**
@@ -339,30 +346,7 @@ public class LangUtilsHook extends Hook {
         if (hooked) {
             return LanguageHelper.getLingeringPotionName(potionType, getUserLocale(user));
         }
-        return switch (potionType) {
-        case UNCRAFTABLE -> "Lingering Uncraftable Potion";
-        case WATER -> "Lingering Water Bottle";
-        case MUNDANE -> "Mundane Lingering Potion";
-        case THICK -> "Thick Lingering Potion";
-        case AWKWARD -> "Awkward Lingering Potion";
-        case NIGHT_VISION -> "Lingering Potion of Night Vision";
-        case INVISIBILITY -> "Lingering Potion of Invisibility";
-        case JUMP -> "Lingering Potion of Leaping";
-        case FIRE_RESISTANCE -> "Lingering Potion of Fire Resistance";
-        case SPEED -> "Lingering Potion of Swiftness";
-        case SLOWNESS -> "Lingering Potion of Slowness";
-        case WATER_BREATHING -> "Lingering Potion of Water Breathing";
-        case INSTANT_HEAL -> "Lingering Potion of Healing";
-        case INSTANT_DAMAGE -> "Lingering Potion of Harming";
-        case POISON -> "Lingering Potion of Poison";
-        case REGEN -> "Lingering Potion of Regeneration";
-        case STRENGTH -> "Lingering Potion of Strength";
-        case WEAKNESS -> "Lingering Potion of Weakness";
-        case LUCK -> "Lingering Potion of Luck";
-        case TURTLE_MASTER -> "Lingering Potion of the Turtle Master";
-        case SLOW_FALLING -> "Lingering Potion of Slow Falling";
-        default -> "Unknown Lingering Potion";
-        };
+        return "Lingering" + generalPotionName(potionType);
     }
 
     /**
@@ -376,28 +360,7 @@ public class LangUtilsHook extends Hook {
         if (hooked) {
             return LanguageHelper.getTippedArrowName(potionType, getUserLocale(user));
         }
-        return switch (potionType) {
-        case UNCRAFTABLE -> "Uncraftable Tipped Arrow";
-        case WATER -> "Arrow of Splashing";
-        case MUNDANE, THICK, AWKWARD -> "Tipped Arrow";
-        case NIGHT_VISION -> "Arrow of Night Vision";
-        case INVISIBILITY -> "Arrow of Invisibility";
-        case JUMP -> "Arrow of Leaping";
-        case FIRE_RESISTANCE -> "Arrow of Fire Resistance";
-        case SPEED -> "Arrow of Swiftness";
-        case SLOWNESS -> "Arrow of Slowness";
-        case WATER_BREATHING -> "Arrow of Water Breathing";
-        case INSTANT_HEAL -> "Arrow of Healing";
-        case INSTANT_DAMAGE -> "Arrow of Harming";
-        case POISON -> "Arrow of Poison";
-        case REGEN -> "Arrow of Regeneration";
-        case STRENGTH -> "Arrow of Strength";
-        case WEAKNESS -> "Arrow of Weakness";
-        case LUCK -> "Arrow of Luck";
-        case TURTLE_MASTER -> "Arrow of the Turtle Master";
-        case SLOW_FALLING -> "Arrow of Slow Falling";
-        default -> "Unknown Arrow";
-        };
+        return generalPotionName(potionType).replaceAll("Potion", "Arrow");
     }
 
     /**
@@ -413,11 +376,12 @@ public class LangUtilsHook extends Hook {
         if (hooked) {
             return LanguageHelper.getPotionBaseEffectName(potionType, getUserLocale(user));
         }
-        PotionEffectType effectType = potionType.getEffectType();
-        if (effectType == null) {
+        List<PotionEffect> effects = potionType.getPotionEffects();
+        if (effects.isEmpty()) {
             return "No Effects";
         }
-        return Util.prettifyText(effectType.getName());
+        return effects.stream().map(effect -> Util.prettifyText(effect.getType().getKey().getKey()))
+                .collect(Collectors.joining(", "));
     }
 
     /**
@@ -430,7 +394,7 @@ public class LangUtilsHook extends Hook {
     public static String getPotionEffectName(PotionEffectType effectType, User user) {
         return hooked
                 ? LanguageHelper.getPotionEffectName(effectType, getUserLocale(user))
-                        : Util.prettifyText(effectType.getName());
+                : Util.prettifyText(effectType.getKey().getKey());
     }
 
     /**

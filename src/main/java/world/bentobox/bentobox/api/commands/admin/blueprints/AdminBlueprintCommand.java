@@ -12,6 +12,7 @@ import org.bukkit.Particle;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
 import world.bentobox.bentobox.managers.BlueprintsManager;
@@ -23,7 +24,6 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
 
     // Map containing selection cuboid display tasks
     private Map<User, Integer> displayClipboards;
-    private static final Particle PARTICLE = Particle.REDSTONE;
     private static final Particle.DustOptions PARTICLE_DUST_OPTIONS = new Particle.DustOptions(Color.RED, 1.0F);
 
     public AdminBlueprintCommand(CompositeCommand parent) {
@@ -99,26 +99,38 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
 
         // Drawing x-axes
         for (int x = minX; x <= maxX; x++) {
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x + 0.5, minY + 0.5, minZ + 0.5);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x + 0.5, maxY + 0.5, minZ + 0.5);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x + 0.5, minY + 0.5, maxZ + 0.5);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x + 0.5, maxY + 0.5, maxZ + 0.5);
+            user.spawnParticle(AdminRangeDisplayCommand.PARTICLE, PARTICLE_DUST_OPTIONS, x + 0.5, minY + 0.5,
+                    minZ + 0.5);
+            user.spawnParticle(AdminRangeDisplayCommand.PARTICLE, PARTICLE_DUST_OPTIONS, x + 0.5, maxY + 0.5,
+                    minZ + 0.5);
+            user.spawnParticle(AdminRangeDisplayCommand.PARTICLE, PARTICLE_DUST_OPTIONS, x + 0.5, minY + 0.5,
+                    maxZ + 0.5);
+            user.spawnParticle(AdminRangeDisplayCommand.PARTICLE, PARTICLE_DUST_OPTIONS, x + 0.5, maxY + 0.5,
+                    maxZ + 0.5);
         }
 
         // Drawing y-axes
         for (int y = minY; y <= maxY; y++) {
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX + 0.5, y + 0.5, minZ + 0.5);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, y + 0.5, minZ + 0.5);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX + 0.5, y + 0.5, maxZ + 0.5);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, y + 0.5, maxZ + 0.5);
+            user.spawnParticle(AdminRangeDisplayCommand.PARTICLE, PARTICLE_DUST_OPTIONS, minX + 0.5, y + 0.5,
+                    minZ + 0.5);
+            user.spawnParticle(AdminRangeDisplayCommand.PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, y + 0.5,
+                    minZ + 0.5);
+            user.spawnParticle(AdminRangeDisplayCommand.PARTICLE, PARTICLE_DUST_OPTIONS, minX + 0.5, y + 0.5,
+                    maxZ + 0.5);
+            user.spawnParticle(AdminRangeDisplayCommand.PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, y + 0.5,
+                    maxZ + 0.5);
         }
 
         // Drawing z-axes
         for (int z = minZ; z <= maxZ; z++) {
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX + 0.5, minY + 0.5, z + 0.5);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, minY + 0.5, z + 0.5);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX + 0.5, maxY + 0.5, z + 0.5);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, maxY + 0.5, z + 0.5);
+            user.spawnParticle(AdminRangeDisplayCommand.PARTICLE, PARTICLE_DUST_OPTIONS, minX + 0.5, minY + 0.5,
+                    z + 0.5);
+            user.spawnParticle(AdminRangeDisplayCommand.PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, minY + 0.5,
+                    z + 0.5);
+            user.spawnParticle(AdminRangeDisplayCommand.PARTICLE, PARTICLE_DUST_OPTIONS, minX + 0.5, maxY + 0.5,
+                    z + 0.5);
+            user.spawnParticle(AdminRangeDisplayCommand.PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, maxY + 0.5,
+                    z + 0.5);
         }
 
     }
