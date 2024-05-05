@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -53,13 +55,13 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
-import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.util.Util;
@@ -240,6 +242,18 @@ public class PlayersManagerTest {
         when(tamed.getOwner()).thenReturn(p);
         when(world.getEntitiesByClass(Tameable.class)).thenReturn(list);
 
+        // Loading objects
+        Object players = new Players();
+        when(h.loadObject(anyString())).thenReturn(players);
+        // Set up names database
+        List<Object> names = new ArrayList<>();
+        Names name = new Names();
+        name.setUniqueId("tastybento");
+        name.setUuid(uuid);
+        names.add(name);
+        when(h.loadObjects()).thenReturn(names);
+        when(h.objectExists(anyString())).thenReturn(true);
+
         // Class under test
         pm = new PlayersManager(plugin);
     }
@@ -261,21 +275,6 @@ public class PlayersManagerTest {
         int deaths = pm.getDeaths(world, uuid);
         pm.addDeath(world, uuid);
         assertEquals(deaths + 1, pm.getDeaths(world, uuid));
-    }
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#addPlayer(java.util.UUID)}.
-     */
-    @Test
-    public void testAddPlayer() {
-
-        pm.addPlayer(null);
-        // Add twice
-        assertFalse(pm.isKnown(uuid));
-        pm.addPlayer(uuid);
-        assertTrue(pm.isKnown(uuid));
-        pm.addPlayer(uuid);
     }
 
     /**
@@ -374,15 +373,6 @@ public class PlayersManagerTest {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#getFlagsDisplayMode(java.util.UUID)}.
-     */
-    @Test
-    public void testGetFlagsDisplayMode() {
-        assertEquals(Mode.BASIC, pm.getFlagsDisplayMode(uuid));
-    }
-
-    /**
-     * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#getLocale(java.util.UUID)}.
      */
     @Test
@@ -403,22 +393,11 @@ public class PlayersManagerTest {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#getPlayer(java.util.UUID)}.
-     */
-    @Test
-    public void testGetPlayer() {
-        Players player = pm.getPlayer(uuid);
-        assertEquals("tastybento", player.getPlayerName());
-        assertEquals(uuid.toString(), player.getUniqueId());
-    }
-
-    /**
-     * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#getPlayers()}.
      */
     @Test
     public void testGetPlayers() {
-        assertTrue(pm.getPlayers().isEmpty());
+        assertFalse(pm.getPlayers().isEmpty());
     }
 
     /**
@@ -442,11 +421,18 @@ public class PlayersManagerTest {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#setResets(World, UUID, int)}.
+     * @throws IntrospectionException 
+     * @throws NoSuchMethodException 
+     * @throws ClassNotFoundException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     @Test
-    public void testGetSetResetsLeft() {
+    public void testGetSetResetsLeft() throws InstantiationException, IllegalAccessException, InvocationTargetException,
+            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         // Add a player
-        pm.addPlayer(uuid);
+        pm.getPlayer(uuid);
         assertEquals(0, pm.getResets(world, uuid));
         pm.setResets(world, uuid, 20);
         assertEquals(20, pm.getResets(world, uuid));
@@ -455,12 +441,19 @@ public class PlayersManagerTest {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#getUser(java.lang.String)}.
+     * @throws IntrospectionException 
+     * @throws NoSuchMethodException 
+     * @throws ClassNotFoundException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     @Test
-    public void testGetUserString() {
+    public void testGetUserString() throws InstantiationException, IllegalAccessException, InvocationTargetException,
+            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         User user = pm.getUser("random");
         assertNull(user);
-        pm.addPlayer(uuid);
+        pm.getPlayer(uuid);
         user = pm.getUser("tastybento");
         assertEquals("tastybento", user.getName());
     }
@@ -481,7 +474,7 @@ public class PlayersManagerTest {
      */
     @Test
     public void testGetUUID() {
-        pm.addPlayer(uuid);
+        pm.getPlayer(uuid);
         assertEquals(uuid, pm.getUUID("tastybento"));
         assertNull(pm.getUUID("unknown"));
     }
@@ -494,7 +487,7 @@ public class PlayersManagerTest {
     public void testGetUUIDOfflinePlayer() {
         pm.setHandler(db);
         // Add a player to the cache
-        pm.addPlayer(uuid);
+        pm.getPlayer(uuid);
         UUID uuidResult = pm.getUUID("tastybento");
         assertEquals(uuid, uuidResult);
     }
@@ -507,7 +500,7 @@ public class PlayersManagerTest {
     public void testGetUUIDUnknownPlayer() {
         pm.setHandler(db);
         // Add a player to the cache
-        pm.addPlayer(uuid);
+        pm.getPlayer(uuid);
         // Unknown player should return null
         assertNull(pm.getUUID("tastybento123"));
     }
@@ -537,8 +530,8 @@ public class PlayersManagerTest {
     @Test
     public void testIsKnown() {
 
-        pm.addPlayer(uuid);
-        pm.addPlayer(notUUID);
+        pm.getPlayer(uuid);
+        pm.getPlayer(notUUID);
 
         assertFalse(pm.isKnown(null));
         assertTrue(pm.isKnown(uuid));
@@ -547,21 +540,11 @@ public class PlayersManagerTest {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#isSaveTaskRunning()}.
+     * {@link world.bentobox.bentobox.managers.PlayersManager#setHandler(Database)}
      */
     @Test
-    public void testIsSaveTaskRunning() {
-        assertFalse(pm.isSaveTaskRunning());
-    }
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#load()}.
-     */
-    @Test
-    public void testLoad() {
+    public void testSetHandler() {
         pm.setHandler(db);
-        pm.load();
     }
 
     /**
@@ -598,50 +581,13 @@ public class PlayersManagerTest {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#saveAll()}.
-     */
-    @Test
-    public void testSaveAll() {
-        pm.setHandler(db);
-        pm.addPlayer(uuid);
-        pm.saveAll();
-        verify(db).saveObjectAsync(any());
-    }
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#saveAll(boolean)}.
-     */
-    @Test
-    public void testSaveAllBoolean() {
-        pm.setHandler(db);
-        pm.addPlayer(uuid);
-        pm.saveAll(true);
-        assertTrue(pm.isSaveTaskRunning());
-    }
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#save(java.util.UUID)}.
-     */
-    @Test
-    public void testSave() {
-        pm.setHandler(db);
-        // Add a player
-        pm.addPlayer(uuid);
-        pm.save(uuid);
-        verify(db).saveObjectAsync(any());
-    }
-
-    /**
-     * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#setPlayerName(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
     public void testSetandGetPlayerName() {
         pm.setHandler(db);
         // Add a player
-        pm.addPlayer(uuid);
+        pm.getPlayer(uuid);
         assertEquals("tastybento", pm.getName(user.getUniqueId()));
         pm.setPlayerName(user);
         assertEquals(user.getName(), pm.getName(user.getUniqueId()));
@@ -656,16 +602,6 @@ public class PlayersManagerTest {
         pm.setDeaths(world, uuid, 50);
         assertEquals(50, pm.getDeaths(world, uuid));
 
-    }
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#setFlagsDisplayMode(java.util.UUID, world.bentobox.bentobox.api.flags.Flag.Mode)}.
-     */
-    @Test
-    public void testSetFlagsDisplayMode() {
-        pm.setFlagsDisplayMode(uuid, Mode.ADVANCED);
-        assertEquals(Mode.ADVANCED, pm.getFlagsDisplayMode(uuid));
     }
 
     /**
@@ -692,15 +628,15 @@ public class PlayersManagerTest {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#setPlayerName(world.bentobox.bentobox.api.user.User)}.
+     * @throws IntrospectionException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
      */
     @Test
-    public void testSetPlayerName() {
+    public void testSetPlayerName() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         pm.setPlayerName(user);
-        assertEquals("tastybento", pm.getName(uuid));
-        when(user.getName()).thenReturn("newName");
-        assertEquals("tastybento", pm.getName(uuid));
-        pm.setPlayerName(user);
-        assertEquals("newName", pm.getName(uuid));
+        // Player and names database saves
+        verify(h, atLeast(2)).saveObject(any());
     }
 
     /**

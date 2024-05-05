@@ -44,13 +44,15 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.github.puregero.multilib.MultiLib;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { BentoBox.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class, MultiLib.class })
 public class AddonTest {
 
     public static int BUFFER_SIZE = 10240;
@@ -90,6 +92,8 @@ public class AddonTest {
         // Addons manager
         when(plugin.getAddonsManager()).thenReturn(am);
 
+        // MultiLib
+        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
 
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);

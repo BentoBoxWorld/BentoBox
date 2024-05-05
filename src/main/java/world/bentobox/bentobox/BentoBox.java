@@ -210,20 +210,6 @@ public class BentoBox extends JavaPlugin implements Listener {
             return;
         }
 
-        // Save islands & players data every X minutes
-        Bukkit.getScheduler().runTaskTimer(instance, () -> {
-            if (!playersManager.isSaveTaskRunning()) {
-                playersManager.saveAll(true);
-            } else {
-                getLogger().warning("Tried to start a player data save task while the previous auto save was still running!");
-            }
-            if (!islandsManager.isSaveTaskRunning()) {
-                islandsManager.saveAll(true);
-            } else {
-                getLogger().warning("Tried to start a island data save task while the previous auto save was still running!");
-            }
-        }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
-
         // Make sure all flag listeners are registered.
         flagsManager.registerListeners();
 
@@ -433,7 +419,7 @@ public class BentoBox extends JavaPlugin implements Listener {
      * @return the ranksManager
      * @deprecated Just use {@code RanksManager.getInstance()}
      */
-    @Deprecated(since = "2.0.0")
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public RanksManager getRanksManager() {
         return RanksManager.getInstance();
     }

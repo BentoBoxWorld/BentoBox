@@ -144,7 +144,6 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getIWM()).thenReturn(iwm);
         // Players manager
         when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getFlagsDisplayMode(any())).thenReturn(Mode.BASIC);
         //Island Manager
         when(plugin.getIslands()).thenReturn(im);
         // Island - player has island
@@ -266,16 +265,6 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(user.isPlayer()).thenReturn(false);
         assertFalse(asc.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("general.errors.use-in-game");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringNoArgs() {
-        assertTrue(asc.execute(user, "", Collections.emptyList()));
-        verify(pm).setFlagsDisplayMode(user.getUniqueId(), Mode.EXPERT);
-        // Open panel
     }
 
     /**

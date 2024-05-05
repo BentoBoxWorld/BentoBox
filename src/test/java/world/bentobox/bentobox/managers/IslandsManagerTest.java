@@ -65,6 +65,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.github.puregero.multilib.MultiLib;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
@@ -85,7 +86,7 @@ import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, MultiLib.class })
 public class IslandsManagerTest extends AbstractCommonSetup {
 
     @Mock
@@ -156,6 +157,9 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+        // Mutilib
+        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
 
         // island world mgr
         when(world.getName()).thenReturn("world");
@@ -243,7 +247,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         // Island
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
-        when(island.getMaxMembers()).thenReturn(null); // default
+        when(island.getMaxMembers()).thenReturn(new HashMap<>()); // default
         when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null); // default
         when(island.getCenter()).thenReturn(location);
         when(island.getProtectionCenter()).thenReturn(location);
@@ -329,6 +333,9 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
         // Util strip spaces
         when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+
+        // World UID
+        when(world.getUID()).thenReturn(uuid);
 
         // Class under test
         im = new IslandsManager(plugin);
@@ -971,7 +978,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#save(Island)}.
+     * {@link world.bentobox.bentobox.managers.IslandsManager#updateIsland(Island)}.
      */
     @Test
     public void testSave() {
@@ -1373,14 +1380,14 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
-        when(island.getMaxMembers()).thenReturn(null);
+        when(island.getMaxMembers()).thenReturn(new HashMap<>());
         when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         // Offline owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
         // Test
         assertEquals(4, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null));
+        verify(island, never()).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null)); // No change
     }
 
     /**
@@ -1392,14 +1399,14 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
-        when(island.getMaxMembers()).thenReturn(null);
+        when(island.getMaxMembers()).thenReturn(new HashMap<>());
         when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         // Online owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(4, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null));
+        verify(island, never()).setMaxMembers(RanksManager.MEMBER_RANK, null);
     }
 
     /**
@@ -1411,7 +1418,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
-        when(island.getMaxMembers()).thenReturn(null);
+        when(island.getMaxMembers()).thenReturn(new HashMap<>());
         when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         when(iwm.getMaxCoopSize(eq(world))).thenReturn(2);
@@ -1420,9 +1427,9 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(2, im.getMaxMembers(island, RanksManager.COOP_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.COOP_RANK), eq(null));
+        verify(island, never()).setMaxMembers(RanksManager.COOP_RANK, null); // No change
         assertEquals(3, im.getMaxMembers(island, RanksManager.TRUSTED_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.TRUSTED_RANK), eq(null));
+        verify(island, never()).setMaxMembers(RanksManager.TRUSTED_RANK, null);
     }
 
     /**
@@ -1440,7 +1447,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(10, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(10));
+        verify(island).setMaxMembers(RanksManager.MEMBER_RANK, 10);
     }
 
     /**
@@ -1458,7 +1465,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(10, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(10));
+        verify(island).setMaxMembers(RanksManager.MEMBER_RANK, 10);
     }
 
     /**
@@ -1470,7 +1477,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
-        when(island.getMaxMembers()).thenReturn(null);
+        when(island.getMaxMembers()).thenReturn(new HashMap<>());
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         // Permission
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
@@ -1483,7 +1490,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(8, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(8));
+        verify(island).setMaxMembers(RanksManager.MEMBER_RANK, 8);
     }
 
     /**
@@ -1495,7 +1502,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Island island = mock(Island.class);
         // Test
         im.setMaxMembers(island, RanksManager.MEMBER_RANK, 40);
-        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(40));
+        verify(island).setMaxMembers(RanksManager.MEMBER_RANK, 40);
     }
 
     /**
@@ -1547,7 +1554,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         // Test
         IslandsManager im = new IslandsManager(plugin);
         assertEquals(4, im.getMaxHomes(island));
-        verify(island).setMaxHomes(eq(null));
+        verify(island, never()).setMaxHomes(null);
     }
 
     /**
@@ -1573,7 +1580,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         // Test
         IslandsManager im = new IslandsManager(plugin);
         assertEquals(20, im.getMaxHomes(island));
-        verify(island).setMaxHomes(eq(20));
+        verify(island, never()).setMaxHomes(20);
     }
 
     /**
@@ -1599,7 +1606,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         // Test
         IslandsManager im = new IslandsManager(plugin);
         assertEquals(8, im.getMaxHomes(island));
-        verify(island).setMaxHomes(eq(8));
+        verify(island).setMaxHomes(8);
     }
 
     /**

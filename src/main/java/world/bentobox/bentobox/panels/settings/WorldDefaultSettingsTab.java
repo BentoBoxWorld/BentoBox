@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.eclipse.jdt.annotation.NonNull;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.clicklisteners.WorldToggleClick;
 import world.bentobox.bentobox.api.localization.TextVariables;

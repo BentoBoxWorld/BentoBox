@@ -52,11 +52,12 @@ import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
+import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class})
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, IslandsManager.class })
 public class TestBentoBox extends AbstractCommonSetup {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID VISITOR_UUID = UUID.randomUUID();
@@ -76,6 +77,9 @@ public class TestBentoBox extends AbstractCommonSetup {
     public void setUp() throws Exception {
         super.setUp();
 
+        // IslandsManager static
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
@@ -87,6 +91,7 @@ public class TestBentoBox extends AbstractCommonSetup {
 
         when(player.hasPermission(anyString())).thenReturn(true);
 
+        when(location.getWorld()).thenReturn(world);
         when(ownerOfIsland.getLocation()).thenReturn(location);
         when(visitorToIsland.getLocation()).thenReturn(location);
         when(location.clone()).thenReturn(location);
@@ -101,6 +106,7 @@ public class TestBentoBox extends AbstractCommonSetup {
 
         island.setOwner(uuid);
         island.setProtectionRange(100);
+        island.setCenter(location);
         HashMap<UUID, Integer> members = new HashMap<>();
         members.put(uuid, RanksManager.OWNER_RANK);
         members.put(MEMBER_UUID, RanksManager.MEMBER_RANK);

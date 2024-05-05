@@ -49,9 +49,6 @@ public class AdminInfoCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), targetUUID);
         if (island != null) {
             new IslandInfo(island).showAdminInfo(user, getAddon());
-            if (!getIslands().getQuarantinedIslandByUser(getWorld(), targetUUID).isEmpty()) {
-                user.sendMessage("commands.admin.info.islands-in-trash");
-            }
             return true;
         } else {
             user.sendMessage("general.errors.player-has-no-island");

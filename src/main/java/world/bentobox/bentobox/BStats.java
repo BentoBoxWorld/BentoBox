@@ -59,7 +59,6 @@ public class BStats {
         registerGameModeAddonsChart();
         registerHooksChart();
         registerPlayersPerServerChart();
-        registerFlagsDisplayModeChart();
 
         // Single Line charts
         registerIslandsCountChart();
@@ -168,27 +167,6 @@ public class BStats {
             else if (players <= 150) return "101-150";
             else if (players <= 200) return "151-200";
             else return "201+";
-        }));
-    }
-
-    /**
-     * Sends the "flags display mode" of all the online players.
-     * @since 1.6.0
-     */
-    private void registerFlagsDisplayModeChart() {
-        metrics.addCustomChart(new AdvancedPie("flagsDisplayMode", () -> {
-            Map<String, Integer> values = new HashMap<>();
-
-            Bukkit.getOnlinePlayers().forEach(player -> {
-                Flag.Mode mode = plugin.getPlayers().getFlagsDisplayMode(player.getUniqueId());
-                if (values.containsKey(mode.name())) {
-                    values.put(mode.name(), values.get(mode.name()) + 1);
-                } else {
-                    values.put(mode.name(), 1);
-                }
-            });
-
-            return values;
         }));
     }
 

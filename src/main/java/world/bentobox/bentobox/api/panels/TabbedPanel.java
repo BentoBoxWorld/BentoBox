@@ -74,6 +74,7 @@ public class TabbedPanel extends Panel implements PanelListener {
      * @param page - the page of the tab to show (if multi paged)
      */
     public void openPanel(int activeTab, int page) {
+
         if (!tpb.getTabs().containsKey(activeTab)) {
             // Request to open a non-existent tab
             throw new InvalidParameterException("Attempt to open a non-existent tab in a tabbed panel. Missing tab #" + activeTab);
@@ -88,21 +89,17 @@ public class TabbedPanel extends Panel implements PanelListener {
         TreeMap<Integer, PanelItem> items = new TreeMap<>();
         // Get the tab
         Tab tab = tpb.getTabs().get(activeTab);
-
         // Remove any tabs that have no items, if required
         if (tpb.isHideIfEmpty()) {
             tpb.getTabs().values().removeIf(t -> !t.equals(tab) && t.getPanelItems().stream().noneMatch(Objects::nonNull));
         }
-
         // Set up the tabbed header
         setupHeader(tab, items);
-
         // Show the active tab
         if (tpb.getTabs().containsKey(activeTab)) {
             List<PanelItem> panelItems = tab.getPanelItems();
             // Adds the flag items
             panelItems.stream().filter(Objects::nonNull).skip(page * ITEMS_PER_PAGE).limit(page * ITEMS_PER_PAGE + ITEMS_PER_PAGE).forEach(i -> items.put(items.lastKey() + 1, i));
-
             // set up the footer
             setupFooter(items);
             // Add forward and backward icons
@@ -182,6 +179,7 @@ public class TabbedPanel extends Panel implements PanelListener {
             // Reset the closed flag
             closed = false;
         }
+
     }
 
     /**

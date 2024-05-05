@@ -5,13 +5,14 @@ import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.TeamInvite;
+import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -49,7 +50,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             user.sendMessage(INVALID_INVITE);
             return false;
         }
-        Invite invite = itc.getInvite(playerUUID);
+        TeamInvite invite = itc.getInvite(playerUUID);
         if (invite.getType().equals(Type.TEAM)) {
             // Check rank to of inviter
             Island island = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
@@ -78,7 +79,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Get the invite
-        Invite invite = itc.getInvite(user.getUniqueId());
+        TeamInvite invite = itc.getInvite(user.getUniqueId());
         switch (invite.getType()) {
         case COOP -> askConfirmation(user, () -> acceptCoopInvite(user, invite));
         case TRUST -> askConfirmation(user, () -> acceptTrustInvite(user, invite));
@@ -94,11 +95,11 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         return true;
     }
 
-    void acceptTrustInvite(User user, Invite invite) {
+    void acceptTrustInvite(User user, TeamInvite invite) {
         // Remove the invite
         itc.removeInvite(user.getUniqueId());
         User inviter = User.getInstance(invite.getInviter());
-        Island island = invite.getIsland();
+        Island island = getIslands().getIslandById(invite.getIslandID()).orElse(null);
         if (island != null) {
             if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() > getIslands().getMaxMembers(island,
                     RanksManager.TRUSTED_RANK)) {
@@ -120,11 +121,11 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         }
     }
 
-    void acceptCoopInvite(User user, Invite invite) {
+    void acceptCoopInvite(User user, TeamInvite invite) {
         // Remove the invite
         itc.removeInvite(user.getUniqueId());
         User inviter = User.getInstance(invite.getInviter());
-        Island island = invite.getIsland();
+        Island island = getIslands().getIslandById(invite.getIslandID()).orElse(null);
         if (island != null) {
             if (island.getMemberSet(RanksManager.COOP_RANK, false).size() > getIslands().getMaxMembers(island,
                     RanksManager.COOP_RANK)) {
@@ -146,13 +147,13 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         }
     }
 
-    void acceptTeamInvite(User user, Invite invite) {
+    void acceptTeamInvite(User user, TeamInvite invite) {
         // Remove the invite
         itc.removeInvite(user.getUniqueId());
         // Get the player's island - may be null if the player has no island
         List<Island> islands = getIslands().getIslands(getWorld(), user.getUniqueId());
         // Get the team's island
-        Island teamIsland = invite.getIsland();
+        Island teamIsland = getIslands().getIslandById(invite.getIslandID()).orElse(null);
         if (teamIsland == null) {
             user.sendMessage(INVALID_INVITE);
             return;
@@ -196,7 +197,6 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME,
                     user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
         }
-        getIslands().save(teamIsland);
         // Fire event
         TeamEvent.builder().island(teamIsland).reason(TeamEvent.Reason.JOINED).involvedPlayer(user.getUniqueId())
                 .build();

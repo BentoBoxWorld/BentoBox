@@ -40,7 +40,6 @@ public class NamePrompt extends StringPrompt {
     @Override
     public Prompt acceptInput(@NonNull ConversationContext context, String input) {
         if (island.renameHome(oldName, input)) {
-            plugin.getIslands().save(island);
             Bukkit.getScheduler().runTask(plugin, () -> user.sendMessage("general.success"));
         } else {
             Bukkit.getScheduler().runTask(plugin, () -> user.sendMessage("commands.island.renamehome.already-exists"));

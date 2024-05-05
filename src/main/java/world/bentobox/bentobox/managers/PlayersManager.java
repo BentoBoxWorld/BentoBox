@@ -4,21 +4,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
@@ -31,11 +28,9 @@ public class PlayersManager {
     private final BentoBox plugin;
     private Database<Players> handler;
     private final Database<Names> names;
+    private final Map<UUID, Players> playerCache = new HashMap<>();
 
-    private final Map<UUID, Players> playerCache;
-    private final Set<UUID> inTeleport;
-
-    private boolean isSaveTaskRunning;
+    private final Set<UUID> inTeleport; // this needs databasing
 
     /**
      * Provides a memory cache of online player information
@@ -50,7 +45,6 @@ public class PlayersManager {
         handler = new Database<>(plugin, Players.class);
         // Set up the names database
         names = new Database<>(plugin, Names.class);
-        playerCache = new HashMap<>();
         inTeleport = new HashSet<>();
     }
 
@@ -62,67 +56,7 @@ public class PlayersManager {
         this.handler = handler;
     }
 
-    /**
-     * Load all players - not normally used as to load all players into memory will be wasteful
-     */
-    public void load(){
-        playerCache.clear();
-        inTeleport.clear();
-        handler.loadObjects().forEach(p -> playerCache.put(p.getPlayerUUID(), p));
-    }
-
-    public boolean isSaveTaskRunning() {
-        return isSaveTaskRunning;
-    }
-
-    /**
-     * Save all players
-     */
-    public void saveAll() {
-        saveAll(false);
-    }
-
-    /**
-     * Save all players
-     * @param schedule true if we should let the task run over multiple ticks to reduce lag spikes
-     */
-    public void saveAll(boolean schedule){
-        if (!schedule) {
-            for (Players player : playerCache.values()) {
-                try {
-                    handler.saveObjectAsync(player);
-                } catch (Exception e) {
-                    plugin.logError("Could not save player to database when running sync! " + e.getMessage());
-                }
-            }
-            return;
-        }
-
-        isSaveTaskRunning = true;
-        Queue<Players> queue = new LinkedList<>(playerCache.values());
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < plugin.getSettings().getMaxSavedPlayersPerTick(); i++) {
-                    Players player = queue.poll();
-                    if (player == null) {
-                        isSaveTaskRunning = false;
-                        cancel();
-                        return;
-                    }
-                    try {
-                        handler.saveObjectAsync(player);
-                    } catch (Exception e) {
-                        plugin.logError("Could not save player to database when running sync! " + e.getMessage());
-                    }
-                }
-            }
-        }.runTaskTimer(plugin, 0, 1);
-    }
-
     public void shutdown(){
-        saveAll();
-        playerCache.clear();
         handler.close();
     }
 
@@ -134,9 +68,27 @@ public class PlayersManager {
     @Nullable
     public Players getPlayer(UUID uuid){
         if (!playerCache.containsKey(uuid)) {
-            addPlayer(uuid);
+            playerCache.put(uuid, addPlayer(uuid));
         }
         return playerCache.get(uuid);
+    }
+
+    /**
+     * Adds a player to the database. If the UUID does not exist, a new player is made
+     * @param playerUUID - the player's UUID
+     */
+    private Players addPlayer(@NonNull UUID playerUUID) {
+        Objects.requireNonNull(playerUUID);
+        // If the player is in the database, load it, otherwise create a new player
+        if (handler.objectExists(playerUUID.toString())) {
+            Players player = handler.loadObject(playerUUID.toString());
+            if (player != null) {
+                return player;
+            }
+        }
+        Players player = new Players(plugin, playerUUID);
+        handler.saveObject(player);
+        return player;
     }
 
     /**
@@ -146,37 +98,7 @@ public class PlayersManager {
      */
     @NonNull
     public Collection<Players> getPlayers() {
-        return Collections.unmodifiableCollection(playerCache.values());
-    }
-
-    /*
-     * Cache control methods
-     */
-
-    /**
-     * Adds a player to the cache. If the UUID does not exist, a new player is made
-     * @param playerUUID - the player's UUID
-     */
-    public void addPlayer(UUID playerUUID) {
-        if (playerUUID == null) {
-            return;
-        }
-        if (!playerCache.containsKey(playerUUID)) {
-            Players player;
-            // If the player is in the database, load it, otherwise create a new player
-            if (handler.objectExists(playerUUID.toString())) {
-                player = handler.loadObject(playerUUID.toString());
-                if (player == null) {
-                    player = new Players(plugin, playerUUID);
-                    // Corrupted database entry
-                    plugin.logError("Corrupted player database entry for " + playerUUID + " - unrecoverable. Recreated.");
-                    player.setUniqueId(playerUUID.toString());
-                }
-            } else {
-                player = new Players(plugin, playerUUID);
-            }
-            playerCache.put(playerUUID, player);
-        }
+        return Collections.unmodifiableCollection(handler.loadObjects());
     }
 
     /**
@@ -187,7 +109,7 @@ public class PlayersManager {
      * @return true if player is known, otherwise false
      */
     public boolean isKnown(UUID uniqueID) {
-        return uniqueID != null && (playerCache.containsKey(uniqueID) || handler.objectExists(uniqueID.toString()));
+        return uniqueID == null ? false : handler.objectExists(uniqueID.toString());
     }
 
     /**
@@ -206,11 +128,8 @@ public class PlayersManager {
                 // Not used
             }
         }
-        // Look in the name cache, then the data base and then give up
-        return playerCache.values().stream()
-                .filter(p -> p.getPlayerName().equalsIgnoreCase(name)).findFirst()
-                .map(p -> UUID.fromString(p.getUniqueId()))
-                .orElseGet(() -> names.objectExists(name) ? names.loadObject(name).getUuid() : null);
+        return names.loadObjects().stream().filter(n -> n.getUniqueId().equalsIgnoreCase(name)).findFirst()
+                .map(Names::getUuid).orElse(null);
     }
 
     /**
@@ -218,8 +137,9 @@ public class PlayersManager {
      * @param user - the User
      */
     public void setPlayerName(@NonNull User user) {
-        addPlayer(user.getUniqueId());
-        playerCache.get(user.getUniqueId()).setPlayerName(user.getName());
+        Players player = getPlayer(user.getUniqueId());
+        player.setPlayerName(user.getName());
+        handler.saveObject(player);
         Names newName = new Names(user.getName(), user.getUniqueId());
         // Add to names database
         names.saveObjectAsync(newName);
@@ -237,8 +157,8 @@ public class PlayersManager {
         if (playerUUID == null) {
             return "";
         }
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getPlayerName();
+        return names.loadObjects().stream().filter(n -> n.getUuid().equals(playerUUID)).findFirst()
+                .map(Names::getUniqueId).orElse(null);
     }
 
     /**
@@ -248,8 +168,7 @@ public class PlayersManager {
      * @return number of resets
      */
     public int getResets(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getResets(world);
+        return getPlayer(playerUUID).getResets(world);
     }
 
     /**
@@ -261,7 +180,7 @@ public class PlayersManager {
      * @see #getResets(World, UUID)
      */
     public int getResetsLeft(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
+        getPlayer(playerUUID);
         if (plugin.getIWM().getResetLimit(world) == -1) {
             return -1;
         } else {
@@ -277,8 +196,9 @@ public class PlayersManager {
      * @param resets number of resets to set
      */
     public void setResets(World world, UUID playerUUID, int resets) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).setResets(world, resets);
+        Players p = getPlayer(playerUUID);
+        p.setResets(world, resets);
+        handler.saveObject(p);
     }
 
     /**
@@ -287,11 +207,7 @@ public class PlayersManager {
      * @return name of the locale this player uses
      */
     public String getLocale(UUID playerUUID) {
-        addPlayer(playerUUID);
-        if (playerUUID == null) {
-            return "";
-        }
-        return playerCache.get(playerUUID).getLocale();
+        return getPlayer(playerUUID).getLocale();
     }
 
     /**
@@ -300,8 +216,9 @@ public class PlayersManager {
      * @param localeName - locale name, e.g., en-US
      */
     public void setLocale(UUID playerUUID, String localeName) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).setLocale(localeName);
+        Players p = getPlayer(playerUUID);
+        p.setLocale(localeName);
+        handler.saveObject(p);
     }
 
     /**
@@ -310,8 +227,9 @@ public class PlayersManager {
      * @param playerUUID - the player's UUID
      */
     public void addDeath(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).addDeath(world);
+        Players p = getPlayer(playerUUID);
+        p.addDeath(world);
+        handler.saveObject(p);
     }
 
     /**
@@ -321,8 +239,9 @@ public class PlayersManager {
      * @param deaths - number of deaths
      */
     public void setDeaths(World world, UUID playerUUID, int deaths) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).setDeaths(world, deaths);
+        Players p = getPlayer(playerUUID);
+        p.setDeaths(world, deaths);
+        handler.saveObject(p);
     }
 
     /**
@@ -332,8 +251,7 @@ public class PlayersManager {
      * @return number of deaths
      */
     public int getDeaths(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID) == null ? 0 : playerCache.get(playerUUID).getDeaths(world);
+        return getPlayer(playerUUID).getDeaths(world);
     }
 
     /**
@@ -361,16 +279,6 @@ public class PlayersManager {
     }
 
     /**
-     * Saves the player to the database
-     * @param playerUUID - the player's UUID
-     */
-    public void save(UUID playerUUID) {
-        if (playerCache.containsKey(playerUUID)) {
-            handler.saveObjectAsync(playerCache.get(playerUUID));
-        }
-    }
-
-    /**
      * Tries to get the user from his name
      * @param name - name
      * @return user - user or null if unknown
@@ -395,41 +303,17 @@ public class PlayersManager {
      * @param playerUUID player's UUID
      */
     public void addReset(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).addReset(world);
+        Players p = getPlayer(playerUUID);
+        p.addReset(world);
+        handler.saveObject(p);
     }
 
     /**
-     * Sets the Flags display mode for the Settings Panel for this player.
-     * @param playerUUID player's UUID
-     * @param displayMode the {@link Flag.Mode} to set
-     * @since 1.6.0
-     */
-    public void setFlagsDisplayMode(UUID playerUUID, Flag.Mode displayMode) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).setFlagsDisplayMode(displayMode);
-    }
-
-    /**
-     * Returns the Flags display mode for the Settings Panel for this player.
-     * @param playerUUID player's UUID
-     * @return the {@link Flag.Mode display mode} for the Flags in the Settings Panel.
-     * @since 1.6.0
-     */
-    public Flag.Mode getFlagsDisplayMode(UUID playerUUID) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getFlagsDisplayMode();
-    }
-
-    /**
-     * Remove player from cache. Clears players with the same name or UUID
+     * Remove player from database
      * @param player player to remove
      */
     public void removePlayer(Player player) {
-        // Clear any players with the same name
-        playerCache.values().removeIf(p -> player.getName().equalsIgnoreCase(p.getPlayerName()));
-        // Remove if the player's UUID is the same
-        playerCache.values().removeIf(p -> player.getUniqueId().toString().equals(p.getUniqueId()));
+        handler.deleteID(player.getUniqueId().toString());
     }
 
     /**
@@ -495,8 +379,6 @@ public class PlayersManager {
             // Player total XP (not displayed)
             target.getPlayer().setTotalExperience(0);
         }
-        // Save player
-        save(target.getUniqueId());
     }
 
 }

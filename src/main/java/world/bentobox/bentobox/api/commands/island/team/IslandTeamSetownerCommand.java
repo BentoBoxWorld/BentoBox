@@ -14,6 +14,7 @@ import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -91,7 +92,6 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         IslandEvent.builder().island(island).involvedPlayer(user.getUniqueId()).admin(false)
                 .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(RanksManager.OWNER_RANK, RanksManager.SUB_OWNER_RANK)
                 .build();
-        getIslands().save(island);
         return true;
     }
 

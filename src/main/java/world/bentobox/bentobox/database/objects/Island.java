@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -41,6 +42,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
 import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
@@ -56,7 +58,7 @@ import world.bentobox.bentobox.util.Util;
 public class Island implements DataObject, MetaDataAble {
 
     @Expose
-    private boolean primary;
+    private Set<UUID> primaries = new HashSet<>();
 
     /**
      * Set to true if this data object has been changed since being loaded from the
@@ -243,7 +245,6 @@ public class Island implements DataObject, MetaDataAble {
         range = BentoBox.getInstance().getIWM().getIslandDistance(world);
         this.protectionRange = protectionRange;
         this.maxEverProtectionRange = protectionRange;
-        this.setChanged();
     }
 
     /**
@@ -290,6 +291,7 @@ public class Island implements DataObject, MetaDataAble {
         this.updatedDate = island.getUpdatedDate();
         this.world = island.getWorld();
         this.bonusRanges.addAll(island.getBonusRanges());
+        this.primaries.addAll(island.getPrimaries());
         this.setChanged();
     }
 
@@ -304,8 +306,10 @@ public class Island implements DataObject, MetaDataAble {
      * @param playerUUID - the player's UUID
      */
     public void addMember(@NonNull UUID playerUUID) {
-        setRank(playerUUID, RanksManager.MEMBER_RANK);
-        setChanged();
+        if (getRank(playerUUID) != RanksManager.MEMBER_RANK) {
+            setRank(playerUUID, RanksManager.MEMBER_RANK);
+            setChanged();
+        }
     }
 
     /**
@@ -320,9 +324,12 @@ public class Island implements DataObject, MetaDataAble {
      * @return {@code true}
      */
     public boolean ban(@NonNull UUID issuer, @NonNull UUID target) {
-        setRank(target, RanksManager.BANNED_RANK);
-        log(new LogEntry.Builder("BAN").data("player", target.toString()).data("issuer", issuer.toString()).build());
-        setChanged();
+        if (getRank(target) != RanksManager.BANNED_RANK) {
+            setRank(target, RanksManager.BANNED_RANK);
+            log(new LogEntry.Builder("BAN").data("player", target.toString()).data("issuer", issuer.toString())
+                    .build());
+            setChanged();
+        }
         return true;
     }
 
@@ -1005,25 +1012,30 @@ public class Island implements DataObject, MetaDataAble {
      * @param playerUUID - uuid of player
      */
     public void removeMember(UUID playerUUID) {
-        members.remove(playerUUID);
-        setChanged();
+        if (members.remove(playerUUID) != null) {
+            setChanged();
+        }
     }
 
     /**
      * @param center the center to set
      */
     public void setCenter(@NonNull Location center) {
-        this.world = center.getWorld();
-        this.center = center;
-        setChanged();
+        if (this.center == null || !center.getWorld().equals(this.center.getWorld()) || !center.equals(this.center)) {
+            this.world = center.getWorld();
+            this.center = center;
+            setChanged();
+        }
     }
 
     /**
      * @param createdDate - the createdDate to sets
      */
     public void setCreatedDate(long createdDate) {
-        this.createdDate = createdDate;
-        setChanged();
+        if (this.createdDate != createdDate) {
+            this.createdDate = createdDate;
+            setChanged();
+        }
     }
 
     /**
@@ -1038,21 +1050,23 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Set the Island Guard flag rank Also specify whether subflags are affected by
-     * this method call
+     * Set the Island Guard flag rank and set any  subflags
      * 
      * @param flag       - flag
      * @param value      - Use RanksManager settings, e.g. RanksManager.MEMBER
      * @param doSubflags - whether to set subflags
+     * @return true if this causes a flag change
      */
     public void setFlag(Flag flag, int value, boolean doSubflags) {
-        flags.put(flag.getID(), value);
+        if (flags.containsKey(flag.getID()) && flags.get(flag.getID()) != value) {
+            flags.put(flag.getID(), value);
+            setChanged();
+        }
         // Subflag support
         if (doSubflags && flag.hasSubflags()) {
             // Ensure that a subflag isn't a subflag of itself or else we're in trouble!
             flag.getSubflags().forEach(subflag -> setFlag(subflag, value, true));
         }
-        setChanged();
     }
 
     /**
@@ -1078,7 +1092,6 @@ public class Island implements DataObject, MetaDataAble {
                 .forEach(f -> result.put(f.getID(),
                         plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
         this.setFlags(result);
-        setChanged();
     }
 
     /**
@@ -1097,8 +1110,10 @@ public class Island implements DataObject, MetaDataAble {
      * @param name The display name to set.
      */
     public void setName(String name) {
-        this.name = (name != null && !name.equals("")) ? name : null;
-        setChanged();
+        if (name == null || !name.equals(this.name)) {
+            this.name = (name != null && !name.equals("")) ? name : null;
+            setChanged();
+        }
     }
 
     /**
@@ -1130,9 +1145,11 @@ public class Island implements DataObject, MetaDataAble {
      * @param protectionRange the protectionRange to set
      */
     public void setProtectionRange(int protectionRange) {
-        this.protectionRange = protectionRange;
-        this.updateMaxEverProtectionRange();
-        setChanged();
+        if (this.protectionRange != protectionRange) {
+            this.protectionRange = protectionRange;
+            this.updateMaxEverProtectionRange();
+            setChanged();
+        }
     }
 
     /**
@@ -1164,8 +1181,10 @@ public class Island implements DataObject, MetaDataAble {
      * @param purgeProtected - if the island is protected from the Purge
      */
     public void setPurgeProtected(boolean purgeProtected) {
-        this.purgeProtected = purgeProtected;
-        setChanged();
+        if (this.purgeProtected != purgeProtected) {
+            this.purgeProtected = purgeProtected;
+            setChanged();
+        }
     }
 
     /**
@@ -1179,8 +1198,10 @@ public class Island implements DataObject, MetaDataAble {
      * @see #setProtectionRange(int)
      */
     public void setRange(int range) {
-        this.range = range;
-        setChanged();
+        if (this.range != range) {
+            this.range = range;
+            setChanged();
+        }
     }
 
     /**
@@ -1191,7 +1212,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setRank(User user, int rank) {
         setRank(user.getUniqueId(), rank);
-        setChanged();
     }
 
     /**
@@ -1202,13 +1222,32 @@ public class Island implements DataObject, MetaDataAble {
      * @param rank rank value
      * @since 1.1
      */
-    public void setRank(@Nullable UUID uuid, int rank) {
+    public void setRank(@Nullable UUID uuid, int newRank) {
+        // Early return if the UUID is null, to avoid unnecessary processing.
         if (uuid == null) {
-            return; // Defensive code
+            return;
         }
-        members.put(uuid, rank);
-        setChanged();
+
+        // Use an AtomicBoolean to track if the member's rank has been changed.
+        AtomicBoolean isRankChanged = new AtomicBoolean(false);
+
+        // Attempt to update the member's rank, if necessary.
+        members.compute(uuid, (key, existingRank) -> {
+            // If the member does not exist or their rank is different, update the rank.
+            if (existingRank == null || existingRank != newRank) {
+                isRankChanged.set(true);
+                return newRank; // Update the rank.
+            }
+            // No change needed; return the existing rank.
+            return existingRank;
+        });
+
+        // If the rank was changed, notify the change and log the update.
+        if (isRankChanged.get()) {
+            setChanged(); // Notify that a change has occurred.
+        }
     }
+
 
     /**
      * @param ranks the ranks to set
@@ -1266,7 +1305,6 @@ public class Island implements DataObject, MetaDataAble {
     @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
-        setChanged();
     }
 
     /**
@@ -1274,7 +1312,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setUpdatedDate(long updatedDate) {
         this.updatedDate = updatedDate;
-        setChanged();
     }
 
     /**
@@ -1347,8 +1384,13 @@ public class Island implements DataObject, MetaDataAble {
      * @param l          - location
      */
     public void setSpawnPoint(Environment islandType, Location l) {
-        spawnPoint.put(islandType, l);
-        setChanged();
+        spawnPoint.compute(islandType, (key, value) -> {
+            if (value == null || !value.equals(l)) {
+                setChanged(); // Call setChanged only if the value is updated.
+                return l;
+            }
+            return value;
+        });
     }
 
     /**
@@ -1368,8 +1410,9 @@ public class Island implements DataObject, MetaDataAble {
      * @param rank rank value
      */
     public void removeRank(Integer rank) {
-        members.values().removeIf(rank::equals);
-        setChanged();
+        if (members.values().removeIf(rank::equals)) {
+            setChanged();
+        }
     }
 
     /**
@@ -1455,7 +1498,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setGameMode(String gameMode) {
         this.gameMode = gameMode;
-        setChanged();
     }
 
     /**
@@ -1518,8 +1560,9 @@ public class Island implements DataObject, MetaDataAble {
         if (cooldowns.containsKey(flag.getID()) && cooldowns.get(flag.getID()) > System.currentTimeMillis()) {
             return true;
         }
-        cooldowns.remove(flag.getID());
-        setChanged();
+        if (cooldowns.remove(flag.getID()) != null) {
+            setChanged();
+        }
         return false;
     }
 
@@ -1603,8 +1646,13 @@ public class Island implements DataObject, MetaDataAble {
     public void setRankCommand(String command, int rank) {
         if (this.commandRanks == null)
             this.commandRanks = new HashMap<>();
-        this.commandRanks.put(command, rank);
-        setChanged();
+        commandRanks.compute(command, (key, value) -> {
+            if (value == null || !value.equals(rank)) {
+                setChanged(); // Call setChanged only if the value is updated.
+                return rank;
+            }
+            return value;
+        });
     }
 
     /**
@@ -1624,8 +1672,10 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.6.0
      */
     public void setReserved(boolean reserved) {
-        this.reserved = reserved;
-        setChanged();
+        if (this.reserved != reserved) {
+            this.reserved = reserved;
+            setChanged();
+        }
     }
 
     /**
@@ -1658,17 +1708,19 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Indicates the fields have been changed. Used to optimize saving on shutdown.
+     * Indicates the fields have been changed. Used to optimize saving on shutdown and notify other servers
      */
     public void setChanged() {
+        this.setUpdatedDate(System.currentTimeMillis());
         this.changed = true;
+        IslandsManager.updateIsland(this);
     }
 
     /**
-     * @param changed the changed to set
+     * Resets the changed if the island has been saved
      */
-    public void setChanged(boolean changed) {
-        this.changed = changed;
+    public void clearChanged() {
+        this.changed = false;
     }
 
     /**
@@ -1692,6 +1744,9 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public void setProtectionCenter(Location location) throws IOException {
+        if (this.location.equals(location)) {
+            return; // nothing to do
+        }
         if (!this.inIslandSpace(location)) {
             throw new IOException("Location must be in island space");
         }
@@ -1741,6 +1796,9 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public void addHome(String name, Location location) {
+        if (getHomes().containsKey(name) && getHomes().get(name).equals(location)) {
+            return; // nothing to do
+        }
         if (location != null) {
             Vector v = location.toVector();
             if (!this.getBoundingBox().contains(v)) {
@@ -1763,8 +1821,11 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public boolean removeHome(String name) {
-        setChanged();
-        return getHomes().remove(name.toLowerCase()) != null;
+        if (getHomes().remove(name.toLowerCase()) != null) {
+            setChanged();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -1774,8 +1835,11 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.20.0
      */
     public boolean removeHomes() {
-        setChanged();
-        return getHomes().keySet().removeIf(k -> !k.isEmpty());
+        if (getHomes().keySet().removeIf(k -> !k.isEmpty())) {
+            setChanged();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -1814,8 +1878,10 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public void setMaxHomes(@Nullable Integer maxHomes) {
-        this.maxHomes = maxHomes;
-        setChanged();
+        if (this.maxHomes != maxHomes) {
+            this.maxHomes = maxHomes;
+            setChanged();
+        }
     }
 
     /**
@@ -1834,8 +1900,10 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public void setMaxMembers(Map<Integer, Integer> maxMembers) {
-        this.maxMembers = maxMembers;
-        setChanged();
+        if (this.maxMembers != maxMembers) {
+            this.maxMembers = maxMembers;
+            setChanged();
+        }
     }
 
     /**
@@ -1860,7 +1928,13 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public void setMaxMembers(int rank, Integer maxMembers) {
-        getMaxMembers().put(rank, maxMembers);
+        getMaxMembers().compute(rank, (key, value) -> {
+            if (value == null || !value.equals(maxMembers)) {
+                setChanged(); // Call setChanged only if the value is updated.
+                return maxMembers;
+            }
+            return value;
+        });
     }
 
     /**
@@ -1923,8 +1997,9 @@ public class Island implements DataObject, MetaDataAble {
      * @param id id to identify this bonus
      */
     public void clearBonusRange(String id) {
-        this.getBonusRanges().removeIf(r -> r.getUniqueId().equals(id));
-        setChanged();
+        if (this.getBonusRanges().removeIf(r -> r.getUniqueId().equals(id))) {
+            setChanged();
+        }
     }
 
     /**
@@ -1936,18 +2011,30 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
+     * @param userID user UUID
      * @return the primary
      */
-    public boolean isPrimary() {
-        return primary;
+    public boolean isPrimary(UUID userID) {
+        return getPrimaries().contains(userID);
     }
 
     /**
      * @param primary the primary to set
      */
-    public void setPrimary(boolean primary) {
-        this.primary = primary;
-        setChanged();
+    public void setPrimary(UUID userID) {
+        if (getPrimaries().add(userID)) {
+            setChanged();
+        }
+    }
+
+    /**
+     * Remove the primary island
+     * @param userID user UUID
+     */
+    public void removePrimary(UUID userID) {
+        if (getPrimaries().remove(userID)) {
+            setChanged();
+        }
     }
 
     /**
@@ -1986,4 +2073,41 @@ public class Island implements DataObject, MetaDataAble {
                 + commandRanks + ", reserved=" + reserved + ", metaData=" + metaData + ", homes=" + homes
                 + ", maxHomes=" + maxHomes + "]";
     }
+
+    /**
+     * @return the primaries
+     */
+    public Set<UUID> getPrimaries() {
+        if (primaries == null) {
+            primaries = new HashSet<>();
+        }
+        return primaries;
+    }
+
+    /**
+     * @param primaries the primaries to set
+     */
+    public void setPrimaries(Set<UUID> primaries) {
+        this.primaries = primaries;
+        setChanged();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uniqueId);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Island other = (Island) obj;
+        return Objects.equals(uniqueId, other.uniqueId);
+    }
+
+
 }

@@ -489,7 +489,7 @@ public class IslandCreationPanel
                 long uses = plugin.getIslands().getIslands(world, user).stream()
                         .filter(is -> is.getMetaData("bundle")
                                 .map(mdv -> bundle.getDisplayName().equalsIgnoreCase(mdv.asString())
-                                        && !(reset && is.isPrimary())) // If this is a reset, then ignore the use of the island being reset
+                                        && !(reset && is.isPrimary(user.getUniqueId()))) // If this is a reset, then ignore the use of the island being reset
                                 .orElse(false))
                         .count();
                 builder.description(this.user.getTranslation(BUNDLE_BUTTON_REF + "uses", TextVariables.NUMBER,

@@ -65,7 +65,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, IslandsManager.class })
 public class JoinLeaveListenerTest {
 
     private static final String[] NAMES = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry",
@@ -111,6 +111,8 @@ public class JoinLeaveListenerTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
@@ -218,8 +220,6 @@ public class JoinLeaveListenerTest {
         jll = new JoinLeaveListener(plugin);
     }
 
-    /**
-     */
     @After
     public void tearDown() {
         User.clearUsers();
@@ -235,8 +235,7 @@ public class JoinLeaveListenerTest {
         PlayerJoinEvent event = new PlayerJoinEvent(player, "");
         jll.onPlayerJoin(event);
         // Verify
-        verify(pm, times(2)).addPlayer(any());
-        verify(pm, times(2)).save(any());
+        verify(pm, times(3)).getPlayer(any());
         verify(player, never()).sendMessage(anyString());
         // Verify resets
         verify(pm).setResets(eq(world), any(), eq(0));
@@ -245,7 +244,6 @@ public class JoinLeaveListenerTest {
         verify(chest).clear();
         verify(inv).clear();
         assertTrue(set.isEmpty());
-        verify(pm, times(2)).save(any());
     }
 
     /**
@@ -262,7 +260,6 @@ public class JoinLeaveListenerTest {
         verify(chest, never()).clear();
         verify(inv, never()).clear();
         assertFalse(set.isEmpty());
-        verify(pm).save(any());
     }
 
     /**
@@ -355,8 +352,7 @@ public class JoinLeaveListenerTest {
         PlayerJoinEvent event = new PlayerJoinEvent(player, "");
         jll.onPlayerJoin(event);
         // Verify
-        verify(pm, times(2)).addPlayer(any());
-        verify(pm, times(2)).save(any());
+        verify(pm, times(3)).getPlayer(any());
         verify(player).sendMessage(eq("commands.island.create.on-first-login"));
     }
 
@@ -372,7 +368,6 @@ public class JoinLeaveListenerTest {
         verify(chest).clear();
         verify(inv).clear();
         assertTrue(set.isEmpty());
-        verify(pm).save(any());
     }
 
     /**
@@ -387,7 +382,6 @@ public class JoinLeaveListenerTest {
         verify(chest, never()).clear();
         verify(inv, never()).clear();
         assertFalse(set.isEmpty());
-        verify(pm, never()).save(any());
     }
 
     /**

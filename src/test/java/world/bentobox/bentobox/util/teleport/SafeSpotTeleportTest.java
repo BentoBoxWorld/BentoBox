@@ -47,7 +47,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Util.class, Bukkit.class})
+@PrepareForTest({ Util.class, Bukkit.class, IslandsManager.class })
 public class SafeSpotTeleportTest {
 
     // Class under test
@@ -92,6 +92,7 @@ public class SafeSpotTeleportTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
         // Setup instance
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // IWM
