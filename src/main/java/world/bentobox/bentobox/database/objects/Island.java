@@ -1055,7 +1055,6 @@ public class Island implements DataObject, MetaDataAble {
      * @param flag       - flag
      * @param value      - Use RanksManager settings, e.g. RanksManager.MEMBER
      * @param doSubflags - whether to set subflags
-     * @return true if this causes a flag change
      */
     public void setFlag(Flag flag, int value, boolean doSubflags) {
         if (flags.containsKey(flag.getID()) && flags.get(flag.getID()) != value) {
@@ -1219,7 +1218,7 @@ public class Island implements DataObject, MetaDataAble {
      * the {@link world.bentobox.bentobox.api.events.island.IslandRankChangeEvent}.
      * 
      * @param uuid UUID of the player
-     * @param rank rank value
+     * @param newRank rank value
      * @since 1.1
      */
     public void setRank(@Nullable UUID uuid, int newRank) {
@@ -2019,7 +2018,8 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * @param primary the primary to set
+     * Set this island to be the primary for this user
+     * @param userID user UUID
      */
     public void setPrimary(UUID userID) {
         if (getPrimaries().add(userID)) {

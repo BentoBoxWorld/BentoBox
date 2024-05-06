@@ -145,7 +145,7 @@ public class IslandsManager {
     /**
      * Used only for testing. Sets the database to a mock database.
      * 
-     * @param handler - handler
+     * @param h - handler
      */
     public void setHandler(@NonNull Database<Island> h) {
         handler = h;
@@ -1518,11 +1518,11 @@ public class IslandsManager {
     /**
      * Checks if a player is in any team in this world. Note that the player may have
      * multiple islands in the world, any one of which may have a team.
+     * Consider checking the island itself {@link Island#inTeam(UUID)}
      * 
      * @param world      - world
      * @param playerUUID - player's UUID
      * @return true if in team, false if not
-     * @see Consider checking the island itself {@link Island#inTeam(UUID)}
      */
     public boolean inTeam(World world, @NonNull UUID playerUUID) {
         return this.islandCache.getIslands(world, playerUUID).stream()

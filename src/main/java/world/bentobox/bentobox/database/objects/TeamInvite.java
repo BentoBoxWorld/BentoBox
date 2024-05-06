@@ -35,7 +35,7 @@ public class TeamInvite implements DataObject {
      * @param type - invitation type, e.g., coop, team, trust
      * @param inviter - UUID of inviter
      * @param invitee - UUID of invitee
-     * @param island - the unique ID of the island this invite is for
+     * @param islandID - the unique ID of the island this invite is for
      */
     public TeamInvite(Type type, UUID inviter, UUID invitee, String islandID) {
         this.type = type;

@@ -65,7 +65,8 @@ public class User implements MetaDataAble {
     private static final Map<Particle, Class<?>> VALIDATION_CHECK;
     static {
         Map<Particle, Class<?>> v = new EnumMap<>(Particle.class);
-        v.put(Particle.DUST, Particle.DustOptions.class);
+        v.put(Enums.getIfPresent(Particle.class, "DUST")
+                .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME)), Particle.DustOptions.class);
         v.put(Particle.ITEM, ItemStack.class);
         v.put(Particle.ITEM_COBWEB, ItemStack.class);
         v.put(Particle.FALLING_DUST, BlockData.class);
@@ -713,8 +714,7 @@ public class User implements MetaDataAble {
      * server's view distance.
      * 
      * @param particle    Particle to display.
-     * @param dustOptions Particle.DustOptions for the particle to display. Cannot
-     *                    be null when particle is {@link Particle#REDSTONE}.
+     * @param dustOptions Particle.DustOptions for the particle to display.
      * @param x           X coordinate of the particle to display.
      * @param y           Y coordinate of the particle to display.
      * @param z           Z coordinate of the particle to display.
@@ -749,8 +749,7 @@ public class User implements MetaDataAble {
      * server's view distance. Compatibility method for older usages.
      * 
      * @param particle    Particle to display.
-     * @param dustOptions Particle.DustOptions for the particle to display. Cannot
-     *                    be null when particle is {@link Particle#REDSTONE}.
+     * @param dustOptions Particle.DustOptions for the particle to display.
      * @param x           X coordinate of the particle to display.
      * @param y           Y coordinate of the particle to display.
      * @param z           Z coordinate of the particle to display.
@@ -764,8 +763,7 @@ public class User implements MetaDataAble {
      * server's view distance.
      * 
      * @param particle    Particle to display.
-     * @param dustOptions Particle.DustOptions for the particle to display. Cannot
-     *                    be null when particle is {@link Particle#REDSTONE}.
+     * @param dustOptions Particle.DustOptions for the particle to display.
      * @param x           X coordinate of the particle to display.
      * @param y           Y coordinate of the particle to display.
      * @param z           Z coordinate of the particle to display.

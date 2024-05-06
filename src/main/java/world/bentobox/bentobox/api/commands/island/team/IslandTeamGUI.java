@@ -528,7 +528,6 @@ public class IslandTeamGUI {
 
     /**
      * Creates text to describe the status of the player
-     * @param user2 user asking to see the status
      * @param offlineMember member of the team
      * @return string
      */
