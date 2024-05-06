@@ -25,6 +25,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.hooks.ItemsAdderHook;
+import world.bentobox.bentobox.hooks.MultipaperHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.MyWorldsHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
@@ -184,6 +185,9 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     private void completeSetup(long loadTime) {
         final long enableStart = System.currentTimeMillis();
+
+        hooksManager.registerHook(new MultipaperHook());
+
         hooksManager.registerHook(new VaultHook());
 
         // MythicMobs
