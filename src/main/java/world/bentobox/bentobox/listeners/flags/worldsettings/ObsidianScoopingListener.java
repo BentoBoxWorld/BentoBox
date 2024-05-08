@@ -17,6 +17,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.RayTraceResult;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -68,12 +69,20 @@ public class ObsidianScoopingListener extends FlagListener {
         return lookForLava(e);
     }
 
+    /**
+     * @param e PlayerInteractEvent
+     * @return false if obsidian not scooped, true if scooped
+     */
     private boolean lookForLava(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         ItemStack bucket = e.getItem();
 
         // Get block player is looking at
-        Block b = e.getPlayer().rayTraceBlocks(5, FluidCollisionMode.ALWAYS).getHitBlock();
+        RayTraceResult rtBlocks = e.getPlayer().rayTraceBlocks(5, FluidCollisionMode.ALWAYS);
+        if (rtBlocks == null) {
+            return false;
+        }
+        Block b = rtBlocks.getHitBlock();
         if (!b.getType().equals(Material.OBSIDIAN)) {
             // This should not be needed but might catch some attempts
             return false;
