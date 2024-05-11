@@ -118,7 +118,6 @@ public class IslandCacheTest {
         assertTrue(ic.addIsland(island));
         // Check if they are added
         assertEquals(island, ic.get(world, owner));
-        assertEquals(island, ic.get(location));
     }
 
     /**
@@ -142,56 +141,8 @@ public class IslandCacheTest {
         ic.addIsland(island);
         // Check if they are added
         assertEquals(island, ic.get(world, owner));
-        assertEquals(island, ic.get(location));
         ic.clear();
         assertNull(ic.get(world, owner));
-        assertNull(ic.get(location));
-    }
-
-    /**
-     * Test for {@link IslandCache#deleteIslandFromCache(Island)}
-     */
-    @Test
-    public void testDeleteIslandFromCache() {
-        ic.addIsland(island);
-        // Check if they are added
-        assertEquals(island, ic.get(world, owner));
-        assertEquals(island, ic.get(location));
-        boolean result = ic.deleteIslandFromCache(island);
-        assertTrue(result);
-        assertNull(ic.get(world, owner));
-        assertNull(ic.get(location));
-
-        // Test removing an island that is not in the cache
-        World world = mock(World.class);
-        Island island2 = mock(Island.class);
-        Location location2 = mock(Location.class);
-        when(location2.getWorld()).thenReturn(world);
-        when(location2.getBlockX()).thenReturn(0);
-        when(location2.getBlockY()).thenReturn(0);
-        when(location2.getBlockZ()).thenReturn(0);
-        when(island2.getCenter()).thenReturn(location2);
-        when(island2.getOwner()).thenReturn(UUID.randomUUID());
-        Builder<UUID> members = new ImmutableSet.Builder<>();
-        members.add(UUID.randomUUID());
-        members.add(UUID.randomUUID());
-        members.add(UUID.randomUUID());
-        when(island2.getMemberSet()).thenReturn(members.build());
-        when(island2.getMinX()).thenReturn(-400);
-        when(island2.getMinZ()).thenReturn(-400);
-
-        assertFalse(ic.deleteIslandFromCache(island2));
-
-    }
-
-    /**
-     * Test for {@link IslandCache#get(Location)}
-     */
-    @Test
-    public void testGetLocation() {
-        ic.addIsland(island);
-        // Check if they are added
-        assertEquals(island, ic.get(location));
     }
 
     /**
@@ -304,7 +255,6 @@ public class IslandCacheTest {
 
         Mockito.verify(island).setOwner(newOwnerUUID);
         assertEquals(island, ic.get(world, newOwnerUUID));
-        assertEquals(island, ic.get(island.getCenter()));
     }
 
     /**
