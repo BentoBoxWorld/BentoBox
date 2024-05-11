@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,8 +30,6 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  */
 public class IslandCache {
-    @NonNull
-    private final Map<@NonNull Location, @NonNull Island> islandsByLocation;
     /**
      * Map of all islands with island uniqueId as key
      */
@@ -49,7 +46,6 @@ public class IslandCache {
     private final Map<@NonNull World, @NonNull IslandGrid> grids;
 
     public IslandCache() {
-        islandsByLocation = new HashMap<>();
         islandsById = new HashMap<>();
         islandsByUUID = new HashMap<>();
         grids = new HashMap<>();
@@ -66,7 +62,6 @@ public class IslandCache {
         }
         // Get the old island
         Island oldIsland = islandsById.get(newIsland.getUniqueId());
-        compareIslands(oldIsland, newIsland);
         Set<UUID> newMembers = newIsland.getMembers().keySet();
         if (oldIsland != null) {
             Set<UUID> oldMembers = oldIsland.getMembers().keySet();
@@ -86,126 +81,10 @@ public class IslandCache {
             islandsByUUID.put(newMember, set);
         }
 
-        if (islandsByLocation.put(newIsland.getCenter(), newIsland) == null) {
-            BentoBox.getInstance().logError("islandsByLocation failed to update");
-
-        }
         if (islandsById.put(newIsland.getUniqueId(), newIsland) == null) {
             BentoBox.getInstance().logError("islandsById failed to update");
         }
 
-    }
-
-    /**
-     * TODO REMOVE THIS DEBUG METHOD
-     * @param island1 island1
-     * @param island2 island 2
-     */
-    public void compareIslands(Island island1, Island island2) {
-        if (island1 == null || island2 == null) {
-            BentoBox.getInstance().logDebug("One or both islands are null. Cannot compare.");
-            return;
-        }
-
-        if (!island1.getUniqueId().equals(island2.getUniqueId())) {
-            BentoBox.getInstance().logDebug("Island unique IDs are different.");
-        }
-
-        if (island1.isDeleted() != island2.isDeleted()) {
-            BentoBox.getInstance().logDebug("Island deleted states are different.");
-        }
-
-        if (!Objects.equals(island1.getCenter(), island2.getCenter())) {
-            BentoBox.getInstance().logDebug("Island centers are different.");
-        }
-
-        if (island1.getRange() != island2.getRange()) {
-            BentoBox.getInstance().logDebug("Island ranges are different.");
-        }
-
-        if (island1.getProtectionRange() != island2.getProtectionRange()) {
-            BentoBox.getInstance().logDebug("Island protection ranges are different.");
-        }
-
-        if (!island1.getBonusRanges().equals(island2.getBonusRanges())) {
-            BentoBox.getInstance().logDebug("Island bonus ranges are different.");
-        }
-
-        if (island1.getMaxEverProtectionRange() != island2.getMaxEverProtectionRange()) {
-            BentoBox.getInstance().logDebug("Island max ever protection ranges are different.");
-        }
-
-        if (!island1.getWorld().equals(island2.getWorld())) {
-            BentoBox.getInstance().logDebug("Island worlds are different.");
-        }
-
-        if (!Objects.equals(island1.getGameMode(), island2.getGameMode())) {
-            BentoBox.getInstance().logDebug("Island game modes are different.");
-        }
-
-        if (!Objects.equals(island1.getName(), island2.getName())) {
-            BentoBox.getInstance().logDebug("Island names are different.");
-        }
-
-        if (island1.getCreatedDate() != island2.getCreatedDate()) {
-            BentoBox.getInstance().logDebug("Island created dates are different.");
-        }
-
-        if (island1.getUpdatedDate() != island2.getUpdatedDate()) {
-            BentoBox.getInstance().logDebug("Island updated dates are different.");
-        }
-
-        if (!Objects.equals(island1.getOwner(), island2.getOwner())) {
-            BentoBox.getInstance().logDebug("Island owners are different.");
-        }
-
-        if (!island1.getMembers().equals(island2.getMembers())) {
-            BentoBox.getInstance().logDebug("Island members are different.");
-        }
-
-        if (!Objects.equals(island1.getMaxMembers(), island2.getMaxMembers())) {
-            BentoBox.getInstance().logDebug("Island max members are different.");
-        }
-
-        if (island1.isSpawn() != island2.isSpawn()) {
-            BentoBox.getInstance().logDebug("Island spawn states are different.");
-        }
-
-        if (!island1.getFlags().equals(island2.getFlags())) {
-            BentoBox.getInstance().logDebug("Island flags are different.");
-        }
-
-        if (!island1.getHistory().equals(island2.getHistory())) {
-            BentoBox.getInstance().logDebug("Island histories are different.");
-        }
-
-        if (!island1.getSpawnPoint().equals(island2.getSpawnPoint())) {
-            BentoBox.getInstance().logDebug("Island spawn points are different.");
-        }
-
-        if (island1.isDoNotLoad() != island2.isDoNotLoad()) {
-            BentoBox.getInstance().logDebug("Island do not load states are different.");
-        }
-
-        if (!island1.getCooldowns().equals(island2.getCooldowns())) {
-            BentoBox.getInstance().logDebug("Island cooldowns are different.");
-        }
-
-        if (!Objects.equals(island1.getCommandRanks(), island2.getCommandRanks())) {
-            BentoBox.getInstance().logDebug("Island command ranks are different.");
-        }
-
-        if (!Objects.equals(island1.getMetaData(), island2.getMetaData())) {
-            BentoBox.getInstance().logDebug("Island metadata are different.");
-        }
-
-        if (!Objects.equals(island1.getHomes(), island2.getHomes())) {
-            BentoBox.getInstance().logDebug("Island homes are different.");
-        }
-
-        if (!Objects.equals(island1.getMaxHomes(), island2.getMaxHomes())) {
-            BentoBox.getInstance().logDebug("Island max homes are different.");
-        }
     }
 
     /**
@@ -219,7 +98,6 @@ public class IslandCache {
             return false;
         }
         if (addToGrid(island)) {
-            islandsByLocation.put(island.getCenter(), island);
             islandsById.put(island.getUniqueId(), island);
             // Only add islands to this map if they are owned
             if (island.isOwned()) {
@@ -253,7 +131,6 @@ public class IslandCache {
     }
 
     public void clear() {
-        islandsByLocation.clear();
         islandsById.clear();
         islandsByUUID.clear();
     }
@@ -262,32 +139,19 @@ public class IslandCache {
      * Deletes an island from the cache. Does not remove blocks.
      * 
      * @param island island to delete
-     * @return true if successful, false if not
      */
-    public boolean deleteIslandFromCache(@NonNull Island island) {
-        if (!islandsByLocation.remove(island.getCenter(), island)) {
-            // Already deleted
-            return false;
-        }
-        islandsById.remove(island.getUniqueId());
+    public void deleteIslandFromCache(@NonNull Island island) {
+        islandsById.remove(island.getUniqueId(), island);
         removeFromIslandsByUUID(island);
         // Remove from grid
         if (grids.containsKey(island.getWorld())) {
-            return grids.get(island.getWorld()).removeFromGrid(island);
+            grids.get(island.getWorld()).removeFromGrid(island);
         }
-        return false;
     }
 
     private void removeFromIslandsByUUID(Island island) {
         for (Set<Island> set : islandsByUUID.values()) {
-            Iterator<Island> is = set.iterator();
-            while (is.hasNext()) {
-                Island i = is.next();
-                if (i.equals(island)) {
-                    is.remove();
-                }
-            }
-            // set.removeIf(island::equals);
+            set.removeIf(island::equals);
         }
     }
 
@@ -296,22 +160,10 @@ public class IslandCache {
      * 
      * @param uniqueId - island unique ID
      */
-    public boolean deleteIslandFromCache(@NonNull String uniqueId) {
+    public void deleteIslandFromCache(@NonNull String uniqueId) {
         if (islandsById.containsKey(uniqueId)) {
-            return deleteIslandFromCache(islandsById.get(uniqueId));
+            deleteIslandFromCache(islandsById.get(uniqueId));
         }
-        return false;
-    }
-
-    /**
-     * Get island based on the exact center location of the island
-     * 
-     * @param location location to search for
-     * @return island or null if it does not exist
-     */
-    @Nullable
-    public Island get(@NonNull Location location) {
-        return islandsByLocation.get(location);
     }
 
     /**
@@ -400,7 +252,7 @@ public class IslandCache {
      */
     @NonNull
     public Collection<Island> getIslands() {
-        return Collections.unmodifiableCollection(islandsByLocation.values());
+        return Collections.unmodifiableCollection(islandsById.values());
     }
 
     /**
@@ -418,8 +270,8 @@ public class IslandCache {
         if (overworld == null) {
             return Collections.emptyList();
         }
-        return islandsByLocation.entrySet().stream()
-                .filter(entry -> overworld.equals(Util.getWorld(entry.getKey().getWorld()))) // shouldn't make NPEs
+        return islandsById.entrySet().stream()
+                .filter(entry -> overworld.equals(Util.getWorld(entry.getValue().getWorld()))) // shouldn't make NPEs
                 .map(Map.Entry::getValue).toList();
     }
 
@@ -494,7 +346,7 @@ public class IslandCache {
      * @return the number of islands
      */
     public int size() {
-        return islandsByLocation.size();
+        return islandsById.size();
     }
 
     /**
@@ -504,7 +356,7 @@ public class IslandCache {
      * @return the number of islands
      */
     public long size(World world) {
-        return this.islandsByLocation.keySet().stream().map(Location::getWorld).filter(world::equals).count();
+        return this.islandsById.values().stream().map(Island::getWorld).filter(world::equals).count();
     }
 
     /**
@@ -519,7 +371,6 @@ public class IslandCache {
             islandsByUUID.computeIfAbsent(newOwnerUUID, k -> new HashSet<>()).add(island);
         }
         island.setRank(newOwnerUUID, RanksManager.OWNER_RANK);
-        islandsByLocation.put(island.getCenter(), island);
         islandsById.put(island.getUniqueId(), island);
     }
 
