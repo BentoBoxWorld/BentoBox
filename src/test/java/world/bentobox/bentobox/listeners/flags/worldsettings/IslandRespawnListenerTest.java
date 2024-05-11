@@ -22,7 +22,6 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.damage.DamageSource;
-import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -73,7 +72,7 @@ public class IslandRespawnListenerTest {
     @Mock
     private Island island;
 
-    private DamageSource ds = DamageSource.builder(DamageType.ARROW).build();
+    private DamageSource ds = null;
 
     /**
      */

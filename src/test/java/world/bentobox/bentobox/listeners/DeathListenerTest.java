@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.damage.DamageSource;
-import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.junit.After;
@@ -41,7 +40,7 @@ public class DeathListenerTest {
     private World world;
     private UUID uuid;
     private IslandWorldManager iwm;
-    private DamageSource ds = DamageSource.builder(DamageType.ARROW).build();
+    private DamageSource ds = null;
 
     @Before
     public void setUp() {
