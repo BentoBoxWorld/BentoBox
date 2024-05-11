@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -18,6 +17,7 @@ import world.bentobox.bentobox.api.events.island.IslandDeletedEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
 
 public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
@@ -82,7 +82,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
                 user.sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, this.getTopLabel());
                 return false;
             }
-        } catch(Exception e) {
+        } catch (NumberFormatException e) {
             user.sendMessage("commands.admin.purge.number-error");
             return false;
         }
@@ -120,29 +120,42 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         }
     }
 
+    /**
+     * Gets a set of islands that are older than the parameter in days
+     * @param days days
+     * @return set of islands
+     */
     Set<String> getOldIslands(int days) {
+        long currentTimeMillis = System.currentTimeMillis();
+        double daysInMilliseconds = days * 1000 * 3600 * 24;
+        Set<String> oldIslands = new HashSet<>();
+
+        // Process islands in one pass, logging and adding to the set if applicable
         getPlugin().getIslands().getIslands().stream()
-        .filter(i -> !i.isSpawn())
-        .filter(i -> !i.getPurgeProtected())
-        .filter(i -> i.getWorld().equals(this.getWorld()))
-        .filter(Island::isOwned)
-        .filter(i -> i.getMembers().size() == 1)
-        .filter(i -> ((double)(System.currentTimeMillis() - Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed()) / 1000 / 3600 / 24) > days)
-        .forEach(i -> {
-            Date date = new Date(Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed());
-            BentoBox.getInstance().log("Will purge " +
-                    BentoBox.getInstance().getPlayers().getName(i.getOwner()) +
-                    " last logged in " + (int)((double)(System.currentTimeMillis() - Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed()) / 1000 / 3600 / 24) + " days ago. " + date);
-        });
-        return getPlugin().getIslands().getIslands().stream()
-                .filter(i -> !i.isSpawn())
-                .filter(i -> !i.getPurgeProtected())
-                .filter(i -> i.getWorld().equals(this.getWorld()))
-                .filter(Island::isOwned)
-                .filter(i -> i.getMembers().size() == 1)
-                .filter(i -> ((double)(System.currentTimeMillis() - Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed()) / 1000 / 3600 / 24) > days)
-                .map(Island::getUniqueId)
-                .collect(Collectors.toSet());
+                .filter(i -> !i.isSpawn()).filter(i -> !i.getPurgeProtected())
+                .filter(i -> i.getWorld().equals(this.getWorld())).filter(Island::isOwned).filter(
+                        i -> i.getMembers().keySet().stream()
+                                .allMatch(member -> (currentTimeMillis
+                                        - Bukkit.getOfflinePlayer(member).getLastPlayed()) > daysInMilliseconds))
+                .forEach(i -> {
+                    // Add the unique island ID to the set
+                    oldIslands.add(i.getUniqueId());
+                    BentoBox.getInstance().log("Will purge island at " + Util.xyz(i.getCenter().toVector()) + " in "
+                            + i.getWorld().getName());
+                    // Log each member's last login information
+                    i.getMembers().keySet().forEach(member -> {
+                        Date lastLogin = new Date(Bukkit.getOfflinePlayer(member).getLastPlayed());
+                        BentoBox.getInstance()
+                                .log("Player " + BentoBox.getInstance().getPlayers().getName(member)
+                                        + " last logged in "
+                                        + (int) ((currentTimeMillis - Bukkit.getOfflinePlayer(member).getLastPlayed())
+                                                / 1000 / 3600 / 24)
+                                        + " days ago. " + lastLogin);
+                    });
+                    BentoBox.getInstance().log("+-----------------------------------------+");
+                });
+
+        return oldIslands;
     }
 
     /**
