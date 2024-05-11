@@ -10,6 +10,8 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.junit.After;
@@ -39,6 +41,7 @@ public class DeathListenerTest {
     private World world;
     private UUID uuid;
     private IslandWorldManager iwm;
+    private DamageSource ds = DamageSource.builder(DamageType.ARROW).build();
 
     @Before
     public void setUp() {
@@ -82,7 +85,7 @@ public class DeathListenerTest {
         // Test
         DeathListener dl = new DeathListener(plugin);
 
-        PlayerDeathEvent e = new PlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeath(e);
         Mockito.verify(pm).addDeath(world, uuid);
     }
@@ -93,7 +96,7 @@ public class DeathListenerTest {
         // Test
         DeathListener dl = new DeathListener(plugin);
 
-        PlayerDeathEvent e = new PlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeath(e);
         Mockito.verify(pm, Mockito.never()).addDeath(world, uuid);
     }
@@ -104,7 +107,7 @@ public class DeathListenerTest {
         // Test
         DeathListener dl = new DeathListener(plugin);
 
-        PlayerDeathEvent e = new PlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeath(e);
         Mockito.verify(pm, Mockito.never()).addDeath(world, uuid);
     }

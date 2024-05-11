@@ -23,6 +23,8 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
@@ -134,7 +136,8 @@ public class VisitorKeepInventoryListenerTest {
         // Default death event
         List<ItemStack> drops = new ArrayList<>();
         drops.add(new ItemStack(Material.ACACIA_BOAT));
-        e = new PlayerDeathEvent(player, drops, 100, 0, 0, 0, "Death message");
+        DamageSource ds = DamageSource.builder(DamageType.ARROW).build();
+        e = new PlayerDeathEvent(player, ds, drops, 100, 0, 0, 0, "Death message");
         // Make new
         l = new VisitorKeepInventoryListener();
     }
