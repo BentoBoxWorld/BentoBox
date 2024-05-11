@@ -46,6 +46,7 @@ import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.util.MyBiomeGrid;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Regenerates by using a seed world. The seed world is created using the same generator as the game
@@ -101,7 +102,10 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     }
                     final int x = chunkX;
                     final int z = chunkZ;
-                    newTasks.add(regenerateChunk(di, world, x, z));
+                    // Only add chunks that are generated
+                    if (world.getChunkAt(x, z, false).isGenerated()) {
+                        newTasks.add(regenerateChunk(di, world, x, z));
+                    }
                     chunkZ++;
                     if (chunkZ > di.getMaxZChunk()) {
                         chunkZ = di.getMinZChunk();
@@ -125,6 +129,11 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     private CompletableFuture<Void> regenerateChunk(@Nullable IslandDeletion di, @NonNull World world, int chunkX,
             int chunkZ) {
+
+        // Check if chunk has been generated
+        if (!world.getChunkAt(chunkX, chunkZ, false).isGenerated()) {
+            return CompletableFuture.completedFuture(null);
+        }
 
         CompletableFuture<Chunk> seedWorldFuture = getSeedWorldChunk(world, chunkX, chunkZ);
 

@@ -748,6 +748,7 @@ public class Util {
             String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
             String pluginPackageName = plugin.getClass().getPackage().getName();
             String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
+            BentoBox.getInstance().log("Optimizing for " + version);
             PasteHandler handler;
             try {
                 Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".PasteHandlerImpl");

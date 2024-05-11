@@ -67,17 +67,21 @@ public class User implements MetaDataAble {
         Map<Particle, Class<?>> v = new EnumMap<>(Particle.class);
         v.put(Enums.getIfPresent(Particle.class, "DUST")
                 .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME)), Particle.DustOptions.class);
-        v.put(Particle.ITEM, ItemStack.class);
-        v.put(Particle.ITEM_COBWEB, ItemStack.class);
+        if (Enums.getIfPresent(Particle.class, "ITEM").isPresent()) {
+            // 1.20.6 Particles
+            v.put(Particle.ITEM, ItemStack.class);
+            v.put(Particle.ITEM_COBWEB, ItemStack.class);
+            v.put(Particle.BLOCK, BlockData.class);
+            v.put(Particle.DUST_PILLAR, BlockData.class);
+            v.put(Particle.ENTITY_EFFECT, Color.class);
+        }
         v.put(Particle.FALLING_DUST, BlockData.class);
-        v.put(Particle.BLOCK, BlockData.class);
         v.put(Particle.BLOCK_MARKER, BlockData.class);
         v.put(Particle.DUST_COLOR_TRANSITION, DustTransition.class);
-        v.put(Particle.DUST_PILLAR, BlockData.class);
         v.put(Particle.VIBRATION, Vibration.class);
         v.put(Particle.SCULK_CHARGE, Float.class);
         v.put(Particle.SHRIEK, Integer.class);
-        v.put(Particle.ENTITY_EFFECT, Color.class);
+
         VALIDATION_CHECK = Collections.unmodifiableMap(v);
     }
 
@@ -732,7 +736,8 @@ public class User implements MetaDataAble {
         // Check if this particle is beyond the viewing distance of the server
         if (this.player != null && this.player.getLocation().toVector().distanceSquared(new Vector(x, y,
                 z)) < (Bukkit.getServer().getViewDistance() * 256 * Bukkit.getServer().getViewDistance())) {
-            if (particle.equals(Particle.DUST)) {
+            if (particle.equals(Enums.getIfPresent(Particle.class, "DUST")
+                    .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME)))) {
                 player.spawnParticle(particle, x, y, z, 1, 0, 0, 0, 1, dustOptions);
             } else if (dustOptions != null) {
                 player.spawnParticle(particle, x, y, z, 1, dustOptions);
