@@ -11,8 +11,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,6 +31,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.google.common.collect.ImmutableSet;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -43,7 +43,6 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * @author tastybento
@@ -243,10 +242,7 @@ public class AdminPurgeCommandTest {
         when(island.getPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
-        Map<UUID, Integer> team = new HashMap<>();
-        team.put(UUID.randomUUID(), RanksManager.OWNER_RANK);
-        team.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
-        when(island.getMembers()).thenReturn(team);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID(), UUID.randomUUID()));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
 
         // All players are up to date
@@ -267,9 +263,7 @@ public class AdminPurgeCommandTest {
         when(island.getPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
-        Map<UUID, Integer> team = new HashMap<>();
-        team.put(UUID.randomUUID(), RanksManager.OWNER_RANK);
-        when(island.getMembers()).thenReturn(team);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer op = mock(OfflinePlayer.class);
@@ -288,9 +282,7 @@ public class AdminPurgeCommandTest {
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
         when(island.isOwned()).thenReturn(true);
-        Map<UUID, Integer> team = new HashMap<>();
-        team.put(UUID.randomUUID(), RanksManager.OWNER_RANK);
-        when(island.getMembers()).thenReturn(team);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer op = mock(OfflinePlayer.class);

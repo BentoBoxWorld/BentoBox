@@ -134,7 +134,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         getPlugin().getIslands().getIslands().stream()
                 .filter(i -> !i.isSpawn()).filter(i -> !i.getPurgeProtected())
                 .filter(i -> i.getWorld().equals(this.getWorld())).filter(Island::isOwned).filter(
-                        i -> i.getMembers().keySet().stream()
+                        i -> i.getMemberSet().stream()
                                 .allMatch(member -> (currentTimeMillis
                                         - Bukkit.getOfflinePlayer(member).getLastPlayed()) > daysInMilliseconds))
                 .forEach(i -> {
@@ -143,7 +143,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
                     BentoBox.getInstance().log("Will purge island at " + Util.xyz(i.getCenter().toVector()) + " in "
                             + i.getWorld().getName());
                     // Log each member's last login information
-                    i.getMembers().keySet().forEach(member -> {
+                    i.getMemberSet().forEach(member -> {
                         Date lastLogin = new Date(Bukkit.getOfflinePlayer(member).getLastPlayed());
                         BentoBox.getInstance()
                                 .log("Player " + BentoBox.getInstance().getPlayers().getName(member)
