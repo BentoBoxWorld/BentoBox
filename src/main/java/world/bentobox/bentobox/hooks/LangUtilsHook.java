@@ -24,6 +24,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.Enums;
 import com.meowj.langutils.lang.LanguageHelper;
 
 import world.bentobox.bentobox.BentoBox;
@@ -286,10 +287,6 @@ public class LangUtilsHook extends Hook {
         case LUCK -> "Potion of Luck";
         case TURTLE_MASTER -> "Potion of the Turtle Master";
         case SLOW_FALLING -> "Potion of Slow Falling";
-        case HARMING -> "Potion of Harming";
-        case HEALING -> "Potion of Healing";
-        case INFESTED -> "Infested Potion";
-        case LEAPING -> "Potion of Leaping";
         case LONG_FIRE_RESISTANCE -> "Potion of Long Fire Resistance";
         case LONG_INVISIBILITY -> "Potion of Long Invisibility";
         case LONG_NIGHT_VISION -> "Potion of Long Night Vision";
@@ -302,8 +299,6 @@ public class LangUtilsHook extends Hook {
         case LONG_TURTLE_MASTER -> "Potion of Long Turtle Master";
         case LONG_WATER_BREATHING -> "Potion of Long Water Breathing";
         case LONG_WEAKNESS -> "Potion of Long Weakness";
-        case OOZING -> "Potion of Oozing";
-        case REGENERATION -> "Potion of Regeneration";
         case STRONG_HARMING -> "Potion of Strong Harming";
         case STRONG_HEALING -> "Potion of Strong Healing";
         case STRONG_LEAPING -> "Potion of Strong Leaping";
@@ -313,10 +308,7 @@ public class LangUtilsHook extends Hook {
         case STRONG_STRENGTH -> "Potion of Strong Strength";
         case STRONG_SWIFTNESS -> "Potion of Swiftness"; 
         case STRONG_TURTLE_MASTER -> "Potion of Strong Turtle Master";
-        case SWIFTNESS -> "Potion of Swiftness"; 
-        case WEAVING -> "Potion of Weaving"; 
-        case WIND_CHARGED -> "Potion of Wind Charged"; 
-        default -> "Potion (Unknown)";
+        default -> "Potion of " + Util.prettifyText(potionType.name());
         };
 
     }

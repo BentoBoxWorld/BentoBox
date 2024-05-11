@@ -344,7 +344,8 @@ public class ItemParser {
                     PatternType pt = Enums.getIfPresent(PatternType.class, part[i]).orNull();
                     if (pt == null) {
                         // Try to convert old to new
-                        if (part[i].trim().equals("STRIPE_SMALL")) {
+                        if (part[i].trim().equals("STRIPE_SMALL")
+                                && Enums.getIfPresent(PatternType.class, "SMALL_STRIPES").isPresent()) {
                             pt = PatternType.SMALL_STRIPES;
                         }
                     }
