@@ -1,6 +1,11 @@
 package world.bentobox.bentobox.hooks;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -8,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.eclipse.jdt.annotation.Nullable;
 
 import dev.lone.itemsadder.api.CustomBlock;
 import world.bentobox.bentobox.BentoBox;
@@ -21,6 +27,19 @@ import world.bentobox.bentobox.managers.RanksManager;
 /**
  * Hook to enable itemsadder blocks to be deleted when islands are deleted.
  * It also includes a flag to track explosion access
+ */
+/*
+ * add some methods under CustomBlock#Advanced class.
+
+        public static void deleteAllCustomBlocksInChunk(Chunk chunk)
+
+        @Nullable
+        public List<Location> getAllBlocksLocationsList(Chunk chunk)
+
+        @Nullable
+        public Map<String, Location> getAllBlocksLocations(Chunk chunk)
+
+        public void runActionOnBlocks(Chunk chunk, BiConsumer<String, Location> action)
  */
 public class ItemsAdderHook extends Hook {
 
@@ -76,6 +95,24 @@ public class ItemsAdderHook extends Hook {
     public void clearBlockInfo(Location location) {
         // TODO: find a more efficient way of doing this.
         // CustomBlock.remove(location);
+    }
+
+    public static void deleteAllCustomBlocksInChunk(Chunk chunk) {
+        CustomBlock.Advanced.deleteAllCustomBlocksInChunk(chunk);
+    }
+
+    @Nullable
+    public List<Location> getAllBlocksLocationsList(Chunk chunk) {
+        return CustomBlock.Advanced.getAllBlocksLocationsList(chunk);
+    }
+
+    @Nullable
+    public Map<Location, String> getAllBlocksLocations(Chunk chunk) {
+        return CustomBlock.Advanced.getAllBlocksLocations(chunk);
+    }
+
+    public void runActionOnBlocks(Chunk chunk, BiConsumer<String, Location> action) {
+        CustomBlock.Advanced.runActionOnBlocks(chunk, action);
     }
 
     class BlockInteractListener extends FlagListener {
