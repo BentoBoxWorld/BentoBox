@@ -11,14 +11,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
@@ -31,6 +31,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.google.common.collect.ImmutableSet;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -41,7 +43,6 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * @author tastybento
@@ -69,6 +70,8 @@ public class AdminPurgeCommandTest {
     private World world;
     @Mock
     private PlayersManager pm;
+    @Mock
+    private @NonNull Location location;
 
     /**
      */
@@ -97,6 +100,8 @@ public class AdminPurgeCommandTest {
 
         // Island
         when(island.isOwned()).thenReturn(true); // Default owned
+        when(location.toVector()).thenReturn(new Vector(1, 2, 3));
+        when(island.getCenter()).thenReturn(location);
 
         // Player manager
         when(plugin.getPlayers()).thenReturn(pm);
@@ -237,11 +242,15 @@ public class AdminPurgeCommandTest {
         when(island.getPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
-        Map<UUID, Integer> team = new HashMap<>();
-        team.put(UUID.randomUUID(), RanksManager.OWNER_RANK);
-        team.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
-        when(island.getMembers()).thenReturn(team);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID(), UUID.randomUUID()));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
+
+        // All players are up to date
+        PowerMockito.mockStatic(Bukkit.class);
+        OfflinePlayer op = mock(OfflinePlayer.class);
+        when(op.getLastPlayed()).thenReturn(System.currentTimeMillis());
+        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
+
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
         verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
     }
@@ -254,9 +263,7 @@ public class AdminPurgeCommandTest {
         when(island.getPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
-        Map<UUID, Integer> team = new HashMap<>();
-        team.put(UUID.randomUUID(), RanksManager.OWNER_RANK);
-        when(island.getMembers()).thenReturn(team);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer op = mock(OfflinePlayer.class);
@@ -275,9 +282,7 @@ public class AdminPurgeCommandTest {
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
         when(island.isOwned()).thenReturn(true);
-        Map<UUID, Integer> team = new HashMap<>();
-        team.put(UUID.randomUUID(), RanksManager.OWNER_RANK);
-        when(island.getMembers()).thenReturn(team);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer op = mock(OfflinePlayer.class);
@@ -300,7 +305,7 @@ public class AdminPurgeCommandTest {
         testExecuteUserStringListOfStringIslandsFound();
         assertTrue(apc.execute(user, "", Collections.singletonList("confirm")));
         verify(im).deleteIsland(eq(island), eq(true), eq(null));
-        verify(plugin, times(2)).log(any());
+        verify(plugin, times(4)).log(any());
         verify(user).sendMessage(eq("commands.admin.purge.see-console-for-status"), eq("[label]"), eq("bsb"));
     }
 
