@@ -145,7 +145,7 @@ public class IslandRespawnListenerTest {
     public void testOnPlayerDeathNotIslandWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         List<ItemStack> drops = new ArrayList<>();
-        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, drops, 0, 0, 0, 0, "");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
         new IslandRespawnListener().onPlayerDeath(e);
         verify(world, never()).getUID();
     }
@@ -158,7 +158,7 @@ public class IslandRespawnListenerTest {
     public void testOnPlayerDeathNoFlag() {
         Flags.ISLAND_RESPAWN.setSetting(world, false);
         List<ItemStack> drops = new ArrayList<>();
-        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, drops, 0, 0, 0, 0, "");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
         new IslandRespawnListener().onPlayerDeath(e);
         verify(world, never()).getUID();
     }
@@ -171,7 +171,7 @@ public class IslandRespawnListenerTest {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         List<ItemStack> drops = new ArrayList<>();
-        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, drops, 0, 0, 0, 0, "");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
         new IslandRespawnListener().onPlayerDeath(e);
         verify(world, never()).getUID();
     }
@@ -184,7 +184,7 @@ public class IslandRespawnListenerTest {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
         List<ItemStack> drops = new ArrayList<>();
-        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, drops, 0, 0, 0, 0, "");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
         new IslandRespawnListener().onPlayerDeath(e);
         verify(world).getUID();
     }
@@ -197,7 +197,7 @@ public class IslandRespawnListenerTest {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         List<ItemStack> drops = new ArrayList<>();
-        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, drops, 0, 0, 0, 0, "");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
         new IslandRespawnListener().onPlayerDeath(e);
         verify(world).getUID();
     }
@@ -209,7 +209,7 @@ public class IslandRespawnListenerTest {
     @Test
     public void testOnPlayerDeath() {
         List<ItemStack> drops = new ArrayList<>();
-        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, drops, 0, 0, 0, 0, "");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
         new IslandRespawnListener().onPlayerDeath(e);
         verify(world).getUID();
     }
@@ -222,7 +222,7 @@ public class IslandRespawnListenerTest {
     public void testOnPlayerRespawn() {
         // Die
         List<ItemStack> drops = new ArrayList<>();
-        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, drops, 0, 0, 0, 0, "");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
         IslandRespawnListener l = new IslandRespawnListener();
         l.onPlayerDeath(e);
         Location location = mock(Location.class);
@@ -264,7 +264,7 @@ public class IslandRespawnListenerTest {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         // Die
         List<ItemStack> drops = new ArrayList<>();
-        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, drops, 0, 0, 0, 0, "");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
         IslandRespawnListener l = new IslandRespawnListener();
         l.onPlayerDeath(e);
         Location location = mock(Location.class);
@@ -286,7 +286,7 @@ public class IslandRespawnListenerTest {
         Flags.ISLAND_RESPAWN.setSetting(world, false);
         // Die
         List<ItemStack> drops = new ArrayList<>();
-        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, drops, 0, 0, 0, 0, "");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
         IslandRespawnListener l = new IslandRespawnListener();
         l.onPlayerDeath(e);
         Location location = mock(Location.class);

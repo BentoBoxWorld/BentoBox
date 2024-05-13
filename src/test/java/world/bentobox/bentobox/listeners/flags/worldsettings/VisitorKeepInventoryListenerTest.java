@@ -134,7 +134,7 @@ public class VisitorKeepInventoryListenerTest {
         // Default death event
         List<ItemStack> drops = new ArrayList<>();
         drops.add(new ItemStack(Material.ACACIA_BOAT));
-        e = new PlayerDeathEvent(player, null, drops, 100, 0, 0, 0, "Death message");
+        e = new PlayerDeathEvent(player, drops, 100, 0, 0, 0, "Death message");
         // Make new
         l = new VisitorKeepInventoryListener();
     }

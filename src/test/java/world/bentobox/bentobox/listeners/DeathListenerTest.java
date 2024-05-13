@@ -84,7 +84,7 @@ public class DeathListenerTest {
         // Test
         DeathListener dl = new DeathListener(plugin);
 
-        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, new ArrayList<>(), 0, 0, 0, 0, "died");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeath(e);
         Mockito.verify(pm).addDeath(world, uuid);
     }
@@ -95,7 +95,7 @@ public class DeathListenerTest {
         // Test
         DeathListener dl = new DeathListener(plugin);
 
-        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, new ArrayList<>(), 0, 0, 0, 0, "died");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeath(e);
         Mockito.verify(pm, Mockito.never()).addDeath(world, uuid);
     }
@@ -106,7 +106,7 @@ public class DeathListenerTest {
         // Test
         DeathListener dl = new DeathListener(plugin);
 
-        PlayerDeathEvent e = new PlayerDeathEvent(player, ds, new ArrayList<>(), 0, 0, 0, 0, "died");
+        PlayerDeathEvent e = new PlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeath(e);
         Mockito.verify(pm, Mockito.never()).addDeath(world, uuid);
     }
