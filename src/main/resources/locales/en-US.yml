@@ -267,7 +267,7 @@ commands:
     reload:
       description: reload
     tp:
-      parameters: <player> [player to teleport]
+      parameters: <player> [player's island]
       description: teleport to a player's island
       manual: '&c No safe warp found! Manually tp near to &b [location] &c and check
         it out'
