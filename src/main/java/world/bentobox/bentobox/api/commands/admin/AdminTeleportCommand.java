@@ -71,10 +71,6 @@ public class AdminTeleportCommand extends CompositeCommand {
             return false;
         }
 
-        if (args.size() == 1) {
-            return true;
-        }
-
         World world = getWorld();
         if (getLabel().equals("tpnether")) {
             world = getPlugin().getIWM().getNetherWorld(getWorld());
@@ -91,9 +87,12 @@ public class AdminTeleportCommand extends CompositeCommand {
             user.sendMessage(NOT_SAFE);
             return false;
         }
+        if (args.size() == 1) {
+            return true;
+        }
 
         // They named the island to go to
-        Map<String, IslandInfo> names = getNameIslandMap(user);
+        Map<String, IslandInfo> names = getNameIslandMap(User.getInstance(targetUUID));
         final String name = String.join(" ", args.subList(1, args.size()));
         if (!names.containsKey(name)) {
             // Failed home name check
@@ -102,14 +101,13 @@ public class AdminTeleportCommand extends CompositeCommand {
             names.keySet()
                     .forEach(n -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, n));
             return false;
-        } else {
+        } else if (names.size() > 1) {
             IslandInfo info = names.get(name);
             Island island = info.island;
             warpSpot = island.getSpawnPoint(world.getEnvironment()) != null
                     ? island.getSpawnPoint(world.getEnvironment())
                     : island.getProtectionCenter().toVector().toLocation(world);
         }
-
         return true;
     }
 
@@ -146,18 +144,18 @@ public class AdminTeleportCommand extends CompositeCommand {
     private record IslandInfo(Island island, boolean islandName) {
     }
 
-    private Map<String, IslandInfo> getNameIslandMap(User user) {
+    private Map<String, IslandInfo> getNameIslandMap(User target) {
         Map<String, IslandInfo> islandMap = new HashMap<>();
         int index = 0;
-        for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
+        for (Island island : getIslands().getIslands(getWorld(), target.getUniqueId())) {
             index++;
             if (island.getName() != null && !island.getName().isBlank()) {
                 // Name has been set
                 islandMap.put(island.getName(), new IslandInfo(island, true));
             } else {
                 // Name has not been set
-                String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
-                        user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index;
+                String text = target.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
+                        target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName()) + " " + index;
                 islandMap.put(text, new IslandInfo(island, true));
             }
             // Add homes. Homes do not need an island specified
@@ -178,8 +176,12 @@ public class AdminTeleportCommand extends CompositeCommand {
         if (args.size() == 2) {
             return Optional.of(Util.tabLimit(new ArrayList<>(Util.getOnlinePlayerList(user)), lastArg));
         }
+
         if (args.size() == 3) {
-            return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(user).keySet()), lastArg));
+            UUID target = Util.getUUID(args.get(1));
+            return target == null ? Optional.empty()
+                    : Optional
+                    .of(Util.tabLimit(new ArrayList<>(getNameIslandMap(User.getInstance(target)).keySet()), lastArg));
         }
         return Optional.empty();
     }

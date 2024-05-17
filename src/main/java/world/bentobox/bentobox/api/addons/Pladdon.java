@@ -7,8 +7,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.io.Files;
 
-import world.bentobox.bentobox.BentoBox;
-
 /**
  * Provides a shell for addons to become Plugins so that other Plugins
  * can tap into their API more easily. Plugin + addon = Pladdon
@@ -18,8 +16,6 @@ import world.bentobox.bentobox.BentoBox;
 public abstract class Pladdon extends JavaPlugin {
 
     private static final String ADDONS_FOLDER = "BentoBox" + File.separator + "addons";
-    private static final String PAPER_REMAPPED = "plugins" + File.separator + ".paper-remapped" + File.separator
-            + "unknown-origin";
 
     /**
      * This must return a new instance of the addon. It is called when the Pladdon is loaded.
@@ -30,7 +26,6 @@ public abstract class Pladdon extends JavaPlugin {
     @Override
     public void onLoad() {
         String parentFolder = getFile().getParent();
-        BentoBox.getInstance().logDebug("LOOK HERE: " + parentFolder);
         if (parentFolder == null || !parentFolder.endsWith(ADDONS_FOLDER)) {
             // Jar is in the wrong place. Let's move it
             //moveJar();
