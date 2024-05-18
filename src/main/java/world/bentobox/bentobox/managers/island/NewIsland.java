@@ -227,6 +227,9 @@ public class NewIsland {
      * @param oldIsland - old island that will be deleted
      */
     private void postCreationTask(Island oldIsland) {
+        if (oldIsland == null) {
+            return;
+        }
         // Set initial spawn point if one exists
         if (island.getSpawnPoint(Environment.NORMAL) != null) {
             plugin.getIslands().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL));
