@@ -53,8 +53,9 @@ public class PVPListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
-            // Allow self damage or NPC attack because Citizens handles its own PVP
-            if (e.getEntity().equals(e.getDamager()) || e.getEntity().hasMetadata("NPC")) {
+            // Allow self damage or NPC attack or attack by NPC because Citizens handles its own PVP
+            if (e.getEntity().equals(e.getDamager()) || e.getEntity().hasMetadata("NPC")
+                    || e.getDamager().hasMetadata("NPC")) {
                 return;
             }
             // Is PVP allowed here?

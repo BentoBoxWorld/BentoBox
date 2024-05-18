@@ -25,6 +25,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
@@ -288,6 +290,27 @@ public class PVPListenerTest {
                 EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        new PVPListener().onEntityDamage(e);
+        // PVP should be allowed for NPC
+        assertFalse(e.isCancelled());
+        verify(player, never()).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+
+    }
+
+    /**
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
+    public void testOnEntityDamageNPCAttacks() {
+        // Player 2 is an NPC
+        when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
+        // PVP is not allowed
+        when(island.isAllowed(any())).thenReturn(false);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player2, player,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
+                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         // PVP should be allowed for NPC
         assertFalse(e.isCancelled());
