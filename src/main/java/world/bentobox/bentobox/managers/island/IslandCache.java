@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,7 +41,7 @@ public class IslandCache {
      * UUID, value is a set of islands
      */
     @NonNull
-    private final Map<@NonNull UUID, Set<Island>> islandsByUUID;
+    private final Map<@NonNull UUID, Set<String>> islandsByUUID;
 
     @NonNull
     private final Map<@NonNull World, @NonNull IslandGrid> grids;
@@ -69,15 +70,17 @@ public class IslandCache {
             for (UUID oldMember : oldMembers) {
                 if (!newMembers.contains(oldMember)) {
                     // Member has been removed - remove island
-                    islandsByUUID.computeIfAbsent(oldMember, k -> new HashSet<>()).remove(oldIsland);
+                    islandsByUUID.computeIfAbsent(oldMember, k -> new HashSet<>()).remove(oldIsland.getUniqueId());
                 }
             }
         }
         // Update the members with the new island object
         for (UUID newMember : newMembers) {
-            Set<Island> set = islandsByUUID.computeIfAbsent(newMember, k -> new HashSet<>());
-            set.remove(oldIsland);
-            set.add(newIsland);
+            Set<String> set = islandsByUUID.computeIfAbsent(newMember, k -> new HashSet<>());
+            if (oldIsland != null) {
+                set.remove(oldIsland.getUniqueId());
+            }
+            set.add(newIsland.getUniqueId());
             islandsByUUID.put(newMember, set);
         }
 
@@ -101,7 +104,7 @@ public class IslandCache {
             islandsById.put(island.getUniqueId(), island);
             // Only add islands to this map if they are owned
             if (island.isOwned()) {
-                islandsByUUID.computeIfAbsent(island.getOwner(), k -> new HashSet<>()).add(island);
+                islandsByUUID.computeIfAbsent(island.getOwner(), k -> new HashSet<>()).add(island.getUniqueId());
                 island.getMemberSet().forEach(member -> addPlayer(member, island));
             }
             return true;
@@ -117,7 +120,7 @@ public class IslandCache {
      *               associated per world.
      */
     public void addPlayer(@NonNull UUID uuid, @NonNull Island island) {
-        islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).add(island);
+        islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).add(island.getUniqueId());
     }
 
     /**
@@ -150,8 +153,8 @@ public class IslandCache {
     }
 
     private void removeFromIslandsByUUID(Island island) {
-        for (Set<Island> set : islandsByUUID.values()) {
-            set.removeIf(island::equals);
+        for (Set<String> set : islandsByUUID.values()) {
+            set.removeIf(island.getUniqueId()::equals);
         }
     }
 
@@ -203,7 +206,8 @@ public class IslandCache {
         if (w == null) {
             return new ArrayList<>();
         }
-        return islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).stream().filter(island -> w.equals(island.getWorld()))
+        return islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).stream().map(islandsById::get)
+                .filter(Objects::nonNull).filter(island -> w.equals(island.getWorld()))
                 .sorted(Comparator.comparingLong(Island::getCreatedDate))
                 .collect(Collectors.toList());
     }
@@ -287,7 +291,8 @@ public class IslandCache {
         if (!islandsByUUID.containsKey(uuid)) {
             return false;
         }
-        return this.islandsByUUID.get(uuid).stream().filter(i -> world.equals(i.getWorld()))
+        return this.islandsByUUID.get(uuid).stream().map(islandsById::get).filter(Objects::nonNull)
+                .filter(i -> world.equals(i.getWorld()))
                 .anyMatch(i -> uuid.equals(i.getOwner()));
     }
 
@@ -297,20 +302,24 @@ public class IslandCache {
      * 
      * @param world world
      * @param uuid  player's UUID
-     * @return list of islands player had or empty if none
+     * @return set of islands player had or empty if none
      */
     public Set<Island> removePlayer(@NonNull World world, @NonNull UUID uuid) {
-        World w = Util.getWorld(world);
-        Set<Island> islandSet = islandsByUUID.get(uuid);
-        if (w == null || islandSet == null) {
-            return Collections.emptySet(); // Return empty list if no islands map exists for the world
+        World resolvedWorld = Util.getWorld(world);
+        Set<String> playerIslandIds = islandsByUUID.get(uuid);
+        Set<Island> removedIslands = new HashSet<>();
+
+        if (resolvedWorld == null || playerIslandIds == null) {
+            return Collections.emptySet(); // Return empty set if no islands map exists for the world
         }
-        // Go through all the islands associated with this player in this world and
-        // remove the player from them.
-        Iterator<Island> it = islandSet.iterator();
-        while (it.hasNext()) {
-            Island island = it.next();
-            if (w.equals(island.getWorld())) {
+
+        // Iterate over the player's island IDs and process each associated island
+        Iterator<String> iterator = playerIslandIds.iterator();
+        while (iterator.hasNext()) {
+            Island island = this.getIslandById(iterator.next());
+            if (island != null && resolvedWorld.equals(island.getWorld())) {
+                removedIslands.add(island);
+
                 if (uuid.equals(island.getOwner())) {
                     // Player is the owner, so clear the whole island and clear the ownership
                     island.getMembers().clear();
@@ -318,11 +327,13 @@ public class IslandCache {
                 } else {
                     island.removeMember(uuid);
                 }
-                // Remove this island from this set of islands associated to this player
-                it.remove();
+
+                // Remove this island from the set of islands associated with this player
+                iterator.remove();
             }
         }
-        return islandSet;
+
+        return removedIslands;
     }
 
     /**
@@ -332,9 +343,9 @@ public class IslandCache {
      * @param uuid   uuid of member to remove
      */
     public void removePlayer(@NonNull Island island, @NonNull UUID uuid) {
-        Set<Island> islandSet = islandsByUUID.get(uuid);
+        Set<String> islandSet = islandsByUUID.get(uuid);
         if (islandSet != null) {
-            islandSet.remove(island);
+            islandSet.remove(island.getUniqueId());
         }
         island.removeMember(uuid);
         island.removePrimary(uuid);
@@ -368,7 +379,7 @@ public class IslandCache {
     public void setOwner(@NonNull Island island, @Nullable UUID newOwnerUUID) {
         island.setOwner(newOwnerUUID);
         if (newOwnerUUID != null) {
-            islandsByUUID.computeIfAbsent(newOwnerUUID, k -> new HashSet<>()).add(island);
+            islandsByUUID.computeIfAbsent(newOwnerUUID, k -> new HashSet<>()).add(island.getUniqueId());
         }
         island.setRank(newOwnerUUID, RanksManager.OWNER_RANK);
         islandsById.put(island.getUniqueId(), island);
