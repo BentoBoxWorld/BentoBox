@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.util.Util;
 
 /**
