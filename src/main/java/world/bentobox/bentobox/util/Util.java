@@ -719,19 +719,21 @@ public class Util {
      */
     public static WorldRegenerator getRegenerator() {
         if (regenerator == null) {
-            String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
+
+            // Bukkit method that was added in 2011
+            // Example value: 1.20.4-R0.1-SNAPSHOT
+            String bukkitVersion = "v" + Bukkit.getServer().getBukkitVersion().replace('.', '_').replace('-', '_');
             String pluginPackageName = plugin.getClass().getPackage().getName();
-            String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
             WorldRegenerator handler;
             try {
-                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".WorldRegeneratorImpl");
+                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + bukkitVersion + ".WorldRegeneratorImpl");
                 if (WorldRegenerator.class.isAssignableFrom(clazz)) {
                     handler = (WorldRegenerator) clazz.getConstructor().newInstance();
                 } else {
                     throw new IllegalStateException("Class " + clazz.getName() + " does not implement WorldRegenerator");
                 }
             } catch (Exception e) {
-                plugin.logWarning("No Regenerator found for " + version + ", falling back to Bukkit API.");
+                plugin.logWarning("No Regenerator found for " + bukkitVersion + ", falling back to Bukkit API.");
                 handler = new world.bentobox.bentobox.nms.fallback.WorldRegeneratorImpl();
             }
             setRegenerator(handler);
