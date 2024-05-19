@@ -81,6 +81,7 @@ public class IslandCacheTest {
 
         // Island
         when(island.getWorld()).thenReturn(world);
+        when(island.getUniqueId()).thenReturn("uniqueId");
         @NonNull
         String uniqueId = UUID.randomUUID().toString();
         when(island.getUniqueId()).thenReturn(uniqueId);
