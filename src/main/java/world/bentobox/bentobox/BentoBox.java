@@ -104,6 +104,8 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable(){
+        setInstance(this);
+
         if (!ServerCompatibility.getInstance().checkCompatibility().isCanLaunch()) {
             // The server's most likely incompatible.
             // Show a warning
@@ -125,7 +127,6 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // Save the default config from config.yml
         saveDefaultConfig();
-        setInstance(this);
         // Load Flags
         flagsManager = new FlagsManager(this);
 

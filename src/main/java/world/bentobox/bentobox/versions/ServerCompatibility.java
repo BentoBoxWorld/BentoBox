@@ -9,6 +9,8 @@ import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.util.Util;
+
 /**
  * Checks and ensures the current server software is compatible with BentoBox.
  * @author Poslovitch
@@ -281,7 +283,6 @@ public class ServerCompatibility {
         if (result == null) {
             // Check the server version first
             ServerVersion version = getServerVersion();
-
             if (version == null || version.getCompatibility().equals(Compatibility.INCOMPATIBLE)) {
                 // 'Version = null' means that it's not listed. And therefore, it's implicitly incompatible.
                 result = Compatibility.INCOMPATIBLE;
@@ -323,9 +324,12 @@ public class ServerCompatibility {
      */
     @NonNull
     public ServerSoftware getServerSoftware() {
-        String[] parts = Bukkit.getServer().getVersion().split("-");
+        if (Util.isPaper()) {
+            return ServerSoftware.PAPER;
+        }
+        String[] parts = Bukkit.getServer().getBukkitVersion().split("-");
         if (parts.length < 2) {
-            return ServerSoftware.UNKNOWN.setName(Bukkit.getServer().getVersion().toUpperCase(Locale.ENGLISH));
+            return ServerSoftware.UNKNOWN.setName(Bukkit.getServer().getBukkitVersion().toUpperCase(Locale.ENGLISH));
         }
         String serverSoftware = Bukkit.getServer().getVersion().split("-")[1];
         try {

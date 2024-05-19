@@ -120,7 +120,8 @@ public class IslandCache {
      *               associated per world.
      */
     public void addPlayer(@NonNull UUID uuid, @NonNull Island island) {
-        islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).add(island.getUniqueId());
+        this.islandsById.put(island.getUniqueId(), island);
+        this.islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).add(island.getUniqueId());
     }
 
     /**
@@ -181,6 +182,7 @@ public class IslandCache {
     public Island get(@NonNull World world, @NonNull UUID uuid) {
         List<Island> islands = getIslands(world, uuid);
         if (islands.isEmpty()) {
+            System.out.println("empty");
             return null;
         }
         for (Island island : islands) {

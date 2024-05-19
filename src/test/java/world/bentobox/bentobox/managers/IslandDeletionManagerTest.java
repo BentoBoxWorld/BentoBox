@@ -80,6 +80,7 @@ public class IslandDeletionManagerTest {
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(server.getPluginManager()).thenReturn(pim);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
+        when(server.getBukkitVersion()).thenReturn("1.20.6-R0.2-SNAPSHOT");
 
         // Clear any remaining database
         deleteAll(new File("database"));
