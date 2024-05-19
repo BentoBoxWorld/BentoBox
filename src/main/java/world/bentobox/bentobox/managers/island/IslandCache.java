@@ -62,7 +62,7 @@ public class IslandCache {
             return;
         }
         // Get the old island
-        Island oldIsland = islandsById.get(newIsland.getUniqueId());
+        Island oldIsland = getIslandById(newIsland.getUniqueId());
         Set<UUID> newMembers = newIsland.getMembers().keySet();
         if (oldIsland != null) {
             Set<UUID> oldMembers = oldIsland.getMembers().keySet();
@@ -84,7 +84,7 @@ public class IslandCache {
             islandsByUUID.put(newMember, set);
         }
 
-        if (islandsById.put(newIsland.getUniqueId(), newIsland) == null) {
+        if (setIslandById(newIsland) == null) {
             BentoBox.getInstance().logError("islandsById failed to update");
         }
 
@@ -101,7 +101,7 @@ public class IslandCache {
             return false;
         }
         if (addToGrid(island)) {
-            islandsById.put(island.getUniqueId(), island);
+            setIslandById(island);
             // Only add islands to this map if they are owned
             if (island.isOwned()) {
                 islandsByUUID.computeIfAbsent(island.getOwner(), k -> new HashSet<>()).add(island.getUniqueId());
@@ -120,7 +120,7 @@ public class IslandCache {
      *               associated per world.
      */
     public void addPlayer(@NonNull UUID uuid, @NonNull Island island) {
-        this.islandsById.put(island.getUniqueId(), island);
+        this.setIslandById(island);
         this.islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).add(island.getUniqueId());
     }
 
@@ -166,7 +166,7 @@ public class IslandCache {
      */
     public void deleteIslandFromCache(@NonNull String uniqueId) {
         if (islandsById.containsKey(uniqueId)) {
-            deleteIslandFromCache(islandsById.get(uniqueId));
+            deleteIslandFromCache(getIslandById(uniqueId));
         }
     }
 
@@ -182,7 +182,6 @@ public class IslandCache {
     public Island get(@NonNull World world, @NonNull UUID uuid) {
         List<Island> islands = getIslands(world, uuid);
         if (islands.isEmpty()) {
-            System.out.println("empty");
             return null;
         }
         for (Island island : islands) {
@@ -208,7 +207,7 @@ public class IslandCache {
         if (w == null) {
             return new ArrayList<>();
         }
-        return islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).stream().map(islandsById::get)
+        return islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).stream().map(this::getIslandById)
                 .filter(Objects::nonNull).filter(island -> w.equals(island.getWorld()))
                 .sorted(Comparator.comparingLong(Island::getCreatedDate))
                 .collect(Collectors.toList());
@@ -384,7 +383,7 @@ public class IslandCache {
             islandsByUUID.computeIfAbsent(newOwnerUUID, k -> new HashSet<>()).add(island.getUniqueId());
         }
         island.setRank(newOwnerUUID, RanksManager.OWNER_RANK);
-        islandsById.put(island.getUniqueId(), island);
+        setIslandById(island);
     }
 
     /**
@@ -397,6 +396,10 @@ public class IslandCache {
     @Nullable
     public Island getIslandById(@NonNull String uniqueId) {
         return islandsById.get(uniqueId);
+    }
+
+    private Island setIslandById(Island island) {
+        return islandsById.put(island.getUniqueId(), island);
     }
 
     /**
