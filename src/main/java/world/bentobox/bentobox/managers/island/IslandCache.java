@@ -179,7 +179,7 @@ public class IslandCache {
      * @return island or null if none
      */
     @Nullable
-    public Island get(@NonNull World world, @NonNull UUID uuid) {
+    public Island getIsland(@NonNull World world, @NonNull UUID uuid) {
         List<Island> islands = getIslands(world, uuid);
         if (islands.isEmpty()) {
             return null;

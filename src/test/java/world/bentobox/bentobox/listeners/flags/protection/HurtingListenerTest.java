@@ -69,7 +69,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         when(Util.isHostileEntity(any())).thenCallRealMethod();
 
         // User & player
-        user = User.getInstance(player);
+        user = User.getInstance(mockPlayer);
     }
 
     /**
@@ -88,7 +88,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnEntityDamagePlayeronMonster() {
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, enderman, null, null, 0);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(mockPlayer, enderman, null, null, 0);
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
         assertTrue(e.isCancelled());
@@ -100,8 +100,8 @@ public class HurtingListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnEntityDamagePlayeronMonsterOp() {
-        when(player.isOp()).thenReturn(true);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, enderman, null, null, 0);
+        when(mockPlayer.isOp()).thenReturn(true);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(mockPlayer, enderman, null, null, 0);
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
         assertFalse(e.isCancelled());
@@ -116,7 +116,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         ArmorStand entity = mock(ArmorStand.class);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
-        PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
+        PlayerFishEvent e = new PlayerFishEvent(mockPlayer, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
@@ -131,7 +131,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         ArmorStand entity = mock(ArmorStand.class);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
-        PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
+        PlayerFishEvent e = new PlayerFishEvent(mockPlayer, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         // Allow
         when(island.isAllowed(any(), any())).thenReturn(true);
@@ -148,7 +148,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         Animals entity = mock(Animals.class);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
-        PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
+        PlayerFishEvent e = new PlayerFishEvent(mockPlayer, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
@@ -163,7 +163,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         Animals entity = mock(Animals.class);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
-        PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
+        PlayerFishEvent e = new PlayerFishEvent(mockPlayer, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         // Allow
         when(island.isAllowed(any(), any())).thenReturn(true);
@@ -180,7 +180,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         Monster entity = mock(Monster.class);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
-        PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
+        PlayerFishEvent e = new PlayerFishEvent(mockPlayer, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
@@ -195,7 +195,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         Monster entity = mock(Monster.class);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
-        PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
+        PlayerFishEvent e = new PlayerFishEvent(mockPlayer, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         // Allow
         when(island.isAllowed(any(), any())).thenReturn(true);
@@ -213,7 +213,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getType()).thenReturn(EntityType.VILLAGER);
         State state = State.CAUGHT_ENTITY;
-        PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
+        PlayerFishEvent e = new PlayerFishEvent(mockPlayer, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
@@ -229,7 +229,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         when(entity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
-        PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
+        PlayerFishEvent e = new PlayerFishEvent(mockPlayer, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
@@ -246,7 +246,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getType()).thenReturn(EntityType.VILLAGER);
         State state = State.CAUGHT_ENTITY;
-        PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
+        PlayerFishEvent e = new PlayerFishEvent(mockPlayer, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         // Allow
         when(island.isAllowed(any(), any())).thenReturn(true);
@@ -264,7 +264,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         State state = State.CAUGHT_ENTITY;
-        PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
+        PlayerFishEvent e = new PlayerFishEvent(mockPlayer, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         // Allow
         when(island.isAllowed(any(), any())).thenReturn(true);

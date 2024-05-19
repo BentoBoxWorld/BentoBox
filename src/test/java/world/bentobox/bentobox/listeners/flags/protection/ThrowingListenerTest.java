@@ -52,7 +52,7 @@ public class ThrowingListenerTest extends AbstractCommonSetup {
     public void testOnPlayerThrowPotion() {
         ThrownPotion entity = mock(ThrownPotion.class);
         when(entity.getLocation()).thenReturn(location);
-        when(entity.getShooter()).thenReturn(player);
+        when(entity.getShooter()).thenReturn(mockPlayer);
         ProjectileLaunchEvent e = new ProjectileLaunchEvent(entity);
         tl.onPlayerThrowPotion(e);
         assertFalse(e.isCancelled());
@@ -67,7 +67,7 @@ public class ThrowingListenerTest extends AbstractCommonSetup {
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
         ThrownPotion entity = mock(ThrownPotion.class);
         when(entity.getLocation()).thenReturn(location);
-        when(entity.getShooter()).thenReturn(player);
+        when(entity.getShooter()).thenReturn(mockPlayer);
         ProjectileLaunchEvent e = new ProjectileLaunchEvent(entity);
         tl.onPlayerThrowPotion(e);
         assertTrue(e.isCancelled());

@@ -73,7 +73,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         Block placedAgainst = mock(Block.class);
         ItemStack itemInHand = mock(ItemStack.class);
         EquipmentSlot hand = EquipmentSlot.HAND;
-        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
     }
@@ -92,7 +92,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         ItemStack itemInHand = mock(ItemStack.class);
         when(itemInHand.getType()).thenReturn(Material.STONE);
         EquipmentSlot hand = EquipmentSlot.HAND;
-        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
     }
@@ -105,7 +105,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         Hanging hanging = mock(Hanging.class);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
-        HangingPlaceEvent e = new HangingPlaceEvent(hanging, player, block, BlockFace.EAST, null, null);
+        HangingPlaceEvent e = new HangingPlaceEvent(hanging, mockPlayer, block, BlockFace.EAST, null, null);
         pbl.onHangingPlace(e);
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
@@ -120,7 +120,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         Hanging hanging = mock(Hanging.class);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
-        HangingPlaceEvent e = new HangingPlaceEvent(hanging, player, block, BlockFace.EAST, null, null);
+        HangingPlaceEvent e = new HangingPlaceEvent(hanging, mockPlayer, block, BlockFace.EAST, null, null);
         pbl.onHangingPlace(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -137,7 +137,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         BlockState replacedBlockState = mock(BlockState.class);
         Block placedAgainst = mock(Block.class);
         EquipmentSlot hand = EquipmentSlot.HAND;
-        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, null, player, true, hand);
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, null, mockPlayer, true, hand);
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
     }
@@ -157,7 +157,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         ItemStack itemInHand = mock(ItemStack.class);
         when(itemInHand.getType()).thenReturn(Material.STONE);
         EquipmentSlot hand = EquipmentSlot.HAND;
-        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
         pbl.onBlockPlace(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -179,7 +179,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         ItemStack itemInHand = mock(ItemStack.class);
         when(itemInHand.getType()).thenReturn(Material.WHEAT_SEEDS);
         EquipmentSlot hand = EquipmentSlot.HAND;
-        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
     }
@@ -200,7 +200,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         ItemStack itemInHand = mock(ItemStack.class);
         when(itemInHand.getType()).thenReturn(Material.DIRT);
         EquipmentSlot hand = EquipmentSlot.HAND;
-        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
         pbl.onBlockPlace(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -222,7 +222,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         ItemStack itemInHand = mock(ItemStack.class);
         when(itemInHand.getType()).thenReturn(Material.WHEAT_SEEDS);
         EquipmentSlot hand = EquipmentSlot.HAND;
-        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
         pbl.onBlockPlace(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -243,7 +243,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         ItemStack itemInHand = mock(ItemStack.class);
         when(itemInHand.getType()).thenReturn(Material.WRITTEN_BOOK);
         EquipmentSlot hand = EquipmentSlot.HAND;
-        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
@@ -263,7 +263,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         Creeper creeper = mock(Creeper.class);
         when(creeper.getLocation()).thenReturn(location);
         when(creeper.getType()).thenReturn(EntityType.CREEPER);
-        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, creeper, EquipmentSlot.HAND);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, creeper, EquipmentSlot.HAND);
         pbl.onPlayerHitItemFrame(e);
         assertFalse(e.isCancelled());
     }
@@ -276,7 +276,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         ItemFrame itemFrame = mock(ItemFrame.class);
         when(itemFrame.getType()).thenReturn(EntityType.ITEM_FRAME);
         when(itemFrame.getLocation()).thenReturn(location);
-        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, itemFrame, EquipmentSlot.HAND);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, itemFrame, EquipmentSlot.HAND);
         pbl.onPlayerHitItemFrame(e);
         assertFalse(e.isCancelled());
     }
@@ -290,7 +290,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         ItemFrame itemFrame = mock(ItemFrame.class);
         when(itemFrame.getType()).thenReturn(EntityType.ITEM_FRAME);
         when(itemFrame.getLocation()).thenReturn(location);
-        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, itemFrame, EquipmentSlot.HAND);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, itemFrame, EquipmentSlot.HAND);
         pbl.onPlayerHitItemFrame(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -307,7 +307,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         when(clickedBlock.getLocation()).thenReturn(location);
         when(clickedBlock.getType()).thenReturn(Material.GRASS_BLOCK);
         for (int i = 0; i < 7; i++) {
-            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
+            PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
             pbl.onPlayerInteract(e);
             assertEquals("Failed on " + item.getType().toString(), Result.ALLOW, e.useInteractedBlock());
         }
@@ -325,7 +325,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         when(clickedBlock.getLocation()).thenReturn(location);
         when(clickedBlock.getType()).thenReturn(Material.GRASS_BLOCK);
         for (int i = 0; i < 7; i++) {
-            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
+            PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
             pbl.onPlayerInteract(e);
             assertEquals("Failed on " + item.getType().toString(), Result.DENY, e.useInteractedBlock());
         }

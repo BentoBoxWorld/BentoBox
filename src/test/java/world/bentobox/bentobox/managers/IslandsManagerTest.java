@@ -254,7 +254,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
         // Mock island cache
         when(islandCache.getIslandAt(any(Location.class))).thenReturn(island);
-        when(islandCache.get(any(), any())).thenReturn(island);
+        when(islandCache.getIsland(any(), any())).thenReturn(island);
         optionalIsland = Optional.ofNullable(island);
         when(islandCache.getIslands(world, uuid)).thenReturn(List.of(island));
 

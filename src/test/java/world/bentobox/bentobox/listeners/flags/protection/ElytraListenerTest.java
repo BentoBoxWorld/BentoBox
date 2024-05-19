@@ -40,7 +40,7 @@ public class ElytraListenerTest extends AbstractCommonSetup {
         super.setUp();
 
         // Player
-        when(player.isGliding()).thenReturn(true);
+        when(mockPlayer.isGliding()).thenReturn(true);
 
         // Default is that everything is allowed
         when(island.isAllowed(any(), any())).thenReturn(true);
@@ -54,7 +54,7 @@ public class ElytraListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnGlideAllowed() {
-        EntityToggleGlideEvent e = new EntityToggleGlideEvent(player, false);
+        EntityToggleGlideEvent e = new EntityToggleGlideEvent(mockPlayer, false);
         el.onGlide(e);
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), anyString());
@@ -66,7 +66,7 @@ public class ElytraListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnGlideNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
-        EntityToggleGlideEvent e = new EntityToggleGlideEvent(player, false);
+        EntityToggleGlideEvent e = new EntityToggleGlideEvent(mockPlayer, false);
         el.onGlide(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -77,7 +77,7 @@ public class ElytraListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testGlidingAllowed() {
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, location, location);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, location, location);
         el.onGliding(e);
         verify(notifier, never()).notify(any(), anyString());
         assertFalse(e.isCancelled());
@@ -89,7 +89,7 @@ public class ElytraListenerTest extends AbstractCommonSetup {
     @Test
     public void testGlidingNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, location, location);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, location, location);
         el.onGliding(e);
         verify(notifier).notify(any(), eq("protection.protected"));
         assertTrue(e.isCancelled());
@@ -100,8 +100,8 @@ public class ElytraListenerTest extends AbstractCommonSetup {
     @Test
     public void testGlidingNotGliding() {
         when(island.isAllowed(any(), any())).thenReturn(false);
-        when(player.isGliding()).thenReturn(false);
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, location, location);
+        when(mockPlayer.isGliding()).thenReturn(false);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, location, location);
         el.onGliding(e);
         verify(notifier, never()).notify(any(), anyString());
         assertFalse(e.isCancelled());
