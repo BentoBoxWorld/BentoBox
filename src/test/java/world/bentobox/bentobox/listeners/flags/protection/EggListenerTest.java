@@ -54,7 +54,7 @@ public class EggListenerTest extends AbstractCommonSetup {
     public void testOnEggThrowAllowed() {
         Egg egg = mock(Egg.class);
         when(egg.getLocation()).thenReturn(location);
-        PlayerEggThrowEvent e = new PlayerEggThrowEvent(player, egg, false, (byte) 0, EntityType.CHICKEN);
+        PlayerEggThrowEvent e = new PlayerEggThrowEvent(mockPlayer, egg, false, (byte) 0, EntityType.CHICKEN);
         el.onEggThrow(e);
         verify(notifier, never()).notify(any(), anyString());
     }
@@ -67,7 +67,7 @@ public class EggListenerTest extends AbstractCommonSetup {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Egg egg = mock(Egg.class);
         when(egg.getLocation()).thenReturn(location);
-        PlayerEggThrowEvent e = new PlayerEggThrowEvent(player, egg, false, (byte) 0, EntityType.CHICKEN);
+        PlayerEggThrowEvent e = new PlayerEggThrowEvent(mockPlayer, egg, false, (byte) 0, EntityType.CHICKEN);
         el.onEggThrow(e);
         assertFalse(e.isHatching());
         verify(notifier).notify(any(), eq("protection.protected"));

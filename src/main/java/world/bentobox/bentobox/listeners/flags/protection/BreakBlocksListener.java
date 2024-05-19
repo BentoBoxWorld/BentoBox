@@ -80,16 +80,20 @@ public class BreakBlocksListener extends FlagListener {
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
         Material m = e.getClickedBlock().getType();
-        // Check for berry picking
-        if (e.getAction() == Action.RIGHT_CLICK_BLOCK && (e.getClickedBlock().getType() == Material.CAVE_VINES || e.getClickedBlock().getType() == Material.CAVE_VINES_PLANT)) {
-            if (!((CaveVinesPlant) e.getClickedBlock().getBlockData()).isBerries()) {
-                    return;
+        // Right click handling
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Material clickedType = e.getClickedBlock().getType();
+            switch (clickedType) {
+            case CAVE_VINES, CAVE_VINES_PLANT -> {
+                if (((CaveVinesPlant) e.getClickedBlock().getBlockData()).isBerries()) {
+                    this.checkIsland(e, p, l, Flags.HARVEST);
                 }
-                this.checkIsland(e, p, l, Flags.HARVEST);
-            return;
-        }
-        if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock().getType() == Material.SWEET_BERRY_BUSH) {
-            this.checkIsland(e, p, l, Flags.HARVEST);
+                }
+            case SWEET_BERRY_BUSH -> this.checkIsland(e, p, l, Flags.HARVEST);
+            case ROOTED_DIRT -> this.checkIsland(e, p, l, Flags.BREAK_BLOCKS);
+            default -> { // Do nothing
+            }
+            }
             return;
         }
         // Only handle hitting things

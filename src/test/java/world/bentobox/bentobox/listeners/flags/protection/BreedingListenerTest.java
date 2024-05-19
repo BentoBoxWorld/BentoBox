@@ -75,7 +75,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         when(itemInOffHand.getType()).thenReturn(Material.AIR);
         when(inv.getItemInMainHand()).thenReturn(itemInMainHand);
         when(inv.getItemInOffHand()).thenReturn(itemInOffHand);
-        when(player.getInventory()).thenReturn(inv);
+        when(mockPlayer.getInventory()).thenReturn(inv);
 
     }
 
@@ -86,7 +86,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
     public void testOnPlayerInteractNotAnimal() {
         Entity clickedEntity = mock(Entity.class);
         Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
+        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position);
         new BreedingListener().onPlayerInteract(e);
         assertFalse("Not animal failed", e.isCancelled());
     }
@@ -98,7 +98,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
     public void testOnPlayerInteractAnimalNothingInMainHand() {
         Animals clickedEntity = mock(Animals.class);
         Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
+        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position);
         new BreedingListener().onPlayerInteract(e);
         assertFalse("Animal, nothing in main hand failed", e.isCancelled());
     }
@@ -110,7 +110,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
     public void testOnPlayerInteractAnimalNothingInOffHand() {
         Animals clickedEntity = mock(Animals.class);
         Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position, EquipmentSlot.OFF_HAND);
+        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position, EquipmentSlot.OFF_HAND);
         new BreedingListener().onPlayerInteract(e);
         assertFalse("Animal, nothing in off hand failed", e.isCancelled());
     }
@@ -127,7 +127,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
+        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position);
         BreedingListener bl = new BreedingListener();
 
         Material breedingMat = BREEDABLE_WITH;
@@ -149,7 +149,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.COW);
         Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
+        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position);
         BreedingListener bl = new BreedingListener();
 
         Material breedingMat = BREEDABLE_WITH;
@@ -172,7 +172,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position, EquipmentSlot.OFF_HAND);
+        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position, EquipmentSlot.OFF_HAND);
         BreedingListener bl = new BreedingListener();
 
         Material breedingMat = BREEDABLE_WITH;
@@ -194,7 +194,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(ENTITY_TYPE);
         Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position, EquipmentSlot.OFF_HAND);
+        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position, EquipmentSlot.OFF_HAND);
         BreedingListener bl = new BreedingListener();
 
         Material breedingMat = BREEDABLE_WITH;
@@ -212,7 +212,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.COW);
         Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
+        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position);
         BreedingListener bl = new BreedingListener();
 
         Material breedingMat = NOT_BREEDABLE_WITH;

@@ -416,7 +416,7 @@ public class IslandsManager {
      */
     @Nullable
     public Island getIsland(@NonNull World world, @NonNull UUID uuid) {
-        return islandCache.get(world, uuid);
+        return islandCache.getIsland(world, uuid);
     }
 
     /**
@@ -1723,14 +1723,14 @@ public class IslandsManager {
     }
 
     /**
-     * Convenience method. See {@link IslandCache#get(World, UUID)}
+     * Convenience method. See {@link IslandCache#getIsland(World, UUID)}
      * 
      * @param world world
      * @param uuid  player's UUID
      * @return Island of player or null if there isn't one
      */
     public Island getPrimaryIsland(World world, UUID uuid) {
-        return this.getIslandCache().get(world, uuid);
+        return this.getIslandCache().getIsland(world, uuid);
     }
 
 }

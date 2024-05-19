@@ -60,7 +60,7 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
         Flags.ENDER_CHEST.setSetting(world, false);
 
         // No special perms
-        when(player.hasPermission(anyString())).thenReturn(false);
+        when(mockPlayer.hasPermission(anyString())).thenReturn(false);
 
         // Action, Item and clicked block
         action = Action.RIGHT_CLICK_BLOCK;
@@ -73,7 +73,7 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
     public void testOnEnderChestOpenNotRightClick() {
         action = Action.LEFT_CLICK_AIR;
         BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         new BlockInteractionListener().onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
     }
@@ -81,7 +81,7 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnEnderChestOpenEnderChestNotInWorld() {
         BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Not in world
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
@@ -92,9 +92,9 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnEnderChestOpenEnderChestOpPlayer() {
         BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Op player
-        when(player.isOp()).thenReturn(true);
+        when(mockPlayer.isOp()).thenReturn(true);
         new BlockInteractionListener().onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
     }
@@ -102,9 +102,9 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnEnderChestOpenEnderChestHasBypassPerm() {
         BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Has bypass perm
-        when(player.hasPermission(anyString())).thenReturn(true);
+        when(mockPlayer.hasPermission(anyString())).thenReturn(true);
         new BlockInteractionListener().onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
     }
@@ -112,7 +112,7 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnEnderChestOpenEnderChestOkay() {
         BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Enderchest use is okay
         Flags.ENDER_CHEST.setSetting(world, true);
         BlockInteractionListener bil = new BlockInteractionListener();
@@ -124,7 +124,7 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnEnderChestOpenEnderChestBlocked() {
         BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Enderchest use is blocked
         Flags.ENDER_CHEST.setSetting(world, false);
         new BlockInteractionListener().onPlayerInteract(e);
@@ -139,7 +139,7 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
         when(item.getType()).thenReturn(Material.STONE);
         when(recipe.getResult()).thenReturn(item);
         InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
+        when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory top = mock(Inventory.class);
         when(top.getSize()).thenReturn(9);
         when(view.getTopInventory()).thenReturn(top);
@@ -158,7 +158,7 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
         when(item.getType()).thenReturn(Material.ENDER_CHEST);
         when(recipe.getResult()).thenReturn(item);
         InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
+        when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory top = mock(Inventory.class);
         when(top.getSize()).thenReturn(9);
         when(view.getTopInventory()).thenReturn(top);

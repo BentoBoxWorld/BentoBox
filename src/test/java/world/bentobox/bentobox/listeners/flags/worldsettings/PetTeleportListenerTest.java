@@ -61,7 +61,7 @@ public class PetTeleportListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPetTeleportNotTameable() {
-        EntityTeleportEvent e = new EntityTeleportEvent(player, location, location);
+        EntityTeleportEvent e = new EntityTeleportEvent(mockPlayer, location, location);
         ptl.onPetTeleport(e);
         assertFalse(e.isCancelled());
     }
@@ -71,7 +71,7 @@ public class PetTeleportListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPetTeleportNullTo() {
-        EntityTeleportEvent e = new EntityTeleportEvent(player, location, null);
+        EntityTeleportEvent e = new EntityTeleportEvent(mockPlayer, location, null);
         ptl.onPetTeleport(e);
         assertFalse(e.isCancelled());
     }

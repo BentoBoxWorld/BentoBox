@@ -118,7 +118,7 @@ public class IslandCacheTest {
     public void testAddIsland() {
         assertTrue(ic.addIsland(island));
         // Check if they are added
-        assertEquals(island, ic.get(world, owner));
+        assertEquals(island, ic.getIsland(world, owner));
     }
 
     /**
@@ -129,8 +129,8 @@ public class IslandCacheTest {
         UUID playerUUID = UUID.randomUUID();
         ic.addPlayer(playerUUID, island);
         // Check if they are added
-        assertEquals(island, ic.get(world, playerUUID));
-        assertNotSame(island, ic.get(world, UUID.randomUUID()));
+        assertEquals(island, ic.getIsland(world, playerUUID));
+        assertNotSame(island, ic.getIsland(world, UUID.randomUUID()));
 
     }
 
@@ -141,19 +141,19 @@ public class IslandCacheTest {
     public void testClear() {
         ic.addIsland(island);
         // Check if they are added
-        assertEquals(island, ic.get(world, owner));
+        assertEquals(island, ic.getIsland(world, owner));
         ic.clear();
-        assertNull(ic.get(world, owner));
+        assertNull(ic.getIsland(world, owner));
     }
 
     /**
-     * Test for {@link IslandCache#get(World, UUID)}
+     * Test for {@link IslandCache#getIsland(World, UUID)}
      */
     @Test
     public void testGetUUID() {
         ic.addIsland(island);
         // Check if they are added
-        assertEquals(island, ic.get(world, owner));
+        assertEquals(island, ic.getIsland(world, owner));
     }
 
     /**
@@ -255,7 +255,7 @@ public class IslandCacheTest {
         ic.setOwner(island, newOwnerUUID);
 
         Mockito.verify(island).setOwner(newOwnerUUID);
-        assertEquals(island, ic.get(world, newOwnerUUID));
+        assertEquals(island, ic.getIsland(world, newOwnerUUID));
     }
 
     /**

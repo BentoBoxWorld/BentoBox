@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.CaveVinesPlant;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
@@ -40,6 +41,7 @@ import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -57,6 +59,10 @@ import world.bentobox.bentobox.util.Util;
 public class BreakBlocksListenerTest extends AbstractCommonSetup {
 
     private BreakBlocksListener bbl;
+    @Mock
+    private Block mockBlock;
+    @Mock
+    private ItemStack mockItem;
 
     @Override
     @Before
@@ -79,7 +85,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
         when(block.getType()).thenReturn(Material.DIRT);
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         bbl.onBlockBreak(e);
         assertFalse(e.isCancelled());
     }
@@ -93,7 +99,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Block block = mock(Block.class);
         when(block.getType()).thenReturn(Material.DIRT);
         when(block.getLocation()).thenReturn(location);
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         bbl.onBlockBreak(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -109,7 +115,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Block block = mock(Block.class);
         when(block.getType()).thenReturn(Material.PUMPKIN);
         when(block.getLocation()).thenReturn(location);
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         bbl.onBlockBreak(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -125,7 +131,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Block block = mock(Block.class);
         when(block.getType()).thenReturn(Material.PUMPKIN);
         when(block.getLocation()).thenReturn(location);
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         bbl.onBlockBreak(e);
         assertFalse(e.isCancelled());
     }
@@ -138,7 +144,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Hanging hanging = mock(Hanging.class);
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.ENTITY;
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, player, cause);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, mockPlayer, cause);
         bbl.onBreakHanging(e);
         assertFalse(e.isCancelled());
     }
@@ -152,7 +158,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Hanging hanging = mock(Hanging.class);
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.ENTITY;
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, player, cause);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, mockPlayer, cause);
         bbl.onBreakHanging(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -196,7 +202,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.PHYSICS;
         Arrow arrow = mock(Arrow.class);
-        when(arrow.getShooter()).thenReturn(player);
+        when(arrow.getShooter()).thenReturn(mockPlayer);
         HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, cause);
         bbl.onBreakHanging(e);
         assertTrue(e.isCancelled());
@@ -212,7 +218,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.PHYSICS;
         Arrow arrow = mock(Arrow.class);
-        when(arrow.getShooter()).thenReturn(player);
+        when(arrow.getShooter()).thenReturn(mockPlayer);
         HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, cause);
         bbl.onBreakHanging(e);
         assertFalse(e.isCancelled());
@@ -227,7 +233,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         ItemStack item = mock(ItemStack.class);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, item, block, BlockFace.EAST);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_AIR, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertEquals(e.useInteractedBlock(), Result.ALLOW);
     }
@@ -241,7 +247,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
         when(block.getType()).thenReturn(Material.STONE);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block,
+                BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
     }
@@ -256,15 +263,16 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
         when(block.getType()).thenReturn(Material.CAKE);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block,
+                BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertFalse(e.isCancelled());
         when(block.getType()).thenReturn(Material.SPAWNER);
-        e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertFalse(e.isCancelled());
         when(block.getType()).thenReturn(Material.DRAGON_EGG);
-        e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertFalse(e.isCancelled());
     }
@@ -279,15 +287,16 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
         when(block.getType()).thenReturn(Material.CAKE);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block,
+                BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertEquals(Result.DENY, e.useInteractedBlock());
         when(block.getType()).thenReturn(Material.SPAWNER);
-        e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertEquals(Result.DENY, e.useInteractedBlock());
         when(block.getType()).thenReturn(Material.DRAGON_EGG);
-        e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertEquals(Result.DENY, e.useInteractedBlock());
         verify(notifier, times(3)).notify(any(), eq("protection.protected"));
@@ -301,7 +310,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         when(vehicle.getType()).thenReturn(EntityType.MINECART);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertFalse(e.isCancelled());
     }
@@ -315,7 +324,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         when(vehicle.getType()).thenReturn(EntityType.MINECART);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -330,7 +339,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         when(vehicle.getType()).thenReturn(EntityType.BOAT);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -345,7 +354,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         when(vehicle.getType()).thenReturn(EntityType.TRIDENT);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -359,7 +368,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertFalse(e.isCancelled());
     }
@@ -382,8 +391,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnEntityDamageNotCovered() {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
-        Entity damagee = player;
-        Entity damager = player;
+        Entity damagee = mockPlayer;
+        Entity damager = mockPlayer;
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
@@ -396,7 +405,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     public void testOnEntityDamageAllowed() {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mock(ArmorStand.class);
-        Entity damager = player;
+        Entity damager = mockPlayer;
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
@@ -419,7 +428,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mock(ArmorStand.class);
         when(damagee.getLocation()).thenReturn(location);
-        Entity damager = player;
+        Entity damager = mockPlayer;
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
@@ -444,7 +453,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mock(ArmorStand.class);
         Projectile damager = mock(Projectile.class);
-        when(damager.getShooter()).thenReturn(player);
+        when(damager.getShooter()).thenReturn(mockPlayer);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
@@ -490,7 +499,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         Entity damagee = mock(ArmorStand.class);
         when(damagee.getLocation()).thenReturn(location);
         Projectile damager = mock(Projectile.class);
-        when(damager.getShooter()).thenReturn(player);
+        when(damager.getShooter()).thenReturn(mockPlayer);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
@@ -510,5 +519,106 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         assertTrue(e.isCancelled());
         verify(notifier, times(3)).notify(any(), eq("protection.protected"));
         verify(damagee).setFireTicks(0);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    public void testRightClickCaveVinesWithBerries() {
+        when(mockBlock.getType()).thenReturn(Material.CAVE_VINES);
+        when(mockBlock.getLocation()).thenReturn(location);
+        CaveVinesPlant mockCaveVinesPlant = mock(CaveVinesPlant.class);
+        when(mockBlock.getBlockData()).thenReturn(mockCaveVinesPlant);
+        when(mockCaveVinesPlant.isBerries()).thenReturn(true);
+
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+
+        assertTrue(e.useInteractedBlock() == Result.ALLOW);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    public void testRightClickSweetBerryBush() {
+        when(mockBlock.getType()).thenReturn(Material.SWEET_BERRY_BUSH);
+        when(mockBlock.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+
+        assertTrue(e.useInteractedBlock() == Result.ALLOW);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    public void testRightClickRootedDirt() {
+        when(mockBlock.getType()).thenReturn(Material.ROOTED_DIRT);
+        when(mockBlock.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+
+        assertTrue(e.useInteractedBlock() == Result.ALLOW);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    public void testLeftClickCake() {
+        when(mockBlock.getType()).thenReturn(Material.CAKE);
+        when(mockBlock.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+        assertTrue(e.useInteractedBlock() == Result.ALLOW);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    public void testLeftClickSpawner() {
+        when(mockBlock.getType()).thenReturn(Material.SPAWNER);
+        when(mockBlock.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+
+        assertTrue(e.useInteractedBlock() == Result.ALLOW);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    public void testLeftClickDragonEgg() {
+        when(mockBlock.getType()).thenReturn(Material.DRAGON_EGG);
+        when(mockBlock.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+
+        assertTrue(e.useInteractedBlock() == Result.ALLOW);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    public void testLeftClickHopper() {
+        when(mockBlock.getType()).thenReturn(Material.HOPPER);
+        when(mockBlock.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+
+        assertTrue(e.useInteractedBlock() == Result.ALLOW);
     }
 }
