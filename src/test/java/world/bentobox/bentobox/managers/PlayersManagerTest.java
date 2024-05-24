@@ -389,6 +389,7 @@ public class PlayersManagerTest {
         assertTrue(pm.getName(null).isEmpty());
         String name = pm.getName(uuid);
         assertEquals("tastybento", name);
+        assertEquals("", pm.getName(UUID.randomUUID()));
     }
 
     /**
