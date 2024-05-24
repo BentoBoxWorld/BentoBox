@@ -2,22 +2,25 @@ package world.bentobox.bentobox.managers.island;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,9 +96,6 @@ public class IslandCacheTest extends RanksManagerBeforeClassTest {
         when(island.getWorld()).thenReturn(world);
         when(island.getUniqueId()).thenReturn("uniqueId");
         when(island.inIslandSpace(anyInt(), anyInt())).thenReturn(true);
-        @NonNull
-        String uniqueId = UUID.randomUUID().toString();
-        when(island.getUniqueId()).thenReturn(uniqueId);
         when(island.getCenter()).thenReturn(location);
         when(island.getOwner()).thenReturn(owner);
         when(island.isOwned()).thenReturn(true);
@@ -181,45 +181,15 @@ public class IslandCacheTest extends RanksManagerBeforeClassTest {
         // Check exact match for location
         assertEquals(island, ic.getIslandAt(island.getCenter()));
 
-
         Location location2 = mock(Location.class);
         when(location2.getWorld()).thenReturn(world);
         when(location2.getBlockX()).thenReturn(10);
         when(location2.getBlockY()).thenReturn(10);
         when(location2.getBlockZ()).thenReturn(10);
 
-
         assertEquals(island, ic.getIslandAt(location2));
         when(island.inIslandSpace(any(Integer.class), any(Integer.class))).thenReturn(false);
         assertNull(ic.getIslandAt(location2));
-    }
-
-    /**
-     * Test for {@link IslandCache#getMembers(World, UUID, int)}
-     */
-    @Test
-    public void testGetMembers() {
-        ic.addIsland(island);
-        /*
-         * assertTrue(ic.getMembers(world, null, RanksManager.MEMBER_RANK).isEmpty());
-         * assertTrue(ic.getMembers(world, UUID.randomUUID(),
-         * RanksManager.MEMBER_RANK).isEmpty()); assertFalse(ic.getMembers(world,
-         * island.getOwner(), RanksManager.MEMBER_RANK).isEmpty()); assertEquals(3,
-         * ic.getMembers(world, island.getOwner(), RanksManager.MEMBER_RANK).size());
-         */
-    }
-
-    /**
-     * Test for {@link IslandCache#getOwner(World, UUID)}
-     */
-    @Test
-    public void testGetOwner() {
-        ic.addIsland(island);
-        // Should be no owner, so null
-        /*
-         * assertEquals(owner, ic.getOwner(world, owner)); assertNull(ic.getOwner(world,
-         * UUID.randomUUID()));
-         */
     }
 
     /**
@@ -289,4 +259,157 @@ public class IslandCacheTest extends RanksManagerBeforeClassTest {
         ic.resetAllFlags(world);
         verify(island).setFlagsDefaults();
     }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#IslandCache(world.bentobox.bentobox.database.Database)}.
+     */
+    @Test
+    public void testIslandCache() {
+        assertNotNull(ic);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#updateIsland(world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    public void testUpdateIsland() {
+        // Add island to cache
+        ic.setIslandById(island);
+        // Copy island
+        Island newIsland = mock(Island.class);
+        when(newIsland.getUniqueId()).thenReturn("uniqueId");
+        when(newIsland.getMembers()).thenReturn(Map.of()); // no members
+
+        ic.updateIsland(newIsland);
+        verify(plugin, never()).logError(anyString());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#deleteIslandFromCache(world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    public void testDeleteIslandFromCacheIsland() {
+        // Fill the cache
+        ic.addIsland(island);
+        ic.setIslandById(island);
+        // Remove it
+        ic.deleteIslandFromCache(island);
+        // TODO need to verify
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#deleteIslandFromCache(java.lang.String)}.
+     */
+    @Test
+    public void testDeleteIslandFromCacheString() {
+        // Fill the cache
+        ic.addIsland(island);
+        ic.setIslandById(island);
+
+        ic.deleteIslandFromCache("uniqueId");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIsland(org.bukkit.World, java.util.UUID)}.
+     */
+    @Test
+    public void testGetIsland() {
+        assertNull(ic.getIsland(world, owner));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands(org.bukkit.World, java.util.UUID)}.
+     */
+    @Test
+    public void testGetIslandsWorldUUID() {
+        assertNull(ic.getIsland(world, this.owner));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#setPrimaryIsland(java.util.UUID, world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    public void testSetPrimaryIsland() {
+        ic.setPrimaryIsland(owner, island);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslandAt(org.bukkit.Location)}.
+     */
+    @Test
+    public void testGetIslandAt() {
+        ic.addIsland(island);
+        ic.setIslandById(island);
+        assertEquals(island, ic.getIslandAt(location));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands()}.
+     */
+    @Test
+    public void testGetIslands() {
+        assertTrue(ic.getIslands().isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands(org.bukkit.World)}.
+     */
+    @Test
+    public void testGetIslandsWorld() {
+        assertTrue(ic.getIslands(world).isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#removePlayer(org.bukkit.World, java.util.UUID)}.
+     */
+    @Test
+    public void testRemovePlayerWorldUUID() {
+        assertTrue(ic.getIslands(owner).isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#removePlayer(world.bentobox.bentobox.database.objects.Island, java.util.UUID)}.
+     */
+    @Test
+    public void testRemovePlayerIslandUUID() {
+        ic.addIsland(island);
+        ic.setIslandById(island);
+        ic.removePlayer(island, owner);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#size(org.bukkit.World)}.
+     */
+    @Test
+    public void testSizeWorld() {
+        assertEquals(0, ic.size(world));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslandById(java.lang.String)}.
+     */
+    @Test
+    public void testGetIslandById() {
+        ic.addIsland(island);
+        ic.setIslandById(island);
+
+        assertEquals(island, ic.getIslandById("uniqueId"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getAllIslandIds()}.
+     */
+    @Test
+    public void testGetAllIslandIds() {
+        assertTrue(ic.getAllIslandIds().isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands(java.util.UUID)}.
+     */
+    @Test
+    public void testGetIslandsUUID() {
+        assertTrue(ic.getIslands(owner).isEmpty());
+    }
+
 }
