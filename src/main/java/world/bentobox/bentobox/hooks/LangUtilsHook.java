@@ -24,7 +24,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.base.Enums;
 import com.meowj.langutils.lang.LanguageHelper;
 
 import world.bentobox.bentobox.BentoBox;

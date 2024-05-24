@@ -25,8 +25,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.damage.DamageSource;
-import org.bukkit.damage.DamageType;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;

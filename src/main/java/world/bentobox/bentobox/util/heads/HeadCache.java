@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.profile.PlayerProfile;
 

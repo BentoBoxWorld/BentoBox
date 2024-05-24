@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -23,7 +22,6 @@ import com.google.common.base.Optional;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * Protects islands from visitors blowing things up

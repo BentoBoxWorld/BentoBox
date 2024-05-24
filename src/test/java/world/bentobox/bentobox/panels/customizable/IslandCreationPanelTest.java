@@ -9,7 +9,12 @@ import static org.mockito.Mockito.when;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

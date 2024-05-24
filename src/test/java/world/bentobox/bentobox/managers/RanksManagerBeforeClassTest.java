@@ -2,6 +2,8 @@ package world.bentobox.bentobox.managers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -71,10 +73,12 @@ public abstract class RanksManagerBeforeClassTest {
     public RanksManager rm;
 
     protected static AbstractDatabaseHandler<Object> h;
+    protected static Object savedObject;
 
     @SuppressWarnings("unchecked")
     @BeforeClass
-    public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException,
+            InstantiationException, ClassNotFoundException, NoSuchMethodException {
         // This has to be done beforeClass otherwise the tests will interfere with each
         // other
         h = mock(AbstractDatabaseHandler.class);
@@ -83,7 +87,27 @@ public abstract class RanksManagerBeforeClassTest {
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
         when(dbSetup.getHandler(any())).thenReturn(h);
-        when(h.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+        //when(h.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+        // Capture the parameter passed to saveObject() and store it in savedObject
+        doAnswer(invocation -> {
+            savedObject = invocation.getArgument(0);
+            return CompletableFuture.completedFuture(true);
+        }).when(h).saveObject(any());
+
+        // Now when loadObject() is called, return the savedObject
+        when(h.loadObject(any())).thenAnswer(invocation -> savedObject);
+
+        // Delete object
+        doAnswer(invocation -> {
+            savedObject = null;
+            return null;
+        }).when(h).deleteObject(any());
+        
+        doAnswer(invocation -> {
+            savedObject = null;
+            return null;
+        }).when(h).deleteID(anyString());
+
     }
 
     @Before
@@ -95,6 +119,8 @@ public abstract class RanksManagerBeforeClassTest {
         when(RanksManager.getInstance()).thenReturn(rm);
         when(rm.getRanks()).thenReturn(DEFAULT_RANKS);
         when(rm.getRank(anyInt())).thenReturn("");
+        // Clear savedObject
+        savedObject = null;
     }
 
     @After

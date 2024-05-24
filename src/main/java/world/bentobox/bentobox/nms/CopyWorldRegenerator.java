@@ -46,7 +46,6 @@ import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.util.MyBiomeGrid;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * Regenerates by using a seed world. The seed world is created using the same generator as the game

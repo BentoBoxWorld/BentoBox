@@ -11,10 +11,8 @@ import org.bstats.charts.AdvancedPie;
 import org.bstats.charts.SimpleBarChart;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
-import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.api.flags.Flag;
 
 /**
  * @author Poslovitch
