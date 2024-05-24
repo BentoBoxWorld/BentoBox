@@ -158,7 +158,7 @@ public class PlayersManager {
             return "";
         }
         return names.loadObjects().stream().filter(n -> n.getUuid().equals(playerUUID)).findFirst()
-                .map(Names::getUniqueId).orElse(null);
+                .map(Names::getUniqueId).orElse("");
     }
 
     /**
