@@ -21,6 +21,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
@@ -45,11 +46,13 @@ public class IslandCache {
 
     @NonNull
     private final Map<@NonNull World, @NonNull IslandGrid> grids;
+    private final @NonNull Database<Island> handler;
 
-    public IslandCache() {
+    public IslandCache(@NonNull Database<Island> handler) {
         islandsById = new HashMap<>();
         islandsByUUID = new HashMap<>();
         grids = new HashMap<>();
+        this.handler = handler;
     }
 
     /**
@@ -91,7 +94,7 @@ public class IslandCache {
     }
 
     /**
-     * Adds an island to the grid
+     * Adds an island to the grid, used for new islands
      * 
      * @param island island to add, not null
      * @return true if successfully added, false if not
@@ -113,14 +116,13 @@ public class IslandCache {
     }
 
     /**
-     * Adds a player's UUID to the look up for islands. Does no checking
+     * Adds a player's UUID to the look up for islands. Does no checking. The island for this player must have been added beforehand.
      * 
      * @param uuid   player's uuid
      * @param island island to associate with this uuid. Only one island can be
      *               associated per world.
      */
     public void addPlayer(@NonNull UUID uuid, @NonNull Island island) {
-        this.setIslandById(island);
         this.islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).add(island.getUniqueId());
     }
 
@@ -395,7 +397,8 @@ public class IslandCache {
      */
     @Nullable
     public Island getIslandById(@NonNull String uniqueId) {
-        return islandsById.get(uniqueId);
+        // Load from cache or database
+        return islandsById.computeIfAbsent(uniqueId, handler::loadObject);
     }
 
     private Island setIslandById(Island island) {

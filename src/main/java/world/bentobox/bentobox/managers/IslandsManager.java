@@ -98,7 +98,7 @@ public class IslandsManager {
         this.plugin = plugin;
         // Set up the database handler to store and retrieve Island classes
         handler = new Database<>(plugin, Island.class);
-        islandCache = new IslandCache();
+        islandCache = new IslandCache(handler);
         // This list should always be empty unless database deletion failed
         // In that case a purge utility may be required in the future
         deletedIslands = new ArrayList<>();

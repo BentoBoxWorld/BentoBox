@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -33,17 +34,17 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BentoBox.class, Util.class })
-public class IslandCacheTest {
+public class IslandCacheTest extends RanksManagerBeforeClassTest {
 
-    @Mock
-    private BentoBox plugin;
     @Mock
     private World world;
     @Mock
@@ -60,7 +61,10 @@ public class IslandCacheTest {
     private Flag flag;
     @Mock
     private IslandsManager im;
+    // Database
+    Database<Island> db;
 
+    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         // Plugin
@@ -74,22 +78,24 @@ public class IslandCacheTest {
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(world);
+        when(Util.getWorld(any())).thenReturn(world);
 
         // Mock up IslandsManager
         when(plugin.getIslands()).thenReturn(im);
 
-        // Island
-        when(island.getWorld()).thenReturn(world);
-        when(island.getUniqueId()).thenReturn("uniqueId");
-        @NonNull
-        String uniqueId = UUID.randomUUID().toString();
-        when(island.getUniqueId()).thenReturn(uniqueId);
         // Location
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
+
+        // Island
+        when(island.getWorld()).thenReturn(world);
+        when(island.getUniqueId()).thenReturn("uniqueId");
+        when(island.inIslandSpace(anyInt(), anyInt())).thenReturn(true);
+        @NonNull
+        String uniqueId = UUID.randomUUID().toString();
+        when(island.getUniqueId()).thenReturn(uniqueId);
         when(island.getCenter()).thenReturn(location);
         when(island.getOwner()).thenReturn(owner);
         when(island.isOwned()).thenReturn(true);
@@ -102,8 +108,11 @@ public class IslandCacheTest {
         when(island.getMinX()).thenReturn(-200);
         when(island.getMinZ()).thenReturn(-200);
 
+        // database must be mocked here
+        db = mock(Database.class);
+
         // New cache
-        ic = new IslandCache();
+        ic = new IslandCache(db);
     }
 
     @After
@@ -117,6 +126,7 @@ public class IslandCacheTest {
     @Test
     public void testAddIsland() {
         assertTrue(ic.addIsland(island));
+        assertEquals(island, ic.getIslandAt(island.getCenter()));
         // Check if they are added
         assertEquals(island, ic.getIsland(world, owner));
     }
@@ -126,6 +136,7 @@ public class IslandCacheTest {
      */
     @Test
     public void testAddPlayer() {
+        ic.addIsland(island);
         UUID playerUUID = UUID.randomUUID();
         ic.addPlayer(playerUUID, island);
         // Check if they are added
@@ -162,7 +173,7 @@ public class IslandCacheTest {
     @Test
     public void testGetIslandAtLocation() {
         // Set coords to be in island space
-        when(island.inIslandSpace(Mockito.any(Integer.class), Mockito.any(Integer.class))).thenReturn(true);
+        when(island.inIslandSpace(any(Integer.class), any(Integer.class))).thenReturn(true);
         // Set plugin
         Util.setPlugin(plugin);
         ic.addIsland(island);
@@ -179,7 +190,7 @@ public class IslandCacheTest {
 
 
         assertEquals(island, ic.getIslandAt(location2));
-        when(island.inIslandSpace(Mockito.any(Integer.class), Mockito.any(Integer.class))).thenReturn(false);
+        when(island.inIslandSpace(any(Integer.class), any(Integer.class))).thenReturn(false);
         assertNull(ic.getIslandAt(location2));
     }
 
