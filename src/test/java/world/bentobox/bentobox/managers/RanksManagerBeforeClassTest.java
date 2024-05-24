@@ -102,7 +102,7 @@ public abstract class RanksManagerBeforeClassTest {
             savedObject = null;
             return null;
         }).when(h).deleteObject(any());
-
+        
         doAnswer(invocation -> {
             savedObject = null;
             return null;

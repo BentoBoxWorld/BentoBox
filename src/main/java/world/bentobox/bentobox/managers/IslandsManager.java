@@ -18,7 +18,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -376,6 +375,17 @@ public class IslandsManager {
     }
 
     /**
+     * Gets all the islands for this player in any world where this player has any presence
+     * 
+     * @param uniqueId  user's UUID
+     * @return List of islands or empty list if none found for user
+     */
+    @NonNull
+    public List<Island> getIslands(UUID uniqueId) {
+        return islandCache.getIslands(uniqueId);
+    }
+
+    /**
      * Gets all the islands for this player in this world that this player owns.
      * 
      * @param world world to check
@@ -441,7 +451,7 @@ public class IslandsManager {
      */
     @NonNull
     public Collection<Island> getIslands() {
-        return islandCache.getIslands();
+        return handler.loadObjects().stream().toList();
     }
 
     /**
@@ -455,7 +465,7 @@ public class IslandsManager {
      */
     @NonNull
     public Collection<Island> getIslands(@NonNull World world) {
-        return islandCache.getIslands(world);
+        return handler.loadObjects().stream().filter(i -> world.equals(i.getWorld())).toList();
     }
 
     /**
@@ -1676,20 +1686,6 @@ public class IslandsManager {
     public void resetFlag(World world, Flag flag) {
         islandCache.resetFlag(world, flag);
         this.saveAll();
-    }
-
-    /**
-     * Returns whether the specified island custom name exists in this world.
-     * 
-     * @param world World of the gamemode
-     * @param name  Name of an island
-     * @return {@code true} if there is an island with the specified name in this
-     *         world, {@code false} otherwise.
-     * @since 1.7.0
-     */
-    public boolean nameExists(@NonNull World world, @NonNull String name) {
-        return getIslands(world).stream().map(Island::getName).filter(Objects::nonNull)
-                .anyMatch(n -> ChatColor.stripColor(n).equals(ChatColor.stripColor(name)));
     }
 
     /**

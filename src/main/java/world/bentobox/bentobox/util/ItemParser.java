@@ -1,14 +1,18 @@
 package world.bentobox.bentobox.util;
 
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Locale;
+import java.util.MissingFormatArgumentException;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.Damageable;

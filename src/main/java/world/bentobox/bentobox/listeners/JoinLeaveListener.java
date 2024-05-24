@@ -189,7 +189,7 @@ public class JoinLeaveListener implements Listener {
     }
 
     private void updateIslandRange(User user) {
-        plugin.getIslands().getIslands().stream()
+        plugin.getIslands().getIslands(user.getUniqueId()).stream()
                 .filter(island -> island.getOwner() != null && island.getOwner().equals(user.getUniqueId()))
                 .forEach(island -> {
                     // Check if new owner has a different range permission than the island size
@@ -220,8 +220,7 @@ public class JoinLeaveListener implements Listener {
         // Remove any coops if all the island players have left
         // Go through all the islands this player is a member of, check if all members
         // have left, remove coops
-
-        plugin.getIslands().getIslands().stream()
+        plugin.getIslands().getIslands(event.getPlayer().getUniqueId()).stream()
                 .filter(island -> island.getMembers().containsKey(event.getPlayer().getUniqueId())).forEach(island -> {
                     // Are there any online players still for this island?
                     if (Bukkit.getOnlinePlayers().stream().filter(p -> !event.getPlayer().equals(p))

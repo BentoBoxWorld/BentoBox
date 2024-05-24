@@ -446,4 +446,13 @@ public class IslandCache {
         return islandsById.keySet();
     }
 
+    /**
+     * Get a unmodifiable list of all islands this player is involved with
+     * @param uniqueId player's UUID
+     * @return list of islands
+     */
+    public @NonNull List<Island> getIslands(UUID uniqueId) {
+        return islandsByUUID.get(uniqueId).stream().map(this::getIslandById).toList();
+    }
+
 }
