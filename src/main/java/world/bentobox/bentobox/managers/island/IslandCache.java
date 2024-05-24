@@ -401,8 +401,13 @@ public class IslandCache {
         return islandsById.computeIfAbsent(uniqueId, handler::loadObject);
     }
 
-    private Island setIslandById(Island island) {
-        return islandsById.put(island.getUniqueId(), island);
+    /**
+     * Place the island into the cache map 
+     * @param island island
+     * @return the previous value associated with island, or null if this is a new entry
+     */
+    Island setIslandById(Island island) {
+        return islandsById.put(island.getUniqueId().intern(), island);
     }
 
     /**
@@ -452,7 +457,7 @@ public class IslandCache {
      * @return list of islands
      */
     public @NonNull List<Island> getIslands(UUID uniqueId) {
-        return islandsByUUID.get(uniqueId).stream().map(this::getIslandById).toList();
+        return islandsByUUID.getOrDefault(uniqueId, Collections.emptySet()).stream().map(this::getIslandById).toList();
     }
 
 }
