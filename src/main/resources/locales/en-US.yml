@@ -1279,6 +1279,7 @@ protection:
     LEASH:
       description: Toggle use
       name: Leash use
+      hint: Leash use disabled
     LECTERN:
       name: Lecterns
       description: |-
