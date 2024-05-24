@@ -1,5 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -8,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -66,6 +70,35 @@ public class CreeperListener extends FlagListener {
         // If creeper damage is not allowed in world cancel the damage
         if (!Flags.CREEPER_DAMAGE.isSetForWorld(e.getEntity().getWorld())) {
             e.setCancelled(true);
+        }
+    }
+
+
+    /**
+     * Prevent creepers from igniting if they are not allowed to grief
+     * @param e - event
+     * @since 2.4.0
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent e)
+    {
+        Player player = e.getPlayer();
+        Location location = e.getRightClicked().getLocation();
+
+        if (!Flags.CREEPER_GRIEFING.isSetForWorld(location.getWorld()) &&
+            e.getRightClicked() instanceof Creeper &&
+            !this.getIslandsManager().locationIsOnIsland(player, location))
+        {
+            Material mainHand = player.getInventory().getItemInMainHand().getType();
+
+            if (Material.FIRE_CHARGE.equals(mainHand) ||
+                Material.FLINT_AND_STEEL.equals(mainHand))
+            {
+                // Creeper igniting
+                User user = User.getInstance(player);
+                user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.CREEPER_GRIEFING.getHintReference()));
+                e.setCancelled(true);
+            }
         }
     }
 }
