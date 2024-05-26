@@ -30,6 +30,7 @@ import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -304,8 +305,12 @@ public class IslandCacheTest extends AbstractCommonSetup {
     @Test
     public void testResetAllFlags() {
         ic.addIsland(island);
+        BukkitScheduler scheduler = mock(BukkitScheduler.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        when(Bukkit.getScheduler()).thenReturn(scheduler);
         ic.resetAllFlags(world);
-        verify(island).setFlagsDefaults();
+
+        verify(scheduler).runTaskAsynchronously(eq(plugin), any(Runnable.class));
     }
 
     /**
