@@ -1455,7 +1455,7 @@ public class IslandsManager {
      */
     public void saveAll(boolean schedule) {
         if (!schedule) {
-            for (Island island : islandCache.getIslands()) {
+            for (Island island : islandCache.getCachedIslands()) {
                 if (island.isChanged()) {
                     try {
                         handler.saveObjectAsync(island);
@@ -1468,7 +1468,7 @@ public class IslandsManager {
         }
 
         isSaveTaskRunning = true;
-        Queue<Island> queue = new LinkedList<>(islandCache.getIslands());
+        Queue<Island> queue = new LinkedList<>(islandCache.getCachedIslands());
         new BukkitRunnable() {
             @Override
             public void run() {
