@@ -15,14 +15,25 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.beans.IntrospectionException;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -37,17 +48,20 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class })
-public class IslandCacheTest extends RanksManagerBeforeClassTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, DatabaseSetup.class, })
+public class IslandCacheTest extends AbstractCommonSetup {
 
+    private static AbstractDatabaseHandler<Object> handler;
     @Mock
     private World world;
     @Mock
@@ -66,6 +80,21 @@ public class IslandCacheTest extends RanksManagerBeforeClassTest {
     private IslandsManager im;
     // Database
     Database<Island> db;
+
+    @SuppressWarnings("unchecked")
+    @BeforeClass
+    public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        // This has to be done beforeClass otherwise the tests will interfere with each
+        // other
+        handler = mock(AbstractDatabaseHandler.class);
+        // Database
+        PowerMockito.mockStatic(DatabaseSetup.class);
+        DatabaseSetup dbSetup = mock(DatabaseSetup.class);
+        when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
+        when(dbSetup.getHandler(any())).thenReturn(handler);
+        when(handler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+
+    }
 
     @SuppressWarnings("unchecked")
     @Before
@@ -110,14 +139,27 @@ public class IslandCacheTest extends RanksManagerBeforeClassTest {
 
         // database must be mocked here
         db = mock(Database.class);
+        when(db.loadObject(anyString())).thenReturn(island);
+        when(db.saveObjectAsync(any())).thenReturn(CompletableFuture.completedFuture(true));
 
         // New cache
         ic = new IslandCache(db);
     }
 
+    @Override
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
+        super.tearDown();
         Mockito.framework().clearInlineMocks();
+        deleteAll(new File("database"));
+        deleteAll(new File("database_backup"));
+    }
+
+    private void deleteAll(File file) throws IOException {
+        if (file.exists()) {
+            Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+        }
+
     }
 
     /**
@@ -169,9 +211,16 @@ public class IslandCacheTest extends RanksManagerBeforeClassTest {
 
     /**
      * Test for {@link IslandCache#getIslandAt(Location)}
+     * @throws IntrospectionException 
+     * @throws NoSuchMethodException 
+     * @throws ClassNotFoundException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     @Test
-    public void testGetIslandAtLocation() {
+    public void testGetIslandAtLocation() throws InstantiationException, IllegalAccessException,
+            InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         // Set coords to be in island space
         when(island.inIslandSpace(any(Integer.class), any(Integer.class))).thenReturn(true);
         // Set plugin
@@ -256,8 +305,12 @@ public class IslandCacheTest extends RanksManagerBeforeClassTest {
     @Test
     public void testResetAllFlags() {
         ic.addIsland(island);
+        BukkitScheduler scheduler = mock(BukkitScheduler.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        when(Bukkit.getScheduler()).thenReturn(scheduler);
         ic.resetAllFlags(world);
-        verify(island).setFlagsDefaults();
+
+        verify(scheduler).runTaskAsynchronously(eq(plugin), any(Runnable.class));
     }
 
     /**

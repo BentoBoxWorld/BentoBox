@@ -74,7 +74,7 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class, DatabaseSetup.class, })
 public class PlayersManagerTest {
 
-    private static AbstractDatabaseHandler<Object> h;
+    private static AbstractDatabaseHandler<Object> handler;
     private Database<Players> db;
     @Mock
     private World end;
@@ -110,13 +110,13 @@ public class PlayersManagerTest {
     public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // This has to be done beforeClass otherwise the tests will interfere with each
         // other
-        h = mock(AbstractDatabaseHandler.class);
+        handler = mock(AbstractDatabaseHandler.class);
         // Database
         PowerMockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
-        when(dbSetup.getHandler(any())).thenReturn(h);
-        when(h.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+        when(dbSetup.getHandler(any())).thenReturn(handler);
+        when(handler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
     }
 
     private void deleteAll(File file) throws IOException {
@@ -244,15 +244,15 @@ public class PlayersManagerTest {
 
         // Loading objects
         Object players = new Players();
-        when(h.loadObject(anyString())).thenReturn(players);
+        when(handler.loadObject(anyString())).thenReturn(players);
         // Set up names database
         List<Object> names = new ArrayList<>();
         Names name = new Names();
         name.setUniqueId("tastybento");
         name.setUuid(uuid);
         names.add(name);
-        when(h.loadObjects()).thenReturn(names);
-        when(h.objectExists(anyString())).thenReturn(true);
+        when(handler.loadObjects()).thenReturn(names);
+        when(handler.objectExists(anyString())).thenReturn(true);
 
         // Class under test
         pm = new PlayersManager(plugin);
@@ -637,7 +637,7 @@ public class PlayersManagerTest {
     public void testSetPlayerName() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         pm.setPlayerName(user);
         // Player and names database saves
-        verify(h, atLeast(2)).saveObject(any());
+        verify(handler, atLeast(2)).saveObject(any());
     }
 
     /**

@@ -1044,9 +1044,11 @@ public class Island implements DataObject, MetaDataAble {
      * 
      * @param flag  - flag
      * @param value - Use RanksManager settings, e.g. RanksManager.MEMBER
+     * @return this island
      */
-    public void setFlag(Flag flag, int value) {
+    public Island setFlag(Flag flag, int value) {
         setFlag(flag, value, true);
+        return this;
     }
 
     /**
@@ -1079,9 +1081,10 @@ public class Island implements DataObject, MetaDataAble {
     /**
      * Resets the flags to their default as set in config.yml for this island. If
      * flags are missing from the config, the default hard-coded value is used and
-     * set
+     * set.
+     * @return this island
      */
-    public void setFlagsDefaults() {
+    public Island setFlagsDefaults() {
         BentoBox plugin = BentoBox.getInstance();
         Map<String, Integer> result = new HashMap<>();
         plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
@@ -1090,7 +1093,8 @@ public class Island implements DataObject, MetaDataAble {
         plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
                 .forEach(f -> result.put(f.getID(),
                         plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
-        this.setFlags(result);
+        setFlags(result);
+        return this;
     }
 
     /**

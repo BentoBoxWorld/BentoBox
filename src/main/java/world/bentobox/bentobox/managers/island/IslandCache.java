@@ -9,11 +9,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.eclipse.jdt.annotation.NonNull;
@@ -104,7 +106,8 @@ public class IslandCache {
             return false;
         }
         if (addToGrid(island)) {
-            setIslandById(island);
+            // Insert a null into the map as a placeholder for cache
+            islandsById.put(island.getUniqueId().intern(), null);
             // Only add islands to this map if they are owned
             if (island.isOwned()) {
                 islandsByUUID.computeIfAbsent(island.getOwner(), k -> new HashSet<>()).add(island.getUniqueId());
@@ -253,18 +256,40 @@ public class IslandCache {
 
     /**
      * Returns an <strong>unmodifiable collection</strong> of all the islands (even
-     * those who may be unowned).
+     * those who may be unowned). Gets them from the cache or from the database if not
+     * loaded.
      * 
      * @return unmodifiable collection containing every island.
      */
     @NonNull
     public Collection<Island> getIslands() {
-        return Collections.unmodifiableCollection(islandsById.values());
+        List<Island> result = new ArrayList<>();
+        for (Entry<@NonNull String, @NonNull Island> entry : islandsById.entrySet()) {
+            Island island = entry.getValue() != null ? entry.getValue() : handler.loadObject(entry.getKey());
+            if (island != null) {
+                result.add(island);
+            }
+        }
+
+        return Collections.unmodifiableCollection(result);
     }
 
     /**
      * Returns an <strong>unmodifiable collection</strong> of all the islands (even
-     * those who may be unowned) in the specified world.
+     * those who may be unowned) that are cached.
+     * 
+     * @return unmodifiable collection containing every cached island.
+     */
+    @NonNull
+    public Collection<Island> getCachedIslands() {
+        return islandsById.entrySet().stream().filter(en -> Objects.nonNull(en.getValue())).map(Map.Entry::getValue)
+                .toList();
+    }
+
+    /**
+     * Returns an <strong>unmodifiable collection</strong> of all the islands (even
+     * those that may be unowned) in the specified world.
+     * Gets islands from the cache if they have been loaded, or from the database if not
      * 
      * @param world World of the gamemode.
      * @return unmodifiable collection containing all the islands in the specified
@@ -277,9 +302,16 @@ public class IslandCache {
         if (overworld == null) {
             return Collections.emptyList();
         }
-        return islandsById.entrySet().stream()
-                .filter(entry -> overworld.equals(Util.getWorld(entry.getValue().getWorld()))) // shouldn't make NPEs
-                .map(Map.Entry::getValue).toList();
+
+        List<Island> result = new ArrayList<>();
+        for (Entry<@NonNull String, @NonNull Island> entry : islandsById.entrySet()) {
+            Island island = entry.getValue() != null ? entry.getValue() : handler.loadObject(entry.getKey());
+            if (island != null && overworld.equals(island.getWorld())) {
+                result.add(island);
+            }
+        }
+
+        return Collections.unmodifiableCollection(result);
     }
 
     /**
@@ -294,7 +326,7 @@ public class IslandCache {
         if (!islandsByUUID.containsKey(uuid)) {
             return false;
         }
-        return this.islandsByUUID.get(uuid).stream().map(islandsById::get).filter(Objects::nonNull)
+        return this.islandsByUUID.get(uuid).stream().map(this::getIslandById).filter(Objects::nonNull)
                 .filter(i -> world.equals(i.getWorld()))
                 .anyMatch(i -> uuid.equals(i.getOwner()));
     }
@@ -364,7 +396,7 @@ public class IslandCache {
     }
 
     /**
-     * Gets the number of islands in the cache for this world
+     * Gets the number of islands in this world
      * 
      * @param world world to get the number of islands in
      * @return the number of islands
@@ -411,17 +443,14 @@ public class IslandCache {
     }
 
     /**
-     * Resets all islands in this game mode to default flag settings
+     * Resets all islands in this game mode to default flag settings.
      * 
      * @param world - world
      * @since 1.3.0
      */
     public void resetAllFlags(World world) {
-        World w = Util.getWorld(world);
-        if (w == null) {
-            return;
-        }
-        islandsById.values().stream().filter(i -> i.getWorld().equals(w)).forEach(Island::setFlagsDefaults);
+        Bukkit.getScheduler().runTaskAsynchronously(BentoBox.getInstance(),
+                () -> this.getIslands(world).stream().forEach(Island::setFlagsDefaults));
     }
 
     /**
@@ -432,13 +461,9 @@ public class IslandCache {
      * @since 1.8.0
      */
     public void resetFlag(World world, Flag flag) {
-        World w = Util.getWorld(world);
-        if (w == null) {
-            return;
-        }
-        int setting = BentoBox.getInstance().getIWM().getDefaultIslandFlags(w).getOrDefault(flag,
+        int setting = BentoBox.getInstance().getIWM().getDefaultIslandFlags(world).getOrDefault(flag,
                 flag.getDefaultRank());
-        islandsById.values().stream().filter(i -> i.getWorld().equals(w)).forEach(i -> i.setFlag(flag, setting));
+        this.getIslands(world).stream().forEach(i -> i.setFlag(flag, setting));
     }
 
     /**
