@@ -1801,6 +1801,10 @@ enums:
     HOT_FLOOR: Hot Floor
     CRAMMING: Cramming
     DRYOUT: Dryout
+    FREEZE: Freeze
+    KILL: Kill
+    SONIC_BOOM: Sonic Boom
+    WORLD_BORDER: World Border
 
 panel:
   credits:
