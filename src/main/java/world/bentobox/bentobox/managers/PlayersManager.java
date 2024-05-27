@@ -67,28 +67,29 @@ public class PlayersManager {
      */
     @Nullable
     public Players getPlayer(UUID uuid){
-        if (!playerCache.containsKey(uuid)) {
-            playerCache.put(uuid, addPlayer(uuid));
-        }
-        return playerCache.get(uuid);
+        return playerCache.computeIfAbsent(uuid, this::addPlayer);
     }
 
     /**
-     * Adds a player to the database. If the UUID does not exist, a new player is made
-     * @param playerUUID - the player's UUID
+     * Adds a player to the database. If the UUID does not exist, a new player is created.
+     *
+     * @param playerUUID the player's UUID, must not be null
+     * @return the loaded or newly created player
+     * @throws NullPointerException if playerUUID is null
      */
     private Players addPlayer(@NonNull UUID playerUUID) {
-        Objects.requireNonNull(playerUUID);
-        // If the player is in the database, load it, otherwise create a new player
+        Objects.requireNonNull(playerUUID, "Player UUID must not be null");
+
+        // If the player exists in the database, load it; otherwise, create and save a new player
         if (handler.objectExists(playerUUID.toString())) {
             Players player = handler.loadObject(playerUUID.toString());
             if (player != null) {
                 return player;
             }
         }
-        Players player = new Players(plugin, playerUUID);
-        handler.saveObject(player);
-        return player;
+        Players newPlayer = new Players(plugin, playerUUID);
+        handler.saveObjectAsync(newPlayer);
+        return newPlayer;
     }
 
     /**
@@ -158,7 +159,7 @@ public class PlayersManager {
             return "";
         }
         getPlayer(playerUUID);
-        return playerCache.get(playerUUID).getPlayerName();
+        return Objects.requireNonNullElse(playerCache.get(playerUUID).getPlayerName(), "");
     }
 
     /**

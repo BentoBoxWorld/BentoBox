@@ -195,7 +195,17 @@ public class PlayersManagerTest {
         when(olp.getUniqueId()).thenReturn(uuid);
         when(olp.getName()).thenReturn("tastybento");
         PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
+        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenAnswer(invocation -> {
+            UUID inputUUID = invocation.getArgument(0);
+            if (inputUUID.equals(uuid)) {
+                return olp;
+            } else {
+                OfflinePlayer differentOlp = mock(OfflinePlayer.class);
+                when(differentOlp.getUniqueId()).thenReturn(inputUUID);
+                when(differentOlp.getName()).thenReturn("");
+                return differentOlp;
+            }
+        });
 
         // Player has island to begin with
         IslandsManager im = mock(IslandsManager.class);
@@ -385,10 +395,34 @@ public class PlayersManagerTest {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
      */
     @Test
-    public void testGetName() {
+    public void testGetNameNull() throws InstantiationException, IllegalAccessException, InvocationTargetException,
+            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+        // Null UUID
         assertTrue(pm.getName(null).isEmpty());
-        String name = pm.getName(uuid);
-        assertEquals("tastybento", name);
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
+     */
+    @Test
+    public void testGetNameKnown() throws InstantiationException, IllegalAccessException, InvocationTargetException,
+            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+        pm.setPlayerName(user);
+        // Known UUID
+        assertEquals("tastybento", pm.getName(uuid));
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
+     */
+    @Test
+    public void testGetNameUnknown() throws InstantiationException, IllegalAccessException, InvocationTargetException,
+            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+        // Unknown UUID - nothing in database
+        when(handler.objectExists(anyString())).thenReturn(false);
+
         assertEquals("", pm.getName(UUID.randomUUID()));
     }
 
