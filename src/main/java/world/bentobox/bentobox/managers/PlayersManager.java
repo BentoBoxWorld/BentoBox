@@ -157,8 +157,8 @@ public class PlayersManager {
         if (playerUUID == null) {
             return "";
         }
-        return names.loadObjects().stream().filter(n -> n.getUuid().equals(playerUUID)).findFirst()
-                .map(Names::getUniqueId).orElse("");
+        getPlayer(playerUUID);
+        return playerCache.get(playerUUID).getPlayerName();
     }
 
     /**
