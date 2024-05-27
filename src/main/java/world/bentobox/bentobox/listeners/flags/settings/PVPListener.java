@@ -225,9 +225,7 @@ public class PVPListener extends FlagListener {
         // Only care about PVP Flags
         if (Flags.PVP_OVERWORLD.equals(flag) || Flags.PVP_NETHER.equals(flag) || Flags.PVP_END.equals(flag)) {
             String message = "protection.flags." + flag.getID() + "." + (e.isSetTo() ? "enabled" : "disabled");
-            // Send the message to visitors
-            e.getIsland().getVisitors().forEach(visitor -> User.getInstance(visitor).sendMessage(message));
-            // Send the message to players on the island
+            // Send the message to all players on the island
             e.getIsland().getPlayersOnIsland().forEach(player -> User.getInstance(player).sendMessage(message));
         }
     }
@@ -269,7 +267,7 @@ public class PVPListener extends FlagListener {
 
     private void alertUser(@NonNull Player player, Flag flag) {
         String message = "protection.flags." + flag.getID() + ".enabled";
-        User.getInstance(player).sendMessage(message);
+        User.getInstance(player).notify(message);
         player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER,2F, 1F);
     }
 }
