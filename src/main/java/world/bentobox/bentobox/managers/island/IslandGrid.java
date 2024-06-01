@@ -100,4 +100,15 @@ class IslandGrid {
         return null;
     }
 
+    /**
+     * @return number of islands stored in the grid
+     */
+    public long getSize() {
+        long count = 0;
+        for (TreeMap<Integer, String> innerMap : grid.values()) {
+            count += innerMap.size();
+        }
+        return count;
+    }
+
 }

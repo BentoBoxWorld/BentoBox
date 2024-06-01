@@ -1262,7 +1262,7 @@ public class IslandsManager {
             } else {
                 // Fix island center if it is off
                 fixIslandCenter(island);
-                islandCache.addIsland(island);
+                islandCache.addIsland(island, true);
 
                 if (island.isSpawn()) {
                     // Success, set spawn if this is the spawn island.

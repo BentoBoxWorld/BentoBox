@@ -97,17 +97,29 @@ public class IslandCache {
 
     /**
      * Adds an island to the grid, used for new islands
+     * Caches island.
      * 
      * @param island island to add, not null
      * @return true if successfully added, false if not
      */
     public boolean addIsland(@NonNull Island island) {
+        return addIsland(island, false);
+    }
+
+    /**
+     * Adds an island to the grid, used for new islands
+     * 
+     * @param island island to add, not null
+     * @param noCache - if true, island will not be cached
+     * @return true if successfully added, false if not
+     */
+    public boolean addIsland(@NonNull Island island, boolean noCache) {
         if (island.getCenter() == null || island.getWorld() == null) {
             return false;
         }
         if (addToGrid(island)) {
             // Insert a null into the map as a placeholder for cache
-            islandsById.put(island.getUniqueId().intern(), null);
+            islandsById.put(island.getUniqueId().intern(), noCache ? null : island);
             // Only add islands to this map if they are owned
             if (island.isOwned()) {
                 islandsByUUID.computeIfAbsent(island.getOwner(), k -> new HashSet<>()).add(island.getUniqueId());
@@ -402,7 +414,8 @@ public class IslandCache {
      * @return the number of islands
      */
     public long size(World world) {
-        return this.islandsById.values().stream().map(Island::getWorld).filter(world::equals).count();
+        // Get from grids because this is where we have islands by world
+        return this.grids.containsKey(world) ? this.grids.get(world).getSize() : 0L;
     }
 
     /**
