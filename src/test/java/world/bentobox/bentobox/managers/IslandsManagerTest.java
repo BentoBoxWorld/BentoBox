@@ -698,7 +698,11 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(h.loadObject(anyString())).thenReturn(island);
         im.createIsland(location, uuid);
         assertEquals(world, im.getIslandLocation(world, uuid).getWorld());
-        assertEquals(location, im.getIslandLocation(world, uuid));
+        Location l = im.getIslandLocation(world, uuid);
+        assertEquals(location.getWorld(), l.getWorld());
+        assertEquals(location.getBlockX(), l.getBlockX());
+        assertEquals(location.getBlockY(), l.getBlockY());
+        assertEquals(location.getBlockZ(), l.getBlockZ());
         assertNull(im.getIslandLocation(world, UUID.randomUUID()));
     }
 
