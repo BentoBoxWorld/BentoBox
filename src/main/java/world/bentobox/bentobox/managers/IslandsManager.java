@@ -1646,7 +1646,8 @@ public class IslandsManager {
      * @param island - island
      */
     public static void updateIsland(Island island) {
-        if (handler.objectExists(island.getUniqueId())) {
+        // When mocking, handler can be null so this null check avoids errors
+        if (handler != null && handler.objectExists(island.getUniqueId())) {
             island.clearChanged();
             handler.saveObjectAsync(island)
                     .thenAccept(b -> MultiLib.notify("bentobox-updateIsland", island.getUniqueId()));
