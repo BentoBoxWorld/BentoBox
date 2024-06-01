@@ -430,7 +430,29 @@ public class IslandCache {
     @Nullable
     public Island getIslandById(@NonNull String uniqueId) {
         // Load from cache or database
-        return islandsById.computeIfAbsent(uniqueId, handler::loadObject);
+        return getIslandById(uniqueId, true);
+    }
+
+    /**
+     * Get the island by unique id
+     * 
+     * @param uniqueId unique id of the Island.
+     * @param cache if true, then the Island will be cached if it is not already
+     * @return island or null if none found
+     * @since 2.4.0
+     */
+    @Nullable
+    public Island getIslandById(@NonNull String uniqueId, boolean cache) {
+        Island island = islandsById.get(uniqueId);
+        if (island != null) {
+            return island;
+        }
+
+        island = handler.loadObject(uniqueId);
+        if (cache && island != null) {
+            islandsById.put(uniqueId, island);
+        }
+        return island;
     }
 
     /**
@@ -483,6 +505,15 @@ public class IslandCache {
      */
     public @NonNull List<Island> getIslands(UUID uniqueId) {
         return islandsByUUID.getOrDefault(uniqueId, Collections.emptySet()).stream().map(this::getIslandById).toList();
+    }
+
+    /**
+     * Returns if this is a known island uniqueId. Will not load the island from the database if it is not loaded already.
+     * @param uniqueId - unique id of island
+     * @return true if this island exists
+     */
+    public boolean isIslandId(String uniqueId) {
+        return this.islandsById.containsKey(uniqueId);
     }
 
 }
