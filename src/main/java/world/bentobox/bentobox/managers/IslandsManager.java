@@ -1657,13 +1657,36 @@ public class IslandsManager {
     /**
      * Try to get an island by its unique id
      * 
-     * @param uniqueId - unique id string
+     * @param uniqueId - unique id of island
      * @return optional island
      * @since 1.3.0
      */
     @NonNull
     public Optional<Island> getIslandById(String uniqueId) {
         return Optional.ofNullable(islandCache.getIslandById(uniqueId));
+    }
+
+    /**
+     * Try to get an island by its unique id. If you are needing to load all the islands to check something
+     * but do not need to have them cached, then use this method and set cache to false.
+     * 
+     * @param uniqueId - unique id of island
+     * @param cache - if false, island will not be cached if it is not already
+     * @return optional island
+     * @since 2.4.0
+     */
+    @NonNull
+    public Optional<Island> getIslandById(String uniqueId, boolean cache) {
+        return Optional.ofNullable(islandCache.getIslandById(uniqueId, cache));
+    }
+
+    /**
+     * Returns if this is a known island uniqueId. Will not load the island from the database if it is not loaded already.
+     * @param uniqueId - unique id of island
+     * @return true if this island exists
+     */
+    public boolean isIslandId(String uniqueId) {
+        return islandCache.isIslandId(uniqueId);
     }
 
     /**
