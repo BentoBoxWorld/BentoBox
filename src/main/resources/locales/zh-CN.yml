@@ -217,6 +217,7 @@ commands:
       banned-players: '封禁玩家:'
       banned-format: '&c[name]'
       unowned: '&c无主岛屿'
+      bundle: '&a用于创建岛屿的蓝图方案: &b[name]'
     switch:
       description: 开启/关闭 保护规避机制
       op: '&cOP始终可以规避岛屿保护.'
@@ -1698,8 +1699,8 @@ panels:
   tips:
     click-to-next: '&e点击 &7往下翻'
     click-to-previous: '&e点击 &7往上翻'
-    click-to-choose: '&e点击 &7选择该语言'
-    click-to-toggle: '&e点击 &7切换该语言'
+    click-to-choose: '&e点击 &7选择'
+    click-to-toggle: '&e点击 &7切换'
     left-click-to-cycle-down: '&e左键 &7向下循环选择'
     right-click-to-cycle-up: '&e右键 &7向上循环选择'
 
