@@ -296,6 +296,14 @@ public enum GameModePlaceholder {
             (addon, user, island) -> (island == null || user == null) ? ""
                     : user.getTranslation(RanksManager.getInstance().getRank(island.getRank(user)))),
     /**
+     * Returns the rank this player has on this island.
+     * @since 2.4.0
+     */
+    VISITED_ISLAND_RANK("visited_island_rank",
+            (addon, user, island) -> getVisitedIsland(addon, user)
+                    .map(is -> user.getTranslation(RanksManager.getInstance().getRank(is.getRank(user)))).orElse("")),
+
+    /**
      * Returns how many times this player reset his island.
      * @since 1.5.0
      */

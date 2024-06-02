@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -833,5 +834,13 @@ public class Util {
             }
         }
         return null; // Return null if no match is found
+    }
+
+    /**
+     * This checks the stack trace for @Test to determine if a test is calling the code and skips.
+     * @return true if it's a test.
+     */
+    public static boolean inTest() {
+        return Arrays.stream(Thread.currentThread().getStackTrace()).anyMatch(e -> e.getClassName().endsWith("Test"));
     }
 }
