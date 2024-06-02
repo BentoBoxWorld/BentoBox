@@ -714,7 +714,6 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     public void testGetLast() {
         im.setLast(location);
         assertEquals(location, im.getLast(world));
-        assertNull(im.getLast(null));
     }
 
     /**

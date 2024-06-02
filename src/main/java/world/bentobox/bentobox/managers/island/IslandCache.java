@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -51,9 +51,9 @@ public class IslandCache {
     private final @NonNull Database<Island> handler;
 
     public IslandCache(@NonNull Database<Island> handler) {
-        islandsById = new HashMap<>();
-        islandsByUUID = new HashMap<>();
-        grids = new HashMap<>();
+        islandsById = new ConcurrentHashMap<>();
+        islandsByUUID = new ConcurrentHashMap<>();
+        grids = new ConcurrentHashMap<>();
         this.handler = handler;
     }
 

@@ -2,12 +2,12 @@ package world.bentobox.bentobox.managers;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -28,7 +28,7 @@ public class PlayersManager {
     private final BentoBox plugin;
     private Database<Players> handler;
     private final Database<Names> names;
-    private final Map<UUID, Players> playerCache = new HashMap<>();
+    private final Map<UUID, Players> playerCache = new ConcurrentHashMap<>();
 
     private final Set<UUID> inTeleport; // this needs databasing
 
