@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.World;
@@ -81,15 +82,24 @@ public class PlayersManager {
         Objects.requireNonNull(playerUUID, "Player UUID must not be null");
 
         // If the player exists in the database, load it; otherwise, create and save a new player
-        if (handler.objectExists(playerUUID.toString())) {
-            Players player = handler.loadObject(playerUUID.toString());
-            if (player != null) {
-                return player;
-            }
+        Players player = loadPlayer(playerUUID);
+        if (player != null) {
+            return player;
         }
         Players newPlayer = new Players(plugin, playerUUID);
         handler.saveObjectAsync(newPlayer);
         return newPlayer;
+    }
+
+    /**
+     * Force load the player from the database. The player must be known to BenoBox. If it is not
+     * use {@link #addPlayer(UUID)} instead. This is a blocking call, so be careful.
+     * @param uuid UUID of player
+     * @return Players object representing that player
+     * @since 2.4.0
+     */
+    public @Nullable Players loadPlayer(UUID uuid) {
+        return handler.loadObject(uuid.toString());
     }
 
     /**
@@ -380,6 +390,21 @@ public class PlayersManager {
             // Player total XP (not displayed)
             target.getPlayer().setTotalExperience(0);
         }
+    }
+
+    /**
+     * Saves the player async to the database. The player has to be known to BentoBox to be saved.
+     * Players are usually detected by BentoBox when they join the server, so this is not an issue.
+     * @param uuid UUID of the player
+     * @return Completable future true when done, or false if not saved for some reason, e.g., invalid UUID
+     * @since 2.4.0
+     */
+    public CompletableFuture<Boolean> savePlayer(UUID uuid) {
+        Players p = this.getPlayer(uuid);
+        if (p != null) {
+            return handler.saveObjectAsync(p);
+        }
+        return CompletableFuture.completedFuture(false);
     }
 
 }

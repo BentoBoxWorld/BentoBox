@@ -269,7 +269,7 @@ public class IslandCache {
     /**
      * Returns an <strong>unmodifiable collection</strong> of all the islands (even
      * those who may be unowned). Gets them from the cache or from the database if not
-     * loaded.
+     * loaded. This is a very heavy operation likely to cause lag.
      * 
      * @return unmodifiable collection containing every island.
      */
@@ -277,13 +277,24 @@ public class IslandCache {
     public Collection<Island> getIslands() {
         List<Island> result = new ArrayList<>();
         for (Entry<@NonNull String, @NonNull Island> entry : islandsById.entrySet()) {
-            Island island = entry.getValue() != null ? entry.getValue() : handler.loadObject(entry.getKey());
+            Island island = entry.getValue() != null ? entry.getValue() : loadIsland(entry.getKey());
             if (island != null) {
                 result.add(island);
             }
         }
 
         return Collections.unmodifiableCollection(result);
+    }
+
+    /**
+     * Loads the island with the uniqueId from the database. Note, this could be a blocking call
+     * and lag the server, so be careful using it.
+     * @param uniqueId unique ID of the island
+     * @return Island or null if that uniqueID is unknown
+     * @since 2.4.0
+     */
+    public Island loadIsland(String uniqueId) {
+        return handler.loadObject(uniqueId);
     }
 
     /**
@@ -317,7 +328,7 @@ public class IslandCache {
 
         List<Island> result = new ArrayList<>();
         for (Entry<@NonNull String, @NonNull Island> entry : islandsById.entrySet()) {
-            Island island = entry.getValue() != null ? entry.getValue() : handler.loadObject(entry.getKey());
+            Island island = entry.getValue() != null ? entry.getValue() : loadIsland(entry.getKey());
             if (island != null && overworld.equals(island.getWorld())) {
                 result.add(island);
             }
@@ -461,7 +472,7 @@ public class IslandCache {
             return island;
         }
 
-        island = handler.loadObject(uniqueId);
+        island = loadIsland(uniqueId);
         if (cache && island != null) {
             islandsById.put(uniqueId, island);
         }
