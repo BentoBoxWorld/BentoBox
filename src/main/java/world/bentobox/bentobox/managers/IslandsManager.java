@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +14,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -68,9 +68,9 @@ public class IslandsManager {
 
     private final BentoBox plugin;
 
-    private Map<World, Island> spawns = new HashMap<>();
+    private Map<World, Island> spawns = new ConcurrentHashMap<>();
 
-    private Map<World, Location> last = new HashMap<>();
+    private Map<World, Location> last = new ConcurrentHashMap<>();
 
     @NonNull
     private static Database<Island> handler;
