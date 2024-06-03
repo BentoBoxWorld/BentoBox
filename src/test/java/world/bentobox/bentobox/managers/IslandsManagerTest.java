@@ -1045,7 +1045,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
         Collection<Island> collection = new ArrayList<>();
         collection.add(is);
-        when(islandCache.getIslands()).thenReturn(collection);
+        when(islandCache.getCachedIslands()).thenReturn(collection);
 
         im.setIslandCache(islandCache);
         Map<UUID, Integer> members = new HashMap<>();
@@ -1085,7 +1085,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
         Collection<Island> collection = new ArrayList<>();
         collection.add(is);
-        when(islandCache.getIslands()).thenReturn(collection);
+        when(islandCache.getCachedIslands()).thenReturn(collection);
 
         im.setIslandCache(islandCache);
         Map<UUID, Integer> members = new HashMap<>();
