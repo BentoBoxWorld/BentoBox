@@ -254,7 +254,7 @@ public class IslandsManager {
         island.setUniqueId(gmName + island.getUniqueId());
         if (islandCache.addIsland(island)) {
             // Save to database and notify other servers
-            handler.saveObjectAsync(island).thenAccept(b -> {
+            saveIsland(island).thenAccept(b -> {
                 if (b.equals(Boolean.TRUE)) {
                     MultiLib.notify("bentobox-newIsland", island.getUniqueId());
                 }
@@ -466,6 +466,16 @@ public class IslandsManager {
     @NonNull
     public Collection<Island> getIslands(@NonNull World world) {
         return handler.loadObjects().stream().filter(i -> world.equals(i.getWorld())).toList();
+    }
+
+    /**
+     * Return island with uniqueId. Loads from database. Will block, so be careful.
+     * @param uniqueID id of island
+     * @return Optional Island object
+     * @since 2.4.0
+     */
+    public Optional<Island> loadIsland(String uniqueID) {
+        return Optional.ofNullable(handler.loadObject(uniqueID));
     }
 
     /**
@@ -1448,7 +1458,7 @@ public class IslandsManager {
     }
 
     /**
-     * Save the all the islands to the database
+     * Save the all the cached islands to the database
      * 
      * @param schedule true if we should let the task run over multiple ticks to
      *                 reduce lag spikes
@@ -1458,7 +1468,7 @@ public class IslandsManager {
             for (Island island : islandCache.getCachedIslands()) {
                 if (island.isChanged()) {
                     try {
-                        handler.saveObjectAsync(island);
+                        saveIsland(island);
                     } catch (Exception e) {
                         plugin.logError("Could not save island to database when running sync! " + e.getMessage());
                     }
@@ -1481,7 +1491,7 @@ public class IslandsManager {
                     }
                     if (island.isChanged()) {
                         try {
-                            handler.saveObjectAsync(island);
+                            saveIsland(island);
                         } catch (Exception e) {
                             plugin.logError("Could not save island to database when running sync! " + e.getMessage());
                         }
@@ -1516,7 +1526,7 @@ public class IslandsManager {
     public void shutdown() {
         plugin.log("Removing coops from islands...");
         // Remove all coop associations
-        islandCache.getIslands().forEach(i -> i.getMembers().values().removeIf(p -> p == RanksManager.COOP_RANK));
+        islandCache.getCachedIslands().forEach(i -> i.getMembers().values().removeIf(p -> p == RanksManager.COOP_RANK));
         plugin.log("Saving islands - this has to be done sync so it may take a while with a lot of islands...");
         saveAll();
         plugin.log("Islands saved.");
@@ -1636,7 +1646,7 @@ public class IslandsManager {
      * @param uniqueId - UUID of player
      */
     public void clearRank(int rank, UUID uniqueId) {
-        islandCache.getIslands().forEach(
+        islandCache.getCachedIslands().forEach(
                 i -> i.getMembers().entrySet().removeIf(e -> e.getKey().equals(uniqueId) && e.getValue() == rank));
     }
 
@@ -1649,9 +1659,18 @@ public class IslandsManager {
         // When mocking, handler can be null so this null check avoids errors
         if (handler != null && handler.objectExists(island.getUniqueId())) {
             island.clearChanged();
-            handler.saveObjectAsync(island)
-                    .thenAccept(b -> MultiLib.notify("bentobox-updateIsland", island.getUniqueId()));
+            saveIsland(island).thenAccept(b -> MultiLib.notify("bentobox-updateIsland", island.getUniqueId()));
         }
+    }
+
+    /**
+     * Saves the island async to the database
+     * @param island Island object to be saved
+     * @return CompletableFuture<Boolean> when done
+     * @since 2.4.0
+     */
+    public static CompletableFuture<Boolean> saveIsland(Island island) {
+        return handler.saveObjectAsync(island);
     }
 
     /**
