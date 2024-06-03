@@ -50,9 +50,14 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
         this.setDescription("commands.admin.help.description");
 
         new AdminVersionCommand(this);
+
         new AdminTeleportCommand(this, "tp");
         new AdminTeleportCommand(this, "tpnether");
         new AdminTeleportCommand(this, "tpend");
+        new AdminTeleportUserCommand(this, "tpuser");
+        new AdminTeleportUserCommand(this, "tpusernether");
+        new AdminTeleportUserCommand(this, "tpuserend");
+
         new AdminGetrankCommand(this);
         new AdminSetrankCommand(this);
         new AdminInfoCommand(this);

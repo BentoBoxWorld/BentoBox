@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -20,23 +22,21 @@ import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
- * Enables admins to teleport to a player's island, nether or end islands, or to teleport another player 
- * to a player's island
+ * Enables admins to teleport a player to another player's island, nether or end islands, 
  * 
- * For example /acid tp tastybento boxmanager would teleport BoxManager to tastybento's overwold island
+ * For example /acid tp lspvicky tastybento [island name] would teleport lspvicky to tastybento's [named] island
  * 
- * If the user has multiple islands, then the format is:
- * [admin_command] [user with island] [island to go to]
  */
 public class AdminTeleportUserCommand extends CompositeCommand {
 
     private static final String NOT_SAFE = "general.errors.no-safe-location-found";
+    private Location warpSpot;
     private @Nullable UUID targetUUID;
-    private @Nullable User userToTeleport;
+    private @NonNull User toBeTeleported;
 
     /**
      * @param parent - parent command
-     * @param tpCommand - should be "tp", "tpnether" or "tpend"
+     * @param tpCommand - should be "tpuser", "tpusernether" or "tpuserend"
      */
     public AdminTeleportUserCommand(CompositeCommand parent, String tpCommand) {
         super(parent, tpCommand);
@@ -45,57 +45,47 @@ public class AdminTeleportUserCommand extends CompositeCommand {
     @Override
     public void setup() {
         // Permission
-        setPermission("admin.tp");
-        setParametersHelp("commands.admin.tp.parameters");
-        setDescription("commands.admin.tp.description");
+        setPermission("admin.tpuser");
+        setParametersHelp("commands.admin.tpuser.parameters");
+        setDescription("commands.admin.tpuser.description");
     }
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        if (args.isEmpty() || args.size() > 3) {
+        if (args.isEmpty() || args.size() == 1) {
             this.showHelp(this, user);
             return false;
         }
-        // Check for console or not
-        if (!user.isPlayer() && args.size() == 1) {
-            user.sendMessage("general.errors.use-in-game");
+        // Convert first name to a UUID
+        UUID teleportee = Util.getUUID(args.get(0));
+        if (teleportee == null) {
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        // Convert name to a UUID
-        targetUUID = Util.getUUID(args.get(0));
+        // Check online
+        toBeTeleported = User.getInstance(teleportee);
+        if (!toBeTeleported.isOnline()) {
+            user.sendMessage("general.errors.offline-player");
+            return false;
+        }
+
+        // Convert second name to a UUID
+        targetUUID = Util.getUUID(args.get(1));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
+
         // Check island exists
         if (!getIslands().hasIsland(getWorld(), targetUUID) && !getIslands().inTeam(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
 
-        if (args.size() == 2) {
-            // We are trying to teleport another player
-            UUID playerToTeleportUUID = Util.getUUID(args.get(1));
-            if (playerToTeleportUUID == null) {
-                user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
-                return false;
-            } else {
-                userToTeleport = User.getInstance(playerToTeleportUUID);
-                if (!userToTeleport.isOnline()) {
-                    user.sendMessage("general.errors.offline-player");
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean execute(User user, String label, List<String> args) {
         World world = getWorld();
-        if (getLabel().equals("tpnether")) {
+        if (getLabel().equals("tpusernether")) {
             world = getPlugin().getIWM().getNetherWorld(getWorld());
-        } else if (getLabel().equals("tpend")) {
+        } else if (getLabel().equals("tpuserend")) {
             world = getPlugin().getIWM().getEndWorld(getWorld());
         }
         if (world == null) {
@@ -103,38 +93,45 @@ public class AdminTeleportUserCommand extends CompositeCommand {
             return false;
         }
         // Get default location if there are no arguments
-        Location warpSpot = getSpot(world);
+        warpSpot = getSpot(world);
         if (warpSpot == null) {
             user.sendMessage(NOT_SAFE);
             return false;
         }
-        // See if there is a quoted island name
         if (args.size() == 2) {
-            Map<String, IslandInfo> names = getNameIslandMap(user);
-            final String name = String.join(" ", args);
-            if (!names.containsKey(name)) {
-                // Failed home name check
-                user.sendMessage("commands.island.go.unknown-home");
-                user.sendMessage("commands.island.sethome.homes-are");
-                names.keySet().forEach(
-                        n -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, n));
-                return false;
-            } else {
-                IslandInfo info = names.get(name);
-                Island island = info.island;
-                warpSpot = island.getSpawnPoint(world.getEnvironment()) != null
-                        ? island.getSpawnPoint(world.getEnvironment())
-                        : island.getProtectionCenter().toVector().toLocation(world);
-            }
+            return true;
         }
 
+        // They named the island to go to
+        Map<String, IslandInfo> names = getNameIslandMap(User.getInstance(targetUUID));
+        final String name = String.join(" ", args.subList(2, args.size()));
+        if (!names.containsKey(name)) {
+            // Failed home name check
+            user.sendMessage("commands.island.go.unknown-home");
+            user.sendMessage("commands.island.sethome.homes-are");
+            names.keySet()
+                    .forEach(n -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, n));
+            return false;
+        } else if (names.size() > 1) {
+            IslandInfo info = names.get(name);
+            Island island = info.island;
+            warpSpot = island.getSpawnPoint(world.getEnvironment()) != null
+                    ? island.getSpawnPoint(world.getEnvironment())
+                    : island.getProtectionCenter().toVector().toLocation(world);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
+        Objects.requireNonNull(warpSpot);
         // Otherwise, ask the admin to go to a safe spot
         String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
                 + warpSpot.getBlockZ());
         // Set the player
-        Player player = args.size() == 2 ? userToTeleport.getPlayer() : user.getPlayer();
+        Player player = toBeTeleported.getPlayer();
         if (args.size() == 2) {
-            failureMessage = userToTeleport.getTranslation(NOT_SAFE);
+            failureMessage = user.getTranslation(NOT_SAFE);
         }
 
         // Teleport
@@ -158,18 +155,18 @@ public class AdminTeleportUserCommand extends CompositeCommand {
     private record IslandInfo(Island island, boolean islandName) {
     }
 
-    private Map<String, IslandInfo> getNameIslandMap(User user) {
+    private Map<String, IslandInfo> getNameIslandMap(User target) {
         Map<String, IslandInfo> islandMap = new HashMap<>();
         int index = 0;
-        for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
+        for (Island island : getIslands().getIslands(getWorld(), target.getUniqueId())) {
             index++;
             if (island.getName() != null && !island.getName().isBlank()) {
                 // Name has been set
                 islandMap.put(island.getName(), new IslandInfo(island, true));
             } else {
                 // Name has not been set
-                String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
-                        user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index;
+                String text = target.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
+                        target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName()) + " " + index;
                 islandMap.put(text, new IslandInfo(island, true));
             }
             // Add homes. Homes do not need an island specified
@@ -187,11 +184,15 @@ public class AdminTeleportUserCommand extends CompositeCommand {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
         }
-        if (args.size() == 1) {
+        if (args.size() == 2 || args.size() == 3) {
             return Optional.of(Util.tabLimit(new ArrayList<>(Util.getOnlinePlayerList(user)), lastArg));
         }
-        if (args.size() == 2) {
-            return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(user).keySet()), lastArg));
+
+        if (args.size() == 4) {
+            UUID target = Util.getUUID(args.get(2));
+            return target == null ? Optional.empty()
+                    : Optional
+                    .of(Util.tabLimit(new ArrayList<>(getNameIslandMap(User.getInstance(target)).keySet()), lastArg));
         }
         return Optional.empty();
     }
