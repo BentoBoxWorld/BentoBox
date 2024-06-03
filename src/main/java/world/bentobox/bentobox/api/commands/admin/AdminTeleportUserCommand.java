@@ -83,9 +83,9 @@ public class AdminTeleportUserCommand extends CompositeCommand {
         }
 
         World world = getWorld();
-        if (getLabel().equals("tpnether")) {
+        if (getLabel().equals("tpusernether")) {
             world = getPlugin().getIWM().getNetherWorld(getWorld());
-        } else if (getLabel().equals("tpend")) {
+        } else if (getLabel().equals("tpuserend")) {
             world = getPlugin().getIWM().getEndWorld(getWorld());
         }
         if (world == null) {
@@ -184,12 +184,12 @@ public class AdminTeleportUserCommand extends CompositeCommand {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
         }
-        if (args.size() == 2) {
+        if (args.size() == 2 || args.size() == 3) {
             return Optional.of(Util.tabLimit(new ArrayList<>(Util.getOnlinePlayerList(user)), lastArg));
         }
 
-        if (args.size() == 3) {
-            UUID target = Util.getUUID(args.get(1));
+        if (args.size() == 4) {
+            UUID target = Util.getUUID(args.get(2));
             return target == null ? Optional.empty()
                     : Optional
                     .of(Util.tabLimit(new ArrayList<>(getNameIslandMap(User.getInstance(target)).keySet()), lastArg));
