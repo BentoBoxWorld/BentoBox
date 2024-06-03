@@ -271,6 +271,9 @@ commands:
       description: teleport to a player's island
       manual: '&c No safe warp found! Manually tp near to &b [location] &c and check
         it out'
+    tpuser:
+      parameters: <teleporting player> <island's player> [player's island]
+      description: teleport a player to another player's island
     getrank:
       parameters: <player> [island owner]
       description: get a player's rank on their island or the island of the owner
