@@ -178,7 +178,6 @@ public class UserTest {
         // If the player has been removed from the cache, then code will ask server for player
         // Return null and check if instance is null will show that the player is not in the cache
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
-        verify(pm).removePlayer(player);
     }
 
     @Test

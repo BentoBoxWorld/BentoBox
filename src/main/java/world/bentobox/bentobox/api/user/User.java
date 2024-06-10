@@ -160,7 +160,6 @@ public class User implements MetaDataAble {
     public static void removePlayer(Player player) {
         if (player != null) {
             users.remove(player.getUniqueId());
-            BentoBox.getInstance().getPlayers().removePlayer(player);
         }
     }
 
