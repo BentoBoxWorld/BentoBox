@@ -8,12 +8,15 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.annotation.Nonnull;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -72,6 +75,11 @@ public class Util {
     private static BentoBox plugin = BentoBox.getInstance();
     private static PasteHandler pasteHandler = null;
     private static WorldRegenerator regenerator = null;
+
+    // Bukkit method that was added in 2011
+    // Example value: 1.20.4-R0.1-SNAPSHOT
+    private static final String bukkitVersion = "v" + Bukkit.getServer().getBukkitVersion().replace('.', '_').replace('-', '_');
+    private static final String pluginPackageName = plugin.getClass().getPackage().getName();
 
     private Util() {}
 
@@ -373,7 +381,7 @@ public class Util {
      * @return Future that completes with the result of the teleport
      */
     @NonNull
-    public static CompletableFuture<Boolean> teleportAsync(@NonNull Entity entity, @NonNull Location location) {
+    public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location) {
         return PaperLib.teleportAsync(entity, location);
     }
 
@@ -385,7 +393,8 @@ public class Util {
      * @return Future that completes with the result of the teleport
      */
     @NonNull
-    public static CompletableFuture<Boolean> teleportAsync(@NonNull Entity entity, @NonNull Location location, TeleportCause cause) {
+    public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location,
+            TeleportCause cause) {
         return PaperLib.teleportAsync(entity, location, cause);
     }
 
@@ -396,7 +405,8 @@ public class Util {
      */
     @NonNull
     public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull Location loc) {
-        return getChunkAtAsync(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, true);
+        return getChunkAtAsync(Objects.requireNonNull(loc.getWorld()), loc.getBlockX() >> 4, loc.getBlockZ() >> 4,
+                true);
     }
 
     /**
@@ -407,7 +417,7 @@ public class Util {
      */
     @NonNull
     public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull Location loc, boolean gen) {
-        return getChunkAtAsync(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, gen);
+        return getChunkAtAsync(Objects.requireNonNull(loc.getWorld()), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, gen);
     }
 
     /**
@@ -418,7 +428,7 @@ public class Util {
      * @return Future that completes with the chunk
      */
     @NonNull
-    public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull World world, int x, int z) {
+    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z) {
         return getChunkAtAsync(world, x, z, true);
     }
 
@@ -431,7 +441,7 @@ public class Util {
      * @return Future that completes with the chunk, or null if the chunk did not exists and generation was not requested.
      */
     @NonNull
-    public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull World world, int x, int z, boolean gen) {
+    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z, boolean gen) {
         return PaperLib.getChunkAtAsync(world, x, z, gen);
     }
 
@@ -441,7 +451,7 @@ public class Util {
      * @return If the chunk is generated or not
      */
     public static boolean isChunkGenerated(@NonNull Location loc) {
-        return isChunkGenerated(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
+        return isChunkGenerated(Objects.requireNonNull(loc.getWorld()), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
     }
 
     /**
@@ -451,7 +461,7 @@ public class Util {
      * @param z Z coordinate of the chunk to checl
      * @return If the chunk is generated or not
      */
-    public static boolean isChunkGenerated(@NonNull World world, int x, int z) {
+    public static boolean isChunkGenerated(@Nonnull World world, int x, int z) {
         return PaperLib.isChunkGenerated(world, x, z);
     }
 
@@ -462,7 +472,7 @@ public class Util {
      * @return The BlockState
      */
     @NonNull
-    public static BlockStateSnapshotResult getBlockState(@NonNull Block block, boolean useSnapshot) {
+    public static BlockStateSnapshotResult getBlockState(@Nonnull Block block, boolean useSnapshot) {
         return PaperLib.getBlockState(block, useSnapshot);
     }
 
@@ -720,11 +730,6 @@ public class Util {
      */
     public static WorldRegenerator getRegenerator() {
         if (regenerator == null) {
-
-            // Bukkit method that was added in 2011
-            // Example value: 1.20.4-R0.1-SNAPSHOT
-            String bukkitVersion = "v" + Bukkit.getServer().getBukkitVersion().replace('.', '_').replace('-', '_');
-            String pluginPackageName = plugin.getClass().getPackage().getName();
             WorldRegenerator handler;
             try {
                 Class<?> clazz = Class.forName(pluginPackageName + ".nms." + bukkitVersion + ".WorldRegeneratorImpl");
@@ -748,20 +753,22 @@ public class Util {
      */
     public static PasteHandler getPasteHandler() {
         if (pasteHandler == null) {
-            String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
+
+            // Bukkit method that was added in 2011
+            // Example value: 1.20.4-R0.1-SNAPSHOT
+            String bukkitVersion = "v" + Bukkit.getServer().getBukkitVersion().replace('.', '_').replace('-', '_');
             String pluginPackageName = plugin.getClass().getPackage().getName();
-            String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
-            BentoBox.getInstance().log("Optimizing for " + version);
+            BentoBox.getInstance().log("Optimizing for " + bukkitVersion);
             PasteHandler handler;
             try {
-                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".PasteHandlerImpl");
+                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + bukkitVersion + ".PasteHandlerImpl");
                 if (PasteHandler.class.isAssignableFrom(clazz)) {
                     handler = (PasteHandler) clazz.getConstructor().newInstance();
                 } else {
                     throw new IllegalStateException("Class " + clazz.getName() + " does not implement PasteHandler");
                 }
             } catch (Exception e) {
-                plugin.logWarning("No PasteHandler found for " + version + ", falling back to Bukkit API.");
+                plugin.logWarning("No PasteHandler found for " + bukkitVersion + ", falling back to Bukkit API.");
                 handler = new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl();
             }
             setPasteHandler(handler);
