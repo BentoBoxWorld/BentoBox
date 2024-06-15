@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -148,7 +147,6 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
         when(Bukkit.getPluginManager()).thenReturn(mock(PluginManager.class));
 
@@ -433,7 +431,6 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
 
         when(island.getMemberSet()).thenReturn(memberSet.build());
         // Return a set of players
-        PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george",
@@ -468,7 +465,6 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
 
         when(island.getMemberSet()).thenReturn(memberSet.build());
         // Return a set of players
-        PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george",
@@ -505,7 +501,6 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
 
         when(island.getMemberSet()).thenReturn(memberSet.build());
         // Return a set of players
-        PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george",

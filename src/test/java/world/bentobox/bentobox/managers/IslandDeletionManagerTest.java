@@ -73,7 +73,7 @@ public class IslandDeletionManagerTest {
     @Before
     public void setUp() throws Exception {
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         Server server = mock(Server.class);
         when(server.getWorld(anyString())).thenReturn(world);
         when(Bukkit.getServer()).thenReturn(server);

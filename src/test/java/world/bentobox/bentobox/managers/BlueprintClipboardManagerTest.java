@@ -128,6 +128,8 @@ public class BlueprintClipboardManagerTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
         blueprintFolder = new File("blueprints");
         // Clear any residual files
         tearDown();
@@ -139,7 +141,6 @@ public class BlueprintClipboardManagerTest {
         when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
         when(plugin.getHooks()).thenReturn(hooksManager);
 
-        PowerMockito.mockStatic(Bukkit.class);
         BlockData blockData = mock(BlockData.class);
         when(Bukkit.createBlockData(any(Material.class))).thenReturn(blockData);
         when(blockData.getAsString()).thenReturn("test123");

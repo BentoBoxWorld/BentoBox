@@ -129,7 +129,7 @@ public class LanguagePanelTest {
         when(lm.getLanguages()).thenReturn(map);
 
         // Panel
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.createInventory(any(), Mockito.anyInt(), any())).thenReturn(inv);
 
         // Item Factory (needed for ItemStack)

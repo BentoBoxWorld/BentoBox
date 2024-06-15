@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
@@ -26,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
@@ -44,7 +46,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
  * @since 1.3.0
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class})
+@PrepareForTest({ BentoBox.class, Bukkit.class })
 public class TreesGrowingOutsideRangeListenerTest {
 
     /* IslandWorldManager */
@@ -79,6 +81,8 @@ public class TreesGrowingOutsideRangeListenerTest {
 
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);

@@ -67,6 +67,7 @@ public class IslandToggleClickTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
@@ -109,7 +110,6 @@ public class IslandToggleClickTest {
         when(im.getIslandAt(any())).thenReturn(opIsland);
 
         // Event
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Active tab

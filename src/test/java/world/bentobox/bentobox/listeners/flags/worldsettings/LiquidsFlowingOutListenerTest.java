@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -20,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
@@ -38,7 +40,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
  * @since 1.3.0
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class})
+@PrepareForTest({ BentoBox.class, Bukkit.class })
 public class LiquidsFlowingOutListenerTest {
 
     /* IslandWorldManager */
@@ -59,6 +61,8 @@ public class LiquidsFlowingOutListenerTest {
 
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);

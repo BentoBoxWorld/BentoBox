@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import org.bukkit.Bukkit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -38,7 +39,7 @@ import world.bentobox.bentobox.database.DatabaseSetup;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, DatabaseSetup.class, RanksManager.class })
+@PrepareForTest({ BentoBox.class, DatabaseSetup.class, RanksManager.class, Bukkit.class })
 public abstract class RanksManagerBeforeClassTest {
 
     // Constants that define the hard coded rank values
@@ -112,6 +113,8 @@ public abstract class RanksManagerBeforeClassTest {
 
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        when(Bukkit.getBukkitVersion()).thenReturn("");
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // RanksManager

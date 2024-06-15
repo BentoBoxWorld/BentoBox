@@ -122,6 +122,11 @@ public class PVPListenerTest {
      */
     @Before
     public void setUp() throws Exception {
+        // Scheduler
+        BukkitScheduler sch = mock(BukkitScheduler.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        when(Bukkit.getScheduler()).thenReturn(sch);
+
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -208,11 +213,6 @@ public class PVPListenerTest {
         when(creeper.getWorld()).thenReturn(world);
         when(creeper.getUniqueId()).thenReturn(UUID.randomUUID());
         when(creeper.getType()).thenReturn(EntityType.CREEPER);
-
-        // Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);

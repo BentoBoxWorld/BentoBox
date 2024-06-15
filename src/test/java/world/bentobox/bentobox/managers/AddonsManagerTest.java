@@ -65,7 +65,7 @@ public class AddonsManagerTest {
      */
     @Before
     public void setup() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(pm);
         // Set up plugin
         plugin = mock(BentoBox.class);

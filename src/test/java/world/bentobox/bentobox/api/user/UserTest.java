@@ -101,6 +101,7 @@ public class UserTest {
 
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         User.setPlugin(plugin);
@@ -110,7 +111,6 @@ public class UserTest {
 
         ItemFactory itemFactory = mock(ItemFactory.class);
 
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
