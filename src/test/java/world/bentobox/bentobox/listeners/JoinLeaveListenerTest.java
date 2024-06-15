@@ -178,7 +178,7 @@ public class JoinLeaveListenerTest {
         island.setMembers(memberMap);
 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
 
         when(Bukkit.getPluginManager()).thenReturn(pim);

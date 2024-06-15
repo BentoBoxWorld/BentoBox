@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.eclipse.jdt.annotation.Nullable;
@@ -24,6 +25,7 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -43,7 +45,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(RanksManager.class)
+@PrepareForTest({ RanksManager.class, Bukkit.class })
 public class GameModePlaceholderTest {
 
     @Mock
@@ -70,6 +72,9 @@ public class GameModePlaceholderTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         PowerMockito.mockStatic(RanksManager.class, Mockito.RETURNS_MOCKS);
         uuid = UUID.randomUUID();
         when(addon.getPlayers()).thenReturn(pm);

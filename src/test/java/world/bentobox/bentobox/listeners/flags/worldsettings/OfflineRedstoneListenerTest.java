@@ -63,6 +63,7 @@ public class OfflineRedstoneListenerTest {
 
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -105,7 +106,6 @@ public class OfflineRedstoneListenerTest {
         when(ws.getWorldFlags()).thenReturn(worldFlags);
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-        PowerMockito.mockStatic(Bukkit.class);
         // Online players
         Set<Player> onlinePlayers = new HashSet<>();
         for (String name : NAMES) {

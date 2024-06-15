@@ -106,7 +106,6 @@ public class IslandUnbanCommandTest extends RanksManagerBeforeClassTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Island Banned list initialization

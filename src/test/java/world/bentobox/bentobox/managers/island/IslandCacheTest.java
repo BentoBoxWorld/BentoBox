@@ -99,7 +99,8 @@ public class IslandCacheTest extends AbstractCommonSetup {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-        // Plugin
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Worlds

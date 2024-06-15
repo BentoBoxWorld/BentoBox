@@ -161,7 +161,6 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 

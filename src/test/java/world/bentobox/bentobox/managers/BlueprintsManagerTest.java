@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +45,7 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import com.github.puregero.multilib.MultiLib;
 
@@ -58,13 +60,14 @@ import world.bentobox.bentobox.blueprints.BlueprintPaster;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, BlueprintPaster.class, MultiLib.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, BlueprintPaster.class, MultiLib.class, Util.class })
 public class BlueprintsManagerTest {
 
     public static int BUFFER_SIZE = 10240;
@@ -100,8 +103,18 @@ public class BlueprintsManagerTest {
 
     @Before
     public void setUp() throws Exception {
+        // Set up plugin
+        BentoBox plugin = mock(BentoBox.class);
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
         // Multilib
         PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
+
+        // Util
+        PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
+        when(Util.inTest()).thenReturn(true);
 
         // Make the addon
         dataFolder = new File("dataFolder");
@@ -119,7 +132,6 @@ public class BlueprintsManagerTest {
         map.put(new Vector(0,0,0), new BlueprintBlock("minecraft:bedrock"));
         defaultBp.setBlocks(map);
         // Scheduler
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
         when(server.getBukkitVersion()).thenReturn("version");
         when(Bukkit.getServer()).thenReturn(server);

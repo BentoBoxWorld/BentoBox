@@ -94,10 +94,12 @@ public abstract class AbstractCommonSetup {
 
 
     public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        // Set up plugin
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+        when(Bukkit.getBukkitVersion()).thenReturn("");
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
 

@@ -90,6 +90,7 @@ public class StandardSpawnProtectionListenerTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Setup plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         when(plugin.getIWM()).thenReturn(iwm);

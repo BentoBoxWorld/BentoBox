@@ -74,6 +74,7 @@ public class AdminGetrankCommandTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -107,7 +108,6 @@ public class AdminGetrankCommandTest {
             online.put(uuid, name);
             onlinePlayers.add(p1);
         }
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         // Command
