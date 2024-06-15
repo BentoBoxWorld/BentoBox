@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -40,6 +41,8 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
@@ -63,6 +66,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
+@PrepareForTest({ BentoBox.class, Bukkit.class })
 public class DefaultPasteUtilTest {
 
     @Mock
@@ -110,6 +114,7 @@ public class DefaultPasteUtilTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         AddonDescription desc = new AddonDescription.Builder("", "", "").build();

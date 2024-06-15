@@ -194,7 +194,7 @@ public class PlayersManagerTest {
         OfflinePlayer olp = mock(OfflinePlayer.class);
         when(olp.getUniqueId()).thenReturn(uuid);
         when(olp.getName()).thenReturn("tastybento");
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenAnswer(invocation -> {
             UUID inputUUID = invocation.getArgument(0);
             if (inputUUID.equals(uuid)) {

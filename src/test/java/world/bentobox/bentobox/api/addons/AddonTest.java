@@ -71,6 +71,8 @@ public class AddonTest {
 
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
         server = mock(Server.class);
         World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
@@ -79,8 +81,6 @@ public class AddonTest {
 
         PluginManager pluginManager = mock(PluginManager.class);
 
-
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getPluginManager()).thenReturn(pluginManager);
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.getPluginManager()).thenReturn(pluginManager);

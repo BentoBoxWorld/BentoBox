@@ -69,6 +69,7 @@ public class ItemFrameListenerTest {
 
     @Before
     public void setUp() {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -78,7 +79,6 @@ public class ItemFrameListenerTest {
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
 
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getServer()).thenReturn(server);
         PluginManager pim = mock(PluginManager.class);
         when(Bukkit.getPluginManager()).thenReturn(pim);

@@ -95,7 +95,7 @@ public class EnterExitListenerTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Server
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Settings

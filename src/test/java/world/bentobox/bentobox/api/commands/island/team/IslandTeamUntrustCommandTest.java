@@ -121,7 +121,6 @@ public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
@@ -272,7 +271,6 @@ public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
 
         when(island.getMembers()).thenReturn(map);
         // Return a set of players
-        PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george",
@@ -307,7 +305,6 @@ public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
 
         when(island.getMembers()).thenReturn(map);
         // Return a set of players
-        PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george",

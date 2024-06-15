@@ -77,6 +77,8 @@ public class AdminPurgeCommandTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
@@ -284,7 +286,6 @@ public class AdminPurgeCommandTest {
         when(island.isOwned()).thenReturn(true);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
-        PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer op = mock(OfflinePlayer.class);
         when(op.getLastPlayed()).thenReturn(0L);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);

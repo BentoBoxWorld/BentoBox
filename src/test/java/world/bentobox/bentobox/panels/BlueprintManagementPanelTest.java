@@ -76,7 +76,7 @@ public class BlueprintManagementPanelTest {
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         ItemFactory itemFac = mock(ItemFactory.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFac);
         // Panel inventory

@@ -92,6 +92,8 @@ public class SafeSpotTeleportTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
         PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
         // Setup instance
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -132,7 +134,6 @@ public class SafeSpotTeleportTest {
 
         // Bukkit scheduler
         when(scheduler.runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong())).thenReturn(task);
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
     }
 

@@ -78,7 +78,7 @@ public class Util {
 
     // Bukkit method that was added in 2011
     // Example value: 1.20.4-R0.1-SNAPSHOT
-    private static final String bukkitVersion = "v" + Bukkit.getServer().getBukkitVersion().replace('.', '_').replace('-', '_');
+    private static final String bukkitVersion = "v" + Bukkit.getBukkitVersion().replace('.', '_').replace('-', '_');
     private static final String pluginPackageName = plugin.getClass().getPackage().getName();
 
     private Util() {}
