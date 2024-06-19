@@ -1,7 +1,12 @@
 package world.bentobox.bentobox.commands;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
+
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -20,6 +25,8 @@ import world.bentobox.bentobox.database.objects.DataObject;
 public class BentoBoxMigrateCommand extends ConfirmableCommand {
 
     private static final String MIGRATED = "commands.bentobox.migrate.migrated";
+    private Queue<Class<? extends DataObject>> classQueue;
+    private BukkitTask task;
 
     /**
      * Reloads settings, addons and localization command
@@ -41,11 +48,21 @@ public class BentoBoxMigrateCommand extends ConfirmableCommand {
             user.sendMessage("commands.bentobox.migrate.addons");
             Set<Class<? extends DataObject>> classSet = getPlugin().getAddonsManager().getDataObjects();
             classSet.addAll(Database.getDataobjects());
-            classSet.forEach(t -> {
-                user.sendMessage("commands.bentobox.migrate.class", TextVariables.DESCRIPTION, BentoBox.getInstance().getSettings().getDatabasePrefix() + t.getCanonicalName());
-                new Database<>(getPlugin(), t).loadObjects();
-                user.sendMessage(MIGRATED);
-            });
+            // Put classSet into classQueue
+            classQueue = new LinkedList<>(classSet);
+            // Start a scheduler to step through these in a reasonable time
+            task = Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
+                Class<? extends DataObject> t = classQueue.poll();
+                if (t != null) {
+                    user.sendMessage("commands.bentobox.migrate.class", TextVariables.DESCRIPTION,
+                            BentoBox.getInstance().getSettings().getDatabasePrefix() + t.getCanonicalName());
+                    new Database<>(getPlugin(), t).loadObjects();
+                    user.sendMessage(MIGRATED);
+                } else {
+                    user.sendMessage("commands.bentobox.migrate.completed");
+                    task.cancel();
+                }
+            }, 0, 20L);
         });
         return true;
     }
