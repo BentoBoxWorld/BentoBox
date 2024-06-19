@@ -514,6 +514,7 @@ commands:
       addons: '[prefix_bentobox]&6 Migrating addons'
       class: '[prefix_bentobox]&6 Migrating [description]'
       migrated: '[prefix_bentobox]&a Migrated'
+      completed: '[prefix_bentobox]&a Completed'
     rank:
       description: 'list, add, or remove ranks'
       parameters: '&a [list | add | remove] [rank reference] [rank value]'
