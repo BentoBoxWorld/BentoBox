@@ -51,7 +51,10 @@ public class HurtingListener extends FlagListener {
     public void onEntityDamage(final EntityDamageByEntityEvent e)
     {
         // Mobs being hurt
-        if (Util.isPassiveEntity(e.getEntity()))
+        if (Util.isTamableEntity(e.getEntity())) {
+            this.respond(e, e.getDamager(), Flags.HURT_TAMED_ANIMALS);
+        }
+        else if (Util.isPassiveEntity(e.getEntity()))
         {
             this.respond(e, e.getDamager(), Flags.HURT_ANIMALS);
         }
@@ -92,7 +95,8 @@ public class HurtingListener extends FlagListener {
             return;
         }
 
-        if ((Util.isPassiveEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
+        if ((Util.isTamableEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_TAMED_ANIMALS)) &&
+                (Util.isPassiveEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
                 || (Util.isHostileEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
                 || (e.getCaught() instanceof AbstractVillager && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
             e.getHook().remove();
@@ -113,7 +117,11 @@ public class HurtingListener extends FlagListener {
         if (e.getRightClicked() instanceof Parrot
                 && (e.getHand().equals(EquipmentSlot.HAND) && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
                 || (e.getHand().equals(EquipmentSlot.OFF_HAND) && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE))) {
-            checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
+            if (((Parrot) e.getRightClicked()).isTamed()) {
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_TAMED_ANIMALS);
+            } else {
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
+            }
         }
     }
 
@@ -134,6 +142,13 @@ public class HurtingListener extends FlagListener {
                 }
                 // Monsters being hurt
                 if (Util.isHostileEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
+                    for (PotionEffect effect : e.getPotion().getEffects()) {
+                        entity.removePotionEffect(effect.getType());
+                    }
+                }
+
+                // Tamed animals being hurt
+                if (Util.isTamableEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_TAMED_ANIMALS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
                     }
@@ -188,6 +203,10 @@ public class HurtingListener extends FlagListener {
         // Monsters being hurt
         if (Util.isHostileEntity(entity)) {
             checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS);
+        }
+        // Tamed animals being hurt
+        if (Util.isTamableEntity(entity)) {
+            checkIsland(e, attacker, entity.getLocation(), Flags.HURT_TAMED_ANIMALS);
         }
         // Mobs being hurt
         if (Util.isPassiveEntity(entity)) {

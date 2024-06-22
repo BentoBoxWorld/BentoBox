@@ -1231,6 +1231,10 @@ protection:
       description: '&a Toggle hive harvesting.'
       name: Hive harvesting
       hint: Harvesting disabled
+    HURT_TAMED_ANIMALS:
+      description: Toggle hurting
+      name: Hurt tamed animals
+      hint: Tamed animal hurting disabled
     HURT_ANIMALS:
       description: Toggle hurting
       name: Hurt animals
