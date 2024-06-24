@@ -1232,7 +1232,7 @@ protection:
       name: Hive harvesting
       hint: Harvesting disabled
     HURT_TAMED_ANIMALS:
-      description: Toggle hurting
+      description: Toggle hurting. Enabled means that tamed animals can take damage. Disabled means they are invincible.
       name: Hurt tamed animals
       hint: Tamed animal hurting disabled
     HURT_ANIMALS:
