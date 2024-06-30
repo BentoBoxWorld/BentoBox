@@ -13,8 +13,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.beans.IntrospectionException;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -54,6 +57,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -65,6 +69,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.github.puregero.multilib.MultiLib;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
@@ -76,7 +81,9 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
@@ -85,9 +92,10 @@ import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, MultiLib.class, DatabaseSetup.class, })
 public class IslandsManagerTest extends AbstractCommonSetup {
 
+    private static AbstractDatabaseHandler<Object> h;
     @Mock
     private BentoBox plugin;
     private UUID uuid;
@@ -145,6 +153,20 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     // Class under test
     IslandsManager im;
 
+    @SuppressWarnings("unchecked")
+    @BeforeClass
+    public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        // This has to be done beforeClass otherwise the tests will interfere with each
+        // other
+        h = mock(AbstractDatabaseHandler.class);
+        // Database
+        PowerMockito.mockStatic(DatabaseSetup.class);
+        DatabaseSetup dbSetup = mock(DatabaseSetup.class);
+        when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
+        when(dbSetup.getHandler(any())).thenReturn(h);
+        when(h.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     @Before
@@ -156,6 +178,9 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+        // Mutilib
+        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
 
         // island world mgr
         when(world.getName()).thenReturn("world");
@@ -238,18 +263,19 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         // Worlds translate to world
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Island
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
-        when(island.getMaxMembers()).thenReturn(null); // default
+        when(island.getMaxMembers()).thenReturn(new HashMap<>()); // default
         when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null); // default
         when(island.getCenter()).thenReturn(location);
         when(island.getProtectionCenter()).thenReturn(location);
 
         // Mock island cache
         when(islandCache.getIslandAt(any(Location.class))).thenReturn(island);
-        when(islandCache.get(any(), any())).thenReturn(island);
+        when(islandCache.getIsland(any(), any())).thenReturn(island);
         optionalIsland = Optional.ofNullable(island);
         when(islandCache.getIslands(world, uuid)).thenReturn(List.of(island));
 
@@ -328,6 +354,9 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
         // Util strip spaces
         when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+
+        // World UID
+        when(world.getUID()).thenReturn(uuid);
 
         // Class under test
         im = new IslandsManager(plugin);
@@ -595,23 +624,39 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#getIsland(World, User)}
+     * @throws IntrospectionException 
+     * @throws NoSuchMethodException 
+     * @throws ClassNotFoundException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     @Test
-    public void testGetIslandWorldUser() {
-        Island island = im.createIsland(location, user.getUniqueId());
-        assertEquals(island, im.getIsland(world, user));
+    public void testGetIslandWorldUser() throws InstantiationException, IllegalAccessException,
+            InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+        Island is = im.createIsland(location, user.getUniqueId());
+        when(h.loadObject(anyString())).thenReturn(is);
+        assertEquals(is, im.getIsland(world, user));
         assertNull(im.getIsland(world, (User) null));
     }
 
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#getIsland(World, UUID)}.
+     * @throws IntrospectionException 
+     * @throws NoSuchMethodException 
+     * @throws ClassNotFoundException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     @Test
-    public void testGetIsland() {
+    public void testGetIsland() throws InstantiationException, IllegalAccessException, InvocationTargetException,
+            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         UUID owner = UUID.randomUUID();
-        Island island = im.createIsland(location, owner);
-        assertEquals(island, im.getIsland(world, owner));
+        Island is = im.createIsland(location, owner);
+        when(h.loadObject(anyString())).thenReturn(is);
+        assertEquals(is, im.getIsland(world, owner));
         assertNull(im.getIsland(world, UUID.randomUUID()));
     }
 
@@ -639,12 +684,25 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#getIslandLocation(World, UUID)}.
+     * @throws IntrospectionException 
+     * @throws NoSuchMethodException 
+     * @throws ClassNotFoundException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     @Test
-    public void testGetIslandLocation() {
-        Island i = im.createIsland(location, uuid);
+    public void testGetIslandLocation() throws InstantiationException, IllegalAccessException,
+            InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+        // Store island in database
+        when(h.loadObject(anyString())).thenReturn(island);
+        im.createIsland(location, uuid);
         assertEquals(world, im.getIslandLocation(world, uuid).getWorld());
-        assertEquals(i.getProtectionCenter(), im.getIslandLocation(world, uuid));
+        Location l = im.getIslandLocation(world, uuid);
+        assertEquals(location.getWorld(), l.getWorld());
+        assertEquals(location.getBlockX(), l.getBlockX());
+        assertEquals(location.getBlockY(), l.getBlockY());
+        assertEquals(location.getBlockZ(), l.getBlockZ());
         assertNull(im.getIslandLocation(world, UUID.randomUUID()));
     }
 
@@ -656,7 +714,6 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     public void testGetLast() {
         im.setLast(location);
         assertEquals(location, im.getLast(world));
-        assertNull(im.getLast(null));
     }
 
     /**
@@ -710,41 +767,6 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(is.onIsland(any())).thenReturn(false);
         assertEquals(Optional.empty(), im.getProtectedIslandAt(location));
     }
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#getSafeHomeLocation(World, User, int)}.
-     */
-    /*
-     * @Test public void testGetSafeHomeLocation() { im.setIslandCache(islandCache);
-     * when(island.getHome(any())).thenReturn(location);
-     * when(iwm.inWorld(eq(world))).thenReturn(true); assertEquals(location,
-     * im.getSafeHomeLocation(world, user, ""));
-     * 
-     * // Change location so that it is not safe // TODO }
-     */
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#getSafeHomeLocation(World, User, int)}.
-     * Ensures that the method returns {@code null} if the world is not an island
-     * world.
-     */
-    /*
-     * @Test public void testGetSafeHomeLocationWorldNotIslandWorld() {
-     * when(iwm.inWorld(world)).thenReturn(false);
-     * assertNull(im.getSafeHomeLocation(world, user, "")); }
-     */
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#getSafeHomeLocation(World, User, int)}.
-     */
-    /*
-     * @Test public void testGetSafeHomeLocationNoIsland() {
-     * assertNull(im.getSafeHomeLocation(world, user, ""));
-     * verify(plugin).logWarning(eq("null player has no island in world world!")); }
-     */
 
     /**
      * Test method for
@@ -970,7 +992,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#save(Island)}.
+     * {@link world.bentobox.bentobox.managers.IslandsManager#updateIsland(Island)}.
      */
     @Test
     public void testSave() {
@@ -1023,7 +1045,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
         Collection<Island> collection = new ArrayList<>();
         collection.add(is);
-        when(islandCache.getIslands()).thenReturn(collection);
+        when(islandCache.getCachedIslands()).thenReturn(collection);
 
         im.setIslandCache(islandCache);
         Map<UUID, Integer> members = new HashMap<>();
@@ -1063,7 +1085,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
         Collection<Island> collection = new ArrayList<>();
         collection.add(is);
-        when(islandCache.getIslands()).thenReturn(collection);
+        when(islandCache.getCachedIslands()).thenReturn(collection);
 
         im.setIslandCache(islandCache);
         Map<UUID, Integer> members = new HashMap<>();
@@ -1372,14 +1394,14 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
-        when(island.getMaxMembers()).thenReturn(null);
+        when(island.getMaxMembers()).thenReturn(new HashMap<>());
         when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         // Offline owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
         // Test
         assertEquals(4, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null));
+        verify(island, never()).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null)); // No change
     }
 
     /**
@@ -1391,14 +1413,14 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
-        when(island.getMaxMembers()).thenReturn(null);
+        when(island.getMaxMembers()).thenReturn(new HashMap<>());
         when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         // Online owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(4, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null));
+        verify(island, never()).setMaxMembers(RanksManager.MEMBER_RANK, null);
     }
 
     /**
@@ -1410,7 +1432,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
-        when(island.getMaxMembers()).thenReturn(null);
+        when(island.getMaxMembers()).thenReturn(new HashMap<>());
         when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         when(iwm.getMaxCoopSize(eq(world))).thenReturn(2);
@@ -1419,9 +1441,9 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(2, im.getMaxMembers(island, RanksManager.COOP_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.COOP_RANK), eq(null));
+        verify(island, never()).setMaxMembers(RanksManager.COOP_RANK, null); // No change
         assertEquals(3, im.getMaxMembers(island, RanksManager.TRUSTED_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.TRUSTED_RANK), eq(null));
+        verify(island, never()).setMaxMembers(RanksManager.TRUSTED_RANK, null);
     }
 
     /**
@@ -1439,7 +1461,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(10, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(10));
+        verify(island).setMaxMembers(RanksManager.MEMBER_RANK, 10);
     }
 
     /**
@@ -1457,7 +1479,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(10, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(10));
+        verify(island).setMaxMembers(RanksManager.MEMBER_RANK, 10);
     }
 
     /**
@@ -1469,7 +1491,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
-        when(island.getMaxMembers()).thenReturn(null);
+        when(island.getMaxMembers()).thenReturn(new HashMap<>());
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         // Permission
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
@@ -1482,7 +1504,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(8, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
-        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(8));
+        verify(island).setMaxMembers(RanksManager.MEMBER_RANK, 8);
     }
 
     /**
@@ -1494,7 +1516,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Island island = mock(Island.class);
         // Test
         im.setMaxMembers(island, RanksManager.MEMBER_RANK, 40);
-        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(40));
+        verify(island).setMaxMembers(RanksManager.MEMBER_RANK, 40);
     }
 
     /**
@@ -1546,7 +1568,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         // Test
         IslandsManager im = new IslandsManager(plugin);
         assertEquals(4, im.getMaxHomes(island));
-        verify(island).setMaxHomes(eq(null));
+        verify(island, never()).setMaxHomes(null);
     }
 
     /**
@@ -1572,7 +1594,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         // Test
         IslandsManager im = new IslandsManager(plugin);
         assertEquals(20, im.getMaxHomes(island));
-        verify(island).setMaxHomes(eq(20));
+        verify(island, never()).setMaxHomes(20);
     }
 
     /**
@@ -1598,7 +1620,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         // Test
         IslandsManager im = new IslandsManager(plugin);
         assertEquals(8, im.getMaxHomes(island));
-        verify(island).setMaxHomes(eq(8));
+        verify(island).setMaxHomes(8);
     }
 
     /**

@@ -74,6 +74,7 @@ public class ObsidianScoopingListenerTest {
 
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
@@ -83,7 +84,6 @@ public class ObsidianScoopingListenerTest {
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         PluginManager pluginManager = mock(PluginManager.class);
         when(Bukkit.getPluginManager()).thenReturn(pluginManager);
 

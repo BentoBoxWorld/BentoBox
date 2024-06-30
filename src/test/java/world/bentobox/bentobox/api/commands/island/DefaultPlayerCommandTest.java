@@ -39,7 +39,7 @@ import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, IslandsManager.class })
 public class DefaultPlayerCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -68,6 +68,7 @@ public class DefaultPlayerCommandTest extends RanksManagerBeforeClassTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         // User
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());

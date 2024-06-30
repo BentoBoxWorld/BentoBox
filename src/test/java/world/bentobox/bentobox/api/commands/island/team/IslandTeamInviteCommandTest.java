@@ -40,12 +40,13 @@ import com.google.common.collect.ImmutableSet;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
-import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.TeamInvite;
+import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -160,7 +161,6 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
@@ -319,7 +319,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
         verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(user, never()).sendMessage(eq("commands.island.team.invite.removing-invite"));
-        verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID, island);
+        verify(ic).addInvite(Type.TEAM, uuid, notUUID, island);
         verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(target).sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, "tastybento", TextVariables.DISPLAY_NAME, "&Ctastbento");
         verify(target).sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, "island");
@@ -338,7 +338,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
         verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(user, never()).sendMessage("commands.island.team.invite.removing-invite");
-        verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID, island);
+        verify(ic).addInvite(Type.TEAM, uuid, notUUID, island);
         verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target",
                 TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(target).sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, "tastybento",
@@ -359,7 +359,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         when(ic.isInvited(notUUID)).thenReturn(true);
         // Set up invite
         when(ic.getInviter(notUUID)).thenReturn(uuid);
-        Invite invite = mock(Invite.class);
+        TeamInvite invite = mock(TeamInvite.class);
         when(invite.getType()).thenReturn(Type.TEAM);
         when(ic.getInvite(notUUID)).thenReturn(invite);
         assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));

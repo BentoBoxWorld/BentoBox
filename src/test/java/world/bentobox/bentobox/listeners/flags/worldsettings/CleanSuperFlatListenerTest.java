@@ -69,6 +69,7 @@ public class CleanSuperFlatListenerTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
@@ -82,6 +83,7 @@ public class CleanSuperFlatListenerTest {
 
         PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Regenerator
         when(Util.getRegenerator()).thenReturn(regenerator);
 
@@ -99,8 +101,6 @@ public class CleanSuperFlatListenerTest {
         when(iwm.isUseOwnGenerator(any())).thenReturn(false);
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-
-        PowerMockito.mockStatic(Bukkit.class);
         ItemFactory itemF = mock(ItemFactory.class);
         ItemMeta im = mock(ItemMeta.class);
         when(itemF.getItemMeta(any())).thenReturn(im);

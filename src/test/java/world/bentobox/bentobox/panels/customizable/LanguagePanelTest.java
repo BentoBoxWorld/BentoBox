@@ -1,6 +1,23 @@
 package world.bentobox.bentobox.panels.customizable;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -23,22 +40,13 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-import java.awt.Panel;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.BentoBoxLocale;
-import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.LocalesManager;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author tastybento
@@ -121,7 +129,7 @@ public class LanguagePanelTest {
         when(lm.getLanguages()).thenReturn(map);
 
         // Panel
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.createInventory(any(), Mockito.anyInt(), any())).thenReturn(inv);
 
         // Item Factory (needed for ItemStack)

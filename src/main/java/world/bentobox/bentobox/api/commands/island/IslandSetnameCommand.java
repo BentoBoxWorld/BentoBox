@@ -75,12 +75,6 @@ public class IslandSetnameCommand extends CompositeCommand {
             name = ChatColor.translateAlternateColorCodes('&', name);
         }
 
-        // Check if the name doesn't already exist in the gamemode
-        if (getSettings().isNameUniqueness() && getIslands().nameExists(getWorld(), name)) {
-            user.sendMessage("commands.island.setname.name-already-exists");
-            return false;
-        }
-
         return true;
     }
 

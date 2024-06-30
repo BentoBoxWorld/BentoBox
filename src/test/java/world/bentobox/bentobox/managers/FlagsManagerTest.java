@@ -56,6 +56,8 @@ public class FlagsManagerTest {
 
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
@@ -75,7 +77,6 @@ public class FlagsManagerTest {
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
 
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getPluginManager()).thenReturn(pluginManager);
 
         ItemFactory itemFactory = mock(ItemFactory.class);
@@ -86,6 +87,9 @@ public class FlagsManagerTest {
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
         //PowerMockito.mockStatic(Flags.class);
+
+        // Util
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
     }
 

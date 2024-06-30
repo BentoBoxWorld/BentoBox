@@ -14,6 +14,7 @@ import java.util.UUID;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -32,6 +33,8 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.common.base.Enums;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -62,19 +65,23 @@ public class User implements MetaDataAble {
     private static final Map<Particle, Class<?>> VALIDATION_CHECK;
     static {
         Map<Particle, Class<?>> v = new EnumMap<>(Particle.class);
-        v.put(Particle.REDSTONE, Particle.DustOptions.class);
-        v.put(Particle.ITEM_CRACK, ItemStack.class);
-        v.put(Particle.BLOCK_CRACK, BlockData.class);
-        v.put(Particle.BLOCK_DUST, BlockData.class);
+        v.put(Enums.getIfPresent(Particle.class, "DUST")
+                .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME)), Particle.DustOptions.class);
+        if (Enums.getIfPresent(Particle.class, "ITEM").isPresent()) {
+            // 1.20.6 Particles
+            v.put(Particle.ITEM, ItemStack.class);
+            v.put(Particle.ITEM_COBWEB, ItemStack.class);
+            v.put(Particle.BLOCK, BlockData.class);
+            v.put(Particle.DUST_PILLAR, BlockData.class);
+            v.put(Particle.ENTITY_EFFECT, Color.class);
+        }
         v.put(Particle.FALLING_DUST, BlockData.class);
         v.put(Particle.BLOCK_MARKER, BlockData.class);
         v.put(Particle.DUST_COLOR_TRANSITION, DustTransition.class);
         v.put(Particle.VIBRATION, Vibration.class);
         v.put(Particle.SCULK_CHARGE, Float.class);
         v.put(Particle.SHRIEK, Integer.class);
-        v.put(Particle.LEGACY_BLOCK_CRACK, BlockData.class);
-        v.put(Particle.LEGACY_BLOCK_DUST, BlockData.class);
-        v.put(Particle.LEGACY_FALLING_DUST, BlockData.class);
+
         VALIDATION_CHECK = Collections.unmodifiableMap(v);
     }
 
@@ -153,7 +160,6 @@ public class User implements MetaDataAble {
     public static void removePlayer(Player player) {
         if (player != null) {
             users.remove(player.getUniqueId());
-            BentoBox.getInstance().getPlayers().removePlayer(player);
         }
     }
 
@@ -711,8 +717,7 @@ public class User implements MetaDataAble {
      * server's view distance.
      * 
      * @param particle    Particle to display.
-     * @param dustOptions Particle.DustOptions for the particle to display. Cannot
-     *                    be null when particle is {@link Particle#REDSTONE}.
+     * @param dustOptions Particle.DustOptions for the particle to display.
      * @param x           X coordinate of the particle to display.
      * @param y           Y coordinate of the particle to display.
      * @param z           Z coordinate of the particle to display.
@@ -730,7 +735,8 @@ public class User implements MetaDataAble {
         // Check if this particle is beyond the viewing distance of the server
         if (this.player != null && this.player.getLocation().toVector().distanceSquared(new Vector(x, y,
                 z)) < (Bukkit.getServer().getViewDistance() * 256 * Bukkit.getServer().getViewDistance())) {
-            if (particle.equals(Particle.REDSTONE)) {
+            if (particle.equals(Enums.getIfPresent(Particle.class, "DUST")
+                    .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME)))) {
                 player.spawnParticle(particle, x, y, z, 1, 0, 0, 0, 1, dustOptions);
             } else if (dustOptions != null) {
                 player.spawnParticle(particle, x, y, z, 1, dustOptions);
@@ -747,8 +753,7 @@ public class User implements MetaDataAble {
      * server's view distance. Compatibility method for older usages.
      * 
      * @param particle    Particle to display.
-     * @param dustOptions Particle.DustOptions for the particle to display. Cannot
-     *                    be null when particle is {@link Particle#REDSTONE}.
+     * @param dustOptions Particle.DustOptions for the particle to display.
      * @param x           X coordinate of the particle to display.
      * @param y           Y coordinate of the particle to display.
      * @param z           Z coordinate of the particle to display.
@@ -762,8 +767,7 @@ public class User implements MetaDataAble {
      * server's view distance.
      * 
      * @param particle    Particle to display.
-     * @param dustOptions Particle.DustOptions for the particle to display. Cannot
-     *                    be null when particle is {@link Particle#REDSTONE}.
+     * @param dustOptions Particle.DustOptions for the particle to display.
      * @param x           X coordinate of the particle to display.
      * @param y           Y coordinate of the particle to display.
      * @param z           Z coordinate of the particle to display.

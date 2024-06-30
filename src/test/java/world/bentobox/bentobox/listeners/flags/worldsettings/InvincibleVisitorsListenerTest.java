@@ -44,6 +44,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -93,6 +94,7 @@ public class InvincibleVisitorsListenerTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
@@ -137,6 +139,7 @@ public class InvincibleVisitorsListenerTest {
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
         when(Util.prettifyText(anyString())).thenCallRealMethod();
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Util translate color codes (used in user translate methods)
         when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         FlagsManager fm = mock(FlagsManager.class);
@@ -168,7 +171,6 @@ public class InvincibleVisitorsListenerTest {
         ivSettings.add(EntityDamageEvent.DamageCause.VOID.name());
         when(iwm.getIvSettings(any())).thenReturn(ivSettings);
 
-        PowerMockito.mockStatic(Bukkit.class);
         ItemFactory itemF = mock(ItemFactory.class);
         ItemMeta imeta = mock(ItemMeta.class);
         when(itemF.getItemMeta(any())).thenReturn(imeta);

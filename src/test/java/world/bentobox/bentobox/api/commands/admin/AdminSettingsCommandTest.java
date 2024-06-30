@@ -42,7 +42,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -144,7 +143,6 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getIWM()).thenReturn(iwm);
         // Players manager
         when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getFlagsDisplayMode(any())).thenReturn(Mode.BASIC);
         //Island Manager
         when(plugin.getIslands()).thenReturn(im);
         // Island - player has island
@@ -155,6 +153,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         PowerMockito.mockStatic(Util.class);
         when(Util.getUUID(anyString())).thenReturn(uuid);
         when(Util.tabLimit(any(), any())).thenCallRealMethod();
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Settings
         Settings settings = new Settings();
@@ -265,16 +264,6 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(user.isPlayer()).thenReturn(false);
         assertFalse(asc.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("general.errors.use-in-game");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringNoArgs() {
-        assertTrue(asc.execute(user, "", Collections.emptyList()));
-        verify(pm).setFlagsDisplayMode(user.getUniqueId(), Mode.EXPERT);
-        // Open panel
     }
 
     /**

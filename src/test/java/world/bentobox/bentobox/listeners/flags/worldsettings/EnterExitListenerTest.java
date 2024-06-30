@@ -95,12 +95,17 @@ public class EnterExitListenerTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Server
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Settings
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
+
+        // Util
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Player
         Player p = mock(Player.class);
@@ -188,9 +193,6 @@ public class EnterExitListenerTest {
 
         // Listener
         listener = new EnterExitListener();
-
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(world);
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);

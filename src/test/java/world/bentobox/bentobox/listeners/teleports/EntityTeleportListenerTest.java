@@ -73,7 +73,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
     public void testOnEntityPortalWrongWorld() {
         PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         when(Util.getWorld(any())).thenReturn(null);
-        EntityPortalEvent event = new EntityPortalEvent(player, location, location, 10);
+        EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location, 10);
         etl.onEntityPortal(event);
         assertFalse(event.isCancelled());
     }
@@ -84,7 +84,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnEntityPortalWrongWorld2() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
-        EntityPortalEvent event = new EntityPortalEvent(player, location, location, 10);
+        EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location, 10);
         etl.onEntityPortal(event);
         assertFalse(event.isCancelled());
     }
@@ -95,7 +95,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnEntityPortalNullTo() {
-        EntityPortalEvent event = new EntityPortalEvent(player, location, null, 10);
+        EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, null, 10);
         etl.onEntityPortal(event);
         assertFalse(event.isCancelled());
     }
@@ -106,7 +106,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnEntityPortalTeleportDisabled() {
-        EntityPortalEvent event = new EntityPortalEvent(player, location, location, 10);
+        EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location, 10);
         etl.onEntityPortal(event);
         assertTrue(event.isCancelled());
     }
@@ -122,7 +122,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
 
         Flags.ENTITY_PORTAL_TELEPORT.setSetting(world, true);
-        EntityPortalEvent event = new EntityPortalEvent(player, location, location, 10);
+        EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location, 10);
         etl.onEntityPortal(event);
         assertFalse(event.isCancelled());
 
@@ -145,7 +145,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
 
         when(location.getWorld()).thenReturn(world);
         Flags.ENTITY_PORTAL_TELEPORT.setSetting(world, true);
-        EntityPortalEvent event = new EntityPortalEvent(player, location, location2, 10);
+        EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location2, 10);
         etl.onEntityPortal(event);
         assertTrue(event.isCancelled());
 
@@ -167,7 +167,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
         when(Util.getWorld(any())).thenReturn(world2);
 
         Flags.ENTITY_PORTAL_TELEPORT.setSetting(world2, true);
-        EntityPortalEvent event = new EntityPortalEvent(player, location, location2, 10);
+        EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location2, 10);
         etl.onEntityPortal(event);
         assertTrue(event.isCancelled());
 
@@ -192,7 +192,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
         when(Util.getWorld(any())).thenReturn(world2);
 
         Flags.ENTITY_PORTAL_TELEPORT.setSetting(world2, true);
-        EntityPortalEvent event = new EntityPortalEvent(player, location, location2, 10);
+        EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location2, 10);
         etl.onEntityPortal(event);
         assertTrue(event.isCancelled());
 

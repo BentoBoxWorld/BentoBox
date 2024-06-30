@@ -73,13 +73,14 @@ public class IslandDeletionManagerTest {
     @Before
     public void setUp() throws Exception {
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         Server server = mock(Server.class);
         when(server.getWorld(anyString())).thenReturn(world);
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(server.getPluginManager()).thenReturn(pim);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
+        when(server.getBukkitVersion()).thenReturn("1.20.6-R0.2-SNAPSHOT");
 
         // Clear any remaining database
         deleteAll(new File("database"));

@@ -89,7 +89,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnInventoryClickEnchantingAllowed() {
         InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
+        when(view.getPlayer()).thenReturn(mockPlayer);
         EnchantingInventory inv = mock(EnchantingInventory.class);
         when(inv.getSize()).thenReturn(9);
         when(view.getTopInventory()).thenReturn(inv);
@@ -108,7 +108,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnInventoryClickAllowed() {
         InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
+        when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory inv = mock(Inventory.class);
         when(inv.getSize()).thenReturn(9);
 
@@ -148,7 +148,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnInventoryClickNullHolder() {
         InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
+        when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory inv = mock(Inventory.class);
         when(inv.getLocation()).thenReturn(location);
         when(inv.getSize()).thenReturn(9);
@@ -191,7 +191,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     public void testOnInventoryClickNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
+        when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory inv = mock(Inventory.class);
         when(inv.getLocation()).thenReturn(location);
         when(inv.getSize()).thenReturn(9);
@@ -222,7 +222,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     public void testOnInventoryClickEnchantingNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
+        when(view.getPlayer()).thenReturn(mockPlayer);
         EnchantingInventory inv = mock(EnchantingInventory.class);
         when(inv.getSize()).thenReturn(9);
         when(view.getTopInventory()).thenReturn(inv);
@@ -252,7 +252,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnInventoryClickOtherHolderAllowed() {
         InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
+        when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory inv = mock(Inventory.class);
         when(inv.getLocation()).thenReturn(location);
         when(inv.getSize()).thenReturn(9);
@@ -274,7 +274,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     public void testOnInventoryClickOtherHolderNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
+        when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory inv = mock(Inventory.class);
         when(inv.getLocation()).thenReturn(location);
         when(inv.getSize()).thenReturn(9);
@@ -296,7 +296,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     public void testOnInventoryClickOtherHolderPlayerNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
+        when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory inv = mock(Inventory.class);
         when(inv.getLocation()).thenReturn(location);
         when(inv.getSize()).thenReturn(9);

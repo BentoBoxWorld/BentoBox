@@ -37,6 +37,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.github.puregero.multilib.MultiLib;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -49,7 +51,7 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, DefaultPermissions.class} )
+@PrepareForTest({ Bukkit.class, BentoBox.class, DefaultPermissions.class, MultiLib.class })
 public class AddonsManagerTest {
 
     private BentoBox plugin;
@@ -63,7 +65,7 @@ public class AddonsManagerTest {
      */
     @Before
     public void setup() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(pm);
         // Set up plugin
         plugin = mock(BentoBox.class);
@@ -81,6 +83,8 @@ public class AddonsManagerTest {
         when(plugin.getSettings()).thenReturn(s);
 
         PowerMockito.mockStatic(DefaultPermissions.class);
+
+        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
     }
 
     /**

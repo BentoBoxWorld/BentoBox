@@ -48,7 +48,6 @@ public class PanelItem {
             meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
             meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
             icon.setItemMeta(meta);
         }
 
@@ -89,7 +88,6 @@ public class PanelItem {
         this.name = name;
         if (meta != null) {
             meta.setDisplayName(name);
-            meta.setLocalizedName(name); //Localized name cannot be overridden by the player using an anvils
             icon.setItemMeta(meta);
         }
     }
@@ -135,9 +133,9 @@ public class PanelItem {
         }
         if (meta != null) {
             if (glow) {
-                meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, glow);
+                meta.addEnchant(Enchantment.LURE, 0, glow);
             } else {
-                meta.removeEnchant(Enchantment.ARROW_DAMAGE);
+                meta.removeEnchant(Enchantment.LURE);
             }
             icon.setItemMeta(meta);
 

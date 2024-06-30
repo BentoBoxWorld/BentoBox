@@ -1,17 +1,26 @@
 package world.bentobox.bentobox.managers;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.beans.IntrospectionException;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
+import org.bukkit.Bukkit;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -22,6 +31,7 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 
 /**
@@ -29,7 +39,7 @@ import world.bentobox.bentobox.database.DatabaseSetup;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, DatabaseSetup.class, RanksManager.class })
+@PrepareForTest({ BentoBox.class, DatabaseSetup.class, RanksManager.class, Bukkit.class })
 public abstract class RanksManagerBeforeClassTest {
 
     // Constants that define the hard coded rank values
@@ -63,8 +73,48 @@ public abstract class RanksManagerBeforeClassTest {
     @Mock
     public RanksManager rm;
 
+    protected static AbstractDatabaseHandler<Object> h;
+    protected static Object savedObject;
+
+    @SuppressWarnings("unchecked")
+    @BeforeClass
+    public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException,
+            InstantiationException, ClassNotFoundException, NoSuchMethodException {
+        // This has to be done beforeClass otherwise the tests will interfere with each
+        // other
+        h = mock(AbstractDatabaseHandler.class);
+        // Database
+        PowerMockito.mockStatic(DatabaseSetup.class);
+        DatabaseSetup dbSetup = mock(DatabaseSetup.class);
+        when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
+        when(dbSetup.getHandler(any())).thenReturn(h);
+        //when(h.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+        // Capture the parameter passed to saveObject() and store it in savedObject
+        doAnswer(invocation -> {
+            savedObject = invocation.getArgument(0);
+            return CompletableFuture.completedFuture(true);
+        }).when(h).saveObject(any());
+
+        // Now when loadObject() is called, return the savedObject
+        when(h.loadObject(any())).thenAnswer(invocation -> savedObject);
+
+        // Delete object
+        doAnswer(invocation -> {
+            savedObject = null;
+            return null;
+        }).when(h).deleteObject(any());
+        
+        doAnswer(invocation -> {
+            savedObject = null;
+            return null;
+        }).when(h).deleteID(anyString());
+
+    }
+
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        when(Bukkit.getBukkitVersion()).thenReturn("");
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // RanksManager
@@ -72,6 +122,8 @@ public abstract class RanksManagerBeforeClassTest {
         when(RanksManager.getInstance()).thenReturn(rm);
         when(rm.getRanks()).thenReturn(DEFAULT_RANKS);
         when(rm.getRank(anyInt())).thenReturn("");
+        // Clear savedObject
+        savedObject = null;
     }
 
     @After

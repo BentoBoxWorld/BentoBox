@@ -20,7 +20,6 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
@@ -144,7 +143,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         hand = EquipmentSlot.HAND;
         // Nothing in hand right now
         when(item.getType()).thenReturn(Material.AIR);
-        when(player.getInventory()).thenReturn(inv);
+        when(mockPlayer.getInventory()).thenReturn(inv);
         when(inv.getItemInMainHand()).thenReturn(item);
         when(inv.getItemInOffHand()).thenReturn(new ItemStack(Material.BUCKET));
 
@@ -161,7 +160,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnPlayerInteractItemFrameNotAllowed() {
         when(clickedBlock.getType()).thenReturn(Material.ITEM_FRAME);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
         assertEquals(Event.Result.DENY, e.useInteractedBlock());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -175,7 +174,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         when(island.isAllowed(any(), eq(Flags.BREAK_BLOCKS))).thenReturn(true);
         when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(true);
         when(clickedBlock.getType()).thenReturn(Material.ITEM_FRAME);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
         assertEquals(Event.Result.DENY, e.useInteractedBlock());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -188,7 +187,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
     public void testOnPlayerInteractNothingInHandPotsNotAllowed() {
         Arrays.stream(Material.values()).filter(m -> m.name().startsWith("POTTED")).forEach(bm -> {
             when(clickedBlock.getType()).thenReturn(bm);
-            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
+            PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
             bil.onPlayerInteract(e);
             assertEquals("Failure " + bm, Event.Result.DENY, e.useInteractedBlock());
         });
@@ -208,7 +207,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         when(clickedBlock.getState()).thenReturn(sign);
         for (Material bm : clickedBlocks.keySet()) {
             when(clickedBlock.getType()).thenReturn(bm);
-            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
+            PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
             bil.onPlayerInteract(e);
             assertEquals("Failure " + bm, Event.Result.DENY, e.useInteractedBlock());
             if (clickedBlocks.get(bm).getType().equals(Type.PROTECTION)) {
@@ -235,7 +234,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
                 clickedBlocks.get(bm).setSetting(world, true);
             }
             when(clickedBlock.getType()).thenReturn(bm);
-            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
+            PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
             bil.onPlayerInteract(e);
             assertNotEquals("Failure " + bm, Event.Result.DENY, e.useInteractedBlock());
             verify(notifier, never()).notify(any(), eq("protection.protected"));
@@ -250,7 +249,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
     public void testOnPlayerInteractSpawnEggInHandNotAllowed() {
         when(clickedBlock.getType()).thenReturn(Material.SPAWNER);
         when(item.getType()).thenReturn(Material.BLAZE_SPAWN_EGG);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
         assertEquals(Event.Result.DENY, e.useInteractedBlock());
         assertEquals(Event.Result.DENY, e.useItemInHand());
@@ -265,7 +264,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         when(island.isAllowed(any(), any())).thenReturn(true);
         when(clickedBlock.getType()).thenReturn(Material.SPAWNER);
         when(item.getType()).thenReturn(Material.BLAZE_SPAWN_EGG);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
         assertNotEquals(Event.Result.DENY, e.useInteractedBlock());
         assertNotEquals(Event.Result.DENY, e.useItemInHand());
@@ -281,7 +280,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(true);
         when(clickedBlock.getType()).thenReturn(Material.ITEM_FRAME);
         when(item.getType()).thenReturn(Material.BLAZE_SPAWN_EGG);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
         assertEquals(Event.Result.DENY, e.useInteractedBlock());
         assertEquals(Event.Result.DENY, e.useItemInHand());

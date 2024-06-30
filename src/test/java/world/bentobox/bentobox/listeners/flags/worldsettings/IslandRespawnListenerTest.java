@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -53,7 +54,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class })
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class IslandRespawnListenerTest {
 
     @Mock
@@ -75,6 +76,7 @@ public class IslandRespawnListenerTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -103,6 +105,7 @@ public class IslandRespawnListenerTest {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);

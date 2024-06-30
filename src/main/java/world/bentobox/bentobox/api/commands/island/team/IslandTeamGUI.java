@@ -22,7 +22,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -34,6 +33,8 @@ import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord.ActionRecord
 import world.bentobox.bentobox.api.panels.reader.PanelTemplateRecord.TemplateItem;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.TeamInvite;
+import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -208,7 +209,7 @@ public class IslandTeamGUI {
     private PanelItem createInvitedButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
         PanelItemBuilder builder = new PanelItemBuilder();
         if (parent.isInvited(user.getUniqueId()) && user.hasPermission(parent.getAcceptCommand().getPermission())) {
-            Invite invite = parent.getInvite(user.getUniqueId());
+            TeamInvite invite = parent.getInvite(user.getUniqueId());
             if (invite == null) {
                 return this.getBlankBorder();
             }
@@ -224,7 +225,8 @@ public class IslandTeamGUI {
         return builder.build();
     }
 
-    private void createInviteClickHandler(PanelItemBuilder builder, Invite invite, @NonNull List<ActionRecords> list) {
+    private void createInviteClickHandler(PanelItemBuilder builder, TeamInvite invite,
+            @NonNull List<ActionRecords> list) {
         Type type = invite.getType();
         builder.clickHandler((panel, user, clickType, clickSlot) -> {
             if (list.stream().noneMatch(ar -> clickType.equals(ar.clickType()))) {
@@ -526,7 +528,6 @@ public class IslandTeamGUI {
 
     /**
      * Creates text to describe the status of the player
-     * @param user2 user asking to see the status
      * @param offlineMember member of the team
      * @return string
      */

@@ -101,6 +101,7 @@ public class UserTest {
 
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         User.setPlugin(plugin);
@@ -110,7 +111,6 @@ public class UserTest {
 
         ItemFactory itemFactory = mock(ItemFactory.class);
 
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
@@ -178,7 +178,6 @@ public class UserTest {
         // If the player has been removed from the cache, then code will ask server for player
         // Return null and check if instance is null will show that the player is not in the cache
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
-        verify(pm).removePlayer(player);
     }
 
     @Test
@@ -842,9 +841,10 @@ public class UserTest {
         User.clearUsers();
         User p = User.getInstance(player);
         try {
-            p.spawnParticle(Particle.REDSTONE, 4, 0.0d, 0.0d, 0.0d);
+            p.spawnParticle(Particle.DUST, 4, 0.0d, 0.0d, 0.0d);
         } catch (Exception e) {
-            assertEquals("A non-null DustOptions must be provided when using Particle.REDSTONE as particle.", e.getMessage());
+            assertEquals("A non-null DustOptions must be provided when using Particle.DUST as particle.",
+                    e.getMessage());
         }
     }
 
@@ -878,8 +878,8 @@ public class UserTest {
 
         User p = User.getInstance(player);
         DustOptions dust = mock(DustOptions.class);
-        p.spawnParticle(Particle.REDSTONE, dust, 0.0d, 0.0d, 0.0d);
-        verify(player).spawnParticle(Particle.REDSTONE, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
+        p.spawnParticle(Particle.DUST, dust, 0.0d, 0.0d, 0.0d);
+        verify(player).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
 
     }
 
@@ -896,8 +896,8 @@ public class UserTest {
 
         User p = User.getInstance(player);
         DustOptions dust = mock(DustOptions.class);
-        p.spawnParticle(Particle.REDSTONE, dust, 0.0d, 0.0d, 0.0d);
-        verify(player).spawnParticle(Particle.REDSTONE, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
+        p.spawnParticle(Particle.DUST, dust, 0.0d, 0.0d, 0.0d);
+        verify(player).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
 
     }
 
@@ -914,8 +914,8 @@ public class UserTest {
 
         User p = User.getInstance(player);
         DustOptions dust = mock(DustOptions.class);
-        p.spawnParticle(Particle.REDSTONE, dust, 0, 0, 0);
-        verify(player).spawnParticle(Particle.REDSTONE, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
+        p.spawnParticle(Particle.DUST, dust, 0, 0, 0);
+        verify(player).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
 
     }
 

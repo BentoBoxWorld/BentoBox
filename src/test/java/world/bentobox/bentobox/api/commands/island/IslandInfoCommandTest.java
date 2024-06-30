@@ -51,7 +51,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, IslandsManager.class })
 public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -83,6 +83,8 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);

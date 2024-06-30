@@ -122,6 +122,11 @@ public class PVPListenerTest {
      */
     @Before
     public void setUp() throws Exception {
+        // Scheduler
+        BukkitScheduler sch = mock(BukkitScheduler.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        when(Bukkit.getScheduler()).thenReturn(sch);
+
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -209,11 +214,6 @@ public class PVPListenerTest {
         when(creeper.getUniqueId()).thenReturn(UUID.randomUUID());
         when(creeper.getType()).thenReturn(EntityType.CREEPER);
 
-        // Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
@@ -231,6 +231,7 @@ public class PVPListenerTest {
 
         // Util translate color codes (used in user translate methods)
         when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
     }
 
@@ -287,6 +288,27 @@ public class PVPListenerTest {
                 EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        new PVPListener().onEntityDamage(e);
+        // PVP should be allowed for NPC
+        assertFalse(e.isCancelled());
+        verify(player, never()).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+
+    }
+
+    /**
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
+    public void testOnEntityDamageNPCAttacks() {
+        // Player 2 is an NPC
+        when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
+        // PVP is not allowed
+        when(island.isAllowed(any())).thenReturn(false);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player2, player,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, null,
+                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         // PVP should be allowed for NPC
         assertFalse(e.isCancelled());

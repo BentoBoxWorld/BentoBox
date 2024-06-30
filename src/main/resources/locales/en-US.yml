@@ -230,6 +230,7 @@ commands:
       banned-players: 'Banned players:'
       banned-format: '&c [name]'
       unowned: '&c Unowned'
+      bundle: '&a Blueprint Bundle used to create island: &b [name]'
     switch:
       description: switch on/off protection bypass
       op: '&c Ops can always bypass protection. Deop to use command.'
@@ -266,10 +267,13 @@ commands:
     reload:
       description: reload
     tp:
-      parameters: <player> [player to teleport]
+      parameters: <player> [player's island]
       description: teleport to a player's island
       manual: '&c No safe warp found! Manually tp near to &b [location] &c and check
         it out'
+    tpuser:
+      parameters: <teleporting player> <island's player> [player's island]
+      description: teleport a player to another player's island
     getrank:
       parameters: <player> [island owner]
       description: get a player's rank on their island or the island of the owner
@@ -510,6 +514,7 @@ commands:
       addons: '[prefix_bentobox]&6 Migrating addons'
       class: '[prefix_bentobox]&6 Migrating [description]'
       migrated: '[prefix_bentobox]&a Migrated'
+      completed: '[prefix_bentobox]&a Completed'
     rank:
       description: 'list, add, or remove ranks'
       parameters: '&a [list | add | remove] [rank reference] [rank value]'
@@ -1226,6 +1231,10 @@ protection:
       description: '&a Toggle hive harvesting.'
       name: Hive harvesting
       hint: Harvesting disabled
+    HURT_TAMED_ANIMALS:
+      description: Toggle hurting. Enabled means that tamed animals can take damage. Disabled means they are invincible.
+      name: Hurt tamed animals
+      hint: Tamed animal hurting disabled
     HURT_ANIMALS:
       description: Toggle hurting
       name: Hurt animals
@@ -1278,6 +1287,7 @@ protection:
     LEASH:
       description: Toggle use
       name: Leash use
+      hint: Leash use disabled
     LECTERN:
       name: Lecterns
       description: |-
@@ -1799,6 +1809,10 @@ enums:
     HOT_FLOOR: Hot Floor
     CRAMMING: Cramming
     DRYOUT: Dryout
+    FREEZE: Freeze
+    KILL: Kill
+    SONIC_BOOM: Sonic Boom
+    WORLD_BORDER: World Border
 
 panel:
   credits:

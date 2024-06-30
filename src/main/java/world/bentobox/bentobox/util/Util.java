@@ -1,17 +1,22 @@
 package world.bentobox.bentobox.util;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.annotation.Nonnull;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,24 +28,14 @@ import org.bukkit.World.Environment;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Allay;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Bat;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Flying;
-import org.bukkit.entity.IronGolem;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.PufferFish;
-import org.bukkit.entity.Shulker;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Snowman;
-import org.bukkit.entity.WaterMob;
+import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.common.base.Enums;
+import com.google.common.base.Optional;
 
 import io.papermc.lib.PaperLib;
 import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
@@ -67,6 +62,11 @@ public class Util {
     private static BentoBox plugin = BentoBox.getInstance();
     private static PasteHandler pasteHandler = null;
     private static WorldRegenerator regenerator = null;
+
+    // Bukkit method that was added in 2011
+    // Example value: 1.20.4-R0.1-SNAPSHOT
+    private static final String bukkitVersion = "v" + Bukkit.getBukkitVersion().replace('.', '_').replace('-', '_');
+    private static final String pluginPackageName = plugin.getClass().getPackage().getName();
 
     private Util() {}
 
@@ -357,6 +357,10 @@ public class Util {
                 entity instanceof Allay;
     }
 
+    public static boolean isTamableEntity(Entity entity) {
+        return entity instanceof Tameable && ((Tameable) entity).isTamed();
+    }
+
     /*
      * PaperLib methods for addons to call
      */
@@ -368,7 +372,7 @@ public class Util {
      * @return Future that completes with the result of the teleport
      */
     @NonNull
-    public static CompletableFuture<Boolean> teleportAsync(@NonNull Entity entity, @NonNull Location location) {
+    public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location) {
         return PaperLib.teleportAsync(entity, location);
     }
 
@@ -380,7 +384,8 @@ public class Util {
      * @return Future that completes with the result of the teleport
      */
     @NonNull
-    public static CompletableFuture<Boolean> teleportAsync(@NonNull Entity entity, @NonNull Location location, TeleportCause cause) {
+    public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location,
+            TeleportCause cause) {
         return PaperLib.teleportAsync(entity, location, cause);
     }
 
@@ -391,7 +396,8 @@ public class Util {
      */
     @NonNull
     public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull Location loc) {
-        return getChunkAtAsync(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, true);
+        return getChunkAtAsync(Objects.requireNonNull(loc.getWorld()), loc.getBlockX() >> 4, loc.getBlockZ() >> 4,
+                true);
     }
 
     /**
@@ -402,7 +408,7 @@ public class Util {
      */
     @NonNull
     public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull Location loc, boolean gen) {
-        return getChunkAtAsync(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, gen);
+        return getChunkAtAsync(Objects.requireNonNull(loc.getWorld()), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, gen);
     }
 
     /**
@@ -413,7 +419,7 @@ public class Util {
      * @return Future that completes with the chunk
      */
     @NonNull
-    public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull World world, int x, int z) {
+    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z) {
         return getChunkAtAsync(world, x, z, true);
     }
 
@@ -426,7 +432,7 @@ public class Util {
      * @return Future that completes with the chunk, or null if the chunk did not exists and generation was not requested.
      */
     @NonNull
-    public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull World world, int x, int z, boolean gen) {
+    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z, boolean gen) {
         return PaperLib.getChunkAtAsync(world, x, z, gen);
     }
 
@@ -436,7 +442,7 @@ public class Util {
      * @return If the chunk is generated or not
      */
     public static boolean isChunkGenerated(@NonNull Location loc) {
-        return isChunkGenerated(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
+        return isChunkGenerated(Objects.requireNonNull(loc.getWorld()), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
     }
 
     /**
@@ -446,7 +452,7 @@ public class Util {
      * @param z Z coordinate of the chunk to checl
      * @return If the chunk is generated or not
      */
-    public static boolean isChunkGenerated(@NonNull World world, int x, int z) {
+    public static boolean isChunkGenerated(@Nonnull World world, int x, int z) {
         return PaperLib.isChunkGenerated(world, x, z);
     }
 
@@ -457,7 +463,7 @@ public class Util {
      * @return The BlockState
      */
     @NonNull
-    public static BlockStateSnapshotResult getBlockState(@NonNull Block block, boolean useSnapshot) {
+    public static BlockStateSnapshotResult getBlockState(@Nonnull Block block, boolean useSnapshot) {
         return PaperLib.getBlockState(block, useSnapshot);
     }
 
@@ -715,19 +721,16 @@ public class Util {
      */
     public static WorldRegenerator getRegenerator() {
         if (regenerator == null) {
-            String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
-            String pluginPackageName = plugin.getClass().getPackage().getName();
-            String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
             WorldRegenerator handler;
             try {
-                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".WorldRegeneratorImpl");
+                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + bukkitVersion + ".WorldRegeneratorImpl");
                 if (WorldRegenerator.class.isAssignableFrom(clazz)) {
                     handler = (WorldRegenerator) clazz.getConstructor().newInstance();
                 } else {
                     throw new IllegalStateException("Class " + clazz.getName() + " does not implement WorldRegenerator");
                 }
             } catch (Exception e) {
-                plugin.logWarning("No Regenerator found for " + version + ", falling back to Bukkit API.");
+                plugin.logWarning("No Regenerator found for " + bukkitVersion + ", falling back to Bukkit API.");
                 handler = new world.bentobox.bentobox.nms.fallback.WorldRegeneratorImpl();
             }
             setRegenerator(handler);
@@ -741,19 +744,22 @@ public class Util {
      */
     public static PasteHandler getPasteHandler() {
         if (pasteHandler == null) {
-            String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
+
+            // Bukkit method that was added in 2011
+            // Example value: 1.20.4-R0.1-SNAPSHOT
+            String bukkitVersion = "v" + Bukkit.getServer().getBukkitVersion().replace('.', '_').replace('-', '_');
             String pluginPackageName = plugin.getClass().getPackage().getName();
-            String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
+            BentoBox.getInstance().log("Optimizing for " + bukkitVersion);
             PasteHandler handler;
             try {
-                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".PasteHandlerImpl");
+                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + bukkitVersion + ".PasteHandlerImpl");
                 if (PasteHandler.class.isAssignableFrom(clazz)) {
                     handler = (PasteHandler) clazz.getConstructor().newInstance();
                 } else {
                     throw new IllegalStateException("Class " + clazz.getName() + " does not implement PasteHandler");
                 }
             } catch (Exception e) {
-                plugin.logWarning("No PasteHandler found for " + version + ", falling back to Bukkit API.");
+                plugin.logWarning("No PasteHandler found for " + bukkitVersion + ", falling back to Bukkit API.");
                 handler = new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl();
             }
             setPasteHandler(handler);
@@ -800,5 +806,39 @@ public class Util {
         return ChatColor.stripColor(
                 Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).
                 toLowerCase();
+    }
+
+    /**
+     * Attempts to find the first matching enum constant from an array of possible string representations.
+     * This method sequentially checks each string against the enum constants of the specified enum class
+     * by normalizing the string values to uppercase before comparison, enhancing the likelihood of a match
+     * if the enum constants are defined in uppercase.
+     *
+     * @param enumClass the Class object of the enum type to be checked against
+     * @param values an array of string values which are potential matches for the enum constants
+     * @param <T> the type parameter of the enum
+     * @return the first matching enum constant if a match is found; otherwise, returns null
+     * @throws IOException 
+     * @throws NullPointerException if either {@code enumClass} or {@code values} are null
+     */
+    public static <T extends Enum<T>> T findFirstMatchingEnum(Class<T> enumClass, String... values) {
+        if (enumClass == null || values == null) {
+            return null;
+        }
+        for (String value : values) {
+            Optional<T> enumConstant = Enums.getIfPresent(enumClass, value.toUpperCase());
+            if (enumConstant.isPresent()) {
+                return enumConstant.get();
+            }
+        }
+        return null; // Return null if no match is found
+    }
+
+    /**
+     * This checks the stack trace for @Test to determine if a test is calling the code and skips.
+     * @return true if it's a test.
+     */
+    public static boolean inTest() {
+        return Arrays.stream(Thread.currentThread().getStackTrace()).anyMatch(e -> e.getClassName().endsWith("Test"));
     }
 }

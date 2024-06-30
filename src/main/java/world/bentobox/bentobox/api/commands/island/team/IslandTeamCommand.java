@@ -1,9 +1,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -16,16 +14,12 @@ import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.reader.PanelTemplateRecord.TemplateItem;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.TeamInvite;
 import world.bentobox.bentobox.managers.RanksManager;
 
 public class IslandTeamCommand extends CompositeCommand {
-
-    /**
-     * Invited list. Key is the invited party, value is the invite.
-     * @since 1.8.0
-     */
-    private final Map<UUID, Invite> inviteMap;
 
     private IslandTeamKickCommand kickCommand;
 
@@ -51,9 +45,11 @@ public class IslandTeamCommand extends CompositeCommand {
 
     private IslandTeamTrustCommand trustCommand;
 
+    private final Database<TeamInvite> handler;
+
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
-        inviteMap = new HashMap<>();
+        handler = new Database<>(parent.getAddon(), TeamInvite.class);
     }
 
     @Override
@@ -139,8 +135,8 @@ public class IslandTeamCommand extends CompositeCommand {
      * @param invitee - uuid of invitee
      * @since 1.8.0
      */
-    public void addInvite(Invite.Type type, @NonNull UUID inviter, @NonNull UUID invitee, @NonNull Island island) {
-        inviteMap.put(invitee, new Invite(type, inviter, invitee, island));
+    public void addInvite(TeamInvite.Type type, @NonNull UUID inviter, @NonNull UUID invitee, @NonNull Island island) {
+        handler.saveObjectAsync(new TeamInvite(type, inviter, invitee, island.getUniqueId()));
     }
 
     /**
@@ -150,7 +146,7 @@ public class IslandTeamCommand extends CompositeCommand {
      * @since 1.8.0
      */
     public boolean isInvited(@NonNull UUID invitee) {
-        return inviteMap.containsKey(invitee);
+        return handler.objectExists(invitee.toString());
     }
 
     /**
@@ -161,7 +157,7 @@ public class IslandTeamCommand extends CompositeCommand {
      */
     @Nullable
     public UUID getInviter(UUID invitee) {
-        return isInvited(invitee) ? inviteMap.get(invitee).getInviter() : null;
+        return isInvited(invitee) ? handler.loadObject(invitee.toString()).getInviter() : null;
     }
 
     /**
@@ -171,8 +167,8 @@ public class IslandTeamCommand extends CompositeCommand {
      * @since 1.8.0
      */
     @Nullable
-    public Invite getInvite(UUID invitee) {
-        return inviteMap.get(invitee);
+    public TeamInvite getInvite(UUID invitee) {
+        return handler.loadObject(invitee.toString());
     }
 
     /**
@@ -181,7 +177,7 @@ public class IslandTeamCommand extends CompositeCommand {
      * @since 1.8.0
      */
     public void removeInvite(@NonNull UUID invitee) {
-        inviteMap.remove(invitee);
+        handler.deleteID(invitee.toString());
     }
 
     /**

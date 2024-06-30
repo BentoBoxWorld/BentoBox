@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -225,29 +224,6 @@ public class IslandSetnameCommandTest {
     public void testIslandSetnameCommandNameTooLong() {
         assertFalse(isc.canExecute(user, isc.getLabel(), List.of("This is a very long name that is not allowed and will have to be prevented")));
         verify(user).sendMessage("commands.island.setname.name-too-long", TextVariables.NUMBER, "20");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testIslandSetnameCommandNameNotUnique() {
-        settings.setNameUniqueness(true);
-        when(im.nameExists(eq(world), anyString())).thenReturn(true);
-        assertFalse(isc.canExecute(user, isc.getLabel(), List.of("name2")));
-        verify(user).sendMessage("commands.island.setname.name-already-exists");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testIslandSetnameCommandNameApplyColors() {
-        when(user.hasPermission(anyString())).thenReturn(true);
-        settings.setNameUniqueness(true);
-        when(im.nameExists(world, "name§b")).thenReturn(true);
-        assertFalse(isc.canExecute(user, isc.getLabel(), List.of("name&b")));
-        verify(user).sendMessage("commands.island.setname.name-already-exists");
     }
 
     /**

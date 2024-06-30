@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.nms.v1_20_R3;
+package world.bentobox.bentobox.nms.v1_20_4_R0_1_SNAPSHOT;
 
 import java.util.concurrent.CompletableFuture;
 

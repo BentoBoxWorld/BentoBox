@@ -55,7 +55,7 @@ public class ExperiencePickupListenerTest extends AbstractCommonSetup {
         when(entity.getLocation()).thenReturn(location);
 
         TargetReason reason = TargetReason.CLOSEST_PLAYER;
-        e = new EntityTargetLivingEntityEvent(entity, player, reason);
+        e = new EntityTargetLivingEntityEvent(entity, mockPlayer, reason);
         epl = new ExperiencePickupListener();
 
     }

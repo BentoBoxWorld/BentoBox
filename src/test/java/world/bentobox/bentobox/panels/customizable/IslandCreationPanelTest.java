@@ -9,7 +9,12 @@ import static org.mockito.Mockito.when;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -84,6 +89,8 @@ public class IslandCreationPanelTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
@@ -145,7 +152,6 @@ public class IslandCreationPanelTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // IWM friendly name
@@ -209,7 +215,6 @@ public class IslandCreationPanelTest {
         verify(inv).setItem(eq(0), any());
         verify(inv).setItem(eq(1), any());
         verify(meta).setDisplayName(eq("test"));
-        verify(meta).setLocalizedName(eq("test"));
         verify(meta).setLore(eq(List.of("A description", "", "panels.tips.click-to-choose")));
     }
 
@@ -224,15 +229,12 @@ public class IslandCreationPanelTest {
         verify(inv).setItem(eq(0), any());
         verify(inv).setItem(eq(1), any());
         verify(meta).setDisplayName(eq("test"));
-        verify(meta).setLocalizedName(eq("test"));
         verify(meta).setLore(eq(List.of("A description", "", "panels.tips.click-to-choose")));
         verify(inv).setItem(eq(0), any());
         verify(meta).setDisplayName(eq("test2"));
-        verify(meta).setLocalizedName(eq("test2"));
         verify(meta).setLore(eq(List.of("A description 2", "", "panels.tips.click-to-choose")));
         verify(inv).setItem(eq(1), any());
         verify(meta).setDisplayName(eq("test3"));
-        verify(meta).setLocalizedName(eq("test3"));
         verify(meta).setLore(eq(List.of("A description 3", "", "panels.tips.click-to-choose")));
     }
 

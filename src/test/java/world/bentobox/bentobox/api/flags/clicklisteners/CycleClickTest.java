@@ -133,7 +133,7 @@ public class CycleClickTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
@@ -215,6 +215,7 @@ public class CycleClickTest {
         // Util
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Event
         when(Bukkit.getPluginManager()).thenReturn(pim);

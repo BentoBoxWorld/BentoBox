@@ -28,7 +28,7 @@ public abstract class Pladdon extends JavaPlugin {
         String parentFolder = getFile().getParent();
         if (parentFolder == null || !parentFolder.endsWith(ADDONS_FOLDER)) {
             // Jar is in the wrong place. Let's move it
-            moveJar();
+            //moveJar();
         }
     }
 

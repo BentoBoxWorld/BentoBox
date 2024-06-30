@@ -1,6 +1,10 @@
 package world.bentobox.bentobox.api.commands.admin.range;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.framework;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -46,6 +50,7 @@ public class AdminRangeDisplayCommandTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -76,37 +81,36 @@ public class AdminRangeDisplayCommandTest {
 
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Player has island to begin with
         IslandsManager im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         PlayersManager pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
         Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer);
+        when(lm.get(any(), any())).thenAnswer(answer);
         when(plugin.getLocalesManager()).thenReturn(lm);
     }
 
     @After
     public void tearDown() {
         User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+        framework().clearInlineMocks();
     }
 
     /**
@@ -118,12 +122,12 @@ public class AdminRangeDisplayCommandTest {
         AdminRangeDisplayCommand ardc = new AdminRangeDisplayCommand(ac);
         ardc.execute(user, "display", new ArrayList<>());
         // Show display
-        Mockito.verify(user).sendMessage("commands.admin.range.display.showing");
-        Mockito.verify(user).sendMessage("commands.admin.range.display.hint");
+        verify(user).sendMessage("commands.admin.range.display.showing");
+        verify(user).sendMessage("commands.admin.range.display.hint");
         // Run command again
         ardc.execute(user, "display", new ArrayList<>());
         // Remove
-        Mockito.verify(user).sendMessage("commands.admin.range.display.hiding");
+        verify(user).sendMessage("commands.admin.range.display.hiding");
     }
 
     /**
@@ -135,13 +139,13 @@ public class AdminRangeDisplayCommandTest {
         AdminRangeDisplayCommand ardc = new AdminRangeDisplayCommand(ac);
         ardc.execute(user, "show", new ArrayList<>());
         // Show display
-        Mockito.verify(user).sendMessage("commands.admin.range.display.showing");
-        Mockito.verify(user).sendMessage("commands.admin.range.display.hint");
+        verify(user).sendMessage("commands.admin.range.display.showing");
+        verify(user).sendMessage("commands.admin.range.display.hint");
         // Run command again
         ardc.execute(user, "show", new ArrayList<>());
-        Mockito.verify(user).sendMessage("commands.admin.range.display.already-on");
+        verify(user).sendMessage("commands.admin.range.display.already-on");
         ardc.execute(user, "hide", new ArrayList<>());
-        Mockito.verify(user).sendMessage("commands.admin.range.display.hiding");
+        verify(user).sendMessage("commands.admin.range.display.hiding");
     }
 
     /**
@@ -152,7 +156,7 @@ public class AdminRangeDisplayCommandTest {
     public void testExecutePlayeHideArgs() {
         AdminRangeDisplayCommand ardc = new AdminRangeDisplayCommand(ac);
         ardc.execute(user, "hide", new ArrayList<>());
-        Mockito.verify(user).sendMessage("commands.admin.range.display.already-off");
+        verify(user).sendMessage("commands.admin.range.display.already-off");
     }
 
 }

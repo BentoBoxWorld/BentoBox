@@ -40,6 +40,7 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.BentoBox;
@@ -54,7 +55,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class })
 public class UtilTest {
 
     private static final String[] NAMES = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
@@ -76,6 +77,10 @@ public class UtilTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        // Set up plugin
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
         // Set up plugin
         Util.setPlugin(plugin);
         // World
@@ -92,7 +97,6 @@ public class UtilTest {
         when(location.getYaw()).thenReturn(10F);
         when(location.getPitch()).thenReturn(20F);
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         Server server = mock(Server.class);
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.getWorld(anyString())).thenReturn(world);

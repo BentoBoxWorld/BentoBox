@@ -12,7 +12,6 @@ import world.bentobox.bentobox.api.commands.admin.resets.AdminResetsCommand;
 import world.bentobox.bentobox.api.commands.admin.team.AdminTeamAddCommand;
 import world.bentobox.bentobox.api.commands.admin.team.AdminTeamCommand;
 import world.bentobox.bentobox.api.commands.admin.team.AdminTeamDisbandCommand;
-import world.bentobox.bentobox.api.commands.admin.team.AdminTeamFixCommand;
 import world.bentobox.bentobox.api.commands.admin.team.AdminTeamKickCommand;
 import world.bentobox.bentobox.api.commands.admin.team.AdminTeamSetownerCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -51,9 +50,14 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
         this.setDescription("commands.admin.help.description");
 
         new AdminVersionCommand(this);
+
         new AdminTeleportCommand(this, "tp");
         new AdminTeleportCommand(this, "tpnether");
         new AdminTeleportCommand(this, "tpend");
+        new AdminTeleportUserCommand(this, "tpuser");
+        new AdminTeleportUserCommand(this, "tpusernether");
+        new AdminTeleportUserCommand(this, "tpuserend");
+
         new AdminGetrankCommand(this);
         new AdminSetrankCommand(this);
         new AdminInfoCommand(this);
@@ -63,7 +67,6 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
         new AdminTeamKickCommand(this);
         new AdminTeamDisbandCommand(this);
         new AdminTeamSetownerCommand(this);
-        new AdminTeamFixCommand(this);
         // Blueprints
         new AdminBlueprintCommand(this);
         // Register/unregister islands

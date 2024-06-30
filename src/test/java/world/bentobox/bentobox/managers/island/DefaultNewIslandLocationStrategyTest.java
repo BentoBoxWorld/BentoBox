@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -39,7 +40,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Util.class)
+@PrepareForTest({ Bukkit.class, Util.class })
 public class DefaultNewIslandLocationStrategyTest {
 
     private DefaultNewIslandLocationStrategy dnils;
@@ -67,6 +68,8 @@ public class DefaultNewIslandLocationStrategyTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Location
         when(location.getWorld()).thenReturn(world);

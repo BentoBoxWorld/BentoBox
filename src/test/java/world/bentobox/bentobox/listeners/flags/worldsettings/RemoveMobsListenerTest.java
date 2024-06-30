@@ -67,6 +67,7 @@ public class RemoveMobsListenerTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -97,6 +98,7 @@ public class RemoveMobsListenerTest {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // World Settings
         IslandWorldManager iwm = mock(IslandWorldManager.class);
@@ -115,7 +117,6 @@ public class RemoveMobsListenerTest {
         when(player.getWorld()).thenReturn(world);
 
         // Scheduler
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
 
     }

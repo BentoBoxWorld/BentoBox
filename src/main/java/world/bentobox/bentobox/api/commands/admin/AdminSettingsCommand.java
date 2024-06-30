@@ -16,7 +16,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
@@ -206,11 +205,9 @@ public class AdminSettingsCommand extends CompositeCommand {
                 switch (f.getType()) {
                 case PROTECTION -> {
                     island.setFlag(f, rank);
-                    getIslands().save(island);
                 }
                 case SETTING -> {
                     island.setSettingsFlag(f, activeState);
-                    getIslands().save(island);
                 }
                 case WORLD_SETTING -> f.setSetting(getWorld(), activeState);
                 default -> {
@@ -226,12 +223,11 @@ public class AdminSettingsCommand extends CompositeCommand {
             user.sendMessage("general.errors.use-in-game");
             return false;
         }
-        getPlayers().setFlagsDisplayMode(user.getUniqueId(), Mode.EXPERT);
         if (args.isEmpty()) {
             new TabbedPanelBuilder()
             .user(user)
             .world(getWorld())
-            .tab(1, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING))
+                    .tab(1, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING, Flag.Mode.EXPERT))
             .tab(2, new WorldDefaultSettingsTab(getWorld(), user))
             .startingSlot(1)
             .size(54)
@@ -242,8 +238,8 @@ public class AdminSettingsCommand extends CompositeCommand {
         new TabbedPanelBuilder()
         .user(user)
         .world(island.getWorld())
-                .island(island).tab(1, new SettingsTab(user, Flag.Type.PROTECTION))
-                .tab(2, new SettingsTab(user, Flag.Type.SETTING))
+                .island(island).tab(1, new SettingsTab(getWorld(), user, Flag.Type.PROTECTION, Flag.Mode.EXPERT))
+                .tab(2, new SettingsTab(getWorld(), user, Flag.Type.SETTING, Flag.Mode.EXPERT))
         .startingSlot(1)
         .size(54)
         .build().openPanel();

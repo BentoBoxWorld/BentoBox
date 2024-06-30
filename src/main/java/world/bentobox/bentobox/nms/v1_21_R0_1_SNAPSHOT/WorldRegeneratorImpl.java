@@ -1,8 +1,8 @@
-package world.bentobox.bentobox.nms.v1_20_R1;
+package world.bentobox.bentobox.nms.v1_21_R0_1_SNAPSHOT;
 
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R1.block.data.CraftBlockData;
 
 import net.minecraft.core.BlockPosition;
 import net.minecraft.world.level.World;

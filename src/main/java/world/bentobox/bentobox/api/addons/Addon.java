@@ -21,11 +21,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 
+import com.github.puregero.multilib.MultiLib;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.request.AddonRequestHandler;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Add-on class for BentoBox. Extend this to create an add-on. The operation
@@ -45,6 +48,10 @@ public abstract class Addon {
 
     protected Addon() {
         state = State.DISABLED;
+        if (!Util.inTest()) {
+            // If the config is updated, update the config.
+            MultiLib.onString(getPlugin(), "bentobox-config-update", v -> this.reloadConfig());
+        }
     }
 
     /**
@@ -275,7 +282,7 @@ public abstract class Addon {
                     }
                     // There are two options, use the path of the resource or not
                     File outFile = new File(destinationFolder,
-                        jarResource.replaceAll("/", Matcher.quoteReplacement(File.separator)));
+                            jarResource.replaceAll("/", Matcher.quoteReplacement(File.separator)));
 
                     if (noPath) {
                         outFile = new File(destinationFolder, outFile.getName());
@@ -396,7 +403,7 @@ public abstract class Addon {
     public IslandsManager getIslands() {
         return getPlugin().getIslands();
     }
-    
+
     /**
      * Get Islands Manager
      * @return Islands manager

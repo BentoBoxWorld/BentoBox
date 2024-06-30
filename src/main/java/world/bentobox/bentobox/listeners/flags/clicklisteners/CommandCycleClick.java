@@ -60,9 +60,6 @@ public class CommandCycleClick implements ClickHandler {
             }
             // Apply change to panel
             panel.getInventory().setItem(slot, commandRankClickListener.getPanelItem(command, user, world).getItem());
-            // Save island
-            plugin.getIslands().save(island);
-
         } else {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
         }

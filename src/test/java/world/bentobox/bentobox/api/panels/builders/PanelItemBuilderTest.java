@@ -32,7 +32,9 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
@@ -44,7 +46,10 @@ public class PanelItemBuilderTest {
     @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        // Set up plugin
+        BentoBox plugin = mock(BentoBox.class);
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         Server server = mock(Server.class);
         World world = mock(World.class);

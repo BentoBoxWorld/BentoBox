@@ -79,7 +79,7 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnPlayerInteractNotPhysical() {
         when(clickedBlock.getType()).thenReturn(Material.STONE);
-        PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.RIGHT_CLICK_AIR, item, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_AIR, item, clickedBlock, BlockFace.UP);
         new PhysicalInteractionListener().onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
     }
@@ -91,7 +91,7 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
     public void testOnPlayerInteractWrongMaterial() {
         when(clickedBlock.getType()).thenReturn(Material.STONE);
         when(Tag.PRESSURE_PLATES.isTagged(clickedBlock.getType())).thenReturn(false);
-        PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         new PhysicalInteractionListener().onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
     }
@@ -102,7 +102,7 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnPlayerInteractFarmland() {
         when(clickedBlock.getType()).thenReturn(Material.FARMLAND);
-        PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
         assertEquals(Result.DENY, e.useInteractedBlock());
@@ -115,9 +115,9 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractFarmlandOp() {
-        when(player.isOp()).thenReturn(true);
+        when(mockPlayer.isOp()).thenReturn(true);
         when(clickedBlock.getType()).thenReturn(Material.FARMLAND);
-        PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
@@ -128,9 +128,9 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractFarmlandPermission() {
-        when(player.hasPermission(anyString())).thenReturn(true);
+        when(mockPlayer.hasPermission(anyString())).thenReturn(true);
         when(clickedBlock.getType()).thenReturn(Material.FARMLAND);
-        PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
@@ -142,7 +142,7 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnPlayerInteractTurtleEgg() {
         when(clickedBlock.getType()).thenReturn(Material.TURTLE_EGG);
-        PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
         assertEquals(Result.DENY, e.useInteractedBlock());
@@ -157,7 +157,7 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
     public void testOnPlayerInteractPressurePlate() {
         Arrays.stream(Material.values()).filter(m -> m.name().contains("PRESSURE_PLATE")).forEach(p -> {
             when(clickedBlock.getType()).thenReturn(p);
-            PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
+            PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
             PhysicalInteractionListener i = new PhysicalInteractionListener();
             i.onPlayerInteract(e);
             assertEquals(Result.DENY, e.useInteractedBlock());
@@ -214,7 +214,7 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnProjectileHitProjectilePlayer() {
         Projectile entity = mock(Projectile.class);
-        ProjectileSource source = player ;
+        ProjectileSource source = mockPlayer ;
         when(entity.getShooter()).thenReturn(source);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);

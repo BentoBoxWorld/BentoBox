@@ -73,6 +73,8 @@ public class AdminTeamKickCommandTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getBukkitVersion()).thenReturn("");
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -118,7 +120,6 @@ public class AdminTeamKickCommandTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 

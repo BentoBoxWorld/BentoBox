@@ -3,7 +3,6 @@ package world.bentobox.bentobox.managers.island;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
@@ -12,8 +11,16 @@ import world.bentobox.bentobox.database.objects.Island;
  *
  */
 class IslandGrid {
-    private final TreeMap<Integer, TreeMap<Integer, Island>> grid = new TreeMap<>();
-    private final BentoBox plugin = BentoBox.getInstance();
+    private final TreeMap<Integer, TreeMap<Integer, String>> grid = new TreeMap<>();
+    private final IslandCache im;
+
+    /**
+     * @param im IslandsManager
+     */
+    public IslandGrid(IslandCache im) {
+        super();
+        this.im = im;
+    }
 
     /**
      * Adds island to grid
@@ -21,50 +28,23 @@ class IslandGrid {
      * @return true if successfully added, false if island already exists, or there is an overlap
      */
     public boolean addToGrid(Island island) {
+        // Check if we know about this island already
         if (grid.containsKey(island.getMinX())) {
-            TreeMap<Integer, Island> zEntry = grid.get(island.getMinX());
+            TreeMap<Integer, String> zEntry = grid.get(island.getMinX());
             if (zEntry.containsKey(island.getMinZ())) {
-                // There is an overlap or duplicate
-                plugin.logError("Cannot load island. Overlapping: " + island.getUniqueId());
-                plugin.logError("Location: " + island.getCenter());
-                // Get the previously loaded island
-                Island firstLoaded = zEntry.get(island.getMinZ());
-                if (firstLoaded.getOwner() == null && island.getOwner() != null) {
-                    // This looks fishy. We prefer to load islands that have an owner. Swap the two
-                    plugin.logError("Duplicate island has an owner, so using that one. " + island.getOwner());
-                    firstLoaded = new Island(island);
-                    zEntry.put(island.getMinZ(), firstLoaded);
-                } else if (firstLoaded.getOwner() != null && island.getOwner() != null) {
-                    // Check if the owners are the same - this is a true duplicate
-                    if (firstLoaded.getOwner().equals(island.getOwner())) {
-                        // Find out which one is the original
-                        if (firstLoaded.getCreatedDate() > island.getCreatedDate()) {
-                            plugin.logError("Same owner duplicate. Swapping based on creation date.");
-                            // FirstLoaded is the newer
-                            firstLoaded = new Island(island);
-                            zEntry.put(island.getMinZ(), firstLoaded);
-                        } else {
-                            plugin.logError("Same owner duplicate.");
-                        }
-                    } else {
-                        plugin.logError("Duplicate but different owner. Keeping first loaded.");
-                        plugin.logError("This is serious!");
-                        plugin.logError("1st loaded ID: " + firstLoaded.getUniqueId());
-                        plugin.logError("1st loaded owner: " + firstLoaded.getOwner());
-                        plugin.logError("2nd loaded ID: " + island.getUniqueId());
-                        plugin.logError("2nd loaded owner: " + island.getOwner());
-                    }
+                if (island.getUniqueId().equals(zEntry.get(island.getMinZ()))) {
+                    return true;
                 }
                 return false;
             } else {
                 // Add island
-                zEntry.put(island.getMinZ(), island);
+                zEntry.put(island.getMinZ(), island.getUniqueId());
                 grid.put(island.getMinX(), zEntry);
             }
         } else {
             // Add island
-            TreeMap<Integer, Island> zEntry = new TreeMap<>();
-            zEntry.put(island.getMinZ(), island);
+            TreeMap<Integer, String> zEntry = new TreeMap<>();
+            zEntry.put(island.getMinZ(), island.getUniqueId());
             grid.put(island.getMinX(), zEntry);
         }
         return true;
@@ -76,43 +56,59 @@ class IslandGrid {
      * @return true if island existed and was deleted, false if there was nothing to delete
      */
     public boolean removeFromGrid(Island island) {
-        // Remove from grid
-        if (island != null) {
-            int x = island.getMinX();
-            int z = island.getMinZ();
-            if (grid.containsKey(x)) {
-                TreeMap<Integer, Island> zEntry = grid.get(x);
-                if (zEntry.containsKey(z)) {
-                    // Island exists - delete it
-                    zEntry.remove(z);
-                    grid.put(x, zEntry);
-                    return true;
-                }
-            }
+        String id = island.getUniqueId();
+        boolean removed = grid.values().stream()
+                .anyMatch(innerMap -> innerMap.values().removeIf(innerValue -> innerValue.equals(id)));
+
+        grid.values().removeIf(TreeMap::isEmpty);
+
+        return removed;
+    }
+    
+    /**
+    * Retrieves the island located at the specified x and z coordinates, covering both the protected area
+    * and the full island space. Returns null if no island exists at the given location.
+    *
+    * @param x the x coordinate of the location
+    * @param z the z coordinate of the location
+    * @return the Island at the specified location, or null if no island is found
+    */
+    public Island getIslandAt(int x, int z) {
+        // Attempt to find the closest x-coordinate entry that does not exceed 'x'
+        Entry<Integer, TreeMap<Integer, String>> xEntry = grid.floorEntry(x);
+        if (xEntry == null) {
+            return null; // No x-coordinate entry found, return null
         }
-        return false;
+
+        // Attempt to find the closest z-coordinate entry that does not exceed 'z' within the found x-coordinate
+        Entry<Integer, String> zEntry = xEntry.getValue().floorEntry(z);
+        if (zEntry == null) {
+            return null; // No z-coordinate entry found, return null
+        }
+
+        // Retrieve the island using the id found in the z-coordinate entry
+        Island island = im.getIslandById(zEntry.getValue());
+        if (island == null) {
+            return null; // No island found by the id, return null
+        }
+        // Check if the specified coordinates are within the island space
+        if (island.inIslandSpace(x, z)) {
+            return island; // Coordinates are within island space, return the island
+        }
+
+        // Coordinates are outside the island space, return null
+        return null;
     }
 
     /**
-     * Returns the island at the x,z location or null if there is none.
-     * This includes the full island space, not just the protected area.
-     *
-     * @param x - x coordinate
-     * @param z - z coordinate
-     * @return Island or null
+     * @return number of islands stored in the grid
      */
-    public Island getIslandAt(int x, int z) {
-        Entry<Integer, TreeMap<Integer, Island>> en = grid.floorEntry(x);
-        if (en != null) {
-            Entry<Integer, Island> ent = en.getValue().floorEntry(z);
-            if (ent != null) {
-                // Check if in the island range
-                Island island = ent.getValue();
-                if (island.inIslandSpace(x, z)) {
-                    return island;
-                }
-            }
+    public long getSize() {
+        long count = 0;
+        for (TreeMap<Integer, String> innerMap : grid.values()) {
+            count += innerMap.size();
         }
-        return null;
+        return count;
     }
+
 }

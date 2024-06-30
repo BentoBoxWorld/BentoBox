@@ -388,21 +388,24 @@ public class Flag implements Comparable<Flag> {
         if (!user.isOp() && invisible) {
             return null;
         }
-        // Start the flag conversion
         PanelItemBuilder pib = new PanelItemBuilder()
                 .icon(ItemParser.parse(user.getTranslationOrNothing(this.getIconReference()), new ItemStack(icon)))
-                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
+                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME,
+                        user.getTranslation(getNameReference())))
                 .clickHandler(clickHandler)
                 .invisible(invisible);
         if (hasSubPanel()) {
             pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             return pib.build();
         }
+
         return switch (getType()) {
         case PROTECTION -> createProtectionFlag(plugin, user, island, pib).build();
         case SETTING -> createSettingFlag(user, island, pib).build();
         case WORLD_SETTING -> createWorldSettingFlag(user, world, pib).build();
+
         };
+
     }
 
     private PanelItemBuilder createWorldSettingFlag(User user, World world, PanelItemBuilder pib) {
@@ -429,19 +432,24 @@ public class Flag implements Comparable<Flag> {
 
     private PanelItemBuilder createProtectionFlag(BentoBox plugin, User user, Island island, PanelItemBuilder pib) {
         if (island != null) {
+            int y = island.getFlag(this);
             // Protection flag
+
             pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
                     TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
+
             RanksManager.getInstance().getRanks().forEach((reference, score) -> {
-                if (score > RanksManager.BANNED_RANK && score < island.getFlag(this)) {
+
+                if (score > RanksManager.BANNED_RANK && score < y) {
                     pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
-                } else if (score <= RanksManager.OWNER_RANK && score > island.getFlag(this)) {
+                } else if (score <= RanksManager.OWNER_RANK && score > y) {
                     pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank") + user.getTranslation(reference));
-                } else if (score == island.getFlag(this)) {
+                } else if (score == y) {
                     pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
                 }
             });
         }
+
         return pib;
     }
 
@@ -469,7 +477,7 @@ public class Flag implements Comparable<Flag> {
     public Set<Flag> getSubflags() {
         return subflags;
     }
-    
+
     /**
      * Set the name of this flag for a specified locale. This enables the flag's name to be assigned via API. It will not be stored anywhere
      * and must be rewritten using this call every time the flag is built.
@@ -482,7 +490,7 @@ public class Flag implements Comparable<Flag> {
     public boolean setTranslatedName(Locale locale, String name) {
         return BentoBox.getInstance().getLocalesManager().setTranslation(locale, getNameReference(), name);
     }
-    
+
     /**
      * Set the name of this flag for a specified locale. This enables the flag's name to be assigned via API. It will not be stored anywhere
      * and must be rewritten using this call every time the flag is built.

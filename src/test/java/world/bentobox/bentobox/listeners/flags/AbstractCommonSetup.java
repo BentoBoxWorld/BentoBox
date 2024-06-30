@@ -68,7 +68,7 @@ public abstract class AbstractCommonSetup {
     protected UUID uuid = UUID.randomUUID();
 
     @Mock
-    protected Player player;
+    protected Player mockPlayer;
     @Mock
     protected PluginManager pim;
     @Mock
@@ -94,10 +94,12 @@ public abstract class AbstractCommonSetup {
 
 
     public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        // Set up plugin
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+        when(Bukkit.getBukkitVersion()).thenReturn("");
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
 
@@ -116,15 +118,15 @@ public abstract class AbstractCommonSetup {
         when(pm.getPlayer(any(UUID.class))).thenReturn(players);
 
         // Player
-        when(player.getUniqueId()).thenReturn(uuid);
-        when(player.getLocation()).thenReturn(location);
-        when(player.getWorld()).thenReturn(world);
-        when(player.getName()).thenReturn("tastybento");
-        when(player.getInventory()).thenReturn(inv);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getLocation()).thenReturn(location);
+        when(mockPlayer.getWorld()).thenReturn(world);
+        when(mockPlayer.getName()).thenReturn("tastybento");
+        when(mockPlayer.getInventory()).thenReturn(inv);
 
         User.setPlugin(plugin);
         User.clearUsers();
-        User.getInstance(player);
+        User.getInstance(mockPlayer);
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
@@ -150,7 +152,7 @@ public abstract class AbstractCommonSetup {
 
         // Enable reporting from Flags class
         MetadataValue mdv = new FixedMetadataValue(plugin, "_why_debug");
-        when(player.getMetadata(anyString())).thenReturn(Collections.singletonList(mdv));
+        when(mockPlayer.getMetadata(anyString())).thenReturn(Collections.singletonList(mdv));
 
         // Locales & Placeholders
         LocalesManager lm = mock(LocalesManager.class);
@@ -169,6 +171,8 @@ public abstract class AbstractCommonSetup {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
+        // Util
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Util translate color codes (used in user translate methods)
         when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 

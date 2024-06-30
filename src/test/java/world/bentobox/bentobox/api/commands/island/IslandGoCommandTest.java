@@ -97,6 +97,7 @@ public class IslandGoCommandTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -138,7 +139,6 @@ public class IslandGoCommandTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
         // Event register
@@ -160,6 +160,7 @@ public class IslandGoCommandTest {
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         PowerMockito.mockStatic(Util.class);
+        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);

@@ -7,15 +7,20 @@
 package world.bentobox.bentobox.panels.customizable;
 
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import java.io.File;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -489,7 +494,7 @@ public class IslandCreationPanel
                 long uses = plugin.getIslands().getIslands(world, user).stream()
                         .filter(is -> is.getMetaData("bundle")
                                 .map(mdv -> bundle.getDisplayName().equalsIgnoreCase(mdv.asString())
-                                        && !(reset && is.isPrimary())) // If this is a reset, then ignore the use of the island being reset
+                                        && !(reset && is.isPrimary(user.getUniqueId()))) // If this is a reset, then ignore the use of the island being reset
                                 .orElse(false))
                         .count();
                 builder.description(this.user.getTranslation(BUNDLE_BUTTON_REF + "uses", TextVariables.NUMBER,

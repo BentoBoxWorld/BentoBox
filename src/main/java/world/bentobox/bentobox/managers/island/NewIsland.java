@@ -19,6 +19,7 @@ import world.bentobox.bentobox.api.events.island.IslandResetEvent;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
+import world.bentobox.bentobox.managers.IslandsManager;
 
 /**
  * Create and paste a new island
@@ -217,7 +218,7 @@ public class NewIsland {
         // Register metrics
         plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
         // Save island
-        plugin.getIslands().save(island);
+        IslandsManager.updateIsland(island);
     }
 
     /**
@@ -266,8 +267,6 @@ public class NewIsland {
                 plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("")
                         + "island.range",
                 island.getProtectionRange()));
-        // Save the player so that if the server crashes weird things won't happen
-        plugin.getPlayers().save(user.getUniqueId());
     }
 
     /**

@@ -2,23 +2,38 @@ package world.bentobox.bentobox.managers.island;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.beans.IntrospectionException;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.eclipse.jdt.annotation.NonNull;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -33,17 +48,20 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.database.AbstractDatabaseHandler;
+import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class })
-public class IslandCacheTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, DatabaseSetup.class, })
+public class IslandCacheTest extends AbstractCommonSetup {
 
-    @Mock
-    private BentoBox plugin;
+    private static AbstractDatabaseHandler<Object> handler;
     @Mock
     private World world;
     @Mock
@@ -60,10 +78,29 @@ public class IslandCacheTest {
     private Flag flag;
     @Mock
     private IslandsManager im;
+    // Database
+    Database<Island> db;
 
+    @SuppressWarnings("unchecked")
+    @BeforeClass
+    public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        // This has to be done beforeClass otherwise the tests will interfere with each
+        // other
+        handler = mock(AbstractDatabaseHandler.class);
+        // Database
+        PowerMockito.mockStatic(DatabaseSetup.class);
+        DatabaseSetup dbSetup = mock(DatabaseSetup.class);
+        when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
+        when(dbSetup.getHandler(any())).thenReturn(handler);
+        when(handler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+
+    }
+
+    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-        // Plugin
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Worlds
@@ -74,21 +111,21 @@ public class IslandCacheTest {
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(world);
+        when(Util.getWorld(any())).thenReturn(world);
 
         // Mock up IslandsManager
         when(plugin.getIslands()).thenReturn(im);
 
-        // Island
-        when(island.getWorld()).thenReturn(world);
-        @NonNull
-        String uniqueId = UUID.randomUUID().toString();
-        when(island.getUniqueId()).thenReturn(uniqueId);
         // Location
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
+
+        // Island
+        when(island.getWorld()).thenReturn(world);
+        when(island.getUniqueId()).thenReturn("uniqueId");
+        when(island.inIslandSpace(anyInt(), anyInt())).thenReturn(true);
         when(island.getCenter()).thenReturn(location);
         when(island.getOwner()).thenReturn(owner);
         when(island.isOwned()).thenReturn(true);
@@ -101,13 +138,29 @@ public class IslandCacheTest {
         when(island.getMinX()).thenReturn(-200);
         when(island.getMinZ()).thenReturn(-200);
 
+        // database must be mocked here
+        db = mock(Database.class);
+        when(db.loadObject(anyString())).thenReturn(island);
+        when(db.saveObjectAsync(any())).thenReturn(CompletableFuture.completedFuture(true));
+
         // New cache
-        ic = new IslandCache();
+        ic = new IslandCache(db);
     }
 
+    @Override
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
+        super.tearDown();
         Mockito.framework().clearInlineMocks();
+        deleteAll(new File("database"));
+        deleteAll(new File("database_backup"));
+    }
+
+    private void deleteAll(File file) throws IOException {
+        if (file.exists()) {
+            Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+        }
+
     }
 
     /**
@@ -116,9 +169,9 @@ public class IslandCacheTest {
     @Test
     public void testAddIsland() {
         assertTrue(ic.addIsland(island));
+        assertEquals(island, ic.getIslandAt(island.getCenter()));
         // Check if they are added
-        assertEquals(island, ic.get(world, owner));
-        assertEquals(island, ic.get(location));
+        assertEquals(island, ic.getIsland(world, owner));
     }
 
     /**
@@ -126,11 +179,12 @@ public class IslandCacheTest {
      */
     @Test
     public void testAddPlayer() {
+        ic.addIsland(island);
         UUID playerUUID = UUID.randomUUID();
         ic.addPlayer(playerUUID, island);
         // Check if they are added
-        assertEquals(island, ic.get(world, playerUUID));
-        assertNotSame(island, ic.get(world, UUID.randomUUID()));
+        assertEquals(island, ic.getIsland(world, playerUUID));
+        assertNotSame(island, ic.getIsland(world, UUID.randomUUID()));
 
     }
 
@@ -141,76 +195,35 @@ public class IslandCacheTest {
     public void testClear() {
         ic.addIsland(island);
         // Check if they are added
-        assertEquals(island, ic.get(world, owner));
-        assertEquals(island, ic.get(location));
+        assertEquals(island, ic.getIsland(world, owner));
         ic.clear();
-        assertNull(ic.get(world, owner));
-        assertNull(ic.get(location));
+        assertNull(ic.getIsland(world, owner));
     }
 
     /**
-     * Test for {@link IslandCache#deleteIslandFromCache(Island)}
-     */
-    @Test
-    public void testDeleteIslandFromCache() {
-        ic.addIsland(island);
-        // Check if they are added
-        assertEquals(island, ic.get(world, owner));
-        assertEquals(island, ic.get(location));
-        boolean result = ic.deleteIslandFromCache(island);
-        assertTrue(result);
-        assertNull(ic.get(world, owner));
-        assertNull(ic.get(location));
-
-        // Test removing an island that is not in the cache
-        World world = mock(World.class);
-        Island island2 = mock(Island.class);
-        Location location2 = mock(Location.class);
-        when(location2.getWorld()).thenReturn(world);
-        when(location2.getBlockX()).thenReturn(0);
-        when(location2.getBlockY()).thenReturn(0);
-        when(location2.getBlockZ()).thenReturn(0);
-        when(island2.getCenter()).thenReturn(location2);
-        when(island2.getOwner()).thenReturn(UUID.randomUUID());
-        Builder<UUID> members = new ImmutableSet.Builder<>();
-        members.add(UUID.randomUUID());
-        members.add(UUID.randomUUID());
-        members.add(UUID.randomUUID());
-        when(island2.getMemberSet()).thenReturn(members.build());
-        when(island2.getMinX()).thenReturn(-400);
-        when(island2.getMinZ()).thenReturn(-400);
-
-        assertFalse(ic.deleteIslandFromCache(island2));
-
-    }
-
-    /**
-     * Test for {@link IslandCache#get(Location)}
-     */
-    @Test
-    public void testGetLocation() {
-        ic.addIsland(island);
-        // Check if they are added
-        assertEquals(island, ic.get(location));
-    }
-
-    /**
-     * Test for {@link IslandCache#get(World, UUID)}
+     * Test for {@link IslandCache#getIsland(World, UUID)}
      */
     @Test
     public void testGetUUID() {
         ic.addIsland(island);
         // Check if they are added
-        assertEquals(island, ic.get(world, owner));
+        assertEquals(island, ic.getIsland(world, owner));
     }
 
     /**
      * Test for {@link IslandCache#getIslandAt(Location)}
+     * @throws IntrospectionException 
+     * @throws NoSuchMethodException 
+     * @throws ClassNotFoundException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     @Test
-    public void testGetIslandAtLocation() {
+    public void testGetIslandAtLocation() throws InstantiationException, IllegalAccessException,
+            InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         // Set coords to be in island space
-        when(island.inIslandSpace(Mockito.any(Integer.class), Mockito.any(Integer.class))).thenReturn(true);
+        when(island.inIslandSpace(any(Integer.class), any(Integer.class))).thenReturn(true);
         // Set plugin
         Util.setPlugin(plugin);
         ic.addIsland(island);
@@ -218,45 +231,15 @@ public class IslandCacheTest {
         // Check exact match for location
         assertEquals(island, ic.getIslandAt(island.getCenter()));
 
-
         Location location2 = mock(Location.class);
         when(location2.getWorld()).thenReturn(world);
         when(location2.getBlockX()).thenReturn(10);
         when(location2.getBlockY()).thenReturn(10);
         when(location2.getBlockZ()).thenReturn(10);
 
-
         assertEquals(island, ic.getIslandAt(location2));
-        when(island.inIslandSpace(Mockito.any(Integer.class), Mockito.any(Integer.class))).thenReturn(false);
+        when(island.inIslandSpace(any(Integer.class), any(Integer.class))).thenReturn(false);
         assertNull(ic.getIslandAt(location2));
-    }
-
-    /**
-     * Test for {@link IslandCache#getMembers(World, UUID, int)}
-     */
-    @Test
-    public void testGetMembers() {
-        ic.addIsland(island);
-        /*
-         * assertTrue(ic.getMembers(world, null, RanksManager.MEMBER_RANK).isEmpty());
-         * assertTrue(ic.getMembers(world, UUID.randomUUID(),
-         * RanksManager.MEMBER_RANK).isEmpty()); assertFalse(ic.getMembers(world,
-         * island.getOwner(), RanksManager.MEMBER_RANK).isEmpty()); assertEquals(3,
-         * ic.getMembers(world, island.getOwner(), RanksManager.MEMBER_RANK).size());
-         */
-    }
-
-    /**
-     * Test for {@link IslandCache#getOwner(World, UUID)}
-     */
-    @Test
-    public void testGetOwner() {
-        ic.addIsland(island);
-        // Should be no owner, so null
-        /*
-         * assertEquals(owner, ic.getOwner(world, owner)); assertNull(ic.getOwner(world,
-         * UUID.randomUUID()));
-         */
     }
 
     /**
@@ -303,8 +286,7 @@ public class IslandCacheTest {
         ic.setOwner(island, newOwnerUUID);
 
         Mockito.verify(island).setOwner(newOwnerUUID);
-        assertEquals(island, ic.get(world, newOwnerUUID));
-        assertEquals(island, ic.get(island.getCenter()));
+        assertEquals(island, ic.getIsland(world, newOwnerUUID));
     }
 
     /**
@@ -324,7 +306,164 @@ public class IslandCacheTest {
     @Test
     public void testResetAllFlags() {
         ic.addIsland(island);
+        BukkitScheduler scheduler = mock(BukkitScheduler.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        when(Bukkit.getScheduler()).thenReturn(scheduler);
         ic.resetAllFlags(world);
-        verify(island).setFlagsDefaults();
+
+        verify(scheduler).runTaskAsynchronously(eq(plugin), any(Runnable.class));
     }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#IslandCache(world.bentobox.bentobox.database.Database)}.
+     */
+    @Test
+    public void testIslandCache() {
+        assertNotNull(ic);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#updateIsland(world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    public void testUpdateIsland() {
+        // Add island to cache
+        ic.setIslandById(island);
+        // Copy island
+        Island newIsland = mock(Island.class);
+        when(newIsland.getUniqueId()).thenReturn("uniqueId");
+        when(newIsland.getMembers()).thenReturn(Map.of()); // no members
+
+        ic.updateIsland(newIsland);
+        verify(plugin, never()).logError(anyString());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#deleteIslandFromCache(world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    public void testDeleteIslandFromCacheIsland() {
+        // Fill the cache
+        ic.addIsland(island);
+        ic.setIslandById(island);
+        // Remove it
+        ic.deleteIslandFromCache(island);
+        // TODO need to verify
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#deleteIslandFromCache(java.lang.String)}.
+     */
+    @Test
+    public void testDeleteIslandFromCacheString() {
+        // Fill the cache
+        ic.addIsland(island);
+        ic.setIslandById(island);
+
+        ic.deleteIslandFromCache("uniqueId");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIsland(org.bukkit.World, java.util.UUID)}.
+     */
+    @Test
+    public void testGetIsland() {
+        assertNull(ic.getIsland(world, owner));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands(org.bukkit.World, java.util.UUID)}.
+     */
+    @Test
+    public void testGetIslandsWorldUUID() {
+        assertNull(ic.getIsland(world, this.owner));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#setPrimaryIsland(java.util.UUID, world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    public void testSetPrimaryIsland() {
+        ic.setPrimaryIsland(owner, island);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslandAt(org.bukkit.Location)}.
+     */
+    @Test
+    public void testGetIslandAt() {
+        ic.addIsland(island);
+        ic.setIslandById(island);
+        assertEquals(island, ic.getIslandAt(location));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands()}.
+     */
+    @Test
+    public void testGetIslands() {
+        assertTrue(ic.getIslands().isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands(org.bukkit.World)}.
+     */
+    @Test
+    public void testGetIslandsWorld() {
+        assertTrue(ic.getIslands(world).isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#removePlayer(org.bukkit.World, java.util.UUID)}.
+     */
+    @Test
+    public void testRemovePlayerWorldUUID() {
+        assertTrue(ic.getIslands(owner).isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#removePlayer(world.bentobox.bentobox.database.objects.Island, java.util.UUID)}.
+     */
+    @Test
+    public void testRemovePlayerIslandUUID() {
+        ic.addIsland(island);
+        ic.setIslandById(island);
+        ic.removePlayer(island, owner);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#size(org.bukkit.World)}.
+     */
+    @Test
+    public void testSizeWorld() {
+        assertEquals(0, ic.size(world));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslandById(java.lang.String)}.
+     */
+    @Test
+    public void testGetIslandById() {
+        ic.addIsland(island);
+        ic.setIslandById(island);
+
+        assertEquals(island, ic.getIslandById("uniqueId"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getAllIslandIds()}.
+     */
+    @Test
+    public void testGetAllIslandIds() {
+        assertTrue(ic.getAllIslandIds().isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands(java.util.UUID)}.
+     */
+    @Test
+    public void testGetIslandsUUID() {
+        assertTrue(ic.getIslands(owner).isEmpty());
+    }
+
 }

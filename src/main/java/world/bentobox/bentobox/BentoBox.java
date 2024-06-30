@@ -25,6 +25,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.hooks.ItemsAdderHook;
+import world.bentobox.bentobox.hooks.MultipaperHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.MyWorldsHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
@@ -37,6 +38,7 @@ import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.listeners.PrimaryIslandListener;
+import world.bentobox.bentobox.listeners.SeedWorldMakerListener;
 import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
 import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
 import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
@@ -102,6 +104,8 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable(){
+        setInstance(this);
+
         if (!ServerCompatibility.getInstance().checkCompatibility().isCanLaunch()) {
             // The server's most likely incompatible.
             // Show a warning
@@ -123,7 +127,6 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // Save the default config from config.yml
         saveDefaultConfig();
-        setInstance(this);
         // Load Flags
         flagsManager = new FlagsManager(this);
 
@@ -184,6 +187,9 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     private void completeSetup(long loadTime) {
         final long enableStart = System.currentTimeMillis();
+
+        hooksManager.registerHook(new MultipaperHook());
+
         hooksManager.registerHook(new VaultHook());
 
         // MythicMobs
@@ -209,20 +215,6 @@ public class BentoBox extends JavaPlugin implements Listener {
             fireCriticalError(e.getMessage(), "Could not load islands!");
             return;
         }
-
-        // Save islands & players data every X minutes
-        Bukkit.getScheduler().runTaskTimer(instance, () -> {
-            if (!playersManager.isSaveTaskRunning()) {
-                playersManager.saveAll(true);
-            } else {
-                getLogger().warning("Tried to start a player data save task while the previous auto save was still running!");
-            }
-            if (!islandsManager.isSaveTaskRunning()) {
-                islandsManager.saveAll(true);
-            } else {
-                getLogger().warning("Tried to start a island data save task while the previous auto save was still running!");
-            }
-        }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
 
         // Make sure all flag listeners are registered.
         flagsManager.registerListeners();
@@ -323,6 +315,8 @@ public class BentoBox extends JavaPlugin implements Listener {
         manager.registerEvents(islandDeletionManager, this);
         // Primary Island Listener
         manager.registerEvents(new PrimaryIslandListener(this), this);
+        // Seed world chunk generator
+        manager.registerEvents(new SeedWorldMakerListener(this), this);
     }
 
     @Override
@@ -433,7 +427,7 @@ public class BentoBox extends JavaPlugin implements Listener {
      * @return the ranksManager
      * @deprecated Just use {@code RanksManager.getInstance()}
      */
-    @Deprecated(since = "2.0.0")
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public RanksManager getRanksManager() {
         return RanksManager.getInstance();
     }

@@ -44,8 +44,16 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         List<T> listTo = toHandler.loadObjects();
         // If source database has objects, then delete and save them in the destination database
         for (T object : listFrom) {
-            toHandler.saveObject(object);
-            fromHandler.deleteObject(object);
+            toHandler.saveObject(object).thenAccept(b -> {
+                // Only delete if save was successful
+                if (b) {
+                    try {
+                        fromHandler.deleteObject(object);
+                    } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+                        plugin.logStacktrace(e);
+                    }
+                }
+            });
         }
         // Merge results
         listTo.addAll(listFrom);

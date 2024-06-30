@@ -17,6 +17,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import com.google.common.base.Enums;
+import com.google.common.base.Optional;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
@@ -28,7 +29,6 @@ import world.bentobox.bentobox.lists.Flags;
  *
  */
 public class BreedingListener extends FlagListener {
-
     /**
      * A list of items that cause breeding if a player has them in their hand and they click an animal
      * This list may need to be extended with future versions of Minecraft.
@@ -41,7 +41,10 @@ public class BreedingListener extends FlagListener {
         bi.put(EntityType.HORSE, Arrays.asList(Material.GOLDEN_APPLE, Material.GOLDEN_CARROT));
         bi.put(EntityType.DONKEY, Arrays.asList(Material.GOLDEN_APPLE, Material.GOLDEN_CARROT));
         bi.put(EntityType.COW, Collections.singletonList(Material.WHEAT));
-        bi.put(EntityType.MUSHROOM_COW, Collections.singletonList(Material.WHEAT));
+        Optional<EntityType> mc = Enums.getIfPresent(EntityType.class, "MUSHROOM_COW");
+        if (mc.isPresent()) {
+            bi.put(mc.get(), Collections.singletonList(Material.WHEAT));
+        }
         bi.put(EntityType.SHEEP, Collections.singletonList(Material.WHEAT));
         bi.put(EntityType.PIG, Arrays.asList(Material.CARROT, Material.POTATO, Material.BEETROOT));
         bi.put(EntityType.CHICKEN, Arrays.asList(Material.WHEAT_SEEDS, Material.PUMPKIN_SEEDS, Material.MELON_SEEDS, Material.BEETROOT_SEEDS));

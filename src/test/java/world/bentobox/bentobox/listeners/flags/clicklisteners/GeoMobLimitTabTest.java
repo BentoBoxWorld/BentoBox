@@ -76,7 +76,9 @@ public class GeoMobLimitTabTest {
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getAddon(any())).thenReturn(Optional.of(gma));
+        // Make  list of the first 4 creatures on the list - it's alphabetical and follows the list of Living Entities
         list = new ArrayList<>();
+        list.add("ARMADILLO");
         list.add("AXOLOTL");
         list.add("BAT");
         list.add("COW");
@@ -102,24 +104,27 @@ public class GeoMobLimitTabTest {
     @Test
     public void testOnClick() {
         GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
-        // AXOLOTL, BAT, and COW in list
+        // ARMADILLO, AXOLOTL, BAT, and COW in list
+        assertEquals(4, list.size());
+        assertEquals("COW", list.get(3));
+        assertEquals("BAT", list.get(2));
+        assertEquals("AXOLOTL", list.get(1));
+        assertEquals("ARMADILLO", list.get(0));
+
+        // Click on ARMADILLO
+        tab.onClick(panel, user, ClickType.LEFT, 10);
+        list.forEach(System.out::println);
         assertEquals(3, list.size());
         assertEquals("COW", list.get(2));
         assertEquals("BAT", list.get(1));
         assertEquals("AXOLOTL", list.get(0));
-
-        // Click on AXOLOTL
+        // Click on ARMADILLO again to have it added to the end of the list
         tab.onClick(panel, user, ClickType.LEFT, 10);
-        list.forEach(System.out::println);
-        assertEquals(2, list.size());
-        assertEquals("COW", list.get(1));
-        assertEquals("BAT", list.get(0));
-        // Click on AXOLOTL again to have it added
-        tab.onClick(panel, user, ClickType.LEFT, 10);
-        assertEquals(3, list.size());
-        assertEquals("BAT", list.get(0));
-        assertEquals("COW", list.get(1));
-        assertEquals("AXOLOTL", list.get(2));
+        assertEquals(4, list.size());
+        assertEquals("COW", list.get(2));
+        assertEquals("BAT", list.get(1));
+        assertEquals("AXOLOTL", list.get(0));
+        assertEquals("ARMADILLO", list.get(3));
         verify(gma, times(2)).saveWorldSettings();
     }
 
@@ -165,7 +170,8 @@ public class GeoMobLimitTabTest {
         List<@Nullable PanelItem> items = tab.getPanelItems();
         assertFalse(items.isEmpty());
         items.forEach(i -> {
-            if (i.getName().equals("Axolotl") || i.getName().equals("Cow") || i.getName().equals("Bat")) {
+            if (i.getName().equals("Armadillo") || i.getName().equals("Axolotl") || i.getName().equals("Cow")
+                    || i.getName().equals("Bat")) {
                 assertEquals("Name : " + i.getName(), Material.RED_SHULKER_BOX, i.getItem().getType());
             } else {
                 assertEquals("Name : " + i.getName(), Material.GREEN_SHULKER_BOX, i.getItem().getType());
@@ -182,7 +188,8 @@ public class GeoMobLimitTabTest {
         List<@Nullable PanelItem> items = tab.getPanelItems();
         assertFalse(items.isEmpty());
         items.forEach(i -> {
-            if (i.getName().equals("Axolotl") || i.getName().equals("Cow") || i.getName().equals("Bat")) {
+            if (i.getName().equals("Armadillo") || i.getName().equals("Axolotl") || i.getName().equals("Cow")
+                    || i.getName().equals("Bat")) {
                 assertEquals("Name : " + i.getName(), Material.GREEN_SHULKER_BOX, i.getItem().getType());
             } else {
                 assertEquals("Name : " + i.getName(), Material.RED_SHULKER_BOX, i.getItem().getType());

@@ -1,9 +1,13 @@
 package world.bentobox.bentobox.api.commands.admin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
@@ -15,6 +19,9 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminDeleteCommand extends ConfirmableCommand {
+
+    private @Nullable UUID targetUUID;
+    private Island island;
 
     public AdminDeleteCommand(CompositeCommand parent) {
         super(parent, "delete");
@@ -29,56 +36,93 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        if (args.size() != 1) {
-            showHelp(this, user);
+        if (args.isEmpty()) {
+            this.showHelp(this, user);
             return false;
         }
-        // Get target
-        UUID targetUUID = Util.getUUID(args.get(0));
+        // Convert name to a UUID
+        targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        Island island = getIslands().getIsland(getWorld(), user);
-        if (island == null) {
+        // Check island exists
+        if (!getIslands().hasIsland(getWorld(), targetUUID) && !getIslands().inTeam(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
 
+        if (args.size() == 1) {
+            // Check if player is owner of any islands
+            if (getIslands().getIslands(getWorld(), targetUUID).stream().filter(Island::hasTeam)
+                    .anyMatch(is -> targetUUID.equals(is.getOwner()))) {
+                user.sendMessage("commands.admin.delete.cannot-delete-owner");
+                return false;
+            }
+            // This is a delete everything request
+            return true;
+        }
+
+        // Get the island
+        User target = User.getInstance(targetUUID);
+        // They named the island to go to
+        Map<String, IslandInfo> names = getNameIslandMap(target);
+        final String name = String.join(" ", args.subList(1, args.size()));
+        if (!names.containsKey(name)) {
+            // Failed home name check
+            user.sendMessage("commands.island.go.unknown-home");
+            user.sendMessage("commands.island.sethome.homes-are");
+            names.keySet()
+                    .forEach(n -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, n));
+            return false;
+        } else {
+            IslandInfo info = names.get(name);
+            island = info.island;
+        }
+
         // Team members should be kicked before deleting otherwise the whole team will become weird
-        if (island.hasTeam() && user.getUniqueId().equals(island.getOwner())) {
+        if (island.hasTeam() && targetUUID.equals(island.getOwner())) {
             user.sendMessage("commands.admin.delete.cannot-delete-owner");
             return false;
+        }
+        if (names.size() == 1) {
+            // This is the only island they have so, no need to specify it
+            island = null;
         }
         return true;
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // Get target
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
         // Confirm
-        askConfirmation(user, () -> deletePlayer(user, targetUUID));
+        if (island == null) {
+            // Delete the player entirely
+            askConfirmation(user, () -> deletePlayer(user));
+        } else {
+            // Just delete the player's island
+            askConfirmation(user, () -> deleteIsland(user, island));
+        }
         return true;
     }
 
-    private void deletePlayer(User user, UUID targetUUID) {
+    private void deleteIsland(User user, Island oldIsland) {
+        // Fire island preclear event
+        IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
+                .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
+        user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ,
+                Util.xyz(oldIsland.getCenter().toVector()));
+        getIslands().deleteIsland(oldIsland, true, targetUUID);
+
+    }
+
+    private void deletePlayer(User user) {
         // Delete player and island
         for (Island oldIsland : getIslands().getIslands(getWorld(), targetUUID)) {
-            // Fire island preclear event
-            IslandEvent.builder()
-            .involvedPlayer(user.getUniqueId())
-            .reason(Reason.PRECLEAR)
-            .island(oldIsland)
-            .oldIsland(oldIsland)
-            .location(oldIsland.getCenter())
-            .build();
-            user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ, Util.xyz(oldIsland.getCenter().toVector()));
-            getIslands().deleteIsland(oldIsland, true, targetUUID);
+            deleteIsland(user, oldIsland);
         }
         // Check if player is online and on the island
         User target = User.getInstance(targetUUID);
-        // Remove them from this island (it still exists and will be deleted later)
+        // Remove target from any and all islands in the world
         getIslands().removePlayer(getWorld(), targetUUID);
         if (target.isPlayer() && target.isOnline()) {
             cleanUp(target);
@@ -120,6 +164,31 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         Util.runCommands(target, target.getName(), getIWM().getOnLeaveCommands(getWorld()), "leave");
     }
 
+    private record IslandInfo(Island island, boolean islandName) {
+    }
+
+    private Map<String, IslandInfo> getNameIslandMap(User target) {
+        Map<String, IslandInfo> islandMap = new HashMap<>();
+        int index = 0;
+        for (Island island : getIslands().getIslands(getWorld(), target.getUniqueId())) {
+            index++;
+            if (island.getName() != null && !island.getName().isBlank()) {
+                // Name has been set
+                islandMap.put(island.getName(), new IslandInfo(island, true));
+            } else {
+                // Name has not been set
+                String text = target.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
+                        target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName()) + " " + index;
+                islandMap.put(text, new IslandInfo(island, true));
+            }
+            // Add homes. Homes do not need an island specified
+            island.getHomes().keySet().forEach(n -> islandMap.put(n, new IslandInfo(island, false)));
+        }
+
+        return islandMap;
+
+    }
+
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
@@ -127,7 +196,16 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
         }
-        List<String> options = new ArrayList<>(Util.getOnlinePlayerList(user));
-        return Optional.of(Util.tabLimit(options, lastArg));
+        if (args.size() == 2) {
+            return Optional.of(Util.tabLimit(new ArrayList<>(Util.getOnlinePlayerList(user)), lastArg));
+        }
+        if (args.size() == 3) {
+            UUID target = Util.getUUID(args.get(1));
+            return target == null ? Optional.empty()
+                    : Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(User.getInstance(target)).keySet()),
+                            lastArg));
+        }
+        return Optional.empty();
     }
+
 }

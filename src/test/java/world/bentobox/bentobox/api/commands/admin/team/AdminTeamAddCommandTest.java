@@ -42,6 +42,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -62,11 +63,15 @@ public class AdminTeamAddCommandTest {
     private UUID notUUID;
     @Mock
     private Island island;
+    @Mock
+    private PlaceholdersManager phm;
 
     /**
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -112,7 +117,6 @@ public class AdminTeamAddCommandTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
         // Plugin Manager
         PluginManager pim = mock(PluginManager.class);
@@ -122,6 +126,8 @@ public class AdminTeamAddCommandTest {
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(any(), any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
+        when(plugin.getPlaceholdersManager()).thenReturn(phm);
+        when(phm.replacePlaceholders(any(), any())).thenReturn("mock translation");
 
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
@@ -317,7 +323,7 @@ public class AdminTeamAddCommandTest {
         // Success
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         verify(im).setJoinTeam(eq(island), eq(notUUID));
-        verify(user).sendMessage("commands.admin.team.add.success", TextVariables.NAME, name[1], "[owner]", name[0]);
+        verify(user).sendMessage("commands.admin.team.add.success", TextVariables.NAME, "", "[owner]", "");
     }
 
 }

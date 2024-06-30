@@ -7,16 +7,21 @@
 package world.bentobox.bentobox.panels.customizable;
 
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import java.io.File;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;

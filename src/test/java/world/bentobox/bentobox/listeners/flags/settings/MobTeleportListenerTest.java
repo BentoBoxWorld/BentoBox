@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -34,7 +35,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class })
 public class MobTeleportListenerTest {
 
     @Mock
@@ -62,6 +63,7 @@ public class MobTeleportListenerTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         PowerMockito.mockStatic(BentoBox.class, Mockito.RETURNS_MOCKS);

@@ -58,7 +58,7 @@ import world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport.PositionDat
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Util.class, Bukkit.class})
+@PrepareForTest({ Util.class, Bukkit.class, IslandsManager.class })
 public class ClosestSafeSpotTeleportTest {
 
     // Class under test
@@ -102,6 +102,11 @@ public class ClosestSafeSpotTeleportTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+
+        // IslandsManager static
+        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+
         // Setup instance
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // IWM
@@ -144,7 +149,6 @@ public class ClosestSafeSpotTeleportTest {
 
         // Bukkit scheduler
         when(scheduler.runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong())).thenReturn(task);
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
 
         // DUT

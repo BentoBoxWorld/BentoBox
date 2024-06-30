@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -77,9 +78,12 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(block.getWorld()).thenReturn(world);
 
         // Entity
-        when(entity.getType()).thenReturn(EntityType.PRIMED_TNT);
+        when(entity.getType()).thenReturn(EntityType.TNT);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getLocation()).thenReturn(location);
+
+        // Util
+        when(Util.findFirstMatchingEnum(any(), anyString())).thenCallRealMethod();
 
         listener = new TNTListener();
         listener.setPlugin(plugin);
@@ -94,7 +98,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(clickedBlock.getLocation()).thenReturn(location);
         ItemStack item = new ItemStack(Material.FLINT_AND_STEEL);
         Action action = Action.RIGHT_CLICK_BLOCK;
-        PlayerInteractEvent e = new PlayerInteractEvent(player , action, item, clickedBlock, clickedFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer , action, item, clickedBlock, clickedFace);
 
         listener.onTNTPriming(e);
         assertEquals(Result.DENY, e.useInteractedBlock());
@@ -151,7 +155,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         // Block on fire
         when(block.getType()).thenReturn(Material.TNT);
         // Entity is not a projectile
-        EntityChangeBlockEvent e = new EntityChangeBlockEvent(player, block, Material.AIR.createBlockData());
+        EntityChangeBlockEvent e = new EntityChangeBlockEvent(mockPlayer, block, Material.AIR.createBlockData());
         listener.onTNTDamage(e);
         assertFalse(e.isCancelled());
 
@@ -162,7 +166,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(block.getType()).thenReturn(Material.TNT);
         // Out of world
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        EntityChangeBlockEvent e = new EntityChangeBlockEvent(player, block, Material.AIR.createBlockData());
+        EntityChangeBlockEvent e = new EntityChangeBlockEvent(mockPlayer, block, Material.AIR.createBlockData());
         listener.onTNTDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -172,7 +176,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(block.getType()).thenReturn(Material.OBSIDIAN);
         // Out of world
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        EntityChangeBlockEvent e = new EntityChangeBlockEvent(player, block, Material.AIR.createBlockData());
+        EntityChangeBlockEvent e = new EntityChangeBlockEvent(mockPlayer, block, Material.AIR.createBlockData());
         listener.onTNTDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -204,7 +208,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         // Entity is an arrow
         Arrow arrow = mock(Arrow.class);
         // Shooter is a player
-        when(arrow.getShooter()).thenReturn(player);
+        when(arrow.getShooter()).thenReturn(mockPlayer);
         // Not fire arrow
         when(arrow.getFireTicks()).thenReturn(0);
 
@@ -223,7 +227,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         // Entity is an arrow
         Arrow arrow = mock(Arrow.class);
         // Shooter is a player
-        when(arrow.getShooter()).thenReturn(player);
+        when(arrow.getShooter()).thenReturn(mockPlayer);
         // Fire arrow
         when(arrow.getFireTicks()).thenReturn(10);
 
@@ -242,7 +246,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         // Entity is an arrow
         Arrow arrow = mock(Arrow.class);
         // Shooter is a player
-        when(arrow.getShooter()).thenReturn(player);
+        when(arrow.getShooter()).thenReturn(mockPlayer);
         // Fire arrow
         when(arrow.getFireTicks()).thenReturn(10);
         // Allowed on island
@@ -265,7 +269,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         // Entity is an arrow
         Arrow arrow = mock(Arrow.class);
         // Shooter is a player
-        when(arrow.getShooter()).thenReturn(player);
+        when(arrow.getShooter()).thenReturn(mockPlayer);
         // Fire arrow
         when(arrow.getFireTicks()).thenReturn(10);
 
@@ -286,7 +290,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         // Entity is an arrow
         Arrow arrow = mock(Arrow.class);
         // Shooter is a player
-        when(arrow.getShooter()).thenReturn(player);
+        when(arrow.getShooter()).thenReturn(mockPlayer);
         // Fire arrow
         when(arrow.getFireTicks()).thenReturn(10);
 
@@ -299,7 +303,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
 
     @Test
     public void testOnEntityExplosion() {
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, null,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION, null,
                 20D);
         listener.onExplosion(e);
         assertTrue(e.isCancelled());
@@ -310,7 +314,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         Flags.WORLD_TNT_DAMAGE.setDefaultSetting(false);
         assertFalse(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, null,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION, null,
                 20D);
         listener.onExplosion(e);
         assertTrue(e.isCancelled());
@@ -321,7 +325,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         Flags.WORLD_TNT_DAMAGE.setDefaultSetting(true);
         assertTrue(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, null,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION, null,
                 20D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
@@ -330,7 +334,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnEntityExplosionWrongWorld() {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, null,
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION, null,
                 20D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
