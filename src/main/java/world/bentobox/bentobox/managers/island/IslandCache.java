@@ -445,7 +445,7 @@ public class IslandCache {
     }
 
     /**
-     * Get the island by unique id
+     * Get the island by unique id. The Island will be cached if it is not already.
      * 
      * @param uniqueId unique id of the Island.
      * @return island or null if none found
@@ -477,6 +477,16 @@ public class IslandCache {
             islandsById.put(uniqueId, island);
         }
         return island;
+    }
+
+    /**
+     * Removes the island from the cache to ensure it is reloaded from the database next time.
+     * @param uniqueId unique id of the Island.
+     * @return true if the island was in the cache, false otherwise.
+     * @since 2.4.1
+     */
+    public boolean expireIslandById(@NonNull String uniqueId) {
+        return islandsById.containsKey(uniqueId) && islandsById.put(uniqueId, null) != null;
     }
 
     /**
@@ -538,6 +548,15 @@ public class IslandCache {
      */
     public boolean isIslandId(String uniqueId) {
         return this.islandsById.containsKey(uniqueId);
+    }
+
+    /**
+     * Returns if this island is cached. 
+     * @param uniqueId - unique id of island
+     * @return true if this island is caches, false if not, or if the island is unknown
+     */
+    public boolean isIslandCached(String uniqueId) {
+        return islandsById.get(uniqueId) != null;
     }
 
 }

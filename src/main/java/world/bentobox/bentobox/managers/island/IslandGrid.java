@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.managers.island;
 
 import java.util.Map.Entry;
+
 import java.util.TreeMap;
 
 import world.bentobox.bentobox.database.objects.Island;
@@ -33,8 +34,10 @@ class IslandGrid {
             TreeMap<Integer, String> zEntry = grid.get(island.getMinX());
             if (zEntry.containsKey(island.getMinZ())) {
                 if (island.getUniqueId().equals(zEntry.get(island.getMinZ()))) {
+                    // If it is the same island then it's okay
                     return true;
                 }
+                // Island overlap, report error
                 return false;
             } else {
                 // Add island

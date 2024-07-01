@@ -140,7 +140,7 @@ public class IslandCacheTest extends AbstractCommonSetup {
 
         // database must be mocked here
         db = mock(Database.class);
-        when(db.loadObject(anyString())).thenReturn(island);
+        when(db.loadObject("uniqueId")).thenReturn(island);
         when(db.saveObjectAsync(any())).thenReturn(CompletableFuture.completedFuture(true));
 
         // New cache
@@ -346,9 +346,13 @@ public class IslandCacheTest extends AbstractCommonSetup {
         // Fill the cache
         ic.addIsland(island);
         ic.setIslandById(island);
+        assertTrue(ic.isIslandCached("uniqueId"));
+
         // Remove it
         ic.deleteIslandFromCache(island);
-        // TODO need to verify
+
+        // verify
+        assertFalse(ic.isIslandCached("uniqueId"));
     }
 
     /**
@@ -464,6 +468,149 @@ public class IslandCacheTest extends AbstractCommonSetup {
     @Test
     public void testGetIslandsUUID() {
         assertTrue(ic.getIslands(owner).isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    public void testAddIslandIslandNullWorld() {
+        // Null world
+        when(island.getWorld()).thenReturn(null);
+        assertFalse(ic.addIsland(island));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    public void testAddIslandIslandNullCenter() {
+        // Try to add an island with a null center
+        when(island.getCenter()).thenReturn(null);
+        assertFalse(ic.addIsland(island));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    public void testAddIslandIslandDuplicate() {
+        assertTrue(ic.addIsland(island));
+        assertTrue(ic.addIsland(island)); // Okay to add
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island, boolean)}.
+     */
+    @Test
+    public void testAddIslandIslandBooleanNullWorld() {
+        // Null world
+        when(island.getWorld()).thenReturn(null);
+        assertFalse(ic.addIsland(island, true));
+        assertFalse(ic.isIslandCached("uniqueId"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island, boolean)}.
+     */
+    @Test
+    public void testAddIslandIslandBooleanNullCenter() {
+        // Try to add an island with a null center
+        when(island.getCenter()).thenReturn(null);
+        assertFalse(ic.addIsland(island, true));
+        assertFalse(ic.isIslandCached("uniqueId"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island, boolean)}.
+     */
+    @Test
+    public void testAddIslandIslandBooleanDuplicate() {
+        // Duplicate
+        assertTrue(ic.addIsland(island, true));
+        assertTrue(ic.addIsland(island, true));
+        // Overlapping
+        Island island2 = mock(Island.class);
+        when(island2.getUniqueId()).thenReturn("different");
+        assertFalse(ic.addIsland(island2, true));
+    }
+
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#loadIsland(java.lang.String)}.
+     */
+    @Test
+    public void testLoadIsland() {
+        assertNull(ic.loadIsland(""));
+        assertNotNull(ic.loadIsland("uniqueId"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getCachedIslands()}.
+     */
+    @Test
+    public void testGetCachedIslands() {
+        assertTrue(ic.getCachedIslands().isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslandById(java.lang.String)}.
+     */
+    @Test
+    public void testGetIslandByIdString() {
+        assertNotNull(ic.getIslandById("uniqueId"));
+        assertTrue(ic.isIslandCached("uniqueId"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslandById(java.lang.String, boolean)}.
+     */
+    @Test
+    public void testGetIslandByIdStringBoolean() {
+        assertNotNull(ic.getIslandById("uniqueId", false));
+        assertFalse(ic.isIslandCached("uniqueId"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#expireIslandById(java.lang.String)}.
+     */
+    @Test
+    public void testExpireIslandById() {
+        // Fill the cache
+        ic.addIsland(island);
+        ic.setIslandById(island);
+        assertTrue(ic.isIslandCached("uniqueId"));
+        // Remove it
+        ic.expireIslandById("uniqueId");
+        // verify
+        assertFalse(ic.isIslandCached("uniqueId"));
+
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#setIslandById(world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    public void testSetIslandById() {
+        assertFalse(ic.isIslandId("uniqueId"));
+        ic.setIslandById(island);
+        assertTrue(ic.isIslandId("uniqueId"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#isIslandId(java.lang.String)}.
+     */
+    @Test
+    public void testIsIslandId() {
+        assertFalse(ic.isIslandId("uniqueId"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#isIslandCached(java.lang.String)}.
+     */
+    @Test
+    public void testIsIslandCached() {
+        assertFalse(ic.isIslandCached("uniqueId"));
     }
 
 }
