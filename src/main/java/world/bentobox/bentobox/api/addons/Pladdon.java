@@ -32,6 +32,14 @@ public abstract class Pladdon extends JavaPlugin {
         }
     }
 
+    @Override
+    public void onDisable() {
+        Addon addon = getAddon();
+        if (addon != null) {
+            addon.onDisable();
+        }
+    }
+
     protected void moveJar() {
         getLogger().severe(getFile().getName() + " must be in the " + ADDONS_FOLDER + " folder! Trying to move it there...");
         File addons = new File(getFile().getParent(), ADDONS_FOLDER);
