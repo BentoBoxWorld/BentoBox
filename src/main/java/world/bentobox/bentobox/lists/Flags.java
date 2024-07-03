@@ -283,7 +283,7 @@ public final class Flags {
     public static final Flag HURT_ANIMALS = new Flag.Builder("HURT_ANIMALS", Material.STONE_SWORD).listener(new HurtingListener()).mode(Flag.Mode.ADVANCED).build();
     public static final Flag HURT_MONSTERS = new Flag.Builder("HURT_MONSTERS", Material.WOODEN_SWORD).mode(Flag.Mode.BASIC).build();
     public static final Flag HURT_VILLAGERS = new Flag.Builder("HURT_VILLAGERS", Material.GOLDEN_SWORD).mode(Flag.Mode.ADVANCED).build();
-    public static final Flag HURT_TAMED_ANIMALS = new Flag.Builder("HURT_TAMABLE_ENTITIES", Material.DIAMOND_SWORD).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag HURT_TAMED_ANIMALS = new Flag.Builder("HURT_TAMED_ANIMALS", Material.DIAMOND_SWORD).mode(Flag.Mode.ADVANCED).build();
 
     // Leashes
     public static final Flag LEASH = new Flag.Builder("LEASH", Material.LEAD).listener(new LeashListener()).build();
