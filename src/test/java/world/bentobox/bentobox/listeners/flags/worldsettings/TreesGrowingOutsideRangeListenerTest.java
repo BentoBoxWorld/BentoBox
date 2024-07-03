@@ -45,7 +45,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
  * @author Poslovitch
  * @since 1.3.0
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ BentoBox.class, Bukkit.class })
 public class TreesGrowingOutsideRangeListenerTest {
 

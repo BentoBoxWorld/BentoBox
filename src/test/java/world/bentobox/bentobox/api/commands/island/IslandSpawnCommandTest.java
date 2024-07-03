@@ -52,7 +52,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class})
 public class IslandSpawnCommandTest {
 

@@ -58,7 +58,7 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, RanksManager.class })
 public class CycleClickTest {
 

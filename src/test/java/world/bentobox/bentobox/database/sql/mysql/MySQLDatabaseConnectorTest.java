@@ -30,7 +30,7 @@ import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class, DriverManager.class })
 public class MySQLDatabaseConnectorTest {
 

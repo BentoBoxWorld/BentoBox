@@ -39,7 +39,7 @@ import io.lumine.mythic.core.mobs.MobExecutor;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.MythicMobRecord;
 
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ BentoBox.class, Bukkit.class, MythicBukkit.class })
 public class MythicMobsHookTest {
 

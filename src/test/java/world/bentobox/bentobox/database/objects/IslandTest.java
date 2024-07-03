@@ -54,7 +54,7 @@ import world.bentobox.bentobox.util.Pair;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class, IslandsManager.class })
 public class IslandTest {
 

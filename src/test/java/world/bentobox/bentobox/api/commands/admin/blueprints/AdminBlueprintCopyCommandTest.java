@@ -11,6 +11,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -43,8 +45,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@RunWith(MockitoJUnitRunner.class)
 public class AdminBlueprintCopyCommandTest {
 
     @Mock
@@ -66,7 +67,11 @@ public class AdminBlueprintCopyCommandTest {
     public void setUp() throws Exception {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        // Use reflection to set the private static field "instance" in BentoBox
+        Field instanceField = BentoBox.class.getDeclaredField("instance");
+
+        instanceField.setAccessible(true);
+        instanceField.set(null, plugin);
 
         // Blueprints Manager
         when(plugin.getBlueprintsManager()).thenReturn(bm);

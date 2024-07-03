@@ -51,7 +51,7 @@ import world.bentobox.bentobox.managers.FlagsManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest( {BentoBox.class, Bukkit.class} )
 public class YamlDatabaseHandlerTest {
 

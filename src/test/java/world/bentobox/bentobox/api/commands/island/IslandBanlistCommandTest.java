@@ -47,7 +47,7 @@ import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class IslandBanlistCommandTest extends RanksManagerBeforeClassTest {
 

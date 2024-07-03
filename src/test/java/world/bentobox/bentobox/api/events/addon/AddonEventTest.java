@@ -21,7 +21,7 @@ import world.bentobox.bentobox.api.addons.Addon;
  * @author tastybento
  */
 
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class })
 public class AddonEventTest {
 

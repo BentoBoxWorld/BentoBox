@@ -38,7 +38,7 @@ import world.bentobox.bentobox.database.DatabaseSetup;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ BentoBox.class, DatabaseSetup.class })
 public class RanksManagerTest {
 

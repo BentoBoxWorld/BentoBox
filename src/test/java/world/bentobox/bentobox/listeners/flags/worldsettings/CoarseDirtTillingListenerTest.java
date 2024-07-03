@@ -54,7 +54,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({BentoBox.class, Bukkit.class})
 public class CoarseDirtTillingListenerTest {
 

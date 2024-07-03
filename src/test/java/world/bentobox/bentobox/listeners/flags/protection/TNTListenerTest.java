@@ -48,7 +48,7 @@ import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest( {BentoBox.class, Util.class, Bukkit.class} )
 public class TNTListenerTest extends AbstractCommonSetup {
 

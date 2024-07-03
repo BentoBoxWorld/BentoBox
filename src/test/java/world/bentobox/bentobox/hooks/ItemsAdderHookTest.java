@@ -57,7 +57,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
 /**
  * Test class for ItemsAdder hook
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ BentoBox.class, Bukkit.class, CustomBlock.class })
 public class ItemsAdderHookTest {
 

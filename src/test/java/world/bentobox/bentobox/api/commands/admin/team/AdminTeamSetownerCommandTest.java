@@ -55,7 +55,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminTeamSetownerCommandTest {
 

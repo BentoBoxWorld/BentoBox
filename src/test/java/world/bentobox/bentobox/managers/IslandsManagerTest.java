@@ -91,7 +91,7 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, MultiLib.class, DatabaseSetup.class, })
 public class IslandsManagerTest extends AbstractCommonSetup {
 

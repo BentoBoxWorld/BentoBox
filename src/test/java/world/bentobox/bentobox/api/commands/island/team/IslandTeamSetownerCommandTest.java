@@ -53,7 +53,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, User.class, IslandsManager.class })
 public class IslandTeamSetownerCommandTest {
 

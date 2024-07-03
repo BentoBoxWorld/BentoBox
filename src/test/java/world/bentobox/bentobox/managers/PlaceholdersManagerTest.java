@@ -34,7 +34,7 @@ import world.bentobox.bentobox.lists.GameModePlaceholder;
  * @author tastybento
  * @since 1.5.0
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest( {BentoBox.class} )
 public class PlaceholdersManagerTest {
 

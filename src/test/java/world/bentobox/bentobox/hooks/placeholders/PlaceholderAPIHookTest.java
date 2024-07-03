@@ -41,7 +41,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({BentoBox.class, PlaceholderAPI.class, Bukkit.class })
 public class PlaceholderAPIHookTest {
 

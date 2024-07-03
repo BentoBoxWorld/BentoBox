@@ -30,7 +30,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @Ignore("Has mocking issues with GameEvent")
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class SculkSensorListenerTest extends AbstractCommonSetup {
 

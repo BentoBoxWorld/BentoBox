@@ -39,7 +39,7 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest( {BentoBox.class, Bukkit.class, Util.class, HandlerList.class} )
 public class FlagsManagerTest {
 

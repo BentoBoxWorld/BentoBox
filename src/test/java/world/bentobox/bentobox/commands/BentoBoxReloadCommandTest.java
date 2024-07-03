@@ -39,7 +39,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class, PanelListenerManager.class })
 public class BentoBoxReloadCommandTest {
 

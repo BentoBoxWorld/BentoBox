@@ -34,7 +34,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest( { Bukkit.class })
 public class BentoBoxLocaleTest {
 

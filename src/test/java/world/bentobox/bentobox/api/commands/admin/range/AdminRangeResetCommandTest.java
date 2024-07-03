@@ -4,6 +4,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminRangeResetCommandTest {
 
@@ -61,11 +62,13 @@ public class AdminRangeResetCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        // Use reflection to set the private static field "instance" in BentoBox
+        Field instanceField = BentoBox.class.getDeclaredField("instance");
+
+        instanceField.setAccessible(true);
+        instanceField.set(null, plugin);
         Util.setPlugin(plugin);
 
         // Command manager

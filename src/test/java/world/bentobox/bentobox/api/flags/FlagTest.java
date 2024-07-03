@@ -56,7 +56,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, RanksManager.class })
 public class FlagTest {
 

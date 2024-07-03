@@ -24,7 +24,7 @@ import world.bentobox.bentobox.util.DeleteIslandChunks;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({BentoBox.class, Bukkit.class, DeleteIslandChunks.class})
 public class IslandChunkDeletionManagerTest {
 

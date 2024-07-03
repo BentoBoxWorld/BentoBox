@@ -41,7 +41,7 @@ import world.bentobox.bentobox.util.heads.HeadGetter;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class, HeadGetter.class })
 public class PanelTest {
 

@@ -33,7 +33,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.MythicMobR
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class BlueprintEntityTest {
 
     @Mock

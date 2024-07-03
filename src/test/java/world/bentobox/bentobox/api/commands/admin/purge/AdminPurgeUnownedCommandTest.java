@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 
 import org.bukkit.Bukkit;
@@ -35,7 +36,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
  * @author Poslovitch
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
 public class AdminPurgeUnownedCommandTest {
 
@@ -62,7 +63,11 @@ public class AdminPurgeUnownedCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        // Use reflection to set the private static field "instance" in BentoBox
+        Field instanceField = BentoBox.class.getDeclaredField("instance");
+
+        instanceField.setAccessible(true);
+        instanceField.set(null, plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);

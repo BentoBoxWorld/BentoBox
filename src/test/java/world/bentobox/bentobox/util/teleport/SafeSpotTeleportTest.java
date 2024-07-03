@@ -46,7 +46,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Util.class, Bukkit.class, IslandsManager.class })
 public class SafeSpotTeleportTest {
 

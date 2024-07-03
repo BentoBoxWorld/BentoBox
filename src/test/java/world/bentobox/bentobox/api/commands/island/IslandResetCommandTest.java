@@ -61,7 +61,7 @@ import world.bentobox.bentobox.managers.island.NewIsland;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class, IslandsManager.class })
 public class IslandResetCommandTest {
 

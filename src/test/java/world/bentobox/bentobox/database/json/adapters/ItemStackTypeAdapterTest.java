@@ -49,7 +49,7 @@ import world.bentobox.bentobox.BentoBox;
  *
  */
 @SuppressWarnings("deprecation")
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest( {Bukkit.class, ItemStack.class} )
 public class ItemStackTypeAdapterTest {
     @Mock

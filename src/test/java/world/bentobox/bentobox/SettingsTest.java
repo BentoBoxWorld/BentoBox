@@ -21,7 +21,7 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest(BentoBox.class)
 public class SettingsTest {
 

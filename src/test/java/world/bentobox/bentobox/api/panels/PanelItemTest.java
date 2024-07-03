@@ -29,7 +29,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class })
 public class PanelItemTest {
 

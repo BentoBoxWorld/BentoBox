@@ -48,7 +48,7 @@ import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.versions.ServerCompatibility;
 
 
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest( {BentoBox.class, Bukkit.class, Flags.class, Util.class })
 public class MobSpawnListenerTest {
 

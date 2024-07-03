@@ -57,7 +57,7 @@ import world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport.PositionDat
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Util.class, Bukkit.class, IslandsManager.class })
 public class ClosestSafeSpotTeleportTest {
 

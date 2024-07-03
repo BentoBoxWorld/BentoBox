@@ -56,7 +56,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, IslandsManager.class })
 public class TestBentoBox extends AbstractCommonSetup {
     private static final UUID MEMBER_UUID = UUID.randomUUID();

@@ -44,7 +44,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ RanksManager.class, Bukkit.class })
 public class GameModePlaceholderTest {
 

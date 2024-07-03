@@ -20,7 +20,7 @@ import world.bentobox.bentobox.api.addons.Addon;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class AddonEnableEventTest {
 
     private AddonEnableEvent aee;

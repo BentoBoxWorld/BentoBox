@@ -7,12 +7,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -38,21 +40,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
-
-import com.github.puregero.multilib.MultiLib;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, MultiLib.class })
+@RunWith(MockitoJUnitRunner.class)
 public class AddonTest {
 
     public static int BUFFER_SIZE = 10240;
@@ -60,6 +57,7 @@ public class AddonTest {
     @Mock
     static BentoBox plugin;
     static JavaPlugin javaPlugin;
+    @Mock
     private Server server;
     @Mock
     private AddonsManager am;
@@ -71,29 +69,31 @@ public class AddonTest {
 
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
-        server = mock(Server.class);
         World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
 
         PluginManager pluginManager = mock(PluginManager.class);
-
-        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
-        when(Bukkit.getServer()).thenReturn(server);
-        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
+        // Mock the static method
+        try (MockedStatic<Bukkit> mockedBukkit = mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS)) {
+            when(Bukkit.getPluginManager()).thenReturn(pluginManager);
+            when(Bukkit.getServer()).thenReturn(server);
+            when(Bukkit.getPluginManager()).thenReturn(pluginManager);
+            when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
+        }
 
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        // Set up plugin
+        // Use reflection to set the private static field "instance" in BentoBox
+        Field instanceField = BentoBox.class.getDeclaredField("instance");
+
+        instanceField.setAccessible(true);
+        instanceField.set(null, plugin);
 
         // Addons manager
         when(plugin.getAddonsManager()).thenReturn(am);
-
-        // MultiLib
-        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
 
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);
@@ -194,7 +194,11 @@ public class AddonTest {
 
     @Test
     public void testGetServer() {
-        assertEquals(server, test.getServer());
+        // Mock the static method
+        try (MockedStatic<Bukkit> mockedBukkit = mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS)) {
+            when(Bukkit.getServer()).thenReturn(server);
+            assertEquals(server, test.getServer());
+        }
     }
 
     @Test

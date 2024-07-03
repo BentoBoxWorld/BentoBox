@@ -60,7 +60,7 @@ import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class, IslandCreationPanel.class })
 public class IslandCreateCommandTest {
 

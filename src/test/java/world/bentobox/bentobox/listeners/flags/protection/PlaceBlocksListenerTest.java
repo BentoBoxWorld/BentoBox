@@ -43,7 +43,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class PlaceBlocksListenerTest extends AbstractCommonSetup {
 

@@ -31,7 +31,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class LimitMobsListenerTest {
 
     @Mock

@@ -93,7 +93,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @SuppressWarnings("deprecation")
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
 public class PVPListenerTest {
 

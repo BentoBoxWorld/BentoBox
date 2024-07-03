@@ -62,7 +62,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractCommonSetup {
 
     protected UUID uuid = UUID.randomUUID();

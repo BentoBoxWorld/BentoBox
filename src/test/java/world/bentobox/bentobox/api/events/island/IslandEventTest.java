@@ -35,7 +35,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({ BentoBox.class, Bukkit.class, IslandsManager.class })
 public class IslandEventTest {
 

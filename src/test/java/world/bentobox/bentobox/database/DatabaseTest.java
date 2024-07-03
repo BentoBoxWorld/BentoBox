@@ -41,7 +41,7 @@ import world.bentobox.bentobox.database.objects.Island;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest( {BentoBox.class, DatabaseSetup.class} )
 public class DatabaseTest {
 

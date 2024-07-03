@@ -32,7 +32,7 @@ import world.bentobox.bentobox.database.objects.Island;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({BentoBox.class, User.class, Bukkit.class})
 public class BlueprintPasterTest {
 

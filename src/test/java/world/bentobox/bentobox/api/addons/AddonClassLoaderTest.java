@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +23,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.eclipse.jdt.annotation.NonNull;
@@ -32,12 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
-
-import com.github.puregero.multilib.MultiLib;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
@@ -48,8 +43,7 @@ import world.bentobox.bentobox.managers.AddonsManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, MultiLib.class })
+@RunWith(MockitoJUnitRunner.class)
 public class AddonClassLoaderTest {
 
     private enum mandatoryTags {
@@ -83,12 +77,15 @@ public class AddonClassLoaderTest {
      */
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
-        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        // Set up plugin
+        // Use reflection to set the private static field "instance" in BentoBox
+        Field instanceField = BentoBox.class.getDeclaredField("instance");
+
+        instanceField.setAccessible(true);
+        instanceField.set(null, plugin);
+
         // To start include everything
         makeAddon(List.of());
         testAddon = new TestClass();
