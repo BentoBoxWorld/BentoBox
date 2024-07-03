@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.database.json;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 import org.bukkit.Location;
@@ -77,7 +79,12 @@ public class BentoboxTypeAdapterFactory implements TypeAdapterFactory {
         } else if (Vector.class.isAssignableFrom(rawType)) {
             return (TypeAdapter<T>) new VectorTypeAdapter();
         } else if (Pair.class.isAssignableFrom(rawType)) {
-            return (TypeAdapter<T>) new PairTypeAdapter<>();
+            // Add Pair handling here with type safety
+            Type pairType = type.getType();
+            ParameterizedType parameterizedType = (ParameterizedType) pairType;
+            Type xType = parameterizedType.getActualTypeArguments()[0];
+            Type zType = parameterizedType.getActualTypeArguments()[1];
+            return (TypeAdapter<T>) new PairTypeAdapter<>(xType, zType);
         } else if (ConfigurationSerializable.class.isAssignableFrom(rawType)) {
             // This covers a lot of Bukkit objects
             return (TypeAdapter<T>) new BukkitObjectTypeAdapter(gson.getAdapter(Map.class));
