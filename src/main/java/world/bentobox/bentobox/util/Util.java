@@ -63,11 +63,6 @@ public class Util {
     private static PasteHandler pasteHandler = null;
     private static WorldRegenerator regenerator = null;
 
-    // Bukkit method that was added in 2011
-    // Example value: 1.20.4-R0.1-SNAPSHOT
-    private static final String bukkitVersion = "v" + Bukkit.getBukkitVersion().replace('.', '_').replace('-', '_');
-    private static final String pluginPackageName = plugin.getClass().getPackage().getName();
-
     private Util() {}
 
     /**
@@ -721,6 +716,10 @@ public class Util {
      */
     public static WorldRegenerator getRegenerator() {
         if (regenerator == null) {
+            // Bukkit method that was added in 2011
+            // Example value: 1.20.4-R0.1-SNAPSHOT
+            final String bukkitVersion = "v" + Bukkit.getBukkitVersion().replace('.', '_').replace('-', '_');
+            final String pluginPackageName = plugin.getClass().getPackage().getName();
             WorldRegenerator handler;
             try {
                 Class<?> clazz = Class.forName(pluginPackageName + ".nms." + bukkitVersion + ".WorldRegeneratorImpl");

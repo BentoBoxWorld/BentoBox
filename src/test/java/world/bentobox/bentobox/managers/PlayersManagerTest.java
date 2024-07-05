@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -71,7 +72,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class, DatabaseSetup.class, })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class, DatabaseSetup.class })
 public class PlayersManagerTest {
 
     private static AbstractDatabaseHandler<Object> handler;
@@ -685,12 +686,65 @@ public class PlayersManagerTest {
     }
 
     /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.PlayersManager#shutdown()}.
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getPlayer(java.util.UUID)}.
      */
     @Test
-    public void testShutdown() {
-        pm.shutdown(); // Clears cache
+    public void testGetPlayer() {
+        Players p = pm.getPlayer(uuid);
+        assertNotNull(p);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#loadPlayer(java.util.UUID)}.
+     */
+    @Test
+    public void testLoadPlayer() {
+        assertNotNull(pm.loadPlayer(uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
+     */
+    @Test
+    public void testGetName() {
+        assertEquals("", pm.getName(uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#cleanLeavingPlayer(org.bukkit.World, world.bentobox.bentobox.api.user.User, boolean, world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    public void testCleanLeavingPlayer() {
+        when(user.isOnline()).thenReturn(true);
+        when(iwm.isOnLeaveResetEnderChest(world)).thenReturn(true);
+        when(iwm.isOnLeaveResetInventory(world)).thenReturn(true);
+        when(iwm.isOnLeaveResetMoney(world)).thenReturn(true);
+        pm.cleanLeavingPlayer(world, user, false, island);
+        PowerMockito.verifyStatic(Util.class);
+        Util.runCommands(user, "", plugin.getIWM().getOnLeaveCommands(world), "leave");
+        verify(world).getEntitiesByClass(Tameable.class);
+        verify(inv).clear(); // Enderchest cleared
+        verify(plugin).getVault(); // Clear money
+        PowerMockito.verifyStatic(Util.class);
+        Util.resetHealth(p);
+        verify(p).setFoodLevel(20);
+        verify(p).setLevel(0);
+        verify(p).setExp(0);
+        // Player total XP (not displayed)
+        verify(p).setTotalExperience(0);
+
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#savePlayer(java.util.UUID)}.
+     * @throws IntrospectionException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     */
+    @Test
+    public void testSavePlayer() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        pm.savePlayer(uuid);
+        verify(handler, atLeastOnce()).saveObject(any());
     }
 
 }

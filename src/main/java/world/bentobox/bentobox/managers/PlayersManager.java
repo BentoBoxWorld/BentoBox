@@ -3,6 +3,7 @@ package world.bentobox.bentobox.managers;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class PlayersManager {
     private Database<Players> handler;
     private final Database<Names> names;
     private final Map<UUID, Players> playerCache = new ConcurrentHashMap<>();
-
+    private final @NonNull List<Names> nameCache;
     private final Set<UUID> inTeleport; // this needs databasing
 
     /**
@@ -46,6 +47,7 @@ public class PlayersManager {
         handler = new Database<>(plugin, Players.class);
         // Set up the names database
         names = new Database<>(plugin, Names.class);
+        nameCache = names.loadObjects();
         inTeleport = new HashSet<>();
     }
 
@@ -139,7 +141,7 @@ public class PlayersManager {
                 // Not used
             }
         }
-        return names.loadObjects().stream().filter(n -> n.getUniqueId().equalsIgnoreCase(name)).findFirst()
+        return nameCache.stream().filter(n -> n.getUniqueId().equalsIgnoreCase(name)).findFirst()
                 .map(Names::getUuid).orElse(null);
     }
 
@@ -148,10 +150,18 @@ public class PlayersManager {
      * @param user - the User
      */
     public void setPlayerName(@NonNull User user) {
+        // Ignore any bots
+        if (user.getUniqueId() == null) {
+            return;
+        }
         Players player = getPlayer(user.getUniqueId());
         player.setPlayerName(user.getName());
         handler.saveObject(player);
+        // Update names
         Names newName = new Names(user.getName(), user.getUniqueId());
+        // Add to cache
+        nameCache.removeIf(name -> user.getUniqueId().equals(name.getUuid()));
+        nameCache.add(newName);
         // Add to names database
         names.saveObjectAsync(newName);
     }
