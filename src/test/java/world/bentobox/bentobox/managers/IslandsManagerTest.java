@@ -37,6 +37,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -92,7 +93,7 @@ import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, MultiLib.class, DatabaseSetup.class, })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, MultiLib.class, DatabaseSetup.class })
 public class IslandsManagerTest extends AbstractCommonSetup {
 
     private static AbstractDatabaseHandler<Object> h;
@@ -225,7 +226,13 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
         // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        when(Bukkit.getRegistry(any())).thenAnswer(invocation -> {
+            Class<?> clazz = invocation.getArgument(0);
+            Registry<?> mockRegistry = mock(Registry.class,
+                    Mockito.withSettings().defaultAnswer(Mockito.CALLS_REAL_METHODS).extraInterfaces(clazz));
+            return mockRegistry;
+        });
         when(Bukkit.getScheduler()).thenReturn(sch);
         // version
         when(Bukkit.getVersion())
@@ -500,6 +507,8 @@ public class IslandsManagerTest extends AbstractCommonSetup {
      */
     @Test
     public void testTrapDoor() {
+        PowerMockito.mockStatic(Material.class, Mockito.RETURNS_MOCKS);
+
         when(ground.getType()).thenReturn(Material.OAK_TRAPDOOR);
         assertFalse("Open trapdoor", im.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.IRON_TRAPDOOR);

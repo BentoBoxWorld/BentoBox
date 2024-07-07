@@ -192,7 +192,7 @@ public class ItemsAdderHookTest {
         when(entity.getType()).thenReturn(EntityType.PLAYER);
         when(entity.hasPermission("XXXXXX")).thenReturn(true);
         List<Block> list = new ArrayList<>();
-        EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0);
+        EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0, null);
         listener.onExplosion(event);
         assertTrue(event.isCancelled());
     }

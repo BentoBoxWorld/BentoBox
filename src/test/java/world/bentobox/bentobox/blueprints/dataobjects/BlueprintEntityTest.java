@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.blueprints.dataobjects;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -55,7 +56,8 @@ public class BlueprintEntityTest {
      */
     @Before
     public void setUp() throws Exception {
-        when(villager.getProfession()).thenReturn(Profession.LIBRARIAN);
+        Profession prof = mock(Profession.class);
+        when(villager.getProfession()).thenReturn(prof);
         when(villager.getVillagerExperience()).thenReturn(100);
         when(villager.getVillagerLevel()).thenReturn(2);
         when(villager.getVillagerType()).thenReturn(Villager.Type.PLAINS);

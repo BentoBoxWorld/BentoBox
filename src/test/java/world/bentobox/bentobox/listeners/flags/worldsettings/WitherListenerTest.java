@@ -121,7 +121,7 @@ public class WitherListenerTest {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.WITHER);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0, null);
         wl.onExplosion(e);
         assertTrue(blocks.isEmpty());
     }
@@ -136,7 +136,7 @@ public class WitherListenerTest {
         when(entity.getLocation()).thenReturn(location2);
         when(entity.getWorld()).thenReturn(world2);
         when(entity.getType()).thenReturn(EntityType.WITHER);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location2, blocks, 0);
+        EntityExplodeEvent e = new EntityExplodeEvent(entity, location2, blocks, 0, null);
         wl.onExplosion(e);
         assertFalse(blocks.isEmpty());
     }
@@ -151,7 +151,7 @@ public class WitherListenerTest {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.WITHER);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0, null);
         wl.onExplosion(e);
         assertFalse(blocks.isEmpty());
 
@@ -166,7 +166,7 @@ public class WitherListenerTest {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.WITHER_SKULL);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0, null);
         wl.onExplosion(e);
         assertTrue(blocks.isEmpty());
     }
@@ -180,7 +180,7 @@ public class WitherListenerTest {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.DRAGON_FIREBALL);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0, null);
         wl.onExplosion(e);
         assertFalse(blocks.isEmpty());
     }

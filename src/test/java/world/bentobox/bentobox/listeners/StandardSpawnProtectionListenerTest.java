@@ -289,7 +289,7 @@ public class StandardSpawnProtectionListenerTest {
                 new Vector(0,0,0),
                 new Vector(0,0,0),
                 new Vector(10000,0,0));
-        EntityExplodeEvent e = new EntityExplodeEvent(player, location, blockList, 0);
+        EntityExplodeEvent e = new EntityExplodeEvent(player, location, blockList, 0, null);
         ssp.onExplosion(e);
         // 4 blocks inside the spawn should be removed, leaving one
         assertEquals(1, blockList.size());
@@ -314,7 +314,7 @@ public class StandardSpawnProtectionListenerTest {
                 new Vector(0,0,0),
                 new Vector(0,0,0),
                 new Vector(10000,0,0));
-        EntityExplodeEvent e = new EntityExplodeEvent(player, location, blockList, 0);
+        EntityExplodeEvent e = new EntityExplodeEvent(player, location, blockList, 0, null);
         ssp.onExplosion(e);
         // No blocks should be removed
         assertEquals(5, blockList.size());

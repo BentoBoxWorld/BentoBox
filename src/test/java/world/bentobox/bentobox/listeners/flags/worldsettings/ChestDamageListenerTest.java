@@ -199,7 +199,7 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
         list.add(chest);
         list.add(trappedChest);
         list.add(stone);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0);
+        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0, null);
         ChestDamageListener listener = new ChestDamageListener();
         listener.setPlugin(plugin);
         listener.onExplosion(e);
@@ -231,7 +231,7 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
         list.add(chest);
         list.add(trappedChest);
         list.add(stone);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0);
+        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0, null);
         ChestDamageListener listener = new ChestDamageListener();
         listener.setPlugin(plugin);
         listener.onExplosion(e);
