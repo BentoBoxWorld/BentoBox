@@ -219,7 +219,8 @@ public class IslandTeamInviteGUI {
             return true;
         }
         if (clickType.equals(ClickType.LEFT)) {
-            user.closeInventory();
+            // Close inventory after one tick to allow the no pickup click return to occur
+            Bukkit.getScheduler().runTask(plugin, () -> user.closeInventory());
             if (itic.canExecute(user, itic.getLabel(), List.of(player.getName()))) {
                 plugin.log("Invite sent to: " + player.getName() + " by " + user.getName() + " to join island in "
                         + itc.getWorld().getName());
@@ -229,7 +230,8 @@ public class IslandTeamInviteGUI {
                         + itc.getWorld().getName());
             }
         } else if (clickType.equals(ClickType.RIGHT)) {
-            user.closeInventory();
+            // Close inventory after one tick to allow the no pickup click return to occur
+            Bukkit.getScheduler().runTask(plugin, () -> user.closeInventory());
             if (this.itc.getCoopCommand().canExecute(user, itic.getLabel(), List.of(player.getName()))) {
                 plugin.log("Coop: " + player.getName() + " cooped " + user.getName() + " to island in "
                         + itc.getWorld().getName());
@@ -240,15 +242,15 @@ public class IslandTeamInviteGUI {
                                 + itc.getWorld().getName());
             }
         } else if (clickType.equals(ClickType.SHIFT_LEFT)) {
-            user.closeInventory();
+            // Close inventory after one tick to allow the no pickup click return to occur
+            Bukkit.getScheduler().runTask(plugin, () -> user.closeInventory());
             if (this.itc.getTrustCommand().canExecute(user, itic.getLabel(), List.of(player.getName()))) {
                 plugin.log("Trust: " + player.getName() + " trusted " + user.getName() + " to island in "
                         + itc.getWorld().getName());
                 this.itc.getTrustCommand().execute(user, itic.getLabel(), List.of(player.getName()));
             } else {
                 plugin.log("Trust failed: " + player.getName() + "'s trust failed for " + user.getName()
-                        + " for island in "
-                        + itc.getWorld().getName());
+                        + " for island in " + itc.getWorld().getName());
             }
         }
         return true;
@@ -272,8 +274,8 @@ public class IslandTeamInviteGUI {
         public Prompt acceptInput(@NonNull ConversationContext context, String input) {
             if (itic.canExecute(user, itic.getLabel(), List.of(input))
                     && itic.execute(user, itic.getLabel(), List.of(input))) {
-                    return Prompt.END_OF_CONVERSATION;
-                }
+                return Prompt.END_OF_CONVERSATION;
+            }
             // Set the search item to what was entered
             searchName = input;
             // Return to the GUI but give a second for the error to show
