@@ -2,11 +2,14 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import org.bukkit.Material;
 import org.bukkit.Tag;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -55,24 +58,37 @@ public class PhysicalInteractionListener extends FlagListener
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onProjectileHit(EntityInteractEvent e)
     {
-        if (!(e.getEntity() instanceof Projectile p))
+        if (e.getEntity() instanceof Projectile p && p.getShooter() instanceof Player player)
         {
+            checkBlocks(e, player, e.getBlock());
+        }
+    }
+
+    private void checkBlocks(Event e, Player player, Block block) {
+        if (Tag.WOODEN_BUTTONS.isTagged(block.getType())) {
+            this.checkIsland(e, player, block.getLocation(), Flags.BUTTON);
             return;
         }
 
-        if (p.getShooter() instanceof Player player)
-        {
-            if (Tag.WOODEN_BUTTONS.isTagged(e.getBlock().getType()))
-            {
-                this.checkIsland(e, player, e.getBlock().getLocation(), Flags.BUTTON);
-                return;
-            }
+        if (Tag.PRESSURE_PLATES.isTagged(block.getType())) {
+            // Pressure plates
+            this.checkIsland(e, player, block.getLocation(), Flags.PRESSURE_PLATE);
+        }
 
-            if (Tag.PRESSURE_PLATES.isTagged(e.getBlock().getType()))
-            {
-                // Pressure plates
-                this.checkIsland(e, player, e.getBlock().getLocation(), Flags.PRESSURE_PLATE);
+    }
+
+    /**
+     * Protects buttons and plates from being activated by projectiles that explode
+     * @param e  - event
+     */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onProjectileExplode(EntityExplodeEvent e) {
+        if (e.getEntity() instanceof Projectile p && p.getShooter() instanceof Player player) {
+            for (Block b : e.blockList()) {
+                this.checkBlocks(e, player, b);
             }
         }
     }
+
+
 }
