@@ -21,7 +21,7 @@ public class CandleListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCandleInteract(final PlayerInteractEvent e) {
-        if (e.getClickedBlock() == null || e.getItem() == null) {
+        if (e.getClickedBlock() == null) {
             return;
         }
 
