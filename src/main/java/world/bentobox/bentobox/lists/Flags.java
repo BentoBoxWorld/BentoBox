@@ -19,6 +19,7 @@ import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListen
 import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
 import world.bentobox.bentobox.listeners.flags.protection.BreedingListener;
 import world.bentobox.bentobox.listeners.flags.protection.BucketListener;
+import world.bentobox.bentobox.listeners.flags.protection.CandleListener;
 import world.bentobox.bentobox.listeners.flags.protection.DyeListener;
 import world.bentobox.bentobox.listeners.flags.protection.EggListener;
 import world.bentobox.bentobox.listeners.flags.protection.ElytraListener;
@@ -686,6 +687,23 @@ public final class Flags {
      * @since 1.24.0
      */
     public static final Flag SIGN_EDITING = new Flag.Builder("SIGN_EDITING", Material.DARK_OAK_SIGN).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
+
+    /**
+     * Bell ringing protection
+     * Listeners are {@link BlockInteractionListener} and {@link PhysicalInteractionListener}
+     * @since 2.4.2
+     */
+    public static final Flag BELL_RINGING = new Flag.Builder("BELL_RINGING", Material.BELL).mode(Flag.Mode.EXPERT)
+            .type(Type.PROTECTION).build();
+
+    /**
+     * Candle protection
+     * Listener is {@link CandleListener}
+     * @since 2.4.2
+     */
+    public static final Flag CANDLES = new Flag.Builder("CANDLES", Material.CANDLE).mode(Flag.Mode.EXPERT)
+            .listener(new CandleListener())
+            .type(Type.PROTECTION).build();
 
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.

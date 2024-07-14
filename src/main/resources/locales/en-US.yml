@@ -912,6 +912,10 @@ protection:
       description: Toggle interaction
       name: Beacons
       hint: Beacon use disabled
+    BELL_RINGING:
+      description: Toggle interaction
+      name: Allow bell ringing
+      hint: Bell ringing disabled
     BED:
       description: Toggle interaction
       name: Beds
@@ -960,6 +964,10 @@ protection:
       description: Toggle button use
       name: Buttons
       hint: Button use disabled
+    CANDLES:
+      description: Toggle candle interaction
+      name: Candles
+      hint: Candle interaction disabled
     CAKE:
       description: Toggle cake interaction
       name: Cakes

@@ -67,16 +67,25 @@ public class PhysicalInteractionListener extends FlagListener
         }
     }
 
-    private static final Map<Tag<Material>, Flag> TAG_TO_FLAG = Map.of(Tag.WOODEN_BUTTONS, Flags.BUTTON,
-            Tag.PRESSURE_PLATES, Flags.PRESSURE_PLATE, Tag.FENCE_GATES, Flags.GATE, Tag.DOORS, Flags.DOOR);
+    private boolean checkBlocks(Event e, Player player, Block block) {
+        Map<Tag<Material>, Flag> TAG_TO_FLAG = Map.of(Tag.WOODEN_BUTTONS, Flags.BUTTON, Tag.PRESSURE_PLATES,
+                Flags.PRESSURE_PLATE, Tag.FENCE_GATES, Flags.GATE, Tag.DOORS, Flags.DOOR, Tag.CANDLE_CAKES,
+                Flags.CANDLES, Tag.CANDLES, Flags.CANDLES);
+        Map<Material, Flag> MAT_TO_FLAG = Map.of(Material.LEVER, Flags.LEVER, Material.TRIPWIRE, Flags.REDSTONE,
+                Material.TARGET, Flags.REDSTONE);
+        boolean result = TAG_TO_FLAG.entrySet().stream().filter(entry -> entry.getKey().isTagged(block.getType()))
+                .findFirst().map(entry -> this.checkIsland(e, player, block.getLocation(), entry.getValue()))
+                .orElse(true);
 
-    private void checkBlocks(Event e, Player player, Block block) {
-        TAG_TO_FLAG.entrySet().stream().filter(entry -> entry.getKey().isTagged(block.getType())).findFirst()
-                .ifPresent(entry -> this.checkIsland(e, player, block.getLocation(), entry.getValue()));
+        if (result && MAT_TO_FLAG.containsKey(block.getType())) {
+            result = this.checkIsland(e, player, block.getLocation(), MAT_TO_FLAG.get(block.getType()));
+        }
+
+        return result;
     }
 
     /**
-     * Protects buttons and plates from being activated by projectiles that explode
+     * Protects buttons and plates, etc. from being activated by projectiles that explode
      * @param e  - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -84,6 +93,11 @@ public class PhysicalInteractionListener extends FlagListener
         if (e.getEntity() instanceof Projectile p && p.getShooter() instanceof Player player) {
             for (Block b : e.blockList()) {
                 this.checkBlocks(e, player, b);
+                /*
+                 * TODO:
+                 * Add protection for candles
+                 * 
+                 */
             }
         }
     }
