@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.util.Map;
+
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
@@ -13,6 +15,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -64,17 +67,12 @@ public class PhysicalInteractionListener extends FlagListener
         }
     }
 
+    private static final Map<Tag<Material>, Flag> TAG_TO_FLAG = Map.of(Tag.WOODEN_BUTTONS, Flags.BUTTON,
+            Tag.PRESSURE_PLATES, Flags.PRESSURE_PLATE, Tag.FENCE_GATES, Flags.GATE, Tag.DOORS, Flags.DOOR);
+
     private void checkBlocks(Event e, Player player, Block block) {
-        if (Tag.WOODEN_BUTTONS.isTagged(block.getType())) {
-            this.checkIsland(e, player, block.getLocation(), Flags.BUTTON);
-            return;
-        }
-
-        if (Tag.PRESSURE_PLATES.isTagged(block.getType())) {
-            // Pressure plates
-            this.checkIsland(e, player, block.getLocation(), Flags.PRESSURE_PLATE);
-        }
-
+        TAG_TO_FLAG.entrySet().stream().filter(entry -> entry.getKey().isTagged(block.getType())).findFirst()
+                .ifPresent(entry -> this.checkIsland(e, player, block.getLocation(), entry.getValue()));
     }
 
     /**
