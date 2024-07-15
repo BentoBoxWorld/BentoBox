@@ -72,12 +72,13 @@ public class PhysicalInteractionListener extends FlagListener
                 Flags.PRESSURE_PLATE, Tag.FENCE_GATES, Flags.GATE, Tag.DOORS, Flags.DOOR, Tag.CANDLE_CAKES,
                 Flags.CANDLES, Tag.CANDLES, Flags.CANDLES);
         Map<Material, Flag> MAT_TO_FLAG = Map.of(Material.LEVER, Flags.LEVER, Material.TRIPWIRE, Flags.REDSTONE,
-                Material.TARGET, Flags.REDSTONE);
+                Material.TARGET, Flags.REDSTONE, Material.DECORATED_POT, Flags.BREAK_BLOCKS);
         boolean result = TAG_TO_FLAG.entrySet().stream().filter(entry -> entry.getKey().isTagged(block.getType()))
                 .findFirst().map(entry -> this.checkIsland(e, player, block.getLocation(), entry.getValue()))
                 .orElse(true);
         if (result && MAT_TO_FLAG.containsKey(block.getType())) {
             result = this.checkIsland(e, player, block.getLocation(), MAT_TO_FLAG.get(block.getType()));
+
         }
 
         return result;
@@ -91,12 +92,9 @@ public class PhysicalInteractionListener extends FlagListener
     public void onProjectileExplode(EntityExplodeEvent e) {
         if (e.getEntity() instanceof Projectile p && p.getShooter() instanceof Player player) {
             for (Block b : e.blockList()) {
-                this.checkBlocks(e, player, b);
-                /*
-                 * TODO:
-                 * Add protection for candles
-                 * 
-                 */
+                if (!this.checkBlocks(e, player, b)) {
+                    e.blockList().clear();
+                }
             }
         }
     }

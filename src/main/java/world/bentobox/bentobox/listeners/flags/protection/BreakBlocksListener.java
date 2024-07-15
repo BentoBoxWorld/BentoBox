@@ -188,7 +188,7 @@ public class BreakBlocksListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onProjectileHitBreakBlock(ProjectileHitEvent e) {
         // We want to make sure this is an actual projectile (arrow or trident)
-        if (!(e.getEntity() instanceof AbstractArrow)) {
+        if (!(e.getEntity() instanceof Projectile)) {
             return;
         }
 

@@ -58,7 +58,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
     private Entity entity;
 
     // Class under test
-    private TNTListener listener;
+    private ExplosionListener listener;
 
     @Override
     @Before
@@ -85,7 +85,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         // Util
         when(Util.findFirstMatchingEnum(any(), anyString())).thenCallRealMethod();
 
-        listener = new TNTListener();
+        listener = new ExplosionListener();
         listener.setPlugin(plugin);
 
     }
