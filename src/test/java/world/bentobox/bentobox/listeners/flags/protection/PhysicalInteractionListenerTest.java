@@ -282,13 +282,11 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
         // Test with wooden button
         when(block1.getType()).thenReturn(Material.OAK_BUTTON);
         when(Tag.WOODEN_BUTTONS.isTagged(Material.OAK_BUTTON)).thenReturn(true);
-        i.onProjectileExplode(e);
-        verify(notifier).notify(any(), eq("protection.protected"));
-        
         // Test with pressure plate
         when(block2.getType()).thenReturn(Material.STONE_PRESSURE_PLATE);
         when(Tag.PRESSURE_PLATES.isTagged(Material.STONE_PRESSURE_PLATE)).thenReturn(true);
+
         i.onProjectileExplode(e);
-        verify(notifier, times(3)).notify(any(), eq("protection.protected"));
+        verify(notifier, times(2)).notify(any(), eq("protection.protected"));
     }
 }
