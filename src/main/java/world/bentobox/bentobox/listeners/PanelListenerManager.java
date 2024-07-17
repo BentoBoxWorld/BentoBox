@@ -26,7 +26,7 @@ public class PanelListenerManager implements Listener {
 
     private static final HashMap<UUID, Panel> openPanels = new HashMap<>();
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onInventoryClick(InventoryClickEvent event) {
         User user = User.getInstance(event.getWhoClicked()); // The player that clicked the item
         InventoryView view = event.getView();
