@@ -27,7 +27,7 @@ import world.bentobox.bentobox.lists.Flags;
  * Protects islands from visitors blowing things up
  * @author tastybento
  */
-public class TNTListener extends FlagListener {
+public class ExplosionListener extends FlagListener {
     /**
      * Contains {@link EntityType}s that generates an explosion.
      * @since 1.5.0

@@ -19,6 +19,7 @@ import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListen
 import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
 import world.bentobox.bentobox.listeners.flags.protection.BreedingListener;
 import world.bentobox.bentobox.listeners.flags.protection.BucketListener;
+import world.bentobox.bentobox.listeners.flags.protection.CandleListener;
 import world.bentobox.bentobox.listeners.flags.protection.DyeListener;
 import world.bentobox.bentobox.listeners.flags.protection.EggListener;
 import world.bentobox.bentobox.listeners.flags.protection.ElytraListener;
@@ -38,7 +39,7 @@ import world.bentobox.bentobox.listeners.flags.protection.PortalListener;
 import world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener;
 import world.bentobox.bentobox.listeners.flags.protection.SculkShriekerListener;
 import world.bentobox.bentobox.listeners.flags.protection.ShearingListener;
-import world.bentobox.bentobox.listeners.flags.protection.TNTListener;
+import world.bentobox.bentobox.listeners.flags.protection.ExplosionListener;
 import world.bentobox.bentobox.listeners.flags.protection.TeleportationListener;
 import world.bentobox.bentobox.listeners.flags.protection.ThrowingListener;
 import world.bentobox.bentobox.listeners.flags.settings.DecayListener;
@@ -266,9 +267,9 @@ public final class Flags {
      * Prevents players from priming TNT.
      * @since 1.5.0
      *
-     * @see TNTListener
+     * @see ExplosionListener
      */
-    public static final Flag TNT_PRIMING = new Flag.Builder("TNT_PRIMING", Material.TNT).listener(new TNTListener()).build();
+    public static final Flag TNT_PRIMING = new Flag.Builder("TNT_PRIMING", Material.TNT).listener(new ExplosionListener()).build();
 
     /**
      * Prevents players from extinguishing fires.
@@ -461,7 +462,7 @@ public final class Flags {
     /**
      * If {@code false}, prevents TNT from breaking blocks and damaging nearby entities.
      * @since 1.5.0
-     * @see TNTListener
+     * @see ExplosionListener
      */
     public static final Flag TNT_DAMAGE = new Flag.Builder("TNT_DAMAGE", Material.TNT).type(Type.SETTING)
             .mode(Flag.Mode.ADVANCED).build();
@@ -469,7 +470,7 @@ public final class Flags {
     /**
      * If {@code false}, prevents Block Explode from breaking blocks and damaging nearby entities.
      * @since 1.19.1
-     * @see TNTListener
+     * @see ExplosionListener
      */
     public static final Flag BLOCK_EXPLODE_DAMAGE = new Flag.Builder("BLOCK_EXPLODE_DAMAGE", Material.TNT_MINECART).type(Type.SETTING)
             .mode(Flag.Mode.ADVANCED).build();
@@ -477,7 +478,7 @@ public final class Flags {
     /**
      * If {@code false}, prevents TNT from breaking blocks and damaging nearby entities outside of island boundaries.
      * @since 1.15.3
-     * @see TNTListener
+     * @see ExplosionListener
      */
     public static final Flag WORLD_TNT_DAMAGE = new Flag.Builder("WORLD_TNT_DAMAGE", Material.TNT)
             .type(Type.WORLD_SETTING)
@@ -486,7 +487,7 @@ public final class Flags {
     /**
      * If {@code false}, prevents Block Explode from breaking blocks and damaging nearby entities outside of island boundaries.
      * @since 1.19.1
-     * @see TNTListener
+     * @see ExplosionListener
      */
     public static final Flag WORLD_BLOCK_EXPLODE_DAMAGE = new Flag.Builder("WORLD_BLOCK_EXPLODE_DAMAGE", Material.TNT_MINECART)
             .type(Type.WORLD_SETTING)
@@ -686,6 +687,23 @@ public final class Flags {
      * @since 1.24.0
      */
     public static final Flag SIGN_EDITING = new Flag.Builder("SIGN_EDITING", Material.DARK_OAK_SIGN).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
+
+    /**
+     * Bell ringing protection
+     * Listeners are {@link BlockInteractionListener} and {@link PhysicalInteractionListener}
+     * @since 2.4.2
+     */
+    public static final Flag BELL_RINGING = new Flag.Builder("BELL_RINGING", Material.BELL).mode(Flag.Mode.EXPERT)
+            .type(Type.PROTECTION).build();
+
+    /**
+     * Candle protection
+     * Listener is {@link CandleListener}
+     * @since 2.4.2
+     */
+    public static final Flag CANDLES = new Flag.Builder("CANDLES", Material.CANDLE).mode(Flag.Mode.EXPERT)
+            .listener(new CandleListener())
+            .type(Type.PROTECTION).build();
 
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
