@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Material;
@@ -91,11 +93,15 @@ public class PhysicalInteractionListener extends FlagListener
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onProjectileExplode(EntityExplodeEvent e) {
         if (e.getEntity() instanceof Projectile p && p.getShooter() instanceof Player player) {
+            List<Block> blocksToRemove = new ArrayList<>();
+
             for (Block b : e.blockList()) {
                 if (!this.checkBlocks(e, player, b)) {
-                    e.blockList().clear();
+                    blocksToRemove.add(b);
                 }
             }
+
+            e.blockList().removeAll(blocksToRemove);
         }
     }
 
