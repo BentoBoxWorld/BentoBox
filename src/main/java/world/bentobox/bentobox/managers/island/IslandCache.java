@@ -38,7 +38,7 @@ public class IslandCache {
      * Map of all islands with island uniqueId as key
      */
     @NonNull
-    private final Map<@NonNull String, @NonNull Island> islandsById;
+    private final Map<@NonNull String, Island> islandsById;
     /**
      * Every player who is associated with an island is in this map. Key is player
      * UUID, value is a set of islands
