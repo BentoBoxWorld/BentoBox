@@ -39,7 +39,7 @@ public class SeedWorldMakerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent e) {
-        if (!ready || !e.getChunk().isGenerated()) {
+        if (!ready) {
             return;
         }
         World world = e.getWorld();
