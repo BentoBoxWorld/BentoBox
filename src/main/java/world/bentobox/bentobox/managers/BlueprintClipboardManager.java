@@ -108,7 +108,9 @@ public class BlueprintClipboardManager {
             bp = gson.fromJson(fr, Blueprint.class);
         } catch (Exception e) {
             plugin.logError("Blueprint has JSON error: " + zipFile.getName());
+            plugin.logStacktrace(e);
             throw new IOException("Blueprint has JSON error: " + zipFile.getName());
+            
         }
         Files.delete(file.toPath());
         // Bedrock check and set

@@ -9,6 +9,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -29,7 +31,9 @@ import world.bentobox.bentobox.database.json.adapters.LocationTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.MaterialTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.PairTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.PotionEffectTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.ProfessionTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.VectorTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.VillagerTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.WorldTypeAdapter;
 import world.bentobox.bentobox.util.Pair;
 
@@ -78,6 +82,10 @@ public class BentoboxTypeAdapterFactory implements TypeAdapterFactory {
             return (TypeAdapter<T>) new WorldTypeAdapter();
         } else if (Vector.class.isAssignableFrom(rawType)) {
             return (TypeAdapter<T>) new VectorTypeAdapter();
+        } else if (Profession.class.isAssignableFrom(rawType)) {
+            return (TypeAdapter<T>) new ProfessionTypeAdapter();
+        } else if (Villager.Type.class.isAssignableFrom(rawType)) {
+            return (TypeAdapter<T>) new VillagerTypeAdapter();
         } else if (Pair.class.isAssignableFrom(rawType)) {
             // Add Pair handling here with type safety
             Type pairType = type.getType();
