@@ -363,16 +363,23 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return Return the translation result.
      */
+    @SuppressWarnings("deprecation")
     public static String getPotionBaseEffectName(PotionType potionType, User user) {
         if (hooked) {
             return LanguageHelper.getPotionBaseEffectName(potionType, getUserLocale(user));
         }
-        List<PotionEffect> effects = potionType.getPotionEffects();
-        if (effects.isEmpty()) {
-            return "No Effects";
+        try {
+            List<PotionEffect> effects = potionType.getPotionEffects();
+
+            if (effects.isEmpty()) {
+                return "No Effects";
+            }
+            return effects.stream().map(effect -> Util.prettifyText(effect.getType().getKey().getKey()))
+                    .collect(Collectors.joining(", "));
+        } catch (Exception e) {
+            // Older versions of Spigot pre-1.20.4 don't have getPotionEffects()
+            return Util.prettifyText(potionType.getEffectType().getKey().getKey());
         }
-        return effects.stream().map(effect -> Util.prettifyText(effect.getType().getKey().getKey()))
-                .collect(Collectors.joining(", "));
     }
 
     /**

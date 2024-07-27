@@ -126,6 +126,22 @@ public enum GameModePlaceholder {
     ISLAND_MEMBERS_LIST("island_members_list", (addon, user, island) -> island == null ? "" : island.getMemberSet(RanksManager.MEMBER_RANK).stream()
             .map(addon.getPlayers()::getName).collect(Collectors.joining(","))),
     /**
+     * Returns a comma separated list of player names that are at least TRUSTED on this island.
+     * @since 2.4.2
+     */
+    ISLAND_TRUSTED_LIST("island_trusted_list",
+            (addon, user, island) -> island == null ? ""
+                    : island.getMemberSet(RanksManager.TRUSTED_RANK, false).stream().map(addon.getPlayers()::getName)
+                            .collect(Collectors.joining(","))),
+    /**
+     * Returns a comma separated list of player names that are at least COOP on this island.
+     * @since 2.4.2
+     */
+    ISLAND_COOP_LIST("island_coop_list",
+            (addon, user, island) -> island == null ? ""
+                    : island.getMemberSet(RanksManager.COOP_RANK, false).stream().map(addon.getPlayers()::getName)
+                            .collect(Collectors.joining(","))),
+    /**
      * Returns the amount of players that are TRUSTED on this island.
      * @since 1.5.0
      */
@@ -244,6 +260,20 @@ public enum GameModePlaceholder {
     VISITED_ISLAND_MEMBERS_LIST("visited_island_members_list", (addon, user, island) ->
     getVisitedIsland(addon, user).map(value -> value.getMemberSet(RanksManager.MEMBER_RANK).stream()
             .map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("")),
+    /**
+     * Returns a comma separated list of player names that are at TRUSTED on the island the player is standing on.
+     * @since 2.4.2
+     */
+    VISITED_ISLAND_TRUSTED_LIST("visited_island_trusted_list", (addon, user,
+            island) -> getVisitedIsland(addon, user).map(value -> value.getMemberSet(RanksManager.TRUSTED_RANK, false)
+                    .stream().map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("")),
+    /**
+     * Returns a comma separated list of player names that are COOP on the island the player is standing on.
+     * @since 2.4.2
+     */
+    VISITED_ISLAND_COOP_LIST("visited_island_coop_list", (addon, user,
+            island) -> getVisitedIsland(addon, user).map(value -> value.getMemberSet(RanksManager.COOP_RANK, false)
+                    .stream().map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("")),
     /**
      * Returns the amount of players that are at least MEMBER on the island the player is standing on.
      * @since 1.5.2

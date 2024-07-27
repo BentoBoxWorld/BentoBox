@@ -501,7 +501,7 @@ public class Island implements DataObject, MetaDataAble {
 
     /**
      * Get the maximum protected Z block coordinate based on the island location. It
-     * will never be more than {@link #getMinZ()}
+     * will never be more than {@link #getMaxZ()}
      * 
      * @return the maxProtectedZ
      * @since 1.5.2

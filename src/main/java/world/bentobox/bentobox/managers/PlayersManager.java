@@ -84,9 +84,11 @@ public class PlayersManager {
         Objects.requireNonNull(playerUUID, "Player UUID must not be null");
 
         // If the player exists in the database, load it; otherwise, create and save a new player
-        Players player = loadPlayer(playerUUID);
-        if (player != null) {
-            return player;
+        if (handler.objectExists(playerUUID.toString())) {
+            Players p = loadPlayer(playerUUID);
+            if (p != null) {
+                return p;
+            }
         }
         Players newPlayer = new Players(plugin, playerUUID);
         handler.saveObjectAsync(newPlayer);

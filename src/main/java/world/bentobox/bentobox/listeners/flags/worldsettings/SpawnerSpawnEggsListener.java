@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -21,8 +20,8 @@ public class SpawnerSpawnEggsListener extends FlagListener {
     public void onSpawnerChange(final PlayerInteractEvent e) {
         User user = User.getInstance(e.getPlayer());
         // Checking if the clicked block is a spawner and the item in hand is a mob egg
-        if (e.getClickedBlock() != null && e.getClickedBlock().getType().equals(Material.SPAWNER)
-                && e.getItem() != null && e.getItem().getType().toString().endsWith("_SPAWN_EGG")
+        if (e.getClickedBlock() != null && e.getClickedBlock().getType().name().endsWith("_SPAWNER")
+                && e.getItem() != null && e.getItem().getType().name().endsWith("_SPAWN_EGG")
                 && getIWM().inWorld(e.getClickedBlock().getWorld())
                 && !(user.hasPermission(getIWM().getPermissionPrefix(e.getClickedBlock().getWorld()) + "mod.bypass." + Flags.SPAWNER_SPAWN_EGGS.getID() + ".everywhere")
                 || user.hasPermission(getIWM().getPermissionPrefix(e.getClickedBlock().getWorld()) + "mod.bypassprotect"))

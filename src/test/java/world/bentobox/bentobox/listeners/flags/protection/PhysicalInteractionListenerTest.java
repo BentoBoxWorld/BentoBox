@@ -7,10 +7,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -25,6 +28,7 @@ import org.bukkit.entity.Slime;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -227,5 +231,62 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
             i.onProjectileHit(e);
             assertTrue(p.name() +" failed", e.isCancelled());
         });
+    }
+    
+    /**
+     * Test method for {@link PhysicalInteractionListener#onProjectileExplode(org.bukkit.event.entity.EntityExplodeEvent)}.
+     */
+    @Test
+    public void testOnProjectileExplodeNotProjectile() {
+        Entity entity = mock(Entity.class);
+        List<Block> blocks = new ArrayList<>();
+        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        PhysicalInteractionListener i = new PhysicalInteractionListener();
+        i.onProjectileExplode(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PhysicalInteractionListener#onProjectileExplode(org.bukkit.event.entity.EntityExplodeEvent)}.
+     */
+    @Test
+    public void testOnProjectileExplodeProjectileNoPlayer() {
+        Projectile entity = mock(Projectile.class);
+        ProjectileSource source = mock(Creeper.class);
+        when(entity.getShooter()).thenReturn(source);
+        List<Block> blocks = new ArrayList<>();
+        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        PhysicalInteractionListener i = new PhysicalInteractionListener();
+        i.onProjectileExplode(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PhysicalInteractionListener#onProjectileExplode(org.bukkit.event.entity.EntityExplodeEvent)}.
+     */
+    @Test
+    public void testOnProjectileExplodeProjectilePlayer() {
+        Projectile entity = mock(Projectile.class);
+        when(entity.getShooter()).thenReturn(mockPlayer);
+        List<Block> blocks = new ArrayList<>();
+        Block block1 = mock(Block.class);
+        Block block2 = mock(Block.class);
+        when(block1.getLocation()).thenReturn(location);
+        when(block2.getLocation()).thenReturn(location);
+        blocks.add(block1);
+        blocks.add(block2);
+        
+        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        PhysicalInteractionListener i = new PhysicalInteractionListener();
+        
+        // Test with wooden button
+        when(block1.getType()).thenReturn(Material.OAK_BUTTON);
+        when(Tag.WOODEN_BUTTONS.isTagged(Material.OAK_BUTTON)).thenReturn(true);
+        // Test with pressure plate
+        when(block2.getType()).thenReturn(Material.STONE_PRESSURE_PLATE);
+        when(Tag.PRESSURE_PLATES.isTagged(Material.STONE_PRESSURE_PLATE)).thenReturn(true);
+
+        i.onProjectileExplode(e);
+        verify(notifier, times(2)).notify(any(), eq("protection.protected"));
     }
 }

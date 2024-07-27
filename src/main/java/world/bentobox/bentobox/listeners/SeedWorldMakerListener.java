@@ -39,7 +39,7 @@ public class SeedWorldMakerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent e) {
-        if (!ready || !e.getChunk().isGenerated()) {
+        if (!ready) {
             return;
         }
         World world = e.getWorld();
@@ -47,7 +47,7 @@ public class SeedWorldMakerListener implements Listener {
             World seed = Bukkit.getWorld(world.getName() + "/bentobox");
             int x = e.getChunk().getX();
             int z = e.getChunk().getZ();
-            if (seed != null && !seed.getChunkAt(x, z, false).isGenerated()) {
+            if (seed != null) {
                 Util.getChunkAtAsync(seed, x, z, true);
             }
         });
