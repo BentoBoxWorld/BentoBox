@@ -19,6 +19,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Common Game Mode Placeholders
+ * All of these are prefixed with the game mode's name, e.g., bskykblock_
  */
 public enum GameModePlaceholder {
 

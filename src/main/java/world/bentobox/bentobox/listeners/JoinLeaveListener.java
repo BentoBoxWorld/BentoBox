@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -105,6 +106,24 @@ public class JoinLeaveListener implements Listener {
 
         // Add a player to the bStats cache.
         plugin.getMetrics().ifPresent(bStats -> bStats.addPlayer(playerUUID));
+
+        // Create onIsland placeholders
+        plugin.getAddonsManager().getGameModeAddons().forEach(addon -> {
+            plugin.getPlaceholdersManager()
+                    .registerPlaceholder(addon.getDescription().getName() + "_onisland_" + user.getName(), asker -> {
+                        if (asker == null) {
+                            return "";
+                        }
+                        // Get the user who this applies to
+                        User named = User.getInstance(user.getUniqueId());
+                        if (named.isOnline()) {
+                            return plugin.getIslands().getIslands(addon.getOverWorld(), asker).stream()
+                                    .filter(island -> island.onIsland(named.getLocation())).findFirst().map(i -> "true")
+                                    .orElse("false");
+                        }
+                        return "false";
+                    });
+        });
     }
 
     private void firstTime(User user) {
