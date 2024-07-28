@@ -116,6 +116,25 @@ public class Flag implements Comparable<Flag> {
         }
     }
 
+    /**
+     * Options for hiding of sub flags
+     * @since 2.4.3
+     */
+    public enum HideWhen {
+        /**
+         * Never hide sub-flags
+         */
+        NEVER,
+        /**
+         * Hide subflags if the setting of the parent flag is true
+         */
+        SETTING_TRUE,
+        /**
+         * Hide subflags if the setting of the parent flag is false
+         */
+        SETTING_FALSE
+    }
+
     private static final String PROTECTION_FLAGS = "protection.flags.";
 
     private final String id;
@@ -131,6 +150,7 @@ public class Flag implements Comparable<Flag> {
     private final int cooldown;
     private final Mode mode;
     private final Set<Flag> subflags;
+    private final HideWhen hideWhen;
 
     private Flag(Builder builder) {
         this.id = builder.id;
@@ -148,6 +168,7 @@ public class Flag implements Comparable<Flag> {
         this.addon = builder.addon;
         this.mode = builder.mode;
         this.subflags = builder.subflags;
+        this.hideWhen = builder.hideWhen;
     }
 
     public String getID() {
@@ -274,6 +295,14 @@ public class Flag implements Comparable<Flag> {
      */
     public Addon getAddon() {
         return addon;
+    }
+
+    /**
+     * Get when sub-flags should be hidden
+     * @return 
+     */
+    public HideWhen getHideWhen() {
+        return hideWhen;
     }
 
     /* (non-Javadoc)
@@ -553,6 +582,9 @@ public class Flag implements Comparable<Flag> {
         // Subflags
         private final Set<Flag> subflags;
 
+        // Hide when indicator
+        private HideWhen hideWhen = HideWhen.NEVER;
+
         /**
          * Builder for making flags
          * @param id - a unique id that MUST be the same as the enum of the flag
@@ -679,6 +711,18 @@ public class Flag implements Comparable<Flag> {
          */
         public Builder subflags(Flag... flags) {
             this.subflags.addAll(Arrays.asList(flags));
+            return this;
+        }
+
+        /**
+         * When should sub-flags be hidden, if ever
+         * {@see HideWhen}
+         * @param hideWhen hide when indicator
+         * @return Builder - flag builder
+         * @since 2.4.3
+         */
+        public Builder hideWhen(HideWhen hideWhen) {
+            this.hideWhen = hideWhen;
             return this;
         }
 

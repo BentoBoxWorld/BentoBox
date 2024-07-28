@@ -2,8 +2,10 @@ package world.bentobox.bentobox.panels.settings;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.flags.Flag.HideWhen;
 import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -131,10 +134,25 @@ public class SettingsTab implements Tab, ClickHandler {
             currentMode.put(user.getUniqueId(), currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC).getNext());
             flags = getFlags();
         }
+        // Remove any sub-flags that shouldn't be shown
+        Set<Flag> toBeRemoved = new HashSet<>();
+        flags.stream().forEach(flag -> {
+            if ((flag.getType() == Type.SETTING || flag.getType() == Type.WORLD_SETTING) && flag.hasSubflags()) {
+                if (flag.isSetForWorld(world) && flag.getHideWhen() == HideWhen.SETTING_TRUE) {
+                    toBeRemoved.addAll(flag.getSubflags());
+                } else if (!flag.isSetForWorld(world) && flag.getHideWhen() == HideWhen.SETTING_FALSE) {
+                    toBeRemoved.addAll(flag.getSubflags());
+                }
+            }
+
+        });
+        flags.removeAll(toBeRemoved);
+
         List<@Nullable PanelItem> result = flags.stream().map(
                 (f -> f.toPanelItem(plugin, user, world, island,
                         plugin.getIWM().getHiddenFlags(world).contains(f.getID()))))
                 .toList();
+
         return result;
     }
 
