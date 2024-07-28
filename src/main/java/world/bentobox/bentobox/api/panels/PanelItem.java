@@ -132,11 +132,7 @@ public class PanelItem {
             return;
         }
         if (meta != null) {
-            if (glow) {
-                meta.addEnchant(Enchantment.LURE, 0, glow);
-            } else {
-                meta.removeEnchant(Enchantment.LURE);
-            }
+            meta.setEnchantmentGlintOverride(glow);
             icon.setItemMeta(meta);
 
         }
