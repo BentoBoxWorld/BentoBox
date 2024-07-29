@@ -136,15 +136,14 @@ public class SettingsTab implements Tab, ClickHandler {
         }
         // Remove any sub-flags that shouldn't be shown
         Set<Flag> toBeRemoved = new HashSet<>();
-        flags.stream().forEach(flag -> {
-            if ((flag.getType() == Type.SETTING || flag.getType() == Type.WORLD_SETTING) && flag.hasSubflags()) {
-                if (flag.isSetForWorld(world) && flag.getHideWhen() == HideWhen.SETTING_TRUE) {
-                    toBeRemoved.addAll(flag.getSubflags());
-                } else if (!flag.isSetForWorld(world) && flag.getHideWhen() == HideWhen.SETTING_FALSE) {
-                    toBeRemoved.addAll(flag.getSubflags());
+        flags.forEach(flag -> {
+            if (flag.isSubFlag() && flag.getHideWhen() != HideWhen.NEVER) {
+                if (!flag.getParentFlag().isSetForWorld(world) && flag.getHideWhen() == HideWhen.SETTING_FALSE) {
+                    toBeRemoved.add(flag);
+                } else if (flag.getParentFlag().isSetForWorld(world) && flag.getHideWhen() == HideWhen.SETTING_TRUE) {
+                    toBeRemoved.add(flag);
                 }
             }
-
         });
         flags.removeAll(toBeRemoved);
 
