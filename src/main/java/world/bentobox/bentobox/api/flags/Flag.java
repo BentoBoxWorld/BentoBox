@@ -151,6 +151,8 @@ public class Flag implements Comparable<Flag> {
     private final Mode mode;
     private final Set<Flag> subflags;
     private final HideWhen hideWhen;
+    private boolean isSubFlag;
+    private Flag parentFlag;
 
     private Flag(Builder builder) {
         this.id = builder.id;
@@ -169,6 +171,8 @@ public class Flag implements Comparable<Flag> {
         this.mode = builder.mode;
         this.subflags = builder.subflags;
         this.hideWhen = builder.hideWhen;
+        this.isSubFlag = false;
+        this.parentFlag = null;
     }
 
     public String getID() {
@@ -303,6 +307,20 @@ public class Flag implements Comparable<Flag> {
      */
     public HideWhen getHideWhen() {
         return hideWhen;
+    }
+
+    /**
+     * @return the isSubFlag
+     */
+    public boolean isSubFlag() {
+        return isSubFlag;
+    }
+
+    /**
+     * @return the parentFlag
+     */
+    public Flag getParentFlag() {
+        return parentFlag;
     }
 
     /* (non-Javadoc)
@@ -711,6 +729,9 @@ public class Flag implements Comparable<Flag> {
          */
         public Builder subflags(Flag... flags) {
             this.subflags.addAll(Arrays.asList(flags));
+            for (Flag flag : flags) {
+                flag.isSubFlag = true;
+            }
             return this;
         }
 
@@ -739,9 +760,9 @@ public class Flag implements Comparable<Flag> {
                 default -> new CycleClick(id);
                 };
             }
-
-            return new Flag(this);
+            Flag flag = new Flag(this);
+            subflags.forEach(subflag -> subflag.parentFlag = flag);
+            return flag;
         }
     }
-
 }
