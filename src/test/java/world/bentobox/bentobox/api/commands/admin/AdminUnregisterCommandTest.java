@@ -41,6 +41,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -270,6 +271,8 @@ public class AdminUnregisterCommandTest {
         verify(user).sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, "1,2,3",
                 TextVariables.NAME, "name");
         verify(island).setOwner(null);
+        verify(island).log(any(LogEntry.class));
+
     }
 
     /**

@@ -114,8 +114,13 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         targetIsland.getMemberSet().forEach(m -> getIslands().removePlayer(targetIsland, m));
         // Remove all island players that reference this island
         targetIsland.getMembers().clear();
-        targetIsland.log(new LogEntry.Builder("UNREGISTER").data("player", targetUUID.toString())
-                .data("admin", user.getUniqueId().toString()).build());
+        if (user.isPlayer()) {
+            targetIsland.log(new LogEntry.Builder("UNREGISTER").data("player", targetUUID.toString())
+                    .data("admin", user.getUniqueId().toString()).build());
+        } else {
+            targetIsland.log(new LogEntry.Builder("UNREGISTER").data("player", targetUUID.toString())
+                    .data("admin", "console").build());
+        }
         user.sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, Util.xyz(targetIsland.getCenter().toVector()),
                 TextVariables.NAME, getPlayers().getName(targetUUID));
     }
