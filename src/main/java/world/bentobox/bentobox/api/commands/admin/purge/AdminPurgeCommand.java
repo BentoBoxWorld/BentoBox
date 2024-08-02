@@ -127,7 +127,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
      */
     Set<String> getOldIslands(int days) {
         long currentTimeMillis = System.currentTimeMillis();
-        double daysInMilliseconds = days * 1000 * 3600 * 24;
+        long daysInMilliseconds = (long) days * 1000 * 3600 * 24;
         Set<String> oldIslands = new HashSet<>();
 
         // Process islands in one pass, logging and adding to the set if applicable
