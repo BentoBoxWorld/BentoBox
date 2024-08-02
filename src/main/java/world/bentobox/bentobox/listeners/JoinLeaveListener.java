@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -110,7 +109,7 @@ public class JoinLeaveListener implements Listener {
         // Create onIsland placeholders
         plugin.getAddonsManager().getGameModeAddons().forEach(addon -> {
             plugin.getPlaceholdersManager()
-                    .registerPlaceholder(addon.getDescription().getName() + "_onisland_" + user.getName(), asker -> {
+                    .registerPlaceholder(addon, "onisland_" + user.getName(), asker -> {
                         if (asker == null) {
                             return "";
                         }
@@ -256,6 +255,9 @@ public class JoinLeaveListener implements Listener {
                 });
         // Remove any coop associations from the player logging out
         plugin.getIslands().clearRank(RanksManager.COOP_RANK, event.getPlayer().getUniqueId());
+        // Remove any onisland placeholder
+        plugin.getAddonsManager().getGameModeAddons().forEach(addon -> plugin.getPlaceholdersManager()
+                .unregisterPlaceholder(addon, "onisland_" + event.getPlayer().getName()));
         User.removePlayer(event.getPlayer());
     }
 }
