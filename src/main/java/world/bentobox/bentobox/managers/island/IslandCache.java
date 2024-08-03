@@ -538,7 +538,9 @@ public class IslandCache {
      * @return list of islands
      */
     public @NonNull List<Island> getIslands(UUID uniqueId) {
-        return islandsByUUID.getOrDefault(uniqueId, Collections.emptySet()).stream().map(this::getIslandById).toList();
+        return islandsByUUID.getOrDefault(uniqueId, Collections.emptySet()).stream().map(this::getIslandById)
+                .filter(Objects::nonNull) // Filter out null values
+                .toList();
     }
 
     /**
