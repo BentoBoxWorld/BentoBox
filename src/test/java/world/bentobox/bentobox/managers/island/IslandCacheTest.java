@@ -471,6 +471,23 @@ public class IslandCacheTest extends AbstractCommonSetup {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands(java.util.UUID)}.
+     * @throws IntrospectionException 
+     * @throws NoSuchMethodException 
+     * @throws ClassNotFoundException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
+     */
+    @Test
+    public void testGetIslandsUUIDNoIslands() throws InstantiationException, IllegalAccessException,
+            InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+        // Test is WIP.
+        when(handler.loadObject(anyString())).thenReturn(null);
+        assertTrue(ic.getIslands(owner).isEmpty());
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
