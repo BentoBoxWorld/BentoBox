@@ -105,6 +105,24 @@ public class JoinLeaveListener implements Listener {
 
         // Add a player to the bStats cache.
         plugin.getMetrics().ifPresent(bStats -> bStats.addPlayer(playerUUID));
+
+        // Create onIsland placeholders
+        plugin.getAddonsManager().getGameModeAddons().forEach(addon -> {
+            plugin.getPlaceholdersManager()
+                    .registerPlaceholder(addon, "onisland_" + user.getName(), asker -> {
+                        if (asker == null) {
+                            return "";
+                        }
+                        // Get the user who this applies to
+                        User named = User.getInstance(user.getUniqueId());
+                        if (named.isOnline()) {
+                            return plugin.getIslands().getIslands(addon.getOverWorld(), asker).stream()
+                                    .filter(island -> island.onIsland(named.getLocation())).findFirst().map(i -> "true")
+                                    .orElse("false");
+                        }
+                        return "false";
+                    });
+        });
     }
 
     private void firstTime(User user) {
@@ -237,6 +255,9 @@ public class JoinLeaveListener implements Listener {
                 });
         // Remove any coop associations from the player logging out
         plugin.getIslands().clearRank(RanksManager.COOP_RANK, event.getPlayer().getUniqueId());
+        // Remove any onisland placeholder
+        plugin.getAddonsManager().getGameModeAddons().forEach(addon -> plugin.getPlaceholdersManager()
+                .unregisterPlaceholder(addon, "onisland_" + event.getPlayer().getName()));
         User.removePlayer(event.getPlayer());
     }
 }
