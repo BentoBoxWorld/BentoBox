@@ -134,7 +134,7 @@ public class PanelItem {
         if (meta != null) {
             try {
                 meta.setEnchantmentGlintOverride(glow);
-            } catch (Exception e) {
+            } catch (NoSuchMethodError e) {
                 // Try the old way
                 if (meta != null) {
                     if (glow) {
