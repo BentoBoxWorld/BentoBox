@@ -46,6 +46,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -57,7 +58,7 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
-public class VisitorKeepInventoryListenerTest {
+public class VisitorKeepInventoryListenerTest extends AbstractCommonSetup {
 
     // Class under test
     private VisitorKeepInventoryListener l;
@@ -136,7 +137,7 @@ public class VisitorKeepInventoryListenerTest {
         // Default death event
         List<ItemStack> drops = new ArrayList<>();
         drops.add(new ItemStack(Material.ACACIA_BOAT));
-        e = new PlayerDeathEvent(player, drops, 100, 0, 0, 0, "Death message");
+        e = getPlayerDeathEvent(player, drops, 100, 0, 0, 0, "Death message");
         // Make new
         l = new VisitorKeepInventoryListener();
     }

@@ -28,6 +28,7 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -181,6 +182,20 @@ public class PanelListenerManagerTest {
         public void setTitle(String title) {
             // TODO Auto-generated method stub
         }
+
+        @Override
+        public void setItem(int slot, ItemStack item) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public ItemStack getItem(int slot) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+
 
     }
 

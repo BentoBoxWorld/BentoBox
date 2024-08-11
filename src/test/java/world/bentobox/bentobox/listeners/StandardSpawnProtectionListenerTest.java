@@ -42,6 +42,7 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -55,7 +56,7 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class })
-public class StandardSpawnProtectionListenerTest {
+public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
 
     @Mock
     private BentoBox plugin;
@@ -289,7 +290,7 @@ public class StandardSpawnProtectionListenerTest {
                 new Vector(0,0,0),
                 new Vector(0,0,0),
                 new Vector(10000,0,0));
-        EntityExplodeEvent e = new EntityExplodeEvent(player, location, blockList, 0);
+        EntityExplodeEvent e = getExplodeEvent(player, location, blockList);
         ssp.onExplosion(e);
         // 4 blocks inside the spawn should be removed, leaving one
         assertEquals(1, blockList.size());
@@ -314,7 +315,7 @@ public class StandardSpawnProtectionListenerTest {
                 new Vector(0,0,0),
                 new Vector(0,0,0),
                 new Vector(10000,0,0));
-        EntityExplodeEvent e = new EntityExplodeEvent(player, location, blockList, 0);
+        EntityExplodeEvent e = getExplodeEvent(player, location, blockList);
         ssp.onExplosion(e);
         // No blocks should be removed
         assertEquals(5, blockList.size());

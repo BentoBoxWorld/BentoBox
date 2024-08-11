@@ -240,7 +240,7 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
     public void testOnProjectileExplodeNotProjectile() {
         Entity entity = mock(Entity.class);
         List<Block> blocks = new ArrayList<>();
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onProjectileExplode(e);
         assertFalse(e.isCancelled());
@@ -255,7 +255,7 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
         ProjectileSource source = mock(Creeper.class);
         when(entity.getShooter()).thenReturn(source);
         List<Block> blocks = new ArrayList<>();
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onProjectileExplode(e);
         assertFalse(e.isCancelled());
@@ -276,7 +276,7 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
         blocks.add(block1);
         blocks.add(block2);
         
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         
         // Test with wooden button

@@ -109,7 +109,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
     public void testOnExplosion() {
         List<Block> list = new ArrayList<>();
         list.add(block);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, list);
         listener.onExplosion(e);
         assertTrue(e.isCancelled());
     }
@@ -121,7 +121,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
         List<Block> list = new ArrayList<>();
         list.add(block);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, list);
         listener.onExplosion(e);
         assertTrue(e.isCancelled());
     }
@@ -133,7 +133,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
         List<Block> list = new ArrayList<>();
         list.add(block);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, list);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
         assertFalse(list.isEmpty());
@@ -144,7 +144,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         List<Block> list = new ArrayList<>();
         list.add(block);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, list);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
         assertFalse(list.isEmpty());
