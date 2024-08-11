@@ -37,7 +37,7 @@ import world.bentobox.bentobox.BentoBox;
  *
  * @author tastybento, Poslovitch
  */
-@SuppressWarnings("deprecation")
+@SuppressWarnings("removal")
 public class ItemParser {
 
     private ItemParser() {} // private constructor to hide the implicit public one.
@@ -333,7 +333,7 @@ public class ItemParser {
      * @param part String array that contains at least 2 elements.
      * @return Banner as item stack.
      */
-    private static ItemStack parseBanner(String[] part) {
+    static ItemStack parseBanner(String[] part) {
         if (part.length >= 2) {
             Material bannerMat = Material.getMaterial(part[0]);
             if (bannerMat == null) {
@@ -345,18 +345,13 @@ public class ItemParser {
             BannerMeta meta = (BannerMeta) result.getItemMeta();
             if (meta != null) {
                 for (int i = 2; i < part.length; i += 2) {
-                    PatternType pt = Enums.getIfPresent(PatternType.class, part[i]).orNull();
-                    if (pt == null) {
-                        // Try to convert old to new
-                        if (part[i].trim().equals("STRIPE_SMALL")
-                                && Enums.getIfPresent(PatternType.class, "SMALL_STRIPES").isPresent()) {
-                            pt = PatternType.SMALL_STRIPES;
+                    //if (!Util.inTest()) {
+                        PatternType pt = PatternType.valueOf(part[i]);
+                        DyeColor dc = Enums.getIfPresent(DyeColor.class, part[i + 1]).orNull();
+                        if (dc != null) {
+                            meta.addPattern(new Pattern(dc, pt));
                         }
-                    }
-                    DyeColor dc = Enums.getIfPresent(DyeColor.class, part[i + 1]).orNull();
-                    if (pt != null && dc != null) {
-                        meta.addPattern(new Pattern(dc, pt));
-                    }
+                        //}
                 }
                 result.setItemMeta(meta);
             }
