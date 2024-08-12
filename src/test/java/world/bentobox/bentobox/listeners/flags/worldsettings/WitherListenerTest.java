@@ -36,6 +36,7 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 
@@ -45,7 +46,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {BentoBox.class, Bukkit.class} )
-public class WitherListenerTest {
+public class WitherListenerTest extends AbstractCommonSetup {
 
     private WitherListener wl;
     @Mock
@@ -121,7 +122,7 @@ public class WitherListenerTest {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.WITHER);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         wl.onExplosion(e);
         assertTrue(blocks.isEmpty());
     }
@@ -136,7 +137,7 @@ public class WitherListenerTest {
         when(entity.getLocation()).thenReturn(location2);
         when(entity.getWorld()).thenReturn(world2);
         when(entity.getType()).thenReturn(EntityType.WITHER);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location2, blocks, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location2, blocks);
         wl.onExplosion(e);
         assertFalse(blocks.isEmpty());
     }
@@ -151,7 +152,7 @@ public class WitherListenerTest {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.WITHER);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         wl.onExplosion(e);
         assertFalse(blocks.isEmpty());
 
@@ -166,7 +167,7 @@ public class WitherListenerTest {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.WITHER_SKULL);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         wl.onExplosion(e);
         assertTrue(blocks.isEmpty());
     }
@@ -180,7 +181,7 @@ public class WitherListenerTest {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.DRAGON_FIREBALL);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         wl.onExplosion(e);
         assertFalse(blocks.isEmpty());
     }

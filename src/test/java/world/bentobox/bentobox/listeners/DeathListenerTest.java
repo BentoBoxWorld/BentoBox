@@ -25,13 +25,14 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
-public class DeathListenerTest {
+public class DeathListenerTest extends AbstractCommonSetup {
 
     private Player player;
     private BentoBox plugin;
@@ -84,7 +85,7 @@ public class DeathListenerTest {
         // Test
         DeathListener dl = new DeathListener(plugin);
 
-        PlayerDeathEvent e = new PlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
+        PlayerDeathEvent e = getPlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeath(e);
         Mockito.verify(pm).addDeath(world, uuid);
     }
@@ -95,7 +96,7 @@ public class DeathListenerTest {
         // Test
         DeathListener dl = new DeathListener(plugin);
 
-        PlayerDeathEvent e = new PlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
+        PlayerDeathEvent e = getPlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeath(e);
         Mockito.verify(pm, Mockito.never()).addDeath(world, uuid);
     }
@@ -106,7 +107,7 @@ public class DeathListenerTest {
         // Test
         DeathListener dl = new DeathListener(plugin);
 
-        PlayerDeathEvent e = new PlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
+        PlayerDeathEvent e = getPlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeath(e);
         Mockito.verify(pm, Mockito.never()).addDeath(world, uuid);
     }

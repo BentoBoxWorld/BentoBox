@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,8 +16,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemFactory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -208,6 +214,24 @@ public abstract class AbstractCommonSetup {
     public void tearDown() throws Exception {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
+    }
+
+    /**
+     * Get the explode event
+     * @param entity
+     * @param l
+     * @param list
+     * @return
+     */
+    public EntityExplodeEvent getExplodeEvent(Entity entity, Location l, List<Block> list) {
+        //return new EntityExplodeEvent(entity, l, list, 0, null);
+        return new EntityExplodeEvent(entity, l, list, 0);
+    }
+
+    public PlayerDeathEvent getPlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newExp,
+            int newTotalExp, int newLevel, @Nullable String deathMessage) {
+        //return new PlayerDeathEvent(player, null, drops, droppedExp, newExp, newTotalExp, newLevel, deathMessage);
+        return new PlayerDeathEvent(player, drops, droppedExp, newExp, newTotalExp, newLevel, deathMessage);
     }
 
 }

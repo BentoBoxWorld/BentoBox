@@ -68,9 +68,7 @@ public class HeadCache
      * @param timestamp     of type long
      */
     public HeadCache(String userName,
-        UUID userId,
-        PlayerProfile playerProfile,
-        long timestamp)
+            UUID userId, PlayerProfile playerProfile, long timestamp)
     {
         this.userName = userName;
         this.playerProfile = playerProfile;
@@ -99,8 +97,12 @@ public class HeadCache
         // Set correct Skull texture
         if (meta != null && this.playerProfile != null)
         {
-            meta.setOwnerProfile(this.playerProfile);
-            item.setItemMeta(meta);
+            try {
+                meta.setOwnerProfile(this.playerProfile);
+                item.setItemMeta(meta);
+            } catch (Exception e) {
+                // Do nothing - there was an error getting the head
+            }
         }
 
         return item;

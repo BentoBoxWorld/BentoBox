@@ -171,8 +171,15 @@ public class IslandCache {
     }
 
     private void removeFromIslandsByUUID(Island island) {
-        for (Set<String> set : islandsByUUID.values()) {
+        Iterator<Map.Entry<UUID, Set<String>>> iterator = islandsByUUID.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<UUID, Set<String>> entry = iterator.next();
+            Set<String> set = entry.getValue();
             set.removeIf(island.getUniqueId()::equals);
+            if (set.isEmpty()) {
+                // Removes the overall entry if there is nothing left in the set
+                iterator.remove();
+            }
         }
     }
 
@@ -538,7 +545,9 @@ public class IslandCache {
      * @return list of islands
      */
     public @NonNull List<Island> getIslands(UUID uniqueId) {
-        return islandsByUUID.getOrDefault(uniqueId, Collections.emptySet()).stream().map(this::getIslandById).toList();
+        return islandsByUUID.getOrDefault(uniqueId, Collections.emptySet()).stream().map(this::getIslandById)
+                .filter(Objects::nonNull) // Filter out null values
+                .toList();
     }
 
     /**

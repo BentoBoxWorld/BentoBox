@@ -52,6 +52,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
+import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -106,6 +107,9 @@ public class JoinLeaveListenerTest {
     private PluginManager pim;
     @Mock
     private @NonNull Location location;
+
+    @Mock
+    private AddonsManager am;
 
     /**
      */
@@ -217,6 +221,9 @@ public class JoinLeaveListenerTest {
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
         when(phm.replacePlaceholders(any(), anyString()))
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+
+        // Addons manager
+        when(plugin.getAddonsManager()).thenReturn(am);
 
         jll = new JoinLeaveListener(plugin);
     }

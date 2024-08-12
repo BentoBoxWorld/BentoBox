@@ -47,6 +47,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.hooks.ItemsAdderHook.BlockInteractListener;
+import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -59,7 +60,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BentoBox.class, Bukkit.class, CustomBlock.class })
-public class ItemsAdderHookTest {
+public class ItemsAdderHookTest extends AbstractCommonSetup {
 
     @Mock
     private BentoBox plugin;
@@ -192,7 +193,7 @@ public class ItemsAdderHookTest {
         when(entity.getType()).thenReturn(EntityType.PLAYER);
         when(entity.hasPermission("XXXXXX")).thenReturn(true);
         List<Block> list = new ArrayList<>();
-        EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0);
+        EntityExplodeEvent event = getExplodeEvent(entity, location, list);
         listener.onExplosion(event);
         assertTrue(event.isCancelled());
     }
