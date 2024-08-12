@@ -137,7 +137,7 @@ public class WitherListenerTest extends AbstractCommonSetup {
         when(entity.getLocation()).thenReturn(location2);
         when(entity.getWorld()).thenReturn(world2);
         when(entity.getType()).thenReturn(EntityType.WITHER);
-        EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
+        EntityExplodeEvent e = getExplodeEvent(entity, location2, blocks);
         wl.onExplosion(e);
         assertFalse(blocks.isEmpty());
     }
