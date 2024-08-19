@@ -5,7 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.CaveVinesPlant;
-import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.ItemFrame;
@@ -23,6 +22,7 @@ import org.bukkit.event.vehicle.VehicleDamageEvent;
 
 import com.google.common.base.Enums;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -38,15 +38,21 @@ public class BreakBlocksListener extends FlagListener {
         Player p = e.getPlayer();
         Location l = e.getBlock().getLocation();
         Material m = e.getBlock().getType();
+        BentoBox.getInstance().logDebug(m);
         if (m.equals(Material.MELON) || m.equals(Material.PUMPKIN)) {
             this.checkIsland(e, p, l, Flags.HARVEST);
         } else {
             // Crops
-            if (Tag.CROPS.isTagged(m)
+            if ((Tag.CROPS.isTagged(m)
                     && !m.equals(Material.MELON_STEM)
                     && !m.equals(Material.PUMPKIN_STEM)
                     && !m.equals(Material.ATTACHED_MELON_STEM)
-                    && !m.equals(Material.ATTACHED_PUMPKIN_STEM)) {
+                    && !m.equals(Material.ATTACHED_PUMPKIN_STEM))
+                    || m == Material.COCOA
+                    || m == Material.SWEET_BERRY_BUSH
+                    || m == Material.BAMBOO
+                    || m == Material.NETHER_WART
+                    ) {
                 this.checkIsland(e,  p,  l, Flags.HARVEST);
             } else {
                 checkIsland(e, p, l, Flags.BREAK_BLOCKS);

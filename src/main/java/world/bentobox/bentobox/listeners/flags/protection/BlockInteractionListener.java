@@ -123,7 +123,8 @@ public class BlockInteractionListener extends FlagListener
         case DRAGON_EGG -> this.checkIsland(e, player, loc, Flags.DRAGON_EGG);
         case END_PORTAL_FRAME, RESPAWN_ANCHOR -> this.checkIsland(e, player, loc, Flags.PLACE_BLOCKS);
         case GLOW_ITEM_FRAME, ITEM_FRAME -> this.checkIsland(e, player, loc, Flags.ITEM_FRAME);
-        case SWEET_BERRY_BUSH, CAVE_VINES -> this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
+        case SWEET_BERRY_BUSH -> this.checkIsland(e, player, loc, Flags.HARVEST);
+        case CAVE_VINES -> this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
         case CAKE -> this.checkIsland(e, player, loc, Flags.CAKE);
         case CHISELED_BOOKSHELF -> this.checkIsland(e, player, loc, Flags.BOOKSHELF);
         case LAVA_CAULDRON ->
