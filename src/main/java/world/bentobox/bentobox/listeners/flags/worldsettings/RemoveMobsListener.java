@@ -24,15 +24,19 @@ public class RemoveMobsListener extends FlagListener {
                 || e.getCause().equals(TeleportCause.SPECTATE)) {
             return;
         }
-        // Return if this is a small teleport
-        if (e.getTo().getWorld().equals(e.getPlayer().getWorld()) &&
-                e.getTo().distanceSquared(e.getPlayer().getLocation()) < getPlugin().getSettings().getClearRadius() * getPlugin().getSettings().getClearRadius()) {
-            return;
+
+        if(e.getTo() != null) {
+            // Return if this is a small teleport
+            if (e.getTo().getWorld().equals(e.getPlayer().getWorld()) &&
+                    e.getTo().distanceSquared(e.getPlayer().getLocation()) < getPlugin().getSettings().getClearRadius() * getPlugin().getSettings().getClearRadius()) {
+                return;
+            }
+            // Only process if flag is active
+            if (getIslands().locationIsOnIsland(e.getPlayer(), e.getTo()) && Flags.REMOVE_MOBS.isSetForWorld(e.getTo().getWorld())) {
+                Bukkit.getScheduler().runTask(getPlugin(), () -> getIslands().clearArea(e.getTo()));
+            }
         }
-        // Only process if flag is active
-        if (getIslands().locationIsOnIsland(e.getPlayer(), e.getTo()) && Flags.REMOVE_MOBS.isSetForWorld(e.getTo().getWorld())) {
-            Bukkit.getScheduler().runTask(getPlugin(), () -> getIslands().clearArea(e.getTo()));
-        }
+        
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
