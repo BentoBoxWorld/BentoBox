@@ -31,6 +31,7 @@ public class RemoveMobsListener extends FlagListener {
                     e.getTo().distanceSquared(e.getPlayer().getLocation()) < getPlugin().getSettings().getClearRadius() * getPlugin().getSettings().getClearRadius()) {
                 return;
             }
+            
             // Only process if flag is active
             if (getIslands().locationIsOnIsland(e.getPlayer(), e.getTo()) && Flags.REMOVE_MOBS.isSetForWorld(e.getTo().getWorld())) {
                 Bukkit.getScheduler().runTask(getPlugin(), () -> getIslands().clearArea(e.getTo()));
