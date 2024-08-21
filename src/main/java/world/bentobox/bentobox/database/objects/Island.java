@@ -1747,7 +1747,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public void setProtectionCenter(Location location) throws IOException {
-        if (this.location.equals(location)) {
+        if (this.getProtectionCenter().equals(location)) {
             return; // nothing to do
         }
         if (!this.inIslandSpace(location)) {
