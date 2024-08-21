@@ -38,7 +38,6 @@ public class BreakBlocksListener extends FlagListener {
         Player p = e.getPlayer();
         Location l = e.getBlock().getLocation();
         Material m = e.getBlock().getType();
-        BentoBox.getInstance().logDebug(m);
         if (m.equals(Material.MELON) || m.equals(Material.PUMPKIN)) {
             this.checkIsland(e, p, l, Flags.HARVEST);
         } else {
