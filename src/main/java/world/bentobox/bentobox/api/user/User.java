@@ -505,12 +505,6 @@ public class User implements MetaDataAble {
     private String replacePrefixes(String translation, String[] variables) {
         for (String prefix : plugin.getLocalesManager().getAvailablePrefixes(this)) {
             String prefixTranslation = getTranslation("prefixes." + prefix);
-            // Replace the [gamemode] text variable
-            prefixTranslation = prefixTranslation.replace("[gamemode]",
-                    addon != null ? addon.getDescription().getName() : "[gamemode]");
-            // Replace the [friendly_name] text variable
-            prefixTranslation = prefixTranslation.replace("[friendly_name]",
-                    isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
 
             // Replace the prefix in the actual message
             translation = translation.replace("[prefix_" + prefix + "]", prefixTranslation);
@@ -529,6 +523,16 @@ public class User implements MetaDataAble {
         // Then replace Placeholders, this will only work if this is a player
         if (player != null) {
             translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
+        }
+
+        // Replace game mode and friendly name in general
+        // Replace the [gamemode] text variable
+        translation = translation.replace("[gamemode]",
+                addon != null ? addon.getDescription().getName() : "[gamemode]");
+        if (getWorld() != null) {
+            // Replace the [friendly_name] text variable
+            translation = translation.replace("[friendly_name]",
+                    isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
         }
         return translation;
     }
