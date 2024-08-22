@@ -119,11 +119,16 @@ public class UserTest {
         // Player
         when(player.getServer()).thenReturn(server);
         when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
+        @NonNull
+        World world = mock(World.class);
+        when(world.getName()).thenReturn("BSkyBlock");
+        when(player.getWorld()).thenReturn(world);
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
         // Addon
-        when(iwm .getAddon(any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
+        when(iwm.getFriendlyName(world)).thenReturn("BSkyBlock-Fiendly");
 
         user = User.getInstance(player);
 
@@ -930,7 +935,7 @@ public class UserTest {
         when(addon.getDescription()).thenReturn(new Builder("main", "gameAddon", "1.0").build());
         p.setAddon(addon);
         p.getTranslation(TEST_TRANSLATION);
-        verify(addon).getDescription();
+        verify(addon, times(2)).getDescription();
     }
 
     /**
