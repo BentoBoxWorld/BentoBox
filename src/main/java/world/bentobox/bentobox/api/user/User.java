@@ -527,9 +527,10 @@ public class User implements MetaDataAble {
 
         // Replace game mode and friendly name in general
         // Replace the [gamemode] text variable
-        translation = translation.replace("[gamemode]",
-                addon != null ? addon.getDescription().getName() : "[gamemode]");
-        if (getWorld() != null) {
+        if (addon != null && addon.getDescription() != null) {
+            translation = translation.replace("[gamemode]", addon.getDescription().getName());
+        }
+        if (player != null && player.getWorld() != null) {
             // Replace the [friendly_name] text variable
             translation = translation.replace("[friendly_name]",
                     isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");

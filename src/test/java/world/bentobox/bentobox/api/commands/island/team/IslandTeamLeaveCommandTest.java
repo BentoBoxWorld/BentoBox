@@ -120,6 +120,7 @@ public class IslandTeamLeaveCommandTest {
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Island World Manager
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Plugin Manager

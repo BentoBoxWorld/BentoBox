@@ -935,7 +935,7 @@ public class UserTest {
         when(addon.getDescription()).thenReturn(new Builder("main", "gameAddon", "1.0").build());
         p.setAddon(addon);
         p.getTranslation(TEST_TRANSLATION);
-        verify(addon, times(2)).getDescription();
+        verify(addon, times(3)).getDescription();
     }
 
     /**

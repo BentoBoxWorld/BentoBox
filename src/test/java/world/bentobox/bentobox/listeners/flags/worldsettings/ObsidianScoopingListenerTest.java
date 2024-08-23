@@ -114,6 +114,7 @@ public class ObsidianScoopingListenerTest {
         when(iwm.getIslandWorld(Mockito.any())).thenReturn(world);
         when(iwm.getNetherWorld(Mockito.any())).thenReturn(world);
         when(iwm.getEndWorld(Mockito.any())).thenReturn(world);
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
 
         // Mock up IslandsManager
         when(plugin.getIslands()).thenReturn(im);
