@@ -139,7 +139,12 @@ commands:
         description: überträgt das Insel-Eigentum auf den Spieler
         already-owner: "&c [name] ist bereits der Besitzer dieser Insel!"
         must-be-on-island: "&c Sie müssen auf der Insel sein, um den Besitzer festzulegen"
+        confirmation: "&a Möchten Sie [name] wirklich als Eigentümer der Insel in
+          [xyz] festlegen?"
         success: "&b [name]&a  ist jetzt der Besitzer dieser Insel."
+        extra-islands: "&c Warnung: Dieser Spieler besitzt jetzt [number] Inseln.
+          Das sind mehr als durch die Einstellungen oder Berechtigungen erlaubt ist:
+          [max]."
     range:
       description: Admin Insel Bereichsbefehl
       invalid-value:
@@ -221,6 +226,7 @@ commands:
       banned-players: 'Gebannte Spieler:'
       banned-format: "&c [name]"
       unowned: "&c Frei"
+      bundle: "&a Blaupausenpaket zum Erstellen der Insel: &b [name]"
     switch:
       description: Schutzumgehung ein-/ausschalten
       op: "&c Ops können den Schutz immer umgehen. Deop um den Befehl zu benutzen."
@@ -416,6 +422,7 @@ commands:
           &a Linksklick zum Erhöhen
           &a Rechtsklick zum Verringern
         unlimited-times: Unbegrenzt
+        maximum-times: Max. [number] Mal
     resetflags:
       parameters: "[flag]"
       description: Alle Inseln in der config.yml auf Standard-Flag-Einstellungen zurücksetzen
@@ -511,8 +518,14 @@ commands:
       completed: "[prefix_bentobox]&a Abgeschlossen"
     rank:
       description: Ränge auflisten, hinzufügen oder entfernen
-      add: {}
-      remove: {}
+      parameters: "&a [list | add | remove] [Rangreferenz] [Rangwert]"
+      add:
+        success: "&a [rank] mit Wert [number] hinzugefügt"
+        failure: "&c [rank] konnte nicht mit dem Wert [number] hinzugefügt werden.
+          Vielleicht ein Duplikat?"
+      remove:
+        success: "&a Entfernt [rank]"
+        failure: "&c [rank] konnte nicht entfernt werden. Unbekannter Rang."
       list: "&a Die registrierten Ränge sind wie folgt:"
   confirmation:
     confirm: "&c Befehl innerhalb von &b [seconds]s&c zur Bestätigung erneut eingeben."
@@ -685,6 +698,10 @@ commands:
         already-has-rank: "&c Der Spieler hat bereits einen Rang!"
         you-are-a-coop-member: "&2 Du wurdest von [name] gecooped"
         success: "&a Du hast &b [name] gecooped."
+        name-has-invited-you: |
+          &a [name] hat Sie eingeladen,
+          &a als Genossenschaftsmitglied
+          &a ihrer Insel beizutreten.
       uncoop:
         description: einen Coop-Rang von einem Spieler entfernen
         parameters: "<player>"
@@ -701,6 +718,10 @@ commands:
         description: Gib einem Spieler einen vertrauenswürdigen Rang auf deiner Insel
         parameters: "<player>"
         trust-in-yourself: "&c Vertraue auf dich selbst!"
+        name-has-invited-you: |
+          &a [name] hat Sie eingeladen,
+          &a als vertrauenswürdiges Mitglied
+          &a ihrer Insel beizutreten.
         player-already-trusted: "&c Der Spieler ist bereits vertrauenswürdig!"
         you-are-trusted: "&2 Du bist vertrauenswürdig für &b [name]&a !"
         success: "&a Du vertraust &b [name]&a ."
@@ -718,6 +739,9 @@ commands:
         description: einen Spieler auf deine Insel einladen
         invitation-sent: "&a Einladung gesendet an [name]"
         removing-invite: "&c Einladung entfernen"
+        name-has-invited-you: |
+          &a [name] hat Sie eingeladen,
+          &a ihrer Insel beizutreten.
         to-accept-or-reject: "&a Gib /[label] team accept um zu akzeptieren, oder
           /[label] team reject um abzulehnen"
         you-will-lose-your-island: |
@@ -729,6 +753,9 @@ commands:
           button:
             already-invited: "&c Bereits eingeladen"
             search: "&a Suche nach einem Spieler"
+            searching: |
+              &b Suche nach
+              &c [name]
           enter-name: "&a Namen eingeben:"
           tips:
             LEFT:
@@ -1189,6 +1216,7 @@ protection:
       description: Verletzen ein-/ausschalten. Aktiviert bedeutet, dass gezähmte Tiere
         Schaden nehmen können. Deaktiviert bedeutet, dass sie unbesiegbar sind.
       name: Verletzte gezähmte Tiere
+      hint: Gezähmtes Tier, das Behinderte verletzt
     HURT_ANIMALS:
       description: Umschalten des Verletzens
       name: Tiere verletzen
@@ -1686,18 +1714,28 @@ panels:
     title: "&2&l Wähle eine Insel"
     buttons:
       bundle:
+        name: "&l [name]"
+        description: "[description]"
+        uses: "&a Verwendet [number]/[max]"
         unlimited: "&a Unbegrenzte Nutzung erlaubt"
   language:
     title: "&2&l Wählen Sie Ihre Sprache"
     buttons:
       language:
+        name: "&f&l [name]"
+        description: |-
+          [authors]
+          |[selected]
         authors: "&7 Autoren:"
+        author: "&7 - &b [name]"
         selected: "&a Aktuell ausgewählt."
   buttons:
     previous:
       name: "&f&l Vorherige Seite"
+      description: "&7 Zur Seite [number] wechseln"
     next:
       name: "&f&l Nächste Seite"
+      description: "&7 Zur Seite [number] wechseln"
   tips:
     click-to-next: "&e Klicken Sie auf &7, um weiterzugehen."
     click-to-previous: "&e Klicken Sie auf &7, um zum vorherigen zu gelangen."
