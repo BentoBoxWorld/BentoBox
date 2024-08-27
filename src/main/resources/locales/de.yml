@@ -138,6 +138,7 @@ commands:
         parameters: "<player>"
         description: überträgt das Insel-Eigentum auf den Spieler
         already-owner: "&c [name] ist bereits der Besitzer dieser Insel!"
+        must-be-on-island: "&c Sie müssen auf der Insel sein, um den Besitzer festzulegen"
         success: "&b [name]&a  ist jetzt der Besitzer dieser Insel."
     range:
       description: Admin Insel Bereichsbefehl
@@ -158,7 +159,7 @@ commands:
           Grüne Partikel &f zeigen den voreingestellten Schutzbereich an, wenn der Inselschutzbereich davon abweicht.
         showing: "&2 Anzeigen von Reichweite Indikatoren"
       set:
-        parameters: "<player> <range>"
+        parameters: "<Spieler> <Reichweite> [Inselstandort]"
         description: legt den geschützten Inselbereich fest
         success: "&a Inselschutzbereich einstellen auf &b [number]&a ."
       reset:
@@ -167,12 +168,12 @@ commands:
         success: "& a Setzen Sie den Inselschutzbereich auf & b [number] & a zurück."
       add:
         description: Erhöht den Schutzbereich der Insel
-        parameters: "<player> <range>"
+        parameters: "<Spieler> <Reichweite> [Inselstandort]"
         success: "&a Erfolgreiche Erhöhung von &b [name]&a 's geschützten Bereich
           der Insel auf &b [total] &7 (&b +[number]&7 )&a ."
       remove:
         description: Verringert den Schutzbereich der Insel
-        parameters: "<player> <range>"
+        parameters: "<Spieler> <Reichweite> [Inselstandort]"
         success: "&a Erfolgreich reduziert &b [name]&a 's geschützten Bereich der
           Insel auf&b [total] &7 (&b -[number]&7 )&a ."
     register:
@@ -191,6 +192,7 @@ commands:
       parameters: "<owner> [x,y,z]"
       description: Besitzer von Insel entfernen, aber Inselblöcke behalten
       unregistered-island: "&a Unregistrierter Spieler von der Insel bei [xyz]."
+      errors: {}
     info:
       parameters: "<player>"
       description: Informationen über deinen Standort oder die Spielerinsel erhalten
@@ -257,10 +259,13 @@ commands:
     reload:
       description: neu laden
     tp:
-      parameters: "<player>"
+      parameters: "<Spieler> [Insel des Spielers]"
       description: zu einer Spielerinsel teleportieren
       manual: "&c Kein sicherer Warp gefunden! Manuell in die Nähe von &b [location]
         &c teleportieren und nachsehen"
+    tpuser:
+      parameters: "<teleportierender Spieler> <Spieler der Insel> [Insel des Spielers]"
+      description: einen Spieler zur Insel eines anderen Spielers teleportieren
     getrank:
       parameters: "<player>"
       description: den Rang eines Spielers auf seiner Insel erhalten
@@ -406,6 +411,11 @@ commands:
         slot-instructions: |-
           &a Linksklick zum Erhöhen
           &a Rechtsklick zum Verringern
+        times: |
+          &a Maximale gleichzeitige Nutzung durch Spieler
+          &a Linksklick zum Erhöhen
+          &a Rechtsklick zum Verringern
+        unlimited-times: Unbegrenzt
     resetflags:
       parameters: "[flag]"
       description: Alle Inseln in der config.yml auf Standard-Flag-Einstellungen zurücksetzen
@@ -498,6 +508,12 @@ commands:
       addons: "&6 Migrieren von Addons"
       class: "&6 Migration [description]"
       migrated: "&A migriert"
+      completed: "[prefix_bentobox]&a Abgeschlossen"
+    rank:
+      description: Ränge auflisten, hinzufügen oder entfernen
+      add: {}
+      remove: {}
+      list: "&a Die registrierten Ränge sind wie folgt:"
   confirmation:
     confirm: "&c Befehl innerhalb von &b [seconds]s&c zur Bestätigung erneut eingeben."
     previous-request-cancelled: "&6 Vorherige Bestätigungsanforderung abgebrochen."
@@ -533,6 +549,9 @@ commands:
         einen Admin."
       creating-island: "&a Einen Ort für deine Insel finden..."
       you-cannot-make: "&c Du kannst keine weiteren Inseln erschaffen!"
+      max-uses: "&c Von dieser Art Inseln kann man keine weiteren machen!"
+      you-cannot-make-team: "&c Teammitglieder können keine Inseln in derselben Welt
+        wie ihre Teaminsel erstellen."
       pasting:
         estimated-time: "&a Geschätzte Zeit: &b [number] &a Sekunden."
         blocks: "&a Block für Block aufbauen: &b [number] &a Blöcke insgesamt..."
@@ -600,18 +619,53 @@ commands:
       description: einen Heimatort umbenennen
       parameters: "[Heimatname]"
       enter-new-name: "&6 Geben Sie den neuen Namen ein"
-      already-exists: "&c Dieser Name existiert bereits, versuchen Sie es mit einem anderen Namen."
+      already-exists: "&c Dieser Name existiert bereits, versuchen Sie es mit einem
+        anderen Namen."
     resetname:
       description: setze deinen Inselnamen zurück
       success: "&a Setzen Sie Ihren Inselnamen erfolgreich zurück."
     team:
       description: Dein Team verwalten
+      gui:
+        titles:
+          team-panel: Teammanagement
+        buttons:
+          status:
+            name: Status
+            description: Der Status des Teams
+          rank-filter:
+            name: Rangfilter
+            description: "&a Klicken Sie hier, um die Ränge zu wechseln"
+          invitation: Einladung
+          invite:
+            name: Spieler einladen
+            description: |
+              &a Spieler müssen sich in der
+              &a selben Welt wie Sie befinden, um
+              &a in der Liste angezeigt zu werden.
+        tips:
+          LEFT:
+            name: "&b Linksklick"
+            invite: "&a, um einen Spieler einzuladen"
+          RIGHT:
+            name: "&b Rechtsklick"
+          SHIFT_RIGHT:
+            name: "&b Umschalttaste Rechtsklick"
+            reject: "&a zum Ablehnen"
+            kick: "&a um Spieler rauszuwerfen"
+            leave: "&a verlässt das Team"
+          SHIFT_LEFT:
+            name: "&b Umschalttaste Linksklick"
+            accept: "&a zum Akzeptieren"
+            setowner: |
+              &a, um den Besitzer
+              &a für diesen Spieler festzulegen
       info:
         description: zeigt detaillierte Informationen über dein Team an
         member-layout:
-          online: '&a &l  o &r &f [name]'
-          offline: '&c &l  o &r &f [name] &7 ([last_seen])'
-          offline-not-last-seen: '&c &l  o &r &f [name]'
+          online: "&a &l  o &r &f [name]"
+          offline: "&c &l  o &r &f [name] &7 ([last_seen])"
+          offline-not-last-seen: "&c &l  o &r &f [name]"
         last-seen:
           layout: "&b [number] &7 [unit] vorher"
           days: Tage
@@ -631,8 +685,6 @@ commands:
         already-has-rank: "&c Der Spieler hat bereits einen Rang!"
         you-are-a-coop-member: "&2 Du wurdest von [name] gecooped"
         success: "&a Du hast &b [name] gecooped."
-        name-has-invited-you: "&a [name] hat dich eingeladen, ein Coop-Mitglied ihrer
-          Insel zu werden."
       uncoop:
         description: einen Coop-Rang von einem Spieler entfernen
         parameters: "<player>"
@@ -649,8 +701,6 @@ commands:
         description: Gib einem Spieler einen vertrauenswürdigen Rang auf deiner Insel
         parameters: "<player>"
         trust-in-yourself: "&c Vertraue auf dich selbst!"
-        name-has-invited-you: "&a [name] hat dich eingeladen, ein vertrauenswürdiges
-          Mitglied ihrer Insel zu werden."
         player-already-trusted: "&c Der Spieler ist bereits vertrauenswürdig!"
         you-are-trusted: "&2 Du bist vertrauenswürdig für &b [name]&a !"
         success: "&a Du vertraust &b [name]&a ."
@@ -668,11 +718,32 @@ commands:
         description: einen Spieler auf deine Insel einladen
         invitation-sent: "&a Einladung gesendet an [name]"
         removing-invite: "&c Einladung entfernen"
-        name-has-invited-you: "&a [name] hat dich eingeladen ihrer Insel beizutreten."
         to-accept-or-reject: "&a Gib /[label] team accept um zu akzeptieren, oder
           /[label] team reject um abzulehnen"
-        you-will-lose-your-island: "&c WARNUNG! Du wirst deine Insel verlieren, wenn
-          du akzeptierst!"
+        you-will-lose-your-island: |
+          &c WARNUNG! Sie verlieren alle
+          &c Ihre Inseln, wenn Sie akzeptieren!
+        gui:
+          titles:
+            team-invite-panel: Spieler einladen
+          button:
+            already-invited: "&c Bereits eingeladen"
+            search: "&a Suche nach einem Spieler"
+          enter-name: "&a Namen eingeben:"
+          tips:
+            LEFT:
+              name: "&b Linksklick"
+              search: "&a Geben Sie den Namen des Spielers ein"
+              back: "&a Zurück"
+              invite: |
+                &a, um einen Spieler einzuladen
+                &a, um deinem Team beizutreten
+            RIGHT:
+              name: "&b Rechtsklick"
+              coop: "&a an Koop-Spieler"
+            SHIFT_LEFT:
+              name: "&b Umschalttaste Linksklick"
+              trust: "&a einem Spieler vertrauen"
         errors:
           cannot-invite-self: "&c Du kannst dich nicht selbst einladen!"
           cooldown: "&c Du kannst diese Person für weitere [number] Sekunden nicht
@@ -690,12 +761,14 @@ commands:
           you-joined-island: "&a Du bist einer Insel beigetreten! Benutze /[label]
             team info um die anderen Mitglieder zu sehen."
           name-joined-your-island: "&a [name] hat sich deiner Insel angeschlossen!"
-          confirmation: |-
-            &c Bist du sicher, dass du diese Einladung annehmen willst?
-            &c&l Du &n VERLIERST&r&c&l deine jetzige Insel!
+          confirmation: |
+            &c Sind Sie sicher, dass Sie
+            &c diese
+            &c Einladung annehmen möchten?
         reject:
           description: eine Einladung ablehnen
-          you-rejected-invite: "&a Du hast die Einladung, einer Insel beizutreten, abgelehnt."
+          you-rejected-invite: "&a Du hast die Einladung, einer Insel beizutreten,
+            abgelehnt."
           name-rejected-your-invite: "&c [name] hat deine Insel-Einladung abgelehnt!"
         cancel:
           description: die ausstehende Einladung zu deiner Insel zurücknehmen
@@ -718,6 +791,7 @@ commands:
         errors:
           cant-demote-yourself: "&c Du kannst dich nicht selbst zurückstufen!"
           cant-demote: "&c Sie können keine höheren Ränge herabstufen!"
+          must-be-member: "&c Der Spieler muss ein Inselmitglied sein!"
         failure: "&c Der Spieler kann nicht weiter zurückgestuft werden!"
         success: "&a Rückstufung von [name] auf [rank]."
       promote:
@@ -726,6 +800,7 @@ commands:
         errors:
           cant-promote-yourself: "&c Du kannst dich nicht bewerben!"
           cant-promote: "&c Sie können nicht über Ihren Rang hinaus aufsteigen!"
+          must-be-member: "&c Der Spieler muss ein Inselmitglied sein!"
         failure: "&c Der Spieler kann nicht weiter befördert werden!"
         success: "&a Beförderung von [name] auf [rank]."
       setowner:
@@ -820,6 +895,10 @@ protection:
       description: Interaktion umschalten
       name: Leuchtfeuer
       hint: Leuchtfeuer-Nutzung deaktiviert
+    BELL_RINGING:
+      description: Interaktion umschalten
+      name: Klingeln zulassen
+      hint: Klingeln deaktiviert
     BED:
       description: Interaktion umschalten
       name: Betten
@@ -866,6 +945,10 @@ protection:
       description: Umschalten der Knopfnutzung
       name: Knöpfe
       hint: Nutzung von Knöpfen deaktiviert
+    CANDLES:
+      description: Kerzeninteraktion umschalten
+      name: Kerzen
+      hint: Kerzeninteraktion deaktiviert
     CAKE:
       description: Kuchen Interaktion umschalten
       name: Kuchen
@@ -1102,6 +1185,10 @@ protection:
       description: "&a Bienenstockernte umschalten."
       name: Bienenstockernte
       hint: Ernte behindert
+    HURT_TAMED_ANIMALS:
+      description: Verletzen ein-/ausschalten. Aktiviert bedeutet, dass gezähmte Tiere
+        Schaden nehmen können. Deaktiviert bedeutet, dass sie unbesiegbar sind.
+      name: Verletzte gezähmte Tiere
     HURT_ANIMALS:
       description: Umschalten des Verletzens
       name: Tiere verletzen
@@ -1147,6 +1234,7 @@ protection:
     LEASH:
       description: Umschalten der Nutzung
       name: Leine benutzen
+      hint: Leinengebrauch deaktiviert
     LECTERN:
       name: Lesepulte
       description: "&a Erlaubt es, Bücher auf ein Lesepult zu legen \n&a oder Bücher
@@ -1469,14 +1557,6 @@ protection:
         &7 Aktuelle Einstellung: [setting]
       setting-active: "&a Aktiv"
       setting-disabled: "&c Deaktiviert"
-language:
-  panel-title: Wähle deine Sprache
-  description:
-    selected: "&a Derzeit ausgewählt."
-    click-to-select: "&e Klick &a zum Auswählen"
-    authors: "&a Autoren:"
-    author: "&3 - &b [name]"
-  edited: "&a Die Sprache wurde geändert auf &e [lang]&a ."
 management:
   panel:
     title: BentoBox Verwaltung
@@ -1586,6 +1666,10 @@ enums:
     HOT_FLOOR: Heißer Boden
     CRAMMING: Pauken
     DRYOUT: Austrocknen
+    FREEZE: Einfrieren
+    KILL: Töten
+    SONIC_BOOM: Überschallknall
+    WORLD_BORDER: Weltgrenze
 panel:
   credits:
     title: "&8 [name] &2 Credits"
@@ -1597,6 +1681,32 @@ panel:
       description: "&c BentoBox konnte die Mitwirkenden \n&c für dieses Addon nicht
         erfassen.\n\n&a BentoBox erlauben, sich mit GitHub in \n&a der Konfiguration
         zu verbinden oder es später erneut versuchen."
+panels:
+  island_creation:
+    title: "&2&l Wähle eine Insel"
+    buttons:
+      bundle:
+        unlimited: "&a Unbegrenzte Nutzung erlaubt"
+  language:
+    title: "&2&l Wählen Sie Ihre Sprache"
+    buttons:
+      language:
+        authors: "&7 Autoren:"
+        selected: "&a Aktuell ausgewählt."
+  buttons:
+    previous:
+      name: "&f&l Vorherige Seite"
+    next:
+      name: "&f&l Nächste Seite"
+  tips:
+    click-to-next: "&e Klicken Sie auf &7, um weiterzugehen."
+    click-to-previous: "&e Klicken Sie auf &7, um zum vorherigen zu gelangen."
+    click-to-choose: "&e Klicken Sie zum Auswählen auf &7."
+    click-to-toggle: "&e Klicken Sie zum Umschalten auf &7."
+    left-click-to-cycle-down: "&e Klicken Sie mit der linken Maustaste auf &7, um
+      nach unten zu blättern."
+    right-click-to-cycle-up: "&e Klicken Sie mit der rechten Maustaste auf &7, um
+      nach oben zu blättern."
 successfully-loaded: |-
   &6   ____             _        ____
   &6  |  _ \           | |      |  _ \             &7 by &a tastybento &7 and &a Poslovitch
