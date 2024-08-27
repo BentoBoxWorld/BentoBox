@@ -197,7 +197,11 @@ commands:
       parameters: "<owner> [x,y,z]"
       description: Besitzer von Insel entfernen, aber Inselblöcke behalten
       unregistered-island: "&a Unregistrierter Spieler von der Insel bei [xyz]."
-      errors: {}
+      errors:
+        unknown-island-location: "&c Unbekannter Inselstandort"
+        specify-island-location: "&c Gib denn Inselstandort in x,y,z Format an"
+        player-has-more-than-one-island: "&c Spieler hat mehr als eine Insel. Gib
+          an welche"
     info:
       parameters: "<player>"
       description: Informationen über deinen Standort oder die Spielerinsel erhalten
