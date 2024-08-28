@@ -42,6 +42,8 @@ public class EntityInteractListener extends FlagListener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e)
     {
+        System.out.println(e.getEventName());
+        System.out.println(e.getRightClicked());
         Player p = e.getPlayer();
         Location l = e.getRightClicked().getLocation();
 
@@ -80,8 +82,9 @@ public class EntityInteractListener extends FlagListener {
                 this.checkIsland(e, p, l, Flags.BOAT);
             }
         }
-        else if (e.getRightClicked() instanceof Villager || e.getRightClicked() instanceof WanderingTrader)
+        else if (e.getRightClicked() instanceof Villager && !(e.getRightClicked() instanceof WanderingTrader))
         {
+            System.out.println("Villager trading");
             // Villager trading
             // Check naming and check trading
             this.checkIsland(e, p, l, Flags.TRADING);
@@ -104,6 +107,7 @@ public class EntityInteractListener extends FlagListener {
         }
         else if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG))
         {
+            System.out.println("name tag");
             // Name tags
             this.checkIsland(e, p, l, Flags.NAME_TAG);
         }

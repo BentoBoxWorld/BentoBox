@@ -250,10 +250,11 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
         clickedEntity = mock(WanderingTrader.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
+        when(inv.getItemInMainHand()).thenReturn(new ItemStack(Material.STONE));
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
         eil.onPlayerInteractEntity(e);
-        verify(notifier, times(2)).notify(any(), eq("protection.protected"));
-        assertTrue(e.isCancelled());
+        verify(notifier, never()).notify(any(), eq("protection.protected"));
+        assertFalse(e.isCancelled());
     }
 
     /**
@@ -286,8 +287,8 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
         eil.onPlayerInteractEntity(e);
-        verify(notifier).notify(any(), eq("protection.protected"));
-        assertTrue(e.isCancelled());
+        verify(notifier, never()).notify(any(), eq("protection.protected"));
+        assertFalse(e.isCancelled());
     }
 
     /**
