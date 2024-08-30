@@ -1209,6 +1209,7 @@ public class IslandsManager {
      */
     public void setSpawn(@NonNull Island spawn) {
         if (spawn.getWorld() != null) {
+            spawn.setSpawn(true);
             spawns.put(Util.getWorld(spawn.getWorld()), spawn);
             // Tell other servers
             MultiLib.notify("bentobox-setspawn", spawn.getWorld().getUID().toString() + "," + spawn.getUniqueId());
@@ -1223,9 +1224,12 @@ public class IslandsManager {
      * @since 1.8.0
      */
     public void clearSpawn(World world) {
-        spawns.remove(world);
-        // Tell other servers
-        MultiLib.notify("bentobox-setspawn", world.getUID().toString());
+        if (spawns.containsKey(world)) {
+            spawns.get(world).setSpawn(false);
+            spawns.remove(world);
+            // Tell other servers
+            MultiLib.notify("bentobox-setspawn", world.getUID().toString());
+        }
     }
 
     /**
