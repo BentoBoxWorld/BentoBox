@@ -24,6 +24,7 @@ import com.google.gson.JsonObject;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.util.ExpiringMap;
 import world.bentobox.bentobox.util.Pair;
 
 /**
