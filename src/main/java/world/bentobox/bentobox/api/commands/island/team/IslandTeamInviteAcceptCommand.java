@@ -48,6 +48,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         UUID prospectiveOwnerUUID = itc.getInviter(playerUUID);
         if (prospectiveOwnerUUID == null) {
             user.sendMessage(INVALID_INVITE);
+            itc.removeInvite(playerUUID);
             return false;
         }
         TeamInvite invite = itc.getInvite(playerUUID);
@@ -65,6 +66,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()
                     && getIslands().inTeam(getWorld(), playerUUID)) {
                 user.sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
+                itc.removeInvite(playerUUID);
                 return false;
             }
             // Fire event so add-ons can run commands, etc.
