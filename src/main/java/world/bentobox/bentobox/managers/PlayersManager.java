@@ -4,12 +4,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -23,6 +22,7 @@ import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
+import world.bentobox.bentobox.util.ExpiringMap;
 import world.bentobox.bentobox.util.Util;
 
 public class PlayersManager {
@@ -30,7 +30,7 @@ public class PlayersManager {
     private final BentoBox plugin;
     private Database<Players> handler;
     private final Database<Names> names;
-    private final Map<UUID, Players> playerCache = new ConcurrentHashMap<>();
+    private final ExpiringMap<UUID, Players> playerCache = new ExpiringMap<>(2, TimeUnit.HOURS);
     private final @NonNull List<Names> nameCache;
     private final Set<UUID> inTeleport; // this needs databasing
 
@@ -61,6 +61,7 @@ public class PlayersManager {
 
     public void shutdown(){
         handler.close();
+        playerCache.shutdown();
     }
 
     /**
