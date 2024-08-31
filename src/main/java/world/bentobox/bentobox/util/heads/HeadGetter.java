@@ -5,13 +5,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -36,7 +35,7 @@ public class HeadGetter {
     /**
      * Local cache for storing player heads.
      */
-    private static final Map<String, HeadCache> cachedHeads = new HashMap<>();
+    private static final ExpiringMap<String, HeadCache> cachedHeads = new ExpiringMap<>(1, TimeUnit.HOURS);
 
     /**
      * Local cache for storing requested names and items which must be updated.
@@ -46,7 +45,8 @@ public class HeadGetter {
     /**
      * Requesters of player heads.
      */
-    private static final Map<String, Set<HeadRequester>> headRequesters = new HashMap<>();
+    private static final ExpiringMap<String, Set<HeadRequester>> headRequesters = new ExpiringMap<>(10,
+            TimeUnit.SECONDS);
 
     private static final String TEXTURES = "textures";
 
@@ -63,6 +63,14 @@ public class HeadGetter {
     public HeadGetter(BentoBox plugin) {
         this.plugin = plugin;
         this.runPlayerHeadGetter();
+    }
+
+    /**
+     * Shutdown the schedulers
+     */
+    public static void shutdown() {
+        cachedHeads.shutdown();
+        headRequesters.shutdown();
     }
 
     /**
