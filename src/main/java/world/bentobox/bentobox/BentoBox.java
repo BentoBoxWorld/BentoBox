@@ -324,6 +324,8 @@ public class BentoBox extends JavaPlugin implements Listener {
         // Stop all async database tasks
         shutdown = true;
 
+        HeadGetter.shutdown();
+
         if (addonsManager != null) {
             addonsManager.disableAddons();
         }
