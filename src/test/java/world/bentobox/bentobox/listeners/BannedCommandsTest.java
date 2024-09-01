@@ -77,6 +77,7 @@ public class BannedCommandsTest {
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
         when(iwm.getVisitorBannedCommands(any())).thenReturn(new ArrayList<>());
         when(iwm.getFallingBannedCommands(any())).thenReturn(new ArrayList<>());
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         WorldSettings ws = new MyWorldSettings();
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         when(plugin.getIWM()).thenReturn(iwm);

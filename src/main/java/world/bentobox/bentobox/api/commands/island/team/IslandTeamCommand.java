@@ -140,17 +140,30 @@ public class IslandTeamCommand extends CompositeCommand {
     }
 
     /**
-     * Check if a player has been invited
+     * Check if a player has been invited - validates any invite that may be in the system
      * @param invitee - UUID of invitee to check
      * @return true if invited, false if not
      * @since 1.8.0
      */
     public boolean isInvited(@NonNull UUID invitee) {
-        return handler.objectExists(invitee.toString());
+        boolean valid = false;
+        if (handler.objectExists(invitee.toString())) {
+            @Nullable
+            TeamInvite invite = getInvite(invitee);
+            valid = getIslands().getIslandById(invite.getUniqueId()).map(island -> island.isOwned() // Still owned by someone
+                    && !island.isDeleted() // Not deleted
+                    && island.getMemberSet().contains(invite.getInviter()) // the inviter is still a member of the island
+            ).orElse(false);
+            if (!valid) {
+                // Remove invite
+                handler.deleteObject(invite);
+            }
+        }
+        return valid;
     }
 
     /**
-     * Get whoever invited invitee
+     * Get whoever invited invitee.
      * @param invitee - uuid
      * @return UUID of inviter, or null if invitee has not been invited
      * @since 1.8.0

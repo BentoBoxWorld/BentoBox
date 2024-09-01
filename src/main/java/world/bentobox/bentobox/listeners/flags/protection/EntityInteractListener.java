@@ -80,7 +80,7 @@ public class EntityInteractListener extends FlagListener {
                 this.checkIsland(e, p, l, Flags.BOAT);
             }
         }
-        else if (e.getRightClicked() instanceof Villager || e.getRightClicked() instanceof WanderingTrader)
+        else if (e.getRightClicked() instanceof Villager && !(e.getRightClicked() instanceof WanderingTrader))
         {
             // Villager trading
             // Check naming and check trading

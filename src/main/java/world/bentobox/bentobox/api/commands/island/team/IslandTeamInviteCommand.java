@@ -61,7 +61,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
         if (args.size() != 1) {
             new IslandTeamInviteGUI(itc, true, island).build(user);
-            return true;
+            return false;
         }
 
         int rank = Objects.requireNonNull(island).getRank(user);
@@ -153,6 +153,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island == null) {
             user.sendMessage("general.errors.no-island");
+            invitedPlayer = null;
             return false;
         }
         // Fire event so add-ons can run commands, etc.
@@ -162,6 +163,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
                 .involvedPlayer(invitedPlayer.getUniqueId())
                 .build();
         if (e.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(e.isCancelled())) {
+            invitedPlayer = null;
             return false;
         }
         // Put the invited player (key) onto the list with inviter (value)
@@ -175,6 +177,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
                 && getIslands().hasIsland(getWorld(), invitedPlayer.getUniqueId())) {
             invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
         }
+        invitedPlayer = null;
         return true;
     }
 

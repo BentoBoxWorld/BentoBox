@@ -110,6 +110,7 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.getNetherSpawnRadius(any())).thenReturn(25);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         // Util
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);

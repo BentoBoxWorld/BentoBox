@@ -244,7 +244,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecuteNoTarget() {
-        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         // Show panel
         verify(p).openInventory(any(Inventory.class));
     }

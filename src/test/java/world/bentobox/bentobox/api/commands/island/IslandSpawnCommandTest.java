@@ -127,6 +127,7 @@ public class IslandSpawnCommandTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // IWM
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         map = new HashMap<>();

@@ -22,7 +22,6 @@ import org.bukkit.event.vehicle.VehicleDamageEvent;
 
 import com.google.common.base.Enums;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -51,6 +50,7 @@ public class BreakBlocksListener extends FlagListener {
                     || m == Material.SWEET_BERRY_BUSH
                     || m == Material.BAMBOO
                     || m == Material.NETHER_WART
+                    || m == Material.CACTUS
                     ) {
                 this.checkIsland(e,  p,  l, Flags.HARVEST);
             } else {

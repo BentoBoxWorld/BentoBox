@@ -134,6 +134,7 @@ public class JoinLeaveListenerTest {
         when(iwm.getAddon(any())).thenReturn(opGm);
         when(gameMode.getPermissionPrefix()).thenReturn("acidisland.");
         when(iwm.getIslandDistance(any())).thenReturn(100);
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
 
         UUID uuid = UUID.randomUUID();
         // Player
