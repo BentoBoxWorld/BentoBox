@@ -301,7 +301,7 @@ public class IslandCache {
      * @since 2.4.0
      */
     public Island loadIsland(String uniqueId) {
-        return handler.loadObject(uniqueId);
+        return handler.objectExists(uniqueId) ? handler.loadObject(uniqueId) : null;
     }
 
     /**

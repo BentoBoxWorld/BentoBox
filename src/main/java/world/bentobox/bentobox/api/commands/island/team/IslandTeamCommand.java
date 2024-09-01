@@ -150,7 +150,7 @@ public class IslandTeamCommand extends CompositeCommand {
         if (handler.objectExists(invitee.toString())) {
             @Nullable
             TeamInvite invite = getInvite(invitee);
-            valid = getIslands().getIslandById(invite.getUniqueId()).map(island -> island.isOwned() // Still owned by someone
+            valid = getIslands().getIslandById(invite.getIslandID()).map(island -> island.isOwned() // Still owned by someone
                     && !island.isDeleted() // Not deleted
                     && island.getMemberSet().contains(invite.getInviter()) // the inviter is still a member of the island
             ).orElse(false);
