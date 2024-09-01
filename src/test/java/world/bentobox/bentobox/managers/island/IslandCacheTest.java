@@ -141,6 +141,7 @@ public class IslandCacheTest extends AbstractCommonSetup {
         // database must be mocked here
         db = mock(Database.class);
         when(db.loadObject("uniqueId")).thenReturn(island);
+        when(db.objectExists(anyString())).thenReturn(true);
         when(db.saveObjectAsync(any())).thenReturn(CompletableFuture.completedFuture(true));
 
         // New cache
