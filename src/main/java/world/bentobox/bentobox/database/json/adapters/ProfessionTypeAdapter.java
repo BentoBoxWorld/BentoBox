@@ -12,8 +12,12 @@ import com.google.gson.stream.JsonWriter;
 public class ProfessionTypeAdapter extends TypeAdapter<Profession> {
 
     @Override
-    public void write(JsonWriter out, Profession profession) throws IOException {    
-        out.value(profession.name());
+    public void write(JsonWriter out, Profession profession) throws IOException {
+        if (profession != null) {
+            out.value(profession.name());
+            return;
+        }
+        out.nullValue();
     }
 
     @Override
