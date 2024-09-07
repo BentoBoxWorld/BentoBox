@@ -253,8 +253,30 @@ public class Players implements DataObject, MetaDataAble {
     public Optional<Map<String, MetaDataValue>> getMetaData() {
         if (metaData == null) {
             metaData = new HashMap<>();
+        } else if (isImmutable(metaData)) {
+            metaData = new HashMap<>(metaData); // Convert immutable map to mutable
         }
         return Optional.of(metaData);
+    }
+
+    private boolean isImmutable(Map<String, MetaDataValue> map) {
+        try {
+            String testKey = "testKey";
+            MetaDataValue testValue = new MetaDataValue("test");
+
+            // If the map already contains keys, use one of them
+            if (!map.isEmpty()) {
+                String existingKey = map.keySet().iterator().next();
+                map.put(existingKey, map.get(existingKey)); // Attempt to replace value
+            } else {
+                // Use a unique key-value pair
+                map.put(testKey, testValue);
+                map.remove(testKey);
+            }
+            return false; // No exception means the map is mutable
+        } catch (UnsupportedOperationException e) {
+            return true; // Exception means the map is immutable
+        }
     }
 
     /**
@@ -264,6 +286,9 @@ public class Players implements DataObject, MetaDataAble {
      */
     @Override
     public void setMetaData(Map<String, MetaDataValue> metaData) {
+        if (isImmutable(metaData)) {
+            throw new IllegalArgumentException("Provided map is immutable and cannot be set.");
+        }
         this.metaData = metaData;
     }
 
