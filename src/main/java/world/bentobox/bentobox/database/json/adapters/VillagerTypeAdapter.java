@@ -12,7 +12,11 @@ import com.google.gson.stream.JsonWriter;
 public class VillagerTypeAdapter extends TypeAdapter<Villager.Type> {
 
     @Override
-    public void write(JsonWriter out, Villager.Type type) throws IOException {    
+    public void write(JsonWriter out, Villager.Type type) throws IOException {
+        if (type == null) {
+            out.nullValue();
+            return;
+        }
         out.value(type.name());
     }
 
