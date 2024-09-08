@@ -246,6 +246,19 @@ public class EnterExitListenerTest {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
+    public void testOnMoveOutsideIslandToNull() {
+        PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, null);
+        listener.onMove(e);
+        // Moving outside the island should result in no messages to the user
+        verify(notifier, never()).notify(any(), any());
+        verify(pim, never()).callEvent(any(IslandEnterEvent.class));
+        verify(pim, never()).callEvent(any(IslandExitEvent.class));
+    }
+
+    /**
+     * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     */
+    @Test
     public void testOnGoingIntoIslandEmptyIslandName() {
         when(island.getName()).thenReturn("");
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, inside);
@@ -284,6 +297,23 @@ public class EnterExitListenerTest {
     public void testExitingIslandEmptyIslandName() {
         when(island.getName()).thenReturn("");
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, outside);
+        listener.onMove(e);
+        // Moving into the island should show a message
+        verify(lm).get(any(), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
+        // The island owner needs to be checked
+        verify(island).isOwned();
+        verify(pim).callEvent(any(IslandExitEvent.class));
+        verify(pim, never()).callEvent(any(IslandEnterEvent.class));
+        verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
+    }
+
+    /**
+     * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     */
+    @Test
+    public void testExitingIslandEmptyIslandNameToNull() {
+        when(island.getName()).thenReturn("");
+        PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, null);
         listener.onMove(e);
         // Moving into the island should show a message
         verify(lm).get(any(), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
@@ -348,6 +378,18 @@ public class EnterExitListenerTest {
     @Test
     public void testExitIslandTeleport() {
         PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), inside, anotherWorld, TeleportCause.PLUGIN);
+        listener.onTeleport(e);
+        verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
+        verify(pim, never()).callEvent(any(IslandEnterEvent.class));
+        verify(pim).callEvent(any(IslandExitEvent.class));
+    }
+
+    /**
+     * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     */
+    @Test
+    public void testExitIslandTeleportToNull() {
+        PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), inside, null, TeleportCause.PLUGIN);
         listener.onTeleport(e);
         verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
         verify(pim, never()).callEvent(any(IslandEnterEvent.class));
