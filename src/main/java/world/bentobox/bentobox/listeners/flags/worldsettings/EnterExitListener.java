@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -36,15 +37,16 @@ public class EnterExitListener extends FlagListener {
         handleEnterExit(User.getInstance(e.getPlayer()), e.getFrom(), e.getTo(), e);
     }
 
-    private void handleEnterExit(@NonNull User user, @NonNull Location from, @NonNull Location to, @NonNull PlayerMoveEvent e) {
+    private void handleEnterExit(@NonNull User user, @NonNull Location from, @Nullable Location to,
+            @NonNull PlayerMoveEvent e) {
         // Only process if there is a change in X or Z coords
-        if (from.getWorld() != null && from.getWorld().equals(to.getWorld())
+        if (from.getWorld() != null && to != null && from.getWorld().equals(to.getWorld())
                 && from.toVector().multiply(XZ).equals(to.toVector().multiply(XZ))) {
             return;
         }
 
         Optional<Island> islandFrom = getIslands().getProtectedIslandAt(from);
-        Optional<Island> islandTo = getIslands().getProtectedIslandAt(to);
+        Optional<Island> islandTo = to == null ? Optional.empty() : getIslands().getProtectedIslandAt(to);
 
         /*
          * Options:
