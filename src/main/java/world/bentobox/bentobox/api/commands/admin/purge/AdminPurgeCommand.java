@@ -133,6 +133,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         // Process islands in one pass, logging and adding to the set if applicable
         getPlugin().getIslands().getIslands().stream()
                 .filter(i -> !i.isSpawn()).filter(i -> !i.getPurgeProtected())
+                .filter(i -> i.getWorld() != null) // to handle currently unloaded world islands
                 .filter(i -> i.getWorld().equals(this.getWorld())).filter(Island::isOwned).filter(
                         i -> i.getMemberSet().stream()
                                 .allMatch(member -> (currentTimeMillis
