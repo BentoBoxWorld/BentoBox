@@ -104,7 +104,9 @@ public class PanelItemBuilder {
      * @return PanelItemBuilder
      */
     public PanelItemBuilder description(String description) {
-        Collections.addAll(this.description, description.split("\n"));
+        if (description != null) {
+            Collections.addAll(this.description, description.split("\n"));
+        }
         return this;
     }
 
@@ -168,7 +170,7 @@ public class PanelItemBuilder {
     public boolean isPlayerHead() {
         return playerHeadName != null && !playerHeadName.isEmpty();
     }
-    
+
     /**
      * @return the playerHead
      * @since 1.9.0

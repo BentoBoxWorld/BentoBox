@@ -1652,6 +1652,59 @@ protection:
         &a player is outside their island
     flag-item:
       name-layout: '&a [name]'
+      # Add commands to this list as required
+      command-instructions:
+        setname: |
+            &a Select the rank that can
+            &a set the name
+        ban: |
+            &a Select the rank that can
+            ban players
+        unban:  |
+            &a Select the rank that can 
+            &a unban players
+        expel: |
+            &a Select the rank who can 
+            &a expel visitors
+        team-invite: |
+            &a Select the rank that can 
+            &a invite
+        team-kick: |
+            &a Select the rank that can
+            &a kick
+        team-coop: |
+            &a Select the rank that can 
+            &a coop
+        team-trust: |
+            &a Select the rank that can 
+            &a trust
+        team-uncoop: |
+            &a Select the rank that can 
+            &a uncoop
+        team-untrust: |
+            &a Select the rank that can 
+            &a untrust
+        team-promote: |
+            &a Select the rank that can
+            &a promote player's rank
+        team-demote: |
+            &a Select the rank that can
+            &a demote player's rank
+        sethome: |
+            &a Select the rank that can
+            &a set homes
+        deletehome: |
+            &a Select the rank that can
+            &a delete homes
+        renamehome: |
+            &a Select the rank that can
+            &a rename homes
+        setcount: |
+            &a Select the rank that can
+            &a change the phase
+        border: |
+            &a Select the rank that can
+            &a use the border command
       description-layout: |
         &a [description]
 
@@ -1854,6 +1907,7 @@ panels:
   # The section of translations used in Language Panel
   language:
     title: "&2&l Select your language"
+    edited: "&c Changed to [lang]"
     buttons:
       # This button is used for displaying different locales that are available in language selection panel.
       language:
