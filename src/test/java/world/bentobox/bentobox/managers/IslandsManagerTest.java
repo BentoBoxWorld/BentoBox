@@ -1111,9 +1111,9 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         UUID coopUUID = UUID.randomUUID();
         members.put(coopUUID, RanksManager.COOP_RANK);
         // Clear a random user
-        im.clearRank(RanksManager.COOP_RANK, UUID.randomUUID());
+        im.clearRankSync(RanksManager.COOP_RANK, UUID.randomUUID());
         assertEquals(14, members.size());
-        im.clearRank(RanksManager.COOP_RANK, coopUUID);
+        im.clearRankSync(RanksManager.COOP_RANK, coopUUID);
         assertEquals(13, members.size());
     }
 

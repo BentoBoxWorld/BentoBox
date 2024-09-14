@@ -1650,6 +1650,10 @@ public class IslandsManager {
      * @param uniqueId - UUID of player
      */
     public void clearRank(int rank, UUID uniqueId) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> clearRankSync(rank, uniqueId));
+    }
+
+    void clearRankSync(int rank, UUID uniqueId) {
         islandCache.getCachedIslands().forEach(
                 i -> i.getMembers().entrySet().removeIf(e -> e.getKey().equals(uniqueId) && e.getValue() == rank));
     }
