@@ -72,6 +72,7 @@ public class CommandsManager {
     }
 
     /**
+     * Get a map of every command registered in BentoBox
      * @return the commands
      */
     @NonNull

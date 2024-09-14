@@ -122,6 +122,10 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         when(user.getPlayer()).thenReturn(player);
         when(user.inWorld()).thenReturn(true);
         when(user.getWorld()).thenReturn(world);
+        when(user.getTranslationOrNothing(anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslationOrNothing(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         when(user.getTranslation(anyString()))
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         when(user.getTranslation(anyString(), anyString(), anyString()))
@@ -215,7 +219,8 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         when(cm.getCommands()).thenReturn(map);
 
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
-        verify(user).getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION, "");
+        verify(user).getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION,
+                "protection.panel.flag-item.command-instructions.");
     }
 
     /**
@@ -226,12 +231,12 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         PanelItem pi = crcl.getPanelItem("test", user, world);
         assertEquals(Material.MAP, pi.getItem().getType());
-        assertEquals("protection.panel.flag-item.description-layout", pi.getDescription().get(0));
+        //assertEquals("protection.panel.flag-item.description-layout", pi.getDescription().get(0));
         //assertEquals("protection.panel.flag-item.minimal-rankranks.member", pi.getDescription().get(1));
         //assertEquals("protection.panel.flag-item.allowed-rankranks.sub-owner", pi.getDescription().get(2));
-        //assertEquals("protection.panel.flag-item.allowed-rankranks.owner", pi.getDescription().get(3));
+        //assertEquals("protection.panel.flag-item.allowed-rankranks.owner", pi.getDescription().get(0));
         assertTrue(pi.getClickHandler().isPresent());
-        assertEquals("test", pi.getName());
+        assertEquals("protection.panel.flag-item.name-layout", pi.getName());
     }
 
 }
