@@ -8,12 +8,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -43,8 +40,8 @@ public class CreeperListener extends FlagListener {
             e.blockList().clear();
             // Still allow player and mob damage
             e.setCancelled(false);
-            return;
         }
+
         // Check for griefing
         Creeper creeper = (Creeper)e.getEntity();
         if (!Flags.CREEPER_GRIEFING.isSetForWorld(e.getLocation().getWorld())
