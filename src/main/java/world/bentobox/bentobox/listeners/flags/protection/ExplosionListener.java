@@ -20,7 +20,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
