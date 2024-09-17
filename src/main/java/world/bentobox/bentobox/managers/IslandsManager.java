@@ -1267,7 +1267,8 @@ public class IslandsManager {
                 // These will be deleted later
                 deletedIslands.add(island.getUniqueId());
             } // Check island distance and if incorrect stop BentoBox
-            else if (island.getWorld() != null && plugin.getIWM().inWorld(island.getWorld())
+            else if (!plugin.getSettings().isOverrideSafetyCheck() && island.getWorld() != null
+                    && plugin.getIWM().inWorld(island.getWorld())
                     && island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld())) {
                 throw new IOException("Island distance mismatch!\n" + "World '" + island.getWorld().getName()
                         + "' distance " + plugin.getIWM().getIslandDistance(island.getWorld()) + " != island range "
