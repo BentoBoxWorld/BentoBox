@@ -13,6 +13,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -40,7 +41,8 @@ public class CreeperListener extends FlagListener {
         if (!Flags.CREEPER_DAMAGE.isSetForWorld(e.getLocation().getWorld())) {
             // If any were removed, then prevent damage too
             e.blockList().clear();
-            e.setCancelled(true);
+            // Still allow player and mob damage
+            e.setCancelled(false);
             return;
         }
         // Check for griefing
@@ -54,25 +56,6 @@ public class CreeperListener extends FlagListener {
             e.blockList().clear();
         }
     }
-
-
-    /**
-     * Prevent entities being damaged by explosion
-     * @param e - event
-     * @since 1.10.0
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onExplosion(final EntityDamageByEntityEvent e) {
-        if (!e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || !getIWM().inWorld(e.getEntity().getLocation())
-                || !e.getDamager().getType().equals(EntityType.CREEPER)) {
-            return;
-        }
-        // If creeper damage is not allowed in world cancel the damage
-        if (!Flags.CREEPER_DAMAGE.isSetForWorld(e.getEntity().getWorld())) {
-            e.setCancelled(true);
-        }
-    }
-
 
     /**
      * Prevent creepers from igniting if they are not allowed to grief

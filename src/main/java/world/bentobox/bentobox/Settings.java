@@ -141,7 +141,6 @@ public class Settings implements ConfigObject {
     private Set<String> fakePlayers = new HashSet<>();
 
     /* PANELS */
-
     @ConfigComment("Toggle whether panels should be closed or not when the player clicks anywhere outside of the inventory view.")
     @ConfigEntry(path = "panel.close-on-click-outside")
     private boolean closePanelOnClickOutside = true;
@@ -189,6 +188,13 @@ public class Settings implements ConfigObject {
     /*
      * Island
      */
+    @ConfigComment("Override island distance mismatch checking. BentoBox normally refuses to run if")
+    @ConfigComment("the island distance in the gamemode config is different to the one stored in the database")
+    @ConfigComment("for safety. This overrides that check. You should never need this, and if you do not understand it")
+    @ConfigComment("keep it as false")
+    @ConfigEntry(path = "island.override-safety-check")
+    private boolean overrideSafetyCheck = false;
+
     // Number of islands
     @ConfigComment("The default number of concurrent islands a player may have.")
     @ConfigComment("This may be overridden by individual game mode config settings.")
@@ -1032,6 +1038,20 @@ public class Settings implements ConfigObject {
      */
     public void setHideUsedBlueprints(boolean hideUsedBlueprints) {
         this.hideUsedBlueprints = hideUsedBlueprints;
+    }
+
+    /**
+     * @return the overrideSafetyCheck
+     */
+    public boolean isOverrideSafetyCheck() {
+        return overrideSafetyCheck;
+    }
+
+    /**
+     * @param overrideSafetyCheck the overrideSafetyCheck to set
+     */
+    public void setOverrideSafetyCheck(boolean overrideSafetyCheck) {
+        this.overrideSafetyCheck = overrideSafetyCheck;
     }
 
 }
