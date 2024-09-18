@@ -1275,8 +1275,10 @@ public class IslandsManager {
                         + island.getRange() + "!\n" + "Island ID in database is " + island.getUniqueId() + ".\n"
                         + "Island distance in config.yml cannot be changed mid-game! Fix config.yml or clean database.");
             } else {
-                // Fix island center if it is off
-                fixIslandCenter(island);
+                if (!plugin.getSettings().isOverrideSafetyCheck()) {
+                    // Fix island center if it is off
+                    fixIslandCenter(island);
+                }
                 islandCache.addIsland(island, true);
 
                 if (island.isSpawn()) {
