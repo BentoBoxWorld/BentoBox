@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -362,6 +363,17 @@ public class AdminPurgeCommandTest {
         apc.setUser(user);
         apc.removeIslands();
         verify(user, Mockito.times(1)).sendMessage(any());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#getOldIslands(int)}
+     */
+    @Test
+    public void testGetOldIslands() {
+        assertTrue(apc.getOldIslands(10).isEmpty());
+        Island island2 = mock(Island.class);
+        when(im.getIslands()).thenReturn(Set.of(island, island2));
+        assertTrue(apc.getOldIslands(10).isEmpty());
     }
 
 }

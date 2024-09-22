@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.bukkit.Material;
@@ -26,6 +27,7 @@ import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 /**
+ * 
  * @author tastybento
  *
  */
@@ -108,11 +110,19 @@ public class CommandRankClickListener implements ClickHandler {
      */
     public PanelItem getPanelItem(String c, User user, World world) {
         PanelItemBuilder pib = new PanelItemBuilder();
-        pib.name(c);
+        pib.name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, c));
         pib.clickHandler(new CommandCycleClick(this, c));
         pib.icon(Material.MAP);
-        // TODO: use specific layout
-        String d = user.getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION, "");
+        String result = "";
+        // Remove the first word (everything before the first space)
+        String[] words = c.split(" ", 2); // Split into two parts, the first word and the rest
+        if (words.length > 1) {
+            result = words[1].replace(" ", "-"); // Replace spaces with hyphens
+        }
+        String ref = "protection.panel.flag-item.command-instructions." + result.toLowerCase(Locale.ENGLISH);
+        String commandDescription = user.getTranslationOrNothing(ref);
+        String d = user.getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION,
+                commandDescription);
         pib.description(d);
         RanksManager.getInstance().getRanks().forEach((reference, score) -> {
             if (score >= RanksManager.MEMBER_RANK && score < island.getRankCommand(c)) {
@@ -133,7 +143,7 @@ public class CommandRankClickListener implements ClickHandler {
                 .filter(c -> c.getWorld() != null && c.getWorld().equals(world)) // Only allow commands in this world
                 .filter(c -> c.testPermission(user.getSender())) // Only allow them to see commands they have permission to see
                 .flatMap(c -> getCmdRecursively("/", c).stream())
-                .filter(label -> user.isOp() || !hiddenItems.contains(CommandCycleClick.COMMAND_RANK_PREFIX + label))
+                .filter(label -> user.isOp() || !hiddenItems.contains(CommandCycleClick.COMMAND_RANK_PREFIX + label)) // Hide any hidden commands
                 .limit(49) // Silently limit to 49
                 .toList();
         return result;

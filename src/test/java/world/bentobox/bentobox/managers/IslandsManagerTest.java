@@ -153,6 +153,8 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     // Class under test
     IslandsManager im;
 
+    private Settings settings;
+
     @SuppressWarnings("unchecked")
     @BeforeClass
     public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
@@ -187,12 +189,12 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
+        when(iwm.getIslandDistance(any())).thenReturn(25);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Settings
-        Settings s = mock(Settings.class);
-        when(plugin.getSettings()).thenReturn(s);
-        when(s.getDatabaseType()).thenReturn(DatabaseType.JSON);
+        settings = new Settings();
+        when(plugin.getSettings()).thenReturn(settings);
 
         // World
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
@@ -827,12 +829,39 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#load()}.
+     * @throws IOException 
+     * @throws IntrospectionException 
+     * @throws NoSuchMethodException 
+     * @throws ClassNotFoundException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     @Test
-    public void testLoad() {
-        //
-        // im.load();
+    public void testLoad() throws IOException, InstantiationException, IllegalAccessException,
+            InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+        when(island.getRange()).thenReturn(100);
+        when(h.loadObjects()).thenReturn(List.of(island));
+        try {
+            im.load();
+        } catch (IOException e) {
+            assertEquals("Island distance mismatch!\n" + "World 'world' distance 25 != island range 100!\n"
+                    + "Island ID in database is null.\n"
+                    + "Island distance in config.yml cannot be changed mid-game! Fix config.yml or clean database.",
+                    e.getMessage());
+        }
 
+    }
+
+    @Test
+    public void testLoadNoDistanceCheck() throws IOException, InstantiationException, IllegalAccessException,
+            InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+        settings.setOverrideSafetyCheck(true);
+        when(island.getUniqueId()).thenReturn(UUID.randomUUID().toString());
+        when(island.getRange()).thenReturn(100);
+        when(h.loadObjects()).thenReturn(List.of(island));
+        im.load();
+        // No exception should be thrown
     }
 
     /**
@@ -1111,9 +1140,9 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         UUID coopUUID = UUID.randomUUID();
         members.put(coopUUID, RanksManager.COOP_RANK);
         // Clear a random user
-        im.clearRank(RanksManager.COOP_RANK, UUID.randomUUID());
+        im.clearRankSync(RanksManager.COOP_RANK, UUID.randomUUID());
         assertEquals(14, members.size());
-        im.clearRank(RanksManager.COOP_RANK, coopUUID);
+        im.clearRankSync(RanksManager.COOP_RANK, coopUUID);
         assertEquals(13, members.size());
     }
 

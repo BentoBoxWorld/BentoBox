@@ -1267,15 +1267,18 @@ public class IslandsManager {
                 // These will be deleted later
                 deletedIslands.add(island.getUniqueId());
             } // Check island distance and if incorrect stop BentoBox
-            else if (island.getWorld() != null && plugin.getIWM().inWorld(island.getWorld())
+            else if (!plugin.getSettings().isOverrideSafetyCheck() && island.getWorld() != null
+                    && plugin.getIWM().inWorld(island.getWorld())
                     && island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld())) {
                 throw new IOException("Island distance mismatch!\n" + "World '" + island.getWorld().getName()
                         + "' distance " + plugin.getIWM().getIslandDistance(island.getWorld()) + " != island range "
                         + island.getRange() + "!\n" + "Island ID in database is " + island.getUniqueId() + ".\n"
                         + "Island distance in config.yml cannot be changed mid-game! Fix config.yml or clean database.");
             } else {
-                // Fix island center if it is off
-                fixIslandCenter(island);
+                if (!plugin.getSettings().isOverrideSafetyCheck()) {
+                    // Fix island center if it is off
+                    fixIslandCenter(island);
+                }
                 islandCache.addIsland(island, true);
 
                 if (island.isSpawn()) {
@@ -1650,6 +1653,10 @@ public class IslandsManager {
      * @param uniqueId - UUID of player
      */
     public void clearRank(int rank, UUID uniqueId) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> clearRankSync(rank, uniqueId));
+    }
+
+    void clearRankSync(int rank, UUID uniqueId) {
         islandCache.getCachedIslands().forEach(
                 i -> i.getMembers().entrySet().removeIf(e -> e.getKey().equals(uniqueId) && e.getValue() == rank));
     }

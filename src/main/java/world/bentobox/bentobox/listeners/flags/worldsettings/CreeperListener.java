@@ -8,8 +8,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
@@ -40,9 +38,10 @@ public class CreeperListener extends FlagListener {
         if (!Flags.CREEPER_DAMAGE.isSetForWorld(e.getLocation().getWorld())) {
             // If any were removed, then prevent damage too
             e.blockList().clear();
-            e.setCancelled(true);
-            return;
+            // Still allow player and mob damage
+            e.setCancelled(false);
         }
+
         // Check for griefing
         Creeper creeper = (Creeper)e.getEntity();
         if (!Flags.CREEPER_GRIEFING.isSetForWorld(e.getLocation().getWorld())
@@ -54,25 +53,6 @@ public class CreeperListener extends FlagListener {
             e.blockList().clear();
         }
     }
-
-
-    /**
-     * Prevent entities being damaged by explosion
-     * @param e - event
-     * @since 1.10.0
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onExplosion(final EntityDamageByEntityEvent e) {
-        if (!e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || !getIWM().inWorld(e.getEntity().getLocation())
-                || !e.getDamager().getType().equals(EntityType.CREEPER)) {
-            return;
-        }
-        // If creeper damage is not allowed in world cancel the damage
-        if (!Flags.CREEPER_DAMAGE.isSetForWorld(e.getEntity().getWorld())) {
-            e.setCancelled(true);
-        }
-    }
-
 
     /**
      * Prevent creepers from igniting if they are not allowed to grief
