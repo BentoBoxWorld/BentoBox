@@ -84,6 +84,9 @@ public class BreakBlocksListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e)
     {
+        if (e.getClickedBlock() == null) {
+            return;
+        }
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
         Material m = e.getClickedBlock().getType();
@@ -95,7 +98,7 @@ public class BreakBlocksListener extends FlagListener {
                 if (((CaveVinesPlant) e.getClickedBlock().getBlockData()).isBerries()) {
                     this.checkIsland(e, p, l, Flags.HARVEST);
                 }
-                }
+            }
             case SWEET_BERRY_BUSH -> this.checkIsland(e, p, l, Flags.HARVEST);
             case ROOTED_DIRT -> this.checkIsland(e, p, l, Flags.BREAK_BLOCKS);
             default -> { // Do nothing
