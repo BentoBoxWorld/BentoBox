@@ -621,4 +621,15 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
 
         assertTrue(e.useInteractedBlock() == Result.ALLOW);
     }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    public void testNoClick() {
+        PlayerInteractEvent e = mock(PlayerInteractEvent.class);
+        when(e.getClickedBlock()).thenReturn(null);
+        bbl.onPlayerInteract(e);
+        verify(e).getClickedBlock();
+    }
 }
