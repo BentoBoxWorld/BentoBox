@@ -95,13 +95,7 @@ public class JoinLeaveListener implements Listener {
 
         // Set island max members and homes based on permissions if this player is the
         // owner of an island
-        plugin.getIWM().getOverWorlds().stream().map(w -> plugin.getIslands().getIsland(w, playerUUID))
-                .filter(Objects::nonNull).filter(i -> playerUUID.equals(i.getOwner())).forEach(i -> {
-                    plugin.getIslands().getMaxMembers(i, RanksManager.MEMBER_RANK);
-                    plugin.getIslands().getMaxMembers(i, RanksManager.COOP_RANK);
-                    plugin.getIslands().getMaxMembers(i, RanksManager.TRUSTED_RANK);
-                    plugin.getIslands().getMaxHomes(i);
-                });
+        updateIslandMaxTeamAndHomeSize(user);
 
         // Add a player to the bStats cache.
         plugin.getMetrics().ifPresent(bStats -> bStats.addPlayer(playerUUID));
@@ -123,6 +117,18 @@ public class JoinLeaveListener implements Listener {
                         return "false";
                     });
         });
+    }
+
+    private void updateIslandMaxTeamAndHomeSize(User user) {
+        plugin.getIWM().getOverWorlds().stream()
+                .flatMap(w -> plugin.getIslands().getIslands(w, user.getUniqueId()).stream()) // Flatten the List<Island> into a Stream<Island>
+                .filter(Objects::nonNull).filter(i -> user.getUniqueId().equals(i.getOwner())).forEach(i -> {
+                    plugin.getIslands().getMaxMembers(i, RanksManager.MEMBER_RANK);
+                    plugin.getIslands().getMaxMembers(i, RanksManager.COOP_RANK);
+                    plugin.getIslands().getMaxMembers(i, RanksManager.TRUSTED_RANK);
+                    plugin.getIslands().getMaxHomes(i);
+                });
+
     }
 
     private void firstTime(User user) {
@@ -206,6 +212,10 @@ public class JoinLeaveListener implements Listener {
         }
     }
 
+    /**
+     * Update island range using player perms
+     * @param user user
+     */
     private void updateIslandRange(User user) {
         plugin.getIslands().getIslands(user.getUniqueId()).stream()
                 .filter(island -> island.getOwner() != null && island.getOwner().equals(user.getUniqueId()))
