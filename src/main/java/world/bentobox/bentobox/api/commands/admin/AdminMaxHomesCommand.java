@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import com.google.common.primitives.Ints;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -32,8 +31,8 @@ import world.bentobox.bentobox.util.Util;
 
 public class AdminMaxHomesCommand extends ConfirmableCommand {
 
-    private Integer maxHomes;
-    private Map<String, Island> islands = new HashMap<>();
+    Integer maxHomes;
+    Map<String, Island> islands = new HashMap<>();
 
     public AdminMaxHomesCommand(CompositeCommand parent) {
         super(parent, "setmaxhomes");
@@ -146,7 +145,7 @@ public class AdminMaxHomesCommand extends ConfirmableCommand {
 
     }
 
-    private Map<String, Island> getNameIslandMap(User user) {
+    Map<String, Island> getNameIslandMap(User user) {
         Map<String, Island> islandMap = new HashMap<>();
         int index = 0;
         for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
