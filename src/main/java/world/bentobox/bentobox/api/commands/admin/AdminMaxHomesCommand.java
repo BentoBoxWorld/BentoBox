@@ -27,6 +27,7 @@ import world.bentobox.bentobox.util.Util;
  * </ul>
  * 
  * @author tastybento
+ * @since 2.6.0
  */
 
 public class AdminMaxHomesCommand extends ConfirmableCommand {

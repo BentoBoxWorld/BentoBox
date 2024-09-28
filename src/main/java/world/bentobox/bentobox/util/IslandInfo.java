@@ -143,7 +143,9 @@ public class IslandInfo {
             // Show team members
             showMembers(user);
         }
-        user.sendMessage("commands.admin.info.max-homes", TextVariables.NUMBER, String.valueOf(island.getMaxHomes()));
+        int maxHomes = island.getMaxHomes() == null ? plugin.getIWM().getMaxHomes(island.getWorld())
+                : island.getMaxHomes();
+        user.sendMessage("commands.admin.info.max-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
         Vector location = island.getProtectionCenter().toVector();
         user.sendMessage("commands.admin.info.island-center", TextVariables.XYZ, Util.xyz(location));
         user.sendMessage("commands.admin.info.protection-range", RANGE, String.valueOf(island.getProtectionRange()));
