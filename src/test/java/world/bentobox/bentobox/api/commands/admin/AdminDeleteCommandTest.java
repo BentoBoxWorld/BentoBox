@@ -68,8 +68,6 @@ public class AdminDeleteCommandTest {
     @Mock
     private @Nullable Island island;
 
-    /**
-     */
     @Before
     public void setUp() throws Exception {
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
