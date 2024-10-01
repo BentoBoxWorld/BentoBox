@@ -140,7 +140,12 @@ public class AdminMaxHomesCommand extends ConfirmableCommand {
             return Optional.of(Util.getOnlinePlayerList(user));
         }
         if (args.size() > 3) {
-        return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(user).keySet()), lastArg));
+            // Work out who is in arg 2
+            UUID targetUUID = getPlayers().getUUID(args.get(1));
+            if (targetUUID != null) {
+                User target = User.getInstance(targetUUID);
+                return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(target).keySet()), lastArg));
+            }
         }
         return Optional.of(List.of("1"));
 

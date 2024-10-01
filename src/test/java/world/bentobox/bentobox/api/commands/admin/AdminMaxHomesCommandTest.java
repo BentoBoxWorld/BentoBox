@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -135,6 +136,8 @@ public class AdminMaxHomesCommandTest {
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
+        // Players
+        when(pm.getUUID(anyString())).thenReturn(uuid);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -457,7 +460,7 @@ public class AdminMaxHomesCommandTest {
         Map<String, Island> nameIslandMap = new HashMap<>();
         nameIslandMap.put("IslandOne", mock(Island.class));
         nameIslandMap.put("IslandTwo", mock(Island.class));
-        doReturn(nameIslandMap).when(instance).getNameIslandMap(user);
+        doReturn(nameIslandMap).when(instance).getNameIslandMap(any());
 
         // Create the list of island names
         List<String> islandNames = new ArrayList<>(nameIslandMap.keySet());
