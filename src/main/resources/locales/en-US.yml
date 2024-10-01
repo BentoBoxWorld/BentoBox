@@ -548,7 +548,9 @@ commands:
       parameters: '[home name]'
       description: teleport you to your island
       teleport: '&a Teleporting you to your island.'
+      in-progress: '&a Teleporting in progress, please wait...'
       teleported: '&a Teleported you to home &e [number].'
+      failure: '&c Teleporting failed for some reason. Please try again later.'
       unknown-home: '&c Unknown home name!'
     help:
       description: the main island command
