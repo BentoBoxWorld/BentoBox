@@ -104,6 +104,8 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
         new AdminResetNameCommand(this);
         // Max homes
         new AdminMaxHomesCommand(this);
+        // Reset Home
+        new AdminResetHomeCommand(this);
     }
 
     /**
