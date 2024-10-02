@@ -82,7 +82,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                                     getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
                                 } else {
                                     user.sendMessage("commands.island.go.failure");
-                                    getPlugin().logError(user.getName() + " could not teleprot to their island - async teleport issue");
+                                    getPlugin().logError(user.getName() + " could not teleport to their island - async teleport issue");
                                 }
                             }));
                     return true;
