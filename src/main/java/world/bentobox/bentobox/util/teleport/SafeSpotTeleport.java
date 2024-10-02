@@ -279,7 +279,11 @@ public class SafeSpotTeleport {
         task.cancel();
         // Return to main thread and teleport the player
         Bukkit.getScheduler().runTask(plugin, () -> {
+            BentoBox.getInstance().logDebug("Home number = " + homeNumber + " Home name = '" + homeName + "'");
+            plugin.getIslands().getIslandAt(loc).ifPresent(is -> 
+            plugin.getIslands().getHomeLocations(is).forEach((k,v) -> BentoBox.getInstance().logDebug("'" + k + "' => " + v)));
             if (!portal && entity instanceof Player && (homeNumber > 0 || !homeName.isEmpty())) {
+                BentoBox.getInstance().logDebug("Setting home");
                 // Set home if so marked
                 plugin.getIslands().setHomeLocation(User.getInstance(entity), loc, homeName);
             }
