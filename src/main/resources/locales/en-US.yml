@@ -61,11 +61,14 @@ commands:
       description: admin command
     maxhomes:
         description: change the number of homes allowed on this island or player's island
-        parameters: <number / player> <number> <island name>
+        parameters: <number / player> <number> [island name]
         max-homes-set: '&a [name] - Set island max homes to [number]'
         errors:
             unknown-island: &c Unknown island! [name]
-            
+    resethome:
+        description: Reset the player's home to default
+        parameters: <player> [island name]
+        cleared: '&b Home reset. [name]'         
     resets:
       description: edit player reset values
       set:

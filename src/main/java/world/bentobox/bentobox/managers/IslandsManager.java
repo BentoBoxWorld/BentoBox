@@ -1385,7 +1385,7 @@ public class IslandsManager {
 
     /**
      * Checks if a specific location is within the protected range of an island that
-     * the player is a member of (owner or member)
+     * the player is a member of (owner or member) or Op.
      *
      * @param player - the player
      * @param loc    - location
@@ -1396,7 +1396,9 @@ public class IslandsManager {
             return false;
         }
         // Get the player's island
-        return getIslandAt(loc).filter(i -> i.onIsland(loc)).map(i -> i.inTeam(player.getUniqueId()))
+        // If Op then all islands are Ops
+        return player.isOp()
+                || getIslandAt(loc).filter(i -> i.onIsland(loc)).map(i -> i.inTeam(player.getUniqueId()))
                 .orElse(false);
     }
 
