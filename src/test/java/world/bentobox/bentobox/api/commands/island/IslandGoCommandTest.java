@@ -197,7 +197,7 @@ public class IslandGoCommandTest {
     public void testExecuteMidTeleport() {
         when(im.isGoingHome(user)).thenReturn(true);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
-        verify(player).sendMessage("commands.island.go.teleport");
+        verify(player).sendMessage("commands.island.go.in-progress");
     }
 
     /**
