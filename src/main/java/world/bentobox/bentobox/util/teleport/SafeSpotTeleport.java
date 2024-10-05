@@ -19,6 +19,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
@@ -38,8 +39,8 @@ public class SafeSpotTeleport {
     private static final long SPEED = 1;
     private static final int MAX_RADIUS = 50;
     // Parameters
-    private final Entity entity;
-    private final Location location;
+    private final @NonNull Entity entity;
+    private final @NonNull Location location;
     private final int homeNumber;
     private final BentoBox plugin;
     private final Runnable runnable;
@@ -64,8 +65,8 @@ public class SafeSpotTeleport {
      */
     SafeSpotTeleport(Builder builder) {
         this.plugin = builder.getPlugin();
-        this.entity = builder.getEntity();
-        this.location = builder.getLocation();
+        this.entity = Objects.requireNonNull(builder.getEntity());
+        this.location = Objects.requireNonNull(builder.getLocation());
         this.portal = builder.isPortal();
         this.homeNumber = builder.getHomeNumber();
         this.homeName = builder.getHomeName();
@@ -86,7 +87,7 @@ public class SafeSpotTeleport {
                 bestSpot = location;
             } else {
                 // If this is not a portal teleport, then go to the safe location immediately
-                Util.teleportAsync(entity, location).thenRun(() -> {
+                Util.teleportAsync(Objects.requireNonNull(entity), Objects.requireNonNull(location)).thenRun(() -> {
                     if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
                     result.complete(true);
                 });
@@ -122,7 +123,7 @@ public class SafeSpotTeleport {
         }
 
         // Get the chunk snapshot and scan it
-        Util.getChunkAtAsync(world, chunkPair.x, chunkPair.z)
+        Util.getChunkAtAsync(Objects.requireNonNull(world), chunkPair.x, chunkPair.z)
         .thenApply(Chunk::getChunkSnapshot)
         .whenCompleteAsync((snapshot, e) -> {
             if (snapshot != null && scanChunk(snapshot)) {
@@ -180,7 +181,8 @@ public class SafeSpotTeleport {
         location.getBlock().setType(Material.AIR, false);
         location.getBlock().getRelative(BlockFace.UP).setType(Material.AIR, false);
         location.getBlock().getRelative(BlockFace.UP).getRelative(BlockFace.UP).setType(m, false);
-        Util.teleportAsync(entity, location.clone().add(new Vector(0.5D, 0D, 0.5D))).thenRun(() -> {
+        Util.teleportAsync(Objects.requireNonNull(entity),
+                Objects.requireNonNull(location.clone().add(new Vector(0.5D, 0D, 0.5D)))).thenRun(() -> {
             if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
             result.complete(true);
         });
@@ -275,19 +277,15 @@ public class SafeSpotTeleport {
     /**
      * Teleports entity to the safe spot
      */
-    void teleportEntity(final Location loc) {
+    void teleportEntity(@NonNull final Location loc) {
         task.cancel();
         // Return to main thread and teleport the player
         Bukkit.getScheduler().runTask(plugin, () -> {
-            BentoBox.getInstance().logDebug("Home number = " + homeNumber + " Home name = '" + homeName + "'");
-            plugin.getIslands().getIslandAt(loc).ifPresent(is -> 
-            plugin.getIslands().getHomeLocations(is).forEach((k,v) -> BentoBox.getInstance().logDebug("'" + k + "' => " + v)));
             if (!portal && entity instanceof Player && (homeNumber > 0 || !homeName.isEmpty())) {
-                BentoBox.getInstance().logDebug("Setting home");
                 // Set home if so marked
                 plugin.getIslands().setHomeLocation(User.getInstance(entity), loc, homeName);
             }
-            Util.teleportAsync(entity, loc).thenRun(() -> {
+            Util.teleportAsync(Objects.requireNonNull(entity), Objects.requireNonNull(loc)).thenRun(() -> {
                 if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
                 result.complete(true);
             });
