@@ -10,6 +10,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -36,6 +38,10 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.common.base.Enums;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.OfflineMessageEvent;
@@ -584,16 +590,105 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Sends a message to sender without any modification (colors, multi-lines,
-     * placeholders).
-     * 
-     * @param message - the message to send
+     * Sends a raw message to the sender, parsing inline commands embedded within square brackets.
+     * <p>
+     * The method supports embedding clickable and hoverable actions into the message text using inline commands.
+     * Recognized commands are:
+     * <ul>
+     *   <li><code>[run_command: &lt;command&gt;]</code> - Runs the specified command when the message is clicked.</li>
+     *   <li><code>[suggest_command: &lt;command&gt;]</code> - Suggests the specified command in the chat input.</li>
+     *   <li><code>[copy_to_clipboard: &lt;text&gt;]</code> - Copies the specified text to the player's clipboard.</li>
+     *   <li><code>[open_url: &lt;url&gt;]</code> - Opens the specified URL when the message is clicked.</li>
+     *   <li><code>[hover: &lt;text&gt;]</code> - Shows the specified text when the message is hovered over.</li>
+     * </ul>
+     * <p>
+     * The commands can be placed anywhere in the message and will apply to the entire message component.
+     * If multiple commands of the same type are provided, only the first one encountered will be applied.
+     * Unrecognized or invalid commands enclosed in square brackets will be preserved in the output text.
+     * <p>
+     * Example usage:
+     * <pre>
+     * sendRawMessage("Hello [not-a-command: hello][run_command: /help] World [hover: This is a hover text]");
+     * </pre>
+     * The above message will display "Hello [not-a-command: hello] World" where clicking the message runs the "/help" command,
+     * and hovering over the message shows "This is a hover text".
+     *
+     * @param message The message to send, containing inline commands in square brackets.
      */
     public void sendRawMessage(String message) {
+        // Create a base TextComponent for the message
+        TextComponent baseComponent = new TextComponent();
+
+        // Regex to find inline commands like [run_command: /help] and [hover: click for help!], or unrecognized commands
+        Pattern pattern = Pattern.compile("\\[(\\w+): ([^\\]]+)]|\\[\\[(.*?)\\]]");
+        Matcher matcher = pattern.matcher(message);
+
+        // Keep track of the current position in the message
+        int lastMatchEnd = 0;
+        ClickEvent clickEvent = null;
+        HoverEvent hoverEvent = null;
+
+        while (matcher.find()) {
+            // Add any text before the current match
+            if (matcher.start() > lastMatchEnd) {
+                String beforeMatch = message.substring(lastMatchEnd, matcher.start());
+                baseComponent.addExtra(new TextComponent(beforeMatch));
+            }
+
+            // Check if it's a recognized command or an unknown bracketed text
+            if (matcher.group(1) != null && matcher.group(2) != null) {
+                // Parse the inline command (action) and value
+                String actionType = matcher.group(1).toUpperCase(Locale.ENGLISH); // e.g., RUN_COMMAND, HOVER
+                String actionValue = matcher.group(2); // The command or text to display
+
+                // Apply the first valid click event or hover event encountered
+                switch (actionType) {
+                    case "RUN_COMMAND":
+                    case "SUGGEST_COMMAND":
+                    case "COPY_TO_CLIPBOARD":
+                    case "OPEN_URL":
+                        if (clickEvent == null) {
+                            clickEvent = new ClickEvent(ClickEvent.Action.valueOf(actionType), actionValue);
+                        }
+                        break;
+                    case "HOVER":
+                        if (hoverEvent == null) {
+                            hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(actionValue));
+                        }
+                        break;
+                    default:
+                        // Unrecognized command; preserve it in the output text
+                        baseComponent.addExtra(new TextComponent(matcher.group(0)));
+                }
+
+            } else if (matcher.group(3) != null) {
+                // Unrecognized bracketed text; preserve it in the output
+                baseComponent.addExtra(new TextComponent("[[" + matcher.group(3) + "]]"));
+            }
+
+            // Update the last match end position
+            lastMatchEnd = matcher.end();
+        }
+
+        // Add any remaining text after the last match
+        if (lastMatchEnd < message.length()) {
+            String remainingText = message.substring(lastMatchEnd);
+            baseComponent.addExtra(new TextComponent(remainingText));
+        }
+
+        // Apply the first encountered ClickEvent and HoverEvent to the entire message
+        if (clickEvent != null) {
+            baseComponent.setClickEvent(clickEvent);
+        }
+        if (hoverEvent != null) {
+            baseComponent.setHoverEvent(hoverEvent);
+        }
+
+        // Send the final component to the sender
         if (sender != null) {
-            sender.sendMessage(message);
+            sender.spigot().sendMessage(baseComponent);
         } else {
-            // Offline player fire event
+            // Handle offline player messaging or alternative actions
             Bukkit.getPluginManager().callEvent(new OfflineMessageEvent(this.playerUUID, message));
         }
     }

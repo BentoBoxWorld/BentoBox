@@ -650,7 +650,6 @@ public class IslandsManager {
      */
     private CompletableFuture<Location> getAsyncSafeHomeLocation(@NonNull World world, @NonNull User user,
             String homeName) {
-        BentoBox.getInstance().logDebug("Getting safe home location for " + user.getName());
         CompletableFuture<Location> result = new CompletableFuture<>();
         // Check if the world is a gamemode world and the player has an island
         Location islandLoc = getIslandLocation(world, user.getUniqueId());
@@ -670,16 +669,10 @@ public class IslandsManager {
         Location namedHome = homeName.isBlank() ? null : getHomeLocation(world, user, name);
         Location l = namedHome != null ? namedHome : defaultHome;
         if (l != null) {
-            BentoBox.getInstance().logDebug("Loading the destination chunk asyc for " + user.getName());
-            long time = System.currentTimeMillis();
             Util.getChunkAtAsync(l).thenRun(() -> {
-                long duration = System.currentTimeMillis() - time;
-                BentoBox.getInstance().logDebug("Chunk loaded asyc for " + user.getName() + " in " + duration + "ms");
-                BentoBox.getInstance().logDebug("Checking if the location is safe for " + user.getName());
                 // Check if it is safe
                 if (isSafeLocation(l)) {
                     result.complete(l);
-                    BentoBox.getInstance().logDebug("Location is safe for " + user.getName());
                     return;
                 }
                 // To cover slabs, stairs and other half blocks, try one block above
@@ -688,7 +681,6 @@ public class IslandsManager {
                     // Adjust the home location accordingly
                     setHomeLocation(user, lPlusOne, name);
                     result.complete(lPlusOne);
-                    BentoBox.getInstance().logDebug("Location is safe for " + user.getName());
                     return;
                 }
                 // Try island
@@ -696,33 +688,25 @@ public class IslandsManager {
             });
             return result;
         }
-        BentoBox.getInstance().logDebug("No home locations found for " + user.getName());
         // Try island
         tryIsland(result, islandLoc, user, name);
         return result;
     }
 
     private void tryIsland(CompletableFuture<Location> result, Location islandLoc, @NonNull User user, String name) {
-        BentoBox.getInstance().logDebug(user.getName() + ": we need to try other locations on the island. Load the island center chunk async...");
-        long time = System.currentTimeMillis();
         Util.getChunkAtAsync(islandLoc).thenRun(() -> {
-            long duration = System.currentTimeMillis() - time;
-            BentoBox.getInstance().logDebug("Island center chunk loaded for " + user.getName() + " in " + duration + "ms");
             World w = islandLoc.getWorld();
             if (isSafeLocation(islandLoc)) {
-                BentoBox.getInstance().logDebug("Location is safe for " + user.getName());
                 setHomeLocation(user, islandLoc, name);
                 result.complete(islandLoc.clone().add(new Vector(0.5D, 0, 0.5D)));
                 return;
             } else {
-                BentoBox.getInstance().logDebug("Location is not safe for " + user.getName());
                 // If these island locations are not safe, then we need to get creative
                 // Try the default location
                 Location dl = islandLoc.clone().add(new Vector(0.5D, 5D, 2.5D));
                 if (isSafeLocation(dl)) {
                     setHomeLocation(user, dl, name);
                     result.complete(dl);
-                    BentoBox.getInstance().logDebug("Found that the default spot is safe " + user.getName());
                     return;
                 }
                 // Try just above the bedrock
@@ -730,22 +714,18 @@ public class IslandsManager {
                 if (isSafeLocation(dl)) {
                     setHomeLocation(user, dl, name);
                     result.complete(dl);
-                    BentoBox.getInstance().logDebug("Location above bedrock is safe for " + user.getName());
                     return;
                 }
-                BentoBox.getInstance().logDebug("Trying all locations up to max height above bedrock for " + user.getName());
                 // Try all the way up to the sky
                 for (int y = islandLoc.getBlockY(); y < w.getMaxHeight(); y++) {
                     dl = new Location(w, islandLoc.getX() + 0.5D, y, islandLoc.getZ() + 0.5D);
                     if (isSafeLocation(dl)) {
                         setHomeLocation(user, dl, name);
                         result.complete(dl);
-                        BentoBox.getInstance().logDebug("Location is safe for " + user.getName());
                         return;
                     }
                 }
             }
-            BentoBox.getInstance().logDebug("Nowhere is safe for " + user.getName());
             result.complete(null);
         });
 
@@ -1071,27 +1051,21 @@ public class IslandsManager {
         user.sendMessage("commands.island.go.teleport");
         goingHome.add(user.getUniqueId());
         readyPlayer(player);
-        BentoBox.getInstance().logDebug(user.getName() + " is going home");
         this.getAsyncSafeHomeLocation(world, user, name).thenAccept(home -> {
             Island island = getIsland(world, user);
             if (home == null) {
-                BentoBox.getInstance().logDebug("Try to fix this teleport location and teleport the player if possible " + user.getName());
                 // Try to fix this teleport location and teleport the player if possible
                 new SafeSpotTeleport.Builder(plugin).entity(player).island(island).homeName(name)
                         .thenRun(() -> teleported(world, user, name, newIsland, island))
                         .ifFail(() -> goingHome.remove(user.getUniqueId())).buildFuture().thenAccept(result::complete);
                 return;
             }
-            BentoBox.getInstance().logDebug("Teleporting " + player.getName() + " async");
-            long time = System.currentTimeMillis();
             PaperLib.teleportAsync(Objects.requireNonNull(player), home).thenAccept(b -> {
                 // Only run the commands if the player is successfully teleported
                 if (Boolean.TRUE.equals(b)) {
-                    BentoBox.getInstance().logDebug("Teleported " + player.getName() + " async - took " + (System.currentTimeMillis() - time) + "ms");
                     teleported(world, user, name, newIsland, island);
                     result.complete(true);
                 } else {
-                    BentoBox.getInstance().logDebug("Failed to teleport " + player.getName() + " async! - took " + (System.currentTimeMillis() - time) + "ms");
                     // Remove from mid-teleport set
                     goingHome.remove(user.getUniqueId());
                     result.complete(false);
