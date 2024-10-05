@@ -24,7 +24,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -42,8 +41,8 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -51,7 +50,6 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -69,22 +67,18 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
-public class IslandGoCommandTest {
+public class IslandGoCommandTest extends AbstractCommonSetup {
     @Mock
     private CompositeCommand ic;
     private User user;
     @Mock
     private IslandsManager im;
     @Mock
-    private Island island;
-    @Mock
     private PluginManager pim;
     @Mock
     private Settings s;
     @Mock
     private BukkitTask task;
-    @Mock
-    private Player player;
     private IslandGoCommand igc;
     @Mock
     private Notifier notifier;
@@ -97,10 +91,7 @@ public class IslandGoCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -110,11 +101,11 @@ public class IslandGoCommandTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        when(player.isOp()).thenReturn(false);
-        when(player.getUniqueId()).thenReturn(uuid);
-        when(player.getName()).thenReturn("tastybento");
-        when(player.getWorld()).thenReturn(world);
-        user = User.getInstance(player);
+        when(mockPlayer.isOp()).thenReturn(false);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getName()).thenReturn("tastybento");
+        when(mockPlayer.getWorld()).thenReturn(world);
+        user = User.getInstance(mockPlayer);
         // Set the User class plugin as this one
         User.setPlugin(plugin);
 
@@ -197,7 +188,7 @@ public class IslandGoCommandTest {
     public void testExecuteMidTeleport() {
         when(im.isGoingHome(user)).thenReturn(true);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
-        verify(player).sendMessage("commands.island.go.teleport");
+        checkSpigotMessage("commands.island.go.in-progress");
     }
 
     /**
@@ -207,7 +198,7 @@ public class IslandGoCommandTest {
     public void testExecuteNoArgsNoIsland() {
         when(im.getIslands(world, uuid)).thenReturn(List.of());
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
-        verify(player).sendMessage("general.errors.no-island");
+        checkSpigotMessage("general.errors.no-island");
     }
 
     /**
@@ -248,9 +239,9 @@ public class IslandGoCommandTest {
     @Test
     public void testExecuteNoArgsNoTeleportWhenFalling() {
         Flags.PREVENT_TELEPORT_WHEN_FALLING.setSetting(world, true);
-        when(player.getFallDistance()).thenReturn(10F);
+        when(mockPlayer.getFallDistance()).thenReturn(10F);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
-        verify(player).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
+        checkSpigotMessage("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint");
     }
 
     /**
@@ -259,7 +250,7 @@ public class IslandGoCommandTest {
     @Test
     public void testExecuteNoArgsNoTeleportWhenFallingNotFalling() {
         Flags.PREVENT_TELEPORT_WHEN_FALLING.setSetting(world, true);
-        when(player.getFallDistance()).thenReturn(0F);
+        when(mockPlayer.getFallDistance()).thenReturn(0F);
         assertTrue(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
     }
 
@@ -279,9 +270,9 @@ public class IslandGoCommandTest {
     @Test
     public void testExecuteArgs1MultipleHomes() {
         assertFalse(igc.execute(user, igc.getLabel(), Collections.singletonList("1")));
-        verify(player).sendMessage("commands.island.go.unknown-home");
-        verify(player).sendMessage("commands.island.sethome.homes-are");
-        verify(player).sendMessage("commands.island.sethome.home-list-syntax");
+        checkSpigotMessage("commands.island.go.unknown-home");
+        checkSpigotMessage("commands.island.sethome.homes-are");
+        checkSpigotMessage("commands.island.sethome.home-list-syntax");
     }
 
     /**
@@ -292,7 +283,7 @@ public class IslandGoCommandTest {
         when(s.getDelayTime()).thenReturn(10);
 
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
-        verify(player).sendMessage(eq("commands.delay.stand-still"));
+        checkSpigotMessage("commands.delay.stand-still");
     }
 
     /**
@@ -306,8 +297,8 @@ public class IslandGoCommandTest {
         // Twice
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
         verify(task).cancel();
-        verify(player).sendMessage(eq("commands.delay.previous-command-cancelled"));
-        verify(player, Mockito.times(2)).sendMessage(eq("commands.delay.stand-still"));
+        checkSpigotMessage("commands.delay.previous-command-cancelled");
+        checkSpigotMessage("commands.delay.stand-still", 2);
     }
 
     /**
@@ -318,10 +309,10 @@ public class IslandGoCommandTest {
         Location l = mock(Location.class);
         Vector vector = mock(Vector.class);
         when(l.toVector()).thenReturn(vector);
-        when(player.getLocation()).thenReturn(l);
-        PlayerMoveEvent e = new PlayerMoveEvent(player, l, l);
+        when(mockPlayer.getLocation()).thenReturn(l);
+        PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, l, l);
         igc.onPlayerMove(e);
-        verify(player, Mockito.never()).sendMessage(eq("commands.delay.moved-so-command-cancelled"));
+        verify(mockPlayer, Mockito.never()).sendMessage(eq("commands.delay.moved-so-command-cancelled"));
     }
 
     /**
@@ -332,11 +323,11 @@ public class IslandGoCommandTest {
         Location l = mock(Location.class);
         Vector vector = mock(Vector.class);
         when(l.toVector()).thenReturn(vector);
-        when(player.getLocation()).thenReturn(l);
+        when(mockPlayer.getLocation()).thenReturn(l);
         testExecuteNoArgsDelay();
-        PlayerMoveEvent e = new PlayerMoveEvent(player, l, l);
+        PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, l, l);
         igc.onPlayerMove(e);
-        verify(player, Mockito.never()).sendMessage(eq("commands.delay.moved-so-command-cancelled"));
+        checkSpigotMessage("commands.delay.moved-so-command-cancelled", 0);
     }
 
     /**
@@ -347,12 +338,12 @@ public class IslandGoCommandTest {
         Location l = mock(Location.class);
         Vector vector = mock(Vector.class);
         when(l.toVector()).thenReturn(vector);
-        when(player.getLocation()).thenReturn(l);
+        when(mockPlayer.getLocation()).thenReturn(l);
         testExecuteNoArgsDelay();
         Location l2 = mock(Location.class);
         Vector vector2 = mock(Vector.class);
         when(l2.toVector()).thenReturn(vector2);
-        PlayerMoveEvent e = new PlayerMoveEvent(player, l, l2);
+        PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, l, l2);
         igc.onPlayerMove(e);
         verify(notifier).notify(any(), eq("commands.delay.moved-so-command-cancelled"));
     }

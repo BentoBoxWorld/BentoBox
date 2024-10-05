@@ -17,12 +17,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,16 +30,15 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -59,8 +54,6 @@ public class AdminInfoCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private User user;
     @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
 
     private Island island;
@@ -68,18 +61,8 @@ public class AdminInfoCommandTest extends RanksManagerBeforeClassTest {
     private AdminInfoCommand iic;
 
     @Mock
-    private Player player;
-    @Mock
-    private World world;
-    @Mock
     private PlaceholdersManager phm;
-    @Mock
-    private @NonNull Location location;
-    @Mock
-    private IslandWorldManager iwm;
 
-    /**
-     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -96,12 +79,12 @@ public class AdminInfoCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Player
-        when(player.isOp()).thenReturn(false);
+        when(mockPlayer.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getName()).thenReturn("tastybento");
         when(user.getWorld()).thenReturn(world);
-        when(user.getPlayer()).thenReturn(player);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.isPlayer()).thenReturn(true);
         //user = User.getInstance(player);
         // Set the User class plugin as this one
@@ -164,6 +147,7 @@ public class AdminInfoCommandTest extends RanksManagerBeforeClassTest {
     @Test
     public void testExecuteUserStringListOfStringNoArgsConsole() {
         CommandSender console = mock(CommandSender.class);
+        when(console.spigot()).thenReturn(spigot);
         User sender = User.getInstance(console);
         assertFalse(iic.execute(sender, "", Collections.emptyList()));
         verify(user, never()).sendMessage("commands.help.header", "[label]", "commands.help.console");

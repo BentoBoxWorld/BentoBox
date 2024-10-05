@@ -158,6 +158,15 @@ public enum GameModePlaceholder {
      */
     ISLAND_VISITORS_COUNT("island_visitors_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getVisitors().size())),
     /**
+     * Returns the amount of players that are at least MEMBER on the island the player is standing on.
+     * @since 2.6.0
+     */
+    ISLAND_MAX_HOMES("island_max_homes",
+            (addon, user, island) -> island == null ? ""
+                    : String.valueOf(
+                            island.getMaxHomes() == null ? addon.getPlugin().getIWM().getMaxHomes(island.getWorld())
+                                    : island.getMaxHomes())),
+    /**
      * Returns the amount of players banned from the island.
      * @since 1.5.0
      */
@@ -281,6 +290,16 @@ public enum GameModePlaceholder {
      */
     VISITED_ISLAND_MEMBERS_COUNT("visited_island_members_count", (addon, user, island) ->
     getVisitedIsland(addon, user).map(value -> String.valueOf(value.getMemberSet().size())).orElse("")),
+    /**
+     * Returns the amount of players that are at least MEMBER on the island the player is standing on.
+     * @since 2.6.0
+     */
+    VISITED_ISLAND_MAX_HOMES("visited_island_max_homes",
+            (addon, user,
+                    island) -> getVisitedIsland(addon, user).map(value -> String.valueOf(
+                            island.getMaxHomes() == null ? addon.getPlugin().getIWM().getMaxHomes(island.getWorld())
+                                    : island.getMaxHomes()))
+                            .orElse("")),
     /**
      * Returns the amount of players that are TRUSTED on the island the player is standing on.
      * @since 1.5.2

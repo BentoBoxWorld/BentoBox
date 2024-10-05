@@ -59,6 +59,16 @@ commands:
   admin:
     help:
       description: admin command
+    maxhomes:
+        description: change the number of homes allowed on this island or player's island
+        parameters: <number / player> <number> [island name]
+        max-homes-set: '&a [name] - Set island max homes to [number]'
+        errors:
+            unknown-island: &c Unknown island! [name]
+    resethome:
+        description: Reset the player's home to default
+        parameters: <player> [island name]
+        cleared: '&b Home reset. [name]'         
     resets:
       description: edit player reset values
       set:
@@ -213,6 +223,7 @@ commands:
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy
       deaths: 'Deaths: [number]'
       resets-left: 'Resets: [number] (Max: [total])'
+      max-homes: 'Max homes: [number]'
       team-members-title: 'Team members:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
@@ -540,7 +551,9 @@ commands:
       parameters: '[home name]'
       description: teleport you to your island
       teleport: '&a Teleporting you to your island.'
+      in-progress: '&a Teleporting in progress, please wait...'
       teleported: '&a Teleported you to home &e [number].'
+      failure: '&c Teleporting failed for some reason. Please try again later.'
       unknown-home: '&c Unknown home name!'
     help:
       description: the main island command

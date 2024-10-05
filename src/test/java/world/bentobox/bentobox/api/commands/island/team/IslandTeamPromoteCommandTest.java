@@ -17,9 +17,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,47 +29,35 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
 public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
 
-    @Mock
-    Player player;
     @Mock
     private IslandTeamCommand ic;
     @Mock
     User user;
-    @Mock
-    IslandsManager im;
 
     // DUT
     private IslandTeamPromoteCommand ipc;
     private IslandTeamPromoteCommand idc;
     @Mock
     private PlayersManager pm;
-    @Mock
-    private World world;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private @Nullable Island island;
     @Mock
     private User target;
 
@@ -99,7 +84,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getName()).thenReturn("tastybento");
-        when(user.getPlayer()).thenReturn(player);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(pm.getUser("target")).thenReturn(target);
         when(target.getName()).thenReturn("target");
         when(target.getDisplayName()).thenReturn("Target");
@@ -138,8 +123,8 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
 
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.getOfflinePlayer(uuid)).thenReturn(player);
-        when(player.getName()).thenReturn("tastybento");
+        when(Bukkit.getOfflinePlayer(uuid)).thenReturn(mockPlayer);
+        when(mockPlayer.getName()).thenReturn("tastybento");
 
 
         ipc = new IslandTeamPromoteCommand(ic, "promote");
@@ -179,7 +164,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
     @Test
     public void testCanExecuteUserStringListOfStringShowHelp() {
         assertFalse(ipc.canExecute(user, "promote", List.of())); // Nothing
-        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, null);
+        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
     }
 
     /**

@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.managers;
+package world.bentobox.bentobox;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -29,10 +29,10 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * @author tastybento
@@ -40,7 +40,7 @@ import world.bentobox.bentobox.database.DatabaseSetup;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BentoBox.class, DatabaseSetup.class, RanksManager.class, Bukkit.class })
-public abstract class RanksManagerBeforeClassTest {
+public abstract class RanksManagerBeforeClassTest extends AbstractCommonSetup {
 
     // Constants that define the hard coded rank values
     public static final String ADMIN_RANK_REF = "ranks.admin";
@@ -68,8 +68,6 @@ public abstract class RanksManagerBeforeClassTest {
             TRUSTED_RANK_REF, TRUSTED_RANK, COOP_RANK_REF, COOP_RANK, VISITOR_RANK_REF, VISITOR_RANK, BANNED_RANK_REF,
             BANNED_RANK);
 
-    @Mock
-    public BentoBox plugin;
     @Mock
     public RanksManager rm;
 
@@ -113,6 +111,7 @@ public abstract class RanksManagerBeforeClassTest {
 
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getBukkitVersion()).thenReturn("");
         // Set up plugin

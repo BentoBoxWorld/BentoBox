@@ -6,13 +6,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,7 +17,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -34,17 +30,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
@@ -59,23 +51,11 @@ import world.bentobox.bentobox.util.Util;
 public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
 
     @Mock
-    private BentoBox plugin;
-    @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private World world;
     @Mock
     private World nether;
     @Mock
     private World end;
-    @Mock
-    private Player player;
-    @Mock
-    private Location location;
     @Mock
     private Block block;
 
@@ -91,10 +71,7 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
      */
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Setup plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        when(plugin.getIWM()).thenReturn(iwm);
+        super.setUp();
         // Worlds
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(nether.getEnvironment()).thenReturn(World.Environment.NETHER);
@@ -112,7 +89,6 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         // Util
-        PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
         // Location
         when(location.toVector()).thenReturn(new Vector(5,5,5));
@@ -120,9 +96,9 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
         when(spawnLocation.toVector()).thenReturn(new Vector(0,0,0));
         when(spawnLocation.getWorld()).thenReturn(nether);
         // Player
-        when(player.getWorld()).thenReturn(nether);
-        when(player.getUniqueId()).thenReturn(UUID.randomUUID());
-        User.getInstance(player);
+        when(mockPlayer.getWorld()).thenReturn(nether);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        User.getInstance(mockPlayer);
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
@@ -157,10 +133,10 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnBlockPlaceDisallowed() {
-        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, player, true, EquipmentSlot.HAND);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
         assertTrue(e.isCancelled());
-        verify(player).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected");
     }
 
     /**
@@ -169,10 +145,10 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnBlockPlaceDisallowedNoProtection() {
         when(iwm.isNetherIslands(any())).thenReturn(true);
-        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, player, true, EquipmentSlot.HAND);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
         assertFalse(e.isCancelled());
-        verify(player, never()).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected", 0);
     }
 
     /**
@@ -180,11 +156,11 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnBlockPlaceAllowed() {
-        when(player.isOp()).thenReturn(true);
-        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, player, true, EquipmentSlot.HAND);
+        when(mockPlayer.isOp()).thenReturn(true);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
         assertFalse(e.isCancelled());
-        verify(player, never()).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected", 0);
     }
 
     /**
@@ -193,10 +169,10 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnBlockPlaceAllowedOutsideSpawn() {
         when(iwm.getNetherSpawnRadius(any())).thenReturn(1);
-        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, player, true, EquipmentSlot.HAND);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
         assertFalse(e.isCancelled());
-        verify(player, never()).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected", 0);
     }
 
     /**
@@ -205,11 +181,11 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnBlockPlaceAllowedWrongWorld() {
         when(location.getWorld()).thenReturn(world);
-        when(player.getWorld()).thenReturn(world);
-        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, player, true, EquipmentSlot.HAND);
+        when(mockPlayer.getWorld()).thenReturn(world);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
         assertFalse(e.isCancelled());
-        verify(player, never()).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected", 0);
     }
 
     /**
@@ -218,10 +194,10 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnBlockPlaceAllowedNetherIslandWorlds() {
         when(iwm.isNetherIslands(any())).thenReturn(true);
-        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, player, true, EquipmentSlot.HAND);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
         assertFalse(e.isCancelled());
-        verify(player, never()).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected", 0);
     }
 
     /**
@@ -230,13 +206,13 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnBlockPlaceAllowedEndIslandWorlds() {
         when(location.getWorld()).thenReturn(end);
-        when(player.getWorld()).thenReturn(end);
+        when(mockPlayer.getWorld()).thenReturn(end);
         when(spawnLocation.getWorld()).thenReturn(end);
         when(iwm.isEndIslands(any())).thenReturn(true);
-        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, player, true, EquipmentSlot.HAND);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
         assertFalse(e.isCancelled());
-        verify(player, never()).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected", 0);
     }
 
     /**
@@ -244,10 +220,10 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnBlockBreakDisallowed() {
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         ssp.onBlockBreak(e);
         assertTrue(e.isCancelled());
-        verify(player).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected");
     }
 
     /**
@@ -256,10 +232,10 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnBlockBreakDisallowedNoProtection() {
         when(ws.isMakeNetherPortals()).thenReturn(true);
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         ssp.onBlockBreak(e);
         assertFalse(e.isCancelled());
-        verify(player, never()).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected", 0);
     }
 
     /**
@@ -267,11 +243,11 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnBlockBreakAllowed() {
-        when(player.isOp()).thenReturn(true);
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        when(mockPlayer.isOp()).thenReturn(true);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         ssp.onBlockBreak(e);
         assertFalse(e.isCancelled());
-        verify(player, never()).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected", 0);
     }
 
     /**
@@ -291,7 +267,7 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
                 new Vector(0,0,0),
                 new Vector(0,0,0),
                 new Vector(10000,0,0));
-        EntityExplodeEvent e = getExplodeEvent(player, location, blockList);
+        EntityExplodeEvent e = getExplodeEvent(mockPlayer, location, blockList);
         ssp.onExplosion(e);
         // 4 blocks inside the spawn should be removed, leaving one
         assertEquals(1, blockList.size());
@@ -316,7 +292,7 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
                 new Vector(0,0,0),
                 new Vector(0,0,0),
                 new Vector(10000,0,0));
-        EntityExplodeEvent e = getExplodeEvent(player, location, blockList);
+        EntityExplodeEvent e = getExplodeEvent(mockPlayer, location, blockList);
         ssp.onExplosion(e);
         // No blocks should be removed
         assertEquals(5, blockList.size());
@@ -328,10 +304,11 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnBucketEmptyDisallowed() {
-        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.DOWN, null, null, null);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(mockPlayer, block, block, BlockFace.DOWN, null, null,
+                null);
         ssp.onBucketEmpty(e);
         assertTrue(e.isCancelled());
-        verify(player).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected");
     }
 
     /**
@@ -340,10 +317,11 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnBucketEmptyDisallowedNoProtection() {
         when(ws.isMakeNetherPortals()).thenReturn(true);
-        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.DOWN, null, null, null);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(mockPlayer, block, block, BlockFace.DOWN, null, null,
+                null);
         ssp.onBucketEmpty(e);
         assertFalse(e.isCancelled());
-        verify(player, never()).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected", 0);
     }
 
     /**
@@ -351,11 +329,12 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnBucketEmptyAllowed() {
-        when(player.isOp()).thenReturn(true);
-        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.DOWN, null, null, null);
+        when(mockPlayer.isOp()).thenReturn(true);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(mockPlayer, block, block, BlockFace.DOWN, null, null,
+                null);
         ssp.onBucketEmpty(e);
         assertFalse(e.isCancelled());
-        verify(player, never()).sendMessage("protection.spawn-protected");
+        checkSpigotMessage("protection.spawn-protected", 0);
     }
 
 }

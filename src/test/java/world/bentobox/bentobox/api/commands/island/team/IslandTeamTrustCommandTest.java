@@ -31,10 +31,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -42,14 +42,14 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
 public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -64,10 +64,6 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
     private UUID notUUID;
     @Mock
     private Settings s;
-    @Mock
-    private Island island;
-    @Mock
-    private Player targetPlayer;
 
     /**
      */
@@ -101,24 +97,24 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
         // Target player
-        when(targetPlayer.getUniqueId()).thenReturn(notUUID);
-        when(targetPlayer.getName()).thenReturn("target");
-        when(targetPlayer.getDisplayName()).thenReturn("&Cposlovich");
-        User.getInstance(targetPlayer);
+        when(mockPlayer.getUniqueId()).thenReturn(notUUID);
+        when(mockPlayer.getName()).thenReturn("target");
+        when(mockPlayer.getDisplayName()).thenReturn("&Cposlovich");
+        User.getInstance(mockPlayer);
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
 
         // Player has island to begin with
-        when(im.hasIsland(any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.inTeam(any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
         // when(im.isOwner(any(), any())).thenReturn(true);
         // when(im.getOwner(any(), any())).thenReturn(uuid);
         // Island
         when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(island.getMemberSet(anyInt(), any(Boolean.class))).thenReturn(ImmutableSet.of(uuid));
-        when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
-        when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -157,7 +153,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         when(im.inTeam(any(), Mockito.any(UUID.class))).thenReturn(false);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage(eq("general.errors.no-island"));
+        verify(user).sendMessage("general.errors.no-island");
     }
 
     /**
@@ -207,7 +203,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         when(pm.getUUID(any())).thenReturn(uuid);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("commands.island.team.trust.trust-in-yourself"));
+        verify(user).sendMessage("commands.island.team.trust.trust-in-yourself");
     }
 
     /**
@@ -224,7 +220,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         when(im.inTeam(any(), any())).thenReturn(true);
         // when(im.getMembers(any(), any())).thenReturn(Collections.singleton(notUUID));
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("bento")));
-        verify(user).sendMessage(eq("commands.island.team.trust.player-already-trusted"));
+        verify(user).sendMessage("commands.island.team.trust.player-already-trusted");
     }
 
     /**
@@ -235,7 +231,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         when(pm.getUUID(any())).thenReturn(uuid);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("commands.island.team.trust.trust-in-yourself"));
+        verify(user).sendMessage("commands.island.team.trust.trust-in-yourself");
     }
 
     /**
@@ -249,7 +245,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         // when(im.getMembers(any(), any())).thenReturn(Collections.singleton(other));
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("commands.island.team.trust.player-already-trusted"));
+        verify(user).sendMessage("commands.island.team.trust.player-already-trusted");
     }
 
     /**
@@ -266,7 +262,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         // Execute
         when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(null);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("general.errors.general"));
+        verify(user).sendMessage("general.errors.general");
     }
 
     /**
@@ -284,7 +280,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         // Execute
         when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
-        verify(user).sendMessage(eq("commands.island.team.trust.is-full"));
+        verify(user).sendMessage("commands.island.team.trust.is-full");
     }
 
     /**
@@ -293,7 +289,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testExecuteSuccessNoConfirmation() {
-        User target = User.getInstance(targetPlayer);
+        User target = User.getInstance(mockPlayer);
         // Can execute
         when(pm.getUUID(any())).thenReturn(notUUID);
         // when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
@@ -308,7 +304,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         verify(user).sendMessage("commands.island.team.trust.success", TextVariables.NAME, "target",
                 TextVariables.DISPLAY_NAME, "&Cposlovich");
         verify(island).setRank(target, RanksManager.TRUSTED_RANK);
-        verify(targetPlayer).sendMessage("commands.island.team.trust.you-are-trusted");
+        checkSpigotMessage("commands.island.team.trust.you-are-trusted");
     }
 
     /**
@@ -317,7 +313,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
     @Test
     public void testExecuteSuccessConfirmation() {
         when(s.isInviteConfirmation()).thenReturn(true);
-        User target = User.getInstance(targetPlayer);
+        User target = User.getInstance(mockPlayer);
         // Can execute
         when(pm.getUUID(any())).thenReturn(notUUID);
         //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
@@ -330,8 +326,8 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
         verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Cposlovich");
         // Send message to online player
-        verify(targetPlayer).sendMessage(eq("commands.island.team.trust.name-has-invited-you"));
-        verify(targetPlayer).sendMessage(eq("commands.island.team.invite.to-accept-or-reject"));
+        checkSpigotMessage("commands.island.team.trust.name-has-invited-you");
+        checkSpigotMessage("commands.island.team.invite.to-accept-or-reject");
         verify(island, never()).setRank(target, RanksManager.TRUSTED_RANK);
     }
 

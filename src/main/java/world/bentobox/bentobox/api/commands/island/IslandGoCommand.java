@@ -37,7 +37,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         // Check if mid-teleport
         if (getIslands().isGoingHome(user)) {
             // Tell them again that it's in progress
-            user.sendMessage("commands.island.go.teleport");
+            user.sendMessage("commands.island.go.in-progress");
             return false;
         }
         List<Island> islands = getIslands().getIslands(getWorld(), user.getUniqueId());
@@ -76,7 +76,15 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                 getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
                 if (!info.islandName) {
                     this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), name)
-                            .thenAccept((r) -> getIslands().setPrimaryIsland(user.getUniqueId(), info.island)));
+                            .thenAccept((r) -> {
+                                if (r.booleanValue()) {
+                                    // Success
+                                    getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
+                                } else {
+                                    user.sendMessage("commands.island.go.failure");
+                                    getPlugin().logError(user.getName() + " could not teleport to their island - async teleport issue");
+                                }
+                            }));
                     return true;
                 }
             }
