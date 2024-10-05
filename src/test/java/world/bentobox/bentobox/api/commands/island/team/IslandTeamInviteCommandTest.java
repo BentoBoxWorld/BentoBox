@@ -18,13 +18,10 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Before;
@@ -38,39 +35,31 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.TeamInvite;
 import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
 public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private IslandTeamCommand ic;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private Island island;
-    @Mock
-    private PluginManager pim;
     @Mock
     private PlayersManager pm;
     @Mock
@@ -80,14 +69,9 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private User user;
 
-    private UUID uuid;
     private UUID islandUUID;
     private IslandTeamInviteCommand itl;
     private UUID notUUID;
-    @Mock
-    private Player p;
-    @Mock
-    private @NonNull World world;
 
     @Before
     public void setUp() throws Exception {
@@ -111,7 +95,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         when(user.getDisplayName()).thenReturn("&Ctastbento");
         when(user.isOnline()).thenReturn(true);
@@ -120,13 +104,13 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         when(User.getInstance(uuid)).thenReturn(user);
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
         // Vanished players
-        when(p.canSee(any())).thenReturn(true);
+        when(mockPlayer.canSee(any())).thenReturn(true);
 
         User.setPlugin(plugin);
         // Target
         notUUID = UUID.randomUUID();
         when(target.getUniqueId()).thenReturn(notUUID);
-        when(target.getPlayer()).thenReturn(p);
+        when(target.getPlayer()).thenReturn(mockPlayer);
         when(target.isOnline()).thenReturn(true);
         when(target.getName()).thenReturn("target");
         when(target.getDisplayName()).thenReturn("&Ctarget");
@@ -170,7 +154,6 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // IWM friendly name
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         @NonNull
         WorldSettings ws = new TestWorldSettings();
@@ -246,7 +229,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
     public void testCanExecuteNoTarget() {
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         // Show panel
-        verify(p).openInventory(any(Inventory.class));
+        verify(mockPlayer).openInventory(any(Inventory.class));
     }
 
     /**
@@ -264,7 +247,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecuteVanishedPlayer() {
-        when(p.canSee(any())).thenReturn(false);
+        when(mockPlayer.canSee(any())).thenReturn(false);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
         verify(user).sendMessage(eq("general.errors.offline-player"));
     }

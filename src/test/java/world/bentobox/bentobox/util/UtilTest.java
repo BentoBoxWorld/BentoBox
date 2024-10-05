@@ -29,6 +29,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Player.Spigot;
 import org.bukkit.util.Vector;
 import org.junit.After;
 import org.junit.Before;
@@ -72,6 +73,8 @@ public class UtilTest {
     private User user;
     @Mock
     private ConsoleCommandSender sender;
+    @Mock
+    private Spigot spigot;
 
     /**
      */
@@ -100,6 +103,7 @@ public class UtilTest {
         Server server = mock(Server.class);
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.getWorld(anyString())).thenReturn(world);
+        when(sender.spigot()).thenReturn(spigot);
         when(Bukkit.getConsoleSender()).thenReturn(sender);
 
         // Bukkit - online players
@@ -113,6 +117,7 @@ public class UtilTest {
             when(p1.getUniqueId()).thenReturn(uuid);
             when(p1.getName()).thenReturn(name);
             when(p1.hasPermission(anyString())).thenReturn(true);
+            when(p1.spigot()).thenReturn(spigot);
             online.put(uuid, name);
             onlinePlayers.add(p1);
             // Add to User cache

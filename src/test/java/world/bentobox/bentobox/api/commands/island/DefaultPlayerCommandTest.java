@@ -14,32 +14,29 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, IslandsManager.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, IslandsManager.class, Util.class })
 public class DefaultPlayerCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -49,10 +46,6 @@ public class DefaultPlayerCommandTest extends RanksManagerBeforeClassTest {
     private WorldSettings ws;
     @Mock
     private User user;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private @Nullable Island island;
 
     class PlayerCommand extends DefaultPlayerCommand {
 
@@ -68,7 +61,6 @@ public class DefaultPlayerCommandTest extends RanksManagerBeforeClassTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         // User
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
@@ -84,8 +76,6 @@ public class DefaultPlayerCommandTest extends RanksManagerBeforeClassTest {
         // World Settings
         when(ws.getDefaultPlayerAction()).thenReturn("go");
         when(ws.getDefaultNewPlayerAction()).thenReturn("create");
-
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         when(ws.getPlayerCommandAliases()).thenReturn("island is");
         when(addon.getWorldSettings()).thenReturn(ws);

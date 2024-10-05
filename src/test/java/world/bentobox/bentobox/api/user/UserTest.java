@@ -33,12 +33,10 @@ import org.bukkit.Particle.DustOptions;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -49,11 +47,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -62,35 +59,27 @@ import world.bentobox.bentobox.api.addons.AddonDescription.Builder;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.database.objects.Players;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class })
-public class UserTest {
+@PrepareForTest({ BentoBox.class, Bukkit.class, Util.class })
+public class UserTest extends AbstractCommonSetup {
 
     private static final String TEST_TRANSLATION = "mock &a translation &b [test]";
     private static final String TEST_TRANSLATION_WITH_COLOR = "mock §atranslation §b[test]";
     @Mock
-    private Player player;
-    @Mock
-    private BentoBox plugin;
-    @Mock
     private LocalesManager lm;
 
     private User user;
-    @Mock
-    private IslandWorldManager iwm;
 
     private UUID uuid;
-    @Mock
-    private PluginManager pim;
     @Mock
     private CommandSender sender;
     @Mock
@@ -101,28 +90,26 @@ public class UserTest {
 
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        User.setPlugin(plugin);
+        super.setUp();
 
         uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
 
         ItemFactory itemFactory = mock(ItemFactory.class);
 
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(mockPlayer);
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getServer()).thenReturn(server);
 
         // Player
-        when(player.getServer()).thenReturn(server);
+        when(mockPlayer.getServer()).thenReturn(server);
         when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
+        when(sender.spigot()).thenReturn(spigot);
         @NonNull
         World world = mock(World.class);
         when(world.getName()).thenReturn("BSkyBlock");
-        when(player.getWorld()).thenReturn(world);
+        when(mockPlayer.getWorld()).thenReturn(world);
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
@@ -130,7 +117,7 @@ public class UserTest {
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
         when(iwm.getFriendlyName(world)).thenReturn("BSkyBlock-Fiendly");
 
-        user = User.getInstance(player);
+        user = User.getInstance(mockPlayer);
 
         // Locales
         when(plugin.getLocalesManager()).thenReturn(lm);
@@ -164,7 +151,7 @@ public class UserTest {
 
     @Test
     public void testGetInstancePlayer() {
-        assertEquals(player,user.getPlayer());
+        assertEquals(mockPlayer, user.getPlayer());
     }
 
     @Test
@@ -179,7 +166,7 @@ public class UserTest {
     public void testRemovePlayer() {
         assertNotNull(User.getInstance(uuid));
         assertEquals(user, User.getInstance(uuid));
-        User.removePlayer(player);
+        User.removePlayer(mockPlayer);
         // If the player has been removed from the cache, then code will ask server for player
         // Return null and check if instance is null will show that the player is not in the cache
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
@@ -190,7 +177,7 @@ public class UserTest {
         BentoBox plugin = mock(BentoBox.class);
         User.setPlugin(plugin);
         user.addPerm("testing123");
-        verify(player).addAttachment(eq(plugin), eq("testing123"), eq(true));
+        verify(mockPlayer).addAttachment(eq(plugin), eq("testing123"), eq(true));
     }
 
     @Test
@@ -206,9 +193,9 @@ public class UserTest {
     @Test
     public void testGetInventory() {
         PlayerInventory value = mock(PlayerInventory.class);
-        when(player.getInventory()).thenReturn(value);
-        assertEquals(value, player.getInventory());
-        User user = User.getInstance(player);
+        when(mockPlayer.getInventory()).thenReturn(value);
+        assertEquals(value, mockPlayer.getInventory());
+        User user = User.getInstance(mockPlayer);
         assertNotNull(user.getInventory());
         assertEquals(value, user.getInventory());
     }
@@ -216,8 +203,8 @@ public class UserTest {
     @Test
     public void testGetLocation() {
         Location loc = mock(Location.class);
-        when(player.getLocation()).thenReturn(loc);
-        User user = User.getInstance(player);
+        when(mockPlayer.getLocation()).thenReturn(loc);
+        User user = User.getInstance(mockPlayer);
         assertNotNull(user.getLocation());
         assertEquals(loc, user.getLocation());
     }
@@ -225,8 +212,8 @@ public class UserTest {
     @Test
     public void testGetName() {
         String name = "tastybento";
-        when(player.getName()).thenReturn(name);
-        User user = User.getInstance(player);
+        when(mockPlayer.getName()).thenReturn(name);
+        User user = User.getInstance(mockPlayer);
         assertNotNull(user.getName());
         assertEquals(name, user.getName());
 
@@ -234,15 +221,15 @@ public class UserTest {
 
     @Test
     public void testGetPlayer() {
-        User user = User.getInstance(player);
-        assertEquals(player, user.getPlayer());
+        User user = User.getInstance(mockPlayer);
+        assertEquals(mockPlayer, user.getPlayer());
     }
 
     @Test
     public void testIsPlayer() {
         User user = User.getInstance(sender);
         assertFalse(user.isPlayer());
-        user = User.getInstance(player);
+        user = User.getInstance(mockPlayer);
         assertTrue(user.isPlayer());
     }
 
@@ -255,8 +242,8 @@ public class UserTest {
     @Test
     public void testGetUniqueId() {
         UUID uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);
-        user = User.getInstance(player);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        user = User.getInstance(mockPlayer);
         assertEquals(uuid, user.getUniqueId());
     }
 
@@ -267,7 +254,7 @@ public class UserTest {
         assertTrue(user.hasPermission(null));
 
         // test if player has the permission
-        when(player.hasPermission(anyString())).thenReturn(true);
+        when(mockPlayer.hasPermission(anyString())).thenReturn(true);
         assertTrue(user.hasPermission("perm"));
     }
 
@@ -283,13 +270,13 @@ public class UserTest {
 
     @Test
     public void testIsOnline() {
-        when(player.isOnline()).thenReturn(true);
+        when(mockPlayer.isOnline()).thenReturn(true);
         assertTrue(user.isOnline());
     }
 
     @Test
     public void testIsOp() {
-        when(player.isOp()).thenReturn(true);
+        when(mockPlayer.isOp()).thenReturn(true);
         assertTrue(user.isOp());
     }
 
@@ -325,7 +312,7 @@ public class UserTest {
         when(lm.get(any(), any())).thenReturn("fake.reference");
         when(lm.get(any())).thenReturn("fake.reference");
 
-        User user = User.getInstance(player);
+        User user = User.getInstance(mockPlayer);
         assertEquals("", user.getTranslationOrNothing("fake.reference"));
         assertEquals("", user.getTranslationOrNothing("fake.reference", "[test]", "variable"));
     }
@@ -333,7 +320,7 @@ public class UserTest {
     @Test
     public void testSendMessage() {
         user.sendMessage("a.reference");
-        verify(player).sendMessage(TEST_TRANSLATION_WITH_COLOR);
+        checkSpigotMessage(TEST_TRANSLATION_WITH_COLOR);
     }
 
     @Test
@@ -347,8 +334,8 @@ public class UserTest {
         when(iwm .getAddon(any())).thenReturn(optionalAddon);
         when(lm.get(any(), eq("name.a.reference"))).thenReturn("mockmockmock");
         user.sendMessage("a.reference");
-        verify(player, never()).sendMessage(eq(TEST_TRANSLATION));
-        verify(player).sendMessage(eq("mockmockmock"));
+        verify(mockPlayer, never()).sendMessage(eq(TEST_TRANSLATION));
+        checkSpigotMessage("mockmockmock");
     }
 
     @Test
@@ -356,7 +343,7 @@ public class UserTest {
         // Nothing - blank translation
         when(lm.get(any(), any())).thenReturn("");
         user.sendMessage("a.reference");
-        verify(player, never()).sendMessage(anyString());
+        checkSpigotMessage("a.reference", 0);
     }
 
     @Test
@@ -368,21 +355,21 @@ public class UserTest {
         }
         when(lm.get(any(), any())).thenReturn(allColors.toString());
         user.sendMessage("a.reference");
-        verify(player, never()).sendMessage(anyString());
+        verify(mockPlayer, never()).sendMessage(anyString());
     }
 
     @Test
     public void testSendMessageColorsAndSpaces() {
         when(lm.get(any(), any())).thenReturn(ChatColor.COLOR_CHAR + "6 Hello there");
         user.sendMessage("a.reference");
-        verify(player).sendMessage(eq(ChatColor.COLOR_CHAR + "6Hello there"));
+        checkSpigotMessage(ChatColor.COLOR_CHAR + "6Hello there");
     }
 
     @Test
     public void testSendRawMessage() {
         String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
         user.sendRawMessage(raw);
-        verify(player).sendMessage(raw);
+        checkSpigotMessage(raw);
     }
 
     @Test
@@ -390,7 +377,7 @@ public class UserTest {
         String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
         user = User.getInstance((CommandSender)null);
         user.sendRawMessage(raw);
-        verify(player, never()).sendMessage(anyString());
+        checkSpigotMessage(raw, 0);
     }
 
     @Test
@@ -414,29 +401,29 @@ public class UserTest {
         for (GameMode gm: GameMode.values()) {
             user.setGameMode(gm);
         }
-        verify(player, times(GameMode.values().length)).setGameMode(any());
+        verify(mockPlayer, times(GameMode.values().length)).setGameMode(any());
     }
 
     @Test
     public void testTeleport() {
-        when(player.teleport(any(Location.class))).thenReturn(true);
+        when(mockPlayer.teleport(any(Location.class))).thenReturn(true);
         Location loc = mock(Location.class);
         user.teleport(loc);
-        verify(player).teleport(loc);
+        verify(mockPlayer).teleport(loc);
     }
 
     @Test
     public void testGetWorld() {
         World world = mock(World.class);
-        when(player.getWorld()).thenReturn(world);
-        User user = User.getInstance(player);
+        when(mockPlayer.getWorld()).thenReturn(world);
+        User user = User.getInstance(mockPlayer);
         assertEquals(world, user.getWorld());
     }
 
     @Test
     public void testCloseInventory() {
         user.closeInventory();
-        verify(player).closeInventory();
+        verify(mockPlayer).closeInventory();
     }
 
     @Test
@@ -468,13 +455,13 @@ public class UserTest {
     @Test
     public void testUpdateInventory() {
         user.updateInventory();
-        verify(player).updateInventory();
+        verify(mockPlayer).updateInventory();
     }
 
     @Test
     public void testPerformCommand() {
         user.performCommand("test");
-        verify(player).performCommand("test");
+        verify(mockPlayer).performCommand("test");
     }
 
     @Test
@@ -520,8 +507,8 @@ public class UserTest {
         permSet.add(pai);
         permSet.add(pai2);
         permSet.add(pai3);
-        when(player.getEffectivePermissions()).thenReturn(permSet);
-        User u = User.getInstance(player);
+        when(mockPlayer.getEffectivePermissions()).thenReturn(permSet);
+        User u = User.getInstance(mockPlayer);
         assertEquals(33, u.getPermissionValue("bskyblock.max", 2));
     }
 
@@ -544,8 +531,8 @@ public class UserTest {
         permSet.add(pai);
         permSet.add(pai2);
         permSet.add(pai3);
-        when(player.getEffectivePermissions()).thenReturn(permSet);
-        User u = User.getInstance(player);
+        when(mockPlayer.getEffectivePermissions()).thenReturn(permSet);
+        User u = User.getInstance(mockPlayer);
         assertEquals(7, u.getPermissionValue("bskyblock.max", 2));
     }
 
@@ -579,8 +566,8 @@ public class UserTest {
         permSet.add(pai);
         permSet.add(pai2);
         permSet.add(pai3);
-        when(player.getEffectivePermissions()).thenReturn(permSet);
-        User u = User.getInstance(player);
+        when(mockPlayer.getEffectivePermissions()).thenReturn(permSet);
+        User u = User.getInstance(mockPlayer);
         assertEquals(-1, u.getPermissionValue("bskyblock.max", 2));
     }
 
@@ -600,8 +587,8 @@ public class UserTest {
         permSet.add(pai);
         permSet.add(pai2);
         permSet.add(pai3);
-        when(player.getEffectivePermissions()).thenReturn(permSet);
-        User u = User.getInstance(player);
+        when(mockPlayer.getEffectivePermissions()).thenReturn(permSet);
+        User u = User.getInstance(mockPlayer);
         assertEquals(22, u.getPermissionValue("bskyblock.max", 22));
     }
 
@@ -614,14 +601,14 @@ public class UserTest {
         PermissionAttachmentInfo pai = mock(PermissionAttachmentInfo.class);
         when(pai.getPermission()).thenReturn("bskyblock.max.3");
         when(pai.getValue()).thenReturn(true);
-        when(player.getEffectivePermissions()).thenReturn(Collections.singleton(pai));
-        User u = User.getInstance(player);
+        when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.singleton(pai));
+        User u = User.getInstance(mockPlayer);
         assertEquals(3, u.getPermissionValue("bskyblock.max", 22));
     }
 
     @Test
     public void testMetaData() {
-        User u = User.getInstance(player);
+        User u = User.getInstance(mockPlayer);
         assertTrue(u.getMetaData().get().isEmpty());
         // Store a string in a new key
         assertFalse(u.putMetaData("string", new MetaDataValue("a string")).isPresent());
@@ -686,7 +673,7 @@ public class UserTest {
         User s = User.getInstance(sender);
         assertFalse(s.isOfflinePlayer());
         User.clearUsers();
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         assertTrue(p.isOfflinePlayer());
     }
 
@@ -696,9 +683,9 @@ public class UserTest {
     @Test
     public void testAddPerm() {
         User.clearUsers();
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         p.addPerm("test.perm");
-        verify(player).addAttachment(plugin, "test.perm", true);
+        verify(mockPlayer).addAttachment(plugin, "test.perm", true);
     }
 
     /**
@@ -708,19 +695,19 @@ public class UserTest {
     public void testRemovePerm() {
         User.clearUsers();
         // No perms to start
-        when(player.getEffectivePermissions()).thenReturn(Collections.emptySet());
-        when(player.hasPermission(anyString())).thenReturn(false);
-        User p = User.getInstance(player);
+        when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.emptySet());
+        when(mockPlayer.hasPermission(anyString())).thenReturn(false);
+        User p = User.getInstance(mockPlayer);
         assertTrue(p.removePerm("test.perm"));
-        verify(player).recalculatePermissions();
+        verify(mockPlayer).recalculatePermissions();
         // Has the perm
         PermissionAttachmentInfo pi = mock(PermissionAttachmentInfo.class);
         when(pi.getPermission()).thenReturn("test.perm");
         PermissionAttachment attachment = mock(PermissionAttachment.class);
         when(pi.getAttachment()).thenReturn(attachment);
-        when(player.getEffectivePermissions()).thenReturn(Set.of(pi));
+        when(mockPlayer.getEffectivePermissions()).thenReturn(Set.of(pi));
         assertTrue(p.removePerm("test.perm"));
-        verify(player).removeAttachment(attachment);
+        verify(mockPlayer).removeAttachment(attachment);
     }
 
 
@@ -731,7 +718,7 @@ public class UserTest {
     @Test
     public void testGetTranslationWorldStringStringArray() {
         User.clearUsers();
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         // No addon
         World world = mock(World.class);
         assertEquals("mock §atranslation §btastybento", p.getTranslation(world, "test.ref", "[test]", "tastybento"));
@@ -743,7 +730,7 @@ public class UserTest {
     @Test
     public void testGetTranslationWorldStringStringArrayWwithAddon() {
         User.clearUsers();
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         World world = mock(World.class);
 
         GameModeAddon gameAddon = mock(GameModeAddon.class);
@@ -759,7 +746,7 @@ public class UserTest {
     @Test
     public void testGetTranslationStringStringArray() {
         User.clearUsers();
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         assertEquals("mock §atranslation §btastybento", p.getTranslation("test.ref", "[test]", "tastybento"));
     }
 
@@ -771,7 +758,7 @@ public class UserTest {
         Notifier notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
         User.clearUsers();
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         p.notify(TEST_TRANSLATION, "[test]", "tastybento");
         verify(notifier).notify(any(User.class), eq("mock §atranslation §btastybento"));
 
@@ -785,7 +772,7 @@ public class UserTest {
         Notifier notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
         User.clearUsers();
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         World world = mock(World.class);
 
         GameModeAddon gameAddon = mock(GameModeAddon.class);
@@ -820,7 +807,7 @@ public class UserTest {
         when(plugin.getSettings()).thenReturn(settings);
         when(pm.getLocale(uuid)).thenReturn("fr-FR");
         User.clearUsers();
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         assertEquals(Locale.FRANCE, p.getLocale());
     }
 
@@ -830,8 +817,8 @@ public class UserTest {
     @Test
     public void testInWorld() {
         User.clearUsers();
-        User p = User.getInstance(player);
-        when(player.getLocation()).thenReturn(mock(Location.class));
+        User p = User.getInstance(mockPlayer);
+        when(mockPlayer.getLocation()).thenReturn(mock(Location.class));
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         assertFalse(p.inWorld());
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
@@ -844,7 +831,7 @@ public class UserTest {
     @Test
     public void testSpawnParticleParticleObjectDoubleDoubleDoubleError() {
         User.clearUsers();
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         try {
             p.spawnParticle(Particle.DUST, 4, 0.0d, 0.0d, 0.0d);
         } catch (Exception e) {
@@ -860,13 +847,13 @@ public class UserTest {
     public void testSpawnParticleParticleObjectDoubleDoubleDouble() {
         User.clearUsers();
         Location loc = mock(Location.class);
-        when(player.getLocation()).thenReturn(loc);
+        when(mockPlayer.getLocation()).thenReturn(loc);
         when(loc.toVector()).thenReturn(new Vector(1,1,1));
         when(server.getViewDistance()).thenReturn(16);
 
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         p.spawnParticle(Particle.SHRIEK, 4, 0.0d, 0.0d, 0.0d);
-        verify(player).spawnParticle(Particle.SHRIEK, 0.0d, 0.0d, 0.0d, 1, 4);
+        verify(mockPlayer).spawnParticle(Particle.SHRIEK, 0.0d, 0.0d, 0.0d, 1, 4);
 
     }
 
@@ -877,14 +864,14 @@ public class UserTest {
     public void testSpawnParticleParticleObjectDoubleDoubleDoubleRedstone() {
         User.clearUsers();
         Location loc = mock(Location.class);
-        when(player.getLocation()).thenReturn(loc);
+        when(mockPlayer.getLocation()).thenReturn(loc);
         when(loc.toVector()).thenReturn(new Vector(1,1,1));
         when(server.getViewDistance()).thenReturn(16);
 
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         DustOptions dust = mock(DustOptions.class);
         p.spawnParticle(Particle.DUST, dust, 0.0d, 0.0d, 0.0d);
-        verify(player).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
+        verify(mockPlayer).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
 
     }
 
@@ -895,14 +882,14 @@ public class UserTest {
     public void testSpawnParticleParticleDustOptionsDoubleDoubleDouble() {
         User.clearUsers();
         Location loc = mock(Location.class);
-        when(player.getLocation()).thenReturn(loc);
+        when(mockPlayer.getLocation()).thenReturn(loc);
         when(loc.toVector()).thenReturn(new Vector(1,1,1));
         when(server.getViewDistance()).thenReturn(16);
 
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         DustOptions dust = mock(DustOptions.class);
         p.spawnParticle(Particle.DUST, dust, 0.0d, 0.0d, 0.0d);
-        verify(player).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
+        verify(mockPlayer).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
 
     }
 
@@ -913,14 +900,14 @@ public class UserTest {
     public void testSpawnParticleParticleDustOptionsIntIntInt() {
         User.clearUsers();
         Location loc = mock(Location.class);
-        when(player.getLocation()).thenReturn(loc);
+        when(mockPlayer.getLocation()).thenReturn(loc);
         when(loc.toVector()).thenReturn(new Vector(1,1,1));
         when(server.getViewDistance()).thenReturn(16);
 
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         DustOptions dust = mock(DustOptions.class);
         p.spawnParticle(Particle.DUST, dust, 0, 0, 0);
-        verify(player).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
+        verify(mockPlayer).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
 
     }
 
@@ -930,7 +917,7 @@ public class UserTest {
     @Test
     public void testSetAddon() {
         User.clearUsers();
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         Addon addon = mock(Addon.class);
         when(addon.getDescription()).thenReturn(new Builder("main", "gameAddon", "1.0").build());
         p.setAddon(addon);
@@ -944,7 +931,7 @@ public class UserTest {
     @Test
     public void testGetMetaData() {
         User.clearUsers();
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         when(pm.getPlayer(uuid)).thenReturn(players);
         assertEquals(Optional.of(new HashMap<>()), p.getMetaData());
     }
@@ -955,7 +942,7 @@ public class UserTest {
     @Test
     public void testSetMetaData() {
         User.clearUsers();
-        User p = User.getInstance(player);
+        User p = User.getInstance(mockPlayer);
         when(pm.getPlayer(uuid)).thenReturn(players);
         Map<String, MetaDataValue> metaData = new HashMap<>();
         p.setMetaData(metaData);

@@ -18,59 +18,43 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.eclipse.jdt.annotation.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
 public class IslandDeletehomeCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private CompositeCommand ic;
-    private UUID uuid;
+
     @Mock
     private User user;
     @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
-    @Mock
-    private Island island;
     private IslandDeletehomeCommand idh;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private @NonNull World world;
-    @Mock
-    private Location location;
 
     /**
      * @throws java.lang.Exception
@@ -99,13 +83,11 @@ public class IslandDeletehomeCommandTest extends RanksManagerBeforeClassTest {
         when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
         when(ic.getAddon()).thenReturn(addon);
         when(ic.getWorld()).thenReturn(world);
-        when(plugin.getIslands()).thenReturn(im);
         // Player
-        Player player = mock(Player.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(player);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         when(user.getWorld()).thenReturn(world);
         when(user.getTranslation(anyString())).thenAnswer(i -> i.getArgument(0, String.class));
@@ -131,10 +113,6 @@ public class IslandDeletehomeCommandTest extends RanksManagerBeforeClassTest {
         when(iwm.isEnd(any())).thenReturn(false);
         // Number of homes default
         when(iwm.getMaxHomes(any())).thenReturn(3);
-        when(plugin.getIWM()).thenReturn(iwm);
-
-        // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         idh = new IslandDeletehomeCommand(ic);
     }

@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.admin.range;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
@@ -24,19 +24,16 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
@@ -46,13 +43,14 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
-public class AdminRangeResetCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
+public class AdminRangeResetCommandTest extends AbstractCommonSetup {
 
+    @Mock
     private CompositeCommand ac;
     private UUID uuid;
+    @Mock
     private User user;
-    private IslandsManager im;
     private PlayersManager pm;
     @Mock
     private PluginManager pim;
@@ -61,21 +59,14 @@ public class AdminRangeResetCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        super.setUp();
 
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         Util.setPlugin(plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Player
-        Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         UUID notUUID = UUID.randomUUID();
@@ -83,23 +74,20 @@ public class AdminRangeResetCommandTest {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         User.setPlugin(plugin);
 
         // Parent command has no aliases
-        ac = mock(CompositeCommand.class);
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getWorld()).thenReturn(mock(World.class));
 
         // Island World Manager
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
         when(iwm.getIslandProtectionRange(Mockito.any())).thenReturn(200);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Player has island to begin with
-        im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
         Island island = mock(Island.class);
@@ -142,10 +130,11 @@ public class AdminRangeResetCommandTest {
     public void testExecuteConsoleNoArgs() {
         AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
         CommandSender sender = mock(CommandSender.class);
+        when(sender.spigot()).thenReturn(spigot);
         User console = User.getInstance(sender);
         arc.execute(console, "", new ArrayList<>());
         // Show help
-        Mockito.verify(sender).sendMessage("commands.help.header");
+        checkSpigotMessage("commands.help.header");
     }
 
     /**
@@ -157,7 +146,7 @@ public class AdminRangeResetCommandTest {
         AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
         arc.execute(user, "", new ArrayList<>());
         // Show help
-        Mockito.verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
+        verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
     }
 
     /**
@@ -169,7 +158,7 @@ public class AdminRangeResetCommandTest {
         AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
         String[] name = { "tastybento" };
         arc.execute(user, "", Arrays.asList(name));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
+        verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
     }
 
     /**
@@ -184,7 +173,7 @@ public class AdminRangeResetCommandTest {
         List<String> args = new ArrayList<>();
         args.add("tastybento");
         arc.execute(user, "", args);
-        Mockito.verify(user).sendMessage("general.errors.player-has-no-island");
+        verify(user).sendMessage("general.errors.player-has-no-island");
     }
 
     @Test
@@ -196,7 +185,7 @@ public class AdminRangeResetCommandTest {
         List<String> args = new ArrayList<>();
         args.add("tastybento");
         arc.execute(user, "", args);
-        Mockito.verify(user, never()).sendMessage("general.errors.player-has-no-island");
+        verify(user, never()).sendMessage("general.errors.player-has-no-island");
     }
 
     /**
@@ -209,7 +198,7 @@ public class AdminRangeResetCommandTest {
         List<String> args = new ArrayList<>();
         args.add("tastybento");
         arc.execute(user, "", args);
-        Mockito.verify(user).sendMessage("commands.admin.range.reset.success", TextVariables.NUMBER, "200");
+        verify(user).sendMessage("commands.admin.range.reset.success", TextVariables.NUMBER, "200");
     }
 
 }

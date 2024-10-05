@@ -21,8 +21,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -30,9 +28,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
@@ -41,19 +37,17 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.managers.AddonsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
@@ -67,33 +61,23 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, IslandsManager.class })
-public class JoinLeaveListenerTest {
+public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
 
     private static final String[] NAMES = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry",
             "ian", "joe" };
 
     @Mock
-    private BentoBox plugin;
-    @Mock
     private PlayersManager pm;
     @Mock
-    private Player player;
-    @Mock
     private Player coopPlayer;
-    @Mock
-    private World world;
 
     private JoinLeaveListener jll;
     @Mock
     private Players pls;
     @Mock
-    private IslandWorldManager iwm;
-    @Mock
     private Inventory chest;
     @Mock
     private Settings settings;
-    @Mock
-    private IslandsManager im;
     @Mock
     private BukkitScheduler scheduler;
     @Mock
@@ -103,10 +87,6 @@ public class JoinLeaveListenerTest {
     private @Nullable Island island;
     @Mock
     private GameModeAddon gameMode;
-    @Mock
-    private PluginManager pim;
-    @Mock
-    private @NonNull Location location;
 
     @Mock
     private AddonsManager am;
@@ -115,10 +95,7 @@ public class JoinLeaveListenerTest {
      */
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
-
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // World
         when(world.getName()).thenReturn("worldname");
@@ -138,12 +115,12 @@ public class JoinLeaveListenerTest {
 
         UUID uuid = UUID.randomUUID();
         // Player
-        when(player.getUniqueId()).thenReturn(uuid);
-        when(player.getWorld()).thenReturn(world);
-        when(player.getEnderChest()).thenReturn(chest);
-        when(player.getName()).thenReturn("tastybento");
-        when(player.getInventory()).thenReturn(inv);
-        when(player.getEffectivePermissions()).thenReturn(Collections.emptySet());
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getWorld()).thenReturn(world);
+        when(mockPlayer.getEnderChest()).thenReturn(chest);
+        when(mockPlayer.getName()).thenReturn("tastybento");
+        when(mockPlayer.getInventory()).thenReturn(inv);
+        when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.emptySet());
 
         // Player is pending kicks
         set = new HashSet<>();
@@ -178,12 +155,12 @@ public class JoinLeaveListenerTest {
         // Add a coop member
         UUID uuid2 = UUID.randomUUID();
         when(coopPlayer.getUniqueId()).thenReturn(uuid2);
+        when(coopPlayer.spigot()).thenReturn(spigot);
         User.getInstance(coopPlayer);
         memberMap.put(uuid2, RanksManager.COOP_RANK);
         island.setMembers(memberMap);
 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
 
         when(Bukkit.getPluginManager()).thenReturn(pim);
@@ -200,14 +177,13 @@ public class JoinLeaveListenerTest {
             online.put(u, name);
             onlinePlayers.add(p1);
         }
-        onlinePlayers.add(player);
+        onlinePlayers.add(mockPlayer);
         when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         User.setPlugin(plugin);
-        User.getInstance(player);
+        User.getInstance(mockPlayer);
 
         // Util
-        PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
         // Util translate color codes (used in user translate methods)
         when(Util.translateColorCodes(anyString()))
@@ -241,11 +217,11 @@ public class JoinLeaveListenerTest {
      */
     @Test
     public void testOnPlayerJoinNotKnownNoAutoCreate() {
-        PlayerJoinEvent event = new PlayerJoinEvent(player, "");
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
         jll.onPlayerJoin(event);
         // Verify
         verify(pm, times(3)).getPlayer(any());
-        verify(player, never()).sendMessage(anyString());
+        verify(mockPlayer, never()).sendMessage(anyString());
         // Verify resets
         verify(pm).setResets(eq(world), any(), eq(0));
         // Verify inventory clear because of kick
@@ -260,9 +236,9 @@ public class JoinLeaveListenerTest {
      */
     @Test
     public void testOnPlayerJoinNullWorld() {
-        when(player.getWorld()).thenReturn(null); // Null
+        when(mockPlayer.getWorld()).thenReturn(null); // Null
         when(Util.getWorld(any())).thenReturn(null); // Make null
-        PlayerJoinEvent event = new PlayerJoinEvent(player, "");
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
         jll.onPlayerJoin(event);
         // Verify inventory clear because of kick
         // Check inventory cleared
@@ -280,11 +256,11 @@ public class JoinLeaveListenerTest {
         PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
         when(pa.getPermission()).thenReturn("acidisland.island.range.1000");
         when(pa.getValue()).thenReturn(true);
-        when(player.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
-        PlayerJoinEvent event = new PlayerJoinEvent(player, "");
+        when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
         jll.onPlayerJoin(event);
         // Verify
-        verify(player).sendMessage(eq("commands.admin.setrange.range-updated"));
+        checkSpigotMessage("commands.admin.setrange.range-updated");
         // Verify island setting
         assertEquals(100, island.getProtectionRange());
         // Verify log
@@ -300,11 +276,11 @@ public class JoinLeaveListenerTest {
         PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
         when(pa.getPermission()).thenReturn("acidisland.island.range.10");
         when(pa.getValue()).thenReturn(true);
-        when(player.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
-        PlayerJoinEvent event = new PlayerJoinEvent(player, "");
+        when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
         jll.onPlayerJoin(event);
         // Verify
-        verify(player).sendMessage(eq("commands.admin.setrange.range-updated"));
+        checkSpigotMessage("commands.admin.setrange.range-updated");
         // Verify island setting
         assertEquals(10, island.getProtectionRange());
         // Verify log
@@ -320,11 +296,11 @@ public class JoinLeaveListenerTest {
         PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
         when(pa.getPermission()).thenReturn("acidisland.island.range.55");
         when(pa.getValue()).thenReturn(true);
-        when(player.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
-        PlayerJoinEvent event = new PlayerJoinEvent(player, "");
+        when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
         jll.onPlayerJoin(event);
         // Verify
-        verify(player).sendMessage(eq("commands.admin.setrange.range-updated"));
+        checkSpigotMessage("commands.admin.setrange.range-updated");
         // Verify island setting
         assertEquals(55, island.getProtectionRange());
         // Verify log
@@ -340,11 +316,11 @@ public class JoinLeaveListenerTest {
         PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
         when(pa.getPermission()).thenReturn("acidisland.island.range.50");
         when(pa.getValue()).thenReturn(true);
-        when(player.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
-        PlayerJoinEvent event = new PlayerJoinEvent(player, "");
+        when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
         jll.onPlayerJoin(event);
         // Verify
-        verify(player, never()).sendMessage(eq("commands.admin.setrange.range-updated"));
+        verify(mockPlayer, never()).sendMessage(eq("commands.admin.setrange.range-updated"));
         // Verify that the island protection range is not changed if it is already at
         // that value
         assertEquals(50, island.getProtectionRange());
@@ -358,11 +334,11 @@ public class JoinLeaveListenerTest {
     @Test
     public void testOnPlayerJoinNotKnownAutoCreate() {
         when(iwm.isCreateIslandOnFirstLoginEnabled(eq(world))).thenReturn(true);
-        PlayerJoinEvent event = new PlayerJoinEvent(player, "");
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
         jll.onPlayerJoin(event);
         // Verify
         verify(pm, times(3)).getPlayer(any());
-        verify(player).sendMessage(eq("commands.island.create.on-first-login"));
+        checkSpigotMessage("commands.island.create.on-first-login");
     }
 
     /**
@@ -371,7 +347,7 @@ public class JoinLeaveListenerTest {
      */
     @Test
     public void testOnPlayerSwitchWorld() {
-        PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(player, world);
+        PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(mockPlayer, world);
         jll.onPlayerSwitchWorld(event);
         // Check inventory cleared
         verify(chest).clear();
@@ -385,7 +361,7 @@ public class JoinLeaveListenerTest {
     @Test
     public void testOnPlayerSwitchWorldNullWorld() {
         when(Util.getWorld(any())).thenReturn(null);
-        PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(player, world);
+        PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(mockPlayer, world);
         jll.onPlayerSwitchWorld(event);
         // These should not happen
         verify(chest, never()).clear();
@@ -399,9 +375,9 @@ public class JoinLeaveListenerTest {
      */
     @Test
     public void testOnPlayerQuit() {
-        PlayerQuitEvent event = new PlayerQuitEvent(player, "");
+        PlayerQuitEvent event = new PlayerQuitEvent(mockPlayer, "");
         jll.onPlayerQuit(event);
-        verify(coopPlayer).sendMessage(eq("commands.island.team.uncoop.all-members-logged-off"));
+        checkSpigotMessage("commands.island.team.uncoop.all-members-logged-off");
         // Team is now only 1 big
         assertEquals(1, island.getMembers().size());
     }

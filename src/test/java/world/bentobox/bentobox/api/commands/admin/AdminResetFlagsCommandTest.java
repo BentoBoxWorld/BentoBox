@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -19,7 +18,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -30,11 +28,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -43,24 +40,22 @@ import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class AdminResetFlagsCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
+public class AdminResetFlagsCommandTest extends AbstractCommonSetup {
 
     @Mock
     private CompositeCommand ac;
     private final UUID uuid = UUID.randomUUID();
-    @Mock
-    private IslandsManager im;
     @Mock
     private PlayersManager pm;
     @Mock
@@ -71,8 +66,6 @@ public class AdminResetFlagsCommandTest {
     private Flag flag2;
     @Mock
     private Flag flag3;
-    @Mock
-    private Player player;
 
     private AdminResetFlagsCommand arf;
     private @Nullable User user;
@@ -81,10 +74,7 @@ public class AdminResetFlagsCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -96,8 +86,8 @@ public class AdminResetFlagsCommandTest {
         when(ac.getPermissionPrefix()).thenReturn("bskyblock.");
 
         // Player
-        when(player.getUniqueId()).thenReturn(uuid);
-        user = User.getInstance(player);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        user = User.getInstance(mockPlayer);
 
         // Flags manager
         when(plugin.getFlagsManager()).thenReturn(fm);
@@ -175,7 +165,7 @@ public class AdminResetFlagsCommandTest {
     public void testExecuteUserStringListOfStringTwoArgs() {
         List<String> args = Arrays.asList("sdfsd", "werwerw");
         assertFalse(arf.execute(user, "", args));
-        verify(player).sendMessage(eq("commands.help.header"));
+        checkSpigotMessage("commands.help.header");
     }
 
     /**
@@ -184,7 +174,7 @@ public class AdminResetFlagsCommandTest {
     @Test
     public void testExecuteUserStringListOfStringOneArgNotFlag() {
         assertFalse(arf.execute(user, "", Collections.singletonList("FLAG3")));
-        verify(player).sendMessage(eq("commands.help.header"));
+        checkSpigotMessage("commands.help.header");
     }
 
     /**
