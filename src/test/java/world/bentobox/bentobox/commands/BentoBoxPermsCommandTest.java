@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,7 +20,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.PluginManager;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
@@ -30,29 +28,26 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class BentoBoxPermsCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
+public class BentoBoxPermsCommandTest extends AbstractCommonSetup {
 
-    @Mock
-    private BentoBox plugin;
     @Mock
     private CompositeCommand ac;
     @Mock
@@ -64,8 +59,6 @@ public class BentoBoxPermsCommandTest {
     @Mock
     private PlaceholdersManager phm;
     @Mock
-    private PluginManager pim;
-    @Mock
     private Permission perm;
 
     private PermissionDefault defaultPerm = PermissionDefault.OP;
@@ -74,8 +67,7 @@ public class BentoBoxPermsCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -101,10 +93,8 @@ public class BentoBoxPermsCommandTest {
         User.setPlugin(plugin);
 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(perm.getDefault()).thenReturn(defaultPerm);
         when(pim.getPermission(anyString())).thenReturn(perm);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Placeholders
         when(phm.replacePlaceholders(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
@@ -112,11 +102,6 @@ public class BentoBoxPermsCommandTest {
         // BentoBox
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(plugin.getIWM()).thenReturn(iwm);
-
-        // Commands for perms
-
 
         cmd = new BentoBoxPermsCommand(ac);
     }
@@ -172,9 +157,10 @@ public class BentoBoxPermsCommandTest {
     public void testExecuteUserStringListOfStringConsole() {
         String[] args = new String[1];
         args[0] = "";
-        CommandSender p = mock(CommandSender.class);
-        assertTrue(cmd.execute(p, "perms", args));
-        verify(p, never()).sendMessage("general.errors.use-in-console");
+        CommandSender console = mock(CommandSender.class);
+        when(console.spigot()).thenReturn(spigot);
+        assertTrue(cmd.execute(console, "perms", args));
+        checkSpigotMessage("general.errors.use-in-console", 0);
     }
 
     /**
@@ -185,8 +171,7 @@ public class BentoBoxPermsCommandTest {
         when(user.isPlayer()).thenReturn(true);
         String[] args = new String[1];
         args[0] = "";
-        Player p = mock(Player.class);
-        assertFalse(cmd.execute(p, "perms", args));
-        verify(p).sendMessage("general.errors.use-in-console");
+        assertFalse(cmd.execute(mockPlayer, "perms", args));
+        checkSpigotMessage("general.errors.use-in-console");
     }
 }

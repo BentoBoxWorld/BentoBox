@@ -30,15 +30,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -48,20 +47,18 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
 public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -70,23 +67,15 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private User user;
     @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
     @Mock
-    private Island island;
-    @Mock
     private LocalesManager lm;
-    @Mock
-    private IslandWorldManager iwm;
     @Mock
     private Addon addon;
 
     private IslandExpelCommand iec;
     @Mock
     private Server server;
-    @Mock
-    private Player p;
 
     @Before
     public void setUp() throws Exception {
@@ -108,10 +97,11 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
-        when(p.getServer()).thenReturn(server);
-        when(user.getPlayer()).thenReturn(p);
+        when(mockPlayer.getServer()).thenReturn(server);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         when(user.getDisplayName()).thenReturn("&Ctastybento");
+        when(user.isOnline()).thenReturn(true);
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
 
         // Parent command has no aliases
@@ -130,7 +120,6 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Island Banned list initialization
@@ -296,7 +285,7 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
     public void testCanExecuteInvisiblePlayer() {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         Player t = setUpTarget();
-        when(p.canSee(t)).thenReturn(false);
+        when(mockPlayer.canSee(t)).thenReturn(false);
         //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("general.errors.offline-player");
@@ -365,10 +354,11 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         when(t.getName()).thenReturn("target");
         when(t.getDisplayName()).thenReturn("&Ctarget");
         when(t.getServer()).thenReturn(server);
+        when(t.spigot()).thenReturn(spigot);
         when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
         User.getInstance(t);
         when(pm.getUUID(anyString())).thenReturn(target);
-        when(p.canSee(t)).thenReturn(true);
+        when(mockPlayer.canSee(t)).thenReturn(true);
         when(Bukkit.getPlayer(target)).thenReturn(t);
         return t;
     }
@@ -472,20 +462,25 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         List<Player> list = new ArrayList<>();
         Player p1 = mock(Player.class);
         when(p1.getName()).thenReturn("normal");
-        when(p.canSee(p1)).thenReturn(true);
+        when(p1.spigot()).thenReturn(spigot);
+        when(mockPlayer.canSee(p1)).thenReturn(true);
         Player p2 = mock(Player.class);
         when(p2.getName()).thenReturn("op");
-        when(p.canSee(p2)).thenReturn(true);
+        when(p2.spigot()).thenReturn(spigot);
+        when(mockPlayer.canSee(p2)).thenReturn(true);
         when(p2.isOp()).thenReturn(true);
         Player p3 = mock(Player.class);
         when(p3.getName()).thenReturn("invisible");
+        when(p3.spigot()).thenReturn(spigot);
         Player p4 = mock(Player.class);
         when(p4.getName()).thenReturn("adminPerm");
-        when(p.canSee(p4)).thenReturn(true);
+        when(p4.spigot()).thenReturn(spigot);
+        when(mockPlayer.canSee(p4)).thenReturn(true);
         when(p4.hasPermission(eq("bskyblock.admin.noexpel"))).thenReturn(true);
         Player p5 = mock(Player.class);
         when(p5.getName()).thenReturn("modPerm");
-        when(p.canSee(p5)).thenReturn(true);
+        when(p5.spigot()).thenReturn(spigot);
+        when(mockPlayer.canSee(p5)).thenReturn(true);
         when(p5.hasPermission(eq("bskyblock.mod.bypassexpel"))).thenReturn(true);
         list.add(p1);
         list.add(p2);

@@ -18,12 +18,10 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
-import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,11 +32,11 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.AddonDescription;
@@ -50,20 +48,20 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class, IslandsManager.class })
-public class IslandResetCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class, IslandsManager.class, Util.class })
+public class IslandResetCommandTest extends AbstractCommonSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -72,24 +70,13 @@ public class IslandResetCommandTest {
     @Mock
     private Settings s;
     @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
     @Mock
-    private World world;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
     private BlueprintsManager bpm;
-    @Mock
-    private @Nullable Island island;
     @Mock
     private PluginManager pim;
 
     private IslandResetCommand irc;
-
-    @Mock
-    private Player pp;
 
     private UUID uuid;
 
@@ -97,12 +84,8 @@ public class IslandResetCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
+        super.setUp();
         PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -115,8 +98,10 @@ public class IslandResetCommandTest {
         // Player
         Player p = mock(Player.class);
         when(p.getUniqueId()).thenReturn(uuid);
-        User.getInstance(p);
+        when(p.spigot()).thenReturn(spigot);
         when(p.isOnline()).thenReturn(true);
+        User.getInstance(p);
+
         // User
         User.setPlugin(plugin);
 
@@ -170,8 +155,8 @@ public class IslandResetCommandTest {
         // Put a team on the island
         for (int j = 0; j < 11; j++) {
             UUID temp = UUID.randomUUID();
-            when(pp.getUniqueId()).thenReturn(temp);
-            User.getInstance(pp);
+            when(mockPlayer.getUniqueId()).thenReturn(temp);
+            User.getInstance(mockPlayer);
             members.add(temp);
         }
         when(island.getMemberSet()).thenReturn(members.build());
@@ -266,7 +251,7 @@ public class IslandResetCommandTest {
         verify(user).sendMessage("commands.island.create.creating-island");
         verify(user, never()).sendMessage(eq("commands.island.reset.kicked-from-island"), eq(TextVariables.GAMEMODE), anyString());
         // Only 11 because the leader should not see this
-        verify(pp, times(11)).sendMessage("commands.island.reset.kicked-from-island");
+        checkSpigotMessage("commands.island.reset.kicked-from-island", 11);
     }
 
     @After

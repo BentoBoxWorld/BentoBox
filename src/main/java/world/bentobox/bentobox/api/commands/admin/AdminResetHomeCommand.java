@@ -138,9 +138,7 @@ public class AdminResetHomeCommand extends CompositeCommand
     Map<String, Island> getNameIslandMap(User user) {
         Map<String, Island> islandMap = new HashMap<>();
         int index = 0;
-        System.out.println("Getting for " + user.getName());
         for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
-            System.out.println("Island - " + island);
             index++;
             if (island.getName() != null && !island.getName().isBlank()) {
                 // Name has been set

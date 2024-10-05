@@ -21,13 +21,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,18 +35,15 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
@@ -61,7 +55,7 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
-public class AdminTeamDisbandCommandTest {
+public class AdminTeamDisbandCommandTest extends AbstractCommonSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -69,31 +63,17 @@ public class AdminTeamDisbandCommandTest {
     @Mock
     private User user;
     @Mock
-    private Player p;
-    @Mock
     private Player p2;
     @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
-    @Mock
-    private PluginManager pim;
+
     private UUID notUUID;
-    @Mock
-    private @Nullable Island island;
-    @Mock
-    private @NonNull Location location;
+
     private AdminTeamDisbandCommand itl;
 
-    /**
-     */
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         Util.setPlugin(plugin);
 
         // Command manager
@@ -109,25 +89,21 @@ public class AdminTeamDisbandCommandTest {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         User.setPlugin(plugin);
         // Set up users
-        when(p.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
         when(p2.getUniqueId()).thenReturn(notUUID);
-        User.getInstance(p);
+        User.getInstance(mockPlayer);
+        when(p2.spigot()).thenReturn(spigot);
         User.getInstance(p2);
 
         // Parent command has no aliases
         ac = mock(CompositeCommand.class);
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
 
-        // Island World Manager
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(plugin.getIWM()).thenReturn(iwm);
-
         // Player has island to begin with
-        im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(island.getOwner()).thenReturn(uuid);
@@ -166,6 +142,7 @@ public class AdminTeamDisbandCommandTest {
 
         // Online players
         PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
+
         when(Util.getOnlinePlayerList(user)).thenReturn(List.of("tastybento", "BONNe"));
         when(Util.translateColorCodes(anyString()))
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
@@ -246,8 +223,7 @@ public class AdminTeamDisbandCommandTest {
         verify(im, never()).removePlayer(island, uuid);
         verify(im).removePlayer(island, notUUID);
         verify(user).sendMessage("commands.admin.team.disband.success", TextVariables.NAME, "tastybento");
-        verify(p).sendMessage("commands.admin.team.disband.disbanded");
-        verify(p2).sendMessage("commands.admin.team.disband.disbanded");
+        checkSpigotMessage("commands.admin.team.disband.disbanded", 2);
         // 2 + 1
         verify(pim, times(3)).callEvent(any());
     }

@@ -29,10 +29,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -40,14 +40,14 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
 public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -62,8 +62,6 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
     private UUID notUUID;
     @Mock
     private Settings s;
-    @Mock
-    private Island island;
 
     @Before
     public void setUp() throws Exception {
@@ -76,7 +74,6 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.isOp()).thenReturn(false);
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(4);
@@ -87,7 +84,7 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         when(user.getDisplayName()).thenReturn("&Ctastybento");
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
@@ -300,6 +297,7 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
         when(p.getUniqueId()).thenReturn(notUUID);
         when(p.getName()).thenReturn("target");
         when(p.getDisplayName()).thenReturn("&Ctarget");
+        when(p.spigot()).thenReturn(spigot);
         User target = User.getInstance(p);
         // Can execute
         when(pm.getUUID(any())).thenReturn(notUUID);

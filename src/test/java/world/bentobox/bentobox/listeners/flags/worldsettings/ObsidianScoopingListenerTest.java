@@ -20,14 +20,12 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.RayTraceResult;
 import org.junit.After;
 import org.junit.Before;
@@ -35,38 +33,26 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
+import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, PlayerEvent.class, PlayerInteractEvent.class, Bukkit.class})
-public class ObsidianScoopingListenerTest {
+@PrepareForTest({ BentoBox.class, PlayerEvent.class, PlayerInteractEvent.class, Bukkit.class, Util.class })
+public class ObsidianScoopingListenerTest extends AbstractCommonSetup {
 
-    @Mock
-    private World world;
     private ObsidianScoopingListener listener;
     @Mock
     private ItemStack item;
     @Mock
     private Block clickedBlock;
-    @Mock
-    private BentoBox plugin;
-    @Mock
-    private Player p;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private IslandsManager im;
     @Mock
     private LocalesManager lm;
     private Material inHand;
@@ -74,18 +60,13 @@ public class ObsidianScoopingListenerTest {
 
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Mock server
         Server server = mock(Server.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
-
-        PluginManager pluginManager = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
 
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);
@@ -95,29 +76,24 @@ public class ObsidianScoopingListenerTest {
         listener = new ObsidianScoopingListener();
 
         // Mock player
-        when(p.getWorld()).thenReturn(world);
+        when(mockPlayer.getWorld()).thenReturn(world);
         RayTraceResult rtr = mock(RayTraceResult.class);
-        when(p.rayTraceBlocks(5, FluidCollisionMode.ALWAYS)).thenReturn(rtr);
+        when(mockPlayer.rayTraceBlocks(5, FluidCollisionMode.ALWAYS)).thenReturn(rtr);
         when(rtr.getHitBlock()).thenReturn(clickedBlock);
 
-        Location location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
-        when(p.getLocation()).thenReturn(location);
+        when(mockPlayer.getLocation()).thenReturn(location);
 
-        when(p.getInventory()).thenReturn(mock(PlayerInventory.class));
+        when(mockPlayer.getInventory()).thenReturn(mock(PlayerInventory.class));
 
         // Worlds
-        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getIslandWorld(Mockito.any())).thenReturn(world);
         when(iwm.getNetherWorld(Mockito.any())).thenReturn(world);
         when(iwm.getEndWorld(Mockito.any())).thenReturn(world);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-
-        // Mock up IslandsManager
-        when(plugin.getIslands()).thenReturn(im);
 
         // Mock up items and blocks
         when(clickedBlock.getX()).thenReturn(0);
@@ -136,7 +112,7 @@ public class ObsidianScoopingListenerTest {
         // Put player on island
         when(im.userIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(true);
         // Set as survival
-        when(p.getGameMode()).thenReturn(GameMode.SURVIVAL);
+        when(mockPlayer.getGameMode()).thenReturn(GameMode.SURVIVAL);
 
         // Locales
         when(plugin.getLocalesManager()).thenReturn(lm);
@@ -157,7 +133,7 @@ public class ObsidianScoopingListenerTest {
         PlayerInventory playerInventory = mock(PlayerInventory.class);
         when(playerInventory.getItemInMainHand()).thenReturn(item);
         when(playerInventory.getItemInOffHand()).thenReturn(new ItemStack(Material.AIR));
-        when(p.getInventory()).thenReturn(playerInventory);
+        when(mockPlayer.getInventory()).thenReturn(playerInventory);
 
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
@@ -219,7 +195,8 @@ public class ObsidianScoopingListenerTest {
 
     @Test
     public void testOnPlayerInteractNotInWorld() {
-        PlayerInteractEvent event = new PlayerInteractEvent(p, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST);
+        PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
+                BlockFace.EAST);
         // Test not in world
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
@@ -235,11 +212,12 @@ public class ObsidianScoopingListenerTest {
 
     @Test
     public void testOnPlayerInteractGameModes() {
-        PlayerInteractEvent event = new PlayerInteractEvent(p, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST);
+        PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
+                BlockFace.EAST);
 
         // Test different game modes
         for (GameMode gm : GameMode.values()) {
-            when(p.getGameMode()).thenReturn(gm);
+            when(mockPlayer.getGameMode()).thenReturn(gm);
             if (!gm.equals(GameMode.SURVIVAL)) {
                 assertFalse(listener.onPlayerInteract(event));
             }
@@ -248,10 +226,11 @@ public class ObsidianScoopingListenerTest {
 
     @Test
     public void testOnPlayerInteractSurvivalNotOnIsland() {
-        PlayerInteractEvent event = new PlayerInteractEvent(p, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST);
+        PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
+                BlockFace.EAST);
 
         // Set as survival
-        when(p.getGameMode()).thenReturn(GameMode.SURVIVAL);
+        when(mockPlayer.getGameMode()).thenReturn(GameMode.SURVIVAL);
 
         // Positive test with 1 bucket in the stack
         inHand = Material.BUCKET;
@@ -273,7 +252,8 @@ public class ObsidianScoopingListenerTest {
         when(airBlock.getType()).thenReturn(Material.AIR);
 
         ObsidianScoopingListener listener = new ObsidianScoopingListener();
-        PlayerInteractEvent event = new PlayerInteractEvent(p, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST);
+        PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
+                BlockFace.EAST);
         if (!item.getType().equals(Material.BUCKET)
                 || !clickedBlock.getType().equals(Material.OBSIDIAN)) {
             assertFalse(listener.onPlayerInteract(event));

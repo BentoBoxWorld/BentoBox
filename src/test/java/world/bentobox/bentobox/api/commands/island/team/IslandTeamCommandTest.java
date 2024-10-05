@@ -18,37 +18,31 @@ import java.util.Collections;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.plugin.PluginManager;
-import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
 public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -56,33 +50,14 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
 
     private IslandTeamCommand tc;
 
-    private UUID uuid;
-
     private UUID invitee;
-
-    @Mock
-    private IslandsManager im;
 
     @Mock
     private User user;
 
     @Mock
-    private World world;
-
-    @Mock
-    private PluginManager pim;
-
-    @Mock
-    private IslandWorldManager iwm;
-
-    @Mock
-    private @Nullable Island island;
-
-    @Mock
     private GameModeAddon addon;
 
-    /**
-     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -97,13 +72,11 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
         when(ic.getAddon()).thenReturn(addon);
 
         // user
-        uuid = UUID.randomUUID();
         invitee = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPermissionValue(eq("bskyblock.team.maxsize"), anyInt())).thenReturn(3);
 
         // island Manager
-        when(plugin.getIslands()).thenReturn(im);
         // is owner of island
         when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
         when(im.getIsland(world, user)).thenReturn(island);
@@ -122,12 +95,7 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
         // island
         when(im.getIsland(any(), eq(uuid))).thenReturn(island);
 
-        // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
-
         // IWM
-        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
 
         // Command under test

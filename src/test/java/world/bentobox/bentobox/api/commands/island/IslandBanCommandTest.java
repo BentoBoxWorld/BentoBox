@@ -39,27 +39,26 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -68,16 +67,10 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private User user;
     @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
-    @Mock
-    private Island island;
     @Mock
     private Addon addon;
     private IslandBanCommand ibc;
-    @Mock
-    private Player targetPlayer;
 
     @Before
     public void setUp() throws Exception {
@@ -153,13 +146,13 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
         // Target bill - default target. Non Op, online, no ban prevention permission
         UUID uuid = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(uuid);
-        when(targetPlayer.getName()).thenReturn("bill");
-        when(targetPlayer.getDisplayName()).thenReturn("&Cbill");
-        when(targetPlayer.getUniqueId()).thenReturn(uuid);
-        when(targetPlayer.isOp()).thenReturn(false);
-        when(targetPlayer.isOnline()).thenReturn(true);
-        when(targetPlayer.hasPermission(anyString())).thenReturn(false);
-        User.getInstance(targetPlayer);
+        when(mockPlayer.getName()).thenReturn("bill");
+        when(mockPlayer.getDisplayName()).thenReturn("&Cbill");
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.isOp()).thenReturn(false);
+        when(mockPlayer.isOnline()).thenReturn(true);
+        when(mockPlayer.hasPermission(anyString())).thenReturn(false);
+        User.getInstance(mockPlayer);
 
         // Island Ban Command
         ibc = new IslandBanCommand(ic);
@@ -242,15 +235,15 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
 
     @Test
     public void testBanOp() {
-        when(targetPlayer.isOp()).thenReturn(true);
+        when(mockPlayer.isOp()).thenReturn(true);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("commands.island.ban.cannot-ban");
     }
 
     @Test
     public void testBanOnlineNoBanPermission() {
-        when(targetPlayer.hasPermission(anyString())).thenReturn(true);
-        User.getInstance(targetPlayer);
+        when(mockPlayer.hasPermission(anyString())).thenReturn(true);
+        User.getInstance(mockPlayer);
 
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("billy")));
         verify(user).sendMessage("commands.island.ban.cannot-ban");
@@ -258,7 +251,7 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
 
     @Test
     public void testBanOfflineUserSuccess() {
-        when(targetPlayer.isOnline()).thenReturn(false);
+        when(mockPlayer.isOnline()).thenReturn(false);
         assertTrue(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
 
         // Allow adding to ban list
@@ -266,7 +259,7 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
         // Run execute
         assertTrue(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, "bill", TextVariables.DISPLAY_NAME, "&Cbill");
-        verify(targetPlayer).sendMessage("commands.island.ban.owner-banned-you");
+        checkSpigotMessage("commands.island.ban.owner-banned-you");
     }
 
     @Test
@@ -279,7 +272,7 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
         assertTrue(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, "bill",
                 TextVariables.DISPLAY_NAME, "&Cbill");
-        verify(targetPlayer).sendMessage("commands.island.ban.owner-banned-you");
+        checkSpigotMessage("commands.island.ban.owner-banned-you");
     }
 
     @Test
@@ -291,8 +284,8 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
 
         assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user, never()).sendMessage("commands.island.ban.player-banned", TextVariables.NAME,
-                targetPlayer.getName(), TextVariables.DISPLAY_NAME, targetPlayer.getDisplayName());
-        verify(targetPlayer, never()).sendMessage("commands.island.ban.owner-banned-you");
+                mockPlayer.getName(), TextVariables.DISPLAY_NAME, mockPlayer.getDisplayName());
+        verify(mockPlayer, never()).sendMessage("commands.island.ban.owner-banned-you");
     }
 
     @Test

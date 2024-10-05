@@ -20,7 +20,6 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -36,6 +35,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
@@ -51,13 +51,13 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
 public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -68,27 +68,15 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private Settings s;
     @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
     private UUID notUUID;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private Player player;
     @Mock
     private Player target;
     @Mock
     private CompositeCommand subCommand;
     @Mock
-    private Island island;
-    @Mock
     private Addon addon;
-    @Mock
-    private World world;
 
-    /**
-     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -112,10 +100,11 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(target.isOnline()).thenReturn(true);
         when(target.getName()).thenReturn("poslovitch");
         when(target.getDisplayName()).thenReturn("&Cposlovich");
+        when(target.spigot()).thenReturn(spigot);
         // Set the target user
         User.getInstance(target);
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(player);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         when(user.getDisplayName()).thenReturn("&Ctastybento");
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));

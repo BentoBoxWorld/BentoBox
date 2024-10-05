@@ -17,14 +17,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
-import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,19 +28,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
@@ -54,64 +46,49 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
-public class AdminRangeSetCommandTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
+public class AdminRangeSetCommandTest extends AbstractCommonSetup {
 
+    @Mock
+    private CommandsManager cm;
+
+    @Mock
     private CompositeCommand ac;
     private UUID uuid;
+    @Mock
     private User user;
-    private IslandsManager im;
     private PlayersManager pm;
-    @Mock
-    private PluginManager pim;
-    @Mock
-    private @NonNull Location location;
 
     /**
      */
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
+
         Util.setPlugin(plugin);
 
         // Command manager
-        CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Player
-        Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
-        UUID notUUID = UUID.randomUUID();
-        while (notUUID.equals(uuid)) {
-            notUUID = UUID.randomUUID();
-        }
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         User.setPlugin(plugin);
 
         // Parent command has no aliases
-        ac = mock(CompositeCommand.class);
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getWorld()).thenReturn(mock(World.class));
 
         // Island World Manager
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(iwm.getIslandProtectionRange(any())).thenReturn(200);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Player has island to begin with
-        im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        Island island = mock(Island.class);
         when(island.getRange()).thenReturn(50);
         when(island.getProtectionRange()).thenReturn(50);
         when(location.toVector()).thenReturn(new Vector(2, 3, 4));
@@ -155,10 +132,11 @@ public class AdminRangeSetCommandTest {
     public void testExecuteConsoleNoArgs() {
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         CommandSender sender = mock(CommandSender.class);
+        when(sender.spigot()).thenReturn(spigot);
         User console = User.getInstance(sender);
         assertFalse(arc.canExecute(console, "", new ArrayList<>()));
         // Show help
-        verify(sender).sendMessage("commands.help.header");
+        checkSpigotMessage("commands.help.header");
     }
 
     /**
