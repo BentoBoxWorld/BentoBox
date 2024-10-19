@@ -1,6 +1,7 @@
 //
 // Created by BONNe
 // Copyright - 2022
+// Updated by tastybento
 //
 
 
@@ -23,8 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.BentoBoxLocale;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -42,8 +41,17 @@ import world.bentobox.bentobox.util.Util;
  * If file with such name is located at gamemode panels directory, then that file will be used.
  * Otherwise, file in BentoBox/panels is used.
  */
-public class LanguagePanel
+public class LanguagePanel extends AbstractPanel
 {
+    // ---------------------------------------------------------------------
+    // Section: Variables
+    // ---------------------------------------------------------------------
+
+    /**
+     * This variable stores filtered elements.
+     */
+    private final List<Locale> elementList;
+
     // ---------------------------------------------------------------------
     // Section: Constructor
     // ---------------------------------------------------------------------
@@ -55,13 +63,24 @@ public class LanguagePanel
      * @param command The main addon command.
      * @param user User who opens panel
      */
-    private LanguagePanel(@NonNull CompositeCommand command, @NonNull User user)
-    {
-        this.plugin = BentoBox.getInstance();
-        this.mainCommand = command;
-        this.user = user;
+    public LanguagePanel(CompositeCommand command, User user) {
+        super(command, user);
+        this.elementList = plugin.getLocalesManager().getAvailableLocales(true);
+    }
 
-        this.elementList = BentoBox.getInstance().getLocalesManager().getAvailableLocales(true);
+    // ---------------------------------------------------------------------
+    // Section: Static methods
+    // ---------------------------------------------------------------------
+
+    /**
+     * This method is used to open Panel outside this class. It will be much easier to open panel with single method
+     * call then initializing new object.
+     *
+     * @param command The main addon command.
+     * @param user User who opens panel
+     */
+    public static void openPanel(@NonNull CompositeCommand command, @NonNull User user) {
+        new LanguagePanel(command, user).build();
     }
 
 
@@ -74,14 +93,15 @@ public class LanguagePanel
      * Build method manages current panel opening. It uses BentoBox PanelAPI that is easy to use and users can get nice
      * panels.
      */
-    private void build()
+    @Override
+    protected void build()
     {
         // Do not open gui if there is no magic sticks.
         if (this.elementList.isEmpty())
         {
             this.plugin.logError("There are no available locales for selection!");
             this.user.sendMessage("no-locales",
-                TextVariables.GAMEMODE, this.plugin.getDescription().getName());
+                    TextVariables.GAMEMODE, this.plugin.getDescription().getName());
             return;
         }
 
@@ -89,10 +109,10 @@ public class LanguagePanel
         TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
 
         // Set main template.
-        if (this.doesCustomPanelExists(this.mainCommand.getAddon(), "language_panel"))
+        if (this.doesCustomPanelExists(this.command.getAddon(), "language_panel"))
         {
             // Addon has its own island creation panel. Use it.
-            panelBuilder.template("language_panel", new File(this.mainCommand.getAddon().getDataFolder(), "panels"));
+            panelBuilder.template("language_panel", new File(this.command.getAddon().getDataFolder(), "panels"));
         }
         else
         {
@@ -115,20 +135,6 @@ public class LanguagePanel
     }
 
 
-    /**
-     * This method returns if panel with the requested name is located in GameModeAddon folder.
-     * @param addon GameModeAddon that need to be checked.
-     * @param name Name of the panel.
-     * @return {@code true} if panel exists, {@code false} otherwise.
-     */
-    private boolean doesCustomPanelExists(GameModeAddon addon, String name)
-    {
-        return addon.getDataFolder().exists() &&
-            new File(addon.getDataFolder(), "panels").exists() &&
-            new File(addon.getDataFolder(), "panels" + File.separator + name + ".yml").exists();
-    }
-
-
     // ---------------------------------------------------------------------
     // Section: Buttons
     // ---------------------------------------------------------------------
@@ -141,13 +147,14 @@ public class LanguagePanel
      * @param slot the slot
      * @return the panel item
      */
+    @Override
     @Nullable
-    private PanelItem createNextButton(@NonNull ItemTemplateRecord template, TemplatedPanel.ItemSlot slot)
+    protected PanelItem createNextButton(@NonNull ItemTemplateRecord template, TemplatedPanel.ItemSlot slot)
     {
         int size = this.elementList.size();
 
         if (size <= slot.amountMap().getOrDefault(LOCALE, 1) ||
-            1.0 * size / slot.amountMap().getOrDefault(LOCALE, 1) <= this.pageIndex + 1)
+                1.0 * size / slot.amountMap().getOrDefault(LOCALE, 1) <= this.pageIndex + 1)
         {
             // There are no next elements
             return null;
@@ -177,7 +184,7 @@ public class LanguagePanel
         if (template.description() != null)
         {
             builder.description(this.user.getTranslation(template.description(),
-                TextVariables.NUMBER, String.valueOf(nextPageIndex)));
+                    TextVariables.NUMBER, String.valueOf(nextPageIndex)));
         }
 
         // Add ClickHandler
@@ -185,7 +192,7 @@ public class LanguagePanel
         {
             template.actions().forEach(action -> {
                 if ((clickType == action.clickType() ||
-                    action.clickType() == ClickType.UNKNOWN) && NEXT.equalsIgnoreCase(action.actionType()))
+                        action.clickType() == ClickType.UNKNOWN) && NEXT.equalsIgnoreCase(action.actionType()))
                 {
                     // Next button ignores click type currently.
                     this.pageIndex++;
@@ -200,10 +207,9 @@ public class LanguagePanel
 
         // Collect tooltips.
         List<String> tooltips = template.actions().stream().
-            filter(action -> action.tooltip() != null).
-            map(action -> this.user.getTranslation( action.tooltip())).
-            filter(text -> !text.isBlank()).
-            collect(Collectors.toCollection(() -> new ArrayList<>(template.actions().size())));
+                filter(action -> action.tooltip() != null).map(action -> this.user.getTranslation(action.tooltip()))
+                .filter(text -> !text.isBlank())
+                .collect(Collectors.toCollection(() -> new ArrayList<>(template.actions().size())));
 
         // Add tooltips.
         if (!tooltips.isEmpty())
@@ -224,8 +230,9 @@ public class LanguagePanel
      * @param slot the slot
      * @return the panel item
      */
+    @Override
     @Nullable
-    private PanelItem createPreviousButton(@NonNull ItemTemplateRecord template, TemplatedPanel.ItemSlot slot)
+    protected PanelItem createPreviousButton(@NonNull ItemTemplateRecord template, TemplatedPanel.ItemSlot slot)
     {
         if (this.pageIndex == 0)
         {
@@ -251,13 +258,13 @@ public class LanguagePanel
 
         if (template.title() != null)
         {
-            builder.name(this.user.getTranslation(this.mainCommand.getWorld(), template.title()));
+            builder.name(this.user.getTranslation(this.command.getWorld(), template.title()));
         }
 
         if (template.description() != null)
         {
-            builder.description(this.user.getTranslation(this.mainCommand.getWorld(), template.description(),
-                TextVariables.NUMBER, String.valueOf(previousPageIndex)));
+            builder.description(this.user.getTranslation(this.command.getWorld(), template.description(),
+                    TextVariables.NUMBER, String.valueOf(previousPageIndex)));
         }
 
         // Add ClickHandler
@@ -266,7 +273,7 @@ public class LanguagePanel
         {
             template.actions().forEach(action -> {
                 if ((clickType == action.clickType() ||
-                    action.clickType() == ClickType.UNKNOWN) && PREVIOUS.equalsIgnoreCase(action.actionType()))
+                        action.clickType() == ClickType.UNKNOWN) && PREVIOUS.equalsIgnoreCase(action.actionType()))
                 {
                     // Next button ignores click type currently.
                     this.pageIndex--;
@@ -281,10 +288,10 @@ public class LanguagePanel
 
         // Collect tooltips.
         List<String> tooltips = template.actions().stream().
-            filter(action -> action.tooltip() != null).
-            map(action -> this.user.getTranslation(this.mainCommand.getWorld(), action.tooltip())).
-            filter(text -> !text.isBlank()).
-            collect(Collectors.toCollection(() -> new ArrayList<>(template.actions().size())));
+                filter(action -> action.tooltip() != null)
+                .map(action -> this.user.getTranslation(this.command.getWorld(), action.tooltip()))
+                .filter(text -> !text.isBlank())
+                .collect(Collectors.toCollection(() -> new ArrayList<>(template.actions().size())));
 
         // Add tooltips.
         if (!tooltips.isEmpty())
@@ -330,9 +337,8 @@ public class LanguagePanel
         {
             // Try to find locale with requested ID. if not found, use already collected locale.
             locale = this.elementList.stream().
-                filter(localeID -> localeID.toLanguageTag().equals(template.dataMap().get("lang_id"))).
-                findFirst().
-                orElse(locale);
+                    filter(localeID -> localeID.toLanguageTag().equals(template.dataMap().get("lang_id"))).findFirst()
+                    .orElse(locale);
         }
 
         return this.createLocaleButton(template, locale);
@@ -371,18 +377,18 @@ public class LanguagePanel
         else
         {
             builder.icon(Objects.requireNonNullElseGet(language.getBanner(),
-                () -> new ItemStack(Material.WHITE_BANNER, 1)));
+                    () -> new ItemStack(Material.WHITE_BANNER, 1)));
         }
 
         if (template.title() != null)
         {
-            builder.name(this.user.getTranslation(this.mainCommand.getWorld(), template.title(),
-                TextVariables.NAME, WordUtils.capitalize(locale.getDisplayName(this.user.getLocale()))));
+            builder.name(this.user.getTranslation(this.command.getWorld(), template.title(),
+                    TextVariables.NAME, WordUtils.capitalize(locale.getDisplayName(this.user.getLocale()))));
         }
         else
         {
             builder.name(this.user.getTranslation(reference + "name",
-                TextVariables.NAME, WordUtils.capitalize(locale.getDisplayName(this.user.getLocale()))));
+                    TextVariables.NAME, WordUtils.capitalize(locale.getDisplayName(this.user.getLocale()))));
         }
 
         final StringBuilder authors = new StringBuilder();
@@ -405,28 +411,25 @@ public class LanguagePanel
         if (template.description() != null)
         {
             descriptionText = this.user.getTranslationOrNothing(template.description(),
-                AUTHORS, authors.toString(),
-                SELECTED, selected.toString());
+                    AUTHORS, authors.toString(), SELECTED, selected.toString());
         }
         else
         {
             descriptionText = this.user.getTranslationOrNothing(reference + "description",
-                AUTHORS, authors.toString(),
-                SELECTED, selected.toString());
+                    AUTHORS, authors.toString(), SELECTED, selected.toString());
         }
 
         descriptionText = descriptionText.replaceAll("(?m)^[ \\t]*\\r?\\n", "").
-            replaceAll("(?<!\\\\)\\|", "\n").
-            replaceAll("\\\\\\|", "|");
+                replaceAll("(?<!\\\\)\\|", "\n").replaceAll("\\\\\\|", "|");
 
         builder.description(descriptionText);
 
         // Display actions only for non-selected locales.
         List<ItemTemplateRecord.ActionRecords> actions = template.actions().stream().
-            filter(action -> !this.user.getLocale().equals(locale) &&
-                (SELECT_ACTION.equalsIgnoreCase(action.actionType()) ||
-                    COMMANDS_ACTION.equalsIgnoreCase(action.actionType()))).
-            toList();
+                filter(action -> !this.user.getLocale().equals(locale)
+                        && (SELECT_ACTION.equalsIgnoreCase(action.actionType())
+                                || COMMANDS_ACTION.equalsIgnoreCase(action.actionType())))
+                .toList();
 
         // Add ClickHandler
         builder.clickHandler((panel, user, clickType, i) ->
@@ -438,7 +441,7 @@ public class LanguagePanel
                     {
                         this.plugin.getPlayers().setLocale(this.user.getUniqueId(), locale.toLanguageTag());
                         this.user.sendMessage("language.edited", "[lang]",
-                            WordUtils.capitalize(locale.getDisplayName(this.user.getLocale())));
+                                WordUtils.capitalize(locale.getDisplayName(this.user.getLocale())));
 
                         // Rebuild panel
                         this.build();
@@ -446,11 +449,11 @@ public class LanguagePanel
                     else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType()))
                     {
                         Util.runCommands(user,
-                            Arrays.stream(action.content().
-                                    replaceAll(Pattern.quote(TextVariables.LABEL), this.mainCommand.getTopLabel()).
-                                    split("\n")).
+                                Arrays.stream(action.content()
+                                        .replaceAll(Pattern.quote(TextVariables.LABEL), this.command.getTopLabel())
+                                        .split("\n")).
                                 toList(),
-                            "CHANGE_LOCALE_COMMANDS");
+                                "CHANGE_LOCALE_COMMANDS");
                     }
                 }
             });
@@ -461,10 +464,10 @@ public class LanguagePanel
 
         // Collect tooltips.
         List<String> tooltips = actions.stream().
-            filter(action -> action.tooltip() != null).
-            map(action -> this.user.getTranslation(this.mainCommand.getWorld(), action.tooltip())).
-            filter(text -> !text.isBlank()).
-            collect(Collectors.toCollection(() -> new ArrayList<>(actions.size())));
+                filter(action -> action.tooltip() != null)
+                .map(action -> this.user.getTranslation(this.command.getWorld(), action.tooltip()))
+                .filter(text -> !text.isBlank())
+                .collect(Collectors.toCollection(() -> new ArrayList<>(actions.size())));
 
         // Add tooltips.
         if (!tooltips.isEmpty())
@@ -478,97 +481,6 @@ public class LanguagePanel
     }
 
 
-    // ---------------------------------------------------------------------
-    // Section: Static methods
-    // ---------------------------------------------------------------------
-
-
-    /**
-     * This method is used to open Panel outside this class. It will be much easier to open panel with single method
-     * call then initializing new object.
-     *
-     * @param command The main addon command.
-     * @param user User who opens panel
-     */
-    public static void openPanel(@NonNull CompositeCommand command, @NonNull User user)
-    {
-        new LanguagePanel(command, user).build();
-    }
-
-
-// ---------------------------------------------------------------------
-// Section: Constants
-// ---------------------------------------------------------------------
-
-
-    /**
-     * This constant is used for button to indicate that it is Language type.
-     */
-    private static final String LOCALE = "LOCALE";
-
-    /**
-     * This constant is used for button to indicate that it is previous page type.
-     */
-    private static final String PREVIOUS = "PREVIOUS";
-
-    /**
-     * This constant is used for button to indicate that it is next page type.
-     */
-    private static final String NEXT = "NEXT";
-
-    /**
-     * This constant is used for indicating that pages should contain numbering.
-     */
-    private static final String INDEXING = "indexing";
-
-    /**
-     * This constant stores value for SELECT action that is used in panels.
-     */
-    private static final String SELECT_ACTION = "SELECT";
-
-    /**
-     * This constant stores value for COMMANDS action that is used in panels.
-     */
-    private static final String COMMANDS_ACTION = "COMMANDS";
-
-    /**
-     * This constant stores value for AUTHORS label that is used in panels.
-     */
-    public static final String AUTHORS = "[authors]";
-
-    /**
-     * This constant stores value for SELECTED label that is used in panels.
-     */
-    public static final String SELECTED = "[selected]";
-
-
-// ---------------------------------------------------------------------
-// Section: Variables
-// ---------------------------------------------------------------------
-
-
-    /**
-     * This variable allows to access plugin object.
-     */
-    private final BentoBox plugin;
-
-    /**
-     * This variable stores the main command object.
-     */
-    private final CompositeCommand mainCommand;
-
-    /**
-     * This variable holds user who opens panel. Without it panel cannot be opened.
-     */
-    private final User user;
-
-    /**
-     * This variable stores filtered elements.
-     */
-    private final List<Locale> elementList;
-
-    /**
-     * This variable holds current pageIndex for multi-page island choosing.
-     */
-    private int pageIndex;
 }
+
+
