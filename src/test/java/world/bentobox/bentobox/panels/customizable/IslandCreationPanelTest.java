@@ -139,6 +139,7 @@ public class IslandCreationPanelTest {
         when(ic.getAddon()).thenReturn(addon);
         World world = mock(World.class);
         when(ic.getWorld()).thenReturn(world);
+        when(ic.getPlugin()).thenReturn(plugin);
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);

@@ -258,6 +258,23 @@ public class IslandCache {
     }
 
     /**
+     * Returns if there is island at the location. This includes
+     * the full island space, not just the protected area.
+     * Does not cause a database load of the island.
+     *
+     * @param location the location
+     * @return true if there is an island there
+     */
+    @Nullable
+    public boolean isIslandAt(@NonNull Location location) {
+        World w = Util.getWorld(location.getWorld());
+        if (w == null || !grids.containsKey(w)) {
+            return false;
+        }
+        return grids.get(w).isIslandAt(location.getBlockX(), location.getBlockZ());
+    }
+
+    /**
      * Returns the island at the location or null if there is none. This includes
      * the full island space, not just the protected area
      *
