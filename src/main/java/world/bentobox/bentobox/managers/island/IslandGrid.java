@@ -37,7 +37,7 @@ class IslandGrid {
         // Check if we know about this island already
         int minX = island.getMinX();
         int minZ = island.getMinZ();
-        IslandData islandData = new IslandData(island.getUniqueId(), minZ, minZ, island.getRange());
+        IslandData islandData = new IslandData(island.getUniqueId(), minX, minZ, island.getRange());
         if (grid.containsKey(minX)) {
             TreeMap<Integer, IslandData> zEntry = grid.get(minX);
             if (zEntry.containsKey(minZ)) {
@@ -99,7 +99,7 @@ class IslandGrid {
      * Checks if an island is at this coordinate or not
      * @param x coord
      * @param z coord
-     * @return true if there is an island registered in the grid
+     * @return true if there is an island registered here in the grid
      */
     public boolean isIslandAt(int x, int z) {
         return getIslandStringAt(x, z) != null;
@@ -124,8 +124,8 @@ class IslandGrid {
             return null; // No z-coordinate entry found, return null
         }
         // Check if the specified coordinates are within the island space
-        if (x >= zEntry.getValue().minX() && x < zEntry.getValue().minX() + zEntry.getValue().range() * 2
-                && z >= zEntry.getValue().minZ() && z < zEntry.getValue().minZ() + zEntry.getValue().range() * 2) {
+        if (x >= zEntry.getValue().minX() && x < (zEntry.getValue().minX() + zEntry.getValue().range() * 2)
+                && z >= zEntry.getValue().minZ() && z < (zEntry.getValue().minZ() + zEntry.getValue().range() * 2)) {
             return zEntry.getValue().id();
         }
         return null;

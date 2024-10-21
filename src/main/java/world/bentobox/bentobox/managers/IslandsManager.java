@@ -442,7 +442,7 @@ public class IslandsManager {
                 : Optional.empty();
     }
 
-    public boolean isIslandAd(@NonNull Location location) {
+    public boolean isIslandAt(@NonNull Location location) {
         return plugin.getIWM().inWorld(location) ? islandCache.isIslandAt(location) : false;
     }
 
