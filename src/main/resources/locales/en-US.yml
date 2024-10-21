@@ -1906,6 +1906,12 @@ panel:
 
 # This section contains values for BentoBox panels.
 panels:
+  # The section of translations used in Island Homes Panel
+  island_homes:
+    title: "&2&l Your island homes"
+    buttons:
+      # This button is used for displaying islands to teleport to
+      name: "&l [name]"
   # The section of translations used in Island Creation Panel
   island_creation:
     title: "&2&l Pick an island"

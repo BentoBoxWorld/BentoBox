@@ -74,7 +74,9 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
      */
     protected Result isIsland(Location location) {
         // Quick check
-        if (plugin.getIslands().getIslandAt(location).isPresent()) return Result.ISLAND_FOUND;
+        if (plugin.getIslands().isIslandAt(location)) {
+            return Result.ISLAND_FOUND;
+        }
 
         World world = location.getWorld();
 

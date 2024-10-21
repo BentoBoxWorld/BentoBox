@@ -61,9 +61,9 @@ public class IslandGoCommand extends DelayedTeleportCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        Map<String, IslandInfo> names = getNameIslandMap(user);
         // Check if the home is known
         if (!args.isEmpty()) {
-            Map<String, IslandInfo> names = getNameIslandMap(user);
             final String name = String.join(" ", args);
             if (!names.containsKey(name)) {
                 // Failed home name check
@@ -113,7 +113,11 @@ public class IslandGoCommand extends DelayedTeleportCommand {
 
     }
 
-    private record IslandInfo(Island island, boolean islandName) {}
+    /**
+     * Record of islands and the name to type
+     */
+    private record IslandInfo(Island island, boolean islandName) {
+    }
 
     private Map<String, IslandInfo> getNameIslandMap(User user) {
         Map<String, IslandInfo> islandMap = new HashMap<>();
@@ -129,7 +133,8 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                 islandMap.put(text, new IslandInfo(island, true));
             }
             // Add homes. Homes do not need an island specified
-            island.getHomes().keySet().forEach(n -> islandMap.put(n, new IslandInfo(island, false)));
+            island.getHomes().keySet().stream().filter(n -> !n.isBlank())
+                    .forEach(n -> islandMap.put(n, new IslandInfo(island, false)));
         }
 
         return islandMap;

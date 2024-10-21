@@ -22,8 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -41,7 +39,7 @@ import world.bentobox.bentobox.util.Util;
  * If file with such name is located at gamemode panels directory, then that file will be used.
  * Otherwise, file in BentoBox/panels is used.
  */
-public class IslandCreationPanel
+public class IslandCreationPanel extends AbstractPanel
 {
     // ---------------------------------------------------------------------
     // Section: Constants
@@ -51,37 +49,10 @@ public class IslandCreationPanel
      * This constant is used for button to indicate that it is Blueprint Bundle type.
      */
     private static final String BUNDLES = "BUNDLE";
-
-    /**
-     * This constant is used for button to indicate that it is previous page type.
-     */
-    private static final String PREVIOUS = "PREVIOUS";
-
-    /**
-     * This constant is used for button to indicate that it is next page type.
-     */
-    private static final String NEXT = "NEXT";
-
-    /**
-     * This constant is used for indicating that pages should contain numbering.
-     */
-    private static final String INDEXING = "indexing";
-
-    /**
-     * This constant stores value for SELECT action that is used in panels.
-     */
-    private static final String SELECT_ACTION = "SELECT";
-
-    /**
-     * This constant stores value for COMMAND action that is used in panels.
-     */
-    private static final String COMMANDS_ACTION = "COMMANDS";
-
     /**
      * This constant stores value for ERROR message that will be displayed upon failing to run creation commands.
      */
     private static final String ISLAND_CREATION_COMMANDS = "ISLAND_CREATION_COMMANDS";
-
     /**
      * Button reference
      */
@@ -92,34 +63,10 @@ public class IslandCreationPanel
     // ---------------------------------------------------------------------
 
     /**
-     * This variable allows to access plugin object.
-     */
-    private final BentoBox plugin;
-
-    /**
-     * This variable stores main command that was triggered.
-     */
-    private final CompositeCommand mainCommand;
-
-    /**
-     * This variable holds user who opens panel. Without it panel cannot be opened.
-     */
-    private final User user;
-
-    /**
-     * This variable holds world where panel is opened. Without it panel cannot be opened.
-     */
-    private final String mainLabel;
-
-    /**
      * This variable stores filtered elements.
      */
     private final List<BlueprintBundle> elementList;
 
-    /**
-     * This variable holds current pageIndex for multi-page island choosing.
-     */
-    private int pageIndex;
 
     /**
      * The world that this command applies to
@@ -147,8 +94,7 @@ public class IslandCreationPanel
     private IslandCreationPanel(@NonNull CompositeCommand command,
             @NonNull User user, @NonNull String label, boolean reset)
     {
-        this.plugin = BentoBox.getInstance();
-        this.user = user;
+        super(command, user);
         this.mainLabel = label;
         this.world = command.getWorld();
         this.reset = reset;
@@ -159,7 +105,6 @@ public class IslandCreationPanel
                         .hasPermission(command.getPermissionPrefix() + "island.create." + bundle.getUniqueId()))
                 .toList();
 
-        this.mainCommand = command;
     }
 
 
@@ -172,7 +117,8 @@ public class IslandCreationPanel
      * Build method manages current panel opening. It uses BentoBox PanelAPI that is easy to use and users can get nice
      * panels.
      */
-    private void build()
+    @Override
+    protected void build()
     {
         // Do not open gui if there is no magic sticks.
         if (this.elementList.isEmpty())
@@ -187,10 +133,10 @@ public class IslandCreationPanel
         TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
 
         // Set main template.
-        if (this.doesCustomPanelExists(this.mainCommand.getAddon(), "island_creation_panel"))
+        if (this.doesCustomPanelExists(this.command.getAddon(), "island_creation_panel"))
         {
             // Addon has its own island creation panel. Use it.
-            panelBuilder.template("island_creation_panel", new File(this.mainCommand.getAddon().getDataFolder(), "panels"));
+            panelBuilder.template("island_creation_panel", new File(this.command.getAddon().getDataFolder(), "panels"));
         }
         else
         {
@@ -212,21 +158,6 @@ public class IslandCreationPanel
         panelBuilder.build();
     }
 
-
-    /**
-     * This method returns if panel with the requested name is located in GameModeAddon folder.
-     * @param addon GameModeAddon that need to be checked.
-     * @param name Name of the panel.
-     * @return {@code true} if panel exists, {@code false} otherwise.
-     */
-    private boolean doesCustomPanelExists(GameModeAddon addon, String name)
-    {
-        return addon.getDataFolder().exists() &&
-                new File(addon.getDataFolder(), "panels").exists()
-                && new File(addon.getDataFolder(), "panels" + File.separator + name + ".yml").exists();
-    }
-
-
     // ---------------------------------------------------------------------
     // Section: Buttons
     // ---------------------------------------------------------------------
@@ -239,8 +170,9 @@ public class IslandCreationPanel
      * @param slot the slot
      * @return the panel item
      */
+    @Override
     @Nullable
-    private PanelItem createNextButton(@NonNull ItemTemplateRecord template, TemplatedPanel.ItemSlot slot)
+    protected PanelItem createNextButton(@NonNull ItemTemplateRecord template, TemplatedPanel.ItemSlot slot)
     {
         int size = this.elementList.size();
 
@@ -269,12 +201,12 @@ public class IslandCreationPanel
 
         if (template.title() != null)
         {
-            builder.name(this.user.getTranslation(this.mainCommand.getWorld(), template.title()));
+            builder.name(this.user.getTranslation(this.command.getWorld(), template.title()));
         }
 
         if (template.description() != null)
         {
-            builder.description(this.user.getTranslation(this.mainCommand.getWorld(), template.description(),
+            builder.description(this.user.getTranslation(this.command.getWorld(), template.description(),
                     TextVariables.NUMBER, String.valueOf(nextPageIndex)));
         }
 
@@ -299,7 +231,7 @@ public class IslandCreationPanel
         // Collect tooltips.
         List<String> tooltips = template.actions().stream().
                 filter(action -> action.tooltip() != null)
-                .map(action -> this.user.getTranslation(this.mainCommand.getWorld(), action.tooltip()))
+                .map(action -> this.user.getTranslation(this.command.getWorld(), action.tooltip()))
                 .filter(text -> !text.isBlank())
                 .collect(Collectors.toCollection(() -> new ArrayList<>(template.actions().size())));
 
@@ -323,7 +255,8 @@ public class IslandCreationPanel
      * @return the panel item
      */
     @Nullable
-    private PanelItem createPreviousButton(@NonNull ItemTemplateRecord template, TemplatedPanel.ItemSlot slot)
+    @Override
+    protected PanelItem createPreviousButton(@NonNull ItemTemplateRecord template, TemplatedPanel.ItemSlot slot)
     {
         if (this.pageIndex == 0)
         {
@@ -349,12 +282,12 @@ public class IslandCreationPanel
 
         if (template.title() != null)
         {
-            builder.name(this.user.getTranslation(this.mainCommand.getWorld(), template.title()));
+            builder.name(this.user.getTranslation(this.command.getWorld(), template.title()));
         }
 
         if (template.description() != null)
         {
-            builder.description(this.user.getTranslation(this.mainCommand.getWorld(), template.description(),
+            builder.description(this.user.getTranslation(this.command.getWorld(), template.description(),
                     TextVariables.NUMBER, String.valueOf(previousPageIndex)));
         }
 
@@ -379,7 +312,7 @@ public class IslandCreationPanel
         // Collect tooltips.
         List<String> tooltips = template.actions().stream().
                 filter(action -> action.tooltip() != null)
-                .map(action -> this.user.getTranslation(this.mainCommand.getWorld(), action.tooltip()))
+                .map(action -> this.user.getTranslation(this.command.getWorld(), action.tooltip()))
                 .filter(text -> !text.isBlank())
                 .collect(Collectors.toCollection(() -> new ArrayList<>(template.actions().size())));
 
@@ -467,7 +400,7 @@ public class IslandCreationPanel
 
         if (template.title() != null)
         {
-            builder.name(this.user.getTranslation(this.mainCommand.getWorld(), template.title(),
+            builder.name(this.user.getTranslation(this.command.getWorld(), template.title(),
                     TextVariables.NAME, bundle.getDisplayName()));
         }
         else
@@ -478,7 +411,7 @@ public class IslandCreationPanel
 
         if (template.description() != null)
         {
-            builder.description(this.user.getTranslation(this.mainCommand.getWorld(), template.description(),
+            builder.description(this.user.getTranslation(this.command.getWorld(), template.description(),
                     TextVariables.DESCRIPTION, String.join("\n", bundle.getDescription())));
         }
         else
@@ -524,13 +457,13 @@ public class IslandCreationPanel
                     {
                         if (SELECT_ACTION.equalsIgnoreCase(action.actionType())) {
                             user.closeInventory();
-                            this.mainCommand.execute(user, this.mainLabel,
+                            this.command.execute(user, this.mainLabel,
                                     Collections.singletonList(bundle.getUniqueId()));
                         } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())) {
                             Util.runCommands(user,
                                     Arrays.stream(action.content()
                                             .replaceAll(Pattern.quote(TextVariables.LABEL),
-                                                    this.mainCommand.getTopLabel())
+                                                    this.command.getTopLabel())
                                             .split("\n")).toList(),
                                     ISLAND_CREATION_COMMANDS);
                         }
@@ -543,7 +476,7 @@ public class IslandCreationPanel
 
             // Collect tooltips.
             List<String> tooltips = actions.stream().filter(action -> action.tooltip() != null)
-                    .map(action -> this.user.getTranslation(this.mainCommand.getWorld(), action.tooltip()))
+                    .map(action -> this.user.getTranslation(this.command.getWorld(), action.tooltip()))
                     .filter(text -> !text.isBlank())
                     .collect(Collectors.toCollection(() -> new ArrayList<>(actions.size())));
 
@@ -557,11 +490,9 @@ public class IslandCreationPanel
         return builder.build();
     }
 
-
     // ---------------------------------------------------------------------
     // Section: Static methods
     // ---------------------------------------------------------------------
-
 
     /**
      * This method is used to open Panel outside this class. It will be much easier to open panel with single method
@@ -572,11 +503,9 @@ public class IslandCreationPanel
      * @param user User who opens panel
      * @param reset true if this is an island reset
      */
-    public static void openPanel(@NonNull CompositeCommand command,
-            @NonNull User user, @NonNull String label, boolean reset)
-    {
+    public static void openPanel(@NonNull CompositeCommand command, @NonNull User user, @NonNull String label,
+            boolean reset) {
         new IslandCreationPanel(command, user, label, reset).build();
     }
-
 
 }

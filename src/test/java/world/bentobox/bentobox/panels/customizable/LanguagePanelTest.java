@@ -108,6 +108,7 @@ public class LanguagePanelTest {
 
         GameModeAddon addon = mock(GameModeAddon.class);
         when(command.getAddon()).thenReturn(addon);
+        when(command.getPlugin()).thenReturn(plugin);
         when(addon.getDataFolder()).thenReturn(resourcePath.toFile());
 
         World world = mock(World.class);
@@ -139,8 +140,6 @@ public class LanguagePanelTest {
 
     }
 
-    /**
-     */
     @After
     public void tearDown() {
         User.clearUsers();

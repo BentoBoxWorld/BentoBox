@@ -442,6 +442,10 @@ public class IslandsManager {
                 : Optional.empty();
     }
 
+    public boolean isIslandAt(@NonNull Location location) {
+        return plugin.getIWM().inWorld(location) ? islandCache.isIslandAt(location) : false;
+    }
+
     /**
      * Returns an <strong>unmodifiable collection</strong> of all existing islands
      * (even those who may be unowned).

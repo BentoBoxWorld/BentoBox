@@ -90,15 +90,29 @@ public class TemplateReader
         }
 
         File file = new File(panelLocation, templateName.endsWith(YML) ? templateName : templateName + YML);
-
+        String absolutePath = file.getAbsolutePath();
         if (!file.exists())
         {
-            BentoBox.getInstance().logError(file.getAbsolutePath() + " does not exist for panel template");
-            // Return as file does not exist.
-            return null;
+            // Try to get it from the JAR
+
+            String keyword = "panels/";
+
+            // Find the index of the keyword "panels/"
+            int index = absolutePath.indexOf(keyword);
+
+            // If the keyword is found, extract the substring starting from that index
+            if (index != -1) {
+                BentoBox.getInstance().saveResource(absolutePath.substring(index), false);
+                file = new File(panelLocation, templateName.endsWith(YML) ? templateName : templateName + YML);
+            } else {
+                BentoBox.getInstance().logError(file.getAbsolutePath() + " does not exist for panel template");
+                // Return as file does not exist.
+                return null;
+            }
+
         }
 
-        final String panelKey = file.getAbsolutePath() + ":" + panelName;
+        final String panelKey = absolutePath + ":" + panelName;
 
         // Check if panel is already crafted.
         if (TemplateReader.loadedPanels.containsKey(panelKey))
