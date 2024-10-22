@@ -1,7 +1,7 @@
 # This is default island homes panel. It is used in all situations when gamemode addon does not have specified their
 # of panel.
 island_homes_panel:
-  title: panels.island_go.title  # The title of panel or link to the localization location.
+  title: panels.island_homes.title  # The title of panel or link to the localization location.
   type: INVENTORY                     # The type of inventory: INVENTORY, DROPPER, HOPPER
   background:                         # The item that will be displayed in empty spots. This section can be removed.
     icon: BLACK_STAINED_GLASS_PANE    # The icon of background item
