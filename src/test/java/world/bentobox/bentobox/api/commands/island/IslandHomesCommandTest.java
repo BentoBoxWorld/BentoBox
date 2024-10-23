@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +38,6 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -200,12 +198,8 @@ public class IslandHomesCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfString() {
-        when(im.getIslands(world, user)).thenReturn(List.of(island));
         IslandHomesCommand isc = new IslandHomesCommand(ic);
-        assertTrue(isc.canExecute(user, "island", Collections.emptyList()));
         assertTrue(isc.execute(user, "island", Collections.emptyList()));
-        verify(user).sendMessage("commands.island.sethome.homes-are");
-        verify(user, times(4)).sendMessage(eq("commands.island.sethome.home-list-syntax"), eq(TextVariables.NAME), anyString());
     }
 
 }

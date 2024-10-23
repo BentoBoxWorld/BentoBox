@@ -616,6 +616,7 @@ public class User implements MetaDataAble {
      * @param message The message to send, containing inline commands in square brackets.
      */
     public void sendRawMessage(String message) {
+        BentoBox.getInstance().logDebug(message);
         // Create a base TextComponent for the message
         TextComponent baseComponent = new TextComponent();
 
@@ -632,7 +633,7 @@ public class User implements MetaDataAble {
             // Add any text before the current match
             if (matcher.start() > lastMatchEnd) {
                 String beforeMatch = message.substring(lastMatchEnd, matcher.start());
-                baseComponent.addExtra(new TextComponent(beforeMatch));
+                baseComponent.addExtra(TextComponent.fromLegacy(beforeMatch));
             }
 
             // Check if it's a recognized command or an unknown bracketed text
@@ -658,12 +659,12 @@ public class User implements MetaDataAble {
                         break;
                     default:
                         // Unrecognized command; preserve it in the output text
-                        baseComponent.addExtra(new TextComponent(matcher.group(0)));
+                        baseComponent.addExtra(TextComponent.fromLegacy(matcher.group(0)));
                 }
 
             } else if (matcher.group(3) != null) {
                 // Unrecognized bracketed text; preserve it in the output
-                baseComponent.addExtra(new TextComponent("[[" + matcher.group(3) + "]]"));
+                baseComponent.addExtra(TextComponent.fromLegacy("[[" + matcher.group(3) + "]]"));
             }
 
             // Update the last match end position
@@ -673,7 +674,7 @@ public class User implements MetaDataAble {
         // Add any remaining text after the last match
         if (lastMatchEnd < message.length()) {
             String remainingText = message.substring(lastMatchEnd);
-            baseComponent.addExtra(new TextComponent(remainingText));
+            baseComponent.addExtra(TextComponent.fromLegacy(remainingText));
         }
 
         // Apply the first encountered ClickEvent and HoverEvent to the entire message
