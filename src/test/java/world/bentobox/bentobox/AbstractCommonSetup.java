@@ -20,6 +20,8 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Player.Spigot;
@@ -298,13 +300,14 @@ public abstract class AbstractCommonSetup {
      */
     public EntityExplodeEvent getExplodeEvent(Entity entity, Location l, List<Block> list) {
         //return new EntityExplodeEvent(entity, l, list, 0, null);
-        return new EntityExplodeEvent(entity, l, list, 0);
+        return new EntityExplodeEvent(entity, l, list, 0, null);
     }
 
     public PlayerDeathEvent getPlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newExp,
             int newTotalExp, int newLevel, @Nullable String deathMessage) {
         //return new PlayerDeathEvent(player, null, drops, droppedExp, newExp, newTotalExp, newLevel, deathMessage);
-        return new PlayerDeathEvent(player, drops, droppedExp, newExp, newTotalExp, newLevel, deathMessage);
+        return new PlayerDeathEvent(player, DamageSource.builder(DamageType.GENERIC).build(), drops, droppedExp, newExp,
+                newTotalExp, newLevel, deathMessage);
     }
 
 }
