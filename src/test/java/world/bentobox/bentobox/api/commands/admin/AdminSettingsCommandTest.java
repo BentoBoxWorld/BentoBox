@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -23,7 +22,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -167,8 +165,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         Inventory inventory = mock(Inventory.class);
-        when(Bukkit.createInventory(eq(null), Mockito.anyInt(), any())).thenReturn(inventory);
-        when(Bukkit.createInventory(eq(null), any(InventoryType.class), any())).thenReturn(inventory);
+        when(Bukkit.createInventory(any(), Mockito.anyInt(), anyString())).thenReturn(inventory);
         // Flags manager
         when(Bukkit.getPluginManager()).thenReturn(pluginManager);
         FlagsManager fm = new FlagsManager(plugin);

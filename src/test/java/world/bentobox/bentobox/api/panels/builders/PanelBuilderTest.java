@@ -1,16 +1,11 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.panels.builders;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.bukkit.Bukkit;
-import org.bukkit.inventory.Inventory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,17 +30,12 @@ import world.bentobox.bentobox.api.user.User;
 @PrepareForTest({Bukkit.class})
 public class PanelBuilderTest {
 
-    /**
-     */
     @Before
     public void setUp() throws Exception {
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
-        Inventory inv = mock(Inventory.class);
-        when(Bukkit.createInventory(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(inv);
 
     }
 

@@ -64,6 +64,9 @@ public class JoinLeaveListener implements Listener {
         // don't exist
         players.getPlayer(playerUUID);
 
+        // Set the login
+        players.setLoginTimeStamp(user);
+
         // Reset island resets if required
         plugin.getIWM().getOverWorlds().stream()
                 .filter(w -> event.getPlayer().getLastPlayed() < plugin.getIWM().getResetEpoch(w))
