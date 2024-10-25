@@ -459,6 +459,16 @@ public class IslandsManager {
     }
 
     /**
+     * Loads all existing islands from the database without caching async
+     * 
+     * @return CompletableFuture<List> of every island
+     * @since 2.7.0
+     */
+    public CompletableFuture<List<Island>> getIslandsASync() {
+        return handler.loadObjectsASync();
+    }
+
+    /**
      * Returns an <strong>unmodifiable collection</strong> of all the islands (even
      * those who may be unowned) in the specified world.
      * 

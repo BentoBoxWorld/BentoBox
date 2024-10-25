@@ -98,6 +98,10 @@ commands:
       purgable-islands: '&a Found &b [number] &a purgable islands.'
       purge-in-progress: '&c Purging in progress. Use &b /[label] purge stop &c to
         cancel.'
+      scanning: '&a Scanning islands in the database. This may take a while depending on how many you have...'
+      scanning-in-progress: '&c Scanning in progress, please wait'
+      none-found: '&c No islands found to purge.'
+      total-islands: '&a You have [number] islands in your database in all worlds.'
       number-error: '&c Argument must be a number of days'
       confirm: '&d Type &b /[label] purge confirm &d to start purging'
       completed: '&a Purging stopped.'

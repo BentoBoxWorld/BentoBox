@@ -6,14 +6,20 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -38,6 +44,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandDeletedEvent;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -95,6 +102,7 @@ public class AdminPurgeCommandTest {
         when(plugin.getIslands()).thenReturn(im);
         // No islands by default
         when(im.getIslands()).thenReturn(Collections.emptyList());
+        when(im.getIslandsASync()).thenReturn(CompletableFuture.completedFuture(Collections.emptyList()));
 
         // IWM
         IslandWorldManager iwm = mock(IslandWorldManager.class);
@@ -286,13 +294,13 @@ public class AdminPurgeCommandTest {
         when(island.getOwner()).thenReturn(UUID.randomUUID());
         when(island.isOwned()).thenReturn(true);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
-        when(im.getIslands()).thenReturn(Collections.singleton(island));
-        OfflinePlayer op = mock(OfflinePlayer.class);
-        when(op.getLastPlayed()).thenReturn(0L);
-        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
-        assertFalse(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("1"));
-        verify(user).sendMessage(eq("commands.admin.purge.confirm"), eq("[label]"), eq("bsb"));
+        when(im.getIslandsASync()).thenReturn(CompletableFuture.completedFuture(List.of(island)));
+        when(pm.getLastLoginTimestamp(any())).thenReturn(962434800L);
+        assertTrue(apc.execute(user, "", Collections.singletonList("10"))); // 10 days ago
+        verify(user).sendMessage("commands.admin.purge.scanning");
+        verify(user).sendMessage("commands.admin.purge.total-islands", "[number]", "1");
+        verify(user, never()).sendMessage("commands.admin.purge.none-found");
+        verify(user).sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, "bsb");
     }
 
 
@@ -367,13 +375,26 @@ public class AdminPurgeCommandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#getOldIslands(int)}
+     * @throws TimeoutException 
+     * @throws ExecutionException 
+     * @throws InterruptedException 
      */
     @Test
-    public void testGetOldIslands() {
-        assertTrue(apc.getOldIslands(10).isEmpty());
+    public void testGetOldIslands() throws InterruptedException, ExecutionException, TimeoutException {
+        assertTrue(apc.execute(user, "", Collections.singletonList("10"))); // 10 days ago
+        // First, ensure that the result is empty
+        CompletableFuture<Set<String>> result = apc.getOldIslands(10);
+        Set<String> set = result.join();
+        assertTrue(set.isEmpty());
+        // Mocking Islands and their retrieval
+        Island island1 = mock(Island.class);
         Island island2 = mock(Island.class);
-        when(im.getIslands()).thenReturn(Set.of(island, island2));
-        assertTrue(apc.getOldIslands(10).isEmpty());
+        
+        when(im.getIslandsASync()).thenReturn(CompletableFuture.completedFuture(List.of(island1, island2)));
+        // Now, check again after mocking islands
+        CompletableFuture<Set<String>> futureWithIslands = apc.getOldIslands(10);
+        assertTrue(futureWithIslands.get(5, TimeUnit.SECONDS).isEmpty()); // Adjust this assertion based on the expected behavior of getOldIslands
+
     }
 
 }

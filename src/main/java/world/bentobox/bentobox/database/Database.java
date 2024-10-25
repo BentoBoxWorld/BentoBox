@@ -166,6 +166,13 @@ public class Database<T> {
         return dataObjects;
     }
 
+    /**
+     * Load all objects async
+     * @return CompletableFuture<List<T>>
+     */
+    public @NonNull CompletableFuture<List<T>> loadObjectsASync() {
+        return handler.loadObjectsASync();
+    }
 
 
 }

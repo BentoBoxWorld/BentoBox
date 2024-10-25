@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -21,8 +23,10 @@ import world.bentobox.bentobox.util.Util;
 
 public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
+    private static final Long YEAR2000 = 946713600L;
     private int count;
     private boolean inPurge;
+    private boolean scanning;
     private boolean toBeConfirmed;
     private Iterator<String> it;
     private User user;
@@ -47,6 +51,10 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        if (scanning) {
+            user.sendMessage("commands.admin.purge.scanning-in-progress");
+            return false;
+        }
         if (inPurge) {
             user.sendMessage("commands.admin.purge.purge-in-progress", TextVariables.LABEL, this.getTopLabel());
             return false;
@@ -75,13 +83,21 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
                 user.sendMessage("commands.admin.purge.days-one-or-more");
                 return false;
             }
-            islands = getOldIslands(days);
-            user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER, String.valueOf(islands.size()));
-            if (!islands.isEmpty()) {
-                toBeConfirmed = true;
-                user.sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, this.getTopLabel());
-                return false;
-            }
+            user.sendMessage("commands.admin.purge.scanning");
+            scanning = true;
+            getOldIslands(days).thenAccept(islandSet -> {
+                user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER,
+                        String.valueOf(islandSet.size()));
+                if (!islandSet.isEmpty()) {
+                    toBeConfirmed = true;
+                    user.sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, this.getTopLabel());
+                    islands = islandSet;
+                } else {
+                    user.sendMessage("commands.admin.purge.none-found");
+                }
+                scanning = false;
+            });
+
         } catch (NumberFormatException e) {
             user.sendMessage("commands.admin.purge.number-error");
             return false;
@@ -125,39 +141,60 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
      * @param days days
      * @return set of islands
      */
-    Set<String> getOldIslands(int days) {
-        long currentTimeMillis = System.currentTimeMillis();
-        long daysInMilliseconds = (long) days * 1000 * 3600 * 24;
-        Set<String> oldIslands = new HashSet<>();
-
+    CompletableFuture<Set<String>> getOldIslands(int days) {
+        CompletableFuture<Set<String>> result = new CompletableFuture<>();
         // Process islands in one pass, logging and adding to the set if applicable
-        getPlugin().getIslands().getIslands().stream()
+        getPlugin().getIslands().getIslandsASync().thenAccept(list -> {
+            user.sendMessage("commands.admin.purge.total-islands", TextVariables.NUMBER, String.valueOf(list.size()));
+            Set<String> oldIslands = new HashSet<>();
+            list.stream()
                 .filter(i -> !i.isSpawn()).filter(i -> !i.getPurgeProtected())
                 .filter(i -> i.getWorld() != null) // to handle currently unloaded world islands
-                .filter(i -> i.getWorld().equals(this.getWorld())).filter(Island::isOwned).filter(
-                        i -> i.getMemberSet().stream()
-                                .allMatch(member -> (currentTimeMillis
-                                        - Bukkit.getOfflinePlayer(member).getLastPlayed()) > daysInMilliseconds))
+                    .filter(i -> i.getWorld().equals(this.getWorld())) // Island needs to be in this world
+                    .filter(Island::isOwned) // The island needs to be owned
+                    .filter(i -> i.getMemberSet().stream().allMatch(member -> checkLastLoginTimestamp(days, member)))
                 .forEach(i -> {
                     // Add the unique island ID to the set
                     oldIslands.add(i.getUniqueId());
-                    BentoBox.getInstance().log("Will purge island at " + Util.xyz(i.getCenter().toVector()) + " in "
+                    getPlugin().log("Will purge island at " + Util.xyz(i.getCenter().toVector()) + " in "
                             + i.getWorld().getName());
                     // Log each member's last login information
                     i.getMemberSet().forEach(member -> {
-                        Date lastLogin = new Date(Bukkit.getOfflinePlayer(member).getLastPlayed());
+                            Long timestamp = getPlayers().getLastLoginTimestamp(member);
+                            Date lastLogin = new Date(timestamp);
                         BentoBox.getInstance()
                                 .log("Player " + BentoBox.getInstance().getPlayers().getName(member)
                                         + " last logged in "
-                                        + (int) ((currentTimeMillis - Bukkit.getOfflinePlayer(member).getLastPlayed())
-                                                / 1000 / 3600 / 24)
+                                            + (int) ((System.currentTimeMillis() - timestamp) / 1000 / 3600 / 24)
                                         + " days ago. " + lastLogin);
                     });
                     BentoBox.getInstance().log("+-----------------------------------------+");
                 });
-
-        return oldIslands;
+            result.complete(oldIslands);
+        });
+        return result;
     }
+
+    private boolean checkLastLoginTimestamp(int days, UUID member) {
+        long daysInMilliseconds = days * 24L * 3600 * 1000; // Calculate days in milliseconds
+        Long lastLoginTimestamp = getPlayers().getLastLoginTimestamp(member);
+        // If no valid last login time is found or it's before the year 2000, try to fetch from Bukkit
+        if (lastLoginTimestamp == null || lastLoginTimestamp < YEAR2000) {
+            lastLoginTimestamp = Bukkit.getOfflinePlayer(member).getLastPlayed();
+
+            // If still invalid, set the current timestamp to mark the user for eventual purging
+            if (lastLoginTimestamp < YEAR2000) {
+                getPlayers().setLoginTimeStamp(member, System.currentTimeMillis());
+                return false; // User will be purged in the future
+            } else {
+                // Otherwise, update the last login timestamp with the valid value from Bukkit
+                getPlayers().setLoginTimeStamp(member, lastLoginTimestamp);
+            }
+        }
+        // Check if the difference between now and the last login is greater than the allowed days
+        return System.currentTimeMillis() - lastLoginTimestamp > daysInMilliseconds;
+    }
+
 
     /**
      * @return the inPurge

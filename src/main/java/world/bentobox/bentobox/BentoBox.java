@@ -207,6 +207,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         registerListeners();
 
         // Load islands from database - need to wait until all the worlds are loaded
+        log("Loading islands from database...");
         try {
             islandsManager.load();
         } catch (Exception e) {
