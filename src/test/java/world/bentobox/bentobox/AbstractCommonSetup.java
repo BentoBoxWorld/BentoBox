@@ -298,13 +298,14 @@ public abstract class AbstractCommonSetup {
      */
     public EntityExplodeEvent getExplodeEvent(Entity entity, Location l, List<Block> list) {
         //return new EntityExplodeEvent(entity, l, list, 0, null);
-        return new EntityExplodeEvent(entity, l, list, 0);
+        return new EntityExplodeEvent(entity, l, list, 0, null);
     }
 
     public PlayerDeathEvent getPlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newExp,
             int newTotalExp, int newLevel, @Nullable String deathMessage) {
-        //return new PlayerDeathEvent(player, null, drops, droppedExp, newExp, newTotalExp, newLevel, deathMessage);
-        return new PlayerDeathEvent(player, drops, droppedExp, newExp, newTotalExp, newLevel, deathMessage);
+        //Technically this null is not allowed, but it works right now
+        return new PlayerDeathEvent(player, null, drops, droppedExp, newExp,
+                newTotalExp, newLevel, deathMessage);
     }
 
 }

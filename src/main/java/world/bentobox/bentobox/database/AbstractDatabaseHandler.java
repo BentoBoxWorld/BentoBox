@@ -135,9 +135,30 @@ public abstract class AbstractDatabaseHandler<T> {
     public abstract T loadObject(@NonNull String uniqueId) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException;
 
     /**
+     * Loads all the records in this table and returns a list of them async
+     * @return CompletableFuture List of <T>
+     * @since 2.7.0
+     */
+    public CompletableFuture<List<T>> loadObjectsASync() {
+        CompletableFuture<List<T>> completableFuture = new CompletableFuture<>();
+
+        Bukkit.getScheduler().runTaskAsynchronously(BentoBox.getInstance(), () -> {
+            try {
+                completableFuture.complete(loadObjects()); // Complete the future with the result
+            } catch (Exception e) {
+                completableFuture.completeExceptionally(e); // Complete exceptionally if an error occurs
+                plugin.logError("Failed to load objects asynchronously: " + e.getMessage());
+            }
+        });
+
+        return completableFuture;
+    }
+
+    /**
      * Save T into the corresponding database
      *
      * @param instance that should be inserted into the database
+     * @return completable future that is true if saved
      */
     public abstract CompletableFuture<Boolean> saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException ;
 

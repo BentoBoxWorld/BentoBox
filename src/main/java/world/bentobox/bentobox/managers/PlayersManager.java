@@ -420,4 +420,44 @@ public class PlayersManager {
         return CompletableFuture.completedFuture(false);
     }
 
+    /**
+     * Records when the user last logged in. Called by the joinleave listener
+     * @param user user
+     * @since 2.7.0
+     */
+    public void setLoginTimeStamp(User user) {
+        if (user.isPlayer() && user.isOnline()) {
+            setLoginTimeStamp(user.getUniqueId(), System.currentTimeMillis());
+        }
+    }
+
+    /**
+     * Set the player's last login time to a timestamp
+     * @param playerUUID player UUID
+     * @param timestamp timestamp to set
+     * @since 2.7.0
+     */
+    public void setLoginTimeStamp(UUID playerUUID, long timestamp) {
+        Players p = this.getPlayer(playerUUID);
+        if (p != null) {
+            p.setLastLogin(timestamp);
+            this.savePlayer(playerUUID);
+        }
+    }
+
+    /**
+     * Get the last login time stamp for this player
+     * @param uuid player's UUID
+     * @return timestamp or null if unknown or not recorded yet
+     * @since 2.7.0
+     */
+    @Nullable
+    public Long getLastLoginTimestamp(UUID uuid) {
+        Players p = this.getPlayer(uuid);
+        if (p != null) {
+            return p.getLastLogin();
+        }
+        return null;
+    }
+
 }

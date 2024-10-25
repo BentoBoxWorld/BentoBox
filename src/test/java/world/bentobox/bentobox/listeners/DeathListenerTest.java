@@ -10,7 +10,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.junit.After;
@@ -41,7 +40,6 @@ public class DeathListenerTest extends AbstractCommonSetup {
     private World world;
     private UUID uuid;
     private IslandWorldManager iwm;
-    private DamageSource ds = null;
 
     @Before
     public void setUp() {

@@ -18,6 +18,7 @@ import java.util.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Arrow;
@@ -35,6 +36,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +47,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -56,6 +60,8 @@ public class TNTListenerTest extends AbstractCommonSetup {
     private Block block;
     @Mock
     private Entity entity;
+    @Mock
+    private IslandWorldManager iwm;
 
     // Class under test
     private ExplosionListener listener;
@@ -64,6 +70,18 @@ public class TNTListenerTest extends AbstractCommonSetup {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        // IWM - for some reason, this doesn't work in the AbstractCommonSetup
+        when(plugin.getIWM()).thenReturn(iwm);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+        // Addon
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
+
+        @Nullable
+        WorldSettings worldSet = new TestWorldSettings();
+        when(iwm.getWorldSettings(any())).thenReturn(worldSet);
 
         // Monsters and animals
         Zombie zombie = mock(Zombie.class);

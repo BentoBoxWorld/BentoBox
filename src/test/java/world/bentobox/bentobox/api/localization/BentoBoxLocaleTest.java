@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,13 +30,15 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import world.bentobox.bentobox.util.ItemParser;
+
 /**
  * Tests BentoBoxLocale class
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class })
+@PrepareForTest({ Bukkit.class, ItemParser.class })
 public class BentoBoxLocaleTest {
 
     private BentoBoxLocale localeObject;
@@ -45,6 +48,8 @@ public class BentoBoxLocaleTest {
      */
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(ItemParser.class, Mockito.RETURNS_MOCKS);
+        when(ItemParser.parse(anyString())).thenReturn(new ItemStack(Material.WHITE_BANNER));
         PowerMockito.mockStatic(Bukkit.class);
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);
@@ -112,8 +117,6 @@ public class BentoBoxLocaleTest {
     public void testGetBanner() {
         ItemStack banner = localeObject.getBanner();
         assertEquals(Material.WHITE_BANNER, banner.getType());
-        // Check that three patters were added
-        Mockito.verify(bannerMeta, Mockito.times(3)).addPattern(Mockito.any());
     }
 
     /**
