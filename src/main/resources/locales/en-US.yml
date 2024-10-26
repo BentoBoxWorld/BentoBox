@@ -96,6 +96,11 @@ commands:
       description: purge islands abandoned for more than [days]
       days-one-or-more: Must be at least 1 day or more
       purgable-islands: '&a Found &b [number] &a purgable islands.'
+      too-many: |
+        &b This is a lot and could take a very long time to delete.
+        &b Consider using Regionerator plugin for deleting world chunks
+        &b and setting keep-previous-island-on-reset: true in BentoBox's config.yml.
+        &b Then run a purge.
       purge-in-progress: '&c Purging in progress. Use &b /[label] purge stop &c to
         cancel.'
       scanning: '&a Scanning islands in the database. This may take a while depending on how many you have...'

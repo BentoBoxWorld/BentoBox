@@ -293,6 +293,9 @@ public class IslandsManager {
                 plugin.getIslandDeletionManager().getIslandChunkDeletionManager().add(id);
                 // Tell other servers
                 MultiLib.notify("bentobox-deleteIsland", getGson().toJson(id));
+            } else {
+                // Fire the deletion event immediately
+                IslandEvent.builder().deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
             }
             // Delete the island from the database
             handler.deleteObject(island);

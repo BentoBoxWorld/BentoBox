@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.api.commands.admin.purge;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -19,11 +18,11 @@ import world.bentobox.bentobox.api.events.island.IslandDeletedEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.util.Util;
 
 public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
     private static final Long YEAR2000 = 946713600L;
+    private static final int TOO_MANY = 1000;
     private int count;
     private boolean inPurge;
     private boolean scanning;
@@ -31,6 +30,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
     private Iterator<String> it;
     private User user;
     private Set<String> islands = new HashSet<>();
+    private Set<Integer> loggedTiers = new HashSet<>(); // Set to store logged percentage tiers
 
     public AdminPurgeCommand(CompositeCommand parent) {
         super(parent, "purge");
@@ -88,6 +88,10 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
             getOldIslands(days).thenAccept(islandSet -> {
                 user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER,
                         String.valueOf(islandSet.size()));
+                if (islandSet.size() > TOO_MANY
+                        && !BentoBox.getInstance().getSettings().isKeepPreviousIslandOnReset()) {
+                    user.sendMessage("commands.admin.purge.too-many"); // Give warning
+                }
                 if (!islandSet.isEmpty()) {
                     toBeConfirmed = true;
                     user.sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, this.getTopLabel());
@@ -110,6 +114,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         user.sendMessage("commands.admin.purge.see-console-for-status", TextVariables.LABEL, this.getTopLabel());
         it = islands.iterator();
         count = 0;
+        loggedTiers.clear(); // % reporting
         // Delete first island
         deleteIsland();
     }
@@ -119,8 +124,21 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
             getIslands().getIslandById(it.next()).ifPresent(i -> {
                 getIslands().deleteIsland(i, true, null);
                 count++;
-                String percentage = String.format("%.1f", (((float) count)/getPurgeableIslandsCount() * 100));
-                getPlugin().log(count + " islands purged out of " + getPurgeableIslandsCount() + " (" + percentage + " %)");
+                float percentage = ((float) count / getPurgeableIslandsCount()) * 100;
+                String percentageStr = String.format("%.1f", percentage);
+                // Round the percentage to check for specific tiers
+                int roundedPercentage = (int) Math.floor(percentage);
+
+                // Determine if this percentage should be logged: 1%, 5%, or any new multiple of 5%
+                if (!BentoBox.getInstance().getSettings().isKeepPreviousIslandOnReset() || (roundedPercentage > 0
+                        && (roundedPercentage == 1 || roundedPercentage == 5 || roundedPercentage % 5 == 0)
+                        && !loggedTiers.contains(roundedPercentage))) {
+
+                    // Log the message and add the tier to the logged set
+                    getPlugin().log(count + " islands purged out of " + getPurgeableIslandsCount() + " ("
+                            + percentageStr + " %)");
+                    loggedTiers.add(roundedPercentage);
+                }
             });
         } else {
             user.sendMessage("commands.admin.purge.completed");
@@ -132,7 +150,8 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     void onIslandDeleted(IslandDeletedEvent e) {
         if (inPurge) {
-            deleteIsland();
+            // Run after one tick - you cannot run millions of events in one tick otherwise the server shuts down
+            Bukkit.getScheduler().runTaskLater(getPlugin(), () -> deleteIsland(), 2L); // 10 a second
         }
     }
 
@@ -153,23 +172,8 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
                     .filter(i -> i.getWorld().equals(this.getWorld())) // Island needs to be in this world
                     .filter(Island::isOwned) // The island needs to be owned
                     .filter(i -> i.getMemberSet().stream().allMatch(member -> checkLastLoginTimestamp(days, member)))
-                .forEach(i -> {
-                    // Add the unique island ID to the set
-                    oldIslands.add(i.getUniqueId());
-                    getPlugin().log("Will purge island at " + Util.xyz(i.getCenter().toVector()) + " in "
-                            + i.getWorld().getName());
-                    // Log each member's last login information
-                    i.getMemberSet().forEach(member -> {
-                            Long timestamp = getPlayers().getLastLoginTimestamp(member);
-                            Date lastLogin = new Date(timestamp);
-                        BentoBox.getInstance()
-                                .log("Player " + BentoBox.getInstance().getPlayers().getName(member)
-                                        + " last logged in "
-                                            + (int) ((System.currentTimeMillis() - timestamp) / 1000 / 3600 / 24)
-                                        + " days ago. " + lastLogin);
-                    });
-                    BentoBox.getInstance().log("+-----------------------------------------+");
-                });
+                    .forEach(i -> oldIslands.add(i.getUniqueId())); // Add the unique island ID to the set
+
             result.complete(oldIslands);
         });
         return result;
