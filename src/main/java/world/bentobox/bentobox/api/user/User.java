@@ -616,7 +616,6 @@ public class User implements MetaDataAble {
      * @param message The message to send, containing inline commands in square brackets.
      */
     public void sendRawMessage(String message) {
-        BentoBox.getInstance().logDebug(message);
         // Create a base TextComponent for the message
         TextComponent baseComponent = new TextComponent();
 
