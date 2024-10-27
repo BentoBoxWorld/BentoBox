@@ -346,7 +346,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * 
      * @return IslandsManager
      */
-    protected IslandsManager getIslands() {
+    public IslandsManager getIslands() {
         return plugin.getIslands();
     }
 

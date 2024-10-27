@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -170,7 +169,6 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         Inventory inventory = mock(Inventory.class);
         when(Bukkit.createInventory(eq(null), anyInt(), any())).thenReturn(inventory);
-        when(Bukkit.createInventory(eq(null), any(InventoryType.class), any())).thenReturn(inventory);
 
         // Command under test
         itl = new IslandTeamInviteCommand(ic);

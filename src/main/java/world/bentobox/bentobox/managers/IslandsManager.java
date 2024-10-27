@@ -293,6 +293,9 @@ public class IslandsManager {
                 plugin.getIslandDeletionManager().getIslandChunkDeletionManager().add(id);
                 // Tell other servers
                 MultiLib.notify("bentobox-deleteIsland", getGson().toJson(id));
+            } else {
+                // Fire the deletion event immediately
+                IslandEvent.builder().deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
             }
             // Delete the island from the database
             handler.deleteObject(island);
@@ -442,6 +445,10 @@ public class IslandsManager {
                 : Optional.empty();
     }
 
+    public boolean isIslandAt(@NonNull Location location) {
+        return plugin.getIWM().inWorld(location) ? islandCache.isIslandAt(location) : false;
+    }
+
     /**
      * Returns an <strong>unmodifiable collection</strong> of all existing islands
      * (even those who may be unowned).
@@ -452,6 +459,16 @@ public class IslandsManager {
     @NonNull
     public Collection<Island> getIslands() {
         return handler.loadObjects().stream().toList();
+    }
+
+    /**
+     * Loads all existing islands from the database without caching async
+     * 
+     * @return CompletableFuture<List> of every island
+     * @since 2.7.0
+     */
+    public CompletableFuture<List<Island>> getIslandsASync() {
+        return handler.loadObjectsASync();
     }
 
     /**

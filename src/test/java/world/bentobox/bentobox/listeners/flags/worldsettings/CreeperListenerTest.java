@@ -65,7 +65,7 @@ public class CreeperListenerTest extends AbstractCommonSetup {
         Entity entity = mock(Entity.class);
         when(entity.getType()).thenReturn(EntityType.TNT);
         when(iwm.inWorld(location)).thenReturn(true);
-        EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0);
+        EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0, null);
         cl.onExplosion(event);
         assertFalse(event.isCancelled());
     }
@@ -80,7 +80,7 @@ public class CreeperListenerTest extends AbstractCommonSetup {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getType()).thenReturn(EntityType.CREEPER);
         when(iwm.inWorld(location)).thenReturn(false);
-        EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0);
+        EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0, null);
         cl.onExplosion(event);
         assertFalse(event.isCancelled());
     }
@@ -98,7 +98,7 @@ public class CreeperListenerTest extends AbstractCommonSetup {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getType()).thenReturn(EntityType.CREEPER);
         when(iwm.inWorld(location)).thenReturn(true);
-        EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0);
+        EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0, null);
         cl.onExplosion(event);
         assertFalse(event.isCancelled());
         assertFalse(event.blockList().isEmpty()); // No clearing of block list
@@ -119,7 +119,7 @@ public class CreeperListenerTest extends AbstractCommonSetup {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getType()).thenReturn(EntityType.CREEPER);
         when(iwm.inWorld(location)).thenReturn(true);
-        EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0);
+        EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0, null);
         cl.onExplosion(event);
         assertFalse(event.isCancelled());
         assertTrue(event.blockList().isEmpty()); // No clearing of block list

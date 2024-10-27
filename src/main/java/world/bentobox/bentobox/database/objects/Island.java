@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
@@ -1512,7 +1513,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public boolean hasNetherIsland() {
         World nether = BentoBox.getInstance().getIWM().getNetherWorld(getWorld());
-        return nether != null && !getCenter().toVector().toLocation(nether).getBlock().getType().isAir();
+        return nether != null && (getCenter().toVector().toLocation(nether).getBlock().getType() != Material.AIR);
     }
 
     /**
@@ -1536,7 +1537,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public boolean hasEndIsland() {
         World end = BentoBox.getInstance().getIWM().getEndWorld(getWorld());
-        return end != null && !getCenter().toVector().toLocation(end).getBlock().getType().isAir();
+        return end != null && (getCenter().toVector().toLocation(end).getBlock().getType() != Material.AIR);
     }
 
     /**

@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 
@@ -37,6 +38,8 @@ public class Players implements DataObject, MetaDataAble {
     private String locale = "";
     @Expose
     private Map<String, Integer> deaths = new HashMap<>();
+    @Expose
+    private Long lastLogin;
 
     /**
      * This variable stores set of worlds where user inventory must be cleared.
@@ -292,5 +295,20 @@ public class Players implements DataObject, MetaDataAble {
         this.metaData = metaData;
     }
 
+    /**
+     * @return the lastLogin, Unix timestamp, or null if never logged in since this was tracked
+     * @since 2.6.0
+     */
+    @Nullable
+    public Long getLastLogin() {
+        return lastLogin;
+    }
+
+    /**
+     * @param lastLogin the lastLogin to set
+     */
+    public void setLastLogin(Long lastLogin) {
+        this.lastLogin = lastLogin;
+    }
 
 }

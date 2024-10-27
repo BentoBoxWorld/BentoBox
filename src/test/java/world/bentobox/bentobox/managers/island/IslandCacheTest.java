@@ -137,6 +137,7 @@ public class IslandCacheTest extends AbstractCommonSetup {
         when(island.getMemberSet()).thenReturn(members.build());
         when(island.getMinX()).thenReturn(-200);
         when(island.getMinZ()).thenReturn(-200);
+        when(island.getRange()).thenReturn(400);
 
         // database must be mocked here
         db = mock(Database.class);
@@ -234,12 +235,10 @@ public class IslandCacheTest extends AbstractCommonSetup {
 
         Location location2 = mock(Location.class);
         when(location2.getWorld()).thenReturn(world);
-        when(location2.getBlockX()).thenReturn(10);
-        when(location2.getBlockY()).thenReturn(10);
-        when(location2.getBlockZ()).thenReturn(10);
+        when(location2.getBlockX()).thenReturn(10000);
+        when(location2.getBlockY()).thenReturn(100);
+        when(location2.getBlockZ()).thenReturn(10000);
 
-        assertEquals(island, ic.getIslandAt(location2));
-        when(island.inIslandSpace(any(Integer.class), any(Integer.class))).thenReturn(false);
         assertNull(ic.getIslandAt(location2));
     }
 

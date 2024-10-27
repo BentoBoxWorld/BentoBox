@@ -280,7 +280,7 @@ public abstract class AbstractCommonSetup {
         List<TextComponent> capturedMessages = captor.getAllValues();
 
         // Count the number of occurrences of the expectedMessage in the captured messages
-        long actualOccurrences = capturedMessages.stream().map(component -> component.toPlainText()) // Convert each TextComponent to plain text
+        long actualOccurrences = capturedMessages.stream().map(component -> component.toLegacyText()) // Convert each TextComponent to plain text
                 .filter(messageText -> messageText.contains(expectedMessage)) // Check if the message contains the expected text
                 .count(); // Count how many times the expected message appears
 
@@ -298,13 +298,14 @@ public abstract class AbstractCommonSetup {
      */
     public EntityExplodeEvent getExplodeEvent(Entity entity, Location l, List<Block> list) {
         //return new EntityExplodeEvent(entity, l, list, 0, null);
-        return new EntityExplodeEvent(entity, l, list, 0);
+        return new EntityExplodeEvent(entity, l, list, 0, null);
     }
 
     public PlayerDeathEvent getPlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newExp,
             int newTotalExp, int newLevel, @Nullable String deathMessage) {
-        //return new PlayerDeathEvent(player, null, drops, droppedExp, newExp, newTotalExp, newLevel, deathMessage);
-        return new PlayerDeathEvent(player, drops, droppedExp, newExp, newTotalExp, newLevel, deathMessage);
+        //Technically this null is not allowed, but it works right now
+        return new PlayerDeathEvent(player, null, drops, droppedExp, newExp,
+                newTotalExp, newLevel, deathMessage);
     }
 
 }

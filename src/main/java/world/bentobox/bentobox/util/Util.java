@@ -743,6 +743,7 @@ public class Util {
                     throw new IllegalStateException("Class " + clazz.getName() + " does not implement WorldRegenerator");
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 plugin.logWarning("No Regenerator found for " + bukkitVersion + ", falling back to Bukkit API.");
                 handler = new world.bentobox.bentobox.nms.fallback.WorldRegeneratorImpl();
             }
@@ -772,6 +773,7 @@ public class Util {
                     throw new IllegalStateException("Class " + clazz.getName() + " does not implement PasteHandler");
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 plugin.logWarning("No PasteHandler found for " + bukkitVersion + ", falling back to Bukkit API.");
                 handler = new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl();
             }
