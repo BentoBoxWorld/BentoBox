@@ -3,6 +3,7 @@ meta:
   authors:
   - xXjojojXx
   - Poslovitch
+  - Archerymaister
   banner: RED_BANNER:1:STRIPE_RIGHT:BLACK:STRIPE_LEFT:YELLOW
 prefixes:
   bentobox: "&6 BentoBox &7 &l > &r "
@@ -13,16 +14,16 @@ general:
     command-cancelled: "&c Befehl abgebrochen."
     no-permission: "&c Du hast nicht die Berechtigung, diesen Befehl auszuführen (&7
       [permission]&c )."
-    insufficient-rank: "&c Ihr Rang ist dafür nicht hoch genug! (&7 [rank]&c )"
+    insufficient-rank: "&c Dein Rang ist dafür nicht hoch genug! (&7 [rank]&c )"
     use-in-game: "&c Dieser Befehl ist nur im Spiel verfügbar."
     use-in-console: "&c Dieser Befehl ist nur in der Konsole verfügbar."
     no-team: "&c Du hast kein Team!"
     no-island: "&c Du hast keine Insel!"
-    player-has-island: "&c Der Spieler hat bereits eine Insel!"
+    player-has-island: "&c Dieser Spieler hat bereits eine Insel!"
     player-has-no-island: "&c Dieser Spieler hat keine Insel!"
     already-have-island: "&c Du hast bereits eine Insel!"
     no-safe-location-found: "&c Es konnte kein sicherer Ort auf der Insel gefunden
-      werden, an den du dich teleportieren konntest."
+      werden, an den du dich teleportieren kannst."
     not-owner: "&c Du bist nicht der Besitzer der Insel!"
     player-is-not-owner: "&b [name] &c ist nicht Besitzer einer Insel!"
     not-in-team: "&c Dieser Spieler gehört nicht zu deinem Team!"
@@ -36,9 +37,9 @@ general:
     must-be-positive-number: "&c [number] ist keine gültige positive Zahl."
     not-on-island: "&c Du bist nicht auf der Insel!"
   worlds:
-    overworld: Überwelt
+    overworld: Oberwelt
     nether: Nether
-    the-end: Das Ende
+    the-end: Das End
 commands:
   help:
     header: "&7 =========== &c [label] Hilfe &7 ==========="
@@ -52,7 +53,7 @@ commands:
     help:
       description: Admin Befehl
     resets:
-      description: die Resets der Spieler bearbeiten
+      description: Resets der Spieler bearbeiten
       set:
         description: Legt die Resets dieses Players fest
         parameters: "<player> <resets>"
@@ -60,31 +61,31 @@ commands:
       reset:
         description: Setzt die Resets dieses Spielers auf 0 zurück
         parameters: "<player>"
-        success-everyone: "&a Erfolgreiches Zurücksetzen &b jedermann&a 's resets
+        success-everyone: "&a Erfolgreiches Zurücksetzen &bvon allen&a Resets
           auf &b 0&a ."
-        success: "&a Erfolgreiches Zurücksetzen von &b [name]&a 's resets auf &b 0&a
+        success: "&a Erfolgreiches Zurücksetzen von &b [name]&a 's Resets auf &b 0&a
           ."
       add:
-        description: fügt dem Spieler Resets hinzu
+        description: Fügt dem Spieler Resets hinzu
         parameters: "<player> <resets>"
-        success: "&a Erfolgreiches Hinzufügen von &b [number] &a resets zu &b [name],
-          wodurch die Summe auf &b [total] &a resets erhöht wurde."
+        success: "&a Erfolgreiches Hinzufügen von&b [number]&a Resets zu&b [name],
+          wodurch die Summe auf &b [total] &a Resets erhöht wurde."
       remove:
-        description: entfernt Resets von dem Spieler
+        description: Entfernt Resets von dem Spieler
         parameters: "<player> <resets>"
-        success: "&a Erfolgreiches Entfernen von &b [number] &a resets zu &b [name],
-          wodurch die Summe auf &b [total]&a resets reduziert wurde."
+        success: "&a Erfolgreiches Entfernen von&b [number] &a Resets für&b [name],
+          wodurch die Summe auf&b [total]&a Resets reduziert wurde."
     purge:
       parameters: "[days]"
-      description: löschen von Inseln, die seit mehr als [days] verlassen sind
+      description: Löschen von Inseln, die seit mehr als [days] verlassen sind
       days-one-or-more: Muss mindestens 1 Tag oder mehr betragen
       purgable-islands: Es wurden [number] löschbare Inseln gefunden.
-      purge-in-progress: "&c Löschung läuft. Benutze Löschstop zum Abbrechen"
-      number-error: "&c Angabe muss eine Anzahl von Tagen sein"
-      confirm: "&d Tippe [label] purge confirm zum Starten des Löschvorgangs ein"
+      purge-in-progress: "&c Löschung läuft. Benutze /[label] purge stop zum Abbrechen"
+      number-error: "&c Eingabe muss eine Anzahl von Tagen sein"
+      confirm: "&d Tippe /[label] purge confirm zum Starten des Löschvorgangs ein"
       completed: "&a Lösung gestoppt"
       see-console-for-status: Löschung gestartet. Für den Status siehe Konsole
-      no-purge-in-progress: "&c Derzeit wird keine Bereinigung durchgeführt."
+      no-purge-in-progress: "&c Derzeit wird keine Löschung durchgeführt."
       protect:
         description: Umschalten des Insellöschschutzes
         move-to-island: "&c Erst auf eine Insel gehen!"
@@ -97,8 +98,8 @@ commands:
         description: Löschen freier Inseln - Bestätigung erforderlich
         unowned-islands: "&d [number] Inseln gefunden"
       status:
-        description: zeigt den Status der Bereinigung an
-        status: "&b [purged] &a islands purged out of &b [purgeable] &7(&b[percentage]
+        description: Zeigt den Status der Bereinigung an
+        status: "&b [purged] &a von&b [purgeable] &b Inseln wurden gelöscht &7(&b[percentage]
           %&7)&a."
     team:
       description: Teams verwalten
@@ -110,12 +111,12 @@ commands:
         success: "&b [name]&a  wurde der Insel von &b [owner]&a hinzugefügt."
       disband:
         parameters: "<owner>"
-        description: das Team des Eigentümers auflösen
-        use-disband-owner: "&c Nicht der Besitzer! Benutze auflösen [owner]."
+        description: Das Team des Eigentümers auflösen
+        use-disband-owner: "&c Nicht der Besitzer! Benutze disband [owner]."
         disbanded: "&c Der Admin hat dein Team aufgelöst!"
-        success: "&b Das Team von [name] &a wurde aufgelöst."
+        success: "&b Das Team von [name]&a wurde aufgelöst."
       fix:
-        description: scannt und behebt die inselübergreifende Mitgliedschaft in der
+        description: Scannt und behebt die inselübergreifende Mitgliedschaft in der
           Datenbank
         scanning: Datenbank wird durchsucht...
         duplicate-owner: "&c Spieler besitzt mehr als eine Insel in der Datenbank:
@@ -128,27 +129,27 @@ commands:
         done: "&a Scan"
       kick:
         parameters: "<team player>"
-        description: einen Spieler aus einem Team kicken
+        description: Einen Spieler aus einem Team kicken
         cannot-kick-owner: "&c Du kannst den Besitzer nicht kicken. Kick erst die
           Mitglieder."
         not-in-team: "&c Dieser Spieler ist nicht in einem Team."
         admin-kicked: "&c Der Admin hat dich aus dem Team gekickt."
-        success: "&b [name] &a wurde von der Insel von &b [owner] &a gekickt."
+        success: "&b [name]&a wurde von der Insel von &b [owner] &a gekickt."
       setowner:
         parameters: "<player>"
         description: überträgt das Insel-Eigentum auf den Spieler
         already-owner: "&c [name] ist bereits der Besitzer dieser Insel!"
-        must-be-on-island: "&c Sie müssen auf der Insel sein, um den Besitzer festzulegen"
-        confirmation: "&a Möchten Sie [name] wirklich als Eigentümer der Insel in
+        must-be-on-island: "&c Du musst auf der Insel sein, um den Besitzer festzulegen"
+        confirmation: "&a Möchtest du [name] wirklich als Eigentümer der Insel in
           [xyz] festlegen?"
-        success: "&b [name]&a  ist jetzt der Besitzer dieser Insel."
+        success: "&b [name]&a ist jetzt der Besitzer dieser Insel."
         extra-islands: "&c Warnung: Dieser Spieler besitzt jetzt [number] Inseln.
           Das sind mehr als durch die Einstellungen oder Berechtigungen erlaubt ist:
           [max]."
     range:
       description: Admin Insel Bereichsbefehl
       invalid-value:
-        too-low: "&c Der Schutzbereich muss größer sein als &b 1&c !"
+        too-low: "&c Der Schutzbereich muss größer sein als&b 1&c !"
         too-high: "&c Der Schutzbereich sollte gleich groß oder kleiner sein als &b
           [number]&c !"
         same-as-before: "&c Der Schutzbereich ist bereits eingestellt auf &b [number]&c
@@ -157,30 +158,30 @@ commands:
         already-off: "&c Die Indikatoren sind bereits aus"
         already-on: "&c Die Indikatoren sind bereits an"
         description: Anzeige des Inselbereichs ein/ausblenden
-        hiding: "&2 Versteckte Reichweite Indikatoren"
+        hiding: "&2 Inselbegrenzungen ausgeblendet"
         hint: |-
-          &c Rote Barriere-Icons &f zeigen die aktuelle Inselschutzbereichsgrenze an.
-          &7 Graue Partikel &f zeigen die maximale Inselgrenze an.
-          Grüne Partikel &f zeigen den voreingestellten Schutzbereich an, wenn der Inselschutzbereich davon abweicht.
-        showing: "&2 Anzeigen von Reichweite Indikatoren"
+          &c Rote Barriere-Icons&f zeigen die aktuelle Inselschutzbereichsgrenze an.
+          &7 Graue Partikel&f zeigen die maximale Inselgrenze an.
+          Grüne Partikel&f zeigen den voreingestellten Schutzbereich an, wenn der Inselschutzbereich davon abweicht.
+        showing: "&2 Inselbegrenzungen eingeblendet"
       set:
         parameters: "<Spieler> <Reichweite> [Inselstandort]"
-        description: legt den geschützten Inselbereich fest
+        description: Legt den geschützten Inselbereich fest
         success: "&a Inselschutzbereich einstellen auf &b [number]&a ."
       reset:
         parameters: "<player>"
         description: Setzt den inselgeschützten Bereich auf den Weltstandard zurück
-        success: "& a Setzen Sie den Inselschutzbereich auf & b [number] & a zurück."
+        success: "& a Setzt den Inselschutzbereich auf & b [number] & a zurück."
       add:
         description: Erhöht den Schutzbereich der Insel
         parameters: "<Spieler> <Reichweite> [Inselstandort]"
-        success: "&a Erfolgreiche Erhöhung von &b [name]&a 's geschützten Bereich
+        success: "&a Erfolgreiche Erhöhung von &b [name]&a's geschützten Bereich
           der Insel auf &b [total] &7 (&b +[number]&7 )&a ."
       remove:
         description: Verringert den Schutzbereich der Insel
         parameters: "<Spieler> <Reichweite> [Inselstandort]"
         success: "&a Erfolgreich reduziert &b [name]&a 's geschützten Bereich der
-          Insel auf&b [total] &7 (&b -[number]&7 )&a ."
+          Insel um&b [total] &7 (&b -[number]&7 )&a ."
     register:
       parameters: "<player>"
       description: Spieler auf freier Insel registrieren, auf der du dich befindest
@@ -201,7 +202,7 @@ commands:
         unknown-island-location: "&c Unbekannter Inselstandort"
         specify-island-location: "&c Gib denn Inselstandort in x,y,z Format an"
         player-has-more-than-one-island: "&c Spieler hat mehr als eine Insel. Gib
-          an welche"
+          an welche."
     info:
       parameters: "<player>"
       description: Informationen über deinen Standort oder die Spielerinsel erhalten
@@ -209,14 +210,14 @@ commands:
       title: "========== Insel Info ============"
       island-uuid: 'UUID: [uuid]'
       owner: 'Besitzer: [owner] ([uuid])'
-      last-login: 'Letzter login: [date]'
+      last-login: 'Letzter Login: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy
       deaths: 'Tode: [number]'
       resets-left: 'Resets: [number] (Max: [total])'
       team-members-title: 'Teammitglieder:'
       team-owner-format: "&a [name] [rank]"
       team-member-format: "&b [name] [rank]"
-      island-protection-center: 'Schutzbereich Mitte: [xyz]'
+      island-protection-center: 'Mittelpunkt des Schutzbereiches: [xyz]'
       island-center: 'Inselmitte: [xyz]'
       island-coords: 'Koordinaten der Insel: [xz1] bis [xz2]'
       islands-in-trash: "&d Der Spieler hat Inseln im Papierkorb."
@@ -233,12 +234,12 @@ commands:
       bundle: "&a Blaupausenpaket zum Erstellen der Insel: &b [name]"
     switch:
       description: Schutzumgehung ein-/ausschalten
-      op: "&c Ops können den Schutz immer umgehen. Deop um den Befehl zu benutzen."
+      op: "&c OPs können den Schutz immer umgehen. Deop um den Befehl zu benutzen."
       removing: Entfernen der Schutzumgehung...
       adding: Schutzumgehung hinzufügen...
     switchto:
       parameters: "<player> <number>"
-      description: die Spielerinsel durch die nummerierte Insel im Papierkorb ersetzen
+      description: Die Spielerinsel durch die nummerierte Insel im Papierkorb ersetzen
       out-of-range: "&c Die Zahl muss zwischen 1 und [number] liegen. Verwende &l
         [label] trash [player] &r &c um die Inselnummern zu sehen"
       cannot-switch: "&c Wechsel fehlgeschlagen. Siehe Konsolenprotokoll für Fehler."
@@ -250,35 +251,35 @@ commands:
       parameters: "[player]"
       description: Zeige freie Inseln oder Spielerinseln im Papierkorb
       title: "&d =========== Inseln im Papierkorb ==========="
-      count: "&l &d Insel [number]:"
-      use-switch: "&a Nutze &l [label] switchto <player> <number>&r &a um den Spieler
+      count: "&l&d Insel [number]:"
+      use-switch: "&a Nutze&l /[label] switchto <player> <number>&r&a um den Spieler
         auf die Insel im Papierkorb zu wechseln"
-      use-emptytrash: "&a Nutze &l [label] emptytrash [player]&r &a, um den Papierkorb
+      use-emptytrash: "&a Nutze&l /[label] emptytrash [player]&r&a, um den Papierkorb
         dauerhaft zu leeren"
     emptytrash:
       parameters: "[player]"
       description: Den Papierkorb für Spieler oder aller freien Inseln im Papierkorb
         leeren
-      success: "&a Papierkorb erfolgreich entleert."
+      success: "&a Papierkorb erfolgreich geleert."
     version:
       description: BentoBox und Addon-Versionen anzeigen
     setrange:
       parameters: "<player> <range>"
-      description: die Reichweite der Spielerinsel festlegen
-      range-updated: "&a Inselbereich aktualisiert auf &b [number]&a ."
+      description: Die Reichweite der Spielerinsel festlegen
+      range-updated: "&a Inselbereich aktualisiert auf &b [number]&a."
     reload:
-      description: neu laden
+      description: Neu laden
     tp:
       parameters: "<Spieler> [Insel des Spielers]"
-      description: zu einer Spielerinsel teleportieren
-      manual: "&c Kein sicherer Warp gefunden! Manuell in die Nähe von &b [location]
+      description: Zu einer Spielerinsel teleportieren
+      manual: "&c Kein sicherer Warp gefunden! Manuell in die Nähe von&b [location]
         &c teleportieren und nachsehen"
     tpuser:
       parameters: "<teleportierender Spieler> <Spieler der Insel> [Insel des Spielers]"
-      description: einen Spieler zur Insel eines anderen Spielers teleportieren
+      description: Einen Spieler zur Insel eines anderen Spielers teleportieren
     getrank:
       parameters: "<player>"
-      description: den Rang eines Spielers auf seiner Insel erhalten
+      description: Den Rang eines Spielers auf seiner Insel erhalten
       rank-is: "&a Der Rang ist [rank] auf ihrer Insel."
     setrank:
       parameters: "<player> <rank> [Insels Besitzer]"
@@ -286,14 +287,14 @@ commands:
         festlegen
       unknown-rank: "&c Unbekannter Rang!"
       not-possible: "&c Der Rang muss höher sein als Besucher."
-      rank-set: "&a Rang gesetzt von &b [from] &a auf &b [to] &a auf &b [name]&a 's
+      rank-set: "&a Rang von&b [from]&a auf&b [to]&a gesetzt für&b [name]&a's
         Insel."
     setprotectionlocation:
       parameters: "[x y z Koordinaten]"
-      description: aktuellen Standort oder [x y z] als Zentrum des Schutzbereichs
+      description: Aktuellen Standort oder [x y z] als Zentrum des Schutzbereichs
         der Insel einstellen
       island: "&c Dies betrifft die Insel in [xyz], die '[name]' gehört."
-      confirmation: "&c Möchten Sie [xyz] wirklich als Schutzzentrum festlegen?"
+      confirmation: "&c Möchtest du [xyz] wirklich als Schutzzentrum festlegen?"
       success: "&a [xyz] erfolgreich als Schutzzentrum festgelegt."
       fail: "&a Fehler beim Festlegen von [xyz] als Schutzzentrum."
       island-location-changed: "&a [user] hat das Schutzzentrum der Insel in [xyz]
@@ -905,11 +906,11 @@ protection:
         Allay
       hint: Allay-Interaktion deaktiviert
     ANIMAL_NATURAL_SPAWN:
-      description: Natürliches Laichen von Tieren umschalten
-      name: Tier natürlicher Laich
+      description: Natürliches Spawnen von Tieren umschalten
+      name: Tier
     ANIMAL_SPAWNERS_SPAWN:
-      description: Schalten Sie das Laichen von Tieren mit Spawnern um
-      name: Tierlaicher
+      description: Schaltet das Spawnen von Tieren mit Spawnern um
+      name: Tierspawner
     ANVIL:
       description: Interaktion umschalten
       name: Ambosse
@@ -1283,7 +1284,7 @@ protection:
         &a spawnen in diesem Spiel
         &a Modus.
       name: "&e Beschränken Sie das Spawnen des Entitätstyps"
-      can: "&a Kann laichen"
+      can: "&a Kann spawnen"
       cannot: "&c Kann nicht spawnen"
     LIQUIDS_FLOWING_OUT:
       name: Flüssigkeiten, die aus den Inseln herausfließen
