@@ -1209,19 +1209,19 @@ protection:
     HARVEST:
       description: |-
         &a Legt fest, wer Getreide ernten kann.
-        &a Vergessen Sie nicht, das Element zuzulassen
-        &eine Abholung auch!
+        &a Vergiss nicht, das Item aufsammeln auch zuzulassen
+        &a zuzulassen!
       name: Ernte
-      hint: Ernteernte deaktiviert
+      hint: Ernte deaktiviert
     HIVE:
       description: "&a Bienenstockernte umschalten."
       name: Bienenstockernte
-      hint: Ernte behindert
+      hint: Ernte deaktiviert
     HURT_TAMED_ANIMALS:
       description: Verletzen ein-/ausschalten. Aktiviert bedeutet, dass gezähmte Tiere
-        Schaden nehmen können. Deaktiviert bedeutet, dass sie unbesiegbar sind.
-      name: Verletzte gezähmte Tiere
-      hint: Gezähmtes Tier, das Behinderte verletzt
+        Schaden nehmen können. Deaktiviert bedeutet, dass sie nicht verletzt werden können.
+      name: Verletze gezähmte Tiere
+      hint: Gezähmtes Tier verletzen deaktivert
     HURT_ANIMALS:
       description: Umschalten des Verletzens
       name: Tiere verletzen
@@ -1241,9 +1241,9 @@ protection:
       hint: Item Rahmen Nutzung deaktiviert
     ITEM_FRAME_DAMAGE:
       description: "&a Mobs können \n&a Item-Rahmen beschädigen"
-      name: Item Rahmenschäden
+      name: Itemrahmenschäden
     INVINCIBLE_VISITORS:
-      description: "&a Konfigurieren Sie unbesiegbare Besucher \n&a Einstellungen."
+      description: "&a Unbesiegbare Besucher"
       name: "&e Unbesiegbare Besucher"
       hint: "&c Besucher geschützt"
     ISLAND_RESPAWN:
@@ -1273,17 +1273,16 @@ protection:
       description: "&a Erlaubt es, Bücher auf ein Lesepult zu legen \n&a oder Bücher
         daraus zu nehmen.\n\n&c Es hindert die Spieler nicht daran, \n&c die Bücher
         zu lesen."
-      hint: Kann kein Buch auf ein Lesepult legen oder ein Buch daraus nehmen.
+      hint: Interaktion mit Lesepulten deaktiviert
     LEVER:
       description: Umschalten der Nutzung
-      name: Hebel benutzen
+      name: Hebeln benutzen
       hint: Nutzung von Hebeln deaktiviert
     LIMIT_MOBS:
       description: |-
-        &a Limitgesellschaften von
-        &a spawnen in diesem Spiel
-        &a Modus.
-      name: "&e Beschränken Sie das Spawnen des Entitätstyps"
+        &a Limitiert das Erscheinen von
+        &a Mobs in diesem Spielmodus
+      name: "&e Beschränkt das Spawnen des Entitätstyps"
       can: "&a Kann spawnen"
       cannot: "&c Kann nicht spawnen"
     LIQUIDS_FLOWING_OUT:
@@ -1300,8 +1299,8 @@ protection:
     CHANGE_SETTINGS:
       name: Einstellungen ändern
       description: |-
-        &a Ermöglicht den Wechsel des Mitglieds
-        &eine Rolle kann Inseleinstellungen ändern.
+        &a Ermöglicht Mitgliedern das Ändern
+        &a von Inseleinstellungen.
     MILKING:
       description: Umschalten des Melkens von Kühen
       name: Melken
@@ -1311,21 +1310,21 @@ protection:
       description: Umschalten von Minecart-Interaktionen
       hint: Minecart-Interaktion deaktiviert
     MONSTER_NATURAL_SPAWN:
-      description: Toggle Natürliches Monsterspawnen
-      name: Monster natürlicher Spawn
+      description: Schaltet natürliches Monsterspawnen um
+      name: Natürlicher Monsterspawn
     MONSTER_SPAWNERS_SPAWN:
-      description: Schalten Sie das Spawnen von Monstern mit Spawnern um
+      description: Schaltet das Spawnen von Monstern mit Spawnern um
       name: Monsterspawner
     MOUNT_INVENTORY:
-      description: "&a Umschalten des Zugriffs \n&a zum Montieren des Inventars"
-      name: Inventar montieren
-      hint: Montage des Inventars deaktiviert
+      description: "&a Umschalten des Zugriffs \n&a auf Reittierinventare"
+      name: Reittierinventare
+      hint: Reittierinventare deaktiviert
     NAME_TAG:
       name: Namensschilder
       description: Umschalten der Nutzung
       hint: Namensschild-Interaktion deaktiviert
     NATURAL_SPAWNING_OUTSIDE_RANGE:
-      name: Natürliches Kreatur spawning ausser Reichweite
+      name: Natürliche Spawns außerhalb des Schutzbereiches
       description: "&a Umschalten, ob Kreaturen (Tiere und \n&a Monster) außerhalb
         \n&a des Schutzbereichs einer Insel natürlich spawnen können.\n\n&c Beachte,
         dass es Kreaturen \n&c nicht daran hindert, über einen Mob-Spawner oder ein
@@ -1333,33 +1332,33 @@ protection:
     NOTE_BLOCK:
       description: Umschalten der Nutzung
       name: Notenblock
-      hint: Notenblock Interaktion deaktiviert
+      hint: Notenblockinteraktion deaktiviert
     OBSIDIAN_SCOOPING:
-      name: Obsidian-Schaufeln
-      description: "&a Umschalten der Schaufel \n&a Erlaubt es, Obsidian mit einem
-        leeren Eimer zurück in die Lava umzuwandeln \n&a Schützt Neulinge. Reduziert
+      name: Schöpfen von Obsidian
+      description: "&a Umschalten des Schöpfens \n&a Erlaubt es, Obsidian mit einem
+        leeren Eimer zurück in die Lava umzuwandeln \n&a Hilft Neulingen und reduziert
         Resets."
       scooping: "&a Obsidian wieder in Lava verwandelt. Sei nächstes Mal vorsichtig!"
       obsidian-nearby: "&c Es gibt Obsidianblöcke in der Nähe, du kannst diesen Block
-        nicht in Lava schaufeln."
+        nicht in Lava umwandeln."
     OFFLINE_GROWTH:
       description: "&a Wenn deaktiviert, wachsen Pflanzen \n&a nicht auf Inseln \n&a,
-        auf welchen alle Mitglieder offline sind. \n&a Kann helfen, Lags zu reduzieren."
+        auf denen alle Mitglieder offline sind. \n&a Kann helfen, Lags zu reduzieren."
       name: Offline-Wachstum
     OFFLINE_REDSTONE:
-      description: "&a Wenn deaktiviert, wird redstone \n&a nicht auf Inseln \n&a
+      description: "&a Wenn deaktiviert, wird Redstone \n&a nicht auf Inseln \n&a
         funktionieren, auf denen alle Mitglieder offline sind. \n&a Kann helfen, Lags
         zu reduzieren. \n&a Hat keinen Einfluss auf die Spawn-Insel."
       name: Offline Redstone
     PETS_STAY_AT_HOME:
       description: |-
-        &a Wenn sie aktiv sind, können
+        &a Wenn aktiv, können
         &a gezähmte Haustiere nur auf die
         &a Heimatinsel des Besitzers gehen
         &a und sie nicht verlassen.
       name: Haustiere bleiben zu Hause
     PISTON_PUSH:
-      description: "&a Aktivieren Sie diese Option, um zu \n&a verhindern, dass Kolben
+      description: "&a Aktiviere diese Option, um zu \n&a verhindern, dass Kolben
         Blöcke außerhalb\n&a der Insel drücken."
       name: Kolben schieben
     PLACE_BLOCKS:
@@ -1373,11 +1372,11 @@ protection:
     NETHER_PORTAL:
       description: Umschalten der Nutzung
       name: Nether Portal
-      hint: Portalnutzung deaktiviert
+      hint: Netherportalnutzung deaktiviert
     END_PORTAL:
       description: Umschalten der Nutzung
       name: End Portal
-      hint: Portalnutzung deaktiviert
+      hint: Endportalnutzung deaktiviert
     PRESSURE_PLATE:
       description: Umschalten der Nutzung
       name: Druckplatten
@@ -1386,18 +1385,18 @@ protection:
       description: |-
         &c PVP aktivieren/deaktivieren
         &c im End.
-      name: End PVP
+      name: PVP im End
       hint: PVP im End deaktiviert
-      enabled: "&c Der PVP am Ende wurde aktiviert."
-      disabled: "&a Der PVP am Ende wurde deaktiviert."
+      enabled: "&c Das PVP im End wurde aktiviert."
+      disabled: "&a Das PVP im End wurde deaktiviert."
     PVP_NETHER:
       description: |-
         &c PVP aktivieren/deaktivieren
         &c im Nether.
       name: Nether PVP
       hint: PVP im Nether deaktiviert
-      enabled: "&c Der PVP im Nether wurde aktiviert."
-      disabled: "&a Der PVP im Nether wurde deaktiviert."
+      enabled: "&c Das PVP im Nether wurde aktiviert."
+      disabled: "&a Das PVP im Nether wurde deaktiviert."
     PVP_OVERWORLD:
       description: |-
         &c PVP aktivieren/deaktivieren
