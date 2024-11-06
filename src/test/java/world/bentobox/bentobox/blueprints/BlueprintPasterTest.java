@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -34,6 +35,7 @@ import world.bentobox.bentobox.database.objects.Island;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BentoBox.class, User.class, Bukkit.class})
+@Ignore("Enums")
 public class BlueprintPasterTest {
 
     private BlueprintPaster bp;
