@@ -1410,9 +1410,9 @@ protection:
       name: Redstone Items
       hint: Redstone-Interaktion deaktiviert
     REMOVE_END_EXIT_ISLAND:
-      description: "&a Verhindert, dass die \n&a Endausgangsinsel bei den Koordinaten
+      description: "&a Verhindert, dass die \n&a Ausgangsinsel vom End bei den Koordinaten
         0,0 \n&a erzeugt wird"
-      name: Entfernen der Endausgangsinsel
+      name: Entfernen der Ausgangsinsel vom End
     REMOVE_MOBS:
       description: "&a Entferne Monster, wenn \n&a sie sich auf die Insel teleportieren"
       name: Monster entfernen
@@ -1431,8 +1431,8 @@ protection:
     SPAWNER_SPAWN_EGGS:
       description: "&a Erlaubt die Änderung des Entitätstyps \n&a eines Spawners unter
         Verwendung von Spawn-Eiern."
-      name: Spawneier auf spawnern
-      hint: changing a spawner's entity type using spawn eggs is not allowed
+      name: Spawner ändern
+      hint: Das Ändern von Spawnern ist nicht gestattet
     SCULK_SENSOR:
       description: |-
         &a Schaltet den Sculk-Sensor um
@@ -1441,16 +1441,16 @@ protection:
       hint: Die Aktivierung des Sculk-Sensors ist deaktiviert
     SCULK_SHRIEKER:
       description: |-
-        &a Schaltet den Sculk-Schreier um
-        &a Aktivierung.
-      name: Sculk-Schreier
-      hint: Die Aktivierung von Sculk Shrieker ist deaktiviert
+        &a Schaltet die Aktivierung von
+        &a Sculk-Kreischern um.
+      name: Sculk-Kreischer
+      hint: Die Aktivierung von Sculk-Kreischern ist deaktiviert
     SIGN_EDITING:
       description: |-
         &a Ermöglicht Textbearbeitung
-        &a von Zeichen
-      name: Zeichenbearbeitung
-      hint: Die Zeichenbearbeitung ist deaktiviert
+        &a von Schildern
+      name: Schildbearbeitung
+      hint: Die Schildbearbeitung ist deaktiviert
     TNT_DAMAGE:
       description: "&a Erlaubt es TNT und TNT-Minecarts \n&a Blöcke zu zerstören und
         Objekte \n&a zu beschädigen."
@@ -1462,38 +1462,38 @@ protection:
       hint: TNT Zündung deaktiviert
     TRADING:
       description: Handel umschalten
-      name: Villager Handel
-      hint: Handel mit Villagern deaktiviert
+      name: Dorfbewohnerhandel
+      hint: Handel mit Dorfbewohnern deaktiviert
     TRAPDOOR:
       description: Zugriff umschalten
       name: Falltüren
       hint: Nutzung von Falltüren deaktiviert
     TREES_GROWING_OUTSIDE_RANGE:
-      name: Bäume, die ausserhalb der Reichweite wachsen
+      name: Bäume, die ausserhalb des Inselbereichs wachsen
       description: "&a Umschalten, ob Bäume außerhalb des Schutzbereichs einer \n&a
         Insel wachsen können oder nicht. \n&a Es verhindert nicht nur, dass die Setzlinge
         \n&a außerhalb des Schutzbereichs einer Insel \n&a wachsen, sondern blockiert
-        auch die Erzeugung \n&a von Blättern/Stämmen außerhalb der Insel, also \n&a
-        das Fällen des Baumes."
+        auch die Erzeugung \n&a von Blättern/Stämmen außerhalb der Insel, was wichtig für \n&a
+        das Fällen des Baumes ist."
     TURTLE_EGGS:
-      description: Zerkleinerung umschalten
+      description: Zertreten umschalten
       name: Schildkröteneier
-      hint: Schildkrötenei Zerdrücken deaktiviert
+      hint: Zertreten von Schildkröteneiern deaktiviert
     FROST_WALKER:
       description: Verzauberung Eisläufer umschalten
       name: Eisläufer
       hint: Eisläufer deaktiviert
     EXPERIENCE_PICKUP:
       name: Erfahrung aufnehmen
-      description: Erfahrungskugel-Aufnahme umschalten
+      description: Aufsammeln von Erfahrung umschalten
       hint: Erfahrung aufnehmen deaktiviert
     PREVENT_TELEPORT_WHEN_FALLING:
-      name: Verhindert den Teleport bei einem Sturz
+      name: Verhindert den Teleport beim Fallen
       description: "&a Verhindert, dass Spieler sich mit einem Befehl \n&a zurück
         auf ihre Insel teleportieren, \n&a wenn sie fallen."
       hint: "&c Das kannst du nicht machen, wenn du fällst."
     VISITOR_KEEP_INVENTORY:
-      name: Besucher führen eine Bestandsaufnahme des Todes
+      name: Besucher behalten ihr Inventar beim Tod
       description: |-
         &a Verhindern Sie, dass Spieler ihre
         &a Gegenstände und Erfahrungen
@@ -1509,33 +1509,32 @@ protection:
         &a Heimatinsel des Besitzers gehen
         &a und sie nicht verlassen.
     VISITOR_TRIGGER_RAID:
-      name: Besucher lösen Razzien aus
+      name: Besucher können Raids auslösen
       description: |-
-        &a Schaltet um, ob Besucher starten können
-        &a ein Überfall auf eine Insel, die sie sind
-        &ein Besuch.
-        &A
-        &ein Bad Omen-Effekt wird entfernt!
+        &a Schaltet um, ob Besucher Rais auf
+        &a Inseln starten können, die sie Besuchen.
+        &a
+        &a Der Bad Omen-Effekt wird entfernt!
     ENTITY_PORTAL_TELEPORT:
-      name: Nutzung des Entitätsportals
+      name: Portalnutzung durch Entitäten
       description: |-
-        &a Schaltet um, ob Entitäten (Nicht-Spieler) dies können
-        &a nutzen Portale, um zwischen ihnen zu teleportieren
-        &a Dimensionen
+        &a Schaltet um, ob Entitäten (Nicht-Spieler) 
+        &a Portale nutzen können, um zwischen
+        &a Dimensionen zu teleportieren
     WITHER_DAMAGE:
       name: Umschalten von Wither-Schäden
       description: "&a Wenn aktiv, kann der Wither \n&a Blöcke und Spieler schädigen"
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
-        &a Bett- und Respawn-Anker zulassen
-        &a, um Blöcke zu zerstören und zu beschädigen
-        &a Entitäten außerhalb der Inselgrenzen.
+        &a Bett- und Respawn-Anker können Blöcke und
+        &a Entitäten außerhalb der Inselgrenzen verletzen.
       name: Weltblock-Explosionsschaden
     WORLD_TNT_DAMAGE:
       description: |-
-        &a TNT- und TNT-Minecarts zulassen
-        &a um Blöcke zu brechen und zu beschädigen
-        &a Entitäten außerhalb der Inselgrenzen.
+        &a TNT- und TNT-Minecarts können
+        &a außerhalb der Inselgrenzen
+        &a Blöcke zerstören und Entitäten
+        &a verletzen.
       name: Welt-TNT-Schaden
   locked: "&c Diese Insel ist gesperrt!"
   protected: "&c Insel geschützt: [description]"
@@ -1552,12 +1551,12 @@ protection:
         name: "&a Grundeinstellungen"
         description: "&a Zeigt die nützlichsten Einstellungen an."
       expert:
-        name: "&c Experten Einstellungen"
+        name: "&c Experteneinstellungen"
         description: "&a Zeigt alle verfügbaren Einstellungen an."
-      click-to-switch: "&e Klick &a, zum wechseln zum  &r [next]&r &a ."
+      click-to-switch: "&e Klicken&a, zum wechseln zu&r [next]&r&a."
     reset-to-default:
       name: "&c Zurücksetzen auf Standard"
-      description: "&a Setzt &c &l ALLE &r &a Einstellungen auf ihren \n&a Standardwert
+      description: "&a Setzt&c&l ALLE&r&a Einstellungen auf ihren \n&a Standardwert
         zurück."
     PROTECTION:
       title: "&6 Schutz"
@@ -1587,7 +1586,7 @@ protection:
         &a [description]
 
         &7 Aktuelle Einstellung: [setting]
-      setting-active: "&a Aktiv"
+      setting-active: "&a Aktiviert"
       setting-disabled: "&c Deaktiviert"
 management:
   panel:
@@ -1595,7 +1594,7 @@ management:
     views:
       gamemodes:
         name: "&6 Gamemodes"
-        description: "&e Klick &a um die aktuell geladenen Spielmodi anzuzeigen"
+        description: "&e Klicke&a, um die aktuell geladenen Spielmodi anzuzeigen"
         blueprints:
           name: "&6 Blaupausen"
           description: "&a Öffnet das Admin-Blaupausenmenü."
@@ -1604,14 +1603,14 @@ management:
           description: "&a Inseln: &b [islands]"
       addons:
         name: "&6 Addons"
-        description: "&e Klick &a um die aktuell geladenen Addons anzuzeigen"
+        description: "&e Klicke&a, um die aktuell geladenen Addons anzuzeigen"
       hooks:
         name: "&6 Haken"
-        description: "&e klicken &a um die aktuell geladenen Haken anzuzeigen"
+        description: "&e Klicke,&a um die aktuell geladenen Haken anzuzeigen"
     actions:
       reload:
         name: "&c Neu laden"
-        description: "&e Klick &c &l zweimal &r &a um BentoBox neu zu laden"
+        description: "&e Klicke&c&l zweimal&r&a um BentoBox neu zu laden"
     buttons:
       catalog:
         name: "&6 Addon Katalog"
@@ -1626,21 +1625,21 @@ management:
       state:
         name: "&6 Kompatibilität"
         description:
-          COMPATIBLE: "&a Ausführung &e [name] [Version]&a .\n\n&a BentoBox läuft
-            derzeit auf einer \n&a &l KOMPATIBELEN &r &a Server Software und \n&a
+          COMPATIBLE: "&a Ausführung &e [name] [Version]&a.\n\n&a BentoBox läuft
+            derzeit auf einer \n&a&l KOMPATIBLEN&r&a Server-Software und \n&a
             Version.\n\n&a Seine Funktionen sind vollständig darauf ausgelegt, \n&a
             in dieser Umgebung zu laufen."
-          SUPPORTED: "&a Ausführung &e [name] [Version]&a .\n\n&a BentoBox läuft derzeit
-            auf einer \n&a &l UNTERSTÜTZTEN &r &a Server-Software und einer \n&a Version.\n\n&a
+          SUPPORTED: "&a Ausführung &e [name] [Version]&a.\n\n&a BentoBox läuft derzeit
+            auf einer \n&a&l UNTERSTÜTZTEN&r&a Server-Software und einer \n&a Version.\n\n&a
             Die meisten seiner Funktionen werden \n&a in dieser Umgebung problemlos
             laufen."
-          NOT_SUPPORTED: "&a Ausführung &e [name] [Version]&a .\n\n&a BentoBox läuft
-            derzeit auf einer \n&6 &l NICHT UNTERSTÜTZTEN &r &a Server-Software oder
+          NOT_SUPPORTED: "&a Ausführung &e [name] [Version]&a.\n\n&a BentoBox läuft
+            derzeit auf einer \n&6&l NICHT UNTERSTÜTZTEN &r&aServer-Software oder
             \n&a Version.\n\n&a Während die meisten seiner Funktionen \n&a korrekt
-            ausgeführt werden, ist mit &6 plattformspezifischen Fehlern oder \n&6
-            Problemen zu rechnen&a ."
-          INCOMPATIBLE: "&a Ausführung &e [name] [Version]&a .\n\n&a BentoBox läuft
-            derzeit auf einer \n&c &l INKOMPATIBELEN &r &a Server-Software oder \n&a
+            ausgeführt werden, ist mit&6 plattformspezifischen Fehlern oder \n&6
+            Problemen zu rechnen&a."
+          INCOMPATIBLE: "&a Ausführung &e [name] [Version]&a.\n\n&a BentoBox läuft
+            derzeit auf einer \n&c &l INKOMPATIBLEN&r&a Server-Software oder \n&a
             Version.\n\n&c Seltsames Verhalten und Fehler können auftreten \n&c und
             die meisten Funktionen können instabil sein."
 catalog:
@@ -1660,12 +1659,12 @@ catalog:
           zu blättern."
     icon:
       description-template: "&8 [topic]\n&a [install]\n\n&7 &o [description]\n\n&e
-        Klick &a, um den Link zur neuesten Version \n&a zu erhalten."
+        Klicke&a, um den Link zur neuesten Version \n&a zu erhalten."
       already-installed: Bereits installiert!
       install-now: Jetzt installieren!
     empty-here:
       name: "&b Hier sieht es leer aus..."
-      description: "&c BentoBox konnte keine Verbindung zu GitHub herstellen.\n\nErlaubt
+      description: "&c BentoBox konnte keine Verbindung zu GitHub herstellen.\n\nErlaube
         BentoBox die Verbindung zu GitHub in \n&a der Konfiguration oder versuche
         es später noch einmal."
 enums:
@@ -1681,7 +1680,7 @@ enums:
     MELTING: Schmelzen
     LAVA: Lava
     DROWNING: Ertrinken
-    BLOCK_EXPLOSION: Explosion blockieren
+    BLOCK_EXPLOSION: Blockexplosion
     ENTITY_EXPLOSION: Entitätsexplosion
     VOID: Leere
     LIGHTNING: Blitz
@@ -1693,25 +1692,25 @@ enums:
     FALLING_BLOCK: Fallender Block
     THORNS: Dornen
     DRAGON_BREATH: Drachenatem
-    CUSTOM: Brauch
+    CUSTOM: Benutzerdefiniert
     FLY_INTO_WALL: In die Wand fliegen
     HOT_FLOOR: Heißer Boden
-    CRAMMING: Pauken
+    CRAMMING: Cramming
     DRYOUT: Austrocknen
-    FREEZE: Einfrieren
+    FREEZE: Erfrieren
     KILL: Töten
     SONIC_BOOM: Überschallknall
     WORLD_BORDER: Weltgrenze
 panel:
   credits:
-    title: "&8 [name] &2 Credits"
+    title: "&8 [name]&2 Credits"
     contributor:
       name: "&a [name]"
-      description: "&a Verpflichtungen: &b [commits]"
+      description: "&a Beiträge:&b [commits]"
     empty-here:
       name: "&c Hier sieht es leer aus..."
       description: "&c BentoBox konnte die Mitwirkenden \n&c für dieses Addon nicht
-        erfassen.\n\n&a BentoBox erlauben, sich mit GitHub in \n&a der Konfiguration
+        erfassen.\n\n&a BentoBox in der Konfiguration erlauben, sich mit GitHub \n&a
         zu verbinden oder es später erneut versuchen."
 panels:
   island_creation:
@@ -1720,10 +1719,10 @@ panels:
       bundle:
         name: "&l [name]"
         description: "[description]"
-        uses: "&a Verwendet [number]/[max]"
+        uses: "&a Verwendung [number]/[max]"
         unlimited: "&a Unbegrenzte Nutzung erlaubt"
   language:
-    title: "&2&l Wählen Sie Ihre Sprache"
+    title: "&2&l Sprache wählen"
     buttons:
       language:
         name: "&f&l [name]"
@@ -1741,13 +1740,13 @@ panels:
       name: "&f&l Nächste Seite"
       description: "&7 Zur Seite [number] wechseln"
   tips:
-    click-to-next: "&e Klicken Sie auf &7, um weiterzugehen."
-    click-to-previous: "&e Klicken Sie auf &7, um zum vorherigen zu gelangen."
-    click-to-choose: "&e Klicken Sie zum Auswählen auf &7."
-    click-to-toggle: "&e Klicken Sie zum Umschalten auf &7."
-    left-click-to-cycle-down: "&e Klicken Sie mit der linken Maustaste auf &7, um
+    click-to-next: "&e Klicken&7, um weiterzugehen."
+    click-to-previous: "&e Klicken&7, um zum zurückgehen."
+    click-to-choose: "&e Klicken&7 zum Auswählen."
+    click-to-toggle: "&e Klicken&7 zum Umschalten."
+    left-click-to-cycle-down: "&e Linksklicken &7, um
       nach unten zu blättern."
-    right-click-to-cycle-up: "&e Klicken Sie mit der rechten Maustaste auf &7, um
+    right-click-to-cycle-up: "&e Rechtsklicken &7, um
       nach oben zu blättern."
 successfully-loaded: |-
   &6   ____             _        ____
