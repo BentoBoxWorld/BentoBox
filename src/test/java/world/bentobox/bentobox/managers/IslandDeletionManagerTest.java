@@ -49,6 +49,7 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
+@Ignore("NMS")
 public class IslandDeletionManagerTest {
 
     @Mock

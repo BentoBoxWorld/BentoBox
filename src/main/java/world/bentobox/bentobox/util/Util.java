@@ -712,7 +712,7 @@ public class Util {
      * @param player - player
      */
     public static void resetHealth(Player player) {
-        double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+        double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
         player.setHealth(maxHealth);
     }
 
