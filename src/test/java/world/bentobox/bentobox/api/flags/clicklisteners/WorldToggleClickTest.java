@@ -19,7 +19,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -37,6 +36,7 @@ import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -58,10 +58,9 @@ public class WorldToggleClickTest {
     @Mock
     private World world;
 
-    /**
-     */
     @Before
     public void setUp() throws Exception {
+        ServerMocks.newServer();
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
@@ -105,6 +104,7 @@ public class WorldToggleClickTest {
 
     @After
     public void tearDown() {
+        ServerMocks.unsetBukkitServer();
         Mockito.framework().clearInlineMocks();
     }
 
@@ -112,7 +112,6 @@ public class WorldToggleClickTest {
      * Test for {@link WorldToggleClick#onClick(Panel, User, ClickType, int)}
      */
     @Test
-    @Ignore("Enums")
     public void testOnClickNoPermission() {
         when(user.hasPermission(anyString())).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
@@ -124,7 +123,6 @@ public class WorldToggleClickTest {
      * Test for {@link WorldToggleClick#onClick(Panel, User, ClickType, int)}
      */
     @Test
-    @Ignore("Enums")
     public void testOnClick() {
         when(user.hasPermission(anyString())).thenReturn(true);
         listener.onClick(panel, user, ClickType.LEFT, 0);

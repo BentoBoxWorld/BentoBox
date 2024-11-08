@@ -37,7 +37,6 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -61,6 +60,7 @@ import world.bentobox.bentobox.blueprints.BlueprintPaster;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -99,11 +99,12 @@ public class BlueprintsManagerTest {
     private BukkitTask task;
 
     private int times;
-    @Mock
+
     private Server server;
 
     @Before
     public void setUp() throws Exception {
+        server = ServerMocks.newServer();
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -188,6 +189,7 @@ public class BlueprintsManagerTest {
      */
     @After
     public void tearDown() throws Exception {
+        ServerMocks.unsetBukkitServer();
         // Clean up file system
         deleteDir(dataFolder.toPath());
         // Delete addon.jar
@@ -259,7 +261,6 @@ public class BlueprintsManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprintBundles(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
-    @Ignore("Enums")
     public void testLoadBlueprintBundlesNoBlueprintFolder() {
         // Set up running and verification
         when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
@@ -280,7 +281,6 @@ public class BlueprintsManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprintBundles(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
-    @Ignore("Enums")
     public void testLoadBlueprintBundles() {
         // Set up running and verification
         when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
@@ -319,7 +319,6 @@ public class BlueprintsManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
-    @Ignore("Enums")
     public void testLoadBlueprints() {
         // Set up running and verification
         when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
@@ -352,7 +351,6 @@ public class BlueprintsManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#saveBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    @Ignore("Enums")
     public void testSaveBlueprint() {
         // Save it
         BlueprintsManager bpm = new BlueprintsManager(plugin);
@@ -650,7 +648,6 @@ public class BlueprintsManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#renameBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint, java.lang.String, java.lang.String)}.
      */
     @Test
-    @Ignore("Enums")
     public void testRenameBlueprint() {
         // Save it
         BlueprintsManager bpm = new BlueprintsManager(plugin);

@@ -26,8 +26,13 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
+import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
@@ -216,10 +221,24 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 try {
                     // Floats need special handling because the database returns them as doubles
                     Type setType = propertyDescriptor.getWriteMethod().getGenericParameterTypes()[0];
+                    BentoBox.getInstance().logDebug("name = " + setType.getTypeName());
+                    plugin.logError("Default setting value will be used: "
+                            + propertyDescriptor.getReadMethod().invoke(instance));
+                    plugin.logError(method.getName());
+                    plugin.logError(propertyDescriptor.getReadMethod().getName());
+                    plugin.logError(instance.toString());
                     if (setType.getTypeName().equals("float")) {
                         double d = (double) setTo;
                         float f = (float)d;
                         method.invoke(instance, f);
+                    } else if (setType.getTypeName().equals("org.bukkit.Sound")) {
+                        Sound s = Registry.SOUNDS
+                                .get(NamespacedKey.fromString(((String) setTo).toLowerCase(Locale.ENGLISH)));
+                        method.invoke(instance, s);
+                    } else if (setType.getTypeName().equals("org.bukkit.block.Biome")) {
+                        Biome b = Registry.BIOME
+                                .get(NamespacedKey.fromString(((String) setTo).toLowerCase(Locale.ENGLISH)));
+                        method.invoke(instance, b);
                     } else {
                         method.invoke(instance, setTo);
                     }
@@ -368,8 +387,9 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Get the read method
             Method method = propertyDescriptor.getReadMethod();
             // Invoke the read method to get the value. We have no idea what type of value it is.
+            BentoBox.getInstance().logDebug("Method is " + method.getName());
             Object value = method.invoke(instance);
-
+            BentoBox.getInstance().logDebug("Value is " + value);
             String storageLocation = field.getName();
 
             // Check if there is an annotation on the field
@@ -395,6 +415,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             }
 
             if (!checkAdapter(field, config, storageLocation, value)) {
+                BentoBox.getInstance().logDebug("No adapter");
                 // Set the filename if it has not be set already
                 if (filename.isEmpty() && method.getName().equals("getUniqueId")) {
                     // Save the name for when the file is saved
@@ -407,6 +428,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     serializeSet((Set<Object>)value, config, storageLocation);
                 } else {
                     // For all other data that doesn't need special serialization
+                    BentoBox.getInstance().logDebug("For all other data that doesn't need special serializationr");
                     config.set(storageLocation, serialize(value));
                 }
             }
@@ -561,6 +583,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private Object serialize(@Nullable Object object) {
         // Null is a value object and is serialized as the string "null"
         if (object == null) {
+            BentoBox.getInstance().logDebug("Object is null");
             return "null";
         }
         // UUID has it's own serialization, that is not picked up automatically
@@ -574,6 +597,11 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Location
         if (object instanceof Location l) {
             return Util.getStringLocation(l);
+        }
+        // Keyed interfaces that are replacing enums
+        if (object instanceof Keyed k) {
+            BentoBox.getInstance().logDebug("Object is keyed");
+            return k.getKey().getKey();
         }
         // Enums
         if (object instanceof Enum<?> e) {

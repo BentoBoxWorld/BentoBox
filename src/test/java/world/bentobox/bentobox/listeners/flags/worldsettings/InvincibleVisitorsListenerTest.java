@@ -41,7 +41,6 @@ import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -63,6 +62,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -91,10 +91,9 @@ public class InvincibleVisitorsListenerTest {
     @Mock
     private PluginManager pim;
 
-    /**
-     */
     @Before
     public void setUp() throws Exception {
+        ServerMocks.newServer();
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
@@ -187,6 +186,7 @@ public class InvincibleVisitorsListenerTest {
 
     @After
     public void tearDown() {
+        ServerMocks.unsetBukkitServer();
         User.clearUsers();
         framework().clearInlineMocks();
     }
@@ -199,7 +199,6 @@ public class InvincibleVisitorsListenerTest {
     }
 
     @Test
-    @Ignore("Enums")
     public void testOnClickNoPermission() {
         when(user.hasPermission(anyString())).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
