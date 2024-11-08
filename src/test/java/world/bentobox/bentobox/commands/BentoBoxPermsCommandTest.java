@@ -106,12 +106,9 @@ public class BentoBoxPermsCommandTest extends AbstractCommonSetup {
         cmd = new BentoBoxPermsCommand(ac);
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
     @After
     public void tearDown() throws Exception {
-        Mockito.framework().clearInlineMocks();
+        super.tearDown();
     }
 
     /**

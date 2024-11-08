@@ -29,7 +29,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -126,9 +125,8 @@ public abstract class RanksManagerBeforeClassTest extends AbstractCommonSetup {
     }
 
     @After
-    public void tearDown() throws IOException {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    public void tearDown() throws Exception {
+        super.tearDown();
         deleteAll(new File("database"));
         deleteAll(new File("database_backup"));
     }

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.framework;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -152,9 +151,8 @@ public class AdminTeamDisbandCommandTest extends AbstractCommonSetup {
     }
 
     @After
-    public void tearDown() {
-        User.clearUsers();
-        framework().clearInlineMocks();
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

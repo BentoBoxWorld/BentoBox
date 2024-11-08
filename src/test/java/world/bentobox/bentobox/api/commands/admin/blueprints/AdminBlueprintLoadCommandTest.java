@@ -24,7 +24,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -43,6 +43,7 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 
 /**
  * @author tastybento
@@ -68,8 +69,11 @@ public class AdminBlueprintLoadCommandTest {
     private Map<String, Blueprint> map;
     private File blueprintsFolder;
 
-    /**
-     */
+    @BeforeClass
+    public static void beforeClass() {
+        ServerMocks.newServer();
+    }
+
     @Before
     public void setUp() throws Exception {
         // Set up plugin
@@ -125,8 +129,6 @@ public class AdminBlueprintLoadCommandTest {
         abcc = new AdminBlueprintLoadCommand(ac);
     }
 
-    /**
-     */
     @After
     public void tearDown() throws Exception {
         User.clearUsers();
@@ -181,7 +183,6 @@ public class AdminBlueprintLoadCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    @Ignore("Enums")
     public void testExecuteUserStringListOfStringSuccessCaps() {
         assertTrue(abcc.execute(user, "", List.of("island")));
         verify(user).sendMessage("general.success");

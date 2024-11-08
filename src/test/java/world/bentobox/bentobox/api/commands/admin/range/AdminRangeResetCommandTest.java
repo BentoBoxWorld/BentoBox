@@ -117,9 +117,8 @@ public class AdminRangeResetCommandTest extends AbstractCommonSetup {
     }
 
     @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
