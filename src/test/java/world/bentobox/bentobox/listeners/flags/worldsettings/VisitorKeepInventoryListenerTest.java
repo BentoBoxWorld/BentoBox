@@ -111,12 +111,9 @@ public class VisitorKeepInventoryListenerTest extends AbstractCommonSetup {
         l = new VisitorKeepInventoryListener();
     }
 
-    /**
-     */
     @After
     public void tearDown() throws Exception {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+        super.tearDown();
     }
 
     /**

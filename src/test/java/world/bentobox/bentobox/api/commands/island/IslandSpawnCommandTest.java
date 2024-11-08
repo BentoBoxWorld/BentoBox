@@ -130,12 +130,9 @@ public class IslandSpawnCommandTest extends AbstractCommonSetup {
         isc = new IslandSpawnCommand(ic);
     }
 
-    /**
-     */
     @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

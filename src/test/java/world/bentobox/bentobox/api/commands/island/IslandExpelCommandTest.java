@@ -21,13 +21,12 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -75,12 +74,11 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
     private Addon addon;
 
     private IslandExpelCommand iec;
-    @Mock
-    private Server server;
-
+    
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
         User.setPlugin(plugin);
 
         // Command manager
@@ -97,7 +95,6 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
         when(mockPlayer.getServer()).thenReturn(server);
         when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
@@ -153,6 +150,11 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
 
         // Class
         iec = new IslandExpelCommand(ic);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -369,7 +371,6 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
      * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    @Ignore("Enums")
     public void testExecuteUserStringListOfStringHasIsland() {
         testCanExecute();
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
@@ -383,7 +384,6 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
      * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    @Ignore("Enums")
     public void testExecuteUserStringListOfStringNoIslandSendToSpawn() {
         Optional<Island> optionalIsland = Optional.of(island);
         when(im.getSpawn(any())).thenReturn(optionalIsland);
@@ -400,7 +400,6 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
      * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    @Ignore("Enums")
     public void testExecuteUserStringListOfStringCreateIsland() {
         GameModeAddon gma = mock(GameModeAddon.class);
         CompositeCommand pc = mock(CompositeCommand.class);
@@ -423,7 +422,6 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
      * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    @Ignore("Enums")
     public void testExecuteUserStringListOfStringCreateIslandFailCommand() {
         GameModeAddon gma = mock(GameModeAddon.class);
         CompositeCommand pc = mock(CompositeCommand.class);

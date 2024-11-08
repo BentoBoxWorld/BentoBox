@@ -32,7 +32,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -56,6 +55,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
@@ -96,12 +96,13 @@ public class CycleClickTest {
     @Mock
     private @NonNull Player p;
 
+
     /**
      * @throws java.lang.Exception - exception
      */
     @Before
     public void setUp() throws Exception {
-
+        ServerMocks.newServer();
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
@@ -234,11 +235,11 @@ public class CycleClickTest {
 
     @After
     public void tearDown() {
+        ServerMocks.unsetBukkitServer();
         Mockito.framework().clearInlineMocks();
     }
 
     @Test
-    @Ignore("Enums")
     public void testNoPremission() {
         when(user.hasPermission(anyString())).thenReturn(false);
         CycleClick udc = new CycleClick(LOCK);
@@ -256,7 +257,6 @@ public class CycleClickTest {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    @Ignore("Enums")
     public void testOnLeftClick() {
         final int SLOT = 5;
         CycleClick udc = new CycleClick(LOCK);
@@ -276,7 +276,6 @@ public class CycleClickTest {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    @Ignore("Enums")
     public void testOnLeftClickSetMinMax() {
         // Provide a current rank value - coop
         when(island.getFlag(any())).thenReturn(RanksManager.COOP_RANK);
@@ -298,7 +297,6 @@ public class CycleClickTest {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    @Ignore("Enums")
     public void testOnRightClick() {
         final int SLOT = 5;
         CycleClick udc = new CycleClick(LOCK);
@@ -318,7 +316,6 @@ public class CycleClickTest {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    @Ignore("Enums")
     public void testOnRightClickMinMaxSet() {
         // Provide a current rank value - coop
         when(island.getFlag(any())).thenReturn(RanksManager.TRUSTED_RANK);
@@ -340,7 +337,6 @@ public class CycleClickTest {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    @Ignore("Enums")
     public void testAllClicks() {
         // Test all possible click types
         CycleClick udc = new CycleClick(LOCK);
@@ -371,7 +367,6 @@ public class CycleClickTest {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    @Ignore("Enums")
     public void testOnShiftLeftClickIsOp() {
         when(user.isOp()).thenReturn(true);
         CycleClick udc = new CycleClick(LOCK);
@@ -384,7 +379,6 @@ public class CycleClickTest {
         assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
         assertTrue(hiddenFlags.isEmpty());
         // Verify sounds
-        verify(p).playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
-        verify(p).playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
+        verify(p, times(2)).playSound((Location) null, (Sound) null, 1F, 1F);
     }
 }

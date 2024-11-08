@@ -30,7 +30,6 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -52,6 +51,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -88,6 +88,7 @@ public class LockAndBanListenerTest {
 
     @Before
     public void setUp() throws Exception {
+        ServerMocks.newServer();
         // Server & Scheduler
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(sch);
@@ -190,6 +191,7 @@ public class LockAndBanListenerTest {
 
     @After
     public void tearDown() {
+        ServerMocks.unsetBukkitServer();
         User.clearUsers();
         framework().clearInlineMocks();
     }
@@ -299,7 +301,6 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    @Ignore("Enums")
     public void testPlayerMoveIntoBannedIsland() {
         // Make player
         when(player.getUniqueId()).thenReturn(uuid);
@@ -322,7 +323,6 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    @Ignore("Enums")
     public void testPlayerMoveInsideBannedIsland() {
         // Make player
         when(player.getUniqueId()).thenReturn(uuid);
@@ -350,7 +350,6 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    @Ignore("Enums")
     public void testVehicleMoveIntoBannedIsland() {
         // Make player
         when(player.getUniqueId()).thenReturn(uuid);
@@ -513,7 +512,6 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    @Ignore("Enums")
     public void testPlayerMoveIntoLockedIsland() {
         // Make player
         when(player.getUniqueId()).thenReturn(uuid);
@@ -618,7 +616,6 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    @Ignore("Enums")
     public void testPlayerMoveInsideLockedIsland() {
         // Make player
         when(player.getUniqueId()).thenReturn(uuid);
@@ -707,7 +704,6 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    @Ignore("Enums")
     public void testVehicleMoveIntoLockedIsland() {
         // Make player
         Player player = mock(Player.class);
