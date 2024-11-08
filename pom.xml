@@ -51,7 +51,7 @@
 
     <distributionManagement>
         <repository>
-            <id>codemc-releases</id>
+            <id>codemc</id>
             <url>https://repo.codemc.org/repository/bentoboxworld/</url>
         </repository>
     </distributionManagement>
