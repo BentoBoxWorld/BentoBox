@@ -221,12 +221,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 try {
                     // Floats need special handling because the database returns them as doubles
                     Type setType = propertyDescriptor.getWriteMethod().getGenericParameterTypes()[0];
-                    BentoBox.getInstance().logDebug("name = " + setType.getTypeName());
-                    plugin.logError("Default setting value will be used: "
-                            + propertyDescriptor.getReadMethod().invoke(instance));
-                    plugin.logError(method.getName());
-                    plugin.logError(propertyDescriptor.getReadMethod().getName());
-                    plugin.logError(instance.toString());
                     if (setType.getTypeName().equals("float")) {
                         double d = (double) setTo;
                         float f = (float)d;
@@ -387,9 +381,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Get the read method
             Method method = propertyDescriptor.getReadMethod();
             // Invoke the read method to get the value. We have no idea what type of value it is.
-            BentoBox.getInstance().logDebug("Method is " + method.getName());
             Object value = method.invoke(instance);
-            BentoBox.getInstance().logDebug("Value is " + value);
             String storageLocation = field.getName();
 
             // Check if there is an annotation on the field
@@ -415,7 +407,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             }
 
             if (!checkAdapter(field, config, storageLocation, value)) {
-                BentoBox.getInstance().logDebug("No adapter");
                 // Set the filename if it has not be set already
                 if (filename.isEmpty() && method.getName().equals("getUniqueId")) {
                     // Save the name for when the file is saved
@@ -428,7 +419,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     serializeSet((Set<Object>)value, config, storageLocation);
                 } else {
                     // For all other data that doesn't need special serialization
-                    BentoBox.getInstance().logDebug("For all other data that doesn't need special serializationr");
                     config.set(storageLocation, serialize(value));
                 }
             }
@@ -583,7 +573,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private Object serialize(@Nullable Object object) {
         // Null is a value object and is serialized as the string "null"
         if (object == null) {
-            BentoBox.getInstance().logDebug("Object is null");
             return "null";
         }
         // UUID has it's own serialization, that is not picked up automatically
@@ -600,7 +589,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         // Keyed interfaces that are replacing enums
         if (object instanceof Keyed k) {
-            BentoBox.getInstance().logDebug("Object is keyed");
             return k.getKey().getKey();
         }
         // Enums
