@@ -241,42 +241,6 @@ public abstract class AbstractCommonSetup {
         checkSpigotMessage(expectedMessage, 1);
     }
 
-    /*
-    public void checkSpigotMessage(String expectedMessage, boolean shouldBePresent) {
-        // Capture the argument passed to spigot().sendMessage(...) if messages are sent
-        ArgumentCaptor<TextComponent> captor = ArgumentCaptor.forClass(TextComponent.class);
-    
-        if (shouldBePresent) {
-            // If we expect a message to be present, verify that sendMessage() was called at least once
-            verify(spigot, atLeastOnce()).sendMessage(captor.capture());
-    
-            // Get all captured TextComponents
-            List<TextComponent> capturedMessages = captor.getAllValues();
-    
-            // Check if any captured message contains the expected text
-            boolean messageFound = capturedMessages.stream()
-                    .map(component -> component.toPlainText()) // Convert each TextComponent to plain text
-                .anyMatch(messageText -> messageText.contains(expectedMessage));  // Check if the expected message is present
-    
-            // Assert that the message was found
-            assertTrue("Expected message not found: " + expectedMessage, messageFound);
-    
-        } else {
-            // If we expect no messages with this text, capture any sent messages to ensure none match the given message
-            verify(spigot, atLeast(0)).sendMessage(captor.capture());
-    
-            // Get all captured TextComponents
-            List<TextComponent> capturedMessages = captor.getAllValues();
-    
-            // Check that none of the captured messages contain the forbidden text
-            boolean messageFound = capturedMessages.stream().map(component -> component.toPlainText()) // Convert each TextComponent to plain text
-                    .anyMatch(messageText -> messageText.contains(expectedMessage)); // Check if the message is present
-    
-            // Assert that the message was NOT found
-            assertFalse("Unexpected message found: " + expectedMessage, messageFound);
-        }
-    }*/
-
     public void checkSpigotMessage(String expectedMessage, int expectedOccurrences) {
         // Capture the argument passed to spigot().sendMessage(...) if messages are sent
         ArgumentCaptor<TextComponent> captor = ArgumentCaptor.forClass(TextComponent.class);
