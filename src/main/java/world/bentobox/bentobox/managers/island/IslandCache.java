@@ -23,6 +23,8 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.logs.LogEntry;
+import world.bentobox.bentobox.api.logs.LogEntry.LogType;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -431,6 +433,8 @@ public class IslandCache {
         }
         island.removeMember(uuid);
         island.removePrimary(uuid);
+        // Add historu record
+        island.log(new LogEntry.Builder(LogType.REMOVE).data(uuid.toString(), "player").build());
     }
 
     /**

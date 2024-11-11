@@ -5,7 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Enums;
+
 import world.bentobox.bentobox.api.logs.LogEntry;
+import world.bentobox.bentobox.api.logs.LogEntry.LogType;
 
 /**
  * @author Poslovitch
@@ -41,7 +44,7 @@ public class LogEntryListAdapter implements AdapterInterface<List<LogEntry>, Lis
         List<Map<String, Object>> serialized = (List<Map<String, Object>>) object;
         for (Map<String, Object> entry : serialized) {
             long timestamp = (long) entry.get(TIMESTAMP);
-            String type = (String) entry.get(TYPE);
+            LogType type = Enums.getIfPresent(LogType.class, (String) entry.get(TYPE)).or(LogType.UNKNOWN);
             Map<String, String> data = (Map<String, String>) entry.get(DATA);
 
             result.add(new LogEntry.Builder(type).timestamp(timestamp).data(data).build());
