@@ -65,7 +65,7 @@ public class LogEntryListAdapter implements AdapterInterface<List<LogEntry>, Lis
         history.forEach(logEntry -> {
             Map<String, Object> value = new LinkedHashMap<>();
             value.put(TIMESTAMP, logEntry.getTimestamp());
-            value.put(TYPE, logEntry.getType());
+            value.put(TYPE, logEntry.getType().name());
 
             if (logEntry.getData() != null) {
                 value.put(DATA, logEntry.getData());
