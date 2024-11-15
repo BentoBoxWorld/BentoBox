@@ -466,7 +466,6 @@ public class BentoBox extends JavaPlugin implements Listener {
             getPluginLoader().disablePlugin(this);
             return false;
         }
-
         log("Saving default panels...");
 
         if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "island_creation_panel.yml"))) {
