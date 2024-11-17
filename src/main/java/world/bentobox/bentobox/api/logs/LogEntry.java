@@ -15,15 +15,20 @@ import com.google.gson.annotations.Expose;
  * An {@link world.bentobox.bentobox.database.objects.adapters.AdapterInterface AdapterInterface} is provided to be able to save/retrieve
  * a list of instances of this object to/from the database: {@link world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter LogEntryListAdapter}.
  *
- * @author Poslovitch
+ * @author Poslovitch, tastybento
+ * 
  */
 public class LogEntry {
     @Expose
     private final long timestamp;
     @Expose
-    private final String type;
+    private final LogType type;
     @Expose
     private final Map<String, String> data;
+
+    public enum LogType {
+        REMOVE, ADD, UNREGISTER, BAN, UNOWNED, SPAWN, UNBAN, JOINED, NEWOWNER, TRUSTED, UNKNOWN
+    }
 
     private LogEntry(@NonNull Builder builder) {
         this.timestamp = builder.timestamp;
@@ -36,7 +41,7 @@ public class LogEntry {
     }
 
     @NonNull
-    public String getType() {
+    public LogType getType() {
         return type;
     }
 
@@ -47,12 +52,12 @@ public class LogEntry {
 
     public static class Builder {
         private long timestamp;
-        private final String type;
+        private final LogType type;
         private Map<String, String> data;
 
-        public Builder(@NonNull String type) {
+        public Builder(LogType type) {
             this.timestamp = System.currentTimeMillis();
-            this.type = type.toUpperCase(Locale.ENGLISH);
+            this.type = type;
             this.data = new LinkedHashMap<>();
         }
 

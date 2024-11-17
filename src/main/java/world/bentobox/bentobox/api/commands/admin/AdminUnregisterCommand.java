@@ -15,6 +15,7 @@ import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.logs.LogEntry;
+import world.bentobox.bentobox.api.logs.LogEntry.LogType;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -115,10 +116,10 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         // Remove all island players that reference this island
         targetIsland.getMembers().clear();
         if (user.isPlayer()) {
-            targetIsland.log(new LogEntry.Builder("UNREGISTER").data("player", targetUUID.toString())
+            targetIsland.log(new LogEntry.Builder(LogType.UNREGISTER).data("player", targetUUID.toString())
                     .data("admin", user.getUniqueId().toString()).build());
         } else {
-            targetIsland.log(new LogEntry.Builder("UNREGISTER").data("player", targetUUID.toString())
+            targetIsland.log(new LogEntry.Builder(LogType.UNREGISTER).data("player", targetUUID.toString())
                     .data("admin", "console").build());
         }
         user.sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, Util.xyz(targetIsland.getCenter().toVector()),

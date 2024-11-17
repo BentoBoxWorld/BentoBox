@@ -492,6 +492,7 @@ public class BentoBox extends JavaPlugin implements Listener {
             log("Saving default team_panel...");
             this.saveResource("panels/team_panel.yml", false);
         }
+
         return true;
     }
 

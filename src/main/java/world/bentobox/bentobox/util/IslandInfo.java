@@ -150,8 +150,9 @@ public class IslandInfo {
         user.sendMessage("commands.admin.info.island-center", TextVariables.XYZ, Util.xyz(location));
         user.sendMessage("commands.admin.info.protection-range", RANGE, String.valueOf(island.getProtectionRange()));
         user.sendMessage("commands.admin.info.protection-coords", XZ1,
-                Util.xyz(new Vector(island.getMinProtectedX(), 0, island.getMinProtectedZ())), "[xz2]",
-                Util.xyz(new Vector(island.getMaxProtectedX() - 1, 0, island.getMaxProtectedZ() - 1)));
+                Util.xyz(new Vector(island.getMinProtectedX(), world.getMinHeight(), island.getMinProtectedZ())),
+                "[xz2]", Util.xyz(new Vector(island.getMaxProtectedX() - 1, world.getMaxHeight(),
+                        island.getMaxProtectedZ() - 1)));
         if (island.isSpawn()) {
             user.sendMessage("commands.admin.info.is-spawn");
         }

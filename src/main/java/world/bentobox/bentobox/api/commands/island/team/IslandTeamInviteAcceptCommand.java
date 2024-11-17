@@ -9,6 +9,8 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.logs.LogEntry;
+import world.bentobox.bentobox.api.logs.LogEntry.LogType;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.TeamInvite;
@@ -120,6 +122,9 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
                 user.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, inviter.getName(),
                         TextVariables.DISPLAY_NAME, inviter.getDisplayName());
             }
+            // Add historu record
+            island.log(new LogEntry.Builder(LogType.TRUSTED).data(user.getUniqueId().toString(), "trusted")
+                    .data(invite.getInviter().toString(), "trusted by").build());
         }
     }
 

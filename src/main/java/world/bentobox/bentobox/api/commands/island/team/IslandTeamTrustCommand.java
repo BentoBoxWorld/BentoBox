@@ -9,6 +9,8 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.logs.LogEntry;
+import world.bentobox.bentobox.api.logs.LogEntry.LogType;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.TeamInvite.Type;
@@ -110,6 +112,10 @@ public class IslandTeamTrustCommand extends CompositeCommand {
                 island.setRank(target, RanksManager.TRUSTED_RANK);
                 user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
                 target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
+                // Add historu record
+                island.log(new LogEntry.Builder(LogType.TRUSTED).data(targetUUID.toString(), "trusted")
+                        .data(user.getUniqueId().toString(), "trusted by").build());
+
             }
             return true;
         } else {
