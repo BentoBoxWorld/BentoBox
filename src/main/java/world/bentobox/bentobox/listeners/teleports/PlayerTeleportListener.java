@@ -78,7 +78,13 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
         {
         case NETHER_PORTAL -> this.portalProcess(event, World.Environment.NETHER);
         case END_PORTAL, END_GATEWAY -> this.portalProcess(event, World.Environment.THE_END);
-        default -> throw new IllegalArgumentException("Unexpected value: " + event.getCause());
+        default -> { // Do nothing, ignore
+
+        }
+        /*
+         * Other potential reasons: CHORUS_FRUIT , COMMAND, DISMOUNT,
+         * ENDER_PEARL, EXIT_BED, PLUGIN, SPECTATE , UNKNOWN
+        */
         }
     }
 
