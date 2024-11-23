@@ -201,11 +201,11 @@ public class IslandSethomeCommandTest {
      */
     @Test
     public void testCanExecuteTooManyHomes() {
-        when(im.getMaxHomes(island)).thenReturn(10);
+        when(im.getMaxHomes(island)).thenReturn(9);
         when(im.getNumberOfHomesIfAdded(eq(island), anyString())).thenReturn(11);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertFalse(isc.canExecute(user, "island", Collections.emptyList()));
-        verify(user).sendMessage("commands.island.sethome.too-many-homes", TextVariables.NUMBER, "10");
+        verify(user).sendMessage("commands.island.sethome.too-many-homes", TextVariables.NUMBER, "9");
         verify(user).sendMessage("commands.island.sethome.homes-are");
     }
 
@@ -251,7 +251,7 @@ public class IslandSethomeCommandTest {
     @Test
     public void testExecuteUserStringListOfStringMultiHomeTooMany() {
         when(im.getMaxHomes(island)).thenReturn(3);
-        when(im.getNumberOfHomesIfAdded(eq(island), anyString())).thenReturn(4);
+        when(im.getNumberOfHomesIfAdded(eq(island), anyString())).thenReturn(5);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertFalse(isc.canExecute(user, "island", Collections.singletonList("13")));
         verify(user).sendMessage(eq("commands.island.sethome.too-many-homes"), eq("[number]"), eq("3"));

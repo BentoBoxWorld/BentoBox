@@ -54,7 +54,8 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         // Check number of homes
 
         int maxHomes = getIslands().getMaxHomes(island);
-        if (getIslands().getNumberOfHomesIfAdded(island, String.join(" ", args)) > maxHomes) {
+        // The + 1 is for the default home
+        if (getIslands().getNumberOfHomesIfAdded(island, String.join(" ", args)) > maxHomes + 1) {
             user.sendMessage("commands.island.sethome.too-many-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
             user.sendMessage("commands.island.sethome.homes-are");
             getIslands().getIslands(getWorld(), user).forEach(is ->

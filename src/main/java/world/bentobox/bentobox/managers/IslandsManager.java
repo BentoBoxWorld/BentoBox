@@ -940,6 +940,7 @@ public class IslandsManager {
      */
     @NonNull
     public Map<String, Location> getHomeLocations(@NonNull Island island) {
+        island.getHomes().forEach((n, l) -> BentoBox.getInstance().logDebug(n));
         return island.getHomes();
     }
 
@@ -956,6 +957,7 @@ public class IslandsManager {
 
     /**
      * Get the number of homes on this island if this home were added
+     * This includes the default home, which has no name
      * 
      * @param island - island
      * @param name   - name
