@@ -389,4 +389,25 @@ public abstract class AbstractTeleportListener
      * Set of entities that currently is in teleportation.
      */
     protected final Set<UUID> inTeleport;
+
+    /**
+     * @return the inTeleport
+     */
+    public Set<UUID> getInTeleport() {
+        return inTeleport;
+    }
+
+    /**
+     * @return the inPortal
+     */
+    public Set<UUID> getInPortal() {
+        return inPortal;
+    }
+
+    /**
+     * @return the teleportOrigin
+     */
+    public Map<UUID, World> getTeleportOrigin() {
+        return teleportOrigin;
+    }
 }

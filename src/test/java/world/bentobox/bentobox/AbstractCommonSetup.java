@@ -22,6 +22,7 @@ import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Player.Spigot;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -143,6 +144,7 @@ public abstract class AbstractCommonSetup {
         when(mockPlayer.getName()).thenReturn("tastybento");
         when(mockPlayer.getInventory()).thenReturn(inv);
         when(mockPlayer.spigot()).thenReturn(spigot);
+        when(mockPlayer.getType()).thenReturn(EntityType.PLAYER);
 
         User.setPlugin(plugin);
         User.clearUsers();
