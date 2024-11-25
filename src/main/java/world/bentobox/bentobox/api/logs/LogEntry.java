@@ -23,6 +23,8 @@ public class LogEntry {
     @Expose
     private final LogType type;
     @Expose
+    private final String customType;
+    @Expose
     private final Map<String, String> data;
 
     /**
@@ -45,6 +47,10 @@ public class LogEntry {
          * Player banned
          */
         BAN,
+        /**
+         * Something was completed
+         */
+        COMPELTE,
         /**
          * Island became unowned
          */
@@ -103,6 +109,7 @@ public class LogEntry {
         this.timestamp = builder.timestamp;
         this.type = builder.type;
         this.data = builder.data;
+        this.customType = builder.customType;
     }
 
     public long getTimestamp() {
@@ -123,22 +130,23 @@ public class LogEntry {
         private long timestamp;
         private final LogType type;
         private Map<String, String> data;
+        private final String customType;
 
         public Builder(LogType type) {
             this.timestamp = System.currentTimeMillis();
             this.type = type;
             this.data = new LinkedHashMap<>();
+            this.customType = null;
         }
 
         /**
-         * @param string
-         * @deprecated Use the enum version. If you need more enums, then add them to the code
+         * @param customType log type
          */
-        @Deprecated
-        public Builder(String string) {
+        public Builder(String customType) {
             this.timestamp = System.currentTimeMillis();
             this.type = LogType.UNKNOWN;
             this.data = new LinkedHashMap<>();
+            this.customType = customType;
         }
 
         public Builder timestamp(long timestamp) {
