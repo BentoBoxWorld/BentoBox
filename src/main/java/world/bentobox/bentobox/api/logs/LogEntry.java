@@ -82,6 +82,10 @@ public class LogEntry {
          */
         RESET,
         /**
+         * Everything was reset
+         */
+        RESET_ALL,
+        /**
          * New thing
          */
         NEW,
