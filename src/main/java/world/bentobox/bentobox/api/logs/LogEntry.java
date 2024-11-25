@@ -25,8 +25,74 @@ public class LogEntry {
     @Expose
     private final Map<String, String> data;
 
+    /**
+     * This is a log enum. If you are a developer and need more make a PR. Or use the string one.
+     */
     public enum LogType {
-        REMOVE, ADD, UNREGISTER, BAN, UNOWNED, SPAWN, UNBAN, JOINED, NEWOWNER, TRUSTED, UNKNOWN
+        /**
+         * Something removed
+         */
+        REMOVE,
+        /**
+         * Something added
+         */
+        ADD,
+        /**
+         * Island unregistered
+         */
+        UNREGISTER,
+        /**
+         * Player banned
+         */
+        BAN,
+        /**
+         * Island became unowned
+         */
+        UNOWNED,
+        /**
+         * Island became spawn
+         */
+        SPAWN,
+        /**
+         * Player unbanned
+         */
+        UNBAN,
+        /**
+         * Player joined
+         */
+        JOINED,
+        /**
+         * New owner made
+         */
+        NEWOWNER,
+        /**
+         * Player trusted
+         */
+        TRUSTED,
+        /**
+         * Player cooped
+         */
+        COOP,
+        /**
+         * Unknown reason
+         */
+        UNKNOWN,
+        /**
+         * Island reset or a reset of some kind
+         */
+        RESET,
+        /**
+         * New thing
+         */
+        NEW,
+        /**
+         * Something duplicated
+         */
+        DUPLICATE,
+        /**
+         * General info
+         */
+        INFO,
     }
 
     private LogEntry(@NonNull Builder builder) {
