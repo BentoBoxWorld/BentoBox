@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.api.logs;
 
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -58,6 +57,17 @@ public class LogEntry {
         public Builder(LogType type) {
             this.timestamp = System.currentTimeMillis();
             this.type = type;
+            this.data = new LinkedHashMap<>();
+        }
+
+        /**
+         * @param string
+         * @deprecated Use the enum version. If you need more enums, then add them to the code
+         */
+        @Deprecated
+        public Builder(String string) {
+            this.timestamp = System.currentTimeMillis();
+            this.type = LogType.UNKNOWN;
             this.data = new LinkedHashMap<>();
         }
 
