@@ -60,6 +60,7 @@ import world.bentobox.bentobox.blueprints.BlueprintPaster;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -98,11 +99,12 @@ public class BlueprintsManagerTest {
     private BukkitTask task;
 
     private int times;
-    @Mock
+
     private Server server;
 
     @Before
     public void setUp() throws Exception {
+        server = ServerMocks.newServer();
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -187,6 +189,7 @@ public class BlueprintsManagerTest {
      */
     @After
     public void tearDown() throws Exception {
+        ServerMocks.unsetBukkitServer();
         // Clean up file system
         deleteDir(dataFolder.toPath());
         // Delete addon.jar

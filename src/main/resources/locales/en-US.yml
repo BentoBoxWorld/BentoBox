@@ -159,6 +159,7 @@ commands:
         not-in-team: '&c This player is not in a team.'
         admin-kicked: '&c The admin kicked you from the team.'
         success: '&b [name] &a has been kicked from &b [owner]&a ''s island.'
+        success-all: '&b Player removed from all teams in this world'
       setowner:
         parameters: <player>
         description: transfers island ownership to the player

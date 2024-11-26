@@ -59,30 +59,6 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
     // Section: Listeners
     // ---------------------------------------------------------------------
 
-
-    /**
-     * This listener checks player portal events and triggers appropriate methods to transfer
-     * players to the correct location in other dimension.
-     * <p>
-     * This event is triggered when player is about to being teleported because of contact with the
-     * nether portal or end gateway portal (exit portal triggers respawn).
-     * <p>
-     * This event is not called if nether/end is disabled in server settings.
-     *
-     * @param event the player portal event.
-     */
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onPlayerPortalEvent(PlayerPortalEvent event)
-    {
-        switch (event.getCause())
-        {
-        case NETHER_PORTAL -> this.portalProcess(event, World.Environment.NETHER);
-        case END_PORTAL, END_GATEWAY -> this.portalProcess(event, World.Environment.THE_END);
-        default -> throw new IllegalArgumentException("Unexpected value: " + event.getCause());
-        }
-    }
-
-
     /**
      * Fires the event if nether or end is disabled at the system level
      *
@@ -96,7 +72,6 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             // This handles only players.
             return;
         }
-
         Entity entity = event.getEntity();
         Material type = event.getLocation().getBlock().getType();
         UUID uuid = entity.getUniqueId();
@@ -106,7 +81,6 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
         {
             return;
         }
-
         this.inPortal.add(uuid);
         // Add original world for respawning.
         this.teleportOrigin.put(uuid, event.getLocation().getWorld());
@@ -133,7 +107,6 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             }, 40);
             return;
         }
-
         // End portals are instant transfer
         if (!Bukkit.getAllowEnd() && (type.equals(Material.END_PORTAL) || type.equals(Material.END_GATEWAY)))
         {
@@ -226,6 +199,31 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
                 });
     }
 
+    /**
+     * This listener checks player portal events and triggers appropriate methods to transfer
+     * players to the correct location in other dimension.
+     * <p>
+     * This event is triggered when player is about to being teleported because of contact with the
+     * nether portal or end gateway portal (exit portal triggers respawn).
+     * <p>
+     * This event is not called if nether/end is disabled in server settings.
+     *
+     * @param event the player portal event.
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPlayerPortalEvent(PlayerPortalEvent event) {
+        switch (event.getCause()) {
+        case NETHER_PORTAL -> this.portalProcess(event, World.Environment.NETHER);
+        case END_PORTAL, END_GATEWAY -> this.portalProcess(event, World.Environment.THE_END);
+        default -> { // Do nothing, ignore
+
+        }
+        /*
+         * Other potential reasons: CHORUS_FRUIT , COMMAND, DISMOUNT,
+         * ENDER_PEARL, EXIT_BED, PLUGIN, SPECTATE , UNKNOWN
+        */
+        }
+    }
 
 
     // ---------------------------------------------------------------------
@@ -248,26 +246,22 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             // Not teleporting from/to bentobox worlds.
             return;
         }
-
         if (!this.isAllowedInConfig(overWorld, environment))
         {
             // World is disabled in config. Do not teleport player.
             event.setCancelled(true);
             return;
         }
-
         if (!this.isAllowedOnServer(environment))
         {
             // World is disabled in bukkit. Event is not triggered, but cancel by chance.
             event.setCancelled(true);
         }
-
         if (this.inTeleport.contains(event.getPlayer().getUniqueId()))
         {
             // Player is already in teleportation.
             return;
         }
-
         this.inTeleport.add(event.getPlayer().getUniqueId());
 
         if (fromWorld.equals(overWorld) && !this.isIslandWorld(overWorld, environment))
@@ -276,7 +270,6 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             this.handleToStandardNetherOrEnd(event, overWorld, environment);
             return;
         }
-
         if (!fromWorld.equals(overWorld) && !this.isIslandWorld(overWorld, environment))
         {
             // If entering a portal in the other world, teleport to a portal in overworld if
@@ -284,7 +277,6 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             this.handleFromStandardNetherOrEnd(event, overWorld, environment);
             return;
         }
-
         // To the nether/end or overworld.
         World toWorld = !fromWorld.getEnvironment().equals(environment) ?
                 this.getNetherEndWorld(overWorld, environment) : overWorld;
@@ -320,13 +312,11 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             // If there is no island, then processor already created island. Nothing to do more.
             return;
         }
-
         if (!event.isCancelled() && event.getCanCreatePortal())
         {
             // Let the server teleport
             return;
         }
-
         if (World.Environment.THE_END.equals(environment))
         {
             // Prevent death from hitting the ground while calculating location.
@@ -366,7 +356,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
      * @param overWorld - over world
      * @param environment - environment involved
      */
-    private void handleToStandardNetherOrEnd(PlayerPortalEvent event,
+    void handleToStandardNetherOrEnd(PlayerPortalEvent event,
             World overWorld,
             World.Environment environment)
     {

@@ -13,7 +13,6 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.IslandInfo;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -59,35 +58,28 @@ public class AdminTeamKickCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, @NonNull List<String> args) {
-        Island island = getIslands().getIsland(getWorld(), targetUUID);
-        if (island == null) {
+        List<Island> islands = getIslands().getIslands(getWorld(), targetUUID);
+        if (islands.isEmpty()) {
             return false;
         }
-        if (targetUUID.equals(island.getOwner())) {
-            user.sendMessage("commands.admin.team.kick.cannot-kick-owner");
-            new IslandInfo(island).showMembers(user);
-            return false;
-        }
-        User target = User.getInstance(targetUUID);
-        target.sendMessage("commands.admin.team.kick.admin-kicked");
+        islands.forEach(island -> {
+            if (!user.getUniqueId().equals(island.getOwner())) {
+                User target = User.getInstance(targetUUID);
+                target.sendMessage("commands.admin.team.kick.admin-kicked");
 
-        getIslands().removePlayer(island, targetUUID);
-        user.sendMessage("commands.admin.team.kick.success", TextVariables.NAME, target.getName(), "[owner]", getPlayers().getName(island.getOwner()));
+                getIslands().removePlayer(island, targetUUID);
+                user.sendMessage("commands.admin.team.kick.success", TextVariables.NAME, target.getName(), "[owner]",
+                        getPlayers().getName(island.getOwner()));
+                // Fire event so add-ons know
+                TeamEvent.builder().island(island).reason(TeamEvent.Reason.KICK).involvedPlayer(targetUUID).admin(true)
+                        .build();
+                IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(true)
+                        .reason(IslandEvent.Reason.RANK_CHANGE)
+                        .rankChange(island.getRank(target), RanksManager.VISITOR_RANK).build();
+            }
+        });
+        user.sendMessage("commands.admin.team.kick.success-all");
 
-        // Fire event so add-ons know
-        TeamEvent.builder()
-        .island(island)
-        .reason(TeamEvent.Reason.KICK)
-        .involvedPlayer(targetUUID)
-        .admin(true)
-        .build();
-        IslandEvent.builder()
-        .island(island)
-        .involvedPlayer(targetUUID)
-        .admin(true)
-        .reason(IslandEvent.Reason.RANK_CHANGE)
-        .rankChange(island.getRank(target), RanksManager.VISITOR_RANK)
-        .build();
         return true;
     }
 }

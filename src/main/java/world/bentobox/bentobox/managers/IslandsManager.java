@@ -47,6 +47,8 @@ import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.logs.LogEntry;
+import world.bentobox.bentobox.api.logs.LogEntry.LogType;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
@@ -938,6 +940,7 @@ public class IslandsManager {
      */
     @NonNull
     public Map<String, Location> getHomeLocations(@NonNull Island island) {
+        island.getHomes().forEach((n, l) -> BentoBox.getInstance().logDebug(n));
         return island.getHomes();
     }
 
@@ -954,6 +957,7 @@ public class IslandsManager {
 
     /**
      * Get the number of homes on this island if this home were added
+     * This includes the default home, which has no name
      * 
      * @param island - island
      * @param name   - name
@@ -1189,6 +1193,7 @@ public class IslandsManager {
      * 
      * @param player player
      */
+    @SuppressWarnings("deprecation")
     private void readyPlayer(@NonNull Player player) {
         // Stop any gliding
         player.setGliding(false);
@@ -1537,6 +1542,8 @@ public class IslandsManager {
         // Add player to new island
         teamIsland.addMember(playerUUID);
         islandCache.addPlayer(playerUUID, teamIsland);
+        // Add historu record
+        teamIsland.log(new LogEntry.Builder(LogType.JOINED).data(playerUUID.toString(), "player").build());
         // Save the island
         updateIsland(teamIsland);
     }

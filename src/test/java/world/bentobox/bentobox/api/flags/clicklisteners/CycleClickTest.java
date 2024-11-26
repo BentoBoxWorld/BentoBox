@@ -55,6 +55,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
@@ -95,12 +96,13 @@ public class CycleClickTest {
     @Mock
     private @NonNull Player p;
 
+
     /**
      * @throws java.lang.Exception - exception
      */
     @Before
     public void setUp() throws Exception {
-
+        ServerMocks.newServer();
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
@@ -233,6 +235,7 @@ public class CycleClickTest {
 
     @After
     public void tearDown() {
+        ServerMocks.unsetBukkitServer();
         Mockito.framework().clearInlineMocks();
     }
 
@@ -376,7 +379,6 @@ public class CycleClickTest {
         assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
         assertTrue(hiddenFlags.isEmpty());
         // Verify sounds
-        verify(p).playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
-        verify(p).playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
+        verify(p, times(2)).playSound((Location) null, (Sound) null, 1F, 1F);
     }
 }

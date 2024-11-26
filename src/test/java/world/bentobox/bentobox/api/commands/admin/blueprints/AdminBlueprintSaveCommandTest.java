@@ -25,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.util.Vector;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -44,6 +45,7 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 
 /**
  * @author tastybento
@@ -67,8 +69,11 @@ public class AdminBlueprintSaveCommandTest {
     private BlueprintsManager bm;
     private Blueprint bp = new Blueprint();
 
-    /**
-     */
+    @BeforeClass
+    public static void beforeClass() {
+        ServerMocks.newServer();
+    }
+
     @Before
     public void setUp() throws Exception {
         // Set up plugin

@@ -51,6 +51,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -87,6 +88,7 @@ public class LockAndBanListenerTest {
 
     @Before
     public void setUp() throws Exception {
+        ServerMocks.newServer();
         // Server & Scheduler
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(sch);
@@ -189,6 +191,7 @@ public class LockAndBanListenerTest {
 
     @After
     public void tearDown() {
+        ServerMocks.unsetBukkitServer();
         User.clearUsers();
         framework().clearInlineMocks();
     }

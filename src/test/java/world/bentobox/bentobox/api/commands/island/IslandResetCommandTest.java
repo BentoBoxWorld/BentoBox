@@ -187,6 +187,10 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
         irc = new IslandResetCommand(ic);
     }
 
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
     /**
      * Test method for
      * {@link IslandResetCommand#canExecute(User, String, java.util.List)}
@@ -252,12 +256,6 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
         verify(user, never()).sendMessage(eq("commands.island.reset.kicked-from-island"), eq(TextVariables.GAMEMODE), anyString());
         // Only 11 because the leader should not see this
         checkSpigotMessage("commands.island.reset.kicked-from-island", 11);
-    }
-
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
     }
 
     /**

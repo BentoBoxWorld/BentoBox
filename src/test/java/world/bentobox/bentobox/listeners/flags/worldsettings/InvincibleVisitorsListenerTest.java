@@ -62,6 +62,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -90,10 +91,9 @@ public class InvincibleVisitorsListenerTest {
     @Mock
     private PluginManager pim;
 
-    /**
-     */
     @Before
     public void setUp() throws Exception {
+        ServerMocks.newServer();
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
@@ -186,6 +186,7 @@ public class InvincibleVisitorsListenerTest {
 
     @After
     public void tearDown() {
+        ServerMocks.unsetBukkitServer();
         User.clearUsers();
         framework().clearInlineMocks();
     }

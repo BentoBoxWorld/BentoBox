@@ -37,6 +37,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
@@ -67,6 +68,7 @@ public class IslandToggleClickTest {
      */
     @Before
     public void setUp() throws Exception {
+        ServerMocks.newServer();
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
@@ -119,6 +121,7 @@ public class IslandToggleClickTest {
 
     @After
     public void tearDown() {
+        ServerMocks.unsetBukkitServer();
         Mockito.framework().clearInlineMocks();
     }
 

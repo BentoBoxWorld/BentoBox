@@ -25,6 +25,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -146,6 +147,11 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         map.put("test", cc);
         when(cm.getCommands()).thenReturn(map);
         crcl = new CommandRankClickListener();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

@@ -17,10 +17,12 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Player.Spigot;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -34,6 +36,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -58,6 +61,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -103,9 +107,13 @@ public abstract class AbstractCommonSetup {
     protected FlagsManager fm;
     @Mock
     protected Spigot spigot;
+    protected Server server;
 
 
+    @Before
     public void setUp() throws Exception {
+
+        server = ServerMocks.newServer();
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
@@ -136,6 +144,7 @@ public abstract class AbstractCommonSetup {
         when(mockPlayer.getName()).thenReturn("tastybento");
         when(mockPlayer.getInventory()).thenReturn(inv);
         when(mockPlayer.spigot()).thenReturn(spigot);
+        when(mockPlayer.getType()).thenReturn(EntityType.PLAYER);
 
         User.setPlugin(plugin);
         User.clearUsers();
@@ -221,6 +230,7 @@ public abstract class AbstractCommonSetup {
      */
     @After
     public void tearDown() throws Exception {
+        ServerMocks.unsetBukkitServer();
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
     }
@@ -232,42 +242,6 @@ public abstract class AbstractCommonSetup {
     public void checkSpigotMessage(String expectedMessage) {
         checkSpigotMessage(expectedMessage, 1);
     }
-
-    /*
-    public void checkSpigotMessage(String expectedMessage, boolean shouldBePresent) {
-        // Capture the argument passed to spigot().sendMessage(...) if messages are sent
-        ArgumentCaptor<TextComponent> captor = ArgumentCaptor.forClass(TextComponent.class);
-    
-        if (shouldBePresent) {
-            // If we expect a message to be present, verify that sendMessage() was called at least once
-            verify(spigot, atLeastOnce()).sendMessage(captor.capture());
-    
-            // Get all captured TextComponents
-            List<TextComponent> capturedMessages = captor.getAllValues();
-    
-            // Check if any captured message contains the expected text
-            boolean messageFound = capturedMessages.stream()
-                    .map(component -> component.toPlainText()) // Convert each TextComponent to plain text
-                .anyMatch(messageText -> messageText.contains(expectedMessage));  // Check if the expected message is present
-    
-            // Assert that the message was found
-            assertTrue("Expected message not found: " + expectedMessage, messageFound);
-    
-        } else {
-            // If we expect no messages with this text, capture any sent messages to ensure none match the given message
-            verify(spigot, atLeast(0)).sendMessage(captor.capture());
-    
-            // Get all captured TextComponents
-            List<TextComponent> capturedMessages = captor.getAllValues();
-    
-            // Check that none of the captured messages contain the forbidden text
-            boolean messageFound = capturedMessages.stream().map(component -> component.toPlainText()) // Convert each TextComponent to plain text
-                    .anyMatch(messageText -> messageText.contains(expectedMessage)); // Check if the message is present
-    
-            // Assert that the message was NOT found
-            assertFalse("Unexpected message found: " + expectedMessage, messageFound);
-        }
-    }*/
 
     public void checkSpigotMessage(String expectedMessage, int expectedOccurrences) {
         // Capture the argument passed to spigot().sendMessage(...) if messages are sent

@@ -65,6 +65,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.hooks.VaultHook;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -134,6 +135,8 @@ public class PlayersManagerTest {
     public void setUp() throws Exception {
         // Clear any lingering database
         tearDown();
+
+        ServerMocks.newServer();
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         when(plugin.getVault()).thenReturn(Optional.of(vault));
@@ -178,7 +181,7 @@ public class PlayersManagerTest {
         when(p.getUniqueId()).thenReturn(uuid);
         AttributeInstance at = mock(AttributeInstance.class);
         when(at.getValue()).thenReturn(20D);
-        when(p.getAttribute(Attribute.GENERIC_MAX_HEALTH)).thenReturn(at);
+        when(p.getAttribute(Attribute.MAX_HEALTH)).thenReturn(at);
         when(p.getName()).thenReturn("tastybento");
         User.getInstance(p);
 
@@ -271,6 +274,7 @@ public class PlayersManagerTest {
 
     @After
     public void tearDown() throws Exception {
+        ServerMocks.unsetBukkitServer();
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
         deleteAll(new File("database"));

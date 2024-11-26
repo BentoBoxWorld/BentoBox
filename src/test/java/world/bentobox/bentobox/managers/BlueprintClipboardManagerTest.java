@@ -41,6 +41,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 
@@ -103,7 +104,7 @@ public class BlueprintClipboardManagerTest {
             "    \"ySize\": 10,\n" +
             "    \"zSize\": 10\n" +
             "}";
-    @Mock
+
     private Server server;
 
     private void zip(File targetFile) throws IOException {
@@ -128,6 +129,7 @@ public class BlueprintClipboardManagerTest {
      */
     @Before
     public void setUp() throws Exception {
+        server = ServerMocks.newServer();
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         blueprintFolder = new File("blueprints");
@@ -152,7 +154,7 @@ public class BlueprintClipboardManagerTest {
      */
     @After
     public void tearDown() throws Exception {
-
+        ServerMocks.unsetBukkitServer();
         if (blueprintFolder.exists()) {
             // Clean up file system
             Files.walk(blueprintFolder.toPath())

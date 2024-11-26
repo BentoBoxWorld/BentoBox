@@ -3,7 +3,10 @@ package world.bentobox.bentobox.lists;
 import java.text.DateFormat;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -11,6 +14,8 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.logs.LogEntry;
+import world.bentobox.bentobox.api.logs.LogEntry.LogType;
 import world.bentobox.bentobox.api.placeholders.GameModePlaceholderReplacer;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -120,6 +125,14 @@ public enum GameModePlaceholder {
      * @since 1.5.0
      */
     ISLAND_MEMBERS_COUNT("island_members_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet().size())),
+
+    /**
+     * Returns the number of players that are or have ever been a MEMBER on this island.
+     * @since 3.0.0
+     */
+    ISLAND_HISTORICAL_MEMBERS_COUNT("island_historical_members_count",
+            (addon, user, island) -> island == null ? "" : getHistoricalMembers(island)),
+
     /**
      * Returns a comma separated list of player names that are at least MEMBER on this island.
      * @since 1.13.0
@@ -393,6 +406,24 @@ public enum GameModePlaceholder {
     GameModePlaceholder(String placeholder, GameModePlaceholderReplacer replacer) {
         this.placeholder = placeholder;
         this.replacer = replacer;
+    }
+
+    /**
+     * Provides a count of how many players have ever joined the island as a member including the owner
+     * @param island island
+     * @return String count of the number of members
+     */
+    private static String getHistoricalMembers(@Nullable Island island) {
+        Set<String> uniqueMembers = new HashSet<>();
+        for (LogEntry le : island.getHistory()) {
+            if (le.getType() == LogType.JOINED) {
+                Iterator<String> it = le.getData().keySet().iterator();
+                while (it.hasNext()) {
+                    uniqueMembers.add(it.next());
+                }
+            }
+        }
+        return String.valueOf(uniqueMembers.size());
     }
 
     /**

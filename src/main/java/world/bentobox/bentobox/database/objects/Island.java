@@ -37,6 +37,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.logs.LogEntry;
+import world.bentobox.bentobox.api.logs.LogEntry.LogType;
 import world.bentobox.bentobox.api.metadata.MetaDataAble;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
@@ -327,7 +328,7 @@ public class Island implements DataObject, MetaDataAble {
     public boolean ban(@NonNull UUID issuer, @NonNull UUID target) {
         if (getRank(target) != RanksManager.BANNED_RANK) {
             setRank(target, RanksManager.BANNED_RANK);
-            log(new LogEntry.Builder("BAN").data("player", target.toString()).data("issuer", issuer.toString())
+            log(new LogEntry.Builder(LogType.BAN).data("player", target.toString()).data("issuer", issuer.toString())
                     .build());
             setChanged();
         }
@@ -360,7 +361,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public boolean unban(@NonNull UUID issuer, @NonNull UUID target) {
         if (members.remove(target) != null) {
-            log(new LogEntry.Builder("UNBAN").data("player", target.toString()).data("issuer", issuer.toString())
+            log(new LogEntry.Builder(LogType.UNBAN).data("player", target.toString()).data("issuer", issuer.toString())
                     .build());
             return true;
         }
@@ -1132,7 +1133,7 @@ public class Island implements DataObject, MetaDataAble {
 
         this.owner = owner;
         if (owner == null) {
-            log(new LogEntry.Builder("UNOWNED").build());
+            log(new LogEntry.Builder(LogType.UNOWNED).build());
             return;
         }
         // Defensive code: demote any previous owner
@@ -1281,7 +1282,7 @@ public class Island implements DataObject, MetaDataAble {
             setFlagsDefaults();
             setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
         }
-        log(new LogEntry.Builder("SPAWN").data("value", String.valueOf(isSpawn)).build());
+        log(new LogEntry.Builder(LogType.SPAWN).data("value", String.valueOf(isSpawn)).build());
         setChanged();
     }
 

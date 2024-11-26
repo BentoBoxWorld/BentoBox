@@ -15,6 +15,8 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandCreateEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
+import world.bentobox.bentobox.api.logs.LogEntry;
+import world.bentobox.bentobox.api.logs.LogEntry.LogType;
 import world.bentobox.bentobox.api.events.island.IslandResetEvent;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -217,6 +219,8 @@ public class NewIsland {
         island.setFlagsDefaults();
         // Register metrics
         plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
+        // Add historu record
+        island.log(new LogEntry.Builder(LogType.JOINED).data(user.getUniqueId().toString(), "owner").build());
         // Save island
         IslandsManager.updateIsland(island);
     }
