@@ -68,6 +68,10 @@ public class AdminTeamKickCommandTest {
     private World world;
     @Mock
     private PluginManager pim;
+    @Mock
+    private Island island;
+    @Mock
+    private Island island2;
 
     /**
      */
@@ -106,9 +110,14 @@ public class AdminTeamKickCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
 
+        // Island
+        when(island.getOwner()).thenReturn(uuid);
+        when(island2.getOwner()).thenReturn(notUUID);
+
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
+        when(im.getIslands(world, uuid)).thenReturn(List.of(island, island2));
         // when(im.isOwner(any(),any())).thenReturn(true);
         // when(im.getOwner(any(),any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
@@ -173,45 +182,20 @@ public class AdminTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link AdminTeamKickCommand#execute(User, String, List)} .
-     */
-    @Test
-    public void testExecuteKickOwner() {
-        when(im.inTeam(any(), any())).thenReturn(true);
-        Island is = mock(Island.class);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(is);
-        when(pm.getUUID(any())).thenReturn(notUUID);
-
-        when(is.getOwner()).thenReturn(notUUID);
-
-        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("commands.admin.team.kick.cannot-kick-owner"));
-        verify(user).sendMessage("commands.admin.info.team-members-title");
-        verify(im, never()).removePlayer(eq(world), eq(notUUID));
-        verify(user, never()).sendMessage(eq("commands.admin.team.kick.success"), anyString(), anyString(), anyString(), anyString());
-        verify(pim, never()).callEvent(any());
-    }
-
-    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamKickCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecute() {
         when(im.inTeam(any(), any())).thenReturn(true);
-        Island is = mock(Island.class);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(is);
         String name = "tastybento";
-        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(pm.getUUID(any())).thenReturn(uuid);
         when(pm.getName(any())).thenReturn(name);
-
-        when(is.getOwner()).thenReturn(uuid);
 
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList(name)));
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList(name)));
-        verify(im).removePlayer(is, notUUID);
+        verify(im, never()).removePlayer(island, uuid);
+        verify(im).removePlayer(island2, uuid);
         verify(user).sendMessage(eq("commands.admin.team.kick.success"), eq(TextVariables.NAME), eq(name), eq("[owner]"), anyString());
         // Offline so event will be called 4 times
         verify(pim, times(4)).callEvent(any());

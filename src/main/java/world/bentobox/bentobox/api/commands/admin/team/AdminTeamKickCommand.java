@@ -13,7 +13,6 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.IslandInfo;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -79,7 +78,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
                         .rankChange(island.getRank(target), RanksManager.VISITOR_RANK).build();
             }
         });
-        user.sendRawMessage("Player removed from all teams in this world");
+        user.sendMessage("commands.admin.team.kick.success-all");
 
         return true;
     }
