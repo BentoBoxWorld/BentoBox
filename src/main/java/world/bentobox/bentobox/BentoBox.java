@@ -24,6 +24,7 @@ import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.DatabaseSetup;
+import world.bentobox.bentobox.hooks.CitizensHook;
 import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.MultipaperHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
@@ -191,6 +192,9 @@ public class BentoBox extends JavaPlugin implements Listener {
         hooksManager.registerHook(new MultipaperHook());
 
         hooksManager.registerHook(new VaultHook());
+
+        // Citizens
+        hooksManager.registerHook(new CitizensHook());
 
         // MythicMobs
         hooksManager.registerHook(new MythicMobsHook());
