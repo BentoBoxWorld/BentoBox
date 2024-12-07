@@ -43,7 +43,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
-import world.bentobox.bentobox.hooks.CitizensHook;
+import world.bentobox.bentobox.hooks.FancyNpcsHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
 
 /**
@@ -70,7 +70,7 @@ public class BlueprintClipboard {
     private final Map<Vector, BlueprintBlock> bpBlocks = new LinkedHashMap<>();
     private final BentoBox plugin = BentoBox.getInstance();
     private Optional<MythicMobsHook> mmh;
-    private Optional<CitizensHook> ch;
+    private Optional<FancyNpcsHook> npc;
 
     /**
      * Create a clipboard for blueprint
@@ -83,7 +83,8 @@ public class BlueprintClipboard {
 
     public BlueprintClipboard() {
         // Citizens Hook
-        ch = plugin.getHooks().getHook("Citizens").filter(CitizensHook.class::isInstance).map(CitizensHook.class::cast);
+        npc = plugin.getHooks().getHook("FancyNpcs").filter(FancyNpcsHook.class::isInstance)
+                .map(FancyNpcsHook.class::cast);
         // MythicMobs Hook
         mmh = plugin.getHooks().getHook("MythicMobs").filter(MythicMobsHook.class::isInstance)
                 .map(MythicMobsHook.class::cast);
@@ -137,10 +138,10 @@ public class BlueprintClipboard {
 
     private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir, boolean copyBiome) {
         copying = false;
-        // Citizens
-        if (ch.isPresent()) {
+        // FancyNpcs
+        if (npc.isPresent()) {
             // Add all the citizens for the area in one go. This is pretty fast.
-            bpEntities.putAll(ch.get().getCitizensInArea(world, vectorsToCopy, origin));
+            bpEntities.putAll(npc.get().getNpcsInArea(world, vectorsToCopy, origin));
         }
 
         // Repeating copy task
@@ -308,7 +309,6 @@ public class BlueprintClipboard {
     private List<BlueprintEntity> setEntities(List<Entity> ents) {
         List<BlueprintEntity> bpEnts = new ArrayList<>();
         for (Entity entity : ents) {
-            BentoBox.getInstance().logDebug("Etity = " + entity);
             BlueprintEntity bpe = new BlueprintEntity();
 
             bpe.setType(entity.getType());

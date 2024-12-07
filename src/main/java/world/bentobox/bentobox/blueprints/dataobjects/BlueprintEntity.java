@@ -24,9 +24,9 @@ import com.google.gson.annotations.Expose;
  */
 public class BlueprintEntity {
 
-    // Citizens storage
+    // Npc storage
     @Expose
-    private String citizen;
+    private String npc;
 
     // MythicMobs storage
     public record MythicMobRecord(String type, String displayName, double level, float power, String stance) {
@@ -310,22 +310,22 @@ public class BlueprintEntity {
     }
 
     /**
-     * @return the citizen
+     * @return the npc
      */
-    public String getCitizen() {
-        return citizen;
+    public String getNpc() {
+        return npc;
     }
 
     /**
      * @param citizen the citizen to set
      */
-    public void setCitizen(String citizen) {
-        this.citizen = citizen;
+    public void setNpc(String citizen) {
+        this.npc = citizen;
     }
 
     @Override
     public String toString() {
-        return "BlueprintEntity [" + (citizen != null ? "citizen=" + citizen + ", " : "")
+        return "BlueprintEntity [" + (npc != null ? "npc=" + npc + ", " : "")
                 + (MMtype != null ? "MMtype=" + MMtype + ", " : "")
                 + (MMLevel != null ? "MMLevel=" + MMLevel + ", " : "")
                 + (MMStance != null ? "MMStance=" + MMStance + ", " : "")
