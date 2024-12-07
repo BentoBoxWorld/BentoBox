@@ -940,7 +940,6 @@ public class IslandsManager {
      */
     @NonNull
     public Map<String, Location> getHomeLocations(@NonNull Island island) {
-        island.getHomes().forEach((n, l) -> BentoBox.getInstance().logDebug(n));
         return island.getHomes();
     }
 

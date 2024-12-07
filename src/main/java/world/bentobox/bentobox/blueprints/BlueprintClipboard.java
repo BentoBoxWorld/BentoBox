@@ -2,7 +2,6 @@ package world.bentobox.bentobox.blueprints;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,8 +22,8 @@ import org.bukkit.block.sign.Side;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ChestedHorse;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Villager;
@@ -44,6 +43,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
+import world.bentobox.bentobox.hooks.FancyNpcsHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
 
 /**
@@ -70,20 +70,22 @@ public class BlueprintClipboard {
     private final Map<Vector, BlueprintBlock> bpBlocks = new LinkedHashMap<>();
     private final BentoBox plugin = BentoBox.getInstance();
     private Optional<MythicMobsHook> mmh;
+    private Optional<FancyNpcsHook> npc;
 
     /**
      * Create a clipboard for blueprint
      * @param blueprint - the blueprint to load into the clipboard
      */
     public BlueprintClipboard(@NonNull Blueprint blueprint) {
+        this();
         this.blueprint = blueprint;
-        // MythicMobs
-        mmh = plugin.getHooks().getHook("MythicMobs").filter(MythicMobsHook.class::isInstance)
-                .map(MythicMobsHook.class::cast);
     }
 
     public BlueprintClipboard() {
-        // MythicMobs
+        // Citizens Hook
+        npc = plugin.getHooks().getHook("FancyNpcs").filter(FancyNpcsHook.class::isInstance)
+                .map(FancyNpcsHook.class::cast);
+        // MythicMobs Hook
         mmh = plugin.getHooks().getHook("MythicMobs").filter(MythicMobsHook.class::isInstance)
                 .map(MythicMobsHook.class::cast);
     }
@@ -136,13 +138,20 @@ public class BlueprintClipboard {
 
     private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir, boolean copyBiome) {
         copying = false;
+        // FancyNpcs
+        if (npc.isPresent()) {
+            // Add all the citizens for the area in one go. This is pretty fast.
+            bpEntities.putAll(npc.get().getNpcsInArea(world, vectorsToCopy, origin));
+        }
+
+        // Repeating copy task
         copyTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             if (copying) {
                 return;
             }
             copying = true;
             vectorsToCopy.stream().skip(index).limit(speed).forEach(v -> {
-                List<LivingEntity> ents = world.getLivingEntities().stream()
+                List<Entity> ents = world.getEntities().stream()
                         .filter(Objects::nonNull)
                         .filter(e -> !(e instanceof Player))
                         .filter(e -> new Vector(Math.rint(e.getLocation().getX()),
@@ -153,6 +162,7 @@ public class BlueprintClipboard {
                     count++;
                 }
             });
+
             index += speed;
             int percent = (int)(index * 100 / (double)vectorsToCopy.size());
             if (percent != lastPercentage && percent % 10 == 0) {
@@ -189,9 +199,9 @@ public class BlueprintClipboard {
         return r;
     }
 
-    private boolean copyBlock(Location l, boolean copyAir, boolean copyBiome, Collection<LivingEntity> entities) {
+    private boolean copyBlock(Location l, boolean copyAir, boolean copyBiome, List<Entity> ents) {
         Block block = l.getBlock();
-        if (!copyAir && block.getType().equals(Material.AIR) && entities.isEmpty()) {
+        if (!copyAir && block.getType().equals(Material.AIR) && ents.isEmpty()) {
             return false;
         }
         // Create position
@@ -202,14 +212,14 @@ public class BlueprintClipboard {
         Vector pos = new Vector(x, y, z);
 
         // Set entities
-        List<BlueprintEntity> bpEnts = setEntities(entities);
+        List<BlueprintEntity> bpEnts = setEntities(ents);
         // Store
         if (!bpEnts.isEmpty()) {
             bpEntities.put(pos, bpEnts);
         }
 
         // Return if this is just air block
-        if (!copyAir && block.getType().equals(Material.AIR) && !entities.isEmpty()) {
+        if (!copyAir && block.getType().equals(Material.AIR) && !ents.isEmpty()) {
             return true;
         }
 
@@ -291,9 +301,14 @@ public class BlueprintClipboard {
         return cs;
     }
 
-    private List<BlueprintEntity> setEntities(Collection<LivingEntity> entities) {
+    /**
+     * Deals with any entities that are in this block. Technically, this could be more than one, but is usually one.
+     * @param ents collection of entities
+     * @return Serialized list of entities
+     */
+    private List<BlueprintEntity> setEntities(List<Entity> ents) {
         List<BlueprintEntity> bpEnts = new ArrayList<>();
-        for (LivingEntity entity: entities) {
+        for (Entity entity : ents) {
             BlueprintEntity bpe = new BlueprintEntity();
 
             bpe.setType(entity.getType());
@@ -329,6 +344,7 @@ public class BlueprintClipboard {
                 bpe.setStyle(horse.getStyle());
             }
 
+            // Mythic mob check
             mmh.filter(mm -> mm.isMythicMob(entity)).map(mm -> mm.getMythicMob(entity))
                     .ifPresent(bpe::setMythicMobsRecord);
 

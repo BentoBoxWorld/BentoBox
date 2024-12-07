@@ -21,6 +21,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -33,6 +34,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.hooks.FancyNpcsHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
 import world.bentobox.bentobox.nms.PasteHandler;
 
@@ -169,6 +171,7 @@ public class DefaultPasteUtil {
      * @param island   - island
      * @param location - location
      * @param list     - blueprint entities
+     * @return future boolean - true if Bukkit entity spawned, false another plugin entity spawned
      */
     public static CompletableFuture<Void> setEntity(Island island, Location location, List<BlueprintEntity> list) {
         World world = location.getWorld();
@@ -180,11 +183,26 @@ public class DefaultPasteUtil {
     /**
      * Spawn an entity
      * @param k the blueprint entity definition
-     * @param location location
+     * @param location location to paste the entity
      * @param island island
-     * @return true if Bukkit entity spawned, false if MythicMob entity spawned
+     * @return true if Bukkit entity spawned, false another plugin entity spawned
      */
     static boolean spawnBlueprintEntity(BlueprintEntity k, Location location, Island island) {
+        // Npc entity
+        if (k.getNpc() != null
+                && plugin.getHooks().getHook("FancyNpcs").filter(mmh -> mmh instanceof FancyNpcsHook).map(mmh -> {
+                    try {
+                        return ((FancyNpcsHook) mmh).spawnNpc(k.getNpc(), location);
+                    } catch (InvalidConfigurationException e) {
+                        plugin.logError("FancyNpc loading failed in blueprint.");
+                        return false;
+                    }
+                }).orElse(false)) {
+            // Npc has spawned.
+            return false;
+        }
+
+        // Mythic Mobs entity
         if (k.getMythicMobsRecord() != null && plugin.getHooks().getHook("MythicMobs")
                 .filter(mmh -> mmh instanceof MythicMobsHook)
                 .map(mmh -> ((MythicMobsHook) mmh).spawnMythicMob(k.getMythicMobsRecord(), location))
