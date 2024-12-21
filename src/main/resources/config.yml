@@ -93,7 +93,7 @@ panel:
   # Mojang API sometime may be slow and may limit requests to the player data, so this will allow to
   # get player heads a bit faster then Mojang API.
   # Added since 1.16.0.
-  use-cache-server: true
+  use-cache-server: false
   # Defines how long player skin texture link is stored into local cache before it is requested again.
   # Defined value is in the minutes.
   # Value 0 will not clear cache until server restart.

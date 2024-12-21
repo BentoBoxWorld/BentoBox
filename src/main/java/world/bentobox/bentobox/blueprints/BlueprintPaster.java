@@ -124,12 +124,38 @@ public class BlueprintPaster {
         location.setY(y);
     }
 
-    private record Bits(Map<Vector, BlueprintBlock> blocks,
+    /**
+     * A record of all the "bits" of the blueprint that need to be pasted
+     * Consists of blocks, attached blocks, entities, iterators for the blocks and a speed
+     */
+    private record Bits(
+            /**
+             * Basic blocks to the pasted (not attached blocks)
+             */
+            Map<Vector, BlueprintBlock> blocks,
+            /**
+             * Attached blocks
+             */
             Map<Vector, BlueprintBlock> attached,
+            /**
+             * Entities to be pasted
+             */
             Map<Vector, List<BlueprintEntity>> entities,
+            /**
+             * Basic block pasting iterator
+             */
             Iterator<Entry<Vector, BlueprintBlock>> it,
+            /**
+             * Attached block pasting iterator
+             */
             Iterator<Entry<Vector, BlueprintBlock>> it2,
+            /**
+             * Entity pasting iterator
+             */
             Iterator<Entry<Vector, List<BlueprintEntity>>> it3,
+            /**
+             * Paste speed
+             */
             int pasteSpeed) {}
 
     /**

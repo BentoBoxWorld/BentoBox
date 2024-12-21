@@ -477,7 +477,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return the minProtectedX
      */
     public int getMinProtectedX() {
-        return Math.max(getMinX(), getProtectionCenter().getBlockX() - protectionRange);
+        return Math.max(getMinX(), getProtectionCenter().getBlockX() - this.getProtectionRange());
     }
 
     /**
@@ -488,7 +488,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public int getMaxProtectedX() {
-        return Math.min(getMaxX(), getProtectionCenter().getBlockX() + protectionRange);
+        return Math.min(getMaxX(), getProtectionCenter().getBlockX() + this.getProtectionRange());
     }
 
     /**
@@ -498,7 +498,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return the minProtectedZ
      */
     public int getMinProtectedZ() {
-        return Math.max(getMinZ(), getProtectionCenter().getBlockZ() - protectionRange);
+        return Math.max(getMinZ(), getProtectionCenter().getBlockZ() - this.getProtectionRange());
     }
 
     /**
@@ -509,7 +509,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public int getMaxProtectedZ() {
-        return Math.min(getMaxZ(), getProtectionCenter().getBlockZ() + protectionRange);
+        return Math.min(getMaxZ(), getProtectionCenter().getBlockZ() + this.getProtectionRange());
     }
 
     /**
@@ -957,9 +957,9 @@ public class Island implements DataObject, MetaDataAble {
                         || this.getPlugin().getIWM().isIslandNether(target.getWorld())
                         || this.getPlugin().getIWM().isIslandEnd(target.getWorld()))
                 && target.getBlockX() >= this.getMinProtectedX()
-                && target.getBlockX() < (this.getMinProtectedX() + this.protectionRange * 2)
+                && target.getBlockX() < (this.getMinProtectedX() + this.getProtectionRange() * 2)
                 && target.getBlockZ() >= this.getMinProtectedZ()
-                && target.getBlockZ() < (this.getMinProtectedZ() + this.protectionRange * 2);
+                && target.getBlockZ() < (this.getMinProtectedZ() + this.getProtectionRange() * 2);
     }
 
     /**

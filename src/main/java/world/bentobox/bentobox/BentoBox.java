@@ -19,11 +19,13 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
+import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.DatabaseSetup;
+import world.bentobox.bentobox.hooks.FancyNpcsHook;
 import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.MultipaperHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
@@ -191,6 +193,9 @@ public class BentoBox extends JavaPlugin implements Listener {
         hooksManager.registerHook(new MultipaperHook());
 
         hooksManager.registerHook(new VaultHook());
+
+        // FancyNpcs
+        hooksManager.registerHook(new FancyNpcsHook());
 
         // MythicMobs
         hooksManager.registerHook(new MythicMobsHook());
