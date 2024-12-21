@@ -30,7 +30,8 @@ jobs:
       - name: Upload to Modrinth
         uses: cloudnode-pro/modrinth-publish@2.0.0
         with:
-          # Configure the action as needed. The following is an example.
+          # Configure the action
+          api-domain: staging-api.modrinth.com
           token: ${{ secrets.MODRINTH_TOKEN }}
           project: aBVLHiAW
           name: ${{ github.event.release.name }}
@@ -42,4 +43,4 @@ jobs:
           game-versions: |-
             1.21.3
             1.21.4
-          files: target/YourProject-${{ github.event.release.tag_name }}.jar
+          files: target/BentoBox-${{ github.event.release.tag_name }}.jar
