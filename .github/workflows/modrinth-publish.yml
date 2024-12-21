@@ -1,0 +1,45 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # !!! Make sure to select the correct Java version for your project !!!
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: adopt
+          cache: maven
+
+      # This step will take the version tag from the release and replace it in `pom.xml` before building.
+      - name: Set version from release tag
+        run: mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
+
+      - name: Build and package with Maven
+        run: mvn -B clean package --file pom.xml
+
+      - name: Upload to Modrinth
+        uses: cloudnode-pro/modrinth-publish@2.0.0
+        with:
+          # Configure the action as needed. The following is an example.
+          token: ${{ secrets.MODRINTH_TOKEN }}
+          project: aBVLHiAW
+          name: ${{ github.event.release.name }}
+          version: ${{ github.event.release.tag_name }}
+          changelog: ${{ github.event.release.body }}
+          loaders: |-
+            paper
+            spigot
+          game-versions: |-
+            1.21.3
+            1.21.4
+          files: target/YourProject-${{ github.event.release.tag_name }}.jar
