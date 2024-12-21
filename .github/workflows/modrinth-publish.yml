@@ -31,7 +31,7 @@ jobs:
         uses: cloudnode-pro/modrinth-publish@2.0.0
         with:
           # Configure the action
-          api-domain: staging-api.modrinth.com
+          # api-domain: staging-api.modrinth.com
           token: ${{ secrets.MODRINTH_TOKEN }}
           project: aBVLHiAW
           name: ${{ github.event.release.name }}
