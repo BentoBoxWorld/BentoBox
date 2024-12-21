@@ -24,6 +24,11 @@ import com.google.gson.annotations.Expose;
  */
 public class BlueprintEntity {
 
+    // Npc storage
+    @Expose
+    private String npc;
+
+    // MythicMobs storage
     public record MythicMobRecord(String type, String displayName, double level, float power, String stance) {
     }
 
@@ -302,6 +307,39 @@ public class BlueprintEntity {
         this.MMLevel = mmr.level();
         this.MMStance = mmr.stance();
         this.MMpower = mmr.power();
+    }
+
+    /**
+     * @return the npc
+     */
+    public String getNpc() {
+        return npc;
+    }
+
+    /**
+     * @param citizen the citizen to set
+     */
+    public void setNpc(String citizen) {
+        this.npc = citizen;
+    }
+
+    @Override
+    public String toString() {
+        return "BlueprintEntity [" + (npc != null ? "npc=" + npc + ", " : "")
+                + (MMtype != null ? "MMtype=" + MMtype + ", " : "")
+                + (MMLevel != null ? "MMLevel=" + MMLevel + ", " : "")
+                + (MMStance != null ? "MMStance=" + MMStance + ", " : "")
+                + (MMpower != null ? "MMpower=" + MMpower + ", " : "") + (color != null ? "color=" + color + ", " : "")
+                + (type != null ? "type=" + type + ", " : "")
+                + (customName != null ? "customName=" + customName + ", " : "")
+                + (tamed != null ? "tamed=" + tamed + ", " : "") + (chest != null ? "chest=" + chest + ", " : "")
+                + (adult != null ? "adult=" + adult + ", " : "")
+                + (domestication != null ? "domestication=" + domestication + ", " : "")
+                + (inventory != null ? "inventory=" + inventory + ", " : "")
+                + (style != null ? "style=" + style + ", " : "") + (level != null ? "level=" + level + ", " : "")
+                + (profession != null ? "profession=" + profession + ", " : "")
+                + (experience != null ? "experience=" + experience + ", " : "")
+                + (villagerType != null ? "villagerType=" + villagerType : "") + "]";
     }
     
 }

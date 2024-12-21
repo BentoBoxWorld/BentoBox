@@ -84,7 +84,7 @@
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>3.0.1</build.version>
+        <build.version>3.1.1</build.version>
         <sonar.organization>bentobox-world</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <server.jars>${project.basedir}/lib</server.jars>
@@ -192,6 +192,12 @@
             <id>clojars</id>
             <url>https://repo.clojars.org/</url>
         </repository>
+        <!-- FancyNPC -->
+        <repository>
+            <id>fancyplugins-releases</id>
+            <name>FancyPlugins Repository</name>
+            <url>https://repo.fancyplugins.de/releases</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -233,6 +239,12 @@
             <artifactId>spigot-api</artifactId>
             <version>${spigot.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+             <groupId>org.spigotmc......</groupId>
+             <artifactId>spigot</artifactId>
+             <version>1.21.4-R0.1-SNAPSHOT</version>
+             <scope>provided</scope>
         </dependency>
         <dependency>
              <groupId>org.spigotmc.....</groupId>
@@ -387,6 +399,13 @@
             <version>1.1.13</version>
             <scope>compile</scope>
          </dependency>
+         <!-- FancyNPCs -->
+        <dependency>
+            <groupId>de.oliver</groupId>
+            <artifactId>FancyNpcs</artifactId>
+            <version>2.4.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

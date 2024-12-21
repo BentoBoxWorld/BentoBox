@@ -2,6 +2,7 @@ package world.bentobox.bentobox.database.objects;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -12,10 +13,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -24,6 +29,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Before;
@@ -68,12 +74,22 @@ public class IslandTest {
     private BentoBox plugin;
     @Mock
     private IslandWorldManager iwm;
+
     @Mock
     private World world;
+    @Mock
+    private World netherWorld;
+    @Mock
+    private World endWorld;
     @Mock
     private User user;
     @Mock
     private CommandsManager cm;
+    private String uniqueId1;
+    private String uniqueId2;
+    private Island island1;
+    private Island island2;
+    private Island island3;
 
     @Before
     public void setUp() throws Exception {
@@ -95,6 +111,12 @@ public class IslandTest {
         // User
         when(user.getUniqueId()).thenReturn(uuid);
 
+        // Nether and End worlds
+        when(iwm.getNetherWorld(world)).thenReturn(netherWorld);
+        when(iwm.getEndWorld(world)).thenReturn(endWorld);
+        when(netherWorld.getName()).thenReturn("bskyblock_nether");
+        when(endWorld.getName()).thenReturn("bskyblock_end");
+
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getOnlinePlayers()).thenReturn(Collections.emptyList());
@@ -109,7 +131,314 @@ public class IslandTest {
         // Islands Manager
         PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
+        // Initialize unique IDs for test objects
+        uniqueId1 = UUID.randomUUID().toString();
+        uniqueId2 = UUID.randomUUID().toString();
+
+        // Create Island instances
+        island1 = new Island();
+        island1.setUniqueId(uniqueId1);
+
+        island2 = new Island();
+        island2.setUniqueId(uniqueId1);
+
+        island3 = new Island();
+        island3.setUniqueId(uniqueId2);
+
         i = new Island(new Island(location, uuid, 100));
+    }
+
+    /**
+     * Test equals method: two objects with the same uniqueId should be equal.
+     */
+    @Test
+    public void testEquals_SameUniqueId() {
+        assertTrue("island1 should equal island2", island1.equals(island2));
+    }
+
+    /**
+     * Test equals method: objects with different uniqueId should not be equal.
+     */
+    @Test
+    public void testEquals_DifferentUniqueId() {
+        assertFalse("island1 should not equal island3", island1.equals(island3));
+    }
+
+    /**
+     * Test equals method: object compared with itself should be equal.
+     */
+    @Test
+    public void testEquals_SameObject() {
+        assertTrue("island1 should equal itself", island1.equals(island1));
+    }
+
+    /**
+     * Test equals method: object compared with null should return false.
+     */
+    @Test
+    public void testEquals_NullObject() {
+        assertFalse("island1 should not equal null", island1.equals(null));
+    }
+
+    /**
+     * Test equals method: object compared with a different class should return false.
+     */
+    @SuppressWarnings("unlikely-arg-type")
+    @Test
+    public void testEquals_DifferentClass() {
+        assertFalse("island1 should not equal a string", island1.equals("someString"));
+    }
+
+    /**
+     * Test hashCode: two objects with the same uniqueId should have the same hashCode.
+     */
+    @Test
+    public void testHashCode_SameUniqueId() {
+        assertEquals("island1 and island2 should have the same hashCode", island1.hashCode(), island2.hashCode());
+    }
+
+    /**
+     * Test hashCode: objects with different uniqueId should have different hashCode.
+     */
+    @Test
+    public void testHashCode_DifferentUniqueId() {
+        assertNotEquals("island1 and island3 should have different hashCodes", island1.hashCode(), island3.hashCode());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.objects.Island#Island()}.
+     */
+    @Test
+    public void testIsland() {
+        Island island = new Island();
+        assertNotNull("Island instance should not be null", island);
+        assertNotNull("Unique ID should be initialized", island.getUniqueId());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getRawProtectionRange()}.
+     */
+    @Test
+    public void testGetRawProtectionRange() {
+        int range = 100;
+        Island island = new Island(location, uuid, range);
+        assertEquals("Raw protection range should match", range, island.getRawProtectionRange());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getNetherWorld()}.
+     */
+    @Test
+    public void testGetNetherWorld() {
+        Island island = new Island(location, uuid, 100);
+        when(plugin.getIWM().isNetherGenerate(world)).thenReturn(true);
+        when(plugin.getIWM().isNetherIslands(world)).thenReturn(true);
+        when(plugin.getIWM().getNetherWorld(world)).thenReturn(netherWorld);
+        assertEquals("Nether world should be returned", netherWorld, island.getNetherWorld());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getEndWorld()}.
+     */
+    @Test
+    public void testGetEndWorld() {
+        Island island = new Island(location, uuid, 100);
+        when(plugin.getIWM().getEndWorld(world)).thenReturn(endWorld);
+        when(plugin.getIWM().isEndGenerate(world)).thenReturn(true);
+        when(plugin.getIWM().isEndIslands(world)).thenReturn(true);
+        assertEquals("End world should be returned", endWorld, island.getEndWorld());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getWorld(org.bukkit.World.Environment)}.
+     */
+    @Test
+    public void testGetWorldEnvironment() {
+        Island island = new Island(location, uuid, 100);
+        when(plugin.getIWM().getEndWorld(world)).thenReturn(endWorld);
+        when(plugin.getIWM().isEndGenerate(world)).thenReturn(true);
+        when(plugin.getIWM().isEndIslands(world)).thenReturn(true);
+        when(plugin.getIWM().isNetherGenerate(world)).thenReturn(true);
+        when(plugin.getIWM().isNetherIslands(world)).thenReturn(true);
+        when(plugin.getIWM().getNetherWorld(world)).thenReturn(netherWorld);
+        assertEquals("Normal world should be returned", world, island.getWorld(Environment.NORMAL));
+        assertEquals("Nether world should be returned", netherWorld, island.getWorld(Environment.NETHER));
+        assertEquals("End world should be returned", endWorld, island.getWorld(Environment.THE_END));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getBoundingBox(org.bukkit.World.Environment)}.
+     */
+    @Test
+    public void testGetBoundingBoxEnvironment() {
+        Island island = new Island(location, uuid, 100);
+        int dist = iwm.getIslandDistance(world);
+        BoundingBox expected = new BoundingBox(-dist, world.getMinHeight(), -dist, dist, world.getMaxHeight(), dist);
+        BoundingBox result = island.getBoundingBox(Environment.NORMAL);
+        assertEquals("BoundingBox should match", expected, result);
+    }
+
+    @Test
+    public void testGetProtectionBoundingBoxEnvironment() {
+        Island island = new Island(location, uuid, 100);
+        when(world.getMinHeight()).thenReturn(0);
+        when(world.getMaxHeight()).thenReturn(256);
+        BoundingBox expected = new BoundingBox(-100, world.getMinHeight(), -100, 100, world.getMaxHeight(), 100);
+
+        BoundingBox result = island.getProtectionBoundingBox(Environment.NORMAL);
+        assertEquals("Protection bounding box should match", expected, result);
+    }
+
+    @Test
+    public void testIsNetherIslandEnabled() {
+        Island island = new Island(location, uuid, 100);
+        when(plugin.getIWM().isNetherGenerate(world)).thenReturn(true);
+        when(plugin.getIWM().isNetherIslands(world)).thenReturn(true);
+
+        assertTrue("Nether island should be enabled", island.isNetherIslandEnabled());
+    }
+
+    @Test
+    public void testIsEndIslandEnabled() {
+        Island island = new Island(location, uuid, 100);
+        when(plugin.getIWM().isEndGenerate(world)).thenReturn(true);
+        when(plugin.getIWM().isEndIslands(world)).thenReturn(true);
+
+        assertTrue("End island should be enabled", island.isEndIslandEnabled());
+    }
+
+    @Test
+    public void testClearChanged() {
+        Island island = new Island(location, uuid, 100);
+        island.setChanged();
+        assertTrue("Island should be marked as changed", island.isChanged());
+
+        island.clearChanged();
+        assertFalse("Island should not be marked as changed", island.isChanged());
+    }
+
+    @Test
+    public void testRemoveHomes() {
+        Island island = new Island(location, uuid, 100);
+        island.addHome("home1", location);
+        island.addHome("home2", location);
+        assertEquals("Island should have two homes", 2, island.getHomes().size());
+
+        island.removeHomes();
+        assertEquals("Only the default home should remain", 0, island.getHomes().size());
+    }
+
+    @Test
+    public void testGetBonusRanges() {
+        Island island = new Island(location, uuid, 100);
+        assertNotNull("Bonus ranges should not be null", island.getBonusRanges());
+        assertTrue("Bonus ranges should initially be empty", island.getBonusRanges().isEmpty());
+    }
+
+    @Test
+    public void testSetBonusRanges() {
+        Island island = new Island(location, uuid, 100);
+        List<BonusRangeRecord> bonusRanges = Arrays.asList(new BonusRangeRecord("id1", 10, "Bonus 1"),
+                new BonusRangeRecord("id2", 20, "Bonus 2"));
+        island.setBonusRanges(bonusRanges);
+        assertEquals("Bonus ranges should match", bonusRanges, island.getBonusRanges());
+        assertEquals("Protection range should match", 100 + 10 + 20, island.getProtectionRange());
+    }
+
+    @Test
+    public void testGetBonusRange() {
+        Island island = new Island(location, uuid, 100);
+        island.addBonusRange("id1", 10, "Bonus 1");
+        assertEquals("Bonus range should match", 10, island.getBonusRange("id1"));
+    }
+
+    @Test
+    public void testGetBonusRangeRecord() {
+        Island island = new Island(location, uuid, 100);
+        island.addBonusRange("id1", 10, "Bonus 1");
+        Optional<BonusRangeRecord> record = island.getBonusRangeRecord("id1");
+        assertTrue("Bonus range record should exist", record.isPresent());
+        assertEquals("Bonus range ID should match", "id1", record.get().getUniqueId());
+    }
+
+    @Test
+    public void testAddBonusRange() {
+        Island island = new Island(location, uuid, 100);
+        island.addBonusRange("id1", 10, "Bonus 1");
+        assertEquals("Bonus range should match", 10, island.getBonusRange("id1"));
+        assertEquals("Protection range should match", 100 + 10, island.getProtectionRange());
+    }
+
+    @Test
+    public void testClearBonusRange() {
+        Island island = new Island(location, uuid, 100);
+        island.addBonusRange("id1", 10, "Bonus 1");
+        island.clearBonusRange("id1");
+        assertEquals("Bonus range should be cleared", 0, island.getBonusRange("id1"));
+        assertEquals("Protection range should match", 100, island.getProtectionRange());
+    }
+
+    @Test
+    public void testClearAllBonusRanges() {
+        Island island = new Island(location, uuid, 100);
+        island.addBonusRange("id1", 10, "Bonus 1");
+        island.addBonusRange("id2", 20, "Bonus 2");
+        assertEquals("Protection range should match", 100 + 10 + 20, island.getProtectionRange());
+        island.clearAllBonusRanges();
+        assertTrue("All bonus ranges should be cleared", island.getBonusRanges().isEmpty());
+        assertEquals("Protection range should match", 100, island.getProtectionRange());
+    }
+
+    @Test
+    public void testIsPrimary() {
+        Island island = new Island(location, uuid, 100);
+        island.setPrimary(uuid);
+        assertTrue("User should be primary", island.isPrimary(uuid));
+    }
+
+    @Test
+    public void testSetPrimary() {
+        Island island = new Island(location, uuid, 100);
+        island.setPrimary(uuid);
+        assertTrue("User should be primary", island.isPrimary(uuid));
+    }
+
+    @Test
+    public void testRemovePrimary() {
+        Island island = new Island(location, uuid, 100);
+        island.setPrimary(uuid);
+        island.removePrimary(uuid);
+        assertFalse("User should not be primary", island.isPrimary(uuid));
+    }
+
+    @Test
+    public void testInTeam() {
+        Island island = new Island(location, uuid, 100);
+        island.addMember(uuid);
+        assertTrue("User should be in team", island.inTeam(uuid));
+    }
+
+    @Test
+    public void testHasTeam() {
+        Island island = new Island(location, uuid, 100);
+        assertFalse("Island should not have a team initially", island.hasTeam());
+        island.addMember(UUID.randomUUID());
+        assertTrue("Island should have a team", island.hasTeam());
+    }
+
+    @Test
+    public void testGetPrimaries() {
+        Island island = new Island(location, uuid, 100);
+        island.setPrimary(uuid);
+        assertTrue("Primaries should contain user", island.getPrimaries().contains(uuid));
+    }
+
+    @Test
+    public void testSetPrimaries() {
+        Island island = new Island(location, uuid, 100);
+        Set<UUID> primaries = new HashSet<>(Collections.singletonList(uuid));
+        island.setPrimaries(primaries);
+        assertEquals("Primaries should match", primaries, island.getPrimaries());
     }
 
     /**

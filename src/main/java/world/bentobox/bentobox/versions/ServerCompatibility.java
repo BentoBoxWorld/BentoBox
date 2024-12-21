@@ -197,23 +197,23 @@ public class ServerCompatibility {
         /**
          * @since 1.21.0
          */
-        V1_19(Compatibility.COMPATIBLE),
+        V1_19(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.21.0
          */
-        V1_19_1(Compatibility.COMPATIBLE),
+        V1_19_1(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.21.0
          */
-        V1_19_2(Compatibility.COMPATIBLE),
+        V1_19_2(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.22.0
          */
-        V1_19_3(Compatibility.COMPATIBLE),
+        V1_19_3(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.22.1
          */
-        V1_19_4(Compatibility.COMPATIBLE),
+        V1_19_4(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.24.0
          */
@@ -221,40 +221,50 @@ public class ServerCompatibility {
         /**
          * @since 1.24.0
          */
-        V1_20_1(Compatibility.COMPATIBLE),
+        V1_20_1(Compatibility.INCOMPATIBLE),
         /**
          * @since 2.0.0
          */
-        V1_20_2(Compatibility.COMPATIBLE),
+        V1_20_2(Compatibility.INCOMPATIBLE),
         /**
          * @since 2.0.0
          */
-        V1_20_3(Compatibility.COMPATIBLE),
+        V1_20_3(Compatibility.INCOMPATIBLE),
         /**
          * @since 2.0.0
          */
-        V1_20_4(Compatibility.COMPATIBLE),
+        V1_20_4(Compatibility.INCOMPATIBLE),
         /**
          * @since 2.4.0
          */
-        V1_20_5(Compatibility.COMPATIBLE),
+        V1_20_5(Compatibility.INCOMPATIBLE),
         /**
          * @since 2.4.0
          */
-        V1_20_6(Compatibility.COMPATIBLE),
+        V1_20_6(Compatibility.INCOMPATIBLE),
         /**
          * @since 2.4.0
          */
-        V1_21(Compatibility.COMPATIBLE),
+        V1_21(Compatibility.INCOMPATIBLE),
         /**
          * @since 2.5.0
          */
-        V1_21_1(Compatibility.COMPATIBLE),
+        V1_21_1(Compatibility.INCOMPATIBLE),
 
         /**
          * @since 2.7.0
          */
-        V1_21_2(Compatibility.INCOMPATIBLE), V1_21_3(Compatibility.COMPATIBLE);
+        V1_21_2(Compatibility.INCOMPATIBLE),
+
+        /**
+         * @since 3.0.0
+         */
+        V1_21_3(Compatibility.COMPATIBLE),
+
+        /**
+         * @since 3.0.1
+         */
+        V1_21_4(Compatibility.COMPATIBLE),;
 
         private final Compatibility compatibility;
 
