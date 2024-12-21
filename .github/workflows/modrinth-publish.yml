@@ -21,8 +21,8 @@ jobs:
           cache: maven
 
       # This step will take the version tag from the release and replace it in `pom.xml` before building.
-      - name: Set version from release tag
-        run: mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
+      #- name: Set version from release tag
+      #  run: mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
 
       - name: Build and package with Maven
         run: mvn -B clean package --file pom.xml
