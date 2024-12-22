@@ -60,7 +60,6 @@ public class IslandHomesPanel extends AbstractPanel
      *
      * @param command CompositeCommand
      * @param user User who opens panel
-     * @param islandMap map of island names and IslandInfo
      */
     private IslandHomesPanel(@NonNull CompositeCommand command, @NonNull User user)
     {
