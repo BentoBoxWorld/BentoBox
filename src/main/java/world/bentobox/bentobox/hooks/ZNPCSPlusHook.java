@@ -49,7 +49,6 @@ public class ZNPCSPlusHook extends Hook {
         NpcType type = npc.getType();
         for (EntityProperty<?> property : npc.getAppliedProperties())
             try {
-                property.toString();
                 PropertySerializer<?> serializer = propertyRegistry
                         .getSerializer(((EntityPropertyImpl<?>) property).getType());
                 if (serializer == null) {
