@@ -419,11 +419,6 @@
           <version>2.0.0-SNAPSHOT</version>
           <scope>provided</scope>
         </dependency>
-        <dependency>
-          <groupId>lol.pyr</groupId>
-          <artifactId>ZNPCsPlus</artifactId>
-          <version>1.0.7</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -475,8 +470,6 @@
                 <version>3.5.2</version>
                 <!--suppress MavenModelInspection -->
                 <configuration>
-                    <parallel>classes</parallel>
-                    <threadCount>8</threadCount>
                     <argLine>
                         ${argLine}
                         --add-opens java.base/java.lang=ALL-UNNAMED
