@@ -141,6 +141,9 @@ public class DefaultPasteUtilTest {
         when(plugin.getHooks()).thenReturn(hooksManager);
 
         when(plugin.getPlayers()).thenReturn(pm);
+
+        // Blueprint Entity
+        when(blueprintEntity.getType()).thenReturn(EntityType.PLAYER);
     }
 
     /**
