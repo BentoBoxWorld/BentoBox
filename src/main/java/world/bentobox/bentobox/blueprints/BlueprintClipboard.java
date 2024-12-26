@@ -45,6 +45,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.hooks.FancyNpcsHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
+import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
 
 /**
  * The clipboard provides the holding spot for an active blueprint that is being
@@ -71,6 +72,7 @@ public class BlueprintClipboard {
     private final BentoBox plugin = BentoBox.getInstance();
     private Optional<MythicMobsHook> mmh;
     private Optional<FancyNpcsHook> npc;
+    private Optional<ZNPCsPlusHook> znpc;
 
     /**
      * Create a clipboard for blueprint
@@ -82,12 +84,15 @@ public class BlueprintClipboard {
     }
 
     public BlueprintClipboard() {
-        // Citizens Hook
+        // Fancy NPCs Hook
         npc = plugin.getHooks().getHook("FancyNpcs").filter(FancyNpcsHook.class::isInstance)
                 .map(FancyNpcsHook.class::cast);
         // MythicMobs Hook
         mmh = plugin.getHooks().getHook("MythicMobs").filter(MythicMobsHook.class::isInstance)
                 .map(MythicMobsHook.class::cast);
+        // ZNPCs Plus Hook
+        znpc = plugin.getHooks().getHook("ZNPCsPlus").filter(ZNPCsPlusHook.class::isInstance)
+                .map(ZNPCsPlusHook.class::cast);
     }
 
     /**
@@ -142,6 +147,9 @@ public class BlueprintClipboard {
         if (npc.isPresent()) {
             // Add all the citizens for the area in one go. This is pretty fast.
             bpEntities.putAll(npc.get().getNpcsInArea(world, vectorsToCopy, origin));
+        }
+        if (znpc.isPresent()) {
+            bpEntities.putAll(znpc.get().getNpcsInArea(world, vectorsToCopy, origin));
         }
 
         // Repeating copy task

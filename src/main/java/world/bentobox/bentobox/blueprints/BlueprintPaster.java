@@ -240,7 +240,7 @@ public class BlueprintPaster {
                 int x = location.getBlockX() + entry.getKey().getBlockX();
                 int y = location.getBlockY() + entry.getKey().getBlockY();
                 int z = location.getBlockZ() + entry.getKey().getBlockZ();
-                Location center = new Location(world, x, y, z).add(new Vector(0.5, 0.5, 0.5));
+                Location center = new Location(world, x, y, z).add(new Vector(0.5, 0D, 0.5));
                 List<BlueprintEntity> entities = entry.getValue();
                 entityMap.put(center, entities);
                 count++;

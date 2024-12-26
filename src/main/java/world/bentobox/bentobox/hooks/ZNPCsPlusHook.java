@@ -3,13 +3,17 @@ package world.bentobox.bentobox.hooks;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -19,6 +23,7 @@ import lol.pyr.znpcsplus.util.NpcLocation;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Provides copy and pasting of ZNPCS Plus in blueprints https://github.com/Pyrbu/ZNPCsPlus
@@ -28,6 +33,8 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
  */
 public class ZNPCsPlusHook extends Hook {
 
+    private static final String VERSION = "2.0.0-SNAPSHOT"; // Minimum version required
+
     public ZNPCsPlusHook() {
         super("ZNPCsPlus", Material.PLAYER_HEAD);
     }
@@ -36,7 +43,6 @@ public class ZNPCsPlusHook extends Hook {
         String result = NpcApiProvider.get().getNpcSerializerRegistry().getSerializer(YamlConfiguration.class)
                 .serialize(entry)
                 .saveToString();
-        BentoBox.getInstance().logDebug(result);
         return result;
     }
 
@@ -48,6 +54,7 @@ public class ZNPCsPlusHook extends Hook {
         NpcLocation loc = new NpcLocation(pos);
         entry.getNpc().setLocation(loc);
         NpcApiProvider.get().getNpcRegistry().register(entry);
+
         return true;
     }
 
@@ -56,7 +63,9 @@ public class ZNPCsPlusHook extends Hook {
         boolean hooked = this.isPluginAvailable();
         // Check version
         String version = this.getPlugin().getDescription().getVersion();
-        BentoBox.getInstance().logDebug("ZNPCsPlus version = " + version);
+        if (!Util.isVersionCompatible(version, VERSION)) {
+            return false;
+        }
         if (!hooked) {
             BentoBox.getInstance().logError("Could not hook into FancyNpcs");
         }
@@ -65,28 +74,30 @@ public class ZNPCsPlusHook extends Hook {
 
     @Override
     public String getFailureCause() {
-        return null; // The hook process shouldn't fail
+        // The only failure is wrong version
+        return "ZNPCsPlus version " + VERSION + " required or later. You are running "
+                + this.getPlugin().getDescription().getVersion();
     }
 
     public Map<? extends Vector, ? extends List<BlueprintEntity>> getNpcsInArea(World world, List<Vector> vectorsToCopy,
             @Nullable Vector origin) {
         Map<Vector, List<BlueprintEntity>> bpEntities = new HashMap<>();
 
-        for (NpcEntry npc : NpcApiProvider.get().getNpcRegistry().getAll()) {
-            NpcLocation npcLocation = npc.getNpc().getLocation();
-            Vector spot = new Vector(npcLocation.getBlockX(), npcLocation.getBlockY(), npcLocation.getBlockZ());
-            if (npc.getNpc().getWorld().equals(world) && vectorsToCopy.contains(spot)) {
+        for (NpcEntry npcEntry : NpcApiProvider.get().getNpcRegistry().getAll()) {
+            NpcLocation npcLocation = npcEntry.getNpc().getLocation();
+            Vector loc = new Vector(npcLocation.getBlockX(), npcLocation.getBlockY(), npcLocation.getBlockZ());
+            if (npcEntry.getNpc().getWorld().equals(world) && vectorsToCopy.contains(loc)) {
+                // Put the NPC into a BlueprintEntity - serialize it
                 BlueprintEntity cit = new BlueprintEntity();
-                //cit.setType(npc.getNpc().getType());
-                cit.setNpc(this.serializeNPC(npc, origin));
-                // Retrieve or create the list, then add the entity
-                List<BlueprintEntity> entities = bpEntities.getOrDefault(spot, new ArrayList<>());
+                cit.setNpc(this.serializeNPC(npcEntry, origin));
+                // Retrieve or create the list of entities and add this one
+                List<BlueprintEntity> entities = bpEntities.getOrDefault(loc, new ArrayList<>());
                 entities.add(cit);
-                // Create position
+                // Create the position where this entity will be pasted relative to the location
                 Vector origin2 = origin == null ? new Vector(0, 0, 0) : origin;
-                int x = spot.getBlockX() - origin2.getBlockX();
-                int y = spot.getBlockY() - origin2.getBlockY();
-                int z = spot.getBlockZ() - origin2.getBlockZ();
+                int x = loc.getBlockX() - origin2.getBlockX();
+                int y = loc.getBlockY() - origin2.getBlockY();
+                int z = loc.getBlockZ() - origin2.getBlockZ();
                 Vector pos = new Vector(x, y, z);
                 // Store
                 bpEntities.put(pos, entities); // Update the map

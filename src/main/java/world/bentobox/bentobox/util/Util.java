@@ -515,6 +515,54 @@ public class Util {
     }
 
     /**
+     * Checks if the given version is compatible with the required version.
+     * 
+     * <p>
+     * A version is considered compatible if:
+     * <ul>
+     *   <li>The major, minor, and patch components of the given version are greater than or equal to those of the required version.</li>
+     *   <li>If the numeric components are equal, the absence of "-SNAPSHOT" in the given version takes precedence (i.e., release versions are considered more compatible than SNAPSHOT versions).</li>
+     * </ul>
+     * </p>
+     * 
+     * @param version          the version to check, in the format "major.minor.patch[-SNAPSHOT]".
+     * @param requiredVersion  the required version, in the format "major.minor.patch[-SNAPSHOT]".
+     * @return {@code true} if the given version is compatible with the required version; {@code false} otherwise.
+     * 
+     * <p>
+     * Examples:
+     * <ul>
+     *   <li>{@code isVersionCompatible("2.1.0", "2.0.0-SNAPSHOT")} returns {@code true}</li>
+     *   <li>{@code isVersionCompatible("2.0.0", "2.0.0-SNAPSHOT")} returns {@code true}</li>
+     *   <li>{@code isVersionCompatible("2.0.0-SNAPSHOT", "2.0.0")} returns {@code false}</li>
+     *   <li>{@code isVersionCompatible("1.9.9", "2.0.0-SNAPSHOT")} returns {@code false}</li>
+     * </ul>
+     * </p>
+     */
+    public static boolean isVersionCompatible(String version, String requiredVersion) {
+        String[] versionParts = version.replace("-SNAPSHOT", "").split("\\.");
+        String[] requiredVersionParts = requiredVersion.replace("-SNAPSHOT", "").split("\\.");
+
+        for (int i = 0; i < Math.max(versionParts.length, requiredVersionParts.length); i++) {
+            int vPart = i < versionParts.length ? Integer.parseInt(versionParts[i]) : 0;
+            int rPart = i < requiredVersionParts.length ? Integer.parseInt(requiredVersionParts[i]) : 0;
+
+            if (vPart > rPart) {
+                return true;
+            } else if (vPart < rPart) {
+                return false;
+            }
+        }
+
+        // If numeric parts are equal, prioritize SNAPSHOT as lower precedence
+        boolean isVersionSnapshot = version.contains("-SNAPSHOT");
+        boolean isRequiredSnapshot = requiredVersion.contains("-SNAPSHOT");
+
+        // If required version is a full release but current version is SNAPSHOT, it's incompatible
+        return !(!isRequiredSnapshot && isVersionSnapshot);
+    }
+
+    /**
      * Check if the server has access to the Spigot API
      * @return True for Spigot <em>and</em> Paper environments
      */
