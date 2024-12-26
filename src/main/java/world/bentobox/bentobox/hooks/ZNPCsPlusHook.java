@@ -65,7 +65,7 @@ public class ZNPCsPlusHook extends Hook {
         if (!hooked) {
             BentoBox.getInstance().logError("Could not hook into FancyNpcs");
         }
-        return hooked; // The hook process shouldn't fail
+        return hooked;
     }
 
     @Override

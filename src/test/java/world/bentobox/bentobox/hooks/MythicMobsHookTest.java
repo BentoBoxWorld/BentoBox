@@ -21,7 +21,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -96,13 +95,6 @@ public class MythicMobsHookTest {
         when(mm.getActiveMob(any())).thenReturn(Optional.of(activeMob));
 
         hook = new MythicMobsHook();
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
     }
 
     /**
