@@ -22,6 +22,7 @@ import org.bukkit.block.sign.Side;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ChestedHorse;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
@@ -356,6 +357,11 @@ public class BlueprintClipboard {
             mmh.filter(mm -> mm.isMythicMob(entity)).map(mm -> mm.getMythicMob(entity))
                     .ifPresent(bpe::setMythicMobsRecord);
 
+            // Display entities
+            if (entity instanceof Display disp) {
+                BentoBox.getInstance().logDebug(disp.getAsString());
+                bpe.storeDisplay(disp);
+            }
             bpEnts.add(bpe);
         }
         return bpEnts;

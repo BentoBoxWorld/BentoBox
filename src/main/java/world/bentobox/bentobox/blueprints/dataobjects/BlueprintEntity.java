@@ -2,19 +2,32 @@ package world.bentobox.bentobox.blueprints.dataobjects;
 
 import java.util.Map;
 
+import org.bukkit.Color;
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.ChestedHorse;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.Display.Billboard;
+import org.bukkit.entity.Display.Brightness;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Style;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Tameable;
+import org.bukkit.entity.TextDisplay;
+import org.bukkit.entity.TextDisplay.TextAlignment;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Colorable;
+import org.bukkit.util.Transformation;
 
 import com.google.gson.annotations.Expose;
 
@@ -342,4 +355,138 @@ public class BlueprintEntity {
                 + (villagerType != null ? "villagerType=" + villagerType : "") + "]";
     }
     
+
+
+
+    @Expose
+    public DisplayRec displayRec;
+    @Expose
+    public TextDisplayRec textDisp;
+    @Expose
+    public BlockData blockDisp;
+    @Expose
+    public ItemStack itemDisp;
+
+    public record DisplayRec(@Expose Billboard billboard, @Expose Brightness brightness, @Expose float height,
+            @Expose float width, @Expose Color glowColorOverride, @Expose int interpolationDelay,
+            @Expose int interpolationDuration, @Expose float shadowRadius, @Expose float shadowStrength,
+            @Expose int teleportDuration, @Expose Transformation transformation, @Expose float range) {
+    }
+
+    public record TextDisplayRec(@Expose String text, @Expose TextAlignment alignment, @Expose Color bgColor,
+            @Expose BlockFace face, @Expose int lWidth, @Expose byte opacity, @Expose boolean isShadowed,
+            @Expose boolean isSeeThrough, @Expose boolean isDefaultBg) {
+    }
+
+    /**
+     * BlockDisplay, ItemDisplay, TextDisplay
+     * @param disp display entity
+     */
+    public void storeDisplay(Display disp) {
+        // Generic items
+        displayRec = new DisplayRec(disp.getBillboard(), disp.getBrightness(), disp.getDisplayHeight(),
+                disp.getDisplayWidth(), disp.getGlowColorOverride(), disp.getInterpolationDelay(),
+                disp.getInterpolationDuration(), disp.getShadowRadius(), disp.getShadowStrength(),
+                disp.getTeleportDuration(), disp.getTransformation(), disp.getViewRange());
+        // Class specific items
+        if (disp instanceof BlockDisplay bd) {
+            this.blockDisp = bd.getBlock();
+        } else if (disp instanceof ItemDisplay id) {
+            itemDisp = id.getItemStack();
+        } else if (disp instanceof TextDisplay td) {
+            textDisp = new TextDisplayRec(td.getText(), td.getAlignment(), td.getBackgroundColor(),
+                    td.getFacing(), td.getLineWidth(), td.getTextOpacity(), td.isShadowed(), td.isSeeThrough(),
+                    td.isDefaultBackground());
+        }
+
+        // , getBrightness, getDisplayHeight, getDisplayWidth, getGlowColorOverride, getInterpolationDelay, getInterpolationDuration, 
+        //getShadowRadius, getShadowStrength, getTeleportDuration, getTransformation, getViewRange, setBillboard, setBrightness, 
+        // setDisplayHeight, setDisplayWidth, setGlowColorOverride, setInterpolationDelay, setInterpolationDuration, setShadowRadius, setShadowStrength, setTeleportDuration, setTransformation, setTransformationMatrix, setViewRange
+    }
+
+    /**
+     * Sets any display entity properties to the location, e.g. holograms
+     * @param pos location
+     */
+    public void setDisplay(Location pos) {
+        World world = pos.getWorld();
+        Display d = null;
+        if (this.blockDisp != null) {
+            // Block Display
+            d = world.spawn(pos, BlockDisplay.class);
+            ((BlockDisplay) d).setBlock(this.blockDisp);
+        } else if (this.itemDisp != null) {
+            // Item Display
+            d = world.spawn(pos, ItemDisplay.class);
+            ((ItemDisplay) d).setItemStack(itemDisp);
+        } else if (this.textDisp != null) {
+            // Block Display
+            d = world.spawn(pos, TextDisplay.class);
+            ((TextDisplay) d).setText(textDisp.text());
+            ((TextDisplay) d).setAlignment(textDisp.alignment());
+            ((TextDisplay) d).setBackgroundColor(textDisp.bgColor());
+            ((TextDisplay) d).setLineWidth(textDisp.lWidth());
+            ((TextDisplay) d).setTextOpacity(textDisp.opacity());
+            ((TextDisplay) d).setShadowed(textDisp.isShadowed());
+            ((TextDisplay) d).setSeeThrough(textDisp.isSeeThrough());
+            ((TextDisplay) d).setBackgroundColor(textDisp.bgColor());
+        }
+        if (d != null && this.displayRec != null) {
+            d.setBillboard(displayRec.billboard());
+            d.setBrightness(displayRec.brightness());
+            d.setDisplayHeight(displayRec.height()); 
+            d.setDisplayWidth(displayRec.width()); 
+            d.setGlowColorOverride(displayRec.glowColorOverride());
+            d.setInterpolationDelay(displayRec.interpolationDelay());
+            d.setInterpolationDuration(displayRec.interpolationDuration());
+            d.setShadowRadius(displayRec.shadowRadius());
+            d.setShadowStrength(displayRec.shadowStrength());
+            d.setTeleportDuration(displayRec.teleportDuration());
+            d.setTransformation(displayRec.transformation());
+            d.setViewRange(displayRec.range());
+        }
+    }
+
+    /**
+     * @return the displayRec
+     */
+    public DisplayRec getDisplayRec() {
+        return displayRec;
+    }
+
+    /**
+     * @param displayRec the displayRec to set
+     */
+    public void setDisplayRec(DisplayRec displayRec) {
+        this.displayRec = displayRec;
+    }
+
+    /**
+     * @return the blockDisp
+     */
+    public BlockData getBlockDisp() {
+        return blockDisp;
+    }
+
+    /**
+     * @param blockDisp the blockDisp to set
+     */
+    public void setBlockDisp(BlockData blockDisp) {
+        this.blockDisp = blockDisp;
+    }
+
+    /**
+     * @return the itemDisp
+     */
+    public ItemStack getItemDisp() {
+        return itemDisp;
+    }
+
+    /**
+     * @param itemDisp the itemDisp to set
+     */
+    public void setItemDisp(ItemStack itemDisp) {
+        this.itemDisp = itemDisp;
+    }
+
 }
