@@ -18,6 +18,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.Attachable;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
@@ -30,7 +31,6 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Attachable;
 import org.bukkit.material.Colorable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
@@ -163,9 +163,8 @@ public class BlueprintClipboard {
                 List<Entity> ents = world.getEntities().stream()
                         .filter(Objects::nonNull)
                         .filter(e -> !(e instanceof Player))
-                        .filter(e -> new Vector(Math.rint(e.getLocation().getX()),
-                                Math.rint(e.getLocation().getY()),
-                                Math.rint(e.getLocation().getZ())).equals(v))
+                        .filter(e -> new Vector(e.getLocation().getBlockX(), e.getLocation().getBlockY(),
+                                e.getLocation().getBlockZ()).equals(v))
                         .toList();
                 if (copyBlock(v.toLocation(world), copyAir, copyBiome, ents)) {
                     count++;
@@ -231,7 +230,7 @@ public class BlueprintClipboard {
         if (!copyAir && block.getType().equals(Material.AIR) && !ents.isEmpty()) {
             return true;
         }
-
+        BentoBox.getInstance().logDebug("Saving blueprint block");
         BlueprintBlock b = bluePrintBlock(pos, block, copyBiome);
         if (b != null) {
             this.bpBlocks.put(pos, b);
@@ -242,6 +241,7 @@ public class BlueprintClipboard {
     private BlueprintBlock bluePrintBlock(Vector pos, Block block, boolean copyBiome) {
         // Block state
         BlockState blockState = block.getState();
+        BentoBox.getInstance().logDebug("saving state");
         BlueprintBlock b = new BlueprintBlock(block.getBlockData().getAsString());
 
         if (copyBiome) {
@@ -256,13 +256,15 @@ public class BlueprintClipboard {
                 b.setGlowingText(side, sign.getSide(side).isGlowingText());
             }
         }
+        BentoBox.getInstance().logDebug("Get block data");
         // Set block data
-        if (blockState.getData() instanceof Attachable) {
+        if (blockState.getBlockData() instanceof Attachable) {
             // Placeholder for attachment
             bpBlocks.put(pos, new BlueprintBlock("minecraft:air"));
             bpAttachable.put(pos, b);
             return null;
         }
+        BentoBox.getInstance().logDebug("Check bedrock");
 
         if (block.getType().equals(Material.BEDROCK)) {
             // Find highest bedrock
@@ -274,7 +276,7 @@ public class BlueprintClipboard {
                 }
             }
         }
-
+        BentoBox.getInstance().logDebug("Chests");
         // Chests
         if (blockState instanceof InventoryHolder ih) {
             b.setInventory(new HashMap<>());
@@ -285,11 +287,11 @@ public class BlueprintClipboard {
                 }
             }
         }
-
+        BentoBox.getInstance().logDebug("Spawner");
         if (blockState instanceof CreatureSpawner spawner) {
             b.setCreatureSpawner(getSpawner(spawner));
         }
-
+        BentoBox.getInstance().logDebug("Banners");
         // Banners
         if (blockState instanceof Banner banner) {
             b.setBannerPatterns(banner.getPatterns());
@@ -359,7 +361,7 @@ public class BlueprintClipboard {
 
             // Display entities
             if (entity instanceof Display disp) {
-                BentoBox.getInstance().logDebug(disp.getAsString());
+                BentoBox.getInstance().logDebug("Storing display: " + disp.getAsString());
                 bpe.storeDisplay(disp);
             }
             bpEnts.add(bpe);

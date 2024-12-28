@@ -189,6 +189,7 @@ public class DefaultPasteUtil {
      * @return true if Bukkit entity spawned, false another plugin entity spawned
      */
     static boolean spawnBlueprintEntity(BlueprintEntity k, Location location, Island island) {
+        BentoBox.getInstance().logDebug("spawn blueprint entiy " + k + " at " + location);
         // Display Entity (holograms, etc.)
         k.setDisplay(location);
         // FancyNpc entity

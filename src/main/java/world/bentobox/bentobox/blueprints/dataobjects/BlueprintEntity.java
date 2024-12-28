@@ -2,14 +2,17 @@ package world.bentobox.bentobox.blueprints.dataobjects;
 
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.Display;
@@ -20,6 +23,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.ItemDisplay.ItemDisplayTransform;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.TextDisplay.TextAlignment;
@@ -27,9 +31,15 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Colorable;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Transformation;
+import org.bukkit.util.Vector;
 
 import com.google.gson.annotations.Expose;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.ItemDispRec.DisplayRec;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.ItemDispRec.TextDisplayRec;
 
 /**
  * @author tastybento
@@ -81,8 +91,16 @@ public class BlueprintEntity {
     private Integer experience;
     @Expose
     private Villager.Type villagerType;
+    // Position within the block
+    @Expose
+    private double x;
+    @Expose
+    private double y;
+    @Expose
+    private double z;
 
     /**
+     * Adjusts the entity according to how it was stored
      * @since 1.8.0
      */
     public void configureEntity(Entity e) {
@@ -115,6 +133,11 @@ public class BlueprintEntity {
         if (style != null && e instanceof Horse horse) {
             horse.setStyle(style);
         }
+        // Shift to the in-block location
+        Vector add = new Vector(x, y, z);
+        BentoBox.getInstance().logDebug("entity is at " + e.getLocation().toVector() + " and adding " + add);
+        e.getLocation().add(add);
+        BentoBox.getInstance().logDebug("entity is now at " + e.getLocation().toVector());
     }
     
     /**
@@ -330,42 +353,22 @@ public class BlueprintEntity {
     }
 
     /**
-     * @param citizen the citizen to set
+     * @param npc the citizen to set
      */
-    public void setNpc(String citizen) {
-        this.npc = citizen;
+    public void setNpc(String npc) {
+        this.npc = npc;
     }
-
-    @Override
-    public String toString() {
-        return "BlueprintEntity [" + (npc != null ? "npc=" + npc + ", " : "")
-                + (MMtype != null ? "MMtype=" + MMtype + ", " : "")
-                + (MMLevel != null ? "MMLevel=" + MMLevel + ", " : "")
-                + (MMStance != null ? "MMStance=" + MMStance + ", " : "")
-                + (MMpower != null ? "MMpower=" + MMpower + ", " : "") + (color != null ? "color=" + color + ", " : "")
-                + (type != null ? "type=" + type + ", " : "")
-                + (customName != null ? "customName=" + customName + ", " : "")
-                + (tamed != null ? "tamed=" + tamed + ", " : "") + (chest != null ? "chest=" + chest + ", " : "")
-                + (adult != null ? "adult=" + adult + ", " : "")
-                + (domestication != null ? "domestication=" + domestication + ", " : "")
-                + (inventory != null ? "inventory=" + inventory + ", " : "")
-                + (style != null ? "style=" + style + ", " : "") + (level != null ? "level=" + level + ", " : "")
-                + (profession != null ? "profession=" + profession + ", " : "")
-                + (experience != null ? "experience=" + experience + ", " : "")
-                + (villagerType != null ? "villagerType=" + villagerType : "") + "]";
-    }
-    
-
-
 
     @Expose
     public DisplayRec displayRec;
     @Expose
     public TextDisplayRec textDisp;
     @Expose
-    public BlockData blockDisp;
+    public BlueprintBlock blockDisp;
     @Expose
-    public ItemStack itemDisp;
+    public ItemDispRec itemDisp;
+    
+    public record ItemDispRec(@Expose ItemStack item, @Expose ItemDisplayTransform itemDispTrans) {}
 
     public record DisplayRec(@Expose Billboard billboard, @Expose Brightness brightness, @Expose float height,
             @Expose float width, @Expose Color glowColorOverride, @Expose int interpolationDelay,
@@ -390,18 +393,18 @@ public class BlueprintEntity {
                 disp.getTeleportDuration(), disp.getTransformation(), disp.getViewRange());
         // Class specific items
         if (disp instanceof BlockDisplay bd) {
-            this.blockDisp = bd.getBlock();
+            this.blockDisp = new BlueprintBlock(bd.getBlock().getAsString());
         } else if (disp instanceof ItemDisplay id) {
-            itemDisp = id.getItemStack();
+            itemDisp = new ItemDispRec(id.getItemStack(), id.getItemDisplayTransform());
         } else if (disp instanceof TextDisplay td) {
             textDisp = new TextDisplayRec(td.getText(), td.getAlignment(), td.getBackgroundColor(),
                     td.getFacing(), td.getLineWidth(), td.getTextOpacity(), td.isShadowed(), td.isSeeThrough(),
                     td.isDefaultBackground());
         }
-
-        // , getBrightness, getDisplayHeight, getDisplayWidth, getGlowColorOverride, getInterpolationDelay, getInterpolationDuration, 
-        //getShadowRadius, getShadowStrength, getTeleportDuration, getTransformation, getViewRange, setBillboard, setBrightness, 
-        // setDisplayHeight, setDisplayWidth, setGlowColorOverride, setInterpolationDelay, setInterpolationDuration, setShadowRadius, setShadowStrength, setTeleportDuration, setTransformation, setTransformationMatrix, setViewRange
+        // Store location within block
+        x = disp.getLocation().getX() - disp.getLocation().getBlockX();
+        y = disp.getLocation().getY() - disp.getLocation().getBlockY();
+        z = disp.getLocation().getZ() - disp.getLocation().getBlockZ();
     }
 
     /**
@@ -410,18 +413,22 @@ public class BlueprintEntity {
      */
     public void setDisplay(Location pos) {
         World world = pos.getWorld();
+        Location newPos = pos.clone().add(new Vector(x - 0.5D, y, z - 0.5D));
         Display d = null;
         if (this.blockDisp != null) {
             // Block Display
-            d = world.spawn(pos, BlockDisplay.class);
-            ((BlockDisplay) d).setBlock(this.blockDisp);
+            d = world.spawn(newPos, BlockDisplay.class);
+            BlockData bd = Bukkit.createBlockData(this.blockDisp.getBlockData());
+            ((BlockDisplay) d).setBlock(bd);
         } else if (this.itemDisp != null) {
             // Item Display
-            d = world.spawn(pos, ItemDisplay.class);
-            ((ItemDisplay) d).setItemStack(itemDisp);
+            d = world.spawn(newPos, ItemDisplay.class);
+            ((ItemDisplay) d).setItemStack(itemDisp.item());
+            ((ItemDisplay) d).setItemDisplayTransform(itemDisp.itemDispTrans());
         } else if (this.textDisp != null) {
-            // Block Display
-            d = world.spawn(pos, TextDisplay.class);
+            BentoBox.getInstance().logDebug("Text display - " + textDisp.text());
+            // Text Display
+            d = world.spawn(newPos, TextDisplay.class);
             ((TextDisplay) d).setText(textDisp.text());
             ((TextDisplay) d).setAlignment(textDisp.alignment());
             ((TextDisplay) d).setBackgroundColor(textDisp.bgColor());
@@ -432,6 +439,8 @@ public class BlueprintEntity {
             ((TextDisplay) d).setBackgroundColor(textDisp.bgColor());
         }
         if (d != null && this.displayRec != null) {
+            BentoBox.getInstance().logDebug("General display");
+            d.setCustomName(getCustomName());
             d.setBillboard(displayRec.billboard());
             d.setBrightness(displayRec.brightness());
             d.setDisplayHeight(displayRec.height()); 
@@ -445,48 +454,14 @@ public class BlueprintEntity {
             d.setTransformation(displayRec.transformation());
             d.setViewRange(displayRec.range());
         }
+        // Spawn an armor stand here so that we have a way to detect if a player interacts with the item
+        ArmorStand armorStand = (ArmorStand) world.spawnEntity(newPos, EntityType.ARMOR_STAND);
+        armorStand.setSmall(true); // Reduces size
+        armorStand.setGravity(false); // Prevents falling
+        //armorStand.setInvisible(true);
+        //armorStand.setMarker(true); // No hitbox
+        NamespacedKey key = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
+        armorStand.getPersistentDataContainer().set(key, PersistentDataType.STRING, d.getUniqueId().toString());
+        BentoBox.getInstance().logDebug("display set done");
     }
-
-    /**
-     * @return the displayRec
-     */
-    public DisplayRec getDisplayRec() {
-        return displayRec;
-    }
-
-    /**
-     * @param displayRec the displayRec to set
-     */
-    public void setDisplayRec(DisplayRec displayRec) {
-        this.displayRec = displayRec;
-    }
-
-    /**
-     * @return the blockDisp
-     */
-    public BlockData getBlockDisp() {
-        return blockDisp;
-    }
-
-    /**
-     * @param blockDisp the blockDisp to set
-     */
-    public void setBlockDisp(BlockData blockDisp) {
-        this.blockDisp = blockDisp;
-    }
-
-    /**
-     * @return the itemDisp
-     */
-    public ItemStack getItemDisp() {
-        return itemDisp;
-    }
-
-    /**
-     * @param itemDisp the itemDisp to set
-     */
-    public void setItemDisp(ItemStack itemDisp) {
-        this.itemDisp = itemDisp;
-    }
-
 }
