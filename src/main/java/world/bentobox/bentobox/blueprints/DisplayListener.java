@@ -13,7 +13,6 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.persistence.PersistentDataType;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.user.User;
 
 /**
  * Provides a listener for the Display Objects pasted when a hologram is interacted with
@@ -23,7 +22,6 @@ public class DisplayListener implements Listener {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractAtEntityEvent event) {
-        BentoBox.getInstance().logDebug(event.getEventName());
         if (event.getRightClicked() instanceof ArmorStand) {
             ArmorStand armorStand = (ArmorStand) event.getRightClicked();
             NamespacedKey key = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
@@ -36,15 +34,11 @@ public class DisplayListener implements Listener {
                 world.getEntitiesByClass(Display.class).stream()
                         .filter(e -> e.getUniqueId().equals(UUID.fromString(displayEntityUUID))).findFirst()
                         .ifPresent(e -> {
-                            User user = User.getInstance(event.getPlayer());
-                            user.sendRawMessage("You interacted with a DisplayEntity! ");
                             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_GLASS_BREAK, 1F,
                                     1F);
                             e.remove();
 
                         });
-                // Perform actions related to the DisplayEntity
-
             }
         }
     }

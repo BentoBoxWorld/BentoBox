@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
@@ -20,18 +21,11 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Attachable;
 import org.bukkit.block.sign.Side;
-import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.ChestedHorse;
-import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
-import org.bukkit.entity.Villager;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Colorable;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -58,6 +52,10 @@ import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
  */
 public class BlueprintClipboard {
 
+    /**
+     * Used to filter out hidden DisplayEntity armor stands when copying
+     */
+    private static final NamespacedKey KEY = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
     private @Nullable Blueprint blueprint;
     private @Nullable Location pos1;
     private @Nullable Location pos2;
@@ -74,6 +72,7 @@ public class BlueprintClipboard {
     private Optional<MythicMobsHook> mmh;
     private Optional<FancyNpcsHook> npc;
     private Optional<ZNPCsPlusHook> znpc;
+
 
     /**
      * Create a clipboard for blueprint
@@ -149,6 +148,7 @@ public class BlueprintClipboard {
             // Add all the citizens for the area in one go. This is pretty fast.
             bpEntities.putAll(npc.get().getNpcsInArea(world, vectorsToCopy, origin));
         }
+        // ZNPCsPlus NPCs
         if (znpc.isPresent()) {
             bpEntities.putAll(znpc.get().getNpcsInArea(world, vectorsToCopy, origin));
         }
@@ -163,6 +163,7 @@ public class BlueprintClipboard {
                 List<Entity> ents = world.getEntities().stream()
                         .filter(Objects::nonNull)
                         .filter(e -> !(e instanceof Player))
+                        .filter(e -> !e.getPersistentDataContainer().has(KEY, PersistentDataType.STRING)) // Do not copy hidden display entities
                         .filter(e -> new Vector(e.getLocation().getBlockX(), e.getLocation().getBlockY(),
                                 e.getLocation().getBlockZ()).equals(v))
                         .toList();
@@ -230,7 +231,6 @@ public class BlueprintClipboard {
         if (!copyAir && block.getType().equals(Material.AIR) && !ents.isEmpty()) {
             return true;
         }
-        BentoBox.getInstance().logDebug("Saving blueprint block");
         BlueprintBlock b = bluePrintBlock(pos, block, copyBiome);
         if (b != null) {
             this.bpBlocks.put(pos, b);
@@ -241,7 +241,6 @@ public class BlueprintClipboard {
     private BlueprintBlock bluePrintBlock(Vector pos, Block block, boolean copyBiome) {
         // Block state
         BlockState blockState = block.getState();
-        BentoBox.getInstance().logDebug("saving state");
         BlueprintBlock b = new BlueprintBlock(block.getBlockData().getAsString());
 
         if (copyBiome) {
@@ -256,7 +255,6 @@ public class BlueprintClipboard {
                 b.setGlowingText(side, sign.getSide(side).isGlowingText());
             }
         }
-        BentoBox.getInstance().logDebug("Get block data");
         // Set block data
         if (blockState.getBlockData() instanceof Attachable) {
             // Placeholder for attachment
@@ -264,7 +262,6 @@ public class BlueprintClipboard {
             bpAttachable.put(pos, b);
             return null;
         }
-        BentoBox.getInstance().logDebug("Check bedrock");
 
         if (block.getType().equals(Material.BEDROCK)) {
             // Find highest bedrock
@@ -276,7 +273,6 @@ public class BlueprintClipboard {
                 }
             }
         }
-        BentoBox.getInstance().logDebug("Chests");
         // Chests
         if (blockState instanceof InventoryHolder ih) {
             b.setInventory(new HashMap<>());
@@ -287,11 +283,9 @@ public class BlueprintClipboard {
                 }
             }
         }
-        BentoBox.getInstance().logDebug("Spawner");
         if (blockState instanceof CreatureSpawner spawner) {
             b.setCreatureSpawner(getSpawner(spawner));
         }
-        BentoBox.getInstance().logDebug("Banners");
         // Banners
         if (blockState instanceof Banner banner) {
             b.setBannerPatterns(banner.getPatterns());
@@ -320,65 +314,13 @@ public class BlueprintClipboard {
     private List<BlueprintEntity> setEntities(List<Entity> ents) {
         List<BlueprintEntity> bpEnts = new ArrayList<>();
         for (Entity entity : ents) {
-            BlueprintEntity bpe = new BlueprintEntity();
-
-            bpe.setType(entity.getType());
-            bpe.setCustomName(entity.getCustomName());
-            if (entity instanceof Villager villager) {
-                setVillager(villager, bpe);
-            }
-            if (entity instanceof Colorable c && c.getColor() != null) {
-                bpe.setColor(c.getColor());
-            }
-            if (entity instanceof Tameable tameable) {
-                bpe.setTamed(tameable.isTamed());
-            }
-            if (entity instanceof ChestedHorse chestedHorse) {
-                bpe.setChest(chestedHorse.isCarryingChest());
-            }
-            // Only set if child. Most animals are adults
-            if (entity instanceof Ageable ageable && !ageable.isAdult()) {
-                bpe.setAdult(false);
-            }
-            if (entity instanceof AbstractHorse horse) {
-                bpe.setDomestication(horse.getDomestication());
-                bpe.setInventory(new HashMap<>());
-                for (int i = 0; i < horse.getInventory().getSize(); i++) {
-                    ItemStack item = horse.getInventory().getItem(i);
-                    if (item != null) {
-                        bpe.getInventory().put(i, item);
-                    }
-                }
-            }
-
-            if (entity instanceof Horse horse) {
-                bpe.setStyle(horse.getStyle());
-            }
-
+            BlueprintEntity bpe = new BlueprintEntity(entity);
             // Mythic mob check
             mmh.filter(mm -> mm.isMythicMob(entity)).map(mm -> mm.getMythicMob(entity))
                     .ifPresent(bpe::setMythicMobsRecord);
-
-            // Display entities
-            if (entity instanceof Display disp) {
-                BentoBox.getInstance().logDebug("Storing display: " + disp.getAsString());
-                bpe.storeDisplay(disp);
-            }
             bpEnts.add(bpe);
         }
         return bpEnts;
-    }
-
-    /**
-     * Set the villager stats
-     * @param v - villager
-     * @param bpe - Blueprint Entity
-     */
-    private void setVillager(Villager v, BlueprintEntity bpe) {
-        bpe.setExperience(v.getVillagerExperience());
-        bpe.setLevel(v.getVillagerLevel());
-        bpe.setProfession(v.getProfession());
-        bpe.setVillagerType(v.getVillagerType());
     }
 
     /**
