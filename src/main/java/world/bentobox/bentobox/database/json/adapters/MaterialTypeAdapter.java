@@ -17,7 +17,7 @@ import com.google.gson.stream.JsonWriter;
 
 /**
  * Minecraft 1.20 changed GRASS to SHORT_GRASS. This class provides and backwards compatibility when loading
- * databased files stored with previous versions. It can be extended in the future if further enum changes are made.
+ * database files stored with previous versions. It can be extended in the future if further enum changes are made.
  * @author tastybento
  * @since 2.0.0
  */

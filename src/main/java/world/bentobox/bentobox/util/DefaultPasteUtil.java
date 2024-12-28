@@ -189,6 +189,8 @@ public class DefaultPasteUtil {
      * @return true if Bukkit entity spawned, false another plugin entity spawned
      */
     static boolean spawnBlueprintEntity(BlueprintEntity k, Location location, Island island) {
+        // Display Entity (holograms, etc.)
+        k.setDisplay(location);
         // FancyNpc entity
         if (k.getNpc() != null
                 && plugin.getHooks().getHook("FancyNpcs").filter(mmh -> mmh instanceof FancyNpcsHook).map(mmh -> {

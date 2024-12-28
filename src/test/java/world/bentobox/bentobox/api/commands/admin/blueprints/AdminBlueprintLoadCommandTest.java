@@ -76,6 +76,8 @@ public class AdminBlueprintLoadCommandTest {
 
     @Before
     public void setUp() throws Exception {
+        // Required for NamespacedKey
+        when(plugin.getName()).thenReturn("BentoBox");
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
