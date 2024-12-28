@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -17,7 +18,7 @@ import lol.pyr.znpcsplus.api.NpcApiProvider;
 import lol.pyr.znpcsplus.api.npc.NpcEntry;
 import lol.pyr.znpcsplus.util.NpcLocation;
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.hooks.Hook;
+import world.bentobox.bentobox.api.hooks.NPCHook;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.util.Util;
 
@@ -27,7 +28,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  * @since 3.2.0
  */
-public class ZNPCsPlusHook extends Hook {
+public class ZNPCsPlusHook extends NPCHook {
 
     private static final String VERSION = "2.0.0-SNAPSHOT"; // Minimum version required
 
@@ -35,13 +36,20 @@ public class ZNPCsPlusHook extends Hook {
         super("ZNPCsPlus", Material.PLAYER_HEAD);
     }
 
-    public String serializeNPC(NpcEntry entry, Vector origin) {
+    /**
+     * Serialize a NpcEntry
+     * @param entry NPC entry
+     * @param origin origin point of blueprint
+     * @return string serializing the NPC Entry
+     */
+    String serializeNPC(NpcEntry entry, Vector origin) {
         String result = NpcApiProvider.get().getNpcSerializerRegistry().getSerializer(YamlConfiguration.class)
                 .serialize(entry)
                 .saveToString();
         return result;
     }
 
+    @Override
     public boolean spawnNpc(String yaml, Location pos) throws InvalidConfigurationException {
         YamlConfiguration yaml2 = new YamlConfiguration();
         yaml2.loadFromString(yaml);
@@ -75,6 +83,7 @@ public class ZNPCsPlusHook extends Hook {
                 + this.getPlugin().getDescription().getVersion();
     }
 
+    @Override
     public Map<? extends Vector, ? extends List<BlueprintEntity>> getNpcsInArea(World world, List<Vector> vectorsToCopy,
             @Nullable Vector origin) {
         Map<Vector, List<BlueprintEntity>> bpEntities = new HashMap<>();
@@ -101,4 +110,23 @@ public class ZNPCsPlusHook extends Hook {
         }
         return bpEntities;
     }
+
+    /**
+     * Get a list of all the NPC IDs in this chunk
+     * @param chunk chunk
+     * @return list of NPC IDs
+     */
+    public List<String> getNPCsInChunk(Chunk chunk) {
+        return NpcApiProvider.get().getNpcRegistry().getAll().stream()
+                .filter(npc -> npc.getNpc().getWorld().equals(chunk.getWorld())) // Only NPCs in this world
+                .filter(npc -> npc.getNpc().getLocation().toBukkitLocation(chunk.getWorld()).getChunk().equals(chunk)) // Only in this chunk
+                .map(npc -> npc.getId()) // IDs
+                .toList();
+    }
+
+    @Override
+    public void removeNPCsInChunk(Chunk chunk) {
+        getNPCsInChunk(chunk).forEach(NpcApiProvider.get().getNpcRegistry()::delete);
+    }
+
 }
