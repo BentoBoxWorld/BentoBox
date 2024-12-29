@@ -1191,7 +1191,6 @@ public class IslandsManager {
      * 
      * @param player player
      */
-    @SuppressWarnings("deprecation")
     private void readyPlayer(@NonNull Player player) {
         // Stop any gliding
         player.setGliding(false);

@@ -80,7 +80,7 @@ public class BlueprintManagementPanelTest {
         ItemFactory itemFac = mock(ItemFactory.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFac);
         // Panel inventory
-        when(Bukkit.createInventory(any(), Mockito.anyInt(), any())).thenReturn(inv);
+        when(Bukkit.createInventory(any(), Mockito.anyInt(), anyString())).thenReturn(inv);
 
         // Player
         Player player = mock(Player.class);

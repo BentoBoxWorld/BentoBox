@@ -37,6 +37,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -48,13 +49,14 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, ServerBuildInfo.class })
 public class IslandCreationPanelTest {
 
     @Mock
@@ -89,6 +91,8 @@ public class IslandCreationPanelTest {
      */
     @Before
     public void setUp() throws Exception {
+        ServerMocks.newServer();
+
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
@@ -160,7 +164,8 @@ public class IslandCreationPanelTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Panel inventory
-        when(Bukkit.createInventory(any(), Mockito.anyInt(), any())).thenReturn(inv);
+
+        when(Bukkit.createInventory(any(), Mockito.anyInt(), anyString())).thenReturn(inv);
 
         // Item Factory (needed for ItemStack)
         ItemFactory itemF = mock(ItemFactory.class);
@@ -202,6 +207,7 @@ public class IslandCreationPanelTest {
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
+        ServerMocks.unsetBukkitServer();
     }
 
     /**

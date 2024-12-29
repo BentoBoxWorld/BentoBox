@@ -131,7 +131,7 @@ public class LanguagePanelTest {
 
         // Panel
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.createInventory(any(), Mockito.anyInt(), any())).thenReturn(inv);
+        when(Bukkit.createInventory(any(), Mockito.anyInt(), anyString())).thenReturn(inv);
 
         // Item Factory (needed for ItemStack)
         ItemFactory itemF = mock(ItemFactory.class);

@@ -38,7 +38,6 @@ import org.bukkit.util.BoundingBox;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.hooks.Hook;
@@ -248,6 +247,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         Arrays.stream(fromChunk.getTileEntities()).forEach(bs -> processTileEntity(bs.getBlock(), bs.getLocation().toVector().toLocation(toChunk.getWorld()).getBlock()));
     }
 
+    @SuppressWarnings("deprecation")
     private void processEntity(Entity entity, Location location) {
         Entity bpe = location.getWorld().spawnEntity(location, entity.getType());
         bpe.setCustomName(entity.getCustomName());
