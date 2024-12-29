@@ -38,7 +38,6 @@ import org.bukkit.util.BoundingBox;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.hooks.Hook;
@@ -148,7 +147,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         CompletableFuture<Chunk> seedWorldFuture = getSeedWorldChunk(world, chunkX, chunkZ);
 
         // Set up a future to get the chunk requests using Paper's Lib. If Paper is used, this should be done async
-        CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
+        CompletableFuture<Chunk> chunkFuture = world.getChunkAtAsync(chunkX, chunkZ);
 
         // If there is no island, do not clean chunk
         CompletableFuture<Void> cleanFuture = di != null ? cleanChunk(chunkFuture, di) : CompletableFuture.completedFuture(null);
@@ -172,7 +171,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     private CompletableFuture<Chunk> getSeedWorldChunk(World world, int chunkX, int chunkZ) {
         World seed = Bukkit.getWorld(world.getName() + "/bentobox");
         if (seed == null) return CompletableFuture.completedFuture(null);
-        return PaperLib.getChunkAtAsync(seed, chunkX, chunkZ);
+        return seed.getChunkAtAsync(chunkX, chunkZ);
     }
 
     /**
@@ -374,7 +373,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     @SuppressWarnings("deprecation")
     private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, @Nonnull World world,
             int chunkX, int chunkZ) {
-        CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
+        CompletableFuture<Chunk> chunkFuture = world.getChunkAtAsync(chunkX, chunkZ);
         CompletableFuture<Void> invFuture = chunkFuture.thenAccept(chunk ->
         Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
         .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))

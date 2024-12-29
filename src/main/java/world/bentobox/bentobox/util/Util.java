@@ -3,16 +3,11 @@ package world.bentobox.bentobox.util;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,8 +46,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 
-import io.papermc.lib.PaperLib;
-import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.nms.PasteHandler;
@@ -376,17 +369,19 @@ public class Util {
 
     /**
      * Teleports an Entity to the target location, loading the chunk asynchronously first if needed.
+     * Paper lib removed.
      * @param entity The Entity to teleport
      * @param location The Location to Teleport to
      * @return Future that completes with the result of the teleport
      */
     @NonNull
     public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location) {
-        return PaperLib.teleportAsync(entity, location);
+        return entity.teleportAsync(location);
     }
 
     /**
      * Teleports an Entity to the target location, loading the chunk asynchronously first if needed.
+     * Paper lib removed.
      * @param entity The Entity to teleport
      * @param location The Location to Teleport to
      * @param cause The cause for the teleportation
@@ -395,7 +390,7 @@ public class Util {
     @NonNull
     public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location,
             TeleportCause cause) {
-        return PaperLib.teleportAsync(entity, location, cause);
+        return entity.teleportAsync(location, cause);
     }
 
     /**
@@ -434,6 +429,7 @@ public class Util {
 
     /**
      * Gets the chunk at the target location, loading it asynchronously if needed.
+     * Paper lib removed.
      * @param world World to load chunk for
      * @param x X coordinate of the chunk to load
      * @param z Z coordinate of the chunk to load
@@ -442,7 +438,7 @@ public class Util {
      */
     @NonNull
     public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z, boolean gen) {
-        return PaperLib.getChunkAtAsync(world, x, z, gen);
+        return world.getChunkAtAsync(x, z, gen);
     }
 
     /**
@@ -456,25 +452,28 @@ public class Util {
 
     /**
      * Checks if the chunk has been generated or not. Only works on Paper 1.12+ or any 1.13.1+ version
+     * Paper lib removed.
      * @param world World to check for
      * @param x X coordinate of the chunk to check
      * @param z Z coordinate of the chunk to checl
      * @return If the chunk is generated or not
      */
     public static boolean isChunkGenerated(@Nonnull World world, int x, int z) {
-        return PaperLib.isChunkGenerated(world, x, z);
+        return world.isChunkGenerated(x, z);
     }
 
-    /**
-     * Get's a BlockState, optionally not using a snapshot
-     * @param block The block to get a State of
-     * @param useSnapshot Whether or not to use a snapshot when supported
-     * @return The BlockState
-     */
-    @NonNull
-    public static BlockStateSnapshotResult getBlockState(@Nonnull Block block, boolean useSnapshot) {
-        return PaperLib.getBlockState(block, useSnapshot);
-    }
+//    I cannot find a replacement for this method. Neither is there a similar method, nor an object that does what BlockStateSnapshotResult used to do.
+//    Perhaps I didn't look close enough, but for nothing currently uses this method. If addons/gamemodes rely on this method than not only does need changed but also the addons/gamemodes
+//    /**
+//     * Get's a BlockState, optionally not using a snapshot
+//     * @param block The block to get a State of
+//     * @param useSnapshot Whether or not to use a snapshot when supported
+//     * @return The BlockState
+//     */
+//    @NonNull
+//    public static BlockStateSnapshotResult getBlockState(@Nonnull Block block, boolean useSnapshot) {
+//        return block.getBlockState(block, useSnapshot);
+//    }
 
     /**
      * Detects if the current MC version is at least the following version.
@@ -485,7 +484,7 @@ public class Util {
      * @return Meets the version requested
      */
     public static boolean isVersion(int minor) {
-        return PaperLib.isVersion(minor);
+        return isVersionPaperLib(minor);
     }
 
     /**
@@ -495,7 +494,7 @@ public class Util {
      * @return Meets the version requested
      */
     public static boolean isVersion(int minor, int patch) {
-        return PaperLib.isVersion(minor, patch);
+        return isVersionPaperLib(minor, patch);
     }
 
     /**
@@ -503,7 +502,7 @@ public class Util {
      * @return The Minor Version
      */
     public static int getMinecraftVersion() {
-        return PaperLib.getMinecraftVersion();
+        return version;
     }
 
     /**
@@ -511,7 +510,7 @@ public class Util {
      * @return The Patch Version
      */
     public static int getMinecraftPatchVersion() {
-        return PaperLib.getMinecraftPatchVersion();
+        return patchVersion;
     }
 
     /**
@@ -566,8 +565,9 @@ public class Util {
      * Check if the server has access to the Spigot API
      * @return True for Spigot <em>and</em> Paper environments
      */
+    //Why is this even here?
     public static boolean isSpigot() {
-        return PaperLib.isSpigot();
+        return true;
     }
 
     /**
@@ -575,7 +575,12 @@ public class Util {
      * @return True for Paper environments
      */
     public static boolean isPaper() {
-        return !isJUnitTest() && PaperLib.isPaper();
+        try{
+            Class.forName("com.destroystokyo.paper.ParticleBuilder");
+
+            return !isJUnitTest();
+        }
+        catch (ClassNotFoundException exception){return false;}
     }
 
     /**
@@ -760,7 +765,7 @@ public class Util {
      * @param player - player
      */
     public static void resetHealth(Player player) {
-        double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
+        double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
         player.setHealth(maxHealth);
     }
 
@@ -901,5 +906,54 @@ public class Util {
      */
     public static boolean inTest() {
         return Arrays.stream(Thread.currentThread().getStackTrace()).anyMatch(e -> e.getClassName().endsWith("Test"));
+    }
+
+
+
+
+    //Stuff copied from PaperLib to get the version and patch version
+    //I couldn't find anything related to this information in paper's api
+    //Needs further investigation
+
+    private static int version = 0;
+    private static int patchVersion = 0;
+    private static int preReleaseVersion = -1;
+    private static int releaseCandidateVersion = -1;
+
+    static{
+        Pattern versionPattern = Pattern.compile("(?i)\\(MC: (\\d)\\.(\\d+)\\.?(\\d+?)?(?: (Pre-Release|Release Candidate) )?(\\d)?\\)");
+        Matcher matcher = versionPattern.matcher(Bukkit.getVersion());
+        if (matcher.find()) {
+            MatchResult matchResult = matcher.toMatchResult();
+            try {
+                version = Integer.parseInt(matchResult.group(2), 10);
+            } catch (Exception ignored) {
+            }
+            if (matchResult.groupCount() >= 3) {
+                try {
+                    patchVersion = Integer.parseInt(matchResult.group(3), 10);
+                } catch (Exception ignored) {
+                }
+            }
+            if (matchResult.groupCount() >= 5) {
+                try {
+                    final int ver = Integer.parseInt(matcher.group(5));
+                    if (matcher.group(4).toLowerCase(Locale.ENGLISH).contains("pre")) {
+                        preReleaseVersion = ver;
+                    } else {
+                        releaseCandidateVersion = ver;
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }
+    }
+
+    private static boolean isVersionPaperLib(int minor) {
+        return isVersionPaperLib(minor, 0);
+    }
+
+    private static boolean isVersionPaperLib(int minor, int patch) {
+        return version > minor || (version >= minor && patch >= patch);
     }
 }

@@ -59,7 +59,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <!-- Non-minecraft related dependencies -->
         <powermock.version>2.0.9</powermock.version>
         <!-- Database related dependencies -->
@@ -146,6 +148,10 @@
             <url>https://jitpack.io</url>
         </repository>
         <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
         </repository>
@@ -156,10 +162,6 @@
         <repository>
             <id>dynmap-repo</id>
             <url>https://repo.mikeprimm.com/</url>
-        </repository>
-        <repository>
-            <id>papermc</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <!-- This is a temporary reference as the Maven Shade plugin 
@@ -239,6 +241,13 @@
             <version>4.2.2</version>
             <scope>test</scope>
         </dependency>
+        <!-- Paper API -->
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${paper.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -275,19 +284,12 @@
              <artifactId>spigot</artifactId>
              <version>1.20.2-R0.1-SNAPSHOT</version>
              <scope>provided</scope>
-        </dependency> 
+        </dependency>
         <dependency>
              <groupId>org.spigotmc...</groupId>
              <artifactId>spigot</artifactId>
              <version>1.20.1-R0.1-SNAPSHOT</version>
              <scope>provided</scope>
-        </dependency>
-        <!-- Paper API -->
-        <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>${paper.version}</version>
-            <scope>provided</scope>
         </dependency>
         <!-- Metrics -->
         <dependency>
@@ -362,13 +364,6 @@
             <groupId>org.eclipse.jdt</groupId>
             <artifactId>org.eclipse.jdt.annotation</artifactId>
             <version>2.2.600</version>
-        </dependency>
-        <!-- PaperLib -->
-        <dependency>
-            <groupId>io.papermc</groupId>
-            <artifactId>paperlib</artifactId>
-            <version>1.0.6</version>
-            <scope>compile</scope>
         </dependency>
         <!-- LangUtils -->
         <dependency>
@@ -466,10 +461,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
-                <configuration>
-                    <release>${java.version}</release>
-                    <!-- <source>${java.version}</source> <target>${java.version}</target> -->
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
