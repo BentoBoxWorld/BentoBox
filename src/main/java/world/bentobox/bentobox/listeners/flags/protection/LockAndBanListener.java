@@ -13,7 +13,6 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 
-import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
@@ -164,7 +163,7 @@ public class LockAndBanListener extends FlagListener {
             // We'll try to teleport him to the spawn...
             Location l = player.getWorld().getSpawnLocation();
             if (l != null) {
-                PaperLib.teleportAsync(player, l);
+                player.teleportAsync(l);
             }
 
             // Switch him back to the default gamemode. He may die, sorry :(
