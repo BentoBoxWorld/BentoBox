@@ -38,14 +38,16 @@ import org.bukkit.util.BoundingBox;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
+import world.bentobox.bentobox.hooks.FancyNpcsHook;
 import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.SlimefunHook;
+import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
 import world.bentobox.bentobox.util.MyBiomeGrid;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Regenerates by using a seed world. The seed world is created using the same generator as the game
@@ -56,9 +58,18 @@ import world.bentobox.bentobox.util.MyBiomeGrid;
 public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     private final BentoBox plugin;
+    private Optional<FancyNpcsHook> npc;
+    private Optional<ZNPCsPlusHook> znpc;
 
     protected CopyWorldRegenerator() {
         this.plugin = BentoBox.getInstance();
+        // Fancy NPCs Hook
+        npc = plugin.getHooks().getHook("FancyNpcs").filter(FancyNpcsHook.class::isInstance)
+                .map(FancyNpcsHook.class::cast);
+        // ZNPCs Plus Hook
+        znpc = plugin.getHooks().getHook("ZNPCsPlus").filter(ZNPCsPlusHook.class::isInstance)
+                .map(ZNPCsPlusHook.class::cast);
+
     }
 
     /**
@@ -137,7 +148,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         CompletableFuture<Chunk> seedWorldFuture = getSeedWorldChunk(world, chunkX, chunkZ);
 
         // Set up a future to get the chunk requests using Paper's Lib. If Paper is used, this should be done async
-        CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
+        CompletableFuture<Chunk> chunkFuture = Util.getChunkAtAsync(world, chunkX, chunkZ);
 
         // If there is no island, do not clean chunk
         CompletableFuture<Void> cleanFuture = di != null ? cleanChunk(chunkFuture, di) : CompletableFuture.completedFuture(null);
@@ -161,7 +172,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     private CompletableFuture<Chunk> getSeedWorldChunk(World world, int chunkX, int chunkZ) {
         World seed = Bukkit.getWorld(world.getName() + "/bentobox");
         if (seed == null) return CompletableFuture.completedFuture(null);
-        return PaperLib.getChunkAtAsync(seed, chunkX, chunkZ);
+        return Util.getChunkAtAsync(seed, chunkX, chunkZ);
     }
 
     /**
@@ -179,11 +190,20 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                 );
 
         // Similarly, when the chunk is loaded, remove all the entities in the chunk apart from players
-        CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk ->
-        // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
-        Arrays.stream(chunk.getEntities())
-        .filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
-        .forEach(Entity::remove));
+        CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk -> {
+            // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
+            Arrays.stream(chunk.getEntities())
+                    .filter(e -> !(e instanceof Player)
+                            && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
+                    .forEach(Entity::remove);
+            // Remove any NPCs
+            // Fancy NPCs Hook
+            npc.ifPresent(hook -> hook.removeNPCsInChunk(chunk));
+            // ZNPCs Plus Hook
+            znpc.ifPresent(hook -> hook.removeNPCsInChunk(chunk));
+
+        });
+
         return CompletableFuture.allOf(invFuture, entitiesFuture);
     }
 
@@ -227,6 +247,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         Arrays.stream(fromChunk.getTileEntities()).forEach(bs -> processTileEntity(bs.getBlock(), bs.getLocation().toVector().toLocation(toChunk.getWorld()).getBlock()));
     }
 
+    @SuppressWarnings("deprecation")
     private void processEntity(Entity entity, Location location) {
         Entity bpe = location.getWorld().spawnEntity(location, entity.getType());
         bpe.setCustomName(entity.getCustomName());
@@ -310,6 +331,10 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     public CompletableFuture<Void> regenerateSimple(GameModeAddon gm, IslandDeletion di, World world) {
         CompletableFuture<Void> bigFuture = new CompletableFuture<>();
+        if (world == null) {
+            bigFuture.complete(null);
+            return bigFuture;
+        }
         new BukkitRunnable() {
             private int chunkX = di.getMinXChunk();
             private int chunkZ = di.getMinZChunk();
@@ -350,7 +375,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     @SuppressWarnings("deprecation")
     private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, @Nonnull World world,
             int chunkX, int chunkZ) {
-        CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
+        CompletableFuture<Chunk> chunkFuture = Util.getChunkAtAsync(world, chunkX, chunkZ);
         CompletableFuture<Void> invFuture = chunkFuture.thenAccept(chunk ->
         Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
         .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))

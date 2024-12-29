@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.mocks;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
@@ -21,10 +22,26 @@ import org.bukkit.Server;
 import org.bukkit.Tag;
 import org.bukkit.UnsafeValues;
 import org.eclipse.jdt.annotation.NonNull;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ServerBuildInfo.class)
 public final class ServerMocks {
+    @Mock
+    private static ServerBuildInfo sbi;
 
     public static @NonNull Server newServer() {
+        PowerMockito.mockStatic(ServerBuildInfo.class, Mockito.RETURNS_MOCKS);
+        when(sbi.asString(any())).thenReturn("Mock server version");
+        when(ServerBuildInfo.buildInfo()).thenReturn(sbi);
+
         Server mock = mock(Server.class);
 
         Logger noOp = mock(Logger.class);
@@ -66,7 +83,7 @@ public final class ServerMocks {
                     doReturn(key).when(keyed).getKey();
                     return keyed;
                 });
-            }).when(registry).get(notNull());
+            }).when(registry).get((NamespacedKey) notNull());
             return registry;
         })).when(mock).getRegistry(notNull());
 

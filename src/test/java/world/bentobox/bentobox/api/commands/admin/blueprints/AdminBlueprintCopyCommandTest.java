@@ -48,12 +48,14 @@ import world.bentobox.bentobox.managers.LocalesManager;
 public class AdminBlueprintCopyCommandTest {
 
     @Mock
+    private BentoBox plugin;
+    @Mock
     private AdminBlueprintCommand ac;
     @Mock
     private GameModeAddon addon;
     @Mock
     private User user;
-    @Mock
+
     private BlueprintClipboard clip;
     private UUID uuid = UUID.randomUUID();
     @Mock
@@ -64,10 +66,12 @@ public class AdminBlueprintCopyCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
+        // Set up plugin        // Set up plugin
+        // Required for NamespacedKey
+        when(plugin.getName()).thenReturn("BentoBox");
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
+        clip = mock(BlueprintClipboard.class);
         // Blueprints Manager
         when(plugin.getBlueprintsManager()).thenReturn(bm);
 

@@ -40,7 +40,6 @@ import com.github.puregero.multilib.MultiLib;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -1080,7 +1079,7 @@ public class IslandsManager {
                         .ifFail(() -> goingHome.remove(user.getUniqueId())).buildFuture().thenAccept(result::complete);
                 return;
             }
-            PaperLib.teleportAsync(Objects.requireNonNull(player), home).thenAccept(b -> {
+            Util.teleportAsync(Objects.requireNonNull(player), home).thenAccept(b -> {
                 // Only run the commands if the player is successfully teleported
                 if (Boolean.TRUE.equals(b)) {
                     teleported(world, user, name, newIsland, island);
@@ -1192,7 +1191,6 @@ public class IslandsManager {
      * 
      * @param player player
      */
-    @SuppressWarnings("deprecation")
     private void readyPlayer(@NonNull Player player) {
         // Stop any gliding
         player.setGliding(false);
@@ -1469,7 +1467,7 @@ public class IslandsManager {
                     } else {
                         // Move player to spawn
                         getSpawn(w).map(i -> i.getSpawnPoint(w.getEnvironment())).filter(Objects::nonNull)
-                                .ifPresentOrElse(sp -> PaperLib.teleportAsync(p, sp),
+                                .ifPresentOrElse(sp -> Util.teleportAsync(p, sp),
                                         () -> plugin.logWarning("Spawn exists but its location is null!"));
 
                     }

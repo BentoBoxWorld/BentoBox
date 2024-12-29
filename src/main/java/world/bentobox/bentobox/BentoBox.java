@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
-import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
@@ -33,6 +32,7 @@ import world.bentobox.bentobox.hooks.MyWorldsHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
 import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.hooks.VaultHook;
+import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
 import world.bentobox.bentobox.listeners.BannedCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
@@ -196,6 +196,8 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // FancyNpcs
         hooksManager.registerHook(new FancyNpcsHook());
+        // ZNPCsPlus
+        hooksManager.registerHook(new ZNPCsPlusHook());
 
         // MythicMobs
         hooksManager.registerHook(new MythicMobsHook());

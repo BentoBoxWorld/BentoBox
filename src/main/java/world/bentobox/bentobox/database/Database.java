@@ -167,8 +167,8 @@ public class Database<T> {
     }
 
     /**
-     * Load all objects async
-     * @return CompletableFuture<List<T>>
+     * Load all objects asynchronously.
+     * @return {@code CompletableFuture<List<T>>}
      */
     public @NonNull CompletableFuture<List<T>> loadObjectsASync() {
         return handler.loadObjectsASync();

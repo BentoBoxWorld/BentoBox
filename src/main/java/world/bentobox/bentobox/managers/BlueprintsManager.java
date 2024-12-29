@@ -44,6 +44,7 @@ import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
+import world.bentobox.bentobox.blueprints.DisplayListener;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
@@ -113,6 +114,8 @@ public class BlueprintsManager {
         gson = builder.create();
         // Loaded tracker
         blueprintsLoaded = new HashSet<>();
+        // Register Display listeners
+        Bukkit.getPluginManager().registerEvents(new DisplayListener(), plugin);
     }
 
     /**

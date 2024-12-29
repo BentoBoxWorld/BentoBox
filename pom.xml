@@ -59,7 +59,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <!-- Non-minecraft related dependencies -->
         <powermock.version>2.0.9</powermock.version>
         <!-- Database related dependencies -->
@@ -84,7 +84,7 @@
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>3.1.1</build.version>
+        <build.version>3.2.0</build.version>
         <sonar.organization>bentobox-world</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <server.jars>${project.basedir}/lib</server.jars>
@@ -162,12 +162,6 @@
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
-            <!-- This is a temporary reference as the Maven Shade plugin 
-                that supports Java 16 is not released yet -->
-            <id>maven-snapshots</id>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
             <id>minecraft-repo</id>
             <url>https://libraries.minecraft.net/</url>
         </repository>
@@ -197,6 +191,12 @@
             <id>fancyplugins-releases</id>
             <name>FancyPlugins Repository</name>
             <url>https://repo.fancyplugins.de/releases</url>
+        </repository>
+        <!-- ZNPCsPlus-->
+        <repository>
+          <id>pyr-snapshots</id>
+          <name>Pyr's Repo</name>
+          <url>https://repo.pyr.lol/snapshots</url>
         </repository>
     </repositories>
 
@@ -232,6 +232,13 @@
             <artifactId>awaitility</artifactId>
             <version>4.2.2</version>
             <scope>test</scope>
+        </dependency>
+        <!-- Paper API -->
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${paper.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Spigot API -->
         <dependency>
@@ -357,13 +364,6 @@
             <artifactId>org.eclipse.jdt.annotation</artifactId>
             <version>2.2.600</version>
         </dependency>
-        <!-- PaperLib -->
-        <dependency>
-            <groupId>io.papermc</groupId>
-            <artifactId>paperlib</artifactId>
-            <version>1.0.6</version>
-            <scope>compile</scope>
-        </dependency>
         <!-- LangUtils -->
         <dependency>
             <groupId>com.github.apachezy</groupId>
@@ -404,6 +404,20 @@
             <groupId>de.oliver</groupId>
             <artifactId>FancyNpcs</artifactId>
             <version>2.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- ZNPCs Plus -->
+        <dependency>
+          <groupId>lol.pyr</groupId>
+          <artifactId>znpcsplus-api</artifactId>
+          <version>2.0.0-SNAPSHOT</version>
+          <scope>provided</scope>
+        </dependency>
+        <!-- FancyHolograms -->
+        <dependency>
+            <groupId>de.oliver</groupId>
+            <artifactId>FancyHolograms</artifactId>
+            <version>2.4.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -454,7 +468,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>3.5.2</version>
                 <!--suppress MavenModelInspection -->
                 <configuration>
                     <argLine>
@@ -528,7 +542,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>3.6.0</version>
                 <configuration>
                     <minimizeJar>true</minimizeJar>
                     <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>

@@ -3,6 +3,7 @@ package world.bentobox.bentobox.database.json.adapters;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -94,7 +95,7 @@ public class ItemStackTypeAdapterTest {
 
         // Mock up the deserialization
         PowerMockito.mockStatic(ItemStack.class);
-        when(ItemStack.deserialize(any())).thenReturn(new ItemStack(Material.STONE, 4));
+        when(ItemStack.deserialize(anyMap())).thenReturn(new ItemStack(Material.STONE, 4));
     }
 
     @After

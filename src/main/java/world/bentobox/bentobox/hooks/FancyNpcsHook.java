@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -31,7 +32,7 @@ import de.oliver.fancynpcs.api.utils.NpcEquipmentSlot;
 import de.oliver.fancynpcs.api.utils.SkinFetcher;
 import net.kyori.adventure.text.format.NamedTextColor;
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.hooks.Hook;
+import world.bentobox.bentobox.api.hooks.NPCHook;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 
 /**
@@ -40,13 +41,13 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
  * @author tastybento
  * @since 3.1.0
  */
-public class FancyNpcsHook extends Hook {
+public class FancyNpcsHook extends NPCHook {
 
     public FancyNpcsHook() {
         super("FancyNpcs", Material.PLAYER_HEAD);
     }
 
-    public String serializeNPC(Npc npc, Vector origin) {
+    String serializeNPC(Npc npc, Vector origin) {
         if (npc == null) {
             throw new IllegalArgumentException("NPC cannot be null.");
         }
@@ -265,6 +266,26 @@ public class FancyNpcsHook extends Hook {
         return null; // The hook process shouldn't fail
     }
 
+    /**
+     * Return all NPCs in the chunk
+     * @param chunk chunk
+     * @return list of NPCs
+     */
+    public List<Npc> getNPCsInChunk(Chunk chunk) {
+        return FancyNpcsPlugin.get().getNpcManager().getAllNpcs().stream()
+                .filter(npc -> npc.getData().getLocation().getChunk().equals(chunk)).toList();
+    }
+
+    /**
+     * Remove all NPCs in chunk
+     * @param chunk chunk
+     */
+    @Override
+    public void removeNPCsInChunk(Chunk chunk) {
+        getNPCsInChunk(chunk).forEach(npc -> npc.removeForAll());
+    }
+
+    @Override
     public Map<? extends Vector, ? extends List<BlueprintEntity>> getNpcsInArea(World world, List<Vector> vectorsToCopy,
             @Nullable Vector origin) {
         Map<Vector, List<BlueprintEntity>> bpEntities = new HashMap<>();
@@ -290,4 +311,5 @@ public class FancyNpcsHook extends Hook {
         }
         return bpEntities;
     }
+
 }

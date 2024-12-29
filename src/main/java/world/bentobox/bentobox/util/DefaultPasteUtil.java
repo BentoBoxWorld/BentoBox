@@ -36,6 +36,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.hooks.FancyNpcsHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
+import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
 import world.bentobox.bentobox.nms.PasteHandler;
 
 /**
@@ -176,8 +177,8 @@ public class DefaultPasteUtil {
     public static CompletableFuture<Void> setEntity(Island island, Location location, List<BlueprintEntity> list) {
         World world = location.getWorld();
         assert world != null;
-        return Util.getChunkAtAsync(location).thenRun(() -> list.stream().filter(k -> k.getType() != null)
-                .forEach(k -> spawnBlueprintEntity(k, location, island)));
+        return Util.getChunkAtAsync(location)
+                .thenRun(() -> list.stream().forEach(k -> spawnBlueprintEntity(k, location, island)));
     }
 
     /**
@@ -188,13 +189,28 @@ public class DefaultPasteUtil {
      * @return true if Bukkit entity spawned, false another plugin entity spawned
      */
     static boolean spawnBlueprintEntity(BlueprintEntity k, Location location, Island island) {
-        // Npc entity
+        // Display Entity (holograms, etc.)
+        k.setDisplay(location);
+        // FancyNpc entity
         if (k.getNpc() != null
                 && plugin.getHooks().getHook("FancyNpcs").filter(mmh -> mmh instanceof FancyNpcsHook).map(mmh -> {
                     try {
                         return ((FancyNpcsHook) mmh).spawnNpc(k.getNpc(), location);
                     } catch (InvalidConfigurationException e) {
                         plugin.logError("FancyNpc loading failed in blueprint.");
+                        return false;
+                    }
+                }).orElse(false)) {
+            // Npc has spawned.
+            return false;
+        }
+        // ZNPCsPlus
+        if (k.getNpc() != null
+                && plugin.getHooks().getHook("ZNPCsPlus").filter(mmh -> mmh instanceof ZNPCsPlusHook).map(znpch -> {
+                    try {
+                        return ((ZNPCsPlusHook) znpch).spawnNpc(k.getNpc(), location);
+                    } catch (InvalidConfigurationException e) {
+                        plugin.logError("ZNPCsPlus loading failed in blueprint.");
                         return false;
                     }
                 }).orElse(false)) {
@@ -208,6 +224,10 @@ public class DefaultPasteUtil {
                 .map(mmh -> ((MythicMobsHook) mmh).spawnMythicMob(k.getMythicMobsRecord(), location))
                 .orElse(false)) {
             // MythicMob has spawned.
+            return false;
+        }
+        if (k.getType() == null) {
+            // Nothing
             return false;
         }
         LivingEntity e = (LivingEntity) location.getWorld().spawnEntity(location, k.getType());

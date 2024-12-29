@@ -74,9 +74,6 @@ import com.github.puregero.multilib.MultiLib;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
-import io.papermc.lib.PaperLib;
-import io.papermc.lib.environments.CraftBukkitEnvironment;
-import io.papermc.lib.environments.Environment;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -148,8 +145,6 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     private Material sign;
     private Material wallSign;
 
-    private Environment env;
-
     // Class under test
     IslandsManager im;
 
@@ -170,7 +165,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -350,10 +345,6 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         sign = Material.BIRCH_SIGN;
         wallSign = Material.ACACIA_WALL_SIGN;
 
-        // PaperLib
-        env = new CraftBukkitEnvironment();
-        PaperLib.setCustomEnvironment(env);
-
         // Util strip spaces
         when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
 
@@ -423,7 +414,6 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         assertFalse(im.isSafeLocation(location));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     @Ignore("Material#isSolid() cannot be tested")
     public void testCheckIfSafeTrapdoor() {

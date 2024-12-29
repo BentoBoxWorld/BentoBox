@@ -55,6 +55,8 @@ import world.bentobox.bentobox.mocks.ServerMocks;
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
 public class AdminBlueprintSaveCommandTest {
 
+    @Mock
+    private BentoBox plugin;
     private AdminBlueprintSaveCommand absc;
     @Mock
     private AdminBlueprintCommand ac;
@@ -76,8 +78,8 @@ public class AdminBlueprintSaveCommandTest {
 
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
+        // Required for NamespacedKey
+        when(plugin.getName()).thenReturn("BentoBox");
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Hooks
         HooksManager hooksManager = mock(HooksManager.class);

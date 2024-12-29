@@ -24,6 +24,9 @@ softdepend:
   - LuckPerms
   - EconomyPlus
   - MythicMobs
+  - ZNPCsPlus
+  - FancyNpcs
+  - FancyHolograms
 
 libraries:
   - mysql:mysql-connector-java:${mysql.version}

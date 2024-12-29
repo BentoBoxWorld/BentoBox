@@ -494,4 +494,112 @@ public class UtilTest {
         assertEquals("§x§f§f§0§0§0§0full hex", Util.translateColorCodes("&#ff0000 full hex"));
         assertEquals("&#ggg outside hex range", Util.translateColorCodes("&#ggg outside hex range"));
     }
+
+    /**
+     * Tests if the method returns true for identical versions without SNAPSHOT.
+     */
+    @Test
+    public void testVersionIsCompatible_SameVersion() {
+        assertTrue("Same versions should be compatible", Util.isVersionCompatible("2.0.0", "2.0.0"));
+    }
+
+    /**
+     * Tests if the method returns true for identical SNAPSHOT versions.
+     */
+    @Test
+    public void testVersionIsCompatible_SnapshotToSnapshot() {
+        assertTrue("Same SNAPSHOT versions should be compatible",
+                Util.isVersionCompatible("2.0.0-SNAPSHOT", "2.0.0-SNAPSHOT"));
+    }
+
+    /**
+     * Tests if the method considers release versions compatible with their SNAPSHOT equivalents.
+     */
+    @Test
+    public void testVersionIsCompatible_ReleaseGreaterThanSnapshot() {
+        assertTrue("Release version should be compatible with SNAPSHOT of the same version",
+                Util.isVersionCompatible("2.0.0", "2.0.0-SNAPSHOT"));
+    }
+
+    /**
+     * Tests if the method considers SNAPSHOT versions less compatible than release versions.
+     */
+    @Test
+    public void testVersionIsCompatible_SnapshotLessThanRelease() {
+        assertFalse("SNAPSHOT version should not be compatible with release of the same version",
+                Util.isVersionCompatible("2.0.0-SNAPSHOT", "2.0.0"));
+    }
+
+    /**
+     * Tests if the method correctly identifies compatibility for a higher major version.
+     */
+    @Test
+    public void testVersionIsCompatible_MajorVersionGreater() {
+        assertTrue("Higher major version should be compatible", Util.isVersionCompatible("3.0.0", "2.0.0"));
+    }
+
+    /**
+     * Tests if the method correctly identifies incompatibility for a lower major version.
+     */
+    @Test
+    public void testVersionIsCompatible_MajorVersionLower() {
+        assertFalse("Lower major version should not be compatible", Util.isVersionCompatible("1.9.9", "2.0.0"));
+    }
+
+    /**
+     * Tests if the method correctly identifies compatibility for a higher minor version.
+     */
+    @Test
+    public void testVersionIsCompatible_MinorVersionGreater() {
+        assertTrue("Higher minor version should be compatible", Util.isVersionCompatible("2.1.0", "2.0.0"));
+    }
+
+    /**
+     * Tests if the method correctly identifies incompatibility for a lower minor version.
+     */
+    @Test
+    public void testVersionIsCompatible_MinorVersionLower() {
+        assertFalse("Lower minor version should not be compatible", Util.isVersionCompatible("2.0.0", "2.1.0"));
+    }
+
+    /**
+     * Tests if the method correctly identifies compatibility for a higher patch version.
+     */
+    @Test
+    public void testVersionIsCompatible_PatchVersionGreater() {
+        assertTrue("Higher patch version should be compatible", Util.isVersionCompatible("2.0.1", "2.0.0"));
+    }
+
+    /**
+     * Tests if the method correctly identifies incompatibility for a lower patch version.
+     */
+    @Test
+    public void testVersionIsCompatible_PatchVersionLower() {
+        assertFalse("Lower patch version should not be compatible", Util.isVersionCompatible("2.0.0", "2.0.1"));
+    }
+
+    /**
+     * Tests if the method correctly handles compatibility when both versions have a SNAPSHOT suffix.
+     */
+    @Test
+    public void testVersionIsCompatible_HandlesSnapshotSuffix() {
+        assertTrue("Higher patch version (SNAPSHOT) should be compatible with lower patch version (SNAPSHOT)",
+                Util.isVersionCompatible("2.0.1-SNAPSHOT", "2.0.0-SNAPSHOT"));
+    }
+
+    /**
+     * Tests if the method throws an exception for an empty version string.
+     */
+    @Test(expected = NumberFormatException.class)
+    public void testVersionIsCompatible_EmptyVersion() {
+        Util.isVersionCompatible("", "2.0.0");
+    }
+
+    /**
+     * Tests if the method throws an exception for a null version string.
+     */
+    @Test(expected = NullPointerException.class)
+    public void testVersionIsCompatible_NullVersion() {
+        Util.isVersionCompatible(null, "2.0.0");
+    }
 }

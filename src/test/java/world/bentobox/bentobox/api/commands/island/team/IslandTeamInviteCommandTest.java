@@ -72,6 +72,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
     private IslandTeamInviteCommand itl;
     private UUID notUUID;
 
+    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -168,7 +169,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         Inventory inventory = mock(Inventory.class);
-        when(Bukkit.createInventory(eq(null), anyInt(), any())).thenReturn(inventory);
+        when(Bukkit.createInventory(eq(null), anyInt(), anyString())).thenReturn(inventory);
 
         // Command under test
         itl = new IslandTeamInviteCommand(ic);

@@ -57,7 +57,7 @@ public class BlueprintClipboardManagerTest {
 
     @Mock
     private BentoBox plugin;
-    @Mock
+
     private BlueprintClipboard clipboard;
 
     private File blueprintFolder;
@@ -129,15 +129,19 @@ public class BlueprintClipboardManagerTest {
      */
     @Before
     public void setUp() throws Exception {
+        // Set up plugin
+        // Required for NamespacedKey
+        when(plugin.getName()).thenReturn("BentoBox");
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+        clipboard = mock(BlueprintClipboard.class);
+
         server = ServerMocks.newServer();
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         blueprintFolder = new File("blueprints");
         // Clear any residual files
         tearDown();
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Hooks
         HooksManager hooksManager = mock(HooksManager.class);
         when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
