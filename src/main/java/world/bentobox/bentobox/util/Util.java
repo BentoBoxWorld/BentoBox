@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.util;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Allay;
 import org.bukkit.entity.Animals;
@@ -51,8 +51,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 
-import io.papermc.lib.PaperLib;
-import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.nms.PasteHandler;
@@ -382,7 +380,7 @@ public class Util {
      */
     @NonNull
     public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location) {
-        return PaperLib.teleportAsync(entity, location);
+        return teleportAsync(entity, location, TeleportCause.UNKNOWN);
     }
 
     /**
@@ -392,12 +390,26 @@ public class Util {
      * @param cause The cause for the teleportation
      * @return Future that completes with the result of the teleport
      */
+    @SuppressWarnings("unchecked")
     @NonNull
     public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location,
             TeleportCause cause) {
-        return PaperLib.teleportAsync(entity, location, cause);
+        try {
+            // Use reflection to check if the method exists
+            Method method = Entity.class.getMethod("teleportAsync", Location.class, TeleportCause.class);
+            if (method != null) {
+                // Invoke the method using reflection on the entity instance
+                return (CompletableFuture<Boolean>) method.invoke(entity, location, cause);
+            }
+        } catch (NoSuchMethodException e) {
+            // Method does not exist, fallback to Spigot behavior
+        } catch (Exception e) {
+            plugin.logStacktrace(e); // Report other exceptions
+        }
+        // Fallback for Spigot servers
+        entity.teleport(location, cause);
+        return CompletableFuture.completedFuture(true);
     }
-
     /**
      * Gets the chunk at the target location, loading it asynchronously if needed.
      * @param loc Location to get chunk for
@@ -440,9 +452,24 @@ public class Util {
      * @param gen Should the chunk generate or not. Only respected on some MC versions, 1.13 for CB, 1.12 for Paper
      * @return Future that completes with the chunk, or null if the chunk did not exists and generation was not requested.
      */
+    @SuppressWarnings("unchecked")
     @NonNull
     public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z, boolean gen) {
-        return PaperLib.getChunkAtAsync(world, x, z, gen);
+        try {
+            // Use reflection to check if the method exists
+            Method method = World.class.getMethod("getChunkAtAsync", int.class, int.class, boolean.class);
+            if (method != null) {
+                // Invoke the method using reflection
+                return (CompletableFuture<Chunk>) method.invoke(world, x, z, gen);
+            }
+        } catch (NoSuchMethodException e) {
+            // Method does not exist, fallback to Spigot behavior
+        } catch (Exception e) {
+            e.printStackTrace(); // Handle other exceptions (optional)
+        }
+        // Fallback for Spigot servers
+        return CompletableFuture.completedFuture(world.getChunkAt(x, z, gen));
+
     }
 
     /**
@@ -462,56 +489,7 @@ public class Util {
      * @return If the chunk is generated or not
      */
     public static boolean isChunkGenerated(@Nonnull World world, int x, int z) {
-        return PaperLib.isChunkGenerated(world, x, z);
-    }
-
-    /**
-     * Get's a BlockState, optionally not using a snapshot
-     * @param block The block to get a State of
-     * @param useSnapshot Whether or not to use a snapshot when supported
-     * @return The BlockState
-     */
-    @NonNull
-    public static BlockStateSnapshotResult getBlockState(@Nonnull Block block, boolean useSnapshot) {
-        return PaperLib.getBlockState(block, useSnapshot);
-    }
-
-    /**
-     * Detects if the current MC version is at least the following version.
-     * <p>
-     * Assumes 0 patch version.
-     *
-     * @param minor Min Minor Version
-     * @return Meets the version requested
-     */
-    public static boolean isVersion(int minor) {
-        return PaperLib.isVersion(minor);
-    }
-
-    /**
-     * Detects if the current MC version is at least the following version.
-     * @param minor Min Minor Version
-     * @param patch Min Patch Version
-     * @return Meets the version requested
-     */
-    public static boolean isVersion(int minor, int patch) {
-        return PaperLib.isVersion(minor, patch);
-    }
-
-    /**
-     * Gets the current Minecraft Minor version. IE: 1.13.1 returns 13
-     * @return The Minor Version
-     */
-    public static int getMinecraftVersion() {
-        return PaperLib.getMinecraftVersion();
-    }
-
-    /**
-     * Gets the current Minecraft Patch version. IE: 1.13.1 returns 1
-     * @return The Patch Version
-     */
-    public static int getMinecraftPatchVersion() {
-        return PaperLib.getMinecraftPatchVersion();
+        return world.isChunkGenerated(x, z);
     }
 
     /**
@@ -563,34 +541,17 @@ public class Util {
     }
 
     /**
-     * Check if the server has access to the Spigot API
-     * @return True for Spigot <em>and</em> Paper environments
-     */
-    public static boolean isSpigot() {
-        return PaperLib.isSpigot();
-    }
-
-    /**
      * Check if the server has access to the Paper API
      * @return True for Paper environments
      */
     public static boolean isPaper() {
-        return !isJUnitTest() && PaperLib.isPaper();
-    }
-
-    /**
-     * I don't like doing this, but otherwise we need to set a flag in every test
-     */
-    private static boolean isJUnitTest() {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        for (StackTraceElement element : stackTrace) {
-            if (element.getClassName().startsWith("org.junit.")) {
-                return true;
-            }
+        try {
+            Class.forName("com.destroystokyo.paper.PaperConfig");
+            return true; // Paper-specific class exists
+        } catch (ClassNotFoundException e) {
+            return false; // Not a Paper server
         }
-        return false;
     }
-
 
     /**
      * This method translates color codes in given string and strips whitespace after them.
@@ -598,6 +559,7 @@ public class Util {
      * @param textToColor Text which color codes must be parsed.
      * @return String text with parsed colors and stripped whitespaces after them.
      */
+    @SuppressWarnings("deprecation")
     @NonNull
     public static String translateColorCodes(@NonNull String textToColor) {
         // Use matcher to find hex patterns in given text.
@@ -760,8 +722,14 @@ public class Util {
      * @param player - player
      */
     public static void resetHealth(Player player) {
-        double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
-        player.setHealth(maxHealth);
+        try {
+            // Paper
+            double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+            player.setHealth(maxHealth);
+        } catch (Exception e) {
+            // Spigot
+            player.setHealth(20D);
+        }
     }
 
     /**
@@ -862,6 +830,7 @@ public class Util {
      * @param input Input that need to be sanitized.
      * @return A sanitized input without illegal characters in names.
      */
+    @SuppressWarnings("deprecation")
     public static String sanitizeInput(String input)
     {
         return ChatColor.stripColor(

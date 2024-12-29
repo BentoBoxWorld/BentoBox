@@ -12,8 +12,6 @@ import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import de.oliver.fancynpcs.api.Npc;
-import lol.pyr.znpcsplus.api.npc.NpcEntry;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 
 /**
