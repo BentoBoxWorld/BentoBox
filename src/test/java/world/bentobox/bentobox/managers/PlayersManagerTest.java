@@ -54,6 +54,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.user.User;
@@ -73,7 +74,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class, DatabaseSetup.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class, DatabaseSetup.class , ServerBuildInfo.class})
 public class PlayersManagerTest {
 
     private static AbstractDatabaseHandler<Object> handler;

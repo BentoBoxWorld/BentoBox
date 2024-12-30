@@ -35,11 +35,12 @@ import io.lumine.mythic.api.mobs.MythicMob;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.mobs.ActiveMob;
 import io.lumine.mythic.core.mobs.MobExecutor;
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.MythicMobRecord;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, MythicBukkit.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class, MythicBukkit.class , ServerBuildInfo.class})
 public class MythicMobsHookTest {
 
     @Mock

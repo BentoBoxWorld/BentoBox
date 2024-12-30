@@ -42,6 +42,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
@@ -61,7 +62,7 @@ import world.bentobox.bentobox.util.Pair;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, IslandsManager.class })
+@PrepareForTest({ Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
 public class IslandTest {
 
     private static final int DISTANCE = 400;

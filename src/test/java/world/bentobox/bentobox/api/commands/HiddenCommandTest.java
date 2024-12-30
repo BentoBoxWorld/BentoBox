@@ -27,6 +27,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.command.CommandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -38,7 +39,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, CommandEvent.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, CommandEvent.class, Bukkit.class , ServerBuildInfo.class})
 public class HiddenCommandTest {
 
     @Mock

@@ -74,6 +74,7 @@ import com.github.puregero.multilib.MultiLib;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -89,7 +90,8 @@ import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, MultiLib.class, DatabaseSetup.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, MultiLib.class, DatabaseSetup.class,
+        ServerBuildInfo.class })
 public class IslandsManagerTest extends AbstractCommonSetup {
 
     private static AbstractDatabaseHandler<Object> h;

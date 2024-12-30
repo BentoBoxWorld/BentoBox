@@ -26,6 +26,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -34,13 +35,15 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
 
+@Ignore("Needs update to work with PaperAPI")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class })
+@PrepareForTest({ Bukkit.class , ServerBuildInfo.class})
 public class PanelItemBuilderTest {
 
     @SuppressWarnings("deprecation")

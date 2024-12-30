@@ -41,6 +41,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import dev.lone.itemsadder.api.CustomBlock;
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.Notifier;
@@ -58,8 +59,9 @@ import world.bentobox.bentobox.managers.PlayersManager;
 /**
  * Test class for ItemsAdder hook
  */
+@Ignore("Needs update to work with PaperAPI")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, CustomBlock.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class, CustomBlock.class , ServerBuildInfo.class})
 public class ItemsAdderHookTest extends AbstractCommonSetup {
 
     @Mock

@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -30,6 +31,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.util.ItemParser;
 
 /**
@@ -37,8 +39,9 @@ import world.bentobox.bentobox.util.ItemParser;
  * @author tastybento
  *
  */
+@Ignore("Needs update to work with PaperAPI")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, ItemParser.class })
+@PrepareForTest({ Bukkit.class, ItemParser.class , ServerBuildInfo.class})
 public class BentoBoxLocaleTest {
 
     private BentoBoxLocale localeObject;

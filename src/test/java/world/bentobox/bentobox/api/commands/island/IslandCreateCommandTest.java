@@ -38,6 +38,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -61,7 +62,7 @@ import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class, IslandCreationPanel.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class, IslandCreationPanel.class , ServerBuildInfo.class})
 public class IslandCreateCommandTest {
 
     @Mock

@@ -34,6 +34,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 
@@ -42,7 +43,7 @@ import world.bentobox.bentobox.util.heads.HeadGetter;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, HeadGetter.class })
+@PrepareForTest({ Bukkit.class, HeadGetter.class , ServerBuildInfo.class})
 public class PanelTest {
 
     private String name;
