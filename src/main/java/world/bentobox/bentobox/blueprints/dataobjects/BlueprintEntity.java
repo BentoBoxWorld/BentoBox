@@ -132,15 +132,15 @@ public class BlueprintEntity {
     @Expose
     private double z;
     @Expose
-    private boolean glowing;
+    private Boolean glowing;
     @Expose
-    private boolean gravity;
+    private Boolean gravity;
     @Expose
-    private boolean visualFire;
+    private Boolean visualFire;
     @Expose
-    private boolean silent;
+    private Boolean silent;
     @Expose
-    private boolean invulnerable;
+    private Boolean invulnerable;
     @Expose
     private int fireTicks;
 
@@ -149,6 +149,7 @@ public class BlueprintEntity {
      * @param entity entity to serialize
      * @since 3.2.0
      */
+    @SuppressWarnings("deprecation")
     public BlueprintEntity(Entity entity) {
         this.setType(entity.getType());
         this.setCustomName(entity.getCustomName());
@@ -568,6 +569,9 @@ public class BlueprintEntity {
      * @return the glowing
      */
     public boolean isGlowing() {
+        if (glowing == null) {
+            glowing = false; // Default
+        }
         return glowing;
     }
 
@@ -582,6 +586,9 @@ public class BlueprintEntity {
      * @return the gravity
      */
     public boolean isGravity() {
+        if (gravity == null) {
+            gravity = true;
+        }
         return gravity;
     }
 
@@ -596,6 +603,9 @@ public class BlueprintEntity {
      * @return the visualFire
      */
     public boolean isVisualFire() {
+        if (visualFire == null) {
+            visualFire = true;
+        }
         return visualFire;
     }
 
@@ -610,6 +620,9 @@ public class BlueprintEntity {
      * @return the silent
      */
     public boolean isSilent() {
+        if (silent == null) {
+            silent = false;
+        }
         return silent;
     }
 
@@ -624,6 +637,9 @@ public class BlueprintEntity {
      * @return the invulnerable
      */
     public boolean isInvulnerable() {
+        if (invulnerable == null) {
+            invulnerable = false;
+        }
         return invulnerable;
     }
 
