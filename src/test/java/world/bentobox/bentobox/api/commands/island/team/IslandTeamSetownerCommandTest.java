@@ -36,6 +36,7 @@ import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
@@ -54,7 +55,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, IslandsManager.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, IslandsManager.class , ServerBuildInfo.class})
 public class IslandTeamSetownerCommandTest {
 
     @Mock

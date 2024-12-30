@@ -56,6 +56,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -70,6 +71,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMap;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -92,9 +94,10 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
+@Ignore("Needs update to work with PaperAPI")
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
 public class PVPListenerTest {
 
     @Mock

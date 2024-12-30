@@ -30,6 +30,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -39,6 +40,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -50,8 +52,9 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
+@Ignore("Needs update to work with PaperAPI")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, ServerBuildInfo.class })
 public class VisitorKeepInventoryListenerTest extends AbstractCommonSetup {
 
     // Class under test

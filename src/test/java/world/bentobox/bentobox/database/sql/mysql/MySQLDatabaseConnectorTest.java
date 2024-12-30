@@ -24,6 +24,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 
 /**
@@ -31,7 +32,7 @@ import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, DriverManager.class })
+@PrepareForTest({ Bukkit.class, DriverManager.class , ServerBuildInfo.class})
 public class MySQLDatabaseConnectorTest {
 
     @Mock

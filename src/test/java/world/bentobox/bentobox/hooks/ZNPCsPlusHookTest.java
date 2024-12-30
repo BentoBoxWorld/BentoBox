@@ -30,6 +30,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import lol.pyr.znpcsplus.api.NpcApi;
 import lol.pyr.znpcsplus.api.NpcApiProvider;
 import lol.pyr.znpcsplus.api.npc.Npc;
@@ -41,7 +42,7 @@ import lol.pyr.znpcsplus.util.NpcLocation;
 import world.bentobox.bentobox.BentoBox;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, NpcApiProvider.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class, NpcApiProvider.class , ServerBuildInfo.class})
 public class ZNPCsPlusHookTest {
 
     @Mock

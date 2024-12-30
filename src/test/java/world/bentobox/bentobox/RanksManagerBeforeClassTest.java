@@ -29,6 +29,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -38,7 +39,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, DatabaseSetup.class, RanksManager.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, DatabaseSetup.class, RanksManager.class, Bukkit.class , ServerBuildInfo.class})
 public abstract class RanksManagerBeforeClassTest extends AbstractCommonSetup {
 
     // Constants that define the hard coded rank values

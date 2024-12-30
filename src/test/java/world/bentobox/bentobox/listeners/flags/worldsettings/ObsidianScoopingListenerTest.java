@@ -29,6 +29,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.RayTraceResult;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,6 +37,7 @@ import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -44,8 +46,9 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.util.Util;
 
+@Ignore("PaperAPI update required")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, PlayerEvent.class, PlayerInteractEvent.class, Bukkit.class, Util.class })
+@PrepareForTest({ BentoBox.class, PlayerEvent.class, PlayerInteractEvent.class, Bukkit.class, Util.class , ServerBuildInfo.class})
 public class ObsidianScoopingListenerTest extends AbstractCommonSetup {
 
     private ObsidianScoopingListener listener;

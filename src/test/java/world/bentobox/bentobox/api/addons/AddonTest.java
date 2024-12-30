@@ -46,13 +46,14 @@ import org.powermock.reflect.Whitebox;
 
 import com.github.puregero.multilib.MultiLib;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, MultiLib.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class, MultiLib.class , ServerBuildInfo.class})
 public class AddonTest {
 
     public static int BUFFER_SIZE = 10240;

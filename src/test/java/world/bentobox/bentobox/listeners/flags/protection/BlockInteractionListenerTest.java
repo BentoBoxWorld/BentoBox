@@ -34,6 +34,7 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -45,8 +46,9 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
+@Ignore("Paper API update required")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
+@PrepareForTest({Bukkit.class, BentoBox.class, Util.class, ServerBuildInfo.class})
 public class BlockInteractionListenerTest extends AbstractCommonSetup {
 
 

@@ -28,6 +28,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.flags.FlagSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -42,7 +43,7 @@ import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class })
+@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class IslandToggleClickTest {
 
     @Mock

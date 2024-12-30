@@ -37,6 +37,7 @@ import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -56,7 +57,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, IslandsManager.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, IslandsManager.class , ServerBuildInfo.class})
 public class AdminUnregisterCommandTest {
 
     private UUID uuid = UUID.randomUUID();

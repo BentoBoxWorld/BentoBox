@@ -15,6 +15,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.api.addons.Addon;
 
 /**
@@ -22,7 +23,7 @@ import world.bentobox.bentobox.api.addons.Addon;
  */
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class })
+@PrepareForTest({ Bukkit.class , ServerBuildInfo.class})
 public class AddonEventTest {
 
     @Mock

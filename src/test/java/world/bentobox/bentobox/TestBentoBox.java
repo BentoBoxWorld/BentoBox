@@ -41,6 +41,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -56,7 +57,7 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, IslandsManager.class })
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
 public class TestBentoBox extends AbstractCommonSetup {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID VISITOR_UUID = UUID.randomUUID();

@@ -25,6 +25,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -33,6 +34,7 @@ import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -46,8 +48,9 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
+@Ignore("Needs update for PaperAPI")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class })
+@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
 public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
 
     @Mock

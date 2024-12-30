@@ -39,6 +39,7 @@ import org.powermock.reflect.Whitebox;
 
 import com.github.puregero.multilib.MultiLib;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -51,7 +52,7 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, DefaultPermissions.class, MultiLib.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, DefaultPermissions.class, MultiLib.class , ServerBuildInfo.class})
 public class AddonsManagerTest {
 
     private BentoBox plugin;

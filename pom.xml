@@ -494,6 +494,7 @@
                         --add-opens java.base/java.util.jar=ALL-UNNAMED
                         --add-opens java.base/java.util.zip=ALL-UNNAMED
                         --add-opens=java.base/java.security=ALL-UNNAMED
+                        --add-opens java.base/jdk.internal.misc=ALL-UNNAMED
                     </argLine>
                 </configuration>
             </plugin>

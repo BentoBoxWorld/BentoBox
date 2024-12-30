@@ -24,6 +24,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -35,7 +36,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class , ServerBuildInfo.class})
 public class MobTeleportListenerTest {
 
     @Mock
