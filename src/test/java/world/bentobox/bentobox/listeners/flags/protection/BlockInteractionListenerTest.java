@@ -46,7 +46,6 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Paper API update required")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, Util.class, ServerBuildInfo.class})
 public class BlockInteractionListenerTest extends AbstractCommonSetup {
@@ -130,8 +129,6 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
     }
 
 
-    /**
-     */
     @Override
     @Before
     public void setUp() throws Exception {
@@ -147,7 +144,9 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         when(item.getType()).thenReturn(Material.AIR);
         when(mockPlayer.getInventory()).thenReturn(inv);
         when(inv.getItemInMainHand()).thenReturn(item);
-        when(inv.getItemInOffHand()).thenReturn(new ItemStack(Material.BUCKET));
+        ItemStack mockBucket = mock(ItemStack.class);
+        when(mockBucket.getType()).thenReturn(Material.BUCKET);
+        when(inv.getItemInOffHand()).thenReturn(mockBucket);
 
         // FlagsManager
         setFlags();
