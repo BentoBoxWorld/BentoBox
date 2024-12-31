@@ -30,7 +30,6 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -56,7 +55,6 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
-@Ignore("Needs PaperAPI update")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
 public class LockAndBanListenerTest {
@@ -157,6 +155,7 @@ public class LockAndBanListenerTest {
         when(loc.getBlockY()).thenReturn(Y);
         when(loc.getBlockZ()).thenReturn(Z);
         when(island.getCenter()).thenReturn(loc);
+        when(loc.clone()).thenReturn(loc);
         when(island.getProtectionRange()).thenReturn(PROTECTION_RANGE);
         // Island is not locked by default
         when(island.isAllowed(any(), any())).thenReturn(true);
@@ -171,16 +170,19 @@ public class LockAndBanListenerTest {
         when(outside.getBlockX()).thenReturn(X + PROTECTION_RANGE + 1);
         when(outside.getBlockY()).thenReturn(Y);
         when(outside.getBlockZ()).thenReturn(Z);
+        when(outside.clone()).thenReturn(outside);
 
         when(inside.getWorld()).thenReturn(world);
         when(inside.getBlockX()).thenReturn(X + PROTECTION_RANGE - 1);
         when(inside.getBlockY()).thenReturn(Y);
         when(inside.getBlockZ()).thenReturn(Z);
+        when(inside.clone()).thenReturn(inside);
 
-        when(inside.getWorld()).thenReturn(world);
-        when(inside.getBlockX()).thenReturn(X + PROTECTION_RANGE - 2);
-        when(inside.getBlockY()).thenReturn(Y);
-        when(inside.getBlockZ()).thenReturn(Z);
+        when(inside2.getWorld()).thenReturn(world);
+        when(inside2.getBlockX()).thenReturn(X + PROTECTION_RANGE - 2);
+        when(inside2.getBlockY()).thenReturn(Y);
+        when(inside2.getBlockZ()).thenReturn(Z);
+        when(inside2.clone()).thenReturn(inside2);
 
         Optional<Island> opIsland = Optional.ofNullable(island);
         when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
@@ -231,6 +233,7 @@ public class LockAndBanListenerTest {
         assertTrue(e.isCancelled());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testLoginToBannedIsland() {
         // Make player
@@ -285,11 +288,13 @@ public class LockAndBanListenerTest {
         when(from.getBlockX()).thenReturn(X);
         when(from.getBlockY()).thenReturn(50);
         when(from.getBlockZ()).thenReturn(Z);
+        when(from.clone()).thenReturn(from);
         Location to = mock(Location.class);
         when(to.getWorld()).thenReturn(world);
         when(to.getBlockX()).thenReturn(X);
         when(to.getBlockY()).thenReturn(55);
         when(to.getBlockZ()).thenReturn(Z);
+        when(to.clone()).thenReturn(to);
         // Create vehicle and put two players in it.
         Vehicle vehicle = mock(Vehicle.class);
         Player player2 = mock(Player.class);
