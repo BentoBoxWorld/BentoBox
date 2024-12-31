@@ -55,7 +55,6 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
 public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
@@ -227,6 +226,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
      * Test method for
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
+    @Ignore("PaperAPI Material issue with Material.get")
     @Test
     public void testCanExecuteNoTarget() {
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));

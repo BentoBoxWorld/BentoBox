@@ -129,6 +129,7 @@ public abstract class AbstractCommonSetup {
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
         when(location.toVector()).thenReturn(new Vector(0,0,0));
+        when(location.clone()).thenReturn(location); // Paper
 
         // Players Manager and meta data
         PlayersManager pm = mock(PlayersManager.class);

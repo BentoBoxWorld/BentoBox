@@ -27,7 +27,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -45,7 +44,6 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Needs redo for PaperAPI")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class EntityInteractListenerTest extends AbstractCommonSetup {
@@ -69,7 +67,9 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
         // Hand - main hand
         hand = EquipmentSlot.HAND;
         position = new Vector(10, 10, 10);
-        when(inv.getItemInMainHand()).thenReturn(new ItemStack(Material.NAME_TAG));
+        ItemStack mockNameTag = mock(ItemStack.class);
+        when(mockNameTag.getType()).thenReturn(Material.NAME_TAG);
+        when(inv.getItemInMainHand()).thenReturn(mockNameTag);
 
         // Initialize the Flags class. This is a workaround to prevent weird errors when mocking
         // I think it's because the flag class needs to be initialized before use in argument matchers
@@ -253,7 +253,9 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
         clickedEntity = mock(WanderingTrader.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
-        when(inv.getItemInMainHand()).thenReturn(new ItemStack(Material.STONE));
+        ItemStack mockStone = mock(ItemStack.class);
+        when(mockStone.getType()).thenReturn(Material.STONE);
+        when(inv.getItemInMainHand()).thenReturn(mockStone);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
         eil.onPlayerInteractEntity(e);
         verify(notifier, never()).notify(any(), eq("protection.protected"));
@@ -319,7 +321,9 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
         clickedEntity = mock(Sheep.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.SHEEP);
-        when(inv.getItemInMainHand()).thenReturn(new ItemStack(Material.AIR));
+        ItemStack mockAir = mock(ItemStack.class);
+        when(mockAir.getType()).thenReturn(Material.AIR);
+        when(inv.getItemInMainHand()).thenReturn(mockAir);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
         eil.onPlayerInteractEntity(e);
         verify(notifier, never()).notify(any(), eq("protection.protected"));
