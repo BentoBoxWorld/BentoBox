@@ -1,17 +1,26 @@
 package world.bentobox.bentobox.blueprints.dataobjects;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.World;
 import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.Cow;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Style;
@@ -52,6 +61,12 @@ public class BlueprintEntityTest {
     private Cow cow;
     @Mock
     private Horse horse;
+    @Mock
+    private Display display;
+    @Mock
+    private World mockWorld;
+
+    private BlueprintEntity blueprint;
 
 
     /**
@@ -70,6 +85,14 @@ public class BlueprintEntityTest {
         when(horse.getDomestication()).thenReturn(50);
         when(horse.getStyle()).thenReturn(Horse.Style.WHITE_DOTS);
 
+        blueprint = new BlueprintEntity();
+        when(display.getType()).thenReturn(EntityType.PLAYER);
+        when(display.isGlowing()).thenReturn(false);
+        when(display.hasGravity()).thenReturn(true);
+        when(display.isVisualFire()).thenReturn(false);
+        when(display.isSilent()).thenReturn(false);
+        when(display.isInvulnerable()).thenReturn(false);
+        when(display.getFireTicks()).thenReturn(0);
     }
 
     /**
@@ -222,6 +245,54 @@ public class BlueprintEntityTest {
         MythicMobRecord mmr = new MythicMobRecord("string", "string2", 10D, 1F, "string3");
         blueprint.setMythicMobsRecord(mmr);
         assertEquals(mmr, blueprint.getMythicMobsRecord());
+    }
+
+    @Test
+    public void testIsGlowing() {
+        blueprint.setGlowing(true);
+        assertTrue(blueprint.isGlowing());
+    }
+
+    @Test
+    public void testIsGravity() {
+        blueprint.setGravity(false);
+        assertFalse(blueprint.isGravity());
+    }
+
+    @Test
+    public void testIsVisualFire() {
+        blueprint.setVisualFire(true);
+        assertTrue(blueprint.isVisualFire());
+    }
+
+    @Test
+    public void testIsSilent() {
+        blueprint.setSilent(true);
+        assertTrue(blueprint.isSilent());
+    }
+
+    @Test
+    public void testIsInvulnerable() {
+        blueprint.setInvulnerable(true);
+        assertTrue(blueprint.isInvulnerable());
+    }
+
+    @Test
+    public void testFireTicks() {
+        blueprint.setFireTicks(20);
+        assertEquals(20, blueprint.getFireTicks());
+    }
+
+    @Test
+    public void testSetDisplay() {
+        Location mockLocation = mock(Location.class);
+        when(mockLocation.getWorld()).thenReturn(mockWorld);
+        when(mockLocation.clone()).thenReturn(mockLocation);
+        when(mockWorld.spawn(any(Location.class), eq(Display.class))).thenReturn(display);
+
+        blueprint.setDisplay(mockLocation);
+
+        assertNotNull(blueprint.displayRec);
     }
 
 }
