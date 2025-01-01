@@ -223,12 +223,12 @@ public class BlueprintEntity {
      */
     public void configureEntity(Entity e) {
         // Set the general states
-        e.setGlowing(glowing);
-        e.setGravity(gravity);
-        e.setVisualFire(visualFire);
-        e.setSilent(silent);
-        e.setInvulnerable(invulnerable);
-        e.setFireTicks(fireTicks);
+        e.setGlowing(isGlowing());
+        e.setGravity(isGravity());
+        e.setVisualFire(isVisualFire());
+        e.setSilent(isSilent());
+        e.setInvulnerable(isInvulnerable());
+        e.setFireTicks(getFireTicks());
 
         if (e instanceof Villager villager) {
             setVillager(villager);
