@@ -724,7 +724,7 @@ public class Util {
     public static void resetHealth(Player player) {
         try {
             // Paper
-            double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+            double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
             player.setHealth(maxHealth);
         } catch (Exception e) {
             // Spigot
