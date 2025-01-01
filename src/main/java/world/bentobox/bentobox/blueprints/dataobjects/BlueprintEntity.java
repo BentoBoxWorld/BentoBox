@@ -604,7 +604,7 @@ public class BlueprintEntity {
      */
     public boolean isVisualFire() {
         if (visualFire == null) {
-            visualFire = true;
+            visualFire = false;
         }
         return visualFire;
     }
