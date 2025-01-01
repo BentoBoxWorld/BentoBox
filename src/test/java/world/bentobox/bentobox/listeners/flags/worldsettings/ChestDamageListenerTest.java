@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.junit.Assert.assertEquals;
@@ -46,6 +43,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -65,11 +63,10 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, Flags.class, Util.class} )
+@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class, ServerBuildInfo.class })
 public class ChestDamageListenerTest extends AbstractCommonSetup
 {
 
-    private Location location;
     private BentoBox plugin;
     private World world;
 
@@ -105,11 +102,7 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        location = mock(Location.class);
-        when(location.getWorld()).thenReturn(world);
-        when(location.getBlockX()).thenReturn(0);
-        when(location.getBlockY()).thenReturn(0);
-        when(location.getBlockZ()).thenReturn(0);
+
         PowerMockito.mockStatic(Flags.class);
 
         FlagsManager flagsManager = new FlagsManager(plugin);
@@ -182,26 +175,36 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
      */
     @Test
     public void testOnExplosionChestDamageNotAllowed() {
+        // Srt the flag to not allow chest damage
         Flags.CHEST_DAMAGE.setSetting(world, false);
+        // Set the entity that is causing the damage (TNT)
         Entity entity = mock(Entity.class);
         when(entity.getType()).thenReturn(EntityType.TNT);
+
+        // Create a list of blocks that will potentially be damaged by TNT
         List<Block> list = new ArrayList<>();
         Block chest = mock(Block.class);
-        when(chest.getType()).thenReturn(Material.CHEST);
+        when(chest.getType()).thenReturn(Material.CHEST); // Regular chest
         when(chest.getLocation()).thenReturn(location);
+
         Block trappedChest = mock(Block.class);
-        when(trappedChest.getType()).thenReturn(Material.TRAPPED_CHEST);
+        when(trappedChest.getType()).thenReturn(Material.TRAPPED_CHEST);// Trapped chest
         when(trappedChest.getLocation()).thenReturn(location);
+
         Block stone = mock(Block.class);
-        when(stone.getType()).thenReturn(Material.STONE);
+        when(stone.getType()).thenReturn(Material.STONE); // Stone
         when(stone.getLocation()).thenReturn(location);
         list.add(chest);
         list.add(trappedChest);
         list.add(stone);
+        // Create the event
         EntityExplodeEvent e = getExplodeEvent(entity, location, list);
+        // Listener to test
         ChestDamageListener listener = new ChestDamageListener();
         listener.setPlugin(plugin);
         listener.onExplosion(e);
+
+        // Verify
         assertFalse(e.isCancelled());
         assertEquals(1, e.blockList().size());
         assertFalse(e.blockList().contains(chest));

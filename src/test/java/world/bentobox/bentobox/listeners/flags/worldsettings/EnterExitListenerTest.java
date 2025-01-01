@@ -37,6 +37,7 @@ import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -58,7 +59,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class })
+@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class EnterExitListenerTest {
 
     private static final Integer PROTECTION_RANGE = 200;

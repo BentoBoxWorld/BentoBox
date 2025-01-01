@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
@@ -31,7 +32,7 @@ import world.bentobox.bentobox.util.Util;
  */
 @Ignore("Has mocking issues with GameEvent")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, ServerBuildInfo.class })
 public class SculkSensorListenerTest extends AbstractCommonSetup {
 
     private SculkSensorListener ssl;

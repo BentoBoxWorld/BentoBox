@@ -27,6 +27,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import world.bentobox.bentobox.BentoBox;
@@ -42,7 +43,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, PlaceholderAPI.class, Bukkit.class })
+@PrepareForTest({BentoBox.class, PlaceholderAPI.class, Bukkit.class , ServerBuildInfo.class})
 public class PlaceholderAPIHookTest {
 
     // Class under test

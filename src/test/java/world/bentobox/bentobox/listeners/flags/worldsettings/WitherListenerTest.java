@@ -33,6 +33,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -45,12 +46,10 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Bukkit.class, ServerBuildInfo.class })
 public class WitherListenerTest extends AbstractCommonSetup {
 
     private WitherListener wl;
-    @Mock
-    private Location location;
     @Mock
     private Location location2;
     @Mock
@@ -80,15 +79,11 @@ public class WitherListenerTest extends AbstractCommonSetup {
         when(ws.getWorldFlags()).thenReturn(map);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
 
-        when(location.getWorld()).thenReturn(world);
-        when(location.getBlockX()).thenReturn(0);
-        when(location.getBlockY()).thenReturn(0);
-        when(location.getBlockZ()).thenReturn(0);
-
         when(location2.getWorld()).thenReturn(world2);
         when(location2.getBlockX()).thenReturn(0);
         when(location2.getBlockY()).thenReturn(0);
         when(location2.getBlockZ()).thenReturn(0);
+        when(location2.clone()).thenReturn(location2); // Paper
 
         blocks = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
@@ -122,6 +117,7 @@ public class WitherListenerTest extends AbstractCommonSetup {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.WITHER);
+        when(location.clone()).thenReturn(location);
         EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         wl.onExplosion(e);
         assertTrue(blocks.isEmpty());
@@ -167,6 +163,7 @@ public class WitherListenerTest extends AbstractCommonSetup {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.WITHER_SKULL);
+        when(location.clone()).thenReturn(location);
         EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         wl.onExplosion(e);
         assertTrue(blocks.isEmpty());

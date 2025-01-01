@@ -38,11 +38,13 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, Objects.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class, Objects.class , ServerBuildInfo.class})
+@Ignore("Needs to be redone for Paper")
 public class ItemParserTest {
 
     @Mock

@@ -16,6 +16,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
@@ -26,7 +27,7 @@ import world.bentobox.bentobox.util.DeleteIslandChunks;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Bukkit.class, DeleteIslandChunks.class})
+@PrepareForTest({BentoBox.class, Bukkit.class, DeleteIslandChunks.class, ServerBuildInfo.class})
 @Ignore("NMS")
 public class IslandChunkDeletionManagerTest {
 

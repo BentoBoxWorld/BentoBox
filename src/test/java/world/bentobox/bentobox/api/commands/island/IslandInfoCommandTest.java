@@ -28,6 +28,7 @@ import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -45,7 +46,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, IslandsManager.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, IslandsManager.class , ServerBuildInfo.class})
 public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock

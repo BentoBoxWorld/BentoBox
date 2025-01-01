@@ -34,6 +34,7 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -46,7 +47,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
+@PrepareForTest({Bukkit.class, BentoBox.class, Util.class, ServerBuildInfo.class})
 public class BlockInteractionListenerTest extends AbstractCommonSetup {
 
 
@@ -128,8 +129,6 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
     }
 
 
-    /**
-     */
     @Override
     @Before
     public void setUp() throws Exception {
@@ -145,7 +144,9 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         when(item.getType()).thenReturn(Material.AIR);
         when(mockPlayer.getInventory()).thenReturn(inv);
         when(inv.getItemInMainHand()).thenReturn(item);
-        when(inv.getItemInOffHand()).thenReturn(new ItemStack(Material.BUCKET));
+        ItemStack mockBucket = mock(ItemStack.class);
+        when(mockBucket.getType()).thenReturn(Material.BUCKET);
+        when(inv.getItemInOffHand()).thenReturn(mockBucket);
 
         // FlagsManager
         setFlags();

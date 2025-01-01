@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -36,7 +37,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, IslandsManager.class, Util.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, IslandsManager.class, Util.class , ServerBuildInfo.class})
 public class DefaultPlayerCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock

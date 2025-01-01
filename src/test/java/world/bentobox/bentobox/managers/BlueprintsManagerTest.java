@@ -49,6 +49,7 @@ import org.powermock.reflect.Whitebox;
 
 import com.github.puregero.multilib.MultiLib;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
@@ -68,7 +69,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, BlueprintPaster.class, MultiLib.class, Util.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, BlueprintPaster.class, MultiLib.class, Util.class , ServerBuildInfo.class})
 public class BlueprintsManagerTest {
 
     public static int BUFFER_SIZE = 10240;

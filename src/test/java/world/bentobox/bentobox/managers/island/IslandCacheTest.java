@@ -46,6 +46,7 @@ import org.powermock.reflect.Whitebox;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -58,7 +59,8 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, DatabaseSetup.class, })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, DatabaseSetup.class,
+        ServerBuildInfo.class })
 public class IslandCacheTest extends AbstractCommonSetup {
 
     private static AbstractDatabaseHandler<Object> handler;

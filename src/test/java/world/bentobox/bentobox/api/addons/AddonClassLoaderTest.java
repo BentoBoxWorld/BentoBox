@@ -39,6 +39,7 @@ import org.powermock.reflect.Whitebox;
 
 import com.github.puregero.multilib.MultiLib;
 
+import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.managers.AddonsManager;
@@ -49,7 +50,7 @@ import world.bentobox.bentobox.managers.AddonsManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, MultiLib.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class, MultiLib.class , ServerBuildInfo.class})
 public class AddonClassLoaderTest {
 
     private enum mandatoryTags {
