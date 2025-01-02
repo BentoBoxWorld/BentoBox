@@ -275,4 +275,6 @@ public class HurtingListener extends FlagListener {
             }
 
         }
+
+    }
 }
