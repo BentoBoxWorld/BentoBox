@@ -32,7 +32,7 @@ public class EggListener extends FlagListener {
      * Handle visitor chicken egg hitting
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEggHit(ProjectileHitEvent e) {
         if (e.getEntity() instanceof Egg egg) {
             if (egg.getShooter() instanceof Player player) {
