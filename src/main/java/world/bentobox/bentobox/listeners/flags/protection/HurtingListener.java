@@ -234,4 +234,44 @@ public class HurtingListener extends FlagListener {
             firedFireworks.put(e.getProjectile(), e.getEntity());
         }
     }
+    
+        /**
+     * Handle visitor projectile hitting
+     *
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onProjectileHit(ProjectileHitEvent e) {
+        if (e.getEntity().getShooter() instanceof Player attacker) {
+            if (e.getHitEntity() instanceof LivingEntity entity) {
+                // Monsters being hit
+                if (Util.isHostileEntity(entity)) {
+                    if (!checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+                // Tamed animals being hit
+                if (Util.isTamableEntity(entity)) {
+                    if (!checkIsland(e, attacker, entity.getLocation(), Flags.HURT_TAMED_ANIMALS)) {
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+                // Mobs being hit
+                if (Util.isPassiveEntity(entity)) {
+                    if (!checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+                // Villagers being hit
+                if (entity instanceof AbstractVillager) {
+                    if (!checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS)) {
+                        e.setCancelled(true);
+                    }
+                }
+            }
+
+        }
 }
