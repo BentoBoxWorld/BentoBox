@@ -31,10 +31,20 @@ public class PasteHandlerImpl implements PasteHandler {
     @Override
     public CompletableFuture<Void> setBlock(Island island, Location location, BlueprintBlock bpBlock) {
         return Util.getChunkAtAsync(location).thenRun(() -> {
+            Block block = setBlock(location, DefaultPasteUtil.createBlockData(bpBlock));
+            DefaultPasteUtil.setBlockState(island, block, bpBlock);
+            // Set biome
+            if (bpBlock.getBiome() != null) {
+                block.setBiome(bpBlock.getBiome());
+            }
+        });
+    }
+
+    @Override
+    public Block setBlock(Location location, BlockData bd) {
             Block block = location.getBlock();
             // Set the block data - default is AIR
-            BlockData bd = DefaultPasteUtil.createBlockData(bpBlock);
-            CraftBlockData craft = (CraftBlockData) bd;
+             CraftBlockData craft = (CraftBlockData) bd;
             net.minecraft.world.level.World nmsWorld = ((CraftWorld) location.getWorld()).getHandle();
             Chunk nmsChunk = nmsWorld.d(location.getBlockX() >> 4, location.getBlockZ() >> 4);
             BlockPosition bp = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
@@ -42,11 +52,6 @@ public class PasteHandlerImpl implements PasteHandler {
             nmsChunk.a(bp, AIR, false);
             nmsChunk.a(bp, craft.getState(), false);
             block.setBlockData(bd, false);
-            DefaultPasteUtil.setBlockState(island, block, bpBlock);
-            // Set biome
-            if (bpBlock.getBiome() != null) {
-                block.setBiome(bpBlock.getBiome());
-            }
-        });
+            return block;
     }
 }
