@@ -28,53 +28,25 @@ import world.bentobox.bentobox.util.Util;
  */
 public enum GameModePlaceholder {
 
-    /* World-related */
     /**
-     * World friendly name
+     * Returns how many times this player died.
+     * @since 1.12.0
      */
-    WORLD_FRIENDLY_NAME("world_friendly_name", (addon, user, island) -> addon.getWorldSettings().getFriendlyName()),
+    DEATHS("deaths", (addon, user, island) -> user == null ? "" : String.valueOf(addon.getPlayers().getDeaths(addon.getOverWorld(), user.getUniqueId()))),
+    /* Player-related */
     /**
-     * Returns the amount of islands in the world.
+     * Returns whether this player has an island or not.
      * @since 1.5.0
      */
-    WORLD_ISLANDS("world_islands", (addon, user, island) -> String.valueOf(addon.getIslands().getIslandCount(addon.getOverWorld()))),
+    HAS_ISLAND("has_island", (addon, user, island) -> String.valueOf(user != null && island != null)),
 
     /* Island-related */
 
-    // TODO: change the two next placeholders as they're related to the worlds instead of the islands
-    ISLAND_DISTANCE("island_distance", (addon, user, island) -> String.valueOf(addon.getWorldSettings().getIslandDistance())),
     /**
-     * Returns the island distance as a diameter (it is therefore equivalent to twice the island distance).
+     * Returns the amount of players banned from the island.
      * @since 1.5.0
      */
-    ISLAND_DISTANCE_DIAMETER("island_distance_diameter", (addon, user, island) -> String.valueOf(2 * addon.getWorldSettings().getIslandDistance())),
-    // ----------------------------------
-    /**
-     * Returns the island's protection range.
-     * @since 1.4.0
-     */
-    ISLAND_PROTECTION_RANGE("island_protection_range", (addon, user, island) -> island == null ? "" : String.valueOf(island.getProtectionRange())),
-    /**
-     * Returns the island's protection range as a diameter (it is therefore equivalent to twice the island protection range).
-     * @since 1.5.0
-     */
-    ISLAND_PROTECTION_RANGE_DIAMETER("island_protection_range_diameter", (addon, user, island) -> island == null ? "" : String.valueOf(2 * island.getProtectionRange())),
-    ISLAND_OWNER("island_owner", (addon, user, island) -> island == null ? "" : addon.getPlayers().getName(island.getOwner())),
-    ISLAND_CREATION_DATE("island_creation_date", (addon, user, island) -> island == null ? "" : DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())))),
-    ISLAND_NAME("island_name", (addon, user, island) -> {
-        if (island == null || user == null) {
-            return "";
-        }
-        if (island.getName() == null) {
-            return user.getTranslation(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, addon.getPlayers().getName(island.getOwner()));
-        }
-        return island.getName();
-    }),
-    /**
-     * Return island unique ID
-     * @since 1.15.4
-     */
-    ISLAND_UUID("island_uuid", (addon, user, island) -> island == null ? "" : island.getUniqueId()),
+    ISLAND_BANS_COUNT("island_bans_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getBanned().size())),
     /**
      * Returns the coordinates of the island's center.
      * @since 1.5.0
@@ -96,6 +68,51 @@ public enum GameModePlaceholder {
      */
     ISLAND_CENTER_Z("island_center_z", (addon, user, island) -> island == null ? "" : String.valueOf(island.getCenter().getBlockZ())),
     /**
+     * Returns a comma separated list of player names that are at least COOP on this island.
+     * @since 2.4.2
+     */
+    ISLAND_COOP_LIST("island_coop_list",
+            (addon, user, island) -> island == null ? ""
+                    : island.getMemberSet(RanksManager.COOP_RANK, false).stream().map(addon.getPlayers()::getName)
+                            .collect(Collectors.joining(","))),
+    /**
+     * Returns the amount of players that are TRUSTED on this island.
+     * @since 1.5.0
+     */
+    ISLAND_COOPS_COUNT("island_coops_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet(RanksManager.COOP_RANK, false).size())),
+    /**
+     * Island creation date
+     * @since 3.2.0
+     */
+    ISLAND_CREATION_DATE("island_creation_date",
+            (addon, user, island) -> island == null ? ""
+                    : DateFormat.getDateInstance(DateFormat.SHORT)
+                            .format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())))),
+
+    /**
+     * Island creation time
+     * @since 3.2.0
+     */
+    ISLAND_CREATION_TIME("island_creation_time",
+            (addon, user, island) -> island == null ? ""
+                    : DateFormat.getTimeInstance(DateFormat.SHORT)
+                            .format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())))),
+    /**
+     * This is a fixed value from settings
+     */
+    ISLAND_DISTANCE("island_distance", (addon, user, island) -> String.valueOf(addon.getWorldSettings().getIslandDistance())),
+    /**
+     * Returns the island distance as a diameter (it is therefore equivalent to twice the island distance).
+     * @since 1.5.0
+     */
+    ISLAND_DISTANCE_DIAMETER("island_distance_diameter", (addon, user, island) -> String.valueOf(2 * addon.getWorldSettings().getIslandDistance())),
+    /**
+     * Returns the number of players that are or have ever been a MEMBER on this island.
+     * @since 3.0.0
+     */
+    ISLAND_HISTORICAL_MEMBERS_COUNT("island_historical_members_count",
+            (addon, user, island) -> island == null ? "" : getHistoricalMembers(island)),
+    /**
      * Returns the coordinates of the island's location, which may be different to the center.
      * @since 1.16.0
      */
@@ -116,61 +133,6 @@ public enum GameModePlaceholder {
      */
     ISLAND_LOCATION_Z("island_location_z", (addon, user, island) -> island == null ? "" : String.valueOf(island.getProtectionCenter().getBlockZ())),
     /**
-     * Returns the maximum number of members the island can have
-     * @since 1.5.0
-     */
-    ISLAND_MEMBERS_MAX("island_members_max", (addon, user, island) -> island == null ? "" : String.valueOf(addon.getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK))),
-    /**
-     * Returns the amount of players that are at least MEMBER on this island.
-     * @since 1.5.0
-     */
-    ISLAND_MEMBERS_COUNT("island_members_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet().size())),
-
-    /**
-     * Returns the number of players that are or have ever been a MEMBER on this island.
-     * @since 3.0.0
-     */
-    ISLAND_HISTORICAL_MEMBERS_COUNT("island_historical_members_count",
-            (addon, user, island) -> island == null ? "" : getHistoricalMembers(island)),
-
-    /**
-     * Returns a comma separated list of player names that are at least MEMBER on this island.
-     * @since 1.13.0
-     */
-    ISLAND_MEMBERS_LIST("island_members_list", (addon, user, island) -> island == null ? "" : island.getMemberSet(RanksManager.MEMBER_RANK).stream()
-            .map(addon.getPlayers()::getName).collect(Collectors.joining(","))),
-    /**
-     * Returns a comma separated list of player names that are at least TRUSTED on this island.
-     * @since 2.4.2
-     */
-    ISLAND_TRUSTED_LIST("island_trusted_list",
-            (addon, user, island) -> island == null ? ""
-                    : island.getMemberSet(RanksManager.TRUSTED_RANK, false).stream().map(addon.getPlayers()::getName)
-                            .collect(Collectors.joining(","))),
-    /**
-     * Returns a comma separated list of player names that are at least COOP on this island.
-     * @since 2.4.2
-     */
-    ISLAND_COOP_LIST("island_coop_list",
-            (addon, user, island) -> island == null ? ""
-                    : island.getMemberSet(RanksManager.COOP_RANK, false).stream().map(addon.getPlayers()::getName)
-                            .collect(Collectors.joining(","))),
-    /**
-     * Returns the amount of players that are TRUSTED on this island.
-     * @since 1.5.0
-     */
-    ISLAND_TRUSTEES_COUNT("island_trustees_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet(RanksManager.TRUSTED_RANK, false).size())),
-    /**
-     * Returns the amount of players that are TRUSTED on this island.
-     * @since 1.5.0
-     */
-    ISLAND_COOPS_COUNT("island_coops_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet(RanksManager.COOP_RANK, false).size())),
-    /**
-     * Returns the amount of players that are currently visiting the island.
-     * @since 1.5.0
-     */
-    ISLAND_VISITORS_COUNT("island_visitors_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getVisitors().size())),
-    /**
      * Returns the amount of players that are at least MEMBER on the island the player is standing on.
      * @since 2.6.0
      */
@@ -180,47 +142,106 @@ public enum GameModePlaceholder {
                             island.getMaxHomes() == null ? addon.getPlugin().getIWM().getMaxHomes(island.getWorld())
                                     : island.getMaxHomes())),
     /**
-     * Returns the amount of players banned from the island.
+     * Returns the amount of players that are at least MEMBER on this island.
      * @since 1.5.0
      */
-    ISLAND_BANS_COUNT("island_bans_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getBanned().size())),
+    ISLAND_MEMBERS_COUNT("island_members_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet().size())),
+    /**
+     * Returns a comma separated list of player names that are at least MEMBER on this island.
+     * @since 1.13.0
+     */
+    ISLAND_MEMBERS_LIST("island_members_list", (addon, user, island) -> island == null ? "" : island.getMemberSet(RanksManager.MEMBER_RANK).stream()
+            .map(addon.getPlayers()::getName).collect(Collectors.joining(","))),
 
-    /* Visited island-related (= island the user is standing on) */
     /**
-     * Returns the protection range of the island the player is standing on.
-     * @since 1.5.2
+     * Returns the maximum number of members the island can have
+     * @since 1.5.0
      */
-    VISITED_ISLAND_PROTECTION_RANGE("visited_island_protection_range", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getProtectionRange())).orElse("")),
-    /**
-     * Returns the protection range of the island the player is standing on as a diameter.
-     * @since 1.5.2
-     */
-    VISITED_ISLAND_PROTECTION_RANGE_DIAMETER("visited_island_protection_range_diameter", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> String.valueOf(2*value.getProtectionRange())).orElse("")),
-    /**
-     * Returns the name of the owner of the island the player is standing on.
-     * @since 1.5.2
-     */
-    VISITED_ISLAND_OWNER("visited_island_owner", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> addon.getPlayers().getName(value.getOwner())).orElse("")),
-    /**
-     * Returns the formatted creation date of the island the player is standing on.
-     * @since 1.5.2
-     */
-    VISITED_ISLAND_CREATION_DATE("visited_island_creation_date", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(value.getCreatedDate())))).orElse("")),
-    /**
-     * Returns the name of the island the player is standing on.
-     * @since 1.5.2
-     */
-    VISITED_ISLAND_NAME("visited_island_name", (addon, user, island) -> getVisitedIsland(addon, user).map(is -> {
-        if (is.getName() != null) {
-            return is.getName();
-        } else {
-            return user.getTranslation(is.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, addon.getPlayers().getName(is.getOwner()));
+    ISLAND_MEMBERS_MAX("island_members_max", (addon, user, island) -> island == null ? "" : String.valueOf(addon.getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK))),
+
+    ISLAND_NAME("island_name", (addon, user, island) -> {
+        if (island == null || user == null) {
+            return "";
         }
-    }).orElse("")),
+        if (island.getName() == null) {
+            return user.getTranslation(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, addon.getPlayers().getName(island.getOwner()));
+        }
+        return island.getName();
+    }),
+    ISLAND_OWNER("island_owner", (addon, user, island) -> island == null ? "" : addon.getPlayers().getName(island.getOwner())),
+    // ----------------------------------
+    /**
+     * Returns the island's protection range.
+     * @since 1.4.0
+     */
+    ISLAND_PROTECTION_RANGE("island_protection_range", (addon, user, island) -> island == null ? "" : String.valueOf(island.getProtectionRange())),
+    /**
+     * Returns the island's protection range as a diameter (it is therefore equivalent to twice the island protection range).
+     * @since 1.5.0
+     */
+    ISLAND_PROTECTION_RANGE_DIAMETER("island_protection_range_diameter", (addon, user, island) -> island == null ? "" : String.valueOf(2 * island.getProtectionRange())),
+    /**
+     * Returns a comma separated list of player names that are at least TRUSTED on this island.
+     * @since 2.4.2
+     */
+    ISLAND_TRUSTED_LIST("island_trusted_list",
+            (addon, user, island) -> island == null ? ""
+                    : island.getMemberSet(RanksManager.TRUSTED_RANK, false).stream().map(addon.getPlayers()::getName)
+                            .collect(Collectors.joining(","))),
+    /**
+     * Returns the amount of players that are TRUSTED on this island.
+     * @since 1.5.0
+     */
+    ISLAND_TRUSTEES_COUNT("island_trustees_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet(RanksManager.TRUSTED_RANK, false).size())),
+    /**
+     * Return island unique ID
+     * @since 1.15.4
+     */
+    ISLAND_UUID("island_uuid", (addon, user, island) -> island == null ? "" : island.getUniqueId()),
+    /**
+     * Returns the amount of players that are currently visiting the island.
+     * @since 1.5.0
+     */
+    ISLAND_VISITORS_COUNT("island_visitors_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getVisitors().size())),
+
+    /**
+     * Returns whether this player is on his island and has a rank greater than VISITOR_RANK
+     * @since 1.13.0
+     */
+    ON_ISLAND("on_island",
+            (addon, user,
+                    island) -> String.valueOf(addon.getIslands().userIsOnIsland(addon.getOverWorld(), user)
+                            || addon.getIslands().userIsOnIsland(addon.getNetherWorld(), user)
+                            || addon.getIslands().userIsOnIsland(addon.getEndWorld(), user))),
+    /**
+     * Returns whether this player is an owner of their island
+     * @since 1.14.0
+     */
+    OWNS_ISLAND("owns_island", (addon, user, island) -> String.valueOf(island != null && user != null && user.getUniqueId().equals(island.getOwner()))),
+    /**
+     * Returns the rank this player has on his island.
+     * @since 1.5.0
+     */
+    RANK("rank",
+            (addon, user, island) -> (island == null || user == null) ? ""
+                    : user.getTranslation(RanksManager.getInstance().getRank(island.getRank(user)))),
+    /**
+     * Returns how many times this player reset his island.
+     * @since 1.5.0
+     */
+    RESETS("resets", (addon, user, island) -> user == null ? "" : String.valueOf(addon.getPlayers().getResets(addon.getOverWorld(), user.getUniqueId()))),
+    /**
+     * Returns how many times this player can reset his island.
+     * {@code -1} is unlimited.
+     * @since 1.5.0
+     */
+    RESETS_LEFT("resets_left", (addon, user, island) -> user == null ? "" : String.valueOf(addon.getPlayers().getResetsLeft(addon.getOverWorld(), user.getUniqueId()))),
+    /**
+     * Returns the amount of players banned from the island the player is standing on.
+     * @since 1.5.2
+     */
+    VISITED_ISLAND_BANS_COUNT("visited_island_bans_count", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getBanned().size())).orElse("")),
     /**
      * Returns the coordinates of the center of the island the player is standing on.
      * @since 1.5.2
@@ -246,6 +267,25 @@ public enum GameModePlaceholder {
     VISITED_ISLAND_CENTER_Z("visited_island_center_z", (addon, user, island) ->
     getVisitedIsland(addon, user).map(value -> String.valueOf(value.getCenter().getBlockZ())).orElse("")),
     /**
+     * Returns a comma separated list of player names that are COOP on the island the player is standing on.
+     * @since 2.4.2
+     */
+    VISITED_ISLAND_COOP_LIST("visited_island_coop_list", (addon, user,
+            island) -> getVisitedIsland(addon, user).map(value -> value.getMemberSet(RanksManager.COOP_RANK, false)
+                    .stream().map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("")),
+    /**
+     * Returns the amount of players that are TRUSTED on the island the player is standing on.
+     * @since 1.5.2
+     */
+    VISITED_ISLAND_COOPS_COUNT("visited_island_coops_count", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getMemberSet(RanksManager.COOP_RANK, false).size())).orElse("")),
+    /**
+     * Returns the formatted creation date of the island the player is standing on.
+     * @since 1.5.2
+     */
+    VISITED_ISLAND_CREATION_DATE("visited_island_creation_date", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(value.getCreatedDate())))).orElse("")),
+    /**
      * Returns the coordinates of the location of the island the player is standing on.
      * @since 1.16.0
      */
@@ -270,40 +310,6 @@ public enum GameModePlaceholder {
     VISITED_ISLAND_LOCATION_Z("visited_island_location_z", (addon, user, island) ->
     getVisitedIsland(addon, user).map(value -> String.valueOf(value.getProtectionCenter().getBlockZ())).orElse("")),
     /**
-     * Returns the maximum number of members the island the player is standing on can have.
-     * @since 1.5.2
-     */
-    VISITED_ISLAND_MEMBERS_MAX("visited_island_members_max", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> String.valueOf(addon.getIslands().getMaxMembers(value, RanksManager.MEMBER_RANK)))
-    .orElse("")),
-    /**
-     * Returns a comma separated list of player names that are at least MEMBER on the island the player is standing on.
-     * @since 1.13.0
-     */
-    VISITED_ISLAND_MEMBERS_LIST("visited_island_members_list", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> value.getMemberSet(RanksManager.MEMBER_RANK).stream()
-            .map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("")),
-    /**
-     * Returns a comma separated list of player names that are at TRUSTED on the island the player is standing on.
-     * @since 2.4.2
-     */
-    VISITED_ISLAND_TRUSTED_LIST("visited_island_trusted_list", (addon, user,
-            island) -> getVisitedIsland(addon, user).map(value -> value.getMemberSet(RanksManager.TRUSTED_RANK, false)
-                    .stream().map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("")),
-    /**
-     * Returns a comma separated list of player names that are COOP on the island the player is standing on.
-     * @since 2.4.2
-     */
-    VISITED_ISLAND_COOP_LIST("visited_island_coop_list", (addon, user,
-            island) -> getVisitedIsland(addon, user).map(value -> value.getMemberSet(RanksManager.COOP_RANK, false)
-                    .stream().map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("")),
-    /**
-     * Returns the amount of players that are at least MEMBER on the island the player is standing on.
-     * @since 1.5.2
-     */
-    VISITED_ISLAND_MEMBERS_COUNT("visited_island_members_count", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getMemberSet().size())).orElse("")),
-    /**
      * Returns the amount of players that are at least MEMBER on the island the player is standing on.
      * @since 2.6.0
      */
@@ -314,50 +320,57 @@ public enum GameModePlaceholder {
                                     : island.getMaxHomes()))
                             .orElse("")),
     /**
-     * Returns the amount of players that are TRUSTED on the island the player is standing on.
+     * Returns the amount of players that are at least MEMBER on the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_TRUSTEES_COUNT("visited_island_trustees_count", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getMemberSet(RanksManager.TRUSTED_RANK, false).size())).orElse("")),
+    VISITED_ISLAND_MEMBERS_COUNT("visited_island_members_count", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getMemberSet().size())).orElse("")),
     /**
-     * Returns the amount of players that are TRUSTED on the island the player is standing on.
-     * @since 1.5.2
+     * Returns a comma separated list of player names that are at least MEMBER on the island the player is standing on.
+     * @since 1.13.0
      */
-    VISITED_ISLAND_COOPS_COUNT("visited_island_coops_count", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getMemberSet(RanksManager.COOP_RANK, false).size())).orElse("")),
+    VISITED_ISLAND_MEMBERS_LIST("visited_island_members_list", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> value.getMemberSet(RanksManager.MEMBER_RANK).stream()
+            .map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("")),
     /**
-     * Returns the amount of players that are currently visiting the island the player is standing on.
+     * Returns the maximum number of members the island the player is standing on can have.
      * @since 1.5.2
      */
-    VISITED_ISLAND_VISITORS_COUNT("visited_island_visitors_count", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getVisitors().size())).orElse("")),
+    VISITED_ISLAND_MEMBERS_MAX("visited_island_members_max", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(addon.getIslands().getMaxMembers(value, RanksManager.MEMBER_RANK)))
+    .orElse("")),
     /**
-     * Returns the amount of players banned from the island the player is standing on.
+     * Returns the name of the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_BANS_COUNT("visited_island_bans_count", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getBanned().size())).orElse("")),
+    VISITED_ISLAND_NAME("visited_island_name", (addon, user, island) -> getVisitedIsland(addon, user).map(is -> {
+        if (is.getName() != null) {
+            return is.getName();
+        } else {
+            return user.getTranslation(is.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, addon.getPlayers().getName(is.getOwner()));
+        }
+    }).orElse("")),
+    /**
+     * Returns the name of the owner of the island the player is standing on.
+     * @since 1.5.2
+     */
+    VISITED_ISLAND_OWNER("visited_island_owner", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> addon.getPlayers().getName(value.getOwner())).orElse("")),
+
+    /* Visited island-related (= island the user is standing on) */
+    /**
+     * Returns the protection range of the island the player is standing on.
+     * @since 1.5.2
+     */
+    VISITED_ISLAND_PROTECTION_RANGE("visited_island_protection_range", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getProtectionRange())).orElse("")),
 
     /**
-     * Get the visited island unique ID
-     * @since 1.15.4
+     * Returns the protection range of the island the player is standing on as a diameter.
+     * @since 1.5.2
      */
-    VISITED_ISLAND_UUID("visited_island_uuid", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(Island::getUniqueId).orElse("")),
-
-    /* Player-related */
-    /**
-     * Returns whether this player has an island or not.
-     * @since 1.5.0
-     */
-    HAS_ISLAND("has_island", (addon, user, island) -> String.valueOf(user != null && island != null)),
-    /**
-     * Returns the rank this player has on his island.
-     * @since 1.5.0
-     */
-    RANK("rank",
-            (addon, user, island) -> (island == null || user == null) ? ""
-                    : user.getTranslation(RanksManager.getInstance().getRank(island.getRank(user)))),
+    VISITED_ISLAND_PROTECTION_RANGE_DIAMETER("visited_island_protection_range_diameter", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(2*value.getProtectionRange())).orElse("")),
     /**
      * Returns the rank this player has on this island.
      * @since 2.4.0
@@ -365,48 +378,42 @@ public enum GameModePlaceholder {
     VISITED_ISLAND_RANK("visited_island_rank",
             (addon, user, island) -> getVisitedIsland(addon, user)
                     .map(is -> user.getTranslation(RanksManager.getInstance().getRank(is.getRank(user)))).orElse("")),
+    /**
+     * Returns a comma separated list of player names that are at TRUSTED on the island the player is standing on.
+     * @since 2.4.2
+     */
+    VISITED_ISLAND_TRUSTED_LIST("visited_island_trusted_list", (addon, user,
+            island) -> getVisitedIsland(addon, user).map(value -> value.getMemberSet(RanksManager.TRUSTED_RANK, false)
+                    .stream().map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("")),
 
     /**
-     * Returns how many times this player reset his island.
+     * Returns the amount of players that are TRUSTED on the island the player is standing on.
+     * @since 1.5.2
+     */
+    VISITED_ISLAND_TRUSTEES_COUNT("visited_island_trustees_count", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getMemberSet(RanksManager.TRUSTED_RANK, false).size())).orElse("")),
+    /**
+     * Get the visited island unique ID
+     * @since 1.15.4
+     */
+    VISITED_ISLAND_UUID("visited_island_uuid", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(Island::getUniqueId).orElse("")),
+    /**
+     * Returns the amount of players that are currently visiting the island the player is standing on.
+     * @since 1.5.2
+     */
+    VISITED_ISLAND_VISITORS_COUNT("visited_island_visitors_count", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getVisitors().size())).orElse("")),
+    /* World-related */
+    /**
+     * World friendly name
+     */
+    WORLD_FRIENDLY_NAME("world_friendly_name", (addon, user, island) -> addon.getWorldSettings().getFriendlyName()),
+    /**
+     * Returns the amount of islands in the world.
      * @since 1.5.0
      */
-    RESETS("resets", (addon, user, island) -> user == null ? "" : String.valueOf(addon.getPlayers().getResets(addon.getOverWorld(), user.getUniqueId()))),
-    /**
-     * Returns how many times this player can reset his island.
-     * {@code -1} is unlimited.
-     * @since 1.5.0
-     */
-    RESETS_LEFT("resets_left", (addon, user, island) -> user == null ? "" : String.valueOf(addon.getPlayers().getResetsLeft(addon.getOverWorld(), user.getUniqueId()))),
-    /**
-     * Returns how many times this player died.
-     * @since 1.12.0
-     */
-    DEATHS("deaths", (addon, user, island) -> user == null ? "" : String.valueOf(addon.getPlayers().getDeaths(addon.getOverWorld(), user.getUniqueId()))),
-    /**
-     * Returns whether this player is on his island and has a rank greater than VISITOR_RANK
-     * @since 1.13.0
-     */
-    ON_ISLAND("on_island",
-            (addon, user,
-                    island) -> String.valueOf(addon.getIslands().userIsOnIsland(addon.getOverWorld(), user)
-                            || addon.getIslands().userIsOnIsland(addon.getNetherWorld(), user)
-                            || addon.getIslands().userIsOnIsland(addon.getEndWorld(), user))),
-    /**
-     * Returns whether this player is an owner of their island
-     * @since 1.14.0
-     */
-    OWNS_ISLAND("owns_island", (addon, user, island) -> String.valueOf(island != null && user != null && user.getUniqueId().equals(island.getOwner())));
-
-    private final String placeholder;
-    /**
-     * @since 1.5.0
-     */
-    private final GameModePlaceholderReplacer replacer;
-
-    GameModePlaceholder(String placeholder, GameModePlaceholderReplacer replacer) {
-        this.placeholder = placeholder;
-        this.replacer = replacer;
-    }
+    WORLD_ISLANDS("world_islands", (addon, user, island) -> String.valueOf(addon.getIslands().getIslandCount(addon.getOverWorld())));
 
     /**
      * Provides a count of how many players have ever joined the island as a member including the owner
@@ -425,7 +432,6 @@ public enum GameModePlaceholder {
         }
         return String.valueOf(uniqueMembers.size());
     }
-
     /**
      * Get the visited island
      * @param addon - game mode addon
@@ -437,6 +443,18 @@ public enum GameModePlaceholder {
             return Optional.empty();
         }
         return addon.getIslands().getIslandAt(user.getLocation());
+    }
+
+    private final String placeholder;
+
+    /**
+     * @since 1.5.0
+     */
+    private final GameModePlaceholderReplacer replacer;
+
+    GameModePlaceholder(String placeholder, GameModePlaceholderReplacer replacer) {
+        this.placeholder = placeholder;
+        this.replacer = replacer;
     }
 
     public String getPlaceholder() {
