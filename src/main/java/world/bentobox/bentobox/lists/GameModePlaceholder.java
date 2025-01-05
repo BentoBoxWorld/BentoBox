@@ -179,7 +179,14 @@ public enum GameModePlaceholder {
      * Returns the island's protection range as a diameter (it is therefore equivalent to twice the island protection range).
      * @since 1.5.0
      */
-    ISLAND_PROTECTION_RANGE_DIAMETER("island_protection_range_diameter", (addon, user, island) -> island == null ? "" : String.valueOf(2 * island.getProtectionRange())),
+    ISLAND_PROTECTION_RANGE_DIAMETER("island_protection_range_diameter",
+            (addon, user, island) -> island == null ? "" : String.valueOf(2 * island.getProtectionRange())),
+    /**
+     * Get the rank the user has on their island
+     */
+    ISLAND_RANK("island_rank",
+            (addon, user, island) -> island == null ? ""
+                    : user.getTranslationOrNothing(RanksManager.getInstance().getRank(island.getRank(user)))),
     /**
      * Returns a comma separated list of player names that are at least TRUSTED on this island.
      * @since 2.4.2
