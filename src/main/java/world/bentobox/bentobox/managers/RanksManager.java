@@ -177,7 +177,7 @@ public class RanksManager {
     /**
      * Gets the reference to the rank name for value
      * @param rank - value
-     * @return Reference
+     * @return Reference or empty string if nothing
      */
     public String getRank(int rank) {
         for (Entry<String, Integer> en : ranks.entrySet()) {
