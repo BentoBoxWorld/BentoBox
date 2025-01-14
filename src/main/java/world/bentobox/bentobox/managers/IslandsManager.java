@@ -848,7 +848,8 @@ public class IslandsManager {
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull UUID uuid) {
-        return this.getPrimaryIsland(world, uuid).getHome("");
+        Island is = this.getPrimaryIsland(world, uuid);
+        return is == null ? null : is.getHome("");
     }
 
     /**
