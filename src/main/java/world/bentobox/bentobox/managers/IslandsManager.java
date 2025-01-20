@@ -152,8 +152,8 @@ public class IslandsManager {
     }
 
     /**
-     * Checks if this location is safe for a player to teleport to. Used by warps
-     * and boat exits Unsafe is any liquid or air and also if there's no space
+     * Checks if this location is safe for a player to teleport to. 
+     * Safe may vary depending on the world.
      *
      * @param l Location to be checked, not null.
      * @return true if safe, otherwise false
@@ -162,7 +162,8 @@ public class IslandsManager {
         Block ground = l.getBlock().getRelative(BlockFace.DOWN);
         Block space1 = l.getBlock();
         Block space2 = l.getBlock().getRelative(BlockFace.UP);
-        return checkIfSafe(l.getWorld(), ground.getType(), space1.getType(), space2.getType());
+        boolean safe = checkIfSafe(l.getWorld(), ground.getType(), space1.getType(), space2.getType());
+        return safe;
     }
 
     /**
@@ -185,7 +186,8 @@ public class IslandsManager {
     }
 
     /**
-     * Check if a location is safe for teleporting
+     * Check if a location is safe for teleporting.
+     * The definition of safe can vary by world
      * 
      * @param world  - world
      * @param ground Material of the block that is going to be the ground
@@ -199,10 +201,12 @@ public class IslandsManager {
         // Ground must be solid, space 1 and 2 must not be solid
         if (world == null || !ground.isSolid() || (space1.isSolid() && !Tag.SIGNS.isTagged(space1))
                 || (space2.isSolid() && !Tag.SIGNS.isTagged(space2))) {
+            BentoBox.getInstance().logDebug("Ground must be solid, space 1 and 2 must not be solid");
             return false;
         }
         // Cannot be submerged or water cannot be dangerous
-        if (space1.equals(Material.WATER) && (space2.equals(Material.WATER) || plugin.getIWM().isWaterNotSafe(world))) {
+        if ((space1.equals(Material.WATER) || space2.equals(Material.WATER)) && plugin.getIWM().isWaterNotSafe(world)) {
+            BentoBox.getInstance().logDebug("water not safe");
             return false;
         }
         // Unsafe
@@ -214,6 +218,7 @@ public class IslandsManager {
                 || Tag.CAMPFIRES.isTagged(ground) || Tag.FIRE.isTagged(ground) || Tag.FIRE.isTagged(space1)
                 || space1.equals(Material.END_PORTAL) || space2.equals(Material.END_PORTAL)
                 || space1.equals(Material.END_GATEWAY) || space2.equals(Material.END_GATEWAY)) {
+            BentoBox.getInstance().logDebug("Unsafe");
             return false;
         }
         // Known unsafe blocks
