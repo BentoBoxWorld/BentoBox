@@ -201,12 +201,10 @@ public class IslandsManager {
         // Ground must be solid, space 1 and 2 must not be solid
         if (world == null || !ground.isSolid() || (space1.isSolid() && !Tag.SIGNS.isTagged(space1))
                 || (space2.isSolid() && !Tag.SIGNS.isTagged(space2))) {
-            BentoBox.getInstance().logDebug("Ground must be solid, space 1 and 2 must not be solid");
             return false;
         }
         // Cannot be submerged or water cannot be dangerous
         if ((space1.equals(Material.WATER) || space2.equals(Material.WATER)) && plugin.getIWM().isWaterNotSafe(world)) {
-            BentoBox.getInstance().logDebug("water not safe");
             return false;
         }
         // Unsafe
@@ -218,7 +216,6 @@ public class IslandsManager {
                 || Tag.CAMPFIRES.isTagged(ground) || Tag.FIRE.isTagged(ground) || Tag.FIRE.isTagged(space1)
                 || space1.equals(Material.END_PORTAL) || space2.equals(Material.END_PORTAL)
                 || space1.equals(Material.END_GATEWAY) || space2.equals(Material.END_GATEWAY)) {
-            BentoBox.getInstance().logDebug("Unsafe");
             return false;
         }
         // Known unsafe blocks
