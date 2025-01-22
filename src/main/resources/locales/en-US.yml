@@ -352,8 +352,8 @@ commands:
       mid-copy: '&c You are mid-copy. Wait until the copy is done.'
       copied-percent: '&6 Copied [number]%'
       copy:
-        parameters: '[air]'
-        description: copy the clipboard set by pos1 and pos2 and optionally the air
+        parameters: '[air] [biome] [nowater]'
+        description: copy the clipboard set by pos1 and pos2 and optionally the air, biome, and water
           blocks
       delete:
         parameters: <name>
