@@ -102,7 +102,7 @@ public class BlueprintClipboard {
      * @param user - user
      * @return true if successful, false if pos1 or pos2 are undefined.
      */
-    public boolean copy(User user, boolean copyAir, boolean copyBiome) {
+    public boolean copy(User user, boolean copyAir, boolean copyBiome, boolean noWater) {
         if (copying) {
             user.sendMessage("commands.admin.blueprint.mid-copy");
             return false;
@@ -137,11 +137,13 @@ public class BlueprintClipboard {
 
         int speed = plugin.getSettings().getPasteSpeed();
         List<Vector> vectorsToCopy = getVectors(toCopy);
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> copyAsync(world, user, vectorsToCopy, speed, copyAir, copyBiome));
+        Bukkit.getScheduler().runTaskAsynchronously(plugin,
+                () -> copyAsync(world, user, vectorsToCopy, speed, copyAir, copyBiome, noWater));
         return true;
     }
 
-    private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir, boolean copyBiome) {
+    private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir,
+            boolean copyBiome, boolean noWater) {
         copying = false;
         // FancyNpcs
         if (npc.isPresent()) {
@@ -167,7 +169,7 @@ public class BlueprintClipboard {
                         .filter(e -> new Vector(e.getLocation().getBlockX(), e.getLocation().getBlockY(),
                                 e.getLocation().getBlockZ()).equals(v))
                         .toList();
-                if (copyBlock(v.toLocation(world), copyAir, copyBiome, ents)) {
+                if (copyBlock(v.toLocation(world), copyAir, copyBiome, ents, noWater)) {
                     count++;
                 }
             });
@@ -208,9 +210,12 @@ public class BlueprintClipboard {
         return r;
     }
 
-    private boolean copyBlock(Location l, boolean copyAir, boolean copyBiome, List<Entity> ents) {
+    private boolean copyBlock(Location l, boolean copyAir, boolean copyBiome, List<Entity> ents, boolean noWater) {
         Block block = l.getBlock();
         if (!copyAir && block.getType().equals(Material.AIR) && ents.isEmpty()) {
+            return false;
+        }
+        if (noWater && block.getType() == Material.WATER && ents.isEmpty()) {
             return false;
         }
         // Create position
@@ -229,6 +234,9 @@ public class BlueprintClipboard {
 
         // Return if this is just air block
         if (!copyAir && block.getType().equals(Material.AIR) && !ents.isEmpty()) {
+            return true;
+        }
+        if (noWater && block.getType().equals(Material.WATER) && !ents.isEmpty()) {
             return true;
         }
         BlueprintBlock b = bluePrintBlock(pos, block, copyBiome);

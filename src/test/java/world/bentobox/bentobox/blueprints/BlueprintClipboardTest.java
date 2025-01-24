@@ -107,7 +107,7 @@ public class BlueprintClipboardTest {
      */
     @Test
     public void testCopy() {
-        assertFalse(bc.copy(user, false, false));
+        assertFalse(bc.copy(user, false, false, false));
         verify(user, never()).sendMessage("commands.admin.blueprint.mid-copy");
         verify(user).sendMessage("commands.admin.blueprint.need-pos1-pos2");
     }

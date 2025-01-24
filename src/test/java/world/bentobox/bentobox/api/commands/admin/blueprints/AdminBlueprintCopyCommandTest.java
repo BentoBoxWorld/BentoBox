@@ -101,7 +101,7 @@ public class AdminBlueprintCopyCommandTest {
         when(ac.getClipboards()).thenReturn(map);
 
         // Clipboard
-        when(clip.copy(any(), anyBoolean(), anyBoolean())).thenReturn(true);
+        when(clip.copy(any(), anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(true);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -156,7 +156,7 @@ public class AdminBlueprintCopyCommandTest {
     @Test
     public void testExecuteUserStringListOfStringSuccess() {
         assertTrue(abcc.execute(user, "", List.of("air", "biome")));
-        verify(clip).copy(user, true, true);
+        verify(clip).copy(user, true, true, false);
     }
 
     /**
@@ -165,7 +165,7 @@ public class AdminBlueprintCopyCommandTest {
     @Test
     public void testExecuteUserStringListOfStringSuccessCaps() {
         assertTrue(abcc.execute(user, "", List.of("AIR", "BIOME")));
-        verify(clip).copy(user, true, true);
+        verify(clip).copy(user, true, true, false);
     }
 
     /**
@@ -174,7 +174,7 @@ public class AdminBlueprintCopyCommandTest {
     @Test
     public void testExecuteUserStringListOfStringJunk() {
         assertTrue(abcc.execute(user, "", List.of("junk", "junk")));
-        verify(clip).copy(user, false, false);
+        verify(clip).copy(user, false, false, false);
     }
 
     /**
@@ -183,7 +183,7 @@ public class AdminBlueprintCopyCommandTest {
     @Test
     public void testExecuteUserStringListOfStringNothing() {
         assertTrue(abcc.execute(user, "", Collections.emptyList()));
-        verify(clip).copy(user, false, false);
+        verify(clip).copy(user, false, false, false);
     }
 
     /**

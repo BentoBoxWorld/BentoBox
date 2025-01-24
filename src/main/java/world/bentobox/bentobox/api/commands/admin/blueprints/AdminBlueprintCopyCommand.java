@@ -41,14 +41,15 @@ public class AdminBlueprintCopyCommand extends CompositeCommand
 
         boolean copyAir = args.stream().anyMatch(key -> key.equalsIgnoreCase("air"));
         boolean copyBiome = args.stream().anyMatch(key -> key.equalsIgnoreCase("biome"));
+        boolean noWater = args.stream().anyMatch(key -> key.equalsIgnoreCase("nowater"));
 
-        return clipboard.copy(user, copyAir, copyBiome);
+        return clipboard.copy(user, copyAir, copyBiome, noWater);
     }
 
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args)
     {
-        return Optional.of(List.of("air", "biome"));
+        return Optional.of(List.of("air", "biome", "nowater"));
     }
 }
