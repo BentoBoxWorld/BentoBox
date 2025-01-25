@@ -459,6 +459,7 @@ commands:
       cannot-delete-owner: '&c All island members have to be kicked from the island
         before deleting it.'
       deleted-island: '&a Island at &e [xyz] &a has been successfully deleted.'
+      canceled: '&c Island deletion was cancelled via API at [xyz].'
     deletehomes:
       parameters: <player>
       description: deletes all named homes from an island

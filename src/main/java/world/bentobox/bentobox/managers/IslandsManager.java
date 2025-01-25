@@ -273,13 +273,14 @@ public class IslandsManager {
      * @param island         island to delete, not null
      * @param removeBlocks   whether the island blocks should be removed or not
      * @param involvedPlayer - player related to the island deletion, if any
+     * @return true if island deleted, false if canceled
      */
-    public void deleteIsland(@NonNull Island island, boolean removeBlocks, @Nullable UUID involvedPlayer) {
+    public boolean deleteIsland(@NonNull Island island, boolean removeBlocks, @Nullable UUID involvedPlayer) {
         // Fire event
         IslandBaseEvent event = IslandEvent.builder().island(island).involvedPlayer(involvedPlayer)
                 .reason(Reason.DELETE).build();
         if (event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled())) {
-            return;
+            return false;
         }
         // Set the owner of the island to no one.
         island.setOwner(null);
@@ -303,6 +304,7 @@ public class IslandsManager {
             // Delete the island from the database
             handler.deleteObject(island);
         }
+        return true;
     }
 
     private Gson getGson() {

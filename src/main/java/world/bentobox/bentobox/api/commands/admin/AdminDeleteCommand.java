@@ -105,13 +105,18 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         return true;
     }
 
-    private void deleteIsland(User user, Island oldIsland) {
+    private boolean deleteIsland(User user, Island oldIsland) {
         // Fire island preclear event
         IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
                 .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
-        user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ,
+        if (getIslands().deleteIsland(oldIsland, true, targetUUID)) {
+            user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ,
+                    Util.xyz(oldIsland.getCenter().toVector()));
+            return true;
+        }
+        user.sendMessage("commands.admin.delete.canceled", TextVariables.XYZ,
                 Util.xyz(oldIsland.getCenter().toVector()));
-        getIslands().deleteIsland(oldIsland, true, targetUUID);
+        return false;
 
     }
 
