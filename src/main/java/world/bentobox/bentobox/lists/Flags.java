@@ -65,6 +65,7 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineGrowthListen
 import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineRedstoneListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.PodzolListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnerSpawnEggsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
@@ -704,6 +705,13 @@ public final class Flags {
     public static final Flag CANDLES = new Flag.Builder("CANDLES", Material.CANDLE).mode(Flag.Mode.EXPERT)
             .listener(new CandleListener())
             .type(Type.PROTECTION).build();
+
+    /**
+     * Prevents podzol production when large trees grow
+     * @since 3.4.2
+     */
+    public static final Flag PODZOL = new Flag.Builder("PODZOL", Material.PODZOL).type(Type.WORLD_SETTING)
+            .defaultSetting(false).listener(new PodzolListener()).build();
 
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.

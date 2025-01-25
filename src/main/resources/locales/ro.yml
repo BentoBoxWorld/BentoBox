@@ -1460,6 +1460,12 @@ protection:
       description: Comutați plasarea
       name: Plasați blocuri
       hint: Blocarea plasării este dezactivată
+    PODZOL:
+        name: Producția de podzol de copac
+        description: |-
+          &a Dacă este dezactivat, va preveni
+          &a producția de podzol de copac
+          &a când cresc copaci mari
     POTION_THROWING:
       name: Aruncarea poției
       description: |-

@@ -1303,6 +1303,12 @@ protection:
       description: Toggle placing
       name: Place blocks
       hint: Blocage du placement désactivé
+    PODZOL:
+      name: Production de podzol d'arbre
+      description: |-
+          &a Si désactivé, empêchera la
+          &a production de podzol d'arbre
+          &a lorsque les grands arbres poussent
     POTION_THROWING:
       name: Potion throwing
       description: |-

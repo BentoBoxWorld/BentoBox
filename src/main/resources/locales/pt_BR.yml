@@ -1133,6 +1133,12 @@ protection:
       description: Permitir colocação
       name: Colocar blocos
       hint: Colocação de blocos desabilitada
+    PODZOL:
+        name: Produção de Podzol de Árvore
+        description: |-
+          &a Se desativado, impedirá
+          &a a produção de podzol de árvore
+          &a quando grandes árvores crescerem
     POTION_THROWING:
       name: Arremesso de poção
       description: |-
