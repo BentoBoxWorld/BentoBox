@@ -3,7 +3,7 @@ meta:
   authors:
   - tastybento
   - 
-  banner: WHITE_BANNER
+  banner: WHITE_BANNER:1:STRIPE_TOP:RED:STRIPE_BOTTOM:BLUE
 prefixes:
   bentobox: "&6 BentoBox &7 &l> &r"
 general:
