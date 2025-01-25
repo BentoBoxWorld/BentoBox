@@ -1448,6 +1448,12 @@ protection:
       description: Toggle placing
       name: Place blocks
       hint: Block placing disabled
+    PODZOL:
+        name: Tree Podzol Production
+        description: |-
+            &a If disabled will prevent
+            &a tree podzol production
+            &a when large trees grow
     POTION_THROWING:
       name: Potion throwing
       description: |-

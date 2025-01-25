@@ -1301,6 +1301,12 @@ protection:
       description: Alihkan penempatan
       name: Tempatkan blok
       hint: Penempatan blok dinonaktifkan
+    PODZOL:
+        name: Produksi Podzol Pohon
+        description: |-
+          &a Jika dinonaktifkan, akan mencegah
+          &a produksi podzol pohon
+          &a saat pohon besar tumbuh
     POTION_THROWING:
       name: Melempar ramuan
       description: |-

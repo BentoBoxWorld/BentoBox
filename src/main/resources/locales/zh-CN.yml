@@ -1303,6 +1303,11 @@ protection:
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2放置方块'
       name: '&b&l放置方块'
       hint: 禁止放置方块
+    PODZOL:
+        name: 树荫土生成
+        description: |-
+          &a 如果禁用，将防止在大树
+          &a 生长时生成树荫土
     POTION_THROWING:
       name: '&b&l投掷药水'
       description: |-

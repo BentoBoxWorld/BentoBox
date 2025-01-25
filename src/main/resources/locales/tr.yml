@@ -1176,6 +1176,12 @@ protection:
       description: Blok koyma ayarı değişimi
       name: Blok yerleştirme
       hint: Blok koymaya izin verilmez.
+    PODZOL:
+        name: Ağaç Podzol Üretimi
+        description: |-
+          &a Devre dışı bırakılırsa,
+          &a büyük ağaçlar büyüdüğünde
+          &a ağaç podzol üretimini önler
     POTION_THROWING:
       name: Potion throwing
       description: "&aİksirlerin atılmasını ayarlar."

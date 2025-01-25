@@ -1114,6 +1114,12 @@ protection:
       description: Modificar construccion
       name: Poner Bloques
       hint: No se permite colocar bloques.
+    PODZOL:
+      name: Producción de Podzol de Árbol
+      description: |-
+          &a Si se desactiva, evitará la
+          &a producción de podzol de árbol
+          &a cuando crezcan árboles grandes
     POTION_THROWING:
       name: Lanzamiento de pociones
       description: |-

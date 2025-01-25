@@ -1073,6 +1073,12 @@ protection:
       description: Przełącz interakcje
       name: Stawianie bloków
       hint: Stawianie bloków jest wyłączone.
+    PODZOL:
+        name: Produkcja podzolu drzewnego
+        description: |-
+          &a Wyłączenie zapobiega
+          &a produkcji podzolu drzewnego
+          &a podczas wzrostu dużych drzew
     POTION_THROWING:
       name: Rzucanie mikstur
       description: '&a Przełącz rzucanie mikstur trwałych i rzucanych.'

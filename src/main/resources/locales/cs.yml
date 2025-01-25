@@ -1273,6 +1273,12 @@ protection:
       description: Přepnout pokládání
       name: Pokládat bloky
       hint: Pokládání bloků zakázáno
+    PODZOL:
+      name: Stromová produkce podzolu
+      description: |-
+        &a Pokud je zakázáno, zabrání
+        &a produkci stromového podzolu
+        &a při růstu velkých stromů
     POTION_THROWING:
       name: Házení lektvarů
       description: |-

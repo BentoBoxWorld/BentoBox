@@ -1365,6 +1365,12 @@ protection:
       description: Platzieren umschalten
       name: Blöcke platzieren
       hint: Blockplatzierung deaktiviert
+    PODZOL:
+      name: Baum-Podzol-Produktion
+      description: |-
+        &a Wenn deaktiviert, wird die
+        &a Baum-Podzol-Produktion
+        &a bei großen Baumwachstum verhindert
     POTION_THROWING:
       name: Trank werfen
       description: "&a Umschalten der Tränke \n&a Dazu gehören Wurf- und Verweiltränke."

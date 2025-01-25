@@ -1208,6 +1208,12 @@ protection:
       description: Schakelen tussen plaatsen
       name: Plaats blokken
       hint: Blok plaatsen uitgeschakeld
+    PODZOL:
+        name: Boom-Podzolproductie
+        description: |-
+          &a Als uitgeschakeld, wordt de
+          &a productie van boom-podzol
+          &a bij grote bomen gestopt
     POTION_THROWING:
       name: Drankje gooien
       description: |-
