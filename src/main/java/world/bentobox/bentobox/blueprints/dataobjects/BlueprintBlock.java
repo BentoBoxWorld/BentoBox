@@ -35,6 +35,12 @@ public class BlueprintBlock {
     @Expose
     private BlueprintCreatureSpawner creatureSpawner;
     /**
+     * @since 3.4.2
+     */
+    @Expose
+    private BlueprintTrialSpawner trialSpawner;
+
+    /**
      * Since 1.15.2
      */
     @Expose
@@ -216,5 +222,19 @@ public class BlueprintBlock {
         } else {
             this.signLines2 = signLines;
         }
+    }
+
+    /**
+     * @return the trialSpawner
+     */
+    public BlueprintTrialSpawner getTrialSpawner() {
+        return trialSpawner;
+    }
+
+    /**
+     * @param trialSpawner the trialSpawner to set
+     */
+    public void setTrialSpawner(BlueprintTrialSpawner trialSpawner) {
+        this.trialSpawner = trialSpawner;
     }
 }

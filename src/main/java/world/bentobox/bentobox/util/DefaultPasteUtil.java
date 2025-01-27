@@ -17,6 +17,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
+import org.bukkit.block.TrialSpawner;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.WallSign;
@@ -28,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.spawner.TrialSpawnerConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -143,8 +145,12 @@ public class DefaultPasteUtil {
         else if (bs instanceof CreatureSpawner spawner) {
             setSpawner(spawner, bpBlock.getCreatureSpawner());
         }
-        else if (bs instanceof TrialSpawnerConfiguration spawner) {
-            bpBlock.getTrialSpawner().configTrialSpawner(spawner);
+        else if (bs instanceof TrialSpawner ts) {
+                TrialSpawnerConfiguration config = ts.getNormalConfiguration();
+                ts.setOminous(bpBlock.getTrialSpawner().configTrialSpawner(config));
+                if (!bs.update(true, false)) {
+                    BentoBox.getInstance().logError("Trial Spawner update failed!");
+                }
         }
         // Banners
         else if (bs instanceof Banner banner && bpBlock.getBannerPatterns() != null) {
