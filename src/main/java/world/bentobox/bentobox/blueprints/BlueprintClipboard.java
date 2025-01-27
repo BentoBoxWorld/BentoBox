@@ -19,6 +19,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
+import org.bukkit.block.TrialSpawner;
 import org.bukkit.block.data.Attachable;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Entity;
@@ -38,6 +39,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintTrialSpawner;
 import world.bentobox.bentobox.hooks.FancyNpcsHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
 import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
@@ -293,6 +295,13 @@ public class BlueprintClipboard {
         }
         if (blockState instanceof CreatureSpawner spawner) {
             b.setCreatureSpawner(getSpawner(spawner));
+        }
+        if (blockState instanceof TrialSpawner spawner) {
+            if (spawner.isOminous()) {
+                b.setTrialSpawner(new BlueprintTrialSpawner(true, spawner.getOminousConfiguration()));
+            } else {
+                b.setTrialSpawner(new BlueprintTrialSpawner(false, spawner.getNormalConfiguration()));
+            }
         }
         // Banners
         if (blockState instanceof Banner banner) {

@@ -17,7 +17,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
+import org.bukkit.block.TrialSpawner;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
@@ -26,6 +28,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.spawner.TrialSpawnerConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -140,6 +144,13 @@ public class DefaultPasteUtil {
         // Mob spawners
         else if (bs instanceof CreatureSpawner spawner) {
             setSpawner(spawner, bpBlock.getCreatureSpawner());
+        }
+        else if (bs instanceof TrialSpawner ts) {
+                TrialSpawnerConfiguration config = ts.getNormalConfiguration();
+                ts.setOminous(bpBlock.getTrialSpawner().configTrialSpawner(config));
+                if (!bs.update(true, false)) {
+                    BentoBox.getInstance().logError("Trial Spawner update failed!");
+                }
         }
         // Banners
         else if (bs instanceof Banner banner && bpBlock.getBannerPatterns() != null) {
@@ -261,21 +272,20 @@ public class DefaultPasteUtil {
      * @param bpSign - BlueprintBlock that is the sign
      * @param side   - the side being written
      */
+    @SuppressWarnings("deprecation")
     public static void writeSign(Island island, final Block block, BlueprintBlock bpSign, Side side) {
         List<String> lines = bpSign.getSignLines(side);
         boolean glow = bpSign.isGlowingText(side);
-
-        BlockFace bf;
-        if (block.getType().name().contains("WALL_SIGN")) {
-            WallSign wallSign = (WallSign) block.getBlockData();
-            bf = wallSign.getFacing();
-        } else {
-            org.bukkit.block.data.type.Sign sign = (org.bukkit.block.data.type.Sign) block.getBlockData();
-            bf = sign.getRotation();
-        }
+        BlockData bd = block.getBlockData();
+        BlockFace bf = (bd instanceof WallSign ws) ? ws.getFacing()
+                : ((org.bukkit.block.data.type.Sign) bd).getRotation();
         // Handle spawn sign
         if (side == Side.FRONT && island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
-            block.setType(Material.AIR);
+            if (bd instanceof Waterlogged wl && wl.isWaterlogged()) {
+                block.setType(Material.WATER);
+            } else {
+                block.setType(Material.AIR);
+            }
             // Orient to face same direction as sign
             Location spawnPoint = new Location(block.getWorld(), block.getX() + 0.5D, block.getY(),
                     block.getZ() + 0.5D, Util.blockFaceToFloat(bf.getOppositeFace()), 30F);
