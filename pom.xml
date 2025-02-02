@@ -77,7 +77,6 @@
         <vault.version>1.7.1</vault.version>
         <placeholderapi.version>2.10.9</placeholderapi.version>
         <githubapi.version>d5f5e0bbd8</githubapi.version>
-        <dynmap.version>3.0-SNAPSHOT</dynmap.version>
         <myworlds.version>1.19.3-v1</myworlds.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
@@ -152,10 +151,6 @@
         <repository>
             <id>codemc-repo</id>
             <url>https://repo.codemc.org/repository/maven-public</url>
-        </repository>
-        <repository>
-            <id>dynmap-repo</id>
-            <url>https://repo.mikeprimm.com/</url>
         </repository>
         <repository>
             <id>papermc</id>
@@ -326,12 +321,6 @@
             <scope>provided</scope>
         </dependency>
         <!-- Hooks -->
-        <dependency>
-            <groupId>us.dynmap</groupId>
-            <artifactId>dynmap-api</artifactId>
-            <version>${dynmap.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>com.bergerkiller.bukkit</groupId>
             <artifactId>MyWorlds</artifactId>
