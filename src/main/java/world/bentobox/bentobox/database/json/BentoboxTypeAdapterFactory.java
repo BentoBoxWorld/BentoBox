@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Registry;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -32,6 +34,7 @@ import world.bentobox.bentobox.database.json.adapters.MaterialTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.PairTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.PotionEffectTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.ProfessionTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.TagTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.VectorTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.VillagerTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.WorldTypeAdapter;
@@ -62,6 +65,7 @@ public class BentoboxTypeAdapterFactory implements TypeAdapterFactory {
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
         Class<?> rawType = type.getRawType();
+
         if (Location.class.isAssignableFrom(rawType)) {
             // Use our current location adapter for backward compatibility
             return (TypeAdapter<T>) new LocationTypeAdapter();
