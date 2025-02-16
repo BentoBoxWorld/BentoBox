@@ -41,7 +41,6 @@ public class JoinLeaveListener implements Listener {
         players = plugin.getPlayers();
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
         // Remove them from the cache, just in case they were not removed for some
