@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -41,6 +40,8 @@ import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.island.IslandGoCommand;
+import world.bentobox.bentobox.api.commands.island.IslandGoCommand.IslandInfo;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -55,7 +56,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, ServerBuildInfo.class, IslandGoCommand.class })
 public class AdminResetHomeCommandTest {
 
     @Mock
@@ -212,9 +213,10 @@ public class AdminResetHomeCommandTest {
         PowerMockito.mockStatic(User.class);
         when(User.getInstance(playerUUID)).thenReturn(targetUser);
 
-        Map<String, Island> islandsMap = new HashMap<>();
-        islandsMap.put("Island1", mock(Island.class));
-        doReturn(islandsMap).when(instance).getNameIslandMap(targetUser);
+        Map<String, IslandInfo> islandsMap = new HashMap<>();
+        islandsMap.put("Island1", new IslandInfo(mock(Island.class), false));
+        PowerMockito.mockStatic(IslandGoCommand.class);
+        when(IslandGoCommand.getNameIslandMap(targetUser, world)).thenReturn(islandsMap);
 
         // Act
         boolean result = instance.canExecute(user, label, args);
@@ -270,13 +272,14 @@ public class AdminResetHomeCommandTest {
         args.add(""); // args.size() == 3 (>2)
         String lastArg = args.get(args.size() - 1);
 
-        Map<String, Island> nameIslandMap = new HashMap<>();
-        nameIslandMap.put("IslandOne", mock(Island.class));
-        nameIslandMap.put("IslandTwo", mock(Island.class));
-        doReturn(nameIslandMap).when(instance).getNameIslandMap(any());
+        Map<String, IslandInfo> islandsMap = new HashMap<>();
+        islandsMap.put("IslandOne", new IslandInfo(mock(Island.class), false));
+        islandsMap.put("IslandTwo", new IslandInfo(mock(Island.class), false));
+        PowerMockito.mockStatic(IslandGoCommand.class);
+        when(IslandGoCommand.getNameIslandMap(any(), any())).thenReturn(islandsMap);
 
         // Create the list of island names
-        List<String> islandNames = new ArrayList<>(nameIslandMap.keySet());
+        List<String> islandNames = new ArrayList<>(islandsMap.keySet());
 
         // Mock Util.tabLimit()
         List<String> limitedIslandNames = Arrays.asList("IslandOne", "IslandTwo");
@@ -313,12 +316,12 @@ public class AdminResetHomeCommandTest {
      */
     @Test
     public void testExecuteSuccessful_SingleIsland() {
-        // Arrange
-        Island island = mock(Island.class);
-        Map<String, Island> islandsMap = new HashMap<>();
-        islandsMap.put("TestIsland", island);
-        instance.islands = islandsMap;
 
+        Map<String, IslandInfo> islandsMap = new HashMap<>();
+        islandsMap.put("TestIsland", new IslandInfo(island, false));
+        PowerMockito.mockStatic(IslandGoCommand.class);
+        when(IslandGoCommand.getNameIslandMap(user, world)).thenReturn(islandsMap);
+        instance.islands = islandsMap;
         // Act
         boolean result = instance.execute(user, label, args);
 
@@ -336,9 +339,11 @@ public class AdminResetHomeCommandTest {
         // Arrange
         Island island1 = mock(Island.class);
         Island island2 = mock(Island.class);
-        Map<String, Island> islandsMap = new HashMap<>();
-        islandsMap.put("IslandOne", island1);
-        islandsMap.put("IslandTwo", island2);
+        Map<String, IslandInfo> islandsMap = new HashMap<>();
+        islandsMap.put("IslandOne", new IslandInfo(island1, false));
+        islandsMap.put("IslandTwo", new IslandInfo(island2, false));
+        PowerMockito.mockStatic(IslandGoCommand.class);
+        when(IslandGoCommand.getNameIslandMap(any(), any())).thenReturn(islandsMap);
         instance.islands = islandsMap;
 
         // Act
