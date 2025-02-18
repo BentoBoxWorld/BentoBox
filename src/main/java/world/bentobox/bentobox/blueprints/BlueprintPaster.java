@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
+import org.bukkit.HeightMap;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
@@ -68,6 +69,7 @@ public class BlueprintPaster {
     private BukkitTask pastingTask;
     private BlueprintClipboard clipboard;
     private CompletableFuture<Void> currentTask = CompletableFuture.completedFuture(null);
+    private boolean sink;
 
     /**
      * The Blueprint to paste.
@@ -79,7 +81,7 @@ public class BlueprintPaster {
      * The Location to paste to.
      */
     @NonNull
-    private final Location location;
+    private Location location;
 
     /**
      * Island related to this paste, may be null.
@@ -315,6 +317,14 @@ public class BlueprintPaster {
             long duration = System.currentTimeMillis() - timer;
             if (duration > chunkLoadTime) {
                 chunkLoadTime = duration;
+            }
+            // Adjust location if this is a sinking blueprint to put it on the ocean floor
+            // Mayday! Mayday! We are sinking! ... What are you sinking about? https://youtu.be/gmOTpIVxji8?si=DC-u4qWRTN5fdWd8
+            if (this.blueprint.isSink() && !sink) {
+                sink = true; // Flag, just do this once
+                location = new Location(location.getWorld(), location.getX(),
+                        location.getWorld().getHighestBlockYAt(location, HeightMap.OCEAN_FLOOR), location.getZ());
+                BentoBox.getInstance().logDebug(location);
             }
         });
 

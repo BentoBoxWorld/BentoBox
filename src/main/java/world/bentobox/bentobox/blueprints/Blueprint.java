@@ -45,6 +45,8 @@ public class Blueprint {
     private int zSize;
     @Expose
     private Vector bedrock;
+    @Expose
+    private boolean sink;
     /**
      * @return the name
      */
@@ -197,6 +199,22 @@ public class Blueprint {
      */
     public void setBedrock(Vector bedrock) {
         this.bedrock = bedrock;
+    }
+
+    /**
+     * Check if the blueprint should sink or not
+     * @return the sink
+     */
+    public boolean isSink() {
+        return sink;
+    }
+
+    /**
+     * Set if the blueprint should sink or not
+     * @param sink the sink to set
+     */
+    public void setSink(boolean sink) {
+        this.sink = sink;
     }
 
 }
