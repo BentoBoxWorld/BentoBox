@@ -324,7 +324,6 @@ public class BlueprintPaster {
                 sink = true; // Flag, just do this once
                 location = new Location(location.getWorld(), location.getX(),
                         location.getWorld().getHighestBlockYAt(location, HeightMap.OCEAN_FLOOR), location.getZ());
-                BentoBox.getInstance().logDebug(location);
             }
         });
 
