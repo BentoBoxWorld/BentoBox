@@ -374,6 +374,12 @@ commands:
         parameters: '[air] [biome] [nowater]'
         description: copy the clipboard set by pos1 and pos2 and optionally the air,
           biome, and water blocks
+      sink:
+        description: "set this blueprint to sink to the ocean floor when pasted"
+        status: "&a Blueprint will [status] &a when pasted"
+        sink: "&c sink"
+        not-sink: "&b not sink"
+        no-clipboard: "&c There is no blueprint in the clipboard. Load or copy something."
       delete:
         parameters: <name>
         description: delete the blueprint

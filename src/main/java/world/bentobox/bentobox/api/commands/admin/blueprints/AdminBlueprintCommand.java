@@ -40,6 +40,7 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
         clipboards = new HashMap<>();
         displayClipboards = new HashMap<>();
 
+        // Sub commands
         new AdminBlueprintLoadCommand(this);
         new AdminBlueprintPasteCommand(this);
         new AdminBlueprintOriginCommand(this);
@@ -50,6 +51,7 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
         new AdminBlueprintPos1Command(this);
         new AdminBlueprintPos2Command(this);
         new AdminBlueprintListCommand(this);
+        new AdminBlueprintSinkCommand(this);
     }
 
     @Override
