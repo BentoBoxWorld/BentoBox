@@ -29,7 +29,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.spawner.TrialSpawnerConfiguration;
-import org.jetbrains.annotations.NotNull;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -39,6 +38,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.hooks.FancyNpcsHook;
+import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
 import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
 import world.bentobox.bentobox.nms.PasteHandler;
@@ -157,7 +157,12 @@ public class DefaultPasteUtil {
             bpBlock.getBannerPatterns().removeIf(Objects::isNull);
             banner.setPatterns(bpBlock.getBannerPatterns());
             banner.update(true, false);
+        } else // Check ItemsAdder
+        if (bpBlock.getItemsAdderBlock() != null && !bpBlock.getItemsAdderBlock().isEmpty()) {
+            BentoBox.getInstance().getHooks().getHook("ItemsAdder")
+                    .ifPresent(h -> ItemsAdderHook.place(bpBlock.getItemsAdderBlock(), block.getLocation()));
         }
+
     }
 
     /**
@@ -199,6 +204,7 @@ public class DefaultPasteUtil {
      * @param island island
      * @return true if Bukkit entity spawned, false another plugin entity spawned
      */
+    @SuppressWarnings("deprecation")
     static boolean spawnBlueprintEntity(BlueprintEntity k, Location location, Island island) {
         // Display Entity (holograms, etc.)
         k.setDisplay(location);
