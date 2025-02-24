@@ -113,9 +113,10 @@ public class ItemsAdderHook extends Hook {
      *
      * @param namespacedId Namespace and ID in the format {@code namespace:id}
      * @param location     The location to place the CustomBlock
+     * @return true if a block was placed
      */
-    public static void place(String namespacedId, Location loc) {
-        CustomBlock.place(namespacedId, loc);
+    public static boolean place(String namespacedId, Location loc) {
+        return CustomBlock.place(namespacedId, loc) != null;
     }
 
     /**

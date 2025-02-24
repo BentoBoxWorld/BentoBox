@@ -157,10 +157,6 @@ public class DefaultPasteUtil {
             bpBlock.getBannerPatterns().removeIf(Objects::isNull);
             banner.setPatterns(bpBlock.getBannerPatterns());
             banner.update(true, false);
-        } else // Check ItemsAdder
-        if (bpBlock.getItemsAdderBlock() != null && !bpBlock.getItemsAdderBlock().isEmpty()) {
-            BentoBox.getInstance().getHooks().getHook("ItemsAdder")
-                    .ifPresent(h -> ItemsAdderHook.place(bpBlock.getItemsAdderBlock(), block.getLocation()));
         }
 
     }
