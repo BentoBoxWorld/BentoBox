@@ -40,6 +40,9 @@ public class BlueprintBlock {
     @Expose
     private BlueprintTrialSpawner trialSpawner;
 
+    @Expose
+    private String itemsAdderBlock;
+
     /**
      * Since 1.15.2
      */
@@ -236,5 +239,19 @@ public class BlueprintBlock {
      */
     public void setTrialSpawner(BlueprintTrialSpawner trialSpawner) {
         this.trialSpawner = trialSpawner;
+    }
+
+    /**
+     * @return the itemsAdderBlock
+     */
+    public String getItemsAdderBlock() {
+        return itemsAdderBlock;
+    }
+
+    /**
+     * @param itemsAdderBlock the itemsAdderBlock to set
+     */
+    public void setItemsAdderBlock(String itemsAdderBlock) {
+        this.itemsAdderBlock = itemsAdderBlock;
     }
 }

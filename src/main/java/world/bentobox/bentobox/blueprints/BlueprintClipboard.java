@@ -41,6 +41,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintTrialSpawner;
 import world.bentobox.bentobox.hooks.FancyNpcsHook;
+import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
 import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
 
@@ -307,6 +308,14 @@ public class BlueprintClipboard {
         if (blockState instanceof Banner banner) {
             b.setBannerPatterns(banner.getPatterns());
         }
+
+        // ItemsAdder
+        plugin.getHooks().getHook("ItemsAdder").ifPresent(hook -> {
+            String iab = ItemsAdderHook.getInCustomRegion(block.getLocation());
+            if (iab != null) {
+                b.setItemsAdderBlock(iab);
+            }
+        });
 
         return b;
     }

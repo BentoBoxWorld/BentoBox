@@ -97,6 +97,32 @@ public class ItemsAdderHook extends Hook {
         // CustomBlock.remove(location);
     }
 
+    /**
+     * Gets the Namespace and ID in the format {@code namespace:id} of the placed CustomBlock in a specific location.
+     *
+     * @param location the location to check
+     * @return the Namespace and ID in the format {@code namespace:id} or null if it's not a CustomBlock.
+     */
+    public static String getInCustomRegion(Location loc) {
+        return CustomBlock.Advanced.getInCustomRegion(loc);
+    }
+
+    /**
+     * Places a CustomBlock provided through the namespace and ID at the provided location. If the item does
+     * not exist it will fail silently.
+     *
+     * @param namespacedId Namespace and ID in the format {@code namespace:id}
+     * @param location     The location to place the CustomBlock
+     * @return true if a block was placed
+     */
+    public static boolean place(String namespacedId, Location loc) {
+        return CustomBlock.place(namespacedId, loc) != null;
+    }
+
+    /**
+     * Delete ItemsAdder blocks in the chunk. Used when deleting island
+     * @param chunk chunk
+     */
     public static void deleteAllCustomBlocksInChunk(Chunk chunk) {
         CustomBlock.Advanced.deleteAllCustomBlocksInChunk(chunk);
     }
