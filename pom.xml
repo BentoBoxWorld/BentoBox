@@ -193,6 +193,11 @@
           <name>Pyr's Repo</name>
           <url>https://repo.pyr.lol/snapshots</url>
         </repository>
+        <!-- ItemsAdder API repo-->
+        <repository>
+            <id>matteodev</id>
+            <url>https://maven.devs.beer/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -376,9 +381,9 @@
         </dependency>
         <!-- ItemsAdder -->
         <dependency>
-            <groupId>com.github.LoneDev6</groupId>
+            <groupId>dev.lone</groupId>
             <artifactId>api-itemsadder</artifactId>
-            <version>3.6.3-beta-14</version>
+            <version>4.0.2-beta-release-11</version>
             <scope>provided</scope>
         </dependency>
         <!-- Multipaper -->
