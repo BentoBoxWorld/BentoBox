@@ -33,14 +33,6 @@ public class PasteHandlerImpl implements PasteHandler {
     @Override
     public CompletableFuture<Void> setBlock(Island island, Location location, BlueprintBlock bpBlock) {
         return Util.getChunkAtAsync(location).thenRun(() -> {
-            // Check ItemsAdder
-            if (bpBlock.getItemsAdderBlock() != null && !bpBlock.getItemsAdderBlock().isEmpty() &&
-                    BentoBox.getInstance().getHooks().getHook("ItemsAdder").map(
-                            h -> ItemsAdderHook.place(bpBlock.getItemsAdderBlock(), location)).orElse(false)) {
-                // CustomBlock pasted
-                return;
-            }
-
             Block block = setBlock(location, DefaultPasteUtil.createBlockData(bpBlock));
             DefaultPasteUtil.setBlockState(island, block, bpBlock);
             // Set biome
@@ -52,16 +44,16 @@ public class PasteHandlerImpl implements PasteHandler {
 
     @Override
     public Block setBlock(Location location, BlockData bd) {
-        Block block = location.getBlock();
-        // Set the block data - default is AIR
-        CraftBlockData craft = (CraftBlockData) bd;
-        net.minecraft.world.level.World nmsWorld = ((CraftWorld) location.getWorld()).getHandle();
-        Chunk nmsChunk = nmsWorld.d(location.getBlockX() >> 4, location.getBlockZ() >> 4);
-        BlockPosition bp = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        // Setting the block to air before setting to another state prevents some console errors
-        nmsChunk.a(bp, AIR, false);
-        nmsChunk.a(bp, craft.getState(), false);
-        block.setBlockData(bd, false);
-        return block;
+            Block block = location.getBlock();
+            // Set the block data - default is AIR
+             CraftBlockData craft = (CraftBlockData) bd;
+            net.minecraft.world.level.World nmsWorld = ((CraftWorld) location.getWorld()).getHandle();
+            Chunk nmsChunk = nmsWorld.d(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+            BlockPosition bp = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+            // Setting the block to air before setting to another state prevents some console errors
+            nmsChunk.a(bp, AIR, false);
+            nmsChunk.a(bp, craft.getState(), false);
+            block.setBlockData(bd, false);
+            return block;
     }
 }
