@@ -113,10 +113,12 @@ public class ItemsAdderHook extends Hook {
      *
      * @param namespacedId Namespace and ID in the format {@code namespace:id}
      * @param location     The location to place the CustomBlock
-     * @return true if a block was placed
      */
-    public static boolean place(String namespacedId, Location loc) {
-        return CustomBlock.place(namespacedId, loc) != null;
+    public static void place(String namespacedId, Location loc) {
+        BentoBox.getInstance().logDebug(
+                "placing " + namespacedId + " at " + loc + " with result = ");
+        CustomBlock cb = CustomBlock.place(namespacedId, loc);
+        BentoBox.getInstance().logDebug(cb);
     }
 
     /**
