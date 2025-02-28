@@ -1315,6 +1315,12 @@ protection:
       description: Elhelyezés váltása
       name: Helyezzen el blokkokat
       hint: A blokk elhelyezése letiltva
+    PODZOL:
+        name: Fa podzol termelés
+        description: |-
+          &a Ha letiltva, megakadályozza a
+          &a fa podzol termelést, amikor
+          &a nagy fák nőnek
     POTION_THROWING:
       name: bájitaldobás
       description: |-

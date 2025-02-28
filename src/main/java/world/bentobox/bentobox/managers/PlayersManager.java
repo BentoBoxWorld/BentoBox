@@ -60,6 +60,8 @@ public class PlayersManager {
     }
 
     public void shutdown(){
+        // Save all players in cache
+        playerCache.forEach((uuid, player) -> handler.saveObject(player));
         handler.close();
         playerCache.shutdown();
     }

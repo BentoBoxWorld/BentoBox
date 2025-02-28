@@ -1233,6 +1233,12 @@ protection:
       description: トグル配置
       name: ブロックの配置
       hint: ブロック配置は無効です
+    PODZOL:
+      name: 木のポドゾル生産
+      description: |-
+          &a 無効にすると、大きな木が
+          &a 育つときに木のポドゾル
+          &a 生産を防ぎます
     POTION_THROWING:
       name: ポーション投げ
       description: |-

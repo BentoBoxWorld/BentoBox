@@ -339,7 +339,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
-        when(vehicle.getType()).thenReturn(EntityType.BOAT);
+        when(vehicle.getType()).thenReturn(EntityType.ACACIA_BOAT);
         VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertTrue(e.isCancelled());

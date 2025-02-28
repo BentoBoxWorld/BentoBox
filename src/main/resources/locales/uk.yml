@@ -3,7 +3,7 @@ meta:
   authors:
   - BONNe
   - GIGABAIT93
-  banner: WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE
+  banner: BLUE_BANNER:1:HALF_VERTICAL:YELLOW
 prefixes:
   bentobox: "&6 BentoBox &7 &l > &r"
 general:
@@ -1321,6 +1321,12 @@ protection:
       description: Перемкнути розміщення
       name: Розмістіть блоки
       hint: Розміщення блоку вимкнено
+    PODZOL:
+        name: Виробництво деревного подзолу
+        description: |-
+          &a Якщо вимкнено, це запобігатиме
+          &a виробництву подзолу дерева
+          &a при вирощуванні великих дерев
     POTION_THROWING:
       name: Кидання зілля
       description: |-

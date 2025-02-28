@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
@@ -43,4 +45,12 @@ public class PasteHandlerImpl implements PasteHandler {
     public CompletableFuture<Void> setBlock(Island island, Location location, BlueprintBlock bpBlock) {
         return DefaultPasteUtil.setBlock(island, location, bpBlock);
     }
+
+    @Override
+    public Block setBlock(Location location, BlockData blockData) {
+        Block block = location.getBlock();
+        block.setBlockData(blockData);
+        return block;
+    }
+
 }

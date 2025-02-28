@@ -69,7 +69,7 @@ public class JoinLeaveListener implements Listener {
 
         // Reset island resets if required
         plugin.getIWM().getOverWorlds().stream()
-                .filter(w -> event.getPlayer().getLastPlayed() < plugin.getIWM().getResetEpoch(w))
+                .filter(w -> event.getPlayer().getLastSeen() < plugin.getIWM().getResetEpoch(w))
                 .forEach(w -> players.setResets(w, playerUUID, 0));
 
         // Update the island range of the islands the player owns
@@ -271,6 +271,8 @@ public class JoinLeaveListener implements Listener {
         // Remove any onisland placeholder
         plugin.getAddonsManager().getGameModeAddons().forEach(addon -> plugin.getPlaceholdersManager()
                 .unregisterPlaceholder(addon, "onisland_" + event.getPlayer().getName()));
+        // Save player on exit
+        plugin.getPlayers().savePlayer(event.getPlayer().getUniqueId());
         User.removePlayer(event.getPlayer());
     }
 }

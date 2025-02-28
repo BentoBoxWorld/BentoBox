@@ -3,7 +3,7 @@ meta:
   authors:
   - tastybento
   - Poslovitch
-  banner: WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE
+  banner: RED_BANNER:1:DIAGONAL_LEFT:BLUE:STRIPE_TOP:WHITE:STRIPE_BOTTOM:WHITE:CURLY_BORDER:WHITE:TRIANGLES_BOTTOM:BLACK:TRIANGLES_TOP:BLACK:BORDER:WHITE
 prefixes:
   bentobox: "&6 BentoBox &7 &l > &r "
 general:
@@ -1068,6 +1068,12 @@ protection:
       description: 설치 가능여부 설정
       name: 블록 설치
       hint: 블록을 설치 할수 없습니다
+    PODZOL:
+        name: 나무 포졸 생산
+        description: |-
+          &a 비활성화하면 큰 나무가
+          &a 자랄 때 나무 포졸
+          &a 생산을 방지합니다
     POTION_THROWING:
       name: 물약 던지기
       description: |-

@@ -1167,6 +1167,11 @@ protection:
       description: 允許/禁止 在島上放置方塊
       name: '&a&l放置方塊'
       hint: '&c已被禁止在島上放置方塊'
+    PODZOL:
+        name: 樹蔭土生成
+        description: |-
+          &a 如果停用，將防止在大樹
+          &a 成長時生成樹蔭土
     POTION_THROWING:
       description: |-
         &7允許/禁止 在島上投擲藥水瓶

@@ -3,7 +3,7 @@ meta:
   authors:
   - tastybento
   - 
-  banner: WHITE_BANNER
+  banner: WHITE_BANNER:1:STRIPE_TOP:RED:STRIPE_BOTTOM:BLUE
 prefixes:
   bentobox: "&6 BentoBox &7 &l> &r"
 general:
@@ -1208,6 +1208,12 @@ protection:
       description: Schakelen tussen plaatsen
       name: Plaats blokken
       hint: Blok plaatsen uitgeschakeld
+    PODZOL:
+        name: Boom-Podzolproductie
+        description: |-
+          &a Als uitgeschakeld, wordt de
+          &a productie van boom-podzol
+          &a bij grote bomen gestopt
     POTION_THROWING:
       name: Drankje gooien
       description: |-

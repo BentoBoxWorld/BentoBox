@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.island.IslandGoCommand;
+import world.bentobox.bentobox.api.commands.island.IslandGoCommand.IslandInfo;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -20,7 +22,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminResetHomeCommand extends CompositeCommand
 {
-    Map<String, Island> islands = new HashMap<>();
+    Map<String, IslandInfo> islands = new HashMap<>();
 
     /**
      * Default constructor.
@@ -66,7 +68,7 @@ public class AdminResetHomeCommand extends CompositeCommand
             return false;
         }
         // Get islands
-        islands = this.getNameIslandMap(User.getInstance(targetUUID));
+        islands = IslandGoCommand.getNameIslandMap(User.getInstance(targetUUID), getWorld());
         if (islands.isEmpty()) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
@@ -107,7 +109,7 @@ public class AdminResetHomeCommand extends CompositeCommand
             return false;
         }
         islands.forEach((name, island) -> {
-            island.getHomes().keySet().removeIf(String::isEmpty); // Remove the default home
+            island.island().getHomes().keySet().removeIf(String::isEmpty); // Remove the default home
             user.sendMessage("commands.admin.resethome.cleared", TextVariables.NAME, name);
         });
 
@@ -128,30 +130,11 @@ public class AdminResetHomeCommand extends CompositeCommand
             UUID targetUUID = getPlayers().getUUID(args.get(0));
             if (targetUUID != null) {
                 User target = User.getInstance(targetUUID);
-                return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(target).keySet()), lastArg));
+                return Optional.of(Util.tabLimit(
+                        new ArrayList<>(IslandGoCommand.getNameIslandMap(target, getWorld()).keySet()), lastArg));
             }
         }
         return Optional.empty();
-
-    }
-
-    Map<String, Island> getNameIslandMap(User user) {
-        Map<String, Island> islandMap = new HashMap<>();
-        int index = 0;
-        for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
-            index++;
-            if (island.getName() != null && !island.getName().isBlank()) {
-                // Name has been set
-                islandMap.put(island.getName(), island);
-            } else {
-                // Name has not been set
-                String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
-                        user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index;
-                islandMap.put(text, island);
-            }
-        }
-
-        return islandMap;
 
     }
 

@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.api.commands.admin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -15,6 +14,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.island.IslandGoCommand;
+import world.bentobox.bentobox.api.commands.island.IslandGoCommand.IslandInfo;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -103,7 +104,8 @@ public class AdminTeleportUserCommand extends CompositeCommand {
         }
 
         // They named the island to go to
-        Map<String, IslandInfo> names = getNameIslandMap(User.getInstance(targetUUID));
+        Map<String, world.bentobox.bentobox.api.commands.island.IslandGoCommand.IslandInfo> names = IslandGoCommand
+                .getNameIslandMap(User.getInstance(targetUUID), getWorld());
         final String name = String.join(" ", args.subList(2, args.size()));
         if (!names.containsKey(name)) {
             // Failed home name check
@@ -114,7 +116,7 @@ public class AdminTeleportUserCommand extends CompositeCommand {
             return false;
         } else if (names.size() > 1) {
             IslandInfo info = names.get(name);
-            Island island = info.island;
+            Island island = info.island();
             warpSpot = island.getSpawnPoint(world.getEnvironment()) != null
                     ? island.getSpawnPoint(world.getEnvironment())
                     : island.getProtectionCenter().toVector().toLocation(world);
@@ -152,31 +154,6 @@ public class AdminTeleportUserCommand extends CompositeCommand {
         return island.getSpawnPoint(world.getEnvironment()) != null ? island.getSpawnPoint(world.getEnvironment()) : island.getProtectionCenter().toVector().toLocation(world);
     }
 
-    private record IslandInfo(Island island, boolean islandName) {
-    }
-
-    private Map<String, IslandInfo> getNameIslandMap(User target) {
-        Map<String, IslandInfo> islandMap = new HashMap<>();
-        int index = 0;
-        for (Island island : getIslands().getIslands(getWorld(), target.getUniqueId())) {
-            index++;
-            if (island.getName() != null && !island.getName().isBlank()) {
-                // Name has been set
-                islandMap.put(island.getName(), new IslandInfo(island, true));
-            } else {
-                // Name has not been set
-                String text = target.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
-                        target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName()) + " " + index;
-                islandMap.put(text, new IslandInfo(island, true));
-            }
-            // Add homes. Homes do not need an island specified
-            island.getHomes().keySet().forEach(n -> islandMap.put(n, new IslandInfo(island, false)));
-        }
-
-        return islandMap;
-
-    }
-
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
@@ -192,7 +169,10 @@ public class AdminTeleportUserCommand extends CompositeCommand {
             UUID target = Util.getUUID(args.get(2));
             return target == null ? Optional.empty()
                     : Optional
-                    .of(Util.tabLimit(new ArrayList<>(getNameIslandMap(User.getInstance(target)).keySet()), lastArg));
+                            .of(Util.tabLimit(
+                                    new ArrayList<>(IslandGoCommand
+                                            .getNameIslandMap(User.getInstance(target), getWorld()).keySet()),
+                                    lastArg));
         }
         return Optional.empty();
     }

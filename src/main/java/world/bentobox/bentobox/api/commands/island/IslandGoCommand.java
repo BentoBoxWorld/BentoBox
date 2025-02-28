@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.bukkit.World;
+
+import net.md_5.bungee.api.ChatColor;
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.DelayedTeleportCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -61,7 +65,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Map<String, IslandInfo> names = getNameIslandMap(user);
+        Map<String, IslandInfo> names = getNameIslandMap(user, getWorld());
         // Check if the home is known
         if (!args.isEmpty()) {
             final String name = String.join(" ", args);
@@ -109,27 +113,30 @@ public class IslandGoCommand extends DelayedTeleportCommand {
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
 
-        return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(user).keySet()), lastArg));
+        return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(user, getWorld()).keySet()), lastArg));
 
     }
 
     /**
      * Record of islands and the name to type
      */
-    private record IslandInfo(Island island, boolean islandName) {
+    public record IslandInfo(Island island, boolean islandName) {
     }
 
-    private Map<String, IslandInfo> getNameIslandMap(User user) {
+    public static Map<String, IslandInfo> getNameIslandMap(User user, World world) {
         Map<String, IslandInfo> islandMap = new HashMap<>();
         int index = 0;
-        for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
+        for (Island island : BentoBox.getInstance().getIslands().getIslands(world, user.getUniqueId())) {
             index++;
             if (island.getName() != null && !island.getName().isBlank()) {
                 // Name has been set
-                islandMap.put(island.getName(), new IslandInfo(island, true));
+                // Color codes need to be stripped because they are not allowed in chat
+                islandMap.put(ChatColor.stripColor(island.getName()), new IslandInfo(island, true));
             } else {
                 // Name has not been set
-                String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index;
+                String text = ChatColor.stripColor(
+                        user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
+                                user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index);
                 islandMap.put(text, new IslandInfo(island, true));
             }
             // Add homes. Homes do not need an island specified

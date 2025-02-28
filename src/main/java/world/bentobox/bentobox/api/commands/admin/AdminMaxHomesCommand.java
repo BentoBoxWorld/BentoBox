@@ -11,9 +11,10 @@ import com.google.common.primitives.Ints;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.commands.island.IslandGoCommand;
+import world.bentobox.bentobox.api.commands.island.IslandGoCommand.IslandInfo;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -33,7 +34,7 @@ import world.bentobox.bentobox.util.Util;
 public class AdminMaxHomesCommand extends ConfirmableCommand {
 
     Integer maxHomes;
-    Map<String, Island> islands = new HashMap<>();
+    Map<String, IslandInfo> islands = new HashMap<>();
 
     public AdminMaxHomesCommand(CompositeCommand parent) {
         super(parent, "setmaxhomes");
@@ -74,7 +75,7 @@ public class AdminMaxHomesCommand extends ConfirmableCommand {
             }
             // Get the island the user is standing on
             boolean onIsland = getIslands().getIslandAt(user.getLocation()).map(is -> {
-                islands.put("", is);
+                islands.put("", new IslandInfo(is, false));
                 return true;
             }).orElse(false);
             if (!onIsland) {
@@ -96,8 +97,9 @@ public class AdminMaxHomesCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
             return false;
         }
+
         // Get islands
-        islands = this.getNameIslandMap(User.getInstance(targetUUID));
+        islands = IslandGoCommand.getNameIslandMap(User.getInstance(targetUUID), getWorld());
         if (islands.isEmpty()) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
@@ -125,7 +127,7 @@ public class AdminMaxHomesCommand extends ConfirmableCommand {
             return false;
         }
         islands.forEach((name, island) -> {
-            island.setMaxHomes(maxHomes);
+            island.island().setMaxHomes(maxHomes);
             user.sendMessage("commands.admin.maxhomes.max-homes-set", TextVariables.NAME, name, TextVariables.NUMBER,
                     String.valueOf(maxHomes));
         });
@@ -144,30 +146,10 @@ public class AdminMaxHomesCommand extends ConfirmableCommand {
             UUID targetUUID = getPlayers().getUUID(args.get(1));
             if (targetUUID != null) {
                 User target = User.getInstance(targetUUID);
-                return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(target).keySet()), lastArg));
+                return Optional.of(Util.tabLimit(new ArrayList<>(IslandGoCommand.getNameIslandMap(target, getWorld()).keySet()), lastArg));
             }
         }
         return Optional.of(List.of("1"));
-
-    }
-
-    Map<String, Island> getNameIslandMap(User user) {
-        Map<String, Island> islandMap = new HashMap<>();
-        int index = 0;
-        for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
-            index++;
-            if (island.getName() != null && !island.getName().isBlank()) {
-                // Name has been set
-                islandMap.put(island.getName(), island);
-            } else {
-                // Name has not been set
-                String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
-                        user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index;
-                islandMap.put(text, island);
-            }
-        }
-
-        return islandMap;
 
     }
 

@@ -1301,6 +1301,12 @@ protection:
       description: Uključi/isključi postavljanje
       name: Postavite blokove
       hint: Onemogućeno postavljanje blokova
+    PODZOL:
+        name: Proizvodnja podzola na drvetu
+        description: |-
+          &a Ako je onemogućeno, spriječit će
+          &a proizvodnju podzola na drvetu
+          &a kada rastu velika stabla
     POTION_THROWING:
       name: Bacanje napitaka
       description: |-

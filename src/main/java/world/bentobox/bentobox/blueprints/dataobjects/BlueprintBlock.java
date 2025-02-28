@@ -35,6 +35,15 @@ public class BlueprintBlock {
     @Expose
     private BlueprintCreatureSpawner creatureSpawner;
     /**
+     * @since 3.4.2
+     */
+    @Expose
+    private BlueprintTrialSpawner trialSpawner;
+
+    @Expose
+    private String itemsAdderBlock;
+
+    /**
      * Since 1.15.2
      */
     @Expose
@@ -216,5 +225,33 @@ public class BlueprintBlock {
         } else {
             this.signLines2 = signLines;
         }
+    }
+
+    /**
+     * @return the trialSpawner
+     */
+    public BlueprintTrialSpawner getTrialSpawner() {
+        return trialSpawner;
+    }
+
+    /**
+     * @param trialSpawner the trialSpawner to set
+     */
+    public void setTrialSpawner(BlueprintTrialSpawner trialSpawner) {
+        this.trialSpawner = trialSpawner;
+    }
+
+    /**
+     * @return the itemsAdderBlock
+     */
+    public String getItemsAdderBlock() {
+        return itemsAdderBlock;
+    }
+
+    /**
+     * @param itemsAdderBlock the itemsAdderBlock to set
+     */
+    public void setItemsAdderBlock(String itemsAdderBlock) {
+        this.itemsAdderBlock = itemsAdderBlock;
     }
 }

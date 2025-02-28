@@ -643,22 +643,22 @@ public class User implements MetaDataAble {
 
                 // Apply the first valid click event or hover event encountered
                 switch (actionType) {
-                    case "RUN_COMMAND":
-                    case "SUGGEST_COMMAND":
-                    case "COPY_TO_CLIPBOARD":
-                    case "OPEN_URL":
-                        if (clickEvent == null) {
-                            clickEvent = new ClickEvent(ClickEvent.Action.valueOf(actionType), actionValue);
-                        }
-                        break;
-                    case "HOVER":
-                        if (hoverEvent == null) {
-                            hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(actionValue));
-                        }
-                        break;
-                    default:
-                        // Unrecognized command; preserve it in the output text
-                        baseComponent.addExtra(TextComponent.fromLegacy(matcher.group(0)));
+                case "RUN_COMMAND":
+                case "SUGGEST_COMMAND":
+                case "COPY_TO_CLIPBOARD":
+                case "OPEN_URL":
+                    if (clickEvent == null) {
+                        clickEvent = new ClickEvent(ClickEvent.Action.valueOf(actionType), actionValue);
+                    }
+                    break;
+                case "HOVER":
+                    if (hoverEvent == null) {
+                        hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(actionValue));
+                    }
+                    break;
+                default:
+                    // Unrecognized command; preserve it in the output text
+                    baseComponent.addExtra(TextComponent.fromLegacy(matcher.group(0)));
                 }
 
             } else if (matcher.group(3) != null) {

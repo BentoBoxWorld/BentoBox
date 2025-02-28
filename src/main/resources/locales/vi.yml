@@ -1203,6 +1203,12 @@ protection:
       description: Bật/Tắt đặt khối
       name: Đặt khối
       hint: Đã tắt đặt khối
+    PODZOL:
+        name: Sản xuất Podzol cây
+        description: |-
+          &a Nếu bị vô hiệu hóa, sẽ ngăn
+          &a sản xuất podzol cây khi
+          &a cây lớn phát triển
     POTION_THROWING:
       name: Quăng bình thuốc
       description: |-

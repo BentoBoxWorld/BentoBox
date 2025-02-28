@@ -42,7 +42,7 @@ import world.bentobox.bentobox.util.Util;
 public class ClosestSafeSpotTeleport
 {
     /**
-     * Teleports and entity to a safe spot on island
+     * Teleports an entity to a safe spot on island
      *
      * @param builder - safe spot teleport builder
      */

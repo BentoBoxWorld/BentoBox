@@ -1201,6 +1201,12 @@ protection:
       description: Abilita/disabilita piazzamento
       hint: Piazzamento blocchi non permesso
       name: Piazza blocchi
+    PODZOL:
+        name: Produzione di podzol degli alberi
+        description: |-
+          &a Se disabilitato, impedirà
+          &a la produzione di podzol
+          &a quando crescono grandi alberi
     POTION_THROWING:
       description: |-
         &aAbilita/disabilita lancio di pozioni.
