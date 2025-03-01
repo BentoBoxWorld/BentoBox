@@ -115,7 +115,7 @@ public class ItemsAdderHook extends Hook {
      * @param location     The location to place the CustomBlock
      */
     public static void place(String namespacedId, Location loc) {
-        CustomBlock cb = CustomBlock.place(namespacedId, loc);
+        CustomBlock.place(namespacedId, loc);
     }
 
     /**
@@ -138,6 +138,27 @@ public class ItemsAdderHook extends Hook {
 
     public void runActionOnBlocks(Chunk chunk, BiConsumer<String, Location> action) {
         CustomBlock.Advanced.runActionOnBlocks(chunk, action);
+    }
+
+    /**
+     * Returns true if the registry contains a block with the specified namespaced id in the format {@code namespace:id}
+     * @param namespacedId Namespace and ID in the format {@code namespace:id}
+     * @return true if it contains the namespaced id, otherwise false
+     */
+    public boolean isInRegistry(String namespacedId) {
+        return CustomBlock.isInRegistry(namespacedId);
+    }
+
+    /**
+     * Gets a CustomBlock instance through the provided namespace and ID.
+     * <br>This may return null if the provided namespace and ID are invalid.
+     *
+     * @param namespacedID Namespace and ID in the format {@code namespace:id}
+     * @return Possibly-null CustomBlock instance.
+     */
+    @Nullable
+    public static CustomBlock getInstance(String namespacedID) {
+        return CustomBlock.getInstance(namespacedID);
     }
 
     class BlockInteractListener extends FlagListener {
