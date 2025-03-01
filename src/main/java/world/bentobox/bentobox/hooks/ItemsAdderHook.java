@@ -145,7 +145,7 @@ public class ItemsAdderHook extends Hook {
      * @param namespacedId Namespace and ID in the format {@code namespace:id}
      * @return true if it contains the namespaced id, otherwise false
      */
-    public boolean isInRegistry(String namespacedId) {
+    public static boolean isInRegistry(String namespacedId) {
         return CustomBlock.isInRegistry(namespacedId);
     }
 
