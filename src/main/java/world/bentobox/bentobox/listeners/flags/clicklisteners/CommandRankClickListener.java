@@ -97,8 +97,8 @@ public class CommandRankClickListener implements ClickHandler {
         pb.user(user).name(panelName).world(world);
         // Make panel items
         getCommands(world, user).forEach(c -> pb.item(getPanelItem(c, user, world)));
-        pb.build();
-
+        Panel p = pb.build();
+        p.setIsland(island);
     }
 
     /**

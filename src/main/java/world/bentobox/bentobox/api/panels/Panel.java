@@ -82,6 +82,7 @@ public class Panel implements HeadRequester, InventoryHolder {
     /**
      * @since 1.7.0
      */
+    @SuppressWarnings("deprecation")
     protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener,
             Type type) {
         this.name = name;
@@ -247,7 +248,7 @@ public class Panel implements HeadRequester, InventoryHolder {
     /**
      * @param island the island to set
      */
-    protected void setIsland(Island island) {
+    public void setIsland(Island island) {
         this.island = island;
     }
 

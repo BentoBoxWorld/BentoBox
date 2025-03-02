@@ -36,9 +36,8 @@ public class CommandCycleClick implements ClickHandler {
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {
         // Left clicking increases the rank required
         // Right clicking decreases the rank required
-        // Get the user's island for the game world
         World world = panel.getWorld().orElse(user.getWorld());
-        Island island = plugin.getIslands().getIsland(world, user.getUniqueId());
+        Island island = panel.getIsland();
         if (island != null && island.getOwner() != null && island.isAllowed(user, Flags.CHANGE_SETTINGS)) {
             int currentRank = island.getRankCommand(command);
             if (click.equals(ClickType.LEFT)) {

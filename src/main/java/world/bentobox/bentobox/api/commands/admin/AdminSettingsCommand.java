@@ -173,6 +173,7 @@ public class AdminSettingsCommand extends CompositeCommand {
      * @param string - the rank given in the command line
      * @return true if rank is valid
      */
+    @SuppressWarnings("deprecation")
     private boolean checkRank(User user, String string) {
         for (Entry<String, Integer> en : RanksManager.getInstance().getRanks().entrySet()) {
             if (en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK
@@ -246,6 +247,7 @@ public class AdminSettingsCommand extends CompositeCommand {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         // Update with the latest lists
