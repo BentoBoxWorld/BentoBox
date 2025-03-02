@@ -83,6 +83,7 @@ public class SettingsTab implements Tab, ClickHandler {
     /**
      * @return list of flags that will be shown in this panel
      */
+    @SuppressWarnings("deprecation")
     protected List<Flag> getFlags() {
         // Get a list of flags of the correct type and sort by the translated names
         List<Flag> flags = plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(type))
