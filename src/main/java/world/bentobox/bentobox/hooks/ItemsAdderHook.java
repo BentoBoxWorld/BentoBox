@@ -114,7 +114,7 @@ public class ItemsAdderHook extends Hook {
      * @param namespacedId name spaced ID
      * @return optional ItemStack
      */
-    public Optional<ItemStack> getIcon(String namespacedId) {
+    public static Optional<ItemStack> getItemStack(String namespacedId) {
         CustomBlock cb = getInstance(namespacedId);
         return Optional.of(cb.getItemStack());
     }
