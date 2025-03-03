@@ -2,6 +2,7 @@ package world.bentobox.bentobox.hooks;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import org.bukkit.Bukkit;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.Nullable;
 
 import dev.lone.itemsadder.api.CustomBlock;
@@ -105,6 +107,16 @@ public class ItemsAdderHook extends Hook {
      */
     public static String getInCustomRegion(Location loc) {
         return CustomBlock.Advanced.getInCustomRegion(loc);
+    }
+
+    /**
+     * Gets the Bukkit ItemStack associated with this CustomStack instance.
+     * @param namespacedId name spaced ID
+     * @return optional ItemStack
+     */
+    public Optional<ItemStack> getIcon(String namespacedId) {
+        CustomBlock cb = getInstance(namespacedId);
+        return Optional.of(cb.getItemStack());
     }
 
     /**
