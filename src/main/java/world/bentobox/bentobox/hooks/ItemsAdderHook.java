@@ -3,6 +3,7 @@ package world.bentobox.bentobox.hooks;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 import org.bukkit.Bukkit;
@@ -15,9 +16,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.eclipse.jdt.annotation.Nullable;
 
 import dev.lone.itemsadder.api.CustomBlock;
+import dev.lone.itemsadder.api.CustomStack;
+import net.kyori.adventure.text.Component;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -27,21 +31,9 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.RanksManager;
 
 /**
- * Hook to enable itemsadder blocks to be deleted when islands are deleted.
- * It also includes a flag to track explosion access
- */
-/*
- * add some methods under CustomBlock#Advanced class.
-
-        public static void deleteAllCustomBlocksInChunk(Chunk chunk)
-
-        @Nullable
-        public List<Location> getAllBlocksLocationsList(Chunk chunk)
-
-        @Nullable
-        public Map<String, Location> getAllBlocksLocations(Chunk chunk)
-
-        public void runActionOnBlocks(Chunk chunk, BiConsumer<String, Location> action)
+ * Hook to provide ItemsAdder API without the  the Addon needing to call
+ * it directly. 
+ * Also provides Island Deletion support.
  */
 public class ItemsAdderHook extends Hook {
 
@@ -91,12 +83,30 @@ public class ItemsAdderHook extends Hook {
     }
 
     /**
-     * Remove the CustomBlock at location
-     * @param location
+     * Remove the CustomBlock at location. This is not an efficient call so use chunk-related calls for large clearances
+     * @param location location
      */
     public void clearBlockInfo(Location location) {
-        // TODO: find a more efficient way of doing this.
-        // CustomBlock.remove(location);
+        CustomBlock.remove(location);
+    }
+
+    /**
+     * Returns Optional empty if the provided {@link ItemStack} is not a custom item created with ItemsAdder.
+     *
+     * @param itemStack the Bukkit ItemStack
+     * @return optional namespacedId or empty
+     */
+    public static Optional<String> getNamespacedId(ItemStack myItemStack) {
+        CustomStack stack = CustomStack.byItemStack(myItemStack);
+        return Optional.of(stack == null ? null : stack.getNamespacedID());
+    }
+
+    /**
+     * Returns a list of all the registered blocks identifiers in the format {@code namespace:id}
+     * @return a list of Namespaces and IDs in the format {@code namespace:id}
+     */
+    public static Set<String> getAllBlocks() {
+        return CustomBlock.getNamespacedIdsInRegistry();
     }
 
     /**
@@ -116,7 +126,13 @@ public class ItemsAdderHook extends Hook {
      */
     public static Optional<ItemStack> getItemStack(String namespacedId) {
         CustomBlock cb = getInstance(namespacedId);
-        return Optional.of(cb.getItemStack());
+        ItemStack item = cb.getItemStack();
+        if (item != null) {
+            ItemMeta meta = item.getItemMeta();
+            meta.displayName(Component.text(cb.getDisplayName()));
+            item.setItemMeta(meta);
+        }
+        return Optional.of(item);
     }
 
     /**
