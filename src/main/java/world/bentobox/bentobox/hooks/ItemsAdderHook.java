@@ -119,12 +119,13 @@ public class ItemsAdderHook extends Hook {
      */
     public static Optional<ItemStack> getItemStack(String namespacedId) {
         CustomBlock cb = getInstance(namespacedId);
-        ItemStack item = cb.getItemStack();
-        if (item != null) {
-            ItemMeta meta = item.getItemMeta();
-            meta.displayName(Component.text(cb.getDisplayName()));
-            item.setItemMeta(meta);
+        if (cb == null) {
+            return Optional.empty();
         }
+        ItemStack item = cb.getItemStack();
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(Component.text(cb.getDisplayName()));
+        item.setItemMeta(meta);
         return Optional.of(item);
     }
 
