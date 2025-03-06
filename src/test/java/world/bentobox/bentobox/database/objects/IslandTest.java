@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -856,6 +857,25 @@ public class IslandTest {
     @Test
     public void testIsAllowedUserFlag() {
         assertTrue(i.isAllowed(user, Flags.BREAK_BLOCKS));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isAllowed(world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.flags.Flag)}.
+     */
+    @Test
+    public void testIsAllowedUserFlagNotAllowed() {
+        User mockUser = mock(User.class);
+        assertFalse(i.isAllowed(mockUser, Flags.BREAK_BLOCKS));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isAllowed(world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.flags.Flag)}.
+     */
+    @Test
+    public void testIsAllowedUserFlagNotAllowedButOp() {
+        User mockUser = mock(User.class);
+        when(mockUser.isOp()).thenReturn(true);
+        assertTrue(i.isAllowed(mockUser, Flags.BREAK_BLOCKS));
     }
 
     /**

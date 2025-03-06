@@ -210,7 +210,7 @@ public class NewIsland {
             Bukkit.getScheduler().runTask(plugin, () -> postCreationTask(oldIsland));
         } else {
             // Find out how far away the player is from the new island
-            boolean useNMS = !user.getWorld().equals(island.getWorld())
+            boolean useNMS = user.isOfflinePlayer() || !user.getWorld().equals(island.getWorld())
                     || (user.getLocation().distance(island.getCenter()) >= Bukkit.getViewDistance() * 16D);
             // Create islands, then run task
             plugin.getBlueprintsManager().paste(addon, island, name, () -> postCreationTask(oldIsland), useNMS);

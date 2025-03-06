@@ -314,7 +314,7 @@ public final class Flags {
             .listener(Util.isPaper() ? new PaperExperiencePickupListener() : new ExperiencePickupListener()).mode(Flag.Mode.ADVANCED).defaultRank(RanksManager.VISITOR_RANK).build();
 
     // Command ranks
-    public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD)
+    public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD).type(Type.SETTING)
             .clickHandler(new CommandRankClickListener()).usePanel(true).build();
 
     /**

@@ -915,14 +915,14 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Check if a user is allowed to bypass the flag or not
+     * Check if a user is allowed to bypass the flag or not. Ops are always allowed
      * 
      * @param user - the User - user
      * @param flag - flag
      * @return true if allowed, false if not
      */
     public boolean isAllowed(User user, Flag flag) {
-        return getRank(user) >= getFlag(flag);
+        return user.isOp() || getRank(user) >= getFlag(flag);
     }
 
     /**
