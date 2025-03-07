@@ -270,6 +270,13 @@ public class BlueprintClipboard {
         if (blockState.getBlockData() instanceof Attachable) {
             // Placeholder for attachment
             bpBlocks.put(pos, new BlueprintBlock("minecraft:air"));
+            // Check for ItemsAdder block
+            plugin.getHooks().getHook("ItemsAdder").ifPresent(hook -> {
+                String iab = ItemsAdderHook.getInCustomRegion(block.getLocation());
+                if (iab != null) {
+                    b.setItemsAdderBlock(iab);
+                }
+            });
             bpAttachable.put(pos, b);
             return null;
         }
