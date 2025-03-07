@@ -30,18 +30,6 @@ public class PasteHandlerImpl implements PasteHandler {
     }
 
     @Override
-    public CompletableFuture<Void> pasteEntities(Island island, World world, Map<Location, List<BlueprintEntity>> entityMap) {
-        return entityMap.entrySet().stream()
-                .map(entry -> DefaultPasteUtil.setEntity(island, entry.getKey(), entry.getValue()))
-                .collect(
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))
-                        )
-                );
-    }
-
-    @Override
     public CompletableFuture<Void> setBlock(Island island, Location location, BlueprintBlock bpBlock) {
         return DefaultPasteUtil.setBlock(island, location, bpBlock);
     }

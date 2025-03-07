@@ -23,6 +23,7 @@ import org.bukkit.block.TrialSpawner;
 import org.bukkit.block.data.Attachable;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
