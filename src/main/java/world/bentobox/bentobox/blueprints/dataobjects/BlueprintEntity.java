@@ -8,6 +8,7 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Rotation;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -25,6 +26,7 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.ItemDisplay.ItemDisplayTransform;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.TextDisplay.TextAlignment;
@@ -143,7 +145,29 @@ public class BlueprintEntity {
     private Boolean invulnerable;
     @Expose
     private int fireTicks;
-
+    /**
+     * Item in ItemFrames
+     * @since 3.2.6
+     */
+    public record ItemFrameRec(
+            @Expose
+            ItemStack item,
+            @Expose
+            Rotation rotation,
+            @Expose
+            boolean isFixed,
+            @Expose
+            boolean isVisible,
+            @Expose
+            float dropChance
+            ) {}
+    /**
+     * Item in ItemFrames
+     * @since 3.2.6
+     */
+    @Expose
+    private ItemFrameRec itemFrame;
+    
     /**
      * Serializes an entity to a Blueprint Entity
      * @param entity entity to serialize
@@ -195,6 +219,10 @@ public class BlueprintEntity {
         if (entity instanceof Display disp) {
             this.storeDisplay(disp);
         }
+        // ItemFrames
+        if (entity instanceof ItemFrame frame) {
+            this.setItemFrame(new ItemFrameRec(frame.getItem(), frame.getRotation(), frame.isFixed(), frame.isVisible(), frame.getItemDropChance()));
+        }
 
     }
 
@@ -229,6 +257,10 @@ public class BlueprintEntity {
         e.setSilent(isSilent());
         e.setInvulnerable(isInvulnerable());
         e.setFireTicks(getFireTicks());
+        
+        if (e instanceof ItemFrame frame) {
+            setFrame(frame);
+        }
 
         if (e instanceof Villager villager) {
             setVillager(villager);
@@ -262,6 +294,17 @@ public class BlueprintEntity {
         // Shift to the in-block location (remove the 0.5 that the location serializer used)
         e.getLocation().add(new Vector(x - 0.5D, y, z - 0.5D));
     }
+    private void setFrame(ItemFrame frame) {
+        if (this.itemFrame == null) {
+            return;
+        }
+        frame.setItem(itemFrame.item());
+        frame.setVisible(itemFrame.isVisible);
+        frame.setFixed(frame.isFixed());
+        frame.setRotation(itemFrame.rotation());
+        frame.setItemDropChance((float)itemFrame.dropChance()); 
+    }
+
     /**
      * @return the adult
      */
@@ -663,4 +706,20 @@ public class BlueprintEntity {
     public void setFireTicks(int fireTicks) {
         this.fireTicks = fireTicks;
     }
+
+    /**
+     * @return the itemFrame
+     */
+    public ItemFrameRec getItemFrame() {
+        return itemFrame;
+    }
+
+    /**
+     * @param itemFrame the itemFrame to set
+     */
+    public void setItemFrame(ItemFrameRec itemFrame) {
+        this.itemFrame = itemFrame;
+    }
+
+
 }
