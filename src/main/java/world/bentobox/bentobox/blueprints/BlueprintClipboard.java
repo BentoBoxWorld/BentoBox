@@ -23,6 +23,7 @@ import org.bukkit.block.TrialSpawner;
 import org.bukkit.block.data.Attachable;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -270,6 +271,13 @@ public class BlueprintClipboard {
         if (blockState.getBlockData() instanceof Attachable) {
             // Placeholder for attachment
             bpBlocks.put(pos, new BlueprintBlock("minecraft:air"));
+            // Check for ItemsAdder block
+            plugin.getHooks().getHook("ItemsAdder").ifPresent(hook -> {
+                String iab = ItemsAdderHook.getInCustomRegion(block.getLocation());
+                if (iab != null) {
+                    b.setItemsAdderBlock(iab);
+                }
+            });
             bpAttachable.put(pos, b);
             return null;
         }

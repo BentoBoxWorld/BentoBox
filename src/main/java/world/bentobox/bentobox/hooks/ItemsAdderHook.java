@@ -91,7 +91,7 @@ public class ItemsAdderHook extends Hook {
      */
     public static Optional<String> getNamespacedId(ItemStack myItemStack) {
         CustomStack stack = CustomStack.byItemStack(myItemStack);
-        return Optional.of(stack == null ? null : stack.getNamespacedID());
+        return Optional.ofNullable(stack == null ? null : stack.getNamespacedID());
     }
 
     /**

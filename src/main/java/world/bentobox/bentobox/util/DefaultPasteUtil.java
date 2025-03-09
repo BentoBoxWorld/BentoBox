@@ -24,12 +24,14 @@ import org.bukkit.block.data.type.WallSign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.spawner.TrialSpawnerConfiguration;
 
+import net.kyori.adventure.text.Component;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -119,7 +121,7 @@ public class DefaultPasteUtil {
     }
 
     /**
-     * Handles signs, chests and mob spawner blocks
+     * Handles signs, chests, frames, and mob spawner blocks
      *
      * @param island  - island
      * @param block   - block
@@ -128,40 +130,47 @@ public class DefaultPasteUtil {
     public static void setBlockState(Island island, Block block, BlueprintBlock bpBlock) {
         // Get the block state
         BlockState bs = block.getState();
-        // Signs
-        if (bs instanceof Sign) {
-            for (Side side : Side.values()) {
-                writeSign(island, block, bpBlock, side);
+        // ItemFrames
+        if (bs instanceof ItemFrame frame ) {
+            if (!bpBlock.getInventory().isEmpty()) {
+                frame.setItem(bpBlock.getInventory().get(0));
+                bs.update();
             }
-        }
+        } else
+            // Signs
+            if (bs instanceof Sign) {
+                for (Side side : Side.values()) {
+                    writeSign(island, block, bpBlock, side);
+                }
+            }
         // Chests, in general
-        else if (bs instanceof InventoryHolder holder) {
-            Inventory ih = holder.getInventory();
-            // Double chests are pasted as two blocks so inventory is filled twice.
-            // This code stops over-filling for the first block.
-            bpBlock.getInventory().forEach((slot, item) -> ih.setItem(slot, item));
-        }
+            else if (bs instanceof InventoryHolder holder) {
+                Inventory ih = holder.getInventory();
+                // Double chests are pasted as two blocks so inventory is filled twice.
+                // This code stops over-filling for the first block.
+                bpBlock.getInventory().forEach((slot, item) -> ih.setItem(slot, item));
+            }
         // Mob spawners
-        else if (bs instanceof CreatureSpawner spawner) {
-            setSpawner(spawner, bpBlock.getCreatureSpawner());
-        }
-        else if (bs instanceof TrialSpawner ts) {
+            else if (bs instanceof CreatureSpawner spawner) {
+                setSpawner(spawner, bpBlock.getCreatureSpawner());
+            }
+            else if (bs instanceof TrialSpawner ts) {
                 TrialSpawnerConfiguration config = ts.getNormalConfiguration();
                 ts.setOminous(bpBlock.getTrialSpawner().configTrialSpawner(config));
                 if (!bs.update(true, false)) {
                     BentoBox.getInstance().logError("Trial Spawner update failed!");
                 }
-        }
+            }
         // Banners
-        else if (bs instanceof Banner banner && bpBlock.getBannerPatterns() != null) {
-            bpBlock.getBannerPatterns().removeIf(Objects::isNull);
-            banner.setPatterns(bpBlock.getBannerPatterns());
-            banner.update(true, false);
-        } else // Check ItemsAdder
-        if (bpBlock.getItemsAdderBlock() != null && !bpBlock.getItemsAdderBlock().isEmpty()) {
-            BentoBox.getInstance().getHooks().getHook("ItemsAdder")
+            else if (bs instanceof Banner banner && bpBlock.getBannerPatterns() != null) {
+                bpBlock.getBannerPatterns().removeIf(Objects::isNull);
+                banner.setPatterns(bpBlock.getBannerPatterns());
+                banner.update(true, false);
+            } else // Check ItemsAdder
+                if (bpBlock.getItemsAdderBlock() != null && !bpBlock.getItemsAdderBlock().isEmpty()) {
+                    BentoBox.getInstance().getHooks().getHook("ItemsAdder")
                     .ifPresent(h -> ItemsAdderHook.place(bpBlock.getItemsAdderBlock(), block.getLocation()));
-        }
+                }
 
     }
 
@@ -247,7 +256,7 @@ public class DefaultPasteUtil {
             // Nothing
             return false;
         }
-        LivingEntity e = (LivingEntity) location.getWorld().spawnEntity(location, k.getType());
+        Entity e = location.getWorld().spawnEntity(location, k.getType());
         if (k.getCustomName() != null) {
             String customName = k.getCustomName();
 
@@ -264,9 +273,10 @@ public class DefaultPasteUtil {
             }
 
             // Actually set the custom name
-            e.setCustomName(customName);
+            e.customName(Component.text(customName));
         }
         k.configureEntity(e);
+
         return true;
     }
 
