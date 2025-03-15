@@ -132,9 +132,6 @@ public class PanelItem {
             return;
         }
         if (meta != null) {
-            try {
-                meta.setEnchantmentGlintOverride(glow);
-            } catch (NoSuchMethodError e) {
                 // Try the old way
                 if (meta != null) {
                     if (glow) {
@@ -146,8 +143,6 @@ public class PanelItem {
                 }
             }
             icon.setItemMeta(meta);
-
-        }
     }
 
     /**

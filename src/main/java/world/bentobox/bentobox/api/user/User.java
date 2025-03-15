@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -28,7 +27,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -73,14 +71,6 @@ public class User implements MetaDataAble {
         Map<Particle, Class<?>> v = new EnumMap<>(Particle.class);
         v.put(Enums.getIfPresent(Particle.class, "DUST")
                 .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME)), Particle.DustOptions.class);
-        if (Enums.getIfPresent(Particle.class, "ITEM").isPresent()) {
-            // 1.20.6 Particles
-            v.put(Particle.ITEM, ItemStack.class);
-            v.put(Particle.ITEM_COBWEB, ItemStack.class);
-            v.put(Particle.BLOCK, BlockData.class);
-            v.put(Particle.DUST_PILLAR, BlockData.class);
-            v.put(Particle.ENTITY_EFFECT, Color.class);
-        }
         v.put(Particle.FALLING_DUST, BlockData.class);
         v.put(Particle.BLOCK_MARKER, BlockData.class);
         v.put(Particle.DUST_COLOR_TRANSITION, DustTransition.class);
