@@ -64,17 +64,16 @@ public class CreeperListener extends FlagListener {
     {
         Player player = e.getPlayer();
         Location location = e.getRightClicked().getLocation();
-
-        if (!Flags.CREEPER_GRIEFING.isSetForWorld(location.getWorld()) &&
-            e.getRightClicked() instanceof Creeper &&
-            !this.getIslandsManager().locationIsOnIsland(player, location))
+        if (this.getPlugin().getIWM().inWorld(location) && !Flags.CREEPER_GRIEFING.isSetForWorld(location.getWorld())
+                && e.getRightClicked() instanceof Creeper
+                && !this.getIslandsManager().locationIsOnIsland(player, location))
         {
             Material mainHand = player.getInventory().getItemInMainHand().getType();
 
             if (Material.FIRE_CHARGE.equals(mainHand) ||
                 Material.FLINT_AND_STEEL.equals(mainHand))
             {
-                // Creeper igniting
+                // Creeper lighting
                 User user = User.getInstance(player);
                 user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.CREEPER_GRIEFING.getHintReference()));
                 e.setCancelled(true);
