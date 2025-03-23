@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
@@ -19,10 +18,8 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -106,10 +103,9 @@ public class CreeperListenerTest extends AbstractCommonSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
-    @Ignore("PaperAPI update required to address failure")
     @Test
     public void testOnExplosionCreeperInWorldDamageNOK() {
-        Flags.CREEPER_GRIEFING.setSetting(world, false);
+        Flags.CREEPER_DAMAGE.setSetting(world, false);
         List<Block> list = new ArrayList<>();
         list.add(mock(Block.class));
         list.add(mock(Block.class));
