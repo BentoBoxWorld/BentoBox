@@ -516,6 +516,11 @@ public class User implements MetaDataAble {
             translation = translation.replace("[prefix_" + prefix + "]", prefixTranslation);
         }
 
+        // Then replace Placeholders, this will only work if this is a player
+        if (player != null) {
+            translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
+        }
+
         // Then replace variables
         if (variables.length > 1) {
             for (int i = 0; i < variables.length; i += 2) {
@@ -524,11 +529,6 @@ public class User implements MetaDataAble {
                     translation = translation.replace(variables[i], variables[i + 1]);
                 }
             }
-        }
-
-        // Then replace Placeholders, this will only work if this is a player
-        if (player != null) {
-            translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
         }
 
         // Replace game mode and friendly name in general
@@ -545,17 +545,16 @@ public class User implements MetaDataAble {
     }
 
     private String replaceVars(String reference, String[] variables) {
+        // Replace Placeholders, this will only work if this is a player
+        if (player != null) {
+            reference = plugin.getPlaceholdersManager().replacePlaceholders(player, reference);
+        }
 
         // Then replace variables
         if (variables.length > 1) {
             for (int i = 0; i < variables.length; i += 2) {
                 reference = reference.replace(variables[i], variables[i + 1]);
             }
-        }
-
-        // Then replace Placeholders, this will only work if this is a player
-        if (player != null) {
-            reference = plugin.getPlaceholdersManager().replacePlaceholders(player, reference);
         }
 
         // If no translation has been found, return the reference for debug purposes.
