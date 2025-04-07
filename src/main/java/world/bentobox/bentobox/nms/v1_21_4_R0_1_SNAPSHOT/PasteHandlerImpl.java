@@ -42,16 +42,30 @@ public class PasteHandlerImpl implements PasteHandler {
 
     @Override
     public Block setBlock(Location location, BlockData bd) {
-            Block block = location.getBlock();
-            // Set the block data - default is AIR
-             CraftBlockData craft = (CraftBlockData) bd;
-            net.minecraft.world.level.World nmsWorld = ((CraftWorld) location.getWorld()).getHandle();
-            Chunk nmsChunk = nmsWorld.d(location.getBlockX() >> 4, location.getBlockZ() >> 4);
-            BlockPosition bp = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-            // Setting the block to air before setting to another state prevents some console errors
+        Block block = location.getBlock();
+        // Set the block data - default is AIR
+        CraftBlockData craft = (CraftBlockData) bd;
+        net.minecraft.world.level.World nmsWorld = ((CraftWorld) location.getWorld()).getHandle();
+        Chunk nmsChunk = nmsWorld.d(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+        BlockPosition bp = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        // Setting the block to air before setting to another state prevents some console errors
+        // If the block is a naturally generated tile entity that needs filling, e.g., a chest, then this kind of pasting can cause console errors due to race condition
+        // so the try's are there to try and catch the errors.
+        try {
             nmsChunk.a(bp, AIR, false);
+        } catch (Exception e) {
+            // Ignore
+        }
+        try {
             nmsChunk.a(bp, craft.getState(), false);
+        } catch (Exception e) {
+            // Ignore
+        }
+        try {
             block.setBlockData(bd, false);
-            return block;
+        } catch (Exception e) {
+            // Ignore
+        }
+        return block;
     }
 }
