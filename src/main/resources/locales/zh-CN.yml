@@ -181,7 +181,7 @@ commands:
         description: 设置岛屿保护范围
         success: '&a岛屿保护范围已被设置为: &b[number]&a.'
       reset:
-        parameters: '&7<player>&f 您已成功登录到服务器！欢迎回来！'
+        parameters: '&7<player>'
         description: 将岛屿保护范围重置为默认值
         success: '&a岛屿保护范围已被重置为: &b[number]&a.'
       add:
