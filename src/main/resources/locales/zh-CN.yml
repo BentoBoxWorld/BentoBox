@@ -607,7 +607,7 @@ commands:
       no-neighbors: '&c你的周边没有岛屿!'
     reset:
       description: 重新开始你的岛屿生涯
-      parameters: 抱歉，我无法处理您的请求。
+      parameters: <蓝图>
       none-left: '&c你没有重置机会了!'
       resets-left: '&c你还有&b[number]&c次重置机会.'
       confirmation: |-
