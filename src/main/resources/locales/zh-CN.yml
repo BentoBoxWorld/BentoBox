@@ -416,7 +416,7 @@ commands:
           &7它将出现在玩家创建岛屿界面中
         name:
           quit: 退出
-          prompt: 请输入蓝图方案名称, 或输入&bquit&r取消创建蓝图方案
+          prompt: 请输入蓝图方案名称, 或输入&退出&r取消创建蓝图方案
           too-long: '&c蓝图方案名称过长, 请确保在32个字符以内.'
           pick-a-unique-name: '&c该蓝图方案名称已存在, 请换一个名称.'
           stripped-char-in-unique-name: '&c其中的非法字符已被删除, 岛屿方案名称为: &b[name]&a.'
@@ -427,7 +427,7 @@ commands:
           instructions: |-
             &7请为&b[name]&7蓝图方案输入描述
             &7每输入一次为一行
-            &7最后输入&bquit&7退出编辑
+            &7最后输入&退出&7退出编辑
           default-color: ''
           success: '&a蓝图方案描述添加成功!'
           cancelling: '&c取消编辑蓝图方案描述!'
