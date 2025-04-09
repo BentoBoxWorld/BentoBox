@@ -86,7 +86,7 @@ commands:
         parameters: <player> <resets>
         success: '&a已将玩家&b[name]&a的岛屿已重置次数减少了&b[number]&a次, 当前已重置次数: &b[total]&a.'
     purge:
-      parameters: '&7在过去的[days]天里，&a你收集了足够的资源来建造一个新家！'
+      parameters: '[days]'
       description: 清理超过[days]天不活跃的岛屿
       days-one-or-more: 天数必需为至少1天或大于1天
       purgable-islands: '&a发现&b[number]&a个不活跃的岛屿可以被清理.'
