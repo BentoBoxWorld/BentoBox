@@ -12,7 +12,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # !!! Make sure to select the correct Java version for your project !!!
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -28,10 +27,8 @@ jobs:
         run: mvn -B clean package --file pom.xml
 
       - name: Upload to Modrinth
-        uses: cloudnode-pro/modrinth-publish@2.0.0
+        uses: cloudnode-pro/modrinth-publish@v2
         with:
-          # Configure the action
-          # api-domain: staging-api.modrinth.com
           token: ${{ secrets.MODRINTH_TOKEN }}
           project: aBVLHiAW
           name: ${{ github.event.release.name }}

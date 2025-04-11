@@ -180,6 +180,8 @@ public class AdminTeleportCommandTest {
 
         // Placeholder manager
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
+        when(phm.replacePlaceholders(any(), any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
     }
 
     @After
