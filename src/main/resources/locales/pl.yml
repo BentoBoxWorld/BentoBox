@@ -46,10 +46,10 @@ general:
 commands:
   help:
     header: '&7=========== &cPomoc [label] &7==========='
-    syntax: '&b[usage] &a[parameters]&7: &e[description]'
-    syntax-no-parameters: '&b [użycie]&7 : &e [opis]'
-    end: '&7================================='
-    parameters: '[komenda]'
+    syntax: '&b [usage] &a [parameters]&7 : &e [description]'
+    syntax-no-parameters: '&b [usage]&7 : &e [description]'
+    end: '&7 ================================='
+    parameters: '[command]'
     description: komenda pomocy
     console: Konsola
   admin:

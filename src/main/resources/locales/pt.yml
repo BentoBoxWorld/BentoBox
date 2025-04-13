@@ -49,7 +49,7 @@ commands:
     syntax: '&b [usage] &a [parameters]&7 : &e [description]'
     syntax-no-parameters: '&b [usage]&7: &e [description]'
     end: '&7 ================================='
-    parameters: '[comando]'
+    parameters: '[command]'
     description: comando de ajuda
     console: Console
   admin:

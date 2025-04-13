@@ -47,9 +47,9 @@ commands:
   help:
     header: '&7 =========== &c [label] ajutor &7 ==========='
     syntax: '&b [usage] &a [parameters]&7 : &e [description]'
-    syntax-no-parameters: '&b [usage] &7: &e [description]'
-    end: '&7 =================================='
-    parameters: '[comandă]'
+    syntax-no-parameters: '&b [usage]&7 : &e [description]'
+    end: '&7 ================================='
+    parameters: '[command]'
     description: comanda de ajutor
     console: Consolă
   admin:

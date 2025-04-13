@@ -41,23 +41,10 @@ general:
 commands:
   help:
     header: '&7 =========== &c Ajuda [label] &7 ==========='
-    syntax: '&b [uso] &a [parâmetros]&7 : &e [descrição]'
-    syntax-no-parameters: '&b [uso]&7 : &e [descrição]'
-    end: >-
-      &7 =================================  
-
-      Olá, [Nome do Jogador]!  
-
-      Bem-vindo ao servidor [Nome do Servidor]!  
-
-      Aqui você pode encontrar muitas aventuras e sobreviver ao caos de [Nome do
-      Mundo].  
-
-      Não se esqueça de conferir as regras em [Link para Regras] e aproveite o
-      jogo!  
-
-      &7 =================================
-    parameters: '[comando]'
+    syntax: '&b [usage] &a [parameters]&7 : &e [description]'
+    syntax-no-parameters: '&b [usage]&7 : &e [description]'
+    end: '&7 ================================='
+    parameters: '[command]'
     description: comando ajuda
     console: Console
   admin:
