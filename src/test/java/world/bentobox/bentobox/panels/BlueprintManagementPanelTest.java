@@ -18,21 +18,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import io.papermc.paper.ServerBuildInfo;
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -41,18 +37,17 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.managers.BlueprintsManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
+@Ignore("Do not know how to prevent the error that Material is not an item")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, ServerBuildInfo.class})
-public class BlueprintManagementPanelTest {
+@PrepareForTest({ Bukkit.class, BentoBox.class, ServerBuildInfo.class, Util.class })
+public class BlueprintManagementPanelTest extends AbstractCommonSetup {
 
-    @Mock
-    private BentoBox plugin;
     @Mock
     private User user;
     @Mock
@@ -76,15 +71,15 @@ public class BlueprintManagementPanelTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         // Bukkit
+        /*
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         ItemFactory itemFac = mock(ItemFactory.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFac);
         // Panel inventory
         when(Bukkit.createInventory(any(), Mockito.anyInt(), anyString())).thenReturn(inv);
-
+        */
         // Player
         Player player = mock(Player.class);
         when(user.isOp()).thenReturn(false);
@@ -134,14 +129,6 @@ public class BlueprintManagementPanelTest {
         // Set up
         bmp = new BlueprintManagementPanel(plugin, user, addon);
 
-    }
-
-    /**
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
     }
 
     /**

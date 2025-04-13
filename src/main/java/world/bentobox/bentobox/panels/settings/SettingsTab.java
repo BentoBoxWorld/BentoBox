@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.commands.admin.conversations.NamePrompt;
 import world.bentobox.bentobox.api.commands.island.conversations.ConfirmPrompt;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.HideWhen;
