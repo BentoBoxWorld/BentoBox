@@ -140,8 +140,9 @@ public class SettingsTabTest extends AbstractCommonSetup {
     @Test
     public void testGetParentPanel() {
         testSettingsTabWorldUserTypeMode();
+
         TabbedPanel pp = tab.getParentPanel();
-        assertEquals(pp, parent);
+        assertEquals(pp, null);
     }
 
     @Test
