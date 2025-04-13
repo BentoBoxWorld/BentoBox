@@ -1577,6 +1577,8 @@ protection:
       description: |
         &aResets&c&lALL&r&athe settings to their
         デフォルト値。
+      confirm: confirm
+      instructions: '&a 本当にいいですか？ &c "confirm" &a と入力してすべてをリセットしてください。'
     PROTECTION:
       title: '&6保護'
       description: '&a場所の保護設定'
