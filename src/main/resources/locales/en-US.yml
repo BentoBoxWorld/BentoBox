@@ -1694,6 +1694,8 @@ protection:
       description: |
         &a Resets &c &l ALL &r &a the settings to their
         &a default value.
+      confirm: 'confirm'
+      instructions: '&a Are you sure? Type &c "confirm" &a to reset everything.'
     PROTECTION:
       title: '&6 Protection'
       description: |-

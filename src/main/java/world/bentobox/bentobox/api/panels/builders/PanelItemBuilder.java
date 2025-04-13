@@ -30,19 +30,13 @@ public class PanelItemBuilder {
      */
     private int amount = 1;
 
-    /**
-     * Default icon if someone gives invalid material or item stack.
-     */
-    private static final ItemStack DEFAULT_ICON = new ItemStack(Material.PAPER);
-
-
     public PanelItemBuilder icon(@Nullable Material icon) {
-        this.icon = icon == null ? DEFAULT_ICON.clone() : new ItemStack(icon);
+        this.icon = icon == null ? new ItemStack(Material.PAPER) : new ItemStack(icon);
         return this;
     }
 
     public PanelItemBuilder icon(@Nullable ItemStack icon) {
-        this.icon = icon == null ? DEFAULT_ICON.clone() : icon;
+        this.icon = icon == null ? new ItemStack(Material.PAPER) : icon;
         // use icon stack amount.
         this.amount = this.icon.getAmount();
         return this;
