@@ -1,15 +1,18 @@
 meta:
   authors:
-  - GlobalServer
-  - DuckSoft
-  - shaokeyibb
-  - Alice-space
-  - CuteLittleSky
-  - dawnTak
+    - GlobalServer
+    - DuckSoft
+    - shaokeyibb
+    - Alice-space
+    - CuteLittleSky
+    - dawnTak
   banner: RED_BANNER:1:SQUARE_TOP_RIGHT:YELLOW:CROSS:RED:CURLY_BORDER:RED:MOJANG:YELLOW:HALF_HORIZONTAL_MIRROR:RED:HALF_VERTICAL:RED
-
 prefixes:
   bentobox: '&6BentoBox &7&l> &r '
+  island: 岛屿
+  Island: 岛屿
+  an-island: 岛屿
+  islands: 岛屿
 general:
   success: '&a成功!'
   invalid: 无效
@@ -40,19 +43,28 @@ general:
     overworld: 主世界
     nether: 下界
     the-end: 末地
-
 commands:
   help:
     header: '&7=========== &c[label]帮助 &7==========='
-    syntax: '&b[usage] &a[parameters]&7: &e[description]'
-    syntax-no-parameters: '&b[usage]&7: &e[description]'
-    end: '&7================================='
+    syntax: '&b [usage] &a [parameters]&7 : &e [description]'
+    syntax-no-parameters: '&b [usage]&7 : &e [description]'
+    end: '&7 ================================='
     parameters: '[command]'
     description: 命令帮助
     console: 控制台
   admin:
     help:
       description: 管理员命令
+    maxhomes:
+      description: 改变此 [prefix_island] 或玩家的 [prefix_island] 允许的家园数量。
+      parameters: <number / player> <number> [[prefix_island] name]
+      max-homes-set: '&a [name] - 将 [prefix_island] 的最大家园设置为 [number]'
+      errors:
+        unknown-island: 未知 &7[prefix_island]&7! &7[name]
+    resethome:
+      description: '&7重置玩家的家为默认设置'
+      parameters: <player> &7[[prefix_island] 名称]
+      cleared: '&b 家庭重置。 [name]'
     resets:
       description: 修改玩家的岛屿已重置次数
       set:
@@ -77,7 +89,16 @@ commands:
       description: 清理超过[days]天不活跃的岛屿
       days-one-or-more: 天数必需为至少1天或大于1天
       purgable-islands: '&a发现&b[number]&a个不活跃的岛屿可以被清理.'
+      too-many: |-
+        &b 这是一份很大的数据，删除可能需要很长时间。  
+        &b 考虑使用 Regionerator 插件来删除世界区块  
+        &b 并在 BentoBox 的 config.yml 中设置 keep-previous-island-on-reset: true。  
+        &b 然后运行一次清理。
       purge-in-progress: '&c清理正在进行中. 使用&b/[label] purge stop&c取消清理.'
+      scanning: '&a 正在扫描数据库中的岛屿。这可能需要一些时间，具体取决于您有多少个...'
+      scanning-in-progress: '&c 扫描中，请稍候'
+      none-found: '&c 没有找到要清除的岛屿。'
+      total-islands: '&a 您在所有世界中拥有 [number] 个岛屿在您的数据库中。'
       number-error: '&c天数必需是整数!'
       confirm: '&d输入&b/[label] purge confirm&d开始清理'
       completed: '&a清理工作已完成.'
@@ -102,7 +123,7 @@ commands:
     team:
       description: 团队管理
       add:
-        parameters: <owner> <player>
+        parameters: <owner> &7<player>
         description: 将玩家添加到某个岛屿
         name-not-owner: '&c[name]不是岛主.'
         name-has-island: '&c[name]已经有岛屿了!'
@@ -110,7 +131,7 @@ commands:
       disband:
         parameters: <owner>
         description: 解散团队
-        use-disband-owner: '&cTA不是岛主! 请使用disband [owner].' # 不知道是什么功能
+        use-disband-owner: '&cTA不是岛主! 请使用disband [owner].'
         disbanded: '&c管理员解散了你的团队!'
         success: '&b[name]&a的团队已被解散.'
       fix:
@@ -123,12 +144,13 @@ commands:
         fixed: '&a已修复'
         done: '&a扫描完毕'
       kick:
-        parameters: <team player>
+        parameters: <团队 玩家>
         description: 将玩家踢出团队
         cannot-kick-owner: '&c你不能踢出岛主, 请先踢出团队成员.'
         not-in-team: '&c该玩家没有团队.'
         admin-kicked: '&c管理员将你踢出了团队.'
         success: '&a已将&b[name]&a从&b[owner]&a的岛屿里踢出.'
+        success-all: '&b 玩家已从这个世界的所有团队中移除'
       setowner:
         parameters: <player>
         description: 将当前岛屿的岛主设置为指定玩家
@@ -158,7 +180,7 @@ commands:
         description: 设置岛屿保护范围
         success: '&a岛屿保护范围已被设置为: &b[number]&a.'
       reset:
-        parameters: <player>
+        parameters: '&7<player>'
         description: 将岛屿保护范围重置为默认值
         success: '&a岛屿保护范围已被重置为: &b[number]&a.'
       add:
@@ -182,7 +204,7 @@ commands:
         &c当前岛屿是出生点岛屿, 确定要让玩家认领这个岛屿吗?
         &6请再次输入命令以确认.
     unregister:
-      parameters: <owner> [x,y,z]
+      parameters: <拥有者> [x,y,z]
       description: 设置为无主岛屿并保留岛屿建筑
       unregistered-island: '&a已将[name]位于[xyz]的岛屿设置为无主岛屿.'
       errors:
@@ -193,13 +215,14 @@ commands:
       parameters: <player>
       description: 获取当前岛屿或指定玩家的都信息
       no-island: '&c你当前没有岛屿...'
-      title: ========== 岛屿信息 ============
+      title: '========== 岛屿信息 ============'
       island-uuid: 'UUID: [uuid]'
       owner: '岛主: [owner] ([uuid])'
       last-login: '最后登录: [date]'
       last-login-date-time-format: yyyy-MM-dd HH:mm:ss zzz
       deaths: '死亡次数: [number]'
       resets-left: '重置次数: [number] (至多: [total])'
+      max-homes: '最大家园数量: &a[number]'
       team-members-title: '团队身份:'
       team-owner-format: '&a[name] [rank]'
       team-member-format: '&b[name] [rank]'
@@ -224,7 +247,7 @@ commands:
       removing: '&a正在删除保护规避...'
       adding: '&a正在添加保护规避...'
     switchto:
-      parameters: <player> <number>
+      parameters: <玩家> <数字>
       description: 将玩家岛屿扔进回收站的指定位置
       out-of-range: |-
         &c数字必须在&b1&c和&b[number]&c之间.
@@ -241,13 +264,13 @@ commands:
       use-switch: '&a使用&l[label] switchto <player> <number>&r&a将玩家岛屿扔到回收站中的指定位置'
       use-emptytrash: '&a使用&l[label] emptytrash [player]&r&a来永久清除指定玩家的回收站'
     emptytrash:
-      parameters: '[player]'
+      parameters: '&7[player]'
       description: 清理回收站中玩家岛屿或全部的无主岛屿
       success: '&a回收站已清空.'
     version:
       description: 显示BentoBox和组件(addon)版本
     setrange:
-      parameters: <player> <range>
+      parameters: <player> &7<range>
       description: 设置玩家岛屿范围
       range-updated: '&a岛屿范围已设置为: &b[number]&a.'
     reload:
@@ -256,6 +279,9 @@ commands:
       parameters: <player> [player to teleport]
       description: 传送到指定玩家的岛屿上
       manual: '&c没有找到安全的落脚点! 请手动传送至&b[location]&c附近检查原因.'
+    tpuser:
+      parameters: <传送玩家> <[prefix_island]的玩家> [玩家的岛]
+      description: 将玩家传送到另一个玩家的 [&prefix_island]
     getrank:
       parameters: <player> [island owner]
       description: 获取指定玩家的身份等级
@@ -267,7 +293,7 @@ commands:
       not-possible: '&c身份等级必须比&b访客&c高.'
       rank-set: '&a已将玩家&b[name]&a的身份等级从&b[from]&a设置为&b[to]&a.'
     setprotectionlocation:
-      parameters: '[x y z coords]'
+      parameters: '&7[x y z coords]'
       description: 将当前位置或指定坐标作为岛屿保护的中心点
       island: '&c这将影响玩家&b[name]&c位于&b[xyz]&c的岛屿.'
       confirmation: '&你确定要将&b[xyz]&c设置为当前岛屿保护的中心点吗?'
@@ -290,7 +316,9 @@ commands:
       success: '&a成功将当前位置设置为该岛屿出生点.'
       island-spawnpoint-changed: '&a[user]更改了岛屿出生点.'
     settings:
-      parameters: '[player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]'
+      parameters: >-
+        [player]/[world flag]/spawn-island [flag/active/disable]
+        [rank/active/disable]
       description: 打开设置面板或使用命令调整岛屿设置
       unknown-setting: '&c未知设置'
     blueprint:
@@ -314,6 +342,12 @@ commands:
       copy:
         parameters: '[air]'
         description: 复制两个选取点所示区域内的所有非空气方块(如果有[air]参数则包含空气方块)
+      sink:
+        description: 将此蓝图设置为粘贴时沉入海底。
+        status: '&a 蓝图会在粘贴时 [status] &a'
+        sink: '&c 沉没'
+        not-sink: '&b 不下沉'
+        no-clipboard: '&c 剪贴板中没有蓝图。加载或复制一些东西。'
       delete:
         parameters: <name>
         description: 删除蓝图
@@ -339,10 +373,10 @@ commands:
       pos2:
         description: 设置剪贴板的第2个选取点
       save:
-        parameters: <blueprint name>
+        parameters: <蓝图名称>
         description: 将剪贴板中的内容保存为蓝图文件
       rename:
-        parameters: <blueprint name> <new name>
+        parameters: <蓝图名称> <新名称>
         description: 重命名蓝图文件
         success: '&a蓝图文件: &b[old]&a已被重命名为: &b[name]&a.'
         pick-different-name: '&c该蓝图名称已存在, 请指定一个不同的名称.'
@@ -380,19 +414,19 @@ commands:
           &7三个世界的岛屿蓝图选择
           &7它将出现在玩家创建岛屿界面中
         name:
-          quit: quit
-          prompt: 请输入蓝图方案名称, 或输入&bquit&r取消创建蓝图方案
+          quit: 退出
+          prompt: 请输入蓝图方案名称, 或输入&退出&r取消创建蓝图方案
           too-long: '&c蓝图方案名称过长, 请确保在32个字符以内.'
           pick-a-unique-name: '&c该蓝图方案名称已存在, 请换一个名称.'
           stripped-char-in-unique-name: '&c其中的非法字符已被删除, 岛屿方案名称为: &b[name]&a.'
           success: '&a蓝图方案创建成功!'
           conversation-prefix: '&f>&r'
         description:
-          quit: quit
+          quit: 退出
           instructions: |-
             &7请为&b[name]&7蓝图方案输入描述
             &7每输入一次为一行
-            &7最后输入&bquit&7退出编辑
+            &7最后输入&退出&7退出编辑
           default-color: ''
           success: '&a蓝图方案描述添加成功!'
           cancelling: '&c取消编辑蓝图方案描述!'
@@ -407,7 +441,7 @@ commands:
         unlimited-times: '&e无限'
         maximum-times: '&f每个玩家最多可用次数: [number]'
     resetflags:
-      parameters: '[flag]'
+      parameters: '&7[flag]'
       description: 将所有岛屿的保护标志设置为config.yml中默认值
       confirm: '&4这将把所有岛屿的保护标志重置为默认值!'
       success: '&a成功将所有岛屿的保护标志重置为默认设置.'
@@ -436,17 +470,17 @@ commands:
         success: '&a成功将玩家&b[name]&a的死亡次数重置为: &b0&a.'
       set:
         description: 设置玩家的死亡次数
-        parameters: <player> <deaths>
+        parameters: '<player> &8死亡: &f<deaths>'
         success: '&a成功将玩家&b[name]&a的死亡次数设置为: &b[number]&a.'
       add:
         description: 增加玩家的死亡次数
-        parameters: <player> <deaths>
+        parameters: <玩家> &c<死亡数>
         success: |-
           &a成功将玩家&b[name]&a的死亡次数增加&b[number]&a次
           &a现在的死亡次数为: &b[total]&a
       remove:
         description: 减少玩家的死亡次数
-        parameters: <player> <deaths>
+        parameters: <玩家> <死亡>
         success: |-
           &a成功将玩家&b[name]&a的死亡次数减少&b[number]&a次
           &a现在的死亡次数为: &b[total]&a
@@ -496,6 +530,7 @@ commands:
       addons: '[prefix_bentobox]&6迁移附加组件(Addons)'
       class: '[prefix_bentobox]&6迁移[description]'
       migrated: '[prefix_bentobox]&a迁移完成'
+      completed: '[prefix_bentobox]&a 完成'
     rank:
       description: 列出, 添加或删除身份等级
       parameters: '&a[list | add | remove] [rank reference] [rank value]'
@@ -518,10 +553,12 @@ commands:
     about:
       description: 显示许可信息
     go:
-      parameters: '[home name]'
+      parameters: '&f[家名]'
       description: 传送到你的岛屿上
       teleport: '&a正在将你传送到你的岛屿上.'
+      in-progress: '&a 正在传送，请稍候...'
       teleported: '&a正在将你传送到你的岛屿传送点: &e[number]&a.'
+      failure: '&c 传送失败，出于某种原因。请稍后再试。'
       unknown-home: '&c未知岛屿传送点名称!'
     help:
       description: 岛屿主要命令
@@ -531,7 +568,7 @@ commands:
       no-spawn: '&c当前游戏模式没有出生点.'
     create:
       description: 使用可选的蓝图方案创建岛屿(一些蓝图可能需要权限)
-      parameters: <blueprint>
+      parameters: <蓝图>
       too-many-islands: '&c这个世界太拥挤了, 没有足够的空间来创建你的岛屿.'
       cannot-create-island: '&c找不到合适的地点为您创建岛屿, 请稍后重试...'
       unable-create-island: '&c无法为你生成岛屿, 请联系管理员.'
@@ -551,7 +588,7 @@ commands:
       you-can-teleport-to-your-island: '&a你可以随时传送到你的岛屿上.'
     deletehome:
       description: 删除岛屿传送点
-      parameters: '[home name]'
+      parameters: '&6[家名]'
     homes:
       description: 显示你设置的全部岛屿传送点
     info:
@@ -569,7 +606,7 @@ commands:
       no-neighbors: '&c你的周边没有岛屿!'
     reset:
       description: 重新开始你的岛屿生涯
-      parameters: <blueprint>
+      parameters: <蓝图>
       none-left: '&c你没有重置机会了!'
       resets-left: '&c你还有&b[number]&c次重置机会.'
       confirmation: |-
@@ -590,7 +627,7 @@ commands:
       the-end:
         not-allowed: '&c不允许在末地设置岛屿传送点.'
         confirmation: '&c你确定要在末地设置岛屿传送点吗?'
-      parameters: '[home name]'
+      parameters: '&6[家名]'
     setname:
       description: 为你的岛屿命名
       name-too-short: '&c岛屿名过短. 请至少有: &b[number]&c个字符.'
@@ -600,7 +637,7 @@ commands:
       success: '&a成功将你的岛屿命名为: &b[name]&a.'
     renamehome:
       description: 重命名岛屿传送点
-      parameters: '[home name]'
+      parameters: '&b[家名字]'
       enter-new-name: '&6请输入新的传送点名称: '
       already-exists: '&c该名称已存在, 请输入一个不同的名称.'
     resetname:
@@ -659,7 +696,7 @@ commands:
           generic: '&6[rank]&7(&b[number]&7)&6: '
       coop:
         description: 将一位玩家以协作者身份加入团队
-        parameters: <player>
+        parameters: '&7<player>'
         cannot-coop-yourself: '&c你不能与自己协作!'
         already-has-rank: '&c该玩家在你的团队中已经有身份等级了!'
         you-are-a-coop-member: '&2你成为了&b[name]&2的协作者.'
@@ -709,7 +746,9 @@ commands:
           button:
             already-invited: '&c已邀请'
             search: '&a查找玩家'
-            searching: "&b查找: \n&c[name]"
+            searching: |-
+              &b查找: 
+              &c[name]
           enter-name: '&a请输入玩家ID: '
           tips:
             LEFT:
@@ -776,7 +815,7 @@ commands:
         success: '&a已将&b[name]&a的身份等级降为&b[rank]&a.'
       promote:
         description: 提升你团队成员的身份等级
-        parameters: <player>
+        parameters: '&7<player>'
         errors:
           cant-promote-yourself: '&c你不能提升自己的身份等级!'
           cant-promote: '&c提升的身份等级不能超过自身!'
@@ -794,7 +833,7 @@ commands:
         you-are-the-owner: '&a你现在是岛主了!'
     ban:
       description: 将一位玩家列入黑名单
-      parameters: <player>
+      parameters: '&7<玩家>'
       cannot-ban-yourself: '&c你不能把自己列入黑名单!'
       cannot-ban: '&c该玩家不能被列入黑名单.'
       cannot-ban-member: '&c如果要将团队成员列入黑名单, 请先踢出该玩家, 然后再把TA列入黑名单.'
@@ -805,7 +844,7 @@ commands:
       you-are-banned: '&b你被该岛屿列入黑名单, 无法进入!'
     unban:
       description: 将一位玩家从黑名单中移除
-      parameters: <player>
+      parameters: '&f<player>'
       cannot-unban-yourself: '&c你不能从黑名单中移除自己!'
       player-not-banned: '&c该玩家没有被列入黑名单.'
       player-unbanned: '&b[name]&a已被你从黑名单中移除, TA现在可以进入你的岛屿'
@@ -820,7 +859,7 @@ commands:
       description: 显示岛屿设置
     language:
       description: 选择语言
-      parameters: '[language]'
+      parameters: '&6[语言]'
       not-available: '&c该语言不可用.'
       already-selected: '&c你当前已经在使用该语言了.'
     expel:
@@ -832,7 +871,6 @@ commands:
       not-on-island: '&c该玩家不在你的岛屿上!'
       player-expelled-you: '&c你被&b[name]&c从TA的岛屿上驱逐了!'
       success: '&a成功将&b[name]&a驱逐出你的岛屿.'
-
 ranks:
   owner: 岛主
   sub-owner: 副岛主
@@ -843,7 +881,6 @@ ranks:
   banned: 黑名单
   admin: 管理员
   mod: 主持人
-
 protection:
   command-is-banned: 访客已被禁止使用命令
   flags:
@@ -873,6 +910,10 @@ protection:
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用信标'
       name: '&b&l信标'
       hint: 禁止使用信标
+    BELL_RINGING:
+      description: '&7切换交互'
+      name: '&2允许铃声响起'
+      hint: '&c铃声已禁用'
     BED:
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用床'
       name: '&b&l床'
@@ -917,6 +958,10 @@ protection:
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用按钮'
       name: '&b&l按钮'
       hint: 禁止使用按钮
+    CANDLES:
+      description: '&7切换蜡烛互动'
+      name: '&b蜡烛'
+      hint: '&c蜡烛互动已禁用'
     CAKE:
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2吃蛋糕'
       name: '&b&l蛋糕'
@@ -1160,6 +1205,10 @@ protection:
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2从蜂巢收集蜂蜜'
       name: '&b&l收集蜂蜜'
       hint: 禁止从蜂巢收集蜂蜜
+    HURT_TAMED_ANIMALS:
+      description: 切换伤害。&a启用意味着驯养的动物可以受到伤害。&c禁用意味着它们是无敌的。
+      name: '&c伤害驯服的动物'
+      hint: '&6驯服的动物伤害已禁用'
     HURT_ANIMALS:
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2伤害动物'
       name: '&b&l伤害动物'
@@ -1304,10 +1353,10 @@ protection:
       name: '&b&l放置方块'
       hint: 禁止放置方块
     PODZOL:
-        name: 树荫土生成
-        description: |-
-          &a 如果禁用，将防止在大树
-          &a 生长时生成树荫土
+      name: 树荫土生成
+      description: |-
+        &a 如果禁用，将防止在大树
+        &a 生长时生成树荫土
     POTION_THROWING:
       name: '&b&l投掷药水'
       description: |-
@@ -1354,7 +1403,6 @@ protection:
         &#FAFAD2红石比较器、阳光探测器等
       name: '&b&l红石元件'
       hint: 禁止调整红石元件
-    # ↓好像开了和关了都没什么区别, 不是很清楚这个的用法↓
     REMOVE_END_EXIT_ISLAND:
       description: |-
         &#FAFAD2防止末地返回主世界的传送门生成在坐标0, 0
@@ -1479,7 +1527,6 @@ protection:
   protected: '&c岛屿保护: [description].'
   world-protected: '&c世界保护: [description].'
   spawn-protected: '&c出生点保护: [description].'
-  
   panel:
     next: '&f下一页'
     previous: '&f上一页'
@@ -1511,6 +1558,44 @@ protection:
       description: '&#FAFAD2世界默认权限设置'
     flag-item:
       name-layout: '&a[name]'
+      command-instructions:
+        setname: '&a 选择可以设置名称的等级'
+        ban: '&a 选择可以禁赛玩家的等级'
+        unban: '&a 选择可以解除玩家禁言的等级'
+        expel: |-
+          &a 选择可以 
+          &a 驱逐访客的权限等级
+        team-invite: |-
+          &a 选择可以 
+          &a 邀请的等级
+        team-kick: |-
+          &a 选择可以
+          &a 踢出的等级
+        team-coop: |-
+          &a 选择可以 
+          &a 合作的等级
+        team-trust: '&a 选择可以信任的等级'
+        team-uncoop: |-
+          &a 选择可以 
+          &a 解除合作的等级
+        team-untrust: |-
+          &a 选择可以 
+          &a 撤销信任的排名
+        team-promote: '&a 选择可以提升玩家等级的等级'
+        team-demote: |-
+          &a 选择可以
+          &a 降级玩家等级的等级
+        sethome: |-
+          &a 选择可以
+          &a 设置家园的等级
+        deletehome: |-
+          &a 选择可以
+          &a 删除家园的权限
+        renamehome: '&a 选择可以重命名家的等级'
+        setcount: |-
+          &a 选择可以
+          &a 更改阶段的等级
+        border: '&a 选择可以使用边界命令的等级'
       description-layout: |-
         &a[description]
 
@@ -1534,7 +1619,6 @@ protection:
         &7当前状态: [setting]
       setting-active: '&a允许'
       setting-disabled: '&c禁止'
-
 management:
   panel:
     title: '&6&lBentoBox管理'
@@ -1615,7 +1699,6 @@ catalog:
         &e点击 &a获取最新版本链接
       already-installed: 已安装!
       install-now: 现在安装!
-    
     empty-here:
       name: '&b&l这里空空如也...'
       description: |
@@ -1655,7 +1738,6 @@ enums:
     KILL: '&e/kill'
     SONIC_BOOM: '&e监守者音波尖啸'
     WORLD_BORDER: '&e世界边界'
-
 panel:
   credits:
     title: '&8&l[name]&6&l贡献者名录'
@@ -1667,23 +1749,23 @@ panel:
       description: |
         &cBentoBox无法获取此附加组件(Addon)的贡献者
         &a请修改配置文件允许BentoBox连接到GitHub或稍后重试
-# This section contains values for BentoBox panels.
 panels:
-  # The section of translations used in Island Creation Panel
+  island_homes:
+    title: '&2&l 您的 [prefix_island] 家园'
+    buttons:
+      name: '&l [name]'
   island_creation:
     title: '&#FF00FF&l选择你的岛屿'
     buttons:
-      # This button is used for displaying blueprint bundle in the island creation panel.
       bundle:
         name: '&l[name]'
         description: '[description]'
         uses: '&a可创建次数: &#FFE4B5[number]&f/&#FFE4B5[max]'
         unlimited: '&a可创建次数: &#1E90FF无限'
-  # The section of translations used in Language Panel
   language:
     title: '&2&l选择你的语言'
+    edited: '&c 已更改为 [lang]'
     buttons:
-      # This button is used for displaying different locales that are available in language selection panel.
       language:
         name: '&f&l[name]'
         description: |-
@@ -1692,12 +1774,10 @@ panels:
         authors: '&7作者: '
         author: '&7 - &b[name]'
         selected: '&a当前已选择该语言'
-  # The set of common buttons used in multiple panels.
   buttons:
-    # Button that is used in multi-page GUIs which allows to return to previous page.
     previous:
       name: '&f&l上一页'
-      description: '&7切换至第[number]页' # Button that is used in multi-page GUIs which allows to go to next page.
+      description: '&7切换至第[number]页'
     next:
       name: '&f&l下一页'
       description: '&7切换至第[number]页'
@@ -1708,20 +1788,19 @@ panels:
     click-to-toggle: '&e点击 &7切换'
     left-click-to-cycle-down: '&e左键 &7向下循环选择'
     right-click-to-cycle-up: '&e右键 &7向上循环选择'
-
-successfully-loaded: |2-
-
+successfully-loaded: >-
   &6   ____             _        ____
-  &6  |  _ \           | |      |  _ \             &7由&atastybento&7和&aPoslovitch&7构建
+  &6  |  _ \           | |      |  _ \            
+  &7由&atastybento&7和&aPoslovitch&7构建
   &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &72017 - 2024
   &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
   &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &bv&e[version]
   &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8加载用时 &e[time]&8毫秒.
 language:
-  panel-title: '&l选择你适用的语言'
-  description:
-    selected: '&a已选定'
-    click-to-select: '&e点击 &f选择'
-    authors: '&7作者：'
-    author: '&3- &b[name]'
-  edited: '&a已将你的语言更改为: &e[lang]'
+   panel-title: '&l选择你适用的语言'
+   description:
+     selected: '&a已选定'
+     click-to-select: '&e点击 &f选择'
+     authors: '&7作者：'
+     author: '&3- &b[name]'
+   edited: '&a已将你的语言更改为: &e[lang]'

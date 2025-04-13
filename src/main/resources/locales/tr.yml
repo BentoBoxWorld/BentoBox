@@ -1,355 +1,426 @@
----
 meta:
   authors:
-  - Over_Brave
-  - None
-  banner: RED_BANNER:1:RHOMBUS_MIDDLE:WHITE:CIRCLE_MIDDLE:RED:HALF_HORIZONTAL_MIRROR:RED:TRIANGLE_BOTTOM:WHITE:STRIPE_BOTTOM:RED
+    - Over_Brave
+    - None
+  banner: >-
+    RED_BANNER:1:RHOMBUS_MIDDLE:WHITE:CIRCLE_MIDDLE:RED:HALF_HORIZONTAL_MIRROR:RED:TRIANGLE_BOTTOM:WHITE:STRIPE_BOTTOM:RED
 prefixes:
-  bentobox: "&6 BentoBox &7 &l > &r "
+  bentobox: '&6 BentoBox &7 &l > &r'
+  island: ada
+  Island: Ada
+  an-island: bir ada
+  islands: adalar
 general:
-  success: "&9Başarılı!"
-  invalid: "&4Geçersiz!"
+  success: '&9Başarılı!'
+  invalid: '&4Geçersiz!'
   errors:
-    command-cancelled: "&4Komut iptal edildi!"
-    no-permission: "&4Bu izne sahip degilsin! Ada açamıyorsan &e/ada"
-    insufficient-rank: "&c Rankınız bunu yapacak kadar yüksek değil! (& 7 [rank] &
-      c)"
-    use-in-game: "&4Bu komutu sadece oyundayken kullanabilirsin!"
-    no-team: "&4Bir takımda değilsin!"
-    no-island: "&4Bir adaya sahip degilsin!"
-    player-has-island: "&4Oyuncunun zaten adası var!"
-    player-has-no-island: "&4Oyuncunun adası yok!"
-    already-have-island: "&4Zaten adan var!"
-    no-safe-location-found: "&4Adanda korumalı bölge bulunamadı!"
-    not-owner: "&4Bu adanın sahibi degilsin!"
-    player-is-not-owner: "&d[name] &cbir adaya sahip değil!"
-    not-in-team: "&4Oyuncu senin takımında degil!"
-    offline-player: "&4Oyuncu çevrimdışı ya da yok."
-    unknown-player: "&e[name] &4adlı bir oyuncu yok!"
-    general: "&Bu komut henüz hazır değil. - Admin ile iteşimie geç!"
-    unknown-command: "&4Bilinmeyen komut. &b/[label] help"
-    wrong-world: "&4Bu komudu kullanmak için adanda olmalısın!"
-    you-must-wait: "&4Komut yazabilmek için &e[number] &4saniye beklemelisin!"
-    must-be-positive-number: "&e[number] &4bu pozitif bir sayı değil!"
-    no-safe-location: "&4Adanda korumalı bölge bulunamadı!"
+    command-cancelled: '&4Komut iptal edildi!'
+    no-permission: '&4Bu izne sahip degilsin! Ada açamıyorsan &e/ada'
+    insufficient-rank: '&c Rankınız bunu yapacak kadar yüksek değil! (& 7 [rank] & c)'
+    use-in-game: '&4Bu komutu sadece oyundayken kullanabilirsin!'
+    use-in-console: '&c Bu komut yalnızca konsolda kullanılabilir.'
+    no-team: '&4Bir takımda değilsin!'
+    no-island: '&4Bir adaya sahip degilsin!'
+    player-has-island: '&4Oyuncunun zaten adası var!'
+    player-has-no-island: '&4Oyuncunun adası yok!'
+    already-have-island: '&4Zaten adan var!'
+    no-safe-location-found: '&4Adanda korumalı bölge bulunamadı!'
+    not-owner: '&4Bu adanın sahibi degilsin!'
+    player-is-not-owner: '&d[name] &cbir adaya sahip değil!'
+    not-in-team: '&4Oyuncu senin takımında degil!'
+    offline-player: '&4Oyuncu çevrimdışı ya da yok.'
+    unknown-player: '&e[name] &4adlı bir oyuncu yok!'
+    general: '&Bu komut henüz hazır değil. - Admin ile iteşimie geç!'
+    unknown-command: '&4Bilinmeyen komut. &b/[label] help'
+    wrong-world: '&4Bu komudu kullanmak için adanda olmalısın!'
+    you-must-wait: '&4Komut yazabilmek için &e[number] &4saniye beklemelisin!'
+    must-be-positive-number: '&e[number] &4bu pozitif bir sayı değil!'
+    not-on-island: '&c [prefix_island] üzerinde değilsin!'
   worlds:
-    overworld: Overworld
+    overworld: Aşırı Dünya
     nether: Nether
-    the-end: The End
-  tips:
-    changing-obsidian-to-lava: "&9Obsidyen lava dönüştü dostum bu bir harika!"
+    the-end: Son
 commands:
   help:
-    header: "&eYardım"
-    syntax: "&d[usage] &9[parameters] &a» &5[description]"
-    syntax-no-parameters: "&d[usage] &a» &5[description]"
-    end: "&eYardım"
-    parameters: "[command]"
+    header: '&eYardım'
+    syntax: '&b [usage] &a [parameters]&7 : &e [description]'
+    syntax-no-parameters: '&b [usage]&7 : &e [description]'
+    end: '&7 ================================='
+    parameters: '[command]'
     description: Yardım komutları
     console: Konsol
   admin:
     help:
       description: Admin komutları
+    maxhomes:
+      description: >-
+        bu [prefix_island] veya oyuncunun [prefix_island] için izin verilen ev
+        sayısını değiştir
+      parameters: <number / player> <number> [[prefix_adası] isim]
+      max-homes-set: '&a [name] - [prefix_island] maksimum ev sayısını [number] olarak ayarla'
+      errors:
+        unknown-island: Bilinmeyen [prefix_island]! [name]
+    resethome:
+      description: Oyuncunun evini varsayılan ayarlara sıfırla.
+      parameters: <player> [[prefix_island] adı]
+      cleared: '&b Ana sayfa sıfırlandı. [name]'
     resets:
       description: Oyuncunun ada sıfırlamasını sıfırla.
       set:
         description: Oyuncunun ada sıfırlamasını ayarla.
-        parameters: "<player> <resets>"
-        success: "&d[name] &5oyuncusunun sıfırlama hakkı &e[number] &5yapıldı."
+        parameters: <player> <resets>
+        success: '&d[name] &5oyuncusunun sıfırlama hakkı &e[number] &5yapıldı.'
       reset:
         description: Oyuncunun ada sıfırlama sayısını 0 yap.
-        parameters: "<player>"
+        parameters: <player>
         success-everyone: Herkesin ada sıfırlama hakkı &e0 &ayapıldı.
-        success: "&d[name] &9oyuncusunun sıfırlama hakkı &e0 &9yapıldı."
+        success: '&d[name] &9oyuncusunun sıfırlama hakkı &e0 &9yapıldı.'
       add:
         description: Oyuncuya sıfırlama hakkı ekler.
-        parameters: "<oyuncur> <reset sayısı>"
-        success: "&d[name] &9oyuncusuna &a[number] &9sıfırlama hakkı eklendi. Toplam
-          hakkı: &5[total]"
+        parameters: <oyuncur> <reset sayısı>
+        success: >-
+          &d[name] &9oyuncusuna &a[number] &9sıfırlama hakkı eklendi. Toplam
+          hakkı: &5[total]
       remove:
         description: Oyuncunun sıfırlama haklarını siler.
-        parameters: "<oyuncur> <reset sayısı>"
-        success: "&d[name] &5oyuncusundan &a[number] sıfırlama hakkı silindi. Toplam
-          hakkı: &5[total]"
+        parameters: <oyuncur> <reset sayısı>
+        success: >-
+          &d[name] &5oyuncusundan &a[number] sıfırlama hakkı silindi. Toplam
+          hakkı: &5[total]
     purge:
-      parameters: "[gün]"
+      parameters: '[gün]'
       description: Belirlediğiniz süreden uzun olan adaları siler.
       days-one-or-more: Gün sayısı 1 veya daha uzun olmalıdır.
-      purgable-islands: "&e[number] &5silinebilecek ada bulundu!"
-      purge-in-progress: "&cTemizleme devam ediyor. Durdurmak için durdurma komutunu
-        kullanın."
-      number-error: "&cGün sayısını yazmalısınız."
-      confirm: "&6Ada temizlemesini başlatmak için onaylayın: &5[label] purge confirm"
-      completed: "&cTemizleme durduruldu."
+      purgable-islands: '&e[number] &5silinebilecek ada bulundu!'
+      too-many: >-
+        &b Bu çok fazla ve silinmesi çok uzun sürebilir.  
+
+        &b Dünya parçalarını silmek için Regionerator eklentisini kullanmayı
+        düşünün  
+
+        &b ve BentoBox'un config.yml dosyasında keep-previous-island-on-reset:
+        true ayarını yapın.  
+
+        &b Sonra bir temizleme işlemi yapın.
+      purge-in-progress: '&cTemizleme devam ediyor. Durdurmak için durdurma komutunu kullanın.'
+      scanning: >-
+        &a Veritabanındaki adaları tarıyor. Ne kadar çok adaya sahip olduğunuza
+        bağlı olarak bu biraz zaman alabilir...
+      scanning-in-progress: '&c Tarama işlemi devam ediyor, lütfen bekleyin'
+      none-found: '&c Temizlenecek ada bulunamadı.'
+      total-islands: '&a Veritabanınızda tüm dünyalarda [number] ada var.'
+      number-error: '&cGün sayısını yazmalısınız.'
+      confirm: '&6Ada temizlemesini başlatmak için onaylayın: &5[label] purge confirm'
+      completed: '&cTemizleme durduruldu.'
       see-console-for-status: |-
         Temizleme başlatıldı. İlerlemeyi
                 görmek için konsola bakınız.
-      no-purge-in-progress: "&c Şu anda devam eden bir temizleme işlemi yok."
+      no-purge-in-progress: '&c Şu anda devam eden bir temizleme işlemi yok.'
       protect:
         description: Adanın anti-silinmesini kapat/aç.
-        move-to-island: "&cİlk önce adaya git!"
-        protecting: "&9Ada artık silinmelere karşı korunuyor."
-        unprotecting: "&cAda artık silinmelere karşı korunmuyor."
+        move-to-island: '&cİlk önce adaya git!'
+        protecting: '&9Ada artık silinmelere karşı korunuyor.'
+        unprotecting: '&cAda artık silinmelere karşı korunmuyor.'
       stop:
         description: Devam eden temizlemeyi durdurur.
         stopping: Temizleme durduruldu.
-        no-purge-in-progress: "&cDevam eden bir temizleme işlemi yok."
       unowned:
         description: Sahipsiz adaları temizler.
-        unowned-islands: "&a[number] &5silinebilecek ada bulundu!"
+        unowned-islands: '&a[number] &5silinebilecek ada bulundu!'
       status:
         description: temizlemenin durumunu gösterir
-        status: "&b [purgeable] &a adadan &b [purged]'si temizlendi &7(&b[percentage]
-          %&7)&a."
+        status: >-
+          &b [purgeable] &a adadan &b [purged]'si temizlendi &7(&b[percentage]
+          %&7)&a.
     team:
+      description: takımları yönet
       add:
-        parameters: "<owner> <player>"
+        parameters: <owner> <player>
         description: Adaya oyuncu ekle
-        name-not-owner: "&d[name] &4ada sahibi degil!"
-        name-has-island: "&e[name] &4bir adaya sahip. "
-        success: "&d[name] &bbaşarıyla &9[owner] &badasına eklendi!"
+        name-not-owner: '&d[name] &4ada sahibi degil!'
+        name-has-island: '&e[name] &4bir adaya sahip. '
+        success: '&d[name] &bbaşarıyla &9[owner] &badasına eklendi!'
       disband:
-        parameters: "<owner>"
+        parameters: <owner>
         description: Ada sahibinin ada takımını dağıt.
-        use-disband-owner: "&4Sahibi degilsin. Sahibi &d[owner]"
-        disbanded: "&4Admin takımınızı dağıttı!"
-        success: "&d[name] &btakımı dağıtıldı!"
+        use-disband-owner: '&4Sahibi degilsin. Sahibi &d[owner]'
+        disbanded: '&4Admin takımınızı dağıttı!'
+        success: '&d[name] &btakımı dağıtıldı!'
       fix:
         description: Veritabanındaki adalar arası üyeliği tarar ve düzeltir
         scanning: Veritabanı taranıyor ...
-        duplicate-owner: "&c Oyuncunun veritabanında birden fazla adası var: [name]"
-        player-has: "&c Oyuncu [name], [number] adaya sahip"
-        duplicate-member: "&c [name],  veri tabanında bulunan birden fazla adanın
-          üyesi"
-        rank-on-island: "&c [rank] adada [xyz]"
-        fixed: "&a Sabit"
-        done: "&a Tarama"
+        duplicate-owner: '&c Oyuncunun veritabanında birden fazla adası var: [name]'
+        player-has: '&c Oyuncu [name], [number] adaya sahip'
+        duplicate-member: '&c [name],  veri tabanında bulunan birden fazla adanın üyesi'
+        rank-on-island: '&c [rank] adada [xyz]'
+        fixed: '&a Sabit'
+        done: '&a Tarama'
       kick:
-        parameters: "<team player>"
+        parameters: <takım oyuncusu>
         description: takımından oyuncu at
-        cannot-kick-owner: "&4Ada sahibini atamazsın. İlk önce diğer üyeleri at."
-        not-in-team: "&4Bu oyunbu bu takımda değil!"
-        admin-kicked: "&9Admin seni takımından attı!"
-        success: "&d[name] &9[owner] &4adasından atıldı!"
+        cannot-kick-owner: '&4Ada sahibini atamazsın. İlk önce diğer üyeleri at.'
+        not-in-team: '&4Bu oyunbu bu takımda değil!'
+        admin-kicked: '&9Admin seni takımından attı!'
+        success: '&d[name] &9[owner] &4adasından atıldı!'
+        success-all: '&b Bu dünyadaki tüm takımlardan oyuncu çıkarıldı'
       setowner:
-        parameters: "<player>"
+        parameters: <player>
         description: Oyuncuya ada liderligini ver!
-        already-owner: "&d[name] &4zaten ada sahibi!"
-        success: "&d[name] &bartık adanın sahibi!"
+        already-owner: '&d[name] &4zaten ada sahibi!'
+        must-be-on-island: '&c Sahibi ayarlamak için [prefix_island] üzerinde olmalısın'
+        confirmation: >-
+          &a [xyz] konumundaki [prefix_island]ın sahibi olarak [name]'i
+          ayarlamak istediğinizden emin misiniz?
+        success: '&d[name] &bartık adanın sahibi!'
+        extra-islands: >-
+          &c Uyarı: bu oyuncunun şimdi [number] adası var. Bu, ayarlar veya
+          izinler tarafından izin verilen [max] miktarından fazladır.
     range:
       description: Admin ada menzili ayarlama
       invalid-value:
-        too-low: "&4Koruma aralığı 1''den büyük olmalıdır!"
-        too-high: "&4Koruma aralığı &5[number] &4büyük ya da küçük olmalıdır!"
-        same-as-before: "&4Koruma aralığı zaten &5[number] &4olarak ayarlandı!"
+        too-low: '&4Koruma aralığı 1''''den büyük olmalıdır!'
+        too-high: '&4Koruma aralığı &5[number] &4büyük ya da küçük olmalıdır!'
+        same-as-before: '&4Koruma aralığı zaten &5[number] &4olarak ayarlandı!'
       display:
-        already-off: "&4Göstergeler zaten kapalı"
-        already-on: "&4Göstergeler zaten açık."
+        already-off: '&4Göstergeler zaten kapalı'
+        already-on: '&4Göstergeler zaten açık.'
         description: Adanın menzil göstergelerini kapat/aç.
-        hiding: "&2Menzil göstergeleri saklanıyor."
-        hint: |-
+        hiding: '&2Menzil göstergeleri saklanıyor.'
+        hint: >-
           &4Kırmızı bariyer ikonları &fmevcut ada koruma limitlerini gösterir.
+
           &7Gri parçacıklar &fadadanın maximum limitini gösterir.
-          &aYeşil parçacıklar &feğer adanın koruma alanı değişmisse normal koruma alanını gösterir.
-        showing: "&2Menzil göstergeleri gösteriliyor."
+
+          &aYeşil parçacıklar &feğer adanın koruma alanı değişmisse normal
+          koruma alanını gösterir.
+        showing: '&2Menzil göstergeleri gösteriliyor.'
       set:
-        parameters: "<player> <range>"
+        parameters: <player> <range>
         description: Adanın koruma bölgesini ayarla.
-        success: "&2Adanın koruma menzili &e[number] &2olarak ayarlandı!"
-        invalid-value:
-          not-numeric: "&e[number] &4tam bir sayı değil!"
-          too-low: "&4Koruma aralığı 1'den büyük olmalıdır!"
-          too-high: "&4Koruma aralığı &e[number] &4büyük ya da küçük olmalıdır!"
-          same-as-before: "&4Koruma aralığı zaten &e[number] &4olarak ayarlandı!"
+        success: '&2Adanın koruma menzili &e[number] &2olarak ayarlandı!'
       reset:
-        parameters: "<player>"
+        parameters: <player>
         description: Adayı dünyanın varsayılan koruma bölgesine göre sıfırla.
-        success: "&2Adanın koruma aralığı sfırlanarak &e[number] &2olarak ayarlandı!"
+        success: '&2Adanın koruma aralığı sfırlanarak &e[number] &2olarak ayarlandı!'
       add:
         description: Ada koruma menzilini artırır.
-        parameters: "<oyuncu> <menzil boyutu>"
-        success: "&d[name] &6koruma alanı &a+[number] &6artırıldı. &6Toplam alan &5[total]"
+        parameters: <oyuncu> <menzil boyutu>
+        success: >-
+          &d[name] &6koruma alanı &a+[number] &6artırıldı. &6Toplam alan
+          &5[total]
       remove:
         description: Ada koruma menzilini azaltır.
-        parameters: "<oyuncu> <menzil boyutu>"
-        success: "&d[name] &6koruma alanı &a-[number] &6azaltıldı. &6Toplam alan &5[total]"
+        parameters: <oyuncu> <menzil boyutu>
+        success: >-
+          &d[name] &6koruma alanı &a-[number] &6azaltıldı. &6Toplam alan
+          &5[total]
     register:
-      parameters: "<player>"
+      parameters: <player>
       description: Sahipsiz adalara oyuncu ver.
-      registered-island: "&9Oyuncunun adası [xyz] kordinatlarına kaydedildi."
-      reserved-island: "&5[xyz] &9koordinatlarındaki ada oyuncuya ayrıldı."
-      already-owned: "&4Bu ada zaten sahipli!"
-      no-island-here: "&4Burda ada yok. Olusturmak icin kabul et!"
-      in-deletion: "&4Ada şuanda siliniyor daha sonra tekrar dene!"
-      cannot-make-island: "&5Buraya ada yerleştirilemiyor. Lütfen detaylı bilgi için
-        konsola bakınız!"
-      island-is-spawn: "&6Başlangıç adası, buna emin misiniz ?Kabul etmek için komutu
-        tekrar girin!"
+      registered-island: '&9Oyuncunun adası [xyz] kordinatlarına kaydedildi.'
+      reserved-island: '&5[xyz] &9koordinatlarındaki ada oyuncuya ayrıldı.'
+      already-owned: '&4Bu ada zaten sahipli!'
+      no-island-here: '&4Burda ada yok. Olusturmak icin kabul et!'
+      in-deletion: '&4Ada şuanda siliniyor daha sonra tekrar dene!'
+      cannot-make-island: >-
+        &5Buraya ada yerleştirilemiyor. Lütfen detaylı bilgi için konsola
+        bakınız!
+      island-is-spawn: >-
+        &6Başlangıç adası, buna emin misiniz ?Kabul etmek için komutu tekrar
+        girin!
     unregister:
-      parameters: "<owner> [x,y,z]"
+      parameters: <sahip> [x,y,z]
       description: Oyuncuyu adadan siler ama ada silinmez.
-      unregistered-island: "&aOyuncu başarıyla &e[xyz] &akoordinatlarındaki adadan
-        silindi!"
+      unregistered-island: '&aOyuncu başarıyla &e[xyz] &akoordinatlarındaki adadan silindi!'
+      errors:
+        unknown-island-location: '&c Bilinmeyen [prefix_island] konumu'
+        specify-island-location: '&c [prefix_island] konumunu x,y,z formatında belirtin'
+        player-has-more-than-one-island: >-
+          &c Oyuncunun birden fazla [prefix_island] var. Hangisini seçeceğinizi
+          belirtin.
     info:
-      parameters: "<player>"
+      parameters: <player>
       description: Ada hakkında bilgi verir
-      no-island: "&4Herhangi bir adada degilsin..."
-      title: "&eAda Bilgileri"
-      island-uuid: "&5UUID: [uuid]"
-      owner: "&bSahibi: &5[owner] ([uuid])"
-      last-login: "&bSon giris: &5[date]"
+      no-island: '&4Herhangi bir adada degilsin...'
+      title: '&eAda Bilgileri'
+      island-uuid: '&5UUID: [uuid]'
+      owner: '&bSahibi: &5[owner] ([uuid])'
+      last-login: '&bSon giris: &5[date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy
-      deaths: "&bÖlme sayısı: &5[number]"
-      resets-left: "&bSıfırlama hakkı: &5[number] (Max: [total])"
-      team-members-title: "&bTakım üyeleri:"
-      team-owner-format: "&d[name] [rank]"
-      team-member-format: "&d[name] [rank]"
+      deaths: '&bÖlme sayısı: &5[number]'
+      resets-left: '&bSıfırlama hakkı: &5[number] (Max: [total])'
+      max-homes: 'Maksimum evler: [number]'
+      team-members-title: '&bTakım üyeleri:'
+      team-owner-format: '&d[name] [rank]'
+      team-member-format: '&d[name] [rank]'
       island-protection-center: 'Korumalı alan merkezi: [xyz]'
       island-center: 'Ada merkezi: [xyz]'
-      island-coords: "&bAda kordinatları: [xz1] ile [xz2] arasında"
-      islands-in-trash: "&bOyuncun adası çöp kutusunda!"
-      protection-range: "&bKoruma alanı: [range]"
+      island-coords: '&bAda kordinatları: [xz1] ile [xz2] arasında'
+      islands-in-trash: '&bOyuncun adası çöp kutusunda!'
+      protection-range: '&bKoruma alanı: [range]'
+      protection-range-bonus-title: '&b Bu bonusları içerir:'
+      protection-range-bonus: 'Bonus: [number]'
       purge-protected: Bu ada silinmelere karşı korunuyor.
-      max-protection-range: "&bÖnceki en büyük koruma alanı: [range]"
-      protection-coords: "&bKoruma kordinatları: [xz1] ile [xz2] arasında."
-      is-spawn: "&bBu ada başlangıç adası"
-      banned-players: "&b Banlanan oyuncular:"
-      banned-format: "&4[name]"
-      unowned: "&eBilinmiyor"
-      island-location: "&bAda lokasyonu: [xyz]"
+      max-protection-range: '&bÖnceki en büyük koruma alanı: [range]'
+      protection-coords: '&bKoruma kordinatları: [xz1] ile [xz2] arasında.'
+      is-spawn: '&bBu ada başlangıç adası'
+      banned-players: '&b Banlanan oyuncular:'
+      banned-format: '&4[name]'
+      unowned: '&eBilinmiyor'
+      bundle: '&a Ada oluşturmak için kullanılan Blueprint Paketi: &b [name]'
     switch:
       description: Koruma izinlerine açma/kapama
-      op: "&cSen zaten tüm korumalardan izinlisin. Yetkini aldıktan sonra tekrar dene."
+      op: >-
+        &cSen zaten tüm korumalardan izinlisin. Yetkini aldıktan sonra tekrar
+        dene.
       removing: Korumalara olan izin siliniyor...
       adding: Korumalara olan izin ekleniyor...
     switchto:
-      parameters: "<player> <number>"
+      parameters: <player> <number>
       description: oyuncunun adasını bir numaralı çöp kutusuna çevir
-      out-of-range: "&cSayı 1 ila [number] arasında olmalıdır. &d[player] &9Çöp olan
-        ada numaralarını görmek için &1[label]"
-      cannot-switch: "&cSwitch failed. See console log for error."
-      success: "&aBaşarıyla oyuncunun adasını belirtilen ada değiştirdi.."
+      out-of-range: >-
+        &cSayı 1 ila [number] arasında olmalıdır. &d[player] &9Çöp olan ada
+        numaralarını görmek için &1[label]
+      cannot-switch: '&cSwitch failed. See console log for error.'
+      success: '&aBaşarıyla oyuncunun adasını belirtilen ada değiştirdi..'
     trash:
-      no-unowned-in-trash: "&cÇöpte sahipsiz ada yok."
-      no-islands-in-trash: "&cOyuncunun çöpte adası yok."
-      parameters: "[player]"
+      no-unowned-in-trash: '&cÇöpte sahipsiz ada yok.'
+      no-islands-in-trash: '&cOyuncunun çöpte adası yok.'
+      parameters: '[player]'
       description: Çöp kutusundaki sahipsiz veya oyuncuların adını gösterir.
-      title: "&d=========== Çöpteki adalar ==========="
-      count: "&l&dAda [number]:"
-      use-switch: "&l[label] &9kullanarak &d<player> &e<number> &9olarak çöp kutusundaki
-        yerini değişebilirsin."
-      use-emptytrash: "&l[label] &9kullanarak &d[player] &9tüm eşyalarını sonsuza
-        kadar silebilirsiniz."
+      title: '&d=========== Çöpteki adalar ==========='
+      count: '&l&dAda [number]:'
+      use-switch: >-
+        &l[label] &9kullanarak &d<player> &e<number> &9olarak çöp kutusundaki
+        yerini değişebilirsin.
+      use-emptytrash: >-
+        &l[label] &9kullanarak &d[player] &9tüm eşyalarını sonsuza kadar
+        silebilirsiniz.
     emptytrash:
-      parameters: "[player]"
+      parameters: '[player]'
       description: Oyuncu için çöpleri veya çöp kutusundaki tüm sahipsiz adaları temizleyin
-      success: "&aÇöp kutusu başarıyla boşaltıldı."
+      success: '&aÇöp kutusu başarıyla boşaltıldı.'
     version:
       description: Bentobox ve eklentileri hakkında bilgi verir.
     setrange:
-      parameters: "<player> <range>"
+      parameters: <player> <range>
       description: Oyuncunun ada menzilini ayarlar.
-      range-updated: "&9Ada menzili &e[number] &9olarak ayarlandı!"
+      range-updated: '&9Ada menzili &e[number] &9olarak ayarlandı!'
     reload:
       description: Yenile
     tp:
-      parameters: "<player> [player to teleport]"
+      parameters: <player> [player to teleport]
       description: Oyuncunun adasına git!
-      manual: "&4Guvenli warp noktası bulunamadı! &b[location] &4ısınlanarak kontrol
-        edebilirsin!"
+      manual: >-
+        &4Guvenli warp noktası bulunamadı! &b[location] &4ısınlanarak kontrol
+        edebilirsin!
+    tpuser:
+      parameters: <teleporting player> <[prefix_island]'in oyuncusu> [oyuncunun adası]
+      description: başka bir oyuncunun [prefix_island] adasına bir oyuncuyu teleport et
     getrank:
-      parameters: "<player>"
+      parameters: <player>
       description: Olduğun ada üstündeki oyuncunun rankını gösterir.
-      rank-is: "&aAda üstündeki yetkisi: &e[rank]."
+      rank-is: '&aAda üstündeki yetkisi: &e[rank].'
     setrank:
-      parameters: "<player> <rank>"
+      parameters: <player> <rank>
       description: Olduğun ada üstündeki oyuncuya yetkisini ayarlar
-      unknown-rank: "&4Bilinmeyen rütbe!"
-      not-possible: "&cRütbe türü ziyaretçiden yüksek olmalıdır."
-      rank-set: "&aRütbe &c[from]&a'dan &e[to] &ayükseltildi."
+      unknown-rank: '&4Bilinmeyen rütbe!'
+      not-possible: '&cRütbe türü ziyaretçiden yüksek olmalıdır.'
+      rank-set: '&aRütbe &c[from]&a''dan &e[to] &ayükseltildi.'
     setprotectionlocation:
-      parameters: "[x y z coords]"
-      description: Şu anki konumu veya [x y z] konumunu adanın koruma bölgesinin merkezi
+      parameters: '[x y z koordinatları]'
+      description: >-
+        Şu anki konumu veya [x y z] konumunu adanın koruma bölgesinin merkezi
         olarak ayarla
-      island: "&c Bu [xyz] konumundaki '[name]' adlı kullanıcının adasını etkileyecek."
-      confirmation: "&c Koruma bölgesinin merkezi olarak [xyz] konumunu ayarlamak
-        istediğine emin misin?"
-      success: "&a [xyz] konumu başarıyla koruma bölgesinin merkezi olarak ayarlandı."
-      fail: "&a [xyz] noktası koruma bölgesinin merkezi olarak ayarlanamadı."
-      island-location-changed: "&a [user] adlı kullanıcı adanın koruma alanı merkezini
-        [xyz] konumuna değiştirdi."
-      xyz-error: "&c Üç adet tam sayı koordinat girin: örn, 100 120 100"
+      island: '&c Bu [xyz] konumundaki ''[name]'' adlı kullanıcının adasını etkileyecek.'
+      confirmation: >-
+        &c Koruma bölgesinin merkezi olarak [xyz] konumunu ayarlamak istediğine
+        emin misin?
+      success: '&a [xyz] konumu başarıyla koruma bölgesinin merkezi olarak ayarlandı.'
+      fail: '&a [xyz] noktası koruma bölgesinin merkezi olarak ayarlanamadı.'
+      island-location-changed: >-
+        &a [user] adlı kullanıcı adanın koruma alanı merkezini [xyz] konumuna
+        değiştirdi.
+      xyz-error: '&c Üç adet tam sayı koordinat girin: örn, 100 120 100'
     setspawn:
       description: Dünyanın adanın spawlanacağı bölgeyi seçer.
-      already-spawn: "&cBu ada zaten spawnalacak bölgede."
-      no-island-here: "&cBurada bir ada yok."
-      confirmation: "&cAdayı dünyanın spawn noktası olarak ayarlıcaksın. Emin misin?"
-      success: "&aBaşarıyla bu ada dünyanın spawn bölgesi oldu."
+      already-spawn: '&cBu ada zaten spawnalacak bölgede.'
+      no-island-here: '&cBurada bir ada yok.'
+      confirmation: '&cAdayı dünyanın spawn noktası olarak ayarlıcaksın. Emin misin?'
+      success: '&aBaşarıyla bu ada dünyanın spawn bölgesi oldu.'
     setspawnpoint:
       description: mevcut konumu bu ada için doğma noktası olarak ayarla
-      no-island-here: "&c Burada ada yok."
-      confirmation: "&c Bu konumu bu adanın yumurtlama noktası olarak ayarlamak istediğinizden
-        emin misiniz?"
-      success: "&a Bu konumu, bu adanın doğma noktası olarak başarıyla ayarlayın."
-      island-spawnpoint-changed: "&a [user] bu adanın doğma noktasını değiştirdi."
+      no-island-here: '&c Burada ada yok.'
+      confirmation: >-
+        &c Bu konumu bu adanın yumurtlama noktası olarak ayarlamak
+        istediğinizden emin misiniz?
+      success: '&a Bu konumu, bu adanın doğma noktası olarak başarıyla ayarlayın.'
+      island-spawnpoint-changed: '&a [user] bu adanın doğma noktasını değiştirdi.'
     settings:
-      parameters: "[oyuncu]"
+      parameters: '[oyuncu]'
       description: Sunucu dünya ayarları veya oyuncu ada ayarlarını aç.
-      unknown-setting: "&c Bilinmeyen ayar"
+      unknown-setting: '&c Bilinmeyen ayar'
     blueprint:
-      parameters: "<load/copy/paste/pos1/pos2/save>"
+      parameters: <load/copy/paste/pos1/pos2/save>
       description: Ada şekillerini değişir.
-      bedrock-required: "&cEn az bir bedrock bloğu ada içinde olmalı!"
-      copy-first: "&cİlk önce kopyala!"
-      file-exists: "&cDosya zaten mevcut, üstüne yaz?"
-      no-such-file: "&cBöyle bir dosya yok!"
-      could-not-load: "&cBu dosya yüklenemedi!"
-      could-not-save: "&cHmm, bu dosyayı kaydederken bir şeyler ters gitti: [message]"
-      set-pos1: "&aKonum 1 &e[vector] &aolarak ayarlandı."
-      set-pos2: "&aKonum 2 &e[vector] &aolarak ayarlandıç"
-      set-different-pos: "&cFarklı bir pozisyon seç, burası zaten seçildi!"
-      need-pos1-pos2: "&cİlk önce poziyon 1 ve 2'yi seç!"
-      copying: "&bBloklar kopyalanıyor..."
-      copied-blocks: "&e[number] &9blok panoya kopyalandı."
-      look-at-a-block: "&cAyarlamak için 20 blok içerisindeki bloğa bakın"
-      mid-copy: "&cSen orta kopyadasın. Kopyalama tamamlanana kadar bekleyin."
-      copied-percent: "&6Kopyalandı [number]%"
+      bedrock-required: '&cEn az bir bedrock bloğu ada içinde olmalı!'
+      copy-first: '&cİlk önce kopyala!'
+      file-exists: '&cDosya zaten mevcut, üstüne yaz?'
+      no-such-file: '&cBöyle bir dosya yok!'
+      could-not-load: '&cBu dosya yüklenemedi!'
+      could-not-save: '&cHmm, bu dosyayı kaydederken bir şeyler ters gitti: [message]'
+      set-pos1: '&aKonum 1 &e[vector] &aolarak ayarlandı.'
+      set-pos2: '&aKonum 2 &e[vector] &aolarak ayarlandıç'
+      set-different-pos: '&cFarklı bir pozisyon seç, burası zaten seçildi!'
+      need-pos1-pos2: '&cİlk önce poziyon 1 ve 2''yi seç!'
+      copying: '&bBloklar kopyalanıyor...'
+      copied-blocks: '&e[number] &9blok panoya kopyalandı.'
+      look-at-a-block: '&cAyarlamak için 20 blok içerisindeki bloğa bakın'
+      mid-copy: '&cSen orta kopyadasın. Kopyalama tamamlanana kadar bekleyin.'
+      copied-percent: '&6Kopyalandı [number]%'
       copy:
-        parameters: "[air]"
-        description: Pozisyon 1 ve 2'nin seçildiği aradaki yeri kopyalar. Opsiyonel
-          olarak havayıda kaydedebilir.
+        parameters: '[air]'
+        description: >-
+          Pozisyon 1 ve 2'nin seçildiği aradaki yeri kopyalar. Opsiyonel olarak
+          havayıda kaydedebilir.
+      sink:
+        description: bu planı yapıştırıldığında okyanus tabanına batacak şekilde ayarla
+        status: '&a Mavi baskı [status] &a yapıştırıldığında'
+        sink: '&c lavuvar'
+        not-sink: '&b batmaz'
+        no-clipboard: '&c Panoda hiçbir mavi plan yok. Bir şey yükleyin veya kopyalayın.'
       delete:
-        parameters: "<isim>"
+        parameters: <isim>
         description: Şematik siler.
-        no-blueprint: "&5[name] &cbulunamadı!"
+        no-blueprint: '&5[name] &cbulunamadı!'
         confirmation: |-
           &cBu şematiği silmek istediğine emin misin?
           &cSilinirse geri dönüşü olmaz!
-        success: "&5[name] &6şematiği silindi."
+        success: '&5[name] &6şematiği silindi.'
       load:
-        parameters: "<name>"
+        parameters: <name>
         description: Panodaki taslakları önbelleğe yükler.
       list:
         description: Sunucuda bulunan taslakları gösterir.
-        no-blueprints: "&cTaslak dosyasında taslak yok!"
-        available-blueprints: "&aBu taslaklar yükleme için uygun:"
+        no-blueprints: '&cTaslak dosyasında taslak yok!'
+        available-blueprints: '&aBu taslaklar yükleme için uygun:'
       origin:
         description: Taslağın orta noktası olduğun pozisyon olarak belirler.
       paste:
         description: Panodaki taslağı olduğun bölgeye yapıştırır.
-        pasting: "&Yapıştırılıyor..."
+        pasting: '&Yapıştırılıyor...'
       pos1:
         description: Kare bir alan için 1. pozisyonu ayarlar.
       pos2:
         description: Kare bir alan için 2. pozisyonu ayarlar.
       save:
-        parameters: "<blueprint name>"
+        parameters: <blueprint name>
         description: Panodaki kopyalanmış taslağı kaydeder.
       rename:
-        parameters: "<şematik isim> <yeni isim>"
+        parameters: <şematik isim> <yeni isim>
         description: Şematik ismi değiştirir.
-        success: "&a[old] &9şematiğinin ismi &5[name] &9olarak değiştirildi."
-        pick-different-name: "&cLütfen şuanki adından farklı bir isim girin."
+        success: '&a[old] &9şematiğinin ismi &5[name] &9olarak değiştirildi.'
+        pick-different-name: '&cLütfen şuanki adından farklı bir isim girin.'
       management:
         back: Geri
         instruction: Taslağa tıkladıktan sonra buraya tıkla.
@@ -357,10 +428,8 @@ commands:
         edit: Tıkla ve düzenle
         rename: Sağ tıkla ve ismini değiş
         edit-description: Tıkla ve açıklamayı değiş
-        world-name-syntax: "[name] dünya"
-        world-instructions: |
-          Place blueprint
-          to right to set
+        world-name-syntax: '[name] dünya'
+        world-instructions: Blueprint'i sağa yerleştirerek ayarla
         trash: Çöp
         no-trash: Çöp Kutusu olamaz
         trash-instructions: Silmek için sağ tıkla
@@ -370,7 +439,7 @@ commands:
         perm-required: Yetki ihtyacı gerekli.
         no-perm-required: Varsayılan paket için izin ayarlanamaz
         perm-not-required: Yetki ihtiyacı yok.
-        perm-format: "&e"
+        perm-format: '&e'
         remove: Silmek için sağ tıkla
         blueprint-instruction: |
           Tıkla ve seç,
@@ -382,94 +451,106 @@ commands:
         name:
           quit: çık
           prompt: İsim gir ya da çıkmak için 'quit' yaz.
-          too-long: "&cÇok uzun."
+          too-long: '&cÇok uzun.'
           pick-a-unique-name: Lütfen daha benzersiz bir ad seçin
-          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
+          stripped-char-in-unique-name: >-
+            &c Bazı karakterler kaldırıldı çünkü izin verilmiyor. &a Yeni ID &b
+            [name]&a olacak.
           success: Başarılı!
-          conversation-prefix: ">"
+          conversation-prefix: '>'
         description:
           quit: çık
           instructions: |
             [name] için çok satırlı bir açıklama girin.
             ve bitirmek için boş satıra 'quit' yazın.
+          default-color: ''
           success: Başarılı!
           cancelling: İptal ediliyor.
-        slot: "&fTercih edilen slot [number]"
+        slot: '&fTercih edilen slot [number]'
         slot-instructions: |
           &aArtırmak için sol
           &aAzaltmak için sağ tıklayın.
-        normal: Normal
-        nether: Nether
-        end: The End
+        times: |-
+          &a Oyuncu başına maksimum eş zamanlı kullanım
+          &a Artırmak için sol tıklayın
+          &a Azaltmak için sağ tıklayın
+        unlimited-times: Sınırsız
+        maximum-times: Max [number] kez
     resetflags:
-      parameters: "[flag]"
+      parameters: '[bayrak]'
       description: Config.yml'deki tüm adaları varsayılan etiket ayarlarına sıfırla
-      confirm: "&4Bu adanın tüm ayarlarını sıfırlayacaktır!"
-      success: "&aBaşarıyla tüm adalar varsayılan etiket ayarlarına döndü."
-      success-one: "&d[name] &aada ayarları sıfırlandı."
+      confirm: '&4Bu adanın tüm ayarlarını sıfırlayacaktır!'
+      success: '&aBaşarıyla tüm adalar varsayılan etiket ayarlarına döndü.'
+      success-one: '&d[name] &aada ayarları sıfırlandı.'
     world:
       description: Dünya ayarlarını yönet"
     delete:
-      parameters: "<player>"
+      parameters: <oyuncu>
       description: Oyuncunun adasını siler.
-      cannot-delete-owner: "&4Silmeden önce adadaki herkesi at."
-      deleted-island: "&e[xyz] &bkordinatlarındaki ada başarıyla silindi"
+      cannot-delete-owner: '&4Silmeden önce adadaki herkesi at.'
+      deleted-island: '&e[xyz] &bkordinatlarındaki ada başarıyla silindi'
     deletehomes:
-      parameters: "<oyuncu>"
+      parameters: <oyuncu>
       description: bir adadan tüm adlandırılmış evleri siler
-      warning: "&c Adlandırılmış tüm evler adadan silinecek!"
+      warning: '&c Adlandırılmış tüm evler adadan silinecek!'
     why:
-      parameters: "<player>"
+      parameters: <player>
       description: Konsolu koruma hata ayıklama raporlaması
-      turning-on: "&D[name] &9için konsol hata ayıklaması açıldı."
-      turning-off: "&D[name] &9için konsol hata ayıklaması kapatıldı."
+      turning-on: '&D[name] &9için konsol hata ayıklaması açıldı.'
+      turning-off: '&D[name] &9için konsol hata ayıklaması kapatıldı.'
     deaths:
       description: oyuncuların ölümlerini düzenleme
       reset:
         description: Oyuncuların ölmesini sıfırlar.
-        parameters: "<player>"
-        success: "&d[name] &aölme puanı sıfırlandı!"
+        parameters: <player>
+        success: '&d[name] &aölme puanı sıfırlandı!'
       set:
         description: Oyuncuların ölmesin sayısını ayarlar.
-        parameters: "<player> <deaths>"
-        success: "&aBaşarıyla &d[name]&a ölüm skorlarını &e[number] &aolarak ayarladın."
+        parameters: <player> <ölümler>
+        success: '&aBaşarıyla &d[name]&a ölüm skorlarını &e[number] &aolarak ayarladın.'
       add:
         description: Oyuncuya ölme sayısı ekler.
-        parameters: "<oyuncu> <ölme sayısı>"
-        success: "&d[name] &5oyuncusunun ölme sayısına &a[number] &5eklendi. Toplam
-          ölme sayısı: &5[total]"
+        parameters: <oyuncu> <ölme sayısı>
+        success: >-
+          &d[name] &5oyuncusunun ölme sayısına &a[number] &5eklendi. Toplam ölme
+          sayısı: &5[total]
       remove:
         description: Oyuncunun ölme sayısını siler.
-        parameters: "<oyuncu> <ölme sayısı>"
-        success: "&d[name] &5oyuncusunun ölme sayısından &a[number] &5silindi. Toplam
-          ölme sayısı: &5[total]'"
+        parameters: <oyuncu> <ölme sayısı>
+        success: >-
+          &d[name] &5oyuncusunun ölme sayısından &a[number] &5silindi. Toplam
+          ölme sayısı: &5[total]'
+    resetname:
+      description: sıfırla oyuncu [prefix_island] adı
+      success: '&a Başarıyla [name]''in [prefix_island] adını sıfırladınız.'
   bentobox:
     description: BentoBox admin komudu
+    perms:
+      description: BentoBox ve Eklentiler için etkili izinleri YAML formatında görüntüler
     about:
       description: Telif ve lisans bilgileri
     reload:
       description: Ayarları, eklentileri (destekliyorsa) ve dil dosyalarını günceller.
-      locales-reloaded: "&bDiller güncellendi."
-      addons-reloaded: "&bEklentiler güncellendi."
-      settings-reloaded: "&bAyalar güncellendi."
-      addon: "&e[name] &bgüncelleniyor."
-      addon-reloaded: "&e[name] &bgüncellendi!"
-      warning: "&cDikkat bu tüm eklentileri güncellemektedir. Eğer konsolda bir hata
-        alırsanız restart atmalısınız."
-      unknown-addon: "&4Bilinmeyen eklenti!"
+      locales-reloaded: '&bDiller güncellendi.'
+      addons-reloaded: '&bEklentiler güncellendi.'
+      settings-reloaded: '&bAyalar güncellendi.'
+      addon: '&e[name] &bgüncelleniyor.'
+      addon-reloaded: '&e[name] &bgüncellendi!'
+      warning: >-
+        &cDikkat bu tüm eklentileri güncellemektedir. Eğer konsolda bir hata
+        alırsanız restart atmalısınız.
+      unknown-addon: '&4Bilinmeyen eklenti!'
       locales:
         description: yerel ayarları yeniden yükler
-      parameters: "[addon]"
     version:
-      plugin-version: "&bBentoBox sürümü: &3[version]"
+      plugin-version: '&bBentoBox sürümü: &3[version]'
       description: Bilgi verir.
       loaded-addons: 'Yüklenen eklentiler:'
       loaded-game-worlds: 'Yüklenen oyun dünyaları:'
-      addon-syntax: "&2[name] &3[version]"
-      game-world: "&2 [name] &7 (&3 [addon]&7 ): &3 [worlds]"
-      server: "&2Sunucu &3[name] [version] &2sürümünde çalışıyor."
-      database: "&2 Database: &3 [database]"
-      game-worlds: "&2[name] &3([addon])"
+      addon-syntax: '&2[name] &3[version]'
+      game-world: '&2 [name] &7 (&3 [addon]&7 ): &3 [worlds]'
+      server: '&2Sunucu &3[name] [version] &2sürümünde çalışıyor.'
+      database: '&2 Veritabanı: &3 [database]'
     manage:
       description: Ayarlar panelini açar.
     catalog:
@@ -481,121 +562,175 @@ commands:
         &aBu komut o kadar spammiş ki geri bildirimler sohbetten okunamıyor ...
     migrate:
       description: Verileri bir veritabanından diğerine geçirir
-      players: "&6Geçen oyuncular"
-      names: "&6Geçen isimler"
-      addons: "&6Geçen eklentiler"
-      class: "&6Geçen [description]"
-      migrated: "&AGeçirildi!"
+      players: '&6Geçen oyuncular'
+      names: '&6Geçen isimler'
+      addons: '&6Geçen eklentiler'
+      class: '&6Geçen [description]'
+      migrated: '&AGeçirildi!'
+      completed: '[prefix_bentobox]&a Tamamlandı'
+    rank:
+      description: rütbeleri listele, ekle veya çıkar
+      parameters: '&a [list | add | remove] [rütbe referansı] [rütbe değeri]'
+      add:
+        success: '&a Eklendi [rank] değeri [number] ile'
+        failure: '&c [number] değeri ile [rank] eklenemedi. Belki bir kopya mı?'
+      remove:
+        success: '&a Kaldırıldı [rank]'
+        failure: '&c [rank] silinemedi. Bilinmeyen rütbe.'
+      list: '&a kayıtlı rütbeler şunlardır:'
   confirmation:
-    confirm: "&4Onaylamak icin &e[seconds] &4saniye icinde tekrar yaz!"
-    previous-request-cancelled: "&4Istek iptal edildi!"
-    request-cancelled: "&4Istek zaman aşımına ugradı ve iptal edildi!"
+    confirm: '&4Onaylamak icin &e[seconds] &4saniye icinde tekrar yaz!'
+    previous-request-cancelled: '&4Istek iptal edildi!'
+    request-cancelled: '&4Istek zaman aşımına ugradı ve iptal edildi!'
   delay:
-    previous-command-cancelled: "&cÖnceki komut iptal edildi."
-    stand-still: "&6Sakın hareket etme. &e[seconds] &6saniye içerisinde ışınlanacaksın."
-    moved-so-command-cancelled: "&cHareket ettin. Işınlanma bozuldu!"
+    previous-command-cancelled: '&cÖnceki komut iptal edildi.'
+    stand-still: '&6Sakın hareket etme. &e[seconds] &6saniye içerisinde ışınlanacaksın.'
+    moved-so-command-cancelled: '&cHareket ettin. Işınlanma bozuldu!'
   island:
     about:
       description: Eklenti hakkında bilgi verir.
     go:
-      parameters: "[home number]"
+      parameters: '[home number]'
       description: Adana ışınlar.
-      teleport: "&9Adana ışınlanıyorsun!"
-      teleported: "&e#[number] &bnumaralı evine gidiyorsun."
-      unknown-home: "&c Bilinmeyen ev adı!"
-      tip: "&9Yardım için &e/is help"
+      teleport: '&9Adana ışınlanıyorsun!'
+      in-progress: '&a Teleportasyon devam ediyor, lütfen bekleyin...'
+      teleported: '&e#[number] &bnumaralı evine gidiyorsun.'
+      failure: >-
+        &c Bir nedenden dolayı ışınlanma başarısız oldu. Lütfen daha sonra
+        tekrar deneyin.
+      unknown-home: '&c Bilinmeyen ev adı!'
     help:
       description: Ana ada komudu
-      pick-world: "&4Specify world from [worlds]"
     spawn:
       description: Başlangıç noktasına ışınlar.
-      teleporting: " &aBaşlangıç noktasına ışınlanıyorsun!"
-      no-spawn: "&4Bu dünyada başlangıç noktan yok!"
+      teleporting: ' &aBaşlangıç noktasına ışınlanıyorsun!'
+      no-spawn: '&4Bu dünyada başlangıç noktan yok!'
     create:
       description: Ada olustur
-      parameters: "<blueprint>"
-      too-many-islands: "&4Ada olusturulacak bolge kalmadı."
-      cannot-create-island: "&cZamanında bir yer bulunamadı, lütfen tekrar deneyin..."
-      unable-create-island: "&4Adan olusturulamıyor. Yetkili ile gorus!"
-      creating-island: "&9Adan oluşturuluyor, birazcık bekle!"
+      parameters: <blueprint>
+      too-many-islands: '&4Ada olusturulacak bolge kalmadı.'
+      cannot-create-island: '&cZamanında bir yer bulunamadı, lütfen tekrar deneyin...'
+      unable-create-island: '&4Adan olusturulamıyor. Yetkili ile gorus!'
+      creating-island: '&9Adan oluşturuluyor, birazcık bekle!'
+      you-cannot-make: '&c Artık daha fazla ada yapamazsın!'
+      max-uses: '&c Bu türden daha fazla [prefix_island] yapamazsınız!'
+      you-cannot-make-team: >-
+        &c Takım üyeleri, kendi takımlarıyla aynı dünyada ada yapamazlar
+        [prefix_island].
       pasting:
-        estimated-time: "&9Tahmini oluşturulma süresi &8- &a[number] &9saniye."
-        blocks: "&9İnşaat edilen blok sayısı &8 - &a[number]"
-        entities: "&9Entegre edilen varlık sayısı &8- &a[number]"
-        done: "&5Adan başarıyla oluşturuldu!"
-      pick: "&9Ada gözükmüyorsa &e/ada"
-      unknown-blueprint: "&cŞematik henüz yüklenemedi."
-      on-first-login: "&9Hoşgeldin, adan bir kaç saniye içerisinde hazır olacaktır!"
-      you-can-teleport-to-your-island: "&6İstediğiniz zaman adanıza ışınlanabilirsiniz."
-      unknown-schem: "&4Taslak yüklenemedi!"
+        estimated-time: '&9Tahmini oluşturulma süresi &8- &a[number] &9saniye.'
+        blocks: '&9İnşaat edilen blok sayısı &8 - &a[number]'
+        entities: '&9Entegre edilen varlık sayısı &8- &a[number]'
+        dimension-done: '&a [prefix_Island] [world] içinde inşa edildi.'
+        done: '&5Adan başarıyla oluşturuldu!'
+      pick: '&9Ada gözükmüyorsa &e/ada'
+      unknown-blueprint: '&cŞematik henüz yüklenemedi.'
+      on-first-login: '&9Hoşgeldin, adan bir kaç saniye içerisinde hazır olacaktır!'
+      you-can-teleport-to-your-island: '&6İstediğiniz zaman adanıza ışınlanabilirsiniz.'
     deletehome:
       description: bir ev noktasını sil
-      parameters: "[home name]"
+      parameters: '[ev adı]'
     homes:
       description: evlerini listele
     info:
       description: Ada hakkında bilgi verir.
-      parameters: "<player>"
+      parameters: <player>
     near:
       description: Etrafında bulunan adaları gösterir.
-      the-following-islands: "&eYakındaki adalar"
-      syntax: "&d[direction] &a&l» &b[name]"
+      parameters: ''
+      the-following-islands: '&eYakındaki adalar'
+      syntax: '&d[direction] &a&l» &b[name]'
       north: Kuzey
       south: Güney
       east: Doğu
       west: Batı
-      no-neighbors: "&4Yakınında ada yok!"
+      no-neighbors: '&4Yakınında ada yok!'
     reset:
       description: Eski adanı siler yenisi açar
-      parameters: "<blueprint>"
-      none-left: "&4Sıfırlama hakkın kalmadı!"
-      resets-left: "&e[number] &4sıfırlama hakkın kaldı!"
-      confirmation: |-
+      parameters: <blueprint>
+      none-left: '&4Sıfırlama hakkın kalmadı!'
+      resets-left: '&e[number] &4sıfırlama hakkın kaldı!'
+      confirmation: >-
         &cBunu yapmak istediğine emin misin?
-        &cAdadaki herkes atılacak ve onlara tekrardan adaya davet isteği atmalısın.
+
+        &cAdadaki herkes atılacak ve onlara tekrardan adaya davet isteği
+        atmalısın.
+
         &cBu işlemin geri dönüşü yok!
-      kicked-from-island: "&cAdadan atıldın. Çünkü ada sahibi adayı sıfırladı."
-      must-remove-members: "&4Restartlamadan önce adadan herkesi at (/island team
-        kick <player>)."
+      kicked-from-island: '&cAdadan atıldın. Çünkü ada sahibi adayı sıfırladı.'
     sethome:
       description: Oldugun noktaya ev olarak kaydeder
-      must-be-on-your-island: "&4Önce adanda olmalısın!"
-      too-many-homes: "&c Ayarlanamadı - adanızda maksimum sayıda [number] ev var."
-      home-set: "&9Oldugun lokasyon ev olarak kaydedildi!"
-      homes-are: "&6 Adadaki evler:"
-      home-list-syntax: "&6 [name]"
+      must-be-on-your-island: '&4Önce adanda olmalısın!'
+      too-many-homes: '&c Ayarlanamadı - adanızda maksimum sayıda [number] ev var.'
+      home-set: '&9Oldugun lokasyon ev olarak kaydedildi!'
+      homes-are: '&6 Adadaki evler:'
+      home-list-syntax: '&6 [name]'
       nether:
-        not-allowed: "&4Netherde ev kaydetmek icin yetkin yok!."
-        confirmation: "&4Nethera ev kaydetmek istedigine emin misin?"
+        not-allowed: '&4Netherde ev kaydetmek icin yetkin yok!.'
+        confirmation: '&4Nethera ev kaydetmek istedigine emin misin?'
       the-end:
-        not-allowed: "&4Ende ev kaydetmek icin yetin yok!"
-        confirmation: "&4Ende ev kaydetmek istedigine emin misin?"
-      parameters: "[home number]"
+        not-allowed: '&4Ende ev kaydetmek icin yetin yok!'
+        confirmation: '&4Ende ev kaydetmek istedigine emin misin?'
+      parameters: '[home number]'
     setname:
       description: Ada ismini degistir.
-      name-too-short: "&4Cok kısa. En az &e[number] &4karakter olabilir!."
-      name-too-long: "&4Cok uzun. En uzun &E[number] &4olabilir."
-      name-already-exists: "&cBöyle bir isim zaten bulunmakta."
-      parameters: "<name>"
-      success: "&9Yeni ada ismin &8- &a[name]"
+      name-too-short: '&4Cok kısa. En az &e[number] &4karakter olabilir!.'
+      name-too-long: '&4Cok uzun. En uzun &E[number] &4olabilir.'
+      name-already-exists: '&cBöyle bir isim zaten bulunmakta.'
+      parameters: <isminiz>
+      success: '&9Yeni ada ismin &8- &a[name]'
     renamehome:
       description: bir evi yeniden adlandır
-      parameters: "[home name]"
-      enter-new-name: "&6 Yeni bir isim gir"
-      already-exists: "&c Bu isim mevcut, lütfen farklı bir isim dene."
+      parameters: '[ev adı]'
+      enter-new-name: '&6 Yeni bir isim gir'
+      already-exists: '&c Bu isim mevcut, lütfen farklı bir isim dene.'
     resetname:
       description: Ada ismini resetle.
-      success: "&9Ada ismini başarıyla sıfırladın."
+      success: '&9Ada ismini başarıyla sıfırladın.'
     team:
       description: Takımını yönet!
+      gui:
+        titles:
+          team-panel: Ekip Yönetimi
+        buttons:
+          status:
+            name: Durum
+            description: Ekibin durumu
+          rank-filter:
+            name: Rütbe Filtresi
+            description: '&a Sıraları döndürmek için tıklayın'
+          invitation: Davetiyeniz
+          invite:
+            name: Oyuncuyu davet et
+            description: |-
+              &a Oyuncuların listede gösterilebilmesi için
+              &a seninle aynı dünyada olmaları
+              &a gerekir.
+        tips:
+          LEFT:
+            name: '&b Sol Tıkla'
+            invite: '&a bir oyuncuyu davet etmek için'
+          RIGHT:
+            name: '&b Sağ Tıkla'
+          SHIFT_RIGHT:
+            name: '&b Sağ Tıklama ile Kaydırma'
+            reject: '&a reddetmek için'
+            kick: '&a oyuncuyu atmak için'
+            leave: '&a takımı bırakmak için'
+          SHIFT_LEFT:
+            name: '&b Sol Tıkla + Shift'
+            accept: '&a kabul etmek için'
+            setowner: |-
+              &a sahibi ayarlamak için  
+              &a bu oyuncuya
       info:
         description: Takımında hakkın detayli bilgi verir!
         member-layout:
-          online: "&a &l  o &r &f [name]"
-          offline: "&c &l  o &r &f [name] &7 ([last_seen])"
-          offline-not-last-seen: "&c &l  o &r &f [name]"
+          online: '&a &l  o &r &f [name]'
+          offline: '&c &l  o &r &f [name] &7 ([last_seen])'
+          offline-not-last-seen: '&c &l  o &r &f [name]'
         last-seen:
-          layout: "&b[number] &7[unit] önce"
+          layout: '&b[number] &7[unit] önce'
           days: gün
           hours: saat
           minutes: dakika
@@ -604,151 +739,183 @@ commands:
           &9Üye sayısı &8- &a[total]&8/&5[max]
           &9Aktif üyeler &8- &a[online]
         rank-layout:
-          owner: "&6 [rank]:"
-          generic: "&6 [rank] &7 (&b [number]&7 )&6 :"
+          owner: '&6 [rank]:'
+          generic: '&6 [rank] &7 (&b [number]&7 )&6 :'
       coop:
         description: Adana işçi ekle!
-        parameters: "<player>"
-        cannot-coop-yourself: "&4Kendini isci olarak ekleyemezsin!"
-        already-has-rank: "&4Oyuncu zaten isci!"
-        you-are-a-coop-member: "&d[name] &bseni işçi olarak adanasına aldı!"
-        success: "&d[name] &9işçi olarak ekledin."
-        name-has-invited-you: "&d[name] &6adanda işçi olarak çalışman için istek yolladı."
+        parameters: <player>
+        cannot-coop-yourself: '&4Kendini isci olarak ekleyemezsin!'
+        already-has-rank: '&4Oyuncu zaten isci!'
+        you-are-a-coop-member: '&d[name] &bseni işçi olarak adanasına aldı!'
+        success: '&d[name] &9işçi olarak ekledin.'
+        name-has-invited-you: '&d[name] &6adanda işçi olarak çalışman için istek yolladı.'
       uncoop:
         description: İşçiyi adandan çıkar
-        parameters: "<player>"
-        cannot-uncoop-yourself: "&4Kendini isten cıkaramazsın!"
-        cannot-uncoop-member: "&4Sen isciyi cıkartamazsın!"
-        player-not-cooped: "&4Bu oyuncu isci degil!"
-        you-are-no-longer-a-coop-member: "&e[name]&4 adasından isci yetkin alındı!"
-        all-members-logged-off: "&4Tum ada oyuncuları cevrımdısı. Isci yetkin &e[name]&4adasından
-          alındı!"
-        success: "&d[name] &a9artık adanda işçi değil!"
-        is-full: "&c Başkasını kooperatif üyesi yapamazsınız."
+        parameters: <player>
+        cannot-uncoop-yourself: '&4Kendini isten cıkaramazsın!'
+        cannot-uncoop-member: '&4Sen isciyi cıkartamazsın!'
+        player-not-cooped: '&4Bu oyuncu isci degil!'
+        you-are-no-longer-a-coop-member: '&e[name]&4 adasından isci yetkin alındı!'
+        all-members-logged-off: >-
+          &4Tum ada oyuncuları cevrımdısı. Isci yetkin &e[name]&4adasından
+          alındı!
+        success: '&d[name] &a9artık adanda işçi değil!'
+        is-full: '&c Başkasını kooperatif üyesi yapamazsınız.'
       trust:
         description: Adana arkadas ekle
-        parameters: "<player>"
-        trust-in-yourself: "&4Kendine guven!"
-        name-has-invited-you: "&d[name] &6adanda arkadaş olarak katılman için istek
-          yolladı!"
-        player-already-trusted: "&4Oyuncu zaten arkadaş!"
-        you-are-trusted: "&e[name] &bseni arkadaş olarak ekledi!"
-        success: "&d[name] &9arkadaş olarak eklendin!"
-        is-full: "&c Başkasına güvenemezsiniz."
-        members-trusted: "&4Uye arkadas olarak eklendi!"
+        parameters: <player>
+        trust-in-yourself: '&4Kendine guven!'
+        name-has-invited-you: '&d[name] &6adanda arkadaş olarak katılman için istek yolladı!'
+        player-already-trusted: '&4Oyuncu zaten arkadaş!'
+        you-are-trusted: '&e[name] &bseni arkadaş olarak ekledi!'
+        success: '&d[name] &9arkadaş olarak eklendin!'
+        is-full: '&c Başkasına güvenemezsiniz.'
       untrust:
         description: Arkadaslık yetkisini kaldır!
-        parameters: "<player>"
-        cannot-untrust-yourself: "&4Kendi guvenini kaldıramazsın!"
-        cannot-untrust-member: "&4Arkadas yetkisini kaldıramazsın!"
-        player-not-trusted: "&4Oyuncu zaten arkadas degil!"
-        you-are-no-longer-trusted: "&4Artık &d[name] &4arkadaşı degilsin!"
-        success: "&d[name] &9artık arkadaşın değil!"
+        parameters: <player>
+        cannot-untrust-yourself: '&4Kendi guvenini kaldıramazsın!'
+        cannot-untrust-member: '&4Arkadas yetkisini kaldıramazsın!'
+        player-not-trusted: '&4Oyuncu zaten arkadas degil!'
+        you-are-no-longer-trusted: '&4Artık &d[name] &4arkadaşı degilsin!'
+        success: '&d[name] &9artık arkadaşın değil!'
       invite:
         description: Adana oyuncu davet et.
-        invitation-sent: "&d[name] &boyuncusuna davet gonderildi!"
-        removing-invite: "&4Davet iptal edildi."
-        name-has-invited-you: "&d[name] &bseni adasına katılman icin davet etti!"
-        to-accept-or-reject: "&5/[label] team accept &byazarsan kabul &5/[label] team
-          reject &byazarsan iptal edersin!"
-        you-will-lose-your-island: "&4DIKKAT! Kabul edersen adan silinir!"
+        invitation-sent: '&d[name] &boyuncusuna davet gonderildi!'
+        removing-invite: '&4Davet iptal edildi.'
+        name-has-invited-you: '&d[name] &bseni adasına katılman icin davet etti!'
+        to-accept-or-reject: >-
+          &5/[label] team accept &byazarsan kabul &5/[label] team reject
+          &byazarsan iptal edersin!
+        you-will-lose-your-island: '&4DIKKAT! Kabul edersen adan silinir!'
+        gui:
+          titles:
+            team-invite-panel: Oyuncuları Davet Et
+          button:
+            already-invited: '&c Zaten davet edildi'
+            search: '&a Bir oyuncu ara'
+            searching: |-
+              &b Aranıyor
+              &c [name]
+          enter-name: '&a İsim girin:'
+          tips:
+            LEFT:
+              name: '&b Sol Tıklama'
+              search: '&a Oyuncunun ismini girin'
+              back: '&a Geri'
+              invite: |-
+                &a bir oyuncuyu davet etmek için  
+                &a ekibinize katılmak için
+            RIGHT:
+              name: '&b Sağ Tıklayın'
+              coop: '&a kooperatif oyuncu için'
+            SHIFT_LEFT:
+              name: '&b Sol Tıkla Kaydır'
+              trust: '&a bir oyuncuya güvenmek için'
         errors:
-          cannot-invite-self: "&4Kendine davet atamazsın!"
-          cooldown: "&4Başkasına davet göndermek için [number] saniye bekle!"
-          island-is-full: "&4Adan dolu daha fazla kimseyi davet edemezsin!"
-          none-invited-you: "&4Seni davet eden kimse yok -_-"
-          you-already-are-in-team: "&4Zaten bir takımdasın!"
-          already-on-team: "&4Oyuncu zaten takımda!"
-          invalid-invite: "&4Davet süresi bitti, üzgünüm."
-          you-have-already-invited: "&cOyuncuyu zaten davet ettin."
-        parameters: "<player>"
-        you-can-invite: "&e[number] &bdaha oyuncu davet edebilirsin!"
+          cannot-invite-self: '&4Kendine davet atamazsın!'
+          cooldown: '&4Başkasına davet göndermek için [number] saniye bekle!'
+          island-is-full: '&4Adan dolu daha fazla kimseyi davet edemezsin!'
+          none-invited-you: '&4Seni davet eden kimse yok -_-'
+          you-already-are-in-team: '&4Zaten bir takımdasın!'
+          already-on-team: '&4Oyuncu zaten takımda!'
+          invalid-invite: '&4Davet süresi bitti, üzgünüm.'
+          you-have-already-invited: '&cOyuncuyu zaten davet ettin.'
+        parameters: <player>
+        you-can-invite: '&e[number] &bdaha oyuncu davet edebilirsin!'
         accept:
           description: Daveti kabul et
-          you-joined-island: "&9Adaya girdin. &5/[label] team info &byazarak diger
-            uyelere bakabilirsin!"
-          name-joined-your-island: "&d[name] &badana katıldı!"
+          you-joined-island: >-
+            &9Adaya girdin. &5/[label] team info &byazarak diger uyelere
+            bakabilirsin!
+          name-joined-your-island: '&d[name] &badana katıldı!'
           confirmation: |-
             &cAre you sure you want to accept this invite?
             &c&lYou will &nLOSE &r&c&lyour current island!
         reject:
           description: Daveti reddet
-          you-rejected-invite: "&9Ada katılma istegini reddettin!"
-          name-rejected-your-invite: "&d[name] &4davetini reddetti!"
+          you-rejected-invite: '&9Ada katılma istegini reddettin!'
+          name-rejected-your-invite: '&d[name] &4davetini reddetti!'
         cancel:
           description: Adanıza davet ettiğin birisinin davetiyesini iptal ettin!
       leave:
-        cannot-leave: "&4Ada sahibi cıkamaz! İlk önce adadan herkesi atması gerekir!"
+        cannot-leave: '&4Ada sahibi cıkamaz! İlk önce adadan herkesi atması gerekir!'
         description: Adandan çık
-        left-your-island: "&d[name] &cadandan çıktı!"
-        success: "&cAdadan ayrıldın."
+        left-your-island: '&d[name] &cadandan çıktı!'
+        success: '&cAdadan ayrıldın.'
       kick:
         description: Adandan oyuncu at!
-        parameters: "<player>"
-        owner-kicked: "&4Ada sahibi adasından seni attı!"
-        cannot-kick: "&4Kendini atamazsın!"
-        success: "&9[name] &badandan atıldı!"
+        parameters: <player>
+        player-kicked: '&c [name] seni [prefix_island] dan [gamemode] modunda attı!'
+        cannot-kick: '&4Kendini atamazsın!'
+        cannot-kick-rank: '&c Sıralamanız [name]’i atmanıza izin vermiyor!'
+        success: '&9[name] &badandan atıldı!'
       demote:
         description: Adandaki oyuncunun rankını düşürür.
-        parameters: "<player>"
+        parameters: <player>
         errors:
-          cant-demote-yourself: "&cKendi rütbeni düşüremezsin!"
-        failure: "&4Oyuncunun rankı daha fazla düşürelemiyor!"
-        success: "&d[name] &crütbesi &e[rank] &cdüşürüldü."
+          cant-demote-yourself: '&cKendi rütbeni düşüremezsin!'
+          cant-demote: '&c Daha yüksek rütbeleri geri alamazsınız!'
+          must-be-member: '&c Oyuncu [prefix_an-island] üyesi olmalıdır!'
+        failure: '&4Oyuncunun rankı daha fazla düşürelemiyor!'
+        success: '&d[name] &crütbesi &e[rank] &cdüşürüldü.'
       promote:
         description: Adandaki üyelerin yetkisini yükselt.
-        parameters: "<player>"
-        failure: "&4Oyuncunun rankı daha fazla artıralamıyor!"
-        success: "&d[name] &arütbesi &e[rank] &ayükseltildi."
+        parameters: <player>
+        errors:
+          cant-promote-yourself: '&c Kendini tanıtamazsın!'
+          cant-promote: '&c Rütbenizin üstüne terfi edemezsiniz!'
+          must-be-member: '&c Oyuncu [prefix_an-island] üyesi olmalıdır!'
+        failure: '&4Oyuncunun rankı daha fazla artıralamıyor!'
+        success: '&d[name] &arütbesi &e[rank] &ayükseltildi.'
       setowner:
         description: Ada liderliğini bir üyeye ver.
         errors:
-          cant-transfer-to-yourself: "&4Kendine ada liderligini veremezsin!"
-          target-is-not-member: "&4Bu oyuncu senin ada takımında degil!"
-        name-is-the-owner: "&d[name] &bartık yeni ada sahibi!"
-        parameters: "<player>"
-        you-are-the-owner: "&9Artık ada sahibi sensin!"
+          cant-transfer-to-yourself: '&4Kendine ada liderligini veremezsin!'
+          target-is-not-member: '&4Bu oyuncu senin ada takımında degil!'
+          at-max: '&c O oyuncunun izin verilen maksimum ada sayısına ulaşmış durumda!'
+        name-is-the-owner: '&d[name] &bartık yeni ada sahibi!'
+        parameters: <player>
+        you-are-the-owner: '&9Artık ada sahibi sensin!'
     ban:
       description: Adandan oyuncu banla.
-      parameters: "<player>"
-      cannot-ban-yourself: "&4Kendini banlayamazsın!"
-      cannot-ban: "&4Oyuncu banlanamaz."
-      cannot-ban-member: "&4ilk önce adandan at ondan sonra banla!"
-      cannot-ban-more-players: "&4Banlama sınırını astin! Daha fazla kimseyi banlayamazsın."
-      player-already-banned: "&4Oyuncu zaten banlı!"
-      player-banned: "&d[name] &badandan banlandı!"
-      owner-banned-you: "&d[name] &4adandan banlandı!"
-      you-are-banned: "&9Adadan banlandın!"
+      parameters: <player>
+      cannot-ban-yourself: '&4Kendini banlayamazsın!'
+      cannot-ban: '&4Oyuncu banlanamaz.'
+      cannot-ban-member: '&4ilk önce adandan at ondan sonra banla!'
+      cannot-ban-more-players: '&4Banlama sınırını astin! Daha fazla kimseyi banlayamazsın.'
+      player-already-banned: '&4Oyuncu zaten banlı!'
+      player-banned: '&d[name] &badandan banlandı!'
+      owner-banned-you: '&d[name] &4adandan banlandı!'
+      you-are-banned: '&9Adadan banlandın!'
     unban:
       description: Oyuncunun ada banını aç.
-      parameters: "<player>"
-      cannot-unban-yourself: "&4Kendi banını acamazsın!"
-      player-not-banned: "&4Oyuncu banlı degil!"
-      player-unbanned: "&d[name] &bbanı adandan kaldırıldı!"
-      you-are-unbanned: "&d[name] &bbanını adadan kaldırdı!"
+      parameters: <player>
+      cannot-unban-yourself: '&4Kendi banını acamazsın!'
+      player-not-banned: '&4Oyuncu banlı degil!'
+      player-unbanned: '&d[name] &bbanı adandan kaldırıldı!'
+      you-are-unbanned: '&d[name] &bbanını adadan kaldırdı!'
     banlist:
       description: Banlı oyuncuları gor!
-      noone: "&9Adanda banlı kimse yok!"
-      the-following: "&9Bu oyuncular banlı!:"
-      names: "&4[line]"
-      you-can-ban: "&e[number] &bdaha oyuncuya banlayabilirsin!"
+      noone: '&9Adanda banlı kimse yok!'
+      the-following: '&9Bu oyuncular banlı!:'
+      names: '&4[line]'
+      you-can-ban: '&e[number] &bdaha oyuncuya banlayabilirsin!'
     settings:
       description: Ada ayarları
     language:
       description: Dili seç.
-      parameters: "[dil]"
-      not-available: "&c Bu dil mevcut değil."
-      already-selected: "&c Zaten bu dili kullanıyorsunuz."
+      parameters: '[dil]'
+      not-available: '&c Bu dil mevcut değil.'
+      already-selected: '&c Zaten bu dili kullanıyorsunuz.'
     expel:
       description: Adandan bir misafiri at.
-      parameters: "<player>"
-      cannot-expel-yourself: "&4Adadan kendini atamazsın!"
-      cannot-expel: "&4Bu oyuncu atılamaz!"
-      cannot-expel-member: "&cBir ekip üyesini sınır dışı edemezsiniz!"
-      not-on-island: "&4Bu misafir şuanda adanda değil!"
-      player-expelled-you: "&d[name] &4seni adadan attı!"
-      success: "&d[name] &9oyuncusunu adadan attın!"
-      cannot-ban-member: "&9Takımdan birisini adadan atamazsın!"
+      parameters: <player>
+      cannot-expel-yourself: '&4Adadan kendini atamazsın!'
+      cannot-expel: '&4Bu oyuncu atılamaz!'
+      cannot-expel-member: '&cBir ekip üyesini sınır dışı edemezsiniz!'
+      not-on-island: '&4Bu misafir şuanda adanda değil!'
+      player-expelled-you: '&d[name] &4seni adadan attı!'
+      success: '&d[name] &9oyuncusunu adadan attın!'
 ranks:
   owner: Ada-Sahibi
   sub-owner: Yardımcı
@@ -762,6 +929,10 @@ ranks:
 protection:
   command-is-banned: Ziyaretçileri banlar.
   flags:
+    ALLAY:
+      name: Allay etkileşimi
+      description: Allay'e eşya verme ve alma işlemlerine izin ver
+      hint: Allay etkileşimi devre dışı bırakıldı
     ANIMAL_NATURAL_SPAWN:
       description: Doğal hayvan yumurtlamasını aç / kapat
       name: Hayvan doğal yumurtlama
@@ -770,16 +941,24 @@ protection:
       name: Hayvan yumurtlayanlar
     ANVIL:
       description: Örs kullanımı değiş.
-      name: Anvils
+      name: Çekiçler
       hint: Anvil kapalıda kullan.
     ARMOR_STAND:
       description: Zırh askısı kullanımı değiş.
       name: Zırh askısı
       hint: Zırh askısı kapalıda kullan.
+    AXOLOTL_SCOOPING:
+      name: Axolotl Kazma
+      description: Bir kova kullanarak aksolotların toplanmasına izin verin
+      hint: Axolotl çıkarma devre dışı bırakıldı
     BEACON:
       description: Fener kullanımı değiş.
       name: Fener
       hint: Feneri kapalıda kullan.
+    BELL_RINGING:
+      description: Etkileşimi aç/kapat
+      name: Zil çalmasına izin ver
+      hint: Zil çalma devre dışı bırakıldı
     BED:
       description: Yatak kullanımı değiş.
       name: Yatak
@@ -788,6 +967,10 @@ protection:
       name: Tekne
       description: Tekne kullanımı değiş.
       hint: Tekne etkileşimini kapalıda kullan
+    BOOKSHELF:
+      name: Kitaplıklar
+      description: '&a Kitap yerleştirmeye izin ver\n&a veya kitap almaya izin ver.'
+      hint: '[kitap] yerleştiremiyorum veya [kitap] alamıyorum.'
     BREAK_BLOCKS:
       description: Kırmayı değiş
       name: Blok kırma
@@ -820,10 +1003,18 @@ protection:
       description: Buton kullanımı değiş.
       name: Buton
       hint: Buton kullanımı kapalı.
+    CANDLES:
+      description: Mum etkileşimini aç / kapat
+      name: Mumlar
+      hint: Mum etkileşimi devre dışı bırakıldı
     CAKE:
       description: Kek yemesini kapatır/açar.
       name: Kekler
       hint: Kek yemesi kapalı.
+    CARTOGRAPHY:
+      name: Harita yapımı masaları
+      description: Kullanımı aç/kapat
+      hint: Harita masası erişimi devre dışı bırakıldı
     CONTAINER:
       name: Kutular
       description: |-
@@ -835,9 +1026,8 @@ protection:
     CHEST:
       name: Sandıklar ve minecart sandıkları
       description: |-
-        &a Toggle interaction with chests
-        &a and chest minecarts.
-        &a (does not include trapped chests)
+        &a Sandıklara ve sandık maden arabalarına etkileşimi aç/kapat  
+        &a (kapanmış sandıkları içermez)
       hint: Sandık erişimi devre dışı
     BARREL:
       name: Variller
@@ -845,22 +1035,43 @@ protection:
       hint: Varil erişimi devre dışı bırakıldı
     BLOCK_EXPLODE_DAMAGE:
       description: |-
-        &a Allow Bed & Respawn Anchors
-        &a to break blocks and damage
-        &a entities.
+        &a Yatak & Yeniden Doğma Noktalarının  
+        &a blokları kırmasına ve  
+        &a varlıklara zarar vermesine izin ver.
       name: Patlama hasarını engelle
     COMPOSTER:
       name: Kompostolar
       description: Komposter etkileşimini aç/kapat
       hint: Komposto etkileşimi devre dışı bırakıldı
+    LOOM:
+      name: Dokuma Tezgahı
+      description: Kullanımı değiştirmek için
+      hint: Loom erişimi devre dışı bırakıldı
     FLOWER_POT:
       name: Çiçek saksıları
       description: Saksı etkileşimini aç/kapat
       hint: Saksı etkileşimi devre dışı bırakıldı
+    GRINDSTONE:
+      name: Taşlama Tahtası
+      description: Kullanımı aç/kapat
+      hint: Grindstone erişimi devre dışı bırakıldı
     SHULKER_BOX:
       name: Shulker kutuları
       description: Shulker kutusu etkileşimini aç/kapat
       hint: Shulker kutusu erişimi devre dışı bırakıldı
+    SHULKER_TELEPORT:
+      description: |-
+        &a Shulker taşınabilir
+        &a eğer aktifse.
+      name: Shulker teleporta
+    SMITHING:
+      name: Demircilik
+      description: Kullanımı aç/kapat
+      hint: Dövme erişimi devre dışı
+    STONECUTTING:
+      name: Taş Kesimi
+      description: Kullanımı değiştirmek için
+      hint: Taş kesim erişimi devre dışı bırakıldı
     TRAPPED_CHEST:
       name: Kapana kısılmış sandıklar
       description: Sıkışmış göğüs etkileşimini aç/kapat
@@ -913,9 +1124,15 @@ protection:
         &a(Kovaları geçersiz kılar)
       name: Su toplaması
       hint: Su toplaması kapalı
+    COLLECT_POWDERED_SNOW:
+      description: |-
+        &a Toz kar toplaymayı aç/kapat  
+        &a (Kovaları geçersiz kıl)
+      name: Küçük kar tozu topla
+      hint: Toz kar kovalari devre dışı bırakıldı
     COMMAND_RANKS:
-      name: "&eKomut sırlaması"
-      description: "&aKomut sıralarını yapılandır"
+      name: '&eKomut sırlaması'
+      description: '&aKomut sıralarını yapılandır'
     CRAFTING:
       description: Kullanımı değiş.
       name: Çalışma masası
@@ -927,6 +1144,10 @@ protection:
       description: Creeper patlamasını değiş.
       name: Creeper patlaması
       hint: Creeper patlama hasarı yoktur.
+    CROP_PLANTING:
+      description: '&a Tohumları kimin dikeceğini ayarla.'
+      name: Bitki ekimi
+      hint: Ekin dikimi devre dışı bırakıldı
     CROP_TRAMPLE:
       description: Ekinleri ezilmesini değiş.
       name: Ekin ezilmesi
@@ -965,35 +1186,39 @@ protection:
         &atuttuğu blok düşürmeyi değişir.
       name: Enderman ölme eşyası
     ENDERMAN_GRIEFING:
-      description: "&aEndermenin adadan blok almasına izin verir."
+      description: '&aEndermenin adadan blok almasına izin verir.'
       name: Enderman hasarı
+    ENDERMAN_TELEPORT:
+      description: '&a Enderman''lar aktif olduğunda ışınlanabilir.'
+      name: Enderman ışınlanması
     ENDER_PEARL:
       description: Kullanımı değiş.
       name: Ender İncisi
       hint: Ender İncisi kullanımı kapalı
     ENTER_EXIT_MESSAGES:
       description: Adaya giriş/çıkışları gösterir.
-      island: "[name]"
+      island: '[name]'
       name: Giriş/çıkış mesajları
-      now-entering: "&d[name] &badasına girdin!"
-      now-entering-your-island: "&aAdana giriş yaptın: &b [name]"
-      now-leaving: "&d[name] &badasından çıktın!"
-      now-leaving-your-island: "&aAdandan çıktın: &b [name]"
+      now-entering: '&d[name] &badasına girdin!'
+      now-entering-your-island: '&aAdana giriş yaptın: &b [name]'
+      now-leaving: '&d[name] &badasından çıktın!'
+      now-leaving-your-island: '&aAdandan çıktın: &b [name]'
     EXPERIENCE_BOTTLE_THROWING:
       name: XP şisesi fırlatması
       description: XP şişe fırlatılmasını değiş.
       hint: XP şişelerin fırlatılmasına izin verilmez.
     FIRE_BURNING:
       name: Ateşin yanması
-      description: "&aBlokların ateşle yanmasını ayarlar."
+      description: '&aBlokların ateşle yanmasını ayarlar.'
     FIRE_EXTINGUISH:
       description: Ateş söndürme değiş.
       name: Ateş söndürme
       hint: Yangın söndürmeye izin verilmez
     FIRE_IGNITE:
       name: Ateş yakma
-      description: "&aAteşin oyuncu olmayan yollarla \n&atutuşup tutuşmayacağı arasında
-        geçiş yapın."
+      description: |-
+        &aAteşin oyuncu olmayan yollarla 
+        &atutuşup tutuşmayacağı arasında geçiş yapın.
     FIRE_SPREAD:
       name: Ateşin yayılması
       description: |-
@@ -1018,12 +1243,26 @@ protection:
       name: Kapılar
       hint: Kapı kullanımı kapalı.
     GEO_LIMIT_MOBS:
-      description: "&aAdanın koruma alanının dışındaki \n&amobları siler."
-      name: "&eVarlıkları adayla sınırla."
+      description: |-
+        &aAdanın koruma alanının dışındaki 
+        &amobları siler.
+      name: '&eVarlıkları adayla sınırla.'
+    HARVEST:
+      description: |-
+        &a Kimlerin mahsulleri toplayabileceğini ayarla.  
+        &a Eşya alma izni vermeyi unutma!
+      name: Bitki hasadı
+      hint: Ekin hasadı devre dışı bırakıldı
     HIVE:
-      description: "&a Kovan hasatını değiştir."
+      description: '&a Kovan hasatını değiştir.'
       name: Kovan hasatı
       hint: Hasat kapalı
+    HURT_TAMED_ANIMALS:
+      description: >-
+        Zarar verme aç/kapa. Etkin olduğunda, evcil hayvanlar hasar alabilir.
+        Devre dışı olduğunda, onları yok edilemez hale getirir.
+      name: Zarar verme [tamed animals]
+      hint: Ehlileştirilmiş hayvan zarar verme devre dışı
     HURT_ANIMALS:
       description: Hasar alımını değiş
       name: Hayvan Hasarı
@@ -1046,9 +1285,9 @@ protection:
         &ahasar verip veremiyeceğini ayarlar.
       name: Item Frame Hasarı
     INVINCIBLE_VISITORS:
-      description: "&aZiyaretçi ayarlarını ayarlar."
-      name: "&eGörünmez misafirler"
-      hint: "&cMisafirler korunuyor."
+      description: '&aZiyaretçi ayarlarını ayarlar.'
+      name: '&eGörünmez misafirler'
+      hint: '&cMisafirler korunuyor.'
     ISLAND_RESPAWN:
       description: |-
         &aOyuncunun adada doğup
@@ -1072,6 +1311,7 @@ protection:
     LEASH:
       description: Kullanımını değiş.
       name: Kayış kullanımı
+      hint: Kulaklık kullanımı devre dışı bırakıldı
     LECTERN:
       name: Kürsü
       description: |-
@@ -1088,9 +1328,9 @@ protection:
       description: |-
         &aVarlıkların doğmasını
         &alimitler.
-      name: "&eVarlıkları sınırla"
-      can: "&aDoğabilir."
-      cannot: "&cDoğamaz."
+      name: '&eVarlıkları sınırla'
+      can: '&aDoğabilir.'
+      cannot: '&cDoğamaz.'
     LIQUIDS_FLOWING_OUT:
       name: Adaların dışında akan sıvı
       description: |-
@@ -1105,6 +1345,13 @@ protection:
     LOCK:
       description: Ada kilitlemesini değiş.
       name: Ada kiliti
+    CHANGE_SETTINGS:
+      name: Ayarları Değiştir
+      description: >-
+        &a Hangi üyenin
+
+        &a rolünün [prefix_island] ayarlarını değiştirebileceğini değiştirmeye
+        izin ver.
     MILKING:
       description: İnek süt sağmasını değiş.
       name: Süt sağma
@@ -1131,9 +1378,13 @@ protection:
       hint: İsim etiketini kullanımı kapalı.
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Normalin dışında doğuşu değiş.
-      description: "&aYaratıkların (hayvanlar ve canavarlar) \n&abir adanın koruma
-        alanının dışında\n&adoğal olarak doğup doğamadığı arasında geçiş yap.\n\n&cUnutmayın
-        bu el ile koyulan\n&ccanlandırıcı yumurtalarında çalışmaz!"
+      description: |-
+        &aYaratıkların (hayvanlar ve canavarlar) 
+        &abir adanın koruma alanının dışında
+        &adoğal olarak doğup doğamadığı arasında geçiş yap.
+
+        &cUnutmayın bu el ile koyulan
+        &ccanlandırıcı yumurtalarında çalışmaz!
     NOTE_BLOCK:
       description: Kullanımını değiş.
       name: Nota bloğu
@@ -1144,8 +1395,8 @@ protection:
         &aLavdan dönüşmüş
         &aobsidyeni kovayla sağ tıkladığınızda
         &ageri alamayacağınızı ayarlar!
-      scooping: "&6Obsidyen lava dönüştürüldü, daha dikkatli ol!"
-      obsidian-nearby: "&cEtrafta başka obsidyenler varken bu obsidyeni lava dönüştüremezsin!"
+      scooping: '&6Obsidyen lava dönüştürüldü, daha dikkatli ol!'
+      obsidian-nearby: '&cEtrafta başka obsidyenler varken bu obsidyeni lava dönüştüremezsin!'
     OFFLINE_GROWTH:
       description: |-
         &aEğer deaktif olursa
@@ -1177,55 +1428,54 @@ protection:
       name: Blok yerleştirme
       hint: Blok koymaya izin verilmez.
     PODZOL:
-        name: Ağaç Podzol Üretimi
-        description: |-
-          &a Devre dışı bırakılırsa,
-          &a büyük ağaçlar büyüdüğünde
-          &a ağaç podzol üretimini önler
+      name: Ağaç Podzol Üretimi
+      description: |-
+        &a Devre dışı bırakılırsa,
+        &a büyük ağaçlar büyüdüğünde
+        &a ağaç podzol üretimini önler
     POTION_THROWING:
-      name: Potion throwing
-      description: "&aİksirlerin atılmasını ayarlar."
+      name: İksir fırlatma
+      description: '&aİksirlerin atılmasını ayarlar.'
       hint: İksir atmaya izin verilmez.
     NETHER_PORTAL:
       description: Kullanımı değiş.
-      name: Nether Portal
+      name: Cehennem Portalı
       hint: Portal use is disallowed
     END_PORTAL:
       description: Kullanımı değiş.
-      name: End Portal
+      name: Son Portal
       hint: Portal use is disallowed
     PRESSURE_PLATE:
       description: Kullanımı değiş.
       name: Basınç plakası
       hint: Baskı plakası kullanımı kapalı
     PVP_END:
-      description: "&cEND'de PVP'yi ayarlar."
-      name: End PVP
+      description: '&cEND''de PVP''yi ayarlar.'
+      name: Son PVP
       hint: END'de PVP'ye izin verilmez.
-      enabled: "&cPVP END dünyasında etkin!"
-      disabled: "&aPVP END dünyasında etkin değil!"
+      enabled: '&cPVP END dünyasında etkin!'
+      disabled: '&aPVP END dünyasında etkin değil!'
     PVP_NETHER:
-      description: "&cNether'da PVP'yi ayarlar."
+      description: '&cNether''da PVP''yi ayarlar.'
       name: Nether PVP
       hint: Nether'da PVP'ye izin verilmez.
-      enabled: "&cPVP Nether dünyasında etkin!"
-      disabled: "&aPVP Nether dünyasında etkin değil!"
+      enabled: '&cPVP Nether dünyasında etkin!'
+      disabled: '&aPVP Nether dünyasında etkin değil!'
     PVP_OVERWORLD:
-      description: "&cAda'da PVP'yi ayarlar."
+      description: '&cAda''da PVP''yi ayarlar.'
       name: Ada pvp
-      hint: "&4PVP burada aktif değil!"
-      enabled: "&cPVP dünyada etkin!"
-      disabled: "&aPVP dünyada etkin değil!"
-      active: "&9PVP burada aktif!"
+      hint: '&4PVP burada aktif değil!'
+      enabled: '&cPVP dünyada etkin!'
+      disabled: '&aPVP dünyada etkin değil!'
     REDSTONE:
       description: Kullanımı değiş.
       name: Kızıltaş eşyaları
       hint: Redstone maddesi kullanımı yok
     REMOVE_END_EXIT_ISLAND:
-      description: "&aÇıkış adasının 0,0 koordinatlarda üretmesini engeller."
+      description: '&aÇıkış adasının 0,0 koordinatlarda üretmesini engeller.'
       name: Bitiş adasını kaldır
     REMOVE_MOBS:
-      description: "&aAdaya ışınlanıldığında canavarları siler."
+      description: '&aAdaya ışınlanıldığında canavarları siler.'
       name: Canavarları sil
     RIDING:
       description: Sürmeyi değiş.
@@ -1240,9 +1490,27 @@ protection:
       name: Spawn yumurtuları
       hint: Canlandırma yumurtaları fırlatılması yok
     SPAWNER_SPAWN_EGGS:
-      description: "&aCanlandırıcı yumurtalarının kullanabilirliğini ayarlar."
+      description: '&aCanlandırıcı yumurtalarının kullanabilirliğini ayarlar.'
       name: Spawnerlarda yumurta kullanımı
       hint: Canlandırma yumurtası kullanılarak spawner içeriğini değiştirilemez.
+    SCULK_SENSOR:
+      description: |-
+        &a Sculk sensörü 
+        &a aktivasyonunu açıp kapatır.
+      name: Sculk Sensörü
+      hint: sculk sensör aktivasyonu devre dışı bırakıldı
+    SCULK_SHRIEKER:
+      description: |-
+        &a Sculk çığlığı açma/kapama.  
+        &a etkinleştirme.
+      name: Sculk Shrieker
+      hint: sculk shrieker aktivasyonu devre dışı bırakıldı
+    SIGN_EDITING:
+      description: |-
+        &a Yazı düzenlemeye izin verir  
+        &a tabelaların
+      name: Tabela Düzenleme
+      hint: imza düzenleme devre dışı bırakıldı
     TNT_DAMAGE:
       description: |-
         &aTnt ve ve tnt'li vagonların
@@ -1250,7 +1518,7 @@ protection:
         &avermesini ayarlar.
       name: TNT hasarı
     TNT_PRIMING:
-      description: "&aTNT'nin etkinleşmesini engeller."
+      description: '&aTNT''nin etkinleşmesini engeller.'
       name: TNT aktifleşmesi
       hint: TNT aktifleşmesi yok
     TRADING:
@@ -1263,10 +1531,14 @@ protection:
       hint: Tuzak kapısı kullanımı yok
     TREES_GROWING_OUTSIDE_RANGE:
       name: Ağaçların sınır dışına büyümesi
-      description: "&aAğaçların bir adanın koruma alanı \n&adışında büyüyüp büyüyemeyeceğini
-        değiştirin. \n&aSadece bir adanın koruma aralığının dışına \n&ayerleştirilen
-        fidanların büyümesini \n&aengellemekle kalmayacak, aynı zamanda \n&aadanın
-        dışında yaprak / kütük oluşumunu \n&aengelleyecek ve böylece ağacı kesecektir."
+      description: |-
+        &aAğaçların bir adanın koruma alanı 
+        &adışında büyüyüp büyüyemeyeceğini değiştirin. 
+        &aSadece bir adanın koruma aralığının dışına 
+        &ayerleştirilen fidanların büyümesini 
+        &aengellemekle kalmayacak, aynı zamanda 
+        &aadanın dışında yaprak / kütük oluşumunu 
+        &aengelleyecek ve böylece ağacı kesecektir.
     TURTLE_EGGS:
       description: Kırılmayı değiş.
       name: Kaplumbağa yumurtası
@@ -1284,7 +1556,7 @@ protection:
       description: |-
         &aOyuncular adadan aşağa düşerken
         &aadaya geri dönme komudunu engeller.
-      hint: "&cAdandan aşağaya düşerken adana geri ışınlanamazsın!"
+      hint: '&cAdandan aşağaya düşerken adana geri ışınlanamazsın!'
     VISITOR_KEEP_INVENTORY:
       name: Ziyaretçiler ölümle ilgili envanter tutuyor
       description: |-
@@ -1294,6 +1566,20 @@ protection:
         &a
         &a Island members still lose their items
         &a if they die on their own island!
+    VISITOR_TRIGGER_RAID:
+      name: Ziyaretçiler saldırıları tetikler
+      description: |-
+        &a Ziyaretçilerin [prefix_an-island] üzerinde
+        &a gerçekleştirdiği bir baskını başlatıp
+        &a başlatamayacaklarını açıp kapatır.
+        &a
+        &a Kötü İşaret etkisi kaldırılacak!
+    ENTITY_PORTAL_TELEPORT:
+      name: Varlık portal kullanımı
+      description: |-
+        &a Varlıkların (oyuncu olmayan) boyutlar arasında
+        &a teleporto olmak için portalları
+        &a kullanıp kullanamayacağını açık/kapalı yapar
     WITHER_DAMAGE:
       name: Wither hasarını ayarlar.
       description: |-
@@ -1311,121 +1597,161 @@ protection:
         &a kırmasına ve ada sınırları dışındaki
         &a varlıklara zarar vermesine izin verin.
       name: Dünya TNT hasarı
-    ANIMAL_SPAWN:
-      description: Doğmayı değiş
-      name: Hayvan doğuşu
-    MONSTER_SPAWN:
-      description: Doğuşu değiş.
-      name: Canavar doğuşu
-  locked: "&4Bu ada kilitli!"
-  protected: "&4Ada korunuyor: [description]"
-  world-protected: "&cDünya korunuyor: [description]"
-  spawn-protected: "&4Spawn koruması: [description]"
+  locked: '&4Bu ada kilitli!'
+  protected: '&4Ada korunuyor: [description]'
+  world-protected: '&cDünya korunuyor: [description]'
+  spawn-protected: '&4Spawn koruması: [description]'
   panel:
     next: Sonraki sayfa
     previous: önceki sayfa
     mode:
       advanced:
-        name: "&6Gelişmiş Ayarlar"
-        description: "&aMakul miktarda ayar görüntüler."
+        name: '&6Gelişmiş Ayarlar'
+        description: '&aMakul miktarda ayar görüntüler.'
       basic:
-        name: "&aTemel Ayarlar"
-        description: "&aİşe yarayan ayarları görüntüler."
+        name: '&aTemel Ayarlar'
+        description: '&aİşe yarayan ayarları görüntüler.'
       expert:
-        name: "&cUzman Ayarları"
-        description: "&aMevcut tüm ayarları görüntüler."
-      click-to-switch: "&6Tıkla ve modu &5[next] &6olarak değiş."
+        name: '&cUzman Ayarları'
+        description: '&aMevcut tüm ayarları görüntüler.'
+      click-to-switch: '&6Tıkla ve modu &5[next] &6olarak değiş.'
     reset-to-default:
-      name: "&cAyarları sıfırla!"
-      description: "&aTüm ada ayarlarını sıfırlar."
+      name: '&cAyarları sıfırla!'
+      description: '&aTüm ada ayarlarını sıfırlar.'
+      confirm: onayla
+      instructions: '&a Emin misin? Her şeyi sıfırlamak için &c "onayla" &a yaz.'
     PROTECTION:
-      title: "&9Korumalar"
-      description: "&aAdanın koruma ayarları"
+      title: '&9Korumalar'
+      description: '&aAdanın koruma ayarları'
     SETTING:
-      title: "&9Ayarlar"
-      description: "&aAdanın genel ayarları"
+      title: '&9Ayarlar'
+      description: '&aAdanın genel ayarları'
     WORLD_SETTING:
-      title: "&e[world_name] &bAyarları"
-      description: "&9Dunya ayarları"
+      title: '&e[world_name] &bAyarları'
+      description: '&9Dunya ayarları'
     WORLD_DEFAULTS:
-      title: "&5[world_name] &6Dünya ayarı"
-      description: "&aOyuncu adasının dışındayken koruma ayarları"
+      title: '&5[world_name] &6Dünya ayarı'
+      description: '&aOyuncu adasının dışındayken koruma ayarları'
     flag-item:
-      name-layout: "&a[name]"
+      name-layout: '&a[name]'
+      command-instructions:
+        setname: |-
+          &a Seçmek istediğin rengi belirle  
+          &a ismi ayarlayabilen rütbeyi seç
+        ban: '&a Oyuncuları yasaklayabilen rütbeyi seçin'
+        unban: '&a Oyuncuları serbest bırakma yetkisine sahip rütbeyi seçin'
+        expel: |-
+          &a Ziyaretçileri 
+          &a kovma yetkisine sahip rengi seçin
+        team-invite: '&a Davet edebilecek rengi seçin'
+        team-kick: |-
+          &a Atılmasını sağlayacak rengi seçin.  
+          &a dışarı.
+        team-coop: '&a İşbirliği yapabileceğiniz rütbeyi seçin'
+        team-trust: '&a Güvenebileceğin rütbeyi seç'
+        team-uncoop: |-
+          &a Kooperasyonu açma yetkisine sahip 
+          &a rengi seçin
+        team-untrust: '&a Güvenin kaldırılabileceği rütbeyi seçin'
+        team-promote: |-
+          &a Oyuncunun rütbesini
+          &a terfi ettirebilecek rütbeyi seçin
+        team-demote: |-
+          &a Oyuncunun unvanını
+          &a düşürebilecek unvanı seçin
+        sethome: |-
+          &a Evleri ayarlayabilen
+          &a rütbeyi seçin
+        deletehome: '&a Silme işlemi yapabilecek rütbeyi seçin'
+        renamehome: '&a Evleri yeniden adlandırabilen rütbeyi seçin'
+        setcount: '&a Aşamayı değiştirebilecek rütbeyi seçin'
+        border: |-
+          &a Sınır komutunu
+          &a kullanabilecek rütbeyi seçin
       description-layout: |
         &a[description]
 
         &7Allowed for:
-      allowed-rank: "&3- &a"
-      blocked-rank: "&3- &4"
-      minimal-rank: "&3- &2"
-      menu-layout: "&a[description]"
-      setting-cooldown: "&cAyar bekleme süresinde!"
+      allowed-rank: '&3- &a'
+      blocked-rank: '&3- &4'
+      minimal-rank: '&3- &2'
+      menu-layout: '&a[description]'
+      setting-cooldown: '&cAyar bekleme süresinde!'
       setting-layout: |
         &a[description]
 
         &7Geçerli ayar: [setting]
-      setting-active: "&9Aktif"
-      setting-disabled: "&4Deaktif"
-language:
-  panel-title: Dilini seç
-  description:
-    selected: "&9Dil secildi!"
-    click-to-select: "&9Tıkla ve seç."
-    authors: "&bHazırlayan:"
-    author: "&3- &d[name]"
-  edited: "&9Dilin &e[lang] &bolarak değiştirildi!"
+      setting-active: '&9Aktif'
+      setting-disabled: '&4Deaktif'
 management:
   panel:
     title: BentoBox Yönetimi
     views:
       gamemodes:
-        name: "&6Oyun Modları"
-        description: "&aTıkla ve yüklü oyun modlarını gör."
+        name: '&6Oyun Modları'
+        description: '&aTıkla ve yüklü oyun modlarını gör.'
         blueprints:
-          name: "&6Taslaklar"
-          description: "&aOpens the Admin Blueprint menu."
+          name: '&6Taslaklar'
+          description: '&aOpens the Admin Blueprint menu.'
         gamemode:
-          name: "&f[name]"
-          description: "&aAdalar: &b[islands]\n"
+          name: '&f[name]'
+          description: |
+            &aAdalar: &b[islands]
       addons:
-        name: "&6Eklentiler"
-        description: "&aYüklü &ceklentileri &agörmek için &etıklayınız."
+        name: '&6Eklentiler'
+        description: '&aYüklü &ceklentileri &agörmek için &etıklayınız.'
       hooks:
-        name: "&6Hooks"
-        description: "&aYüklü &chookları &agörmek için &etıklayınız."
+        name: '&6Hooks'
+        description: '&aYüklü &chookları &agörmek için &etıklayınız.'
     actions:
       reload:
-        name: "&cYenile"
-        description: "&aBentoboxu yenilemek için &c2 kez &etıklayın."
+        name: '&cYenile'
+        description: '&aBentoboxu yenilemek için &c2 kez &etıklayın.'
     buttons:
       catalog:
-        name: "&6Eklenti kataloğu"
-        description: "&aEklentiler Kataloğunu açar"
+        name: '&6Eklenti kataloğu'
+        description: '&aEklentiler Kataloğunu açar'
       credits:
-        name: "&6Emeği geçenler"
-        description: "&aEmeği geçenleri gösterir."
+        name: '&6Emeği geçenler'
+        description: '&aEmeği geçenleri gösterir.'
       empty-here:
-        name: "&bBurası boş gibi gözüküyor..."
-        description: "&aKataloğumuza bakarsanız ne olur?"
+        name: '&bBurası boş gibi gözüküyor...'
+        description: '&aKataloğumuza bakarsanız ne olur?'
     information:
       state:
-        name: "&6Uyumluluk"
+        name: '&6Uyumluluk'
         description:
-          COMPATIBLE: "&aÇalıştığı sürüm: &e[name] [version]&a.\n\n&aBentoBox şu anda
-            bir &2UYUMLU &asunucu\n&ayazılımı ve sürümü üzerinde çalışmaktadır. \n\n&aBu
-            ortamda çalışması için tamamen tasarlanmıştır.\n"
-          SUPPORTED: "&aÇalıştığı sürüm: &e[name] [version]&a.\n\n&aBentoBox şu anda
-            bir &eDESTEKLENEN &asunucu\n&ayazılımı ve sürümü üzerinde çalışmaktadır.
-            \n\n&aBu ortamda özelliklerinin çoğu sorunsuz çalışacaktır.\n"
-          NOT_SUPPORTED: "&aÇalıştığı sürüm: &e[name] [version]&a.\n\n&aBentoBox şu
-            anda bir &cDESTEKLENMEYEN &asunucu\n&ayazılımı ve sürümü üzerinde çalışmaktadır.
-            \n\n&2Özelliklerinin çoğu düzgün çalışacak olsa da,\n&2platforma özgü
-            hatalar veya sorunlar beklenebilir.\n"
-          INCOMPATIBLE: "&aÇalıştığı sürüm: &e[name] [version]&a.\n\n&aBentoBox şu
-            anda bir &4UYUMSUZ &asunucu\n&ayazılımı ve sürümü üzerinde çalışmaktadır.
-            \n\n&cGarip davranışlar ve hatalar oluşabilir ve \n&cçoğu özellik kararsız
-            olabilir.\n\n"
+          COMPATIBLE: |
+            &aÇalıştığı sürüm: &e[name] [version]&a.
+
+            &aBentoBox şu anda bir &2UYUMLU &asunucu
+            &ayazılımı ve sürümü üzerinde çalışmaktadır. 
+
+            &aBu ortamda çalışması için tamamen tasarlanmıştır.
+          SUPPORTED: |
+            &aÇalıştığı sürüm: &e[name] [version]&a.
+
+            &aBentoBox şu anda bir &eDESTEKLENEN &asunucu
+            &ayazılımı ve sürümü üzerinde çalışmaktadır. 
+
+            &aBu ortamda özelliklerinin çoğu sorunsuz çalışacaktır.
+          NOT_SUPPORTED: |
+            &aÇalıştığı sürüm: &e[name] [version]&a.
+
+            &aBentoBox şu anda bir &cDESTEKLENMEYEN &asunucu
+            &ayazılımı ve sürümü üzerinde çalışmaktadır. 
+
+            &2Özelliklerinin çoğu düzgün çalışacak olsa da,
+            &2platforma özgü hatalar veya sorunlar beklenebilir.
+          INCOMPATIBLE: |+
+            &aÇalıştığı sürüm: &e[name] [version]&a.
+
+            &aBentoBox şu anda bir &4UYUMSUZ &asunucu
+            &ayazılımı ve sürümü üzerinde çalışmaktadır. 
+
+            &cGarip davranışlar ve hatalar oluşabilir ve 
+            &cçoğu özellik kararsız olabilir.
+
 catalog:
   panel:
     GAMEMODES:
@@ -1434,13 +1760,14 @@ catalog:
       title: Eklenti Kataloğu
     views:
       gamemodes:
-        name: "&6Oyun Modları"
+        name: '&6Oyun Modları'
         description: |
           &eClick &ato browse through the
           &aavailable official Gamemodes.
       addons:
-        name: "&6Eklentiler"
-        description: "&aMevcut resmi Oyun Modlarına göz atmak için tıklayın.\n"
+        name: '&6Eklentiler'
+        description: |
+          &aMevcut resmi Oyun Modlarına göz atmak için tıklayın.
     icon:
       description-template: |
         &8[topic]
@@ -1452,13 +1779,12 @@ catalog:
       already-installed: Zaten yüklenmiş!
       install-now: Şimdi yükle!
     empty-here:
-      name: "&9Burası boş gibi gözüküyor..."
+      name: '&9Burası boş gibi gözüküyor...'
       description: |
         &cBentoBox github'a bağlanamadı!
 
         &aBentoBox'un konfigürasyondaki GitHub'a
         &abağlanmasına izin verin veya daha sonra tekrar deneyin.
-
 enums:
   DamageCause:
     CONTACT: Temas
@@ -1489,23 +1815,74 @@ enums:
     HOT_FLOOR: Sıcak Zemin
     CRAMMING: Sıkışma
     DRYOUT: Kuruma
+    FREEZE: Donma
+    KILL: Öldür
+    SONIC_BOOM: Sonic Boom
+    WORLD_BORDER: Dünya Sınırı
 panel:
   credits:
-    title: "&8[name] &2Emeği geçenler"
+    title: '&8[name] &2Emeği geçenler'
     contributor:
-      name: "&a[name]"
-      description: "&a Commits: &b [commits]"
+      name: '&a[name]'
+      description: '&a Commits: &b [commits]'
     empty-here:
-      name: "&cBurası boş gibi gözüküyor..."
+      name: '&cBurası boş gibi gözüküyor...'
       description: |-
         &e● &cBentoBox bu Eklenti için Katkıda\n&cBulunanları &ctoplayamadı\
                 .\n&f\n&e● &aBentoBox'ın yapılandırmada GitHub'a\n&abağlanmasına izin verin\
                 \ veya daha \n&asonra tekrar deneyin.\n
-successfully-loaded: |2
+panels:
+  island_homes:
+    title: '&2&l Senin [prefix_island] evlerin'
+    buttons:
+      name: '&l [name]'
+  island_creation:
+    title: '&2&l Seç [prefix_an-island]'
+    buttons:
+      bundle:
+        name: '&l [name]'
+        description: '[description]'
+        uses: '&a Kullanıldı [number]/[max]'
+        unlimited: '&a Sınırsız kullanım izni verilir'
+  language:
+    title: '&2&l Dilinizi seçin'
+    edited: '&c [lang] olarak değiştirildi'
+    buttons:
+      language:
+        name: '&f&l [name]'
+        description: |-
+          [authors]
+          |[selected]
+        authors: '&7 Yazarlar:'
+        author: '&7 - &b [name]'
+        selected: '&a Şu anda seçili.'
+  buttons:
+    previous:
+      name: '&f&l Önceki Sayfa'
+      description: '&7 [number] sayfaya geçiş yap'
+    next:
+      name: '&f&l Son Sayfa'
+      description: '&7 [number] sayfaya geç'
+  tips:
+    click-to-next: '&e Tıkla &7 sonraki için.'
+    click-to-previous: '&e Tıkla &7 önceki için.'
+    click-to-choose: '&e Tıklayın &7 seçmek için.'
+    click-to-toggle: '&e Tıklayın &7 açıp kapatmak için.'
+    left-click-to-cycle-down: '&e Sol Tıkla &7 aşağı döngü yapmak için.'
+    right-click-to-cycle-up: '&e Sağ Tıkla &7 yukarı döngü yapmak için.'
+successfully-loaded: >
 
   &6  ____             _        ____
-  &6 |  _ \           | |      |  _ \             &bYazım yanlışları varsa iletişim:
-  &6 | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &cOver_Brave#9324 &b2017 - 2022
-  &6 |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /  &bYapımcısı : &atastybento &band &ePoslovitch
+
+  &6 |  _ \           | |      |  _ \             &bYazım yanlışları varsa
+  iletişim:
+
+  &6 | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &cOver_Brave#9324 &b2017 -
+  2022
+
+  &6 |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /  &bYapımcısı : &atastybento
+  &band &ePoslovitch
+
   &6 | |_) |  __/ | | | || (_) | |_) | (_) >  <   &bVersiyon &e[version]
+
   &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &e[time] &bsaniyede yüklendi!

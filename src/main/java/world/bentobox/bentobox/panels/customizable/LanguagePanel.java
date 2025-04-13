@@ -440,7 +440,7 @@ public class LanguagePanel extends AbstractPanel
                     if (SELECT_ACTION.equalsIgnoreCase(action.actionType()))
                     {
                         this.plugin.getPlayers().setLocale(this.user.getUniqueId(), locale.toLanguageTag());
-                        this.user.sendMessage("language.edited", "[lang]",
+                        this.user.sendMessage("panels.language.edited", "[lang]",
                                 WordUtils.capitalize(locale.getDisplayName(this.user.getLocale())));
 
                         // Rebuild panel
