@@ -201,7 +201,7 @@ public class SettingsTab implements Tab, ClickHandler {
                     .clickHandler((panel, user1, clickType, slot) -> {
                         user.closeInventory(); // let them see the confirmation
                         String confirmation = user
-                                .getTranslationOrNothing(PROTECTION_PANEL + "reset-to-default.instructions");
+                                .getTranslationOrNothing(PROTECTION_PANEL + "reset-to-default.confirm");
                         if (confirmation.isBlank()) {
                             confirmation = "confirm";
                         }
