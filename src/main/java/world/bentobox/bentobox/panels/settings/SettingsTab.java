@@ -13,11 +13,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.commands.admin.conversations.NamePrompt;
+import world.bentobox.bentobox.api.commands.island.conversations.ConfirmPrompt;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.HideWhen;
 import world.bentobox.bentobox.api.flags.Flag.Mode;
@@ -196,8 +199,20 @@ public class SettingsTab implements Tab, ClickHandler {
                     .name(user.getTranslation(PROTECTION_PANEL + "reset-to-default.name"))
                     .description(user.getTranslation(PROTECTION_PANEL + "reset-to-default.description"))
                     .clickHandler((panel, user1, clickType, slot) -> {
-                        island.setFlagsDefaults();
-                        user.getPlayer().playSound(user.getLocation(), Sound.ENTITY_TNT_PRIMED, 1F, 1F);
+                        user.closeInventory(); // let them see the confirmation
+                        String confirmation = user
+                                .getTranslationOrNothing(PROTECTION_PANEL + "reset-to-default.instructions");
+                        if (confirmation.isBlank()) {
+                            confirmation = "confirm";
+                        }
+                        new ConversationFactory(BentoBox.getInstance()).withModality(true).withLocalEcho(false)
+                                .withTimeout(90)
+                                .withFirstPrompt(new ConfirmPrompt(user, plugin,
+                                        PROTECTION_PANEL + "reset-to-default.instructions",
+                                        confirmation, () -> {
+                                    island.setFlagsDefaults();
+                                    user.getPlayer().playSound(user.getLocation(), Sound.ENTITY_TNT_PRIMED, 1F, 1F);
+                                })).buildConversation(user.getPlayer()).begin();
                         return true;
                     })
                     .build());
