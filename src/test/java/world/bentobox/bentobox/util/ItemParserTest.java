@@ -9,6 +9,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -26,6 +27,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionType;
+import org.jspecify.annotations.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -39,6 +41,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import io.papermc.paper.ServerBuildInfo;
+import io.papermc.paper.registry.tag.Tag;
+import io.papermc.paper.registry.tag.TagKey;
 import world.bentobox.bentobox.BentoBox;
 
 
@@ -108,6 +112,36 @@ public class ItemParserTest {
         public Keyed getOrThrow(NamespacedKey key) {
             // TODO Auto-generated method stub
             return null;
+        }
+
+        @Override
+        public @Nullable NamespacedKey getKey(Keyed value) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public boolean hasTag(TagKey key) {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public Tag getTag(TagKey key) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Collection getTags() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int size() {
+            // TODO Auto-generated method stub
+            return 0;
         }
     }
 

@@ -73,6 +73,7 @@ public class IslandRespawnListener extends FlagListener {
             final Location respawnLocation = getIslands().getHomeLocation(world, e.getPlayer().getUniqueId());
             if (respawnLocation != null && getIslands().isSafeLocation(respawnLocation)) {
                 e.setRespawnLocation(respawnLocation);
+                System.out.println(e.getRespawnLocation());
                 // Get the island owner name
                 Island island = BentoBox.getInstance().getIslands().getIsland(w, User.getInstance(e.getPlayer()));
                 if (island != null) {
