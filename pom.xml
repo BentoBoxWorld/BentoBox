@@ -256,13 +256,6 @@
              <version>1.21.3-R0.1-SNAPSHOT</version>
              <scope>provided</scope>
         </dependency>
-        <!-- Paper API -->
-        <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>${paper.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- Metrics -->
         <dependency>
             <groupId>org.bstats</groupId>
