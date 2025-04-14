@@ -1,12 +1,12 @@
-package world.bentobox.bentobox.nms.v1_21_3_R0_1_SNAPSHOT;
+package world.bentobox.bentobox.nms.v1_21_5_R0_1_SNAPSHOT;
 
 import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_21_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_21_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_21_R4.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R4.block.data.CraftBlockData;
 
 import net.minecraft.core.BlockPosition;
 import net.minecraft.world.level.block.state.IBlockData;
@@ -42,16 +42,33 @@ public class PasteHandlerImpl implements PasteHandler {
 
     @Override
     public Block setBlock(Location location, BlockData bd) {
-            Block block = location.getBlock();
-            // Set the block data - default is AIR
-            CraftBlockData craft = (CraftBlockData) bd;
-            net.minecraft.world.level.World nmsWorld = ((CraftWorld) location.getWorld()).getHandle();
-            Chunk nmsChunk = nmsWorld.d(location.getBlockX() >> 4, location.getBlockZ() >> 4);
-            BlockPosition bp = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-            // Setting the block to air before setting to another state prevents some console errors
-            nmsChunk.a(bp, AIR, false);
-            nmsChunk.a(bp, craft.getState(), false);
+        Block block = location.getBlock();
+        // Set the block data - default is AIR
+        CraftBlockData craft = (CraftBlockData) bd;
+        net.minecraft.world.level.World nmsWorld = ((CraftWorld) location.getWorld()).getHandle();
+        Chunk nmsChunk = nmsWorld.d(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+        BlockPosition bp = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        // Setting the block to air before setting to another state prevents some console errors
+        // If the block is a naturally generated tile entity that needs filling, e.g., a chest, then this kind of pasting can cause console errors due to race condition
+        // so the try's are there to try and catch the errors.
+        try {
+            nmsChunk.a(bp, AIR, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Ignore
+        }
+        try {
+            nmsChunk.a(bp, craft.getState(), 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Ignore
+        }
+        try {
             block.setBlockData(bd, false);
-            return block;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Ignore
+        }
+        return block;
     }
 }

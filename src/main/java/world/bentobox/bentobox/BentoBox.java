@@ -113,7 +113,7 @@ public class BentoBox extends JavaPlugin implements Listener {
             // Show a warning
             logWarning("************ Disclaimer **************");
             logWarning("BentoBox may not be compatible with this server!");
-            logWarning("BentoBox is tested only on the following Spigot versions:");
+            logWarning("BentoBox is tested only on the following Paper versions:");
 
             List<String> versions = ServerCompatibility.ServerVersion.getVersions(ServerCompatibility.Compatibility.COMPATIBLE, ServerCompatibility.Compatibility.SUPPORTED)
                     .stream().map(ServerCompatibility.ServerVersion::toString).toList();
