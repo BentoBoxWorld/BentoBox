@@ -40,4 +40,4 @@ jobs:
           game-versions: |-
             1.21.4
             1.21.5
-          files: /home/runner/work/BentoBox/BentoBox/target/BentoBox-${{ github.event.release.tag_name }}.jar
+          files: /home/runner/work/BentoBox/BentoBox/target/BentoBox-${{ github.event.release.tag_name }}-SNAPSHOT-LOCAL.jar
