@@ -42,10 +42,10 @@ general:
 commands:
   help:
     header: '&7 =========== &c [label] trợ giúp &7 ==========='
-    syntax: '&b [sử dụng] &a [tham số]&7 : &e [mô tả]'
-    syntax-no-parameters: '&b [sử dụng]&7 : &e [mô tả]'
+    syntax: '&b [usage] &a [parameters]&7 : &e [description]'
+    syntax-no-parameters: '&b [usage]&7 : &e [description]'
     end: '&7 ================================='
-    parameters: '[lệnh]'
+    parameters: '[command]'
     description: xem hướng dẫn
     console: Bảng điều khiển
   admin:

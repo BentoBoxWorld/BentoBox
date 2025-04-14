@@ -1727,6 +1727,8 @@ protection:
       description: |-
         &a Réinitialise &c &l TOUT &r &a les paramètres à leur
         &a valeur par défaut.
+      confirm: confirmer
+      instructions: '&a Êtes-vous sûr ? Tapez &c "confirmer" &a pour tout réinitialiser.'
     PROTECTION:
       title: '&6 Protection'
       description: |-
@@ -1928,8 +1930,8 @@ enums:
     CONTACT: Contact
     ENTITY_ATTACK: Attaque de foule
     ENTITY_SWEEP_ATTACK: Attaque par balayage
-    PROJECTILE: Projectile
-    SUFFOCATION: Suffocation
+    PROJECTILE: Projectiles
+    SUFFOCATION: Étouffement
     FALL: Automne
     FIRE: Feu
     FIRE_TICK: Brûlant
@@ -2011,10 +2013,8 @@ panels:
     left-click-to-cycle-down: '&e Clic gauche &7 pour faire défiler vers le bas.'
     right-click-to-cycle-up: '&e Clique Droit &7 pour faire défiler vers le haut.'
 successfully-loaded: >-
-  &6   ____             _        ____
-  &6  |  _ \           | |      |  _ \             &7 par &a tastybento &7 et &a
-  Poslovitch
-  &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2023
-  &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
-  &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
+  &6   ____             _        ____ &6  |  _ \           | |      |  _
+  \             &7 par &a tastybento &7 et &a Poslovitch &6  | |_) | ___ _ __ |
+  |_ ___ | |_) | _____  __  &7 2017 - 2023 &6  |  _ < / _ \ '_ \| __/ _ \|  _ <
+  / _ \ \/ / &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
   &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8 Chargé en &e [time]&8 ms.

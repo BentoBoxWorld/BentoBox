@@ -1743,6 +1743,8 @@ protection:
       description: |-
         &a Setzt&c&l ALLE&r&a Einstellungen auf ihren 
         &a Standardwert zurück.
+      confirm: bestätigen
+      instructions: '&a Bist du sicher? Tippe &c "bestätigen" &a um alles zurückzusetzen.'
     PROTECTION:
       title: '&6 Schutz'
       description: |-

@@ -1664,6 +1664,8 @@ protection:
       description: |
         &a Obnoví &c &l VŠECHNA &r &a nastavení
         &a na výchozí hodnoty.
+      confirm: potvrdit
+      instructions: '&a Jste si jisti? Typ &c "potvrdit" &a pro resetování všeho.'
     PROTECTION:
       title: '&6 Protekce'
       description: |-

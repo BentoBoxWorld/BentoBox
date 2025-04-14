@@ -36,7 +36,7 @@ public class IslandLanguageCommand extends CompositeCommand {
                 // Check if that locale is not already selected
                 if (!user.getLocale().equals(locale)) {
                     getPlugin().getPlayers().setLocale(user.getUniqueId(), locale.toLanguageTag());
-                    user.sendMessage("language.edited", "[lang]", locale.toLanguageTag());
+                    user.sendMessage("panels.language.edited", "[lang]", locale.toLanguageTag());
                 } else {
                     user.sendMessage("commands.island.language.already-selected");
                     return false;
