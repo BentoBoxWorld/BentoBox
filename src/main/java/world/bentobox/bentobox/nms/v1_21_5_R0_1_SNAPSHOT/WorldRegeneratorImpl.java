@@ -19,8 +19,8 @@ public class WorldRegeneratorImpl extends CopyWorldRegenerator {
         Chunk nmsChunk = nmsWorld.d(chunk.getX(), chunk.getZ());
         BlockPosition bp = new BlockPosition((chunk.getX() << 4) + x, y, (chunk.getZ() << 4) + z);
         // Setting the block to air before setting to another state prevents some console errors
-        nmsChunk.a(bp, PasteHandlerImpl.AIR, applyPhysics);
-        nmsChunk.a(bp, craft.getState(), applyPhysics);
+        nmsChunk.a(bp, PasteHandlerImpl.AIR, applyPhysics ? 1 : 0);
+        nmsChunk.a(bp, craft.getState(), applyPhysics ? 1 : 0);
     }
 
 }

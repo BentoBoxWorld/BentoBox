@@ -52,13 +52,13 @@ public class PasteHandlerImpl implements PasteHandler {
         // If the block is a naturally generated tile entity that needs filling, e.g., a chest, then this kind of pasting can cause console errors due to race condition
         // so the try's are there to try and catch the errors.
         try {
-            nmsChunk.a(bp, AIR, false);
+            nmsChunk.a(bp, AIR, 0);
         } catch (Exception e) {
             e.printStackTrace();
             // Ignore
         }
         try {
-            nmsChunk.a(bp, craft.getState(), false);
+            nmsChunk.a(bp, craft.getState(), 0);
         } catch (Exception e) {
             e.printStackTrace();
             // Ignore
