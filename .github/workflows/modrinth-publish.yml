@@ -24,7 +24,7 @@ jobs:
       #  run: mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
 
       - name: Build and package with Maven
-        run: mvn -B clean package --file pom.xml
+        run: mvn -B clean package -DskipTests -Pmaster --file pom.xml
 
       - name: Upload to Modrinth
         uses: cloudnode-pro/modrinth-publish@v2
@@ -38,6 +38,6 @@ jobs:
             paper
             spigot
           game-versions: |-
-            1.21.3
             1.21.4
+            1.21.5
           files: /home/runner/work/BentoBox/BentoBox/target/BentoBox-${{ github.event.release.tag_name }}.jar

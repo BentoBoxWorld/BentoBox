@@ -74,7 +74,7 @@
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>3.3.3</build.version>
+        <build.version>3.3.4</build.version>
         <sonar.organization>bentobox-world</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <server.jars>${project.basedir}/lib</server.jars>
@@ -363,7 +363,7 @@
         <dependency>
             <groupId>de.oliver</groupId>
             <artifactId>FancyNpcs</artifactId>
-            <version>2.4.0</version>
+            <version>2.4.4</version>
             <scope>provided</scope>
         </dependency>
         <!-- ZNPCs Plus -->
