@@ -29,7 +29,6 @@ import de.oliver.fancynpcs.api.NpcData;
 import de.oliver.fancynpcs.api.actions.ActionTrigger;
 import de.oliver.fancynpcs.api.actions.NpcAction;
 import de.oliver.fancynpcs.api.utils.NpcEquipmentSlot;
-import de.oliver.fancynpcs.api.utils.SkinFetcher;
 import net.kyori.adventure.text.format.NamedTextColor;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.hooks.NPCHook;
@@ -78,8 +77,8 @@ public class FancyNpcsHook extends NPCHook {
         npcConfig.set("interactionCooldown", data.getInteractionCooldown());
         npcConfig.set("scale", data.getScale());
 
-        if (data.getSkin() != null) {
-            npcConfig.set("skin.identifier", data.getSkin().identifier());
+        if (data.getSkinData() != null) {
+            npcConfig.set("skin.identifier", data.getSkinData().getIdentifier());
         } else {
             npcConfig.set("skin.identifier", null);
         }
@@ -138,16 +137,12 @@ public class FancyNpcsHook extends NPCHook {
 
 
             String skinIdentifier = npcConfig.getString("skin.identifier", npcConfig.getString("skin.uuid", ""));
-            SkinFetcher.SkinData skin = null;
-            if (!skinIdentifier.isEmpty()) {
-                skin = new SkinFetcher.SkinData(skinIdentifier, "", "");
-            }
-
+            /*
             if (npcConfig.isSet("skin.value") && npcConfig.isSet("skin.signature")) {
-
+            
                 String value = npcConfig.getString("skin.value");
                 String signature = npcConfig.getString("skin.signature");
-
+            
                 if (value != null && !value.isEmpty() && signature != null && !signature.isEmpty()) {
                     skin = new SkinFetcher.SkinData(skinIdentifier, value, signature);
                     SkinFetcher.SkinData oldSkinData = new SkinFetcher.SkinData(skinIdentifier, value, signature);
@@ -156,6 +151,7 @@ public class FancyNpcsHook extends NPCHook {
                             System.currentTimeMillis(), 1000 * 60 * 60 * 24));
                 }
             }
+            */
 
             boolean mirrorSkin = npcConfig.getBoolean("skin.mirrorSkin");
 
@@ -230,9 +226,14 @@ public class FancyNpcsHook extends NPCHook {
 
             // When we make a copy, we need to use a new ID
             String newId = UUID.randomUUID().toString();
-            NpcData data = new NpcData(newId, name, creator, displayName, skin, location, showInTab, spawnEntity,
-                    collidable, glowing, glowingColor, type, new HashMap<>(), turnToPlayer, null, actions,
-                    interactionCooldown, scale, attributes, mirrorSkin);
+
+            NpcData data = new NpcData(newId, creator, location).setDisplayName(displayName).setSkin(skinIdentifier)
+                    .setLocation(location).setShowInTab(showInTab).setSpawnEntity(spawnEntity).setCollidable(collidable)
+                    .setGlowing(glowing).setGlowingColor(glowingColor).setType(type).setTurnToPlayer(turnToPlayer)
+                    .setActions(actions).setInteractionCooldown(interactionCooldown).setScale(scale)
+                    .setMirrorSkin(mirrorSkin);
+            attributes.forEach((k, v) -> data.addAttribute(k, v));
+
             Npc npc = FancyNpcsPlugin.get().getNpcAdapter().apply(data);
 
             if (npcConfig.isConfigurationSection("equipment")) {
