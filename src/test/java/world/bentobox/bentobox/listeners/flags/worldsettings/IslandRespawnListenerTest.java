@@ -240,7 +240,7 @@ public class IslandRespawnListenerTest extends AbstractCommonSetup {
         @NotNull
         Builder<RespawnFlag> respawnFlags = new Builder<RespawnFlag>().add(RespawnFlag.BED_SPAWN);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, RespawnReason.DEATH,
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, false, RespawnReason.DEATH,
                 respawnFlags);
         l.onPlayerRespawn(ev);
         assertEquals(safeLocation, ev.getRespawnLocation());
