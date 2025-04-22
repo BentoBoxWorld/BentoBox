@@ -305,10 +305,16 @@
             <scope>provided</scope>
         </dependency>
         <!-- Shaded APIs -->
+        <!--
         <dependency>
             <groupId>com.github.TheBusyBiscuit</groupId>
             <artifactId>GitHubWebAPI4Java</artifactId>
             <version>${githubapi.version}</version>
+        </dependency>-->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.Marcono1234</groupId>
@@ -512,10 +518,10 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>world.bentobox.bentobox.util.metrics</shadedPattern>
                         </relocation>
-                        <relocation>
+<!--                   <relocation>
                             <pattern>io.github.TheBusyBiscuit.GitHubWebAPI4Java</pattern>
                             <shadedPattern>world.bentobox.bentobox.api.github</shadedPattern>
-                        </relocation>
+                        </relocation>-->     
                         <relocation>
                             <pattern>io.papermc.lib</pattern>
                             <shadedPattern>world.bentobox.bentobox.paperlib</shadedPattern>
