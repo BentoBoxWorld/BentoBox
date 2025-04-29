@@ -190,32 +190,13 @@ public class WebManager {
         }
     }
 
-    /**
-     * Validates if a string is Base64-encoded.
-     * 
-     * @param content - the string to validate
-     * @return true if the string is Base64-encoded, false otherwise
-     */
-    private boolean isBase64Encoded(String content) {
-        try {
-            Base64.getDecoder().decode(content);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-
     @NonNull
     private String getContent(@NonNull GitHubRepository repo, String fileName) {
         try {
             String content = repo.getContent(fileName).getContent();
             return new String(DatatypeConverter.parseBase64Binary(content.replaceAll("_", "/")));
         } catch (Exception e) {
-            e.printStackTrace();
-            if (plugin.getSettings().isLogGithubDownloadData()) {
-                plugin.logError("An unhandled exception occurred when downloading '" + fileName + "' from GitHub...");
-                plugin.logStacktrace(e);
-            }
+            // Silently fail
         }
         return "";
     }
