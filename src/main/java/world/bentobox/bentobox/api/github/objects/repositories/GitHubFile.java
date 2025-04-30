@@ -21,12 +21,17 @@ public class GitHubFile {
 
     /**
      * Returns the content of this file.
-     * @return the content of this file in Base64
-     * @throws IllegalAccessException if the connection to the GitHub API could not be established.
+     * @return the content of this file in Base64 or nothing if the connection to the GitHub API could not be established.
      * @throws IOException - If an error occurs during the request.
      */
-    public String getContent() throws IllegalAccessException, IOException {
-        JsonObject response = api.fetch(path);
+    public String getContent() throws IllegalAccessException {
+        JsonObject response;
+        try {
+            response = api.fetch(path);
+        } catch (IOException e) {
+            // Cannot get a connection for some reason
+            return "";
+        }
         return response.get("content").getAsString();
     }
 }
