@@ -36,6 +36,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=BentoBoxWorld_BentoBox
+      - name: Debug - List target directory
+        run: ls -la /home/runner/work/BentoBox/BentoBox/target
       - run: mvn --batch-mode clean org.jacoco:jacoco-maven-plugin:prepare-agent install
       - run: mkdir staging && cp target/*.jar staging
       - name: Save artifacts

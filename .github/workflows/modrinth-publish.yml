@@ -25,7 +25,8 @@ jobs:
 
       - name: Build and package with Maven
         run: mvn -B clean package -DskipTests -Pmaster --file pom.xml
-
+      - name: Debug - List target directory
+        run: ls -la /home/runner/work/BentoBox/BentoBox/target
       - name: Upload to Modrinth
         uses: cloudnode-pro/modrinth-publish@v2
         with:
