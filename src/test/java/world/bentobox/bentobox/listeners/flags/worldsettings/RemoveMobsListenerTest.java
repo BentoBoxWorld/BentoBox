@@ -91,6 +91,8 @@ public class RemoveMobsListenerTest {
         // Teleports are from far away
         when(inside.distanceSquared(any())).thenReturn(100D);
 
+        when(inside.clone()).thenReturn(inside);
+
 
         Optional<Island> opIsland = Optional.ofNullable(island);
         when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(opIsland);
@@ -203,7 +205,7 @@ public class RemoveMobsListenerTest {
      */
     @Test
     public void testOnUserRespawn() {
-        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, false, RespawnReason.DEATH);
         new RemoveMobsListener().onUserRespawn(e);
         verify(scheduler).runTask(any(), any(Runnable.class));
     }
@@ -214,7 +216,8 @@ public class RemoveMobsListenerTest {
     @Test
     public void testOnUserRespawnDoNotRemove() {
         Flags.REMOVE_MOBS.setSetting(world, false);
-        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, RespawnReason.DEATH);
+
+        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, false, RespawnReason.DEATH);
         new RemoveMobsListener().onUserRespawn(e);
         verify(scheduler, never()).runTask(any(), any(Runnable.class));
     }
@@ -226,7 +229,7 @@ public class RemoveMobsListenerTest {
     public void testOnUserRespawnNotIsland() {
         // Not on island
         when(im.locationIsOnIsland(any(), any())).thenReturn(false);
-        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, false, RespawnReason.DEATH);
         new RemoveMobsListener().onUserRespawn(e);
         verify(scheduler, never()).runTask(any(), any(Runnable.class));
     }

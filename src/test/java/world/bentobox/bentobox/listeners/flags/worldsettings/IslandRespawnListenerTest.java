@@ -25,10 +25,8 @@ import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerRespawnEvent.RespawnFlag;
 import org.bukkit.event.player.PlayerRespawnEvent.RespawnReason;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,9 +37,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 
 import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.AbstractCommonSetup;
@@ -237,11 +232,8 @@ public class IslandRespawnListenerTest extends AbstractCommonSetup {
         when(location.clone()).thenReturn(location); // Event clones the location
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        @NotNull
-        Builder<RespawnFlag> respawnFlags = new Builder<RespawnFlag>().add(RespawnFlag.BED_SPAWN);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, false, RespawnReason.DEATH,
-                respawnFlags);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
         assertEquals(safeLocation, ev.getRespawnLocation());
         // Verify commands
@@ -258,10 +250,11 @@ public class IslandRespawnListenerTest extends AbstractCommonSetup {
         IslandRespawnListener l = new IslandRespawnListener();
         Location location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
+        when(location.clone()).thenReturn(location);
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }
@@ -280,10 +273,11 @@ public class IslandRespawnListenerTest extends AbstractCommonSetup {
         l.onPlayerDeath(e);
         Location location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
+        when(location.clone()).thenReturn(location);
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }
@@ -302,10 +296,11 @@ public class IslandRespawnListenerTest extends AbstractCommonSetup {
         l.onPlayerDeath(e);
         Location location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
+        when(location.clone()).thenReturn(location);
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }

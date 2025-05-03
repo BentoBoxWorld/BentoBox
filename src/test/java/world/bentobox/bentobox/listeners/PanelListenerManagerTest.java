@@ -29,6 +29,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MenuType;
+import org.jetbrains.annotations.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,6 +82,7 @@ public class PanelListenerManagerTest {
 
     /**
      */
+    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
         // Set up plugin
@@ -248,6 +251,12 @@ public class PanelListenerManagerTest {
         public void open() {
             // TODO Auto-generated method stub
 
+        }
+
+        @Override
+        public @Nullable MenuType getMenuType() {
+            // TODO Auto-generated method stub
+            return null;
         }
 
     }
