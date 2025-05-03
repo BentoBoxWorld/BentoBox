@@ -27,7 +27,8 @@ import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.hooks.FancyNpcsHook;
 import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.MultipaperHook;
-import world.bentobox.bentobox.hooks.MultiverseCoreHook;
+import world.bentobox.bentobox.hooks.MultiverseCore4Hook;
+import world.bentobox.bentobox.hooks.MultiverseCore5Hook;
 import world.bentobox.bentobox.hooks.MyWorldsHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
 import world.bentobox.bentobox.hooks.SlimefunHook;
@@ -233,7 +234,11 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // Register Multiverse hook - MV loads AFTER BentoBox
         // Make sure all worlds are already registered to Multiverse.
-        hooksManager.registerHook(new MultiverseCoreHook());
+        if (hasClass("org.mvplugins.multiverse.core.MultiverseCore")) {
+            hooksManager.registerHook(new MultiverseCore5Hook());
+        } else if (hasClass("com.onarandombox.MultiverseCore.MultiverseCore")) {
+            hooksManager.registerHook(new MultiverseCore4Hook());
+        }
         hooksManager.registerHook(new MyWorldsHook());
         islandWorldManager.registerWorldsToMultiverse(true);
 
@@ -278,6 +283,15 @@ public class BentoBox extends JavaPlugin implements Listener {
             logWarning("You should switch ASAP to an alternative database type. Please refer to the comments in BentoBox's config.yml.");
             logWarning("There is NO guarantee YAML database will remain properly supported in the following updates, and its usage should as such be considered a non-viable situation.");
             logWarning("*** *** *** *** *** *** *** *** *** *** ***");
+        }
+    }
+
+    private boolean hasClass(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
         }
     }
 
