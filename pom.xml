@@ -161,6 +161,17 @@
             <id>MG-Dev Jenkins CI Maven Repository</id>
             <url>https://ci.mg-dev.eu/plugin/repository/everything</url>
         </repository>
+        <!-- Used for Multiverse hook -->
+        <repository>
+            <id>multiverse-multiverse-releases</id>
+            <name>Multiverse Repository</name>
+            <url>https://repo.onarandombox.com/multiverse-releases</url>
+        </repository>
+        <repository>
+            <id>multiverse-multiverse-snapshots</id>
+            <name>Multiverse Repository</name>
+            <url>https://repo.onarandombox.com/multiverse-snapshots</url>
+        </repository>
         <!-- For MythicMobs -->
         <repository>
             <id>nexus</id>
@@ -302,6 +313,18 @@
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
             <version>5.3.5</version>  
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mvplugins.multiverse.core</groupId>
+            <artifactId>multiverse-core</artifactId>
+            <version>5.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.onarandombox.multiversecore</groupId>
+            <artifactId>multiverse-core</artifactId>
+            <version>4.3.16</version>
             <scope>provided</scope>
         </dependency>
         <!-- Shaded APIs -->
