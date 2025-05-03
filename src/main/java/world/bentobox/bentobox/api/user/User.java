@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -823,8 +824,10 @@ public class User implements MetaDataAble {
      */
     public void spawnParticle(Particle particle, @Nullable Object dustOptions, double x, double y, double z) {
         Class<?> expectedClass = VALIDATION_CHECK.get(particle);
-        if (expectedClass == null)
-            throw new IllegalArgumentException("Unexpected value: " + particle);
+        if (expectedClass == null) {
+            throw new IllegalArgumentException("Unexpected value: " + particle + "\nExpected one of:"
+                    + VALIDATION_CHECK.keySet().stream().map(Particle::name).collect(Collectors.joining(", ")));
+        }
 
         if (!(expectedClass.isInstance(dustOptions))) {
             throw new IllegalArgumentException("A non-null " + expectedClass.getSimpleName()
