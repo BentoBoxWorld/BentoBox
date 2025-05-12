@@ -25,22 +25,20 @@ public class MultiverseCore4Hook extends Hook implements WorldManagementHook {
             return;
         }
         String generator = islandWorld ? getGenerator(world) : null;
-        core.getMVWorldManager().addWorld(
-                world.getName(),
-                world.getEnvironment(),
-                String.valueOf(world.getSeed()),
-                world.getWorldType(),
-                world.canGenerateStructures(),
-                generator
-        );
-        core.getMVWorldManager().getMVWorld(world.getName()).setAutoLoad(false);
+        try {
+            core.getMVWorldManager().addWorld(world.getName(), world.getEnvironment(), String.valueOf(world.getSeed()),
+                    world.getWorldType(), world.canGenerateStructures(), generator);
+            core.getMVWorldManager().getMVWorld(world.getName()).setAutoLoad(false);
+        } catch (Exception e) {
+            // Do nothing
+        }
     }
 
     private String getGenerator(World world) {
         return BentoBox.getInstance().getIWM().getAddon(world)
                 .map(gm -> gm.getDefaultWorldGenerator(world.getName(), "") != null).orElse(false)
                 ? BentoBox.getInstance().getName()
-                : null;
+                        : null;
     }
 
     @Override
