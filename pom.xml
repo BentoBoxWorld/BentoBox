@@ -74,7 +74,7 @@
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>3.3.4</build.version>
+        <build.version>3.3.5</build.version>
         <sonar.organization>bentobox-world</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <server.jars>${project.basedir}/lib</server.jars>
@@ -160,6 +160,17 @@
         <repository>
             <id>MG-Dev Jenkins CI Maven Repository</id>
             <url>https://ci.mg-dev.eu/plugin/repository/everything</url>
+        </repository>
+        <!-- Used for Multiverse hook -->
+        <repository>
+            <id>multiverse-multiverse-releases</id>
+            <name>Multiverse Repository</name>
+            <url>https://repo.onarandombox.com/multiverse-releases</url>
+        </repository>
+        <repository>
+            <id>multiverse-multiverse-snapshots</id>
+            <name>Multiverse Repository</name>
+            <url>https://repo.onarandombox.com/multiverse-snapshots</url>
         </repository>
         <!-- For MythicMobs -->
         <repository>
@@ -304,11 +315,29 @@
             <version>5.3.5</version>  
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mvplugins.multiverse.core</groupId>
+            <artifactId>multiverse-core</artifactId>
+            <version>5.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.onarandombox.multiversecore</groupId>
+            <artifactId>multiverse-core</artifactId>
+            <version>4.3.16</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Shaded APIs -->
+        <!--
         <dependency>
             <groupId>com.github.TheBusyBiscuit</groupId>
             <artifactId>GitHubWebAPI4Java</artifactId>
             <version>${githubapi.version}</version>
+        </dependency>-->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.Marcono1234</groupId>
@@ -512,10 +541,10 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>world.bentobox.bentobox.util.metrics</shadedPattern>
                         </relocation>
-                        <relocation>
+<!--                   <relocation>
                             <pattern>io.github.TheBusyBiscuit.GitHubWebAPI4Java</pattern>
                             <shadedPattern>world.bentobox.bentobox.api.github</shadedPattern>
-                        </relocation>
+                        </relocation>-->     
                         <relocation>
                             <pattern>io.papermc.lib</pattern>
                             <shadedPattern>world.bentobox.bentobox.paperlib</shadedPattern>

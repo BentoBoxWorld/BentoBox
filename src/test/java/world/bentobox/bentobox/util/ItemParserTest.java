@@ -143,6 +143,12 @@ public class ItemParserTest {
             // TODO Auto-generated method stub
             return 0;
         }
+
+        @Override
+        public Stream keyStream() {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
     @After
