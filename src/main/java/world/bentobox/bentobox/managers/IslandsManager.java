@@ -1204,7 +1204,7 @@ public class IslandsManager {
                 player.leaveVehicle();
                 // Remove the boat so they don't lie around everywhere
                 boat.remove();
-                player.getInventory().addItem(new ItemStack(boaty.getBoatType().getMaterial()));
+                player.getInventory().addItem(new ItemStack(boaty.getBoatMaterial()));
                 player.updateInventory();
             }
         }
@@ -1667,7 +1667,7 @@ public class IslandsManager {
                 .filter(en -> Util.isHostileEntity(en)
                         && !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType())
                         && !(en instanceof PufferFish) && ((LivingEntity) en).getRemoveWhenFarAway())
-                .filter(en -> en.getCustomName() == null).forEach(Entity::remove);
+                .filter(en -> en.customName() == null).forEach(Entity::remove);
     }
 
     /**
