@@ -94,6 +94,7 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
         // Disband team
         island.getMemberSet().forEach(m -> {
             User mUser = User.getInstance(m);
+            System.out.println("sss");
             mUser.sendMessage("commands.admin.team.disband.disbanded");
             // The owner gets to keep the island
             if (!m.equals(targetUUID)) {

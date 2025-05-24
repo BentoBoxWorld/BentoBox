@@ -153,6 +153,7 @@ public class IslandGoCommandTest extends AbstractCommonSetup {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+        when(Util.stripColor(any())).thenCallRealMethod();
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);

@@ -209,6 +209,7 @@ public class EnterExitListenerTest {
 
         // Util translate color codes (used in user translate methods)
         when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(Util.stripColor(any())).thenCallRealMethod();
     }
 
     @After

@@ -11,6 +11,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 
 /**
@@ -61,7 +62,7 @@ public class IslandSetnameCommand extends CompositeCommand {
         String name = String.join(" ", args);
 
         // Check if the name isn't too short or too long
-        if (name.length() < getSettings().getNameMinLength() || ChatColor.stripColor(name).isEmpty()) {
+        if (name.length() < getSettings().getNameMinLength() || Util.stripColor(name).isEmpty()) {
             user.sendMessage("commands.island.setname.name-too-short", TextVariables.NUMBER, String.valueOf(getSettings().getNameMinLength()));
             return false;
         }

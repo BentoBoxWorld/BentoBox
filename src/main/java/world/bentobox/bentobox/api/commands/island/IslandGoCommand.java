@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import org.bukkit.World;
 
-import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.DelayedTeleportCommand;
@@ -131,10 +130,10 @@ public class IslandGoCommand extends DelayedTeleportCommand {
             if (island.getName() != null && !island.getName().isBlank()) {
                 // Name has been set
                 // Color codes need to be stripped because they are not allowed in chat
-                islandMap.put(ChatColor.stripColor(island.getName()), new IslandInfo(island, true));
+                islandMap.put(Util.stripColor(island.getName()), new IslandInfo(island, true));
             } else {
                 // Name has not been set
-                String text = ChatColor.stripColor(
+                String text = Util.stripColor(
                         user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
                                 user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index);
                 islandMap.put(text, new IslandInfo(island, true));
