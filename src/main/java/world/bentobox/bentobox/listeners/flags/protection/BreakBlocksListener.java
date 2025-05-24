@@ -95,7 +95,7 @@ public class BreakBlocksListener extends FlagListener {
             Material clickedType = e.getClickedBlock().getType();
             switch (clickedType) {
             case CAVE_VINES, CAVE_VINES_PLANT -> {
-                if (((CaveVinesPlant) e.getClickedBlock().getBlockData()).isBerries()) {
+                if (((CaveVinesPlant) e.getClickedBlock().getBlockData()).hasBerries()) {
                     this.checkIsland(e, p, l, Flags.HARVEST);
                 }
             }

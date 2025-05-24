@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.nms.fallback;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -11,7 +10,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
-import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.util.DefaultPasteUtil;
