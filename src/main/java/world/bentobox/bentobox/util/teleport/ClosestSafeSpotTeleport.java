@@ -41,6 +41,111 @@ import world.bentobox.bentobox.util.Util;
 
 public class ClosestSafeSpotTeleport
 {
+    // ---------------------------------------------------------------------
+    // Section: Constants
+    // ---------------------------------------------------------------------
+
+    /**
+     * This comparator sorts position data based in order:
+     * - the smallest distance value
+     * - the smallest x value
+     * - the smallest z value
+     * - the smallest y value
+     */
+    private static final Comparator<PositionData> POSITION_COMPARATOR = Comparator
+            .comparingDouble(PositionData::distance).thenComparingInt(position -> position.vector().getBlockX())
+            .thenComparingInt(position -> position.vector().getBlockZ())
+            .thenComparingInt(position -> position.vector().getBlockY());
+
+    /**
+     * Stores chunk load speed.
+     */
+    private static final long CHUNK_LOAD_SPEED = 1;
+
+    /**
+     * Range to scan
+     */
+    private static final int SCAN_RANGE = 20;
+
+    // ---------------------------------------------------------------------
+    // Section: Variables
+    // ---------------------------------------------------------------------
+
+    /**
+     * BentoBox plugin instance.
+     */
+    private final BentoBox plugin;
+
+    /**
+     * Entity that will be teleported.
+     */
+    private final Entity entity;
+
+    /**
+     * Start location of teleportation.
+     */
+    private final Location location;
+
+    /**
+     * World where teleportation happens.
+     */
+    private final World world;
+
+    /**
+     * Runnable that will be triggered after successful teleportation.
+     */
+    private final Runnable successRunnable;
+
+    /**
+     * CompletableFuture that is triggered upon finishing position searching.
+     */
+    private final CompletableFuture<Boolean> result;
+
+    /**
+     * Boolean that indicates if teleportation should search for portal.
+     */
+    private final boolean portal;
+
+    /**
+     * Boolean that indicates if failing teleport should cancel it or create spot for player.
+     */
+    private final boolean cancelIfFail;
+
+    /**
+     * Local variable that indicates if current process is running.
+     */
+    private final AtomicBoolean checking = new AtomicBoolean();
+
+    /**
+     * The distance from starting location in all directions where new position will be searched.
+     */
+    private int range;
+
+    /**
+     * Block Queue for all blocks that should be validated.
+     */
+    private Queue<PositionData> blockQueue;
+
+    /**
+     * List of chunks that will be scanned for positions.
+     */
+    private Iterator<Pair<Integer, Integer>> chunksToScanIterator;
+
+    /**
+     * BoundingBox where teleportation can happen. Areas outside are illegal.
+     */
+    private BoundingBox boundingBox;
+
+    /**
+     * This method returns first best available spot if portal was not found in search area.
+     */
+    private Location noPortalPosition;
+
+    /**
+     * Bukkit task that processes chunks.
+     */
+    private BukkitTask task;
+
     /**
      * Teleports an entity to a safe spot on island
      *
@@ -142,10 +247,8 @@ public class ClosestSafeSpotTeleport
         this.chunksToScanIterator.remove();
 
         // Get the chunk snapshot and scan it
-        Util.getChunkAtAsync(this.world, chunkPair.x, chunkPair.z).
-        thenApply(Chunk::getChunkSnapshot).
-        whenCompleteAsync((snapshot, e) ->
-        {
+        Util.getChunkAtAsync(Objects.requireNonNull(world), chunkPair.x, chunkPair.z)
+                .thenApply(Chunk::getChunkSnapshot).whenCompleteAsync((snapshot, e) -> {
             if (snapshot != null)
             {
                 // Find best spot based on collected information chunks.
@@ -381,7 +484,7 @@ public class ClosestSafeSpotTeleport
      */
     void asyncTeleport(final Location location)
     {
-        Util.teleportAsync(this.entity, location).thenRun(() ->
+        Util.teleportAsync(Objects.requireNonNull(entity), Objects.requireNonNull(location)).thenRun(() ->
         {
             if (this.successRunnable != null)
             {
@@ -707,112 +810,5 @@ public class ClosestSafeSpotTeleport
          */
         private boolean cancelIfFail;
     }
-
-
-    // ---------------------------------------------------------------------
-    // Section: Constants
-    // ---------------------------------------------------------------------
-
-    /**
-     * This comparator sorts position data based in order:
-     * - the smallest distance value
-     * - the smallest x value
-     * - the smallest z value
-     * - the smallest y value
-     */
-    private static final Comparator<PositionData> POSITION_COMPARATOR = Comparator.comparingDouble(PositionData::distance).
-            thenComparingInt(position -> position.vector().getBlockX()).
-            thenComparingInt(position -> position.vector().getBlockZ()).
-            thenComparingInt(position -> position.vector().getBlockY());
-
-    /**
-     * Stores chunk load speed.
-     */
-    private static final long CHUNK_LOAD_SPEED = 1;
-
-    /**
-     * Range to scan
-     */
-    private static final int SCAN_RANGE = 20;
-
-
-    // ---------------------------------------------------------------------
-    // Section: Variables
-    // ---------------------------------------------------------------------
-
-    /**
-     * BentoBox plugin instance.
-     */
-    private final BentoBox plugin;
-
-    /**
-     * Entity that will be teleported.
-     */
-    private final Entity entity;
-
-    /**
-     * Start location of teleportation.
-     */
-    private final Location location;
-
-    /**
-     * World where teleportation happens.
-     */
-    private final World world;
-
-    /**
-     * Runnable that will be triggered after successful teleportation.
-     */
-    private final Runnable successRunnable;
-
-    /**
-     * CompletableFuture that is triggered upon finishing position searching.
-     */
-    private final CompletableFuture<Boolean> result;
-
-    /**
-     * Boolean that indicates if teleportation should search for portal.
-     */
-    private final boolean portal;
-
-    /**
-     * Boolean that indicates if failing teleport should cancel it or create spot for player.
-     */
-    private final boolean cancelIfFail;
-
-    /**
-     * Local variable that indicates if current process is running.
-     */
-    private final AtomicBoolean checking = new AtomicBoolean();
-
-    /**
-     * The distance from starting location in all directions where new position will be searched.
-     */
-    private int range;
-
-    /**
-     * Block Queue for all blocks that should be validated.
-     */
-    private Queue<PositionData> blockQueue;
-
-    /**
-     * List of chunks that will be scanned for positions.
-     */
-    private Iterator<Pair<Integer, Integer>> chunksToScanIterator;
-
-    /**
-     * BoundingBox where teleportation can happen. Areas outside are illegal.
-     */
-    private BoundingBox boundingBox;
-
-    /**
-     * This method returns first best available spot if portal was not found in search area.
-     */
-    private Location noPortalPosition;
-
-    /**
-     * Bukkit task that processes chunks.
-     */
-    private BukkitTask task;
 }
 

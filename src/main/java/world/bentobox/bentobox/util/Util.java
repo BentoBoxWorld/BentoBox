@@ -68,6 +68,7 @@ public class Util {
      * Use standard color code definition: {@code &<hex>}.
      */
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
+
     private static final String NETHER = "_nether";
     private static final String THE_END = "_the_end";
     private static String serverVersion = null;
@@ -833,7 +834,7 @@ public class Util {
     @SuppressWarnings("deprecation")
     public static String sanitizeInput(String input)
     {
-        return ChatColor.stripColor(
+        return Util.stripColor(
                 Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).
                 toLowerCase();
     }
@@ -871,4 +872,14 @@ public class Util {
     public static boolean inTest() {
         return Arrays.stream(Thread.currentThread().getStackTrace()).anyMatch(e -> e.getClassName().endsWith("Test"));
     }
+
+    /**
+     * Strings old-style §-based color codes (used by ChatColor) from text
+     * @param input text with color codes
+     * @return  unformatted text
+     */
+    public static String stripColor(String input) {
+        return input.replaceAll("(?i)§[0-9A-FK-ORX]", ""); // Use regex because it's fast and reliable
+    }
+    
 }

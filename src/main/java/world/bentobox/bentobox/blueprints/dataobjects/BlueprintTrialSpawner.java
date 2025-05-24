@@ -14,11 +14,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.loot.LootTable;
 import org.bukkit.spawner.TrialSpawnerConfiguration;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.annotations.Expose;
-
-import world.bentobox.bentobox.BentoBox;
 
 /**
  * @author tastybento

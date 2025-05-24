@@ -38,6 +38,7 @@ import org.bukkit.util.BoundingBox;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import net.kyori.adventure.text.Component;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.hooks.Hook;
@@ -323,8 +324,9 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         SignSide fromSide = fromSign.getSide(side);
         SignSide toSide = toSign.getSide(side);
         int i = 0;
-        for (String line : fromSide.getLines()) {
-            toSide.setLine(i++, line);
+        
+        for (Component line : fromSide.lines()) {
+            toSide.line(i++, line);
         }
         toSide.setGlowingText(fromSide.isGlowingText());
     }

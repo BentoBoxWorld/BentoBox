@@ -103,10 +103,11 @@ public class ObsidianScoopingListener extends FlagListener {
         return false;
 
     }
+
     private void givePlayerLava(Player player, Block b, ItemStack bucket) {
         if (bucket.getAmount() == 1) {
             // Needs some special handling when there is only 1 bucket in the stack
-            bucket.setType(Material.LAVA_BUCKET);
+            bucket = new ItemStack(Material.LAVA_BUCKET);
         } else {
             // Remove one empty bucket and add a lava bucket to the player's inventory
             bucket.setAmount(bucket.getAmount() - 1);

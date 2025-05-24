@@ -184,7 +184,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         Long lastLoginTimestamp = getPlayers().getLastLoginTimestamp(member);
         // If no valid last login time is found or it's before the year 2000, try to fetch from Bukkit
         if (lastLoginTimestamp == null || lastLoginTimestamp < YEAR2000) {
-            lastLoginTimestamp = Bukkit.getOfflinePlayer(member).getLastPlayed();
+            lastLoginTimestamp = Bukkit.getOfflinePlayer(member).getLastSeen();
 
             // If still invalid, set the current timestamp to mark the user for eventual purging
             if (lastLoginTimestamp < YEAR2000) {

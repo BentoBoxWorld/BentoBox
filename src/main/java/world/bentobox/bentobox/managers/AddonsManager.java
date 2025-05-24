@@ -32,17 +32,18 @@ import org.bukkit.WorldType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -68,6 +69,8 @@ public class AddonsManager {
 
     private static final String GAMEMODE = "[gamemode].";
 
+    private static final @NotNull String BENTOBOX = "/bentobox";
+
     @NonNull
     private final List<Addon> addons;
     @NonNull
@@ -82,8 +85,6 @@ public class AddonsManager {
     @NonNull
     private final Map<@NonNull Addon, @NonNull List<Listener>> listeners;
 
-    private final PluginLoader pluginLoader;
-
     public AddonsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
         addons = new ArrayList<>();
@@ -92,7 +93,6 @@ public class AddonsManager {
         classes = new HashMap<>();
         listeners = new HashMap<>();
         worldNames = new HashMap<>();
-        pluginLoader = plugin.getPluginLoader();
     }
 
     /**
@@ -380,9 +380,68 @@ public class AddonsManager {
         }
     }
 
+    /**
+     * Removes the temporary seed worlds on shutdown
+     */
+    public void removeSeedWorlds() {
+        plugin.log("Removing temporary seed worlds...");
+        this.getGameModeAddons().stream().filter(gm -> gm.isUsesNewChunkGeneration()).forEach(gameMode -> {
+            plugin.log("Removing " + gameMode.getDescription().getName());
+            if (gameMode.getOverWorld() != null) {
+                plugin.log("Removing " + gameMode.getOverWorld().getName() + BENTOBOX);
+                removeSeedWorld(gameMode.getOverWorld().getName() + BENTOBOX);
+            }
+            if (gameMode.getNetherWorld() != null) {
+                removeSeedWorld(gameMode.getNetherWorld().getName() + BENTOBOX);
+            }
+            if (gameMode.getEndWorld() != null) {
+                removeSeedWorld(gameMode.getEndWorld().getName() + BENTOBOX);
+            }
+        });
+        plugin.log("Removed temporary seed worlds.");
+    }
+
+    private void removeSeedWorld(String name) {
+        World world = Bukkit.getWorld(name);
+        if (world == null || !world.getName().endsWith(BENTOBOX)) {
+            return;
+        }
+        // Teleport any players out of the world, just in case
+        for (Player player : world.getPlayers()) {
+            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
+        }
+
+        // Unload the world
+        boolean success = Bukkit.unloadWorld(world, false); // false = do not save
+        if (!success) {
+            plugin.logWarning("Failed to unload seed world: " + world.getName());
+        }
+        // Delete the world folder and everything in it
+        File path = new File(Bukkit.getWorldContainer(), world.getName());
+        this.deleteWorldFolder(path);
+    }
+
+    /**
+     * Recursive delete
+     * @param path path to delete
+     */
+    private void deleteWorldFolder(File path) {
+        if (path.exists()) {
+            File[] files = path.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    deleteWorldFolder(file);
+                }
+            }
+            if (!path.delete()) {
+                plugin.logWarning("Failed to delete: " + path.getAbsolutePath());
+            }
+        }
+    }
+
     private void seedWorld(GameModeAddon gameMode, @NonNull World world) {
         // Use the Flat type of world because this is a copy and no vanilla creation is required
-        WorldCreator wc = WorldCreator.name(world.getName() + "/bentobox").type(WorldType.FLAT)
+        WorldCreator wc = WorldCreator.name(world.getName() + BENTOBOX).type(WorldType.FLAT)
                 .environment(world.getEnvironment()).seed(world.getSeed());
         World w = gameMode.getWorldSettings().isUseOwnGenerator() ? wc.createWorld()
                 : wc.generator(world.getGenerator()).createWorld();
@@ -410,8 +469,11 @@ public class AddonsManager {
         plugin.logStacktrace(e);
     }
 
+
     private boolean isAddonCompatibleWithBentoBox(@NonNull Addon addon) {
-        return isAddonCompatibleWithBentoBox(addon, plugin.getDescription().getVersion());
+        @SuppressWarnings("deprecation")
+        String v = plugin.getDescription().getVersion();
+        return isAddonCompatibleWithBentoBox(addon, v);
     }
 
     /**
@@ -481,6 +543,8 @@ public class AddonsManager {
         }
         // Unregister all commands
         plugin.getCommandsManager().unregisterCommands();
+        // Delete seed worlds
+        removeSeedWorlds();
         // Clear all maps
         listeners.clear();
         pladdons.clear();
@@ -657,7 +721,7 @@ public class AddonsManager {
     @Nullable
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         // Clean up world name
-        String w = worldName.replace("_nether", "").replace("_the_end", "").replace("/bentobox", "")
+        String w = worldName.replace("_nether", "").replace("_the_end", "").replace(BENTOBOX, "")
                 .toLowerCase(Locale.ENGLISH);
         if (worldNames.containsKey(w) && worldNames.get(w) != null) {
             return worldNames.get(w).getDefaultWorldGenerator(worldName, id);
@@ -710,10 +774,12 @@ public class AddonsManager {
             loaders.remove(addon);
         }
         // Disable pladdons
+        /*
         if (pladdons.containsKey(addon)) {
             this.pluginLoader.disablePlugin(Objects.requireNonNull(this.pladdons.get(addon)));
             pladdons.remove(addon);
         }
+         */
         // Remove it from the addons list
         addons.remove(addon);
     }

@@ -244,6 +244,7 @@ public abstract class AbstractCommonSetup {
         checkSpigotMessage(expectedMessage, 1);
     }
 
+    @SuppressWarnings("deprecation")
     public void checkSpigotMessage(String expectedMessage, int expectedOccurrences) {
         // Capture the argument passed to spigot().sendMessage(...) if messages are sent
         ArgumentCaptor<TextComponent> captor = ArgumentCaptor.forClass(TextComponent.class);

@@ -3,6 +3,7 @@ package world.bentobox.bentobox.util.heads;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Base64;
 import java.util.HashSet;
@@ -350,6 +351,7 @@ public class HeadGetter {
         return returnValue;
     }
 
+    @SuppressWarnings("deprecation")
     private static URL getSkinURLFromBase64(String base64) {
         /*
          * Base64 encoded string is in format: { "timestamp": 0, "profileId": "UUID",
@@ -361,7 +363,7 @@ public class HeadGetter {
             String decoded = new String(Base64.getDecoder().decode(base64));
             JsonObject json = new Gson().fromJson(decoded, JsonObject.class);
             String url = json.getAsJsonObject(TEXTURES).getAsJsonObject("SKIN").get("url").getAsString();
-            return new URL(url);
+            return new URI(url).toURL();
         } catch (Exception e) {
             return null;
         }

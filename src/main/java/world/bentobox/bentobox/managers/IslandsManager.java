@@ -284,24 +284,24 @@ public class IslandsManager {
         // Set the owner of the island to no one.
         island.setOwner(null);
         island.setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
-        island.setDeleted(true);
         if (removeBlocks) {
-            // Remove island from the cache
-            islandCache.deleteIslandFromCache(island);
             // Remove players from island
             removePlayersFromIsland(island);
             if (!plugin.getSettings().isKeepPreviousIslandOnReset()) {
+                island.setDeleted(true);
+                // Remove island from the cache
+                islandCache.deleteIslandFromCache(island);
                 // Remove blocks from world
                 IslandDeletion id = new IslandDeletion(island);
                 plugin.getIslandDeletionManager().getIslandChunkDeletionManager().add(id);
                 // Tell other servers
                 MultiLib.notify("bentobox-deleteIsland", getGson().toJson(id));
+                // Delete the island from the database
+                handler.deleteObject(island);
             } else {
                 // Fire the deletion event immediately
                 IslandEvent.builder().deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
             }
-            // Delete the island from the database
-            handler.deleteObject(island);
         }
     }
 
@@ -1204,7 +1204,7 @@ public class IslandsManager {
                 player.leaveVehicle();
                 // Remove the boat so they don't lie around everywhere
                 boat.remove();
-                player.getInventory().addItem(new ItemStack(boaty.getBoatType().getMaterial()));
+                player.getInventory().addItem(new ItemStack(boaty.getBoatMaterial()));
                 player.updateInventory();
             }
         }
@@ -1667,7 +1667,7 @@ public class IslandsManager {
                 .filter(en -> Util.isHostileEntity(en)
                         && !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType())
                         && !(en instanceof PufferFish) && ((LivingEntity) en).getRemoveWhenFarAway())
-                .filter(en -> en.getCustomName() == null).forEach(Entity::remove);
+                .filter(en -> en.customName() == null).forEach(Entity::remove);
     }
 
     /**

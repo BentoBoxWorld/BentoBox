@@ -75,6 +75,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
 import io.papermc.paper.ServerBuildInfo;
+import net.kyori.adventure.text.Component;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -321,7 +322,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(pufferfish.getType()).thenReturn(EntityType.PUFFERFISH);
         // Named monster
         when(skelly.getType()).thenReturn(EntityType.SKELETON);
-        when(skelly.getCustomName()).thenReturn("Skelly");
+        when(skelly.customName()).thenReturn(Component.text("Skelly"));
         when(skelly.getRemoveWhenFarAway()).thenReturn(true);
 
         Collection<Entity> collection = new ArrayList<>();

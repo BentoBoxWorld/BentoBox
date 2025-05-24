@@ -1,9 +1,11 @@
 package world.bentobox.bentobox.hooks;
 
-import com.onarandombox.MultiverseCore.MultiverseCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+
+import com.onarandombox.MultiverseCore.MultiverseCore;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.hooks.Hook;
 

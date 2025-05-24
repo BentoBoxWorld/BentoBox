@@ -41,7 +41,6 @@ import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.listeners.PrimaryIslandListener;
-import world.bentobox.bentobox.listeners.SeedWorldMakerListener;
 import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
 import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
 import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
@@ -337,8 +336,6 @@ public class BentoBox extends JavaPlugin implements Listener {
         manager.registerEvents(islandDeletionManager, this);
         // Primary Island Listener
         manager.registerEvents(new PrimaryIslandListener(this), this);
-        // Seed world chunk generator
-        manager.registerEvents(new SeedWorldMakerListener(this), this);
     }
 
     @Override
@@ -358,6 +355,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         if (islandsManager != null) {
             islandsManager.shutdown();
         }
+
 
     }
 

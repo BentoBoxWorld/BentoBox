@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.github.objects.repositories;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import com.google.gson.JsonObject;
 
@@ -28,7 +29,7 @@ public class GitHubFile {
         JsonObject response;
         try {
             response = api.fetch(path);
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             // Cannot get a connection for some reason
             return "";
         }

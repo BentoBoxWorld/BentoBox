@@ -213,7 +213,6 @@ public class DefaultPasteUtil {
      * @param island island
      * @return true if Bukkit entity spawned, false another plugin entity spawned
      */
-    @SuppressWarnings("deprecation")
     static boolean spawnBlueprintEntity(BlueprintEntity k, Location location, Island island) {
         // Display Entity (holograms, etc.)
         k.setDisplay(location);
