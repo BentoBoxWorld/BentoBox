@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -173,11 +172,10 @@ public class AdminSettingsCommand extends CompositeCommand {
      * @param string - the rank given in the command line
      * @return true if rank is valid
      */
-    @SuppressWarnings("deprecation")
     private boolean checkRank(User user, String string) {
         for (Entry<String, Integer> en : RanksManager.getInstance().getRanks().entrySet()) {
             if (en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK
-                    && string.equalsIgnoreCase(ChatColor.stripColor(user.getTranslation(en.getKey())))) {
+                    && string.equalsIgnoreCase(Util.stripColor(user.getTranslation(en.getKey())))) {
                 // We have a winner
                 rank = en.getValue();
                 return true;
@@ -188,8 +186,8 @@ public class AdminSettingsCommand extends CompositeCommand {
     }
 
     private boolean checkActiveDisabled(User user, String string) {
-        String active = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
-        String disabled = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
+        String active = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
+        String disabled = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
         if (!string.equalsIgnoreCase(active) && !string.equalsIgnoreCase(disabled)) {
             user.sendMessage("commands.admin.settings.unknown-setting", TextVariables.NAME, string);
             return false;
@@ -247,13 +245,12 @@ public class AdminSettingsCommand extends CompositeCommand {
         return true;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         // Update with the latest lists
         this.makeLists();
-        String active = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
-        String disabled = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
+        String active = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
+        String disabled = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
         List<String> options = new ArrayList<>();
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         if (args.size() == 2) {

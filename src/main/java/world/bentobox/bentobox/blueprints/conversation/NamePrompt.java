@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
@@ -57,7 +56,7 @@ public class NamePrompt extends StringPrompt
         String uniqueId = Util.sanitizeInput(input);
 
         // Convert color codes
-        if (ChatColor.stripColor(Util.translateColorCodes(input)).length() > 32)
+        if (Util.stripColor(Util.translateColorCodes(input)).length() > 32)
         {
             context.getForWhom().sendRawMessage(
                 user.getTranslation("commands.admin.blueprint.management.name.too-long"));

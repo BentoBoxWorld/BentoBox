@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -39,6 +38,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.common.base.Enums;
 
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -261,9 +261,21 @@ public class User implements MetaDataAble {
      *         name
      * @since 1.22.1
      */
+    @SuppressWarnings("deprecation")
     @NonNull
     public String getDisplayName() {
         return player != null ? player.getDisplayName() : plugin.getPlayers().getName(playerUUID);
+    }
+
+    /**
+     * Get the user's display name as a text Component
+     * 
+     * @return player's display name if the player is online otherwise just their
+     *         name
+     * @since 3.4.0
+     */
+    public Component displayName() {
+        return player != null ? player.displayName() : Component.text(plugin.getPlayers().getName(playerUUID));
     }
 
     /**
@@ -584,7 +596,8 @@ public class User implements MetaDataAble {
      */
     public void sendMessage(String reference, String... variables) {
         String message = getTranslation(reference, variables);
-        if (!ChatColor.stripColor(message).trim().isEmpty()) {
+        String noColors = message.replaceAll("(?i)§[0-9A-FK-ORX]", "").trim();
+        if (!noColors.isEmpty()) {
             sendRawMessage(message);
         }
     }
@@ -704,7 +717,7 @@ public class User implements MetaDataAble {
      */
     public void notify(String reference, String... variables) {
         String message = getTranslation(reference, variables);
-        if (!ChatColor.stripColor(message).trim().isEmpty() && sender != null) {
+        if (!Util.stripColor(message).trim().isEmpty() && sender != null) {
             plugin.getNotifier().notify(this, message);
         }
     }
@@ -722,7 +735,7 @@ public class User implements MetaDataAble {
      */
     public void notify(World world, String reference, String... variables) {
         String message = getTranslation(world, reference, variables);
-        if (!ChatColor.stripColor(message).trim().isEmpty() && sender != null) {
+        if (!Util.stripColor(message).trim().isEmpty() && sender != null) {
             plugin.getNotifier().notify(this, message);
         }
     }
