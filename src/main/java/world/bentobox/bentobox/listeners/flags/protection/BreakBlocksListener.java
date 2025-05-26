@@ -20,8 +20,6 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 
-import com.google.common.base.Enums;
-
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -109,10 +107,6 @@ public class BreakBlocksListener extends FlagListener {
         // Only handle hitting things
         if (!(e.getAction() == Action.LEFT_CLICK_BLOCK) || e.getClickedBlock() == null)
         {
-            return;
-        }
-        if (Enums.getIfPresent(Material.class, "TRIAL_SPAWNER").isPresent() && m.equals(Material.TRIAL_SPAWNER)) {
-            this.checkIsland(e, p, l, Flags.BREAK_SPAWNERS);
             return;
         }
         switch (m)

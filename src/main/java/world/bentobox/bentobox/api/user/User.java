@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -28,7 +27,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -73,14 +71,6 @@ public class User implements MetaDataAble {
         Map<Particle, Class<?>> v = new EnumMap<>(Particle.class);
         v.put(Enums.getIfPresent(Particle.class, "DUST")
                 .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME)), Particle.DustOptions.class);
-        if (Enums.getIfPresent(Particle.class, "ITEM").isPresent()) {
-            // 1.20.6 Particles
-            v.put(Particle.ITEM, ItemStack.class);
-            v.put(Particle.ITEM_COBWEB, ItemStack.class);
-            v.put(Particle.BLOCK, BlockData.class);
-            v.put(Particle.DUST_PILLAR, BlockData.class);
-            v.put(Particle.ENTITY_EFFECT, Color.class);
-        }
         v.put(Particle.FALLING_DUST, BlockData.class);
         v.put(Particle.BLOCK_MARKER, BlockData.class);
         v.put(Particle.DUST_COLOR_TRANSITION, DustTransition.class);
@@ -632,7 +622,7 @@ public class User implements MetaDataAble {
             // Add any text before the current match
             if (matcher.start() > lastMatchEnd) {
                 String beforeMatch = message.substring(lastMatchEnd, matcher.start());
-                baseComponent.addExtra(TextComponent.fromLegacy(beforeMatch));
+                baseComponent.addExtra(beforeMatch);
             }
 
             // Check if it's a recognized command or an unknown bracketed text
@@ -658,12 +648,12 @@ public class User implements MetaDataAble {
                         break;
                     default:
                         // Unrecognized command; preserve it in the output text
-                        baseComponent.addExtra(TextComponent.fromLegacy(matcher.group(0)));
+                        baseComponent.addExtra(matcher.group(0));
                 }
 
             } else if (matcher.group(3) != null) {
                 // Unrecognized bracketed text; preserve it in the output
-                baseComponent.addExtra(TextComponent.fromLegacy("[[" + matcher.group(3) + "]]"));
+                baseComponent.addExtra("[[" + matcher.group(3) + "]]");
             }
 
             // Update the last match end position
@@ -673,7 +663,7 @@ public class User implements MetaDataAble {
         // Add any remaining text after the last match
         if (lastMatchEnd < message.length()) {
             String remainingText = message.substring(lastMatchEnd);
-            baseComponent.addExtra(TextComponent.fromLegacy(remainingText));
+            baseComponent.addExtra(remainingText);
         }
 
         // Apply the first encountered ClickEvent and HoverEvent to the entire message

@@ -286,27 +286,6 @@ public class LangUtilsHook extends Hook {
         case LUCK -> "Potion of Luck";
         case TURTLE_MASTER -> "Potion of the Turtle Master";
         case SLOW_FALLING -> "Potion of Slow Falling";
-        case LONG_FIRE_RESISTANCE -> "Potion of Long Fire Resistance";
-        case LONG_INVISIBILITY -> "Potion of Long Invisibility";
-        case LONG_NIGHT_VISION -> "Potion of Long Night Vision";
-        case LONG_POISON -> "Potion of Long Poison";
-        case LONG_REGENERATION -> "Potion of Long Regeneration";
-        case LONG_SLOWNESS -> "Potion of Long Slowness";
-        case LONG_SLOW_FALLING -> "Potion of Long Slow Falling";
-        case LONG_STRENGTH -> "Potion of Long Strength";
-        case LONG_SWIFTNESS -> "Potion of Long Swiftness";
-        case LONG_TURTLE_MASTER -> "Potion of Long Turtle Master";
-        case LONG_WATER_BREATHING -> "Potion of Long Water Breathing";
-        case LONG_WEAKNESS -> "Potion of Long Weakness";
-        case STRONG_HARMING -> "Potion of Strong Harming";
-        case STRONG_HEALING -> "Potion of Strong Healing";
-        case STRONG_LEAPING -> "Potion of Strong Leaping";
-        case STRONG_POISON -> "Potion of Strong Poison";
-        case STRONG_REGENERATION -> "Potion of Strong Regeneration";
-        case STRONG_SLOWNESS -> "Potion of Strong Slowness";
-        case STRONG_STRENGTH -> "Potion of Strong Strength";
-        case STRONG_SWIFTNESS -> "Potion of Swiftness"; 
-        case STRONG_TURTLE_MASTER -> "Potion of Strong Turtle Master";
         default -> "Potion of " + Util.prettifyText(potionType.name());
         };
 
@@ -363,23 +342,12 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return Return the translation result.
      */
-    @SuppressWarnings("deprecation")
     public static String getPotionBaseEffectName(PotionType potionType, User user) {
         if (hooked) {
             return LanguageHelper.getPotionBaseEffectName(potionType, getUserLocale(user));
         }
-        try {
-            List<PotionEffect> effects = potionType.getPotionEffects();
-
-            if (effects.isEmpty()) {
-                return "No Effects";
-            }
-            return effects.stream().map(effect -> Util.prettifyText(effect.getType().getKey().getKey()))
-                    .collect(Collectors.joining(", "));
-        } catch (Exception e) {
-            // Older versions of Spigot pre-1.20.4 don't have getPotionEffects()
-            return Util.prettifyText(potionType.getEffectType().getKey().getKey());
-        }
+        // Older versions of Spigot pre-1.20.4 don't have getPotionEffects()
+        return Util.prettifyText(potionType.getEffectType().getKey().getKey());
     }
 
     /**

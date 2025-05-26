@@ -265,8 +265,7 @@ public class ItemParser {
         boolean isUpgraded = !part[2].isEmpty() && !part[2].equalsIgnoreCase("1");
         boolean isExtended = part[3].equalsIgnoreCase("EXTENDED");
         PotionData data = new PotionData(type, isExtended, isUpgraded);
-        // TODO: Set extended and u[graded settings.
-        potionMeta.setBasePotionType(type);
+        potionMeta.setBasePotionData(data);
         result.setItemMeta(potionMeta);
         result.setAmount(Integer.parseInt(part[5]));
         return result;
@@ -320,7 +319,8 @@ public class ItemParser {
         if (result.getItemMeta() instanceof PotionMeta meta) {
             PotionType potionType = Enums.getIfPresent(PotionType.class, part[1].toUpperCase(Locale.ENGLISH)).
                     or(PotionType.WATER);
-            meta.setBasePotionType(potionType);
+            PotionData data = new PotionData(potionType, false, false);
+            meta.setBasePotionData(data);
             result.setItemMeta(meta);
         }
 

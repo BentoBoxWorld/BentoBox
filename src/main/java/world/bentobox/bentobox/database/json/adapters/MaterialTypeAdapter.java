@@ -33,11 +33,6 @@ public final class MaterialTypeAdapter extends TypeAdapter<Material>
 
         // Put in current values.
         Arrays.stream(Material.values()).forEach(mat -> this.materialMap.put(mat.name(), mat));
-
-        // Put in renamed material values.
-        if (Enums.getIfPresent(Material.class, "SHORT_GRASS").isPresent()) {
-            this.materialMap.put("GRASS", Material.SHORT_GRASS);
-        }
     }
 
     @Override
