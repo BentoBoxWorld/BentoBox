@@ -3,7 +3,6 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.CaveVinesPlant;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EnderCrystal;
@@ -195,25 +194,21 @@ public class BreakBlocksListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onProjectileHitBreakBlock(ProjectileHitEvent e) {
-        // We want to make sure this is an actual projectile (arrow or trident)
-        if (!(e.getEntity() instanceof Projectile)) {
+        if (e.getHitBlock() == null) {
             return;
         }
 
-        // We want to make sure it hit a CHORUS_FLOWER
-        if (e.getHitBlock() == null || !e.getHitBlock().getType().equals(Material.CHORUS_FLOWER)) {
+        // Check if the hit block is a Chorus Flower or a Decorated Pot
+        if(!(e.getHitBlock().getType().equals(Material.CHORUS_FLOWER) ||
+                e.getHitBlock().getType().equals(Material.DECORATED_POT))) {
             return;
         }
 
         // Find out who fired the arrow
         if (e.getEntity().getShooter() instanceof Player s &&
                 !checkIsland(e, s, e.getHitBlock().getLocation(), Flags.BREAK_BLOCKS)) {
-            final BlockData data = e.getHitBlock().getBlockData();
-            // We seemingly can't prevent the block from being destroyed
-            // So we need to put it back with a slight delay (yup, this is hacky - it makes the block flicker sometimes)
-            e.getHitBlock().setType(Material.AIR); // prevents the block from dropping a chorus flower
-            getPlugin().getServer().getScheduler().runTask(getPlugin(), () -> e.getHitBlock().setBlockData(data, true));
-            // Sorry, this might also cause some ghost blocks!
+
+            e.setCancelled(true); // Prevents the block from being destroyed
         }
     }
 }
