@@ -1055,6 +1055,10 @@ protection:
       name: Barrels
       description: Toggle barrel interaction
       hint: Barrel access disabled
+    CRAFTER:
+        name: Crafter
+        description: Toggle use
+        hint: Crafter access disabled
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Allow Bed & Respawn Anchors
