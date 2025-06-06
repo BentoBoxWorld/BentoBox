@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.util;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Base64;
@@ -445,7 +446,7 @@ public class ItemParser {
             String decoded = new String(Base64.getDecoder().decode(base64));
             JsonObject json = new Gson().fromJson(decoded, JsonObject.class);
             String url = json.getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
-            return new URL(url);
+            return new URI(url).toURL();
         }
         catch (Exception e) {
             return null;

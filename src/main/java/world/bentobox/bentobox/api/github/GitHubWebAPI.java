@@ -2,6 +2,8 @@ package world.bentobox.bentobox.api.github;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
@@ -32,8 +34,9 @@ public class GitHubWebAPI {
      * @param endpoint The API endpoint to fetch.
      * @return The JSON response as a JsonObject.
      * @throws IOException If an error occurs during the request.
+     * @throws URISyntaxException if URI syntax is wrong
      */
-    public synchronized JsonObject fetch(String endpoint) throws IOException {
+    public synchronized JsonObject fetch(String endpoint) throws IOException, URISyntaxException {
         long currentTime = System.currentTimeMillis();
         long timeSinceLastRequest = currentTime - lastRequestTime;
 
@@ -48,7 +51,7 @@ public class GitHubWebAPI {
 
         lastRequestTime = System.currentTimeMillis();
 
-        URL url = new URL(API_BASE_URL + endpoint);
+        URL url = new URI(API_BASE_URL + endpoint).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Accept", "application/vnd.github.v3+json");
@@ -75,7 +78,7 @@ public class GitHubWebAPI {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return fetch(endpoint);
-            } catch (IOException e) {
+            } catch (IOException | URISyntaxException e) {
                 throw new RuntimeException("Failed to fetch data from GitHub API", e);
             }
         }, executor);

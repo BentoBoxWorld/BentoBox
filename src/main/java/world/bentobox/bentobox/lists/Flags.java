@@ -126,6 +126,7 @@ public final class Flags {
     public static final Flag FLOWER_POT = new Flag.Builder("FLOWER_POT", Material.FLOWER_POT).mode(Flag.Mode.ADVANCED).build();
     public static final Flag SHULKER_BOX = new Flag.Builder("SHULKER_BOX", Material.SHULKER_BOX).mode(Flag.Mode.ADVANCED).build();
     public static final Flag TRAPPED_CHEST = new Flag.Builder("TRAPPED_CHEST", Material.TRAPPED_CHEST).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag CRAFTER = new Flag.Builder("CRAFTER", Material.CRAFTER).mode(Flag.Mode.ADVANCED).build();
     // END CONTAINER split
     public static final Flag DISPENSER = new Flag.Builder("DISPENSER", Material.DISPENSER).mode(Flag.Mode.ADVANCED).build();
     public static final Flag DROPPER = new Flag.Builder("DROPPER", Material.DROPPER).mode(Flag.Mode.ADVANCED).build();

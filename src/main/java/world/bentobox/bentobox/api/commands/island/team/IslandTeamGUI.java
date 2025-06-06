@@ -545,7 +545,7 @@ public class IslandTeamGUI {
 
     private String lastSeen(OfflinePlayer offlineMember) {
         // A bit of handling for the last joined date
-        Instant lastJoined = Instant.ofEpochMilli(offlineMember.getLastPlayed());
+        Instant lastJoined = Instant.ofEpochMilli(offlineMember.getLastSeen());
         Instant now = Instant.now();
 
         Duration duration = Duration.between(lastJoined, now);

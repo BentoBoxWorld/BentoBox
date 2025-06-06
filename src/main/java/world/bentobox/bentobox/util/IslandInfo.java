@@ -56,9 +56,9 @@ public class IslandInfo {
                     TextVariables.UUID, owner.toString());
 
             // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
-            long lastPlayed = (Bukkit.getOfflinePlayer(owner).getLastPlayed() != 0)
-                    ? Bukkit.getOfflinePlayer(owner).getLastPlayed()
-                    : Bukkit.getOfflinePlayer(owner).getFirstPlayed();
+            long lastPlayed = (Bukkit.getOfflinePlayer(owner).getLastSeen() != 0)
+                    ? Bukkit.getOfflinePlayer(owner).getLastSeen()
+                    : Bukkit.getOfflinePlayer(owner).getLastSeen();
             String formattedDate;
             try {
                 String dateTimeFormat = plugin.getLocalesManager()

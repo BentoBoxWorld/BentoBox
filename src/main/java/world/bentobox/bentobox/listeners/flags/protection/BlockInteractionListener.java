@@ -105,6 +105,7 @@ public class BlockInteractionListener extends FlagListener
         case BEEHIVE, BEE_NEST -> this.checkIsland(e, player, loc, Flags.HIVE);
         case BARREL -> this.checkIsland(e, player, loc, Flags.BARREL);
         case CANDLE -> this.checkIsland(e, player, loc, Flags.CANDLES);
+        case CRAFTER -> this.checkIsland(e, player, loc, Flags.CRAFTER);
         case CHEST, CHEST_MINECART -> this.checkIsland(e, player, loc, Flags.CHEST);
         case TRAPPED_CHEST -> this.checkIsland(e, player, loc, Flags.TRAPPED_CHEST);
         case FLOWER_POT -> this.checkIsland(e, player, loc, Flags.FLOWER_POT);

@@ -12,7 +12,6 @@ import world.bentobox.bentobox.api.commands.island.IslandGoCommand;
 import world.bentobox.bentobox.api.commands.island.IslandGoCommand.IslandInfo;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
 
