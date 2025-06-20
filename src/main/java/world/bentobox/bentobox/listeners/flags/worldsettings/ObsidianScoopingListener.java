@@ -58,8 +58,8 @@ public class ObsidianScoopingListener extends FlagListener {
         }
 
         if (Material.BUCKET.equals(e.getPlayer().getInventory().getItemInOffHand().getType()) &&
-            Material.BUCKET.equals(e.getPlayer().getInventory().getItemInMainHand().getType()) &&
-            EquipmentSlot.OFF_HAND.equals(e.getHand()))
+                Material.BUCKET.equals(e.getPlayer().getInventory().getItemInMainHand().getType())
+                && EquipmentSlot.OFF_HAND.equals(e.getHand()))
         {
             // If player is holding bucket in both hands, then allow to interact only with main hand.
             // Prevents lava duplication glitch.
@@ -105,16 +105,11 @@ public class ObsidianScoopingListener extends FlagListener {
     }
 
     private void givePlayerLava(Player player, Block b, ItemStack bucket) {
-        if (bucket.getAmount() == 1) {
-            // Needs some special handling when there is only 1 bucket in the stack
-            bucket = new ItemStack(Material.LAVA_BUCKET);
-        } else {
-            // Remove one empty bucket and add a lava bucket to the player's inventory
-            bucket.setAmount(bucket.getAmount() - 1);
-            HashMap<Integer, ItemStack> map = player.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
-            if (!map.isEmpty()) {
-                map.values().forEach(i -> player.getWorld().dropItem(player.getLocation(), i));
-            }
+        // Remove one empty bucket and add a lava bucket to the player's inventory
+        bucket.setAmount(bucket.getAmount() - 1);
+        HashMap<Integer, ItemStack> map = player.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
+        if (!map.isEmpty()) {
+            map.values().forEach(i -> player.getWorld().dropItem(player.getLocation(), i));
         }
         // Set block to air only after giving bucket
         b.setType(Material.AIR);
