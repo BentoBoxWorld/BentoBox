@@ -268,7 +268,11 @@ public class ServerCompatibility {
         /**
          * @since 3.3.3
          */
-        V1_21_5(Compatibility.COMPATIBLE),;
+        V1_21_5(Compatibility.COMPATIBLE),
+        /**
+         * @since 3.5.0
+         */
+        V1_21_6(Compatibility.COMPATIBLE),;
 
         private final Compatibility compatibility;
 
