@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.lang.reflect.Method;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -75,6 +77,20 @@ public class BreakBlocksListener extends FlagListener {
         }
     }
 
+    private static final Method BERRIES_CHECK;
+
+    static {
+        Method m = null;
+        try {
+            m = CaveVinesPlant.class.getMethod("hasBerries");
+        } catch (NoSuchMethodException ignored) {
+            try {
+                m = CaveVinesPlant.class.getMethod("isBerries");
+            } catch (NoSuchMethodException ignored2) {
+            }
+        }
+        BERRIES_CHECK = m;
+    }
     /**
      * Handles breaking objects
      *
@@ -94,8 +110,14 @@ public class BreakBlocksListener extends FlagListener {
             Material clickedType = e.getClickedBlock().getType();
             switch (clickedType) {
             case CAVE_VINES, CAVE_VINES_PLANT -> {
-                if (((CaveVinesPlant) e.getClickedBlock().getBlockData()).hasBerries()) {
-                    this.checkIsland(e, p, l, Flags.HARVEST);
+                try {
+                    boolean hasBerries = (Boolean) BERRIES_CHECK
+                            .invoke((CaveVinesPlant) e.getClickedBlock().getBlockData());
+                    if (hasBerries) {
+                        this.checkIsland(e, p, l, Flags.HARVEST);
+                    }
+                } catch (ReflectiveOperationException ex) {
+                    getPlugin().logStacktrace(ex);
                 }
             }
             case SWEET_BERRY_BUSH -> this.checkIsland(e, p, l, Flags.HARVEST);
