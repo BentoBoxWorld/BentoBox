@@ -562,7 +562,11 @@ public class User implements MetaDataAble {
         if (player != null) {
             reference = plugin.getPlaceholdersManager().replacePlaceholders(player, reference);
         }
-
+        // Validate variables array length
+        if (variables.length % 2 != 0) {
+            throw new IllegalArgumentException(
+                    "Variable replacements must be in pairs (key, value), but got odd number: " + variables.length);
+        }
         // Then replace variables
         if (variables.length > 1) {
             for (int i = 0; i < variables.length; i += 2) {
