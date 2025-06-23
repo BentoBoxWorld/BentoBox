@@ -753,7 +753,6 @@ public class Util {
             final String pluginPackageName = plugin.getClass().getPackage().getName();
             WorldRegenerator handler;
             try {
-                BentoBox.getInstance().logDebug(pluginPackageName + ".nms." + bukkitVersion + ".WorldRegeneratorImpl");
                 Class<?> clazz = Class.forName(pluginPackageName + ".nms." + bukkitVersion + ".WorldRegeneratorImpl");
                 if (WorldRegenerator.class.isAssignableFrom(clazz)) {
                     handler = (WorldRegenerator) clazz.getConstructor().newInstance();
@@ -783,7 +782,6 @@ public class Util {
             BentoBox.getInstance().log("Optimizing for " + bukkitVersion);
             PasteHandler handler;
             try {
-                BentoBox.getInstance().logDebug(pluginPackageName + ".nms." + bukkitVersion + ".PasteHandlerImpl");
                 Class<?> clazz = Class.forName(pluginPackageName + ".nms." + bukkitVersion + ".PasteHandlerImpl");
                 if (PasteHandler.class.isAssignableFrom(clazz)) {
                     handler = (PasteHandler) clazz.getConstructor().newInstance();
