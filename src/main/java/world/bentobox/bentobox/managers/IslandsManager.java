@@ -1079,7 +1079,10 @@ public class IslandsManager {
                 // Try to fix this teleport location and teleport the player if possible
                 new SafeSpotTeleport.Builder(plugin).entity(player).island(island).homeName(name)
                         .thenRun(() -> teleported(world, user, name, newIsland, island))
-                        .ifFail(() -> goingHome.remove(user.getUniqueId())).buildFuture().thenAccept(result::complete);
+                        .ifFail(() -> {
+                            plugin.logError(user.getName() + " could not be teleported to home because a safe spot could not be found on island " + island.getCenter());
+                            goingHome.remove(user.getUniqueId());
+                            }).buildFuture().thenAccept(result::complete);
                 return;
             }
             Util.teleportAsync(Objects.requireNonNull(player), home).thenAccept(b -> {
