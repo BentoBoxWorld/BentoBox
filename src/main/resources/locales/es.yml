@@ -1084,6 +1084,10 @@ protection:
       name: Barriles
       description: Cambiar la interacción con el barril
       hint: Acceso al barril deshabilitado
+    CRAFTER:
+      name: Crafter
+      description: Alternar uso
+      hint: Acceso de Crafter deshabilitado
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Permitir que las camas & anclas de reaparición  
