@@ -39,6 +39,7 @@ general:
       lagi.
     must-be-positive-number: '&c [number] bukan angka positif yang valid.'
     not-on-island: '&c Kamu tidak berada di pulau!'
+    slow-down: '&c Perlahan. Klik lebih lambat.'
   worlds:
     overworld: Dunia Luar
     nether: Nether

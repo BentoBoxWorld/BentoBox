@@ -37,6 +37,7 @@ general:
     you-must-wait: '&cTev ir jāgaida [number]s pirms vari izmantot komandu vēlreiz.'
     must-be-positive-number: '&c[number] nav derīgs pozitīvs numurs.'
     not-on-island: '&c Tu neesi uz [prefix_island]!'
+    slow-down: '&c Palēnini. Klikšķini lēnāk.'
   worlds:
     overworld: Pasaule
     nether: Elles

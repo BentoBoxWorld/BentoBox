@@ -39,6 +39,7 @@ general:
       novamente.
     must-be-positive-number: '&c [number] não é um número positivo válido.'
     not-on-island: '&c Você não está na ilha!'
+    slow-down: '&c Abranda. Clica mais devagar.'
   worlds:
     overworld: Mundo superior
     nether: Inferior

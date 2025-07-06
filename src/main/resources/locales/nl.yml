@@ -41,6 +41,7 @@ general:
       doen.
     must-be-positive-number: '&c [number] is geen geldig positief getal.'
     not-on-island: '&c Je bevindt je niet op [prefix_island]!'
+    slow-down: '&c Langzamer. Klik langzamer.'
   worlds:
     overworld: Bovenwereld
     nether: Nether

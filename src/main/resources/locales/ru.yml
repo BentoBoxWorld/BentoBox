@@ -35,6 +35,7 @@ general:
     you-must-wait: '&c Вы должны подождать [number] прежде чем пробовать команду снова.'
     must-be-positive-number: '&c[number] не является корректным положительным значением.'
     not-on-island: '&cВы не на острове!'
+    slow-down: '&c Помедленнее. Кликайте медленнее.'
   worlds:
     overworld: Верхний мир
     nether: Незер

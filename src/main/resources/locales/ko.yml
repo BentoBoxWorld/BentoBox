@@ -36,6 +36,7 @@ general:
     you-must-wait: '&c 그 커맨드를 다시 이용하기 위해서는 [number]를 기다려야합니다.'
     must-be-positive-number: '&c [number] 는 올바를 양수가 아닙니다. (음수는 입력할 수 없습니다.)'
     not-on-island: '&c 당신은 [prefix_island]에 없습니다!'
+    slow-down: '&c 천천히 하세요. 더 천천히 클릭하세요.'
   worlds:
     overworld: 오버월드
     nether: 지옥

@@ -37,6 +37,7 @@ general:
     you-must-wait: '&cDevi aspettare [number]s prima di comporre di nuovo quel comando.'
     must-be-positive-number: '&c[number] non è un numero positivo valido.'
     not-on-island: '&c Non sei su [prefix_island]!'
+    slow-down: '&c Rallenta. Clicca più lentamente.'
   worlds:
     overworld: Sopravvivenza
     nether: Nether

@@ -41,6 +41,7 @@ general:
       parancsot.
     must-be-positive-number: '&c [number] nem egy érvényes pozitív szám.'
     not-on-island: '&c Nem vagy a szigeten!'
+    slow-down: '&c Lassíts. Kattints lassabban.'
   worlds:
     overworld: Alap világ
     nether: Pokol

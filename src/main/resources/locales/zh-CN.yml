@@ -39,6 +39,7 @@ general:
     you-must-wait: '&c你必须等待[number]秒后才能执行该命令.'
     must-be-positive-number: '&c[number]不是一个正数.'
     not-on-island: '&c你不在岛上!'
+    slow-down: '&c 慢点。点击慢一些。'
   worlds:
     overworld: 主世界
     nether: 下界
