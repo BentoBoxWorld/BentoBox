@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
@@ -181,8 +182,15 @@ public class BentoBox extends JavaPlugin implements Listener {
             try {
                 completeSetup(loadTime);
             } catch (Exception e) {
-                fireCriticalError(e.getMessage(), "");
-                e.printStackTrace();
+                getLogger().log(Level.WARNING,
+                        "unexpected exception occurred during completeSetup, Disabling BentoBox...", e);
+                // Do not save players or islands, just shutdown
+                shutdown = true;
+                // Stop all addons
+                if (addonsManager != null) {
+                    addonsManager.disableAddons();
+                }
+                instance.setEnabled(false);
             }
         });
     }
