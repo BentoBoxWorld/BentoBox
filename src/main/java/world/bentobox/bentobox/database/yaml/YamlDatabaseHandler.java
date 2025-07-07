@@ -344,7 +344,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param instance that should be inserted into the database
      * @return CompletableFuture that will be true if object is saved successfully
      */
-    @SuppressWarnings("unchecked")
     @Override
     public CompletableFuture<Boolean> saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
@@ -357,6 +356,19 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return CompletableFuture.completedFuture(false);
         }
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, ()-> {
+            try {
+                processFile(completableFuture, instance);
+            } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+                completableFuture.complete(false);
+                plugin.logStacktrace(e);
+            }
+        });
+        return completableFuture;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void processFile(CompletableFuture<Boolean> completableFuture, T instance) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
         // This is the Yaml Configuration that will be used and saved at the end
         YamlConfiguration config = new YamlConfiguration();
 
@@ -430,7 +442,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
         // Save
         save(completableFuture, filename, config.saveToString(), path, yamlComments);
-        return completableFuture;
     }
 
     private void save(CompletableFuture<Boolean> completableFuture, String name, String data, String path, Map<String, String> yamlComments) {

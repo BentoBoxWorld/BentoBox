@@ -39,6 +39,7 @@ general:
       nou.
     must-be-positive-number: '&c [number] nu este un număr pozitiv valid.'
     not-on-island: '&c Nu ești pe insulă!'
+    slow-down: '&c Încetinește. Apasă mai încet.'
   worlds:
     overworld: Lumea de Sus
     nether: Nether

@@ -45,6 +45,7 @@ general:
     you-must-wait: '&c You must wait [number]s before you can do that command again.'
     must-be-positive-number: '&c [number] is not a valid positive number.'
     not-on-island: '&c You are not on [prefix_island]!'
+    slow-down: '&c Slow down. Click slower.'
   worlds:
     overworld: Overworld
     nether: Nether

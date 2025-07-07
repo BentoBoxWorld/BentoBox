@@ -37,6 +37,7 @@ general:
       utiliser cette commande.
     must-be-positive-number: '&c [number] n''est pas un nombre positif valide.'
     not-on-island: "&c Vous n'êtes pas sur l'île\_!"
+    slow-down: '&c Ralentis. Clique plus lentement.'
   worlds:
     overworld: Monde supérieur
     nether: Nether

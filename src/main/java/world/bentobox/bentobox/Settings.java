@@ -141,6 +141,10 @@ public class Settings implements ConfigObject {
     private Set<String> fakePlayers = new HashSet<>();
 
     /* PANELS */
+    @ConfigComment("Panel click cooldown. Value is in milliseconds. Prevents players spamming button presses in GUIs.")
+    @ConfigEntry(path = "panel.click-cooldown-ms")
+    private long clickCooldownMs = 1000;
+    
     @ConfigComment("Toggle whether panels should be closed or not when the player clicks anywhere outside of the inventory view.")
     @ConfigEntry(path = "panel.close-on-click-outside")
     private boolean closePanelOnClickOutside = true;
@@ -1052,6 +1056,23 @@ public class Settings implements ConfigObject {
      */
     public void setOverrideSafetyCheck(boolean overrideSafetyCheck) {
         this.overrideSafetyCheck = overrideSafetyCheck;
+    }
+
+    /**
+     * @return the clickCooldownMs
+     */
+    public long getClickCooldownMs() {
+        if (clickCooldownMs < 50) {
+            clickCooldownMs = 50;
+        }
+        return clickCooldownMs;
+    }
+
+    /**
+     * @param clickCooldownMs the clickCooldownMs to set
+     */
+    public void setClickCooldownMs(long clickCooldownMs) {
+        this.clickCooldownMs = clickCooldownMs;
     }
 
 }

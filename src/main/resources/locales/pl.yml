@@ -39,6 +39,7 @@ general:
       ponownie.
     must-be-positive-number: '&c [number] nie jest poprawną liczbą dodatnią.'
     not-on-island: '&c Nie jesteś na [prefix_island]!'
+    slow-down: '&c Zwolnij. Klikaj wolniej.'
   worlds:
     overworld: Świat wysp
     nether: Nether
