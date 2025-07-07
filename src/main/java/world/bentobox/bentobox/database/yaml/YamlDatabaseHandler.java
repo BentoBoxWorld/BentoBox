@@ -356,14 +356,23 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return CompletableFuture.completedFuture(false);
         }
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, ()-> {
+        if (plugin.isShutdown()) {
             try {
                 processFile(completableFuture, instance);
             } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
                 completableFuture.complete(false);
                 plugin.logStacktrace(e);
             }
-        });
+        } else {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, ()-> {
+                try {
+                    processFile(completableFuture, instance);
+                } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+                    completableFuture.complete(false);
+                    plugin.logStacktrace(e);
+                }
+            });
+        }
         return completableFuture;
     }
 
