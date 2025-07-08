@@ -171,6 +171,21 @@ public class IslandCache {
             grids.get(island.getWorld()).removeFromGrid(island);
         }
     }
+    
+    /**
+     * Get the island's unique ID. Does not make a database call.
+     * @param world world
+     * @param x coordinate
+     * @param z coordinate
+     * @return Island ID or null if unknown
+     */
+    public String getIslandIDByXZ(World world, int x, int z) {
+        if (grids.containsKey(world)) {
+            return grids.get(world).getIslandStringAt(x, z);
+        } else {
+            return null;
+        }
+    }
 
     private void removeFromIslandsByUUID(Island island) {
         Iterator<Map.Entry<UUID, Set<String>>> iterator = islandsByUUID.entrySet().iterator();

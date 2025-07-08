@@ -35,10 +35,10 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     private int count;
     private volatile boolean inPurge;
     private boolean toBeConfirmed;
-     private User user;
+    private User user;
     private Set<String> islands = new HashSet<>();
     private volatile int islandCount;
-    private List<File> deletableFiles;
+    private Map<File, Set<Pair<Integer, Integer>>> deletableFileToCoords = new HashMap<>();
     private final Map<String, AtomicInteger> regionChunkCounts = new ConcurrentHashMap<>();
 
     public AdminPurgeRegionsCommand(CompositeCommand parent) {
@@ -71,52 +71,69 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     @Override
     public boolean execute(User user, String label, List<String> args) {
         if (args.get(0).equalsIgnoreCase("confirm") && toBeConfirmed && this.user.equals(user)) {
-            if (deletableFiles.isEmpty()) {
+            if (deletableFileToCoords.isEmpty()) {
                 user.sendMessage("commands.admin.purge.none-found"); // Should never happen
                 return false;
             }
             // Remove any regions that have recently been loaded for some reason
-            int num = deletableFiles.size();
-            filterDeletableFiles(deletableFiles); // Technically this could be used to delete just the unchanged ones
+            int num = deletableFileToCoords.size();
+            filterDeletableFiles(new ArrayList<>(deletableFileToCoords.keySet())); // Technically this could be used to delete just the unchanged ones
             // For now though, if there is any change, then stop and have them rescan
-            if (num != deletableFiles.size()) {
+            if (num != deletableFileToCoords.size()) {
                 user.sendMessage("commands.admin.purge.regions-changed");
                 return false;
             }
             // Delete them
+            for (Set<Pair<Integer, Integer>> coords : deletableFileToCoords.values()) {
+                for (Pair<Integer, Integer> coord : coords) {
+                    // Delete the island at this coordinate
+                    String islandID = getPlugin().getIslands().getIslandCache().getIslandIDByXZ(getWorld(), coord.x, coord.z);
+                    if (islandID != null) {
+                     // Remove island from the cache
+                        getPlugin().getIslands().getIslandCache().deleteIslandFromCache(islandID);
+                        // Delete island from database using id
+                        getPlugin().getIslands().deleteIslandId(islandID);
+                        // Log
+                        getPlugin().log("Island at " + coord.x + "," + coord.z + " in " + getWorld().getName() + " deleted from cache and database" );
+                    }
+                }
+            }
+            getPlugin().log("Now deleting region files");
             deleteRegionFiles();
-            if (!deletableFiles.isEmpty()) {
+            if (!deletableFileToCoords.isEmpty()) {
                 user.sendMessage("commands.admin.purge.not-all-deleted");
                 return false;
             }
             user.sendMessage("general.success");
             toBeConfirmed = false;
-            deletableFiles.clear();
+            deletableFileToCoords.clear();
             return true;
         }
         // Clear tbc
         toBeConfirmed = false;
         this.user = user;
         int days = Integer.parseInt(args.get(0));
-        /*
+        /* TODO: Add this in after testing
         if (days < 1) {
             user.sendMessage("commands.admin.purge.days-one-or-more");
             return false;
         }*/
         user.sendMessage("commands.admin.purge.scanning");
+        // Save all worlds to update any region files
+        Bukkit.getWorlds().forEach(World::save);
 
         // Find the potential islands
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), ()-> removeIslands(getWorld(), days));
         return true;
     }
-    
+
     /**
      * Deletes files from the deletableFiles list.
      * Files that are successfully deleted are removed from the list.
      * Any deletion errors are logged to the console via getPlugin().logError(...).
      */
     public void deleteRegionFiles() {
-        Iterator<File> iterator = deletableFiles.iterator();
+        Iterator<File> iterator = deletableFileToCoords.keySet().iterator();
 
         while (iterator.hasNext()) {
             File file = iterator.next();
@@ -131,7 +148,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             }
         }
     }
-    
+
     /**
      * Removes any region files from the given list that have loaded chunks.
      * @param deletableFiles list of region files potentially queued for deletion
@@ -161,12 +178,22 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
+        // Only operate if there are potential regions to delete
+        if (this.deletableFileToCoords.isEmpty()) {
+            regionChunkCounts.clear();
+            return;
+        }
         String key = getRegionKey(event.getChunk());
         regionChunkCounts.computeIfAbsent(key, k -> new AtomicInteger()).incrementAndGet();
     }
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
+        // Only operate if there are potential regions to delete
+        if (this.deletableFileToCoords.isEmpty()) {
+            regionChunkCounts.clear();
+            return;
+        }
         String key = getRegionKey(event.getChunk());
         regionChunkCounts.computeIfPresent(key, (k, count) -> {
             if (count.decrementAndGet() <= 0) return null;
@@ -184,18 +211,17 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             if (grid == null) {
                 // There are no islands in this world yet!
                 Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage("commands.admin.purge.none-found"));
-                getPlugin().logDebug("No grid for " + world.getName());
                 return;
             }
             List<Pair<Integer, Integer>> blockCoords = grid.getIslandCoordinates();
 
             // Set number of islands to zero
             islandCount = 0;
-            
+
             // Group block coords by region file
             Map<File, Set<Pair<Integer, Integer>>> fileToCoords = mapCoordsToRegionFiles(blockCoords, days);
 
-            deletableFiles = new ArrayList<>();
+            deletableFileToCoords = new HashMap<>();
 
             for (Map.Entry<File, Set<Pair<Integer, Integer>>> entry : fileToCoords.entrySet()) {
                 File regionFile = entry.getKey();
@@ -210,24 +236,24 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                 }
 
                 if (allDeletable) {
-                    deletableFiles.add(regionFile);
+                    deletableFileToCoords.put(regionFile, coords);
                 }
             }
 
-            if (deletableFiles.isEmpty()) {
+            if (deletableFileToCoords.isEmpty()) {
                 Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage("commands.admin.purge.none-found"));
             } else {
                 Bukkit.getScheduler().runTask(getPlugin(), () -> {
                     user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER, String.valueOf(islandCount));
                     user.sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, this.getLabel());
                     this.toBeConfirmed = true;
-                    });
+                });
             }
         } finally {
             inPurge = false;
         }
     }
-    
+
     /**
      * Checks if this island can be deleted or not
      * @param x coordinate
@@ -237,7 +263,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     private boolean canDelete(Integer x, Integer z) {
         // Get the island and see if it is protected. If there is no island at this location, then it is deletable
         return getPlugin().getIslands().getIslandAt(new Location(getWorld(), x, 0, z)).map(is -> {
-            
+
             if (checkIsland(is)) {
                 islandCount++;
                 getPlugin().log("Island at " + Util.xyz(is.getCenter().toVector()) 
@@ -246,9 +272,9 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             } else {
                 return false;
             }
-            }).orElse(true);
+        }).orElse(true);
     }
-    
+
     /**
      * Only true if not purge protected, not spawn, and owned
      * @param island island
@@ -257,12 +283,12 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     private boolean checkIsland(Island island) {
         // Level check 
         boolean levelCheck = getPlugin().getAddonsManager().getAddonByName("Level").map(l -> 
-            ((Level) l).getIslandLevel(getWorld(), island.getOwner()) >= getPlugin().getSettings().getIslandPurgeLevel()).orElse(false);
+        ((Level) l).getIslandLevel(getWorld(), island.getOwner()) >= getPlugin().getSettings().getIslandPurgeLevel()).orElse(false);
         if (levelCheck) {
             // Island level is too high
             return false;
         }
-       return !island.isPurgeProtected() && !island.isSpawn() && island.isOwned(); 
+        return !island.isPurgeProtected() && !island.isSpawn() && island.isOwned(); 
     }
 
     private Map<File, Set<Pair<Integer, Integer>>> mapCoordsToRegionFiles(List<Pair<Integer, Integer>> blockCoords, int days) {
@@ -283,9 +309,9 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             String filename = "r." + regionX + "." + regionZ + ".mca";
 
             File[] files = {
-                new File(overworldRegion, filename),
-                new File(netherRegion, filename),
-                new File(endRegion, filename)
+                    new File(overworldRegion, filename),
+                    new File(netherRegion, filename),
+                    new File(endRegion, filename)
             };
 
             boolean allOldEnough = true;
