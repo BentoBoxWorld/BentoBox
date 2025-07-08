@@ -284,7 +284,7 @@ public class Island implements DataObject, MetaDataAble {
         this.name = island.getName();
         this.owner = island.getOwner();
         this.protectionRange = island.getProtectionRange();
-        this.purgeProtected = island.getPurgeProtected();
+        this.purgeProtected = island.isPurgeProtected();
         this.range = island.getRange();
         this.reserved = island.isReserved();
         this.spawn = island.isSpawn();
@@ -644,7 +644,7 @@ public class Island implements DataObject, MetaDataAble {
     /**
      * @return true if the island is protected from the Purge, otherwise false
      */
-    public boolean getPurgeProtected() {
+    public boolean isPurgeProtected() {
         return purgeProtected;
     }
 

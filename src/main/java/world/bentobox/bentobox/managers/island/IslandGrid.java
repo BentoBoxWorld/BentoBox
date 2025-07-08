@@ -1,18 +1,21 @@
 package world.bentobox.bentobox.managers.island;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Pair;
 
 /**
  * Handles the island location grid for each world
  * @author tastybento
  *
  */
-class IslandGrid {
+public class IslandGrid {
 
     private record IslandData(String id, int minX, int minZ, int range) {
     }
@@ -75,16 +78,16 @@ class IslandGrid {
 
         return removed;
     }
-    
+
     /**
-    * Retrieves the island located at the specified x and z coordinates, covering both the protected area
-    * and the full island space. Returns null if no island exists at the given location.
-    * This will load the island from the database if it is not in the cache.
-    *
-    * @param x the x coordinate of the location
-    * @param z the z coordinate of the location
-    * @return the Island at the specified location, or null if no island is found
-    */
+     * Retrieves the island located at the specified x and z coordinates, covering both the protected area
+     * and the full island space. Returns null if no island exists at the given location.
+     * This will load the island from the database if it is not in the cache.
+     *
+     * @param x the x coordinate of the location
+     * @param z the z coordinate of the location
+     * @return the Island at the specified location, or null if no island is found
+     */
     public Island getIslandAt(int x, int z) {
         String id = getIslandStringAt(x, z);
         if (id == null) {
@@ -142,4 +145,18 @@ class IslandGrid {
         return count;
     }
 
+    /**
+     * Gets a list of all the island coordinates in this grid
+     * @return list of island coordinates as Pairs
+     */
+    public List<Pair<Integer, Integer>> getIslandCoordinates() {
+        List<Pair<Integer, Integer>> result = new ArrayList<>();
+
+        grid.forEach((x, innerMap) ->
+        innerMap.forEach((z, island) ->
+        result.add(Pair.of(x, z))
+                )
+                );
+        return result;
+    }
 }

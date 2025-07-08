@@ -66,6 +66,7 @@
         <paper.version>1.21.7-R0.1-SNAPSHOT</paper.version>
         <bstats.version>3.0.0</bstats.version>
         <vault.version>1.7.1</vault.version>
+        <level.version>2.21.3</level.version>
         <placeholderapi.version>2.10.9</placeholderapi.version>
         <githubapi.version>d5f5e0bbd8</githubapi.version>
         <myworlds.version>1.19.3-v1</myworlds.version>
@@ -199,6 +200,11 @@
         <repository>
             <id>matteodev</id>
             <url>https://maven.devs.beer/</url>
+        </repository>
+        <!-- BentoBox Addons -->
+        <repository>
+            <id>bentoboxworld</id>
+            <url>https://repo.codemc.org/repository/bentoboxworld/</url>
         </repository>
     </repositories>
 
@@ -407,6 +413,13 @@
             <groupId>de.oliver</groupId>
             <artifactId>FancyHolograms</artifactId>
             <version>2.4.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Level -->
+        <dependency>
+            <groupId>world.bentobox</groupId>
+            <artifactId>level</artifactId>
+            <version>${level.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

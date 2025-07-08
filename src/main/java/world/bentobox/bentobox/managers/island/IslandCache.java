@@ -588,5 +588,18 @@ public class IslandCache {
     public boolean isIslandCached(String uniqueId) {
         return islandsById.get(uniqueId) != null;
     }
+    
+    /**
+     * Return the island grid for this world
+     * @param world world
+     * @return IslandGrid for the world, or null if there is none or the world is unknown.
+     */
+    public IslandGrid getIslandGrid(World world) {
+        World w = Util.getWorld(world);
+        if (w == null) {
+            return null;
+        }
+        return this.grids.get(w);
+    }
 
 }

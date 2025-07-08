@@ -213,7 +213,7 @@ public class AdminPurgeCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringNoIslandsPurgeProtected() {
-        when(island.getPurgeProtected()).thenReturn(true);
+        when(island.isPurgeProtected()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
         verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
@@ -224,7 +224,7 @@ public class AdminPurgeCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringNoIslandsWrongWorld() {
-        when(island.getPurgeProtected()).thenReturn(false);
+        when(island.isPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(mock(World.class));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
@@ -236,7 +236,7 @@ public class AdminPurgeCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringNoIslandsUnowned() {
-        when(island.getPurgeProtected()).thenReturn(false);
+        when(island.isPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(null);
         when(island.isUnowned()).thenReturn(true);
@@ -251,7 +251,7 @@ public class AdminPurgeCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringOnlyIslandSpawn() {
-        when(island.getPurgeProtected()).thenReturn(false);
+        when(island.isPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.isSpawn()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
@@ -264,7 +264,7 @@ public class AdminPurgeCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringNoIslandsTeamIsland() {
-        when(island.getPurgeProtected()).thenReturn(false);
+        when(island.isPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID(), UUID.randomUUID()));
@@ -285,7 +285,7 @@ public class AdminPurgeCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringNoIslandsRecentLogin() {
-        when(island.getPurgeProtected()).thenReturn(false);
+        when(island.isPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
@@ -303,7 +303,7 @@ public class AdminPurgeCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringIslandsFound() {
-        when(island.getPurgeProtected()).thenReturn(false);
+        when(island.isPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
         when(island.isOwned()).thenReturn(true);

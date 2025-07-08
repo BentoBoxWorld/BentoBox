@@ -293,6 +293,12 @@ public class Settings implements ConfigObject {
     @ConfigComment("resulting amount of chunks that must be loaded to fulfill the process, which often causes the server to hang out.")
     @ConfigEntry(path = "island.paste-speed")
     private int pasteSpeed = 64;
+    
+    @ConfigComment("Island Level Purge Protection")
+    @ConfigComment("Islands above this level will not be purged even if they are old. Requires the Level Addon.")
+    @ConfigComment("If the Level addon is not present, this will not be checked.")
+    @ConfigEntry(path = "island.purge-level")
+    private int islandPurgeLevel = 10;
 
     @ConfigComment("Island deletion: Number of chunks per world to regenerate per second.")
     @ConfigComment("If there is a nether and end then 3x this number will be regenerated per second.")
@@ -1073,6 +1079,20 @@ public class Settings implements ConfigObject {
      */
     public void setClickCooldownMs(long clickCooldownMs) {
         this.clickCooldownMs = clickCooldownMs;
+    }
+
+    /**
+     * @return the islandPurgeLevel
+     */
+    public int getIslandPurgeLevel() {
+        return islandPurgeLevel;
+    }
+
+    /**
+     * @param islandPurgeLevel the islandPurgeLevel to set
+     */
+    public void setIslandPurgeLevel(int islandPurgeLevel) {
+        this.islandPurgeLevel = islandPurgeLevel;
     }
 
 }
