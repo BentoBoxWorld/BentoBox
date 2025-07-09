@@ -1,14 +1,11 @@
 package world.bentobox.bentobox.managers.island;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.util.Pair;
 
 /**
  * Handles the island location grid for each world
@@ -17,8 +14,10 @@ import world.bentobox.bentobox.util.Pair;
  */
 public class IslandGrid {
 
-    private record IslandData(String id, int minX, int minZ, int range) {
-    }
+    /**
+     * Island id, minX, minZ, and range
+     */
+    public record IslandData(String id, int minX, int minZ, int range) {}
 
     private final TreeMap<Integer, TreeMap<Integer, IslandData>> grid = new TreeMap<>();
     private final IslandCache im;
@@ -146,17 +145,10 @@ public class IslandGrid {
     }
 
     /**
-     * Gets a list of all the island coordinates in this grid
-     * @return list of island coordinates as Pairs
+     * @return the grid
      */
-    public List<Pair<Integer, Integer>> getIslandCoordinates() {
-        List<Pair<Integer, Integer>> result = new ArrayList<>();
-
-        grid.forEach((x, innerMap) ->
-        innerMap.forEach((z, island) ->
-        result.add(Pair.of(x, z))
-                )
-                );
-        return result;
+    public TreeMap<Integer, TreeMap<Integer, IslandData>> getGrid() {
+        return grid;
     }
+
 }

@@ -117,6 +117,7 @@ commands:
       total-islands: '&a You have [number] islands in your database in all worlds.'
       number-error: '&c Argument must be a number of days'
       confirm: '&d Type &b /[label] purge confirm &d to start purging'
+      regions-confirm: '&d Type &b /[label] purge regions confirm &d to start purging'
       regions-changed: '&c One or more regions have been loaded since the scan. Redo the scan.'
       not-all-deleted: '&c Not all regions were deleted. See console for errors.'
       completed: '&a Purging stopped.'
