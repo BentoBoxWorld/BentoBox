@@ -36,7 +36,6 @@ import world.bentobox.level.Level;
 
 public class AdminPurgeRegionsCommand extends CompositeCommand implements Listener {
 
-    private int count;
     private volatile boolean inPurge;
     private boolean toBeConfirmed;
     private User user;
@@ -86,11 +85,18 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         // Clear tbc
         toBeConfirmed = false;
 
-        days = Integer.parseInt(args.get(0));
-        if (days < 1) {
+        try {
+            days = Integer.parseInt(args.get(0));
+            if (days <= 0) {
+                user.sendMessage("commands.admin.purge.days-one-or-more");
+                return false;
+            }
+
+        } catch (NumberFormatException e) {
             user.sendMessage("commands.admin.purge.days-one-or-more");
             return false;
         }
+        
         user.sendMessage("commands.admin.purge.scanning");
         // Save all worlds to update any region files
         Bukkit.getWorlds().forEach(World::save);
@@ -99,6 +105,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), ()-> findIslands(getWorld(), days));
         return true;
     }
+
 
     private boolean deleteEverything() {
         if (deleteableRegions.isEmpty()) {
@@ -146,7 +153,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      * @return {@code true} if deletion was performed; {@code false} if cancelled
      *         due to any file being newer than the cutoff
      */
-    public boolean deleteRegionFiles() {
+    private boolean deleteRegionFiles() {
         if (days <= 0) { 
             getPlugin().logError("Days is somehow zero or negative!");
             return false;
@@ -292,7 +299,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                 + " who last logged in " + formatLocalTimestamp(getPlugin().getPlayers().getLastLoginTimestamp(island.getOwner()))
                 + " will be deleted");
     }
-    
+
     /**
      * Formats a millisecond timestamp into a human-readable string
      * using the system's local time zone.
@@ -300,14 +307,14 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      * @param millis the timestamp in milliseconds
      * @return formatted string in the form "yyyy-MM-dd HH:mm"
      */
-    public String formatLocalTimestamp(Long millis) {
+    private String formatLocalTimestamp(Long millis) {
         if (millis == null) {
             return "(unknown or never recorded)";
         }
         Instant instant = Instant.ofEpochMilli(millis);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-            .withZone(ZoneId.systemDefault()); // Uses the machine's local time zone
+                .withZone(ZoneId.systemDefault()); // Uses the machine's local time zone
 
         return formatter.format(instant);
     }
@@ -350,7 +357,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      * @return a list of {@code Pair<regionX, regionZ>} for each region meeting
      *         the age criteria
      */
-    public List<Pair<Integer, Integer>> findOldRegions(int days) {
+    private List<Pair<Integer, Integer>> findOldRegions(int days) {
         List<Pair<Integer, Integer>> regions = new ArrayList<>();
 
         // Base folders
@@ -429,7 +436,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      * @param grid       a 2D TreeMap mapping centreX → (centreZ → IslandData)
      * @return           a map from region coords to the set of overlapping island IDs
      */
-    public Map<Pair<Integer, Integer>, Set<String>> mapIslandsToRegions(
+    private Map<Pair<Integer, Integer>, Set<String>> mapIslandsToRegions(
             List<Pair<Integer, Integer>> oldRegions,
             TreeMap<Integer, TreeMap<Integer, IslandData>> grid
             ) {
@@ -476,36 +483,6 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     } 
 
     /**
-     * @return the inPurge
-     */
-    boolean isInPurge() {
-        return inPurge;
-    }
-
-    /**
-     * Stop the purge
-     */
-    void stop() {
-        inPurge = false;
-    }
-
-    /**
-     * @param user the user to set
-     */
-    void setUser(User user) {
-        this.user = user;
-    }
-
-    /**
-     * Returns the amount of purged islands.
-     * @return the amount of islands that have been purged.
-     * @since 1.13.0
-     */
-    int getPurgedIslandsCount() {
-        return this.count;
-    }
-
-    /**
      * Reads a Minecraft region file (.mca) and returns the most recent
      * per-chunk timestamp found in its header, in milliseconds since epoch.
      *
@@ -513,7 +490,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      * @return the most recent timestamp (in millis) among all chunk entries,
      *         or 0 if the file is invalid or empty
      */
-    public long getRegionTimestamp(File regionFile) {
+    private long getRegionTimestamp(File regionFile) {
         if (!regionFile.exists() || regionFile.length() < 8192) {
             return 0L;
         }
