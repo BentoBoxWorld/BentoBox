@@ -110,7 +110,7 @@ public class IslandInfo {
             island.getBanned().forEach(u -> user.sendMessage("commands.admin.info.banned-format", TextVariables.NAME,
                     plugin.getPlayers().getName(u)));
         }
-        if (island.getPurgeProtected()) {
+        if (island.isPurgeProtected()) {
             user.sendMessage("commands.admin.info.purge-protected");
         }
         // Show bundle info if available

@@ -41,6 +41,9 @@ public class CommandRankClickListener implements ClickHandler {
      */
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
+        if (plugin.onTimeout(user)) {
+            return true;
+        }
         // This click listener is used with TabbedPanel and SettingsTabs only
         TabbedPanel tp = (TabbedPanel)panel;
         SettingsTab st = (SettingsTab)tp.getActiveTab();

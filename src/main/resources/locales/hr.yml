@@ -39,6 +39,7 @@ general:
       naredbu.
     must-be-positive-number: '&c [number] nije važeći pozitivan broj.'
     not-on-island: '&c Niste na otoku!'
+    slow-down: '&c Uspori. Klikaj sporije.'
   worlds:
     overworld: Nadzemlje
     nether: Podzemni

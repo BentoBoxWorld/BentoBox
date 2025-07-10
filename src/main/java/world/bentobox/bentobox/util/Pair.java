@@ -11,6 +11,16 @@ package world.bentobox.bentobox.util;
 public class Pair<X, Z> {
     public final X x;
     public final Z z;
+    
+    /**
+     * Static factory method to create a Pair.
+     * @param x the x part
+     * @param z the z part
+     * @return a new Pair containing x and z
+     */
+    public static <X, Z> Pair<X, Z> of(X x, Z z) {
+        return new Pair<>(x, z);
+    }
 
     public Pair(X x, Z z) {
         this.x = x;

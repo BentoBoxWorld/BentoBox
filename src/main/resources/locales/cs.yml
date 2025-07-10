@@ -35,6 +35,7 @@ general:
     you-must-wait: '&c Musíš čekat [number]s před tím, než tento příkaz znovu použiješ.'
     must-be-positive-number: '&c [number] není platné kladné číslo.'
     not-on-island: '&c Nejste na ostrově!'
+    slow-down: '&c Zpomal. Klikni pomaleji.'
   worlds:
     overworld: Svět
     nether: Dolní

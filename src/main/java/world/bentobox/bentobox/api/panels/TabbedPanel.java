@@ -169,6 +169,10 @@ public class TabbedPanel extends Panel implements PanelListener {
 
     @Override
     public void onInventoryClick(User user, InventoryClickEvent event) {
+        if (plugin.onTimeout(user)) {
+            event.setCancelled(true);
+            return;
+        }
         // Trap top row tab clicks
         if (event.isLeftClick() && tpb.getTabs().containsKey(event.getRawSlot())
                 && (tpb.getTabs().get(event.getRawSlot()).getPermission().isEmpty()

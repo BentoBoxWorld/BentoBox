@@ -962,4 +962,14 @@ public class User implements MetaDataAble {
         Objects.requireNonNull(p, "Unknown player for " + playerUUID).setMetaData(metaData);
     }
 
+    @Override
+    public String toString() {
+        return "User [" + (player != null ? "player=" + player + ", " : "")
+                + (offlinePlayer != null ? "offlinePlayer=" + offlinePlayer + ", " : "")
+                + (playerUUID != null ? "playerUUID=" + playerUUID + ", " : "")
+                + (sender != null ? "sender=" + sender + ", " : "") + (addon != null ? "addon=" + addon + ", " : "")
+                + (getLocation() != null ? "getLocation()=" + getLocation() + ", " : "") + "isPlayer()=" + isPlayer()
+                + "]";
+    }
+
 }

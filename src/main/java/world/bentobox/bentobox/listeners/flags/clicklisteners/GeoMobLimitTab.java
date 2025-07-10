@@ -64,6 +64,9 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
+        if (plugin.onTimeout(user)) {
+            return true;
+        }
         // Case panel to Tabbed Panel to get the active page
         TabbedPanel tp = (TabbedPanel)panel;
         // Convert the slot and active page to an index

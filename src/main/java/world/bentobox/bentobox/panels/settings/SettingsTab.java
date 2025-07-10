@@ -85,7 +85,6 @@ public class SettingsTab implements Tab, ClickHandler {
     /**
      * @return list of flags that will be shown in this panel
      */
-    @SuppressWarnings("deprecation")
     protected List<Flag> getFlags() {
         // Get a list of flags of the correct type and sort by the translated names
         List<Flag> flags = plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(type))
@@ -258,6 +257,9 @@ public class SettingsTab implements Tab, ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
+        if (plugin.onTimeout(user)) {
+            return true;
+        }
         // Cycle the mode
         currentMode.put(user.getUniqueId(), currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC).getNext());
         if (panel instanceof TabbedPanel tp) {

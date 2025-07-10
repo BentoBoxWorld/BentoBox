@@ -39,6 +39,9 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
+        if (BentoBox.getInstance().onTimeout(user)) {
+            return true;
+        }
         // Get the world
         if (!user.inWorld()) {
             user.sendMessage("general.errors.wrong-world");

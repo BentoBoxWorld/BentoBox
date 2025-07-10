@@ -4,6 +4,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
@@ -57,6 +59,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.WebManager;
+import world.bentobox.bentobox.util.ExpiringMap;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.versions.ServerCompatibility;
 
@@ -89,6 +92,9 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     // Notifier
     private Notifier notifier;
+    
+    // Click limiter
+    private ExpiringMap<UUID, Boolean> lastClick ;
 
     private HeadGetter headGetter;
 
@@ -138,6 +144,9 @@ public class BentoBox extends JavaPlugin implements Listener {
         }
         // Saving the config now.
         saveConfig();
+        
+        // Set up click timeout
+        lastClick = new ExpiringMap<UUID, Boolean>(getSettings().getClickCooldownMs(), TimeUnit.MILLISECONDS);
 
         // Start Database managers
         playersManager = new PlayersManager(this);
@@ -650,5 +659,19 @@ public class BentoBox extends JavaPlugin implements Listener {
      */
     public boolean isShutdown() {
         return shutdown;
+    }
+    
+    /**
+     * Checks if a user can click a GUI or needs to slow down
+     * @param user user
+     * @return false if they can click and the timeout is started, otherwise true.
+     */
+    public boolean onTimeout(User user) {
+        if (lastClick.containsKey(user.getUniqueId())) {
+            user.notify("general.errors.slow-down");
+            return true;
+        }
+        lastClick.put(user.getUniqueId(), true);
+        return false;
     }
 }

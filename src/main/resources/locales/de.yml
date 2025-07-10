@@ -42,6 +42,7 @@ general:
       kannst.
     must-be-positive-number: '&c [number] ist keine gültige positive Zahl.'
     not-on-island: '&c Du bist nicht auf der Insel!'
+    slow-down: '&c Langsamer. Klicke langsamer.'
   worlds:
     overworld: Oberwelt
     nether: Nether

@@ -41,8 +41,8 @@ public class AdminPurgeProtectCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        island.setPurgeProtected(!island.getPurgeProtected());
-        if (island.getPurgeProtected()) {
+        island.setPurgeProtected(!island.isPurgeProtected());
+        if (island.isPurgeProtected()) {
             user.sendMessage("commands.admin.purge.protect.protecting");
         } else {
             user.sendMessage("commands.admin.purge.protect.unprotecting");

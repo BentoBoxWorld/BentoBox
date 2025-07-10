@@ -35,6 +35,7 @@ general:
     you-must-wait: '&cそのコマンドを再度実行するには、[number]秒を待つ必要があります。'
     must-be-positive-number: '&c [number]は有効な正数ではありません。'
     not-on-island: '&c あなたは島にいません!'
+    slow-down: '&c 落ち着いて。もっとゆっくりクリックして。'
   worlds:
     overworld: オーバーワールド
     nether: ネザー

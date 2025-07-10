@@ -36,6 +36,7 @@ general:
     you-must-wait: '&4Komut yazabilmek için &e[number] &4saniye beklemelisin!'
     must-be-positive-number: '&e[number] &4bu pozitif bir sayı değil!'
     not-on-island: '&c [prefix_island] üzerinde değilsin!'
+    slow-down: '&c Yavaş ol. Daha yavaş tıkla.'
   worlds:
     overworld: Aşırı Dünya
     nether: Nether

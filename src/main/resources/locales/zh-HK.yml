@@ -39,7 +39,7 @@ general:
     you-must-wait: "&c要再次使用該命令, 您必須等待 [number] 秒"
     must-be-positive-number: "&c[number] 不是一個有效的正數。"
     not-on-island: '&c你目前不在這島嶼上!'
-  
+    slow-down: '&c 慢啲。慢啲點擊。'
   worlds:
     overworld: 主世界
     nether: 地獄

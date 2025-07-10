@@ -86,7 +86,7 @@ public class AdminPurgeUnownedCommandTest {
         // Island
         when(island.getWorld()).thenReturn(world);
         when(island.isSpawn()).thenReturn(false);
-        when(island.getPurgeProtected()).thenReturn(false);
+        when(island.isPurgeProtected()).thenReturn(false);
         when(island.isOwned()).thenReturn(true); // Default owned
         when(island.isUnowned()).thenReturn(false);
 
@@ -130,7 +130,7 @@ public class AdminPurgeUnownedCommandTest {
 
     @Test
     public void testNoPurgeIfIslandIsPurgeProtected() {
-        when(island.getPurgeProtected()).thenReturn(true);
+        when(island.isPurgeProtected()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage(eq("commands.admin.purge.unowned.unowned-islands"), eq("[number]"), eq("0"));
