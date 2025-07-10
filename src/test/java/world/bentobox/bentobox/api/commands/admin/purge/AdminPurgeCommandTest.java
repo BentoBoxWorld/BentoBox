@@ -158,7 +158,7 @@ public class AdminPurgeCommandTest {
         assertFalse(apc.isOnlyPlayer());
         assertEquals("commands.admin.purge.parameters", apc.getParameters());
         assertEquals("commands.admin.purge.description", apc.getDescription());
-        assertEquals(5, apc.getSubCommands().size());
+        assertEquals(6, apc.getSubCommands().size());
     }
 
 
