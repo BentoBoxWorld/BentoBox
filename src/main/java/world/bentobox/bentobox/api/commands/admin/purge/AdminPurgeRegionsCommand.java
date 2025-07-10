@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -249,7 +252,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             .anyMatch(optIsland -> 
             // If missing (empty) → treat as undeletable (true) - this is a bit conservative but maybe the database is messed up
             // If present, checkIsland(...) == true means “cannot delete”
-            optIsland.map(this::checkIsland)
+            optIsland.map(this::canDeleteIsland)
             .orElse(true)
                     )
                     );
@@ -284,7 +287,29 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
     private void displayIsland(Island island) {
         // Log the island data
-        getPlugin().log("Island at " + Util.xyz(island.getCenter().toVector()) + " in world " + getWorld().getName() + " owned by " + getPlugin().getPlayers().getName(island.getOwner()) + " will be deleted");
+        getPlugin().log("Island at " + Util.xyz(island.getCenter().toVector()) + " in world " + getWorld().getName() 
+                + " owned by " + getPlugin().getPlayers().getName(island.getOwner()) 
+                + " who last logged in " + formatLocalTimestamp(getPlugin().getPlayers().getLastLoginTimestamp(island.getOwner()))
+                + " will be deleted");
+    }
+    
+    /**
+     * Formats a millisecond timestamp into a human-readable string
+     * using the system's local time zone.
+     *
+     * @param millis the timestamp in milliseconds
+     * @return formatted string in the form "yyyy-MM-dd HH:mm"
+     */
+    public String formatLocalTimestamp(Long millis) {
+        if (millis == null) {
+            return "(unknown or never recorded)";
+        }
+        Instant instant = Instant.ofEpochMilli(millis);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+            .withZone(ZoneId.systemDefault()); // Uses the machine's local time zone
+
+        return formatter.format(instant);
     }
 
     /**
@@ -293,7 +318,12 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      * @param island island
      * @return true means “cannot delete”
      */
-    private boolean checkIsland(Island island) {
+    private boolean canDeleteIsland(Island island) {
+        long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
+        // Check if owner or team members logged in recently
+        if (island.getMemberSet().stream().map(uuid -> getPlugin().getPlayers().getLastLoginTimestamp(uuid) >= cutoffMillis).findFirst().orElse(false)) {
+            return false;
+        }
         // Level check 
         boolean levelCheck = getPlugin().getAddonsManager().getAddonByName("Level").map(l -> 
         ((Level) l).getIslandLevel(getWorld(), island.getOwner()) >= getPlugin().getSettings().getIslandPurgeLevel()).orElse(false);
