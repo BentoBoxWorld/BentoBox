@@ -101,7 +101,7 @@ commands:
     purge:
       parameters: '[days]'
       description: purge islands abandoned for more than [days]
-      days-one-or-more: Must be at least 1 day or more
+      days-one-or-more: '&c Must be at least 1 day or more'
       purgable-islands: '&a Found &b [number] &a purgable islands.'
       too-many: |
         &b This is a lot and could take a very long time to delete.
@@ -117,13 +117,14 @@ commands:
       total-islands: '&a You have [number] islands in your database in all worlds.'
       number-error: '&c Argument must be a number of days'
       confirm: '&d Type &b /[label] purge confirm &d to start purging'
-      regions-confirm: '&d Type &b /[label] purge regions confirm &d to start purging'
-      regions-changed: '&c One or more regions have been loaded since the scan. Redo the scan.'
-      not-all-deleted: '&c Not all regions were deleted. See console for errors.'
       completed: '&a Purging stopped.'
       see-console-for-status: '&a Purge started. See console for status or use &b
         /[label] purge status&a.'
       no-purge-in-progress: '&c There is currently no purge in progress.'
+      regions:
+        parameters: '[days]'
+        description: 'purge islands by deleting old region files'
+        confirm: '&d Type &b /[label] purge regions confirm &d to start purging'
       protect:
         description: toggle [prefix_island] purge protection
         move-to-island: '&c Move to [prefix_an-island] first!'

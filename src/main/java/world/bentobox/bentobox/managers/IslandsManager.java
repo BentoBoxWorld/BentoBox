@@ -308,11 +308,14 @@ public class IslandsManager {
     /**
      * Deletes an island by ID. If the id doesn't exist it will do nothing.
      * @param uniqueId island ID
+     * @return true if island in database and deleted
      */
-    public void deleteIslandId(String uniqueId) {
+    public boolean deleteIslandId(String uniqueId) {
         if (handler.objectExists(uniqueId)) {
             handler.deleteID(uniqueId);
+            return true;
         }
+        return false;
     }
 
     private Gson getGson() {

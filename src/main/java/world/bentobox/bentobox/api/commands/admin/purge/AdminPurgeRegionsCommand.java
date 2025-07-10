@@ -1,6 +1,10 @@
 package world.bentobox.bentobox.api.commands.admin.purge;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +25,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.island.IslandGrid;
 import world.bentobox.bentobox.managers.island.IslandGrid.IslandData;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
@@ -77,7 +82,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
          */
         // Clear tbc
         toBeConfirmed = false;
-        
+
         days = Integer.parseInt(args.get(0));
         if (days < 1) {
             user.sendMessage("commands.admin.purge.days-one-or-more");
@@ -103,7 +108,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         getPlugin().log("Now deleting region files");
         if (!deleteRegionFiles()) {
             // Fail!
-          getPlugin().logError("Not all region files could be deleted");
+            getPlugin().logError("Not all region files could be deleted");
         }
 
         // Delete islands and regions
@@ -112,17 +117,18 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                 // Remove island from the cache
                 getPlugin().getIslands().getIslandCache().deleteIslandFromCache(islandID);
                 // Delete island from database using id
-                getPlugin().getIslands().deleteIslandId(islandID);
-                // Log
-                getPlugin().log("Island ID " + islandID + " deleted from cache and database" );
+                if (getPlugin().getIslands().deleteIslandId(islandID)) {
+                    // Log
+                    getPlugin().log("Island ID " + islandID + " deleted from cache and database" );
+                }
             }
         }
- 
+
         user.sendMessage("general.success");
         toBeConfirmed = false;
         deleteableRegions.clear();
         return true;
-        
+
     }
 
     /**
@@ -138,8 +144,8 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      *         due to any file being newer than the cutoff
      */
     public boolean deleteRegionFiles() {
-        if (days < 0) {
-            getPlugin().logError("Days is somehow negative!");
+        if (days <= 0) { 
+            getPlugin().logError("Days is somehow zero or negative!");
             return false;
         }
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
@@ -157,18 +163,18 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             String name = "r." + x + "." + z + ".mca";
 
             File owFile = new File(overworldRegion, name);
-            if (owFile.exists() && owFile.lastModified() >= cutoffMillis) {
+            if (owFile.exists() && getRegionTimestamp(owFile) >= cutoffMillis) {
                 return false;
             }
             if (isNether) {
                 File nf = new File(netherRegion, name);
-                if (nf.exists() && nf.lastModified() >= cutoffMillis) {
+                if (nf.exists() && getRegionTimestamp(nf) >= cutoffMillis) {
                     return false;
                 }
             }
             if (isEnd) {
                 File ef = new File(endRegion, name);
-                if (ef.exists() && ef.lastModified() >= cutoffMillis) {
+                if (ef.exists() && getRegionTimestamp(ef) >= cutoffMillis) {
                     return false;
                 }
             }
@@ -220,7 +226,12 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     private void findIslands(World world, int days) {
         try {
             // Get the grid that covers this world
-            TreeMap<Integer, TreeMap<Integer, IslandData>> grid = getPlugin().getIslands().getIslandCache().getIslandGrid(world).getGrid();
+            IslandGrid islandGrid = getPlugin().getIslands().getIslandCache().getIslandGrid(world);
+            if (islandGrid == null) {
+                Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage("commands.admin.purge.none-found"));
+                return;
+            }
+            TreeMap<Integer, TreeMap<Integer, IslandData>> grid = islandGrid.getGrid();
             if (grid == null) {
                 // There are no islands in this world yet!
                 Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage("commands.admin.purge.none-found"));
@@ -262,7 +273,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             } else {
                 Bukkit.getScheduler().runTask(getPlugin(), () -> {
                     user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER, String.valueOf(uniqueIslands.size()));
-                    user.sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, this.getLabel());
+                    user.sendMessage("commands.admin.purge.regions.confirm", TextVariables.LABEL, this.getLabel());
                     this.toBeConfirmed = true;
                 });
             }
@@ -328,7 +339,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
         for (File owFile : files) {
             // Skip if the overworld file is too recent
-            if (owFile.lastModified() >= cutoffMillis) continue;
+            if (getRegionTimestamp(owFile) >= cutoffMillis) continue;
 
             // Parse region coords from filename "r.<x>.<z>.mca"
             String name = owFile.getName(); // e.g. "r.-2.3.mca"
@@ -349,7 +360,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             // If nether flag is set, require nether region file also older than cutoff
             if (isNether) {
                 File netherFile = new File(netherRegion, name);
-                if (!netherFile.exists() || netherFile.lastModified() >= cutoffMillis) {
+                if (!netherFile.exists() || getRegionTimestamp(netherFile) >= cutoffMillis) {
                     include = false;
                 }
             }
@@ -357,7 +368,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             // If end flag is set, require end region file also older than cutoff
             if (isEnd) {
                 File endFile = new File(endRegion, name);
-                if (!endFile.exists() || endFile.lastModified() >= cutoffMillis) {
+                if (!endFile.exists() || getRegionTimestamp(endFile) >= cutoffMillis) {
                     include = false;
                 }
             }
@@ -464,4 +475,50 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         return this.count;
     }
 
+    /**
+     * Reads a Minecraft region file (.mca) and returns the most recent
+     * per-chunk timestamp found in its header, in milliseconds since epoch.
+     *
+     * @param regionFile the .mca file
+     * @return the most recent timestamp (in millis) among all chunk entries,
+     *         or 0 if the file is invalid or empty
+     */
+    public long getRegionTimestamp(File regionFile) {
+        if (!regionFile.exists() || regionFile.length() < 8192) {
+            return 0L;
+        }
+
+        try (FileInputStream fis = new FileInputStream(regionFile)) {
+            byte[] buffer = new byte[4096]; // Second 4KB block is the timestamp table
+
+            // Skip first 4KB (location table)
+            if (fis.skip(4096) != 4096) {
+                return 0L;
+            }
+
+            // Read the timestamp table
+            if (fis.read(buffer) != 4096) {
+                return 0L;
+            }
+
+            ByteBuffer bb = ByteBuffer.wrap(buffer);
+            bb.order(ByteOrder.BIG_ENDIAN); // Timestamps are stored as big-endian ints
+
+            long maxTimestampSeconds = 0;
+
+            for (int i = 0; i < 1024; i++) {
+                long timestamp = Integer.toUnsignedLong(bb.getInt());
+                if (timestamp > maxTimestampSeconds) {
+                    maxTimestampSeconds = timestamp;
+                }
+            }
+
+            // Convert seconds to milliseconds
+            return maxTimestampSeconds * 1000L;
+
+        } catch (IOException e) {
+            getPlugin().logError("Failed to read region file timestamps: " + regionFile.getAbsolutePath() + " " + e.getMessage());
+            return 0L;
+        }
+    }
 }
