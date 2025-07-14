@@ -328,7 +328,13 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     private boolean canDeleteIsland(Island island) {
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
         // Check if owner or team members logged in recently
-        if (island.getMemberSet().stream().map(uuid -> getPlugin().getPlayers().getLastLoginTimestamp(uuid) >= cutoffMillis).findFirst().orElse(false)) {
+        if (island.getMemberSet().stream().map(uuid -> {
+            Long lastLogin = getPlugin().getPlayers().getLastLoginTimestamp(uuid);
+            if (lastLogin == null) {
+                lastLogin = Bukkit.getOfflinePlayer(uuid).getLastSeen();
+            }
+            return lastLogin >= cutoffMillis;
+            }).findFirst().orElse(false)) {
             return false;
         }
         // Level check 
