@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
 
@@ -120,10 +121,10 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             // Fail!
             getPlugin().logError("Not all region files could be deleted");
         }
-
         // Delete islands and regions
         for (Set<String> islandIDs : deleteableRegions.values()) {
             for (String islandID : islandIDs) {
+                deletePlayerFromWorldFolder(islandID);
                 // Remove island from the cache
                 getPlugin().getIslands().getIslandCache().deleteIslandFromCache(islandID);
                 // Delete island from database using id
@@ -139,6 +140,46 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         deleteableRegions.clear();
         return true;
 
+    }
+
+    private void deletePlayerFromWorldFolder(String islandID) {
+        File base = getWorld().getWorldFolder();
+        File playerData = new File(base, "playerdata");
+        // Get the island from the cache
+        getPlugin().getIslands().getIslandById(islandID).ifPresent(island -> {
+            island.getMemberSet().forEach(uuid -> {
+                // Check if the player has any islands left
+                List<Island> memberOf = new ArrayList<>(getIslands().getIslands(getWorld(), uuid));
+                deleteableRegions.values().forEach(ids -> memberOf.removeIf(i -> ids.contains(i.getUniqueId())));
+                if (memberOf.isEmpty()) {
+                    // Do not remove this player if they are Op
+                    OfflinePlayer p = Bukkit.getOfflinePlayer(uuid);
+                    if (p.isOp()) {
+                        return;
+                    }
+                    // Do not remove if player logged in recently
+                    Long lastLogin = getPlugin().getPlayers().getLastLoginTimestamp(uuid);
+                    if (lastLogin == null) {
+                        lastLogin = Bukkit.getOfflinePlayer(uuid).getLastSeen();
+                    }
+                    long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
+                    if (lastLogin >= cutoffMillis) {
+                        return;
+                    }
+                    // Remove the player from the world folder playerdata because they no longer have any island associated with them
+                    if (playerData.exists()) {
+                        File playerFile = new File(playerData, uuid + ".dat");
+                        if (playerFile.exists() && !playerFile.delete()) {
+                            getPlugin().logError("Failed to delete player data file: " + playerFile.getAbsolutePath());
+                        }
+                        playerFile = new File(playerData, uuid + ".dat_old");
+                        if (playerFile.exists() && !playerFile.delete()) {
+                            getPlugin().logError("Failed to delete player data backup file: " + playerFile.getAbsolutePath());
+                        }
+                    }
+                }
+            });        
+        });
     }
 
     /**
