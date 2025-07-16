@@ -287,8 +287,9 @@ public class IslandsManager {
         if (removeBlocks) {
             // Remove players from island
             removePlayersFromIsland(island);
-            if (!plugin.getSettings().isKeepPreviousIslandOnReset()) {
-                island.setDeleted(true);
+            // Mark island as deleted
+            island.setDeleted(true);
+            if (!plugin.getSettings().isKeepPreviousIslandOnReset()) {            
                 // Remove island from the cache
                 islandCache.deleteIslandFromCache(island);
                 // Remove blocks from world
@@ -299,6 +300,7 @@ public class IslandsManager {
                 // Delete the island from the database
                 handler.deleteObject(island);
             } else {
+                handler.saveObject(island);
                 // Fire the deletion event immediately
                 IslandEvent.builder().deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
             }
