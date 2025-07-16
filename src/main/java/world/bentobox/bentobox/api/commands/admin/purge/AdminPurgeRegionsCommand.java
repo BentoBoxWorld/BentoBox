@@ -183,14 +183,23 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     }
 
     /**
+     * Deletes a file if it exists, logging an error if deletion fails.
+     * @param file the file to delete
+     * @return true if deleted or does not exist, false if exists but could not be deleted
+     */
+    private boolean deleteIfExists(File file) {
+        if (file.exists()) {
+            if (!file.delete()) {
+                getPlugin().logError("Failed to delete file: " + file.getAbsolutePath());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Deletes all region files in deleteableRegions that are older than {@code days}.
-     * First verifies that none of the overworld, nether or end region files (as
-     * configured by the {@code isNether} and {@code isEnd} fields) have been
-     * modified within the last {@code days} days. If any file is newer than the
-     * cutoff, no files are deleted and the method returns {@code false}.
-     * Otherwise all required files for each region are deleted (logging any errors),
-     * removed from {@code deleteableRegions}, and the method returns {@code true}.
-     *
+     * Also deletes corresponding entities and poi files in each dimension.
      * @return {@code true} if deletion was performed; {@code false} if cancelled
      *         due to any file being newer than the cutoff
      */
@@ -204,8 +213,14 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         World world = getWorld();
         File base = world.getWorldFolder();
         File overworldRegion = new File(base, "region");
+        File overworldEntities = new File(base, "entities");
+        File overworldPoi = new File(base, "poi");
         File netherRegion    = new File(base, "DIM-1" + File.separator + "region");
+        File netherEntities  = new File(base, "DIM-1" + File.separator + "entities");
+        File netherPoi       = new File(base, "DIM-1" + File.separator + "poi");
         File endRegion       = new File(base, "DIM1"  + File.separator + "region");
+        File endEntities     = new File(base, "DIM1"  + File.separator + "entities");
+        File endPoi          = new File(base, "DIM1"  + File.separator + "poi");
 
         // Phase 1: verify none of the files have been updated since the cutoff
         for (Pair<Integer, Integer> coords : deleteableRegions.keySet()) {
@@ -241,28 +256,25 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
             boolean allDeleted = true;
 
-            File owFile = new File(overworldRegion, name);
-            if (owFile.exists() && !owFile.delete()) {
-                getPlugin().logError("Failed to delete overworld region: " + owFile.getAbsolutePath());
-                allDeleted = false;
-            }
+            // Overworld
+            allDeleted &= deleteIfExists(new File(overworldRegion, name));
+            allDeleted &= deleteIfExists(new File(overworldEntities, name));
+            allDeleted &= deleteIfExists(new File(overworldPoi, name));
+            // Nether
             if (isNether) {
-                File nf = new File(netherRegion, name);
-                if (nf.exists() && !nf.delete()) {
-                    getPlugin().logError("Failed to delete nether region: " + nf.getAbsolutePath());
-                    allDeleted = false;
-                }
+                allDeleted &= deleteIfExists(new File(netherRegion, name));
+                allDeleted &= deleteIfExists(new File(netherEntities, name));
+                allDeleted &= deleteIfExists(new File(netherPoi, name));
             }
+            // End
             if (isEnd) {
-                File ef = new File(endRegion, name);
-                if (ef.exists() && !ef.delete()) {
-                    getPlugin().logError("Failed to delete end region: " + ef.getAbsolutePath());
-                    allDeleted = false;
-                }
+                allDeleted &= deleteIfExists(new File(endRegion, name));
+                allDeleted &= deleteIfExists(new File(endEntities, name));
+                allDeleted &= deleteIfExists(new File(endPoi, name));
             }
 
             if (!allDeleted) {
-                getPlugin().logError("Could not delete all the region files for some reason");
+                getPlugin().logError("Could not delete all the region/entity/poi files for some reason");
             }
         }
 
