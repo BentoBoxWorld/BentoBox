@@ -335,8 +335,16 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
     private void displayIsland(Island island) {
         // Log the island data
+        if (island.isDeleted()) {
+            getPlugin().log("Deleted island at " + Util.xyz(island.getCenter().toVector()) + " in world " + getWorld().getName() + " will be deleted");
+            return;
+        }
+        if (island.getOwner() == null) {
+            getPlugin().log("Unowned island at " + Util.xyz(island.getCenter().toVector()) + " in world " + getWorld().getName() + " will be deleted");
+            return;
+        }
         getPlugin().log("Island at " + Util.xyz(island.getCenter().toVector()) + " in world " + getWorld().getName() 
-                + " owned by " + getPlugin().getPlayers().getName(island.getOwner()) 
+                + " owned by " + getPlugin().getPlayers().getName(island.getOwner())
                 + " who last logged in " + formatLocalTimestamp(getPlugin().getPlayers().getLastLoginTimestamp(island.getOwner()))
                 + " will be deleted");
     }
@@ -367,6 +375,10 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      * @return true means “cannot delete”
      */
     private boolean canDeleteIsland(Island island) {
+        // If the island is marked for deletion, it can be deleted at any time
+        if (island.isDeleted()) {
+            return false;
+        }
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
         // Check if owner or team members logged in recently
         if (island.getMemberSet().stream().map(uuid -> {
