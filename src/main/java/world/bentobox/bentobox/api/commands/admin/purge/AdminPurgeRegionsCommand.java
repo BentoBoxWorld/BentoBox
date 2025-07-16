@@ -184,10 +184,15 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
     /**
      * Deletes a file if it exists, logging an error if deletion fails.
+     * Does not log if the parent folder does not exist (normal for entities/poi).
      * @param file the file to delete
      * @return true if deleted or does not exist, false if exists but could not be deleted
      */
     private boolean deleteIfExists(File file) {
+        if (!file.getParentFile().exists()) {
+            // Parent folder missing is normal for entities/poi, do not log
+            return true;
+        }
         if (file.exists()) {
             if (!file.delete()) {
                 getPlugin().logError("Failed to delete file: " + file.getAbsolutePath());
