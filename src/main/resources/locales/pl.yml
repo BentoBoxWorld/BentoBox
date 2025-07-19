@@ -12,6 +12,7 @@ prefixes:
 general:
   success: '&aSukces!'
   invalid: Błąd
+  beta: '&d&l To polecenie jest w wersji beta. Upewnij się, że masz kopie zapasowe!'
   errors:
     command-cancelled: '&cKomenda anulowana'
     no-permission: '&cNie masz uprawnień do wykonywania tego polecenia.'
@@ -121,6 +122,10 @@ commands:
         Rozpoczęto proces czyszczenia wysp. Uruchom konsolę w celu sprawdzenia
         szczegółowego statusu.
       no-purge-in-progress: '&c Obecnie nie ma w toku żadnej czystki.'
+      regions:
+        parameters: '[days]'
+        description: Oczyszcz wyspy, usuwając stare pliki regionu
+        confirm: '&d Typ &b /[label] purgę regions confirm &d aby rozpocząć czyszczenie'
       protect:
         description: Przełącz ochronę przed usuwaniem opuszczonych wysp
         move-to-island: '&c Najpierw przenieś się na wyspę!'
@@ -1067,6 +1072,10 @@ protection:
       name: Beczki
       description: Przełącz interakcję z beczką
       hint: Dostęp do beczki wyłączony
+    CRAFTER:
+      name: Crafter
+      description: Przełącz użycie
+      hint: Dostęp do rzemieślniczy wyłączony
     BLOCK_EXPLODE_DAMAGE:
       description: >-
         &a Zezwól na łóżka i kotwice respawnu\n&a na niszczenie bloków i
@@ -1909,7 +1918,7 @@ enums:
     FALLING_BLOCK: Spadający Blok
     THORNS: Kolce
     DRAGON_BREATH: Oddech Smoka
-    CUSTOM: Custom
+    CUSTOM: Zwyczaj
     FLY_INTO_WALL: Lecieć w Ścianę
     HOT_FLOOR: Gorąca Podłoga
     CRAMMING: Cramming

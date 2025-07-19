@@ -2,7 +2,7 @@ meta:
   authors:
     - HSGamer
     - tastybento
-  banner: RED_BANNER:1:CREEPER:YELLOW:RHOMBUS_MIDDLE:YELLOW:TRIANGLES_BOTTOM:RED:SQUARE_BOTTOM_LEFT:RED:SQUARE_BOTTOM_RIGHT:RED
+  banner: 'RED_BANNER:1:CREEPER:YELLOW:RHOMBUS_MIDDLE:YELLOW:TRIANGLES_BOTTOM:RED:SQUARE_BOTTOM_LEFT:RED:SQUARE_BOTTOM_RIGHT:RED'
 prefixes:
   bentobox: '&6 BentoBox &7 &l > &r'
   island: hòn đảo
@@ -12,6 +12,7 @@ prefixes:
 general:
   success: '&a Thành công!'
   invalid: Không hợp lệ
+  beta: '&d&l Lệnh này là trong phiên bản beta. Hãy chắc chắn rằng bạn có bản sao lưu!'
   errors:
     command-cancelled: '&c Lệnh đã bị hủy.'
     no-permission: '&c Bạn không có quyền dùng lệnh này'
@@ -120,6 +121,10 @@ commands:
         &a Quá trình xóa đã bắt đầu. Xem bảng điều khiển cho trạng thái hoặc
         dùng &b /[label] purge status&a.
       no-purge-in-progress: '&c Không có quá trình xóa đang thực thi.'
+      regions:
+        parameters: '[days]'
+        description: purge Quần đảo bằng cách xóa các tập tin khu vực cũ
+        confirm: '&d Loại &b /[label] purge regions confirm &d để bắt đầu thanh trừng'
       protect:
         description: bật bảo vệ đảo khỏi bị xóa
         move-to-island: '&c Di chuyển về đảo trước!'
@@ -286,7 +291,7 @@ commands:
     trash:
       no-unowned-in-trash: '&c Không có hòn đảo không có chủ trong thùng rác'
       no-islands-in-trash: '&c Người chơi không có đảo nào trong thùng rác.'
-      parameters: '[player]'
+      parameters: '[Người chơi]'
       description: hiển thị các đảo không sở hữu hoặc đảo của người chơi trong thùng rác
       title: '&d =========== Các Đảo Trong Rác ==========='
       count: '&l &d Island [number]:'
@@ -297,7 +302,7 @@ commands:
         &a Sử dụng &l [label] emptytrash [player]&r &a để xóa vĩnh viễn các vật
         phẩm rác
     emptytrash:
-      parameters: '[player]'
+      parameters: '[Người chơi]'
       description: >-
         Xóa rác cho người chơi, hoặc tất cả các hòn đảo không thuộc sở hữu trong
         rác.
@@ -305,7 +310,7 @@ commands:
     version:
       description: hiển thị phiên bản BentoBox và các addon
     setrange:
-      parameters: <player> <range>
+      parameters: <Người chơi> <Range>
       description: set the range of player's island
       range-updated: '&a Island range updated to &b [number]&a .'
     reload:
@@ -388,7 +393,7 @@ commands:
           &c Không có bản thiết kế nào trong bảng diễn. Tải lên hoặc sao chép
           thứ gì đó.
       delete:
-        parameters: <name>
+        parameters: <Tên>
         description: xóa bản thiết kế
         no-blueprint: '&b [name] &c không tồn tại.'
         confirmation: |-
@@ -396,7 +401,7 @@ commands:
           &c Một khi đã xóa, sẽ không có cách nào để phục hồi nó.
         success: '&a Xóa sơ đồ thành công &b [name]&a .'
       load:
-        parameters: <name>
+        parameters: <Tên>
         description: Tải bản thiết kế vào khay nhớ tạm
       list:
         description: liệt kê các bản thiết kế có sẵn
@@ -412,7 +417,7 @@ commands:
       pos2:
         description: đặt góc thứ 2 của clipboard khối lập phương
       save:
-        parameters: <blueprint name>
+        parameters: <Tên bản BluePrint>
         description: lưu clipboard đã sao chép
       rename:
         parameters: <blueprint name> <tên mới>
@@ -1054,6 +1059,10 @@ protection:
       name: Thùng
       description: Bật/Tắt tương tác với thùng
       hint: Tương tác với thùng đã tắt
+    CRAFTER:
+      name: Khối sản xuất
+      description: Chuyển đổi sử dụng
+      hint: Khối sản xuất bị vô hiệu hóa
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Cho phép Giường & Điểm Hồi Sinh
@@ -1065,7 +1074,7 @@ protection:
       description: Bật/Tắt tương tác với thùng ủ phân
       hint: Tương tác với thùng ủ phân đã tắt
     LOOM:
-      name: Loom
+      name: Hiện ra dệt
       description: Chuyển đổi sử dụng
       hint: Truy cập khung dệt đã bị vô hiệu hóa
     FLOWER_POT:
@@ -1086,7 +1095,7 @@ protection:
         &a nếu đang hoạt động.
       name: Dịch chuyển Shulker
     SMITHING:
-      name: Smithing
+      name: Đập
       description: Bật sử dụng
       hint: '&cTruy cập rèn bị vô hiệu hóa'
     STONECUTTING:
@@ -1570,7 +1579,7 @@ protection:
         &a Cho phép chỉnh sửa văn bản
         &a của biển hiệu
       name: Chỉnh sửa Biển hiệu
-      hint: sign editing is disabled
+      hint: Chỉnh sửa dấu hiệu bị vô hiệu hóa
     TNT_DAMAGE:
       description: |-
         &a Cho phép TNT và xe mỏ có TNT
@@ -1681,6 +1690,8 @@ protection:
       description: |
         &a Chỉnh &c &l TOÀN BỘ &r &a tùy chỉnh về
         &a giá trị mặc định.
+      confirm: xác nhận
+      instructions: '&a Bạn có chắc không? Nhập &c "xác nhận" &a để đặt lại mọi thứ.'
     PROTECTION:
       title: '&6 Bảo vệ'
       description: |-
@@ -1970,10 +1981,8 @@ panels:
     left-click-to-cycle-down: '&e Nhấn chuột trái &7 để chuyển xuống.'
     right-click-to-cycle-up: '&e Nhấp chuột phải &7 để xoay lên trên.'
 successfully-loaded: >
-  &6   ____             _        ____
-  &6  |  _ \           | |      |  _ \             &7 by &a tastybento &7 and &a
-  Poslovitch
-  &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2022
-  &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
-  &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
+  &6   ____             _        ____ &6  |  _ \           | |      |  _
+  \             &7 by &a tastybento &7 and &a Poslovitch &6  | |_) | ___ _ __ |
+  |_ ___ | |_) | _____  __  &7 2017 - 2022 &6  |  _ < / _ \ '_ \| __/ _ \|  _ <
+  / _ \ \/ / &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
   &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8 Loaded in &e [time]&8 ms.

@@ -12,6 +12,7 @@ prefixes:
 general:
   success: '&aSuccesso!'
   invalid: Invalido
+  beta: '&d&l Questo comando è in beta. Assicurati di avere backup!'
   errors:
     command-cancelled: '&cComando annullato.'
     no-permission: '&cNon hai il permesso per eseguire questo comando (&7[permission]&c).'
@@ -121,6 +122,10 @@ commands:
       completed: '&a Purga completata'
       see-console-for-status: Purga iniziata. Controlla la console per maggiori informazioni
       no-purge-in-progress: '&c Attualmente non c''è alcuna purga in corso.'
+      regions:
+        parameters: '[days]'
+        description: purge Isole eliminando i vecchi file della regione
+        confirm: '&d Tipo &b /[label] purge regions confirm &d di iniziare lo spurgo'
       protect:
         description: Abilita o disabilita la protezione isola dalla purga
         move-to-island: '&c Spostati su una isola prima!'
@@ -1092,6 +1097,10 @@ protection:
       name: Barili
       description: Attiva/disattiva l'interazione con il barile
       hint: Accesso al barile disabilitato
+    CRAFTER:
+      name: Crafter
+      description: Attiva / disattiva l'uso
+      hint: Accesso al crafter disabilitato
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Permetti ai letti & agli ancoraggi di respawn  

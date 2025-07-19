@@ -12,6 +12,9 @@ prefixes:
 general:
   success: '&a Succes!'
   invalid: Invalid
+  beta: >-
+    &d&l Această comandă este în versiune beta. Asigurați -vă că aveți copii de
+    rezervă!
   errors:
     command-cancelled: '&c Comanda anulată.'
     no-permission: '&c Nu aveți permisiunea de a executa această comandă (&7 [permission] &c).'
@@ -123,6 +126,10 @@ commands:
         &a început o purjare. Consultați consola pentru stare sau utilizați &b
         /[label] starea de purjare &a.
       no-purge-in-progress: '&c În prezent nu există nicio purjare în curs.'
+      regions:
+        parameters: '[days]'
+        description: insulele de purjare prin ștergerea fișierelor din regiunea veche
+        confirm: '&d Tip &b /[label] purge regions confirm &d să înceapă purjarea'
       protect:
         description: comutați protecția de purjare a insulei
         move-to-island: '&c Mutați-vă mai întâi pe o insulă!'
@@ -491,7 +498,7 @@ commands:
         unlimited-times: Nelimitat
         maximum-times: Max [număr] ori
     resetflags:
-      parameters: '[flag]'
+      parameters: '[pavilion]'
       description: >-
         Resetați toate insulele la setările implicite de semnalizare din
         config.yml
@@ -1093,6 +1100,10 @@ protection:
       name: Butoaie
       description: Comutați interacțiunea butoiului
       hint: Accesul la butoi este dezactivat
+    CRAFTER:
+      name: Crafter
+      description: Utilizarea comutatorului
+      hint: Crafter Access dezactivat
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Permite ancore de pat și reapariție
