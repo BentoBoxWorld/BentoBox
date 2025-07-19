@@ -13,6 +13,7 @@ prefixes:
 general:
   success: '&9Başarılı!'
   invalid: '&4Geçersiz!'
+  beta: '&d&l Bu komut beta. Yedeklemeleriniz olduğundan emin olun!'
   errors:
     command-cancelled: '&4Komut iptal edildi!'
     no-permission: '&4Bu izne sahip degilsin! Ada açamıyorsan &e/ada'
@@ -117,6 +118,12 @@ commands:
         Temizleme başlatıldı. İlerlemeyi
                 görmek için konsola bakınız.
       no-purge-in-progress: '&c Şu anda devam eden bir temizleme işlemi yok.'
+      regions:
+        parameters: '[days]'
+        description: eski bölge dosyalarını silerek adaları temizleyin
+        confirm: >-
+          &d Temizlemeyi başlatmak için &b /[label] purge regions confirm &d
+          yazın
       protect:
         description: Adanın anti-silinmesini kapat/aç.
         move-to-island: '&cİlk önce adaya git!'
@@ -1034,6 +1041,10 @@ protection:
       name: Variller
       description: Varil etkileşimini aç/kapat
       hint: Varil erişimi devre dışı bırakıldı
+    CRAFTER:
+      name: Zanaatkar
+      description: Kullanım kullanımı
+      hint: Zanaatkar devre dışı
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Yatak & Yeniden Doğma Noktalarının  
@@ -1818,7 +1829,7 @@ enums:
     DRYOUT: Kuruma
     FREEZE: Donma
     KILL: Öldür
-    SONIC_BOOM: Sonic Boom
+    SONIC_BOOM: Sonik patlama
     WORLD_BORDER: Dünya Sınırı
 panel:
   credits:

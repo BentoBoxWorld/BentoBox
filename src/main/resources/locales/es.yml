@@ -13,6 +13,7 @@ prefixes:
 general:
   success: '&aÉxito!'
   invalid: Inválido
+  beta: '&d&l Este comando está en beta. ¡Asegúrate de tener copias de seguridad!'
   errors:
     command-cancelled: '&cComando cancelado.'
     no-permission: '&cNo tienes permiso para ejecutar ese comando (&7[permission]&c).'
@@ -119,6 +120,10 @@ commands:
       completed: '&a La purga se detuvo'
       see-console-for-status: La purga comenzó. Ver consola para el estado
       no-purge-in-progress: '&c Actualmente no hay ninguna purga en curso.'
+      regions:
+        parameters: '[days]'
+        description: Purge Islas eliminando archivos de región antiguas
+        confirm: '&d Tipo &b /[label] purge regions confirm &d para comenzar a purgar'
       protect:
         description: Activar protección de purga de isla
         move-to-island: '&c¡Muévete primero a una isla!'
@@ -1086,7 +1091,7 @@ protection:
       description: Cambiar la interacción con el barril
       hint: Acceso al barril deshabilitado
     CRAFTER:
-      name: Crafter
+      name: Pañuelo
       description: Alternar uso
       hint: Acceso de Crafter deshabilitado
     BLOCK_EXPLODE_DAMAGE:

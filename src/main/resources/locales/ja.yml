@@ -12,6 +12,7 @@ prefixes:
 general:
   success: '&a成否'
   invalid: 無効
+  beta: '&d&l このコマンドはベータ版です。バックアップがあることを確認してください！'
   errors:
     command-cancelled: '&cCommandはキャンセルされました。'
     no-permission: '&cこのコマンドを実行する権限がありません ([permission])。'
@@ -101,6 +102,10 @@ commands:
       completed: '&aパージを停止しました'
       see-console-for-status: パージが開始されました。ステータスについてはコンソールをご覧ください
       no-purge-in-progress: '&c現在進行中のパージはありません。'
+      regions:
+        parameters: '[days]'
+        description: 古い地域ファイルを削除して島をパージします
+        confirm: '&d タイプ &b /[label] purge regions confirm &d を開始することを確認します'
       protect:
         description: アイランドパージ保護の切り替え
         move-to-island: '&c最初に島に移動してください！'
@@ -970,6 +975,10 @@ protection:
       name: バレル
       description: バレルのインタラクションを切り替えます
       hint: バレルアクセス無効
+    CRAFTER:
+      name: クラフター
+      description: トグルの使用
+      hint: Crafter access disabled
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a ベッドとリスポーンアンカーを許可する

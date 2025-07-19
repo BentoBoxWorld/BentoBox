@@ -13,6 +13,7 @@ prefixes:
 general:
   success: '&a 성공!'
   invalid: 올바르지 않음
+  beta: '&d&l 이 명령은 베타입니다. 백업이 있는지 확인하십시오!'
   errors:
     command-cancelled: '& c 명령이 취소되었습니다.'
     no-permission: '&c  당신은 이 명령어를 실행하기 위한 권한을 가지고있지 않습니다. 필요 권한 : (&7 [permission]&c ).'
@@ -110,6 +111,10 @@ commands:
       completed: '&a 청소 중단됨'
       see-console-for-status: '&a 청소가 시작되었습니다 상태를 보려면 콘솔을 보거나 &b/[label] purge status&a를 입력하세요'
       no-purge-in-progress: '&c 청소가 진행되고 있지 않습니다.'
+      regions:
+        parameters: '[days]'
+        description: 오래된 지역 파일을 삭제하여 섬을 제거합니다
+        confirm: '&d 유형 &b /[label] purge regions confirm'
       protect:
         description: 섬 청소 보호 여부를 설정합니다
         move-to-island: '&c 섬으로 먼저 이동하세요!'
@@ -992,6 +997,10 @@ protection:
       name: 통 합
       description: 배럴 상호작용 전환
       hint: 배럴 접근 비활성화됨
+    CRAFTER:
+      name: 크래프터
+      description: 토글 사용
+      hint: 크래프터가 비활성화되었습니다
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a 침대 및 리스폰 앵커

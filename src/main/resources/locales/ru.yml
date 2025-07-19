@@ -12,6 +12,7 @@ prefixes:
 general:
   success: '&a Успешно!'
   invalid: Некорректно
+  beta: '&d&l Эта команда в бета -версии. Убедитесь, что у вас есть резервные копии!'
   errors:
     command-cancelled: '&cКоманда отменена.'
     no-permission: '&cУ вас нет разрешения на извлечение этой команды (&7 [permission]&c ).'
@@ -118,6 +119,10 @@ commands:
         &aОчистка начата. Смотрите в консоль для статуса или используйте &b
         /[label] purge status&a.
       no-purge-in-progress: '&cВ данный момент очистка не проводится.'
+      regions:
+        parameters: '[days]'
+        description: oстрова чистки путем удаления файлов старого региона
+        confirm: '&d Тип &b /[label] purge regions confirm &d чтобы начать чистку'
       protect:
         description: переключатель защиты острова от очистки
         move-to-island: '&cДля начала вернитесь на остров!'
@@ -1080,6 +1085,10 @@ protection:
       name: Бочка
       description: Переключатель возможности взаимодействовать с бочками
       hint: Доступ к бочкам запрещен
+    CRAFTER:
+      name: Крафт
+      description: Использование переключения
+      hint: Крафт отключен
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Позволяет кроватям и якорям возрождения

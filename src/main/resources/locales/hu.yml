@@ -12,6 +12,7 @@ prefixes:
 general:
   success: '&a Siker!'
   invalid: Érvénytelen
+  beta: '&d&l Ez a parancs béta. Győződjön meg róla, hogy van biztonsági másolata!'
   errors:
     command-cancelled: '&c A parancs megszakítva.'
     no-permission: '&c Nincs engedélye a parancs végrehajtására (&7 [permission] &c).'
@@ -131,6 +132,10 @@ commands:
         &a Törlés elkezdve. Nézd meg a konzolt a jelenlegi állapotért, vagy
         használd a &b /[label] purge status&a parancsot.
       no-purge-in-progress: '&c Jelenleg egy törlés  sincs folyamatban.'
+      regions:
+        parameters: '[days]'
+        description: tisztítsa meg a szigeteket a régi régiófájlok törlésével
+        confirm: '&d Type &b /[label] purge regions confirm'
       protect:
         description: Sziget törlés elleni védelmének engedélyezése
         move-to-island: '&c Először menj egy szigetre!'
@@ -1112,6 +1117,10 @@ protection:
       name: Hordók
       description: A hordó interakciójának váltása
       hint: A hordó hozzáférés letiltva
+    CRAFTER:
+      name: Crafter
+      description: Váltás
+      hint: Crafter hozzáférés letiltva
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Bed & Respawn horgonyok engedélyezése
@@ -1766,7 +1775,7 @@ protection:
       description: |
         &a Visszaállítja &c &l ÖSSZES &r &a beállításokat a sajátjukra
         &alapértelmezett érték.
-      confirm: confirm
+      confirm: megerősít
       instructions: >-
         &a Biztos vagy benne? Írd be &c "confirm" &a mindennek a
         visszaállításához.
@@ -2003,7 +2012,7 @@ enums:
     POISON: Méreg
     MAGIC: varázslat
     WITHER: Elhervad
-    FALLING_BLOCK: Falling Block
+    FALLING_BLOCK: Leeső blokk
     THORNS: Tövis
     DRAGON_BREATH: Sárkánylehellet
     CUSTOM: Egyedi
@@ -2013,7 +2022,7 @@ enums:
     DRYOUT: Kiszáradni
     FREEZE: Fagyasztás
     KILL: Ölj meg
-    SONIC_BOOM: Sonic Boom
+    SONIC_BOOM: Hangrobbanás
     WORLD_BORDER: Világ Határ
 panel:
   credits:

@@ -12,6 +12,7 @@ prefixes:
 general:
   success: '&aDarīts!'
   invalid: Nederīgs
+  beta: '&d&l Šī komanda ir beta versijā. Pārliecinieties, ka jums ir dublējumi!'
   errors:
     command-cancelled: '&cKomanda atcleta.'
     no-permission: '&cTev nav atļaujas rīkoties ar šo komandu (&7[permission]&c).'
@@ -118,6 +119,10 @@ commands:
       completed: '&aDzēšana pabeigta.'
       see-console-for-status: Dzēšana uzsākta. Skati terminālī, lai redzētu satusu.
       no-purge-in-progress: '&c Šobrīd nav nevienas tīrīšanas procedūras.'
+      regions:
+        parameters: '[days]'
+        description: Iztīrīt salas, izdzēšot veco reģiona failus
+        confirm: '&d Type &b /[label] purge regions confirm&d , lai sāktu attīrīt'
       protect:
         description: Pārslēgt salas aizsargāšanu no dzēšanas
         move-to-island: '&cSākumā pārvietojies uz salas!'
@@ -644,7 +649,7 @@ commands:
       you-can-teleport-to-your-island: '&a Tu vari pārvietoties uz savu salu, kad vien vēlies.'
     deletehome:
       description: dzēst mājvietas atrašanās vietu
-      parameters: '[home name]'
+      parameters: '[Mājas vārds]'
     homes:
       description: uzskaiti savas mājas
     info:
@@ -698,7 +703,7 @@ commands:
       success: '&a Salas nosaukums veiksmīgi nomainīts uz &b [name]&a .'
     renamehome:
       description: pārdēvēt mājas atrašanās vietu
-      parameters: '[home name]'
+      parameters: '[Mājas vārds]'
       enter-new-name: '&6 Ievadiet jauno vārdu'
       already-exists: '&c Tas nosaukums jau pastāv, mēģini citu nosaukumu.'
     resetname:
@@ -1066,6 +1071,10 @@ protection:
       name: Tvertnes
       description: Pārslēgt mucas mijiedarbību
       hint: Muca piekļuve atspējota
+    CRAFTER:
+      name: Amatnieks
+      description: Pārslēgt lietošanu
+      hint: Amatnieks invalīda
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Atļaut gultām & atkārtotas atdzimšanas enkuriem
@@ -1077,7 +1086,7 @@ protection:
       description: Pārslēgt kompostera mijiedarbību
       hint: Kompostiera mijiedarbība atspējota
     LOOM:
-      name: Loom
+      name: Stelles
       description: Pārslēgt lietošanu
       hint: Loom piekļuve atspējota
     FLOWER_POT:
@@ -1085,7 +1094,7 @@ protection:
       description: Pārslēgt puķu poda mijiedarbību
       hint: Zieda poda mijiedarbība atspējota
     GRINDSTONE:
-      name: Grindstone
+      name: Sasmalcināšana
       description: Pārslēgt lietošanu
       hint: Grindstone piekļuve atslēgta
     SHULKER_BOX:
@@ -1971,7 +1980,7 @@ enums:
     DRYOUT: Sausušana
     FREEZE: Saldēt
     KILL: Nogalini
-    SONIC_BOOM: Sonic Boom
+    SONIC_BOOM: Skaņas uzplaukums
     WORLD_BORDER: Pasaules robeža
 panel:
   credits:

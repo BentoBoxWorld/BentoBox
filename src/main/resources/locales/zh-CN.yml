@@ -6,7 +6,8 @@ meta:
     - Alice-space
     - CuteLittleSky
     - dawnTak
-  banner: RED_BANNER:1:SQUARE_TOP_RIGHT:YELLOW:CROSS:RED:CURLY_BORDER:RED:MOJANG:YELLOW:HALF_HORIZONTAL_MIRROR:RED:HALF_VERTICAL:RED
+  banner: >-
+    RED_BANNER:1:SQUARE_TOP_RIGHT:YELLOW:CROSS:RED:CURLY_BORDER:RED:MOJANG:YELLOW:HALF_HORIZONTAL_MIRROR:RED:HALF_VERTICAL:RED
 prefixes:
   bentobox: '&6BentoBox &7&l> &r '
   island: 岛屿
@@ -16,6 +17,7 @@ prefixes:
 general:
   success: '&a成功!'
   invalid: 无效
+  beta: '&d&l 此命令在Beta中。确保您有备份！'
   errors:
     command-cancelled: '&c命令已取消.'
     no-permission: '&c你无权执行此命令. (&7[permission]&c)'
@@ -107,6 +109,10 @@ commands:
         &a清理已开始.
         &a请参阅控制台或使用&b/[label] purge status&a查看清理状态&a.
       no-purge-in-progress: '&c没有正在进行的清理工作.'
+      regions:
+        parameters: '[days]'
+        description: 通过删除旧区域文件清除岛
+        confirm: '&d 输入&b “/[label] purge region confirmed”&d 开始清除'
       protect:
         description: 开/关 岛屿清理保护, 开启清理保护的岛屿不会被清理.
         move-to-island: '&c你身处的位置并没有岛屿, 请到要操作的岛上再试!'
@@ -130,7 +136,7 @@ commands:
         name-has-island: '&c[name]已经有岛屿了!'
         success: '&a已将&b[name]&a加入到&b[owner]&a的岛屿.'
       disband:
-        parameters: <owner>
+        parameters: <所有者>
         description: 解散团队
         use-disband-owner: '&cTA不是岛主! 请使用disband [owner].'
         disbanded: '&c管理员解散了你的团队!'
@@ -153,7 +159,7 @@ commands:
         success: '&a已将&b[name]&a从&b[owner]&a的岛屿里踢出.'
         success-all: '&b 玩家已从这个世界的所有团队中移除'
       setowner:
-        parameters: <player>
+        parameters: <玩家>
         description: 将当前岛屿的岛主设置为指定玩家
         already-owner: '&c[name]已经是当前岛屿的岛主了!'
         must-be-on-island: '&c你必须在岛屿上才能设置所有者'
@@ -193,7 +199,7 @@ commands:
         parameters: <player> <range> [island location]
         success: '&a玩家&b[name]&a的岛屿保护范围已减少至&b[total]&7(&b-[number]&7)&a.'
     register:
-      parameters: <player>
+      parameters: <玩家>
       description: 将玩家认领到当前的无主岛屿
       registered-island: '&a已将当前岛屿[xyz]认领给玩家[name].'
       reserved-island: '&a已为玩家&b[name]&a预留了位于&b[xyz]&a的岛屿.'
@@ -213,7 +219,7 @@ commands:
         specify-island-location: '&c以x,y,z格式选定岛屿位置'
         player-has-more-than-one-island: '&c玩家拥有多个岛屿, 请指定一个岛屿.'
     info:
-      parameters: <player>
+      parameters: <玩家>
       description: 获取当前岛屿或指定玩家的都信息
       no-island: '&c你当前没有岛屿...'
       title: '========== 岛屿信息 ============'
@@ -258,7 +264,7 @@ commands:
     trash:
       no-unowned-in-trash: '&c回收站中没有无主岛屿'
       no-islands-in-trash: '&c该玩家在回收站中没有岛屿'
-      parameters: '[player]'
+      parameters: '[玩家]'
       description: 显示回收站中无主岛屿或玩家岛屿
       title: '&d =========== 岛屿回收站 ==========='
       count: '&d&l岛屿: [number]'
@@ -350,7 +356,7 @@ commands:
         not-sink: '&b 不下沉'
         no-clipboard: '&c 剪贴板中没有蓝图。加载或复制一些东西。'
       delete:
-        parameters: <name>
+        parameters: <名称>
         description: 删除蓝图
         no-blueprint: '&c蓝图: &b[name]&c不存在.'
         confirmation: |-
@@ -358,7 +364,7 @@ commands:
           &c一旦删除成功, 将无法恢复.
         success: '&a成功删除蓝图: &b[name]&a.'
       load:
-        parameters: <name>
+        parameters: <名称>
         description: 加载蓝图到剪贴板
       list:
         description: 列出可用蓝图
@@ -450,16 +456,16 @@ commands:
     world:
       description: 管理世界设置
     delete:
-      parameters: <player>
+      parameters: <玩家>
       description: 删除玩家的岛屿
       cannot-delete-owner: '&c删除岛屿之前, 必须将所有团队成员踢出队伍.'
       deleted-island: '&a位于&e[xyz]&a的岛屿已成功删除.'
     deletehomes:
-      parameters: <player>
+      parameters: <玩家>
       description: 从岛上删除所有命名过的家
       warning: '&c岛上所有命名过的家将被删除!'
     why:
-      parameters: <player>
+      parameters: <玩家>
       description: 为玩家开启/关闭控制台调试报告
       turning-on: '&a已为&b[name]&a打开控制台调试报告.'
       turning-off: '&e已为&b[name]&e关闭控制台调试报告.'
@@ -467,7 +473,7 @@ commands:
       description: 编辑玩家的死亡次数
       reset:
         description: 重置玩家的死亡次数
-        parameters: <player>
+        parameters: <玩家>
         success: '&a成功将玩家&b[name]&a的死亡次数重置为: &b0&a.'
       set:
         description: 设置玩家的死亡次数
@@ -594,7 +600,7 @@ commands:
       description: 显示你设置的全部岛屿传送点
     info:
       description: 显示当前岛屿或指定玩家的岛屿信息
-      parameters: <player>
+      parameters: <玩家>
     near:
       description: 显示周边岛屿名称
       parameters: ''
@@ -634,7 +640,7 @@ commands:
       name-too-short: '&c岛屿名过短. 请至少有: &b[number]&c个字符.'
       name-too-long: '&c岛屿名过长. 请至多有: &b[number]&c个字符.'
       name-already-exists: '&c已经有一个该名称的岛屿了.'
-      parameters: <name>
+      parameters: <名称>
       success: '&a成功将你的岛屿命名为: &b[name]&a.'
     renamehome:
       description: 重命名岛屿传送点
@@ -705,7 +711,7 @@ commands:
         name-has-invited-you: '&b[name]&a邀请你以&b协作者&a的身份加入团队.'
       uncoop:
         description: 与一位玩家解除协作
-        parameters: <player>
+        parameters: <玩家>
         cannot-uncoop-yourself: '&c你不能与自己解除协作!'
         cannot-uncoop-member: '&c你不能与一名团队成员解除协作!'
         player-not-cooped: '&c该玩家不是你的协作者!'
@@ -717,7 +723,7 @@ commands:
         is-full: '&c你的协作者数量已达上限.'
       trust:
         description: 将一位玩家以可信玩家身份加入团队
-        parameters: <player>
+        parameters: <玩家>
         trust-in-yourself: '&c你一直都信任着自己!'
         name-has-invited-you: '&b[name]&a邀请你以&b可信玩家&a的身份加入团队.'
         player-already-trusted: '&c该玩家已经是可信玩家了!'
@@ -726,7 +732,7 @@ commands:
         is-full: '&c你的可信玩家数量已达上限.'
       untrust:
         description: 将指定玩家取消可信玩家身份
-        parameters: <player>
+        parameters: <玩家>
         cannot-untrust-yourself: '&c你不能不信任自己!'
         cannot-untrust-member: '&c你不能将团队成员取消可信玩家身份!'
         player-not-trusted: '&c该玩家不是你的可信玩家!'
@@ -778,7 +784,7 @@ commands:
           already-on-team: '&c该玩家已经有团队了!'
           invalid-invite: '&c该邀请已失效.'
           you-have-already-invited: '&c你已经邀请过该玩家了!'
-        parameters: <player>
+        parameters: <玩家>
         you-can-invite: '&a你还能再邀请&b[number]&a个玩家.'
         accept:
           description: 接受邀请
@@ -800,14 +806,14 @@ commands:
         success: '&a你离开了这个岛屿.'
       kick:
         description: 将指定成员踢出你岛屿
-        parameters: <player>
+        parameters: <玩家>
         player-kicked: '&b[name]&c将你在&b[gamemode]&c上踢了出去!'
         cannot-kick: '&c你不能踢出你自己!'
         cannot-kick-rank: '&c你的身份等级过低, 无法踢出&b[name]&c!'
         success: '&b[name]&a已经被踢出了你的岛屿.'
       demote:
         description: 降低你团队成员的身份等级
-        parameters: <player>
+        parameters: <玩家>
         errors:
           cant-demote-yourself: '&c你不能降低自己的身份等级!'
           cant-demote: '&c降低的身份等级不能更高!'
@@ -830,7 +836,7 @@ commands:
           target-is-not-member: '&c该玩家不在你的团队中!'
           at-max: '&c该玩家拥有的岛屿数量已达上限!'
         name-is-the-owner: '&b[name]&a现在是岛主了!'
-        parameters: <player>
+        parameters: <玩家>
         you-are-the-owner: '&a你现在是岛主了!'
     ban:
       description: 将一位玩家列入黑名单
@@ -865,7 +871,7 @@ commands:
       already-selected: '&c你当前已经在使用该语言了.'
     expel:
       description: 将一位玩家从你的岛屿上驱逐
-      parameters: <player>
+      parameters: <玩家>
       cannot-expel-yourself: '&c你不能驱逐自己!'
       cannot-expel: '&c该玩家不能被驱逐.'
       cannot-expel-member: '&c你不能驱逐团队成员!'
@@ -993,6 +999,10 @@ protection:
       name: '&b&l木桶'
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2打开木桶'
       hint: 禁止打开木桶
+    CRAFTER:
+      name: 手工艺者
+      description: 切换使用
+      hint: Crafter访问禁用
     BLOCK_EXPLODE_DAMAGE:
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2床与重生锚破坏方块和对实体造成伤害'
       name: '&b&l爆炸伤害与破坏'
@@ -1545,6 +1555,8 @@ protection:
     reset-to-default:
       name: '&c&l重置为默认值'
       description: '&#FAFAD2将&b全部&#FAFAD2设置项恢复为默认值'
+      confirm: 确认
+      instructions: '&a 你确定吗？键入&c “确认”&a 以重置所有内容。'
     PROTECTION:
       title: '&6&l保护'
       description: '&#FAFAD2适用于该岛屿的保护权限'
@@ -1790,18 +1802,8 @@ panels:
     left-click-to-cycle-down: '&e左键 &7向下循环选择'
     right-click-to-cycle-up: '&e右键 &7向上循环选择'
 successfully-loaded: >-
-  &6   ____             _        ____
-  &6  |  _ \           | |      |  _ \            
-  &7由&atastybento&7和&aPoslovitch&7构建
-  &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &72017 - 2024
-  &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
-  &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &bv&e[version]
-  &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8加载用时 &e[time]&8毫秒.
-language:
-   panel-title: '&l选择你适用的语言'
-   description:
-     selected: '&a已选定'
-     click-to-select: '&e点击 &f选择'
-     authors: '&7作者：'
-     author: '&3- &b[name]'
-   edited: '&a已将你的语言更改为: &e[lang]'
+  &6   ____             _        ____ &6  |  _ \           | |      |  _
+  \             &7由&atastybento&7和&aPoslovitch&7构建 &6  | |_) | ___ _ __ | |_ ___
+  | |_) | _____  __  &72017 - 2024 &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/
+  / &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &bv&e[version] &6  |____/
+  \___|_| |_|\__\___/|____/ \___/_/\_\  &8加载用时 &e[time]&8毫秒.

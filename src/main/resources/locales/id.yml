@@ -12,6 +12,7 @@ prefixes:
 general:
   success: '&a Berhasil!'
   invalid: Tidak valid
+  beta: '&d&l Perintah ini dalam beta. Pastikan Anda memiliki cadangan!'
   errors:
     command-cancelled: '&c Perintah dibatalkan.'
     no-permission: >-
@@ -122,6 +123,10 @@ commands:
         & Pembersihan dimulai. Lihat konsol untuk status atau gunakan &b
         /[label] purge status&a.
       no-purge-in-progress: '&c Saat ini tidak ada pembersihan yang sedang berlangsung.'
+      regions:
+        parameters: '[days]'
+        description: pulau Purge dengan menghapus file wilayah lama
+        confirm: '&d Jenis &b /[label] purge regions confirm &d untuk mulai membersihkan'
       protect:
         description: beralih perlindungan pembersihan pulau
         move-to-island: '&c Pindah ke pulau dulu!'
@@ -1089,6 +1094,10 @@ protection:
       name: barel
       description: Alihkan interaksi barel
       hint: Akses barel dinonaktifkan
+    CRAFTER:
+      name: Perajin
+      description: Penggunaan sakelar
+      hint: Akses perajin dinonaktifkan
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Izinkan Tempat Tidur & Respawn Jangkar
@@ -1100,7 +1109,7 @@ protection:
       description: Alihkan interaksi komposter
       hint: Interaksi komposter dinonaktifkan
     LOOM:
-      name: Loom
+      name: Mesin tenun
       description: Alihkan penggunaan
       hint: Akses Loom dinonaktifkan
     FLOWER_POT:
