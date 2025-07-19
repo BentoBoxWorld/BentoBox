@@ -20,6 +20,7 @@ prefixes:
 general:
   success: '&a Success!'
   invalid: Invalid
+  beta: '&d&l This command is in beta. Make sure you have backups!'
   errors:
     command-cancelled: '&c Command cancelled.'
     no-permission: '&c You don''t have the permission to execute this command (&7

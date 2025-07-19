@@ -342,6 +342,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                 Bukkit.getScheduler().runTask(getPlugin(), () -> {
                     user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER, String.valueOf(uniqueIslands.size()));
                     user.sendMessage("commands.admin.purge.regions.confirm", TextVariables.LABEL, this.getLabel());
+                    user.sendMessage("general.beta"); // TODO Remove beta in the future
                     this.toBeConfirmed = true;
                 });
             }
