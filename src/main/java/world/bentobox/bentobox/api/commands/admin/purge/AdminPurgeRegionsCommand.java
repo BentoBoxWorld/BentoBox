@@ -336,6 +336,11 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             // Display to the user
             uniqueIslands.forEach(this::displayIsland);
 
+            // Display empty regions
+            deleteableRegions.entrySet().stream()
+                .filter(e -> e.getValue().isEmpty())
+                .forEach(e -> displayEmptyRegion(e.getKey()));
+
             if (deleteableRegions.isEmpty()) {
                 Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage("commands.admin.purge.none-found"));
             } else {
@@ -365,6 +370,10 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                 + " owned by " + getPlugin().getPlayers().getName(island.getOwner())
                 + " who last logged in " + formatLocalTimestamp(getPlugin().getPlayers().getLastLoginTimestamp(island.getOwner()))
                 + " will be deleted");
+    }
+
+    private void displayEmptyRegion(Pair<Integer, Integer> region) {
+        getPlugin().log("Empty region at r." + region.x + "." + region.z + " in world " + getWorld().getName() + " will be deleted (no islands)");
     }
 
     /**
@@ -551,9 +560,8 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                 }
             }
 
-            if (!ids.isEmpty()) {
-                regionToIslands.put(region, ids);
-            }
+            // Always add the region, even if ids is empty
+            regionToIslands.put(region, ids);
         }
 
         return regionToIslands;
