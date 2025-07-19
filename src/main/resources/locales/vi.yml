@@ -2,8 +2,7 @@ meta:
   authors:
     - HSGamer
     - tastybento
-  banner: >-
-    RED_BANNER:1:CREEPER:YELLOW:RHOMBUS_MIDDLE:YELLOW:TRIANGLES_BOTTOM:RED:SQUARE_BOTTOM_LEFT:RED:SQUARE_BOTTOM_RIGHT:RED
+  banner: 'RED_BANNER:1:CREEPER:YELLOW:RHOMBUS_MIDDLE:YELLOW:TRIANGLES_BOTTOM:RED:SQUARE_BOTTOM_LEFT:RED:SQUARE_BOTTOM_RIGHT:RED'
 prefixes:
   bentobox: '&6 BentoBox &7 &l > &r'
   island: hòn đảo
@@ -13,9 +12,7 @@ prefixes:
 general:
   success: '&a Thành công!'
   invalid: Không hợp lệ
-  beta: >-
-    &d&l Lệnh này là trong phiên bản beta. Hãy chắc chắn rằng bạn có bản sao
-    lưu!
+  beta: '&d&l Lệnh này là trong phiên bản beta. Hãy chắc chắn rằng bạn có bản sao lưu!'
   errors:
     command-cancelled: '&c Lệnh đã bị hủy.'
     no-permission: '&c Bạn không có quyền dùng lệnh này'
