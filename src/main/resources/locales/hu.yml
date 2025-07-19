@@ -1777,7 +1777,7 @@ protection:
         &alapértelmezett érték.
       confirm: megerősít
       instructions: >-
-        &a Biztos vagy benne? Írd be &c "confirm" &a mindennek a
+        &a Biztos vagy benne? Írd be &c "megerősít" &a mindennek a
         visszaállításához.
     PROTECTION:
       title: '&6 Védelem'
