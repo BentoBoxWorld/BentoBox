@@ -12,6 +12,9 @@ prefixes:
 general:
   success: '&a Succès !'
   invalid: Invalide
+  beta: >-
+    &d&l Cette commande est en version bêta. Assurez-vous d'avoir des
+    sauvegardes!
   errors:
     command-cancelled: '&c Commande annulée.'
     no-permission: '&c Vous n''êtes pas autorisé à exécuter cette commande (&7 [permission]&c).'
@@ -37,6 +40,7 @@ general:
       utiliser cette commande.
     must-be-positive-number: '&c [number] n''est pas un nombre positif valide.'
     not-on-island: "&c Vous n'êtes pas sur l'île\_!"
+    slow-down: '&c Ralentis. Clique plus lentement.'
   worlds:
     overworld: Monde supérieur
     nether: Nether
@@ -120,6 +124,10 @@ commands:
         La purge a commencé. Consultez la console pour le suivi ou utilisez
         &b/[label] purge status&a.
       no-purge-in-progress: '&c Il n''y a actuellement aucune purge en cours.'
+      regions:
+        parameters: '[days]'
+        description: purge îles en supprimant les anciens fichiers régionaux
+        confirm: '&d Type &b /[label] purge regions confirm &d pour commencer la purge'
       protect:
         description: activer/désactiver la protection de l'île contre la purge
         move-to-island: '&c Déplacez-vous d''abord sur une île.'
@@ -469,7 +477,7 @@ commands:
         no-trash: Impossible de mettre dans la corbeille
         trash-instructions: Clic droit pour supprimer
         no-trash-instructions: Impossible de supprimer le bundle par défaut
-        permission: Permission
+        permission: Autorisation
         no-permission: Aucune autorisation
         perm-required: Obligatoire
         no-perm-required: Impossible de définir la permanente pour le bundle par défaut
@@ -1103,6 +1111,10 @@ protection:
       name: Barils
       description: Activer/désactiver l'interaction du canon
       hint: Accès au baril désactivé
+    CRAFTER:
+      name: Artisan
+      description: Faire de l'utilisation
+      hint: Crafter Accès désactivé
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Autoriser les ancres de lit et de réapparition
@@ -1267,7 +1279,7 @@ protection:
         &a si actif.
       name: Téléportation Enderman
     ENDER_PEARL:
-      description: Toggle use
+      description: Faire de l'utilisation
       name: Perles d'Ender
       hint: Utilisation d'Enderpearl désactivée
     ENTER_EXIT_MESSAGES:

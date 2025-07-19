@@ -694,11 +694,11 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getPurgeProtected()}.
+     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isPurgeProtected()}.
      */
     @Test
     public void testGetPurgeProtected() {
-        assertFalse(i.getPurgeProtected());
+        assertFalse(i.isPurgeProtected());
     }
 
     /**
@@ -1041,9 +1041,9 @@ public class IslandTest {
     @Test
     public void testSetPurgeProtected() {
         i.setPurgeProtected(true);
-        assertTrue(i.getPurgeProtected());
+        assertTrue(i.isPurgeProtected());
         i.setPurgeProtected(false);
-        assertFalse(i.getPurgeProtected());
+        assertFalse(i.isPurgeProtected());
     }
 
     /**

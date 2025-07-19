@@ -50,7 +50,8 @@ public abstract class FlagListener implements Listener {
         SETTING_NOT_ALLOWED_ON_ISLAND,
         SETTING_ALLOWED_IN_WORLD,
         SETTING_NOT_ALLOWED_IN_WORLD,
-        NULL_LOCATION
+        NULL_LOCATION,
+        ISLAND_DELETED
     }
 
     @NonNull
@@ -143,13 +144,13 @@ public abstract class FlagListener implements Listener {
 
         // Get the island and if present
         Optional<Island> island = getIslands().getProtectedIslandAt(loc);
+        
         // Handle Settings Flag
         if (flag.getType().equals(Flag.Type.SETTING)) {
             return processSetting(flag, island, e, loc);
         }
 
         // Protection flag
-
         // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
         if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
                 && (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypassprotect")
@@ -160,6 +161,12 @@ public abstract class FlagListener implements Listener {
                 report(user, e, loc, flag,  Why.BYPASS_EVERYWHERE);
             }
             return true;
+        }
+        // Check if the island is deleted - if so, then nothing is allowed by default
+        if (island.isPresent() && island.get().isDeleted()) {
+            report(user, e, loc, flag, Why.ISLAND_DELETED);
+            noGo(e, flag, silent, "protection.world-protected");
+            return false;
         }
 
         // Handle World Settings

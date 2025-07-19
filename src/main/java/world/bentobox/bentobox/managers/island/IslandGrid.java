@@ -12,10 +12,12 @@ import world.bentobox.bentobox.database.objects.Island;
  * @author tastybento
  *
  */
-class IslandGrid {
+public class IslandGrid {
 
-    private record IslandData(String id, int minX, int minZ, int range) {
-    }
+    /**
+     * Island id, minX, minZ, and range
+     */
+    public record IslandData(String id, int minX, int minZ, int range) {}
 
     private final TreeMap<Integer, TreeMap<Integer, IslandData>> grid = new TreeMap<>();
     private final IslandCache im;
@@ -75,16 +77,16 @@ class IslandGrid {
 
         return removed;
     }
-    
+
     /**
-    * Retrieves the island located at the specified x and z coordinates, covering both the protected area
-    * and the full island space. Returns null if no island exists at the given location.
-    * This will load the island from the database if it is not in the cache.
-    *
-    * @param x the x coordinate of the location
-    * @param z the z coordinate of the location
-    * @return the Island at the specified location, or null if no island is found
-    */
+     * Retrieves the island located at the specified x and z coordinates, covering both the protected area
+     * and the full island space. Returns null if no island exists at the given location.
+     * This will load the island from the database if it is not in the cache.
+     *
+     * @param x the x coordinate of the location
+     * @param z the z coordinate of the location
+     * @return the Island at the specified location, or null if no island is found
+     */
     public Island getIslandAt(int x, int z) {
         String id = getIslandStringAt(x, z);
         if (id == null) {
@@ -140,6 +142,13 @@ class IslandGrid {
             count += innerMap.size();
         }
         return count;
+    }
+
+    /**
+     * @return the grid
+     */
+    public TreeMap<Integer, TreeMap<Integer, IslandData>> getGrid() {
+        return grid;
     }
 
 }

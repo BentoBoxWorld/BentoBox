@@ -13,6 +13,7 @@ prefixes:
 general:
   success: '&a Erfolg!'
   invalid: Ungültig
+  beta: '&d&l Dieser Befehl ist in Beta. Stellen Sie sicher, dass Sie Backups haben!'
   errors:
     command-cancelled: '&c Befehl abgebrochen.'
     no-permission: >-
@@ -42,6 +43,7 @@ general:
       kannst.
     must-be-positive-number: '&c [number] ist keine gültige positive Zahl.'
     not-on-island: '&c Du bist nicht auf der Insel!'
+    slow-down: '&c Langsamer. Klicke langsamer.'
   worlds:
     overworld: Oberwelt
     nether: Nether
@@ -123,6 +125,12 @@ commands:
       completed: '&a Lösung gestoppt'
       see-console-for-status: Löschung gestartet. Für den Status siehe Konsole
       no-purge-in-progress: '&c Derzeit wird keine Löschung durchgeführt.'
+      regions:
+        parameters: '[days]'
+        description: Säuberinseln durch Löschen alter Regionendateien
+        confirm: >-
+          &d Typ &b /[label] purge regions confirm &d, um mit dem Spülen zu
+          beginnen
       protect:
         description: Umschalten des Insellöschschutzes
         move-to-island: '&c Erst auf eine Insel gehen!'
@@ -1110,6 +1118,10 @@ protection:
       name: Fässer
       description: Fass-Interaktion umschalten
       hint: Fasszugang deaktiviert
+    CRAFTER:
+      name: Handwerker
+      description: Verwendung umschalten
+      hint: Handwerkerzugriff deaktiviert
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Bett- und Respawn-Anker zulassen

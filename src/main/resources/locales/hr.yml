@@ -12,6 +12,7 @@ prefixes:
 general:
   success: '&uspjeh!'
   invalid: Neispravno
+  beta: '&d&l Ova je naredba u beta verziji. Obavezno imate sigurnosne kopije!'
   errors:
     command-cancelled: '&c Naredba otkazana.'
     no-permission: '&c Nemate dopuštenje za izvršenje ove naredbe (&7 [permission]&c).'
@@ -39,6 +40,7 @@ general:
       naredbu.
     must-be-positive-number: '&c [number] nije važeći pozitivan broj.'
     not-on-island: '&c Niste na otoku!'
+    slow-down: '&c Uspori. Klikaj sporije.'
   worlds:
     overworld: Nadzemlje
     nether: Podzemni
@@ -120,6 +122,10 @@ commands:
         &a Čišćenje je počelo. Pogledajte konzolu za status ili koristite &b
         /[label] status čišćenja&a.
       no-purge-in-progress: '&c Trenutno nije u tijeku čišćenje.'
+      regions:
+        parameters: '[days]'
+        description: očistite otoke brisanjem datoteka stare regije
+        confirm: '&d Tip &b /[label] purge regions confirm &d da se pokrenu čišćenje'
       protect:
         description: isključiti island purge protection
         move-to-island: '&c Prvo se preseli na otok!'
@@ -1064,6 +1070,10 @@ protection:
       name: Bačve
       description: Uključivanje interakcije bačve
       hint: Pristup bačvi onemogućen
+    CRAFTER:
+      name: Rafter
+      description: Upotreba prebacivanja
+      hint: Crafter pristup onemogućen
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Dopusti krevet i sidra za ponovno stvaranje

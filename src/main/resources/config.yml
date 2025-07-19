@@ -84,11 +84,13 @@ general:
   fakeplayers:
   - '[CoFH]'
 panel:
+  # Panel click cooldown. Value is in milliseconds. Prevents players spamming button presses in GUIs.
+  click-cooldown-ms: 1000
   # Toggle whether panels should be closed or not when the player clicks anywhere outside of the inventory view.
   close-on-click-outside: true
   # Defines the Material of the item that fills the gaps (in the header, etc.) of most panels.
   # Added since 1.14.0.
-  filler-material: LIGHT_BLUE_STAINED_GLASS_PANE
+  filler-material: light_blue_stained_glass_pane
   # Toggle whether player head texture should be gathered from Mojang API or mc-heads.net cache server.
   # Mojang API sometime may be slow and may limit requests to the player data, so this will allow to
   # get player heads a bit faster then Mojang API.
@@ -119,9 +121,19 @@ logs:
   # Added since 1.5.0.
   github-download-data: true
 island:
+  # Override island distance mismatch checking. BentoBox normally refuses to run if
+  # the island distance in the gamemode config is different to the one stored in the database
+  # for safety. This overrides that check. You should never need this, and if you do not understand it
+  # keep it as false
+  override-safety-check: false
   # The default number of concurrent islands a player may have.
   # This may be overridden by individual game mode config settings.
   concurrent-islands: 1
+  # Hide used blueprints.
+  # Blueprints can have a maximum use when players have concurrent islands.
+  # If this is true, then ones that are used up will not be shown in the island create menu.
+  # Added since 2.3.0.
+  hide-used-blueprints: false
   cooldown:
     time:
       # How long a player must wait until they can rejoin a team island after being kicked in minutes.

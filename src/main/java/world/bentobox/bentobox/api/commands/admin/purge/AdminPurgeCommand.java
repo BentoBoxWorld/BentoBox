@@ -47,6 +47,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         new AdminPurgeStopCommand(this);
         new AdminPurgeUnownedCommand(this);
         new AdminPurgeProtectCommand(this);
+        new AdminPurgeRegionsCommand(this);
     }
 
     @Override
@@ -167,7 +168,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
             user.sendMessage("commands.admin.purge.total-islands", TextVariables.NUMBER, String.valueOf(list.size()));
             Set<String> oldIslands = new HashSet<>();
             list.stream()
-                .filter(i -> !i.isSpawn()).filter(i -> !i.getPurgeProtected())
+                .filter(i -> !i.isSpawn()).filter(i -> !i.isPurgeProtected())
                 .filter(i -> i.getWorld() != null) // to handle currently unloaded world islands
                     .filter(i -> i.getWorld().equals(this.getWorld())) // Island needs to be in this world
                     .filter(Island::isOwned) // The island needs to be owned

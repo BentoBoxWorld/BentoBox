@@ -20,6 +20,7 @@ prefixes:
 general:
   success: '&a Success!'
   invalid: Invalid
+  beta: '&d&l This command is in beta. Make sure you have backups!'
   errors:
     command-cancelled: '&c Command cancelled.'
     no-permission: '&c You don''t have the permission to execute this command (&7
@@ -45,6 +46,7 @@ general:
     you-must-wait: '&c You must wait [number]s before you can do that command again.'
     must-be-positive-number: '&c [number] is not a valid positive number.'
     not-on-island: '&c You are not on [prefix_island]!'
+    slow-down: '&c Slow down. Click slower.'
   worlds:
     overworld: Overworld
     nether: Nether
@@ -100,7 +102,7 @@ commands:
     purge:
       parameters: '[days]'
       description: purge islands abandoned for more than [days]
-      days-one-or-more: Must be at least 1 day or more
+      days-one-or-more: '&c Must be at least 1 day or more'
       purgable-islands: '&a Found &b [number] &a purgable islands.'
       too-many: |
         &b This is a lot and could take a very long time to delete.
@@ -120,6 +122,10 @@ commands:
       see-console-for-status: '&a Purge started. See console for status or use &b
         /[label] purge status&a.'
       no-purge-in-progress: '&c There is currently no purge in progress.'
+      regions:
+        parameters: '[days]'
+        description: 'purge islands by deleting old region files'
+        confirm: '&d Type &b /[label] purge regions confirm &d to start purging'
       protect:
         description: toggle [prefix_island] purge protection
         move-to-island: '&c Move to [prefix_an-island] first!'

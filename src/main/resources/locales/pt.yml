@@ -12,6 +12,7 @@ prefixes:
 general:
   success: '&c Sucesso!'
   invalid: Invalido
+  beta: '&d&l Este comando está na versão beta. Certifique -se de ter backups!'
   errors:
     command-cancelled: '&c Comando cancelado.'
     no-permission: '&c Você não tem permissão para executar este comando (&7 [permission]&c ).'
@@ -39,6 +40,7 @@ general:
       novamente.
     must-be-positive-number: '&c [number] não é um número positivo válido.'
     not-on-island: '&c Você não está na ilha!'
+    slow-down: '&c Abranda. Clica mais devagar.'
   worlds:
     overworld: Mundo superior
     nether: Inferior
@@ -124,6 +126,10 @@ commands:
         &a Limpeza iniciada. Veja o console para status ou use &b /[label] purge
         status&a.
       no-purge-in-progress: '&c Atualmente, não há limpeza em andamento.'
+      regions:
+        parameters: '[days]'
+        description: purge Islands excluindo arquivos da região antiga
+        confirm: '&d tipo &b /[label] purge regions confirm &d para começar a limpar'
       protect:
         description: alternar proteção contra exclusão de ilha
         move-to-island: '&c Vá para uma ilha primeiro!'
@@ -1080,6 +1086,10 @@ protection:
       name: Barris
       description: Alternar interação do barril
       hint: Acesso ao barril desativado
+    CRAFTER:
+      name: Artesão
+      description: Alternar o uso
+      hint: Acesso ao artesão desativado
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Permitir âncoras de cama e reaparecimento

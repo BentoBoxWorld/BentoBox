@@ -12,6 +12,7 @@ prefixes:
 general:
   success: '&a Povedlo se!'
   invalid: Neplatné
+  beta: '&d&l Este comando está en beta. ¡Asegúrate de tener copias de seguridad!'
   errors:
     command-cancelled: '&c Příkaz zrušen.'
     no-permission: '&c Nemáš oprávnění k provedení tohoto příkazu (&7 [permission]&c ).'
@@ -35,6 +36,7 @@ general:
     you-must-wait: '&c Musíš čekat [number]s před tím, než tento příkaz znovu použiješ.'
     must-be-positive-number: '&c [number] není platné kladné číslo.'
     not-on-island: '&c Nejste na ostrově!'
+    slow-down: '&c Zpomal. Klikni pomaleji.'
   worlds:
     overworld: Svět
     nether: Dolní
@@ -112,6 +114,10 @@ commands:
       completed: '&a Čištění zastaveno'
       see-console-for-status: Čištění začalo. Pro aktuální status použij konzoli
       no-purge-in-progress: '&c Momentálně neprobíhá žádné čištění.'
+      regions:
+        parameters: '[days]'
+        description: Purge Islands odstraněním souborů starého regionu
+        confirm: '&d Typ &b /[label] purge regions potvrdit & d pro začátek čištění'
       protect:
         description: Přepnout protekci proti čištění
         move-to-island: '&c Nejdříve se přesuň na ostrov!'
@@ -1045,6 +1051,10 @@ protection:
       name: Sudy
       description: Přepnout interakci sudu
       hint: Přístup do sudu zakázán
+    CRAFTER:
+      name: Crafter
+      description: Přepínač
+      hint: Crafter Access deaktivovaný
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Povolit kotvy Bed & Respawn

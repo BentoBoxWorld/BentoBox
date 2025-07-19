@@ -12,6 +12,7 @@ prefixes:
 general:
   success: '&a Succes!'
   invalid: Ongeldig
+  beta: '&d&l Deze opdracht is in bèta. Zorg ervoor dat je back -ups hebt!'
   errors:
     command-cancelled: '&c Commando geannuleerd.'
     no-permission: >-
@@ -41,6 +42,7 @@ general:
       doen.
     must-be-positive-number: '&c [number] is geen geldig positief getal.'
     not-on-island: '&c Je bevindt je niet op [prefix_island]!'
+    slow-down: '&c Langzamer. Klik langzamer.'
   worlds:
     overworld: Bovenwereld
     nether: Nether
@@ -121,6 +123,12 @@ commands:
         &a zuivering begon. Zie console voor status of gebruik &b /[label]
         zuiveringsstatus &a.
       no-purge-in-progress: '&c Er is momenteel geen zuivering bezig.'
+      regions:
+        parameters: '[days]'
+        description: purge -eilanden door oude regiobestanden te verwijderen
+        confirm: >-
+          &d Type &b /[label] purge regions confirm &d om te beginnen met
+          spoelen
       protect:
         description: schakel de bescherming tegen het doorspoelen van het eiland in
         move-to-island: '&c Ga eerst naar een eiland!'
@@ -1108,18 +1116,22 @@ protection:
       name: Vaten
       description: Schakel vateninteractie in/uit
       hint: Toegang tot vat uitgeschakeld
+    CRAFTER:
+      name: Knutsel
+      description: Gebruik
+      hint: Knutsel uitgeschakeld
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Sta Bed & Respawn Ankers toe  
         &a om blokken te breken en schade  
         &a toe te brengen aan entiteiten.
-      name: Block explode damage
+      name: Block exploderen schade
     COMPOSTER:
       name: Composters
       description: Schakel interactie met de composter in of uit
       hint: Composter interactie uitgeschakeld
     LOOM:
-      name: Loom
+      name: Weefgetouw
       description: Schakel gebruik in
       hint: Loom-toegang uitgeschakeld
     FLOWER_POT:
@@ -1989,7 +2001,7 @@ enums:
     DRYOUT: Uitdrogen
     FREEZE: Bevriezen
     KILL: Doden
-    SONIC_BOOM: Sonic Boom
+    SONIC_BOOM: Sonische boom
     WORLD_BORDER: Wereldgrens
 panel:
   credits:

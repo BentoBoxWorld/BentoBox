@@ -11,6 +11,7 @@ prefixes:
 general:
   success: '&a Sucesso!'
   invalid: Inválido
+  beta: '&d&l Este comando está na versão beta. Certifique -se de ter backups!'
   errors:
     command-cancelled: '&c Comando cancelado.'
     no-permission: '&c Você não tem permissão para executar esse comando (&7 [permission]&c ).'
@@ -34,6 +35,7 @@ general:
     you-must-wait: '&c Você deve aguardar [number]s antes de usar esse comando novamente.'
     must-be-positive-number: '&c [number] não é um número positivo válido.'
     not-on-island: '&c Você não está na [prefix_island]!'
+    slow-down: '&c Vai com calma. Clique mais devagar.'
   worlds:
     overworld: Mundo Superior
     nether: Nether
@@ -113,6 +115,10 @@ commands:
         &a Exclusão iniciada. Veja o console para ver o estado ou use &b
         /[label] purge status&a.
       no-purge-in-progress: '&c Não há nenhuma exclusão em progresso.'
+      regions:
+        parameters: '[days]'
+        description: purge Islands excluindo arquivos da região antiga
+        confirm: '&d Tipo &b /[label] purge regions confirm &d para começar a limpar'
       protect:
         description: alternar proteção de exclusão da ilha
         move-to-island: '&c Mova para uma ilha antes!'
@@ -643,7 +649,7 @@ commands:
       you-can-teleport-to-your-island: '&a Você pode teleportar para sua ilha assim que quiser.'
     deletehome:
       description: deletar uma localização de casa
-      parameters: '[home name]'
+      parameters: '[nome de origem]'
     homes:
       description: liste suas casas
     info:
@@ -700,7 +706,7 @@ commands:
       success: '&a O nome de sua ilha foi alterado para &b [name]&a com sucesso.'
     renamehome:
       description: renomear uma localização de casa
-      parameters: '[home name]'
+      parameters: '[nome de origem]'
       enter-new-name: '&6 Digite o novo nome'
       already-exists: '&c Esse nome já existe, tente outro nome.'
     resetname:
@@ -1068,6 +1074,10 @@ protection:
       name: Barricas
       description: Alternar interação com barril
       hint: Acesso ao barril desativado
+    CRAFTER:
+      name: Artesão
+      description: Alternar o uso
+      hint: Acesso ao artesão desativado
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         &a Permitir que Camas & Âncoras de Resspawn
