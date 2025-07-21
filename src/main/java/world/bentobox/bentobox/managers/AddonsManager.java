@@ -147,7 +147,9 @@ public class AddonsManager {
             return;
         }
         Arrays.stream(Objects.requireNonNull(f.listFiles()))
-                .filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
+                .filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")
+                        && !x.getName().startsWith("._")
+                        ).forEach(this::loadAddon);
         plugin.log("Loaded " + getLoadedAddons().size() + " addons.");
 
         if (!getLoadedAddons().isEmpty()) {
