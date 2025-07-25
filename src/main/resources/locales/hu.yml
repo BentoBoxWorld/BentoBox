@@ -390,7 +390,7 @@ commands:
       success: '&a Sikeresen beállította ezt a helyet a sziget ívási pontjaként.'
       island-spawnpoint-changed: '&a [user] megváltoztatta a sziget spawn pontot.'
     settings:
-      parameters: [player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]
+      parameters: '[player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]'
       description: nyissa meg a beállítások GUI-ját vagy állítsa be a beállításokat
       unknown-setting: '&c Ismeretlen beállítás'
     blueprint:
