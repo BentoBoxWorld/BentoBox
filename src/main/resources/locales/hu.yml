@@ -53,7 +53,7 @@ commands:
     syntax: '&b [usage] &a [parameters]&7 : &e [description]'
     syntax-no-parameters: '&b [usage]&7 : &e [description]'
     end: '&7 ================================='
-    parameters: '[Parancs]'
+    parameters: '[command]'
     description: Segítség Parancs
     console: Konzol
   admin:
@@ -71,7 +71,7 @@ commands:
       errors:
         unknown-island: Ismeretlen [prefix_island]! [name]
     resethome:
-      description: Állítsd vissza a játékos otthonát alapértelmezettre [default]
+      description: A játékos otthonának visszaállítása az alapértelmezettre
       parameters: <player> [[prefix_island] név]
       cleared: '&b Otthon visszaállítva. [name]'
     resets:
@@ -101,7 +101,7 @@ commands:
           szigetét&a, így a végösszeg &b[total]&a visszaállításra csökkent.
     purge:
       parameters: '[napok]'
-      description: Több mint [napja] elhagyatott szigetek törlése.
+      description: Több mint [days] elhagyatott szigetek törlése.
       days-one-or-more: Legalább 1 napnak vagy hosszabbnak kell lennie
       purgable-islands: '&a Megtalálva &b [number] &a törölhető sziget.'
       too-many: >-
@@ -272,7 +272,7 @@ commands:
       title: '========== Sziget információ ============'
       island-uuid: 'UUID: [uuid]'
       owner: 'Tulajdonos: [owner] ([uuid])'
-      last-login: 'Utolsó bejelentkezés: [dátum]'
+      last-login: 'Utolsó bejelentkezés: [date]'
       last-login-date-time-format: EEE HMM nn ÓÓ:pp:ss zzz éééé
       deaths: 'Halálozás: [number]'
       resets-left: 'Visszaállítások: [number] (max.: [total])'
@@ -390,9 +390,7 @@ commands:
       success: '&a Sikeresen beállította ezt a helyet a sziget ívási pontjaként.'
       island-spawnpoint-changed: '&a [user] megváltoztatta a sziget spawn pontot.'
     settings:
-      parameters: >-
-        [játékos]/[világzászló]/spawn-sziget [zászló/aktív/letilt]
-        [rang/aktív/letilt]
+      parameters: [player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]
       description: nyissa meg a beállítások GUI-ját vagy állítsa be a beállításokat
       unknown-setting: '&c Ismeretlen beállítás'
     blueprint:
@@ -414,7 +412,7 @@ commands:
       mid-copy: '&c Ön a másolat közepén áll. Várja meg, amíg a másolás elkészül.'
       copied-percent: '&6 másolva [number]%'
       copy:
-        parameters: '[air]'
+        parameters: '[air] [biome] [nowater]'
         description: >-
           másolja a pos1 és pos2 által beállított vágólapot és opcionálisan a
           légblokkokat
@@ -467,7 +465,7 @@ commands:
         edit: Kattintson a szerkesztéshez
         rename: Kattintson a jobb gombbal az átnevezéshez
         edit-description: Kattintson a leírás szerkesztéséhez
-        world-name-syntax: '[név] világ'
+        world-name-syntax: '[name] világ'
         world-instructions: |
           Hely tervrajz
           jobbra a beállításhoz
@@ -502,7 +500,7 @@ commands:
         description:
           quit: kilép
           instructions: |
-            Írjon be többsoros leírást a következőhöz: [név]
+            Írjon be többsoros leírást a következőhöz: [name]
             és „kilép” egy sorból a befejezéshez.
           default-color: ''
           success: Siker!
@@ -616,7 +614,7 @@ commands:
       players: '[prefix_bentobox]&6 Migráló játékosok'
       names: '[prefix_bentobox]&6 Migráló nevek'
       addons: '[prefix_bentobox]&6 Kiegészítők költöztetése'
-      class: '[prefix_bentobox]&6 Migrálás [leírás]'
+      class: '[prefix_bentobox]&6 Migrálás [description]'
       migrated: '[prefix_bentobox]&a Migrált'
       completed: '[prefix_bentobox]&a Befejezve'
     rank:
@@ -914,7 +912,7 @@ commands:
       kick:
         description: távolíts el egy tagot a szigetedről
         parameters: <lejátszó>
-        player-kicked: '&c A [name] kirúgott a szigetről [játékmód]-ban!'
+        player-kicked: '&c A [name] kirúgott a szigetről [gamemode]-ban!'
         cannot-kick: '&c Nem rúghatod meg magad!'
         cannot-kick-rank: '&c A rangod nem teszi lehetővé [name] rúgását!'
         success: '&b [name] &a-t kirúgták a szigetedről.'
@@ -1753,9 +1751,9 @@ protection:
         &a entitások a sziget határain kívül.
       name: Világ TNT kár
   locked: '&c Ez a sziget le van zárva!'
-  protected: '&c Sziget védett: [leírás].'
-  world-protected: '&c Világvédett: [leírás].'
-  spawn-protected: '&c Spawn védett: [leírás].'
+  protected: '&c Sziget védett: [description].'
+  world-protected: '&c Világvédett: [description].'
+  spawn-protected: '&c Spawn védett: [description].'
   panel:
     next: '&f Következő oldal'
     previous: '&f Előző oldal'
@@ -1769,7 +1767,7 @@ protection:
       expert:
         name: '&c Szakértői beállítások'
         description: '&a Megjeleníti az összes elérhető beállítást.'
-      click-to-switch: '&e Kattintson a &7 gombra, hogy a &r [tovább]&r &7-re váltson.'
+      click-to-switch: '&e Kattintson a &7 gombra, hogy a &r [next]&r &7-re váltson.'
     reset-to-default:
       name: '&c Visszaállítás az alapértelmezettre'
       description: |
@@ -1790,15 +1788,15 @@ protection:
         &a Általános beállítások
         &a erre a szigetre
     WORLD_SETTING:
-      title: '&b [világnév] &6 Beállítások'
+      title: '&b [world_name] &6 Beállítások'
       description: '&a Beállítások ehhez a játékvilághoz'
     WORLD_DEFAULTS:
-      title: '&b [világnév] &6 Világvédelem'
+      title: '&b [world_name] &6 Világvédelem'
       description: |
         &a Védelmi beállítások mikor
         &egy játékos a szigetén kívül van
     flag-item:
-      name-layout: '&egy név]'
+      name-layout: '&a [name]'
       command-instructions:
         setname: |-
           &a Válaszd ki a rangot, amelyik
@@ -1852,7 +1850,7 @@ protection:
           &a Válaszd ki azt a rangot, amelyik
           &a használhatja a határ parancsot
       description-layout: |
-        &egy leírás]
+        &a [description]
 
         &e Bal klikk a &7 gombra a lefelé léptetéshez.
         &e Kattintson a jobb gombbal a &7 gombra a felfelé lépéshez.
@@ -1862,16 +1860,16 @@ protection:
       blocked-rank: '&3 - stb'
       minimal-rank: '&3 - &2'
       menu-layout: |
-        &egy leírás]
+        &a [description]
 
         &e Kattintson a &7 gombra a megnyitáshoz.
       setting-cooldown: '&c A beállítás lehűlés alatt van'
       setting-layout: |
-        &egy leírás]
+        &a [description]
 
         &e Kattintson a &7 gombra a váltáshoz.
 
-        &7 Jelenlegi beállítás: [beállítás]
+        &7 Jelenlegi beállítás: [description]
       setting-active: '&a Aktív'
       setting-disabled: '&c Letiltva'
 management:
@@ -1889,7 +1887,7 @@ management:
         gamemode:
           name: '&f [name]'
           description: |
-            &a Szigetek: &b [szigetek]
+            &a Szigetek: &b [islands]
       addons:
         name: '&6 Kiegészítések'
         description: >-
@@ -1919,7 +1917,7 @@ management:
         name: '&6 Kompatibilitás'
         description:
           COMPATIBLE: |
-            &a Futó &e [name] [verzió]&a .
+            &a Futó &e [name] [version]&a .
 
             &a BentoBox jelenleg fut a
             &a &l KOMPATIBILIS &r &a szerverszoftver és
@@ -1928,7 +1926,7 @@ management:
             &a Funkcióit teljes mértékben arra tervezték
             &futás ebben a környezetben.
           SUPPORTED: |
-            &a Futó &e [name] [verzió]&a .
+            &a Futó &e [name] [version]&a .
 
             &a BentoBox jelenleg fut a
             &a &l TÁMOGATOTT &r &a szerverszoftver és
@@ -1937,7 +1935,7 @@ management:
             &a A legtöbb funkció zökkenőmentesen fog működni
             &a ebben a környezetben.
           NOT_SUPPORTED: |
-            &a Futó &e [name] [verzió]&a .
+            &a Futó &e [name] [version]&a .
 
             &a BentoBox jelenleg fut a
             &6 &l NEM TÁMOGATOTT &r &a szerverszoftver ill
@@ -1947,7 +1945,7 @@ management:
             &a helyesen, &6 platform-specifikus hibák ill
             &6 probléma várható&a .
           INCOMPATIBLE: |
-            &a Futó &e [name] [verzió]&a .
+            &a Futó &e [name] [version]&a .
 
             &a BentoBox jelenleg egy
             &c &l INCOMPATIBLE &r &a szerverszoftver ill
@@ -2081,8 +2079,8 @@ panels:
 successfully-loaded: |
 
   &6 ____ _ ____
-  &6 | _ \ | | | _ \ &7, &a tastybento &7 és &a Poslovitch
-  &6 | |_) | ___ _ __ | |_ ___ | |_) | _____ __ &7 2017–2023
+  &6 | _ \ | | | _ \ &7, &a tastybento
+  &6 | |_) | ___ _ __ | |_ ___ | |_) | _____ __ &7 2017–2025
   &6 | _ < / _ \ '_ \| __/ _ \| _ < / _ \ \/ /
-  &6 | |_) | __/ | | | || (_) | |_) | (_) > < &b v&e [verzió]
-  &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\ &8 Betöltés: &e [idő]&8 ms.
+  &6 | |_) | __/ | | | || (_) | |_) | (_) > < &b v&e [version]
+  &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\ &8 Betöltés: &e [time]&8 ms.
