@@ -137,7 +137,7 @@ commands:
         description: tisztítsa meg a szigeteket a régi régiófájlok törlésével
         confirm: '&d Type &b /[label] purge regions confirm'
       protect:
-        description: '[prefix_Island] törlés elleni védelmének engedélyezése''
+        description: '[prefix_Island] törlés elleni védelmének engedélyezése'
         move-to-island: '&c Először menj egy szigetre!'
         protecting: '&a A [prefix_island] törlés ellen védve van.'
         unprotecting: '&a Törlés elleni védelem eltávolítása.'
@@ -1398,7 +1398,7 @@ protection:
       description: |-
         &a Játékosok újraszületése
         &a a szigeten
-      name: '[prefix_Island] újraszületése''
+      name: '[prefix_Island] újraszületése'
     ITEM_DROP:
       description: Ledobás váltása
       name: Elemesés
