@@ -27,8 +27,8 @@ general:
     player-has-no-island: '&c Ennek a játékosnak nincs szigete!'
     already-have-island: '&c Már van egy szigeted!'
     no-safe-location-found: '&c Nem található egy biztonságos hely sem, ahova teleportálhat a szigeten.'
-    not-owner: '&c Nem te vagy a sziget tulajdonosa!'
-    player-is-not-owner: '&b [name] &c nem egy sziget tulajdonosa!'
+    not-owner: '&c Nem te vagy a [prefix_island] tulajdonosa!'
+    player-is-not-owner: '&b [name] &c nem [prefix_an_island] tulajdonosa!'
     not-in-team: '&c Az a játékos nincs a csapatodban!'
     offline-player: '&c Az a játékos offline állapotban van, vagy nem létezik.'
     unknown-player: '&c [name] ismeretlen játékos!'
@@ -53,7 +53,7 @@ commands:
     syntax: '&b [usage] &a [parameters]&7 : &e [description]'
     syntax-no-parameters: '&b [usage]&7 : &e [description]'
     end: '&7 ================================='
-    parameters: '[Parancs]'
+    parameters: '[command]'
     description: Segítség Parancs
     console: Konzol
   admin:
@@ -71,7 +71,7 @@ commands:
       errors:
         unknown-island: Ismeretlen [prefix_island]! [name]
     resethome:
-      description: Állítsd vissza a játékos otthonát alapértelmezettre [default]
+      description: A játékos otthonának visszaállítása az alapértelmezettre
       parameters: <player> [[prefix_island] név]
       cleared: '&b Otthon visszaállítva. [name]'
     resets:
@@ -79,31 +79,31 @@ commands:
       set:
         description: beállítja, hogy ez a játékos hányszor állította vissza a szigetét
         parameters: <játekos> <visszaállitás>
-        success: '&b [name]&a sziget-visszaállítási száma most &b [number]&a .'
+        success: '&b [name]&a [prefix_island]-visszaállítási száma most &b [number]&a .'
       reset:
-        description: 0-ra állítja a játékos sziget visszaállítási számát
+        description: 0-ra állítja a játékos [prefix_island] visszaállítási számát
         parameters: <játékos>
         success-everyone: >-
           &a Sikeresen &b mindenki visszaállítása&a számlálójának visszaállítása
           &b 0&a-ra.
         success: '&a Sikeresen visszaállította &b [name]&a számlálóját &b 0&a értékre.'
       add:
-        description: hozzáadja ennek a játékosnak a sziget visszaállítási számát
+        description: hozzáadja ennek a játékosnak a [prefix_island] visszaállítási számát
         parameters: <játékos> <Visszaállítás>
         success: >-
           &a Sikeresen hozzáadva &b [number]&a visszaállítás a &b [name]
           értékre, növelve az összértéket &b [total] &a visszaállítássra.
       remove:
-        description: csökkenti a játékos sziget visszaállításának számát
+        description: csökkenti a játékos [prefix_island] visszaállításának számát
         parameters: <játékos> <visszaállítás>
         success: >-
           &a sikeresen eltávolítva &b [number] &a visszaállítja &b [name]
           szigetét&a, így a végösszeg &b[total]&a visszaállításra csökkent.
     purge:
       parameters: '[napok]'
-      description: Több mint [napja] elhagyatott szigetek törlése.
+      description: Több mint [days] elhagyatott [prefix_islands] törlése.
       days-one-or-more: Legalább 1 napnak vagy hosszabbnak kell lennie
-      purgable-islands: '&a Megtalálva &b [number] &a törölhető sziget.'
+      purgable-islands: '&a Megtalálva &b [number] &a törölhető [prefix_island].'
       too-many: >-
         &b Ez egy nagy terület, és nagyon sokáig eltarthat a törlése.  
 
@@ -137,20 +137,20 @@ commands:
         description: tisztítsa meg a szigeteket a régi régiófájlok törlésével
         confirm: '&d Type &b /[label] purge regions confirm'
       protect:
-        description: Sziget törlés elleni védelmének engedélyezése
+        description: '[prefix_Island] törlés elleni védelmének engedélyezése'
         move-to-island: '&c Először menj egy szigetre!'
-        protecting: '&a A sziget törlés ellen védve van.'
+        protecting: '&a A [prefix_island] törlés ellen védve van.'
         unprotecting: '&a Törlés elleni védelem eltávolítása.'
       stop:
         description: Törlés megállítása a folyamat közben.
         stopping: Törlés megállítása
       unowned:
-        description: Tulajdonos nélküli szigetek törlése.
-        unowned-islands: '&a Megtalálva &b [number] &a tulajdonos nélküli sziget.'
+        description: Tulajdonos nélküli [prefix_islands] törlése.
+        unowned-islands: '&a Megtalálva &b [number] &a tulajdonos nélküli [prefix_island].'
       status:
         description: Törlés státuszának kijelzése.
         status: >-
-          &b [purged] &a szigetek törölve a &b [purgeable] &7(&b[percentage]
+          &b [purged] &a [prefix_islands] törölve a &b [purgeable] &7(&b[percentage]
           %&7)-ból/ből&a.
     team:
       description: csapatokat irányítani
@@ -167,7 +167,7 @@ commands:
         disbanded: '&c Egy adminisztrátor feloszlatta a csapatodat!'
         success: '&b [name]&a csapata fel lett oszlatva.'
       fix:
-        description: átvizsgálja és javítja a szigetek közötti tagságot az adatbázisban
+        description: átvizsgálja és javítja a [prefix_islands] közötti tagságot az adatbázisban
         scanning: Adatbázis szkennelése...
         duplicate-owner: 'Az &c Player egynél több szigettel rendelkezik az adatbázisban: [name]'
         player-has: '&c A [name] játékosnak [number] szigete van'
@@ -185,18 +185,18 @@ commands:
         success-all: '&b A játékos eltávolítva minden csapatból ebben a világban'
       setowner:
         parameters: <Játékosnév>
-        description: A sziget tulajdonjogának átruházása a játékosnak.
+        description: A [prefix_island] tulajdonjogának átruházása a játékosnak.
         already-owner: '&c [name] már a szigetnek a tulajdonosa!'
         must-be-on-island: '&c A [prefix_island] területen kell lenned a tulajdonos beállításához.'
         confirmation: >-
           &a Biztos vagy benne, hogy a [name]-t akarod kijelölni a
           [prefix_island] tulajdonosának a [xyz]-nél?
-        success: '&b [name]&a nem a sziget tulajdonosa.'
+        success: '&b [name]&a nem a [prefix_island] tulajdonosa.'
         extra-islands: >-
           &c Figyelmeztetés: ez a játékos most [number] szigettel rendelkezik.
           Ez több, mint amit a beállítások vagy jogosultságok engednek: [max].
     range:
-      description: Admin sziget tartományának parancsa
+      description: Admin [prefix_island] tartományának parancsa
       invalid-value:
         too-low: '&c A védelem tartományának nagyobbnak kell lennie &b 1-nél&c !'
         too-high: >-
@@ -206,52 +206,52 @@ commands:
       display:
         already-off: '&c A jelölők már ki vannak kapcsolva.'
         already-on: '&c A jelölők már be vannak kapcsolva.'
-        description: A sziget tartomány jelölőinek mutatása/elrejtése.
+        description: A [prefix_island] tartomány jelölőinek mutatása/elrejtése.
         hiding: '&2 Tartomány jelölőinek elrejtése.'
         hint: >-
-          &c A pirosa akadály ikon &f mutatja a sziget jelenlegi védelmi
+          &c A pirosa akadály ikon &f mutatja a [prefix_island] jelenlegi védelmi
           tartományának a limitjét..
 
-          &7 A szürke effektek &f mutatják a sziget maximális limitjét..
+          &7 A szürke effektek &f mutatják a [prefix_island] maximális limitjét..
 
-          &a A zöld effektek &f mutatják a sziget alap levédett tartományát, ha
-          a sziget jelenlegi védelmi tartománya ettől eltér.
+          &a A zöld effektek &f mutatják a [prefix_island] alap levédett tartományát, ha
+          a [prefix_island] jelenlegi védelmi tartománya ettől eltér.
         showing: '&2Tartomány jelölőinek mutatása.'
       set:
         parameters: <Játékos> <tartomány>
-        description: Beállítja a sziget védelmi tartományát
-        success: '&aA sziget védelmi tartományának beállítása  &b [number]-ra/re&a .'
+        description: Beállítja a [prefix_island] védelmi tartományát
+        success: '&aA [prefix_island] védelmi tartományának beállítása  &b [number]-ra/re&a .'
       reset:
         parameters: <lejátszó>
         description: >-
-          visszaállítja a sziget védett tartományát a világ alapértelmezett
+          visszaállítja a [prefix_island] védett tartományát a világ alapértelmezett
           értékére
         success: '&a Szigetvédelmi tartomány visszaállítása erre: &b [number]&a .'
       add:
-        description: növeli a sziget védett tartományát
+        description: növeli a [prefix_island] védett tartományát
         parameters: <lejátszó> <tartomány>
         success: >-
-          &a Sikeresen megnöveltük &b [name]&a sziget védett tartományát &b
+          &a Sikeresen megnöveltük &b [name]&a [prefix_island] védett tartományát &b
           [total] &7-re (&b +[number]&7 )&a .
       remove:
-        description: csökkenti a sziget védett tartományát
+        description: csökkenti a [prefix_island] védett tartományát
         parameters: <lejátszó> <tartomány>
         success: >-
-          &a Sikeresen csökkentette &b [name]&a sziget védett tartományát &b
+          &a Sikeresen csökkentette &b [name]&a [prefix_island] védett tartományát &b
           [total] &7-re (&b -[number]&7 )&a .
     register:
       parameters: <lejátszó>
       description: regisztrálj játékost egy ismeretlen szigetre, amelyen tartózkodsz
       registered-island: '&a [name] regisztrálva a [xyz] szigetre.'
-      reserved-island: '&egy fenntartott sziget a [xyz] címen a [name] számára.'
+      reserved-island: '&a fenntartott [prefix_island] a [xyz] címen a [name] számára.'
       already-owned: Az &c Island már egy másik játékos tulajdona!
-      no-island-here: '&c Itt nincs sziget. Erősítse meg, hogy készítsen egyet.'
+      no-island-here: '&c Itt nincs [prefix_island]. Erősítse meg, hogy készítsen egyet.'
       in-deletion: '&c Ez a szigetterület jelenleg törlés alatt áll. Próbáld később.'
       cannot-make-island: >-
-        &c Sziget nem helyezhető ide, sajnálom. Lásd a konzolt a lehetséges
+        &c [prefix_Island] nem helyezhető ide, sajnálom. Lásd a konzolt a lehetséges
         hibákért.
       island-is-spawn: >-
-        &6 A sziget spawn. biztos vagy ebben? A megerősítéshez írja be újra a
+        &6 A [prefix_island] spawn. biztos vagy ebben? A megerősítéshez írja be újra a
         parancsot.
     unregister:
       parameters: <tulajdonos> [x,y,z]
@@ -269,10 +269,10 @@ commands:
       parameters: <lejátszó>
       description: információkat kaphat a tartózkodási helyéről vagy a játékos szigetéről
       no-island: '&c Jelenleg nem vagy szigeten...'
-      title: '========== Sziget információ ============'
+      title: '========== [prefix_Island] információ ============'
       island-uuid: 'UUID: [uuid]'
       owner: 'Tulajdonos: [owner] ([uuid])'
-      last-login: 'Utolsó bejelentkezés: [dátum]'
+      last-login: 'Utolsó bejelentkezés: [date]'
       last-login-date-time-format: EEE HMM nn ÓÓ:pp:ss zzz éééé
       deaths: 'Halálozás: [number]'
       resets-left: 'Visszaállítások: [number] (max.: [total])'
@@ -281,21 +281,21 @@ commands:
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
       island-protection-center: 'Védelmi terület középpontja: [xyz]'
-      island-center: 'Sziget központja: [xyz]'
-      island-coords: 'Sziget koordináták: [xz1] - [xz2]'
+      island-center: '[prefix_Island] központja: [xyz]'
+      island-coords: '[prefix_Island] koordináták: [xz1] - [xz2]'
       islands-in-trash: '&d A játékosnak szigetei vannak a kukában.'
       protection-range: 'Védelmi tartomány: [range]'
       protection-range-bonus-title: '&b A következő bónuszokat tartalmazza:'
       protection-range-bonus: 'Bónusz: [number]'
-      purge-protected: A sziget takarítással védett
+      purge-protected: A [prefix_island] takarítással védett
       max-protection-range: 'Legnagyobb történelmi védelmi tartomány: [range]'
       protection-coords: 'Védelmi koordináták: [xz1] – [xz2]'
-      is-spawn: A sziget spawn sziget
+      is-spawn: A [prefix_island] spawn [prefix_island]
       banned-players: 'Eltiltott játékosok:'
       banned-format: '&c [name]'
       unowned: '&c Ismeretlen'
       bundle: >-
-        &a Kékprint csomag, amely az sziget létrehozásához használható: &b
+        &a Kékprint csomag, amely az [prefix_island] létrehozásához használható: &b
         [name]
     switch:
       description: védelmi bypass be/kikapcsolása
@@ -311,13 +311,13 @@ commands:
       cannot-switch: '&c A váltás nem sikerült. Lásd a konzolnaplót a hibákért.'
       success: '&a Sikeresen átváltotta a játékos szigetét a megadottra.'
     trash:
-      no-unowned-in-trash: '&c Nincsenek ismeretlen szigetek a szemetesben'
+      no-unowned-in-trash: '&c Nincsenek ismeretlen [prefix_islands] a szemetesben'
       no-islands-in-trash: '&c A játékosnak nincsenek szigetei a kukában'
       parameters: '[játékos]'
       description: >-
         mutasson meg nem birtokolt szigeteket vagy játékos szigeteit a
         szemetesben
-      title: '&d =========== Szigetek a kukában ==========='
+      title: '&d =========== [prefix_Island]ek a kukában ==========='
       count: '&l &d Island [number]:'
       use-switch: >-
         &a Használja az &l [label] kapcsolót a <lejátszó> <szám>&r &a gombbal a
@@ -363,7 +363,7 @@ commands:
     setprotectionlocation:
       parameters: '[x y z koordináta]'
       description: >-
-        állítsa be az aktuális helyet vagy [x y z]-t a sziget védelmi
+        állítsa be az aktuális helyet vagy [x y z]-t a [prefix_island] védelmi
         területének központjaként
       island: '&c Ez hatással lesz a ''[name]'' tulajdonában lévő [xyz] szigetre.'
       confirmation: >-
@@ -372,27 +372,25 @@ commands:
       success: '&a Sikeresen beállította az [xyz]-t védelmi központként.'
       fail: '&c Nem sikerült beállítani az [xyz]-t védelmi központként.'
       island-location-changed: >-
-        &a [user] megváltoztatta a sziget védelmi központját a következőre:
+        &a [user] megváltoztatta a [prefix_island] védelmi központját a következőre:
         [xyz].
       xyz-error: '&c Adjon meg három egész koordinátát: pl. 100 120 100'
     setspawn:
       description: állíts be egy szigetet spawnként ehhez a játékmódhoz
-      already-spawn: '&c Ez a sziget már spawn!'
-      no-island-here: '&c Itt nincs sziget.'
+      already-spawn: '&c Ez a [prefix_island] már spawn!'
+      no-island-here: '&c Itt nincs [prefix_island].'
       confirmation: '&c Biztos, hogy ezt a szigetet kívánja beállítani a világ ivadékává?'
       success: '&a Sikeresen beállította ezt a szigetet a világ ivadékává.'
     setspawnpoint:
-      description: állítsa be az aktuális helyet a sziget ívási pontjaként
-      no-island-here: '&c Itt nincs sziget.'
+      description: állítsa be az aktuális helyet a [prefix_island] ívási pontjaként
+      no-island-here: '&c Itt nincs [prefix_island].'
       confirmation: >-
-        &c Biztos benne, hogy ezt a helyet szeretné beállítani a sziget ívási
+        &c Biztos benne, hogy ezt a helyet szeretné beállítani a [prefix_island] ívási
         pontjaként?
-      success: '&a Sikeresen beállította ezt a helyet a sziget ívási pontjaként.'
-      island-spawnpoint-changed: '&a [user] megváltoztatta a sziget spawn pontot.'
+      success: '&a Sikeresen beállította ezt a helyet a [prefix_island] ívási pontjaként.'
+      island-spawnpoint-changed: '&a [user] megváltoztatta a [prefix_island] spawn pontot.'
     settings:
-      parameters: >-
-        [játékos]/[világzászló]/spawn-sziget [zászló/aktív/letilt]
-        [rang/aktív/letilt]
+      parameters: '[player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]'
       description: nyissa meg a beállítások GUI-ját vagy állítsa be a beállításokat
       unknown-setting: '&c Ismeretlen beállítás'
     blueprint:
@@ -414,7 +412,7 @@ commands:
       mid-copy: '&c Ön a másolat közepén áll. Várja meg, amíg a másolás elkészül.'
       copied-percent: '&6 másolva [number]%'
       copy:
-        parameters: '[air]'
+        parameters: '[air] [biome] [nowater]'
         description: >-
           másolja a pos1 és pos2 által beállított vágólapot és opcionálisan a
           légblokkokat
@@ -467,7 +465,7 @@ commands:
         edit: Kattintson a szerkesztéshez
         rename: Kattintson a jobb gombbal az átnevezéshez
         edit-description: Kattintson a leírás szerkesztéséhez
-        world-name-syntax: '[név] világ'
+        world-name-syntax: '[name] világ'
         world-instructions: |
           Hely tervrajz
           jobbra a beállításhoz
@@ -502,7 +500,7 @@ commands:
         description:
           quit: kilép
           instructions: |
-            Írjon be többsoros leírást a következőhöz: [név]
+            Írjon be többsoros leírást a következőhöz: [name]
             és „kilép” egy sorból a befejezéshez.
           default-color: ''
           success: Siker!
@@ -532,8 +530,8 @@ commands:
     delete:
       parameters: <lejátszó>
       description: törli a játékos szigetét
-      cannot-delete-owner: '&c A sziget összes tagját ki kell rúgni a szigetről, mielőtt törli.'
-      deleted-island: '&a sziget itt: &e [xyz] &a sikeresen törölve.'
+      cannot-delete-owner: '&c A [prefix_island] összes tagját ki kell rúgni a szigetről, mielőtt törli.'
+      deleted-island: '&a [prefix_island] itt: &e [xyz] &a sikeresen törölve.'
     deletehomes:
       parameters: <lejátszó>
       description: törli az összes elnevezett otthont egy szigetről
@@ -616,7 +614,7 @@ commands:
       players: '[prefix_bentobox]&6 Migráló játékosok'
       names: '[prefix_bentobox]&6 Migráló nevek'
       addons: '[prefix_bentobox]&6 Kiegészítők költöztetése'
-      class: '[prefix_bentobox]&6 Migrálás [leírás]'
+      class: '[prefix_bentobox]&6 Migrálás [description]'
       migrated: '[prefix_bentobox]&a Migrált'
       completed: '[prefix_bentobox]&a Befejezve'
     rank:
@@ -681,7 +679,7 @@ commands:
       pick: '&2 Válasszon ki egy szigetet'
       unknown-blueprint: '&c A tervrajz még nincs betöltve.'
       on-first-login: >-
-        &a Üdvözlünk! Néhány másodpercen belül megkezdjük a sziget
+        &a Üdvözlünk! Néhány másodpercen belül megkezdjük a [prefix_island]
         előkészítését.
       you-can-teleport-to-your-island: '&a Amikor akarod, teleportálhatsz a szigetedre.'
     deletehome:
@@ -693,9 +691,9 @@ commands:
       description: információk megjelenítése a szigetről vagy a játékos szigetéről
       parameters: <lejátszó>
     near:
-      description: mutasd meg a körülötted lévő szomszédos szigetek nevét
+      description: mutasd meg a körülötted lévő szomszédos [prefix_islands] nevét
       parameters: ''
-      the-following-islands: '&a A következő szigetek vannak a közelben:'
+      the-following-islands: '&a A következő [prefix_islands] vannak a közelben:'
       syntax: '&6 [direction]: &a [name]'
       north: Északi
       south: Déli
@@ -710,7 +708,7 @@ commands:
       confirmation: >-
         &c Biztos, hogy ezt szeretné?
 
-        &c A sziget összes tagját kirúgják a szigetről, utána újra meg kell
+        &c A [prefix_island] összes tagját kirúgják a szigetről, utána újra meg kell
         hívnod őket.
 
         &c Nincs visszaút: ha az aktuális szigetet törölték, a későbbiekben &l
@@ -738,17 +736,17 @@ commands:
       description: adj nevet a szigetednek
       name-too-short: '&c Túl rövid. A minimális méret [number] karakter.'
       name-too-long: '&c Túl hosszú. A maximális méret [number] karakter.'
-      name-already-exists: '&c Ebben a játékmódban már van egy ilyen nevű sziget.'
+      name-already-exists: '&c Ebben a játékmódban már van egy ilyen nevű [prefix_island].'
       parameters: <név>
-      success: '&a Sikeresen beállította a sziget nevét &b [name]&a értékre.'
+      success: '&a Sikeresen beállította a [prefix_island] nevét &b [name]&a értékre.'
     renamehome:
       description: nevezzen át egy otthoni helyet
       parameters: '[otthon neve]'
       enter-new-name: '&6 Írja be az új nevet'
       already-exists: '&c Ez a név már létezik, próbálkozzon másik névvel.'
     resetname:
-      description: állítsa vissza a sziget nevét
-      success: '&a Sikeresen visszaállította a sziget nevét.'
+      description: állítsa vissza a [prefix_island] nevét
+      success: '&a Sikeresen visszaállította a [prefix_island] nevét.'
     team:
       description: irányítani a csapatát
       gui:
@@ -822,7 +820,7 @@ commands:
         player-not-cooped: '&c A lejátszó nincs összefogva!'
         you-are-no-longer-a-coop-member: '&c Ön már nem tagja [name] szigetének.'
         all-members-logged-off: >-
-          &c A sziget összes tagja kijelentkezett, így Ön többé nem tagja [name]
+          &c A [prefix_island] összes tagja kijelentkezett, így Ön többé nem tagja [name]
           szigetének.
         success: '&b [name] &a már nem tagja a szigetednek.'
         is-full: '&c Nem tud együttműködni senki mással.'
@@ -914,7 +912,7 @@ commands:
       kick:
         description: távolíts el egy tagot a szigetedről
         parameters: <lejátszó>
-        player-kicked: '&c A [name] kirúgott a szigetről [játékmód]-ban!'
+        player-kicked: '&c A [name] kirúgott a szigetről [gamemode]-ban!'
         cannot-kick: '&c Nem rúghatod meg magad!'
         cannot-kick-rank: '&c A rangod nem teszi lehetővé [name] rúgását!'
         success: '&b [name] &a-t kirúgták a szigetedről.'
@@ -937,7 +935,7 @@ commands:
         failure: '&c A játékos nem léptethető tovább!'
         success: '&a Előléptette [name] a [rank] rangra'
       setowner:
-        description: átadja a sziget tulajdonjogát egy tagnak
+        description: átadja a [prefix_island] tulajdonjogát egy tagnak
         errors:
           cant-transfer-to-yourself: >-
             &c A tulajdonjogot nem ruházhatod át magadra! &7 (&o Nos, valójában
@@ -945,9 +943,9 @@ commands:
             )
           target-is-not-member: '&c Az a játékos nem tagja a szigeti csapatodnak!'
           at-max: '&c Ennek a játékosnak már van a megengedett maximális számú szigete!'
-        name-is-the-owner: '&a [name] mostantól a sziget tulajdonosa!'
+        name-is-the-owner: '&a [name] mostantól a [prefix_island] tulajdonosa!'
         parameters: <lejátszó>
-        you-are-the-owner: '&a Mostantól Ön a sziget tulajdonosa!'
+        you-are-the-owner: '&a Mostantól Ön a [prefix_island] tulajdonosa!'
     ban:
       description: kitilts egy játékost a szigetedről
       parameters: <lejátszó>
@@ -975,7 +973,7 @@ commands:
       names: '&c [line]'
       you-can-ban: '&b Legfeljebb &e [number] &b további játékost kitilthatsz.'
     settings:
-      description: kijelző sziget beállításai
+      description: kijelző [prefix_island] beállításai
     language:
       description: Válasszon nyelvet
       parameters: '[nyelv]'
@@ -1099,8 +1097,8 @@ protection:
         &a Az összes tárolóval való interakció váltása.
         &a Tartalmazza: hordó, méhkaptár, sörfőző állvány,
         &láda, komposztáló, adagoló, cseppentő,
-        &egy virágcserép, kemence, garat, tárgykeret,
-        &egy zenegép, minecart láda, shulker doboz,
+        &a virágcserép, kemence, garat, tárgykeret,
+        &a zenegép, minecart láda, shulker doboz,
         &a csapdába esett láda.
 
         &7 Az egyéni beállítások módosítása felülbírálja
@@ -1347,7 +1345,7 @@ protection:
       description: |-
         &a Távolítsa el a menő csőcseléket
         &a kívülről védett
-        &egy szigettér
+        &a szigettér
       name: '&e Korlátozza a mobokat a szigetre'
     HARVEST:
       description: |-
@@ -1400,7 +1398,7 @@ protection:
       description: |-
         &a Játékosok újraszületése
         &a a szigeten
-      name: Sziget újraszületése
+      name: '[prefix_Island] újraszületése'
     ITEM_DROP:
       description: Ledobás váltása
       name: Elemesés
@@ -1448,7 +1446,7 @@ protection:
       description: >-
         &a Bekapcsolhatja, hogy a folyadékok kifolyhatnak-e
 
-        &a a sziget védelmi körzetéből.
+        &a a [prefix_island] védelmi körzetéből.
 
         &a A letiltása segít elkerülni a lávat és a vizet
 
@@ -1467,12 +1465,12 @@ protection:
         &c védelmi tartomány.
     LOCK:
       description: Kapcsolja be a zárat
-      name: Zár sziget
+      name: Zár [prefix_island]
     CHANGE_SETTINGS:
       name: Beállítások megváltoztatása
       description: |-
         &a A tagváltás engedélyezése
-        &a szerepkör módosíthatja a sziget beállításait.
+        &a szerepkör módosíthatja a [prefix_island] beállításait.
     MILKING:
       description: Tehénfejés váltása
       name: Fejés
@@ -1504,7 +1502,7 @@ protection:
       description: |-
         &a A lények (állatok és
         &a szörnyek) természetes úton költhetnek kívül
-        &a sziget védelmi területe.
+        &a [prefix_island] védelmi területe.
 
         &c Vegye figyelembe, hogy nem akadályozza meg a lényeket
         &c spawn keresztül mob spawner vagy spawn
@@ -1549,13 +1547,13 @@ protection:
         &a Ha aktív, szelídített háziállat
         &a csak az és-re tud menni
         &a nem hagyhatja el a tulajdonosét
-        &egy otthoni sziget.
+        &a otthoni [prefix_island].
       name: A házi kedvencek otthon maradnak
     PISTON_PUSH:
       description: |-
         &a Engedélyezze ezt a megelőzéshez
         &a dugattyúk a lökéstől
-        &egy háztömbnyire a szigeten kívül
+        &a háztömbnyire a szigeten kívül
       name: Dugattyúnyomás elleni védelem
     PLACE_BLOCKS:
       description: Elhelyezés váltása
@@ -1616,7 +1614,7 @@ protection:
     REMOVE_END_EXIT_ISLAND:
       description: |-
         &a Megakadályozza a végkilépést
-        &a sziget létrehozásából
+        &a [prefix_island] létrehozásából
         &a 0,0 koordinátákon
       name: Távolítsa el a végkijárati szigetet
     REMOVE_MOBS:
@@ -1687,9 +1685,9 @@ protection:
       name: A hatótávolságon kívül növekvő fák
       description: |-
         &a Kapcsolja be, hogy a fák nőhetnek-e a külsőn kívül
-        &egy sziget védelmi tartománya vagy sem.
+        &a [prefix_island] védelmi tartománya vagy sem.
         &a Nemcsak megakadályozza a kihelyezett csemetéket
-        &a egy sziget védelmi tartományán kívül
+        &a egy [prefix_island] védelmi tartományán kívül
         &a növekszik, de blokkolja is a generációt
         &a levelek/hasábok a szigeten kívül, így
         &a vágja a fát.
@@ -1717,9 +1715,9 @@ protection:
       description: |-
         &a Megakadályozza a játékosok elvesztését
         &a tárgyak és tapasztalatok, ha meghalnak
-        &a egy sziget, amelyen látogatói vannak.
+        &a egy [prefix_island], amelyen látogatói vannak.
         &a
-        &a Sziget tagjai továbbra is elveszítik tárgyaikat
+        &a [prefix_Island] tagjai továbbra is elveszítik tárgyaikat
         &a ha a saját szigetükön halnak meg!
     VISITOR_TRIGGER_RAID:
       name: A látogatók rajtaütéseket indítanak el
@@ -1744,18 +1742,18 @@ protection:
       description: |-
         &a Bed & Respawn horgonyok engedélyezése
         &a blokkok törésére és sérülésére
-        &a entitások a sziget határain kívül.
+        &a entitások a [prefix_island] határain kívül.
       name: World blokk robbanás sérülés
     WORLD_TNT_DAMAGE:
       description: |-
         &a TNT és TNT aknakocsik engedélyezése
         &a blokkok törésére és sérülésére
-        &a entitások a sziget határain kívül.
+        &a entitások a [prefix_island] határain kívül.
       name: Világ TNT kár
-  locked: '&c Ez a sziget le van zárva!'
-  protected: '&c Sziget védett: [leírás].'
-  world-protected: '&c Világvédett: [leírás].'
-  spawn-protected: '&c Spawn védett: [leírás].'
+  locked: '&c Ez a [prefix_island] le van zárva!'
+  protected: '&c [prefix_Island] védett: [description].'
+  world-protected: '&c Világvédett: [description].'
+  spawn-protected: '&c Spawn védett: [description].'
   panel:
     next: '&f Következő oldal'
     previous: '&f Előző oldal'
@@ -1769,7 +1767,7 @@ protection:
       expert:
         name: '&c Szakértői beállítások'
         description: '&a Megjeleníti az összes elérhető beállítást.'
-      click-to-switch: '&e Kattintson a &7 gombra, hogy a &r [tovább]&r &7-re váltson.'
+      click-to-switch: '&e Kattintson a &7 gombra, hogy a &r [next]&r &7-re váltson.'
     reset-to-default:
       name: '&c Visszaállítás az alapértelmezettre'
       description: |
@@ -1790,15 +1788,15 @@ protection:
         &a Általános beállítások
         &a erre a szigetre
     WORLD_SETTING:
-      title: '&b [világnév] &6 Beállítások'
+      title: '&b [world_name] &6 Beállítások'
       description: '&a Beállítások ehhez a játékvilághoz'
     WORLD_DEFAULTS:
-      title: '&b [világnév] &6 Világvédelem'
+      title: '&b [world_name] &6 Világvédelem'
       description: |
         &a Védelmi beállítások mikor
-        &egy játékos a szigetén kívül van
+        &a játékos a szigetén kívül van
     flag-item:
-      name-layout: '&egy név]'
+      name-layout: '&a [name]'
       command-instructions:
         setname: |-
           &a Válaszd ki a rangot, amelyik
@@ -1852,7 +1850,7 @@ protection:
           &a Válaszd ki azt a rangot, amelyik
           &a használhatja a határ parancsot
       description-layout: |
-        &egy leírás]
+        &a [description]
 
         &e Bal klikk a &7 gombra a lefelé léptetéshez.
         &e Kattintson a jobb gombbal a &7 gombra a felfelé lépéshez.
@@ -1862,16 +1860,16 @@ protection:
       blocked-rank: '&3 - stb'
       minimal-rank: '&3 - &2'
       menu-layout: |
-        &egy leírás]
+        &a [description]
 
         &e Kattintson a &7 gombra a megnyitáshoz.
       setting-cooldown: '&c A beállítás lehűlés alatt van'
       setting-layout: |
-        &egy leírás]
+        &a [description]
 
         &e Kattintson a &7 gombra a váltáshoz.
 
-        &7 Jelenlegi beállítás: [beállítás]
+        &7 Jelenlegi beállítás: [description]
       setting-active: '&a Aktív'
       setting-disabled: '&c Letiltva'
 management:
@@ -1889,7 +1887,7 @@ management:
         gamemode:
           name: '&f [name]'
           description: |
-            &a Szigetek: &b [szigetek]
+            &a Szigetek: &b [islands]
       addons:
         name: '&6 Kiegészítések'
         description: >-
@@ -1919,7 +1917,7 @@ management:
         name: '&6 Kompatibilitás'
         description:
           COMPATIBLE: |
-            &a Futó &e [name] [verzió]&a .
+            &a Futó &e [name] [version]&a .
 
             &a BentoBox jelenleg fut a
             &a &l KOMPATIBILIS &r &a szerverszoftver és
@@ -1928,7 +1926,7 @@ management:
             &a Funkcióit teljes mértékben arra tervezték
             &futás ebben a környezetben.
           SUPPORTED: |
-            &a Futó &e [name] [verzió]&a .
+            &a Futó &e [name] [version]&a .
 
             &a BentoBox jelenleg fut a
             &a &l TÁMOGATOTT &r &a szerverszoftver és
@@ -1937,7 +1935,7 @@ management:
             &a A legtöbb funkció zökkenőmentesen fog működni
             &a ebben a környezetben.
           NOT_SUPPORTED: |
-            &a Futó &e [name] [verzió]&a .
+            &a Futó &e [name] [version]&a .
 
             &a BentoBox jelenleg fut a
             &6 &l NEM TÁMOGATOTT &r &a szerverszoftver ill
@@ -1947,7 +1945,7 @@ management:
             &a helyesen, &6 platform-specifikus hibák ill
             &6 probléma várható&a .
           INCOMPATIBLE: |
-            &a Futó &e [name] [verzió]&a .
+            &a Futó &e [name] [version]&a .
 
             &a BentoBox jelenleg egy
             &c &l INCOMPATIBLE &r &a szerverszoftver ill
@@ -1966,12 +1964,12 @@ catalog:
         name: '&6 Játékmódok'
         description: |
           &e Kattintson a &a gombra a böngészéshez
-          &egy elérhető hivatalos játékmód.
+          &a elérhető hivatalos játékmód.
       addons:
         name: '&6 Kiegészítések'
         description: |
           &e Kattintson a &a gombra a böngészéshez
-          &egy elérhető hivatalos kiegészítő.
+          &a elérhető hivatalos kiegészítő.
     icon:
       description-template: |
         &8 [téma]
@@ -2081,8 +2079,8 @@ panels:
 successfully-loaded: |
 
   &6 ____ _ ____
-  &6 | _ \ | | | _ \ &7, &a tastybento &7 és &a Poslovitch
-  &6 | |_) | ___ _ __ | |_ ___ | |_) | _____ __ &7 2017–2023
+  &6 | _ \ | | | _ \ &7, &a tastybento
+  &6 | |_) | ___ _ __ | |_ ___ | |_) | _____ __ &7 2017–2025
   &6 | _ < / _ \ '_ \| __/ _ \| _ < / _ \ \/ /
-  &6 | |_) | __/ | | | || (_) | |_) | (_) > < &b v&e [verzió]
-  &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\ &8 Betöltés: &e [idő]&8 ms.
+  &6 | |_) | __/ | | | || (_) | |_) | (_) > < &b v&e [version]
+  &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\ &8 Betöltés: &e [time]&8 ms.
