@@ -53,6 +53,7 @@ import com.google.common.base.Optional;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.nms.AbstractMetaData;
 import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.nms.WorldRegenerator;
 
@@ -75,6 +76,8 @@ public class Util {
     private static BentoBox plugin = BentoBox.getInstance();
     private static PasteHandler pasteHandler = null;
     private static WorldRegenerator regenerator = null;
+
+    private static AbstractMetaData metaData;
 
     private Util() {}
 
@@ -725,7 +728,7 @@ public class Util {
     public static void resetHealth(Player player) {
         try {
             // Paper
-            double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
+            double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
             player.setHealth(maxHealth);
         } catch (Exception e) {
             // Spigot
@@ -795,6 +798,34 @@ public class Util {
             setPasteHandler(handler);
         }
         return pasteHandler;
+    }
+    
+    /**
+     * Checks what version the server is running and picks the appropriate NMS handler, or fallback
+     * @return AbstractMetaData
+     */
+    public static AbstractMetaData getMetaData() {
+        if (metaData == null) {
+
+            // Bukkit method that was added in 2011
+            // Example value: 1.20.4-R0.1-SNAPSHOT
+            String bukkitVersion = "v" + Bukkit.getServer().getBukkitVersion().replace('.', '_').replace('-', '_');
+            String pluginPackageName = plugin.getClass().getPackage().getName();
+           AbstractMetaData getMetaData;
+            try {
+                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + bukkitVersion + ".GetMetaData");
+                if (AbstractMetaData.class.isAssignableFrom(clazz)) {
+                    getMetaData = (AbstractMetaData) clazz.getConstructor().newInstance();
+                } else {
+                    throw new IllegalStateException("Class " + clazz.getName() + " does not implement PasteHandler");
+                }
+            } catch (Exception e) {
+                plugin.logWarning("No AbstractMetaData found for " + bukkitVersion + ", falling back to Bukkit API.");
+                getMetaData = new world.bentobox.bentobox.nms.fallback.GetMetaData();
+            }
+            metaData = getMetaData;
+        }
+        return metaData;
     }
 
     /**

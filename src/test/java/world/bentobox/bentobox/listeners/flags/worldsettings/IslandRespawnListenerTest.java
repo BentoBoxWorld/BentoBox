@@ -233,7 +233,7 @@ public class IslandRespawnListenerTest extends AbstractCommonSetup {
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
         assertEquals(safeLocation, ev.getRespawnLocation());
         // Verify commands
@@ -254,7 +254,7 @@ public class IslandRespawnListenerTest extends AbstractCommonSetup {
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }
@@ -277,7 +277,7 @@ public class IslandRespawnListenerTest extends AbstractCommonSetup {
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }
@@ -300,7 +300,7 @@ public class IslandRespawnListenerTest extends AbstractCommonSetup {
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }

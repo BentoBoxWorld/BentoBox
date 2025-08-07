@@ -83,7 +83,7 @@ public class MobSpawnListenerTest {
 
         ServerCompatibility serverCompatibility = mock(ServerCompatibility.class);
         Whitebox.setInternalState(ServerCompatibility.class, "instance", serverCompatibility);
-        when(serverCompatibility.getServerVersion()).thenReturn(ServerCompatibility.ServerVersion.V1_19);
+        when(serverCompatibility.getServerVersion()).thenReturn(ServerCompatibility.ServerVersion.V1_21_1);
 
         PluginManager pim = mock(PluginManager.class);
 

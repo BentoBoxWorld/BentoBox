@@ -205,7 +205,7 @@ public class RemoveMobsListenerTest {
      */
     @Test
     public void testOnUserRespawn() {
-        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, RespawnReason.DEATH);
         new RemoveMobsListener().onUserRespawn(e);
         verify(scheduler).runTask(any(), any(Runnable.class));
     }
@@ -217,7 +217,7 @@ public class RemoveMobsListenerTest {
     public void testOnUserRespawnDoNotRemove() {
         Flags.REMOVE_MOBS.setSetting(world, false);
 
-        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, RespawnReason.DEATH);
         new RemoveMobsListener().onUserRespawn(e);
         verify(scheduler, never()).runTask(any(), any(Runnable.class));
     }
@@ -229,7 +229,7 @@ public class RemoveMobsListenerTest {
     public void testOnUserRespawnNotIsland() {
         // Not on island
         when(im.locationIsOnIsland(any(), any())).thenReturn(false);
-        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, RespawnReason.DEATH);
         new RemoveMobsListener().onUserRespawn(e);
         verify(scheduler, never()).runTask(any(), any(Runnable.class));
     }

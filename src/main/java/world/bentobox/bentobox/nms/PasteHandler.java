@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
@@ -38,14 +37,6 @@ public interface PasteHandler {
     }
 
     CompletableFuture<Void> setBlock(Island island, Location location, BlueprintBlock bpBlock);
-
-    /**
-     * Set the block at location to the block data
-     * @param location
-     * @param blockData
-     * @return
-     */
-    Block setBlock(Location location, BlockData blockData);
 
     /**
      * Create a future to paste the entities
