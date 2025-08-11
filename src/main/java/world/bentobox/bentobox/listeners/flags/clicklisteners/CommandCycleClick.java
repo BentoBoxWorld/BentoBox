@@ -39,10 +39,7 @@ public class CommandCycleClick implements ClickHandler {
      */
     @Override
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {
-        if (plugin.onTimeout(user)) {
-            return true;
-        }
-        // Left clicking increases the rank required
+       // Left clicking increases the rank required
         // Right clicking decreases the rank required
         World world = panel.getWorld().orElse(user.getWorld());
         Island island = panel.getIsland();

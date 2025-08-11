@@ -39,9 +39,6 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
-        if (BentoBox.getInstance().onTimeout(user)) {
-            return true;
-        }
         // Get the world
         if (!user.inWorld()) {
             user.sendMessage("general.errors.wrong-world");
@@ -57,6 +54,10 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
 
         String ivPanelName = user.getTranslation("protection.flags.INVINCIBLE_VISITORS.name");
         if (panel.getName().equals(ivPanelName)) {
+            if (BentoBox.getInstance().onTimeout(user, panel)) {
+                return true;
+            }
+
             // This is a click on the IV panel
             String itemName = panel.getItems().get(slot).getName();
             DamageCause c = getEnum(user, itemName);

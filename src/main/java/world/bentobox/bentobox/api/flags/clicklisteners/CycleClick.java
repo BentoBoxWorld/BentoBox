@@ -60,9 +60,6 @@ public class CycleClick implements PanelItem.ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user2, ClickType click, int slot) {
-        if (plugin.onTimeout(user2)) {
-            return true;
-        }
         if (panel.getWorld().isEmpty()) {
             plugin.logError("Panel " + panel.getName()
                     + " has no world associated with it. Please report this bug to the author.");

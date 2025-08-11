@@ -169,7 +169,7 @@ public class TabbedPanel extends Panel implements PanelListener {
 
     @Override
     public void onInventoryClick(User user, InventoryClickEvent event) {
-        if (plugin.onTimeout(user)) {
+        if (plugin.onTimeout(user, this)) {
             event.setCancelled(true);
             return;
         }

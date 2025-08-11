@@ -33,9 +33,6 @@ public class WorldToggleClick implements ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {
-        if (plugin.onTimeout(user)) {
-            return true;
-        }
         World world = panel.getWorld().orElseThrow(); // The panel must have a world
         String reqPerm = plugin.getIWM().getPermissionPrefix(world) + "admin.world.settings." + id;
         if (!user.hasPermission(reqPerm)) {
