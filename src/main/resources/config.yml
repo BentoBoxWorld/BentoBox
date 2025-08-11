@@ -85,7 +85,7 @@ general:
   - '[CoFH]'
 panel:
   # Panel click cooldown. Value is in milliseconds. Prevents players spamming button presses in GUIs.
-  click-cooldown-ms: 1000
+  click-cooldown-ms: 250
   # Toggle whether panels should be closed or not when the player clicks anywhere outside of the inventory view.
   close-on-click-outside: true
   # Defines the Material of the item that fills the gaps (in the header, etc.) of most panels.

@@ -41,9 +41,6 @@ public class CommandRankClickListener implements ClickHandler {
      */
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
-        if (plugin.onTimeout(user)) {
-            return true;
-        }
         // This click listener is used with TabbedPanel and SettingsTabs only
         TabbedPanel tp = (TabbedPanel)panel;
         SettingsTab st = (SettingsTab)tp.getActiveTab();
@@ -81,6 +78,9 @@ public class CommandRankClickListener implements ClickHandler {
         String panelName = user.getTranslation("protection.flags.COMMAND_RANKS.name");
         if (panel.getName().equals(panelName)) {
             // This is a click on the panel
+            if (plugin.onTimeout(user, panel)) {
+                return true;
+            }
             // Slot relates to the command
             String c = getCommands(panel.getWorld().orElse(user.getWorld()), user).get(slot);
             // Apply change to panel

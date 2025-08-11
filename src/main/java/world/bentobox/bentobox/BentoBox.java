@@ -22,6 +22,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
@@ -60,6 +61,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.WebManager;
 import world.bentobox.bentobox.util.ExpiringMap;
+import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.versions.ServerCompatibility;
 
@@ -94,7 +96,7 @@ public class BentoBox extends JavaPlugin implements Listener {
     private Notifier notifier;
     
     // Click limiter
-    private ExpiringMap<UUID, Boolean> lastClick ;
+    private ExpiringMap<Pair<UUID, String>, Boolean> lastClick ;
 
     private HeadGetter headGetter;
 
@@ -146,7 +148,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         saveConfig();
         
         // Set up click timeout
-        lastClick = new ExpiringMap<UUID, Boolean>(getSettings().getClickCooldownMs(), TimeUnit.MILLISECONDS);
+        lastClick = new ExpiringMap<Pair<UUID, String>, Boolean>(getSettings().getClickCooldownMs(), TimeUnit.MILLISECONDS);
 
         // Start Database managers
         playersManager = new PlayersManager(this);
@@ -666,12 +668,12 @@ public class BentoBox extends JavaPlugin implements Listener {
      * @param user user
      * @return false if they can click and the timeout is started, otherwise true.
      */
-    public boolean onTimeout(User user) {
-        if (lastClick.containsKey(user.getUniqueId())) {
+    public boolean onTimeout(User user, Panel panel) {
+        if (lastClick.containsKey(new Pair<UUID, String>(user.getUniqueId(), panel.getName()))) {
             user.notify("general.errors.slow-down");
             return true;
         }
-        lastClick.put(user.getUniqueId(), true);
+        lastClick.put(new Pair<UUID, String>(user.getUniqueId(), panel.getName()), true);
         return false;
     }
 }

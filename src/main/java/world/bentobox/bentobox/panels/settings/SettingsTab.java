@@ -257,9 +257,6 @@ public class SettingsTab implements Tab, ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
-        if (plugin.onTimeout(user)) {
-            return true;
-        }
         // Cycle the mode
         currentMode.put(user.getUniqueId(), currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC).getNext());
         if (panel instanceof TabbedPanel tp) {
