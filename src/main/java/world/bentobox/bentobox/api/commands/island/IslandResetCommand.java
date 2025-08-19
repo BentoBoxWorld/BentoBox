@@ -56,7 +56,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             return false;
         }
         if (!getIslands().hasIsland(getWorld(), user.getUniqueId())) {
-            user.sendMessage("general.errors.no-island");
+            user.sendMessage("general.errors.not-owner");
             return false;
         }
         int resetsLeft = getPlayers().getResetsLeft(getWorld(), user.getUniqueId());
