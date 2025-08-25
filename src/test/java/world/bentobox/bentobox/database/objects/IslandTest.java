@@ -1281,10 +1281,17 @@ public class IslandTest {
      */
     @Test
     public void testSetDeleted() {
+        assertFalse(i.isDeleted());
         i.setDeleted(true);
         assertTrue(i.isDeleted());
         i.setDeleted(false);
         assertFalse(i.isDeleted());
+        
+        assertFalse(i.isPurgable());
+        i.setPurgable(true);
+        assertTrue(i.isPurgable());
+        i.setPurgable(false);
+        assertFalse(i.isPurgable());
     }
 
     /**

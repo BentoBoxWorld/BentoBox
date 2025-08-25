@@ -289,6 +289,8 @@ public class IslandsManager {
             removePlayersFromIsland(island);
             // Mark island as deleted
             island.setDeleted(true);
+            // Mark as purgeable
+            island.setPurgable(true);
             if (!plugin.getSettings().isKeepPreviousIslandOnReset()) {            
                 // Remove island from the cache
                 islandCache.deleteIslandFromCache(island);
