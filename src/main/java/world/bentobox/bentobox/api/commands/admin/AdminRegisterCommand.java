@@ -129,6 +129,8 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         if (island.isSpawn()) {
             getIslands().clearSpawn(island.getWorld());
         }
+        // Remove deletion status if it has been assigned.
+        island.setDeleted(false);
         user.sendMessage("commands.admin.register.registered-island", TextVariables.XYZ,
                 Util.xyz(island.getCenter().toVector()), TextVariables.NAME, targetName);
         user.sendMessage("general.success");
