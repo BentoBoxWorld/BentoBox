@@ -18,7 +18,7 @@ import com.google.gson.stream.JsonWriter;
 /**
  * @author tastybento
  *
- * @param <T> Tag class to be serialized
+ * @param <E> Tag class to be serialized
  */
 public final class TagTypeAdapter<E extends Keyed> extends TypeAdapter<Tag<E>> {
     private final TypeAdapter<String> stringAdapter;

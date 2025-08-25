@@ -86,7 +86,7 @@ public class ItemsAdderHook extends Hook {
     /**
      * Returns Optional empty if the provided {@link ItemStack} is not a custom item created with ItemsAdder.
      *
-     * @param itemStack the Bukkit ItemStack
+     * @param myItemStack the Bukkit ItemStack
      * @return optional namespacedId or empty
      */
     public static Optional<String> getNamespacedId(ItemStack myItemStack) {
@@ -105,7 +105,7 @@ public class ItemsAdderHook extends Hook {
     /**
      * Gets the Namespace and ID in the format {@code namespace:id} of the placed CustomBlock in a specific location.
      *
-     * @param location the location to check
+     * @param loc the location to check
      * @return the Namespace and ID in the format {@code namespace:id} or null if it's not a CustomBlock.
      */
     public static String getInCustomRegion(Location loc) {
@@ -134,7 +134,7 @@ public class ItemsAdderHook extends Hook {
      * not exist it will fail silently.
      *
      * @param namespacedId Namespace and ID in the format {@code namespace:id}
-     * @param location     The location to place the CustomBlock
+     * @param loc     The location to place the CustomBlock
      */
     public static void place(String namespacedId, Location loc) {
         CustomBlock.place(namespacedId, loc);
