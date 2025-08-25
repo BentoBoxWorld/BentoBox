@@ -289,6 +289,8 @@ public class IslandsManager {
             removePlayersFromIsland(island);
             // Mark island as deleted
             island.setDeleted(true);
+            // Mark as purgeable
+            island.setPurgable(true);
             if (!plugin.getSettings().isKeepPreviousIslandOnReset()) {            
                 // Remove island from the cache
                 islandCache.deleteIslandFromCache(island);
@@ -1306,9 +1308,8 @@ public class IslandsManager {
             if (island.isDeleted()) {
                 // These will be deleted later
                 deletedIslands.add(island.getUniqueId());
-            }
-            // Check island distance and if incorrect stop BentoBox
-            if (!plugin.getSettings().isOverrideSafetyCheck() && island.getWorld() != null
+            } // Check island distance and if incorrect stop BentoBox
+            else if (!plugin.getSettings().isOverrideSafetyCheck() && island.getWorld() != null
                     && plugin.getIWM().inWorld(island.getWorld())
                     && island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld())) {
                 throw new IOException("Island distance mismatch!\n" + "World '" + island.getWorld().getName()

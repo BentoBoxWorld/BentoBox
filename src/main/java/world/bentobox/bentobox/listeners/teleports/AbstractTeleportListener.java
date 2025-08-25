@@ -205,12 +205,12 @@ public abstract class AbstractTeleportListener
             int x = Math.abs(island.getProtectionCenter().getBlockX() - location.getBlockX());
             int z = Math.abs(island.getProtectionCenter().getBlockZ() - location.getBlockZ());
 
-            diff = Math.min(this.plugin.getSettings().getSafeSpotSearchRange(),
-                    island.getProtectionRange() - Math.max(x, z));
+            diff = Math.min(this.plugin.getSettings().getMinPortalSearchRadius(),
+                    island.getProtectionRange() + (island.getRange() - island.getProtectionRange())*2 - Math.max(x, z));
         }
         else
         {
-            diff = this.plugin.getSettings().getSafeSpotSearchRange();
+            diff = this.plugin.getSettings().getMinPortalSearchRadius();
         }
 
         return diff;

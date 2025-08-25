@@ -71,6 +71,10 @@ public class Island implements DataObject, MetaDataAble {
     // True if this island is deleted and pending deletion from the database
     @Expose
     private boolean deleted = false;
+    
+    // True if this island is purgable from the database
+    @Expose
+    private boolean purgable = false;
 
     @Expose
     @NonNull
@@ -267,6 +271,7 @@ public class Island implements DataObject, MetaDataAble {
         });
         this.createdDate = island.getCreatedDate();
         this.deleted = island.isDeleted();
+        this.purgable = island.isPurgable();
         this.doNotLoad = island.isDoNotLoad();
         this.flags.putAll(island.getFlags());
         this.gameMode = island.getGameMode();
@@ -2118,5 +2123,19 @@ public class Island implements DataObject, MetaDataAble {
         return Objects.equals(uniqueId, other.uniqueId);
     }
 
+    /**
+     * @return the purgable
+     */
+    public boolean isPurgable() {
+        return purgable;
+    }
+
+    /**
+     * @param purgable the purgable to set
+     */
+    public void setPurgable(boolean purgable) {
+        this.purgable = purgable;
+        setChanged();
+    }
 
 }
