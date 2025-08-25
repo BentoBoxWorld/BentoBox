@@ -28,7 +28,7 @@ public class GitHubRepository {
     /**
      * Fetches the content of a file in the repository.
      * 
-     * @param fpath The path to the file.
+     * @param path The path to the file.
      * @return A GitHubFile object representing the file content.
      * @throws Exception If an error occurs during the request.
      */

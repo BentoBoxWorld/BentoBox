@@ -236,7 +236,6 @@ public class BlueprintEntity {
     /**
      * Set the villager stats
      * @param v - villager
-     * @param bpe - Blueprint Entity
      */
     private void configVillager(Villager v) {
         this.setExperience(v.getVillagerExperience());

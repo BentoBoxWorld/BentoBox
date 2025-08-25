@@ -201,7 +201,7 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
         // Test the reset command
         // Does not have island
         assertFalse(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
-        verify(user).sendMessage("general.errors.no-island");
+        verify(user).sendMessage("general.errors.not-owner");
     }
 
     /**

@@ -17,7 +17,7 @@ import world.bentobox.bentobox.api.github.objects.repositories.GitHubRepository;
 
 /**
  * Handles interactions with the GitHub API.
- * This is a rewrite of {@link https://github.com/Poslovitch/GitHubWebAPI4}, which is now out of date
+ * This is a rewrite of https://github.com/Poslovitch/GitHubWebAPI4, which is now out of date
  * and this code only implements parts that are used by BentoBox and not all of it.
  */
 public class GitHubWebAPI {
