@@ -358,8 +358,8 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
     private void displayIsland(Island island) {
         // Log the island data
-        if (island.isPurgable()) {
-            getPlugin().log("Purgable island at " + Util.xyz(island.getCenter().toVector()) + " in world " + getWorld().getName() + " will be deleted");
+        if (island.isDeletable()) {
+            getPlugin().log("Deletable island at " + Util.xyz(island.getCenter().toVector()) + " in world " + getWorld().getName() + " will be deleted");
             return;
         }
         if (island.getOwner() == null) {
@@ -402,8 +402,8 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      * @return true means “cannot delete”
      */
     private boolean canDeleteIsland(Island island) {
-        // If the island is purgeable, it can be deleted at any time
-        if (island.isPurgable()) {
+        // If the island is deletable, it can be deleted at any time
+        if (island.isDeletable()) {
             return false;
         }
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);

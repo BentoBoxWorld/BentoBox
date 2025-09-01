@@ -60,14 +60,11 @@ public class IslandCache {
     }
 
     /**
-     * Replace the island we have with this one
+     * Replace the island we have with this one.
+     * Used by MultiLib to update database based on another server's operation.
      * @param newIsland island
      */
-    public void updateIsland(@NonNull Island newIsland) {
-        if (newIsland.isDeleted()) {
-            this.deleteIslandFromCache(newIsland);
-            return;
-        }
+    public void updateMultiLibIsland(@NonNull Island newIsland) {
         // Get the old island
         Island oldIsland = getIslandById(newIsland.getUniqueId());
         Set<UUID> newMembers = newIsland.getMembers().keySet();
@@ -267,7 +264,6 @@ public class IslandCache {
      * @param location the location
      * @return true if there is an island there
      */
-    @Nullable
     public boolean isIslandAt(@NonNull Location location) {
         World w = Util.getWorld(location.getWorld());
         if (w == null || !grids.containsKey(w)) {
@@ -319,6 +315,7 @@ public class IslandCache {
      * @return Island or null if that uniqueID is unknown
      * @since 2.4.0
      */
+    @Nullable
     public Island loadIsland(String uniqueId) {
         return handler.objectExists(uniqueId) ? handler.loadObject(uniqueId) : null;
     }
@@ -331,8 +328,7 @@ public class IslandCache {
      */
     @NonNull
     public Collection<Island> getCachedIslands() {
-        return islandsById.entrySet().stream().filter(en -> Objects.nonNull(en.getValue())).map(Map.Entry::getValue)
-                .toList();
+        return islandsById.values().stream().filter(Objects::nonNull).toList();
     }
 
     /**
@@ -534,7 +530,7 @@ public class IslandCache {
      */
     public void resetAllFlags(World world) {
         Bukkit.getScheduler().runTaskAsynchronously(BentoBox.getInstance(),
-                () -> this.getIslands(world).stream().forEach(Island::setFlagsDefaults));
+                () -> this.getIslands(world).forEach(Island::setFlagsDefaults));
     }
 
     /**
@@ -547,7 +543,7 @@ public class IslandCache {
     public void resetFlag(World world, Flag flag) {
         int setting = BentoBox.getInstance().getIWM().getDefaultIslandFlags(world).getOrDefault(flag,
                 flag.getDefaultRank());
-        this.getIslands(world).stream().forEach(i -> i.setFlag(flag, setting));
+        this.getIslands(world).forEach(i -> i.setFlag(flag, setting));
     }
 
     /**

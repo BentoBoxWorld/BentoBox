@@ -461,10 +461,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <release>${java.version}</release>
-                    <!-- <source>${java.version}</source> <target>${java.version}</target> -->
                 </configuration>
             </plugin>
             <plugin>
@@ -608,7 +607,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
+                <version>0.8.13</version>
                 <configuration>
                     <append>true</append>
                     <excludes>

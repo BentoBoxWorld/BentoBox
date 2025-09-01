@@ -156,7 +156,7 @@ public class RemoveMobsListenerTest {
      */
     @Test
     public void testOnUserTeleportChorusEtc() {
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.CONSUMABLE_EFFECT);
         new RemoveMobsListener().onUserTeleport(e);
         e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
         new RemoveMobsListener().onUserTeleport(e);
