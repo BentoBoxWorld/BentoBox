@@ -325,10 +325,10 @@ public class IslandCacheTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#updateIsland(world.bentobox.bentobox.database.objects.Island)}.
+     * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#updateMultiLibIsland(world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testUpdateIsland() {
+    public void testUpdateMultiLibIsland() {
         // Add island to cache
         ic.setIslandById(island);
         // Copy island
@@ -336,7 +336,7 @@ public class IslandCacheTest extends AbstractCommonSetup {
         when(newIsland.getUniqueId()).thenReturn("uniqueId");
         when(newIsland.getMembers()).thenReturn(Map.of()); // no members
 
-        ic.updateIsland(newIsland);
+        ic.updateMultiLibIsland(newIsland);
         verify(plugin, never()).logError(anyString());
     }
 

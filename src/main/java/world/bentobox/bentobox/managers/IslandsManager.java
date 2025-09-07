@@ -110,7 +110,7 @@ public class IslandsManager {
         MultiLib.onString(plugin, "bentobox-updateIsland", id -> {
             Island island = handler.loadObject(id);
             if (island != null) {
-                islandCache.updateIsland(island);
+                islandCache.updateMultiLibIsland(island);
             }
         });
 
@@ -287,10 +287,8 @@ public class IslandsManager {
         if (removeBlocks) {
             // Remove players from island
             removePlayersFromIsland(island);
-            // Mark island as deleted
-            island.setDeleted(true);
-            // Mark as purgeable
-            island.setPurgable(true);
+            // Mark island as deletable
+            island.setDeletable(true);
             if (!plugin.getSettings().isKeepPreviousIslandOnReset()) {            
                 // Remove island from the cache
                 islandCache.deleteIslandFromCache(island);
@@ -1295,21 +1293,17 @@ public class IslandsManager {
      */
     public void load() throws IOException {
         islandCache.clear();
-        List<Island> toQuarantine = new ArrayList<>();
-        int owned = 0;
-        int unowned = 0;
         // Attempt to load islands
         for (Island island : handler.loadObjects()) {
             if (island == null) {
                 plugin.logWarning("Null island when loading...");
                 continue;
+            } else if (island.isDeleted()) {
+                // TODO delete from database
             }
-
-            if (island.isDeleted()) {
-                // These will be deleted later
-                deletedIslands.add(island.getUniqueId());
-            } // Check island distance and if incorrect stop BentoBox
-            else if (!plugin.getSettings().isOverrideSafetyCheck() && island.getWorld() != null
+            // Check island distance and if incorrect stop BentoBox
+            else if (!plugin.getSettings().isOverrideSafetyCheck()
+                    && island.getWorld() != null
                     && plugin.getIWM().inWorld(island.getWorld())
                     && island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld())) {
                 throw new IOException("Island distance mismatch!\n" + "World '" + island.getWorld().getName()
@@ -1338,34 +1332,6 @@ public class IslandsManager {
                 island.setGameMode(plugin.getIWM().getAddon(island.getWorld()).map(gm -> gm.getDescription().getName())
                         .orElse(""));
             }
-        }
-        if (!toQuarantine.isEmpty()) {
-            plugin.logError(toQuarantine.size() + " islands could not be loaded successfully; moving to trash bin.");
-            plugin.logError(unowned + " are unowned, " + owned + " are owned.");
-
-            toQuarantine.forEach(handler::saveObjectAsync);
-            // Check if there are any islands with duplicate islands
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                Set<UUID> duplicatedUUIDRemovedSet = new HashSet<>();
-                Set<UUID> duplicated = islandCache.getIslands().stream().map(Island::getOwner).filter(Objects::nonNull)
-                        .filter(n -> !duplicatedUUIDRemovedSet.add(n)).collect(Collectors.toSet());
-                if (!duplicated.isEmpty()) {
-                    plugin.logError("**** Owners that have more than one island = " + duplicated.size());
-                    for (UUID uuid : duplicated) {
-                        Set<Island> set = islandCache.getIslands().stream().filter(i -> uuid.equals(i.getOwner()))
-                                .collect(Collectors.toSet());
-                        plugin.logError(plugin.getPlayers().getName(uuid) + "(" + uuid.toString() + ") has "
-                                + set.size() + " islands:");
-                        set.forEach(i -> {
-                            plugin.logError("Island at " + i.getCenter());
-                            plugin.logError("Island unique ID = " + i.getUniqueId());
-                        });
-                        plugin.logError(
-                                "You should find out which island is real and delete the uniqueID from the database for the bogus one.");
-                        plugin.logError("");
-                    }
-                }
-            });
         }
     }
 

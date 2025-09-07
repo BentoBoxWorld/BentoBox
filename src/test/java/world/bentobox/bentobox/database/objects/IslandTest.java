@@ -1287,11 +1287,11 @@ public class IslandTest {
         i.setDeleted(false);
         assertFalse(i.isDeleted());
         
-        assertFalse(i.isPurgable());
-        i.setPurgable(true);
-        assertTrue(i.isPurgable());
-        i.setPurgable(false);
-        assertFalse(i.isPurgable());
+        assertFalse(i.isDeletable());
+        i.setDeletable(true);
+        assertTrue(i.isDeletable());
+        i.setDeletable(false);
+        assertFalse(i.isDeletable());
     }
 
     /**
