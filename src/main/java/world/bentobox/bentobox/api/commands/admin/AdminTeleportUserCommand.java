@@ -10,7 +10,6 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -24,7 +23,7 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
  * Enables admins to teleport a player to another player's island, nether or end islands, 
- * 
+ * <p>
  * For example /acid tp lspvicky tastybento [island name] would teleport lspvicky to tastybento's [named] island
  * 
  */
@@ -33,7 +32,7 @@ public class AdminTeleportUserCommand extends CompositeCommand {
     private static final String NOT_SAFE = "general.errors.no-safe-location-found";
     private Location warpSpot;
     private @Nullable UUID targetUUID;
-    private @NonNull User toBeTeleported;
+    private User toBeTeleported;
 
     /**
      * @param parent - parent command
@@ -147,6 +146,7 @@ public class AdminTeleportUserCommand extends CompositeCommand {
     }
 
     private Location getSpot(World world) {
+        assert targetUUID != null;
         Island island = getIslands().getIsland(world, targetUUID);
         if (island == null) {
             return null;
@@ -156,7 +156,7 @@ public class AdminTeleportUserCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

@@ -285,7 +285,7 @@ public class TestBentoBox extends AbstractCommonSetup {
 
         @Override
         public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            String lastArg = !args.isEmpty() ? args.getLast() : "";
             List<String> options = new ArrayList<>(Arrays.asList("Florian", "Ben", "Bill", "Ted"));
             return Optional.of(Util.tabLimit(options, lastArg));
         }

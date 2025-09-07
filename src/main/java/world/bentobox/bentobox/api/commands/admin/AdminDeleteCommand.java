@@ -122,6 +122,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             deleteIsland(user, oldIsland);
         }
         // Check if player is online and on the island
+        assert targetUUID != null;
         User target = User.getInstance(targetUUID);
         // Remove target from any and all islands in the world
         getIslands().removePlayer(getWorld(), targetUUID);
@@ -167,7 +168,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

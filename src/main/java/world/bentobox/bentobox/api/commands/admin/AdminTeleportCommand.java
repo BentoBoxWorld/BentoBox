@@ -23,7 +23,7 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
  * Enables admins to teleport to a player's island, nether or end islands, 
- * 
+ * <p>
  * For example /acid tp tastybento [island name] would teleport to tastybento's [named] island
  * 
  */
@@ -120,7 +120,7 @@ public class AdminTeleportCommand extends CompositeCommand {
         String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
                 + warpSpot.getBlockZ());
         // Set the player
-        Player player = args.size() == 2 ? user.getPlayer() : user.getPlayer();
+        Player player = user.getPlayer();
         if (args.size() == 2) {
             failureMessage = user.getTranslation(NOT_SAFE);
         }
@@ -136,6 +136,7 @@ public class AdminTeleportCommand extends CompositeCommand {
     }
 
     private Location getSpot(World world) {
+        assert targetUUID != null;
         Island island = getIslands().getIsland(world, targetUUID);
         if (island == null) {
             return null;
@@ -145,7 +146,7 @@ public class AdminTeleportCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

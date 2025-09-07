@@ -16,7 +16,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * This command sets the center of the protected area.
- * The location can be anywhere inside the island range area. Therefore the protected
+ * The location can be anywhere inside the island range area. Therefore, the protected
  * range can be up to 2x the island range.
  * The location will change for all environments.
  * @author tastybento

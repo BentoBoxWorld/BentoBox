@@ -127,7 +127,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (lastArg.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

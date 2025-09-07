@@ -83,6 +83,7 @@ public class AdminGetrankCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Get rank
+        assert targetUUID != null;
         User target = User.getInstance(targetUUID);
         int currentRank = island.getRank(target);
         user.sendMessage("commands.admin.getrank.rank-is", TextVariables.RANK,

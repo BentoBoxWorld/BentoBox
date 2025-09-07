@@ -19,7 +19,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Sets the maximum number of homes allowed on this island.
- * 
+ * <p>
  * Commands:
  * <ul>
  *     <li><b>/bsb maxhomes &lt;player&gt; &lt;number&gt;</b> - Sets the maximum number of homes for each island where the player is the owner. This could apply to multiple islands.</li>
@@ -136,7 +136,7 @@ public class AdminMaxHomesCommand extends ConfirmableCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.size() == 2) {
             // Suggest player names
             return Optional.of(Util.getOnlinePlayerList(user));

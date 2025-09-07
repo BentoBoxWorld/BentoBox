@@ -59,15 +59,14 @@ public class AdminDeleteHomesCommand extends ConfirmableCommand {
         return true;
     }
 
-    private boolean deleteHomes(User user, Island island) {
+    private void deleteHomes(User user, Island island) {
         island.removeHomes();
         user.sendMessage("general.success");
-        return true;
     }
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

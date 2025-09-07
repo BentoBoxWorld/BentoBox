@@ -91,6 +91,7 @@ public class AdminSetrankCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        assert targetUUID != null;
         User target = User.getInstance(targetUUID);
         Island island;
         if (ownerUUID != null) {

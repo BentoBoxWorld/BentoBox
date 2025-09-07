@@ -114,7 +114,7 @@ public class IslandUnbanCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             List<String> options = island.getBanned().stream().map(getPlayers()::getName).toList();
-            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            String lastArg = !args.isEmpty() ? args.getLast() : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();
