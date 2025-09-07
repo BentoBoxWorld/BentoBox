@@ -33,6 +33,7 @@ public class AdminBlueprintSinkCommand extends CompositeCommand
                     v -> new BlueprintClipboard());
             if (clipboard.isFull()) {
                 // Clipboard loaded - toggle sink
+                assert clipboard.getBlueprint() != null;
                 clipboard.getBlueprint().setSink(!clipboard.getBlueprint().isSink());
                 user.sendMessage("commands.admin.blueprint.sink.status", "[status]",
                         clipboard.getBlueprint().isSink() ? user.getTranslation("commands.admin.blueprint.sink.sink")
