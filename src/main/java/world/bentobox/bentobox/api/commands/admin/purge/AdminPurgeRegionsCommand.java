@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -77,7 +76,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     @Override
     public boolean execute(User user, String label, List<String> args) {
         this.user = user;
-        if (args.get(0).equalsIgnoreCase("confirm") && toBeConfirmed && this.user.equals(user)) {
+        if (args.getFirst().equalsIgnoreCase("confirm") && toBeConfirmed && this.user.equals(user)) {
             return deleteEverything();
         }
         /*
@@ -87,7 +86,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         toBeConfirmed = false;
 
         try {
-            days = Integer.parseInt(args.get(0));
+            days = Integer.parseInt(args.getFirst());
             if (days <= 0) {
                 user.sendMessage("commands.admin.purge.days-one-or-more");
                 return false;
@@ -146,40 +145,38 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         File base = getWorld().getWorldFolder();
         File playerData = new File(base, "playerdata");
         // Get the island from the cache
-        getPlugin().getIslands().getIslandById(islandID).ifPresent(island -> {
-            island.getMemberSet().forEach(uuid -> {
-                // Check if the player has any islands left
-                List<Island> memberOf = new ArrayList<>(getIslands().getIslands(getWorld(), uuid));
-                deleteableRegions.values().forEach(ids -> memberOf.removeIf(i -> ids.contains(i.getUniqueId())));
-                if (memberOf.isEmpty()) {
-                    // Do not remove this player if they are Op
-                    OfflinePlayer p = Bukkit.getOfflinePlayer(uuid);
-                    if (p.isOp()) {
-                        return;
+        getPlugin().getIslands().getIslandById(islandID).ifPresent(island -> island.getMemberSet().forEach(uuid -> {
+            // Check if the player has any islands left
+            List<Island> memberOf = new ArrayList<>(getIslands().getIslands(getWorld(), uuid));
+            deleteableRegions.values().forEach(ids -> memberOf.removeIf(i -> ids.contains(i.getUniqueId())));
+            if (memberOf.isEmpty()) {
+                // Do not remove this player if they are Op
+                OfflinePlayer p = Bukkit.getOfflinePlayer(uuid);
+                if (p.isOp()) {
+                    return;
+                }
+                // Do not remove if player logged in recently
+                Long lastLogin = getPlugin().getPlayers().getLastLoginTimestamp(uuid);
+                if (lastLogin == null) {
+                    lastLogin = Bukkit.getOfflinePlayer(uuid).getLastSeen();
+                }
+                long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
+                if (lastLogin >= cutoffMillis) {
+                    return;
+                }
+                // Remove the player from the world folder playerdata because they no longer have any island associated with them
+                if (playerData.exists()) {
+                    File playerFile = new File(playerData, uuid + ".dat");
+                    if (playerFile.exists() && !playerFile.delete()) {
+                        getPlugin().logError("Failed to delete player data file: " + playerFile.getAbsolutePath());
                     }
-                    // Do not remove if player logged in recently
-                    Long lastLogin = getPlugin().getPlayers().getLastLoginTimestamp(uuid);
-                    if (lastLogin == null) {
-                        lastLogin = Bukkit.getOfflinePlayer(uuid).getLastSeen();
-                    }
-                    long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
-                    if (lastLogin >= cutoffMillis) {
-                        return;
-                    }
-                    // Remove the player from the world folder playerdata because they no longer have any island associated with them
-                    if (playerData.exists()) {
-                        File playerFile = new File(playerData, uuid + ".dat");
-                        if (playerFile.exists() && !playerFile.delete()) {
-                            getPlugin().logError("Failed to delete player data file: " + playerFile.getAbsolutePath());
-                        }
-                        playerFile = new File(playerData, uuid + ".dat_old");
-                        if (playerFile.exists() && !playerFile.delete()) {
-                            getPlugin().logError("Failed to delete player data backup file: " + playerFile.getAbsolutePath());
-                        }
+                    playerFile = new File(playerData, uuid + ".dat_old");
+                    if (playerFile.exists() && !playerFile.delete()) {
+                        getPlugin().logError("Failed to delete player data backup file: " + playerFile.getAbsolutePath());
                     }
                 }
-            });        
-        });
+            }
+        }));
     }
 
     /**
@@ -252,9 +249,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         }
 
         // Phase 2: perform deletions
-        Iterator<Pair<Integer, Integer>> it = deleteableRegions.keySet().iterator();
-        while (it.hasNext()) {
-            Pair<Integer, Integer> coords = it.next();
+        for (Pair<Integer, Integer> coords : deleteableRegions.keySet()) {
             int x = coords.x;
             int z = coords.z;
             String name = "r." + x + "." + z + ".mca";
@@ -321,7 +316,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             .orElse(true)
                     )
                     );
-            // At this point any islands that might be deleted are in the cache and so we can freely access them
+            // At this point any islands that might be deleted are in the cache, and so we can freely access them
             // 1) Pull out all island IDs,  
             // 2) resolve to Optional<Island>,  
             // 3) flatten to Island,  
