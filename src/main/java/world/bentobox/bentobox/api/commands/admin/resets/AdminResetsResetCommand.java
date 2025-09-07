@@ -35,7 +35,7 @@ public class AdminResetsResetCommand extends ConfirmableCommand {
         }
 
         // Check if this is @a - therefore, we're resetting everyone's resets :)
-        if (args.get(0).equalsIgnoreCase("@a")) {
+        if (args.getFirst().equalsIgnoreCase("@a")) {
             this.askConfirmation(user, () -> {
                 // Set the reset epoch to now
                 getIWM().setResetEpoch(getWorld());
@@ -46,13 +46,13 @@ public class AdminResetsResetCommand extends ConfirmableCommand {
             return true;
         } else {
             // Then, it may be a player
-            UUID targetUUID = Util.getUUID(args.get(0));
+            UUID targetUUID = Util.getUUID(args.getFirst());
             if (targetUUID == null) {
-                user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+                user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
                 return false;
             } else {
                 getPlayers().setResets(getWorld(), targetUUID, 0);
-                user.sendMessage("commands.admin.resets.reset.success", TextVariables.NAME, args.get(0));
+                user.sendMessage("commands.admin.resets.reset.success", TextVariables.NAME, args.getFirst());
                 return true;
             }
         }

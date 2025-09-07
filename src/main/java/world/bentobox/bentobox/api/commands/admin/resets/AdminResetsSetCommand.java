@@ -30,7 +30,7 @@ public class AdminResetsSetCommand extends CompositeCommand {
 
         UUID targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
         } else if (!Util.isInteger(args.get(1), true) || Integer.parseInt(args.get(1)) <= 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
         } else {
