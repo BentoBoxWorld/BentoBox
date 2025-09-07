@@ -61,9 +61,9 @@ public class AdminResetHomeCommand extends CompositeCommand
             return false;
         }
         // First arg must be a valid player name
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Get islands
@@ -119,14 +119,14 @@ public class AdminResetHomeCommand extends CompositeCommand
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.size() == 2) {
             // Suggest player names
             return Optional.of(Util.getOnlinePlayerList(user));
         }
         if (args.size() > 2) {
             // Work out who is in arg 2
-            UUID targetUUID = getPlayers().getUUID(args.get(0));
+            UUID targetUUID = getPlayers().getUUID(args.getFirst());
             if (targetUUID != null) {
                 User target = User.getInstance(targetUUID);
                 return Optional.of(Util.tabLimit(

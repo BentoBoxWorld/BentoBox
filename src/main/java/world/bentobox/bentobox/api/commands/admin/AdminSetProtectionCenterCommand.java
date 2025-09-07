@@ -69,7 +69,7 @@ public class AdminSetProtectionCenterCommand extends ConfirmableCommand
 
     private Location getLocation(List<String> args) {
         try {
-            int x = Integer.parseInt(args.get(0));
+            int x = Integer.parseInt(args.getFirst());
             int y = Integer.parseInt(args.get(1));
             int z = Integer.parseInt(args.get(2));
             return new Location(getWorld(), x, y, z);

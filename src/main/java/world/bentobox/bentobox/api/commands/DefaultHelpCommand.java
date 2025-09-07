@@ -44,9 +44,9 @@ public class DefaultHelpCommand extends CompositeCommand {
         // Show default help
         int depth = 0;
         if (args.size() == 1) {
-            if (NumberUtils.isDigits(args.get(0))) {
+            if (NumberUtils.isDigits(args.getFirst())) {
                 // Converts first argument into an int, or returns -1 if it cannot. Avoids exceptions.
-                depth = Optional.ofNullable(args.get(0)).map(NumberUtils::toInt).orElse(-1);
+                depth = Optional.ofNullable(args.getFirst()).map(NumberUtils::toInt).orElse(-1);
             } else {
                 String usage = parent.getUsage();
                 String params = user.getTranslation("commands.help.parameters");

@@ -62,9 +62,9 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             return false;
         }
         // Get target player
-        targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Check cooldown

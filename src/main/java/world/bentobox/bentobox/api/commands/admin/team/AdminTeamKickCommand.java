@@ -43,9 +43,9 @@ public class AdminTeamKickCommand extends CompositeCommand {
         }
 
         // Get target
-        targetUUID = Util.getUUID(args.get(0));
+        targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         if (!getIslands().inTeam(getWorld(), targetUUID)) {
@@ -64,6 +64,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
         }
         islands.forEach(island -> {
             if (!user.getUniqueId().equals(island.getOwner())) {
+                assert targetUUID != null;
                 User target = User.getInstance(targetUUID);
                 target.sendMessage("commands.admin.team.kick.admin-kicked");
 

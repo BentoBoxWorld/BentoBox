@@ -278,7 +278,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
         options = ipc.tabComplete(user, "promote", List.of("t"));
         assertFalse(options.isEmpty());
         assertFalse(options.get().isEmpty());
-        assertEquals("tastybento", options.get().get(0));
+        assertEquals("tastybento", options.get().getFirst());
     }
 
 }

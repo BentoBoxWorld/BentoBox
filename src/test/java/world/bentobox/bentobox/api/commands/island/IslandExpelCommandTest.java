@@ -496,7 +496,7 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         List<String> result = iec.tabComplete(user, "", Collections.emptyList()).get();
         assertFalse(result.isEmpty());
         assertEquals(2, result.size());
-        assertEquals("normal", result.get(0));
+        assertEquals("normal", result.getFirst());
         assertEquals("normal", result.get(1));
     }
 }

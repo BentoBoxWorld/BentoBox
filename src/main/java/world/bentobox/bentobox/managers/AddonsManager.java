@@ -410,7 +410,7 @@ public class AddonsManager {
         }
         // Teleport any players out of the world, just in case
         for (Player player : world.getPlayers()) {
-            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
+            player.teleport(Bukkit.getWorlds().getFirst().getSpawnLocation());
         }
 
         // Unload the world

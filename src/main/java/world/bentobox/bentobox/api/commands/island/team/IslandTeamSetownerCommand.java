@@ -53,9 +53,9 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("general.errors.not-owner");
             return false;
         }
-        targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         if (targetUUID.equals(user.getUniqueId())) {
@@ -101,7 +101,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()) == null) {
             return Optional.empty();
         }

@@ -45,9 +45,9 @@ public class AdminGetrankCommand extends CompositeCommand {
             return false;
         }
         // Get target player
-        targetUUID = Util.getUUID(args.get(0));
+        targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
 
@@ -97,7 +97,7 @@ public class AdminGetrankCommand extends CompositeCommand {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
         }
-        String lastArg = args.get(args.size() - 1);
+        String lastArg = args.getLast();
         List<String> options = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
         return Optional.of(Util.tabLimit(options, lastArg));
     }

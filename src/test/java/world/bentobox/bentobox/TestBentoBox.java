@@ -136,7 +136,7 @@ public class TestBentoBox extends AbstractCommonSetup {
         assertTrue(testCommand.execute(user, testCommand.getLabel(), new ArrayList<>()));
         assertEquals("test",testCommand.getLabel());
         assertEquals(2, testCommand.getAliases().size());
-        assertEquals("t", testCommand.getAliases().get(0));
+        assertEquals("t", testCommand.getAliases().getFirst());
         assertTrue(testCommand.isOnlyPlayer());
         assertNull(testCommand.getParent());
         assertEquals("default.permission", testCommand.getPermission());

@@ -35,7 +35,7 @@ public abstract class AbstractAdminRangeCommand extends CompositeCommand {
             return false;
         }
 
-        targetUUID = Util.getUUID(args.get(0));
+        targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;

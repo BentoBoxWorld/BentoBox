@@ -50,9 +50,9 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             return false;
         }
         // Get target
-        targetUUID = Util.getUUID(args.get(0));
+        targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Check if this spot is still being deleted
@@ -66,7 +66,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         if (opIsland.isEmpty()) {
             // Reserve spot
             this.askConfirmation(user, user.getTranslation("commands.admin.register.no-island-here"),
-                    () -> reserve(user, args.get(0)));
+                    () -> reserve(user, args.getFirst()));
             return false;
         }
         island = opIsland.get();
@@ -77,7 +77,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         // Check if island is spawn
         if (island.isSpawn()) {
             askConfirmation(user, user.getTranslation("commands.admin.register.island-is-spawn"),
-                    () -> register(user, args.get(0)));
+                    () -> register(user, args.getFirst()));
             return false;
         }
 
@@ -86,7 +86,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        register(user, args.get(0));
+        register(user, args.getFirst());
         return true;
     }
 

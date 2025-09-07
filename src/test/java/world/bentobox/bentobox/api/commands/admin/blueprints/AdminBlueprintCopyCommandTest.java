@@ -193,7 +193,7 @@ public class AdminBlueprintCopyCommandTest {
     public void testTabCompleteUserStringListOfString() {
         Optional<List<String>> o = abcc.tabComplete(user, "", List.of(""));
         assertTrue(o.isPresent());
-        assertEquals("air", o.get().get(0));
+        assertEquals("air", o.get().getFirst());
         assertEquals("biome", o.get().get(1));
     }
 

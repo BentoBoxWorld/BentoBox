@@ -46,7 +46,7 @@ public class BentoBoxRankCommand extends CompositeCommand {
             return false;
         }
         // Check if the first element is "add" or REMOVE or "list"
-        firstElement = args.get(0);
+        firstElement = args.getFirst();
         if (!("list".equals(firstElement) || "add".equals(firstElement) || REMOVE.equals(firstElement))) {
             // Show help
             showHelp(this, user);

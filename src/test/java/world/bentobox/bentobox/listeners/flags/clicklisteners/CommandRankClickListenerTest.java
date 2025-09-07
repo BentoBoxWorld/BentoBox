@@ -240,10 +240,10 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         PanelItem pi = crcl.getPanelItem("test", user, world);
         assertEquals(Material.MAP, pi.getItem().getType());
-        //assertEquals("protection.panel.flag-item.description-layout", pi.getDescription().get(0));
+        //assertEquals("protection.panel.flag-item.description-layout", pi.getDescription().getFirst());
         //assertEquals("protection.panel.flag-item.minimal-rankranks.member", pi.getDescription().get(1));
         //assertEquals("protection.panel.flag-item.allowed-rankranks.sub-owner", pi.getDescription().get(2));
-        //assertEquals("protection.panel.flag-item.allowed-rankranks.owner", pi.getDescription().get(0));
+        //assertEquals("protection.panel.flag-item.allowed-rankranks.owner", pi.getDescription().getFirst());
         assertTrue(pi.getClickHandler().isPresent());
         assertEquals("protection.panel.flag-item.name-layout", pi.getName());
     }

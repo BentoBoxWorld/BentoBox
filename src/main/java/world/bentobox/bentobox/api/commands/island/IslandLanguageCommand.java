@@ -31,7 +31,7 @@ public class IslandLanguageCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         if (args.size() == 1) {
             // The user provided a language code
-            Locale locale = Locale.forLanguageTag(args.get(0));
+            Locale locale = Locale.forLanguageTag(args.getFirst());
             if (getPlugin().getLocalesManager().isLocaleAvailable(locale)) {
                 // Check if that locale is not already selected
                 if (!user.getLocale().equals(locale)) {

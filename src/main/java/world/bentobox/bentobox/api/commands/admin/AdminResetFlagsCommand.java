@@ -44,8 +44,8 @@ public class AdminResetFlagsCommand extends ConfirmableCommand {
                 user.sendMessage("commands.admin.resetflags.success");
             });
             return true;
-        } else if (args.size() == 1 && options.contains(args.get(0).toUpperCase(Locale.ENGLISH))) {
-            getPlugin().getFlagsManager().getFlag(args.get(0).toUpperCase(Locale.ENGLISH)).ifPresent(flag ->
+        } else if (args.size() == 1 && options.contains(args.getFirst().toUpperCase(Locale.ENGLISH))) {
+            getPlugin().getFlagsManager().getFlag(args.getFirst().toUpperCase(Locale.ENGLISH)).ifPresent(flag ->
             askConfirmation(user, user.getTranslation("commands.admin.resetflags.confirm"), () -> {
                 getIslands().resetFlag(getWorld(), flag);
                 user.sendMessage("commands.admin.resetflags.success-one", TextVariables.NAME, flag.getID());

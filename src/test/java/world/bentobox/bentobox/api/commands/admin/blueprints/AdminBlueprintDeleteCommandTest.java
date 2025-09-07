@@ -167,7 +167,7 @@ public class AdminBlueprintDeleteCommandTest {
     public void testTabCompleteUserStringListOfString() {
         Optional<List<String>> o = abcc.tabComplete(user, "", List.of(""));
         assertTrue(o.isPresent());
-        assertEquals("key", o.get().get(0));
+        assertEquals("key", o.get().getFirst());
     }
 
 }

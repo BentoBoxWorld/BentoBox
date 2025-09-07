@@ -254,7 +254,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Note that we have no idea what type of List this is
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be only 1 long
-        Type setType = collectionTypes.get(0);
+        Type setType = collectionTypes.getFirst();
         // Create an empty list
         List<Object> value = new ArrayList<>();
         // Lists are stored as lists in YAML
@@ -271,7 +271,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Note that we have no idea what type this set is
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be only 1 long
-        Type setType = collectionTypes.get(0);
+        Type setType = collectionTypes.getFirst();
         // Create an empty set to fill
         Set<Object> value = new HashSet<>();
         // Sets are stored as a list in YAML
@@ -288,7 +288,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Note that we have no idea what type of map this is, so we need to find out
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be 2 long because there are two parameters in a Map (key, value)
-        Type keyType = collectionTypes.get(0);
+        Type keyType = collectionTypes.getFirst();
         Type valueType = collectionTypes.get(1);
         // Create a map that we'll put the values into
         Map<Object,Object> value = new HashMap<>();

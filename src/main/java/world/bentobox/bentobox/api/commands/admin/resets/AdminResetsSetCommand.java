@@ -28,7 +28,7 @@ public class AdminResetsSetCommand extends CompositeCommand {
             return false;
         }
 
-        UUID targetUUID = Util.getUUID(args.get(0));
+        UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
         } else if (!Util.isInteger(args.get(1), true) || Integer.parseInt(args.get(1)) <= 0) {
@@ -36,7 +36,7 @@ public class AdminResetsSetCommand extends CompositeCommand {
         } else {
             getPlayers().setResets(getWorld(), targetUUID, Integer.parseInt(args.get(1)));
             user.sendMessage("commands.admin.resets.set.success",
-                    TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1));
+                    TextVariables.NAME, args.getFirst(), TextVariables.NUMBER, args.get(1));
             return true;
         }
 

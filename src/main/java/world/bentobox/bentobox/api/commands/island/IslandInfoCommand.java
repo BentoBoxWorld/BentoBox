@@ -45,9 +45,9 @@ public class IslandInfoCommand extends CompositeCommand {
             return true;
         }
         // Get target player
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Get island

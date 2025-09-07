@@ -58,9 +58,9 @@ public class AdminTeleportUserCommand extends CompositeCommand {
             return false;
         }
         // Convert first name to a UUID
-        UUID teleportee = Util.getUUID(args.get(0));
+        UUID teleportee = Util.getUUID(args.getFirst());
         if (teleportee == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Check online
@@ -73,7 +73,7 @@ public class AdminTeleportUserCommand extends CompositeCommand {
         // Convert second name to a UUID
         targetUUID = Util.getUUID(args.get(1));
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
 

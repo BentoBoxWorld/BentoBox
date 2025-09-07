@@ -85,14 +85,14 @@ public class AdminSettingsCommand extends CompositeCommand {
     }
 
     private boolean getIsland(User user, List<String> args) {
-        if (args.get(0).equalsIgnoreCase(SPAWN_ISLAND) && getIslands().getSpawn(getWorld()).isPresent()) {
+        if (args.getFirst().equalsIgnoreCase(SPAWN_ISLAND) && getIslands().getSpawn(getWorld()).isPresent()) {
             island = getIslands().getSpawn(getWorld()).get();
             return true;
         }
         // Get target player
-        @Nullable UUID targetUUID = Util.getUUID(args.get(0));
+        @Nullable UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         island = getIslands().getIsland(getWorld(), targetUUID);
@@ -125,11 +125,11 @@ public class AdminSettingsCommand extends CompositeCommand {
     }
 
     private boolean checkWorldSetting(User user, List<String> args) {
-        String arg0 = args.get(0).toUpperCase(Locale.ENGLISH);
+        String arg0 = args.getFirst().toUpperCase(Locale.ENGLISH);
 
         if (worldSettingFlagNames.contains(arg0)) {
             if (checkActiveDisabled(user, args.get(1))) {
-                flag = getPlugin().getFlagsManager().getFlag(args.get(0).toUpperCase(Locale.ENGLISH));
+                flag = getPlugin().getFlagsManager().getFlag(args.getFirst().toUpperCase(Locale.ENGLISH));
                 return true;
             }
         } else {

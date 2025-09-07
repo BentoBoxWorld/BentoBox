@@ -66,7 +66,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
         int rank = Objects.requireNonNull(island).getRank(user);
 
-        return checkRankAndInvitePlayer(user, island, rank, args.get(0));
+        return checkRankAndInvitePlayer(user, island, rank, args.getFirst());
     }
 
     private boolean checkRankAndInvitePlayer(User user, Island island, int rank, String playerName) {

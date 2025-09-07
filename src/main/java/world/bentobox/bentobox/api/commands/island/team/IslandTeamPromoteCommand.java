@@ -63,9 +63,9 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         }
 
         // Get target
-        target = getPlayers().getUser(args.get(0));
+        target = getPlayers().getUser(args.getFirst());
         if (target == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Check that target is a member of this island

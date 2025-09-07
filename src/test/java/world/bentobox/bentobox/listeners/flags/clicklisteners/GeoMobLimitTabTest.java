@@ -112,7 +112,7 @@ public class GeoMobLimitTabTest {
         assertEquals("COW", list.get(3));
         assertEquals("BAT", list.get(2));
         assertEquals("AXOLOTL", list.get(1));
-        assertEquals("ARMADILLO", list.get(0));
+        assertEquals("ARMADILLO", list.getFirst());
 
         // Click on ARMADILLO
         tab.onClick(panel, user, ClickType.LEFT, 10);
@@ -120,13 +120,13 @@ public class GeoMobLimitTabTest {
         assertEquals(3, list.size());
         assertEquals("COW", list.get(2));
         assertEquals("BAT", list.get(1));
-        assertEquals("AXOLOTL", list.get(0));
+        assertEquals("AXOLOTL", list.getFirst());
         // Click on ARMADILLO again to have it added to the end of the list
         tab.onClick(panel, user, ClickType.LEFT, 10);
         assertEquals(4, list.size());
         assertEquals("COW", list.get(2));
         assertEquals("BAT", list.get(1));
-        assertEquals("AXOLOTL", list.get(0));
+        assertEquals("AXOLOTL", list.getFirst());
         assertEquals("ARMADILLO", list.get(3));
         verify(gma, times(2)).saveWorldSettings();
     }

@@ -52,9 +52,9 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
         }
 
         // Get target
-        targetUUID = Util.getUUID(args.get(0));
+        targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Check that user is on an island
@@ -66,7 +66,7 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
         island = opIsland.get();
         previousOwnerUUID = island.getOwner();
         if (targetUUID.equals(previousOwnerUUID)) {
-            user.sendMessage("commands.admin.team.setowner.already-owner", TextVariables.NAME, args.get(0));
+            user.sendMessage("commands.admin.team.setowner.already-owner", TextVariables.NAME, args.getFirst());
             return false;
         }
         return true;
@@ -77,12 +77,13 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
         Objects.requireNonNull(targetUUID);
 
         this.askConfirmation(user, user.getTranslation("commands.admin.team.setowner.confirmation", TextVariables.NAME,
-                args.get(0), TextVariables.XYZ, Util.xyz(island.getCenter().toVector())), () -> changeOwner(user));
+                args.getFirst(), TextVariables.XYZ, Util.xyz(island.getCenter().toVector())), () -> changeOwner(user));
         return true;
 
     }
 
     protected void changeOwner(User user) {
+        assert targetUUID != null;
         User target = User.getInstance(targetUUID);
         // Fire event so add-ons know
         // Call the setowner event
@@ -124,7 +125,7 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         List<String> options = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
         return Optional.of(Util.tabLimit(options, lastArg));
     }
