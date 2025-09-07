@@ -37,7 +37,7 @@ public abstract class AbstractAdminRangeCommand extends CompositeCommand {
 
         targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
 
@@ -47,7 +47,7 @@ public abstract class AbstractAdminRangeCommand extends CompositeCommand {
         }
         // Check if the player has more than one island
         Map<String, Island> islands = getIslandsXYZ(targetUUID);
-        if (islands.size() == 0) {
+        if (islands.isEmpty()) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         } else if (args.size() == 2) {
@@ -84,7 +84,7 @@ public abstract class AbstractAdminRangeCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
