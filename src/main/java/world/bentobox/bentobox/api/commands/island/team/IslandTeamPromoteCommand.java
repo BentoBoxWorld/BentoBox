@@ -104,6 +104,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
 
     private boolean change(User user, User target) {
         Island island = getIslands().getIsland(getWorld(), user);
+        assert island != null;
         int currentRank = island.getRank(target);
         if (this.getLabel().equals("promote")) {
             int nextRank = RanksManager.getInstance().getRankUpValue(currentRank);
