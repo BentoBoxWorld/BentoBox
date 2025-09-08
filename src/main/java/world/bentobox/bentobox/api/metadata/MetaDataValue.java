@@ -5,7 +5,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import com.google.gson.annotations.Expose;
 
 /**
- * Stores meta data value in a GSON friendly way so it can be serialized and deserialized.
+ * Stores metadata value in a GSON friendly way so it can be serialized and deserialized.
  * Values that are null are not stored in the database, so only the appropriate type is stored.
  * @author tastybento
  * @since 1.15.4
@@ -36,22 +36,17 @@ public class MetaDataValue {
      * @param value the value assigned to this metadata value
      */
     public MetaDataValue(@NonNull Object value) {
-        if (value instanceof Integer i) {
-            intValue = i;
-        } else if (value instanceof Float f) {
-            floatValue = f;
-        } else if (value instanceof Double d) {
-            doubleValue = d;
-        } else if (value instanceof Long l) {
-            longValue = l;
-        } else if (value instanceof Short s) {
-            shortValue = s;
-        } else if (value instanceof Byte b) {
-            byteValue = b;
-        } else if (value instanceof Boolean bo) {
-            booleanValue = bo;
-        } else if (value instanceof String st) {
-            stringValue = st;
+        switch (value) {
+            case Integer i -> intValue = i;
+            case Float f -> floatValue = f;
+            case Double d -> doubleValue = d;
+            case Long l -> longValue = l;
+            case Short s -> shortValue = s;
+            case Byte b -> byteValue = b;
+            case Boolean bo -> booleanValue = bo;
+            case String st -> stringValue = st;
+            default -> {
+            }
         }
     }
 

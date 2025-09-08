@@ -133,7 +133,7 @@ public class DefaultPasteUtil {
         // ItemFrames
         if (bs instanceof ItemFrame frame ) {
             if (!bpBlock.getInventory().isEmpty()) {
-                frame.setItem(bpBlock.getInventory().getFirst());
+                frame.setItem(bpBlock.getInventory().get(0));
                 bs.update();
             }
         } else
