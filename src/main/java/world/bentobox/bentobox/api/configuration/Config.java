@@ -85,7 +85,7 @@ public class Config<T> {
      * @param instance to save
      */
     public boolean saveConfigObject(T instance) {
-        // Set the addon (may be null)
+        // Set the addon (maybe null)
         handler.setAddon(addon);
         try {
             handler.saveObject(instance);
