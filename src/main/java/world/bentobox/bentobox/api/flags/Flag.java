@@ -303,7 +303,7 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * Get when sub-flags should be hidden
-     * @return 
+     * @return hideWhen
      */
     public HideWhen getHideWhen() {
         return hideWhen;
@@ -421,7 +421,7 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
-     * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
+     * Converts a flag to a panel item. The content of the flag will change depending on whom the user is and where they are.
      * @param plugin - plugin
      * @param user - user that will see this flag
      * @param world - the world this flag is being shown for. If island is present, then world is the same as the island.
