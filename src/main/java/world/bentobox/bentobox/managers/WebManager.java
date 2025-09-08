@@ -205,9 +205,9 @@ public class WebManager {
             List<Contributor> addonContributors = new LinkedList<>();
             for (GitHubContributor gitHubContributor : repo.getContributors()) {
                 addonContributors.add(
-                        new Contributor(gitHubContributor.getUsername(), gitHubContributor.getContributionsAmount()));
+                        new Contributor(gitHubContributor.username(), gitHubContributor.contributionsAmount()));
             }
-            contributors.put(repo.getFullName(), addonContributors);
+            contributors.put(repo.fullName(), addonContributors);
         } catch (Exception e) {
             // Silently fail
         }
