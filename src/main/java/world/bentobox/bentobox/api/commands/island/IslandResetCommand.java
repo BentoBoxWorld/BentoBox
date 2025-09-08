@@ -132,6 +132,7 @@ public class IslandResetCommand extends ConfirmableCommand {
         user.sendMessage("commands.island.create.creating-island");
         // Create new island and then delete the old one
         try {
+            assert oldIsland != null;
             Builder builder = NewIsland.builder().player(user).reason(Reason.RESET).addon(getAddon())
                     .oldIsland(oldIsland).name(name);
             if (noPaste)

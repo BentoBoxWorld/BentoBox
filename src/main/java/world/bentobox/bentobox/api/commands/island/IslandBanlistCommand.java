@@ -73,7 +73,7 @@ public class IslandBanlistCommand extends CompositeCommand {
         // Remove trailing comma
         line.setLength(line.length() - 2);
         // Add the final line if it is not empty
-        if (line.length() > 0) {
+        if (!line.isEmpty()) {
             lines.add(line.toString());
         }
         // Send the strings

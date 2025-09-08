@@ -75,6 +75,7 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        assert island != null;
         new ConversationFactory(BentoBox.getInstance())
         .withModality(true)
         .withLocalEcho(false)

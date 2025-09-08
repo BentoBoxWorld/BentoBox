@@ -30,7 +30,7 @@ public class IslandSettingsCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        if (Util.getWorld(user.getWorld()).equals(getWorld())) {
+        if (getWorld().equals(Util.getWorld(user.getWorld()))) {
             // Player is in same world
             island = getIslands().getIslandAt(user.getLocation()).orElseGet(() -> getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         } else {

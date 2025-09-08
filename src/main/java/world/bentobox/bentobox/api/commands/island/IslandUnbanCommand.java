@@ -80,6 +80,7 @@ public class IslandUnbanCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        assert targetUUID != null;
         User target = User.getInstance(targetUUID);
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
 
@@ -95,6 +96,7 @@ public class IslandUnbanCommand extends CompositeCommand {
             return false;
         }
         // Event is not cancelled
+        assert island != null;
         if (island.unban(user.getUniqueId(), target.getUniqueId())) {
             user.sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
             target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
