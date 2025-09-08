@@ -22,7 +22,7 @@ import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * Toggles a island setting on/off
+ * Toggles an island setting on/off
  * @author tastybento
  *
  */
