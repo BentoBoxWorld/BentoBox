@@ -59,8 +59,8 @@ import world.bentobox.bentobox.util.Util;
 public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     private final BentoBox plugin;
-    private Optional<FancyNpcsHook> npc;
-    private Optional<ZNPCsPlusHook> znpc;
+    private final Optional<FancyNpcsHook> npc;
+    private final Optional<ZNPCsPlusHook> znpc;
 
     protected CopyWorldRegenerator() {
         this.plugin = BentoBox.getInstance();
@@ -298,24 +298,28 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         BlockState b = toBlock.getState();
 
         // Signs
-        if (blockState instanceof Sign fromSign && b instanceof Sign toSign) {
-            for (Side side : Side.values()) {
-                writeSign(fromSign, toSign, side);
+        switch (blockState) {
+            case Sign fromSign when b instanceof Sign toSign -> {
+                for (Side side : Side.values()) {
+                    writeSign(fromSign, toSign, side);
+                }
             }
-        }
-        // Chests
-        else if (blockState instanceof InventoryHolder ih && b instanceof InventoryHolder toChest) {
-            toChest.getInventory().setContents(ih.getInventory().getContents());
-        }
-        // Spawner type
-        else if (blockState instanceof CreatureSpawner spawner && b instanceof CreatureSpawner toSpawner) {
-            toSpawner.setSpawnedType(spawner.getSpawnedType());
-        }
+            // Chests
+            case InventoryHolder ih when b instanceof InventoryHolder toChest ->
+                    toChest.getInventory().setContents(ih.getInventory().getContents());
 
-        // Banners
-        else if (blockState instanceof Banner banner && b instanceof Banner toBanner) {
-            toBanner.setBaseColor(banner.getBaseColor());
-            toBanner.setPatterns(banner.getPatterns());
+            // Spawner type
+            case CreatureSpawner spawner when b instanceof CreatureSpawner toSpawner ->
+                    toSpawner.setSpawnedType(spawner.getSpawnedType());
+
+
+            // Banners
+            case Banner banner when b instanceof Banner toBanner -> {
+                toBanner.setBaseColor(banner.getBaseColor());
+                toBanner.setPatterns(banner.getPatterns());
+            }
+            default -> {
+            }
         }
     }
 

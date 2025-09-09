@@ -22,7 +22,7 @@ import world.bentobox.bentobox.util.DefaultPasteUtil;
  */
 public interface PasteHandler {
 
-    static final BlockData AIR_BLOCKDATA = Bukkit.createBlockData(Material.AIR);
+    BlockData AIR_BLOCKDATA = Bukkit.createBlockData(Material.AIR);
     /**
      * Create a future to paste the blocks
      *
@@ -41,9 +41,9 @@ public interface PasteHandler {
 
     /**
      * Set the block at location to the block data
-     * @param location
-     * @param blockData
-     * @return
+     * @param location location
+     * @param blockData block data
+     * @return block
      */
     Block setBlock(Location location, BlockData blockData);
 

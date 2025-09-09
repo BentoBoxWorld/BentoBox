@@ -89,7 +89,7 @@ public class IslandCreationPanel extends AbstractPanel
      * @param command CompositeCommand object
      * @param label The main command label
      * @param user User who opens panel
-     * @param reset 
+     * @param reset true if this is a reset
      */
     private IslandCreationPanel(@NonNull CompositeCommand command,
             @NonNull User user, @NonNull String label, boolean reset)

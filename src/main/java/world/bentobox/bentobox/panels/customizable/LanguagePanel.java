@@ -268,7 +268,6 @@ public class LanguagePanel extends AbstractPanel
         }
 
         // Add ClickHandler
-        // Add ClickHandler
         builder.clickHandler((panel, user, clickType, i) ->
         {
             template.actions().forEach(action -> {
