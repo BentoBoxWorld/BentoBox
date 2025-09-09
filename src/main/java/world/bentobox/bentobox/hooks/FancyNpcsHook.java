@@ -125,7 +125,7 @@ public class FancyNpcsHook extends NPCHook {
         EntityType type = EntityType.valueOf(npcConfig.getString("type", "PLAYER").toUpperCase(Locale.ENGLISH));
 
             // Create the spawn location
-            Location location = null;
+            Location location;
             double x = pos.getBlockX();
             double y = pos.getBlockY();
             double z = pos.getBlockZ();
@@ -137,23 +137,8 @@ public class FancyNpcsHook extends NPCHook {
 
 
             String skinIdentifier = npcConfig.getString("skin.identifier", npcConfig.getString("skin.uuid", ""));
-            /*
-            if (npcConfig.isSet("skin.value") && npcConfig.isSet("skin.signature")) {
-            
-                String value = npcConfig.getString("skin.value");
-                String signature = npcConfig.getString("skin.signature");
-            
-                if (value != null && !value.isEmpty() && signature != null && !signature.isEmpty()) {
-                    skin = new SkinFetcher.SkinData(skinIdentifier, value, signature);
-                    SkinFetcher.SkinData oldSkinData = new SkinFetcher.SkinData(skinIdentifier, value, signature);
-                    SkinFetcher.skinCache.put(skinIdentifier, oldSkinData);
-                    FancyNpcsPlugin.get().getSkinCache().upsert(new SkinFetcher.SkinCacheData(oldSkinData,
-                            System.currentTimeMillis(), 1000 * 60 * 60 * 24));
-                }
-            }
-            */
 
-            boolean mirrorSkin = npcConfig.getBoolean("skin.mirrorSkin");
+        boolean mirrorSkin = npcConfig.getBoolean("skin.mirrorSkin");
 
             boolean showInTab = npcConfig.getBoolean("showInTab");
             boolean spawnEntity = npcConfig.getBoolean("spawnEntity");
@@ -232,7 +217,7 @@ public class FancyNpcsHook extends NPCHook {
                     .setGlowing(glowing).setGlowingColor(glowingColor).setType(type).setTurnToPlayer(turnToPlayer)
                     .setActions(actions).setInteractionCooldown(interactionCooldown).setScale(scale)
                     .setMirrorSkin(mirrorSkin);
-            attributes.forEach((k, v) -> data.addAttribute(k, v));
+            attributes.forEach(data::addAttribute);
 
             Npc npc = FancyNpcsPlugin.get().getNpcAdapter().apply(data);
 
@@ -283,7 +268,7 @@ public class FancyNpcsHook extends NPCHook {
      */
     @Override
     public void removeNPCsInChunk(Chunk chunk) {
-        getNPCsInChunk(chunk).forEach(npc -> npc.removeForAll());
+        getNPCsInChunk(chunk).forEach(Npc::removeForAll);
     }
 
     @Override
