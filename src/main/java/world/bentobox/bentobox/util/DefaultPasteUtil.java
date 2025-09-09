@@ -148,7 +148,7 @@ public class DefaultPasteUtil {
                 Inventory ih = holder.getInventory();
                 // Double chests are pasted as two blocks so inventory is filled twice.
                 // This code stops over-filling for the first block.
-                bpBlock.getInventory().forEach((slot, item) -> ih.setItem(slot, item));
+                bpBlock.getInventory().forEach(ih::setItem);
             }
         // Mob spawners
             else if (bs instanceof CreatureSpawner spawner) {
@@ -203,7 +203,7 @@ public class DefaultPasteUtil {
         World world = location.getWorld();
         assert world != null;
         return Util.getChunkAtAsync(location)
-                .thenRun(() -> list.stream().forEach(k -> spawnBlueprintEntity(k, location, island)));
+                .thenRun(() -> list.forEach(k -> spawnBlueprintEntity(k, location, island)));
     }
 
     /**

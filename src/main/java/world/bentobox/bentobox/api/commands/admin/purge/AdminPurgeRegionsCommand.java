@@ -226,8 +226,8 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
         // Phase 1: verify none of the files have been updated since the cutoff
         for (Pair<Integer, Integer> coords : deleteableRegions.keySet()) {
-            int x = coords.x;
-            int z = coords.z;
+            int x = coords.x();
+            int z = coords.z();
             String name = "r." + x + "." + z + ".mca";
 
             File owFile = new File(overworldRegion, name);
@@ -250,8 +250,8 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
         // Phase 2: perform deletions
         for (Pair<Integer, Integer> coords : deleteableRegions.keySet()) {
-            int x = coords.x;
-            int z = coords.z;
+            int x = coords.x();
+            int z = coords.z();
             String name = "r." + x + "." + z + ".mca";
 
             boolean allDeleted = true;
@@ -368,7 +368,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     }
 
     private void displayEmptyRegion(Pair<Integer, Integer> region) {
-        getPlugin().log("Empty region at r." + region.x + "." + region.z + " in world " + getWorld().getName() + " will be deleted (no islands)");
+        getPlugin().log("Empty region at r." + region.x() + "." + region.z() + " in world " + getWorld().getName() + " will be deleted (no islands)");
     }
 
     /**
@@ -525,8 +525,8 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         Map<Pair<Integer, Integer>, Set<String>> regionToIslands = new HashMap<>();
 
         for (Pair<Integer, Integer> region : oldRegions) {
-            int rX = region.x;
-            int rZ = region.z;
+            int rX = region.x();
+            int rZ = region.z();
 
             int regionMinX = rX * BLOCKS_PER_REGION;
             int regionMinZ = rZ * BLOCKS_PER_REGION;

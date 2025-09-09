@@ -797,7 +797,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return true or false
      */
     public boolean inIslandSpace(Pair<Integer, Integer> blockCoordinates) {
-        return inIslandSpace(blockCoordinates.x, blockCoordinates.z);
+        return inIslandSpace(blockCoordinates.x(), blockCoordinates.z());
     }
 
     /**
