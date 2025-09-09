@@ -158,7 +158,7 @@ public interface DatabaseSetup {
          */
         POSTGRESQL2JSON(new PostgreSQL2JsonDatabase());
 
-        DatabaseSetup database;
+        final DatabaseSetup database;
 
         DatabaseType(DatabaseSetup database){
             this.database = database;

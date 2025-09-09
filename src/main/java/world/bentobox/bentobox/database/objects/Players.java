@@ -56,7 +56,7 @@ public class Players implements DataObject, MetaDataAble {
     private Flag.Mode flagsDisplayMode = Flag.Mode.BASIC;
 
     /**
-     * A place to store meta data for this player.
+     * A place to store metadata for this player.
      * @since 1.15.4
      */
     @Expose
@@ -195,7 +195,7 @@ public class Players implements DataObject, MetaDataAble {
      * @param world - world
      */
     public void addReset(World world) {
-        resets.merge(world.getName(), 1, (oldValue, newValue) -> Integer.valueOf(oldValue + newValue));
+        resets.merge(world.getName(), 1, Integer::sum);
     }
 
     /**
