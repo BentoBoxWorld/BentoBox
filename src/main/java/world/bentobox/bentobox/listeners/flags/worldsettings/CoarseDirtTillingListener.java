@@ -60,7 +60,7 @@ public class CoarseDirtTillingListener extends FlagListener {
     /**
      * If podzol is mined when coarse dirt tilling is not allowed, then it'll just drop podzol and not dirt
      * This prevents an exploit where growing big spruce trees can turn gravel into podzol.
-     * https://github.com/BentoBoxWorld/BentoBox/issues/613
+     * <a href="https://github.com/BentoBoxWorld/BentoBox/issues/613">...</a>
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
