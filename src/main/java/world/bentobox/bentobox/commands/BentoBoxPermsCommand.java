@@ -51,7 +51,7 @@ public class BentoBoxPermsCommand extends CompositeCommand {
     }
 
     private void printData(User user, CompositeCommand cc, String label) {
-        if (cc.getPermission().isBlank()) return;
+        if (cc.getPermission() == null || cc.getPermission().isBlank()) return;
         String desc = user.getTranslation(cc.getWorld(), cc.getDescription());
         user.sendRawMessage("  " + cc.getPermission() + ":");
         user.sendRawMessage("    description: Allow use of '/" + label + "' command - " + desc);

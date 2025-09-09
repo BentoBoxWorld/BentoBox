@@ -114,9 +114,7 @@ public class BentoBoxRankCommand extends CompositeCommand {
 
     private void showRanks(User user) {
         user.sendMessage("commands.bentobox.rank.list");
-        RanksManager.getInstance().getRanks().forEach((ref, rank) -> {
-            user.sendRawMessage(user.getTranslation(ref) + ": " + ref + " " + String.valueOf(rank));
-        });
+        RanksManager.getInstance().getRanks().forEach((ref, rank) -> user.sendRawMessage(user.getTranslation(ref) + ": " + ref + " " + rank));
 
     }
 
