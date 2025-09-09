@@ -284,7 +284,7 @@ public class BlueprintsManager {
     }
 
     /**
-     * This should never be needed and is just a boot strap
+     * This should never be needed and is just a bootstrap
      *
      * @param addon addon
      */

@@ -104,22 +104,20 @@ public class JoinLeaveListener implements Listener {
         plugin.getMetrics().ifPresent(bStats -> bStats.addPlayer(playerUUID));
 
         // Create onIsland placeholders
-        plugin.getAddonsManager().getGameModeAddons().forEach(addon -> {
-            plugin.getPlaceholdersManager()
-                    .registerPlaceholder(addon, "onisland_" + user.getName(), asker -> {
-                        if (asker == null) {
-                            return "";
-                        }
-                        // Get the user who this applies to
-                        User named = User.getInstance(user.getUniqueId());
-                        if (named.isOnline()) {
-                            return plugin.getIslands().getIslands(addon.getOverWorld(), asker).stream()
-                                    .filter(island -> island.onIsland(named.getLocation())).findFirst().map(i -> "true")
-                                    .orElse("false");
-                        }
-                        return "false";
-                    });
-        });
+        plugin.getAddonsManager().getGameModeAddons().forEach(addon -> plugin.getPlaceholdersManager()
+                .registerPlaceholder(addon, "onisland_" + user.getName(), asker -> {
+                    if (asker == null) {
+                        return "";
+                    }
+                    // Get the user who this applies to
+                    User named = User.getInstance(user.getUniqueId());
+                    if (named.isOnline()) {
+                        return plugin.getIslands().getIslands(addon.getOverWorld(), asker).stream()
+                                .filter(island -> island.onIsland(named.getLocation())).findFirst().map(i -> "true")
+                                .orElse("false");
+                    }
+                    return "false";
+                }));
     }
 
     private void updateIslandMaxTeamAndHomeSize(User user) {
@@ -188,7 +186,7 @@ public class JoinLeaveListener implements Listener {
 
     /**
      * This method clears player inventory and ender chest if given world is
-     * quarantined in user data file and it is required by plugin settings.
+     * quarantined in user data file, and it is required by plugin settings.
      * 
      * @param world World where cleaning must occur.
      * @param user  Targeted user.

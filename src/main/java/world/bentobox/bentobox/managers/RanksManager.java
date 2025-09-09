@@ -71,12 +71,12 @@ public class RanksManager {
         handler = new Database<>(BentoBox.getInstance(), Ranks.class);
         if (!handler.objectExists("BentoBox-Ranks")) {
             // Make the initial object
-            DEFAULT_RANKS.forEach((ref, rank) -> ranksPut(ref, rank));
+            DEFAULT_RANKS.forEach(this::ranksPut);
             save();
         } else {
             // Load the ranks from the database
             Objects.requireNonNull(handler.loadObject("BentoBox-Ranks")).getRankReference()
-                    .forEach((rankRef, rankValue) -> ranksPut(rankRef, rankValue));
+                    .forEach(this::ranksPut);
         }
 
     }

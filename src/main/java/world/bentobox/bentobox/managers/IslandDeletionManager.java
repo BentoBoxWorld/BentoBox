@@ -46,7 +46,7 @@ public class IslandDeletionManager implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
-        // Load list of islands that were mid deletion and delete them
+        // Load list of islands that were mid-deletion and delete them
         List<IslandDeletion> toBeDeleted = handler.loadObjects();
         List<IslandDeletion> toBeRemoved = new ArrayList<>();
         if (!toBeDeleted.isEmpty()) {

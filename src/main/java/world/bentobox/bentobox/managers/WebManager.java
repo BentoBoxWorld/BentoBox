@@ -51,7 +51,7 @@ public class WebManager {
         this.gamemodesCatalog = new ArrayList<>();
         this.contributors = new HashMap<>();
 
-        // Setup the GitHub connection
+        // Set up the GitHub connection
         if (plugin.getSettings().isGithubDownloadData()) {
             this.gitHub = new GitHubWebAPI();
 
@@ -214,7 +214,7 @@ public class WebManager {
     }
 
     /**
-     * Returns the contents of the addons catalog (may be an empty list).
+     * Returns the contents of the addons catalog (maybe an empty list).
      * 
      * @return the contents of the addons catalog.
      * @since 1.5.0
@@ -225,7 +225,7 @@ public class WebManager {
     }
 
     /**
-     * Returns the contents of the gamemodes catalog (may be an empty list).
+     * Returns the contents of the gamemodes catalog (maybe an empty list).
      * 
      * @return the contents of the gamemodes catalog.
      * @since 1.5.0

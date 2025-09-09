@@ -387,7 +387,7 @@ public class AddonsManager {
      */
     public void removeSeedWorlds() {
         plugin.log("Removing temporary seed worlds...");
-        this.getGameModeAddons().stream().filter(gm -> gm.isUsesNewChunkGeneration()).forEach(gameMode -> {
+        this.getGameModeAddons().stream().filter(GameModeAddon::isUsesNewChunkGeneration).forEach(gameMode -> {
             plugin.log("Removing " + gameMode.getDescription().getName());
             if (gameMode.getOverWorld() != null) {
                 plugin.log("Removing " + gameMode.getOverWorld().getName() + BENTOBOX);
@@ -715,7 +715,7 @@ public class AddonsManager {
 
     /**
      * Get the world generator if it exists
-     * @param worldName - name of world - case insensitive
+     * @param worldName - name of world - case-insensitive
      * @param id - specific generator id
      * @return ChunkGenerator or null if none found
      * @since 1.2.0
@@ -776,18 +776,12 @@ public class AddonsManager {
             loaders.remove(addon);
         }
         // Disable pladdons
-        /*
-        if (pladdons.containsKey(addon)) {
-            this.pluginLoader.disablePlugin(Objects.requireNonNull(this.pladdons.get(addon)));
-            pladdons.remove(addon);
-        }
-         */
         // Remove it from the addons list
         addons.remove(addon);
     }
 
     /*
-     * Get a unmodifiable list of addon classes that are of type {@link DataObject}
+     * Get an unmodifiable list of addon classes that are of type {@link DataObject}
      * but not {@link ConfigObject}. Configs are not transitioned to database.
      * Used in database transition.
      * @return list of DataObjects
