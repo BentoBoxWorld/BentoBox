@@ -124,6 +124,11 @@ public class OraxenHook extends Hook {
     public static Mechanic getOraxenBlock(Location location) {
         return OraxenBlocks.getOraxenBlock(location);
     }
+    
+    public static String getOraxenBlockID(Location location) {
+        Mechanic m = getOraxenBlock(location);
+        return m == null ? null : m.getItemID();
+    }
 
     public static Mechanic getOraxenBlock(BlockData blockData) {
         return OraxenBlocks.getOraxenBlock(blockData);
