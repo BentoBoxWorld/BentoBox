@@ -34,6 +34,7 @@ import world.bentobox.bentobox.hooks.MultiverseCore4Hook;
 import world.bentobox.bentobox.hooks.MultiverseCore5Hook;
 import world.bentobox.bentobox.hooks.MyWorldsHook;
 import world.bentobox.bentobox.hooks.MythicMobsHook;
+import world.bentobox.bentobox.hooks.OraxenHook;
 import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
@@ -257,6 +258,9 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // Register ItemsAdder
         hooksManager.registerHook(new ItemsAdderHook(this));
+        
+        // Register Oraxen
+        hooksManager.registerHook(new OraxenHook(this));
 
         // TODO: re-enable after implementation
         //hooksManager.registerHook(new DynmapHook());
