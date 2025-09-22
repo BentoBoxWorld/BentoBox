@@ -63,8 +63,8 @@ public class OraxenHook extends Hook {
      *
      * @param location The location of the OraxenBlock
      */
-    public void clearBlockInfo(Location location) {
-        OraxenBlocks.remove(location, null); // Null player
+    public static void clearBlockInfo(Location location) {
+        OraxenBlocks.remove(location, null, null); // Null player
     }
 
     /**
