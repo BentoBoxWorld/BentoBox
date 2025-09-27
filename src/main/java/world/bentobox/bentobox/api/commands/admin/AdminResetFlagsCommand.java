@@ -19,11 +19,22 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminResetFlagsCommand extends ConfirmableCommand {
 
-    private final List<String> options;
+    private List<String> options;
 
     public AdminResetFlagsCommand(CompositeCommand parent) {
         super(parent, "resetflags");
-        options = getPlugin().getFlagsManager().getFlags().stream()
+    }
+
+    private List<String> getOptions() {
+        if (this.options == null) {
+            updateOptions();
+        }
+        return this.options;
+    }
+
+    private void updateOptions() {
+        this.getPlugin().getLogger().info("Generating flag options");
+        this.options = getPlugin().getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(Type.PROTECTION) || f.getType().equals(Type.SETTING))
                 .map(Flag::getID).toList();
     }
@@ -44,7 +55,7 @@ public class AdminResetFlagsCommand extends ConfirmableCommand {
                 user.sendMessage("commands.admin.resetflags.success");
             });
             return true;
-        } else if (args.size() == 1 && options.contains(args.get(0).toUpperCase(Locale.ENGLISH))) {
+        } else if (args.size() == 1 && getOptions().contains(args.get(0).toUpperCase(Locale.ENGLISH))) {
             getPlugin().getFlagsManager().getFlag(args.get(0).toUpperCase(Locale.ENGLISH)).ifPresent(flag ->
             askConfirmation(user, user.getTranslation("commands.admin.resetflags.confirm"), () -> {
                 getIslands().resetFlag(getWorld(), flag);
@@ -60,6 +71,6 @@ public class AdminResetFlagsCommand extends ConfirmableCommand {
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        return Optional.of(Util.tabLimit(options, lastArg));
+        return Optional.of(Util.tabLimit(getOptions(), lastArg));
     }
 }
