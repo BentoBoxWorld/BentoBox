@@ -33,7 +33,7 @@ public class AdminResetFlagsCommand extends ConfirmableCommand {
     }
 
     private void updateOptions() {
-        this.getPlugin().getLogger().info("Generating flag options");
+        this.getPlugin().log("Generating flag options");
         this.options = getPlugin().getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(Type.PROTECTION) || f.getType().equals(Type.SETTING))
                 .map(Flag::getID).toList();
