@@ -16,10 +16,28 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * Handle promotion and demotion
+ * Command that handles promoting and demoting team members within an island team hierarchy.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Promotes/demotes team members between ranks</li>
+ *   <li>Validates permissions and rank requirements</li>
+ *   <li>Prevents invalid rank changes (self-promotion, promoting above own rank)</li>
+ *   <li>Fires rank change events</li>
+ * </ul>
+ * <p>
+ * This command supports both promotion and demotion through the same code base,
+ * differentiating behavior based on the command label ("promote" or "demote").
+ * Rank changes are restricted:
+ * <ul>
+ *   <li>Promotions stop short of Owner rank</li>
+ *   <li>Demotions cannot go below Member rank</li>
+ *   <li>Cannot promote/demote players of equal or higher rank</li>
+ * </ul>
  */
 public class IslandTeamPromoteCommand extends CompositeCommand {
 
+    /** The target player for promotion/demotion */
     private User target;
 
     public IslandTeamPromoteCommand(CompositeCommand islandTeamCommand, String string) {
@@ -41,6 +59,18 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
     }
 
 
+    /**
+     * Validates command execution conditions.
+     * Checks:
+     * <ul>
+     *   <li>Correct number of arguments</li>
+     *   <li>User is in a team</li>
+     *   <li>User has sufficient rank</li>
+     *   <li>Target exists and is team member</li>
+     *   <li>Not trying to promote/demote self</li>
+     *   <li>Target's rank is lower than user's</li>
+     * </ul>
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         // If args are not right, show help
@@ -97,11 +127,20 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         return true;
     }
 
-    @Override
-    public boolean execute(User user, String label, List<String> args) {
-        return change(user, target);
-    }
-
+    /**
+     * Handles the rank change logic.
+     * For promotion:
+     * - Increases rank but stays below owner
+     * - Must be at least member rank
+     * For demotion:
+     * - Decreases rank but not below member
+     * 
+     * Fires IslandEvent.Reason.RANK_CHANGE on success
+     * 
+     * @param user command issuer
+     * @param target player being promoted/demoted
+     * @return true if rank change successful, false otherwise
+     */
     private boolean change(User user, User target) {
         Island island = getIslands().getIsland(getWorld(), user);
         int currentRank = island.getRank(target);
@@ -148,6 +187,10 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         }
     }
 
+    /**
+     * Provides tab completion for team member names.
+     * Only shows members of the user's island.
+     */
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         Island island = getIslands().getIsland(getWorld(), user);

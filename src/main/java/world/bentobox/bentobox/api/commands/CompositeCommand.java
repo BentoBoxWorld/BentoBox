@@ -34,105 +34,109 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * BentoBox composite command. Provides an abstract implementation of a command.
+ * The foundation for BentoBox's command system, implementing a composite pattern
+ * for nested command hierarchies.
+ * <p>
+ * Key features:
+ * <ul>
+ *   <li>Hierarchical command structure (commands can have sub-commands)</li>
+ *   <li>Permission management with inheritance</li>
+ *   <li>Player/Console restrictions</li>
+ *   <li>Tab completion</li>
+ *   <li>Cooldown system</li>
+ *   <li>Configurable rank requirements</li>
+ *   <li>World-specific command handling</li>
+ * </ul>
+ * <p>
+ * Example usage:
+ * <pre>
+ * public class MyCommand extends CompositeCommand {
+ *     public MyCommand(Addon addon) {
+ *         super(addon, "mycommand", "alias1", "alias2");
+ *     }
+ *     
+ *     &#64;Override
+ *     public void setup() {
+ *         setDescription("commands.mycommand.description");
+ *         setOnlyPlayer(true);
+ *         // Add sub-commands here
+ *         new MySubCommand(this);
+ *     }
+ *     
+ *     &#64;Override
+ *     public boolean execute(User user, String label, List&lt;String&gt; args) {
+ *         // Command implementation
+ *         return true;
+ *     }
+ * }
+ * </pre>
  * 
  * @author tastybento
  * @author Poslovitch
+ * @since 1.0
  */
 public abstract class CompositeCommand extends Command implements PluginIdentifiableCommand, BentoBoxCommand {
 
+    /** Prefix for localization keys for commands */
     private static final String COMMANDS = "commands.";
 
+    /** Reference to the main plugin */
     private final BentoBox plugin;
 
     /**
-     * True if the command is for the player only (not for the console)
+     * Controls command execution restrictions:
+     * - onlyPlayer: Command can only be used by players
+     * - onlyConsole: Command can only be used by console
+     * - configurableRankCommand: Command's required rank can be configured
+     * - hidden: Command is hidden from help and tab completion
      */
     private boolean onlyPlayer = false;
-
-    /**
-     * True if the command is only for the console
-     * 
-     * @since 1.24.0
-     */
     private boolean onlyConsole = false;
-
-    /**
-     * True if command is a configurable rank
-     */
     private boolean configurableRankCommand = false;
-
-    /**
-     * Make default command rank as owner rank.
-     * 
-     * @since 1.20.0
-     */
-    private int defaultCommandRank = RanksManager.OWNER_RANK;
-
-    /**
-     * True if command is hidden from help and tab complete
-     * 
-     * @since 1.13.0
-     */
     private boolean hidden = false;
 
     /**
-     * The parameters string for this command. It is the commands followed by a
-     * locale reference.
+     * Command metadata:
+     * - parameters: Localization key for command parameters
+     * - permission: Permission node required to use this command
+     * - defaultCommandRank: Default rank required if command is rank-configurable
      */
     private String parameters = "";
+    private String permission = "";
+    private int defaultCommandRank = RanksManager.OWNER_RANK;
+
     /**
-     * The parent command to this one. If this is a top-level command it will be
-     * empty.
+     * Command hierarchy management:
+     * - parent: Parent command (null for top-level commands)
+     * - subCommandLevel: Depth in command tree (0 for top-level)
+     * - subCommands: Map of direct sub-commands by label
+     * - subCommandAliases: Map of sub-command aliases
+     * - usage: Full command usage string including parent chain
+     * - topLabel: The root command's label
      */
     protected final CompositeCommand parent;
-    /**
-     * The permission required to execute this command
-     */
-    private String permission = "";
-    /**
-     * This is the command level. 0 is the top, 1 is the first level sub command.
-     */
     private final int subCommandLevel;
-    /**
-     * Map of sub commands
-     */
     private final Map<String, CompositeCommand> subCommands;
-
-    /**
-     * Map of aliases for subcommands
-     */
     private final Map<String, CompositeCommand> subCommandAliases;
-    /**
-     * The command chain from the very top, e.g., island team promote
-     */
     private String usage;
-
-    /**
-     * The prefix to be used in this command
-     */
-    @Nullable
-    private final String permissionPrefix;
-
-    /**
-     * The world that this command operates in. This is an overworld and will cover
-     * any associated nether or end If the world value does not exist, then the
-     * command is general across worlds
-     */
-    private World world;
-
-    /**
-     * The addon creating this command, if any
-     */
-    private final Addon addon;
-
-    /**
-     * The top level label
-     */
     private final String topLabel;
 
     /**
-     * Cool down tracker
+     * Command context:
+     * - permissionPrefix: Prefix for permission nodes (from addon)
+     * - world: World this command operates in (null for global)
+     * - addon: The addon that owns this command
+     */
+    @Nullable
+    private final String permissionPrefix;
+    private World world;
+    private final Addon addon;
+
+    /**
+     * Cooldown system:
+     * Outer map: User ID → Inner map
+     * Inner map: Target ID → Expiration timestamp
+     * Target ID can be null for non-targeted cooldowns
      */
     private final Map<String, Map<String, Long>> cooldowns = new HashMap<>();
 

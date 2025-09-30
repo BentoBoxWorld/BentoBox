@@ -13,12 +13,30 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * Tells the players which islands are near to them
+ * Handles the island near command (/island near).
+ * <p>
+ * This command shows information about neighboring islands in the four cardinal directions
+ * (North, East, South, West) at a distance of twice the island spacing.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Compass-based neighbor detection</li>
+ *   <li>Shows island names or owner names</li>
+ *   <li>Handles unowned islands</li>
+ *   <li>Supports localization for directions</li>
+ * </ul>
+ * <p>
+ * Permission: {@code island.near}
+ *
  * @author tastybento
  * @since 1.5.0
  */
 public class IslandNearCommand extends CompositeCommand {
 
+    /**
+     * The cardinal directions to check for neighboring islands.
+     * Order determines the display order in the command output.
+     */
     private static final List<BlockFace> COMPASS_POINTS = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
 
     public IslandNearCommand(CompositeCommand islandCommand) {
@@ -49,6 +67,16 @@ public class IslandNearCommand extends CompositeCommand {
         return true;
     }
 
+    /**
+     * Checks neighboring islands in all cardinal directions.
+     * <p>
+     * For each direction:
+     * <ul>
+     *   <li>Checks a location at 2x island distance</li>
+     *   <li>Gets island at that location</li>
+     *   <li>Displays name or owner of found islands</li>
+     * </ul>
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Get coordinates around island
@@ -77,6 +105,17 @@ public class IslandNearCommand extends CompositeCommand {
         return true;
     }
 
+    /**
+     * Gets the display name for an island.
+     * Priority:
+     * 1. Custom island name
+     * 2. "Unowned" for unowned islands
+     * 3. Owner's name
+     *
+     * @param user The user executing the command
+     * @param island The island to get the name for
+     * @return The display name for the island
+     */
     private String getName(User user, Island island) {
         if (island.getName() != null && !island.getName().isEmpty()) {
             return island.getName();

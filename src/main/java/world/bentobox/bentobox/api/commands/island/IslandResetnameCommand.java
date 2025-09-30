@@ -11,8 +11,23 @@ import world.bentobox.bentobox.managers.RanksManager;
 
 
 /**
- * @author tastybento
+ * Handles the island reset name command (/island resetname).
+ * <p>
+ * This command removes the custom name from an island, reverting it
+ * to the default naming scheme. It requires the same permission as
+ * the name command and appropriate rank to execute.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Configurable rank requirement</li>
+ *   <li>Permission inheritance from name command</li>
+ *   <li>Immediate name removal</li>
+ * </ul>
+ * <p>
+ * Permission: {@code island.name}
  *
+ * @author tastybento
+ * @since 1.0
  */
 public class IslandResetnameCommand extends CompositeCommand {
 
@@ -28,6 +43,15 @@ public class IslandResetnameCommand extends CompositeCommand {
     }
 
 
+    /**
+     * Validates command execution conditions.
+     * <p>
+     * Checks:
+     * <ul>
+     *   <li>Player has an island</li>
+     *   <li>Player has sufficient rank</li>
+     * </ul>
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args)
     {
@@ -50,6 +74,10 @@ public class IslandResetnameCommand extends CompositeCommand {
     }
 
 
+    /**
+     * Removes the custom name from the island.
+     * Sets the island name to null, which reverts it to the default naming scheme.
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
 

@@ -16,14 +16,32 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * Command to coop another player
- * 
- * @author tastybento
+ * Handles the island team coop command (/island team coop).
+ * <p>
+ * This command allows island members to grant temporary cooperative access
+ * to other players. Coop members have limited permissions on the island
+ * but are not full team members.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Configurable rank requirement</li>
+ *   <li>Cooldown system</li>
+ *   <li>Optional invite confirmation</li>
+ *   <li>Maximum coop member limit</li>
+ *   <li>Tab completion for online players</li>
+ * </ul>
+ * <p>
+ * Permission: {@code island.team.coop}
  *
+ * @author tastybento
+ * @since 1.0
  */
 public class IslandTeamCoopCommand extends CompositeCommand {
 
+    /** Reference to parent team command for invite handling */
     private final IslandTeamCommand itc;
+    
+    /** Cached UUID of target player to coop */
     private @Nullable UUID targetUUID;
 
     public IslandTeamCoopCommand(IslandTeamCommand parentCommand) {
@@ -40,6 +58,21 @@ public class IslandTeamCoopCommand extends CompositeCommand {
         setConfigurableRankCommand();
     }
 
+    /**
+     * Validates coop command execution conditions.
+     * <p>
+     * Checks:
+     * <ul>
+     *   <li>Correct argument count</li>
+     *   <li>Player has an island</li>
+     *   <li>Player has sufficient rank</li>
+     *   <li>Target player exists</li>
+     *   <li>Cooldown expired</li>
+     *   <li>Not trying to coop self</li>
+     *   <li>Target not already cooped</li>
+     *   <li>No pending invite exists</li>
+     * </ul>
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         if (args.size() != 1) {
@@ -90,6 +123,15 @@ public class IslandTeamCoopCommand extends CompositeCommand {
         return true;
     }
 
+    /**
+     * Handles the coop process based on settings.
+     * <p>
+     * Two possible flows:
+     * <ul>
+     *   <li>With confirmation: Sends invite that must be accepted</li>
+     *   <li>Without confirmation: Immediately grants coop rank if space available</li>
+     * </ul>
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
         User target = User.getInstance(targetUUID);
@@ -127,6 +169,10 @@ public class IslandTeamCoopCommand extends CompositeCommand {
         }
     }
 
+    /**
+     * Provides tab completion for online player names.
+     * Requires at least one character to avoid showing all players.
+     */
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";

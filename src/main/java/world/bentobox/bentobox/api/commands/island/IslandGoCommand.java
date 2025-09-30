@@ -19,7 +19,26 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
 /**
+ * Handles the island teleport command (/island go).
+ * <p>
+ * This command teleports players to their islands or specific island homes.
+ * Extends {@link DelayedTeleportCommand} to provide a configurable delay
+ * before teleporting to prevent abuse.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Multiple home locations support</li>
+ *   <li>Named homes and islands</li>
+ *   <li>Teleport delay and cancellation on movement</li>
+ *   <li>Fall protection (prevents teleporting while falling)</li>
+ *   <li>Reserved island handling</li>
+ * </ul>
+ * <p>
+ * Aliases: go, home, h
+ * Permission: {@code island.home}
+ *
  * @author tastybento
+ * @since 1.0
  */
 public class IslandGoCommand extends DelayedTeleportCommand {
 
@@ -35,6 +54,17 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         setDescription("commands.island.go.description");
     }
 
+    /**
+     * Validates command execution conditions.
+     * <p>
+     * Checks:
+     * <ul>
+     *   <li>Not already in teleport process</li>
+     *   <li>Has at least one island</li>
+     *   <li>Island is not reserved</li>
+     *   <li>Not falling (if PREVENT_TELEPORT_WHEN_FALLING flag is set)</li>
+     * </ul>
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         // Check if mid-teleport
@@ -62,6 +92,13 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         return true;
     }
 
+    /**
+     * Handles the teleport process.
+     * <p>
+     * If no arguments are provided, teleports to the default home.
+     * If arguments are provided, attempts to teleport to the named home or island.
+     * Sets the teleported island as the primary island for the user.
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
         Map<String, IslandInfo> names = getNameIslandMap(user, getWorld());
@@ -96,6 +133,14 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         return true;
     }
 
+    /**
+     * Checks if any of the user's islands are reserved.
+     * If a reserved island is found, redirects the user to island creation.
+     *
+     * @param user The user to check
+     * @param islands List of islands to check
+     * @return true if any island is reserved
+     */
     private boolean checkReserved(User user, List<Island> islands) {
         for (Island island : islands) {
             if (island.isReserved()) {
@@ -107,21 +152,25 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         return false;
     }
 
-
-    @Override
-    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-
-        return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(user, getWorld()).keySet()), lastArg));
-
-    }
-
     /**
-     * Record of islands and the name to type
+     * Record to store island information and whether the name refers to
+     * an island name or a home location.
      */
     public record IslandInfo(Island island, boolean islandName) {
     }
 
+    /**
+     * Creates a mapping of valid teleport destination names for a user.
+     * Includes:
+     * <ul>
+     *   <li>Island names (with index if unnamed)</li>
+     *   <li>Home location names</li>
+     * </ul>
+     *
+     * @param user The user whose destinations to map
+     * @param world The world to check
+     * @return Map of destination names to island information
+     */
     public static Map<String, IslandInfo> getNameIslandMap(User user, World world) {
         Map<String, IslandInfo> islandMap = new HashMap<>();
         int index = 0;

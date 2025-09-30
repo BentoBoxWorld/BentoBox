@@ -20,8 +20,36 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
+/**
+ * Handles the island ban command, which allows island owners and team members
+ * to ban players from their island.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Configurable rank requirement</li>
+ *   <li>Ban limits based on permissions</li>
+ *   <li>Cooldown system</li>
+ *   <li>Protection against banning team members</li>
+ *   <li>Admin protection (cannot ban ops or admins)</li>
+ *   <li>Automatic teleport of banned online players</li>
+ * </ul>
+ * <p>
+ * Permission: {@code island.ban}
+ * <br>
+ * Sub-permissions:
+ * <ul>
+ *   <li>{@code island.ban.maxlimit.[number]} - Sets maximum number of bans</li>
+ *   <li>{@code admin.noban} - Prevents player from being banned</li>
+ * </ul>
+ * 
+ * @author tastybento
+ * @since 1.0
+ */
 public class IslandBanCommand extends CompositeCommand {
 
+    /**
+     * Cached target player to ban, set during canExecute and used in execute.
+     */
     private @Nullable User target;
 
     public IslandBanCommand(CompositeCommand islandCommand) {
@@ -37,6 +65,22 @@ public class IslandBanCommand extends CompositeCommand {
         setConfigurableRankCommand();
     }
 
+    /**
+     * Checks if the command can be executed by this user.
+     * <p>
+     * Validation checks:
+     * <ul>
+     *   <li>Correct number of arguments</li>
+     *   <li>Player has an island or is in a team</li>
+     *   <li>Player has sufficient rank</li>
+     *   <li>Target player exists</li>
+     *   <li>Player isn't trying to ban themselves</li>
+     *   <li>Target isn't a team member</li>
+     *   <li>Target isn't already banned</li>
+     *   <li>Ban cooldown has expired</li>
+     *   <li>Target isn't an op or admin</li>
+     * </ul>
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         if (args.size() != 1) {
@@ -90,12 +134,32 @@ public class IslandBanCommand extends CompositeCommand {
         return true;
     }
 
+    /**
+     * Executes the ban after all checks have passed.
+     * Delegates to the {@link #ban(User, User)} method.
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Finished error checking - start the banning
         return ban(user, target);
     }
 
+    /**
+     * Performs the actual ban operation.
+     * <p>
+     * Process:
+     * <ul>
+     *   <li>Checks ban limit</li>
+     *   <li>Fires ban event (cancellable)</li>
+     *   <li>Applies the ban</li>
+     *   <li>Notifies both parties</li>
+     *   <li>Teleports banned player if online and on island</li>
+     * </ul>
+     *
+     * @param issuer The player issuing the ban
+     * @param target The player being banned
+     * @return true if the ban was successful, false otherwise
+     */
     private boolean ban(@NonNull User issuer, User target) {
         Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), issuer.getUniqueId()));
 
@@ -132,6 +196,17 @@ public class IslandBanCommand extends CompositeCommand {
         return false;
     }
 
+    /**
+     * Provides tab completion for player names.
+     * <p>
+     * Only shows:
+     * <ul>
+     *   <li>Online players</li>
+     *   <li>Players not already banned</li>
+     *   <li>Players the command issuer can see</li>
+     *   <li>Players whose names match the partial input</li>
+     * </ul>
+     */
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";

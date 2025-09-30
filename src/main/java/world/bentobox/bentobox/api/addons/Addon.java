@@ -31,10 +31,34 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * Add-on class for BentoBox. Extend this to create an add-on. The operation
- * and methods are very similar to Bukkit's JavaPlugin.
+ * The main class for a BentoBox addon.
+ * <p>
+ * To create an addon, you must extend this class. The operation and methods are
+ * very similar to Bukkit's {@code JavaPlugin}.
+ * <p>
+ * Each addon must have an {@code addon.yml} file in its root directory. This file
+ * contains metadata about the addon, such as its name, version, and main class.
+ * <p>
+ * Example of a simple addon main class:
+ * <pre>
+ * public class MyAddon extends Addon {
+ *
+ *     {@literal @}Override
+ *     public void onEnable() {
+ *         // Addon startup logic
+ *         getLogger().info("MyAddon has been enabled!");
+ *     }
+ *
+ *     {@literal @}Override
+ *     public void onDisable() {
+ *         // Addon shutdown logic
+ *         getLogger().info("MyAddon has been disabled!");
+ *     }
+ * }
+ * </pre>
  *
  * @author tastybento, ComminQ_Q
+ * @since 1.0
  */
 public abstract class Addon {
 

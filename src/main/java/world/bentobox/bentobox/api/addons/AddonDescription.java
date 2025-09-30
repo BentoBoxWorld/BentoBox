@@ -10,7 +10,31 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
+ * Represents the metadata and configuration for a BentoBox addon.
+ * <p>
+ * This class encapsulates information such as the main class, name, version,
+ * description, authors, dependencies, soft dependencies, metrics inclusion,
+ * GitHub repository, icon, minimum BentoBox API version, and permissions.
+ * <p>
+ * Instances of this class are typically created using the {@link Builder} pattern.
+ * <p>
+ * Example usage:
+ * <pre>
+ *     AddonDescription desc = new AddonDescription.Builder("main.class", "AddonName", "1.0.0")
+ *         .description("My Addon Description")
+ *         .authors("Author1", "Author2")
+ *         .dependencies(Arrays.asList("Dep1", "Dep2"))
+ *         .softDependencies(Arrays.asList("SoftDep1"))
+ *         .metrics(true)
+ *         .repository("Owner/RepoName")
+ *         .icon(Material.DIAMOND)
+ *         .apiVersion("1.11.0")
+ *         .build();
+ * </pre>
+ * </p>
+ *
  * @author tastybento, Poslovitch
+ * @since 1.0
  */
 public final class AddonDescription {
 
