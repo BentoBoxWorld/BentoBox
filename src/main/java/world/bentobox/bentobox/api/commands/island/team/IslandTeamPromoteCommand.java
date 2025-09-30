@@ -126,6 +126,11 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
 
         return true;
     }
+    
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
+        return change(user, target);
+    }
 
     /**
      * Handles the rank change logic.
