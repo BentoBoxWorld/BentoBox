@@ -116,6 +116,7 @@ public class LockAndBanListenerTest {
         // User and player are not op
         when(user.isOp()).thenReturn(false);
         when(player.isOp()).thenReturn(false);
+        when(player.getWorld()).thenReturn(world);
         // No special perms
         when(player.hasPermission(anyString())).thenReturn(false);
         uuid = UUID.randomUUID();
@@ -191,6 +192,7 @@ public class LockAndBanListenerTest {
 
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
+        when(iwm.getFriendlyName(world)).thenReturn("BSkyblock");
 
     }
 
@@ -233,7 +235,7 @@ public class LockAndBanListenerTest {
         assertTrue(e.isCancelled());
     }
 
-    @SuppressWarnings("deprecation")
+    
     @Test
     public void testLoginToBannedIsland() {
         // Make player
@@ -716,11 +718,13 @@ public class LockAndBanListenerTest {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
+        when(player.getWorld()).thenReturn(world);
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         Player player2 = mock(Player.class);
         UUID uuid2 = UUID.randomUUID();
         when(player2.getUniqueId()).thenReturn(uuid2);
+        when(player2.getWorld()).thenReturn(world);
 
         // Player 1 is not a member, player 2 is an island member
         when(island.isAllowed(any(User.class), any())).thenAnswer(

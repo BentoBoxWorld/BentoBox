@@ -103,6 +103,7 @@ public class AdminTeleportCommandTest {
         when(p.getUniqueId()).thenReturn(uuid);
         when(p.hasPermission("admin.tp")).thenReturn(true);
         when(p.hasPermission("admin")).thenReturn(false);
+        when(p.getWorld()).thenReturn(endWorld);
 
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
@@ -182,6 +183,8 @@ public class AdminTeleportCommandTest {
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
         when(phm.replacePlaceholders(any(), any()))
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
     }
 
     @After
@@ -210,7 +213,7 @@ public class AdminTeleportCommandTest {
     public void testExecuteUserStringListOfStringEmptyArgs() {
         AdminTeleportCommand atc = new AdminTeleportCommand(ac, "tp");
         assertFalse(atc.canExecute(user, "tp", new ArrayList<>()));
-        verify(user).sendMessage(eq("commands.help.header"), eq(TextVariables.LABEL), eq(null));
+        verify(user).sendMessage(eq("commands.help.header"), eq(TextVariables.LABEL), eq("BSkyBlock"));
     }
 
     @Test

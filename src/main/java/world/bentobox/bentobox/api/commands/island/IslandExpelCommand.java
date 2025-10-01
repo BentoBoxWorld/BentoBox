@@ -111,7 +111,6 @@ public class IslandExpelCommand extends CompositeCommand {
             user.sendMessage(CANNOT_EXPEL);
             return false;
         }
-
         target.sendMessage("commands.island.expel.player-expelled-you", TextVariables.NAME, user.getName(),
                 TextVariables.DISPLAY_NAME, user.getDisplayName());
         island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
