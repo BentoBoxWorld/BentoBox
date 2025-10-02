@@ -20,14 +20,38 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
+ * Handles the island expel command (/island expel).
+ * <p>
+ * This command allows island owners and team members to remove visitors from their island.
+ * Unlike banning, expelling is temporary - players can return later.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Configurable rank requirement</li>
+ *   <li>Protection for team members</li>
+ *   <li>Protection for admins and moderators</li>
+ *   <li>Smart teleport handling (home island, spawn, or new island)</li>
+ *   <li>Sound effects</li>
+ *   <li>Event system integration</li>
+ * </ul>
+ * <p>
+ * Permission nodes:
+ * <ul>
+ *   <li>{@code island.expel} - Base permission</li>
+ *   <li>{@code [gamemode].admin.noexpel} - Cannot be expelled</li>
+ *   <li>{@code [gamemode].mod.bypassexpel} - Cannot be expelled</li>
+ * </ul>
+ *
  * @author tastybento
  * @since 1.4.0
  */
 public class IslandExpelCommand extends CompositeCommand {
 
+    /** Common message keys to avoid duplication */
     private static final String CANNOT_EXPEL = "commands.island.expel.cannot-expel";
     private static final String SUCCESS = "commands.island.expel.success";
 
+    /** Cached target player, set during canExecute and used in execute */
     private @Nullable User target;
 
     public IslandExpelCommand(CompositeCommand islandCommand) {
@@ -43,6 +67,19 @@ public class IslandExpelCommand extends CompositeCommand {
         setConfigurableRankCommand();
     }
 
+    /**
+     * Validates command execution conditions.
+     * <p>
+     * Checks:
+     * <ul>
+     *   <li>Correct number of arguments</li>
+     *   <li>Player has an island or is in a team</li>
+     *   <li>Player has sufficient rank</li>
+     *   <li>Target player exists and is online</li>
+     *   <li>Target is not self, team member, or protected</li>
+     *   <li>Target is actually on the island</li>
+     * </ul>
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         if (args.size() != 1) {
@@ -100,6 +137,23 @@ public class IslandExpelCommand extends CompositeCommand {
         return true;
     }
 
+    /**
+     * Handles the expulsion process.
+     * <p>
+     * Flow:
+     * <ul>
+     *   <li>Fires cancellable expel event</li>
+     *   <li>Notifies target</li>
+     *   <li>Plays explosion sound</li>
+     *   <li>Teleports target to:
+     *     <ul>
+     *       <li>Their home island</li>
+     *       <li>Spawn (if exists)</li>
+     *       <li>New island (if possible)</li>
+     *     </ul>
+     *   </li>
+     * </ul>
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Finished error checking - expel player
@@ -141,6 +195,16 @@ public class IslandExpelCommand extends CompositeCommand {
         return false;
     }
 
+    /**
+     * Provides tab completion for online players currently on the island.
+     * Excludes:
+     * <ul>
+     *   <li>Command issuer</li>
+     *   <li>Invisible players</li>
+     *   <li>Server operators</li>
+     *   <li>Protected players (admin.noexpel, mod.bypassexpel)</li>
+     * </ul>
+     */
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         Island island = getIslands().getIsland(getWorld(), user);

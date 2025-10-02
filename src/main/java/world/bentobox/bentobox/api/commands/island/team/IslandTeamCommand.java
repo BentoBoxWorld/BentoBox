@@ -19,32 +19,56 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.TeamInvite;
 import world.bentobox.bentobox.managers.RanksManager;
 
+/**
+ * Handles the island team command system (/island team).
+ * <p>
+ * This is the parent command for all team-related operations including:
+ * <ul>
+ *   <li>Inviting players (invite, accept, reject)</li>
+ *   <li>Team management (kick, leave, setowner)</li>
+ *   <li>Role management (promote, demote, coop, trust)</li>
+ *   <li>Team GUI panel system</li>
+ * </ul>
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Persistent invite system</li>
+ *   <li>Team size limits</li>
+ *   <li>Role-based permissions</li>
+ *   <li>Customizable GUI panel</li>
+ * </ul>
+ */
 public class IslandTeamCommand extends CompositeCommand {
 
+    /** Sub-commands for team management */
     private IslandTeamKickCommand kickCommand;
 
     private IslandTeamLeaveCommand leaveCommand;
 
     private IslandTeamSetownerCommand setOwnerCommand;
 
+    /** Sub-commands for role management */
     private IslandTeamUncoopCommand uncoopCommand;
 
     private IslandTeamUntrustCommand unTrustCommand;
 
-    private @Nullable TemplateItem border;
+    private IslandTeamCoopCommand coopCommand;
 
-    private @Nullable TemplateItem background;
+    private IslandTeamTrustCommand trustCommand;
 
+    /** Sub-commands for invite system */
     private IslandTeamInviteAcceptCommand acceptCommand;
 
     private IslandTeamInviteRejectCommand rejectCommand;
 
     private IslandTeamInviteCommand inviteCommand;
 
-    private IslandTeamCoopCommand coopCommand;
+    /** GUI panel template items */
+    private @Nullable TemplateItem border;
 
-    private IslandTeamTrustCommand trustCommand;
+    private @Nullable TemplateItem background;
 
+    /** Database handler for team invites */
     private final Database<TeamInvite> handler;
 
     public IslandTeamCommand(CompositeCommand parent) {
@@ -52,6 +76,18 @@ public class IslandTeamCommand extends CompositeCommand {
         handler = new Database<>(parent.getAddon(), TeamInvite.class);
     }
 
+    /**
+     * Sets up the team command system.
+     * <p>
+     * Initializes:
+     * <ul>
+     *   <li>Core team commands (invite, leave, setowner, kick)</li>
+     *   <li>Invite management commands (accept, reject)</li>
+     *   <li>Role commands if enabled (coop, trust)</li>
+     *   <li>Rank commands (promote, demote)</li>
+     *   <li>GUI panel template</li>
+     * </ul>
+     */
     @Override
     public void setup() {
         setPermission("island.team");
@@ -81,6 +117,16 @@ public class IslandTeamCommand extends CompositeCommand {
         }
     }
 
+    /**
+     * Validates team command execution.
+     * <p>
+     * Checks:
+     * <ul>
+     *   <li>Player has an island or pending invite</li>
+     *   <li>Team event isn't cancelled</li>
+     *   <li>Team size limits for owners</li>
+     * </ul>
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         // Player issuing the command must have an island
@@ -109,6 +155,9 @@ public class IslandTeamCommand extends CompositeCommand {
         return true;
     }
 
+    /**
+     * Opens the team management GUI panel.
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Show the panel
@@ -124,7 +173,14 @@ public class IslandTeamCommand extends CompositeCommand {
     }
 
     /**
-     * Add an invite
+     * Manages the invite system in the database.
+     * Methods handle:
+     * <ul>
+     *   <li>Adding new invites</li>
+     *   <li>Validating existing invites</li>
+     *   <li>Retrieving invite information</li>
+     *   <li>Removing expired/accepted/rejected invites</li>
+     * </ul>
      * @param type - type of invite
      * @param inviter - uuid of inviter
      * @param invitee - uuid of invitee

@@ -15,8 +15,27 @@ import world.bentobox.bentobox.util.Util;
 
 
 /**
- * @author tastybento
+ * Handles the island set name command (/island setname).
+ * <p>
+ * This command allows players to set or change their island's display name.
+ * Names can include color codes if the player has the appropriate permission.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Configurable name length limits</li>
+ *   <li>Color code support (with permission)</li>
+ *   <li>Configurable rank requirement</li>
+ *   <li>Name change event firing</li>
+ * </ul>
+ * <p>
+ * Permissions:
+ * <ul>
+ *   <li>{@code island.name} - Base permission</li>
+ *   <li>{@code island.name.format} - Allows use of color codes</li>
+ * </ul>
  *
+ * @author tastybento
+ * @since 1.0
  */
 public class IslandSetnameCommand extends CompositeCommand {
 
@@ -34,6 +53,18 @@ public class IslandSetnameCommand extends CompositeCommand {
     }
 
 
+    /**
+     * Validates command execution conditions.
+     * <p>
+     * Checks:
+     * <ul>
+     *   <li>Name argument provided</li>
+     *   <li>Player has an island</li>
+     *   <li>Player has sufficient rank</li>
+     *   <li>Name length within limits</li>
+     *   <li>Name not empty after color stripping</li>
+     * </ul>
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args)
     {
@@ -80,6 +111,17 @@ public class IslandSetnameCommand extends CompositeCommand {
     }
 
 
+    /**
+     * Sets the island name and fires the name change event.
+     * <p>
+     * Process:
+     * <ul>
+     *   <li>Joins arguments into name string</li>
+     *   <li>Applies color codes if permitted</li>
+     *   <li>Updates island name</li>
+     *   <li>Fires IslandEvent with NAME reason</li>
+     * </ul>
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Naming the island - join all the arguments with spaces.

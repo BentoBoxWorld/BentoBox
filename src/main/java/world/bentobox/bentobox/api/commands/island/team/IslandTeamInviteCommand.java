@@ -22,10 +22,37 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
+/**
+ * Handles team invitation commands in BentoBox.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Invite players to join island teams</li>
+ *   <li>GUI-based player selection</li>
+ *   <li>Invitation cooldowns</li>
+ *   <li>Rank-based permission control</li>
+ *   <li>Team size limits</li>
+ * </ul>
+ * <p>
+ * Restrictions:
+ * <ul>
+ *   <li>Players must have sufficient rank to invite</li>
+ *   <li>Team must have space for new members</li>
+ *   <li>Cannot invite players already on teams (configurable)</li>
+ *   <li>Cannot invite offline players</li>
+ *   <li>Cannot invite self</li>
+ *   <li>Only one active invite per player</li>
+ * </ul>
+ */
 public class IslandTeamInviteCommand extends CompositeCommand {
 
+    /** Parent team command reference */
     private final IslandTeamCommand itc;
+    
+    /** Currently invited player - used between canExecute and execute */
     private @Nullable User invitedPlayer;
+    
+    /** GUI template items */
     private @Nullable TemplateItem border;
     private @Nullable TemplateItem background;
 
@@ -69,6 +96,20 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         return checkRankAndInvitePlayer(user, island, rank, args.getFirst());
     }
 
+    /**
+     * Validates invitation requirements:
+     * - User has required rank
+     * - Team has space
+     * - Target player exists and is online
+     * - No existing invite
+     * - Team membership restrictions
+     * 
+     * @param user command issuer
+     * @param island user's island
+     * @param rank user's rank
+     * @param playerName target player name
+     * @return true if invite can proceed, false if requirements not met
+     */
     private boolean checkRankAndInvitePlayer(User user, Island island, int rank, String playerName) {
         PlayersManager playersManager = getPlayers();
         UUID playerUUID = user.getUniqueId();
@@ -119,6 +160,11 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         return true;
     }
 
+    /**
+     * Validates player-specific invite conditions:
+     * - Player is online and visible
+     * - Not inviting self
+     */
     private boolean canInvitePlayer(User user, User invitedPlayer) {
         UUID playerUUID = user.getUniqueId();
         if (!invitedPlayer.isOnline() || !user.getPlayer().canSee(invitedPlayer.getPlayer())) {
@@ -140,6 +186,13 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         return Objects.requireNonNull(itc.getInvite(invitedPlayerUUID)).getType().equals(Type.TEAM);
     }
 
+    /**
+     * Process the invite:
+     * - Cancels any existing invite
+     * - Fires team invite event
+     * - Sends invite messages
+     * - Warns about island loss if applicable
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Rare case when invited player is null. Could be a race condition.
@@ -181,6 +234,10 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         return true;
     }
 
+    /**
+     * Provides tab completion for online player names.
+     * Requires at least first letter to avoid showing all players.
+     */
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.getLast() : "";
