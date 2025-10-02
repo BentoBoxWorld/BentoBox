@@ -19,11 +19,22 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminResetFlagsCommand extends ConfirmableCommand {
 
-    private final List<String> options;
+    private List<String> options;
 
     public AdminResetFlagsCommand(CompositeCommand parent) {
         super(parent, "resetflags");
-        options = getPlugin().getFlagsManager().getFlags().stream()
+    }
+
+    private List<String> getOptions() {
+        if (this.options == null) {
+            updateOptions();
+        }
+        return this.options;
+    }
+
+    private void updateOptions() {
+        this.getPlugin().log("Generating flag options");
+        this.options = getPlugin().getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(Type.PROTECTION) || f.getType().equals(Type.SETTING))
                 .map(Flag::getID).toList();
     }

@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -139,9 +137,6 @@ public class AdminResetFlagsCommandTest extends AbstractCommonSetup {
     @Test
     public void testAdminResetFlagsCommand() {
         assertEquals("resetflags", arf.getLabel());
-        verify(flag).getID();
-        verify(flag2).getID();
-        verify(flag3, never()).getID();
     }
 
     /**
