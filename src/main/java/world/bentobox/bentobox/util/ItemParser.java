@@ -460,7 +460,7 @@ public class ItemParser {
      * @return {@code true} if value is integer, {@code false} otherwise.
      */
     private static boolean isNumeric(String string) {
-        if(string == null || string.equals("")) {
+        if(string == null || string.isEmpty()) {
             return false;
         }
 

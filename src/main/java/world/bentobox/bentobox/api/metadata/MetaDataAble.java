@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * This interface is for all BentoBox objects that have meta data
+ * This interface is for all BentoBox objects that have metadata
  * @author tastybento
  * @since 1.15.6
  */
@@ -22,7 +22,7 @@ public interface MetaDataAble {
     void setMetaData(Map<String, MetaDataValue> metaData);
 
     /**
-     * Get meta data by key
+     * Get metadata by key
      * @param key - key
      * @return the value to which the specified key is mapped, or null if there is no mapping for the key
      * @since 1.15.6
@@ -32,7 +32,7 @@ public interface MetaDataAble {
     }
 
     /**
-     * Put a key, value string pair into the meta data
+     * Put a key, value string pair into the metadata
      * @param key - key
      * @param value - value
      * @return the previous value associated with key, or empty if there was no mapping for key.

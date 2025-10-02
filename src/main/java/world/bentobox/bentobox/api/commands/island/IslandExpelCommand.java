@@ -65,9 +65,9 @@ public class IslandExpelCommand extends CompositeCommand {
             return false;
         }
         // Get target player
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Player cannot expel themselves
@@ -111,7 +111,6 @@ public class IslandExpelCommand extends CompositeCommand {
             user.sendMessage(CANNOT_EXPEL);
             return false;
         }
-
         target.sendMessage("commands.island.expel.player-expelled-you", TextVariables.NAME, user.getName(),
                 TextVariables.DISPLAY_NAME, user.getDisplayName());
         island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
@@ -154,7 +153,7 @@ public class IslandExpelCommand extends CompositeCommand {
                     .filter(p -> !p.hasPermission(this.getPermissionPrefix() + "mod.bypassexpel")).map(Player::getName)
                     .toList();
 
-            String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+            String lastArg = !args.isEmpty() ? args.getLast() : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

@@ -18,7 +18,7 @@ public class AddonPlaceholderExpansion extends BasicPlaceholderExpansion {
 
     @Override
     public @NonNull String getAuthor() {
-        return addon.getDescription().getAuthors().get(0);
+        return addon.getDescription().getAuthors().getFirst();
     }
 
     @Override

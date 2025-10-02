@@ -53,9 +53,9 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("general.errors.not-owner");
             return false;
         }
-        targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         if (targetUUID.equals(user.getUniqueId())) {
@@ -93,7 +93,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         IslandEvent.builder().island(island).involvedPlayer(user.getUniqueId()).admin(false)
                 .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(RanksManager.OWNER_RANK, RanksManager.SUB_OWNER_RANK)
                 .build();
-        // Add historu record
+        // Add history record
         island.log(new LogEntry.Builder(LogType.NEWOWNER).data(targetUUID2.toString(), "new owner")
                 .data(user.getUniqueId().toString(), "old owner").build());
         return true;
@@ -101,7 +101,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()) == null) {
             return Optional.empty();
         }

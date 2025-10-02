@@ -52,7 +52,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         if (checkReserved(user, islands)) {
             return false;
         }
-        // Prevent command if player is falling and its not allowed
+        // Prevent command if player is falling and it's not allowed
         if ((getIWM().inWorld(user.getWorld()) && Flags.PREVENT_TELEPORT_WHEN_FALLING.isSetForWorld(user.getWorld()))
                 && user.getPlayer().getFallDistance() > 0) {
             // We're sending the "hint" to the player to tell them they cannot teleport while falling.
@@ -80,7 +80,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                 if (!info.islandName) {
                     this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), name)
                             .thenAccept((r) -> {
-                                if (r.booleanValue()) {
+                                if (r) {
                                     // Success
                                     getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
                                 } else {
@@ -110,7 +110,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
 
         return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(user, getWorld()).keySet()), lastArg));
 

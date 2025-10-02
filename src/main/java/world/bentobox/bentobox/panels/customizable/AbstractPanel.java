@@ -82,7 +82,7 @@ public abstract class AbstractPanel {
     String mainLabel;
 
     /**
-     * This variable holds current pageIndex for multi-page island choosing.
+     * This variable holds current pageIndex for multipage island choosing.
      */
     int pageIndex;
 

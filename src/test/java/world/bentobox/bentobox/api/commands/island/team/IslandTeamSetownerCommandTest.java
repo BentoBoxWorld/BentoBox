@@ -324,7 +324,7 @@ public class IslandTeamSetownerCommandTest {
         UUID target = UUID.randomUUID();
         when(pm.getName(any())).thenReturn("tastybento");
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(target));
-        assertEquals("tastybento", its.tabComplete(user, "", List.of()).get().get(0));
+        assertEquals("tastybento", its.tabComplete(user, "", List.of()).get().getFirst());
     }
     
     /**

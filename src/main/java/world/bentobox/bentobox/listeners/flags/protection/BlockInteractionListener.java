@@ -285,7 +285,7 @@ public class BlockInteractionListener extends FlagListener
             return;
         }
 
-        // If egg starts in a protected island...
+        // If egg starts on a protected island...
         // Cancel if toIsland is not fromIsland or if there is no protected island there
         // This protects against eggs dropping into adjacent islands, e.g. island distance and protection range are equal
         Optional<Island> fromIsland = this.getIslands().getProtectedIslandAt(block.getLocation());
@@ -299,7 +299,7 @@ public class BlockInteractionListener extends FlagListener
     /**
      * This method returns if player is holding given material in main or offhand.
      * @param player Player that must be checked.
-     * @param material item that mus t be checjed.
+     * @param material item that mus t be checked.
      * @return {@code true} if player is holding item in main hand or offhand.
      */
     private static boolean holds(Player player, Material material)

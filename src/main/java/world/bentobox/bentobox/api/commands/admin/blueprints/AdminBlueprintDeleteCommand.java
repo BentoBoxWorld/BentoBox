@@ -41,7 +41,7 @@ public class AdminBlueprintDeleteCommand extends ConfirmableCommand
             return false;
         }
 
-        String blueprintName = Util.sanitizeInput(args.get(0));
+        String blueprintName = Util.sanitizeInput(args.getFirst());
 
         // Check if blueprint exist
         if (this.getPlugin().getBlueprintsManager().getBlueprints(this.getAddon()).containsKey(blueprintName))

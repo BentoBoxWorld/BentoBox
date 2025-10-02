@@ -60,9 +60,9 @@ public class IslandUnbanCommand extends CompositeCommand {
             return false;
         }
         // Get target player
-        targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Player cannot unban themselves
@@ -80,6 +80,7 @@ public class IslandUnbanCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        assert targetUUID != null;
         User target = User.getInstance(targetUUID);
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
 
@@ -95,6 +96,7 @@ public class IslandUnbanCommand extends CompositeCommand {
             return false;
         }
         // Event is not cancelled
+        assert island != null;
         if (island.unban(user.getUniqueId(), target.getUniqueId())) {
             user.sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
             target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
@@ -114,7 +116,7 @@ public class IslandUnbanCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             List<String> options = island.getBanned().stream().map(getPlayers()::getName).toList();
-            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            String lastArg = !args.isEmpty() ? args.getLast() : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

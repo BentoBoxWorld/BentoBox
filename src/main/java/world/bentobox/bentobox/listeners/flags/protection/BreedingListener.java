@@ -30,7 +30,7 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class BreedingListener extends FlagListener {
     /**
-     * A list of items that cause breeding if a player has them in their hand and they click an animal
+     * A list of items that cause breeding if a player has them in their hand, and they click an animal
      * This list may need to be extended with future versions of Minecraft.
      * See this Minecraft Wiki page for reference: <a href="https://minecraft.gamepedia.com/Breeding#Breeding_foods">...</a>.
      */

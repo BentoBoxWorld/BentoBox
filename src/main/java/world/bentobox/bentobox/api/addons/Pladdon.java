@@ -24,15 +24,6 @@ public abstract class Pladdon extends JavaPlugin {
     public abstract Addon getAddon();
 
     @Override
-    public void onLoad() {
-        String parentFolder = getFile().getParent();
-        if (parentFolder == null || !parentFolder.endsWith(ADDONS_FOLDER)) {
-            // Jar is in the wrong place. Let's move it
-            //moveJar();
-        }
-    }
-
-    @Override
     public void onDisable() {
         Addon addon = getAddon();
         if (addon != null) {
@@ -65,7 +56,7 @@ public abstract class Pladdon extends JavaPlugin {
 
 
     /**
-     * This method enables marks pladdons as enabled.
+     * This method marks pladdons as enabled.
      * By default, enable status is not set because onEnable and onLoad is not triggered.
      */
     public void setEnabled() {

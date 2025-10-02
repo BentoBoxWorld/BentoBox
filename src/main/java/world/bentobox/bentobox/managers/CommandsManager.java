@@ -38,7 +38,7 @@ public class CommandsManager {
             }
         }
         catch(Exception exception){
-            Bukkit.getLogger().severe("Bukkit server commandMap method is not there! This means no commands can be registered!");
+            BentoBox.getInstance().logError("Bukkit server commandMap method is not there! This means no commands can be registered!");
         }
     }
 
@@ -57,7 +57,7 @@ public class CommandsManager {
             // Zap everything
             commands.clear();
         } catch(Exception e){
-            Bukkit.getLogger().severe("Known commands reflection was not possible, BentoBox is now unstable, so restart server!");
+            BentoBox.getInstance().logError("Known commands reflection was not possible, BentoBox is now unstable, so restart server!");
         }
     }
 

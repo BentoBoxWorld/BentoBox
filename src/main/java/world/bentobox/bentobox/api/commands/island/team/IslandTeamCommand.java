@@ -86,11 +86,6 @@ public class IslandTeamCommand extends CompositeCommand {
         // Player issuing the command must have an island
         Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
         if (island == null) {
-            if (isInvited(user.getUniqueId())) {
-                // Player has an invite, so show the invite
-                new IslandTeamGUI(getPlugin(), this, user, island).build();
-                return true;
-            }
             user.sendMessage("general.errors.no-island");
             return false;
         }

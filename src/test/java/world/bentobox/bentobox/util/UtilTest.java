@@ -118,6 +118,7 @@ public class UtilTest {
             when(p1.getUniqueId()).thenReturn(uuid);
             when(p1.getName()).thenReturn(name);
             when(p1.hasPermission(anyString())).thenReturn(true);
+            when(p1.getWorld()).thenReturn(world);
             when(p1.spigot()).thenReturn(spigot);
             online.put(uuid, name);
             onlinePlayers.add(p1);
@@ -135,6 +136,9 @@ public class UtilTest {
         when(phm.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         when(plugin.getLocalesManager()).thenReturn(lm);
+        
+        // IWM
+        when(iwm.getFriendlyName(world)).thenReturn("BSkyBlock");
 
     }
 

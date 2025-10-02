@@ -89,7 +89,7 @@ public class PlaceholdersManager {
             AtomicInteger generatedCount = new AtomicInteger(1); // To increment within lambda
             return plugin.getIslands().getIslands(addon.getOverWorld(), user).stream().map(island -> {
                 IslandName islandName = getIslandName(island, user, generatedCount.get());
-                if (islandName.generatated()) {
+                if (islandName.generated()) {
                     generatedCount.getAndIncrement(); // Increment if the name was generated
                     }
                 return islandName.name;
@@ -107,7 +107,7 @@ public class PlaceholdersManager {
                                 .orElse("")));
     }
 
-    private record IslandName(String name, boolean generatated) {
+    private record IslandName(String name, boolean generated) {
     }
 
     private IslandName getIslandName(Island island, User user, int index) {
@@ -312,7 +312,7 @@ public class PlaceholdersManager {
      * Default placeholder
      *
      */
-    class DefaultPlaceholder implements PlaceholderReplacer {
+    static class DefaultPlaceholder implements PlaceholderReplacer {
         private final GameModeAddon addon;
         private final GameModePlaceholder type;
         public DefaultPlaceholder(GameModeAddon addon, GameModePlaceholder type) {

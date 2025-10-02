@@ -247,11 +247,11 @@ public class LocalesManagerTest {
 
         // Unsorted
         List<Locale> localeList = lm.getAvailableLocales(false);
-        assertEquals(Locale.FRANCE, localeList.get(0));
+        assertEquals(Locale.FRANCE, localeList.getFirst());
         assertEquals(Locale.US, localeList.get(1));
         // Sorted
         localeList = lm.getAvailableLocales(true);
-        assertEquals(Locale.US, localeList.get(0));
+        assertEquals(Locale.US, localeList.getFirst());
         assertEquals(Locale.FRANCE, localeList.get(1));
 
     }

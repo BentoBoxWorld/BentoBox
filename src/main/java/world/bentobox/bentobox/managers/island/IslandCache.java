@@ -130,7 +130,7 @@ public class IslandCache {
     }
 
     /**
-     * Adds a player's UUID to the look up for islands. Does no checking. The island for this player must have been added beforehand.
+     * Adds a player's UUID to the look-up for islands. Does no checking. The island for this player must have been added beforehand.
      * 
      * @param uuid   player's uuid
      * @param island island to associate with this uuid. Only one island can be
@@ -213,7 +213,7 @@ public class IslandCache {
             }
         }
         // If there is no primary set, then set one - it doesn't matter which.
-        Island result = islands.iterator().next();
+        Island result = islands.getFirst();
         result.setPrimary(uuid);
         return result;
     }
@@ -429,7 +429,7 @@ public class IslandCache {
         }
         island.removeMember(uuid);
         island.removePrimary(uuid);
-        // Add historu record
+        // Add history record
         island.log(new LogEntry.Builder(LogType.REMOVE).data(uuid.toString(), "player").build());
     }
 
@@ -557,7 +557,7 @@ public class IslandCache {
     }
 
     /**
-     * Get a unmodifiable list of all islands this player is involved with
+     * Get an unmodifiable list of all islands this player is involved with
      * @param uniqueId player's UUID
      * @return list of islands
      */

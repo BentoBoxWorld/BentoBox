@@ -63,9 +63,9 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         }
 
         // Get target
-        target = getPlayers().getUser(args.get(0));
+        target = getPlayers().getUser(args.getFirst());
         if (target == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Check that target is a member of this island
@@ -104,6 +104,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
 
     private boolean change(User user, User target) {
         Island island = getIslands().getIsland(getWorld(), user);
+        assert island != null;
         int currentRank = island.getRank(target);
         if (this.getLabel().equals("promote")) {
             int nextRank = RanksManager.getInstance().getRankUpValue(currentRank);
@@ -156,7 +157,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
                     .map(Bukkit::getOfflinePlayer)
                     .map(OfflinePlayer::getName).toList();
 
-            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            String lastArg = !args.isEmpty() ? args.getLast() : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

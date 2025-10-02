@@ -220,7 +220,7 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
         assertTrue(result.isPresent());
         result.ifPresent(list -> {
             assertEquals(1, list.size());
-            assertEquals("tastybento", list.get(0));
+            assertEquals("tastybento", list.getFirst());
         });
     }
 

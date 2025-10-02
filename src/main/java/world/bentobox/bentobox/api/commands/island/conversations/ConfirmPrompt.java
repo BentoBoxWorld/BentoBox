@@ -40,7 +40,7 @@ public class ConfirmPrompt extends StringPrompt {
 
     @Override
     public Prompt acceptInput(@NonNull ConversationContext context, String input) {
-        if (input.equals(response)) {
+        if (input != null && input.equals(response)) {
             Bukkit.getScheduler().runTask(plugin, () -> user.sendMessage("general.success"));
             Bukkit.getScheduler().runTask(plugin, action);
         } else {

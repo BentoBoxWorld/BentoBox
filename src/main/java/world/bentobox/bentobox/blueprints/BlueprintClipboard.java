@@ -282,7 +282,7 @@ public class BlueprintClipboard {
         }
 
         if (block.getType().equals(Material.BEDROCK)) {
-            // Find highest bedrock
+            // Find the highest bedrock
             if(blueprint.getBedrock() == null) {
                 blueprint.setBedrock(pos);
             } else {

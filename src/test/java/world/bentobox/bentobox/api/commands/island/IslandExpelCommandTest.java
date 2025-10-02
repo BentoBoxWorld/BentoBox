@@ -96,6 +96,7 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
+        when(user.getWorld()).thenReturn(world);
         when(mockPlayer.getServer()).thenReturn(server);
         when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
@@ -358,6 +359,7 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         when(t.getName()).thenReturn("target");
         when(t.getDisplayName()).thenReturn("&Ctarget");
         when(t.getServer()).thenReturn(server);
+        when(t.getWorld()).thenReturn(world);
         when(t.spigot()).thenReturn(spigot);
         when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
         User.getInstance(t);
@@ -496,7 +498,7 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         List<String> result = iec.tabComplete(user, "", Collections.emptyList()).get();
         assertFalse(result.isEmpty());
         assertEquals(2, result.size());
-        assertEquals("normal", result.get(0));
+        assertEquals("normal", result.getFirst());
         assertEquals("normal", result.get(1));
     }
 }

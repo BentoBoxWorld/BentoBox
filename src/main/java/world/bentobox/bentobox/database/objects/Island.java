@@ -159,7 +159,7 @@ public class Island implements DataObject, MetaDataAble {
     private Map<UUID, Integer> members = new HashMap<>();
 
     /**
-     * Maximum number of members allowed in this island. Key is rank, value is
+     * Maximum number of members allowed on this island. Key is rank, value is
      * number
      * 
      * @since 1.16.0
@@ -797,7 +797,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return true or false
      */
     public boolean inIslandSpace(Pair<Integer, Integer> blockCoordinates) {
-        return inIslandSpace(blockCoordinates.x, blockCoordinates.z);
+        return inIslandSpace(blockCoordinates.x(), blockCoordinates.z());
     }
 
     /**
@@ -1786,7 +1786,7 @@ public class Island implements DataObject, MetaDataAble {
     /**
      * Get the location of a named home
      * 
-     * @param nameToLookFor home name case insensitive (name is forced to lower case)
+     * @param nameToLookFor home name case-insensitive (name is forced to lower case)
      * @return the home location or if none found the protection center of the
      *         island is returned.
      * @since 1.16.0

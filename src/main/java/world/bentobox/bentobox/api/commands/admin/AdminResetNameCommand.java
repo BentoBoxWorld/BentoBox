@@ -53,11 +53,11 @@ public class AdminResetNameCommand extends CompositeCommand
     {
         if (args.size() == 1)
         {
-            UUID playerUUID = Util.getUUID(args.get(0));
+            UUID playerUUID = Util.getUUID(args.getFirst());
 
             if (playerUUID == null)
             {
-                user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+                user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
                 return false;
             }
 

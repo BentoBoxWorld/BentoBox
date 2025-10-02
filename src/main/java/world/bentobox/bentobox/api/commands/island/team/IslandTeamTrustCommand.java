@@ -62,9 +62,9 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             return false;
         }
         // Get target player
-        targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Check cooldown
@@ -92,6 +92,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        assert targetUUID != null;
         User target = User.getInstance(targetUUID);
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
@@ -112,7 +113,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
                 island.setRank(target, RanksManager.TRUSTED_RANK);
                 user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
                 target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
-                // Add historu record
+                // Add history record
                 island.log(new LogEntry.Builder(LogType.TRUSTED).data(targetUUID.toString(), "trusted")
                         .data(user.getUniqueId().toString(), "trusted by").build());
 
@@ -127,7 +128,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (lastArg.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

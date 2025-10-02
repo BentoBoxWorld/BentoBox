@@ -131,7 +131,7 @@ public class IslandTeamGUI {
     }
 
     private PanelItem createRankButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
-        // If there is no island, the do not show this icon
+        // If there is no island, then do not show this icon
         if (island == null) {
             return this.getBlankBorder();
         }
@@ -295,11 +295,13 @@ public class IslandTeamGUI {
     }
 
     private PanelItem getBlankBorder() {
+        assert border != null;
         return new PanelItemBuilder().icon(Objects.requireNonNullElse(border.icon(), new ItemStack(Material.BARRIER)))
                 .name((Objects.requireNonNullElse(border.title(), ""))).build();
     }
 
     private PanelItem getBlankBackground() {
+        assert background != null;
         return new PanelItemBuilder()
                 .icon(Objects.requireNonNullElse(background.icon(), new ItemStack(Material.BARRIER)))
                 .name((Objects.requireNonNullElse(background.title(), ""))).build();
@@ -362,14 +364,14 @@ public class IslandTeamGUI {
                     .findFirst().ifPresent(desc::add);
         }
         if (member.isOnline()) {
-            desc.add(0, user.getTranslation(rankRef));
+            desc.addFirst(user.getTranslation(rankRef));
             return new PanelItemBuilder().icon(member.getName()).name(member.getDisplayName()).description(desc)
                     .clickHandler(
                             (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
                     .build();
         } else {
             // Offline player
-            desc.add(0, user.getTranslation(rankRef));
+            desc.addFirst(user.getTranslation(rankRef));
             return new PanelItemBuilder().icon(member.getName())
                     .name(offlinePlayerStatus(Bukkit.getOfflinePlayer(member.getUniqueId()))).description(desc)
                     .clickHandler(

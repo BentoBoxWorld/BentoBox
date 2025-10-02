@@ -136,10 +136,10 @@ public class IslandTeamInviteGUI {
 
     private void checkTemplate(ItemTemplateRecord template) {
         if (template.icon() == null) {
-            plugin.logError("Icon in template is missing or unknown! " + template.toString());
+            plugin.logError("Icon in template is missing or unknown! " + template);
         }
         if (template.title() == null) {
-            plugin.logError("Title in template is missing! " + template.toString());
+            plugin.logError("Title in template is missing! " + template);
         }
 
     }
@@ -220,7 +220,7 @@ public class IslandTeamInviteGUI {
         }
         if (clickType.equals(ClickType.LEFT)) {
             // Close inventory after one tick to allow the no pickup click return to occur
-            Bukkit.getScheduler().runTask(plugin, () -> user.closeInventory());
+            Bukkit.getScheduler().runTask(plugin, user::closeInventory);
             if (itic.canExecute(user, itic.getLabel(), List.of(player.getName()))) {
                 plugin.log("Invite sent to: " + player.getName() + " by " + user.getName() + " to join island in "
                         + itc.getWorld().getName());
@@ -231,7 +231,7 @@ public class IslandTeamInviteGUI {
             }
         } else if (clickType.equals(ClickType.RIGHT)) {
             // Close inventory after one tick to allow the no pickup click return to occur
-            Bukkit.getScheduler().runTask(plugin, () -> user.closeInventory());
+            Bukkit.getScheduler().runTask(plugin, user::closeInventory);
             if (this.itc.getCoopCommand().canExecute(user, itic.getLabel(), List.of(player.getName()))) {
                 plugin.log("Coop: " + player.getName() + " cooped " + user.getName() + " to island in "
                         + itc.getWorld().getName());
@@ -243,7 +243,7 @@ public class IslandTeamInviteGUI {
             }
         } else if (clickType.equals(ClickType.SHIFT_LEFT)) {
             // Close inventory after one tick to allow the no pickup click return to occur
-            Bukkit.getScheduler().runTask(plugin, () -> user.closeInventory());
+            Bukkit.getScheduler().runTask(plugin, user::closeInventory);
             if (this.itc.getTrustCommand().canExecute(user, itic.getLabel(), List.of(player.getName()))) {
                 plugin.log("Trust: " + player.getName() + " trusted " + user.getName() + " to island in "
                         + itc.getWorld().getName());

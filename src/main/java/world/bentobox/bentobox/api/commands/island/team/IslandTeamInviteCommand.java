@@ -66,7 +66,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
         int rank = Objects.requireNonNull(island).getRank(user);
 
-        return checkRankAndInvitePlayer(user, island, rank, args.get(0));
+        return checkRankAndInvitePlayer(user, island, rank, args.getFirst());
     }
 
     private boolean checkRankAndInvitePlayer(User user, Island island, int rank, String playerName) {
@@ -144,7 +144,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         // Rare case when invited player is null. Could be a race condition.
         if (invitedPlayer == null) return false;
-        // If that player already has an invite out then retract it.
+        // If that player already has an invitation out then retract it.
         // Players can only have one invite one at a time - interesting
         if (itc.isInvited(invitedPlayer.getUniqueId())) {
             itc.removeInvite(invitedPlayer.getUniqueId());
@@ -183,7 +183,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (lastArg.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

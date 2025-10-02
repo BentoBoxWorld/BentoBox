@@ -127,7 +127,7 @@ public class PlayersManager {
      * @return true if player is known, otherwise false
      */
     public boolean isKnown(UUID uniqueID) {
-        return uniqueID == null ? false : handler.objectExists(uniqueID.toString());
+        return uniqueID != null && handler.objectExists(uniqueID.toString());
     }
 
     /**

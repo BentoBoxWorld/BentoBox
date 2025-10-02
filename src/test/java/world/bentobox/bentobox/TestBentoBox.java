@@ -136,7 +136,7 @@ public class TestBentoBox extends AbstractCommonSetup {
         assertTrue(testCommand.execute(user, testCommand.getLabel(), new ArrayList<>()));
         assertEquals("test",testCommand.getLabel());
         assertEquals(2, testCommand.getAliases().size());
-        assertEquals("t", testCommand.getAliases().get(0));
+        assertEquals("t", testCommand.getAliases().getFirst());
         assertTrue(testCommand.isOnlyPlayer());
         assertNull(testCommand.getParent());
         assertEquals("default.permission", testCommand.getPermission());
@@ -285,7 +285,7 @@ public class TestBentoBox extends AbstractCommonSetup {
 
         @Override
         public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            String lastArg = !args.isEmpty() ? args.getLast() : "";
             List<String> options = new ArrayList<>(Arrays.asList("Florian", "Ben", "Bill", "Ted"));
             return Optional.of(Util.tabLimit(options, lastArg));
         }

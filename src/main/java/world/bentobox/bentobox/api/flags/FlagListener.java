@@ -193,6 +193,7 @@ public abstract class FlagListener implements Listener {
 
     private boolean processBypass(@NonNull Flag flag, Island island, @NonNull Event e, @NonNull Location loc, boolean silent) {
         // If it is not allowed on the island, "bypass island" moderators can do anything
+        assert user != null;
         if (island.isAllowed(user, flag)) {
             report(user, e, loc, flag,  Why.RANK_ALLOWED);
             return true;

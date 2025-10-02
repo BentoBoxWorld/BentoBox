@@ -60,7 +60,7 @@ public class AdminRangeRemoveCommand extends AbstractAdminRangeCommand {
         .build();
 
         user.sendMessage("commands.admin.range.remove.success",
-                TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1),
+                TextVariables.NAME, args.getFirst(), TextVariables.NUMBER, args.get(1),
                 "[total]", String.valueOf(newRange));
 
         return true;

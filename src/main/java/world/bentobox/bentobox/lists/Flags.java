@@ -3,11 +3,11 @@ package world.bentobox.bentobox.lists;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import com.google.common.base.Enums;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.flags.Flag.Type;
@@ -726,7 +726,7 @@ public final class Flags {
                     try {
                         return (Flag)field.get(null);
                     } catch (IllegalArgumentException | IllegalAccessException e) {
-                        Bukkit.getLogger().severe("Could not get Flag values " + e.getMessage());
+                        BentoBox.getInstance().logError("Could not get Flag values " + e.getMessage());
                     }
                     return null;
                 }).toList();

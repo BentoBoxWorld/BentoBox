@@ -95,6 +95,7 @@ public class AdminTeamDisbandCommandTest extends AbstractCommonSetup {
         // Set up users
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         when(p2.getUniqueId()).thenReturn(notUUID);
+        when(p2.getWorld()).thenReturn(world);
         User.getInstance(mockPlayer);
         when(p2.spigot()).thenReturn(spigot);
         User.getInstance(p2);

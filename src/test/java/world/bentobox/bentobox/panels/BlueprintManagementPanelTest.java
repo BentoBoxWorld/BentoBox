@@ -159,7 +159,7 @@ public class BlueprintManagementPanelTest extends AbstractCommonSetup {
         PanelItem pi = bmp.getBundleIcon(bb);
         assertEquals("commands.admin.blueprint.management.edit-description", pi.getName());
         assertEquals(Material.STONE, pi.getItem().getType());
-        assertEquals("A description", pi.getDescription().get(0));
+        assertEquals("A description", pi.getDescription().getFirst());
     }
 
     /**
@@ -170,7 +170,7 @@ public class BlueprintManagementPanelTest extends AbstractCommonSetup {
         PanelItem pi = bmp.getBlueprintItem(addon, 0, bb, blueprint);
         assertEquals("blueprint name", pi.getName());
         assertEquals(Material.PAPER, pi.getItem().getType());
-        assertEquals("commands.admin.blueprint.management.blueprint-instruction", pi.getDescription().get(0));
+        assertEquals("commands.admin.blueprint.management.blueprint-instruction", pi.getDescription().getFirst());
     }
 
     /**
@@ -183,7 +183,7 @@ public class BlueprintManagementPanelTest extends AbstractCommonSetup {
         PanelItem pi = bmp.getBlueprintItem(addon, 0, bb, blueprint);
         assertEquals("Display Name", pi.getName());
         assertEquals(Material.BEACON, pi.getItem().getType());
-        assertEquals("commands.admin.blueprint.management.blueprint-instruction", pi.getDescription().get(0));
+        assertEquals("commands.admin.blueprint.management.blueprint-instruction", pi.getDescription().getFirst());
     }
 
     /**
@@ -196,7 +196,7 @@ public class BlueprintManagementPanelTest extends AbstractCommonSetup {
         PanelItem pi = bmp.getBlueprintItem(addon, 5, bb, blueprint);
         assertEquals("Display Name", pi.getName());
         assertEquals(Material.BEACON, pi.getItem().getType());
-        assertEquals("commands.admin.blueprint.management.remove", pi.getDescription().get(0));
+        assertEquals("commands.admin.blueprint.management.remove", pi.getDescription().getFirst());
     }
 
 }

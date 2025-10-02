@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import dev.lone.itemsadder.api.CustomBlock;
@@ -24,7 +25,7 @@ import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.managers.RanksManager;
 
 /**
- * Hook to provide ItemsAdder API without the  the Addon needing to call
+ * Hook to provide ItemsAdder API without the Addon needing to call
  * it directly. 
  * Also provides Island Deletion support.
  */
@@ -42,7 +43,7 @@ public class ItemsAdderHook extends Hook {
                     .
             build();
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
 
     private BlockInteractListener listener;
 
@@ -96,7 +97,7 @@ public class ItemsAdderHook extends Hook {
 
     /**
      * Returns a list of all the registered blocks identifiers in the format {@code namespace:id}
-     * @return a list of Namespaces and IDs in the format {@code namespace:id}
+     * @return a set of Namespaces and IDs in the format {@code namespace:id}
      */
     public static Set<String> getAllBlocks() {
         return CustomBlock.getNamespacedIdsInRegistry();
@@ -178,8 +179,7 @@ public class ItemsAdderHook extends Hook {
      * @param namespacedID Namespace and ID in the format {@code namespace:id}
      * @return Possibly-null CustomBlock instance.
      */
-    @Nullable
-    public static CustomBlock getInstance(String namespacedID) {
+    public static @NonNull CustomBlock getInstance(String namespacedID) {
         return CustomBlock.getInstance(namespacedID);
     }
 

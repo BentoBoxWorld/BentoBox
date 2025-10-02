@@ -78,7 +78,7 @@ public class HiddenCommandTest {
         String[] args = {"v"};
         List<String> opList = tlc.tabComplete(sender, "top", args);
         assertFalse(opList.isEmpty());
-        assertEquals("visible", opList.get(0));
+        assertEquals("visible", opList.getFirst());
     }
 
     /**
@@ -91,7 +91,7 @@ public class HiddenCommandTest {
         String[] args = {"h"};
         List<String> opList = tlc.tabComplete(sender, "top", args);
         assertEquals(2, opList.size());
-        assertEquals("help", opList.get(0)); // Console can see all commands
+        assertEquals("help", opList.getFirst()); // Console can see all commands
         assertEquals("hidden", opList.get(1)); // Console can see all commands
     }
     
@@ -106,7 +106,7 @@ public class HiddenCommandTest {
         List<String> opList = tlc.tabComplete(sender, "top", args);
         opList.forEach(System.out::println);
         assertEquals(1, opList.size());
-        assertEquals("help", opList.get(0)); // Only help
+        assertEquals("help", opList.getFirst()); // Only help
     }
 
     /**

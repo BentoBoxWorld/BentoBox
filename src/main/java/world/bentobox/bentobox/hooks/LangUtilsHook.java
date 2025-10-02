@@ -424,7 +424,7 @@ public class LangUtilsHook extends Hook {
         String effecName = getPotionEffectName(effect.getType(), user);
         String amplifier = getEffectAmplifierName(effect.getAmplifier(), user);
 
-        if (amplifier.length() > 0) {
+        if (!amplifier.isEmpty()) {
             effecName = effecName + " " + amplifier;
         }
 

@@ -460,7 +460,7 @@ public class AdminMaxHomesCommandTest {
         args.add("anotherArg");
         args.add("thirdArg");
         args.add(""); // args.size() == 4 (>3)
-        String lastArg = args.get(args.size() - 1);
+        String lastArg = args.getLast();
 
         Map<String, IslandInfo> islandsMap = new HashMap<>();
         islandsMap.put("Island1", new IslandInfo(mock(Island.class), true));
