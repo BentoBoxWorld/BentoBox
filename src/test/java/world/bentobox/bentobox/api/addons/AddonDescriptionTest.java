@@ -79,7 +79,7 @@ public class AddonDescriptionTest {
      */
     @Test
     public void testGetAuthors() {
-        assertEquals("tastybento", ad.getAuthors().get(0));
+        assertEquals("tastybento", ad.getAuthors().getFirst());
     }
 
     /**
@@ -87,7 +87,7 @@ public class AddonDescriptionTest {
      */
     @Test
     public void testGetDependencies() {
-        assertEquals("dep1", ad.getDependencies().get(0));
+        assertEquals("dep1", ad.getDependencies().getFirst());
     }
 
     /**
@@ -95,7 +95,7 @@ public class AddonDescriptionTest {
      */
     @Test
     public void testGetSoftDependencies() {
-        assertEquals("sdep1", ad.getSoftDependencies().get(0));
+        assertEquals("sdep1", ad.getSoftDependencies().getFirst());
     }
 
     /**

@@ -126,7 +126,7 @@ public class IslandEvent extends IslandBaseEvent {
         /**
          * Called when an island has been pasted due to a reset.
          * Occurs before the old island has been deleted but after everything else.
-         * ie., island pasted, player teleported, etc.
+         * i.e., island pasted, player teleported, etc.
          */
         RESETTED,
         /**

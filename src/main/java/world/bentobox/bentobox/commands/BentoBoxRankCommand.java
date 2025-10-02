@@ -46,7 +46,7 @@ public class BentoBoxRankCommand extends CompositeCommand {
             return false;
         }
         // Check if the first element is "add" or REMOVE or "list"
-        firstElement = args.get(0);
+        firstElement = args.getFirst();
         if (!("list".equals(firstElement) || "add".equals(firstElement) || REMOVE.equals(firstElement))) {
             // Show help
             showHelp(this, user);
@@ -114,9 +114,7 @@ public class BentoBoxRankCommand extends CompositeCommand {
 
     private void showRanks(User user) {
         user.sendMessage("commands.bentobox.rank.list");
-        RanksManager.getInstance().getRanks().forEach((ref, rank) -> {
-            user.sendRawMessage(user.getTranslation(ref) + ": " + ref + " " + String.valueOf(rank));
-        });
+        RanksManager.getInstance().getRanks().forEach((ref, rank) -> user.sendRawMessage(user.getTranslation(ref) + ": " + ref + " " + rank));
 
     }
 

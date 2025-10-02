@@ -118,6 +118,7 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        assert island != null;
         new ConversationFactory(BentoBox.getInstance())
         .withModality(true)
         .withLocalEcho(false)
@@ -134,7 +135,7 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
      */
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         Island is = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (is != null) {
             return Optional.of(Util.tabLimit(new ArrayList<>(is.getHomes().keySet()), lastArg));

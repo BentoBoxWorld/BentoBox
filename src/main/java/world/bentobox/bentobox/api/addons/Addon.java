@@ -95,7 +95,7 @@ public abstract class Addon {
     /**
      * Executes code when loading the addon.
      * This is called before {@link #onEnable()}.
-     * This <b>must</b> be used to setup configuration, worlds and commands.
+     * This <b>must</b> be used to set up configuration, worlds and commands.
      */
     public void onLoad() {}
 
@@ -220,7 +220,7 @@ public abstract class Addon {
                 yamlConfig = new YamlConfiguration();
                 yamlConfig.load(yamlFile);
             } catch (Exception e) {
-                Bukkit.getLogger().severe(() -> "Could not load config.yml: " + e.getMessage());
+                BentoBox.getInstance().logError("Could not load config.yml: " + e.getMessage());
             }
         }
         return yamlConfig;
@@ -242,7 +242,7 @@ public abstract class Addon {
         try {
             getConfig().save(new File(dataFolder, ADDON_CONFIG_FILENAME));
         } catch (IOException e) {
-            Bukkit.getLogger().severe("Could not save config! " + this.getDescription().getName() + " " + e.getMessage());
+            BentoBox.getInstance().logError("Could not save config! " + this.getDescription().getName() + " " + e.getMessage());
         }
     }
 
@@ -291,7 +291,7 @@ public abstract class Addon {
      * @return file written, or null if none
      */
     public File saveResource(String jarResource, File destinationFolder, boolean replace, boolean noPath) {
-        if (jarResource == null || jarResource.equals("")) {
+        if (jarResource == null || jarResource.isEmpty()) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
 
@@ -312,7 +312,9 @@ public abstract class Addon {
                         outFile = new File(destinationFolder, outFile.getName());
                     }
                     // Make any dirs that need to be made
-                    outFile.getParentFile().mkdirs();
+                    if (!outFile.getParentFile().mkdirs()) {
+                        throw new IOException();
+                    }
                     if (!outFile.exists() || replace) {
                         java.nio.file.Files.copy(in, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     }
@@ -338,7 +340,7 @@ public abstract class Addon {
      * @throws InvalidConfigurationException - if the yaml is malformed
      */
     public YamlConfiguration getYamlFromJar(String jarResource) throws IOException, InvalidConfigurationException {
-        if (jarResource == null || jarResource.equals("")) {
+        if (jarResource == null || jarResource.isEmpty()) {
             throw new IllegalArgumentException("jarResource cannot be null or empty");
         }
         YamlConfiguration result = new YamlConfiguration();
@@ -360,7 +362,7 @@ public abstract class Addon {
      * @return resource or null if there is a problem
      */
     public InputStream getResource(String jarResource) {
-        if (jarResource == null || jarResource.equals("")) {
+        if (jarResource == null || jarResource.isEmpty()) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
 
@@ -373,7 +375,7 @@ public abstract class Addon {
                 }
             }
         } catch (IOException e) {
-            Bukkit.getLogger().severe("Could not open from jar file. " + jarResource);
+            BentoBox.getInstance().logError("Could not open from jar file. " + jarResource);
         }
         return null;
     }

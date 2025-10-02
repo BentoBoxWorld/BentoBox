@@ -36,16 +36,14 @@ public class PrimaryIslandListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent event) {
-        if (event.getTo() != null && !event.getFrom().toVector().equals(event.getTo().toVector())) {
+        if (!event.getFrom().toVector().equals(event.getTo().toVector())) {
             setIsland(event.getPlayer(), event.getTo());
         }
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerMove(final PlayerTeleportEvent event) {
-        if (event.getTo() != null) {
-            setIsland(event.getPlayer(), event.getTo());
-        }
+        setIsland(event.getPlayer(), event.getTo());
     }
 
     private void setIsland(Player player, Location location) {

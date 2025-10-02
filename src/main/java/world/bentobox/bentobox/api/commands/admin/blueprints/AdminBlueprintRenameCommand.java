@@ -43,7 +43,7 @@ public class AdminBlueprintRenameCommand extends ConfirmableCommand
             return false;
         }
 
-        String from = Util.sanitizeInput(args.get(0));
+        String from = Util.sanitizeInput(args.getFirst());
         String to = Util.sanitizeInput(args.get(1));
 
         // Check if name is changed.
@@ -73,7 +73,7 @@ public class AdminBlueprintRenameCommand extends ConfirmableCommand
         AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
 
         // Check if the names are the same
-        String from = Util.sanitizeInput(args.get(0));
+        String from = Util.sanitizeInput(args.getFirst());
         String to = Util.sanitizeInput(args.get(1));
 
         // Check if the 'to' file exists

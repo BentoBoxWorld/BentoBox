@@ -69,11 +69,10 @@ public class IslandsManager {
 
     private final BentoBox plugin;
 
-    private Map<World, Island> spawns = new ConcurrentHashMap<>();
+    private final Map<World, Island> spawns = new ConcurrentHashMap<>();
 
-    private Map<World, Location> last = new ConcurrentHashMap<>();
+    private final Map<World, Location> last = new ConcurrentHashMap<>();
 
-    @NonNull
     private static Database<Island> handler;
 
     /**
@@ -135,7 +134,7 @@ public class IslandsManager {
             } else if (split.length == 2) {
                 World world = Bukkit.getWorld(split[0]);
                 if (world != null) {
-                    getIslandById(split[1]).ifPresent(i -> this.setSpawn(i));
+                    getIslandById(split[1]).ifPresent(this::setSpawn);
                 }
             }
 
@@ -162,8 +161,7 @@ public class IslandsManager {
         Block ground = l.getBlock().getRelative(BlockFace.DOWN);
         Block space1 = l.getBlock();
         Block space2 = l.getBlock().getRelative(BlockFace.UP);
-        boolean safe = checkIfSafe(l.getWorld(), ground.getType(), space1.getType(), space2.getType());
-        return safe;
+        return checkIfSafe(l.getWorld(), ground.getType(), space1.getType(), space2.getType());
     }
 
     /**
@@ -411,7 +409,7 @@ public class IslandsManager {
      * 
      * @param world world to check
      * @param user user
-     * @return List of islands or empty list if none found for user
+     * @return Set of islands or empty list if none found for user
      * @since 2.1.0
      */
     @NonNull
@@ -427,7 +425,7 @@ public class IslandsManager {
      * 
      * @param world world to check
      * @param uniqueId  user's UUID
-     * @return List of islands or empty list if none found for user
+     * @return Set of islands or empty list if none found for user
      * @since 2.1.0
      */
     @NonNull
@@ -464,7 +462,7 @@ public class IslandsManager {
     }
 
     public boolean isIslandAt(@NonNull Location location) {
-        return plugin.getIWM().inWorld(location) ? islandCache.isIslandAt(location) : false;
+        return plugin.getIWM().inWorld(location) && islandCache.isIslandAt(location);
     }
 
     /**
@@ -601,7 +599,7 @@ public class IslandsManager {
                     islandMax);
         }
         Integer change = islandMax == worldDefault ? null : islandMax;
-        if (island.getMaxMembers().get(rank) != change) {
+        if (!Objects.equals(island.getMaxMembers().get(rank), change)) {
             island.setMaxMembers(rank, change);
             updateIsland(island);
         }
@@ -643,7 +641,7 @@ public class IslandsManager {
         // If the island maxHomes is just the same as the world default, then set to
         // null
         Integer change = islandMax == plugin.getIWM().getMaxHomes(island.getWorld()) ? null : islandMax;
-        if (island.getMaxHomes() != change) {
+        if (!Objects.equals(island.getMaxHomes(), change)) {
             island.setMaxHomes(change);
             updateIsland(island);
         }
@@ -1252,7 +1250,7 @@ public class IslandsManager {
             spawn.setSpawn(true);
             spawns.put(Util.getWorld(spawn.getWorld()), spawn);
             // Tell other servers
-            MultiLib.notify("bentobox-setspawn", spawn.getWorld().getUID().toString() + "," + spawn.getUniqueId());
+            MultiLib.notify("bentobox-setspawn", spawn.getWorld().getUID() + "," + spawn.getUniqueId());
         }
     }
 

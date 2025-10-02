@@ -1236,7 +1236,7 @@ public class IslandTest {
     public void testLog() {
         LogEntry le = Mockito.mock(LogEntry.class);
         i.log(le);
-        assertEquals(le, i.getHistory().get(0));
+        assertEquals(le, i.getHistory().getFirst());
     }
 
     /**
@@ -1246,7 +1246,7 @@ public class IslandTest {
     public void testSetHistory() {
         LogEntry le = Mockito.mock(LogEntry.class);
         i.setHistory(List.of(le));
-        assertEquals(le, i.getHistory().get(0));
+        assertEquals(le, i.getHistory().getFirst());
     }
 
     /**

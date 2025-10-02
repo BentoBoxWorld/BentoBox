@@ -69,7 +69,7 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand
         BlueprintClipboard clipboard = parent.getClipboards().
                 computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
 
-        String fileName = Util.sanitizeInput(args.get(0));
+        String fileName = Util.sanitizeInput(args.getFirst());
 
         // Check if file exists
         File newFile = new File(parent.getBlueprintsFolder(), fileName + BlueprintsManager.BLUEPRINT_SUFFIX);
@@ -78,11 +78,11 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand
         {
             this.askConfirmation(user,
                     user.getTranslation("commands.admin.blueprint.file-exists"),
-                    () -> this.hideAndSave(user, parent, clipboard, fileName, args.get(0)));
+                    () -> this.hideAndSave(user, parent, clipboard, fileName, args.getFirst()));
             return false;
         }
 
-        return this.hideAndSave(user, parent, clipboard, fileName, args.get(0));
+        return this.hideAndSave(user, parent, clipboard, fileName, args.getFirst());
     }
 
 
@@ -108,6 +108,7 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand
 
         if (result && clipboard.isFull())
         {
+            assert clipboard.getBlueprint() != null;
             this.getPlugin().getBlueprintsManager().addBlueprint(this.getAddon(), clipboard.getBlueprint());
         }
 

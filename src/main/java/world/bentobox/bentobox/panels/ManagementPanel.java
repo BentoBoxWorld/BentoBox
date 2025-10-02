@@ -47,7 +47,7 @@ public class ManagementPanel {
             builder.item(i, new PanelItemBuilder().icon(plugin.getSettings().getPanelFillerMaterial()).name(" ").build());
         }
 
-        // Setup the views
+        // Set up the views
         int startSlot = 10;
         int i = 0;
         List<? extends Addon> addons;
@@ -134,7 +134,7 @@ public class ManagementPanel {
             }
         }
 
-        // Setup a few more buttons
+        // Set up a few more buttons
         // Catalog
         PanelItem catalog = new PanelItemBuilder()
                 .icon(Material.ENCHANTED_BOOK)

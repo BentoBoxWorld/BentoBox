@@ -96,12 +96,15 @@ public record PanelTemplateRecord(Panel.Type type,
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof PanelTemplateRecord other)) {
+        if (!(obj instanceof PanelTemplateRecord(
+                Panel.Type type1, String title1, TemplateItem border1, TemplateItem background1, boolean[] rows,
+                ItemTemplateRecord[][] content1
+        ))) {
             return false;
         }
-        return Objects.equals(background, other.background) && Objects.equals(border, other.border)
-                && Arrays.deepEquals(content, other.content) && Arrays.equals(forcedRows, other.forcedRows)
-                && Objects.equals(title, other.title) && type == other.type;
+        return Objects.equals(background, background1) && Objects.equals(border, border1)
+                && Arrays.deepEquals(content, content1) && Arrays.equals(forcedRows, rows)
+                && Objects.equals(title, title1) && type == type1;
     }
 
 

@@ -138,7 +138,7 @@ public class PanelItem {
                 // Try the old way
                 if (meta != null) {
                     if (glow) {
-                        meta.addEnchant(Enchantment.LURE, 0, glow);
+                        meta.addEnchant(Enchantment.LURE, 0, true);
                     } else {
                         meta.removeEnchant(Enchantment.LURE);
                     }

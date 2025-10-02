@@ -45,9 +45,9 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
             return false;
         }
         // Get target
-        targetUUID = Util.getUUID(args.get(0));
+        targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         if (!getIslands().hasIsland(getWorld(), targetUUID)) {
@@ -56,7 +56,7 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         }
         // Check if the player has more than one island
         Map<String, Island> islands = getIslandsXYZ(targetUUID);
-        if (islands.size() == 0) {
+        if (islands.isEmpty()) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         } else if (args.size() == 1) {
@@ -116,9 +116,11 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         // Remove all island players that reference this island
         targetIsland.getMembers().clear();
         if (user.isPlayer()) {
+            assert targetUUID != null;
             targetIsland.log(new LogEntry.Builder(LogType.UNREGISTER).data("player", targetUUID.toString())
                     .data("admin", user.getUniqueId().toString()).build());
         } else {
+            assert targetUUID != null;
             targetIsland.log(new LogEntry.Builder(LogType.UNREGISTER).data("player", targetUUID.toString())
                     .data("admin", "console").build());
         }
@@ -128,7 +130,7 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

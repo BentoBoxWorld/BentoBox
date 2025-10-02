@@ -110,6 +110,7 @@ public class EnterExitListenerTest {
 
         // Player
         Player p = mock(Player.class);
+        when(p.getWorld()).thenReturn(world);
         // Sometimes use Mockito.withSettings().verboseLogging()
         User.setPlugin(plugin);
         when(user.isOp()).thenReturn(false);
@@ -185,6 +186,7 @@ public class EnterExitListenerTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
+        when(iwm.getFriendlyName(world)).thenReturn("BskyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Player's manager

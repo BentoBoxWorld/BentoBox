@@ -364,7 +364,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * @return this command's sub-level. Top level is 0. Every time a command
+     * @return this command's sublevel. Top level is 0. Every time a command
      *         registers with a parent, their level will be set.
      */
     protected int getLevel() {
@@ -585,7 +585,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * Sets locale reference to this command's description. It is used to display
      * the help of this command.
-     *
      * <br/>
      * <br/>
      *
@@ -623,7 +622,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * Sets locale reference to this command's parameters. It is used to display the
      * help of this command.
-     *
      * <br/>
      * <br/>
      *
@@ -786,7 +784,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * The the world that this command applies to.
+     * The world that this command applies to.
      * 
      * @return the world
      */

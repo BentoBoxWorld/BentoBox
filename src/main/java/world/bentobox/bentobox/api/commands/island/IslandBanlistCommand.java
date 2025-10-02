@@ -125,10 +125,10 @@ public class IslandBanlistCommand extends CompositeCommand {
             line.append(n);
             line.append(", ");
         });
-        
-        // Clean up the final line
-        line.setLength(line.length() - 2); // Remove trailing comma and space
-        if (line.length() > 0) {
+        // Remove trailing comma
+        line.setLength(line.length() - 2);
+        // Add the final line if it is not empty
+        if (!line.isEmpty()) {
             lines.add(line.toString());
         }
         

@@ -119,7 +119,7 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
             return false;
         }
 
-        // By default run the attached help command, if it exists (it should)
+        // By default, run the attached help command, if it exists (it should)
         return this.showHelp(this, user);
     }
 }

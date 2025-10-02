@@ -196,7 +196,7 @@ public class IslandCreateCommandTest {
     @Test
     public void testIslandCreateCommand() {
         assertEquals("create", cc.getLabel());
-        assertEquals("new", cc.getAliases().get(0));
+        assertEquals("new", cc.getAliases().getFirst());
     }
 
     /**

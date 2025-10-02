@@ -69,7 +69,7 @@ public class IslandLanguageCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         if (args.size() == 1) {
             // The user provided a language code
-            Locale locale = Locale.forLanguageTag(args.get(0));
+            Locale locale = Locale.forLanguageTag(args.getFirst());
             if (getPlugin().getLocalesManager().isLocaleAvailable(locale)) {
                 // Check if that locale is not already selected
                 if (!user.getLocale().equals(locale)) {
@@ -96,7 +96,7 @@ public class IslandLanguageCommand extends CompositeCommand {
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         List<String> options = new ArrayList<>();
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         for (Locale locale : getPlugin().getLocalesManager().getAvailableLocales(true)) {
             options.add(locale.toLanguageTag());
         }

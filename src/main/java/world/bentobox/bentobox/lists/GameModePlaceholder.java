@@ -4,7 +4,6 @@ import java.text.DateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -431,10 +430,7 @@ public enum GameModePlaceholder {
         Set<String> uniqueMembers = new HashSet<>();
         for (LogEntry le : island.getHistory()) {
             if (le.getType() == LogType.JOINED) {
-                Iterator<String> it = le.getData().keySet().iterator();
-                while (it.hasNext()) {
-                    uniqueMembers.add(it.next());
-                }
+                uniqueMembers.addAll(le.getData().keySet());
             }
         }
         return String.valueOf(uniqueMembers.size());
@@ -446,8 +442,10 @@ public enum GameModePlaceholder {
      * @return optional island
      */
     private static Optional<Island> getVisitedIsland(@NonNull GameModeAddon addon, @Nullable User user) {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
+        if (user == null || !user.isPlayer()) {
             return Optional.empty();
+        } else {
+            user.getLocation();
         }
         return addon.getIslands().getIslandAt(user.getLocation());
     }

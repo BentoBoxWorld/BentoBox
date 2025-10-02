@@ -277,7 +277,7 @@ public class BlueprintPaster {
             } else {
                 // Attachments done. Next paste entities
                 pasteState = PasteState.ENTITIES;
-                if (bits.entities.size() != 0) {
+                if (!bits.entities.isEmpty()) {
                     owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.entities", TextVariables.NUMBER, String.valueOf(bits.entities.size())));
                 }
             }

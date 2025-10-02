@@ -773,14 +773,14 @@ public class Util {
         
         T handler;
         try {
-            Class<?> clazz = Class.forName(getPrefix().x + "." + implName);
+            Class<?> clazz = Class.forName(getPrefix().x() + "." + implName);
             if (handlerClass.isAssignableFrom(clazz)) {
                 handler = handlerClass.cast(clazz.getConstructor().newInstance());
             } else {
                 throw new IllegalStateException("Class " + clazz.getName() + " does not implement " + handlerClass.getSimpleName());
             }
         } catch (Exception e) {
-            plugin.logWarning("No " + logPrefix + " found for " + getPrefix().z + ", falling back to Bukkit API.");
+            plugin.logWarning("No " + logPrefix + " found for " + getPrefix().z() + ", falling back to Bukkit API.");
             handler = fallbackSupplier.get();
         }
         return handler;
@@ -822,7 +822,7 @@ public class Util {
      */
     public static PasteHandler getPasteHandler() {
         if (pasteHandler == null) {
-            BentoBox.getInstance().log("Optimizing for " + getPrefix().z);
+            BentoBox.getInstance().log("Optimizing for " + getPrefix().z());
             pasteHandler = getNMSHandler(PasteHandler.class,
                     "PasteHandlerImpl",
                     () -> new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl(),

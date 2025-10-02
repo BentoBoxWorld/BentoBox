@@ -85,14 +85,14 @@ public class AdminSettingsCommand extends CompositeCommand {
     }
 
     private boolean getIsland(User user, List<String> args) {
-        if (args.get(0).equalsIgnoreCase(SPAWN_ISLAND) && getIslands().getSpawn(getWorld()).isPresent()) {
+        if (args.getFirst().equalsIgnoreCase(SPAWN_ISLAND) && getIslands().getSpawn(getWorld()).isPresent()) {
             island = getIslands().getSpawn(getWorld()).get();
             return true;
         }
         // Get target player
-        @Nullable UUID targetUUID = Util.getUUID(args.get(0));
+        @Nullable UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         island = getIslands().getIsland(getWorld(), targetUUID);
@@ -125,11 +125,11 @@ public class AdminSettingsCommand extends CompositeCommand {
     }
 
     private boolean checkWorldSetting(User user, List<String> args) {
-        String arg0 = args.get(0).toUpperCase(Locale.ENGLISH);
+        String arg0 = args.getFirst().toUpperCase(Locale.ENGLISH);
 
         if (worldSettingFlagNames.contains(arg0)) {
             if (checkActiveDisabled(user, args.get(1))) {
-                flag = getPlugin().getFlagsManager().getFlag(args.get(0).toUpperCase(Locale.ENGLISH));
+                flag = getPlugin().getFlagsManager().getFlag(args.getFirst().toUpperCase(Locale.ENGLISH));
                 return true;
             }
         } else {
@@ -202,12 +202,8 @@ public class AdminSettingsCommand extends CompositeCommand {
             // Command line setting
             flag.ifPresent(f -> {
                 switch (f.getType()) {
-                case PROTECTION -> {
-                    island.setFlag(f, rank);
-                }
-                case SETTING -> {
-                    island.setSettingsFlag(f, activeState);
-                }
+                case PROTECTION -> island.setFlag(f, rank);
+                case SETTING -> island.setSettingsFlag(f, activeState);
                 case WORLD_SETTING -> f.setSetting(getWorld(), activeState);
                 default -> {
                     // Do nothing
@@ -252,7 +248,7 @@ public class AdminSettingsCommand extends CompositeCommand {
         String active = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
         String disabled = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
         List<String> options = new ArrayList<>();
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.size() == 2) {
             // Player names or world settings
             options = Util.tabLimit(Util.getOnlinePlayerList(user), lastArg);

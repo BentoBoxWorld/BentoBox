@@ -103,7 +103,6 @@ public class TemplateReader
             // If the keyword is found, extract the substring starting from that index
             if (index != -1) {
                 BentoBox.getInstance().saveResource(absolutePath.substring(index), false);
-                file = new File(panelLocation, templateName.endsWith(YML) ? templateName : templateName + YML);
             } else {
                 BentoBox.getInstance().logError(file.getAbsolutePath() + " does not exist for panel template");
                 // Return as file does not exist.
@@ -380,9 +379,9 @@ public class TemplateReader
                 actionSection.getKeys(false).forEach(actionKey -> {
                     ClickType clickType = Enums.getIfPresent(ClickType.class, actionKey.toUpperCase()).orNull();
 
+                    ConfigurationSection actionDataSection = actionSection.getConfigurationSection(actionKey);
                     if (clickType != null)
                     {
-                        ConfigurationSection actionDataSection = actionSection.getConfigurationSection(actionKey);
 
                         if (actionDataSection != null)
                         {
@@ -396,7 +395,6 @@ public class TemplateReader
                     }
                     else
                     {
-                        ConfigurationSection actionDataSection = actionSection.getConfigurationSection(actionKey);
 
                         if (actionDataSection != null && actionDataSection.contains(CLICK_TYPE))
                         {

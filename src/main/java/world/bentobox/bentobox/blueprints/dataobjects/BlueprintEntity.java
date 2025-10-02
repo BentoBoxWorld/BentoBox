@@ -105,7 +105,7 @@ public class BlueprintEntity {
     Float MMpower;
     @Expose
     String MMStance;
-    // GSON can serialize records, but the record class needs to be know in advance. So this breaks out the record entries
+    // GSON can serialize records, but the record class needs to be known in advance. So this breaks out the record entries
     @Expose
     String MMtype;
     // Npc storage
@@ -283,7 +283,7 @@ public class BlueprintEntity {
         if (e instanceof AbstractHorse horse) {
             if (domestication != null) horse.setDomestication(domestication);
             if (inventory != null) {
-                inventory.forEach((index, item) -> horse.getInventory().setItem(index.intValue(), item));
+                inventory.forEach((index, item) -> horse.getInventory().setItem(index, item));
 
             }
         }
@@ -592,14 +592,15 @@ public class BlueprintEntity {
                 disp.getInterpolationDuration(), disp.getShadowRadius(), disp.getShadowStrength(),
                 disp.getTeleportDuration(), disp.getTransformation(), disp.getViewRange());
         // Class specific items
-        if (disp instanceof BlockDisplay bd) {
-            this.blockDisp = new BlueprintBlock(bd.getBlock().getAsString());
-        } else if (disp instanceof ItemDisplay id) {
-            itemDisp = new ItemDispRec(id.getItemStack(), id.getItemDisplayTransform());
-        } else if (disp instanceof TextDisplay td) {
-            textDisp = new TextDisplayRec(td.getText(), td.getAlignment(), td.getBackgroundColor(),
-                    td.getFacing(), td.getLineWidth(), td.getTextOpacity(), td.isShadowed(), td.isSeeThrough(),
-                    td.isDefaultBackground());
+        switch (disp) {
+            case BlockDisplay bd -> this.blockDisp = new BlueprintBlock(bd.getBlock().getAsString());
+            case ItemDisplay id -> itemDisp = new ItemDispRec(id.getItemStack(), id.getItemDisplayTransform());
+            case TextDisplay td ->
+                    textDisp = new TextDisplayRec(td.getText(), td.getAlignment(), td.getBackgroundColor(),
+                            td.getFacing(), td.getLineWidth(), td.getTextOpacity(), td.isShadowed(), td.isSeeThrough(),
+                            td.isDefaultBackground());
+            default -> {
+            }
         }
         // Store location within block
         x = disp.getLocation().getX() - disp.getLocation().getBlockX();

@@ -148,7 +148,7 @@ public class DefaultPasteUtil {
                 Inventory ih = holder.getInventory();
                 // Double chests are pasted as two blocks so inventory is filled twice.
                 // This code stops over-filling for the first block.
-                bpBlock.getInventory().forEach((slot, item) -> ih.setItem(slot, item));
+                bpBlock.getInventory().forEach(ih::setItem);
             }
         // Mob spawners
             else if (bs instanceof CreatureSpawner spawner) {
@@ -203,7 +203,7 @@ public class DefaultPasteUtil {
         World world = location.getWorld();
         assert world != null;
         return Util.getChunkAtAsync(location)
-                .thenRun(() -> list.stream().forEach(k -> spawnBlueprintEntity(k, location, island)));
+                .thenRun(() -> list.forEach(k -> spawnBlueprintEntity(k, location, island)));
     }
 
     /**
@@ -295,7 +295,7 @@ public class DefaultPasteUtil {
         BlockFace bf = (bd instanceof WallSign ws) ? ws.getFacing()
                 : ((org.bukkit.block.data.type.Sign) bd).getRotation();
         // Handle spawn sign
-        if (side == Side.FRONT && island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
+        if (side == Side.FRONT && island != null && !lines.isEmpty() && lines.getFirst().equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
             if (bd instanceof Waterlogged wl && wl.isWaterlogged()) {
                 block.setType(Material.WATER);
             } else {
@@ -316,7 +316,7 @@ public class DefaultPasteUtil {
         Sign s = (org.bukkit.block.Sign) block.getState();
         SignSide signSide = s.getSide(side);
         // Sign text must be stored under the addon's name.sign.line0,1,2,3 in the yaml file
-        if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.START_TEXT)) {
+        if (island != null && !lines.isEmpty() && lines.getFirst().equalsIgnoreCase(TextVariables.START_TEXT)) {
             // Get the addon that is operating in this world
             String addonName = plugin.getIWM().getAddon(island.getWorld()).map(addon -> addon.getDescription().getName().toLowerCase(Locale.ENGLISH)).orElse("");
             Optional<User> user = Optional.ofNullable(island.getOwner()).map(User::getInstance);

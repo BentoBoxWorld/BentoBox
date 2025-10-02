@@ -59,9 +59,9 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
             return false;
         }
         // Get target player
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Uncoop
@@ -114,7 +114,7 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
             List<String> options = island.getMembers().entrySet().stream()
                     .filter(e -> e.getValue() == RanksManager.COOP_RANK).map(e -> Bukkit.getOfflinePlayer(e.getKey()))
                     .map(OfflinePlayer::getName).toList();
-            String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+            String lastArg = !args.isEmpty() ? args.getLast() : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

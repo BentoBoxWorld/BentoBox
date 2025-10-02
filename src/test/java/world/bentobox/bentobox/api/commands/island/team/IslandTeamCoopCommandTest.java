@@ -85,6 +85,7 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getWorld()).thenReturn(world);
         when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         when(user.getDisplayName()).thenReturn("&Ctastybento");
@@ -298,6 +299,7 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
         when(p.getUniqueId()).thenReturn(notUUID);
         when(p.getName()).thenReturn("target");
         when(p.getDisplayName()).thenReturn("&Ctarget");
+        when(p.getWorld()).thenReturn(world);
         when(p.spigot()).thenReturn(spigot);
         User target = User.getInstance(p);
         // Can execute

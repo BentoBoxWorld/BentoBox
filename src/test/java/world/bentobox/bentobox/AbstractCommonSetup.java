@@ -146,6 +146,7 @@ public abstract class AbstractCommonSetup {
         when(mockPlayer.getInventory()).thenReturn(inv);
         when(mockPlayer.spigot()).thenReturn(spigot);
         when(mockPlayer.getType()).thenReturn(EntityType.PLAYER);
+        when(mockPlayer.getWorld()).thenReturn(world);
 
         User.setPlugin(plugin);
         User.clearUsers();

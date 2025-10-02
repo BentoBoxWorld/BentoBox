@@ -11,7 +11,7 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * Fired when an a player reuqets info about an island
+ * Fired when a player requests info about an island
  * Cancellation has no effect.
  * @since 1.24.0
  */

@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 @SuppressWarnings("deprecation")
 public class MyBiomeGrid implements BiomeGrid {
     Map<Vector, Biome> map = new HashMap<>();
-    private Biome defaultBiome;
+    private final Biome defaultBiome;
     public MyBiomeGrid(Environment environment) {
         switch (environment) {
         case NETHER -> defaultBiome = Biome.NETHER_WASTES;

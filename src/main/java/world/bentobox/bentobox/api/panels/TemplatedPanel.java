@@ -129,7 +129,7 @@ public class TemplatedPanel extends Panel {
     }
 
     /**
-     * This method removes all empty lines if they are not forced to be showed.
+     * This method removes all empty lines if they are not forced to be shown.
      * 
      * @param itemArray The double array with items into panel
      */
@@ -297,7 +297,7 @@ public class TemplatedPanel extends Panel {
     }
 
     /**
-     * This method creates a fall back button for given record.
+     * This method creates a fallback button for given record.
      * 
      * @param rec Record which fallback must be created.
      * @return PanelItem if fallback was creates successfully, otherwise null.

@@ -34,9 +34,9 @@ public class AdminTeamAddCommand extends CompositeCommand {
             return false;
         }
         // Get owner and target
-        UUID ownerUUID = Util.getUUID(args.get(0));
+        UUID ownerUUID = Util.getUUID(args.getFirst());
         if (ownerUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         UUID targetUUID = Util.getUUID(args.get(1));
@@ -50,7 +50,7 @@ public class AdminTeamAddCommand extends CompositeCommand {
             return false;
         }
         if (getIslands().inTeam(getWorld(), ownerUUID) && !ownerUUID.equals(island.getOwner())) {
-            user.sendMessage("commands.admin.team.add.name-not-owner", TextVariables.NAME, args.get(0));
+            user.sendMessage("commands.admin.team.add.name-not-owner", TextVariables.NAME, args.getFirst());
             new IslandInfo(island).showMembers(user);
             return false;
         }

@@ -156,6 +156,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
         UUID uuid2 = UUID.randomUUID();
         when(coopPlayer.getUniqueId()).thenReturn(uuid2);
         when(coopPlayer.spigot()).thenReturn(spigot);
+        when(coopPlayer.getWorld()).thenReturn(world);
         User.getInstance(coopPlayer);
         memberMap.put(uuid2, RanksManager.COOP_RANK);
         island.setMembers(memberMap);
@@ -174,6 +175,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
             UUID u = UUID.randomUUID();
             when(p1.getUniqueId()).thenReturn(u);
             when(p1.getName()).thenReturn(name);
+            when(p1.getWorld()).thenReturn(world);
             online.put(u, name);
             onlinePlayers.add(p1);
         }

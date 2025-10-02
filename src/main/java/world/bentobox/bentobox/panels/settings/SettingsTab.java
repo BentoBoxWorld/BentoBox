@@ -53,7 +53,7 @@ public class SettingsTab implements Tab, ClickHandler {
     protected Island island;
     protected TabbedPanel parent;
 
-    private Map<UUID, Flag.Mode> currentMode = new HashMap<>();
+    private final Map<UUID, Flag.Mode> currentMode = new HashMap<>();
 
     /**
      * Show a tab of settings
@@ -149,12 +149,10 @@ public class SettingsTab implements Tab, ClickHandler {
         });
         flags.removeAll(toBeRemoved);
 
-        List<@Nullable PanelItem> result = flags.stream().map(
+        return flags.stream().map(
                 (f -> f.toPanelItem(plugin, user, world, island,
                         plugin.getIWM().getHiddenFlags(world).contains(f.getID()))))
                 .toList();
-
-        return result;
     }
 
     @Override

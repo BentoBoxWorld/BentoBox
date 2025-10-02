@@ -47,9 +47,9 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
             return false;
         }
         // Get target
-        targetUUID = Util.getUUID(args.get(0));
+        targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
 
@@ -76,7 +76,7 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
         }
         // Check that the target owns the island
         if (island.getOwner() == null || !island.getOwner().equals(targetUUID)) {
-            user.sendMessage("general.errors.player-is-not-owner", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.player-is-not-owner", TextVariables.NAME, args.getFirst());
             return false;
         }
         return true;
@@ -104,13 +104,13 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
                         .rankChange(island.getRank(mUser), RanksManager.VISITOR_RANK).build();
             }
         });
-        user.sendMessage("commands.admin.team.disband.success", TextVariables.NAME, args.get(0));
+        user.sendMessage("commands.admin.team.disband.success", TextVariables.NAME, args.getFirst());
         return true;
     }
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

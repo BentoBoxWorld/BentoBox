@@ -85,6 +85,7 @@ public class IslandNearCommand extends CompositeCommand {
         int dist = getIWM().getIslandDistance(getWorld()) * 2;
         boolean noNeighbors = true;
         for (BlockFace face : COMPASS_POINTS) {
+            assert island != null;
             String name = getIslands().getIslandAt(
                     island
                     .getCenter()

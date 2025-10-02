@@ -17,15 +17,14 @@ public class GitHubFile {
 
     public GitHubFile(GitHubWebAPI api, GitHubRepository gitHubRepository, String fullpath) {
         this.api = api;
-        this.path = "repos/" + gitHubRepository.getFullName() + fullpath;
+        this.path = "repos/" + gitHubRepository.fullName() + fullpath;
     }
 
     /**
      * Returns the content of this file.
      * @return the content of this file in Base64 or nothing if the connection to the GitHub API could not be established.
-     * @throws IOException - If an error occurs during the request.
      */
-    public String getContent() throws IllegalAccessException {
+    public String getContent() {
         JsonObject response;
         try {
             response = api.fetch(path);

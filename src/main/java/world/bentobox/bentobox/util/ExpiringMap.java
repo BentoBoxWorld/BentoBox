@@ -151,7 +151,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
     }
 
     /**
-     * Copies all of the mappings from the specified map to this map. The effect of this call is
+     * Copies all the mappings from the specified map to this map. The effect of this call is
      * equivalent to that of calling {@link #put(Object, Object) put(k, v)} on this map once
      * for each mapping from key {@code k} to value {@code v} in the specified map. The behavior
      * of this operation is undefined if the specified map is modified while the operation is in progress.
@@ -170,7 +170,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
     }
 
     /**
-     * Removes all of the mappings from this map. The map will be empty after this call returns.
+     * Removes all the mappings from this map. The map will be empty after this call returns.
      */
     @Override
     public void clear() {
@@ -179,7 +179,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
 
     /**
      * Returns a {@link Set} view of the keys contained in this map. The set is backed by the map,
-     * so changes to the map are reflected in the set, and vice-versa. If the map is modified while
+     * so changes to the map are reflected in the set, and vice versa. If the map is modified while
      * an iteration over the set is in progress, the results of the iteration are undefined. The set
      * supports element removal, which removes the corresponding mapping from the map, via the
      * {@code Iterator.remove}, {@code Set.remove}, {@code removeAll}, {@code retainAll}, and
@@ -194,7 +194,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
 
     /**
      * Returns a {@link Collection} view of the values contained in this map. The collection is
-     * backed by the map, so changes to the map are reflected in the collection, and vice-versa.
+     * backed by the map, so changes to the map are reflected in the collection, and vice versa.
      * If the map is modified while an iteration over the collection is in progress, the results
      * of the iteration are undefined. The collection supports element removal, which removes
      * the corresponding mapping from the map, via the {@code Iterator.remove}, {@code Collection.remove},
@@ -210,7 +210,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
 
     /**
      * Returns a {@link Set} view of the mappings contained in this map. The set is backed by the map,
-     * so changes to the map are reflected in the set, and vice-versa. If the map is modified while
+     * so changes to the map are reflected in the set, and vice versa. If the map is modified while
      * an iteration over the set is in progress, the results of the iteration are undefined. The set
      * supports element removal, which removes the corresponding mapping from the map, via the
      * {@code Iterator.remove}, {@code Set.remove}, {@code removeAll}, {@code retainAll}, and

@@ -82,7 +82,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         if (checkReserved(user, islands)) {
             return false;
         }
-        // Prevent command if player is falling and its not allowed
+        // Prevent command if player is falling and it's not allowed
         if ((getIWM().inWorld(user.getWorld()) && Flags.PREVENT_TELEPORT_WHEN_FALLING.isSetForWorld(user.getWorld()))
                 && user.getPlayer().getFallDistance() > 0) {
             // We're sending the "hint" to the player to tell them they cannot teleport while falling.
@@ -117,7 +117,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                 if (!info.islandName) {
                     this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), name)
                             .thenAccept((r) -> {
-                                if (r.booleanValue()) {
+                                if (r) {
                                     // Success
                                     getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
                                 } else {

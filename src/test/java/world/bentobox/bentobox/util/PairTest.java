@@ -23,8 +23,8 @@ public class PairTest {
     @Test
     public final void testPair() {
         Pair<Integer, Integer> pair = new Pair<>(1,2);
-        assertEquals(Integer.valueOf(1), pair.x);
-        assertEquals(Integer.valueOf(2), pair.z);
+        assertEquals(Integer.valueOf(1), pair.x());
+        assertEquals(Integer.valueOf(2), pair.z());
     }
 
     @Test

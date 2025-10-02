@@ -221,7 +221,7 @@ public class User implements MetaDataAble {
     }
 
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        return sender.getEffectivePermissions();
+        return sender == null ? Set.of() : sender.getEffectivePermissions();
     }
 
     /**
@@ -329,7 +329,7 @@ public class User implements MetaDataAble {
      *         permission or if the player is op.
      */
     public boolean hasPermission(@Nullable String permission) {
-        return permission == null || permission.isEmpty() || isOp() || sender.hasPermission(permission);
+        return permission == null || permission.isEmpty() || isOp() || (sender != null && sender.hasPermission(permission));
     }
 
     /**
@@ -340,6 +340,9 @@ public class User implements MetaDataAble {
      * @since 1.5.0
      */
     public boolean removePerm(String name) {
+        if (player == null) {
+            return false;
+        }
         for (PermissionAttachmentInfo p : player.getEffectivePermissions()) {
             if (p.getPermission().equals(name) && p.getAttachment() != null) {
                 player.removeAttachment(p.getAttachment());
@@ -358,6 +361,7 @@ public class User implements MetaDataAble {
      * @since 1.5.0
      */
     public PermissionAttachment addPerm(String name) {
+        assert player != null;
         return player.addAttachment(plugin, name, true);
     }
 
@@ -393,7 +397,7 @@ public class User implements MetaDataAble {
      */
     public int getPermissionValue(String permissionPrefix, int defaultValue) {
         // If requester is console, then return the default value
-        if (!isPlayer())
+        if (!isPlayer() || player == null)
             return defaultValue;
 
         // If there is a dot at the end of the permissionPrefix, remove it
@@ -424,6 +428,9 @@ public class User implements MetaDataAble {
 
     private int iteratePerms(List<String> permissions, String permPrefix, int defaultValue) {
         int value = 0;
+        if (player == null) {
+            return 0;
+        }
         for (String permission : permissions) {
             if (permission.contains(permPrefix + "*")) {
                 // 'Star' permission
@@ -549,7 +556,7 @@ public class User implements MetaDataAble {
         if (addon != null && addon.getDescription() != null) {
             translation = translation.replace("[gamemode]", addon.getDescription().getName());
         }
-        if (player != null && player.getWorld() != null) {
+        if (player != null) {
             // Replace the [friendly_name] text variable
             translation = translation.replace("[friendly_name]",
                     isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
@@ -750,7 +757,9 @@ public class User implements MetaDataAble {
      * @param mode - GameMode
      */
     public void setGameMode(GameMode mode) {
-        player.setGameMode(mode);
+        if (player != null) {
+            player.setGameMode(mode);
+        }
     }
 
     /**
@@ -760,7 +769,9 @@ public class User implements MetaDataAble {
      * @param location - the location
      */
     public void teleport(Location location) {
-        player.teleport(location);
+        if (player != null) {
+            player.teleport(location);
+        }
     }
 
     /**
@@ -811,7 +822,7 @@ public class User implements MetaDataAble {
         PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getPlayer(), command);
         Bukkit.getPluginManager().callEvent(event);
 
-        // only perform the command, if the event wasn't cancelled by an other plugin:
+        // only perform the command, if the event wasn't cancelled by another plugin:
         if (!event.isCancelled()) {
             return getPlayer().performCommand(
                     event.getMessage().startsWith("/") ? event.getMessage().substring(1) : event.getMessage());
@@ -940,7 +951,7 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Get all the meta data for this user
+     * Get all the metadata for this user
      * 
      * @return the metaData
      * @since 1.15.4

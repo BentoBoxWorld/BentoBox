@@ -128,13 +128,13 @@ public class IslandResetCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         // Permission check if the name is not the default one
         if (!args.isEmpty()) {
-            String name = getPlugin().getBlueprintsManager().validate(getAddon(), Util.sanitizeInput(args.get(0)));
+            String name = getPlugin().getBlueprintsManager().validate(getAddon(), Util.sanitizeInput(args.getFirst()));
             if (name == null || name.isEmpty()) {
                 // The blueprint name is not valid.
                 user.sendMessage("commands.island.create.unknown-blueprint");
                 return false;
             }
-            if (!getPlugin().getBlueprintsManager().checkPerm(getAddon(), user, Util.sanitizeInput(args.get(0)))) {
+            if (!getPlugin().getBlueprintsManager().checkPerm(getAddon(), user, Util.sanitizeInput(args.getFirst()))) {
                 return false;
             }
             return resetIsland(user, name);
@@ -190,6 +190,7 @@ public class IslandResetCommand extends ConfirmableCommand {
         user.sendMessage("commands.island.create.creating-island");
         // Create new island and then delete the old one
         try {
+            assert oldIsland != null;
             Builder builder = NewIsland.builder().player(user).reason(Reason.RESET).addon(getAddon())
                     .oldIsland(oldIsland).name(name);
             if (noPaste)

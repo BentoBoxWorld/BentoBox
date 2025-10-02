@@ -204,7 +204,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerBeforeClassTest {
         when(island.getHomes()).thenReturn(Map.of("home", location));
         Optional<List<String>> list = idh.tabComplete(user, "label", List.of("hom"));
         assertTrue(list.isPresent());
-        assertEquals("home", list.get().get(0));
+        assertEquals("home", list.get().getFirst());
     }
 
     /**

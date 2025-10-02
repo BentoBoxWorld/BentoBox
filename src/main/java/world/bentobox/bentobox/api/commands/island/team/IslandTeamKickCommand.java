@@ -54,9 +54,9 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             return false;
         }
         // Get target
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         if (targetUUID.equals(user.getUniqueId())) {
@@ -80,7 +80,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Get target
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (!getSettings().isKickConfirmation()) {
             kick(user, targetUUID);
             return true;
@@ -135,7 +135,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                     .filter(uuid -> island.getRank(uuid) >= RanksManager.MEMBER_RANK).map(Bukkit::getOfflinePlayer)
                     .map(OfflinePlayer::getName).toList();
 
-            String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+            String lastArg = !args.isEmpty() ? args.getLast() : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();
