@@ -55,7 +55,7 @@ public class AdminResetFlagsCommand extends ConfirmableCommand {
                 user.sendMessage("commands.admin.resetflags.success");
             });
             return true;
-        } else if (args.size() == 1 && options.contains(args.getFirst().toUpperCase(Locale.ENGLISH))) {
+        } else if (args.size() == 1 && getOptions().contains(args.getFirst().toUpperCase(Locale.ENGLISH))) {
             getPlugin().getFlagsManager().getFlag(args.getFirst().toUpperCase(Locale.ENGLISH)).ifPresent(flag ->
             askConfirmation(user, user.getTranslation("commands.admin.resetflags.confirm"), () -> {
                 getIslands().resetFlag(getWorld(), flag);
@@ -71,6 +71,6 @@ public class AdminResetFlagsCommand extends ConfirmableCommand {
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.getLast() : "";
-        return Optional.of(Util.tabLimit(options, lastArg));
+        return Optional.of(Util.tabLimit(getOptions(), lastArg));
     }
 }
