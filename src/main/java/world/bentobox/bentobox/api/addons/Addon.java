@@ -312,9 +312,7 @@ public abstract class Addon {
                         outFile = new File(destinationFolder, outFile.getName());
                     }
                     // Make any dirs that need to be made
-                    if (!outFile.getParentFile().mkdirs()) {
-                        throw new IOException();
-                    }
+                    outFile.getParentFile().mkdirs();
                     if (!outFile.exists() || replace) {
                         java.nio.file.Files.copy(in, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     }
@@ -326,6 +324,7 @@ public abstract class Addon {
                         "The embedded resource '" + jarResource + "' cannot be found in " + jar.getName());
             }
         } catch (IOException e) {
+            e.printStackTrace();
             BentoBox.getInstance().logError(
                     "Could not save from jar file. From " + jarResource + " to " + destinationFolder.getAbsolutePath());
         }

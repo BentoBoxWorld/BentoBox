@@ -1,19 +1,20 @@
 package world.bentobox.bentobox.util;
 
 
-import org.eclipse.jdt.annotation.NonNull;
-
 /**
- * Class to store pairs of objects, e.g. coordinates
+ * Class to store pairs of objects, e.g. coordinates.
+ * This could be done now as a record, but due to legacy code referencing it, it stays as a class.
+ * @author tastybento
  *
  * @param <X> the x part of the pair
  * @param <Z> the z part of the pair
- * @author tastybento
  */
-public record Pair<X, Z>(X x, Z z) {
+public class Pair<X, Z> {
+    public final X x;
+    public final Z z;
+    
     /**
      * Static factory method to create a Pair.
-     *
      * @param x the x part
      * @param z the z part
      * @return a new Pair containing x and z
@@ -22,10 +23,14 @@ public record Pair<X, Z>(X x, Z z) {
         return new Pair<>(x, z);
     }
 
+    public Pair(X x, Z z) {
+        this.x = x;
+        this.z = z;
+    }
+
 
     /**
      * Returns X element as key.
-     *
      * @return X element
      */
     public X getKey() {
@@ -35,7 +40,6 @@ public record Pair<X, Z>(X x, Z z) {
 
     /**
      * Returns Z element as value.
-     *
      * @return Z element
      */
     public Z getValue() {
@@ -47,8 +51,20 @@ public record Pair<X, Z>(X x, Z z) {
      * @see java.lang.Object#toString()
      */
     @Override
-    public @NonNull String toString() {
+    public String toString() {
         return "Pair [x=" + x + ", z=" + z + "]";
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((x == null) ? 0 : x.hashCode());
+        result = prime * result + ((z == null) ? 0 : z.hashCode());
+        return result;
     }
 
     /* (non-Javadoc)
@@ -62,17 +78,27 @@ public record Pair<X, Z>(X x, Z z) {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Pair<?, ?>(Object x1, Object z1))) {
+        if (!(obj instanceof Pair<?, ?> other)) {
             return false;
         }
         if (x == null) {
-            return false;
-        } else if (!x.equals(x1)) {
+            if (other.x != null) {
+                return false;
+            }
+        } else if (!x.equals(other.x)) {
             return false;
         }
         if (z == null) {
-            return false;
-        } else return z.equals(z1);
+            return other.z == null;
+        } else return z.equals(other.z);
+    }
+    
+    public X x() {
+        return x;
     }
 
+    public Z z() {
+        return z;
+    }
+    
 }
