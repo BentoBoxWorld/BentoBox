@@ -19,8 +19,28 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
+/**
+ * Handles the transfer of island ownership between team members.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Transfer island ownership to another team member</li>
+ *   <li>Automatic rank adjustments for old and new owner</li>
+ *   <li>Event firing for addons</li>
+ *   <li>History logging of ownership changes</li>
+ * </ul>
+ * <p>
+ * Restrictions:
+ * <ul>
+ *   <li>Only the current owner can transfer ownership</li>
+ *   <li>Target must be a team member</li>
+ *   <li>Cannot transfer to self</li>
+ *   <li>Requires specific permission</li>
+ * </ul>
+ */
 public class IslandTeamSetownerCommand extends CompositeCommand {
 
+    /** UUID of target player to receive ownership - stored between canExecute and execute */
     private @Nullable UUID targetUUID;
 
     public IslandTeamSetownerCommand(CompositeCommand islandTeamCommand) {
@@ -35,6 +55,13 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         setDescription("commands.island.team.setowner.description");
     }
 
+    /**
+     * Validates ownership transfer requirements:
+     * - Command sender must be in a team
+     * - Command sender must be the owner
+     * - Target player must exist and be on the team
+     * - Cannot transfer to self
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         // If args are not right, show help
@@ -53,9 +80,9 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("general.errors.not-owner");
             return false;
         }
-        targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         if (targetUUID.equals(user.getUniqueId())) {
@@ -69,6 +96,17 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         return true;
     }
 
+    /**
+     * Processes the ownership transfer:
+     * - Fires pre-transfer event
+     * - Updates island ownership
+     * - Fires rank change events for both players
+     * - Logs the transfer in island history
+     * 
+     * @param user current owner executing the command
+     * @param targetUUID2 new owner's UUID
+     * @return true if transfer successful, false if cancelled
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
         return setOwner(user, targetUUID);
@@ -93,15 +131,19 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         IslandEvent.builder().island(island).involvedPlayer(user.getUniqueId()).admin(false)
                 .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(RanksManager.OWNER_RANK, RanksManager.SUB_OWNER_RANK)
                 .build();
-        // Add historu record
+        // Add history record
         island.log(new LogEntry.Builder(LogType.NEWOWNER).data(targetUUID2.toString(), "new owner")
                 .data(user.getUniqueId().toString(), "old owner").build());
         return true;
     }
 
+    /**
+     * Provides tab completion for team member names.
+     * Only shows team members excluding the current owner.
+     */
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()) == null) {
             return Optional.empty();
         }

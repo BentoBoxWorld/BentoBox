@@ -53,7 +53,7 @@ public class CommandRankClickListener implements ClickHandler {
             return true;
         }
 
-        // Check if has permission
+        // Check if user has permission
         World w = Objects.requireNonNull(Util.getWorld(panel.getWorld().orElse(user.getWorld())));
         String prefix = plugin.getIWM().getPermissionPrefix(w);
         String reqPerm = prefix + "settings." + Flags.COMMAND_RANKS.getID();
@@ -142,14 +142,13 @@ public class CommandRankClickListener implements ClickHandler {
 
     private List<String> getCommands(World world, User user) {
         List<String> hiddenItems = plugin.getIWM().getHiddenFlags(world);
-        List<String> result = plugin.getCommandsManager().getCommands().values().stream()
+        return plugin.getCommandsManager().getCommands().values().stream()
                 .filter(c -> c.getWorld() != null && c.getWorld().equals(world)) // Only allow commands in this world
                 .filter(c -> c.testPermission(user.getSender())) // Only allow them to see commands they have permission to see
                 .flatMap(c -> getCmdRecursively("/", c).stream())
                 .filter(label -> user.isOp() || !hiddenItems.contains(CommandCycleClick.COMMAND_RANK_PREFIX + label)) // Hide any hidden commands
                 .limit(49) // Silently limit to 49
                 .toList();
-        return result;
     }
 
     /**

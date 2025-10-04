@@ -90,7 +90,7 @@ public class BlueprintManagementPanel {
      * Translate "commands.admin.blueprint.management." + t + vars reference
      * @param t end of reference
      * @param vars any other parameters
-     * @return transmation
+     * @return translation
      */
     private String t(String t, String... vars) {
         return user.getTranslation("commands.admin.blueprint.management." + t, vars);
@@ -187,12 +187,12 @@ public class BlueprintManagementPanel {
         blueprints.entrySet().stream().limit(18).forEach(b -> pb.item(getBlueprintItem(addon, b.getKey(), bb, b.getValue())));
         // Buttons for non-default bundle
         if (bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
-            // Panel has a No Trash icon. If right clicked it is discarded
+            // Panel has a No Trash icon. If right-clicked it is discarded
             pb.item(36, getNoTrashIcon());
             // Toggle permission - default is always allowed
             pb.item(39, getNoPermissionIcon());
         } else {
-            // Panel has a Trash icon. If right clicked it is discarded
+            // Panel has a Trash icon. If right-clicked it is discarded
             pb.item(36, getTrashIcon(addon, bb));
             // Toggle permission - default is always allowed
             pb.item(39, getPermissionIcon(addon, bb));

@@ -200,7 +200,7 @@ public class AdminBlueprintLoadCommandTest {
     public void testTabCompleteUserStringListOfString() {
         Optional<List<String>> o = abcc.tabComplete(user, "", List.of(""));
         assertTrue(o.isPresent());
-        assertEquals("island", o.get().get(0));
+        assertEquals("island", o.get().getFirst());
     }
 
     /**

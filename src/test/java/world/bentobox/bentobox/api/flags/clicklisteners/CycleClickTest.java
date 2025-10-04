@@ -377,7 +377,7 @@ public class CycleClickTest {
         assertTrue(hiddenFlags.isEmpty());
         assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
         assertFalse(hiddenFlags.isEmpty());
-        assertEquals(LOCK, hiddenFlags.get(0));
+        assertEquals(LOCK, hiddenFlags.getFirst());
         // Click shift left again to remove flag
         assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
         assertTrue(hiddenFlags.isEmpty());

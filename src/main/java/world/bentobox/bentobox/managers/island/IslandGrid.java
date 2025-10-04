@@ -43,12 +43,9 @@ public class IslandGrid {
         if (grid.containsKey(minX)) {
             TreeMap<Integer, IslandData> zEntry = grid.get(minX);
             if (zEntry.containsKey(minZ)) {
-                if (island.getUniqueId().equals(zEntry.get(minZ).id())) {
-                    // If it is the same island then it's okay
-                    return true;
-                }
+                // If it is the same island then it's okay
+                return island.getUniqueId().equals(zEntry.get(minZ).id());
                 // Island overlap, report error
-                return false;
             } else {
                 // Add island
                 zEntry.put(minZ, islandData);
@@ -108,7 +105,7 @@ public class IslandGrid {
     }
 
     /**
-     * Get the island ID string for an island at this coordinates, or null if none.
+     * Get the island ID string for an island at these coordinates, or null if none.
      * @param x coord
      * @param z coord
      * @return Unique Island ID string, or null if there is no island here.

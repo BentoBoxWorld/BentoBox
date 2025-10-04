@@ -1236,7 +1236,7 @@ public class IslandTest {
     public void testLog() {
         LogEntry le = Mockito.mock(LogEntry.class);
         i.log(le);
-        assertEquals(le, i.getHistory().get(0));
+        assertEquals(le, i.getHistory().getFirst());
     }
 
     /**
@@ -1246,7 +1246,7 @@ public class IslandTest {
     public void testSetHistory() {
         LogEntry le = Mockito.mock(LogEntry.class);
         i.setHistory(List.of(le));
-        assertEquals(le, i.getHistory().get(0));
+        assertEquals(le, i.getHistory().getFirst());
     }
 
     /**
@@ -1287,11 +1287,11 @@ public class IslandTest {
         i.setDeleted(false);
         assertFalse(i.isDeleted());
         
-        assertFalse(i.isPurgable());
-        i.setPurgable(true);
-        assertTrue(i.isPurgable());
-        i.setPurgable(false);
-        assertFalse(i.isPurgable());
+        assertFalse(i.isDeletable());
+        i.setDeletable(true);
+        assertTrue(i.isDeletable());
+        i.setDeletable(false);
+        assertFalse(i.isDeletable());
     }
 
     /**

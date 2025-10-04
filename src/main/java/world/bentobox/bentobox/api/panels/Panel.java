@@ -120,7 +120,7 @@ public class Panel implements HeadRequester, InventoryHolder {
     private int fixSize(int size) {
         // If size is undefined (0) then use the number of items
         if (size == 0) {
-            size = items.keySet().size();
+            size = items.size();
         }
         if (size > 0) {
             // Make sure size is a multiple of 9 and is 54 max.
@@ -195,7 +195,7 @@ public class Panel implements HeadRequester, InventoryHolder {
     }
 
     /**
-     * @param user - the User the user to set
+     * @param user - the User to set
      */
     public void setUser(User user) {
         this.user = user;

@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -41,6 +42,7 @@ import world.bentobox.bentobox.api.events.command.CommandEvent;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
+import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 
@@ -79,6 +81,10 @@ public class DelayedTeleportCommandTest {
     private Location to;
     @Mock
     private Notifier notifier;
+    @Mock
+    private World world;
+    @Mock
+    private IslandWorldManager iwm;
 
     /**
      */
@@ -106,6 +112,7 @@ public class DelayedTeleportCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getLocation()).thenReturn(from);
         when(player.getUniqueId()).thenReturn(uuid);
+        when(player.getWorld()).thenReturn(world);
         User.getInstance(player);
         // Locations
         when(to.toVector()).thenReturn(new Vector(1,2,3));
@@ -119,6 +126,8 @@ public class DelayedTeleportCommandTest {
 
         when(plugin.getLocalesManager()).thenReturn(lm);
 
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+        when(plugin.getIWM()).thenReturn(iwm);
 
         String[] alias = {};
         // Class under test

@@ -96,7 +96,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         // Load the YAML file at the location.
         YamlConfiguration config = ((YamlDatabaseConnector)databaseConnector).loadYamlFile(path, key);
-        // Use the createObject method to turn a YAML config into an Java object
+        // Use the createObject method to turn a YAML config into a Java object
         return createObject(config);
     }
 
@@ -221,20 +221,23 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 try {
                     // Floats need special handling because the database returns them as doubles
                     Type setType = propertyDescriptor.getWriteMethod().getGenericParameterTypes()[0];
-                    if (setType.getTypeName().equals("float")) {
-                        double d = (double) setTo;
-                        float f = (float)d;
-                        method.invoke(instance, f);
-                    } else if (setType.getTypeName().equals("org.bukkit.Sound")) {
-                        Sound s = Registry.SOUNDS
-                                .get(NamespacedKey.fromString(((String) setTo).toLowerCase(Locale.ENGLISH)));
-                        method.invoke(instance, s);
-                    } else if (setType.getTypeName().equals("org.bukkit.block.Biome")) {
-                        Biome b = Registry.BIOME
-                                .get(NamespacedKey.fromString(((String) setTo).toLowerCase(Locale.ENGLISH)));
-                        method.invoke(instance, b);
-                    } else {
-                        method.invoke(instance, setTo);
+                    switch (setType.getTypeName()) {
+                        case "float" -> {
+                            double d = (double) setTo;
+                            float f = (float) d;
+                            method.invoke(instance, f);
+                        }
+                        case "org.bukkit.Sound" -> {
+                            Sound s = Registry.SOUNDS
+                                    .get(NamespacedKey.fromString(((String) setTo).toLowerCase(Locale.ENGLISH)));
+                            method.invoke(instance, s);
+                        }
+                        case "org.bukkit.block.Biome" -> {
+                            Biome b = Registry.BIOME
+                                    .get(NamespacedKey.fromString(((String) setTo).toLowerCase(Locale.ENGLISH)));
+                            method.invoke(instance, b);
+                        }
+                        default -> method.invoke(instance, setTo);
                     }
                 } catch (Exception e) {
                     plugin.logError("Could not deserialize. Attempt by " + instance.getClass().getCanonicalName() + " " + method.getName() + " to set to " + setTo);
@@ -254,7 +257,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Note that we have no idea what type of List this is
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be only 1 long
-        Type setType = collectionTypes.get(0);
+        Type setType = collectionTypes.getFirst();
         // Create an empty list
         List<Object> value = new ArrayList<>();
         // Lists are stored as lists in YAML
@@ -271,7 +274,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Note that we have no idea what type this set is
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be only 1 long
-        Type setType = collectionTypes.get(0);
+        Type setType = collectionTypes.getFirst();
         // Create an empty set to fill
         Set<Object> value = new HashSet<>();
         // Sets are stored as a list in YAML
@@ -288,7 +291,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Note that we have no idea what type of map this is, so we need to find out
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be 2 long because there are two parameters in a Map (key, value)
-        Type keyType = collectionTypes.get(0);
+        Type keyType = collectionTypes.getFirst();
         Type valueType = collectionTypes.get(1);
         // Create a map that we'll put the values into
         Map<Object,Object> value = new HashMap<>();
@@ -592,31 +595,27 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @NonNull
     private Object serialize(@Nullable Object object) {
         // Null is a value object and is serialized as the string "null"
-        if (object == null) {
-            return "null";
-        }
-        // UUID has it's own serialization, that is not picked up automatically
-        if (object instanceof UUID) {
-            return object.toString();
-        }
-        // Only the world name is needed for worlds
-        if (object instanceof World w) {
-            return w.getName();
-        }
-        // Location
-        if (object instanceof Location l) {
-            return Util.getStringLocation(l);
-        }
-        // Keyed interfaces that are replacing enums
-        if (object instanceof Keyed k) {
-            return k.getKey().getKey();
-        }
-        // Enums
-        if (object instanceof Enum<?> e) {
-            //Custom enums are a child of the Enum class. Just get the names of each one.
-            return e.name();
-        }
-        return object;
+        return switch (object) {
+            case null -> "null";
+
+            // UUID has it's own serialization, that is not picked up automatically
+            case UUID uuid -> object.toString();
+
+            // Only the world name is needed for worlds
+            case World w -> w.getName();
+
+            // Location
+            case Location l -> Util.getStringLocation(l);
+
+            // Keyed interfaces that are replacing enums
+            case Keyed k -> k.getKey().getKey();
+
+            // Enums
+            case Enum<?> e ->
+                //Custom enums are a child of the Enum class. Just get the names of each one.
+                    e.name();
+            default -> object;
+        };
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

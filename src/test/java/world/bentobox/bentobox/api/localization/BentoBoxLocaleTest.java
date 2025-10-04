@@ -127,7 +127,7 @@ public class BentoBoxLocaleTest {
      */
     @Test
     public void testGetAuthors() {
-        assertEquals("tastybento", localeObject.getAuthors().get(0));
+        assertEquals("tastybento", localeObject.getAuthors().getFirst());
         assertEquals("tastybento2", localeObject.getAuthors().get(1));
     }
 
@@ -148,7 +148,7 @@ public class BentoBoxLocaleTest {
         assertEquals("missing.reference", localeObject.get("missing.reference"));
         assertEquals("this is okay", localeObject.get("new.string"));
         assertEquals("test result", localeObject.get("reference.to.test"));
-        assertEquals("tastybento", localeObject.getAuthors().get(0));
+        assertEquals("tastybento", localeObject.getAuthors().getFirst());
         assertEquals("tastybento2", localeObject.getAuthors().get(1));
         assertEquals("new author", localeObject.getAuthors().get(2));
         assertEquals(3, localeObject.getAuthors().size());

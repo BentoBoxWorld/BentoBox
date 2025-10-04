@@ -123,7 +123,7 @@ public class SafeSpotTeleport {
         }
 
         // Get the chunk snapshot and scan it
-        Util.getChunkAtAsync(Objects.requireNonNull(world), chunkPair.x, chunkPair.z)
+        Util.getChunkAtAsync(Objects.requireNonNull(world), chunkPair.x(), chunkPair.z())
         .thenApply(Chunk::getChunkSnapshot)
         .whenCompleteAsync((snapshot, e) -> {
             if (snapshot != null && scanChunk(snapshot)) {

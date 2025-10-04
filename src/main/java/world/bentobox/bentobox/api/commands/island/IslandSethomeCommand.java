@@ -13,9 +13,32 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 
-
+/**
+ * Handles the island set home command (/island sethome).
+ * <p>
+ * This command allows players to set multiple home locations on their island,
+ * with dimension-specific restrictions and confirmations.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Multiple named home points</li>
+ *   <li>Configurable maximum homes per island</li>
+ *   <li>Dimension-specific restrictions (Nether/End)</li>
+ *   <li>Optional confirmation dialogs</li>
+ *   <li>Configurable rank requirement (default: Member)</li>
+ * </ul>
+ * <p>
+ * Permission: {@code island.sethome}
+ *
+ * @author tastybento
+ * @since 1.0
+ */
 public class IslandSethomeCommand extends ConfirmableCommand {
 
+    /**
+     * Cached island instance to avoid multiple database lookups.
+     * Set during canExecute and used in execute.
+     */
     private @Nullable Island island;
 
     public IslandSethomeCommand(CompositeCommand islandCommand) {
@@ -31,6 +54,17 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         setDefaultCommandRank(RanksManager.MEMBER_RANK);
     }
 
+    /**
+     * Validates command execution conditions.
+     * <p>
+     * Checks:
+     * <ul>
+     *   <li>Player has an island</li>
+     *   <li>Player is on their island</li>
+     *   <li>Player has sufficient rank</li>
+     *   <li>Home limit not exceeded</li>
+     * </ul>
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         island = getIslands().getIsland(getWorld(), user);
@@ -65,6 +99,16 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         return true;
     }
 
+    /**
+     * Handles the home setting process with dimension-specific checks.
+     * <p>
+     * Dimension handling:
+     * <ul>
+     *   <li>Nether: Checks allowSetHomeInNether and confirmation settings</li>
+     *   <li>End: Checks allowSetHomeInTheEnd and confirmation settings</li>
+     *   <li>Overworld: No additional checks required</li>
+     * </ul>
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
         String number = String.join(" ", args);
@@ -102,6 +146,13 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         return true;
     }
 
+    /**
+     * Sets the home location and notifies the user.
+     * If multiple homes exist, displays a list of all homes.
+     * 
+     * @param user The user setting the home
+     * @param name The name of the home location
+     */
     private void doSetHome(User user, String name) {
         // Define a runnable as we will be using it often in the code below.
         getIslands().setHomeLocation(user, user.getLocation(), name);

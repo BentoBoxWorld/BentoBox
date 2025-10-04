@@ -11,7 +11,7 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * Fired when an a player names or renames an island.
+ * Fired when a player names or renames an island.
  * Cancellation has no effect.
  */
 public class IslandNameEvent extends IslandBaseEvent {

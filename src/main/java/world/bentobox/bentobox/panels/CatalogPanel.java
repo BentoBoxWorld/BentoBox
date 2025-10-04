@@ -81,7 +81,7 @@ public class CatalogPanel {
 
                 String name = NamedTextColor.WHITE + addon.getName();
                 if (addon.getTag() != null) {
-                    name += " " + NamedTextColor.AQUA + "" + TextDecoration.BOLD
+                    name += " " + NamedTextColor.AQUA + TextDecoration.BOLD
                             + user.getTranslation("catalog.tags." + addon.getTag());
                 }
 

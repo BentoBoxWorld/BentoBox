@@ -69,11 +69,10 @@ public class IslandsManager {
 
     private final BentoBox plugin;
 
-    private Map<World, Island> spawns = new ConcurrentHashMap<>();
+    private final Map<World, Island> spawns = new ConcurrentHashMap<>();
 
-    private Map<World, Location> last = new ConcurrentHashMap<>();
+    private final Map<World, Location> last = new ConcurrentHashMap<>();
 
-    @NonNull
     private static Database<Island> handler;
 
     /**
@@ -110,7 +109,7 @@ public class IslandsManager {
         MultiLib.onString(plugin, "bentobox-updateIsland", id -> {
             Island island = handler.loadObject(id);
             if (island != null) {
-                islandCache.updateIsland(island);
+                islandCache.updateMultiLibIsland(island);
             }
         });
 
@@ -135,7 +134,7 @@ public class IslandsManager {
             } else if (split.length == 2) {
                 World world = Bukkit.getWorld(split[0]);
                 if (world != null) {
-                    getIslandById(split[1]).ifPresent(i -> this.setSpawn(i));
+                    getIslandById(split[1]).ifPresent(this::setSpawn);
                 }
             }
 
@@ -162,8 +161,7 @@ public class IslandsManager {
         Block ground = l.getBlock().getRelative(BlockFace.DOWN);
         Block space1 = l.getBlock();
         Block space2 = l.getBlock().getRelative(BlockFace.UP);
-        boolean safe = checkIfSafe(l.getWorld(), ground.getType(), space1.getType(), space2.getType());
-        return safe;
+        return checkIfSafe(l.getWorld(), ground.getType(), space1.getType(), space2.getType());
     }
 
     /**
@@ -287,10 +285,8 @@ public class IslandsManager {
         if (removeBlocks) {
             // Remove players from island
             removePlayersFromIsland(island);
-            // Mark island as deleted
-            island.setDeleted(true);
-            // Mark as purgeable
-            island.setPurgable(true);
+            // Mark island as deletable
+            island.setDeletable(true);
             if (!plugin.getSettings().isKeepPreviousIslandOnReset()) {            
                 // Remove island from the cache
                 islandCache.deleteIslandFromCache(island);
@@ -413,7 +409,7 @@ public class IslandsManager {
      * 
      * @param world world to check
      * @param user user
-     * @return List of islands or empty list if none found for user
+     * @return Set of islands or empty list if none found for user
      * @since 2.1.0
      */
     @NonNull
@@ -429,7 +425,7 @@ public class IslandsManager {
      * 
      * @param world world to check
      * @param uniqueId  user's UUID
-     * @return List of islands or empty list if none found for user
+     * @return Set of islands or empty list if none found for user
      * @since 2.1.0
      */
     @NonNull
@@ -466,7 +462,7 @@ public class IslandsManager {
     }
 
     public boolean isIslandAt(@NonNull Location location) {
-        return plugin.getIWM().inWorld(location) ? islandCache.isIslandAt(location) : false;
+        return plugin.getIWM().inWorld(location) && islandCache.isIslandAt(location);
     }
 
     /**
@@ -603,7 +599,7 @@ public class IslandsManager {
                     islandMax);
         }
         Integer change = islandMax == worldDefault ? null : islandMax;
-        if (island.getMaxMembers().get(rank) != change) {
+        if (!Objects.equals(island.getMaxMembers().get(rank), change)) {
             island.setMaxMembers(rank, change);
             updateIsland(island);
         }
@@ -645,7 +641,7 @@ public class IslandsManager {
         // If the island maxHomes is just the same as the world default, then set to
         // null
         Integer change = islandMax == plugin.getIWM().getMaxHomes(island.getWorld()) ? null : islandMax;
-        if (island.getMaxHomes() != change) {
+        if (!Objects.equals(island.getMaxHomes(), change)) {
             island.setMaxHomes(change);
             updateIsland(island);
         }
@@ -1254,7 +1250,7 @@ public class IslandsManager {
             spawn.setSpawn(true);
             spawns.put(Util.getWorld(spawn.getWorld()), spawn);
             // Tell other servers
-            MultiLib.notify("bentobox-setspawn", spawn.getWorld().getUID().toString() + "," + spawn.getUniqueId());
+            MultiLib.notify("bentobox-setspawn", spawn.getWorld().getUID() + "," + spawn.getUniqueId());
         }
     }
 
@@ -1295,21 +1291,17 @@ public class IslandsManager {
      */
     public void load() throws IOException {
         islandCache.clear();
-        List<Island> toQuarantine = new ArrayList<>();
-        int owned = 0;
-        int unowned = 0;
         // Attempt to load islands
         for (Island island : handler.loadObjects()) {
             if (island == null) {
                 plugin.logWarning("Null island when loading...");
                 continue;
+            } else if (island.isDeleted()) {
+                // TODO delete from database
             }
-
-            if (island.isDeleted()) {
-                // These will be deleted later
-                deletedIslands.add(island.getUniqueId());
-            } // Check island distance and if incorrect stop BentoBox
-            else if (!plugin.getSettings().isOverrideSafetyCheck() && island.getWorld() != null
+            // Check island distance and if incorrect stop BentoBox
+            else if (!plugin.getSettings().isOverrideSafetyCheck()
+                    && island.getWorld() != null
                     && plugin.getIWM().inWorld(island.getWorld())
                     && island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld())) {
                 throw new IOException("Island distance mismatch!\n" + "World '" + island.getWorld().getName()
@@ -1338,34 +1330,6 @@ public class IslandsManager {
                 island.setGameMode(plugin.getIWM().getAddon(island.getWorld()).map(gm -> gm.getDescription().getName())
                         .orElse(""));
             }
-        }
-        if (!toQuarantine.isEmpty()) {
-            plugin.logError(toQuarantine.size() + " islands could not be loaded successfully; moving to trash bin.");
-            plugin.logError(unowned + " are unowned, " + owned + " are owned.");
-
-            toQuarantine.forEach(handler::saveObjectAsync);
-            // Check if there are any islands with duplicate islands
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                Set<UUID> duplicatedUUIDRemovedSet = new HashSet<>();
-                Set<UUID> duplicated = islandCache.getIslands().stream().map(Island::getOwner).filter(Objects::nonNull)
-                        .filter(n -> !duplicatedUUIDRemovedSet.add(n)).collect(Collectors.toSet());
-                if (!duplicated.isEmpty()) {
-                    plugin.logError("**** Owners that have more than one island = " + duplicated.size());
-                    for (UUID uuid : duplicated) {
-                        Set<Island> set = islandCache.getIslands().stream().filter(i -> uuid.equals(i.getOwner()))
-                                .collect(Collectors.toSet());
-                        plugin.logError(plugin.getPlayers().getName(uuid) + "(" + uuid.toString() + ") has "
-                                + set.size() + " islands:");
-                        set.forEach(i -> {
-                            plugin.logError("Island at " + i.getCenter());
-                            plugin.logError("Island unique ID = " + i.getUniqueId());
-                        });
-                        plugin.logError(
-                                "You should find out which island is real and delete the uniqueID from the database for the bogus one.");
-                        plugin.logError("");
-                    }
-                }
-            });
         }
     }
 

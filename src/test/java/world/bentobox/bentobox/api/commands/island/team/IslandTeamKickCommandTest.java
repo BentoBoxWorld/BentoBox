@@ -102,6 +102,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(target.getName()).thenReturn("poslovitch");
         when(target.getDisplayName()).thenReturn("&Cposlovich");
         when(target.spigot()).thenReturn(spigot);
+        when(target.getWorld()).thenReturn(world);
         // Set the target user
         User.getInstance(target);
         when(user.getUniqueId()).thenReturn(uuid);

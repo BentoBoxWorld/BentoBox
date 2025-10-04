@@ -38,30 +38,53 @@ import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
+/**
+ * GUI for managing island teams in BentoBox.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Display team members with their ranks</li>
+ *   <li>Rank filtering and management</li>
+ *   <li>Team invites handling</li>
+ *   <li>Member management (kick, promote, demote)</li>
+ *   <li>Owner transfer</li>
+ *   <li>Team status display</li>
+ * </ul>
+ * <p>
+ * The GUI uses a template system for layout and styling, loaded from team_panel.yml.
+ * It supports various click actions for different team management operations.
+ * 
+ * @since 1.0
+ */
 public class IslandTeamGUI {
 
     /**
-     * List of ranks that we will loop through in order
+     * Ordered list of ranks from highest (OWNER) to lowest (COOP).
+     * Used for displaying members in rank order and filtering.
      */
     private static final List<Integer> RANKS = List.of(RanksManager.OWNER_RANK, RanksManager.SUB_OWNER_RANK,
             RanksManager.MEMBER_RANK, RanksManager.TRUSTED_RANK, RanksManager.COOP_RANK);
 
     private static final String NAME = ".name";
-
     private static final String TIPS = "commands.island.team.gui.tips.";
 
+    /** The user viewing the GUI */
     private final User user;
 
+    /** The island being managed */
     private final Island island;
 
+    /**
+     * Current rank being viewed in the filter.
+     * Defaults to OWNER_RANK which shows all ranks.
+     */
     private int rankView = RanksManager.OWNER_RANK;
 
+    /** Template items for panel styling */
     private @Nullable TemplateItem border;
-
     private @Nullable TemplateItem background;
 
     private final IslandTeamCommand parent;
-
     private final BentoBox plugin;
 
 
@@ -131,7 +154,7 @@ public class IslandTeamGUI {
     }
 
     private PanelItem createRankButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
-        // If there is no island, the do not show this icon
+        // If there is no island, then do not show this icon
         if (island == null) {
             return this.getBlankBorder();
         }
@@ -145,6 +168,13 @@ public class IslandTeamGUI {
         return builder.build();
     }
 
+    /**
+     * Creates button to filter members by rank.
+     * Updates the display when clicked:
+     * - Left click decreases rank
+     * - Right click increases rank 
+     * - Wraps around at min/max ranks
+     */
     private void createClickHandler(PanelItemBuilder builder, @NonNull List<ActionRecords> actions) {
         builder.clickHandler((panel, user, clickType, clickSlot) -> {
             if (actions.stream().noneMatch(ar -> clickType.equals(ar.clickType()))) {
@@ -178,6 +208,10 @@ public class IslandTeamGUI {
 
     }
 
+    /**
+     * Creates the description showing which ranks are currently visible.
+     * Ranks above and below the selected rank are shown as blocked.
+     */
     private void createDescription(PanelItemBuilder builder) {
         RanksManager.getInstance().getRanks().forEach((reference, score) -> {
             if (rankView == RanksManager.OWNER_RANK && score > RanksManager.VISITOR_RANK
@@ -295,11 +329,13 @@ public class IslandTeamGUI {
     }
 
     private PanelItem getBlankBorder() {
+        assert border != null;
         return new PanelItemBuilder().icon(Objects.requireNonNullElse(border.icon(), new ItemStack(Material.BARRIER)))
                 .name((Objects.requireNonNullElse(border.title(), ""))).build();
     }
 
     private PanelItem getBlankBackground() {
+        assert background != null;
         return new PanelItemBuilder()
                 .icon(Objects.requireNonNullElse(background.icon(), new ItemStack(Material.BARRIER)))
                 .name((Objects.requireNonNullElse(background.title(), ""))).build();
@@ -362,14 +398,14 @@ public class IslandTeamGUI {
                     .findFirst().ifPresent(desc::add);
         }
         if (member.isOnline()) {
-            desc.add(0, user.getTranslation(rankRef));
+            desc.addFirst(user.getTranslation(rankRef));
             return new PanelItemBuilder().icon(member.getName()).name(member.getDisplayName()).description(desc)
                     .clickHandler(
                             (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
                     .build();
         } else {
             // Offline player
-            desc.add(0, user.getTranslation(rankRef));
+            desc.addFirst(user.getTranslation(rankRef));
             return new PanelItemBuilder().icon(member.getName())
                     .name(offlinePlayerStatus(Bukkit.getOfflinePlayer(member.getUniqueId()))).description(desc)
                     .clickHandler(
@@ -543,6 +579,13 @@ public class IslandTeamGUI {
         }
     }
 
+    /**
+     * Formats the last seen time for offline players.
+     * Shows time in most appropriate unit:
+     * - Minutes if < 1 hour
+     * - Hours if < 1 day
+     * - Days otherwise
+     */
     private String lastSeen(OfflinePlayer offlineMember) {
         // A bit of handling for the last joined date
         Instant lastJoined = Instant.ofEpochMilli(offlineMember.getLastSeen());

@@ -270,7 +270,7 @@ public class AdminResetHomeCommandTest {
         args.add("someArg");
         args.add("anotherArg");
         args.add(""); // args.size() == 3 (>2)
-        String lastArg = args.get(args.size() - 1);
+        String lastArg = args.getLast();
 
         Map<String, IslandInfo> islandsMap = new HashMap<>();
         islandsMap.put("IslandOne", new IslandInfo(mock(Island.class), false));

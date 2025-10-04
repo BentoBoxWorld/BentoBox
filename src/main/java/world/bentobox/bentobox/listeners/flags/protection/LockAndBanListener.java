@@ -163,9 +163,7 @@ public class LockAndBanListener extends FlagListener {
             // There's nothing much we can do.
             // We'll try to teleport him to the spawn...
             Location l = player.getWorld().getSpawnLocation();
-            if (l != null) {
-                Util.teleportAsync(player, l);
-            }
+            Util.teleportAsync(player, l);
 
             // Switch him back to the default gamemode. He may die, sorry :(
             player.setGameMode(getIWM().getDefaultGameMode(player.getWorld()));

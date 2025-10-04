@@ -10,77 +10,131 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * Adds a default help to every command that will show the usage of the command
- * and the usage of any subcommands that the command has.
+ * Provides a standardized help system for BentoBox commands.
+ * <p>
+ * This command is automatically added to every {@link CompositeCommand} that doesn't
+ * define its own help sub-command. It displays command usage, parameters, and descriptions
+ * in a hierarchical format, respecting permissions and command visibility settings.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Hierarchical help display up to {@value #MAX_DEPTH} levels deep</li>
+ *   <li>Permission-based filtering of commands</li>
+ *   <li>Support for console and player-specific commands</li>
+ *   <li>Pagination support via depth parameter</li>
+ * </ul>
+ * <p>
+ * Usage: {@code /parentcommand help [depth]}
+ * 
  * @author tastybento
- *
+ * @since 1.0
  */
 public class DefaultHelpCommand extends CompositeCommand {
 
+    /** Maximum depth of sub-commands to display in help */
     protected static final int MAX_DEPTH = 2;
+    
+    /** Placeholders used in help message formatting */
     protected static final String USAGE_PLACEHOLDER = "[usage]";
     protected static final String PARAMS_PLACEHOLDER = "[parameters]";
     protected static final String DESC_PLACEHOLDER = "[description]";
+    
+    /** Localization keys for help message templates */
     protected static final String HELP_SYNTAX_REF = "commands.help.syntax";
     protected static final String HELP_SYNTAX_NO_PARAMETERS_REF = "commands.help.syntax-no-parameters";
+    
+    /** Standard label for help commands */
     protected static final String HELP = "help";
 
+    /**
+     * Creates a help command for the specified parent command.
+     * Inherits permissions and parameters from the parent.
+     *
+     * @param parent The command that this help command belongs to
+     */
     public DefaultHelpCommand(CompositeCommand parent) {
         super(parent, HELP);
     }
 
     @Override
     public void setup() {
-        // Set the usage to what the parent's command is
+        // Inherit parameters and description from parent command
         setParametersHelp(parent.getParameters());
         setDescription(parent.getDescription());
         inheritPermission();
     }
 
+    /**
+     * Executes the help command, displaying formatted help information.
+     * <p>
+     * The help display:
+     * <ol>
+     *   <li>Checks if parent command is hidden</li>
+     *   <li>Processes optional depth parameter</li>
+     *   <li>Shows help header (if depth = 0)</li>
+     *   <li>Displays command help up to MAX_DEPTH</li>
+     *   <li>Shows help footer (if depth = 0)</li>
+     * </ol>
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // If command is hidden, do not show anything
+        // Hidden commands don't show help
         if (parent.isHidden()) return true;
-        // Show default help
+
+        // Process depth parameter (0 = top level, increases for sub-commands)
         int depth = 0;
         if (args.size() == 1) {
-            if (NumberUtils.isDigits(args.get(0))) {
+            if (NumberUtils.isDigits(args.getFirst())) {
                 // Converts first argument into an int, or returns -1 if it cannot. Avoids exceptions.
-                depth = Optional.ofNullable(args.get(0)).map(NumberUtils::toInt).orElse(-1);
+                depth = Optional.ofNullable(args.getFirst()).map(NumberUtils::toInt).orElse(-1);
             } else {
+                // Show basic syntax help if argument isn't a valid depth
                 String usage = parent.getUsage();
                 String params = user.getTranslation("commands.help.parameters");
                 String desc = user.getTranslation("commands.help.description");
-                user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
+                user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, 
+                    PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
                 return true;
             }
         }
+
+        // Show header for top-level help
         if (depth == 0) {
-            // Get the name of the world for the help header, or console if there is no world association
-            String labelText = getWorld() != null ? getIWM().getFriendlyName(getWorld()) : user.getTranslation("commands.help.console");
+            String labelText = getWorld() != null ? 
+                getIWM().getFriendlyName(getWorld()) : 
+                user.getTranslation("commands.help.console");
             user.sendMessage("commands.help.header", TextVariables.LABEL, labelText);
         }
+
+        // Display help content if within depth limit
         if (depth < MAX_DEPTH) {
             if (!parent.getLabel().equals(HELP)) {
-                // Get elements
                 String usage = parent.getUsage();
                 String params = user.getTranslationOrNothing(getParameters());
                 String desc = user.getTranslation(getDescription());
 
                 if (showPrettyHelp(user, usage, params, desc)) {
-                    // No more to show
-                    return true;
+                    return true; // Exit if no permission
                 }
             }
-            // Increment the depth and run through any subcommands and get their help too
+            // Show help for sub-commands at next depth level
             runSubCommandHelp(user, depth + 1);
         }
+
+        // Show footer for top-level help
         if (depth == 0) {
             user.sendMessage("commands.help.end");
         }
         return true;
     }
 
+    /**
+     * Recursively displays help for all sub-commands at the specified depth.
+     * Skips the help command itself to avoid infinite recursion.
+     *
+     * @param user     The user to show help to
+     * @param newDepth The depth level for sub-commands
+     */
     protected void runSubCommandHelp(User user, int newDepth) {
         for (CompositeCommand subCommand : parent.getSubCommands().values()) {
             // Ignore the help command
@@ -92,6 +146,15 @@ public class DefaultHelpCommand extends CompositeCommand {
         }
     }
 
+    /**
+     * Displays formatted help for a single command, respecting permissions and command type.
+     *
+     * @param user   The user to show help to
+     * @param usage  The command usage string
+     * @param params The command parameters description
+     * @param desc   The command description
+     * @return true if help display should stop (e.g., no permission), false to continue
+     */
     protected boolean showPrettyHelp(User user, String usage, String params, String desc) {
         // Show the help
         if (user.isPlayer()) {

@@ -219,7 +219,7 @@ public class NewIsland {
         island.setFlagsDefaults();
         // Register metrics
         plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
-        // Add historu record
+        // Add history record
         island.log(new LogEntry.Builder(LogType.JOINED).data(user.getUniqueId().toString(), "owner").build());
         // Save island
         IslandsManager.updateIsland(island);

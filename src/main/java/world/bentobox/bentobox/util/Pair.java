@@ -2,7 +2,8 @@ package world.bentobox.bentobox.util;
 
 
 /**
- * Class to store pairs of objects, e.g. coordinates
+ * Class to store pairs of objects, e.g. coordinates.
+ * This could be done now as a record, but due to legacy code referencing it, it stays as a class.
  * @author tastybento
  *
  * @param <X> the x part of the pair
@@ -90,6 +91,14 @@ public class Pair<X, Z> {
         if (z == null) {
             return other.z == null;
         } else return z.equals(other.z);
+    }
+    
+    public X x() {
+        return x;
+    }
+
+    public Z z() {
+        return z;
     }
     
 }

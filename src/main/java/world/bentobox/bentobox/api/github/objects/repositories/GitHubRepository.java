@@ -11,34 +11,21 @@ import world.bentobox.bentobox.api.github.GitHubWebAPI;
 /**
  * Represents a GitHub repository and provides methods to fetch its data.
  */
-public class GitHubRepository {
-
-    private final GitHubWebAPI api;
-    private final String fullName;
-
-    public GitHubRepository(GitHubWebAPI api, String fullName) {
-        this.api = api;
-        this.fullName = fullName;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
+public record GitHubRepository(GitHubWebAPI api, String fullName) {
 
     /**
      * Fetches the content of a file in the repository.
-     * 
+     *
      * @param path The path to the file.
      * @return A GitHubFile object representing the file content.
-     * @throws Exception If an error occurs during the request.
      */
-    public GitHubFile getContent(String path) throws Exception {
+    public GitHubFile getContent(String path) {
         return new GitHubFile(api, this, "/contents/" + path);
     }
 
     /**
      * Fetches the list of contributors to the repository.
-     * 
+     *
      * @return A list of GitHubContributor objects.
      * @throws Exception If an error occurs during the request.
      */
@@ -48,8 +35,8 @@ public class GitHubRepository {
         response.forEach(element -> {
             JsonObject contributor = element.getAsJsonObject();
             contributors.add(new GitHubContributor(
-                contributor.get("login").getAsString(),
-                contributor.get("contributions").getAsInt()
+                    contributor.get("login").getAsString(),
+                    contributor.get("contributions").getAsInt()
             ));
         });
         return contributors;

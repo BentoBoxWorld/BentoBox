@@ -20,10 +20,39 @@ import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
 import world.bentobox.bentobox.util.Util;
 
 /**
+ * Handles the island reset command (/island reset).
+ * <p>
+ * This command allows players to reset their island, optionally with a new blueprint.
+ * The process includes:
+ * <ul>
+ *   <li>Cooldown management</li>
+ *   <li>Reset limit tracking</li>
+ *   <li>Team member removal</li>
+ *   <li>Old island deletion</li>
+ *   <li>New island creation</li>
+ * </ul>
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Configurable cooldown period</li>
+ *   <li>Limited or unlimited resets</li>
+ *   <li>Multiple blueprint support</li>
+ *   <li>Optional confirmation dialog</li>
+ *   <li>Blueprint selection GUI</li>
+ * </ul>
+ * <p>
+ * Permission: {@code island.reset}
+ * Aliases: reset, restart
+ *
  * @author tastybento
+ * @since 1.0
  */
 public class IslandResetCommand extends ConfirmableCommand {
 
+    /**
+     * If true, skips pasting a new island after reset.
+     * Used for special game modes or testing.
+     */
     private boolean noPaste;
 
     public IslandResetCommand(CompositeCommand islandCommand) {
@@ -49,6 +78,16 @@ public class IslandResetCommand extends ConfirmableCommand {
         setDescription("commands.island.reset.description");
     }
 
+    /**
+     * Validates command execution conditions.
+     * <p>
+     * Checks:
+     * <ul>
+     *   <li>Reset cooldown period</li>
+     *   <li>Island ownership</li>
+     *   <li>Remaining reset count</li>
+     * </ul>
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         // Check cooldown
@@ -76,17 +115,26 @@ public class IslandResetCommand extends ConfirmableCommand {
         return true;
     }
 
+    /**
+     * Handles the reset process based on arguments.
+     * <p>
+     * Flow:
+     * <ul>
+     *   <li>With args: Directly reset with specified blueprint</li>
+     *   <li>Without args: Show confirmation and/or blueprint selection</li>
+     * </ul>
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Permission check if the name is not the default one
         if (!args.isEmpty()) {
-            String name = getPlugin().getBlueprintsManager().validate(getAddon(), Util.sanitizeInput(args.get(0)));
+            String name = getPlugin().getBlueprintsManager().validate(getAddon(), Util.sanitizeInput(args.getFirst()));
             if (name == null || name.isEmpty()) {
                 // The blueprint name is not valid.
                 user.sendMessage("commands.island.create.unknown-blueprint");
                 return false;
             }
-            if (!getPlugin().getBlueprintsManager().checkPerm(getAddon(), user, Util.sanitizeInput(args.get(0)))) {
+            if (!getPlugin().getBlueprintsManager().checkPerm(getAddon(), user, Util.sanitizeInput(args.getFirst()))) {
                 return false;
             }
             return resetIsland(user, name);
@@ -103,9 +151,12 @@ public class IslandResetCommand extends ConfirmableCommand {
     }
 
     /**
-     * Either selects the bundle to use or asks the user to choose.
+     * Manages blueprint selection process.
+     * Shows GUI if multiple blueprints are available,
+     * otherwise uses default blueprint.
      * 
-     * @since 1.5.1
+     * @param user The user resetting their island
+     * @param label The command label used
      */
     private void selectBundle(@NonNull User user, @NonNull String label) {
         // Show panel only if there are multiple bundles available
@@ -118,11 +169,18 @@ public class IslandResetCommand extends ConfirmableCommand {
     }
 
     /**
-     * Reset island
+     * Performs the actual island reset process.
+     * <p>
+     * Process:
+     * <ul>
+     *   <li>Delete old island</li>
+     *   <li>Create new island</li>
+     *   <li>Apply cooldown</li>
+     * </ul>
      * 
-     * @param user user
-     * @param name name of Blueprint Bundle
-     * @return true if successful
+     * @param user The user resetting their island
+     * @param name The blueprint bundle name to use
+     * @return true if reset was successful
      */
     private boolean resetIsland(User user, String name) {
         // Get the player's old island
@@ -132,6 +190,7 @@ public class IslandResetCommand extends ConfirmableCommand {
         user.sendMessage("commands.island.create.creating-island");
         // Create new island and then delete the old one
         try {
+            assert oldIsland != null;
             Builder builder = NewIsland.builder().player(user).reason(Reason.RESET).addon(getAddon())
                     .oldIsland(oldIsland).name(name);
             if (noPaste)
@@ -146,6 +205,13 @@ public class IslandResetCommand extends ConfirmableCommand {
         return true;
     }
 
+    /**
+     * Handles old island cleanup before reset.
+     * Fires preclear event and removes all team members.
+     * 
+     * @param user The user resetting their island
+     * @param oldIsland The island being reset
+     */
     private void deleteOldIsland(User user, Island oldIsland) {
         // Fire island preclear event
         IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
@@ -161,8 +227,11 @@ public class IslandResetCommand extends ConfirmableCommand {
     }
 
     /**
-     * Kicks the members (incl. owner) of the island.
+     * Removes all members from an island.
+     * Handles member cleanup and event firing.
+     * Does not use team kick command to avoid permission issues.
      * 
+     * @param island The island to remove members from
      * @since 1.7.0
      */
     private void kickMembers(Island island) {

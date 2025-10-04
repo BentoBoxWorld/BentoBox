@@ -19,7 +19,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Sets the maximum number of homes allowed on this island.
- * 
+ * <p>
  * Commands:
  * <ul>
  *     <li><b>/bsb maxhomes &lt;player&gt; &lt;number&gt;</b> - Sets the maximum number of homes for each island where the player is the owner. This could apply to multiple islands.</li>
@@ -68,9 +68,9 @@ public class AdminMaxHomesCommand extends ConfirmableCommand {
                 return false;
             }
             // Arg must be an integer to return true, otherwise false
-            maxHomes = Ints.tryParse(args.get(0));
+            maxHomes = Ints.tryParse(args.getFirst());
             if (maxHomes == null || maxHomes < 1) {
-                user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(0));
+                user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.getFirst());
                 return false;
             }
             // Get the island the user is standing on
@@ -86,9 +86,9 @@ public class AdminMaxHomesCommand extends ConfirmableCommand {
         }
         // More than one argument
         // First arg must be a valid player name
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Second arg must be the max homes number
@@ -136,7 +136,7 @@ public class AdminMaxHomesCommand extends ConfirmableCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.size() == 2) {
             // Suggest player names
             return Optional.of(Util.getOnlinePlayerList(user));

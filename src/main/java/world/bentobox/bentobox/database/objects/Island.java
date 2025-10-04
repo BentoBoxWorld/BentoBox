@@ -68,13 +68,16 @@ public class Island implements DataObject, MetaDataAble {
      */
     private boolean changed;
 
-    // True if this island is deleted and pending deletion from the database
+    /** True if this island is deleted and pending deletion from the database
+     * @deprecated
+     */
     @Expose
+    @Deprecated(since = "3.7.4", forRemoval = true)
     private boolean deleted = false;
     
-    // True if this island is purgable from the database
+    // True if this island is detetable from the database
     @Expose
-    private boolean purgable = false;
+    private boolean deletable = false;
 
     @Expose
     @NonNull
@@ -156,7 +159,7 @@ public class Island implements DataObject, MetaDataAble {
     private Map<UUID, Integer> members = new HashMap<>();
 
     /**
-     * Maximum number of members allowed in this island. Key is rank, value is
+     * Maximum number of members allowed on this island. Key is rank, value is
      * number
      * 
      * @since 1.16.0
@@ -271,7 +274,7 @@ public class Island implements DataObject, MetaDataAble {
         });
         this.createdDate = island.getCreatedDate();
         this.deleted = island.isDeleted();
-        this.purgable = island.isPurgable();
+        this.deletable = island.isDeletable();
         this.doNotLoad = island.isDoNotLoad();
         this.flags.putAll(island.getFlags());
         this.gameMode = island.getGameMode();
@@ -794,7 +797,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return true or false
      */
     public boolean inIslandSpace(Pair<Integer, Integer> blockCoordinates) {
-        return inIslandSpace(blockCoordinates.x, blockCoordinates.z);
+        return inIslandSpace(blockCoordinates.x(), blockCoordinates.z());
     }
 
     /**
@@ -803,7 +806,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return a {@link BoundingBox} of the full island space.
      * @since 1.5.2
      */
-    @NonNull
+    @Nullable
     public BoundingBox getBoundingBox() {
         return this.getBoundingBox(Environment.NORMAL);
     }
@@ -825,11 +828,11 @@ public class Island implements DataObject, MetaDataAble {
             // Return normal world bounding box.
             boundingBox = new BoundingBox(this.getMinX(), this.world.getMinHeight(), this.getMinZ(), this.getMaxX(),
                     this.world.getMaxHeight(), this.getMaxZ());
-        } else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled()) {
+        } else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled() && this.getEndWorld() != null) {
             // If end world is generated, return end island bounding box.
             boundingBox = new BoundingBox(this.getMinX(), this.getEndWorld().getMinHeight(), this.getMinZ(),
                     this.getMaxX(), this.getEndWorld().getMaxHeight(), this.getMaxZ());
-        } else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled()) {
+        } else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled() && this.getNetherWorld() != null) {
             // If nether world is generated, return nether island bounding box.
             boundingBox = new BoundingBox(this.getMinX(), this.getNetherWorld().getMinHeight(), this.getMinZ(),
                     this.getMaxX(), this.getNetherWorld().getMaxHeight(), this.getMaxZ());
@@ -973,7 +976,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return a {@link BoundingBox} of this island's protected area.
      * @since 1.5.2
      */
-    @NonNull
+    @Nullable
     public BoundingBox getProtectionBoundingBox() {
         return this.getProtectionBoundingBox(Environment.NORMAL);
     }
@@ -995,12 +998,12 @@ public class Island implements DataObject, MetaDataAble {
             // Return normal world bounding box.
             boundingBox = new BoundingBox(this.getMinProtectedX(), this.world.getMinHeight(), this.getMinProtectedZ(),
                     this.getMaxProtectedX(), this.world.getMaxHeight(), this.getMaxProtectedZ());
-        } else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled()) {
+        } else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled() && this.getEndWorld() != null) {
             // If end world is generated, return end island bounding box.
             boundingBox = new BoundingBox(this.getMinProtectedX(), this.getEndWorld().getMinHeight(),
                     this.getMinProtectedZ(), this.getMaxProtectedX(), this.getEndWorld().getMaxHeight(),
                     this.getMaxProtectedZ());
-        } else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled()) {
+        } else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled() && this.getNetherWorld() != null) {
             // If nether world is generated, return nether island bounding box.
             boundingBox = new BoundingBox(this.getMinProtectedX(), this.getNetherWorld().getMinHeight(),
                     this.getMinProtectedZ(), this.getMaxProtectedX(), this.getNetherWorld().getMaxHeight(),
@@ -1121,7 +1124,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setName(String name) {
         if (name == null || !name.equals(this.name)) {
-            this.name = (name != null && !name.equals("")) ? name : null;
+            this.name = (name != null && !name.isEmpty()) ? name : null;
             setChanged();
         }
     }
@@ -1313,7 +1316,7 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     @Override
-    public void setUniqueId(String uniqueId) {
+    public void setUniqueId(@NonNull String uniqueId) {
         this.uniqueId = uniqueId;
     }
 
@@ -1783,7 +1786,7 @@ public class Island implements DataObject, MetaDataAble {
     /**
      * Get the location of a named home
      * 
-     * @param nameToLookFor home name case insensitive (name is forced to lower case)
+     * @param nameToLookFor home name case-insensitive (name is forced to lower case)
      * @return the home location or if none found the protection center of the
      *         island is returned.
      * @since 1.16.0
@@ -1814,7 +1817,7 @@ public class Island implements DataObject, MetaDataAble {
         }
         if (location != null) {
             Vector v = location.toVector();
-            if (!this.getBoundingBox().contains(v)) {
+            if (this.getBoundingBox() != null && !this.getBoundingBox().contains(v)) {
                 BentoBox.getInstance().logWarning("Tried to set a home location " + location
                         + " outside of the island. This generally should not happen.");
                 BentoBox.getInstance().logWarning(
@@ -1891,7 +1894,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public void setMaxHomes(@Nullable Integer maxHomes) {
-        if (this.maxHomes != maxHomes) {
+        if (!Objects.equals(this.maxHomes, maxHomes)) {
             this.maxHomes = maxHomes;
             setChanged();
         }
@@ -2124,18 +2127,17 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * @return the purgable
+     * @return the deletable
      */
-    public boolean isPurgable() {
-        return purgable;
+    public boolean isDeletable() {
+        return deletable;
     }
 
     /**
-     * @param purgable the purgable to set
+     * @param deletable the deletable to set
      */
-    public void setPurgable(boolean purgable) {
-        this.purgable = purgable;
-        setChanged();
+    public void setDeletable(boolean deletable) {
+        this.deletable = deletable;
     }
 
 }

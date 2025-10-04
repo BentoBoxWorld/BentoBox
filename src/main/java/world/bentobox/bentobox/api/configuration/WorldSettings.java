@@ -577,7 +577,7 @@ public interface WorldSettings extends ConfigObject {
 
 
     /**
-     * Returns sub-command for users when they execute main user command and they have an
+     * Returns sub-command for users when they execute main user command, and they have an
      * island.
      * If defined sub-command does not exist in accessible user command list, then it will
      * still call "go" sub-command.
@@ -592,7 +592,7 @@ public interface WorldSettings extends ConfigObject {
 
 
     /**
-     * Returns default sub-command for users when they execute main user command and they
+     * Returns default sub-command for users when they execute main user command, and they
      * do not have an island.
      * If defined sub-command does not exist in accessible user command list, then it will
      * still call "create" sub-command.

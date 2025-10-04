@@ -45,6 +45,7 @@ import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.hooks.FancyNpcsHook;
 import world.bentobox.bentobox.hooks.ItemsAdderHook;
+import world.bentobox.bentobox.hooks.OraxenHook;
 import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
 import world.bentobox.bentobox.util.MyBiomeGrid;
@@ -59,8 +60,8 @@ import world.bentobox.bentobox.util.Util;
 public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     private final BentoBox plugin;
-    private Optional<FancyNpcsHook> npc;
-    private Optional<ZNPCsPlusHook> znpc;
+    private final Optional<FancyNpcsHook> npc;
+    private final Optional<ZNPCsPlusHook> znpc;
 
     protected CopyWorldRegenerator() {
         this.plugin = BentoBox.getInstance();
@@ -194,9 +195,9 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk -> {
             // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
             Arrays.stream(chunk.getEntities())
-                    .filter(e -> !(e instanceof Player)
-                            && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
-                    .forEach(Entity::remove);
+            .filter(e -> !(e instanceof Player)
+                    && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
+            .forEach(Entity::remove);
             // Remove any NPCs
             // Fancy NPCs Hook
             npc.ifPresent(hook -> hook.removeNPCsInChunk(chunk));
@@ -221,6 +222,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         int maxHeight = toChunk.getWorld().getMaxHeight();
         Optional<SlimefunHook> slimefunHook = plugin.getHooks().getHook("Slimefun").map(SlimefunHook.class::cast);
         Optional<ItemsAdderHook> itemsAdderHook = plugin.getHooks().getHook("ItemsAdder").map(ItemsAdderHook.class::cast);
+        Optional<Hook> oraxenHook = plugin.getHooks().getHook("Oraxen");
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 if (limitBox != null && !limitBox.contains(baseX + x, 0, baseZ + z)) {
@@ -235,12 +237,14 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     // Delete any 3rd party blocks
                     Location loc = new Location(toChunk.getWorld(), baseX + x, y, baseZ + z);
                     slimefunHook.ifPresent(hook -> hook.clearBlockInfo(loc, true));
-
+                    // Oraxen
+                    oraxenHook.ifPresent(h -> OraxenHook.clearBlockInfo(loc));
                 }
             }
         }
         // Items Adder
         itemsAdderHook.ifPresent(hook -> ItemsAdderHook.deleteAllCustomBlocksInChunk(toChunk));
+
         // Entities
         Arrays.stream(fromChunk.getEntities()).forEach(e -> processEntity(e, e.getLocation().toVector().toLocation(toChunk.getWorld())));
 
@@ -298,24 +302,28 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         BlockState b = toBlock.getState();
 
         // Signs
-        if (blockState instanceof Sign fromSign && b instanceof Sign toSign) {
-            for (Side side : Side.values()) {
-                writeSign(fromSign, toSign, side);
+        switch (blockState) {
+            case Sign fromSign when b instanceof Sign toSign -> {
+                for (Side side : Side.values()) {
+                    writeSign(fromSign, toSign, side);
+                }
             }
-        }
-        // Chests
-        else if (blockState instanceof InventoryHolder ih && b instanceof InventoryHolder toChest) {
-            toChest.getInventory().setContents(ih.getInventory().getContents());
-        }
-        // Spawner type
-        else if (blockState instanceof CreatureSpawner spawner && b instanceof CreatureSpawner toSpawner) {
-            toSpawner.setSpawnedType(spawner.getSpawnedType());
-        }
+            // Chests
+            case InventoryHolder ih when b instanceof InventoryHolder toChest ->
+                    toChest.getInventory().setContents(ih.getInventory().getContents());
 
-        // Banners
-        else if (blockState instanceof Banner banner && b instanceof Banner toBanner) {
-            toBanner.setBaseColor(banner.getBaseColor());
-            toBanner.setPatterns(banner.getPatterns());
+            // Spawner type
+            case CreatureSpawner spawner when b instanceof CreatureSpawner toSpawner ->
+                    toSpawner.setSpawnedType(spawner.getSpawnedType());
+
+
+            // Banners
+            case Banner banner when b instanceof Banner toBanner -> {
+                toBanner.setBaseColor(banner.getBaseColor());
+                toBanner.setPatterns(banner.getPatterns());
+            }
+            default -> {
+            }
         }
     }
 
@@ -324,7 +332,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         SignSide fromSide = fromSign.getSide(side);
         SignSide toSide = toSign.getSide(side);
         int i = 0;
-        
+
         for (Component line : fromSide.lines()) {
             toSide.line(i++, line);
         }
@@ -414,6 +422,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         int minHeight = chunk.getWorld().getMinHeight();
         int maxHeight = chunk.getWorld().getMaxHeight();
         Optional<Hook> slimefunHook = plugin.getHooks().getHook("Slimefun");
+        Optional<Hook> oraxenHook = plugin.getHooks().getHook("Oraxen");
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 if (!limitBox.contains(baseX + x, 0, baseZ + z)) {
@@ -428,6 +437,8 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     // Delete any 3rd party blocks
                     Location loc = new Location(chunk.getWorld(), baseX + x, y, baseZ + z);
                     slimefunHook.ifPresent(sf -> ((SlimefunHook) sf).clearBlockInfo(loc, true));
+                    // Oraxen
+                    oraxenHook.ifPresent(h -> OraxenHook.clearBlockInfo(loc));
                 }
             }
         }

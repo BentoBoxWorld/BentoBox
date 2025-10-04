@@ -17,12 +17,31 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * Unban command
- * @author tastybento
+ * Handles the island unban command (/island unban).
+ * <p>
+ * This command allows island owners and team members to remove bans from players,
+ * allowing them to visit the island again.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Configurable rank requirement</li>
+ *   <li>Ban cooldown system</li>
+ *   <li>Event system integration</li>
+ *   <li>Tab completion for banned players</li>
+ * </ul>
+ * <p>
+ * Permission: {@code island.ban}
+ * Aliases: unban, pardon
  *
+ * @author tastybento
+ * @since 1.0
  */
 public class IslandUnbanCommand extends CompositeCommand {
 
+    /**
+     * Cached UUID of the player to be unbanned.
+     * Set during canExecute and used in execute.
+     */
     private @Nullable UUID targetUUID;
 
     public IslandUnbanCommand(CompositeCommand islandCommand) {
@@ -38,6 +57,19 @@ public class IslandUnbanCommand extends CompositeCommand {
         setConfigurableRankCommand();
     }
 
+    /**
+     * Validates command execution conditions.
+     * <p>
+     * Checks:
+     * <ul>
+     *   <li>Correct number of arguments</li>
+     *   <li>Player has an island or is in team</li>
+     *   <li>Player has sufficient rank</li>
+     *   <li>Target player exists</li>
+     *   <li>Not trying to unban self</li>
+     *   <li>Target is actually banned</li>
+     * </ul>
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         if (args.size() != 1) {
@@ -60,9 +92,9 @@ public class IslandUnbanCommand extends CompositeCommand {
             return false;
         }
         // Get target player
-        targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Player cannot unban themselves
@@ -78,8 +110,20 @@ public class IslandUnbanCommand extends CompositeCommand {
         return true;
     }
 
+    /**
+     * Handles the unban process.
+     * <p>
+     * Process:
+     * <ul>
+     *   <li>Fires cancellable unban event</li>
+     *   <li>Removes ban from island</li>
+     *   <li>Notifies both parties</li>
+     *   <li>Sets ban cooldown if configured</li>
+     * </ul>
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        assert targetUUID != null;
         User target = User.getInstance(targetUUID);
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
 
@@ -95,6 +139,7 @@ public class IslandUnbanCommand extends CompositeCommand {
             return false;
         }
         // Event is not cancelled
+        assert island != null;
         if (island.unban(user.getUniqueId(), target.getUniqueId())) {
             user.sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
             target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
@@ -109,12 +154,16 @@ public class IslandUnbanCommand extends CompositeCommand {
         return false;
     }
 
+    /**
+     * Provides tab completion for currently banned player names.
+     * Filters suggestions based on partial input.
+     */
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             List<String> options = island.getBanned().stream().map(getPlayers()::getName).toList();
-            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            String lastArg = !args.isEmpty() ? args.getLast() : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

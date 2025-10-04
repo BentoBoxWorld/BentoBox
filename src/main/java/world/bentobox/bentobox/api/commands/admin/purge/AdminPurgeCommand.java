@@ -30,7 +30,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
     private Iterator<String> it;
     private User user;
     private Set<String> islands = new HashSet<>();
-    private Set<Integer> loggedTiers = new HashSet<>(); // Set to store logged percentage tiers
+    private final Set<Integer> loggedTiers = new HashSet<>(); // Set to store logged percentage tiers
 
     public AdminPurgeCommand(CompositeCommand parent) {
         super(parent, "purge");
@@ -70,7 +70,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (args.get(0).equalsIgnoreCase("confirm") && toBeConfirmed && this.user.equals(user)) {
+        if (args.getFirst().equalsIgnoreCase("confirm") && toBeConfirmed && this.user.equals(user)) {
             removeIslands();
             return true;
         }
@@ -79,7 +79,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         islands.clear();
         this.user = user;
         try {
-            int days = Integer.parseInt(args.get(0));
+            int days = Integer.parseInt(args.getFirst());
             if (days < 1) {
                 user.sendMessage("commands.admin.purge.days-one-or-more");
                 return false;
@@ -132,7 +132,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
                 // Determine if this percentage should be logged: 1%, 5%, or any new multiple of 5%
                 if (!BentoBox.getInstance().getSettings().isKeepPreviousIslandOnReset() || (roundedPercentage > 0
-                        && (roundedPercentage == 1 || roundedPercentage == 5 || roundedPercentage % 5 == 0)
+                        && (roundedPercentage == 1 || roundedPercentage % 5 == 0)
                         && !loggedTiers.contains(roundedPercentage))) {
 
                     // Log the message and add the tier to the logged set
@@ -152,7 +152,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
     void onIslandDeleted(IslandDeletedEvent e) {
         if (inPurge) {
             // Run after one tick - you cannot run millions of events in one tick otherwise the server shuts down
-            Bukkit.getScheduler().runTaskLater(getPlugin(), () -> deleteIsland(), 2L); // 10 a second
+            Bukkit.getScheduler().runTaskLater(getPlugin(), this::deleteIsland, 2L); // 10 a second
         }
     }
 
@@ -183,7 +183,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
     private boolean checkLastLoginTimestamp(int days, UUID member) {
         long daysInMilliseconds = days * 24L * 3600 * 1000; // Calculate days in milliseconds
         Long lastLoginTimestamp = getPlayers().getLastLoginTimestamp(member);
-        // If no valid last login time is found or it's before the year 2000, try to fetch from Bukkit
+        // If no valid last login time is found, or it's before the year 2000, try to fetch from Bukkit
         if (lastLoginTimestamp == null || lastLoginTimestamp < YEAR2000) {
             lastLoginTimestamp = Bukkit.getOfflinePlayer(member).getLastSeen();
 

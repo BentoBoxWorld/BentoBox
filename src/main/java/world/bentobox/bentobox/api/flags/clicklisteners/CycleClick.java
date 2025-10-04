@@ -82,8 +82,8 @@ public class CycleClick implements PanelItem.ClickHandler {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
-        // Left clicking increases the rank required
-        // Right clicking decreases the rank required
+        // Left-clicking increases the rank required
+        // Right-clicking decreases the rank required
         // Shift Left Click toggles player visibility
         if (island != null && (user.isOp() || island.isAllowed(user, Flags.CHANGE_SETTINGS) || user.hasPermission(prefix + "admin.settings"))) {
             changeOccurred = true;

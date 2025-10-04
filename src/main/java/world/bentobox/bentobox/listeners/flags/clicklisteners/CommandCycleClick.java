@@ -1,8 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
@@ -15,7 +12,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.ExpiringMap;
 
 /**
  * @author tastybento
@@ -39,8 +35,8 @@ public class CommandCycleClick implements ClickHandler {
      */
     @Override
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {
-       // Left clicking increases the rank required
-        // Right clicking decreases the rank required
+       // Left-clicking increases the rank required
+        // Right-clicking decreases the rank required
         World world = panel.getWorld().orElse(user.getWorld());
         Island island = panel.getIsland();
         if (island != null && island.getOwner() != null && island.isAllowed(user, Flags.CHANGE_SETTINGS)) {

@@ -280,7 +280,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
     public void testTabCompleteUserStringListOfStringTwoArgs() {
         Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b", "WORLD_TNT"));
         assertFalse(r.isEmpty());
-        assertEquals("WORLD_TNT_DAMAGE", r.get().get(0));
+        assertEquals("WORLD_TNT_DAMAGE", r.get().getFirst());
     }
 
     /**
@@ -290,7 +290,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
     public void testTabCompleteUserStringListOfStringThreeArgs() {
         Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b", "WORLD_TNT", "BEACO"));
         assertFalse(r.isEmpty());
-        assertEquals("BEACON", r.get().get(0));
+        assertEquals("BEACON", r.get().getFirst());
     }
 
     /**

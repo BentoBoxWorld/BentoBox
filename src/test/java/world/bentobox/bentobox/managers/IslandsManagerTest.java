@@ -1405,7 +1405,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
+     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}.
      */
     @Test
     public void testGetMaxMembersNoOwner() {
@@ -1418,7 +1418,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
+     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}.
      */
     @Test
     public void testGetMaxMembersOfflineOwner() {
@@ -1437,7 +1437,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
+     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}.
      */
     @Test
     public void testGetMaxMembersOnlineOwnerNoPerms() {
@@ -1456,7 +1456,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
+     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}.
      */
     @Test
     public void testGetMaxMembersOnlineOwnerNoPermsCoopTrust() {
@@ -1479,7 +1479,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
+     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}
      */
     @Test
     public void testGetMaxMembersOnlineOwnerNoPermsPreset() {
@@ -1497,7 +1497,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
+     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}.
      */
     @Test
     public void testGetMaxMembersOnlineOwnerNoPermsPresetLessThanDefault() {
@@ -1515,7 +1515,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
+     * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}.
      */
     @Test
     public void testGetMaxMembersOnlineOwnerHasPerm() {
@@ -1540,7 +1540,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#setMaxMembers(Island, Integer, Integer)}.
+     * {@link world.bentobox.bentobox.managers.IslandsManager#setMaxMembers(Island, int, Integer)}.
      */
     @Test
     public void testsetMaxMembers() {

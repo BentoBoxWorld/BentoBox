@@ -459,7 +459,7 @@ public class IslandWorldManager {
         StringBuilder r = new StringBuilder();
         gameModes.values().stream().distinct()
                 .forEach(n -> r.append(n.getWorldSettings().getFriendlyName()).append(", "));
-        if (r.length() > 0) {
+        if (!r.isEmpty()) {
             r.setLength(r.length() - 2);
         }
         return r.toString();

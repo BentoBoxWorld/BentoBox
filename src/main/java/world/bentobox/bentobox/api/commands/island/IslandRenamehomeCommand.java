@@ -19,12 +19,33 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * Renames a home
- * @author tastybento
+ * Handles the island rename home command (/island renamehome).
+ * <p>
+ * This command allows players to rename their existing home locations through
+ * an interactive conversation prompt.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Configurable rank requirement (default: Member)</li>
+ *   <li>Interactive name input via conversation</li>
+ *   <li>Tab completion for existing home names</li>
+ *   <li>Home name validation</li>
+ *   <li>90-second conversation timeout</li>
+ * </ul>
+ * <p>
+ * Usage: /island renamehome &lt;current name&gt;
+ * <br>
+ * Permission: {@code island.renamehome}
  *
+ * @author tastybento
+ * @since 1.0
  */
 public class IslandRenamehomeCommand extends ConfirmableCommand {
 
+    /**
+     * Cached island instance to avoid multiple database lookups.
+     * Set during canExecute and used in execute.
+     */
     private @Nullable Island island;
 
     public IslandRenamehomeCommand(CompositeCommand islandCommand) {
@@ -41,6 +62,17 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
         setDefaultCommandRank(RanksManager.MEMBER_RANK);
     }
 
+    /**
+     * Validates command execution conditions.
+     * <p>
+     * Checks:
+     * <ul>
+     *   <li>Arguments provided</li>
+     *   <li>Player has an island</li>
+     *   <li>Home name exists</li>
+     *   <li>Player has sufficient rank</li>
+     * </ul>
+     */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
@@ -73,8 +105,20 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
         return true;
     }
 
+    /**
+     * Starts an interactive conversation to rename the home.
+     * <p>
+     * Creates a conversation with:
+     * <ul>
+     *   <li>Modal dialog (blocks other chat)</li>
+     *   <li>No local echo of input</li>
+     *   <li>90-second timeout</li>
+     *   <li>Custom name prompt</li>
+     * </ul>
+     */
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        assert island != null;
         new ConversationFactory(BentoBox.getInstance())
         .withModality(true)
         .withLocalEcho(false)
@@ -85,9 +129,13 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
     }
 
 
+    /**
+     * Provides tab completion for existing home names.
+     * Only shows homes for the user's current island.
+     */
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         Island is = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (is != null) {
             return Optional.of(Util.tabLimit(new ArrayList<>(is.getHomes().keySet()), lastArg));
