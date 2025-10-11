@@ -773,6 +773,7 @@ public class Util {
         
         T handler;
         try {
+            BentoBox.getInstance().logDebug("Trying to get this class:" + getPrefix().x() + "." + implName);
             Class<?> clazz = Class.forName(getPrefix().x() + "." + implName);
             if (handlerClass.isAssignableFrom(clazz)) {
                 handler = handlerClass.cast(clazz.getConstructor().newInstance());

@@ -1,11 +1,12 @@
-package world.bentobox.bentobox.nms.v1_21_4_R0_1_SNAPSHOT;
+package world.bentobox.bentobox.nms.v1_21_10_R0_1_SNAPSHOT;
 
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_21_R3.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_21_R6.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R6.block.data.CraftBlockData;
 
 import net.minecraft.core.BlockPosition;
 import net.minecraft.world.level.World;
+import net.minecraft.world.level.chunk.Chunk;
 import world.bentobox.bentobox.nms.CopyWorldRegenerator;
 
 public class WorldRegeneratorImpl extends CopyWorldRegenerator {
@@ -15,10 +16,11 @@ public class WorldRegeneratorImpl extends CopyWorldRegenerator {
             boolean applyPhysics) {
         CraftBlockData craft = (CraftBlockData) blockData;
         World nmsWorld = ((CraftWorld) chunk.getWorld()).getHandle();
+        Chunk nmsChunk = nmsWorld.d(chunk.getX(), chunk.getZ());
         BlockPosition bp = new BlockPosition((chunk.getX() << 4) + x, y, (chunk.getZ() << 4) + z);
         // Setting the block to air before setting to another state prevents some console errors
-        nmsWorld.a(bp, PasteHandlerImpl.AIR);
-        nmsWorld.a(bp, craft.getState());
+        nmsChunk.a(bp, PasteHandlerImpl.AIR, applyPhysics ? 1 : 0);
+        nmsChunk.a(bp, craft.getState(), applyPhysics ? 1 : 0);
     }
 
 }
