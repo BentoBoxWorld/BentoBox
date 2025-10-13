@@ -1,14 +1,16 @@
-package world.bentobox.bentobox.nms.v1_21_4_R0_1_SNAPSHOT;
+package world.bentobox.bentobox.nms.v1_21_10_R0_1_SNAPSHOT;
 
 import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_21_R3.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_21_R6.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R6.block.data.CraftBlockData;
 
 import net.minecraft.core.BlockPosition;
 import net.minecraft.world.level.block.state.IBlockData;
+import net.minecraft.world.level.chunk.Chunk;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.nms.PasteHandler;
@@ -43,21 +45,20 @@ public class PasteHandlerImpl implements PasteHandler {
         Block block = location.getBlock();
         // Set the block data - default is AIR
         CraftBlockData craft = (CraftBlockData) bd;
-        net.minecraft.world.level.World nmsWorld = ((org.bukkit.craftbukkit.v1_21_R3.CraftWorld) location.getWorld())
-                .getHandle();
+        net.minecraft.world.level.World nmsWorld = ((CraftWorld) location.getWorld()).getHandle();
+        Chunk nmsChunk = nmsWorld.d(location.getBlockX() >> 4, location.getBlockZ() >> 4);
         BlockPosition bp = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         // Setting the block to air before setting to another state prevents some console errors
         // If the block is a naturally generated tile entity that needs filling, e.g., a chest, then this kind of pasting can cause console errors due to race condition
         // so the try's are there to try and catch the errors.
         try {
-            nmsWorld.a(bp, AIR);
+            nmsChunk.a(bp, AIR, 0);
         } catch (Exception e) {
             e.printStackTrace();
             // Ignore
         }
         try {
-            nmsWorld.a(bp, craft.getState());
-            //nmsChunk.a(bp, craft.getState(), false);
+            nmsChunk.a(bp, craft.getState(), 0);
         } catch (Exception e) {
             e.printStackTrace();
             // Ignore

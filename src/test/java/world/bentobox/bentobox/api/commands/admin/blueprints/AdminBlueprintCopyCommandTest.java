@@ -39,6 +39,7 @@ import world.bentobox.bentobox.blueprints.BlueprintClipboard;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.mocks.ServerMocks;
 
 /**
  * @author tastybento
@@ -56,7 +57,7 @@ public class AdminBlueprintCopyCommandTest {
     private GameModeAddon addon;
     @Mock
     private User user;
-
+    @Mock
     private BlueprintClipboard clip;
     private UUID uuid = UUID.randomUUID();
     @Mock
@@ -67,7 +68,8 @@ public class AdminBlueprintCopyCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin        // Set up plugin
+        // Set up plugin
+        PowerMockito.mockStatic(BentoBox.class, Mockito.RETURNS_MOCKS);
         // Required for NamespacedKey
         when(plugin.getName()).thenReturn("BentoBox");
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -118,8 +120,8 @@ public class AdminBlueprintCopyCommandTest {
      */
     @After
     public void tearDown() throws Exception {
-        User.clearUsers();
         Mockito.framework().clearInlineMocks();
+        ServerMocks.unsetBukkitServer();
     }
 
     /**

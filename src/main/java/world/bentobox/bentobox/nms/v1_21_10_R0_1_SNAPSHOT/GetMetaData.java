@@ -1,8 +1,8 @@
-package world.bentobox.bentobox.nms.v1_21_4_R0_1_SNAPSHOT;
+package world.bentobox.bentobox.nms.v1_21_10_R0_1_SNAPSHOT;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R6.CraftWorld;
 
 import net.minecraft.core.BlockPosition;
 import net.minecraft.world.level.block.entity.TileEntity;
