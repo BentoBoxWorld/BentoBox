@@ -58,7 +58,7 @@ public class BlueprintClipboard {
     /**
      * Used to filter out hidden DisplayEntity armor stands when copying
      */
-    private static final NamespacedKey KEY = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
+    private NamespacedKey key;
     private @Nullable Blueprint blueprint;
     private @Nullable Location pos1;
     private @Nullable Location pos2;
@@ -84,6 +84,7 @@ public class BlueprintClipboard {
     public BlueprintClipboard(@NonNull Blueprint blueprint) {
         this();
         this.blueprint = blueprint;
+        this.key = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
     }
 
     public BlueprintClipboard() {
@@ -168,7 +169,7 @@ public class BlueprintClipboard {
                 List<Entity> ents = world.getEntities().stream()
                         .filter(Objects::nonNull)
                         .filter(e -> !(e instanceof Player))
-                        .filter(e -> !e.getPersistentDataContainer().has(KEY, PersistentDataType.STRING)) // Do not copy hidden display entities
+                        .filter(e -> !e.getPersistentDataContainer().has(key, PersistentDataType.STRING)) // Do not copy hidden display entities
                         .filter(e -> new Vector(e.getLocation().getBlockX(), e.getLocation().getBlockY(),
                                 e.getLocation().getBlockZ()).equals(v))
                         .toList();
