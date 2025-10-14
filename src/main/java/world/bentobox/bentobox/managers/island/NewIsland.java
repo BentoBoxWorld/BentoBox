@@ -310,7 +310,7 @@ public class NewIsland {
      */
     private Location makeNextIsland() throws IOException {
         // Use location strategy to find next available spot
-        Location next = this.locationStrategy.getNextLocation(world);
+        Location next = this.locationStrategy.getNextLocation(world, user);
         if (next == null) {
             plugin.logError("Failed to make island - no unoccupied spot found.");
             plugin.logError("If the world was imported, try multiple times until all unowned islands are known.");
