@@ -984,8 +984,8 @@ protection:
     BOAT:
       name: Boats
       description: |-
-        Toggle placing, breaking and
-        entering into boats.
+        &a Toggle placing, breaking and
+        &a entering into boats.
       hint: No boat interaction allowed
     BOOKSHELF:
       name: Bookshelves
@@ -999,14 +999,14 @@ protection:
       hint: Block breaking disabled
     BREAK_SPAWNERS:
       description: |-
-        Toggle spawners breaking.
-        Overrides the Break Blocks flag.
+        &a Toggle spawners breaking.
+        &a Overrides the Break Blocks flag.
       name: Break spawners
       hint: Spawner breaking disabled
     BREAK_HOPPERS:
       description: |-
-        Toggle hoppers breaking.
-        Overrides the Break Blocks flag.
+        &a Toggle hoppers breaking.
+        &a Overrides the Break Blocks flag.
       name: Break hoppers
       hint: Hoppers breaking disabled
     BREEDING:
