@@ -58,7 +58,6 @@ public class BlueprintClipboard {
     /**
      * Used to filter out hidden DisplayEntity armor stands when copying
      */
-    private NamespacedKey key;
     private @Nullable Blueprint blueprint;
     private @Nullable Location pos1;
     private @Nullable Location pos2;
@@ -84,7 +83,6 @@ public class BlueprintClipboard {
     public BlueprintClipboard(@NonNull Blueprint blueprint) {
         this();
         this.blueprint = blueprint;
-        this.key = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
     }
 
     public BlueprintClipboard() {
@@ -165,6 +163,7 @@ public class BlueprintClipboard {
                 return;
             }
             copying = true;
+            NamespacedKey key = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
             vectorsToCopy.stream().skip(index).limit(speed).forEach(v -> {
                 List<Entity> ents = world.getEntities().stream()
                         .filter(Objects::nonNull)
