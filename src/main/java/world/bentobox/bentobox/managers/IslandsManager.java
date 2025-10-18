@@ -1302,6 +1302,7 @@ public class IslandsManager {
             }
             // Check island distance and if incorrect stop BentoBox
             else if (!plugin.getSettings().isOverrideSafetyCheck()
+                    && plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::isEnforceEqualRanges).orElse(true)
                     && island.getWorld() != null
                     && plugin.getIWM().inWorld(island.getWorld())
                     && island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld())) {
