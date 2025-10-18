@@ -263,7 +263,7 @@ commands:
       team-owner-format: '&a[name] [rank]'
       team-member-format: '&b[name] [rank]'
       island-protection-center: 'Centro del área de protección: [xyz]'
-      island-center: '[prefix_island] centro: [xyz]'
+      island-center: '[prefix_Island] centro: [xyz]'
       island-coords: 'Coordenadas de la isla: [xz1] to [xz2]'
       islands-in-trash: '&dEl jugador tiene islas en la basura.'
       protection-range: 'Rango de protección: [range]'
