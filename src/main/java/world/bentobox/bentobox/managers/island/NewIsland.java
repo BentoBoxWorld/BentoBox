@@ -298,7 +298,7 @@ public class NewIsland {
         // Set protection range based on user's permission, if different from default
         island.setProtectionRange(user.getPermissionValue(
                 plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("")
-                        + "island.range",
+                + "island.range",
                 island.getProtectionRange()));
     }
 
@@ -312,14 +312,18 @@ public class NewIsland {
         // Use location strategy to find next available spot
         Location next = this.locationStrategy.getNextLocation(world, user);
         if (next == null) {
-            plugin.logError("Failed to make island - no unoccupied spot found.");
-            plugin.logError("If the world was imported, try multiple times until all unowned islands are known.");
+            if (plugin.getIWM().getAddon(world).map(GameModeAddon::isEnforceEqualRanges).orElse(true)) {
+                plugin.logError("Failed to make island - no unoccupied spot found.");
+                plugin.logError("If the world was imported, try multiple times until all unowned islands are known.");
+            }
             throw new IOException("commands.island.create.cannot-create-island");
         }
         // Add island to grid
         island = plugin.getIslands().createIsland(next, user.getUniqueId());
         if (island == null) {
-            plugin.logError("Failed to make island! Island could not be added to the grid.");
+            if (plugin.getIWM().getAddon(world).map(GameModeAddon::isEnforceEqualRanges).orElse(true)) {
+                plugin.logError("Failed to make island! Island could not be added to the grid.");
+            }
             throw new IOException("commands.island.create.unable-create-island");
         }
         return next;
@@ -359,8 +363,8 @@ public class NewIsland {
 
         // Fire exit event for plugins/addons
         IslandEvent.builder().involvedPlayer(user.getUniqueId())
-                .reason(reason == Reason.RESET ? Reason.RESETTED : Reason.CREATED).island(island)
-                .location(island.getCenter()).oldIsland(oldIsland).build();
+        .reason(reason == Reason.RESET ? Reason.RESETTED : Reason.CREATED).island(island)
+        .location(island.getCenter()).oldIsland(oldIsland).build();
 
     }
 }
