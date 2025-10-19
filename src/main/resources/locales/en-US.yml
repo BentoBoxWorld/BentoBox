@@ -247,7 +247,7 @@ commands:
       parameters: <player>
       description: get info on where you are or player's [prefix_island]
       no-island: '&c You are not on [prefix_an-island] right now...'
-      title: ========== [prefix_island] Info ============
+      title: ========== [prefix_Island] Info ============
       island-uuid: 'UUID: [uuid]'
       owner: 'Owner: [owner] ([uuid])'
       last-login: 'Last login: [date]'
