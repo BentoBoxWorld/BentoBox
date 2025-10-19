@@ -1242,9 +1242,9 @@ protection:
       island: '[name]''s [prefix_island]'
       name: Enter/Exit messages
       now-entering: '&a Now entering &b [name]&a .'
-      now-entering-your-island: '&a Now entering your island: &b [name]'
+      now-entering-your-island: '&a Now entering your [prefix_island]: &b [name]'
       now-leaving: '&a Now leaving &b [name]&a .'
-      now-leaving-your-island: '&a Now leaving your island: &b [name]'
+      now-leaving-your-island: '&a Now leaving your [prefix_island]: &b [name]'
     EXPERIENCE_BOTTLE_THROWING:
       name: Experience bottle throwing
       description: Toggle throwing experience bottles.
