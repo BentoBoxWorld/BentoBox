@@ -15,6 +15,7 @@ prefixes:
   bentobox: '&6 BentoBox &7 &l > &r '
   island: island
   Island: Island
+  Islands: Islands
   an-island: an island
   islands: islands
 general:
@@ -101,9 +102,9 @@ commands:
           [prefix_island]&a, decreasing the total to &b[total]&a resets.'
     purge:
       parameters: '[days]'
-      description: purge islands abandoned for more than [days]
+      description: purge [prefix_Islands] abandoned for more than [days]
       days-one-or-more: '&c Must be at least 1 day or more'
-      purgable-islands: '&a Found &b [number] &a purgable islands.'
+      purgable-islands: '&a Found &b [number] &a purgable [prefix_Islands].'
       too-many: |
         &b This is a lot and could take a very long time to delete.
         &b Consider using Regionerator plugin for deleting world chunks
@@ -111,11 +112,11 @@ commands:
         &b Then run a purge.
       purge-in-progress: '&c Purging in progress. Use &b /[label] purge stop &c to
         cancel.'
-      scanning: '&a Scanning islands in the database. This may take a while depending
+      scanning: '&a Scanning [prefix_Islands] in the database. This may take a while depending
         on how many you have...'
       scanning-in-progress: '&c Scanning in progress, please wait'
-      none-found: '&c No islands found to purge.'
-      total-islands: '&a You have [number] islands in your database in all worlds.'
+      none-found: '&c No [prefix_Islands] found to purge.'
+      total-islands: '&a You have [number] [prefix_Islands] in your database in all worlds.'
       number-error: '&c Argument must be a number of days'
       confirm: '&d Type &b /[label] purge confirm &d to start purging'
       completed: '&a Purging stopped.'
@@ -478,10 +479,10 @@ commands:
         maximum-times: Max [number] times
     resetflags:
       parameters: '[flag]'
-      description: Reset all islands to default flag settings in config.yml
-      confirm: '&4 This will reset the flag(s) to default for all islands!'
-      success: '&a Successfully reset all islands'' flags to the default settings.'
-      success-one: '&a [name] flag set to default for all islands.'
+      description: Reset all [prefix_Islands] to default flag settings in config.yml
+      confirm: '&4 This will reset the flag(s) to default for all [prefix_Islands]!'
+      success: '&a Successfully reset all [prefix_Islands]'' flags to the default settings.'
+      success-one: '&a [name] flag set to default for all [prefix_Islands].'
     world:
       description: Manage world settings
     delete:
@@ -605,15 +606,15 @@ commands:
     create:
       description: create [prefix_an-island], using optional blueprint (requires permission)
       parameters: <blueprint>
-      too-many-islands: '&c There are too many islands in this world: there isn''t
+      too-many-islands: '&c There are too many [prefix_Islands] in this world: there isn''t
         enough room for yours to be created.'
       cannot-create-island: '&c A spot could not be found in time, please try again...'
       unable-create-island: '&c Your [prefix_island] could not be generated, please
         contact an administrator.'
       creating-island: '&a Finding a spot for your [prefix_island]...'
-      you-cannot-make: '&c You cannot make any more islands!'
+      you-cannot-make: '&c You cannot make any more [prefix_Islands]!'
       max-uses: '&c You cannot make any more of that type of [prefix_island]!'
-      you-cannot-make-team: '&c Team members cannot make islands in the same world
+      you-cannot-make-team: '&c Team members cannot make [prefix_Islands] in the same world
         as their team [prefix_island].'
       pasting:
         estimated-time: '&a Estimated time: &b [number] &a seconds.'
@@ -636,15 +637,15 @@ commands:
       description: display info about your [prefix_island] or the player's [prefix_island]
       parameters: <player>
     near:
-      description: show the name of neighboring islands around you
+      description: show the name of neighboring [prefix_islands] around you
       parameters: ''
-      the-following-islands: '&a The following islands are nearby:'
+      the-following-islands: '&a The following [prefix_islands] are nearby:'
       syntax: '&6 [direction]: &a [name]'
       north: North
       south: South
       east: East
       west: West
-      no-neighbors: '&c You have no immediate neighboring islands!'
+      no-neighbors: '&c You have no immediate neighboring [prefix_islands]!'
     reset:
       description: restart your [prefix_island] and remove the old one
       parameters: <blueprint>
@@ -795,7 +796,7 @@ commands:
           reject to reject'
         you-will-lose-your-island: |
           &c WARNING! You will lose all
-          &c your islands if you accept!
+          &c your [prefix_islands] if you accept!
         gui:
           titles:
             team-invite-panel: Invite Players
@@ -886,7 +887,7 @@ commands:
             it''s useless.&r &7 )'
           target-is-not-member: '&c That player is not part of your [prefix_island]
             team!'
-          at-max: '&c That player already has the maximum number of islands they are
+          at-max: '&c That player already has the maximum number of [prefix_islands] they are
             allowed!'
         name-is-the-owner: '&a [name] is now the [prefix_island] owner!'
         parameters: <player>
@@ -1226,7 +1227,7 @@ protection:
     ENDERMAN_GRIEFING:
       description: |-
         &a Endermen can remove
-        &a blocks from islands
+        &a blocks from [prefix_islands]
       name: Enderman griefing
     ENDERMAN_TELEPORT:
       description: |-
@@ -1386,13 +1387,13 @@ protection:
       can: '&a Can spawn'
       cannot: '&c Cannot spawn'
     LIQUIDS_FLOWING_OUT:
-      name: Liquids flowing outside islands
+      name: Liquids flowing outside [prefix_islands]
       description: |-
         &a Toggle whether liquids can flow outside
         &a of the [prefix_island]'s protection range.
         &a Disabling it helps avoiding lava and water
         &a generating cobblestone in the area between
-        &a two islands.
+        &a two [prefix_islands].
 
         &c Note that liquids will still flow vertically.
         &c They will also not spread horizontally if
@@ -1464,14 +1465,14 @@ protection:
     OFFLINE_GROWTH:
       description: |-
         &a When disabled, plants
-        &a will not grow on islands
+        &a will not grow on [prefix_islands]
         &a where all members are offline.
         &a May help reduce lag.
       name: Offline Growth
     OFFLINE_REDSTONE:
       description: |-
         &a When disabled, redstone
-        &a will not operate on islands
+        &a will not operate on [prefix_islands]
         &a where all members are offline.
         &a May help reduce lag.
         &a Does not affect spawn [prefix_island].
@@ -1804,7 +1805,7 @@ management:
         gamemode:
           name: '&f [name]'
           description: |
-            &a Islands: &b [islands]
+            &a [prefix_Islands]: &b [islands]
       addons:
         name: '&6 Addons'
         description: '&e Click &a to display currently loaded Addons'
