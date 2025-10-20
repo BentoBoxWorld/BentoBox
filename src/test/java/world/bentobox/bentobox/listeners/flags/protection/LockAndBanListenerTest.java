@@ -576,7 +576,7 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(outside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(player, outside, inside);
@@ -635,7 +635,7 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(inside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(player, inside, inside2);
@@ -665,7 +665,7 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(inside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(player, inside, inside2);
