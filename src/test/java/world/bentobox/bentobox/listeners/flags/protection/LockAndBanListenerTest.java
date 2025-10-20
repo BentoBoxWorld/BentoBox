@@ -405,7 +405,7 @@ public class LockAndBanListenerTest {
         // Make player
         when(player.getUniqueId()).thenReturn(uuid);
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
         // Simulate a teleport into an island
         PlayerTeleportEvent e = new PlayerTeleportEvent(player, outside, inside);
         // Pass to event listener
@@ -441,7 +441,7 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(inside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Log them in
         listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
@@ -470,7 +470,7 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(inside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Log them in
         listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
@@ -494,7 +494,7 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(inside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Log them in
         listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
@@ -556,7 +556,7 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(outside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(player, outside, inside);
