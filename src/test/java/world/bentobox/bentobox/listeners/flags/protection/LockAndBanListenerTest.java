@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.framework;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -556,8 +557,8 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(outside);
 
         // Lock island for player
-        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
-
+        doReturn(false).when(island).isAllowed(any(User.class), eq(Flags.LOCK));
+        
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(player, outside, inside);
         listener.onPlayerMove(e);
