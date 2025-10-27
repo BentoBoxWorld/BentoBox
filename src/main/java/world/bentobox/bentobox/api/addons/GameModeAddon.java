@@ -179,5 +179,24 @@ public abstract class GameModeAddon extends Addon {
     public boolean isUsesNewChunkGeneration() {
         return false;
     }
+    
+    /**
+     * Indicates whether BentoBox should try to align island centers on a grid, or leave them free form.
+     * Free form is used with some claim-based or player-selected island location addons.
+     * @return true by default
+     * @since 3.8.2
+     */
+    public boolean isFixIslandCenter() {
+        return true;
+    }
 
+    /**
+     * Indicates whether BentoBox should fail to run if island ranges in a Game Mode are different.
+     * For some Game Modes, this is not an issue. Also disables console errors if islands cannot be made.
+     * @return default is true
+     * @since 3.8.2
+     */
+    public boolean isEnforceEqualRanges() {
+        return true;
+    }
 }

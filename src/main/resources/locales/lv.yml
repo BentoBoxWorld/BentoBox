@@ -268,7 +268,7 @@ commands:
       team-owner-format: '&a[name] [rank]'
       team-member-format: '&b[name] [rank]'
       island-protection-center: 'Aizsardzības zonas centrs: [xyz]'
-      island-center: '[prefix_island] centrs: [xyz]'
+      island-center: '[prefix_Island] centrs: [xyz]'
       island-coords: 'Salas kooridinātes: no [xz1] līdz [xz2]'
       islands-in-trash: '&dSpēlētājam sala ir atkritnē.'
       protection-range: 'Aizsardzības distance: [range]'

@@ -242,7 +242,7 @@ commands:
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
       island-protection-center: '보호 구역 중심: [xyz]'
-      island-center: '[prefix_island] 중앙: [xyz]'
+      island-center: '[prefix_Island] 중앙: [xyz]'
       island-coords: '섬 좌표: [xz1] 에서 [xz2] 까지'
       islands-in-trash: '&d 플레이어는 쓰레기 안에있는 섬을 가지고 있습니다'
       protection-range: '보호 범위: [range]'

@@ -152,7 +152,7 @@ public final class Flags {
     public static final Flag STONECUTTING = new Flag.Builder("STONECUTTING", Material.STONECUTTER).build();
     public static final Flag LOOM = new Flag.Builder("LOOM", Material.LOOM).build();
 
-    public static final Flag CONTAINER = new Flag.Builder("CONTAINER", Material.CHEST).mode(Flag.Mode.BASIC)
+    public static final Flag CONTAINER = new Flag.Builder("CONTAINER", Material.BARREL).mode(Flag.Mode.BASIC)
             .subflags(BREWING, BARREL, CHEST, COMPOSTER, FLOWER_POT, SHULKER_BOX, TRAPPED_CHEST, FURNACE, JUKEBOX, DISPENSER,
                     DROPPER, HOPPER, ITEM_FRAME, HIVE)
             .build();

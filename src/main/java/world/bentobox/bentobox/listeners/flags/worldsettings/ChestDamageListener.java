@@ -24,8 +24,10 @@ public class ChestDamageListener extends FlagListener {
         if (getIWM().inWorld(e.getLocation()) && !Flags.CHEST_DAMAGE.isSetForWorld(e.getLocation().getWorld()))
         {
             e.blockList().removeIf(b -> b.getType().equals(Material.CHEST) ||
+                    Tag.COPPER_CHESTS.isTagged(b.getType()) ||
                 b.getType().equals(Material.TRAPPED_CHEST) ||
                 Tag.SHULKER_BOXES.isTagged(b.getType()));
+            
         }
     }
 }

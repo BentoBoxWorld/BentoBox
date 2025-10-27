@@ -41,6 +41,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
@@ -1301,6 +1302,7 @@ public class IslandsManager {
             }
             // Check island distance and if incorrect stop BentoBox
             else if (!plugin.getSettings().isOverrideSafetyCheck()
+                    && plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::isEnforceEqualRanges).orElse(true)
                     && island.getWorld() != null
                     && plugin.getIWM().inWorld(island.getWorld())
                     && island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld())) {
@@ -1309,7 +1311,8 @@ public class IslandsManager {
                         + island.getRange() + "!\n" + "Island ID in database is " + island.getUniqueId() + ".\n"
                         + "Island distance in config.yml cannot be changed mid-game! Fix config.yml or clean database.");
             } else {
-                if (!plugin.getSettings().isOverrideSafetyCheck()) {
+                // Only try to fix the island center if we have to
+                if (!plugin.getSettings().isOverrideSafetyCheck() && plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::isFixIslandCenter).orElse(true)) {
                     // Fix island center if it is off
                     fixIslandCenter(island);
                 }
