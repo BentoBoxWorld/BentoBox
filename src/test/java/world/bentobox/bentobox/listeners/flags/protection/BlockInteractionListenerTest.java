@@ -75,6 +75,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         clickedBlocks.put(Material.WATER_CAULDRON, Flags.COLLECT_WATER);
         clickedBlocks.put(Material.BARREL, Flags.BARREL);
         clickedBlocks.put(Material.CHEST, Flags.CHEST);
+        clickedBlocks.put(Material.COPPER_CHEST, Flags.CHEST);
         clickedBlocks.put(Material.CHEST_MINECART, Flags.CHEST);
         clickedBlocks.put(Material.TRAPPED_CHEST, Flags.TRAPPED_CHEST);
         clickedBlocks.put(Material.SHULKER_BOX, Flags.SHULKER_BOX);

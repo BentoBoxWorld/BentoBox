@@ -241,12 +241,18 @@ public class BlockInteractionListener extends FlagListener
         Location loc = block.getLocation();
 
         // Handle pots
-        if (type.name().startsWith("POTTED"))
+        if (Tag.FLOWER_POTS.isTagged(type))
         {
             this.checkIsland(e, player, loc, Flags.FLOWER_POT);
             return true;
         }
 
+        // There are various types of copper chests
+        if (Tag.COPPER_CHESTS.isTagged(type)) {
+            this.checkIsland(e, player, loc, Flags.CHEST);
+            return true;
+        } 
+        
         if (block.getState() instanceof BrushableBlock && BlockInteractionListener.holds(player, Material.BRUSH)) {
             // Protect this using break blocks flag for now. Maybe in the future it can have its own flag.
             this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);

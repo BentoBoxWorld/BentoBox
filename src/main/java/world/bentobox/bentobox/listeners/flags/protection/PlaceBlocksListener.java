@@ -131,6 +131,7 @@ public class PlaceBlocksListener extends FlagListener
                     e.getMaterial() == Material.ITEM_FRAME ||
                     e.getMaterial() == Material.GLOW_ITEM_FRAME ||
                     e.getMaterial() == Material.CHEST ||
+                    e.getMaterial() == Material.COPPER_CHEST ||
                     e.getMaterial() == Material.TRAPPED_CHEST)
             {
                 this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
