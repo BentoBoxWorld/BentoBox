@@ -70,6 +70,14 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         when(Tag.ANVIL.isTagged(Material.DAMAGED_ANVIL)).thenReturn(true);
         clickedBlocks.put(Material.BEACON, Flags.BEACON);
         clickedBlocks.put(Material.WHITE_BED, Flags.BED);
+        clickedBlocks.put(Material.COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
+        clickedBlocks.put(Material.WAXED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
+        clickedBlocks.put(Material.EXPOSED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
+        clickedBlocks.put(Material.WAXED_EXPOSED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
+        clickedBlocks.put(Material.WAXED_WEATHERED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
+        clickedBlocks.put(Material.WEATHERED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
+        clickedBlocks.put(Material.OXIDIZED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
+        clickedBlocks.put(Material.WAXED_OXIDIZED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
         when(Tag.BEDS.isTagged(Material.WHITE_BED)).thenReturn(true);
         clickedBlocks.put(Material.BREWING_STAND, Flags.BREWING);
         clickedBlocks.put(Material.WATER_CAULDRON, Flags.COLLECT_WATER);
@@ -187,6 +195,43 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractNothingInHandPotsNotAllowed() {
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_ACACIA_SAPLING)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_ALLIUM)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_AZALEA_BUSH)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_AZURE_BLUET)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_BAMBOO)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_BIRCH_SAPLING)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_BLUE_ORCHID)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_BROWN_MUSHROOM)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_CACTUS)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_CHERRY_SAPLING)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_CLOSED_EYEBLOSSOM)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_CORNFLOWER)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_CRIMSON_FUNGUS)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_CRIMSON_ROOTS)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_DANDELION)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_DARK_OAK_SAPLING)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_DEAD_BUSH)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_FERN)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_FLOWERING_AZALEA_BUSH)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_JUNGLE_SAPLING)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_LILY_OF_THE_VALLEY)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_MANGROVE_PROPAGULE)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_OAK_SAPLING)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_OPEN_EYEBLOSSOM)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_ORANGE_TULIP)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_OXEYE_DAISY)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_PALE_OAK_SAPLING)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_PINK_TULIP)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_POPPY)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_RED_MUSHROOM)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_RED_TULIP)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_SPRUCE_SAPLING)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_TORCHFLOWER)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_WARPED_FUNGUS)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_WARPED_ROOTS)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_WHITE_TULIP)).thenReturn(true);
+        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_WITHER_ROSE)).thenReturn(true);
         Arrays.stream(Material.values()).filter(m -> m.name().startsWith("POTTED")).forEach(bm -> {
             when(clickedBlock.getType()).thenReturn(bm);
             PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
@@ -201,6 +246,16 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractNothingInHandNotAllowed() {
+        when(Tag.COPPER_CHESTS.isTagged(Material.COPPER_CHEST)).thenReturn(true);
+        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.COPPER_GOLEM_STATUE)).thenReturn(true);
+        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.EXPOSED_COPPER_GOLEM_STATUE)).thenReturn(true);
+        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.OXIDIZED_COPPER_GOLEM_STATUE)).thenReturn(true);
+        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.WAXED_COPPER_GOLEM_STATUE)).thenReturn(true);
+        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.WAXED_EXPOSED_COPPER_GOLEM_STATUE)).thenReturn(true);
+        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.WAXED_OXIDIZED_COPPER_GOLEM_STATUE)).thenReturn(true);
+        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.WAXED_WEATHERED_COPPER_GOLEM_STATUE)).thenReturn(true);
+        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.WEATHERED_COPPER_GOLEM_STATUE)).thenReturn(true);
+        
         int count = 0;
         int worldSettingCount = 0;
         // Make all block states a sign. Right now, only the sign check cares, so fix in the future if required
