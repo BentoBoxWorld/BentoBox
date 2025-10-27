@@ -31,6 +31,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Allay;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Bat;
+import org.bukkit.entity.CopperGolem;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Flying;
@@ -365,7 +366,7 @@ public class Util {
 
         return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
                 entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat ||
-                entity instanceof Allay;
+                entity instanceof Allay || entity instanceof CopperGolem;
     }
 
     public static boolean isTamableEntity(Entity entity) {

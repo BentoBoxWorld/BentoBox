@@ -37,7 +37,7 @@ public class EntityInteractListener extends FlagListener {
         if (e.getRightClicked() instanceof ArmorStand) {
             checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.ARMOR_STAND);
         }
-    }
+     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e)
