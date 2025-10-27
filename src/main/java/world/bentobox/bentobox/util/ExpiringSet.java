@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
  * applies to all elements added to the set. It is thread-safe and provides similar
  * functionality to {@code HashSet} with the added feature of automatic expiration of elements.
  *
+ * <p> Example usage: {@code ExpiringSet<UUID> players = new ExpiringSet<>(100, TimeUnit.SECONDS);}
  * <p>This class manages a background thread resource, so it implements {@code AutoCloseable}
  * to ensure resources are released reliably using try-with-resources.
  *
