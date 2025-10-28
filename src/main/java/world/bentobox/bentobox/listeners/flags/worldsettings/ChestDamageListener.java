@@ -8,6 +8,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
@@ -24,10 +25,17 @@ public class ChestDamageListener extends FlagListener {
         if (getIWM().inWorld(e.getLocation()) && !Flags.CHEST_DAMAGE.isSetForWorld(e.getLocation().getWorld()))
         {
             e.blockList().removeIf(b -> b.getType().equals(Material.CHEST) ||
-                    Tag.COPPER_CHESTS.isTagged(b.getType()) ||
-                b.getType().equals(Material.TRAPPED_CHEST) ||
-                Tag.SHULKER_BOXES.isTagged(b.getType()));
-            
+                    isCopperChest(b.getType()) ||
+                    b.getType().equals(Material.TRAPPED_CHEST) ||
+                    Tag.SHULKER_BOXES.isTagged(b.getType()));
+
         }
+    }
+
+    private boolean isCopperChest(Material m) {
+        if (Util.isVersionAtLeast("1.21.10")) {
+            return Tag.COPPER_CHESTS.isTagged(m);
+        }
+        return false;
     }
 }
