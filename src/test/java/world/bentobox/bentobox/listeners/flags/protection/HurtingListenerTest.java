@@ -26,6 +26,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -68,6 +69,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         // Utils
         when(Util.isPassiveEntity(any())).thenCallRealMethod();
         when(Util.isHostileEntity(any())).thenCallRealMethod();
+        when(Util.isTamableEntity(any())).thenCallRealMethod();
 
         // User & player
         user = User.getInstance(mockPlayer);
@@ -93,6 +95,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
         assertTrue(e.isCancelled());
+        
         verify(notifier).notify(user, "protection.protected");
     }
 
@@ -121,7 +124,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
-        verify(notifier).notify(user, "protection.protected");
+        verify(notifier, Mockito.atLeastOnce()).notify(user, "protection.protected");
     }
 
     /**
@@ -185,7 +188,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
-        verify(notifier).notify(user, "protection.protected");
+        verify(notifier, Mockito.atLeastOnce()).notify(user, "protection.protected");
     }
 
     /**

@@ -362,6 +362,9 @@ public class Util {
      * @since 1.4.0
      */
     public static boolean isPassiveEntity(Entity entity) {
+        if (entity == null || entity.getType() == null) {
+            return true;
+        }
         // Check built-in class hierarchy for common passive mobs
         boolean isPassiveByClass = entity instanceof Animals
                 || entity instanceof IronGolem 
