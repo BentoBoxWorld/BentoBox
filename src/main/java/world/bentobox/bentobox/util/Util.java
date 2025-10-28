@@ -73,6 +73,8 @@ public class Util {
 
     private static final String NETHER = "_nether";
     private static final String THE_END = "_the_end";
+
+    private static final String SERVER_VERSION = Bukkit.getMinecraftVersion();
     private static String serverVersion = null;
     private static BentoBox plugin = BentoBox.getInstance();
     private static PasteHandler pasteHandler = null;
@@ -363,10 +365,15 @@ public class Util {
         // Fishes, Dolphin and Squid extends WaterMob | Excludes PufferFish
         // Bat extends Mob
         // Most of passive mobs extends Animals
-
+        boolean copperGolem = false;
+        try {
+            copperGolem = entity instanceof CopperGolem;
+        } catch (Exception ex) {
+            copperGolem = false;
+        }
         return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
                 entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat ||
-                entity instanceof Allay || entity instanceof CopperGolem;
+                entity instanceof Allay || copperGolem;
     }
 
     public static boolean isTamableEntity(Entity entity) {
@@ -744,7 +751,7 @@ public class Util {
     public static void setRegenerator(WorldRegenerator regenerator) {
         Util.regenerator = regenerator;
     }
-    
+
     private static Pair<String, String> getPrefix() {
         // Bukkit method that was added in 2011
         // Example value: 1.20.4-R0.1-SNAPSHOT
@@ -752,7 +759,7 @@ public class Util {
         final String pluginPackageName = plugin.getClass().getPackage().getName();
         return new Pair<String, String>(pluginPackageName + ".nms." + bukkitVersion, bukkitVersion);
     }
-    
+
     /**
      * Generic method to get NMS handlers with fallback options
      * @param <T> The type of handler to get
@@ -771,7 +778,7 @@ public class Util {
         if (existingHandler != null) {
             return existingHandler;
         }
-        
+
         T handler;
         try {
             Class<?> clazz = Class.forName(getPrefix().x() + "." + implName);
@@ -786,7 +793,7 @@ public class Util {
         }
         return handler;
     }
-    
+
     /**
      * Get metadata decoder
      * @return an accelerated metadata class for this server
@@ -909,5 +916,30 @@ public class Util {
     public static String stripColor(String input) {
         return input.replaceAll("(?i)§[0-9A-FK-ORX]", ""); // Use regex because it's fast and reliable
     }
-    
+
+    /**
+     * Simple utility method to check if the server version is at least the target version.
+     */
+    public static boolean isVersionAtLeast(String targetVersion) {
+        // Simple string comparison may be sufficient for minor versions, 
+        // but a proper numeric check is safer for major releases.
+        try {
+            // Get major, minor, patch versions
+            String[] currentParts = SERVER_VERSION.split("\\.");
+            String[] targetParts = targetVersion.split("\\.");
+
+            for (int i = 0; i < targetParts.length; i++) {
+                int current = (i < currentParts.length) ? Integer.parseInt(currentParts[i]) : 0;
+                int target = Integer.parseInt(targetParts[i]);
+
+                if (current > target) return true;
+                if (current < target) return false;
+            }
+            // All parts checked are equal (e.g., 1.21.9 vs 1.21.9)
+            return true;
+        } catch (NumberFormatException e) {
+            // Fallback for non-standard version strings
+            return SERVER_VERSION.startsWith(targetVersion);
+        }
+    }
 }

@@ -116,6 +116,8 @@ public abstract class AbstractCommonSetup {
         server = ServerMocks.newServer();
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        // Version
+        when(Bukkit.getMinecraftVersion()).thenReturn("1.21.10");
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
