@@ -34,6 +34,7 @@ import org.bukkit.entity.Bat;
 import org.bukkit.entity.CopperGolem;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Flying;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Monster;
@@ -361,19 +362,22 @@ public class Util {
      * @since 1.4.0
      */
     public static boolean isPassiveEntity(Entity entity) {
-        // IronGolem and Snowman extends Golem, but Shulker also extends Golem
-        // Fishes, Dolphin and Squid extends WaterMob | Excludes PufferFish
-        // Bat extends Mob
-        // Most of passive mobs extends Animals
-        boolean copperGolem = false;
-        try {
-            copperGolem = entity instanceof CopperGolem;
-        } catch (Exception ex) {
-            copperGolem = false;
-        }
-        return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
-                entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat ||
-                entity instanceof Allay || copperGolem;
+        // Check built-in class hierarchy for common passive mobs
+        boolean isPassiveByClass = entity instanceof Animals
+                || entity instanceof IronGolem 
+                || entity instanceof Snowman 
+                || entity instanceof Bat 
+                || entity instanceof Allay;
+
+        // Check WaterMob hierarchy, excluding PufferFish (hostile)
+        boolean isPassiveWaterMob = entity instanceof WaterMob && !(entity instanceof PufferFish);
+
+        // Check for newer entity types by their enum name (String comparison is safe across versions)
+        boolean isCopperGolem = entity.getType().name().equals("COPPER_GOLEM");
+        // And the sniffer
+        boolean isSniffer = entity.getType().name().equals("SNIFFER");
+
+        return isPassiveByClass || isPassiveWaterMob || isCopperGolem || isSniffer;
     }
 
     public static boolean isTamableEntity(Entity entity) {
