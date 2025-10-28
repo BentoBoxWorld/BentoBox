@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Handle interaction with blocks
@@ -246,17 +247,19 @@ public class BlockInteractionListener extends FlagListener
             this.checkIsland(e, player, loc, Flags.FLOWER_POT);
             return true;
         }
-        // Prevent animation of copper golems. Use break blocks for now. This could potentiall have it's own flag in the future.
-        if (Tag.COPPER_GOLEM_STATUES.isTagged(type)) {
-            this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
-            return true;
+        if (Util.isVersionAtLeast("1.21.10")) {
+            // Prevent animation of copper golems. Use break blocks for now. This could potentiall have it's own flag in the future.
+            if (Tag.COPPER_GOLEM_STATUES.isTagged(type)) {
+                this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
+                return true;
+            }
+
+            // There are various types of copper chests
+            if (Tag.COPPER_CHESTS.isTagged(type)) {
+                this.checkIsland(e, player, loc, Flags.CHEST);
+                return true;
+            } 
         }
-        
-        // There are various types of copper chests
-        if (Tag.COPPER_CHESTS.isTagged(type)) {
-            this.checkIsland(e, player, loc, Flags.CHEST);
-            return true;
-        } 
         
         if (block.getState() instanceof BrushableBlock && BlockInteractionListener.holds(player, Material.BRUSH)) {
             // Protect this using break blocks flag for now. Maybe in the future it can have its own flag.

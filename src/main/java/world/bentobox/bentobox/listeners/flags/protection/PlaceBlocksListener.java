@@ -16,6 +16,8 @@ import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import com.google.common.base.Enums;
+
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -131,7 +133,7 @@ public class PlaceBlocksListener extends FlagListener
                     e.getMaterial() == Material.ITEM_FRAME ||
                     e.getMaterial() == Material.GLOW_ITEM_FRAME ||
                     e.getMaterial() == Material.CHEST ||
-                    e.getMaterial() == Material.COPPER_CHEST ||
+                    e.getMaterial() == Enums.getIfPresent(Material.class, "COPPER_CHEST").or(Material.CHEST) ||
                     e.getMaterial() == Material.TRAPPED_CHEST)
             {
                 this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
