@@ -104,28 +104,29 @@ public class MobSpawnListener extends FlagListener
 
         switch (e.getSpawnReason())
         {
-        // Natural
-        case DEFAULT, DROWNED, JOCKEY, LIGHTNING, MOUNT, NATURAL, NETHER_PORTAL, OCELOT_BABY, PATROL,
-        RAID, REINFORCEMENTS, SILVERFISH_BLOCK, TRAP, VILLAGE_DEFENSE, VILLAGE_INVASION ->
-        {
-            boolean cancelNatural = this.shouldCancel(e.getEntity(),
+            // Natural
+            case DEFAULT, DROWNED, JOCKEY, LIGHTNING, MOUNT, NATURAL, NETHER_PORTAL, OCELOT_BABY, PATROL,
+                 RAID, REINFORCEMENTS, SILVERFISH_BLOCK, TRAP, VILLAGE_DEFENSE, VILLAGE_INVASION ->
+            {
+                boolean cancelNatural = this.shouldCancel(e.getEntity(),
                     e.getLocation(),
                     Flags.ANIMAL_NATURAL_SPAWN,
                     Flags.MONSTER_NATURAL_SPAWN);
-            e.setCancelled(cancelNatural);
-        }
-        // Spawners
-        case SPAWNER ->
-        {
-            boolean cancelSpawners = this.shouldCancel(e.getEntity(),
+                e.setCancelled(cancelNatural);
+            }
+            // Spawners
+            case SPAWNER, TRIAL_SPAWNER ->
+            {
+                boolean cancelSpawners = this.shouldCancel(e.getEntity(),
                     e.getLocation(),
                     Flags.ANIMAL_SPAWNERS_SPAWN,
                     Flags.MONSTER_SPAWNERS_SPAWN);
-            e.setCancelled(cancelSpawners);
-        }
-        default -> {
-            // Nothing to do
-        }
+                e.setCancelled(cancelSpawners);
+            }
+            default ->
+            {
+                // Nothing to do
+            }
         }
     }
 
