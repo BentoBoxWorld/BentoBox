@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.protocol.game.PacketPlayOutTileEntityData;
 import net.minecraft.world.level.block.entity.TileEntity;
+import world.bentobox.bentobox.BentoBox;
 
 public abstract class AbstractMetaData {
 
@@ -33,7 +34,7 @@ public abstract class AbstractMetaData {
             //            object.getClass().getCanonicalName() + " is not a PacketPlayOutTileEntityData");
             //}
         } catch (Exception e) {
-            System.out.println("The method '" + method + "' does not exist in the TileEntity class.");
+            BentoBox.getInstance().logError("The method '" + method + "' does not exist in the TileEntity class.");
             e.printStackTrace();
         }
         return "";
