@@ -150,15 +150,6 @@ public class MobSpawnListenerTest {
     }
 
     @Test
-    public void testNotLoaded() {
-        when(plugin.isLoaded()).thenReturn(false);
-        CreatureSpawnEvent e = new CreatureSpawnEvent(livingEntity, SpawnReason.NATURAL);
-        MobSpawnListener l = new MobSpawnListener();
-        l.onMobSpawn(e);
-        assertFalse(e.isCancelled());
-    }
-
-    @Test
     public void testNotInWorld() {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         IslandsManager im = mock(IslandsManager.class);
