@@ -989,11 +989,11 @@ protection:
         &a entering into boats.
       hint: No boat interaction allowed
     BOOKSHELF:
-      name: Bookshelves
+      name: Shelves
       description: |-
-        &a Allow to place books
-        &a or to take books.
-      hint: cannot place a book or take a book.
+        &a Allow to place item
+        &a or to take item.
+      hint: cannot place an item or take an item.
     BREAK_BLOCKS:
       description: Toggle breaking
       name: Break blocks
