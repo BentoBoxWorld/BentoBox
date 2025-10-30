@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.api.logs;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -172,6 +174,18 @@ public class LogEntry {
 
         public LogEntry build() {
             return new LogEntry(this);
+        }
+
+        @Override
+        public String toString() {
+            String time = Instant.ofEpochMilli(timestamp).atZone(ZoneId.systemDefault()).toLocalDateTime().toString();
+            StringBuilder sb = new StringBuilder("LogEntry{").append("time=").append(time).append(", type=")
+                    .append(type);
+            if (customType != null)
+                sb.append(", customType=").append(customType);
+            if (data != null && !data.isEmpty())
+                sb.append(", data=").append(data);
+            return sb.append('}').toString();
         }
     }
 }
