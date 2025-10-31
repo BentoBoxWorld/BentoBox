@@ -31,6 +31,20 @@ public class IslandGridTest {
     private Island island2;
     @Mock
     private Island overlappingIsland;
+    @Mock
+    private Island original;
+    @Mock
+    private Island updated;
+    @Mock
+    private Island a;
+    @Mock
+    private Island b;
+    @Mock
+    private Island big;
+    @Mock
+    private Island small;
+    @Mock
+    private Island zIsland;
 
     /**
      * @throws java.lang.Exception
@@ -141,6 +155,103 @@ public class IslandGridTest {
     @Test
     public void testGetGrid() {
         assertNotNull(ig.getGrid());
+    }
+    
+    @Test
+    public void testUpdateIslandCoordinatesKeepsSingleEntry() {
+        // original at (100,100) range 20
+        when(original.getMinX()).thenReturn(100);
+        when(original.getMinZ()).thenReturn(100);
+        when(original.getRange()).thenReturn(20);
+        when(original.getUniqueId()).thenReturn("orig");
+
+        // updated has same id but moved to (300,300) range 20
+        when(updated.getMinX()).thenReturn(300);
+        when(updated.getMinZ()).thenReturn(300);
+        when(updated.getRange()).thenReturn(20);
+        when(updated.getUniqueId()).thenReturn("orig");
+
+        when(im.getIslandById("orig")).thenReturn(original);
+
+        // add original
+        assertTrue(ig.addToGrid(original));
+        assertEquals(1, ig.getSize());
+
+        // add updated (same id) -> should update, keep size 1
+        assertTrue(ig.addToGrid(updated));
+        assertEquals(1, ig.getSize());
+
+        // original location should no longer contain the island
+        assertNull(ig.getIslandStringAt(110, 110));
+
+        // new location should contain the island
+        assertEquals("orig", ig.getIslandStringAt(310, 310));
+    }
+
+    @Test
+    public void testAdjacentIslandsAllowedWhenEdgesTouch() {
+        // island a covers x:[0,20) z:[0,20)
+        when(a.getMinX()).thenReturn(0);
+        when(a.getMinZ()).thenReturn(0);
+        when(a.getRange()).thenReturn(10);
+        when(a.getUniqueId()).thenReturn("a");
+
+        // island b starts exactly at x=20 (touching edge), z same
+        when(b.getMinX()).thenReturn(20);
+        when(b.getMinZ()).thenReturn(0);
+        when(b.getRange()).thenReturn(10);
+        when(b.getUniqueId()).thenReturn("b");
+
+        when(im.getIslandById("a")).thenReturn(a);
+        when(im.getIslandById("b")).thenReturn(b);
+
+        assertTrue(ig.addToGrid(a));
+        // touching edge should be allowed
+        assertTrue(ig.addToGrid(b));
+
+        // verify both retrievable at representative coords
+        assertEquals("a", ig.getIslandStringAt(10, 10));
+        assertEquals("b", ig.getIslandStringAt(21, 10));
+    }
+
+    @Test
+    public void testLargeExistingIslandShouldBlockSmallIslandEvenIfMinXOutsideSubMapWindow() {
+        // big island minX = 0, range = 1000
+        when(big.getMinX()).thenReturn(0);
+        when(big.getMinZ()).thenReturn(0);
+        when(big.getRange()).thenReturn(1000);
+        when(big.getUniqueId()).thenReturn("big");
+
+        // small island minX = 1500, range = 10 -> would overlap big
+        when(small.getMinX()).thenReturn(1500);
+        when(small.getMinZ()).thenReturn(10);
+        when(small.getRange()).thenReturn(10);
+        when(small.getUniqueId()).thenReturn("small");
+
+        when(im.getIslandById("big")).thenReturn(big);
+        when(im.getIslandById("small")).thenReturn(small);
+
+        assertTrue(ig.addToGrid(big));
+
+        // Expected: adding small should be rejected because it lies inside big
+        // If this test fails, it reveals the current subMap window is too small to find big.
+        assertFalse("Small island overlaps big island; should have been rejected", ig.addToGrid(small));
+    }
+
+    @Test
+    public void testGetIslandStringAtWhenXEntryExistsButNoZEntryApplies() {
+        // island exists at minX=100 minZ=100 range=10 (covers z [110,110))
+        when(zIsland.getMinX()).thenReturn(100);
+        when(zIsland.getMinZ()).thenReturn(100);
+        when(zIsland.getRange()).thenReturn(10);
+        when(zIsland.getUniqueId()).thenReturn("z");
+
+        when(im.getIslandById("z")).thenReturn(zIsland);
+
+        assertTrue(ig.addToGrid(zIsland));
+
+        // Query an x within island x-range but z is below any minZ -> should return null
+        assertNull(ig.getIslandStringAt(110, 50));
     }
 
 }

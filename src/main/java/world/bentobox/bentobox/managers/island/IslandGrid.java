@@ -40,35 +40,31 @@ public class IslandGrid {
         int minZ = island.getMinZ();
         int range = island.getRange();
         IslandData newIsland = new IslandData(island.getUniqueId(), minX, minZ, range);
-        
-        // Check for overlaps with existing islands
-        // Get potential overlapping islands by checking the range before and after minX
-        for (Entry<Integer, TreeMap<Integer, IslandData>> xEntry : grid.subMap(minX - 2 * range, true, 
-                minX + 2 * range, true).entrySet()) {
-            
-            // For each X entry, check Z entries within range
+
+        // Remove this island if it is already in the grid
+        this.removeFromGrid(island);
+
+        // compute bounds for the new island (upper bounds are exclusive)
+        int newMaxX = minX + range * 2;
+        int newMaxZ = minZ + range * 2;
+
+        /*
+         * Find any existing islands that could overlap:
+         * - Any existing island with minX <= newMaxX could extend over newMinX, so we must consider
+         *   all entries with key <= newMaxX (use headMap).
+         * - For each candidate X entry, consider Z entries with minZ <= newMaxZ (use headMap).
+         * This avoids missing large islands whose minX is far left of the new island.
+         */
+        for (Entry<Integer, TreeMap<Integer, IslandData>> xEntry : grid.headMap(newMaxX, true).entrySet()) {
             TreeMap<Integer, IslandData> zMap = xEntry.getValue();
-            for (Entry<Integer, IslandData> zEntry : zMap.subMap(minZ - 2 * range, true, 
-                    minZ + 2 * range, true).entrySet()) {
-                
+            for (Entry<Integer, IslandData> zEntry : zMap.headMap(newMaxZ, true).entrySet()) {
                 IslandData existingIsland = zEntry.getValue();
-                
-                // If it's the same island, allow the update
-                if (existingIsland.id().equals(newIsland.id())) {
-                    // Remove old entry
-                    removeFromGrid(island);
-                    // Add new entry
-                    addNewEntry(minX, minZ, newIsland);
-                    return true;
-                }
-                
-                // Check for overlap
                 if (isOverlapping(newIsland, existingIsland)) {
                     return false;
                 }
             }
         }
-        
+
         // No overlaps found, add the island
         addNewEntry(minX, minZ, newIsland);
         return true;
@@ -85,17 +81,17 @@ public class IslandGrid {
         int island1MaxZ = island1.minZ() + (island1.range() * 2);
         int island2MaxX = island2.minX() + (island2.range() * 2);
         int island2MaxZ = island2.minZ() + (island2.range() * 2);
-        
+
         // Check if one rectangle is to the left of the other
         if (island1MaxX <= island2.minX() || island2MaxX <= island1.minX()) {
             return false;
         }
-        
+
         // Check if one rectangle is above the other
         if (island1MaxZ <= island2.minZ() || island2MaxZ <= island1.minZ()) {
             return false;
         }
-        
+
         return true;
     }
 
