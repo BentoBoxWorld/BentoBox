@@ -1140,6 +1140,7 @@ public class Island implements DataObject, MetaDataAble {
         this.owner = owner;
         if (owner == null) {
             log(new LogEntry.Builder(LogType.UNOWNED).build());
+            setChanged();
             return;
         }
         // Defensive code: demote any previous owner
