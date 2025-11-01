@@ -56,7 +56,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             tableFolder.mkdirs();
         }
         // Load each object from the file system, filtered, non-null
-        for (File file: Objects.requireNonNull(tableFolder.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(JSON)))) {
+        for (File file: Objects.requireNonNull(tableFolder.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(JSON) && !name.startsWith("._")))) {
             try (FileReader reader = new FileReader(file)){
                 T object = getGson().fromJson(reader, dataObject);
                 if (object != null) {
