@@ -151,6 +151,14 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         }
         return false;
     }
+    
+    @Override
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
+        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+
+        return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(user, getWorld()).keySet()), lastArg));
+
+    }
 
     /**
      * Record to store island information and whether the name refers to
