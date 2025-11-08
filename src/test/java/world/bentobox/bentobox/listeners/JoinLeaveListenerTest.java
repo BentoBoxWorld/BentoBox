@@ -43,6 +43,7 @@ import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -91,6 +92,8 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
     @Mock
     private AddonsManager am;
 
+    private AddonDescription desc;
+
     /**
      */
     @Before
@@ -107,6 +110,8 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
         when(iwm.isOnLeaveResetInventory(any())).thenReturn(true);
         when(iwm.getOverWorlds()).thenReturn(Collections.singletonList(world));
         when(iwm.getResetEpoch(any())).thenReturn(20L);
+        desc = new AddonDescription.Builder("main", "BSkyBlock", "1.0.0").build();
+        when(gameMode.getDescription()).thenReturn(desc);
         Optional<GameModeAddon> opGm = Optional.of(gameMode);
         when(iwm.getAddon(any())).thenReturn(opGm);
         when(gameMode.getPermissionPrefix()).thenReturn("acidisland.");

@@ -248,6 +248,12 @@ public class BlockInteractionListener extends FlagListener
             return true;
         }
         if (Util.isVersionAtLeast("1.21.10")) {
+            // Wooden shelves
+            if (Tag.WOODEN_SHELVES.isTagged(type)) {
+                this.checkIsland(e, player, loc, Flags.BOOKSHELF);
+                return true;
+            }
+            
             // Prevent animation of copper golems. Use break blocks for now. This could potentiall have it's own flag in the future.
             if (Tag.COPPER_GOLEM_STATUES.isTagged(type)) {
                 this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);

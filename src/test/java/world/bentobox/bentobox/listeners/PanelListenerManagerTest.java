@@ -181,84 +181,83 @@ public class PanelListenerManagerTest {
 
         @Override
         public String getOriginalTitle() {
-            // TODO Auto-generated method stub
+            
             return "";
         }
 
         @Override
         public void setTitle(String title) {
-            // TODO Auto-generated method stub
+            
         }
 
         @Override
         public void setItem(int slot, ItemStack item) {
-            // TODO Auto-generated method stub
+            
 
         }
 
         @Override
         public ItemStack getItem(int slot) {
-            // TODO Auto-generated method stub
+            
             return null;
         }
 
         @Override
         public void setCursor(ItemStack item) {
-            // TODO Auto-generated method stub
+            
 
         }
 
         @Override
         public ItemStack getCursor() {
-            // TODO Auto-generated method stub
+            
             return null;
         }
 
         @Override
         public Inventory getInventory(int rawSlot) {
-            // TODO Auto-generated method stub
-            return null;
+            return top;
         }
 
         @Override
         public int convertSlot(int rawSlot) {
-            // TODO Auto-generated method stub
+            
             return 0;
         }
 
         @Override
         public SlotType getSlotType(int slot) {
-            // TODO Auto-generated method stub
+            
             return null;
         }
 
         @Override
         public void close() {
-            // TODO Auto-generated method stub
+            
 
         }
 
         @Override
         public int countSlots() {
-            // TODO Auto-generated method stub
+            
             return 0;
         }
 
         @Override
         public boolean setProperty(Property prop, int value) {
-            // TODO Auto-generated method stub
+            
             return false;
         }
 
         @Override
         public void open() {
-            // TODO Auto-generated method stub
+            
 
         }
 
         @Override
         public @Nullable MenuType getMenuType() {
-            // TODO Auto-generated method stub
+            
             return null;
         }
 

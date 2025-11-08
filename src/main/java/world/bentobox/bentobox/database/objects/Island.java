@@ -657,9 +657,7 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Returns the island range. It is a convenience method that returns the exact
-     * same value than island range, although it has been saved into the Island
-     * object for easier access.
+     * Returns the island range. Protection range can never be bigger than this.
      * 
      * @return the island range
      * @see #getProtectionRange()
@@ -1142,6 +1140,7 @@ public class Island implements DataObject, MetaDataAble {
         this.owner = owner;
         if (owner == null) {
             log(new LogEntry.Builder(LogType.UNOWNED).build());
+            setChanged();
             return;
         }
         // Defensive code: demote any previous owner
@@ -1201,11 +1200,14 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Sets the island range. This method should <u><strong>NEVER</strong></u> be
-     * used except for testing purposes. <br>
+     * Sets the island range. <br>
      * The range value is a copy of {@link WorldSettings#getIslandDistance()} made
-     * when the Island got created in order to allow easier access to this value and
-     * must therefore remain <u><strong>AS IS</strong></u>.
+     * when the Island got created. It should not be altered mid-game unless you set
+     *  {@link world.bentobox.bentobox.api.addons.GameModeAddon#isEnforceEqualRanges()}
+     *  to {@code false}, and also likely set {@link world.bentobox.bentobox.api.addons.GameModeAddon#isFixIslandCenter()}
+     *  to {@code false} too.
+     *  
+     *  The protection range can be set to be bigger than this, but will never report as being bigger than this.
      * 
      * @param range the range to set
      * @see #setProtectionRange(int)

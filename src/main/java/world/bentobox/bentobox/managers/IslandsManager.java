@@ -248,10 +248,23 @@ public class IslandsManager {
      */
     @Nullable
     public Island createIsland(@NonNull Location location, @Nullable UUID owner) {
-        Island island = new Island(location, owner, plugin.getIWM().getIslandProtectionRange(location.getWorld()));
+        return createIsland(location, owner, plugin.getIWM().getIslandProtectionRange(location.getWorld()));
+    }
+    
+    /**
+     * Create an island with owner, and a specified protection range. Note this does not paste blocks. It just creates
+     * the island data object.
+     * 
+     * @param location the location, not null
+     * @param owner    the island owner UUID, may be null
+     * @param protectionRange size of protection range
+     * @return Island or null if the island could not be created for some reason
+     * @since 3.10.0
+     */
+    public Island createIsland(@NonNull Location location, @Nullable UUID owner, int protectionRange) {
+        Island island = new Island(location, owner, protectionRange);
         // Game the gamemode name and prefix the uniqueId
-        String gmName = plugin.getIWM().getAddon(location.getWorld()).map(gm -> gm.getDescription().getName())
-                .orElse("");
+        String gmName = plugin.getIWM().getAddon(location.getWorld()).map(gm -> gm.getDescription().getName()).orElse("");
         island.setGameMode(gmName);
         island.setUniqueId(gmName + island.getUniqueId());
         if (islandCache.addIsland(island)) {
@@ -265,6 +278,7 @@ public class IslandsManager {
         }
         return null;
     }
+    
 
     /**
      * Deletes island.

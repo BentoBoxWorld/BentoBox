@@ -36,28 +36,71 @@ public class IslandGrid {
      * @return true if successfully added, false if island already exists, or there is an overlap
      */
     public boolean addToGrid(Island island) {
-        // Check if we know about this island already
         int minX = island.getMinX();
         int minZ = island.getMinZ();
-        IslandData islandData = new IslandData(island.getUniqueId(), minX, minZ, island.getRange());
-        if (grid.containsKey(minX)) {
-            TreeMap<Integer, IslandData> zEntry = grid.get(minX);
-            if (zEntry.containsKey(minZ)) {
-                // If it is the same island then it's okay
-                return island.getUniqueId().equals(zEntry.get(minZ).id());
-                // Island overlap, report error
-            } else {
-                // Add island
-                zEntry.put(minZ, islandData);
-                grid.put(minX, zEntry);
+        int range = island.getRange();
+        IslandData newIsland = new IslandData(island.getUniqueId(), minX, minZ, range);
+
+        // Remove this island if it is already in the grid
+        this.removeFromGrid(island);
+
+        // compute bounds for the new island (upper bounds are exclusive)
+        int newMaxX = minX + range * 2;
+        int newMaxZ = minZ + range * 2;
+
+        /*
+         * Find any existing islands that could overlap:
+         * - Any existing island with minX <= newMaxX could extend over newMinX, so we must consider
+         *   all entries with key <= newMaxX (use headMap).
+         * - For each candidate X entry, consider Z entries with minZ <= newMaxZ (use headMap).
+         * This avoids missing large islands whose minX is far left of the new island.
+         */
+        for (Entry<Integer, TreeMap<Integer, IslandData>> xEntry : grid.headMap(newMaxX, true).entrySet()) {
+            TreeMap<Integer, IslandData> zMap = xEntry.getValue();
+            for (Entry<Integer, IslandData> zEntry : zMap.headMap(newMaxZ, true).entrySet()) {
+                IslandData existingIsland = zEntry.getValue();
+                if (isOverlapping(newIsland, existingIsland)) {
+                    return false;
+                }
             }
-        } else {
-            // Add island
-            TreeMap<Integer, IslandData> zEntry = new TreeMap<>();
-            zEntry.put(minZ, islandData);
-            grid.put(minX, zEntry);
         }
+
+        // No overlaps found, add the island
+        addNewEntry(minX, minZ, newIsland);
         return true;
+    }
+
+    /**
+     * Checks if two islands overlap
+     * @param island1 first island
+     * @param island2 second island
+     * @return true if islands overlap
+     */
+    private boolean isOverlapping(IslandData island1, IslandData island2) {
+        int island1MaxX = island1.minX() + (island1.range() * 2);
+        int island1MaxZ = island1.minZ() + (island1.range() * 2);
+        int island2MaxX = island2.minX() + (island2.range() * 2);
+        int island2MaxZ = island2.minZ() + (island2.range() * 2);
+
+        // Check if one rectangle is to the left of the other
+        if (island1MaxX <= island2.minX() || island2MaxX <= island1.minX()) {
+            return false;
+        }
+
+        // Check if one rectangle is above the other
+        if (island1MaxZ <= island2.minZ() || island2MaxZ <= island1.minZ()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Helper method to add a new entry to the grid
+     */
+    private void addNewEntry(int minX, int minZ, IslandData islandData) {
+        TreeMap<Integer, IslandData> zEntry = grid.computeIfAbsent(minX, k -> new TreeMap<>());
+        zEntry.put(minZ, islandData);
     }
 
     /**
