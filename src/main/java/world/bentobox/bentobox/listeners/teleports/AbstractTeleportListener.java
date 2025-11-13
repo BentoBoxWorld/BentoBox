@@ -8,12 +8,12 @@ package world.bentobox.bentobox.listeners.teleports;
 
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,6 +27,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.ExpiringSet;
 import world.bentobox.bentobox.util.Util;
 
 
@@ -42,8 +43,8 @@ public abstract class AbstractTeleportListener
     AbstractTeleportListener(@NonNull BentoBox bentoBox)
     {
         this.plugin = bentoBox;
-        this.inPortal = new HashSet<>();
-        this.inTeleport = new HashSet<>();
+        this.inPortal = new ExpiringSet<UUID>(10, TimeUnit.SECONDS);
+        this.inTeleport = new ExpiringSet<UUID>(10, TimeUnit.SECONDS);
         this.teleportOrigin = new HashMap<>();
     }
 
@@ -378,7 +379,7 @@ public abstract class AbstractTeleportListener
     /**
      * Set of entities that currently is inside portal.
      */
-    protected final Set<UUID> inPortal;
+    protected final ExpiringSet<UUID> inPortal;
 
     /**
      * Map that links entities origin of teleportation. Used for respawning.

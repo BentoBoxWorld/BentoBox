@@ -48,7 +48,6 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
         super(bentoBox);
     }
 
-
     /**
      * This listener checks entity portal events and triggers appropriate methods to transfer
      * entities to the correct location in other dimension.
@@ -121,13 +120,10 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
         Entity entity = event.getEntity();
         Material type = event.getLocation().getBlock().getType();
         UUID uuid = entity.getUniqueId();
-
-        if (this.inPortal.contains(uuid))
-        {
-            // Already in process.
+        if (entity.getPortalCooldown() > 0) {
             return;
         }
-
+        
         World fromWorld = event.getLocation().getWorld();
         World overWorld = Util.getWorld(fromWorld);
 
@@ -142,8 +138,6 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
             // Teleportation is disabled. Cancel processing.
             return;
         }
-
-        this.inPortal.add(uuid);
         // Add original world for respawning.
         this.teleportOrigin.put(uuid, fromWorld);
 
@@ -176,12 +170,6 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityExitPortal(EntityPortalExitEvent event)
     {
-        if (!this.inPortal.contains(event.getEntity().getUniqueId()))
-        {
-            return;
-        }
-
-        this.inPortal.remove(event.getEntity().getUniqueId());
         this.inTeleport.remove(event.getEntity().getUniqueId());
         this.teleportOrigin.remove(event.getEntity().getUniqueId());
     }
