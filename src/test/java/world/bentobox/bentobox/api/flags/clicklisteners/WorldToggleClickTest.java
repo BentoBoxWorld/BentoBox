@@ -21,6 +21,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
@@ -37,7 +38,6 @@ import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -61,7 +61,7 @@ public class WorldToggleClickTest {
 
     @Before
     public void setUp() throws Exception {
-        ServerMocks.newServer();
+        MockBukkit.mock();
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
@@ -105,7 +105,7 @@ public class WorldToggleClickTest {
 
     @After
     public void tearDown() {
-        ServerMocks.unsetBukkitServer();
+        MockBukkit.unmock();
         Mockito.framework().clearInlineMocks();
     }
 

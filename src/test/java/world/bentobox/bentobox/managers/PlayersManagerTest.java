@@ -47,6 +47,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
@@ -66,7 +67,6 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.hooks.VaultHook;
-import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -136,8 +136,8 @@ public class PlayersManagerTest {
     public void setUp() throws Exception {
         // Clear any lingering database
         tearDown();
-
-        ServerMocks.newServer();
+        // Mock server
+        MockBukkit.mock();
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         when(plugin.getVault()).thenReturn(Optional.of(vault));
@@ -275,7 +275,7 @@ public class PlayersManagerTest {
 
     @After
     public void tearDown() throws Exception {
-        ServerMocks.unsetBukkitServer();
+        MockBukkit.unmock();
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
         deleteAll(new File("database"));

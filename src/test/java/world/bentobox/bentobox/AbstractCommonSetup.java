@@ -38,6 +38,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -61,7 +62,6 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -113,7 +113,7 @@ public abstract class AbstractCommonSetup {
     @Before
     public void setUp() throws Exception {
 
-        server = ServerMocks.newServer();
+        server = MockBukkit.mock();
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Version
@@ -234,7 +234,7 @@ public abstract class AbstractCommonSetup {
      */
     @After
     public void tearDown() throws Exception {
-        ServerMocks.unsetBukkitServer();
+        MockBukkit.unmock();
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
     }

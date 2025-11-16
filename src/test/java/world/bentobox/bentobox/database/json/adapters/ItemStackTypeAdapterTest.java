@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
@@ -44,7 +45,6 @@ import com.google.gson.stream.JsonWriter;
 
 import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.mocks.ServerMocks;
 
 /**
  * Tests the ItemStack type adapter for GSON
@@ -81,7 +81,7 @@ public class ItemStackTypeAdapterTest {
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        Server server = ServerMocks.newServer();
+        Server server = MockBukkit.getMock();
 
         PluginManager pim = mock(PluginManager.class);
 
@@ -114,7 +114,7 @@ public class ItemStackTypeAdapterTest {
     @After
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
-        ServerMocks.unsetBukkitServer();
+        MockBukkit.unmock();
     }
 
     /**

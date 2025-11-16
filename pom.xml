@@ -53,6 +53,7 @@
         <java.version>21</java.version>
         <!-- Non-minecraft related dependencies -->
         <powermock.version>2.0.9</powermock.version>
+        <mock-bukkit.version>v1.21-SNAPSHOT</mock-bukkit.version>
         <!-- Database related dependencies -->
         <mongodb.version>3.12.12</mongodb.version>
         <mariadb.version>3.0.5</mariadb.version>
@@ -247,6 +248,13 @@
             <version>4.2.2</version>
             <scope>test</scope>
         </dependency>
+        <!-- Mock Bukkit - used to mock the server in tests -->
+        <dependency>
+            <groupId>com.github.MockBukkit</groupId>
+            <artifactId>MockBukkit</artifactId>
+            <version>${mock-bukkit.version}</version>
+            <scope>test</scope>
+         </dependency>
         <!-- Paper API -->
         <dependency>
             <groupId>io.papermc.paper</groupId>

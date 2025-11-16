@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
@@ -42,7 +43,6 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
-import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 
@@ -138,7 +138,7 @@ public class BlueprintClipboardManagerTest {
 
         clipboard = mock(BlueprintClipboard.class);
 
-        server = ServerMocks.newServer();
+        server = MockBukkit.mock();
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         blueprintFolder = new File("blueprints");
@@ -160,7 +160,7 @@ public class BlueprintClipboardManagerTest {
      */
     @After
     public void tearDown() throws Exception {
-        ServerMocks.unsetBukkitServer();
+        MockBukkit.unmock();
         if (blueprintFolder.exists()) {
             // Clean up file system
             Files.walk(blueprintFolder.toPath())

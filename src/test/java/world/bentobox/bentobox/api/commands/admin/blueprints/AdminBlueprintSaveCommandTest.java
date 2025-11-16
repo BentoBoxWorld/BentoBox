@@ -29,6 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
@@ -47,7 +48,6 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.LocalesManager;
-import world.bentobox.bentobox.mocks.ServerMocks;
 
 /**
  * @author tastybento
@@ -75,7 +75,7 @@ public class AdminBlueprintSaveCommandTest {
 
     @BeforeClass
     public static void beforeClass() {
-        ServerMocks.newServer();
+        MockBukkit.mock();
     }
 
     @Before
@@ -141,6 +141,7 @@ public class AdminBlueprintSaveCommandTest {
             .map(Path::toFile)
             .forEach(File::delete);
         }
+        MockBukkit.unmock();
     }
 
     /**

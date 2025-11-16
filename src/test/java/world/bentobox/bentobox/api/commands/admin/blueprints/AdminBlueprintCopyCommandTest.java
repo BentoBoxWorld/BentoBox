@@ -39,7 +39,6 @@ import world.bentobox.bentobox.blueprints.BlueprintClipboard;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
-import world.bentobox.bentobox.mocks.ServerMocks;
 
 /**
  * @author tastybento
@@ -121,7 +120,6 @@ public class AdminBlueprintCopyCommandTest {
     @After
     public void tearDown() throws Exception {
         Mockito.framework().clearInlineMocks();
-        ServerMocks.unsetBukkitServer();
     }
 
     /**

@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -50,7 +51,6 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.mocks.ServerMocks;
 
 /**
  * @author tastybento
@@ -93,7 +93,7 @@ public class IslandCreationPanelTest {
      */
     @Before
     public void setUp() throws Exception {
-        ServerMocks.newServer();
+        MockBukkit.mock();
 
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
@@ -209,7 +209,7 @@ public class IslandCreationPanelTest {
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
-        ServerMocks.unsetBukkitServer();
+        MockBukkit.unmock();
     }
 
     /**

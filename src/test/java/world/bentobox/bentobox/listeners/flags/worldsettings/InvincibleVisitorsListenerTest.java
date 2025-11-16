@@ -44,6 +44,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -64,7 +65,6 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 @Ignore("Needs PaperAPI Update")
@@ -96,7 +96,7 @@ public class InvincibleVisitorsListenerTest {
 
     @Before
     public void setUp() throws Exception {
-        ServerMocks.newServer();
+        MockBukkit.mock();
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
@@ -189,7 +189,7 @@ public class InvincibleVisitorsListenerTest {
 
     @After
     public void tearDown() {
-        ServerMocks.unsetBukkitServer();
+        MockBukkit.unmock();
         User.clearUsers();
         framework().clearInlineMocks();
     }
