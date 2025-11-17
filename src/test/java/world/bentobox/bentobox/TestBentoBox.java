@@ -1,11 +1,12 @@
 package world.bentobox.bentobox;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -31,17 +32,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -71,7 +68,14 @@ public class TestBentoBox extends AbstractCommonSetup {
     private Player visitorToIsland;
     @Mock
     private CommandsManager cm;
+    private MockedStatic<IslandsManager> mockedStaticIM;
 
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+    
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -79,7 +83,7 @@ public class TestBentoBox extends AbstractCommonSetup {
 
         // IslandsManager static
         //PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
-
+        mockedStaticIM = Mockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
@@ -102,7 +106,8 @@ public class TestBentoBox extends AbstractCommonSetup {
 
         // Util
         //PowerMockito.mockStatic(Util.class);
-        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+        //when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         island.setOwner(uuid);
         island.setProtectionRange(100);
@@ -150,7 +155,7 @@ public class TestBentoBox extends AbstractCommonSetup {
         }
         String[] args = {""};
         // Results are alphabetically sorted
-        when(Util.tabLimit(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.tabLimit(any(), any())).thenCallRealMethod();
         assertEquals(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(mockPlayer, "test", args));
         assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(sender, "test", args));
         args[0] = "su";
@@ -414,15 +419,15 @@ public class TestBentoBox extends AbstractCommonSetup {
 
         // checking events - vistor
         Event e3 = new BlockBreakEvent(block, visitorToIsland);
-        Assert.assertFalse(fl.checkIsland(e3, visitorToIsland, location, Flags.BREAK_BLOCKS, true));
+        assertFalse(fl.checkIsland(e3, visitorToIsland, location, Flags.BREAK_BLOCKS, true));
 
         // checking events - owner
         Event e = new BlockBreakEvent(block, ownerOfIsland);
-        Assert.assertTrue(fl.checkIsland(e, ownerOfIsland, location, Flags.BREAK_BLOCKS, true));
+        assertTrue(fl.checkIsland(e, ownerOfIsland, location, Flags.BREAK_BLOCKS, true));
 
         // checking events - member
         Event e2 = new BlockBreakEvent(block, mockPlayer);
-        Assert.assertTrue(fl.checkIsland(e2, mockPlayer, location, Flags.BREAK_BLOCKS, true));
+        assertTrue(fl.checkIsland(e2, mockPlayer, location, Flags.BREAK_BLOCKS, true));
 
     }
 
@@ -433,10 +438,10 @@ public class TestBentoBox extends AbstractCommonSetup {
         Collection<Flag> defaultFlags = Flags.values();
         Collection<Flag> f = fm.getFlags();
         for (Flag flag : defaultFlags) {
-            assertTrue(flag.getID(), f.contains(flag));
+            assertTrue( f.contains(flag), flag.getID());
         }
         for (Flag flag : f) {
-            assertTrue(flag.getID(), defaultFlags.contains(flag));
+            assertTrue(defaultFlags.contains(flag), flag.getID());
         }
     }
 

@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.io.File;
@@ -29,10 +28,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.WhiteBox;
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.managers.AddonsManager;
 
@@ -41,7 +38,7 @@ import world.bentobox.bentobox.managers.AddonsManager;
  * @author tastybento
  *
  */
-public class AddonClassLoaderTest {
+public class AddonClassLoaderTest extends AbstractCommonSetup {
 
     private enum mandatoryTags {
         MAIN,
@@ -68,15 +65,11 @@ public class AddonClassLoaderTest {
     @Mock
     private AddonsManager am;
 
-    private BentoBox plugin;
-
     /**
      */
     @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        plugin = mock(BentoBox.class);
-        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         // To start include everything
         makeAddon(List.of());
         testAddon = new TestClass();
@@ -172,9 +165,11 @@ public class AddonClassLoaderTest {
     }
 
     /**
+     * @throws Exception 
      */
     @AfterEach
-    public void TearDown() throws IOException {
+    public void TearDown() throws Exception {
+        super.tearDown();
         Files.deleteIfExists(jarFile.toPath());
         if (dataFolder.exists()) {
             Files.walk(dataFolder.toPath())
@@ -182,7 +177,6 @@ public class AddonClassLoaderTest {
             .map(Path::toFile)
             .forEach(File::delete);
         }
-        Mockito.framework().clearInlineMocks();
     }
 
     class TestClass extends Addon {
@@ -222,6 +216,7 @@ public class AddonClassLoaderTest {
         assertEquals(List.of("Boxed", "AcidIsland"), desc.getSoftDependencies());
         assertEquals("1.0.0", desc.getVersion());
         assertNull(desc.getPermissions());
+        System.out.println(plugin);
         verify(plugin).logWarning("TestAddon addon depends on development version of BentoBox plugin. Some functions may be not implemented.");
     }
 

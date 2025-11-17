@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,16 +21,9 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemFactory;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -40,21 +32,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.WhiteBox;
+import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
-public class AddonTest {
+public class AddonTest extends AbstractCommonSetup {
 
     public static int BUFFER_SIZE = 10240;
 
-    @Mock
-    static BentoBox plugin;
     static JavaPlugin javaPlugin;
-    private Server server;
     @Mock
     private AddonsManager am;
     private File dataFolder;
@@ -65,32 +52,9 @@ public class AddonTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-
-        server = mock(Server.class);
-        World world = mock(World.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
-
-        PluginManager pluginManager = mock(PluginManager.class);
-
-        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
-        when(Bukkit.getServer()).thenReturn(server);
-        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-
-        plugin = mock(BentoBox.class);
-        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
-
+        super.setUp();
         // Addons manager
         when(plugin.getAddonsManager()).thenReturn(am);
-
-        // MultiLib
-        // Mock item factory (for itemstacks)
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        when(server.getItemFactory()).thenReturn(itemFactory);
-        ItemMeta itemMeta = mock(ItemMeta.class);
-        when(itemFactory.getItemMeta(any())).thenReturn(itemMeta);
 
         // Make the addon
         dataFolder = new File("dataFolder");
@@ -124,7 +88,8 @@ public class AddonTest {
     }
 
     @AfterEach
-    public void TearDown() throws IOException {
+    public void TearDown() throws Exception {
+        super.tearDown();
         Files.deleteIfExists(jarFile.toPath());
         if (dataFolder.exists()) {
             Files.walk(dataFolder.toPath())
@@ -132,7 +97,6 @@ public class AddonTest {
             .map(Path::toFile)
             .forEach(File::delete);
         }
-        Mockito.framework().clearInlineMocks();
     }
 
     class TestClass extends Addon {
