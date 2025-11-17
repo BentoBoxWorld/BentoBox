@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -192,9 +191,9 @@ public abstract class AbstractCommonSetup {
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Fake players
-        Settings settings = mock(Settings.class);
+        Settings settings = new Settings();
         when(plugin.getSettings()).thenReturn(settings);
-        when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+
 
         //PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
         mockedUtil = Mockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);

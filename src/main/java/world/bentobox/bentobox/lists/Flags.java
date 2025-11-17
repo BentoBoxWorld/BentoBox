@@ -719,7 +719,7 @@ public final class Flags {
      * Deprecated Flags are ignored.
      * @return List of all the flags in this class
      */
-    public static List<Flag> values() {
+    public static final List<Flag> values() {
         return Arrays.stream(Flags.class.getFields())
                 .filter(field -> field.getAnnotation(Deprecated.class) == null) // Ensures it is not deprecated
                 .map(field -> {
