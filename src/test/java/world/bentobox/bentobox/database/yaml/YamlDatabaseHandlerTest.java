@@ -51,8 +51,8 @@ import world.bentobox.bentobox.managers.FlagsManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Bukkit.class} )
+
+//@PrepareForTest( {BentoBox.class, Bukkit.class} )
 public class YamlDatabaseHandlerTest {
 
     @Mock
@@ -82,14 +82,14 @@ public class YamlDatabaseHandlerTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         when(plugin.getLogger()).thenReturn(logger);
         when(plugin.isEnabled()).thenReturn(true);
 
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
 
         when(scheduler.runTaskTimerAsynchronously(any(), any(Runnable.class), anyLong(), anyLong())).thenReturn(task);
@@ -126,7 +126,7 @@ public class YamlDatabaseHandlerTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         deleteAll(new File("database"));
         deleteAll(new File("database_backup"));
@@ -145,7 +145,7 @@ public class YamlDatabaseHandlerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#loadObjects()}.
      */
-    @Ignore("YAML database is no longer supported")
+    @Disabled("YAML database is no longer supported")
     @Test
     public void testLoadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         List<Island> list = handler.loadObjects();
@@ -160,7 +160,7 @@ public class YamlDatabaseHandlerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#loadObject(java.lang.String)}.
      */
-    @Ignore("YAML database is no longer supported")
+    @Disabled("YAML database is no longer supported")
     @Test
     public void testLoadObject() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         String name = UUID.randomUUID().toString();
@@ -174,7 +174,7 @@ public class YamlDatabaseHandlerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#saveObject(java.lang.Object)}.
      */
-    @Ignore("YAML database is no longer supported")
+    @Disabled("YAML database is no longer supported")
     @SuppressWarnings("unchecked")
     @Test
     public void testSaveObject() throws IllegalAccessException, InvocationTargetException, IntrospectionException {

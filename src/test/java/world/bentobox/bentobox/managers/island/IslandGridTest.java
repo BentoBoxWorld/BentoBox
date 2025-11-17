@@ -19,7 +19,7 @@ import world.bentobox.bentobox.database.objects.Island;
 /**
  * Grid test
  */
-@RunWith(PowerMockRunner.class)
+
 public class IslandGridTest {
     
     private IslandGrid ig;
@@ -49,7 +49,7 @@ public class IslandGridTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Islands
         when(island.getMinX()).thenReturn(356);
@@ -73,7 +73,7 @@ public class IslandGridTest {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 

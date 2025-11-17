@@ -57,8 +57,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
 public class PanelListenerManagerTest {
 
     private static final String PANEL_NAME = "name";
@@ -84,13 +84,13 @@ public class PanelListenerManagerTest {
     /**
      */
     @SuppressWarnings("deprecation")
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getMinecraftVersion()).thenReturn("1.21.10");
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Settings
         Settings settings = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(settings);
@@ -263,7 +263,7 @@ public class PanelListenerManagerTest {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

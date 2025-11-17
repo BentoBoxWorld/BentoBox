@@ -51,8 +51,8 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
 public class BannedCommandsTest {
 
     @Mock
@@ -66,12 +66,12 @@ public class BannedCommandsTest {
     @Mock
     private World world;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Island World Manager
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
@@ -128,7 +128,7 @@ public class BannedCommandsTest {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

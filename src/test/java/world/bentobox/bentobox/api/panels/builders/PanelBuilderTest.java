@@ -27,20 +27,20 @@ import world.bentobox.bentobox.api.user.User;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, ServerBuildInfo.class})
+
+//@PrepareForTest({Bukkit.class, ServerBuildInfo.class})
 public class PanelBuilderTest {
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }

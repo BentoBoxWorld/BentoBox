@@ -58,8 +58,8 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, DatabaseSetup.class,
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, DatabaseSetup.class,
         ServerBuildInfo.class })
 public class IslandCacheTest extends AbstractCommonSetup {
 
@@ -90,7 +90,7 @@ public class IslandCacheTest extends AbstractCommonSetup {
         // other
         handler = mock(AbstractDatabaseHandler.class);
         // Database
-        PowerMockito.mockStatic(DatabaseSetup.class);
+        //PowerMockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
         when(dbSetup.getHandler(any())).thenReturn(handler);
@@ -99,11 +99,11 @@ public class IslandCacheTest extends AbstractCommonSetup {
     }
 
     @SuppressWarnings("unchecked")
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Worlds
         when(plugin.getIWM()).thenReturn(iwm);
@@ -112,7 +112,7 @@ public class IslandCacheTest extends AbstractCommonSetup {
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
 
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
 
         // Mock up IslandsManager
@@ -152,7 +152,7 @@ public class IslandCacheTest extends AbstractCommonSetup {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         Mockito.framework().clearInlineMocks();
@@ -309,7 +309,7 @@ public class IslandCacheTest extends AbstractCommonSetup {
     public void testResetAllFlags() {
         ic.addIsland(island);
         BukkitScheduler scheduler = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
         ic.resetAllFlags(world);
 

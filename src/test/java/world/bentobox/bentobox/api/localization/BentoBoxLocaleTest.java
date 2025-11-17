@@ -39,9 +39,9 @@ import world.bentobox.bentobox.util.ItemParser;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, ItemParser.class , ServerBuildInfo.class})
+@Disabled("Needs update to work with PaperAPI")
+
+//@PrepareForTest({ Bukkit.class, ItemParser.class , ServerBuildInfo.class})
 public class BentoBoxLocaleTest {
 
     private BentoBoxLocale localeObject;
@@ -49,11 +49,11 @@ public class BentoBoxLocaleTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(ItemParser.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(ItemParser.class, Mockito.RETURNS_MOCKS);
         when(ItemParser.parse(anyString())).thenReturn(new ItemStack(Material.WHITE_BANNER));
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);
         bannerMeta = mock(BannerMeta.class);
@@ -72,7 +72,7 @@ public class BentoBoxLocaleTest {
         localeObject = new BentoBoxLocale(locale, config);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }

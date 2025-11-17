@@ -56,8 +56,8 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
 public class LockAndBanListenerTest {
 
     private static final Integer PROTECTION_RANGE = 200;
@@ -88,19 +88,19 @@ public class LockAndBanListenerTest {
     @Mock
     private Player player;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockBukkit.mock();
         // Server & Scheduler
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(sch);
         when(Bukkit.getBukkitVersion()).thenReturn("");
 
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
 
         // Island world manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
@@ -197,7 +197,7 @@ public class LockAndBanListenerTest {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         MockBukkit.unmock();
         User.clearUsers();

@@ -35,8 +35,8 @@ import world.bentobox.bentobox.managers.IslandsManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Bukkit.class , ServerBuildInfo.class})
 public class MobTeleportListenerTest {
 
     @Mock
@@ -62,12 +62,12 @@ public class MobTeleportListenerTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        PowerMockito.mockStatic(BentoBox.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(BentoBox.class, Mockito.RETURNS_MOCKS);
         when(BentoBox.getInstance()).thenReturn(plugin);
         // Island World Manager
         when(plugin.getIWM()).thenReturn(iwm);
@@ -90,7 +90,7 @@ public class MobTeleportListenerTest {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         Mockito.framework().clearInlineMocks();
     }

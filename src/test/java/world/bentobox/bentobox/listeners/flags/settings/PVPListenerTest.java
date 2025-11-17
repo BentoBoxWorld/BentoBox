@@ -94,10 +94,10 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
+@Disabled("Needs update to work with PaperAPI")
 @SuppressWarnings("deprecation")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
 public class PVPListenerTest {
 
     @Mock
@@ -123,16 +123,16 @@ public class PVPListenerTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Make sure you set the plung for the User class otherwise it'll use an old object
         User.setPlugin(plugin);
         // Island World Manager
@@ -172,7 +172,7 @@ public class PVPListenerTest {
         User.getInstance(player2);
 
         // Util
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
 
         // Flags Manager
@@ -239,7 +239,7 @@ public class PVPListenerTest {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

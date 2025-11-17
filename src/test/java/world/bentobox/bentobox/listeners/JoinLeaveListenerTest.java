@@ -60,8 +60,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
 public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
 
     private static final String[] NAMES = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry",
@@ -96,7 +96,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -212,7 +212,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
         jll = new JoinLeaveListener(plugin);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

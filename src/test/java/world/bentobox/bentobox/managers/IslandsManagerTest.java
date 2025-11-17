@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.managers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -55,30 +55,24 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import com.github.puregero.multilib.MultiLib;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
-import io.papermc.paper.ServerBuildInfo;
 import net.kyori.adventure.text.Component;
 import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.WhiteBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
 import world.bentobox.bentobox.api.user.User;
@@ -90,9 +84,9 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, MultiLib.class, DatabaseSetup.class,
-        ServerBuildInfo.class })
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class, MultiLib.class, DatabaseSetup.class,
+//        ServerBuildInfo.class })
 public class IslandsManagerTest extends AbstractCommonSetup {
 
     private static AbstractDatabaseHandler<Object> h;
@@ -154,13 +148,13 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     private Settings settings;
 
     @SuppressWarnings("unchecked")
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // This has to be done beforeClass otherwise the tests will interfere with each
         // other
         h = mock(AbstractDatabaseHandler.class);
         // Database
-        PowerMockito.mockStatic(DatabaseSetup.class);
+        //PowerMockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
         when(dbSetup.getHandler(any())).thenReturn(h);
@@ -169,7 +163,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     @Override
     @SuppressWarnings({ "unchecked", "deprecation" })
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -177,10 +171,10 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         tearDown();
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Mutilib
-        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
 
         // island world mgr
         when(world.getName()).thenReturn("world");
@@ -225,7 +219,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
         // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
         // version
         when(Bukkit.getVersion())
@@ -261,7 +255,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
 
         // Worlds translate to world
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
@@ -361,7 +355,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         Mockito.framework().clearInlineMocks();
@@ -381,7 +375,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Ignore("Material#isSolid() cannot be tested")
+    @Disabled("Material#isSolid() cannot be tested")
     public void testIsSafeLocationSafe() {
         assertTrue(im.isSafeLocation(location));
     }
@@ -399,7 +393,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Ignore("Material#isSolid() cannot be tested")
+    @Disabled("Material#isSolid() cannot be tested")
     public void testIsSafeLocationNonSolidGround() {
         when(ground.getType()).thenReturn(Material.WATER);
         assertFalse(im.isSafeLocation(location));
@@ -409,7 +403,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Ignore("Material#isSolid() cannot be tested")
+    @Disabled("Material#isSolid() cannot be tested")
     public void testIsSafeLocationSubmerged() {
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.WATER);
@@ -418,7 +412,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     }
 
     @Test
-    @Ignore("Material#isSolid() cannot be tested")
+    @Disabled("Material#isSolid() cannot be tested")
     public void testCheckIfSafeTrapdoor() {
         for (Material d : Material.values()) {
             if (d.name().contains("DOOR")) {
@@ -435,7 +429,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Ignore("Material#isSolid() cannot be tested")
+    @Disabled("Material#isSolid() cannot be tested")
     public void testIsSafeLocationPortals() {
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.AIR);
@@ -480,7 +474,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Ignore("Material#isSolid() cannot be tested")
+    @Disabled("Material#isSolid() cannot be tested")
     public void testIsSafeLocationLava() {
         when(ground.getType()).thenReturn(Material.LAVA);
         when(space1.getType()).thenReturn(Material.AIR);
@@ -500,7 +494,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Ignore("Material#isSolid() cannot be tested")
+    @Disabled("Material#isSolid() cannot be tested")
     public void testTrapDoor() {
         when(ground.getType()).thenReturn(Material.OAK_TRAPDOOR);
         assertFalse("Open trapdoor", im.isSafeLocation(location));
@@ -512,7 +506,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Ignore("Material#isSolid() cannot be tested")
+    @Disabled("Material#isSolid() cannot be tested")
     public void testBadBlocks() {
         // Fences
         when(ground.getType()).thenReturn(Material.SPRUCE_FENCE);
@@ -537,7 +531,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Ignore("Material#isSolid() cannot be tested")
+    @Disabled("Material#isSolid() cannot be tested")
     public void testSolidBlocks() {
         when(space1.getType()).thenReturn(Material.STONE);
         assertFalse("Solid", im.isSafeLocation(location));

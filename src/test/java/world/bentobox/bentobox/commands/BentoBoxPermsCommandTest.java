@@ -45,8 +45,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
 public class BentoBoxPermsCommandTest extends AbstractCommonSetup {
 
     @Mock
@@ -66,7 +66,7 @@ public class BentoBoxPermsCommandTest extends AbstractCommonSetup {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -107,7 +107,7 @@ public class BentoBoxPermsCommandTest extends AbstractCommonSetup {
         cmd = new BentoBoxPermsCommand(ac);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

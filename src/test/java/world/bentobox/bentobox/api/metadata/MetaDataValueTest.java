@@ -12,7 +12,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+
 public class MetaDataValueTest {
 
     /**

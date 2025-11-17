@@ -39,8 +39,8 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Bukkit.class, Util.class, HandlerList.class} )
+
+//@PrepareForTest( {BentoBox.class, Bukkit.class, Util.class, HandlerList.class} )
 public class FlagsManagerTest {
 
     /**
@@ -54,15 +54,15 @@ public class FlagsManagerTest {
     @Mock
     private PluginManager pluginManager;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Util class to handle PaperLib
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.isPaper()).thenReturn(false);
 
         // Plugin is loaded
@@ -86,14 +86,14 @@ public class FlagsManagerTest {
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        //PowerMockito.mockStatic(Flags.class);
+        ////PowerMockito.mockStatic(Flags.class);
 
         // Util
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }
@@ -161,7 +161,7 @@ public class FlagsManagerTest {
      */
     @Test
     public void testUnregisterFlag() {
-        PowerMockito.mockStatic(HandlerList.class);
+        //PowerMockito.mockStatic(HandlerList.class);
         when(plugin.isLoaded()).thenReturn(true);
         FlagsManager fm = new FlagsManager(plugin);
         // Listener

@@ -67,9 +67,9 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 
-@Ignore("Needs PaperAPI Update")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
+@Disabled("Needs PaperAPI Update")
+
+//@PrepareForTest({BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
 public class InvincibleVisitorsListenerTest {
 
     @Mock
@@ -94,14 +94,14 @@ public class InvincibleVisitorsListenerTest {
     @Mock
     private PluginManager pim;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockBukkit.mock();
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Island World Manager
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
@@ -139,7 +139,7 @@ public class InvincibleVisitorsListenerTest {
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(player.getUniqueId()).thenReturn(uuid);
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
         when(Util.prettifyText(anyString())).thenCallRealMethod();
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
@@ -187,7 +187,7 @@ public class InvincibleVisitorsListenerTest {
         when(Bukkit.createInventory(any(), anyInt(), anyString())).thenReturn(top);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         MockBukkit.unmock();
         User.clearUsers();

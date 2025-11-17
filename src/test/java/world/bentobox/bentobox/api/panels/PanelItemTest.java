@@ -31,9 +31,9 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class , ServerBuildInfo.class})
+@Disabled("Needs update to work with PaperAPI")
+
+//@PrepareForTest({ Bukkit.class , ServerBuildInfo.class})
 public class PanelItemTest {
 
     @Mock
@@ -45,9 +45,9 @@ public class PanelItemTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Builder
         when(pib.getAmount()).thenReturn(2);
         when(pib.getClickHandler()).thenReturn(clickHandler);
@@ -61,7 +61,7 @@ public class PanelItemTest {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         Mockito.framework().clearInlineMocks();
     }

@@ -44,8 +44,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class EntityInteractListenerTest extends AbstractCommonSetup {
 
     private EntityInteractListener eil;
@@ -57,7 +57,7 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
     /**
      */
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

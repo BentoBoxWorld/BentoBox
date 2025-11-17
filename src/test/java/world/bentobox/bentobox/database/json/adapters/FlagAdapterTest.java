@@ -35,17 +35,17 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, Flags.class, Util.class} )
+
+//@PrepareForTest( {Bukkit.class, BentoBox.class, Flags.class, Util.class} )
 public class FlagAdapterTest {
 
     private BentoBox plugin;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         Server server = mock(Server.class);
 
@@ -54,7 +54,7 @@ public class FlagAdapterTest {
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
@@ -66,7 +66,7 @@ public class FlagAdapterTest {
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }

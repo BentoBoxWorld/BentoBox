@@ -56,9 +56,9 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, ServerBuildInfo.class , ServerBuildInfo.class})
+@Disabled("Needs update to work with PaperAPI")
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, ServerBuildInfo.class , ServerBuildInfo.class})
 public class IslandCreationPanelTest {
 
     @Mock
@@ -91,14 +91,14 @@ public class IslandCreationPanelTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockBukkit.mock();
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -205,7 +205,7 @@ public class IslandCreationPanelTest {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

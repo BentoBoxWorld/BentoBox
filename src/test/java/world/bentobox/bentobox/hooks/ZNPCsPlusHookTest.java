@@ -41,8 +41,8 @@ import lol.pyr.znpcsplus.api.serialization.NpcSerializerRegistry;
 import lol.pyr.znpcsplus.util.NpcLocation;
 import world.bentobox.bentobox.BentoBox;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, NpcApiProvider.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Bukkit.class, NpcApiProvider.class , ServerBuildInfo.class})
 public class ZNPCsPlusHookTest {
 
     @Mock
@@ -76,13 +76,13 @@ public class ZNPCsPlusHookTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(npcPlugin.getDescription()).thenReturn(new PluginDescriptionFile("ZNPCsPlus", "2.0.0-SNAPSHOT", "main"));
         when(pim.getPlugin("ZNPCsPlus")).thenReturn(npcPlugin);
@@ -90,7 +90,7 @@ public class ZNPCsPlusHookTest {
         when(world.getName()).thenReturn("bskyblock");
         when(location.getWorld()).thenReturn(world);
         // NpcApiProvider
-        PowerMockito.mockStatic(NpcApiProvider.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(NpcApiProvider.class, Mockito.RETURNS_MOCKS);
         when(NpcApiProvider.get()).thenReturn(npcApi);
 
         when(registry.getAll()).thenAnswer(invocation -> List.of(entry));

@@ -62,8 +62,8 @@ import world.bentobox.bentobox.util.Pair;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
 public class IslandTest {
 
     private static final int DISTANCE = 400;
@@ -93,10 +93,10 @@ public class IslandTest {
     private Island island2;
     private Island island3;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Max range
         when(plugin.getIWM()).thenReturn(iwm);
@@ -120,7 +120,7 @@ public class IslandTest {
         when(endWorld.getName()).thenReturn("bskyblock_end");
 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getOnlinePlayers()).thenReturn(Collections.emptyList());
 
         FlagsManager fm = new FlagsManager(plugin);
@@ -131,7 +131,7 @@ public class IslandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Islands Manager
-        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         // Initialize unique IDs for test objects
         uniqueId1 = UUID.randomUUID().toString();

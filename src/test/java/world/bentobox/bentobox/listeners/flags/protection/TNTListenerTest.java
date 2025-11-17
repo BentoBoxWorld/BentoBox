@@ -54,8 +54,8 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, ServerBuildInfo.class })
+
+//@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, ServerBuildInfo.class })
 public class TNTListenerTest extends AbstractCommonSetup {
 
     @Mock
@@ -69,7 +69,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
     private ExplosionListener listener;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -111,7 +111,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
     }
 
     @Test
-    @Ignore("PaperAPI error with Material isn't an item issue")
+    @Disabled("PaperAPI error with Material isn't an item issue")
     public void testOnTNTPriming() {
         BlockFace clickedFace = BlockFace.DOWN;
         Block clickedBlock = mock(Block.class);

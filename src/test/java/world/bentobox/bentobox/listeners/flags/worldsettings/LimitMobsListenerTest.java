@@ -31,7 +31,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+
 public class LimitMobsListenerTest {
 
     @Mock
@@ -52,11 +52,11 @@ public class LimitMobsListenerTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         when(plugin.getIWM()).thenReturn(iwm);
         list.add("SKELETON");
         when(iwm.getMobLimitSettings(world)).thenReturn(list);
@@ -77,7 +77,7 @@ public class LimitMobsListenerTest {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         Mockito.framework().clearInlineMocks();
     }

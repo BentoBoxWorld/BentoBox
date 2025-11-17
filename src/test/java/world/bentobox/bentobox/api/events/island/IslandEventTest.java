@@ -36,8 +36,8 @@ import world.bentobox.bentobox.managers.IslandsManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
 public class IslandEventTest {
 
     private Island island;
@@ -55,16 +55,16 @@ public class IslandEventTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         uuid = UUID.randomUUID();
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getPluginManager()).thenReturn(pim);
         // Island
         island = new Island();
@@ -74,7 +74,7 @@ public class IslandEventTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 

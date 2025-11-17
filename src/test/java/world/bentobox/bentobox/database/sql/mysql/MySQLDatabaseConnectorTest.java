@@ -31,8 +31,8 @@ import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, DriverManager.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, DriverManager.class , ServerBuildInfo.class})
 public class MySQLDatabaseConnectorTest {
 
     @Mock
@@ -44,7 +44,7 @@ public class MySQLDatabaseConnectorTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(dbSettings.getDatabaseName()).thenReturn("bentobox");
         when(dbSettings.getHost()).thenReturn("localhost");
@@ -52,13 +52,13 @@ public class MySQLDatabaseConnectorTest {
         when(dbSettings.getUsername()).thenReturn("username");
         when(dbSettings.getPassword()).thenReturn("password");
         // Logger
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getLogger()).thenReturn(logger);
     }
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }
@@ -77,7 +77,7 @@ public class MySQLDatabaseConnectorTest {
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#createConnection()}.
      */
-    @Ignore("This is apparently very hard to do!")
+    @Disabled("This is apparently very hard to do!")
     @Test
     public void testCreateConnection() {
         MySQLDatabaseConnector dc = new MySQLDatabaseConnector(dbSettings);
@@ -87,7 +87,7 @@ public class MySQLDatabaseConnectorTest {
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#createConnection()}.
      */
-    @Ignore("Does not work in Java 11")
+    @Disabled("Does not work in Java 11")
     @Test
     public void testCreateConnectionError() throws SQLException {
         PowerMockito.doThrow(new SQLException("error")).when(DriverManager.class);
@@ -101,7 +101,7 @@ public class MySQLDatabaseConnectorTest {
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#getConnectionUrl()}.
      */
     @Test
-    @Ignore("After reworking to HikariCP, this does not work.")
+    @Disabled("After reworking to HikariCP, this does not work.")
     public void testGetConnectionUrl() {
         MySQLDatabaseConnector dc = new MySQLDatabaseConnector(dbSettings);
         assertEquals("jdbc:mysql://localhost:1234/bentobox"
@@ -129,7 +129,7 @@ public class MySQLDatabaseConnectorTest {
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#closeConnection()}.
      */
     @Test
-    @Ignore("After reworking to HikariCP, this does not work.")
+    @Disabled("After reworking to HikariCP, this does not work.")
     public void testCloseConnection() {
         MySQLDatabaseConnector dc = new MySQLDatabaseConnector(dbSettings);
         dc.createConnection(null);
@@ -140,7 +140,7 @@ public class MySQLDatabaseConnectorTest {
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#closeConnection()}.
      */
     @Test
-    @Ignore("After reworking to HikariCP, this does not work.")
+    @Disabled("After reworking to HikariCP, this does not work.")
     public void testCloseConnectionError() throws SQLException {
         MySQLDatabaseConnector dc = new MySQLDatabaseConnector(dbSettings);
         dc.createConnection(null);

@@ -58,9 +58,9 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, RanksManager.class , ServerBuildInfo.class})
+@Disabled("Needs update to work with PaperAPI")
+
+//@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, RanksManager.class , ServerBuildInfo.class})
 public class FlagTest {
 
     private Flag f;
@@ -78,14 +78,14 @@ public class FlagTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         // Return world
         when(Util.getWorld(any())).thenAnswer((Answer<World>) invocation -> invocation.getArgument(0, World.class));
 
@@ -117,7 +117,7 @@ public class FlagTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }
@@ -380,7 +380,7 @@ public class FlagTest {
         when(im.getIslandAt(any(Location.class))).thenReturn(oL);
         when(plugin.getIslands()).thenReturn(im);
 
-        PowerMockito.mockStatic(RanksManager.class);
+        //PowerMockito.mockStatic(RanksManager.class);
         RanksManager rm = mock(RanksManager.class);
         when(RanksManager.getInstance()).thenReturn(rm);
         when(rm.getRank(RanksManager.VISITOR_RANK)).thenReturn("Visitor");

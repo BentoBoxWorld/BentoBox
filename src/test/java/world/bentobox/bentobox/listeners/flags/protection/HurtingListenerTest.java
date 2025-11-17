@@ -41,8 +41,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, ServerBuildInfo.class })
+
+//@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, ServerBuildInfo.class })
 public class HurtingListenerTest extends AbstractCommonSetup {
 
     @Mock
@@ -55,7 +55,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     /**
      */
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -280,7 +280,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     /**
      * Test method for {@link HurtingListener#onPlayerFeedParrots(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
-    @Ignore("Not yet implemented")
+    @Disabled("Not yet implemented")
     @Test
     public void testOnPlayerFeedParrots() {
         //fail("Not yet implemented"); // TODO
@@ -289,7 +289,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     /**
      * Test method for {@link HurtingListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
-    @Ignore("Not yet implemented")
+    @Disabled("Not yet implemented")
     @Test
     public void testOnSplashPotionSplash() {
         //fail("Not yet implemented"); // TODO
@@ -298,7 +298,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     /**
      * Test method for {@link HurtingListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
      */
-    @Ignore("Not yet implemented")
+    @Disabled("Not yet implemented")
     @Test
     public void testOnLingeringPotionSplash() {
         //fail("Not yet implemented"); // TODO
@@ -307,7 +307,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     /**
      * Test method for {@link HurtingListener#onLingeringPotionDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
-    @Ignore("Not yet implemented")
+    @Disabled("Not yet implemented")
     @Test
     public void testOnLingeringPotionDamage() {
         //fail("Not yet implemented"); // TODO

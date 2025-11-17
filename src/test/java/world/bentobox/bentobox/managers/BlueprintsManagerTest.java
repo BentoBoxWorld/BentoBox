@@ -69,8 +69,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, BlueprintPaster.class, MultiLib.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, BlueprintPaster.class, MultiLib.class, Util.class , ServerBuildInfo.class})
 public class BlueprintsManagerTest {
 
     public static int BUFFER_SIZE = 10240;
@@ -104,20 +104,20 @@ public class BlueprintsManagerTest {
 
     private Server server;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         server = MockBukkit.mock();
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Multilib
-        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
 
         // Util
-        PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
+        //PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
         when(Util.inTest()).thenReturn(true);
 
         // Make the addon
@@ -189,7 +189,7 @@ public class BlueprintsManagerTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         MockBukkit.unmock();
         // Clean up file system
@@ -262,7 +262,7 @@ public class BlueprintsManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprintBundles(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
-    @Ignore("Paper issue with biomes")
+    @Disabled("Paper issue with biomes")
     @Test
     public void testLoadBlueprintBundlesNoBlueprintFolder() {
         // Set up running and verification
@@ -283,7 +283,7 @@ public class BlueprintsManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprintBundles(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
-    @Ignore("Paper issue with biomes")
+    @Disabled("Paper issue with biomes")
     @Test
     public void testLoadBlueprintBundles() {
         // Set up running and verification
@@ -322,7 +322,7 @@ public class BlueprintsManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
-    @Ignore("Paper issue with biomes")
+    @Disabled("Paper issue with biomes")
     @Test
     public void testLoadBlueprints() {
         // Set up running and verification
@@ -355,7 +355,7 @@ public class BlueprintsManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#saveBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint)}.
      */
-    @Ignore("Paper issue with biomes")
+    @Disabled("Paper issue with biomes")
     @Test
     public void testSaveBlueprint() {
         // Save it
@@ -653,7 +653,7 @@ public class BlueprintsManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#renameBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint, java.lang.String, java.lang.String)}.
      */
-    @Ignore("Paper issue with biomes")
+    @Disabled("Paper issue with biomes")
     @Test
     public void testRenameBlueprint() {
         // Save it

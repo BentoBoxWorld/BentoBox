@@ -20,7 +20,7 @@ import world.bentobox.bentobox.api.addons.Addon;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+
 public class AddonEnableEventTest {
 
     private AddonEnableEvent aee;
@@ -29,7 +29,7 @@ public class AddonEnableEventTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         Map<String, Object> map = new HashMap<>();
         aee = new AddonEnableEvent(addon, map);
@@ -96,7 +96,7 @@ public class AddonEnableEventTest {
      * Test method for {@link world.bentobox.bentobox.api.events.BentoBoxEvent#setKeyValues(java.util.Map)}.
      */
     @Test
-    @Ignore
+    @Disabled
     public void testSetKeyValues() {
         // No fields to set values for in the class
     }

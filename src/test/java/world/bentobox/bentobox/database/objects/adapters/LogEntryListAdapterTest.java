@@ -30,7 +30,7 @@ public class LogEntryListAdapterTest {
     private UUID issuer;
     private List<LogEntry> toLog;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         config = new YamlConfiguration();
         a = new LogEntryListAdapter();
@@ -46,7 +46,7 @@ public class LogEntryListAdapterTest {
         history.addAll(toLog);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }

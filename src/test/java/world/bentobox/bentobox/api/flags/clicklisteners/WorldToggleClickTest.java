@@ -40,8 +40,8 @@ import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class WorldToggleClickTest {
 
     @Mock
@@ -59,13 +59,13 @@ public class WorldToggleClickTest {
     @Mock
     private World world;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockBukkit.mock();
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Island World Manager
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
@@ -87,7 +87,7 @@ public class WorldToggleClickTest {
         when(user.getPlayer()).thenReturn(mock(Player.class));
 
         // Util
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
 
         // Flags Manager
@@ -99,11 +99,11 @@ public class WorldToggleClickTest {
         when(plugin.getFlagsManager()).thenReturn(fm);
 
         // Event
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getPluginManager()).thenReturn(pim);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         MockBukkit.unmock();
         Mockito.framework().clearInlineMocks();

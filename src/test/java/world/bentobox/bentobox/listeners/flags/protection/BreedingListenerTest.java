@@ -41,8 +41,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class, ServerBuildInfo.class })
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class, ServerBuildInfo.class })
 public class BreedingListenerTest extends AbstractCommonSetup {
 
     private ItemStack itemInMainHand;
@@ -53,7 +53,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
     private static final Material NOT_BREEDABLE_WITH = Material.SEAGRASS;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

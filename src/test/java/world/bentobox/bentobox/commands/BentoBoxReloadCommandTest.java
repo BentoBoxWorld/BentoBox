@@ -40,8 +40,8 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, PanelListenerManager.class , ServerBuildInfo.class})
+
+//@PrepareForTest({Bukkit.class, BentoBox.class, User.class, PanelListenerManager.class , ServerBuildInfo.class})
 public class BentoBoxReloadCommandTest {
 
     @Mock
@@ -58,10 +58,10 @@ public class BentoBoxReloadCommandTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -92,14 +92,14 @@ public class BentoBoxReloadCommandTest {
 
         // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // User
         when(user.getTranslation(Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Panels
-        PowerMockito.mockStatic(PanelListenerManager.class);
+        //PowerMockito.mockStatic(PanelListenerManager.class);
 
         // Command
         reload = new BentoBoxReloadCommand(ac);
@@ -107,7 +107,7 @@ public class BentoBoxReloadCommandTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }

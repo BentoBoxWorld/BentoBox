@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.api.addons;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,27 +33,20 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
-
-import com.github.puregero.multilib.MultiLib;
 
 import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.WhiteBox;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, MultiLib.class , ServerBuildInfo.class})
 public class AddonTest {
 
     public static int BUFFER_SIZE = 10240;
@@ -70,9 +63,8 @@ public class AddonTest {
 
     private TestClass test;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         server = mock(Server.class);
         World world = mock(World.class);
@@ -88,14 +80,12 @@ public class AddonTest {
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
 
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Addons manager
         when(plugin.getAddonsManager()).thenReturn(am);
 
         // MultiLib
-        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
-
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
@@ -133,7 +123,7 @@ public class AddonTest {
         Files.deleteIfExists(ymlFile.toPath());
     }
 
-    @After
+    @AfterEach
     public void TearDown() throws IOException {
         Files.deleteIfExists(jarFile.toPath());
         if (dataFolder.exists()) {
@@ -218,27 +208,23 @@ public class AddonTest {
         assertTrue(testConfig.exists());
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testSaveResourceStringBooleanEmptyName() {
-        test.saveResource("", true);
+        Assertions.assertThrows( IllegalArgumentException.class, () -> test.saveResource("", true));
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testSaveResourceStringBooleanSaveANull() {
-        test.saveResource(null, true);
+        Assertions.assertThrows( IllegalArgumentException.class, () -> test.saveResource(null, true));
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testSaveResourceStringBooleanNoFile() {
-        test.saveResource("no_such_file", true);
+        Assertions.assertThrows( IllegalArgumentException.class, () -> test.saveResource("no_such_file", true));
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testSaveResourceStringFileBooleanBoolean() {
         test.saveResource("no_such_file", jarFile, false, false);
         test.saveResource("no_such_file", jarFile, false, true);
         test.saveResource("no_such_file", jarFile, true, false);
-        test.saveResource("no_such_file", jarFile, true, true);
+        Assertions.assertThrows( IllegalArgumentException.class, () -> test.saveResource("no_such_file", jarFile, true, true));
     }
 
     @Test

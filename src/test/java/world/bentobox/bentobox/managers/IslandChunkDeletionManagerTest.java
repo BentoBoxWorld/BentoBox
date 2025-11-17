@@ -26,9 +26,9 @@ import world.bentobox.bentobox.util.DeleteIslandChunks;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Bukkit.class, DeleteIslandChunks.class, ServerBuildInfo.class})
-@Ignore("NMS")
+
+//@PrepareForTest({BentoBox.class, Bukkit.class, DeleteIslandChunks.class, ServerBuildInfo.class})
+@Disabled("NMS")
 public class IslandChunkDeletionManagerTest {
 
     @Mock
@@ -45,16 +45,16 @@ public class IslandChunkDeletionManagerTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Scheduler
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         
         // DeleteIslandChunks
         PowerMockito.whenNew(DeleteIslandChunks.class).withAnyArguments().thenReturn(dic);

@@ -1,7 +1,8 @@
 package world.bentobox.bentobox.api.addons;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -9,24 +10,20 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+
 public class AddonDescriptionTest {
 
     private @NonNull AddonDescription ad;
     private ConfigurationSection configSec;
 
-    /**
-     */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         configSec = new YamlConfiguration();
         ad = new AddonDescription.Builder("main", "name", "version")

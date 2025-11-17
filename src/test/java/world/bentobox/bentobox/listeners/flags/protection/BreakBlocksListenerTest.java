@@ -55,8 +55,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class , ServerBuildInfo.class})
 public class BreakBlocksListenerTest extends AbstractCommonSetup {
 
     private BreakBlocksListener bbl;
@@ -66,7 +66,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     private ItemStack mockItem;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

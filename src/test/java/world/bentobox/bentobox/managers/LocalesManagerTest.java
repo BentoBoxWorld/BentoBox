@@ -46,8 +46,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class })
+
+//@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class })
 public class LocalesManagerTest {
 
     private BentoBox plugin;
@@ -56,12 +56,12 @@ public class LocalesManagerTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         Settings settings = mock(Settings.class);
         when(settings.getDefaultLanguage()).thenReturn(Locale.US.toLanguageTag());
@@ -87,7 +87,7 @@ public class LocalesManagerTest {
     /**
      * Deletes the fake locales folder
      */
-    @After
+    @AfterEach
     public void cleanUp() throws Exception {
         // Delete locale folder
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER);

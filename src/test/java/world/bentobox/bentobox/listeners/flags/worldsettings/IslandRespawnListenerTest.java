@@ -55,8 +55,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class , ServerBuildInfo.class})
 public class IslandRespawnListenerTest extends AbstractCommonSetup {
 
     @Mock
@@ -76,12 +76,12 @@ public class IslandRespawnListenerTest extends AbstractCommonSetup {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // World
         when(world.getUID()).thenReturn(UUID.randomUUID());
@@ -105,7 +105,7 @@ public class IslandRespawnListenerTest extends AbstractCommonSetup {
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
 
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
@@ -134,7 +134,7 @@ public class IslandRespawnListenerTest extends AbstractCommonSetup {
         User.getInstance(player);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

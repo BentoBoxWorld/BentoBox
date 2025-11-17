@@ -57,8 +57,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
 public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
 
     private AdminSettingsCommand asc;
@@ -90,7 +90,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         Util.setPlugin(plugin);
@@ -123,7 +123,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(endWorld.getEnvironment()).thenReturn(Environment.THE_END);
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
@@ -149,7 +149,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
 
         // Util
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getUUID(anyString())).thenReturn(uuid);
         when(Util.tabLimit(any(), any())).thenCallRealMethod();
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
@@ -159,7 +159,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getSettings()).thenReturn(settings);
 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);
         ItemMeta bannerMeta = mock(ItemMeta.class);

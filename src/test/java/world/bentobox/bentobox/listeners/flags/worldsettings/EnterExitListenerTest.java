@@ -58,8 +58,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class EnterExitListenerTest {
 
     private static final Integer PROTECTION_RANGE = 200;
@@ -89,14 +89,14 @@ public class EnterExitListenerTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Server
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Settings
@@ -104,7 +104,7 @@ public class EnterExitListenerTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Util
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
@@ -214,7 +214,7 @@ public class EnterExitListenerTest {
         when(Util.stripColor(any())).thenCallRealMethod();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

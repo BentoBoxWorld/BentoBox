@@ -45,8 +45,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
+
+//@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
 public class IslandWorldManagerTest {
 
     @Mock
@@ -74,10 +74,10 @@ public class IslandWorldManagerTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         iwm = new IslandWorldManager(plugin);
         // World
         when(world.getName()).thenReturn("test-world");
@@ -87,7 +87,7 @@ public class IslandWorldManagerTest {
 
         // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Flags Manager
@@ -104,7 +104,7 @@ public class IslandWorldManagerTest {
         iwm.addGameMode(gm);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }

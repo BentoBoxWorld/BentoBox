@@ -54,8 +54,8 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, IslandsManager.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, IslandsManager.class , ServerBuildInfo.class})
 public class IslandTeamSetownerCommandTest {
 
     @Mock
@@ -83,15 +83,15 @@ public class IslandTeamSetownerCommandTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
-        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -159,7 +159,7 @@ public class IslandTeamSetownerCommandTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 

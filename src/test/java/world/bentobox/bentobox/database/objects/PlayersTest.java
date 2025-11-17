@@ -31,8 +31,8 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, ServerBuildInfo.class})
+
+//@PrepareForTest({Bukkit.class, BentoBox.class, ServerBuildInfo.class})
 public class PlayersTest {
 
     @Mock
@@ -47,16 +47,16 @@ public class PlayersTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         when(iwm.getDeathsMax(Mockito.any())).thenReturn(3);
         when(plugin.getIWM()).thenReturn(iwm);
 
         Server server = mock(Server.class);
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
 
         when(Bukkit.getServer()).thenReturn(server);
         OfflinePlayer olp = mock(OfflinePlayer.class);
@@ -88,7 +88,7 @@ public class PlayersTest {
         p = new Players(plugin, uuid);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }

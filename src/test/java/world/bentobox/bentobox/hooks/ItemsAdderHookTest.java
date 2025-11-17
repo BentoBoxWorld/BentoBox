@@ -58,9 +58,9 @@ import world.bentobox.bentobox.managers.PlayersManager;
 /**
  * Test class for ItemsAdder hook
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, CustomBlock.class , ServerBuildInfo.class})
+@Disabled("Needs update to work with PaperAPI")
+
+//@PrepareForTest({ BentoBox.class, Bukkit.class, CustomBlock.class , ServerBuildInfo.class})
 public class ItemsAdderHookTest extends AbstractCommonSetup {
 
     @Mock
@@ -94,11 +94,11 @@ public class ItemsAdderHookTest extends AbstractCommonSetup {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // User
         UUID uuid = UUID.randomUUID();
@@ -110,7 +110,7 @@ public class ItemsAdderHookTest extends AbstractCommonSetup {
         when(plugin.getFlagsManager()).thenReturn(fm);
 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(pim.getPlugin("ItemsAdder")).thenReturn(itemsAdder);
 
@@ -119,7 +119,7 @@ public class ItemsAdderHookTest extends AbstractCommonSetup {
         when(iwm.inWorld(location)).thenReturn(true);
 
         // CustomBlock
-        PowerMockito.mockStatic(CustomBlock.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(CustomBlock.class, Mockito.RETURNS_MOCKS);
 
         // Location
         when(world.getName()).thenReturn("bskyblock");
@@ -156,7 +156,7 @@ public class ItemsAdderHookTest extends AbstractCommonSetup {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         User.clearUsers();
     }
@@ -211,7 +211,7 @@ public class ItemsAdderHookTest extends AbstractCommonSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.hooks.ItemsAdderHook#clearBlockInfo(org.bukkit.Location)}.
      */
-    @Ignore("Temp skip until this is optimized")
+    @Disabled("Temp skip until this is optimized")
     @Test
     public void testClearBlockInfo() {
         hook.clearBlockInfo(location);

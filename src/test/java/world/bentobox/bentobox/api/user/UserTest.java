@@ -68,8 +68,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Bukkit.class, Util.class , ServerBuildInfo.class})
 public class UserTest extends AbstractCommonSetup {
 
     private static final String TEST_TRANSLATION = "mock &a translation &b [test]";
@@ -88,7 +88,7 @@ public class UserTest extends AbstractCommonSetup {
     private PlayersManager pm;
     private @Nullable Players players;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -135,7 +135,7 @@ public class UserTest extends AbstractCommonSetup {
         when(pm.getPlayer(any())).thenReturn(players);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

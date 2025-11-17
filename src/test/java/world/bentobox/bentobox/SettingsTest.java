@@ -21,17 +21,17 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(BentoBox.class)
+
+//@PrepareForTest(BentoBox.class)
 public class SettingsTest {
 
     private Settings s;
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        Whitebox.setInternalState(BentoBox.class, "instance", Mockito.mock(BentoBox.class));
+        WhiteBox.setInternalState(BentoBox.class, "instance", Mockito.mock(BentoBox.class));
         // Class under test
         s = new Settings();
     }

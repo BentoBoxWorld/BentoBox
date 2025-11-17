@@ -73,8 +73,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class, DatabaseSetup.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class, DatabaseSetup.class , ServerBuildInfo.class})
 public class PlayersManagerTest {
 
     private static AbstractDatabaseHandler<Object> handler;
@@ -115,7 +115,7 @@ public class PlayersManagerTest {
         // other
         handler = mock(AbstractDatabaseHandler.class);
         // Database
-        PowerMockito.mockStatic(DatabaseSetup.class);
+        //PowerMockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
         when(dbSetup.getHandler(any())).thenReturn(handler);
@@ -132,14 +132,14 @@ public class PlayersManagerTest {
     /**
      */
     @SuppressWarnings("unchecked")
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Clear any lingering database
         tearDown();
         // Mock server
         MockBukkit.mock();
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         when(plugin.getVault()).thenReturn(Optional.of(vault));
         // Settings
         Settings s = mock(Settings.class);
@@ -199,7 +199,7 @@ public class PlayersManagerTest {
         OfflinePlayer olp = mock(OfflinePlayer.class);
         when(olp.getUniqueId()).thenReturn(uuid);
         when(olp.getName()).thenReturn("tastybento");
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenAnswer(invocation -> {
             UUID inputUUID = invocation.getArgument(0);
             if (inputUUID.equals(uuid)) {
@@ -229,7 +229,7 @@ public class PlayersManagerTest {
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // Util
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         when(Util.sameWorld(any(), any())).thenCallRealMethod();
 
         // Database
@@ -273,7 +273,7 @@ public class PlayersManagerTest {
         pm = new PlayersManager(plugin);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         MockBukkit.unmock();
         User.clearUsers();

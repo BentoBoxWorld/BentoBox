@@ -56,9 +56,9 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  * @author tastybento
  *
  */
-@Ignore("Needs PaperAPI update")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Bukkit.class, ServerBuildInfo.class})
+@Disabled("Needs PaperAPI update")
+
+//@PrepareForTest({BentoBox.class, Bukkit.class, ServerBuildInfo.class})
 public class CoarseDirtTillingListenerTest {
 
     @SuppressWarnings("deprecation")
@@ -83,12 +83,12 @@ public class CoarseDirtTillingListenerTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Island World Manager
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -129,7 +129,7 @@ public class CoarseDirtTillingListenerTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         User.clearUsers();
     }

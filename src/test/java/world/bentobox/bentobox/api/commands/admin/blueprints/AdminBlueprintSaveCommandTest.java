@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -21,25 +21,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.WhiteBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
@@ -53,8 +46,6 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class , ServerBuildInfo.class})
 public class AdminBlueprintSaveCommandTest {
 
     @Mock
@@ -73,16 +64,16 @@ public class AdminBlueprintSaveCommandTest {
     private BlueprintsManager bm;
     private Blueprint bp = new Blueprint();
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         MockBukkit.mock();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Required for NamespacedKey
         when(plugin.getName()).thenReturn("BentoBox");
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Hooks
         HooksManager hooksManager = mock(HooksManager.class);
         when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
@@ -124,14 +115,12 @@ public class AdminBlueprintSaveCommandTest {
         when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
         absc = new AdminBlueprintSaveCommand(ac);
     }
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
@@ -208,7 +197,6 @@ public class AdminBlueprintSaveCommandTest {
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
-    @Ignore("Paper Biome issue")
     @Test
     public void testExecuteUserStringListOfString() {
         testCanExecute();
@@ -220,7 +208,6 @@ public class AdminBlueprintSaveCommandTest {
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
-    @Ignore("Paper Biome issue")
     @Test
     public void testExecuteUserStringListOfStringFileExists() {
         testCanExecute();

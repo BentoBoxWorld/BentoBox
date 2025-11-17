@@ -59,9 +59,9 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
+@Disabled("Needs update to work with PaperAPI")
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
     @Mock
     private User user;
@@ -93,12 +93,12 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Island
         when(island.getOwner()).thenReturn(uuid);
@@ -136,7 +136,7 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Util
-        PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
+        //PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
         when(Util.getWorld(any())).thenReturn(world);
         // Commands Manager
         when(plugin.getCommandsManager()).thenReturn(cm);
@@ -152,7 +152,7 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         crcl = new CommandRankClickListener();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

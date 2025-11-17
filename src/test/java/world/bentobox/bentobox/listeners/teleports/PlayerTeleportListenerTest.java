@@ -48,9 +48,9 @@ import world.bentobox.bentobox.util.Util;
 /**
  * @author tastybento
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, ServerBuildInfo.class })
+@Disabled("Needs update to work with PaperAPI")
+
+//@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, ServerBuildInfo.class })
 public class PlayerTeleportListenerTest extends AbstractCommonSetup {
 
     private PlayerTeleportListener ptl;
@@ -62,7 +62,7 @@ public class PlayerTeleportListenerTest extends AbstractCommonSetup {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -101,7 +101,7 @@ public class PlayerTeleportListenerTest extends AbstractCommonSetup {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

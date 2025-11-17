@@ -43,8 +43,8 @@ import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListen
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, ServerBuildInfo.class })
+
+//@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, ServerBuildInfo.class })
 public class EnderChestListenerTest extends AbstractCommonSetup {
 
     @Mock
@@ -54,7 +54,7 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
     private Action action;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         // Ender chest use is not allowed by default

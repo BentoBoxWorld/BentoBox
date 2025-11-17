@@ -42,8 +42,8 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
 public class PistonPushListenerTest {
 
     @Mock
@@ -54,12 +54,12 @@ public class PistonPushListenerTest {
     private Block block;
     private List<Block> blocks;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Owner
         UUID uuid = UUID.randomUUID();
@@ -95,7 +95,7 @@ public class PistonPushListenerTest {
             blocks.add(block);
         }
 
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
@@ -116,7 +116,7 @@ public class PistonPushListenerTest {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

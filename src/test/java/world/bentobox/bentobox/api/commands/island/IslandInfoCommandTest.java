@@ -45,8 +45,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, IslandsManager.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, IslandsManager.class , ServerBuildInfo.class})
 public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -63,7 +63,7 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
     private IslandInfoCommand iic;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

@@ -45,8 +45,8 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.MythicMobR
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@Ignore("Cannot mock Villager Professions anynore")
+
+@Disabled("Cannot mock Villager Professions anynore")
 public class BlueprintEntityTest {
 
     @Mock
@@ -72,7 +72,7 @@ public class BlueprintEntityTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(villager.getProfession())
                 .thenReturn(Registry.VILLAGER_PROFESSION.get(NamespacedKey.minecraft("librarian")));
@@ -98,7 +98,7 @@ public class BlueprintEntityTest {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         Mockito.framework().clearInlineMocks();
     }

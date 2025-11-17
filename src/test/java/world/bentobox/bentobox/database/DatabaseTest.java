@@ -41,8 +41,8 @@ import world.bentobox.bentobox.database.objects.Island;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, DatabaseSetup.class} )
+
+//@PrepareForTest( {BentoBox.class, DatabaseSetup.class} )
 public class DatabaseTest {
 
     @Mock
@@ -62,18 +62,18 @@ public class DatabaseTest {
     /**
      */
     @SuppressWarnings("unchecked")
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         when(plugin.getLogger()).thenReturn(logger);
 
-        PowerMockito.mockStatic(DatabaseSetup.class);
+        //PowerMockito.mockStatic(DatabaseSetup.class);
         dbSetup = mock(DatabaseSetup.class);
         handler = mock(AbstractDatabaseHandler.class);
         when(dbSetup.getHandler(any())).thenReturn(handler);
         // Set the internal state of the static database variable to null for each test
-        Whitebox.setInternalState(Database.class, "databaseSetup", dbSetup);
+        WhiteBox.setInternalState(Database.class, "databaseSetup", dbSetup);
 
         when(handler.loadObject(anyString())).thenReturn(island);
         objectList = new ArrayList<>();
@@ -91,7 +91,7 @@ public class DatabaseTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         dbSetup = null;
         framework().clearInlineMocks();

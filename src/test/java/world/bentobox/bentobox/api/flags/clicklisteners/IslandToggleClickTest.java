@@ -42,8 +42,8 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class IslandToggleClickTest {
 
     @Mock
@@ -67,14 +67,14 @@ public class IslandToggleClickTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockBukkit.mock();
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Island World Manager
         iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -94,7 +94,7 @@ public class IslandToggleClickTest {
         when(user.hasPermission(Mockito.anyString())).thenReturn(true);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
@@ -120,7 +120,7 @@ public class IslandToggleClickTest {
         when(settingsTab.getIsland()).thenReturn(island);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         MockBukkit.unmock();
         Mockito.framework().clearInlineMocks();

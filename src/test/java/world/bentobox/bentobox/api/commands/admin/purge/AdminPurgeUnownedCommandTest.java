@@ -1,6 +1,6 @@
 package world.bentobox.bentobox.api.commands.admin.purge;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -9,21 +9,15 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.WhiteBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
@@ -36,8 +30,6 @@ import world.bentobox.bentobox.managers.IslandsManager;
  * @author Poslovitch
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class , ServerBuildInfo.class})
 public class AdminPurgeUnownedCommandTest {
 
     @Mock
@@ -60,10 +52,10 @@ public class AdminPurgeUnownedCommandTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -95,7 +87,7 @@ public class AdminPurgeUnownedCommandTest {
         apuc = new AdminPurgeUnownedCommand(apc);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }
@@ -118,7 +110,7 @@ public class AdminPurgeUnownedCommandTest {
         verify(user).sendMessage(eq("commands.admin.purge.unowned.unowned-islands"), eq("[number]"), eq("0"));
     }
 
-    @Ignore("unable to mock CompositeCommand#askConfirmation()")
+    //@Disabled("unable to mock CompositeCommand#askConfirmation()")
     @Test
     public void testPurgeIfIslandIsUnowned() {
         when(island.isOwned()).thenReturn(false);

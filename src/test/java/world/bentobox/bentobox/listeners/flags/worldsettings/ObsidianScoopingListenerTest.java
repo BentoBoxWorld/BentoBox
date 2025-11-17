@@ -46,9 +46,9 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.util.Util;
 
-@Ignore("PaperAPI update required")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, PlayerEvent.class, PlayerInteractEvent.class, Bukkit.class, Util.class , ServerBuildInfo.class})
+@Disabled("PaperAPI update required")
+
+//@PrepareForTest({ BentoBox.class, PlayerEvent.class, PlayerInteractEvent.class, Bukkit.class, Util.class , ServerBuildInfo.class})
 public class ObsidianScoopingListenerTest extends AbstractCommonSetup {
 
     private ObsidianScoopingListener listener;
@@ -61,7 +61,7 @@ public class ObsidianScoopingListenerTest extends AbstractCommonSetup {
     private Material inHand;
     private Material block;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -142,7 +142,7 @@ public class ObsidianScoopingListenerTest extends AbstractCommonSetup {
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

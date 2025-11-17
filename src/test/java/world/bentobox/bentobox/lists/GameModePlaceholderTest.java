@@ -45,8 +45,8 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ RanksManager.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ RanksManager.class, Bukkit.class , ServerBuildInfo.class})
 public class GameModePlaceholderTest {
 
     @Mock
@@ -71,12 +71,12 @@ public class GameModePlaceholderTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        PowerMockito.mockStatic(RanksManager.class, Mockito.RETURNS_MOCKS);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
+        //PowerMockito.mockStatic(RanksManager.class, Mockito.RETURNS_MOCKS);
         uuid = UUID.randomUUID();
         when(addon.getPlayers()).thenReturn(pm);
         when(addon.getIslands()).thenReturn(im);

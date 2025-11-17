@@ -47,8 +47,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class IslandSpawnCommandTest extends AbstractCommonSetup {
 
     @Mock
@@ -67,7 +67,7 @@ public class IslandSpawnCommandTest extends AbstractCommonSetup {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -131,7 +131,7 @@ public class IslandSpawnCommandTest extends AbstractCommonSetup {
         isc = new IslandSpawnCommand(ic);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

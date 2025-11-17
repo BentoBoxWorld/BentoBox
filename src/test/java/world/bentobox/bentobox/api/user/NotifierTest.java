@@ -19,14 +19,14 @@ public class NotifierTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         n = new Notifier();
     }
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }

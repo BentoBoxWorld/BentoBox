@@ -38,8 +38,8 @@ import world.bentobox.bentobox.util.Util;
  * Test class
  * @author tastybento
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class })
+
+//@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class })
 public class JSONDatabaseHandlerTest {
 
     @Mock
@@ -53,13 +53,13 @@ public class JSONDatabaseHandlerTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Setup plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         when(plugin.isEnabled()).thenReturn(false);  // Force sync actions
         //Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         test = new TestClass();
         test.setUniqueId("test");
@@ -87,7 +87,7 @@ public class JSONDatabaseHandlerTest {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         // Clean up the folders
         File dataFolder = new File("database");

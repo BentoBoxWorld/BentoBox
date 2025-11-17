@@ -42,8 +42,8 @@ import world.bentobox.bentobox.util.heads.HeadGetter;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, HeadGetter.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, HeadGetter.class , ServerBuildInfo.class})
 public class PanelTest {
 
     private String name;
@@ -59,11 +59,11 @@ public class PanelTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Server & Bukkit
         Server server = mock(Server.class);
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.createInventory(any(), anyInt(), anyString())).thenReturn(inv);
 
@@ -73,13 +73,13 @@ public class PanelTest {
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
 
         // Head getter
-        PowerMockito.mockStatic(HeadGetter.class);
+        //PowerMockito.mockStatic(HeadGetter.class);
 
     }
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }
@@ -293,7 +293,7 @@ public class PanelTest {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#setHead(world.bentobox.bentobox.api.panels.PanelItem)}.
      */
     @Test
-    @Ignore("New test required for new code")
+    @Disabled("New test required for new code")
     public void testSetHead() {
 
     }

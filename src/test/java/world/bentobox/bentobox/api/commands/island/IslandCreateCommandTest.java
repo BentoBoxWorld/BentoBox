@@ -61,8 +61,8 @@ import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class, IslandCreationPanel.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class, IslandCreationPanel.class , ServerBuildInfo.class})
 public class IslandCreateCommandTest {
 
     @Mock
@@ -91,11 +91,11 @@ public class IslandCreateCommandTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -159,7 +159,7 @@ public class IslandCreateCommandTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         // NewIsland
-        PowerMockito.mockStatic(NewIsland.class);
+        //PowerMockito.mockStatic(NewIsland.class);
         when(NewIsland.builder()).thenReturn(builder);
         when(builder.player(any())).thenReturn(builder);
         when(builder.name(Mockito.anyString())).thenReturn(builder);
@@ -175,7 +175,7 @@ public class IslandCreateCommandTest {
         when(plugin.getBlueprintsManager()).thenReturn(bpm);
 
         // IslandCreationPanel
-        PowerMockito.mockStatic(IslandCreationPanel.class);
+        //PowerMockito.mockStatic(IslandCreationPanel.class);
 
         // Command
         cc = new IslandCreateCommand(ic);
@@ -183,7 +183,7 @@ public class IslandCreateCommandTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

@@ -53,8 +53,8 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, Flags.class, Util.class, ServerBuildInfo.class })
+
+//@PrepareForTest({ BentoBox.class, Bukkit.class, Flags.class, Util.class, ServerBuildInfo.class })
 public class FireListenerTest {
 
     private Location location;
@@ -64,14 +64,14 @@ public class FireListenerTest {
 
     private final Map<String, Boolean> worldFlags = new HashMap<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         worldFlags.clear();
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         Server server = mock(Server.class);
         World world = mock(World.class);
@@ -94,7 +94,7 @@ public class FireListenerTest {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
-        PowerMockito.mockStatic(Flags.class);
+        //PowerMockito.mockStatic(Flags.class);
 
         FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
@@ -141,11 +141,11 @@ public class FireListenerTest {
         Optional<GameModeAddon> opGma = Optional.of(gma );
         when(iwm.getAddon(any())).thenReturn(opGma);
 
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

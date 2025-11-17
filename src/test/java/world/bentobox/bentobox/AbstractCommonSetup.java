@@ -76,7 +76,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
+
 public abstract class AbstractCommonSetup {
 
     protected UUID uuid = UUID.randomUUID();
@@ -110,16 +110,16 @@ public abstract class AbstractCommonSetup {
     protected Server server;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         server = MockBukkit.mock();
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Version
         when(Bukkit.getMinecraftVersion()).thenReturn("1.21.10");
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         when(Bukkit.getBukkitVersion()).thenReturn("");
         when(Bukkit.getPluginManager()).thenReturn(pim);
@@ -196,7 +196,7 @@ public abstract class AbstractCommonSetup {
         when(plugin.getSettings()).thenReturn(settings);
         when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
-        PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
+        //PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
 
         // Util
@@ -232,7 +232,7 @@ public abstract class AbstractCommonSetup {
     /**
      * @throws Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         MockBukkit.unmock();
         User.clearUsers();

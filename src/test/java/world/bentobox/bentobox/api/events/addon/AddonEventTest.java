@@ -22,8 +22,8 @@ import world.bentobox.bentobox.api.addons.Addon;
  * @author tastybento
  */
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class , ServerBuildInfo.class})
 public class AddonEventTest {
 
     @Mock
@@ -32,9 +32,9 @@ public class AddonEventTest {
     @Mock
     private PluginManager mockPluginManager;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(mockPluginManager);
     }
 

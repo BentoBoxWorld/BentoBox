@@ -45,8 +45,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
 public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -66,7 +66,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -123,7 +123,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
         when(island.getMemberSet()).thenReturn(team);
 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getOfflinePlayer(uuid)).thenReturn(mockPlayer);
         when(mockPlayer.getName()).thenReturn("tastybento");
 

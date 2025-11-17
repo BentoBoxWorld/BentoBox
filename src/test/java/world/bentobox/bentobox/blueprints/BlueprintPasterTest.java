@@ -34,9 +34,9 @@ import world.bentobox.bentobox.database.objects.Island;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, User.class, Bukkit.class, ServerBuildInfo.class})
-@Ignore("Enums")
+
+//@PrepareForTest({BentoBox.class, User.class, Bukkit.class, ServerBuildInfo.class})
+@Disabled("Enums")
 public class BlueprintPasterTest {
 
     private BlueprintPaster bp;
@@ -60,13 +60,13 @@ public class BlueprintPasterTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         
         // Scheduler
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         
         Settings settings = new Settings();
         // Settings
@@ -83,7 +83,7 @@ public class BlueprintPasterTest {
         when(clipboard.getBlueprint()).thenReturn(blueprint);
         
         // User
-        PowerMockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
         when(User.getInstance(any(UUID.class))).thenReturn(user);
 
         bp = new BlueprintPaster(plugin, blueprint, world, island);

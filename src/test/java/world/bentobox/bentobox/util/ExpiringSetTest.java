@@ -25,9 +25,9 @@ public class ExpiringSetTest {
 
     /**
      * Since ExpiringSet implements AutoCloseable, we use try-with-resources in tests.
-     * The @After method is no longer strictly necessary but kept for standard test structure.
+     * The @AfterEach method is no longer strictly necessary but kept for standard test structure.
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 

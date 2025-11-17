@@ -58,8 +58,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -73,7 +73,7 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
     private Addon addon;
     private IslandBanCommand ibc;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         User.setPlugin(plugin);

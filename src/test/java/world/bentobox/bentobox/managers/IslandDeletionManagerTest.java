@@ -47,9 +47,9 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
-@Ignore("NMS")
+
+//@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
+@Disabled("NMS")
 public class IslandDeletionManagerTest {
 
     @Mock
@@ -71,10 +71,10 @@ public class IslandDeletionManagerTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         Server server = mock(Server.class);
         when(server.getWorld(anyString())).thenReturn(world);
         when(Bukkit.getServer()).thenReturn(server);
@@ -88,7 +88,7 @@ public class IslandDeletionManagerTest {
         deleteAll(new File("database_backup"));
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Settings
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
@@ -108,7 +108,7 @@ public class IslandDeletionManagerTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         Mockito.framework().clearInlineMocks();
         deleteAll(new File("database"));
@@ -180,7 +180,7 @@ public class IslandDeletionManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandDeletionManager#onIslandDeleted(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent)}.
      */
-    @Ignore("To do")
+    @Disabled("To do")
     @Test
     public void testOnIslandDeleted() {
 

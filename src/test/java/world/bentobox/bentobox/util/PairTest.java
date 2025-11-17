@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class PairTest {
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
     }
 

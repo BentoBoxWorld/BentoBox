@@ -28,8 +28,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, ServerBuildInfo.class })
+
+//@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, ServerBuildInfo.class })
 public class ThrowingListenerTest extends AbstractCommonSetup {
 
     private ThrowingListener tl;
@@ -37,7 +37,7 @@ public class ThrowingListenerTest extends AbstractCommonSetup {
     /**
      */
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         // Default is that everything is allowed

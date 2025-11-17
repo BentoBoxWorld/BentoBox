@@ -66,8 +66,8 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Bukkit.class , ServerBuildInfo.class})
 public class DefaultPasteUtilTest {
 
     @Mock
@@ -113,11 +113,11 @@ public class DefaultPasteUtilTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         AddonDescription desc = new AddonDescription.Builder("", "", "").build();
         when(addon.getDescription()).thenReturn(desc);
         when(plugin.getIWM()).thenReturn(iwm);
@@ -150,7 +150,7 @@ public class DefaultPasteUtilTest {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         User.clearUsers();
     }
@@ -223,7 +223,7 @@ public class DefaultPasteUtilTest {
         Assert.assertEquals(linesTranslated, capturedLines);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testSpawnBlueprintEntity_WithMythicMobs() {
         // Set up conditions to satisfy the mythic mobs spawning logic

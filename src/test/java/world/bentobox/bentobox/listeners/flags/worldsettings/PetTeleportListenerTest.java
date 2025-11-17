@@ -32,8 +32,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class, ServerBuildInfo.class})
+
+//@PrepareForTest({Bukkit.class, BentoBox.class, Util.class, ServerBuildInfo.class})
 public class PetTeleportListenerTest extends AbstractCommonSetup {
 
     private PetTeleportListener ptl;
@@ -45,7 +45,7 @@ public class PetTeleportListenerTest extends AbstractCommonSetup {
     /**
      */
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         // Island

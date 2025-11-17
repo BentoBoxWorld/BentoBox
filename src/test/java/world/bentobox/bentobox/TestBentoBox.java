@@ -56,8 +56,8 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
 public class TestBentoBox extends AbstractCommonSetup {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID VISITOR_UUID = UUID.randomUUID();
@@ -73,12 +73,12 @@ public class TestBentoBox extends AbstractCommonSetup {
     private CommandsManager cm;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         // IslandsManager static
-        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         when(plugin.getCommandsManager()).thenReturn(cm);
 
@@ -101,7 +101,7 @@ public class TestBentoBox extends AbstractCommonSetup {
         when(visitorToIsland.getUniqueId()).thenReturn(VISITOR_UUID);
 
         // Util
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         island.setOwner(uuid);

@@ -56,8 +56,8 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, ServerBuildInfo.class})
+
+//@PrepareForTest({Bukkit.class, BentoBox.class, ServerBuildInfo.class})
 public class IslandSetnameCommandTest {
 
     @Mock
@@ -83,11 +83,11 @@ public class IslandSetnameCommandTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         User.setPlugin(plugin);
 
         // Command manager
@@ -124,7 +124,7 @@ public class IslandSetnameCommandTest {
         when(island.getName()).thenReturn("previous-name");
 
         // Server and Plugin Manager for events
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Locales
@@ -143,7 +143,7 @@ public class IslandSetnameCommandTest {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

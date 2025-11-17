@@ -35,8 +35,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class, ServerBuildInfo.class })
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class, ServerBuildInfo.class })
 public class ExperiencePickupListenerTest extends AbstractCommonSetup {
 
     private EntityTargetLivingEntityEvent e;
@@ -46,7 +46,7 @@ public class ExperiencePickupListenerTest extends AbstractCommonSetup {
     /**
      */
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         when(island.isAllowed(any(), any())).thenReturn(true);

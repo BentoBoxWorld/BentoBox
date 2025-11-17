@@ -34,8 +34,8 @@ import world.bentobox.bentobox.lists.GameModePlaceholder;
  * @author tastybento
  * @since 1.5.0
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class} )
+
+//@PrepareForTest( {BentoBox.class} )
 public class PlaceholdersManagerTest {
 
     @Mock
@@ -51,10 +51,10 @@ public class PlaceholdersManagerTest {
     private IslandWorldManager iwm;
     private Settings settings;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         settings = new Settings();
         when(plugin.getSettings()).thenReturn(settings);
 
@@ -84,7 +84,7 @@ public class PlaceholdersManagerTest {
         pm = new PlaceholdersManager(plugin);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }

@@ -33,8 +33,8 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, IslandsManager.class, ServerBuildInfo.class })
+
+//@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, IslandsManager.class, ServerBuildInfo.class })
 public class SettingsTabTest extends AbstractCommonSetup {
 
     private SettingsTab tab;
@@ -42,7 +42,7 @@ public class SettingsTabTest extends AbstractCommonSetup {
     @Mock
     private TabbedPanel parent;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         when(plugin.getFlagsManager()).thenReturn(fm);
@@ -69,7 +69,7 @@ public class SettingsTabTest extends AbstractCommonSetup {
         tab.getFlags();
     }
 
-    @Ignore("Issue with Materials and item checking")
+    @Disabled("Issue with Materials and item checking")
     @Test
     public void testGetIcon() {
         testSettingsTabWorldUserTypeMode();
@@ -90,7 +90,7 @@ public class SettingsTabTest extends AbstractCommonSetup {
         assertTrue(items.isEmpty());
     }
 
-    @Ignore("Issue with Materials and item checking")
+    @Disabled("Issue with Materials and item checking")
     @Test
     public void testGetTabIcons() {
         testSettingsTabWorldUserTypeMode();

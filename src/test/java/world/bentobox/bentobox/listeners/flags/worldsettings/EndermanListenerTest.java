@@ -55,8 +55,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, ServerBuildInfo.class })
+
+//@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, ServerBuildInfo.class })
 public class EndermanListenerTest {
 
     private static IslandWorldManager iwm;
@@ -65,13 +65,13 @@ public class EndermanListenerTest {
     private static Slime slime;
     private BlockData bd;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         Server server = mock(Server.class);
         world = mock(World.class);
@@ -96,7 +96,7 @@ public class EndermanListenerTest {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
-        PowerMockito.mockStatic(Flags.class);
+        //PowerMockito.mockStatic(Flags.class);
 
         FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
@@ -137,13 +137,13 @@ public class EndermanListenerTest {
         Optional<Island> optional = Optional.of(island);
         when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
 
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
         // Not allowed to start
         Flags.ENDERMAN_GRIEFING.setSetting(world, false);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

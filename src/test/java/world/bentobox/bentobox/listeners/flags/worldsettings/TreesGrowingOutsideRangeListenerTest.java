@@ -46,8 +46,8 @@ import world.bentobox.bentobox.managers.IslandsManager;
  * @author Poslovitch
  * @since 1.3.0
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Bukkit.class , ServerBuildInfo.class})
 public class TreesGrowingOutsideRangeListenerTest {
 
     /* IslandWorldManager */
@@ -80,13 +80,13 @@ public class TreesGrowingOutsideRangeListenerTest {
     @Mock
     private BlockState lastBlock;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         /* Blocks */
         when(sapling.getType()).thenReturn(Material.OAK_SAPLING);
@@ -123,7 +123,7 @@ public class TreesGrowingOutsideRangeListenerTest {
         when(islandsManager.getProtectedIslandAt(any())).thenReturn(Optional.of(island));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

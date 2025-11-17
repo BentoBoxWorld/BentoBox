@@ -61,9 +61,9 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, RanksManager.class , ServerBuildInfo.class})
+@Disabled("Needs update to work with PaperAPI")
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, RanksManager.class , ServerBuildInfo.class})
 public class CycleClickTest {
 
     private static final Integer PROTECTION_RANGE = 200;
@@ -103,11 +103,11 @@ public class CycleClickTest {
     /**
      * @throws java.lang.Exception - exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockBukkit.mock();
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // World
         World world = mock(World.class);
@@ -138,7 +138,7 @@ public class CycleClickTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
@@ -200,7 +200,7 @@ public class CycleClickTest {
         // Provide a current rank value - member
         when(island.getFlag(any())).thenReturn(RanksManager.MEMBER_RANK);
         // Set up up and down ranks
-        PowerMockito.mockStatic(RanksManager.class);
+        //PowerMockito.mockStatic(RanksManager.class);
         when(RanksManager.getInstance()).thenReturn(rm);
         when(rm.getRankUpValue(eq(RanksManager.VISITOR_RANK))).thenReturn(RanksManager.COOP_RANK);
         when(rm.getRankUpValue(eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
@@ -218,7 +218,7 @@ public class CycleClickTest {
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
 
         // Util
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
@@ -236,7 +236,7 @@ public class CycleClickTest {
         when(iwm.getHiddenFlags(world)).thenReturn(hiddenFlags);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         MockBukkit.unmock();
         Mockito.framework().clearInlineMocks();

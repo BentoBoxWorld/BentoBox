@@ -62,8 +62,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class, ServerBuildInfo.class })
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class, ServerBuildInfo.class })
 public class ChestDamageListenerTest extends AbstractCommonSetup
 {
 
@@ -71,13 +71,13 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
     private World world;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Tags
         when(Tag.SHULKER_BOXES.isTagged(any(Material.class))).thenReturn(false);
@@ -94,7 +94,7 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
         when(server.getItemFactory()).thenReturn(itemFactory);
 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
@@ -103,7 +103,7 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
 
-        PowerMockito.mockStatic(Flags.class);
+        //PowerMockito.mockStatic(Flags.class);
 
         FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
@@ -161,11 +161,11 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
         when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
 
         // Util
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

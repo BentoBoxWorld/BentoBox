@@ -50,9 +50,9 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class} )
+@Disabled("Needs update to work with PaperAPI")
+
+//@PrepareForTest( {Bukkit.class, BentoBox.class} )
 public class BlueprintClipboardManagerTest {
 
     private static final String BLUEPRINT = "blueprint";
@@ -129,17 +129,17 @@ public class BlueprintClipboardManagerTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
         // Required for NamespacedKey
         when(plugin.getName()).thenReturn("BentoBox");
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         clipboard = mock(BlueprintClipboard.class);
 
         server = MockBukkit.mock();
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         blueprintFolder = new File("blueprints");
         // Clear any residual files
@@ -158,7 +158,7 @@ public class BlueprintClipboardManagerTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         MockBukkit.unmock();
         if (blueprintFolder.exists()) {

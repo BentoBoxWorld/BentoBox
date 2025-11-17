@@ -39,8 +39,8 @@ import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.MythicMobRecord;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, MythicBukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Bukkit.class, MythicBukkit.class , ServerBuildInfo.class})
 public class MythicMobsHookTest {
 
     @Mock
@@ -69,13 +69,13 @@ public class MythicMobsHookTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(pim.getPlugin("MythicMobs")).thenReturn(mythicMobs);
         // Location
@@ -84,7 +84,7 @@ public class MythicMobsHookTest {
         // Entity
         when(entity.getUniqueId()).thenReturn(UUID.randomUUID());
         // MythicMobs
-        PowerMockito.mockStatic(MythicBukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(MythicBukkit.class, Mockito.RETURNS_MOCKS);
         when(MythicBukkit.inst()).thenReturn(mythicBukkit);
         when(mythicBukkit.getMobManager()).thenReturn(mm);
         when(mm.getMythicMob(anyString())).thenReturn(Optional.of(mythicMob));

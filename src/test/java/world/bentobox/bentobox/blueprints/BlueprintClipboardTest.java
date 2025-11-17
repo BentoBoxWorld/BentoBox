@@ -40,8 +40,8 @@ import world.bentobox.bentobox.managers.HooksManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Bukkit.class, ServerBuildInfo.class})
+
+//@PrepareForTest({BentoBox.class, Bukkit.class, ServerBuildInfo.class})
 public class BlueprintClipboardTest {
 
     private BlueprintClipboard bc;
@@ -58,12 +58,12 @@ public class BlueprintClipboardTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Required for NamespacedKey
         when(plugin.getName()).thenReturn("BentoBox");
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Hooks
         HooksManager hooksManager = mock(HooksManager.class);
         when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
@@ -81,7 +81,7 @@ public class BlueprintClipboardTest {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         Mockito.framework().clearInlineMocks();
     }
@@ -89,7 +89,7 @@ public class BlueprintClipboardTest {
     /**
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#BlueprintClipboard(world.bentobox.bentobox.blueprints.Blueprint)}.
      */
-    @Ignore("Issue with internal field")
+    @Disabled("Issue with internal field")
     @Test
     public void testBlueprintClipboardBlueprint() {
         bc = new BlueprintClipboard(blueprint);

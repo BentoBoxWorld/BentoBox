@@ -47,8 +47,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
 public class IslandUnbanCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -58,7 +58,7 @@ public class IslandUnbanCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private PlayersManager pm;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         User.setPlugin(plugin);
@@ -205,7 +205,7 @@ public class IslandUnbanCommandTest extends RanksManagerBeforeClassTest {
         // when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         UUID targetUUID = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(targetUUID);
-        PowerMockito.mockStatic(User.class);
+        //PowerMockito.mockStatic(User.class);
         User targetUser = mock(User.class);
         when(targetUser.isOp()).thenReturn(false);
         when(targetUser.isPlayer()).thenReturn(true);

@@ -51,8 +51,8 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, TeamEvent.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, TeamEvent.class , ServerBuildInfo.class})
 public class IslandTeamInviteAcceptCommandTest {
 
     @Mock
@@ -78,11 +78,11 @@ public class IslandTeamInviteAcceptCommandTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -132,7 +132,7 @@ public class IslandTeamInviteAcceptCommandTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
@@ -158,7 +158,7 @@ public class IslandTeamInviteAcceptCommandTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         User.clearUsers();
     }
@@ -303,7 +303,7 @@ public class IslandTeamInviteAcceptCommandTest {
         when(im.inTeam(any(), any())).thenReturn(false);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Block event
-        PowerMockito.mockStatic(TeamEvent.class);
+        //PowerMockito.mockStatic(TeamEvent.class);
         TeamEventBuilder teb = mock(TeamEventBuilder.class);
         when(teb.island(any())).thenReturn(teb);
         when(teb.involvedPlayer(any())).thenReturn(teb);

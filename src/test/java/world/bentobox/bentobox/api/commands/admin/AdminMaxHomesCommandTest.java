@@ -59,8 +59,8 @@ import world.bentobox.bentobox.util.Util;
 /**
  * @author tastybento
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, ServerBuildInfo.class, IslandGoCommand.class })
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, ServerBuildInfo.class, IslandGoCommand.class })
 public class AdminMaxHomesCommandTest {
 
     @Mock
@@ -81,15 +81,15 @@ public class AdminMaxHomesCommandTest {
     private String label;
     private ArrayList<String> args = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
-        PowerMockito.mockStatic(IslandGoCommand.class);
+        //PowerMockito.mockStatic(IslandGoCommand.class);
 
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Util
         Util.setPlugin(plugin);
@@ -161,7 +161,7 @@ public class AdminMaxHomesCommandTest {
         label = "island";
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
@@ -345,7 +345,7 @@ public class AdminMaxHomesCommandTest {
         User targetUser = mock(User.class);
         // Mock static method User.getInstance(UUID)
         // Assuming use of Mockito with inline mocking or PowerMockito
-        PowerMockito.mockStatic(User.class);
+        //PowerMockito.mockStatic(User.class);
         when(User.getInstance(playerUUID)).thenReturn(targetUser);
         when(IslandGoCommand.getNameIslandMap(targetUser, world)).thenReturn(new HashMap<>());
 
@@ -373,7 +373,7 @@ public class AdminMaxHomesCommandTest {
         User targetUser = mock(User.class);
         // Mock static method User.getInstance(UUID)
         // Assuming use of Mockito with inline mocking or PowerMockito
-        PowerMockito.mockStatic(User.class);
+        //PowerMockito.mockStatic(User.class);
         when(User.getInstance(playerUUID)).thenReturn(targetUser);
 
         Map<String, IslandInfo> islandsMap = new HashMap<>();
@@ -402,7 +402,7 @@ public class AdminMaxHomesCommandTest {
 
         User targetUser = mock(User.class);
         // Mock static method User.getInstance(UUID)
-        PowerMockito.mockStatic(User.class);
+        //PowerMockito.mockStatic(User.class);
         when(User.getInstance(playerUUID)).thenReturn(targetUser);
 
         Map<String, IslandInfo> islandsMap = new HashMap<>();
@@ -439,7 +439,7 @@ public class AdminMaxHomesCommandTest {
 
         // Mock Util.getOnlinePlayerList(user)
         List<String> onlinePlayers = Arrays.asList("PlayerOne", "PlayerTwo");
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getOnlinePlayerList(user)).thenReturn(onlinePlayers);
 
         // Act
@@ -472,7 +472,7 @@ public class AdminMaxHomesCommandTest {
 
         // Mock Util.tabLimit()
         List<String> limitedIslandNames = Arrays.asList("IslandOne", "IslandTwo");
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.tabLimit(islandNames, lastArg)).thenReturn(limitedIslandNames);
 
         // Act
@@ -660,7 +660,7 @@ public class AdminMaxHomesCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    @Ignore("This fails for some reason on the map getting")
+    @Disabled("This fails for some reason on the map getting")
     public void testExecuteWithMultipleIslandsAfterCanExecute() {
         // Arrange
         args.add("ValidPlayer");

@@ -52,16 +52,16 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, ServerBuildInfo.class })
+@Disabled("Needs update to work with PaperAPI")
+
+//@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, ServerBuildInfo.class })
 public class VisitorKeepInventoryListenerTest extends AbstractCommonSetup {
 
     // Class under test
     private VisitorKeepInventoryListener l;
     private PlayerDeathEvent e;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -103,7 +103,7 @@ public class VisitorKeepInventoryListenerTest extends AbstractCommonSetup {
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.of(island));
 
         // Util
-        PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
+        //PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
         when(Util.getWorld(any())).thenReturn(world);
 
         // Default death event
@@ -114,7 +114,7 @@ public class VisitorKeepInventoryListenerTest extends AbstractCommonSetup {
         l = new VisitorKeepInventoryListener();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

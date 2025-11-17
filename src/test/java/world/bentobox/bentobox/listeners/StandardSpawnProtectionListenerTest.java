@@ -48,9 +48,9 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Needs update for PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
+@Disabled("Needs update for PaperAPI")
+
+//@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
 public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
 
     @Mock
@@ -72,7 +72,7 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         // Worlds
@@ -122,7 +122,7 @@ public class StandardSpawnProtectionListenerTest extends AbstractCommonSetup {
         ssp = new StandardSpawnProtectionListener(plugin);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

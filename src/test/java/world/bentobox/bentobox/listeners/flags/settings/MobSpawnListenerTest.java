@@ -49,8 +49,8 @@ import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.versions.ServerCompatibility;
 
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, Flags.class, Util.class, ServerBuildInfo.class })
+
+//@PrepareForTest({ BentoBox.class, Bukkit.class, Flags.class, Util.class, ServerBuildInfo.class })
 public class MobSpawnListenerTest {
 
     private Location location;
@@ -67,10 +67,10 @@ public class MobSpawnListenerTest {
     @Mock
     private LivingEntity livingEntity;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
@@ -82,7 +82,7 @@ public class MobSpawnListenerTest {
         when(server.getVersion()).thenReturn("BSB_Mocking");
 
         ServerCompatibility serverCompatibility = mock(ServerCompatibility.class);
-        Whitebox.setInternalState(ServerCompatibility.class, "instance", serverCompatibility);
+        WhiteBox.setInternalState(ServerCompatibility.class, "instance", serverCompatibility);
         when(serverCompatibility.getServerVersion()).thenReturn(ServerCompatibility.ServerVersion.V1_21_9);
 
         PluginManager pim = mock(PluginManager.class);
@@ -92,7 +92,7 @@ public class MobSpawnListenerTest {
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(Bukkit.getPluginManager()).thenReturn(pim);
@@ -102,7 +102,7 @@ public class MobSpawnListenerTest {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
-        PowerMockito.mockStatic(Flags.class);
+        //PowerMockito.mockStatic(Flags.class);
 
         FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
@@ -122,7 +122,7 @@ public class MobSpawnListenerTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Util class
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
         when(Util.isPassiveEntity(Mockito.any())).thenCallRealMethod();
         when(Util.isHostileEntity(Mockito.any())).thenCallRealMethod();
@@ -143,7 +143,7 @@ public class MobSpawnListenerTest {
         when(livingEntity.getLocation()).thenReturn(location);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

@@ -43,9 +43,9 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Do not know how to prevent the error that Material is not an item")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, ServerBuildInfo.class, Util.class })
+@Disabled("Do not know how to prevent the error that Material is not an item")
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, ServerBuildInfo.class, Util.class })
 public class BlueprintManagementPanelTest extends AbstractCommonSetup {
 
     @Mock
@@ -69,12 +69,12 @@ public class BlueprintManagementPanelTest extends AbstractCommonSetup {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         // Bukkit
         /*
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         ItemFactory itemFac = mock(ItemFactory.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFac);
         // Panel inventory

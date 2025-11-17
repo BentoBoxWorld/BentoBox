@@ -52,8 +52,8 @@ import world.bentobox.bentobox.BentoBox;
  *
  */
 @SuppressWarnings("deprecation")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, ItemStack.class, ServerBuildInfo.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, ItemStack.class, ServerBuildInfo.class , ServerBuildInfo.class})
 public class ItemStackTypeAdapterTest {
     @Mock
     private BentoBox plugin;
@@ -66,10 +66,10 @@ public class ItemStackTypeAdapterTest {
     @Mock
     private ItemFactory itemFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
-        PowerMockito.mockStatic(ServerBuildInfo.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(ServerBuildInfo.class, Mockito.RETURNS_MOCKS);
 
         ServerBuildInfo sbi = mock(io.papermc.paper.ServerBuildInfo.class);
         when(ServerBuildInfo.buildInfo()).thenReturn(sbi);
@@ -79,7 +79,7 @@ public class ItemStackTypeAdapterTest {
 
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         Server server = MockBukkit.getMock();
 
@@ -87,7 +87,7 @@ public class ItemStackTypeAdapterTest {
 
         when(server.getItemFactory()).thenReturn(itemFactory);
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
@@ -107,11 +107,11 @@ public class ItemStackTypeAdapterTest {
         @NotNull
         ItemStack object = new ItemStack(Material.APPLE, 4);
         
-        PowerMockito.mockStatic(ItemStack.class);
+        //PowerMockito.mockStatic(ItemStack.class);
         when(ItemStack.deserialize(anyMap())).thenReturn(object);*/
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
         MockBukkit.unmock();
@@ -121,7 +121,7 @@ public class ItemStackTypeAdapterTest {
      * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#write(com.google.gson.stream.JsonWriter, org.bukkit.inventory.ItemStack)}.
      */
     @Test
-    @Ignore("Needs to be redone for Paper")
+    @Disabled("Needs to be redone for Paper")
     public void testWriteJsonWriterItemStack() throws IOException {
         ItemStack stack = new ItemStack(Material.STONE, 4);
         isa.write(out, stack);
@@ -152,7 +152,7 @@ public class ItemStackTypeAdapterTest {
      * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#read(com.google.gson.stream.JsonReader)}.
      */
     @Test
-    @Ignore("Needs to be redone for Paper")
+    @Disabled("Needs to be redone for Paper")
     public void testReadJsonReader() throws IOException {
         File tmp = new File("test.json");
         // Write a file - skip the meta because it causes the reader to choke if the class mentioned isn't known
@@ -178,7 +178,7 @@ public class ItemStackTypeAdapterTest {
      * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#read(com.google.gson.stream.JsonReader)}.
      */
     @Test
-    @Ignore("Needs to be redone for Paper")
+    @Disabled("Needs to be redone for Paper")
     public void testReadJsonReaderUnknownMaterial() throws IOException {
         File tmp = new File("test.json");
         // Write a file - skip the meta because it causes the reader to choke if the class mentioned isn't known

@@ -47,8 +47,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Util.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Util.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
 public class SafeSpotTeleportTest {
 
     // Class under test
@@ -91,20 +91,20 @@ public class SafeSpotTeleportTest {
     private BukkitTask task;
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
-        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
         // Setup instance
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // IWM
         when(iwm.getIslandProtectionRange(any())).thenReturn(100);
         when(iwm.getIslandDistance(any())).thenReturn(400);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Mock static Util
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         when(Util.getChunkAtAsync(any(Location.class))).thenReturn(cfChunk);
         // Same world
         when(Util.sameWorld(any(), any())).thenReturn(true);
@@ -140,7 +140,7 @@ public class SafeSpotTeleportTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         Mockito.framework().clearInlineMocks();
     }

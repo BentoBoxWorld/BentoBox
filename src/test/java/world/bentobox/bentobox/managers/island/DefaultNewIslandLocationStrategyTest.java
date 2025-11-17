@@ -40,8 +40,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, Util.class , ServerBuildInfo.class})
 public class DefaultNewIslandLocationStrategyTest {
 
     private DefaultNewIslandLocationStrategy dnils;
@@ -67,11 +67,11 @@ public class DefaultNewIslandLocationStrategyTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Location
         when(location.getWorld()).thenReturn(world);
         when(location.getX()).thenReturn(100D);
@@ -99,7 +99,7 @@ public class DefaultNewIslandLocationStrategyTest {
         when(plugin.getIslandDeletionManager()).thenReturn(idm);
         when(idm.inDeletion(any())).thenReturn(false);
         // Util
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         // Return back what the argument was, i.e., no change
         when(Util.getClosestIsland(any())).thenAnswer((Answer<Location>) invocation -> invocation.getArgument(0, Location.class));
         // Default is that chunks have been generated
@@ -112,7 +112,7 @@ public class DefaultNewIslandLocationStrategyTest {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }

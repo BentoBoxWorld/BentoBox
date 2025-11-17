@@ -50,8 +50,8 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, CommandEvent.class, ServerBuildInfo.class})
+
+//@PrepareForTest({Bukkit.class, BentoBox.class, CommandEvent.class, ServerBuildInfo.class})
 public class DelayedTeleportCommandTest {
 
     private static final String HELLO = "hello";
@@ -88,10 +88,10 @@ public class DelayedTeleportCommandTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
@@ -101,7 +101,7 @@ public class DelayedTeleportCommandTest {
         when(plugin.getSettings()).thenReturn(settings);
         when(settings.getDelayTime()).thenReturn(10); // 10 seconds
         // Server & Scheduler
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(sch);
         when(sch.runTaskLater(any(), any(Runnable.class), anyLong())).thenReturn(task);
         // Plugin manager
@@ -161,7 +161,7 @@ public class DelayedTeleportCommandTest {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

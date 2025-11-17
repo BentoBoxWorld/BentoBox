@@ -46,8 +46,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, IslandsManager.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, IslandsManager.class , ServerBuildInfo.class})
 public class AdminInfoCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -64,17 +64,17 @@ public class AdminInfoCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private PlaceholdersManager phm;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
-        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
@@ -224,7 +224,7 @@ public class AdminInfoCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testExecuteUserStringListOfStringArgsUnknownPlayer() {
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getUUID(any())).thenReturn(null);
         assertFalse(iic.execute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");

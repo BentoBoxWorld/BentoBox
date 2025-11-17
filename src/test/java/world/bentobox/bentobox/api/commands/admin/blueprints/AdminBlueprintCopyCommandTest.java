@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -18,19 +18,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -44,8 +37,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class , ServerBuildInfo.class})
+
 public class AdminBlueprintCopyCommandTest {
 
     @Mock
@@ -65,13 +57,12 @@ public class AdminBlueprintCopyCommandTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        PowerMockito.mockStatic(BentoBox.class, Mockito.RETURNS_MOCKS);
         // Required for NamespacedKey
         when(plugin.getName()).thenReturn("BentoBox");
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        setInternalState(BentoBox.class, "instance", plugin);
 
         clip = mock(BlueprintClipboard.class);
         // Blueprints Manager
@@ -109,15 +100,35 @@ public class AdminBlueprintCopyCommandTest {
         when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+       abcc = new AdminBlueprintCopyCommand(ac);
+    }
+    
+    /**
+     * Sets the value of a private static field using Java Reflection.
+     * @param targetClass The class containing the static field.
+     * @param fieldName The name of the private static field.
+     * @param value The value to set the field to.
+     */
+    private static void setInternalState(Class<?> targetClass, String fieldName, Object value) {
+        try {
+            // 1. Get the Field object from the class
+            java.lang.reflect.Field field = targetClass.getDeclaredField(fieldName);
 
+            // 2. Make the field accessible (required for private fields)
+            field.setAccessible(true);
 
-        abcc = new AdminBlueprintCopyCommand(ac);
+            // 3. Set the new value. The first argument is 'null' for static fields.
+            field.set(null, value);
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            // Wrap reflection exceptions in a runtime exception for clarity
+            throw new RuntimeException("Failed to set static field '" + fieldName + "' on class " + targetClass.getName(), e);
+        }
     }
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         Mockito.framework().clearInlineMocks();
     }

@@ -48,8 +48,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class CleanSuperFlatListenerTest {
 
     @Mock
@@ -68,13 +68,13 @@ public class CleanSuperFlatListenerTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         when(plugin.isLoaded()).thenReturn(true);
 
@@ -82,7 +82,7 @@ public class CleanSuperFlatListenerTest {
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(world.getName()).thenReturn("world");
 
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         when(Util.getWorld(any())).thenReturn(world);
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Regenerator
@@ -133,7 +133,7 @@ public class CleanSuperFlatListenerTest {
         
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

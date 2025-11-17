@@ -49,8 +49,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
 public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -68,7 +68,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -198,7 +198,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecuteSamePlayer() {
-        PowerMockito.mockStatic(User.class);
+        //PowerMockito.mockStatic(User.class);
         when(User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
@@ -213,7 +213,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecutePlayerHasRank() {
-        PowerMockito.mockStatic(User.class);
+        //PowerMockito.mockStatic(User.class);
         when(User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);

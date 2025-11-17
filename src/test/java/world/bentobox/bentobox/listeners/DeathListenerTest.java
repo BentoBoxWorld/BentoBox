@@ -30,8 +30,8 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
 public class DeathListenerTest extends AbstractCommonSetup {
 
     private Player player;
@@ -42,11 +42,11 @@ public class DeathListenerTest extends AbstractCommonSetup {
     private UUID uuid;
     private IslandWorldManager iwm;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Island World Manager
         iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -73,7 +73,7 @@ public class DeathListenerTest extends AbstractCommonSetup {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

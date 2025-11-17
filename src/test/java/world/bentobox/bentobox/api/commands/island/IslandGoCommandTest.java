@@ -66,8 +66,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class IslandGoCommandTest extends AbstractCommonSetup {
     @Mock
     private CompositeCommand ic;
@@ -90,7 +90,7 @@ public class IslandGoCommandTest extends AbstractCommonSetup {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -151,7 +151,7 @@ public class IslandGoCommandTest extends AbstractCommonSetup {
         // Just return an empty addon for now
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         when(Util.stripColor(any())).thenCallRealMethod();
 
@@ -177,7 +177,7 @@ public class IslandGoCommandTest extends AbstractCommonSetup {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

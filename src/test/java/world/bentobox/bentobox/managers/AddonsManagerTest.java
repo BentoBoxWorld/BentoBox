@@ -51,8 +51,8 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, DefaultPermissions.class, MultiLib.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, DefaultPermissions.class, MultiLib.class , ServerBuildInfo.class})
 public class AddonsManagerTest {
 
     private BentoBox plugin;
@@ -64,13 +64,13 @@ public class AddonsManagerTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(pm);
         // Set up plugin
         plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         FlagsManager fm = mock(FlagsManager.class);
         when(plugin.getFlagsManager()).thenReturn(fm);
 
@@ -83,14 +83,14 @@ public class AddonsManagerTest {
         // settings
         when(plugin.getSettings()).thenReturn(s);
 
-        PowerMockito.mockStatic(DefaultPermissions.class);
+        //PowerMockito.mockStatic(DefaultPermissions.class);
 
-        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
     }
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         // Delete the addons folder
         File f = new File(plugin.getDataFolder(), "addons");

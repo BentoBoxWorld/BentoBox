@@ -46,9 +46,9 @@ import io.papermc.paper.registry.tag.TagKey;
 import world.bentobox.bentobox.BentoBox;
 
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, Objects.class , ServerBuildInfo.class})
-@Ignore("Needs to be redone for Paper")
+
+//@PrepareForTest({ BentoBox.class, Bukkit.class, Objects.class , ServerBuildInfo.class})
+@Disabled("Needs to be redone for Paper")
 public class ItemParserTest {
 
     @Mock
@@ -66,13 +66,13 @@ public class ItemParserTest {
 
 
     @SuppressWarnings("deprecation")
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         // Do not test Bukkit createItemStack method output as I assume Bukkit has their tests covered.
@@ -151,7 +151,7 @@ public class ItemParserTest {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }
@@ -257,7 +257,7 @@ public class ItemParserTest {
     }
 
     @Test
-    @Ignore("Doesn't work on 1.21")
+    @Disabled("Doesn't work on 1.21")
     public void testParseBanner() {
         when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
         // Germany - two patterns

@@ -45,8 +45,8 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, ServerBuildInfo.class })
+
+//@PrepareForTest({ BentoBox.class, Bukkit.class, ServerBuildInfo.class })
 public class WitherListenerTest extends AbstractCommonSetup {
 
     private WitherListener wl;
@@ -66,12 +66,12 @@ public class WitherListenerTest extends AbstractCommonSetup {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.inWorld(eq(world))).thenReturn(true);
         when(iwm.inWorld(eq(location))).thenReturn(true);
@@ -102,7 +102,7 @@ public class WitherListenerTest extends AbstractCommonSetup {
 
     /**
      */
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

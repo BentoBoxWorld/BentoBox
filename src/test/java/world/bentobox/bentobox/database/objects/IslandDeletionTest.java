@@ -34,8 +34,8 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, ServerBuildInfo.class})
+
+//@PrepareForTest({Bukkit.class, BentoBox.class, ServerBuildInfo.class})
 public class IslandDeletionTest {
 
     @Mock
@@ -56,10 +56,10 @@ public class IslandDeletionTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Max range
         when(plugin.getIWM()).thenReturn(iwm);
@@ -76,7 +76,7 @@ public class IslandDeletionTest {
         when(location.getBlockY()).thenReturn(120);
         when(location.getBlockZ()).thenReturn(-5245);
 
-        PowerMockito.mockStatic(UUID.class);
+        //PowerMockito.mockStatic(UUID.class);
         when(UUID.randomUUID()).thenReturn(uuid);
         /*
          *         uniqueId = UUID.randomUUID().toString();
@@ -94,7 +94,7 @@ public class IslandDeletionTest {
         id = new IslandDeletion(island);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }

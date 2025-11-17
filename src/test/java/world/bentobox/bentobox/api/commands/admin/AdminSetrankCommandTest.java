@@ -44,8 +44,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
 public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -65,7 +65,7 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         Util.setPlugin(plugin);
@@ -83,7 +83,7 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
         User.getInstance(p);
 
         // Online players
-        PowerMockito.mockStatic(Util.class);
+        //PowerMockito.mockStatic(Util.class);
         when(Util.getOnlinePlayerList(any())).thenReturn(Collections.singletonList("tastybento"));
         when(Util.getUUID(anyString())).thenCallRealMethod();
 
@@ -95,7 +95,7 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
         c = new AdminSetrankCommand(ac);
 
         // Plugin Manager
-        PowerMockito.mockStatic(Bukkit.class);
+        //PowerMockito.mockStatic(Bukkit.class);
         PluginManager pim = mock(PluginManager.class);
         when(Bukkit.getPluginManager()).thenReturn(pim);
     }

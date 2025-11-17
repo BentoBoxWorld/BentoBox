@@ -27,8 +27,8 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class , ServerBuildInfo.class})
 public class CandleListenerTest extends AbstractCommonSetup {
 
     private CandleListener l;
@@ -38,7 +38,7 @@ public class CandleListenerTest extends AbstractCommonSetup {
     /**
      */
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

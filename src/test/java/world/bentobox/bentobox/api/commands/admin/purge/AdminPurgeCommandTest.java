@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.admin.purge;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -28,22 +28,17 @@ import org.bukkit.World;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.WhiteBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandDeletedEvent;
@@ -59,8 +54,6 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class , ServerBuildInfo.class})
 public class AdminPurgeCommandTest {
 
     @Mock
@@ -86,9 +79,8 @@ public class AdminPurgeCommandTest {
     @Mock
     private BukkitScheduler scheduler;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         // Mock the method to immediately run the Runnable
         when(scheduler.runTaskLater(eq(plugin), any(Runnable.class), anyLong())).thenAnswer(invocation -> {
             Runnable task = invocation.getArgument(1);
@@ -98,7 +90,7 @@ public class AdminPurgeCommandTest {
         when(Bukkit.getScheduler()).thenReturn(scheduler);
 
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -136,7 +128,7 @@ public class AdminPurgeCommandTest {
         apc = new AdminPurgeCommand(ac);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }
@@ -271,7 +263,7 @@ public class AdminPurgeCommandTest {
         when(im.getIslands()).thenReturn(Collections.singleton(island));
 
         // All players are up to date
-        PowerMockito.mockStatic(Bukkit.class);
+        ////PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer op = mock(OfflinePlayer.class);
         when(op.getLastPlayed()).thenReturn(System.currentTimeMillis());
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
@@ -290,7 +282,7 @@ public class AdminPurgeCommandTest {
         when(island.getOwner()).thenReturn(UUID.randomUUID());
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
-        PowerMockito.mockStatic(Bukkit.class);
+        ////PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer op = mock(OfflinePlayer.class);
         when(op.getLastPlayed()).thenReturn(System.currentTimeMillis());
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);

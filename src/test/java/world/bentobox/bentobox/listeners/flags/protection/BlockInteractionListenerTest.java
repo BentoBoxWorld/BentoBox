@@ -46,8 +46,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class, ServerBuildInfo.class})
+
+//@PrepareForTest({Bukkit.class, BentoBox.class, Util.class, ServerBuildInfo.class})
 public class BlockInteractionListenerTest extends AbstractCommonSetup {
 
 
@@ -139,7 +139,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
 
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -349,7 +349,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
-    @Ignore("TODO")
+    @Disabled("TODO")
     @Test
     public void testOnBlockBreak() {
         fail("Not yet implemented"); // TODO
@@ -358,7 +358,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onDragonEggTeleport(org.bukkit.event.block.BlockFromToEvent)}.
      */
-    @Ignore("TODO")
+    @Disabled("TODO")
     @Test
     public void testOnDragonEggTeleport() {
         fail("Not yet implemented"); // TODO

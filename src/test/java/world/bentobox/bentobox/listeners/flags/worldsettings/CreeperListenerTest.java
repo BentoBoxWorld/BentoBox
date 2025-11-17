@@ -31,8 +31,8 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class , ServerBuildInfo.class})
 public class CreeperListenerTest extends AbstractCommonSetup {
 
     private CreeperListener cl;
@@ -40,14 +40,14 @@ public class CreeperListenerTest extends AbstractCommonSetup {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         cl = new CreeperListener();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

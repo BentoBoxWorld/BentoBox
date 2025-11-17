@@ -39,8 +39,8 @@ import world.bentobox.bentobox.database.DatabaseSetup;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, DatabaseSetup.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, DatabaseSetup.class , ServerBuildInfo.class})
 public class RanksManagerTest {
 
     private static AbstractDatabaseHandler<Object> h;
@@ -54,20 +54,20 @@ public class RanksManagerTest {
         // This has to be done beforeClass otherwise the tests will interfere with each other
         h = mock(AbstractDatabaseHandler.class);
         // Database
-        PowerMockito.mockStatic(DatabaseSetup.class);
+        //PowerMockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
         when(dbSetup.getHandler(any())).thenReturn(h);
         when(h.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();

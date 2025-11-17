@@ -55,8 +55,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
 public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -75,7 +75,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
     private UUID notUUID;
 
     @SuppressWarnings("deprecation")
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -91,7 +91,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
                 .thenReturn(new File("src" + File.separator + "main" + File.separator + "resources"));
 
         // Player & users
-        PowerMockito.mockStatic(User.class);
+        //PowerMockito.mockStatic(User.class);
 
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.isOp()).thenReturn(false);
@@ -226,7 +226,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
      * Test method for
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
-    @Ignore("PaperAPI Material issue with Material.get")
+    @Disabled("PaperAPI Material issue with Material.get")
     @Test
     public void testCanExecuteNoTarget() {
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));

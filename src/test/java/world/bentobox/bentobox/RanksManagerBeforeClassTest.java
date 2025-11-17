@@ -38,8 +38,8 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, DatabaseSetup.class, RanksManager.class, Bukkit.class , ServerBuildInfo.class})
+
+//@PrepareForTest({ BentoBox.class, DatabaseSetup.class, RanksManager.class, Bukkit.class , ServerBuildInfo.class})
 public abstract class RanksManagerBeforeClassTest extends AbstractCommonSetup {
 
     // Constants that define the hard coded rank values
@@ -82,7 +82,7 @@ public abstract class RanksManagerBeforeClassTest extends AbstractCommonSetup {
         // other
         h = mock(AbstractDatabaseHandler.class);
         // Database
-        PowerMockito.mockStatic(DatabaseSetup.class);
+        //PowerMockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
         when(dbSetup.getHandler(any())).thenReturn(h);
@@ -109,15 +109,15 @@ public abstract class RanksManagerBeforeClassTest extends AbstractCommonSetup {
 
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getBukkitVersion()).thenReturn("");
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // RanksManager
-        PowerMockito.mockStatic(RanksManager.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(RanksManager.class, Mockito.RETURNS_MOCKS);
         when(RanksManager.getInstance()).thenReturn(rm);
         when(rm.getRanks()).thenReturn(DEFAULT_RANKS);
         when(rm.getRank(anyInt())).thenReturn("");
@@ -125,7 +125,7 @@ public abstract class RanksManagerBeforeClassTest extends AbstractCommonSetup {
         savedObject = null;
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         deleteAll(new File("database"));

@@ -54,9 +54,9 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, ServerBuildInfo.class , ServerBuildInfo.class})
+@Disabled("Needs update to work with PaperAPI")
+
+//@PrepareForTest({ Bukkit.class, BentoBox.class, ServerBuildInfo.class , ServerBuildInfo.class})
 public class LanguagePanelTest {
 
     @Mock
@@ -88,10 +88,10 @@ public class LanguagePanelTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
         // Player
         Player player = mock(Player.class);
         when(user.isOp()).thenReturn(false);
@@ -133,7 +133,7 @@ public class LanguagePanelTest {
         when(lm.getLanguages()).thenReturn(map);
 
         // Panel
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        //PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.createInventory(any(), Mockito.anyInt(), anyString())).thenReturn(inv);
 
         // Item Factory (needed for ItemStack)
@@ -143,7 +143,7 @@ public class LanguagePanelTest {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
