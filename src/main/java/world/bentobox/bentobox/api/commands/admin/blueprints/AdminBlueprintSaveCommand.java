@@ -40,7 +40,6 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand
             this.showHelp(this, user);
             return false;
         }
-
         BlueprintClipboard clipboard = ((AdminBlueprintCommand) this.getParent()).getClipboards().
                 computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
 

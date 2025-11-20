@@ -51,7 +51,9 @@ import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
+import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -101,6 +103,10 @@ public abstract class AbstractCommonSetup {
     protected FlagsManager fm;
     @Mock
     protected Spigot spigot;
+    @Mock
+    protected HooksManager hooksManager;
+    @Mock
+    protected BlueprintsManager bm;
     
     protected Server server;
 
@@ -208,6 +214,13 @@ public abstract class AbstractCommonSetup {
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
         mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+
+        // Hooks
+        when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
+        when(plugin.getHooks()).thenReturn(hooksManager);
+
+        // Blueprints Manager
+        when(plugin.getBlueprintsManager()).thenReturn(bm);
 
 
         // Tags
