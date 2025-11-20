@@ -45,7 +45,7 @@ public class FlagsManagerTest extends AbstractCommonSetup {
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+        mockedBukkit.when(() -> Bukkit.getItemFactory()).thenReturn(itemFactory);
 
         // Util
         mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();

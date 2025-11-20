@@ -90,7 +90,7 @@ public class TestBentoBox extends AbstractCommonSetup {
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
 
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
-        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
+        mockedBukkit.when(() -> Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("tastybento");
 
         when(mockPlayer.hasPermission(anyString())).thenReturn(true);
@@ -106,7 +106,7 @@ public class TestBentoBox extends AbstractCommonSetup {
 
         // Util
         //PowerMockito.mockStatic(Util.class);
-        //when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+        //mockedUtil.when(() -> findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         island.setOwner(uuid);

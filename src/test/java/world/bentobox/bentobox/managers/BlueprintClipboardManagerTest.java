@@ -132,7 +132,7 @@ public class BlueprintClipboardManagerTest extends AbstractCommonSetup {
         when(plugin.getHooks()).thenReturn(hooksManager);
 
         BlockData blockData = mock(BlockData.class);
-        when(Bukkit.createBlockData(any(Material.class))).thenReturn(blockData);
+        mockedBukkit.when(() -> Bukkit.createBlockData(any(Material.class))).thenReturn(blockData);
         when(blockData.getAsString()).thenReturn("test123");
     }
 

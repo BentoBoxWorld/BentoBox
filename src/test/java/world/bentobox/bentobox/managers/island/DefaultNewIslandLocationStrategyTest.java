@@ -167,7 +167,7 @@ public class DefaultNewIslandLocationStrategyTest extends AbstractCommonSetup {
      */
     @Test
     public void testIsIslandChunkNotGenerated() {
-        when(Util.isChunkGenerated(any())).thenReturn(false);
+        mockedUtil.when(() -> Util.isChunkGenerated(any())).thenReturn(false);
         assertEquals(Result.FREE, dnils.isIsland(location));
     }
 

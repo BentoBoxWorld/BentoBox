@@ -30,6 +30,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
@@ -195,15 +196,19 @@ public abstract class AbstractCommonSetup {
         Settings settings = new Settings();
         when(plugin.getSettings()).thenReturn(settings);
 
-
-        //PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
+        //Util
         mockedUtil = Mockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
         mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
 
         // Util
-        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Util translate color codes (used in user translate methods)
-        //when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        //mockedUtil.when(() -> translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        
+        // Server & Scheduler
+        BukkitScheduler sch = mock(BukkitScheduler.class);
+        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+
 
         // Tags
         /*

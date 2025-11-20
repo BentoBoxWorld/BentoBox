@@ -220,7 +220,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
         // version
-        when(Bukkit.getVersion())
+        mockedBukkit.when(() -> Bukkit.getVersion())
                 .thenReturn("Paper version git-Paper-225 (MC: 1.14.4) (Implementing API version 1.14.4-R0.1-SNAPSHOT)");
 
         // Standard location
@@ -244,7 +244,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
         // Online players
         // Return a set of online players
-        when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> new HashSet<>());
+        mockedBukkit.when(() -> Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> new HashSet<>());
 
         // Worlds
         when(plugin.getIWM()).thenReturn(iwm);
@@ -274,13 +274,13 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(user.getLocation()).thenReturn(location);
 
         // Plugin Manager for events
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+        mockedBukkit.when(() -> Bukkit.getPluginManager()).thenReturn(pim);
 
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         // Cover hostile entities
-        when(Util.isHostileEntity(any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.isHostileEntity(any())).thenCallRealMethod();
 
         // Set up island entities
         WorldSettings ws = mock(WorldSettings.class);
@@ -340,7 +340,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         wallSign = Material.ACACIA_WALL_SIGN;
 
         // Util strip spaces
-        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
 
         // World UID
         when(world.getUID()).thenReturn(uuid);
@@ -1393,7 +1393,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         // Offline owner
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
         // Test
         assertEquals(4, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
         verify(island, never()).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null)); // No change
@@ -1412,7 +1412,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         // Online owner
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(4, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
         verify(island, never()).setMaxMembers(RanksManager.MEMBER_RANK, null);
@@ -1433,7 +1433,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(iwm.getMaxCoopSize(eq(world))).thenReturn(2);
         when(iwm.getMaxTrustSize(eq(world))).thenReturn(3);
         // Online owner
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(2, im.getMaxMembers(island, RanksManager.COOP_RANK));
         verify(island, never()).setMaxMembers(RanksManager.COOP_RANK, null); // No change
@@ -1453,7 +1453,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(island.getMaxMembers(eq(RanksManager.MEMBER_RANK))).thenReturn(10);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         // Online owner
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(10, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
         verify(island).setMaxMembers(RanksManager.MEMBER_RANK, 10);
@@ -1471,7 +1471,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(island.getMaxMembers(eq(RanksManager.MEMBER_RANK))).thenReturn(10);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(40);
         // Online owner
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(10, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
         verify(island).setMaxMembers(RanksManager.MEMBER_RANK, 10);
@@ -1496,7 +1496,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Set<PermissionAttachmentInfo> set = Collections.singleton(pai);
         when(player.getEffectivePermissions()).thenReturn(set);
         // Online owner
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         assertEquals(8, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
         verify(island).setMaxMembers(RanksManager.MEMBER_RANK, 8);
@@ -1533,7 +1533,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Set<PermissionAttachmentInfo> set = Collections.singleton(pai);
         when(player.getEffectivePermissions()).thenReturn(set);
         // Online owner
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         IslandsManager im = new IslandsManager(plugin);
         assertEquals(8, im.getMaxHomes(island));
@@ -1559,7 +1559,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Set<PermissionAttachmentInfo> set = Collections.singleton(pai);
         when(player.getEffectivePermissions()).thenReturn(set);
         // Online owner
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         IslandsManager im = new IslandsManager(plugin);
         assertEquals(4, im.getMaxHomes(island));
@@ -1585,7 +1585,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Set<PermissionAttachmentInfo> set = Collections.singleton(pai);
         when(player.getEffectivePermissions()).thenReturn(set);
         // Online owner
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         IslandsManager im = new IslandsManager(plugin);
         assertEquals(20, im.getMaxHomes(island));
@@ -1611,7 +1611,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         Set<PermissionAttachmentInfo> set = Collections.singleton(pai);
         when(player.getEffectivePermissions()).thenReturn(set);
         // Online owner
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         IslandsManager im = new IslandsManager(plugin);
         assertEquals(8, im.getMaxHomes(island));
