@@ -63,6 +63,7 @@ public class IslandCacheTest extends AbstractCommonSetup {
     private MockedStatic<DatabaseSetup> mockedDatabaseSetup;
 
     @SuppressWarnings("unchecked")
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
