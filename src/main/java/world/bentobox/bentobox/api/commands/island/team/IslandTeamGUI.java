@@ -581,9 +581,9 @@ public class IslandTeamGUI {
 
     /**
      * Formats the last seen time for offline players.
-     * Shows time in most appropriate unit:
-     * - Minutes if < 1 hour
-     * - Hours if < 1 day
+     * Shows time in most appropriate unit: <br>
+     * - Minutes if &lt 1 hour <br>
+     * - Hours if &lt 1 day <br>
      * - Days otherwise
      */
     private String lastSeen(OfflinePlayer offlineMember) {
