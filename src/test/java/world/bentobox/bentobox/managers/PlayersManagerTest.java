@@ -41,10 +41,10 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import world.bentobox.bentobox.AbstractCommonSetup;
@@ -64,9 +64,9 @@ import world.bentobox.bentobox.util.Util;
  */
 public class PlayersManagerTest extends AbstractCommonSetup {
 
-    private static AbstractDatabaseHandler<Players> playerHandler;
-    private static AbstractDatabaseHandler<Names> namesHandler;
-    private static AbstractDatabaseHandler<Island> islandHandler;
+    private AbstractDatabaseHandler<Players> playerHandler;
+    private AbstractDatabaseHandler<Names> namesHandler;
+    private AbstractDatabaseHandler<Island> islandHandler;
     private Database<Players> db;
     @Mock
     private World end;
@@ -87,50 +87,10 @@ public class PlayersManagerTest extends AbstractCommonSetup {
 
     @Mock
     private VaultHook vault;
+    private MockedStatic<DatabaseSetup> mockedDatabase;
     private @Nullable
     static UUID notThere = UUID.randomUUID();
     private static List<Names> names = new ArrayList<>();
-
-    @SuppressWarnings("unchecked")
-    @BeforeAll
-    public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException, InstantiationException, ClassNotFoundException, NoSuchMethodException, IOException {
-     // Clear any lingering database
-        deleteAll(new File("database"));
-        deleteAll(new File("database_backup"));
-        // This has to be done beforeClass otherwise the tests will interfere with each
-        // other
-        playerHandler = mock(AbstractDatabaseHandler.class);
-        namesHandler = mock(AbstractDatabaseHandler.class);
-        islandHandler = mock(AbstractDatabaseHandler.class);
-        // Database
-        Mockito.mockStatic(DatabaseSetup.class);
-        DatabaseSetup dbSetup = mock(DatabaseSetup.class);
-        when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
-        when(dbSetup.getHandler(eq(Players.class))).thenReturn(playerHandler);
-        when(dbSetup.getHandler(eq(Names.class))).thenReturn(namesHandler);
-        when(dbSetup.getHandler(eq(Island.class))).thenReturn(islandHandler);
-        
-        // Unknown UUID - nothing in database
-        when(playerHandler.objectExists(notThere.toString())).thenReturn(false);
-        when(namesHandler.objectExists(notThere.toString())).thenReturn(false);
-        when(islandHandler.objectExists(any())).thenReturn(false);
-        // Loading objects
-        Players playerDB = new Players();
-        when(playerHandler.loadObject(anyString())).thenReturn(playerDB);
-        // Set up names database
-        
-        Names name = new Names();
-        name.setUniqueId("tastybento");
-        name.setUuid(uuid);
-        names.add(name);
-        when(namesHandler.loadObjects()).thenReturn(names);
-        when(namesHandler.loadObject(any())).thenReturn(name);
-        when(namesHandler.objectExists(uuid.toString())).thenReturn(true);
-        // Save successfully
-        when(namesHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
-        when(playerHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
-        when(islandHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
-    }
 
     private static void deleteAll(File file) throws IOException {
         if (file.exists()) {
@@ -144,9 +104,43 @@ public class PlayersManagerTest extends AbstractCommonSetup {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
+
         // Clear any lingering database
         deleteAll(new File("database"));
         deleteAll(new File("database_backup"));
+        // This has to be done beforeClass otherwise the tests will interfere with each
+        // other
+        playerHandler = mock(AbstractDatabaseHandler.class);
+        namesHandler = mock(AbstractDatabaseHandler.class);
+        islandHandler = mock(AbstractDatabaseHandler.class);
+        // Database
+        mockedDatabase = Mockito.mockStatic(DatabaseSetup.class);
+        DatabaseSetup dbSetup = mock(DatabaseSetup.class);
+        when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
+        when(dbSetup.getHandler(eq(Players.class))).thenReturn(playerHandler);
+        when(dbSetup.getHandler(eq(Names.class))).thenReturn(namesHandler);
+        when(dbSetup.getHandler(eq(Island.class))).thenReturn(islandHandler);
+
+        // Unknown UUID - nothing in database
+        when(playerHandler.objectExists(notThere.toString())).thenReturn(false);
+        when(namesHandler.objectExists(notThere.toString())).thenReturn(false);
+        when(islandHandler.objectExists(any())).thenReturn(false);
+        // Loading objects
+        Players playerDB = new Players();
+        when(playerHandler.loadObject(anyString())).thenReturn(playerDB);
+        // Set up names database
+
+        Names name = new Names();
+        name.setUniqueId("tastybento");
+        name.setUuid(uuid);
+        names.add(name);
+        when(namesHandler.loadObjects()).thenReturn(names);
+        when(namesHandler.loadObject(any())).thenReturn(name);
+        when(namesHandler.objectExists(uuid.toString())).thenReturn(true);
+        // Save successfully
+        when(namesHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+        when(playerHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+        when(islandHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
 
         when(plugin.getVault()).thenReturn(Optional.of(vault));
         // island world mgr
@@ -265,6 +259,7 @@ public class PlayersManagerTest extends AbstractCommonSetup {
         super.tearDown();
         deleteAll(new File("database"));
         deleteAll(new File("database_backup"));
+        mockedDatabase.closeOnDemand();
     }
 
     /**

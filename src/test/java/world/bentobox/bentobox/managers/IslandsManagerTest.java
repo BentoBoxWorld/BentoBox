@@ -57,7 +57,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -87,10 +86,11 @@ import world.bentobox.bentobox.util.Util;
 
 public class IslandsManagerTest extends AbstractCommonSetup {
 
-    private static AbstractDatabaseHandler<Island> h;
-    private static MockedStatic<DatabaseSetup> mockedDatabaseSetup;
-    private static @Nullable UUID owner = UUID.randomUUID();
-    private static Island is;
+    private AbstractDatabaseHandler<Island> h;
+    private MockedStatic<DatabaseSetup> mockedDatabaseSetup;
+    private @Nullable UUID owner = UUID.randomUUID();
+    private Island is;
+
     private UUID uuid;
     @Mock
     private User user;
@@ -140,9 +140,11 @@ public class IslandsManagerTest extends AbstractCommonSetup {
 
     private Settings settings;
 
-    @SuppressWarnings("unchecked")
-    @BeforeAll
-    public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException, InstantiationException, ClassNotFoundException, NoSuchMethodException {
+    @Override
+    @SuppressWarnings({ "unchecked"})
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
         // This has to be done beforeClass otherwise the tests will interfere with each
         // other
         h = mock(AbstractDatabaseHandler.class);
@@ -166,14 +168,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(h.loadObjects()).thenReturn(List.of(is));
         when(h.objectExists(is.getUniqueId())).thenReturn(true);
         when(h.loadObject(is.getUniqueId())).thenReturn(is);
-    }
-
-    @Override
-    @SuppressWarnings({ "unchecked"})
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+  
         // Clear any lingering database
         deleteAll(new File("database"));
         deleteAll(new File("database_backup"));
@@ -362,6 +357,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         super.tearDown();
         deleteAll(new File("database"));
         deleteAll(new File("database_backup"));
+        mockedDatabaseSetup.closeOnDemand();
     }
 
     private void deleteAll(File file) throws IOException {
