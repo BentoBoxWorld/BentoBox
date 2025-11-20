@@ -108,7 +108,7 @@ public class RanksManager {
         return true;
     }
 
-    private void ranksPut(String reference, int value) {
+    private void ranksPut(String reference, Integer value) {
         ranks.put(reference, value);
         // Sort
         ranks = ranks.entrySet().stream().sorted(Map.Entry.comparingByValue())

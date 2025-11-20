@@ -100,6 +100,7 @@ public abstract class AbstractCommonSetup {
     protected FlagsManager fm;
     @Mock
     protected Spigot spigot;
+    
     protected Server server;
 
     protected MockedStatic<Bukkit> mockedBukkit;
