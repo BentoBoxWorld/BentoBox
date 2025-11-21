@@ -25,6 +25,7 @@ import org.mockito.Mockito;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.objects.Ranks;
+import world.bentobox.bentobox.database.objects.TeamInvite;
 import world.bentobox.bentobox.managers.RanksManager;
 
 /**
@@ -61,7 +62,8 @@ public abstract class RanksManagerBeforeClassTest extends AbstractCommonSetup {
 
     @Mock
     public RanksManager rm;
-    private AbstractDatabaseHandler<Ranks> handler;
+    protected AbstractDatabaseHandler<Ranks> ranksHandler;
+    protected AbstractDatabaseHandler<TeamInvite> invitesHandler;
     private MockedStatic<DatabaseSetup> mockedDatabaseSetup;
 
     protected Object savedObject;
@@ -76,33 +78,49 @@ public abstract class RanksManagerBeforeClassTest extends AbstractCommonSetup {
         deleteAll(new File("database_backup"));
 
         // This has to be done beforeClass otherwise the tests will interfere with each other
-        handler = (AbstractDatabaseHandler<Ranks>)mock(AbstractDatabaseHandler.class);
+        ranksHandler = (AbstractDatabaseHandler<Ranks>)mock(AbstractDatabaseHandler.class);
+        invitesHandler = (AbstractDatabaseHandler<TeamInvite>)mock(AbstractDatabaseHandler.class);
         // Database
         mockedDatabaseSetup = Mockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         mockedDatabaseSetup.when(() -> DatabaseSetup.getDatabase()).thenReturn(dbSetup);
-        when(dbSetup.getHandler(eq(Ranks.class))).thenReturn(handler);
-        when(handler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
-
+        when(dbSetup.getHandler(eq(Ranks.class))).thenReturn(ranksHandler);
+        when(ranksHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+        when(dbSetup.getHandler(eq(TeamInvite.class))).thenReturn(invitesHandler);
+        when(invitesHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+        
         // Capture the parameter passed to saveObject() and store it in savedObject
         doAnswer(invocation -> {
             savedObject = invocation.getArgument(0);
             return CompletableFuture.completedFuture(true);
-        }).when(handler).saveObject(any());
+        }).when(ranksHandler).saveObject(any());
+        doAnswer(invocation -> {
+            savedObject = invocation.getArgument(0);
+            return CompletableFuture.completedFuture(true);
+        }).when(invitesHandler).saveObject(any());
 
         // Now when loadObject() is called, return the savedObject
-        when(handler.loadObject(any())).thenAnswer(invocation -> savedObject);
-
+        when(ranksHandler.loadObject(any())).thenAnswer(invocation -> savedObject);
+        when(invitesHandler.loadObject(any())).thenAnswer(invocation -> savedObject);
+        
         // Delete object
         doAnswer(invocation -> {
             savedObject = null;
             return null;
-        }).when(handler).deleteObject(any());
+        }).when(ranksHandler).deleteObject(any());
+        doAnswer(invocation -> {
+            savedObject = null;
+            return null;
+        }).when(invitesHandler).deleteObject(any());
         
         doAnswer(invocation -> {
             savedObject = null;
             return null;
-        }).when(handler).deleteID(anyString());
+        }).when(ranksHandler).deleteID(anyString());
+        doAnswer(invocation -> {
+            savedObject = null;
+            return null;
+        }).when(invitesHandler).deleteID(anyString());
 
         // RanksManager
         mockedRanksManager = Mockito.mockStatic(RanksManager.class, Mockito.RETURNS_MOCKS);
@@ -118,6 +136,8 @@ public abstract class RanksManagerBeforeClassTest extends AbstractCommonSetup {
         super.tearDown();
         deleteAll(new File("database"));
         deleteAll(new File("database_backup"));
+        ranksHandler.close();
+        invitesHandler.close();
     }
 
     private void deleteAll(File file) throws IOException {

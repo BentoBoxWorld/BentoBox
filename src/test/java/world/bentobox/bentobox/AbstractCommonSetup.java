@@ -111,8 +111,8 @@ public abstract class AbstractCommonSetup {
     protected Server server;
 
     protected MockedStatic<Bukkit> mockedBukkit;
-
     protected MockedStatic<Util> mockedUtil;
+    
     protected AutoCloseable closeable;
 
 
