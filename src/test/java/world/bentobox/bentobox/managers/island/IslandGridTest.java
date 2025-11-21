@@ -12,13 +12,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Grid test
  */
-public class IslandGridTest extends AbstractCommonSetup {
+public class IslandGridTest extends CommonTestSetup {
     
     private IslandGrid ig;
     @Mock

@@ -47,7 +47,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.Database;
@@ -62,7 +62,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class PlayersManagerTest extends AbstractCommonSetup {
+public class PlayersManagerTest extends CommonTestSetup {
 
     private AbstractDatabaseHandler<Players> playerHandler;
     private AbstractDatabaseHandler<Names> namesHandler;

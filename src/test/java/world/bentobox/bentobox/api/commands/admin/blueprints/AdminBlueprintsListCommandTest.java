@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -33,7 +33,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-public class AdminBlueprintsListCommandTest extends AbstractCommonSetup {
+public class AdminBlueprintsListCommandTest extends CommonTestSetup {
 
     @Mock
     private AdminBlueprintCommand ac;

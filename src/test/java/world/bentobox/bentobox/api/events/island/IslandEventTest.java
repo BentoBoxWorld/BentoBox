@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
@@ -25,7 +25,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
  * @author tastybento
  *
  */
-public class IslandEventTest extends AbstractCommonSetup {
+public class IslandEventTest extends CommonTestSetup {
 
     @Mock
     private @NonNull BlueprintBundle blueprintBundle;

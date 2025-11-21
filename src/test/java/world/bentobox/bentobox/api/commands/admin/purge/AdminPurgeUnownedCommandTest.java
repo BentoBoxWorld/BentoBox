@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
@@ -25,7 +25,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
  * @author Poslovitch
  *
  */
-public class AdminPurgeUnownedCommandTest extends AbstractCommonSetup {
+public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;

@@ -37,7 +37,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -58,7 +58,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class IslandGoCommandTest extends AbstractCommonSetup {
+public class IslandGoCommandTest extends CommonTestSetup {
     @Mock
     private CompositeCommand ic;
     private User user;

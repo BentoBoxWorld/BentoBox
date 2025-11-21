@@ -24,7 +24,7 @@ import org.mockito.Mock;
 
 import com.google.common.collect.ImmutableSet;
 
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -38,7 +38,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
+public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private IslandTeamCommand ic;

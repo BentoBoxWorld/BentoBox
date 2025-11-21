@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.flags.FlagWorldSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -30,7 +30,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.util.Util;
 
-public class WorldToggleClickTest extends AbstractCommonSetup {
+public class WorldToggleClickTest extends CommonTestSetup {
 
     private WorldToggleClick listener;
     @Mock

@@ -29,7 +29,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandCreateEvent;
@@ -50,7 +50,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class NewIslandTest extends AbstractCommonSetup {
+public class NewIslandTest extends CommonTestSetup {
 
     private static final String NAME = "name";
     @Mock

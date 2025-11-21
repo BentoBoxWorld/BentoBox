@@ -15,7 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -28,7 +28,7 @@ import world.bentobox.bentobox.lists.GameModePlaceholder;
  * @author tastybento
  * @since 1.5.0
  */
-public class PlaceholdersManagerTest extends AbstractCommonSetup {
+public class PlaceholdersManagerTest extends CommonTestSetup {
 
     @Mock
     private GameModeAddon addon;

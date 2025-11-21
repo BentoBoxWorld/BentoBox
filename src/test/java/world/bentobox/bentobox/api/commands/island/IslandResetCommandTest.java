@@ -31,7 +31,7 @@ import org.mockito.stubbing.Answer;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -52,7 +52,7 @@ import world.bentobox.bentobox.managers.island.NewIsland;
  * @author tastybento
  *
  */
-public class IslandResetCommandTest extends AbstractCommonSetup {
+public class IslandResetCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ic;

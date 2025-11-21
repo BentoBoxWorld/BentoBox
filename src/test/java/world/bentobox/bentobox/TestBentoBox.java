@@ -55,7 +55,7 @@ import world.bentobox.bentobox.util.Util;
 
 
 //@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
-public class TestBentoBox extends AbstractCommonSetup {
+public class TestBentoBox extends CommonTestSetup {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID VISITOR_UUID = UUID.randomUUID();
     @Mock

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -39,7 +39,7 @@ import world.bentobox.bentobox.api.flags.Flag;
  * @author tastybento
  *
  */
-public class IslandWorldManagerTest extends AbstractCommonSetup {
+public class IslandWorldManagerTest extends CommonTestSetup {
 
     private IslandWorldManager iwm;
 

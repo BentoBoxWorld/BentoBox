@@ -14,14 +14,14 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.Addon;
 
 /**
  * @author tastybento
  *
  */
-public class AddonEnableEventTest extends AbstractCommonSetup {
+public class AddonEnableEventTest extends CommonTestSetup {
 
     private AddonEnableEvent aee;
     @Mock

@@ -24,7 +24,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
@@ -34,7 +34,7 @@ import world.bentobox.bentobox.database.objects.Ranks;
  * @author tastybento
  *
  */
-public class RanksManagerTest extends AbstractCommonSetup {
+public class RanksManagerTest extends CommonTestSetup {
 
     private  AbstractDatabaseHandler<Ranks> handler;
 

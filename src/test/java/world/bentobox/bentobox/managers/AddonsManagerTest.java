@@ -33,7 +33,7 @@ import org.mockito.Mockito;
 
 import com.github.puregero.multilib.MultiLib;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.Addon.State;
@@ -44,7 +44,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
 
-public class AddonsManagerTest extends AbstractCommonSetup {
+public class AddonsManagerTest extends CommonTestSetup {
 
     private AddonsManager am;
     @Mock

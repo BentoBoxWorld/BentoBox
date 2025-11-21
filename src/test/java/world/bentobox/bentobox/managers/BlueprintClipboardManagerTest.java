@@ -30,7 +30,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
@@ -41,7 +41,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class BlueprintClipboardManagerTest extends AbstractCommonSetup {
+public class BlueprintClipboardManagerTest extends CommonTestSetup {
 
     private static final String BLUEPRINT = "blueprint";
 

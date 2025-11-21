@@ -35,7 +35,7 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableSet;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -50,7 +50,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-public class AdminPurgeCommandTest extends AbstractCommonSetup {
+public class AdminPurgeCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;

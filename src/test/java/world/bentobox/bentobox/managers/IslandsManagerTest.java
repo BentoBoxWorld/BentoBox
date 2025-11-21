@@ -71,7 +71,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
 import net.kyori.adventure.text.Component;
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
@@ -84,7 +84,7 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.Util;
 
-public class IslandsManagerTest extends AbstractCommonSetup {
+public class IslandsManagerTest extends CommonTestSetup {
 
     private AbstractDatabaseHandler<Island> h;
     private MockedStatic<DatabaseSetup> mockedDatabaseSetup;

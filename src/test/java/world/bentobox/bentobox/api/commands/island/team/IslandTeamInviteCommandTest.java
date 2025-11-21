@@ -32,7 +32,7 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableSet;
 
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -50,7 +50,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
+public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private IslandTeamCommand ic;

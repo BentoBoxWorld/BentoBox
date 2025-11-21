@@ -27,7 +27,7 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableSet;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -44,7 +44,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminUnregisterCommandTest extends AbstractCommonSetup {
+public class AdminUnregisterCommandTest extends CommonTestSetup {
 
     private UUID uuid = UUID.randomUUID();
     @Mock

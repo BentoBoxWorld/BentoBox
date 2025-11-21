@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -29,7 +29,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
  * @author tastybento
  *
  */
-public class HiddenCommandTest extends AbstractCommonSetup {
+public class HiddenCommandTest extends CommonTestSetup {
 
     @Mock
     private User user;

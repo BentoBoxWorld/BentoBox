@@ -32,7 +32,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public abstract class RanksManagerBeforeClassTest extends AbstractCommonSetup {
+public abstract class RanksManagerTestSetup extends CommonTestSetup {
 
     // Constants that define the hard coded rank values
     public static final String ADMIN_RANK_REF = "ranks.admin";

@@ -34,7 +34,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.IslandGoCommand;
@@ -50,7 +50,7 @@ import world.bentobox.bentobox.util.Util;
 /**
  * @author tastybento
  */
-public class AdminMaxHomesCommandTest extends AbstractCommonSetup {
+public class AdminMaxHomesCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;

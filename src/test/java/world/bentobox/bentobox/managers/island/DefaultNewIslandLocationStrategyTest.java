@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandDeletionManager;
 import world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy.Result;
@@ -29,7 +29,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class DefaultNewIslandLocationStrategyTest extends AbstractCommonSetup {
+public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
 
     private DefaultNewIslandLocationStrategy dnils;
 

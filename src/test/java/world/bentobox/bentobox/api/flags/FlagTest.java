@@ -36,7 +36,7 @@ import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -50,7 +50,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class FlagTest extends RanksManagerBeforeClassTest {
+public class FlagTest extends RanksManagerTestSetup {
 
     private Flag f;
     @Mock

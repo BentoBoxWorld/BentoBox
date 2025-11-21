@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.user.Notifier;
@@ -39,7 +39,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  * @author tastybento
  *
  */
-public class DelayedTeleportCommandTest extends AbstractCommonSetup {
+public class DelayedTeleportCommandTest extends CommonTestSetup {
 
     private static final String HELLO = "hello";
     @Mock

@@ -30,7 +30,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -50,7 +50,7 @@ import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
  * @author tastybento
  *
  */
-public class IslandCreateCommandTest extends AbstractCommonSetup {
+public class IslandCreateCommandTest extends CommonTestSetup {
 
     @Mock
     private User user;

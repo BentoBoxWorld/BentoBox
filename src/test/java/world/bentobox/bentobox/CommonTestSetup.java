@@ -73,7 +73,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public abstract class AbstractCommonSetup {
+public abstract class CommonTestSetup {
 
     protected UUID uuid = UUID.randomUUID();
 

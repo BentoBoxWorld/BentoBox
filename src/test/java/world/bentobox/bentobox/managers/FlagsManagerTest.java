@@ -24,12 +24,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-public class FlagsManagerTest extends AbstractCommonSetup {
+public class FlagsManagerTest extends CommonTestSetup {
 
     /**
      * Update this value if the number of registered listeners changes

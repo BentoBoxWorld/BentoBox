@@ -29,7 +29,7 @@ import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.ImmutableSet;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -43,7 +43,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminTeamDisbandCommandTest extends AbstractCommonSetup {
+public class AdminTeamDisbandCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;

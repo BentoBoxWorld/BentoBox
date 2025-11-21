@@ -29,7 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.managers.AddonsManager;
 
@@ -38,7 +38,7 @@ import world.bentobox.bentobox.managers.AddonsManager;
  * @author tastybento
  *
  */
-public class AddonClassLoaderTest extends AbstractCommonSetup {
+public class AddonClassLoaderTest extends CommonTestSetup {
 
     private enum mandatoryTags {
         MAIN,

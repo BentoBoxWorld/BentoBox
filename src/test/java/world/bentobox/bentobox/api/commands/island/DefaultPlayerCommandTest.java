@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -29,7 +29,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
  * @author tastybento
  *
  */
-public class DefaultPlayerCommandTest extends RanksManagerBeforeClassTest {
+public class DefaultPlayerCommandTest extends RanksManagerTestSetup {
 
     @Mock
     GameModeAddon addon;

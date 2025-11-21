@@ -29,7 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
@@ -39,7 +39,7 @@ import world.bentobox.bentobox.api.user.User;
  * @author tastybento
  *
  */
-public class LocalesManagerTest  extends AbstractCommonSetup {
+public class LocalesManagerTest  extends CommonTestSetup {
 
     private static final String LOCALE_FOLDER = "locales";
     private static final String BENTOBOX = "BentoBox";

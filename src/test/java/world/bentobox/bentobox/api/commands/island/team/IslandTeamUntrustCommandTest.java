@@ -29,7 +29,7 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableSet;
 
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -43,7 +43,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
+public class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;

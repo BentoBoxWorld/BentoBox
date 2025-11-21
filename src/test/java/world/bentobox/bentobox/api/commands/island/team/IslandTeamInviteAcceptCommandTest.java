@@ -22,7 +22,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -40,7 +40,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandTeamInviteAcceptCommandTest extends RanksManagerBeforeClassTest {
+public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private IslandTeamCommand itc;

@@ -26,7 +26,7 @@ import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.ImmutableSet;
 
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -41,7 +41,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-public class IslandTeamSetownerCommandTest extends RanksManagerBeforeClassTest {
+public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;

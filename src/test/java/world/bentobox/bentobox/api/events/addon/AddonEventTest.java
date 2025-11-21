@@ -8,14 +8,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import world.bentobox.bentobox.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.Addon;
 
 /**
  * @author tastybento
  */
 
-public class AddonEventTest extends AbstractCommonSetup {
+public class AddonEventTest extends CommonTestSetup {
 
     @Mock
     private Addon mockAddon;
