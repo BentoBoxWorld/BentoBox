@@ -67,7 +67,7 @@ public abstract class RanksManagerBeforeClassTest extends AbstractCommonSetup {
     private MockedStatic<DatabaseSetup> mockedDatabaseSetup;
 
     protected Object savedObject;
-    private MockedStatic<RanksManager> mockedRanksManager;
+    protected MockedStatic<RanksManager> mockedRanksManager;
 
     @SuppressWarnings("unchecked")
     @BeforeEach
