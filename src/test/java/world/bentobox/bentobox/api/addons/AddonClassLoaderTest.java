@@ -216,7 +216,6 @@ public class AddonClassLoaderTest extends CommonTestSetup {
         assertEquals(List.of("Boxed", "AcidIsland"), desc.getSoftDependencies());
         assertEquals("1.0.0", desc.getVersion());
         assertNull(desc.getPermissions());
-        System.out.println(plugin);
         verify(plugin).logWarning("TestAddon addon depends on development version of BentoBox plugin. Some functions may be not implemented.");
     }
 
