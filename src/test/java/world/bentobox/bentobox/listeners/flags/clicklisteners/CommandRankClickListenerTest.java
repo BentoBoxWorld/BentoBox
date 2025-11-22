@@ -1,0 +1,216 @@
+package world.bentobox.bentobox.listeners.flags.clicklisteners;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.Inventory;
+import org.eclipse.jdt.annotation.NonNull;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.stubbing.Answer;
+
+import world.bentobox.bentobox.RanksManagerTestSetup;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.CommandsManager;
+import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.panels.settings.SettingsTab;
+import world.bentobox.bentobox.util.Util;
+
+/**
+ * @author tastybento
+ *
+ */
+public class CommandRankClickListenerTest extends RanksManagerTestSetup {
+    @Mock
+    private User user;
+    @Mock
+    private TabbedPanel panel;
+    @Mock
+    private @NonNull Inventory inv;
+    @Mock
+    private GameModeAddon gma;
+
+    private CommandRankClickListener crcl;
+    @Mock
+    private CommandsManager cm;
+    @Mock
+    private SettingsTab tab;
+
+    /**
+     * @throws java.lang.Exception
+     */
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+
+        // Island
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.isAllowed(user, Flags.CHANGE_SETTINGS)).thenReturn(true);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.MEMBER_RANK);
+        // IM
+        when(im.getIsland(world, uuid)).thenReturn(island);
+        when(im.getIsland(world, user)).thenReturn(island);
+        // IWM
+        when(iwm.getAddon(any())).thenReturn(Optional.of(gma));
+        when(iwm.getPermissionPrefix(world)).thenReturn("oneblock.");
+        // Panel
+        when(panel.getInventory()).thenReturn(inv);
+        when(panel.getWorld()).thenReturn(Optional.of(world));
+        when(panel.getName()).thenReturn("protection.flags.COMMAND_RANKS.name");
+        when(panel.getActiveTab()).thenReturn(tab);
+        // Tab
+        when(tab.getIsland()).thenReturn(island);
+        // User
+        when(user.isOp()).thenReturn(true);
+        when(user.getUniqueId()).thenReturn(uuid);
+        when(user.hasPermission(anyString())).thenReturn(true);
+        when(user.getPlayer()).thenReturn(mockPlayer);
+        when(user.inWorld()).thenReturn(true);
+        when(user.getWorld()).thenReturn(world);
+        when(user.getTranslationOrNothing(anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslationOrNothing(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString(), anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+
+        // Util
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
+        // Commands Manager
+        when(plugin.getCommandsManager()).thenReturn(cm);
+        Map<String, CompositeCommand> map = new HashMap<>();
+        CompositeCommand cc = mock(CompositeCommand.class);
+        when(cc.getWorld()).thenReturn(world);
+        when(cc.isConfigurableRankCommand()).thenReturn(true);
+        when(cc.getName()).thenReturn("test");
+        when(cc.getSubCommands()).thenReturn(Collections.emptyMap());
+        when(cc.testPermission(any())).thenReturn(true); // All commands are allowed
+        map.put("test", cc);
+        when(cm.getCommands()).thenReturn(map);
+        crcl = new CommandRankClickListener();
+    }
+
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
+     */
+    @Test
+    public void testOnClickWrongWorld() {
+        when(user.inWorld()).thenReturn(false);
+        assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
+        verify(user).sendMessage("general.errors.wrong-world");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
+     */
+    @Test
+    public void testOnClickNoPermission() {
+        when(user.isOp()).thenReturn(false);
+        when(user.hasPermission(anyString())).thenReturn(false);
+        assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
+        verify(user).sendMessage("general.errors.no-permission", TextVariables.PERMISSION, "oneblock.settings.COMMAND_RANKS");
+        verify(mockPlayer).playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
+     */
+    @Test
+    public void testOnClickNoFlag() {
+        when(island.isAllowed(user, Flags.CHANGE_SETTINGS)).thenReturn(false);
+        assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
+        verify(mockPlayer).playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
+     */
+    @Test
+    public void testOnClickDifferentPanelName() {
+        when(panel.getName()).thenReturn("different");
+        assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
+        verify(inv, never()).setItem(eq(0), any());
+        verify(user).closeInventory();
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
+     */
+    @Test
+    public void testOnClick() {
+        assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
+        verify(inv).setItem(eq(0), any());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
+     */
+    @Test
+    public void testOnClickTooManyCommands() {
+        Map<String, CompositeCommand> map = new HashMap<>();
+        for (int i = 0; i < 55; i++) {
+            CompositeCommand cc = mock(CompositeCommand.class);
+            when(cc.getWorld()).thenReturn(world);
+            when(cc.isConfigurableRankCommand()).thenReturn(true);
+            when(cc.getName()).thenReturn("test" + i);
+            when(cc.getSubCommands()).thenReturn(Collections.emptyMap());
+            map.put("test" + i, cc);
+            when(cc.testPermission(any())).thenReturn(true);
+        }
+        when(cm.getCommands()).thenReturn(map);
+
+        assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
+        verify(user).getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION,
+                "protection.panel.flag-item.command-instructions.");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#getPanelItem(java.lang.String, world.bentobox.bentobox.api.user.User, org.bukkit.World)}.
+     */
+    @Test
+    public void testGetPanelItem() {
+        assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
+        PanelItem pi = crcl.getPanelItem("test", user, world);
+        assertEquals(Material.MAP, pi.getItem().getType());
+        //assertEquals("protection.panel.flag-item.description-layout", pi.getDescription().getFirst());
+        //assertEquals("protection.panel.flag-item.minimal-rankranks.member", pi.getDescription().get(1));
+        //assertEquals("protection.panel.flag-item.allowed-rankranks.sub-owner", pi.getDescription().get(2));
+        //assertEquals("protection.panel.flag-item.allowed-rankranks.owner", pi.getDescription().getFirst());
+        assertTrue(pi.getClickHandler().isPresent());
+        assertEquals("protection.panel.flag-item.name-layout", pi.getName());
+    }
+
+}

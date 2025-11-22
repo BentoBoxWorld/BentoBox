@@ -1,0 +1,250 @@
+package world.bentobox.bentobox.listeners.flags.protection;
+
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.TropicalFish;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.lists.Flags;
+
+/**
+ * @author tastybento
+ *
+ */
+public class BucketListenerTest extends CommonTestSetup {
+
+
+    private BucketListener l;
+
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+
+        // Island manager
+        // Default is that everything is allowed
+        when(island.isAllowed(any(), any())).thenReturn(true);
+
+        // Listener
+        l = new BucketListener();
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
+     */
+    @Test
+    public void testOnBucketEmptyAllowed() {
+        Block block = mock(Block.class);
+        when(block.getLocation()).thenReturn(location);
+        when(block.getRelative(any())).thenReturn(block);
+        ItemStack item = mock(ItemStack.class);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketEmpty(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
+     */
+    @Test
+    public void testOnBucketEmptyNotAllowed() {
+        when(island.isAllowed(any(), any())).thenReturn(false);
+        Block block = mock(Block.class);
+        when(block.getLocation()).thenReturn(location);
+        when(block.getRelative(any())).thenReturn(block);
+        ItemStack item = mock(ItemStack.class);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketEmpty(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketFill(org.bukkit.event.player.PlayerBucketFillEvent)}.
+     */
+    @Test
+    public void testOnBucketFillAllowed() {
+        Block block = mock(Block.class);
+        when(block.getLocation()).thenReturn(location);
+        when(block.getRelative(any())).thenReturn(block);
+        ItemStack item = mock(ItemStack.class);
+        when(item.getType()).thenReturn(Material.WATER_BUCKET);
+        PlayerBucketFillEvent e = new PlayerBucketFillEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketFill(e);
+        assertFalse(e.isCancelled());
+
+        when(item.getType()).thenReturn(Material.BUCKET);
+        e = new PlayerBucketFillEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketFill(e);
+        assertFalse(e.isCancelled());
+
+        when(item.getType()).thenReturn(Material.LAVA_BUCKET);
+        e = new PlayerBucketFillEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketFill(e);
+        assertFalse(e.isCancelled());
+
+        when(item.getType()).thenReturn(Material.MILK_BUCKET);
+        e = new PlayerBucketFillEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketFill(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketFill(org.bukkit.event.player.PlayerBucketFillEvent)}.
+     */
+    @Test
+    public void testOnBucketFillNotAllowed() {
+        when(island.isAllowed(any(), any())).thenReturn(false);
+        Block block = mock(Block.class);
+        when(block.getLocation()).thenReturn(location);
+        when(block.getRelative(any())).thenReturn(block);
+        ItemStack item = mock(ItemStack.class);
+        when(item.getType()).thenReturn(Material.WATER_BUCKET);
+        PlayerBucketFillEvent e = new PlayerBucketFillEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketFill(e);
+        assertTrue(e.isCancelled());
+
+        when(item.getType()).thenReturn(Material.BUCKET);
+        e = new PlayerBucketFillEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketFill(e);
+        assertTrue(e.isCancelled());
+
+        when(item.getType()).thenReturn(Material.LAVA_BUCKET);
+        e = new PlayerBucketFillEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketFill(e);
+        assertTrue(e.isCancelled());
+
+        when(item.getType()).thenReturn(Material.MILK_BUCKET);
+        e = new PlayerBucketFillEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketFill(e);
+        assertTrue(e.isCancelled());
+
+        verify(notifier, times(4)).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketFill(org.bukkit.event.player.PlayerBucketFillEvent)}.
+     */
+    @Test
+    public void testOnBucketFillMixedAllowed() {
+        when(island.isAllowed(any(), eq(Flags.BUCKET))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.COLLECT_WATER))).thenReturn(true);
+        when(island.isAllowed(any(), eq(Flags.COLLECT_LAVA))).thenReturn(true);
+        when(island.isAllowed(any(), eq(Flags.MILKING))).thenReturn(true);
+        Block block = mock(Block.class);
+        when(block.getLocation()).thenReturn(location);
+        when(block.getRelative(any())).thenReturn(block);
+        ItemStack item = mock(ItemStack.class);
+        when(item.getType()).thenReturn(Material.WATER_BUCKET);
+        PlayerBucketFillEvent e = new PlayerBucketFillEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketFill(e);
+        assertFalse(e.isCancelled());
+
+        when(item.getType()).thenReturn(Material.BUCKET);
+        e = new PlayerBucketFillEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketFill(e);
+        assertTrue(e.isCancelled());
+
+        when(item.getType()).thenReturn(Material.LAVA_BUCKET);
+        e = new PlayerBucketFillEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketFill(e);
+        assertFalse(e.isCancelled());
+
+        when(item.getType()).thenReturn(Material.MILK_BUCKET);
+        e = new PlayerBucketFillEvent(mockPlayer, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        l.onBucketFill(e);
+        assertFalse(e.isCancelled());
+
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     */
+    @Test
+    public void testOnTropicalFishScoopingNotFish() {
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, mockPlayer);
+        l.onTropicalFishScooping(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     */
+    @Test
+    public void testOnTropicalFishScoopingFishNoWaterBucket() {
+        TropicalFish fish = mock(TropicalFish.class);
+        when(fish.getLocation()).thenReturn(location);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, fish );
+        PlayerInventory inv = mock(PlayerInventory.class);
+        ItemStack item = mock(ItemStack.class);
+        when(item.getType()).thenReturn(Material.STONE);
+        when(inv.getItemInMainHand()).thenReturn(item);
+        when(mockPlayer.getInventory()).thenReturn(inv);
+        l.onTropicalFishScooping(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     */
+    @Test
+    public void testOnTropicalFishScoopingFishWaterBucket() {
+        TropicalFish fish = mock(TropicalFish.class);
+        when(fish.getLocation()).thenReturn(location);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, fish );
+        PlayerInventory inv = mock(PlayerInventory.class);
+        ItemStack item = mock(ItemStack.class);
+        when(item.getType()).thenReturn(Material.WATER_BUCKET);
+        when(inv.getItemInMainHand()).thenReturn(item);
+        when(mockPlayer.getInventory()).thenReturn(inv);
+        l.onTropicalFishScooping(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     */
+    @Test
+    public void testOnTropicalFishScoopingFishWaterBucketNotAllowed() {
+        when(island.isAllowed(any(), any())).thenReturn(false);
+        TropicalFish fish = mock(TropicalFish.class);
+        when(fish.getLocation()).thenReturn(location);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, fish );
+        PlayerInventory inv = mock(PlayerInventory.class);
+        ItemStack item = mock(ItemStack.class);
+        when(item.getType()).thenReturn(Material.WATER_BUCKET);
+        when(inv.getItemInMainHand()).thenReturn(item);
+        when(mockPlayer.getInventory()).thenReturn(inv);
+        l.onTropicalFishScooping(e);
+        assertTrue(e.isCancelled());
+
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+}

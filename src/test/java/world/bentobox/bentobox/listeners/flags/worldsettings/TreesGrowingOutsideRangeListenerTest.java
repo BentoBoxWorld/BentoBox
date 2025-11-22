@@ -1,0 +1,219 @@
+package world.bentobox.bentobox.listeners.flags.worldsettings;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.TreeType;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.event.world.StructureGrowEvent;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+
+import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.Flags;
+
+/**
+ * Tests {@link TreesGrowingOutsideRangeListener}.
+ * @author Poslovitch
+ * @since 1.3.0
+ */
+public class TreesGrowingOutsideRangeListenerTest extends CommonTestSetup {
+
+    /* Event */
+    private StructureGrowEvent event;
+
+    /* Block */
+    @Mock
+    private Block sapling;
+    private List<BlockState> blockStates;
+
+    /* Islands */
+    @Mock
+    private Island island;
+    @Mock
+    private Island anotherIsland;
+
+    @Mock
+    private BlockState firstBlock;
+    @Mock
+    private BlockState lastBlock;
+
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+        /* Blocks */
+        when(sapling.getType()).thenReturn(Material.OAK_SAPLING);
+        when(sapling.getLocation()).thenReturn(new Location(world, 2, 0, 2));
+
+        blockStates = new ArrayList<>();
+        populateBlockStatesList();
+
+        /* Event */
+        event = new StructureGrowEvent(sapling.getLocation(), TreeType.TREE, false, null, blockStates);
+
+        // WorldSettings and World Flags
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
+
+        // By default everything is in world
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
+
+        /* Flags */
+        // By default, it is not allowed
+        Flags.TREES_GROWING_OUTSIDE_RANGE.setSetting(world, false);
+
+        /* Islands */
+        // By default, there should be an island.
+        when(im.getProtectedIslandAt(any())).thenReturn(Optional.of(island));
+    }
+
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    /**
+     * Populates {@link TreesGrowingOutsideRangeListenerTest#blockStates} with a tree schema.
+     */
+    private void populateBlockStatesList() {
+        Location a = new Location(world, 2, 0, 2);
+
+        when(firstBlock.getLocation()).thenReturn(a);
+        blockStates.add(firstBlock);
+        // Tree logs
+        for (int i = 0; i < 3; i++) {
+            BlockState logState = mock(BlockState.class);
+            when(logState.getType()).thenReturn(Material.OAK_LOG);
+            Location trunk = new Location(world, 2, i, 2);
+            when(logState.getLocation()).thenReturn(trunk);
+            blockStates.add(logState);
+        }
+
+        // Basic leaves pattern
+        for (int x = 0; x < 5 ; x++) {
+            for (int y = 0; y < 5; y++) {
+                for (int z = 0; z < 5; z++) {
+                    if (x != 2 && y >= 3 && z != 2) {
+                        BlockState leafState = mock(BlockState.class);
+                        when(leafState.getType()).thenReturn(Material.OAK_LEAVES);
+                        Location l = new Location(world, x, y, z);
+                        when(leafState.getLocation()).thenReturn(l);
+                        blockStates.add(leafState);
+                    }
+                }
+            }
+        }
+        when(lastBlock.getLocation()).thenReturn(new Location(world, 2, 0, 2));
+        blockStates.add(lastBlock);
+    }
+
+    /**
+     * Asserts that no interaction is done to the event when it does not happen in the world.
+     */
+    @Test
+    public void testNotInWorld() {
+        // Not in world
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
+
+        // Run
+        new TreesGrowingOutsideRangeListener().onTreeGrow(event);
+        assertEquals(blockStates, event.getBlocks());
+        assertFalse(event.isCancelled());
+    }
+
+    /**
+     * Asserts that no interaction is done to the event when {@link Flags#TREES_GROWING_OUTSIDE_RANGE} is allowed.
+     */
+    @Test
+    public void testFlagIsAllowed() {
+        // Allowed
+        Flags.TREES_GROWING_OUTSIDE_RANGE.setSetting(world, true);
+
+        // Run
+        new TreesGrowingOutsideRangeListener().onTreeGrow(event);
+        assertEquals(blockStates, event.getBlocks());
+        assertFalse(event.isCancelled());
+    }
+
+    /**
+     * Asserts that the event is cancelled and that there is no interaction with the blocks list when the sapling is outside an island.
+     */
+    @Test
+    public void testSaplingOutsideIsland() {
+        // No protected island at the sapling's location
+        when(im.getProtectedIslandAt(sapling.getLocation())).thenReturn(Optional.empty());
+
+        // Run
+        new TreesGrowingOutsideRangeListener().onTreeGrow(event);
+        assertEquals(blockStates, event.getBlocks());
+        assertTrue(event.isCancelled());
+    }
+
+    /**
+     * Asserts that the event is cancelled and that there is no interaction with the blocks list when the sapling is outside an island but inside another island.
+     */
+    @Test
+    public void testSaplingOutsideIslandButInAnotherIsland() {
+        // Sapling is on the island, but some leaves are in another island. For simplicity
+        for (BlockState b: blockStates) {
+            if (b.getLocation().getBlockY() == 4) {
+                when(im.getProtectedIslandAt(b.getLocation())).thenReturn(Optional.of(anotherIsland));
+            }
+        }
+        // Run
+        new TreesGrowingOutsideRangeListener().onTreeGrow(event);
+        // Some blocks should have become air only 21 are left
+        assertEquals(21, event.getBlocks().size());
+    }
+
+    /**
+     * Asserts that no interaction is done to the event when everything's inside an island.
+     */
+    @Test
+    public void testTreeFullyInsideIsland() {
+        // Run
+        new TreesGrowingOutsideRangeListener().onTreeGrow(event);
+        assertEquals(blockStates, event.getBlocks());
+        assertFalse(event.isCancelled());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testTreePartiallyOutsideIsland() {
+        // Only the first few blocks are inside the island
+        when(im.getProtectedIslandAt(any())).thenReturn(Optional.of(island),
+                Optional.of(island),
+                Optional.of(island),
+                Optional.empty());
+        // Run
+        new TreesGrowingOutsideRangeListener().onTreeGrow(event);
+        assertFalse(event.isCancelled());
+        // Some blocks should have become air only 21 are left
+        assertEquals(2, event.getBlocks().size());
+    }
+}

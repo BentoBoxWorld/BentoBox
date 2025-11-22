@@ -558,19 +558,6 @@ public class Util {
     }
 
     /**
-     * Check if the server has access to the Paper API
-     * @return True for Paper environments
-     */
-    public static boolean isPaper() {
-        try {
-            Class.forName("com.destroystokyo.paper.PaperConfig");
-            return true; // Paper-specific class exists
-        } catch (ClassNotFoundException e) {
-            return false; // Not a Paper server
-        }
-    }
-
-    /**
      * This method translates color codes in given string and strips whitespace after them.
      * This code parses both: hex and old color codes.
      * @param textToColor Text which color codes must be parsed.

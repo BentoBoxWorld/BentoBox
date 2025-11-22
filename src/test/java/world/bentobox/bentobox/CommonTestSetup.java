@@ -9,7 +9,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,6 +38,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockbukkit.mockbukkit.MockBukkit;
+import org.mockbukkit.mockbukkit.ServerMock;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -108,16 +111,22 @@ public abstract class CommonTestSetup {
     @Mock
     protected BlueprintsManager bm;
     
-    protected Server server;
+    protected ServerMock server;
 
     protected MockedStatic<Bukkit> mockedBukkit;
     protected MockedStatic<Util> mockedUtil;
     
     protected AutoCloseable closeable;
+    
+    @Mock
+    protected BukkitScheduler sch;
+    @Mock
+    protected LocalesManager lm;
 
 
     @BeforeEach
     public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
         // Processes the @Mock annotations and initializes the field
         closeable = MockitoAnnotations.openMocks(this);
         server = MockBukkit.mock();
@@ -169,7 +178,7 @@ public abstract class CommonTestSetup {
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-        @Nullable
+        // World Settings
         WorldSettings worldSet = new TestWorldSettings();
         when(iwm.getWorldSettings(any())).thenReturn(worldSet);
 
@@ -189,7 +198,6 @@ public abstract class CommonTestSetup {
         when(mockPlayer.getMetadata(anyString())).thenReturn(Collections.singletonList(mdv));
 
         // Locales & Placeholders
-        LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
@@ -212,7 +220,6 @@ public abstract class CommonTestSetup {
         //mockedUtil.when(() -> translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         
         // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
         mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
 
         // Hooks
@@ -256,6 +263,7 @@ public abstract class CommonTestSetup {
     public void tearDown() throws Exception {
         // IMPORTANT: Explicitly close the mock to prevent leakage
         mockedBukkit.closeOnDemand();
+        mockedUtil.closeOnDemand();
         closeable.close();
         MockBukkit.unmock();
         User.clearUsers();

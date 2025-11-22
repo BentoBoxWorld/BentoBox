@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -46,7 +47,6 @@ public class IslandRespawnListener extends FlagListener {
                 && !getIslands().inTeam(world, e.getEntity().getUniqueId())) {
             return; // doesn't have an island in this world
         }
-
         respawn.put(e.getEntity().getUniqueId(), world.getUID());
     }
 
@@ -62,12 +62,11 @@ public class IslandRespawnListener extends FlagListener {
             return; // no respawn world set
         }
 
-        final World world = e.getPlayer().getServer().getWorld(worldUUID);
+        final World world = Bukkit.getWorld(worldUUID);
         if (world == null) {
             return; // world no longer available
         }
         World w = Util.getWorld(world);
-
         String ownerName = e.getPlayer().getName();
         if (w != null) {
             final Location respawnLocation = getIslands().getHomeLocation(world, e.getPlayer().getUniqueId());
