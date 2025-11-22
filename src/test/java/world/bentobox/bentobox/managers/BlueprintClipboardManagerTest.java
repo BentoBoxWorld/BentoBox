@@ -23,7 +23,6 @@ import java.util.zip.ZipOutputStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.AfterEach;

@@ -34,14 +34,12 @@ import org.mockito.Mockito;
 import com.github.puregero.multilib.MultiLib;
 
 import world.bentobox.bentobox.CommonTestSetup;
-import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.Addon.State;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 public class AddonsManagerTest extends CommonTestSetup {

@@ -9,9 +9,7 @@ import java.util.Collections;
 import org.bukkit.Material;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 

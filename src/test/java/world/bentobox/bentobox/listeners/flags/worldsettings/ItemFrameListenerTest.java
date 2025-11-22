@@ -31,7 +31,6 @@ import org.mockito.Mockito;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;

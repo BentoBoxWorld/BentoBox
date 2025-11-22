@@ -9,10 +9,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -24,8 +20,8 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.objects.Ranks;
