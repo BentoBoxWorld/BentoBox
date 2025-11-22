@@ -33,15 +33,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.MythicMobRecord;
 
 /**
  * @author tastybento
  *
  */
-public class BlueprintEntityTest {
+public class BlueprintEntityTest extends CommonTestSetup {
 
     @Mock
     private Villager villager;
@@ -66,18 +66,26 @@ public class BlueprintEntityTest {
     /**
      * @throws java.lang.Exception
      */
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
+        super.setUp();
         when(villager.getProfession())
                 .thenReturn(Registry.VILLAGER_PROFESSION.get(NamespacedKey.minecraft("librarian")));
         when(villager.getVillagerExperience()).thenReturn(100);
         when(villager.getVillagerLevel()).thenReturn(2);
         when(villager.getVillagerType()).thenReturn(Villager.Type.PLAINS);
+        when(villager.getLocation()).thenReturn(location);
         when(sheep.getColor()).thenReturn(DyeColor.BLUE);
+        when(sheep.getLocation()).thenReturn(location);
         when(wolf.isTamed()).thenReturn(true);
+        when(wolf.getLocation()).thenReturn(location);
         when(chestedHorse.isCarryingChest()).thenReturn(true);
+        when(chestedHorse.getLocation()).thenReturn(location);
         when(horse.getDomestication()).thenReturn(50);
         when(horse.getStyle()).thenReturn(Horse.Style.WHITE_DOTS);
+        when(horse.getLocation()).thenReturn(location);
+        when(cow.getLocation()).thenReturn(location);
 
         blueprint = new BlueprintEntity();
         when(display.getType()).thenReturn(EntityType.PLAYER);
@@ -87,14 +95,16 @@ public class BlueprintEntityTest {
         when(display.isSilent()).thenReturn(false);
         when(display.isInvulnerable()).thenReturn(false);
         when(display.getFireTicks()).thenReturn(0);
+        when(display.getLocation()).thenReturn(location);
     }
 
     /**
      * @throws java.lang.Exception
      */
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
-        Mockito.framework().clearInlineMocks();
+        super.tearDown();
     }
 
 
@@ -145,6 +155,7 @@ public class BlueprintEntityTest {
 
         blueprint.setType(EntityType.HORSE);
         blueprint.setChest(true);
+        
 
         blueprint.configureEntity(chestedHorse);
 
@@ -279,12 +290,11 @@ public class BlueprintEntityTest {
 
     @Test
     public void testSetDisplay() {
-        Location mockLocation = mock(Location.class);
-        when(mockLocation.getWorld()).thenReturn(mockWorld);
-        when(mockLocation.clone()).thenReturn(mockLocation);
+        when(location.getWorld()).thenReturn(mockWorld);
+        when(location.clone()).thenReturn(location);
         when(mockWorld.spawn(any(Location.class), eq(Display.class))).thenReturn(display);
-
-        blueprint.setDisplay(mockLocation);
+        blueprint.storeDisplay(display);
+        blueprint.setDisplay(location);
 
         assertNotNull(blueprint.displayRec);
     }
