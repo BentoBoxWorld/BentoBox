@@ -215,6 +215,7 @@ public abstract class CommonTestSetup {
         //Util
         mockedUtil = Mockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
         mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
+        Util.setPlugin(plugin);
 
         // Util
         mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
