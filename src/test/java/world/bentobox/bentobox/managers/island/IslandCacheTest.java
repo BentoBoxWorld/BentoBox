@@ -124,16 +124,7 @@ public class IslandCacheTest extends CommonTestSetup {
     public void tearDown() throws Exception {
         super.tearDown();
         Mockito.framework().clearInlineMocks();
-        deleteAll(new File("database"));
-        deleteAll(new File("database_backup"));
         this.mockedDatabaseSetup.closeOnDemand();
-    }
-
-    private void deleteAll(File file) throws IOException {
-        if (file.exists()) {
-            Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-        }
-
     }
 
     /**

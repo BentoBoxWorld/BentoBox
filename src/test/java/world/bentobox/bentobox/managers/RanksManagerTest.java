@@ -70,17 +70,8 @@ public class RanksManagerTest extends CommonTestSetup {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        deleteAll(new File("database"));
-        deleteAll(new File("database_backup"));
         mockedDatabaseSetup.closeOnDemand();
         handler.close();
-    }
-
-    private void deleteAll(File file) throws IOException {
-        if (file.exists()) {
-            Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-        }
-
     }
 
     /**

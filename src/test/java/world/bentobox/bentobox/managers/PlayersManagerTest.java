@@ -15,13 +15,9 @@ import static org.mockito.Mockito.when;
 
 import java.beans.IntrospectionException;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -91,13 +87,6 @@ public class PlayersManagerTest extends CommonTestSetup {
     private @Nullable
     static UUID notThere = UUID.randomUUID();
     private static List<Names> names = new ArrayList<>();
-
-    private static void deleteAll(File file) throws IOException {
-        if (file.exists()) {
-            Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-        }
-
-    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -257,8 +246,6 @@ public class PlayersManagerTest extends CommonTestSetup {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        deleteAll(new File("database"));
-        deleteAll(new File("database_backup"));
         mockedDatabase.closeOnDemand();
     }
 

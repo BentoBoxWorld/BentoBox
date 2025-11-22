@@ -9,10 +9,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -138,13 +134,6 @@ public abstract class RanksManagerTestSetup extends CommonTestSetup {
         deleteAll(new File("database_backup"));
         ranksHandler.close();
         invitesHandler.close();
-    }
-
-    private void deleteAll(File file) throws IOException {
-        if (file.exists()) {
-            Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-        }
-
     }
 
 }
