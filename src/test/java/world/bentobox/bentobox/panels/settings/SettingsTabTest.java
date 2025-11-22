@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.panels.settings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -86,12 +87,11 @@ public class SettingsTabTest extends CommonTestSetup {
         assertTrue(items.isEmpty());
     }
 
-    //@Ignore("Issue with Materials and item checking")
     @Test
     public void testGetTabIcons() {
         testSettingsTabWorldUserTypeMode();
         Map<Integer, PanelItem> icons = tab.getTabIcons();
-        assertTrue(icons.isEmpty());
+        assertFalse(icons.isEmpty());
     }
 
     @Test
