@@ -26,7 +26,7 @@ public class Database<T> {
 
     private final AbstractDatabaseHandler<T> handler;
     private final Logger logger;
-    private static DatabaseSetup databaseSetup = DatabaseSetup.getDatabase();
+    private DatabaseSetup databaseSetup = DatabaseSetup.getDatabase();
     private static final Set<Class<? extends DataObject>> dataObjects = new HashSet<>();
 
     /**

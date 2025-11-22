@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -13,32 +13,18 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.eclipse.jdt.annotation.Nullable;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
@@ -47,40 +33,23 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class , ServerBuildInfo.class})
-public class IslandTeamLeaveCommandTest {
+public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
-    private UUID uuid;
     @Mock
     private User user;
     @Mock
     private Settings s;
     @Mock
-    private IslandsManager im;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private Player player;
-    @Mock
     private CompositeCommand subCommand;
     @Mock
     private PlayersManager pm;
-    @Mock
-    private World world;
-    @Mock
-    private @Nullable Island island;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -95,7 +64,7 @@ public class IslandTeamLeaveCommandTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(player);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         User.setPlugin(plugin);
 
@@ -109,24 +78,13 @@ public class IslandTeamLeaveCommandTest {
         // Player has island to begin with
         when(island.getOwner()).thenReturn(UUID.randomUUID());
         when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
-        // when(im.isOwner(any(), any())).thenReturn(true);
-        when(plugin.getIslands()).thenReturn(im);
-
+        
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-
         // Island World Manager
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-        when(plugin.getIWM()).thenReturn(iwm);
-
-        // Plugin Manager
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Island
         when(island.getUniqueId()).thenReturn("uniqueid");
@@ -141,6 +99,12 @@ public class IslandTeamLeaveCommandTest {
         // Placeholder manager
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

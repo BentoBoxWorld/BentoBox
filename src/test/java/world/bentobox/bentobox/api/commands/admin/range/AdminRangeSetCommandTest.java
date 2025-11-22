@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.admin.range;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -16,24 +16,17 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -46,9 +39,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class AdminRangeSetCommandTest extends AbstractCommonSetup {
+public class AdminRangeSetCommandTest extends CommonTestSetup {
 
     @Mock
     private CommandsManager cm;
@@ -60,9 +51,8 @@ public class AdminRangeSetCommandTest extends AbstractCommonSetup {
     private User user;
     private PlayersManager pm;
 
-    /**
-     */
-    @Before
+   @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -85,7 +75,6 @@ public class AdminRangeSetCommandTest extends AbstractCommonSetup {
         // Island World Manager
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(iwm.getIslandProtectionRange(any())).thenReturn(200);
-        when(plugin.getIWM()).thenReturn(iwm);
 
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
@@ -95,18 +84,12 @@ public class AdminRangeSetCommandTest extends AbstractCommonSetup {
         when(location.toVector()).thenReturn(new Vector(2, 3, 4));
         when(island.getCenter()).thenReturn(location);
         when(im.getOwnedIslands(any(), any(UUID.class))).thenReturn(Set.of(island));
-        when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         pm = mock(PlayersManager.class);
         when(im.inTeam(any(), Mockito.eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
-
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -119,7 +102,8 @@ public class AdminRangeSetCommandTest extends AbstractCommonSetup {
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
     }
 
-    @After
+   @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

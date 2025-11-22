@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -17,28 +17,21 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -54,15 +47,12 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class, IslandsManager.class, Util.class , ServerBuildInfo.class})
-public class IslandResetCommandTest extends AbstractCommonSetup {
+public class IslandResetCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -74,19 +64,16 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
     private PlayersManager pm;
     @Mock
     private BlueprintsManager bpm;
-    @Mock
-    private PluginManager pim;
 
     private IslandResetCommand irc;
 
     private UUID uuid;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+        Mockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -122,8 +109,6 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        // when(im.isOwner(any(), eq(uuid))).thenReturn(false);
-        when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
@@ -134,13 +119,10 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
         BukkitTask task = mock(BukkitTask.class);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 
-        when(Bukkit.getScheduler()).thenReturn(sch);
-        // Event
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
 
         // IWM friendly name
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-        when(plugin.getIWM()).thenReturn(iwm);
 
         // Bundles manager
         when(plugin.getBlueprintsManager()).thenReturn(bpm);
@@ -161,7 +143,6 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
             members.add(temp);
         }
         when(island.getMemberSet()).thenReturn(members.build());
-        Location location = mock(Location.class);
         when(location.clone()).thenReturn(location);
         when(island.getCenter()).thenReturn(location);
         when(island.getHistory()).thenReturn(Collections.emptyList());
@@ -188,7 +169,8 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
         irc = new IslandResetCommand(ic);
     }
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -243,8 +225,8 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
-        PowerMockito.mockStatic(NewIsland.class);
-        when(NewIsland.builder()).thenReturn(builder);
+        MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
+        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
 
         // Reset command, no confirmation required
         assertTrue(irc.execute(user, irc.getLabel(), Collections.emptyList()));
@@ -283,8 +265,8 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
-        PowerMockito.mockStatic(NewIsland.class);
-        when(NewIsland.builder()).thenReturn(builder);
+        MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
+        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
         // Test with unlimited resets
         when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(-1);
 
@@ -316,8 +298,8 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
-        PowerMockito.mockStatic(NewIsland.class);
-        when(NewIsland.builder()).thenReturn(builder);
+        MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
+        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
         // Test with unlimited resets
         when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(-1);
 
@@ -352,8 +334,8 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
-        PowerMockito.mockStatic(NewIsland.class);
-        when(NewIsland.builder()).thenReturn(builder);
+        MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
+        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
 
         // Require confirmation
         when(s.isResetConfirmation()).thenReturn(true);
@@ -424,8 +406,8 @@ public class IslandResetCommandTest extends AbstractCommonSetup {
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
-        PowerMockito.mockStatic(NewIsland.class);
-        when(NewIsland.builder()).thenReturn(builder);
+        MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
+        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
 
         // Bundle exists
         when(bpm.validate(any(), any())).thenReturn("custom");

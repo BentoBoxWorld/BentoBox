@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -16,38 +16,29 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, IslandsManager.class , ServerBuildInfo.class})
-public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
+public class IslandInfoCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -63,7 +54,8 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
     private IslandInfoCommand iic;
 
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -78,7 +70,6 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
         when(user.getWorld()).thenReturn(world);
         when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.isPlayer()).thenReturn(true);
-        //user = User.getInstance(player);
         // Set the User class plugin as this one
         User.setPlugin(plugin);
 
@@ -109,6 +100,12 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
 
         // Command
         iic = new IslandInfoCommand(ic);
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

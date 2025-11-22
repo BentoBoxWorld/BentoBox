@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -13,71 +13,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab.EntityLimitTabType;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class, ServerBuildInfo.class})
-public class GeoMobLimitTabTest {
+public class GeoMobLimitTabTest extends CommonTestSetup {
 
     @Mock
     private User user;
     @Mock
-    private World world;
-    @Mock
     private TabbedPanel panel;
-    @Mock
-    private BentoBox plugin;
-    @Mock
-    private IslandWorldManager iwm;
     @Mock
     private @NonNull Inventory inv;
     private List<String> list;
     @Mock
     private GameModeAddon gma;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        // IWM
-        when(plugin.getIWM()).thenReturn(iwm);
+        super.setUp();
+         // IWM
         when(iwm.getAddon(any())).thenReturn(Optional.of(gma));
         // Make  list of the first 4 creatures on the list - it's alphabetical and follows the list of Living Entities
         list = new ArrayList<>();
@@ -92,13 +67,13 @@ public class GeoMobLimitTabTest {
         // User
         when(user.getTranslation(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         // Util
-        PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
-        when(Util.getWorld(any())).thenReturn(world);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
     }
 
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -175,9 +150,9 @@ public class GeoMobLimitTabTest {
         items.forEach(i -> {
             if (i.getName().equals("Armadillo") || i.getName().equals("Axolotl") || i.getName().equals("Cow")
                     || i.getName().equals("Bat")) {
-                assertEquals("Name : " + i.getName(), Material.RED_SHULKER_BOX, i.getItem().getType());
+                assertEquals(Material.RED_SHULKER_BOX, i.getItem().getType(), "Name : " + i.getName());
             } else {
-                assertEquals("Name : " + i.getName(), Material.GREEN_SHULKER_BOX, i.getItem().getType());
+                assertEquals(Material.GREEN_SHULKER_BOX, i.getItem().getType(), "Name : " + i.getName());
             }
         });
     }
@@ -193,9 +168,9 @@ public class GeoMobLimitTabTest {
         items.forEach(i -> {
             if (i.getName().equals("Armadillo") || i.getName().equals("Axolotl") || i.getName().equals("Cow")
                     || i.getName().equals("Bat")) {
-                assertEquals("Name : " + i.getName(), Material.GREEN_SHULKER_BOX, i.getItem().getType());
+                assertEquals(Material.GREEN_SHULKER_BOX, i.getItem().getType(), "Name : " + i.getName());
             } else {
-                assertEquals("Name : " + i.getName(), Material.RED_SHULKER_BOX, i.getItem().getType());
+                assertEquals(Material.RED_SHULKER_BOX, i.getItem().getType(), "Name : " + i.getName());
             }
         });
     }

@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -18,9 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -28,21 +26,13 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
@@ -52,22 +42,21 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, ServerBuildInfo.class })
-public class VisitorKeepInventoryListenerTest extends AbstractCommonSetup {
+public class VisitorKeepInventoryListenerTest extends CommonTestSetup {
 
     // Class under test
     private VisitorKeepInventoryListener l;
     private PlayerDeathEvent e;
 
-    @Before
+    @SuppressWarnings("deprecation")
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         // User
         User.setPlugin(plugin);
-        UUID uuid = UUID.randomUUID();
+        
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         when(mockPlayer.getName()).thenReturn("tastybento");
         when(mockPlayer.getLocation()).thenReturn(location);
@@ -95,16 +84,13 @@ public class VisitorKeepInventoryListenerTest extends AbstractCommonSetup {
         // Default not set
         Flags.VISITOR_KEEP_INVENTORY.setSetting(world, false);
 
-        /* Islands */
-        when(plugin.getIslands()).thenReturn(im);
         // Visitor
         when(island.getMemberSet(anyInt())).thenReturn(ImmutableSet.of());
         // By default, there should be an island.
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.of(island));
 
         // Util
-        PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
-        when(Util.getWorld(any())).thenReturn(world);
+        mockedUtil.when(()-> Util.getWorld(any())).thenReturn(world);
 
         // Default death event
         List<ItemStack> drops = new ArrayList<>();
@@ -114,7 +100,8 @@ public class VisitorKeepInventoryListenerTest extends AbstractCommonSetup {
         l = new VisitorKeepInventoryListener();
     }
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

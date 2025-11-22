@@ -12,19 +12,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -32,18 +27,15 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class AdminRangeCommandTest extends AbstractCommonSetup {
+public class AdminRangeCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
     @Mock
     private User user;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         Util.setPlugin(plugin);
@@ -94,7 +86,8 @@ public class AdminRangeCommandTest extends AbstractCommonSetup {
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
     }
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

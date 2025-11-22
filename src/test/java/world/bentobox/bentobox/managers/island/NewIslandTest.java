@@ -1,11 +1,10 @@
 package world.bentobox.bentobox.managers.island;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,25 +17,20 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandCreateEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -48,7 +42,6 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.IslandDeletionManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
@@ -57,15 +50,9 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Util.class, IslandEvent.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
-public class NewIslandTest {
+public class NewIslandTest extends CommonTestSetup {
 
     private static final String NAME = "name";
-    @Mock
-    private BentoBox plugin;
-    @Mock
-    private World world;
     @Mock
     private GameModeAddon addon;
     @Mock
@@ -73,21 +60,13 @@ public class NewIslandTest {
     @Mock
     private Island oldIsland;
     @Mock
-    private IslandsManager im;
-    @Mock
-    private Island island;
-    @Mock
     private PlayersManager pm;
-    @Mock
-    private IslandWorldManager iwm;
     @Mock
     private IslandCreateEvent ice;
     @Mock
     private IslandResetEvent ire;
     @Mock
     private IslandDeletionManager idm;
-    @Mock
-    private Location location;
     @Mock
     private Block block;
     @Mock
@@ -102,18 +81,15 @@ public class NewIslandTest {
     private BlueprintsManager bpm;
     @Mock
     private @NonNull Location location2;
+    private MockedStatic<IslandsManager> mockedIslandsManager;
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+        super.setUp();
         // Islands manager
-        when(plugin.getIslands()).thenReturn(im);
+        mockedIslandsManager = Mockito.mockStatic(IslandsManager.class);
         when(im.createIsland(any(), any())).thenReturn(island);
         when(im.getLast(any())).thenReturn(location);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
@@ -122,7 +98,6 @@ public class NewIslandTest {
         // Player's manager
         when(plugin.getPlayers()).thenReturn(pm);
         // IWM
-        when(plugin.getIWM()).thenReturn(iwm);
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
         when(iwm.getAddon(any())).thenReturn(optionalAddon);
         when(iwm.isDeathsResetOnNewIsland(any())).thenReturn(true);
@@ -142,8 +117,8 @@ public class NewIslandTest {
         when(user.getLocation()).thenReturn(location);
 
         // Events
-        PowerMockito.mockStatic(IslandEvent.class);
-        when(IslandEvent.builder()).thenReturn(builder);
+        MockedStatic<IslandEvent> mockedIslandEvent = Mockito.mockStatic(IslandEvent.class);
+        mockedIslandEvent.when(() -> IslandEvent.builder()).thenReturn(builder);
         when(builder.admin(anyBoolean())).thenReturn(builder);
         when(builder.blueprintBundle(any())).thenReturn(builder);
         when(builder.deletedIslandInfo(any())).thenReturn(builder);
@@ -169,24 +144,23 @@ public class NewIslandTest {
         when(oldIsland.getWorld()).thenReturn(world);
 
         // Util - return the same location
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getClosestIsland(any()))
+        mockedUtil.when(() -> Util.getClosestIsland(any()))
                 .thenAnswer((Answer<Location>) invocation -> invocation.getArgument(0, Location.class));
 
         // Bukkit Scheduler
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(scheduler);
-        when(Bukkit.getViewDistance()).thenReturn(10);
+        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(scheduler);
+        mockedBukkit.when(() -> Bukkit.getViewDistance()).thenReturn(10);
 
         // Addon
         when(addon.getOverWorld()).thenReturn(world);
     }
 
     /**
+     * @throws Exception 
      */
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -211,8 +185,7 @@ public class NewIslandTest {
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland)
                 .build();
         // Verifications
-        PowerMockito.verifyStatic(IslandsManager.class);
-        IslandsManager.updateIsland(eq(island));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -231,8 +204,7 @@ public class NewIslandTest {
         when(builder.build()).thenReturn(ire);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.RESET).oldIsland(oldIsland).build();
         // Verifications
-        PowerMockito.verifyStatic(IslandsManager.class);
-        IslandsManager.updateIsland(eq(island));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -251,8 +223,7 @@ public class NewIslandTest {
     public void testBuilderNoOldIsland() throws Exception {
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).build();
         // Verifications
-        PowerMockito.verifyStatic(IslandsManager.class);
-        IslandsManager.updateIsland(eq(island));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -271,8 +242,7 @@ public class NewIslandTest {
         when(location.distance(any())).thenReturn(30D);
         NewIsland.builder().addon(addon).name(NAME).player(user).reason(Reason.CREATE).build();
         // Verifications
-        PowerMockito.verifyStatic(IslandsManager.class);
-        IslandsManager.updateIsland(eq(island));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
         verify(island).setFlagsDefaults();
         verify(bpm).paste(eq(addon), eq(island), eq(NAME), any(Runnable.class), eq(false));
         verify(builder, times(2)).build();
@@ -289,10 +259,8 @@ public class NewIslandTest {
     @Test
     public void testBuilderNoOldIslandPasteWithNMS() throws Exception {
         NewIsland.builder().addon(addon).name(NAME).player(user).reason(Reason.CREATE).build();
-        PowerMockito.mockStatic(Bukkit.class);
         // Verifications
-        PowerMockito.verifyStatic(IslandsManager.class);
-        IslandsManager.updateIsland(eq(island));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
         verify(island).setFlagsDefaults();
         verify(bpm).paste(eq(addon), eq(island), eq(NAME), any(Runnable.class), eq(true));
         verify(builder, times(2)).build();
@@ -310,8 +278,7 @@ public class NewIslandTest {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
         // Verifications
-        PowerMockito.verifyStatic(IslandsManager.class);
-        IslandsManager.updateIsland(eq(island));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -332,8 +299,7 @@ public class NewIslandTest {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
         // Verifications
-        PowerMockito.verifyStatic(IslandsManager.class);
-        IslandsManager.updateIsland(eq(island));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -349,14 +315,13 @@ public class NewIslandTest {
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
      */
     @Test
-    @Ignore("Not done")
+    @Disabled("Not done")
     public void testBuilderHasIslandFailnoReserve() throws Exception {
         when(island.isReserved()).thenReturn(false);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
         // Verifications
-        PowerMockito.verifyStatic(IslandsManager.class);
-        IslandsManager.updateIsland(eq(island));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();

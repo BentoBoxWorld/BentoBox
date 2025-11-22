@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -17,34 +17,26 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
+public class IslandTeamCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -59,7 +51,8 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private GameModeAddon addon;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -101,6 +94,12 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
 
         // Command under test
         tc = new IslandTeamCommand(ic);
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -155,7 +154,7 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
     @Test
     public void testAddInvite() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         tc.addInvite(Type.TEAM, uuid, invitee, island);
-        verify(h, atLeast(1)).saveObject(any());
+        verify(invitesHandler, atLeast(1)).saveObject(any());
     }
 
     /**

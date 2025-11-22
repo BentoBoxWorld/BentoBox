@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.api.user;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -30,28 +30,22 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
@@ -62,15 +56,12 @@ import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, Util.class , ServerBuildInfo.class})
-public class UserTest extends AbstractCommonSetup {
+public class UserTest extends CommonTestSetup {
 
     private static final String TEST_TRANSLATION = "mock &a translation &b [test]";
     private static final String TEST_TRANSLATION_WITH_COLOR = "mock §atranslation §b[test]";
@@ -79,40 +70,28 @@ public class UserTest extends AbstractCommonSetup {
 
     private User user;
 
-    private UUID uuid;
     @Mock
     private CommandSender sender;
-    @Mock
-    private Server server;
     @Mock
     private PlayersManager pm;
     private @Nullable Players players;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         uuid = UUID.randomUUID();
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
 
-        ItemFactory itemFactory = mock(ItemFactory.class);
-
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(mockPlayer);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-        when(Bukkit.getServer()).thenReturn(server);
+        mockedBukkit.when(() -> Bukkit.getPlayer(any(UUID.class))).thenReturn(mockPlayer);
 
         // Player
         when(mockPlayer.getServer()).thenReturn(server);
-        when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
         when(sender.spigot()).thenReturn(spigot);
-        @NonNull
-        World world = mock(World.class);
         when(world.getName()).thenReturn("BSkyBlock");
         when(mockPlayer.getWorld()).thenReturn(world);
 
-        // IWM
-        when(plugin.getIWM()).thenReturn(iwm);
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
         when(iwm.getFriendlyName(world)).thenReturn("BSkyBlock-Fiendly");
@@ -135,11 +114,11 @@ public class UserTest extends AbstractCommonSetup {
         when(pm.getPlayer(any())).thenReturn(players);
     }
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }
-
 
     @Test
     public void testGetInstanceCommandSender() {
@@ -345,11 +324,12 @@ public class UserTest extends AbstractCommonSetup {
         checkSpigotMessage("a.reference", 0);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSendMessageOnlyColors() {
         // Nothing - just color codes
         StringBuilder allColors = new StringBuilder();
-        for (ChatColor cc : ChatColor.values()) {
+        for (@SuppressWarnings("deprecation") ChatColor cc : ChatColor.values()) {
             allColors.append(cc);
         }
         when(lm.get(any(), any())).thenReturn(allColors.toString());
@@ -357,6 +337,7 @@ public class UserTest extends AbstractCommonSetup {
         verify(mockPlayer, never()).sendMessage(anyString());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSendMessageColorsAndSpaces() {
         when(lm.get(any(), any())).thenReturn(ChatColor.COLOR_CHAR + "6 Hello there");
@@ -366,6 +347,7 @@ public class UserTest extends AbstractCommonSetup {
 
     @Test
     public void testSendRawMessage() {
+        @SuppressWarnings("deprecation")
         String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
         user.sendRawMessage(raw);
         checkSpigotMessage(raw);
@@ -373,6 +355,7 @@ public class UserTest extends AbstractCommonSetup {
 
     @Test
     public void testSendRawMessageNullUser() {
+        @SuppressWarnings("deprecation")
         String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
         user = User.getInstance((CommandSender)null);
         user.sendRawMessage(raw);
@@ -384,6 +367,7 @@ public class UserTest extends AbstractCommonSetup {
         Notifier notifier = mock(Notifier.class);
 
         when(plugin.getNotifier()).thenReturn(notifier);
+        @SuppressWarnings("deprecation")
         String translation = ChatColor.RED + "" + ChatColor.BOLD + "test translation";
         when(lm.get(any(), any())).thenReturn(translation);
 
@@ -848,7 +832,6 @@ public class UserTest extends AbstractCommonSetup {
         Location loc = mock(Location.class);
         when(mockPlayer.getLocation()).thenReturn(loc);
         when(loc.toVector()).thenReturn(new Vector(1,1,1));
-        when(server.getViewDistance()).thenReturn(16);
 
         User p = User.getInstance(mockPlayer);
         p.spawnParticle(Particle.SHRIEK, 4, 0.0d, 0.0d, 0.0d);
@@ -865,7 +848,6 @@ public class UserTest extends AbstractCommonSetup {
         Location loc = mock(Location.class);
         when(mockPlayer.getLocation()).thenReturn(loc);
         when(loc.toVector()).thenReturn(new Vector(1,1,1));
-        when(server.getViewDistance()).thenReturn(16);
 
         User p = User.getInstance(mockPlayer);
         DustOptions dust = mock(DustOptions.class);
@@ -883,7 +865,6 @@ public class UserTest extends AbstractCommonSetup {
         Location loc = mock(Location.class);
         when(mockPlayer.getLocation()).thenReturn(loc);
         when(loc.toVector()).thenReturn(new Vector(1,1,1));
-        when(server.getViewDistance()).thenReturn(16);
 
         User p = User.getInstance(mockPlayer);
         DustOptions dust = mock(DustOptions.class);
@@ -901,8 +882,7 @@ public class UserTest extends AbstractCommonSetup {
         Location loc = mock(Location.class);
         when(mockPlayer.getLocation()).thenReturn(loc);
         when(loc.toVector()).thenReturn(new Vector(1,1,1));
-        when(server.getViewDistance()).thenReturn(16);
-
+   
         User p = User.getInstance(mockPlayer);
         DustOptions dust = mock(DustOptions.class);
         p.spawnParticle(Particle.DUST, dust, 0, 0, 0);

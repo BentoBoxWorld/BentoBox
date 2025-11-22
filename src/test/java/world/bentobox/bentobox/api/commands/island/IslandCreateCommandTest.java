@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -20,26 +20,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -50,8 +41,6 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.managers.island.NewIsland.Builder;
@@ -61,21 +50,13 @@ import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class, IslandCreationPanel.class , ServerBuildInfo.class})
-public class IslandCreateCommandTest {
+public class IslandCreateCommandTest extends CommonTestSetup {
 
     @Mock
     private User user;
     private IslandCreateCommand cc;
     @Mock
-    private IslandsManager im;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
     private Builder builder;
-    @Mock
-    private BentoBox plugin;
     @Mock
     private Settings settings;
     @Mock
@@ -83,20 +64,12 @@ public class IslandCreateCommandTest {
     @Mock
     private BlueprintsManager bpm;
     @Mock
-    private World world;
-    @Mock
     private @NonNull WorldSettings ws;
-    @Mock
-    private Island island;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
+        super.setUp();
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
@@ -105,12 +78,11 @@ public class IslandCreateCommandTest {
         when(plugin.getSettings()).thenReturn(settings);
 
         // Player
-        Player player = mock(Player.class);
         when(user.isOp()).thenReturn(false);
         when(user.isPlayer()).thenReturn(true);
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(player);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.hasPermission(anyString())).thenReturn(true);
         when(user.getTranslation(any()))
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
@@ -119,7 +91,7 @@ public class IslandCreateCommandTest {
                 .thenAnswer((Answer<Integer>) inv -> inv.getArgument(1, Integer.class));
         User.setPlugin(plugin);
         // Set up user already
-        User.getInstance(player);
+        User.getInstance(mockPlayer);
 
         // Addon
         GameModeAddon addon = mock(GameModeAddon.class);
@@ -147,20 +119,15 @@ public class IslandCreateCommandTest {
         PlayersManager pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-
         // IWM
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(ws.getConcurrentIslands()).thenReturn(1); // One island allowed
         when(iwm.getWorldSettings(world)).thenReturn(ws);
         when(iwm.getAddon(world)).thenReturn(Optional.of(addon));
-        when(plugin.getIWM()).thenReturn(iwm);
 
         // NewIsland
-        PowerMockito.mockStatic(NewIsland.class);
-        when(NewIsland.builder()).thenReturn(builder);
+        MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
+        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
         when(builder.player(any())).thenReturn(builder);
         when(builder.name(Mockito.anyString())).thenReturn(builder);
         when(builder.addon(addon)).thenReturn(builder);
@@ -175,18 +142,16 @@ public class IslandCreateCommandTest {
         when(plugin.getBlueprintsManager()).thenReturn(bpm);
 
         // IslandCreationPanel
-        PowerMockito.mockStatic(IslandCreationPanel.class);
+        Mockito.mockStatic(IslandCreationPanel.class);
 
         // Command
         cc = new IslandCreateCommand(ic);
     }
 
-    /**
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

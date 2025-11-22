@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -91,7 +92,7 @@ public class IslandCreationPanel extends AbstractPanel
      * @param user User who opens panel
      * @param reset true if this is a reset
      */
-    private IslandCreationPanel(@NonNull CompositeCommand command,
+    IslandCreationPanel(@NonNull CompositeCommand command,
             @NonNull User user, @NonNull String label, boolean reset)
     {
         super(command, user);
@@ -477,6 +478,7 @@ public class IslandCreationPanel extends AbstractPanel
             // Collect tooltips.
             List<String> tooltips = actions.stream().filter(action -> action.tooltip() != null)
                     .map(action -> this.user.getTranslation(this.command.getWorld(), action.tooltip()))
+                    .filter(Objects::nonNull)
                     .filter(text -> !text.isBlank())
                     .collect(Collectors.toCollection(() -> new ArrayList<>(actions.size())));
 

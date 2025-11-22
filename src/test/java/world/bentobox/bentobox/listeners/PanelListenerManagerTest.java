@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.listeners;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -31,39 +30,27 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MenuType;
 import org.jetbrains.annotations.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.panels.PanelListener;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * Test class for PanelListenerManager.java
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
-public class PanelListenerManagerTest {
+public class PanelListenerManagerTest extends CommonTestSetup {
 
     private static final String PANEL_NAME = "name";
-    @Mock
-    private Player player;
     private InventoryView view;
     @Mock
     private PanelListenerManager plm;
@@ -76,30 +63,21 @@ public class PanelListenerManagerTest {
     @Mock
     private ClickHandler ch;
 
-    private UUID uuid;
     private SlotType type;
     private ClickType click;
     private InventoryAction inv;
 
-    /**
-     */
-    @SuppressWarnings("deprecation")
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.getMinecraftVersion()).thenReturn("1.21.10");
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         // Settings
         Settings settings = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(settings);
         when(settings.isClosePanelOnClickOutside()).thenReturn(true);
 
         // Player
-        uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);
-        User.getInstance(player);
+        User.getInstance(mockPlayer);
 
         // Inventory view
         view = new MyView(ChatColor.RED + PANEL_NAME);
@@ -131,6 +109,12 @@ public class PanelListenerManagerTest {
 
         // Clear the static panels
         PanelListenerManager.getOpenPanels().clear();
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     class MyView implements InventoryView {
@@ -166,7 +150,7 @@ public class PanelListenerManagerTest {
 
         @Override
         public HumanEntity getPlayer() {
-            return player;
+            return mockPlayer;
         }
 
         @Override
@@ -263,13 +247,6 @@ public class PanelListenerManagerTest {
 
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-        PanelListenerManager.getOpenPanels().clear();
-    }
-
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
@@ -278,7 +255,7 @@ public class PanelListenerManagerTest {
         SlotType type = SlotType.OUTSIDE;
         InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
         plm.onInventoryClick(e);
-        verify(player, never()).closeInventory();
+        verify(mockPlayer, never()).closeInventory();
     }
 
     /**
@@ -291,7 +268,7 @@ public class PanelListenerManagerTest {
         SlotType type = SlotType.OUTSIDE;
         InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
         plm.onInventoryClick(e);
-        verify(player).closeInventory();
+        verify(mockPlayer).closeInventory();
     }
 
     /**
@@ -302,7 +279,7 @@ public class PanelListenerManagerTest {
         InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
         plm.onInventoryClick(e);
         // Nothing should happen
-        verify(player, never()).closeInventory();
+        verify(mockPlayer, never()).closeInventory();
     }
 
     /**
@@ -317,7 +294,7 @@ public class PanelListenerManagerTest {
         plm.onInventoryClick(e);
         // Panel should be removed
         assertTrue(PanelListenerManager.getOpenPanels().isEmpty());
-        verify(player).closeInventory();
+        verify(mockPlayer).closeInventory();
     }
 
     /**
@@ -406,7 +383,7 @@ public class PanelListenerManagerTest {
         assertFalse(PanelListenerManager.getOpenPanels().isEmpty());
 
         // Real log out
-        event = new PlayerQuitEvent(player, "");
+        event = new PlayerQuitEvent(mockPlayer, "");
         plm.onLogOut(event);
         assertTrue(PanelListenerManager.getOpenPanels().isEmpty());
     }

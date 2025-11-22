@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.settings;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -9,11 +9,8 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.LivingEntity;
@@ -21,41 +18,25 @@ import org.bukkit.entity.Slime;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.plugin.PluginManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
-import world.bentobox.bentobox.versions.ServerCompatibility;
 
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, Flags.class, Util.class, ServerBuildInfo.class })
-public class MobSpawnListenerTest {
+public class MobSpawnListenerTest extends CommonTestSetup {
 
-    private Location location;
-    @Mock
-    private BentoBox plugin;
     @Mock
     private Zombie zombie;
     @Mock
@@ -63,46 +44,22 @@ public class MobSpawnListenerTest {
     @Mock
     private Cow cow;
     @Mock
-    private IslandWorldManager iwm;
-    @Mock
     private LivingEntity livingEntity;
 
-    @Before
-    public void setUp() {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
-        IslandsManager im = mock(IslandsManager.class);
-        when(plugin.getIslands()).thenReturn(im);
-
-        Server server = mock(Server.class);
-        World world = mock(World.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
-
-        ServerCompatibility serverCompatibility = mock(ServerCompatibility.class);
-        Whitebox.setInternalState(ServerCompatibility.class, "instance", serverCompatibility);
-        when(serverCompatibility.getServerVersion()).thenReturn(ServerCompatibility.ServerVersion.V1_21_9);
-
-        PluginManager pim = mock(PluginManager.class);
-
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        when(server.getItemFactory()).thenReturn(itemFactory);
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(Bukkit.getPluginManager()).thenReturn(pim);
-
-        location = mock(Location.class);
+ 
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
-        PowerMockito.mockStatic(Flags.class);
+        
+        Mockito.mockStatic(Flags.class);
 
         FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
@@ -116,16 +73,13 @@ public class MobSpawnListenerTest {
         when(cow.getWorld()).thenReturn(world);
 
         // Worlds
-        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
-        when(plugin.getIWM()).thenReturn(iwm);
 
         // Util class
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
-        when(Util.isPassiveEntity(Mockito.any())).thenCallRealMethod();
-        when(Util.isHostileEntity(Mockito.any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        mockedUtil.when(() -> Util.isPassiveEntity(Mockito.any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.isHostileEntity(Mockito.any())).thenCallRealMethod();
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
@@ -143,10 +97,10 @@ public class MobSpawnListenerTest {
         when(livingEntity.getLocation()).thenReturn(location);
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Test
@@ -202,17 +156,17 @@ public class MobSpawnListenerTest {
                 case DEFAULT, DROWNED, JOCKEY, LIGHTNING, MOUNT, NATURAL, NETHER_PORTAL, OCELOT_BABY, PATROL, RAID, REINFORCEMENTS, SILVERFISH_BLOCK, TRAP, VILLAGE_DEFENSE, VILLAGE_INVASION -> {
                     // These should be blocked
                     l.onMobSpawn(e);
-                    assertTrue("Natural spawn should be blocked: " + reason.toString(), e.isCancelled());
+                    assertTrue( e.isCancelled(), "Natural spawn should be blocked: " + reason.toString());
                 }
                 // Spawners
                 case SPAWNER -> {
                     l.onMobSpawn(e);
-                    assertTrue("Spawners spawn should be blocked: " + reason.toString(), e.isCancelled());
+                    assertTrue(e.isCancelled(), "Spawners spawn should be blocked: " + reason.toString());
                 }
                 // Unnatural - player involved or allowed
                 case BREEDING, BUILD_IRONGOLEM, BUILD_SNOWMAN, BUILD_WITHER, CURED, CUSTOM, DISPENSE_EGG, EGG, ENDER_PEARL, EXPLOSION, INFECTION, SHEARED, SHOULDER_ENTITY, SPAWNER_EGG, SLIME_SPLIT -> {
                     l.onMobSpawn(e);
-                    assertFalse("Should be not blocked: " + reason.toString(), e.isCancelled());
+                    assertFalse(e.isCancelled(), "Should be not blocked: " + reason.toString());
                 }
                 default -> {
                 }

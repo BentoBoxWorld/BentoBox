@@ -1,14 +1,13 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Enderman;
@@ -21,29 +20,22 @@ import org.bukkit.entity.WanderingTrader;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, ServerBuildInfo.class })
-public class HurtingListenerTest extends AbstractCommonSetup {
+public class HurtingListenerTest extends CommonTestSetup {
 
     @Mock
     private Enderman enderman;
@@ -55,7 +47,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     /**
      */
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -73,6 +65,12 @@ public class HurtingListenerTest extends AbstractCommonSetup {
 
         // User & player
         user = User.getInstance(mockPlayer);
+    }
+
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -95,7 +93,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
         assertTrue(e.isCancelled());
-        
+
         verify(notifier).notify(user, "protection.protected");
     }
 
@@ -280,7 +278,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     /**
      * Test method for {@link HurtingListener#onPlayerFeedParrots(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
-    @Ignore("Not yet implemented")
+    @Disabled("Not yet implemented")
     @Test
     public void testOnPlayerFeedParrots() {
         //fail("Not yet implemented"); // TODO
@@ -289,7 +287,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     /**
      * Test method for {@link HurtingListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
-    @Ignore("Not yet implemented")
+    @Disabled("Not yet implemented")
     @Test
     public void testOnSplashPotionSplash() {
         //fail("Not yet implemented"); // TODO
@@ -298,7 +296,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     /**
      * Test method for {@link HurtingListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
      */
-    @Ignore("Not yet implemented")
+    @Disabled("Not yet implemented")
     @Test
     public void testOnLingeringPotionSplash() {
         //fail("Not yet implemented"); // TODO
@@ -307,7 +305,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     /**
      * Test method for {@link HurtingListener#onLingeringPotionDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
-    @Ignore("Not yet implemented")
+    @Disabled("Not yet implemented")
     @Test
     public void testOnLingeringPotionDamage() {
         //fail("Not yet implemented"); // TODO

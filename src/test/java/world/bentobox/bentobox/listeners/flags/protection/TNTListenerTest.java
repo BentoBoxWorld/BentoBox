@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -37,44 +36,33 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, ServerBuildInfo.class })
-public class TNTListenerTest extends AbstractCommonSetup {
+public class TNTListenerTest extends CommonTestSetup {
 
     @Mock
     private Block block;
     @Mock
     private Entity entity;
-    @Mock
-    private IslandWorldManager iwm;
 
     // Class under test
     private ExplosionListener listener;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
-        // IWM - for some reason, this doesn't work in the AbstractCommonSetup
-        when(plugin.getIWM()).thenReturn(iwm);
+        // IWM - for some reason, this doesn't work in the CommonTestSetup
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
@@ -103,15 +91,20 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(entity.getLocation()).thenReturn(location);
 
         // Util
-        when(Util.findFirstMatchingEnum(any(), anyString())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), anyString())).thenCallRealMethod();
 
         listener = new ExplosionListener();
         listener.setPlugin(plugin);
 
     }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
 
     @Test
-    @Ignore("PaperAPI error with Material isn't an item issue")
     public void testOnTNTPriming() {
         BlockFace clickedFace = BlockFace.DOWN;
         Block clickedBlock = mock(Block.class);

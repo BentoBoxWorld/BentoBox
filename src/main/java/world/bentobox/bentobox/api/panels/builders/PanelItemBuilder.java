@@ -48,7 +48,7 @@ public class PanelItemBuilder {
      * @return PanelItemBuilder
      */
     public PanelItemBuilder icon(String playerName) {
-        this.icon = new ItemStack(Material.PLAYER_HEAD, 1);
+        this.icon = new ItemStack(Material.PLAYER_HEAD);
         this.playerHeadName = playerName;
         return this;
     }

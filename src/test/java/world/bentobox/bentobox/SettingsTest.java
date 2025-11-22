@@ -1,19 +1,15 @@
 package world.bentobox.bentobox;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 
 import org.bukkit.Material;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 
@@ -21,17 +17,14 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(BentoBox.class)
+
 public class SettingsTest {
 
     private Settings s;
 
-    /**
-     */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        Whitebox.setInternalState(BentoBox.class, "instance", Mockito.mock(BentoBox.class));
+        WhiteBox.setInternalState(BentoBox.class, "instance", Mockito.mock(BentoBox.class));
         // Class under test
         s = new Settings();
     }

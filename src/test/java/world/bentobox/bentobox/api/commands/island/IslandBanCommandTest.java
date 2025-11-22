@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -25,42 +25,32 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
-public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
+public class IslandBanCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -73,7 +63,8 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
     private Addon addon;
     private IslandBanCommand ibc;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         User.setPlugin(plugin);
@@ -87,12 +78,10 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         when(user.getDisplayName()).thenReturn("&Ctastybento");
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(-1);
@@ -103,17 +92,11 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
 
         // Player has island to begin with
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        // when(im.isOwner(any(), eq(uuid))).thenReturn(true);
-        when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
         when(plugin.getPlayers()).thenReturn(pm);
-
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Island Banned list initialization
         when(island.getBanned()).thenReturn(new HashSet<>());
@@ -124,13 +107,7 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
         when(im.getPrimaryIsland(any(), any())).thenReturn(island);
 
         // IWM friendly name
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-        when(plugin.getIWM()).thenReturn(iwm);
-
-        // Server and Plugin Manager for events
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Addon
         when(ic.getAddon()).thenReturn(addon);
@@ -158,6 +135,12 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
         // Island Ban Command
         ibc = new IslandBanCommand(ic);
 
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -343,7 +326,7 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
                 .getOrDefault(invocation.getArgument(0, UUID.class), "tastybento"));
 
         // Return a set of online players
-        when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
+        mockedBukkit.when(() -> Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         // Set up the user
         User user = mock(User.class);

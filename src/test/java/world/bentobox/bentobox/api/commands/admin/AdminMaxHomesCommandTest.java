@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.admin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -24,24 +24,17 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
-import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.IslandGoCommand;
@@ -50,8 +43,6 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
@@ -59,37 +50,27 @@ import world.bentobox.bentobox.util.Util;
 /**
  * @author tastybento
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, ServerBuildInfo.class, IslandGoCommand.class })
-public class AdminMaxHomesCommandTest {
+public class AdminMaxHomesCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
     @Mock
     private User user;
     @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
     private UUID notUUID;
     private UUID uuid;
-    @Mock
-    private World world;
-    @Mock
-    private @Nullable Island island;
     private AdminMaxHomesCommand instance;
     private String label;
     private ArrayList<String> args = new ArrayList<>();
+    private MockedStatic<IslandGoCommand> mockedIslandGo;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        super.setUp();
 
-        PowerMockito.mockStatic(IslandGoCommand.class);
-
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        mockedIslandGo = Mockito.mockStatic(IslandGoCommand.class);
 
         // Util
         Util.setPlugin(plugin);
@@ -104,8 +85,6 @@ public class AdminMaxHomesCommandTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
@@ -113,7 +92,7 @@ public class AdminMaxHomesCommandTest {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         User.setPlugin(plugin);
 
@@ -121,10 +100,6 @@ public class AdminMaxHomesCommandTest {
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getTopLabel()).thenReturn("admin");
         when(ac.getWorld()).thenReturn(world);
-
-        // Island World Manager
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(plugin.getIWM()).thenReturn(iwm);
 
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
@@ -148,7 +123,7 @@ public class AdminMaxHomesCommandTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
         BukkitTask task = mock(BukkitTask.class);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 
@@ -161,10 +136,10 @@ public class AdminMaxHomesCommandTest {
         label = "island";
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -344,10 +319,9 @@ public class AdminMaxHomesCommandTest {
 
         User targetUser = mock(User.class);
         // Mock static method User.getInstance(UUID)
-        // Assuming use of Mockito with inline mocking or PowerMockito
-        PowerMockito.mockStatic(User.class);
-        when(User.getInstance(playerUUID)).thenReturn(targetUser);
-        when(IslandGoCommand.getNameIslandMap(targetUser, world)).thenReturn(new HashMap<>());
+        MockedStatic<User> mockedUser = Mockito.mockStatic(User.class);
+        mockedUser.when(() -> User.getInstance(playerUUID)).thenReturn(targetUser);
+        mockedIslandGo.when(() -> IslandGoCommand.getNameIslandMap(targetUser, world)).thenReturn(new HashMap<>());
 
         // Act
         boolean result = instance.canExecute(user, label, args);
@@ -372,13 +346,12 @@ public class AdminMaxHomesCommandTest {
 
         User targetUser = mock(User.class);
         // Mock static method User.getInstance(UUID)
-        // Assuming use of Mockito with inline mocking or PowerMockito
-        PowerMockito.mockStatic(User.class);
-        when(User.getInstance(playerUUID)).thenReturn(targetUser);
+        MockedStatic<User> mockedUser = Mockito.mockStatic(User.class);
+        mockedUser.when(() -> User.getInstance(playerUUID)).thenReturn(targetUser);
 
         Map<String, IslandInfo> islandsMap = new HashMap<>();
         islandsMap.put("Island1", new IslandInfo(mock(Island.class), true));
-        when(IslandGoCommand.getNameIslandMap(targetUser, world)).thenReturn(islandsMap);
+        mockedIslandGo.when(() -> IslandGoCommand.getNameIslandMap(targetUser, world)).thenReturn(islandsMap);
 
         // Act
         boolean result = instance.canExecute(user, label, args);
@@ -402,12 +375,12 @@ public class AdminMaxHomesCommandTest {
 
         User targetUser = mock(User.class);
         // Mock static method User.getInstance(UUID)
-        PowerMockito.mockStatic(User.class);
-        when(User.getInstance(playerUUID)).thenReturn(targetUser);
+        MockedStatic<User> mockedUser = Mockito.mockStatic(User.class);
+        mockedUser.when(() -> User.getInstance(playerUUID)).thenReturn(targetUser);
 
         Map<String, IslandInfo> islandsMap = new HashMap<>();
         islandsMap.put("", new IslandInfo(mock(Island.class), false));
-        when(IslandGoCommand.getNameIslandMap(targetUser, world)).thenReturn(islandsMap);
+        mockedIslandGo.when(() -> IslandGoCommand.getNameIslandMap(targetUser, world)).thenReturn(islandsMap);
 
         // Act
         boolean result = instance.canExecute(user, label, args);
@@ -439,8 +412,7 @@ public class AdminMaxHomesCommandTest {
 
         // Mock Util.getOnlinePlayerList(user)
         List<String> onlinePlayers = Arrays.asList("PlayerOne", "PlayerTwo");
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getOnlinePlayerList(user)).thenReturn(onlinePlayers);
+        mockedUtil.when(() -> Util.getOnlinePlayerList(user)).thenReturn(onlinePlayers);
 
         // Act
         Optional<List<String>> result = instance.tabComplete(user, label, args);
@@ -472,8 +444,7 @@ public class AdminMaxHomesCommandTest {
 
         // Mock Util.tabLimit()
         List<String> limitedIslandNames = Arrays.asList("IslandOne", "IslandTwo");
-        PowerMockito.mockStatic(Util.class);
-        when(Util.tabLimit(islandNames, lastArg)).thenReturn(limitedIslandNames);
+        mockedUtil.when(() -> Util.tabLimit(islandNames, lastArg)).thenReturn(limitedIslandNames);
 
         // Act
         Optional<List<String>> result = instance.tabComplete(user, label, args);
@@ -660,7 +631,7 @@ public class AdminMaxHomesCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    @Ignore("This fails for some reason on the map getting")
+    @Disabled("This fails for some reason on the map getting")
     public void testExecuteWithMultipleIslandsAfterCanExecute() {
         // Arrange
         args.add("ValidPlayer");

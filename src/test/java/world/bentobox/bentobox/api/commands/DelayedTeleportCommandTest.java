@@ -14,35 +14,24 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.events.command.CommandEvent;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 
@@ -50,17 +39,11 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, CommandEvent.class, ServerBuildInfo.class})
-public class DelayedTeleportCommandTest {
+public class DelayedTeleportCommandTest extends CommonTestSetup {
 
     private static final String HELLO = "hello";
     @Mock
-    private BentoBox plugin;
-    @Mock
     private BukkitScheduler sch;
-    @Mock
-    private PluginManager pim;
 
     private TestClass dtc;
     @Mock
@@ -81,17 +64,11 @@ public class DelayedTeleportCommandTest {
     private Location to;
     @Mock
     private Notifier notifier;
-    @Mock
-    private World world;
-    @Mock
-    private IslandWorldManager iwm;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
@@ -101,11 +78,10 @@ public class DelayedTeleportCommandTest {
         when(plugin.getSettings()).thenReturn(settings);
         when(settings.getDelayTime()).thenReturn(10); // 10 seconds
         // Server & Scheduler
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
         when(sch.runTaskLater(any(), any(Runnable.class), anyLong())).thenReturn(task);
         // Plugin manager
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+        mockedBukkit.when(() -> Bukkit.getPluginManager()).thenReturn(pim);
         // user
         User.setPlugin(plugin);
         UUID uuid = UUID.randomUUID();
@@ -161,10 +137,10 @@ public class DelayedTeleportCommandTest {
 
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

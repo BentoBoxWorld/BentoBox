@@ -1,11 +1,10 @@
 package world.bentobox.bentobox.api.addons;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,46 +21,27 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemFactory;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import com.github.puregero.multilib.MultiLib;
-
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class, MultiLib.class , ServerBuildInfo.class})
-public class AddonTest {
+public class AddonTest extends CommonTestSetup {
 
     public static int BUFFER_SIZE = 10240;
 
-    @Mock
-    static BentoBox plugin;
     static JavaPlugin javaPlugin;
-    private Server server;
     @Mock
     private AddonsManager am;
     private File dataFolder;
@@ -70,37 +50,11 @@ public class AddonTest {
 
     private TestClass test;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
-        server = mock(Server.class);
-        World world = mock(World.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
-
-        PluginManager pluginManager = mock(PluginManager.class);
-
-        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
-        when(Bukkit.getServer()).thenReturn(server);
-        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-
-        plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
+        super.setUp();
         // Addons manager
         when(plugin.getAddonsManager()).thenReturn(am);
-
-        // MultiLib
-        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
-
-        // Mock item factory (for itemstacks)
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        when(server.getItemFactory()).thenReturn(itemFactory);
-        ItemMeta itemMeta = mock(ItemMeta.class);
-        when(itemFactory.getItemMeta(any())).thenReturn(itemMeta);
 
         // Make the addon
         dataFolder = new File("dataFolder");
@@ -133,8 +87,9 @@ public class AddonTest {
         Files.deleteIfExists(ymlFile.toPath());
     }
 
-    @After
-    public void TearDown() throws IOException {
+    @AfterEach
+    public void TearDown() throws Exception {
+        super.tearDown();
         Files.deleteIfExists(jarFile.toPath());
         if (dataFolder.exists()) {
             Files.walk(dataFolder.toPath())
@@ -142,7 +97,6 @@ public class AddonTest {
             .map(Path::toFile)
             .forEach(File::delete);
         }
-        Mockito.framework().clearInlineMocks();
     }
 
     class TestClass extends Addon {
@@ -218,27 +172,23 @@ public class AddonTest {
         assertTrue(testConfig.exists());
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testSaveResourceStringBooleanEmptyName() {
-        test.saveResource("", true);
+        Assertions.assertThrows( IllegalArgumentException.class, () -> test.saveResource("", true));
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testSaveResourceStringBooleanSaveANull() {
-        test.saveResource(null, true);
+        Assertions.assertThrows( IllegalArgumentException.class, () -> test.saveResource(null, true));
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testSaveResourceStringBooleanNoFile() {
-        test.saveResource("no_such_file", true);
+        Assertions.assertThrows( IllegalArgumentException.class, () -> test.saveResource("no_such_file", true));
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testSaveResourceStringFileBooleanBoolean() {
         test.saveResource("no_such_file", jarFile, false, false);
         test.saveResource("no_such_file", jarFile, false, true);
         test.saveResource("no_such_file", jarFile, true, false);
-        test.saveResource("no_such_file", jarFile, true, true);
+        Assertions.assertThrows( IllegalArgumentException.class, () -> test.saveResource("no_such_file", jarFile, true, true));
     }
 
     @Test

@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.managers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -23,26 +23,16 @@ import java.util.zip.ZipOutputStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
-import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 
@@ -50,15 +40,9 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class} )
-public class BlueprintClipboardManagerTest {
+public class BlueprintClipboardManagerTest extends CommonTestSetup {
 
     private static final String BLUEPRINT = "blueprint";
-
-    @Mock
-    private BentoBox plugin;
 
     private BlueprintClipboard clipboard;
 
@@ -107,8 +91,6 @@ public class BlueprintClipboardManagerTest {
             "    \"zSize\": 10\n" +
             "}";
 
-    private Server server;
-
     private void zip(File targetFile) throws IOException {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + BlueprintsManager.BLUEPRINT_SUFFIX))) {
             zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
@@ -129,38 +111,13 @@ public class BlueprintClipboardManagerTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        // Required for NamespacedKey
-        when(plugin.getName()).thenReturn("BentoBox");
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
+        super.setUp();
         clipboard = mock(BlueprintClipboard.class);
-
-        server = ServerMocks.newServer();
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         blueprintFolder = new File("blueprints");
         // Clear any residual files
-        tearDown();
-        // Hooks
-        HooksManager hooksManager = mock(HooksManager.class);
-        when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
-        when(plugin.getHooks()).thenReturn(hooksManager);
-
-        BlockData blockData = mock(BlockData.class);
-        when(Bukkit.createBlockData(any(Material.class))).thenReturn(blockData);
-        when(blockData.getAsString()).thenReturn("test123");
-        when(server.getBukkitVersion()).thenReturn("version");
-        when(Bukkit.getServer()).thenReturn(server);
-    }
-
-    /**
-     */
-    @After
-    public void tearDown() throws Exception {
-        ServerMocks.unsetBukkitServer();
         if (blueprintFolder.exists()) {
             // Clean up file system
             Files.walk(blueprintFolder.toPath())
@@ -168,7 +125,28 @@ public class BlueprintClipboardManagerTest {
             .map(Path::toFile)
             .forEach(File::delete);
         }
-        Mockito.framework().clearInlineMocks();
+        // Hooks
+        HooksManager hooksManager = mock(HooksManager.class);
+        when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
+        when(plugin.getHooks()).thenReturn(hooksManager);
+
+        BlockData blockData = mock(BlockData.class);
+        mockedBukkit.when(() -> Bukkit.createBlockData(any(Material.class))).thenReturn(blockData);
+        when(blockData.getAsString()).thenReturn("test123");
+    }
+
+    /**
+     */
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+        if (blueprintFolder.exists()) {
+            // Clean up file system
+            Files.walk(blueprintFolder.toPath())
+            .sorted(Comparator.reverseOrder())
+            .map(Path::toFile)
+            .forEach(File::delete);
+        }
     }
 
     /**

@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -9,47 +9,31 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.RayTraceResult;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.LocalesManager;
-import world.bentobox.bentobox.managers.PlaceholdersManager;
-import world.bentobox.bentobox.util.Util;
 
-@Ignore("PaperAPI update required")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, PlayerEvent.class, PlayerInteractEvent.class, Bukkit.class, Util.class , ServerBuildInfo.class})
-public class ObsidianScoopingListenerTest extends AbstractCommonSetup {
+public class ObsidianScoopingListenerTest extends CommonTestSetup {
 
     private ObsidianScoopingListener listener;
     @Mock
@@ -61,19 +45,10 @@ public class ObsidianScoopingListenerTest extends AbstractCommonSetup {
     private Material inHand;
     private Material block;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-
-        // Mock server
-        Server server = mock(Server.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
-
-        // Mock item factory (for itemstacks)
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        when(server.getItemFactory()).thenReturn(itemFactory);
 
         // Create new object
         listener = new ObsidianScoopingListener();
@@ -84,10 +59,6 @@ public class ObsidianScoopingListenerTest extends AbstractCommonSetup {
         when(mockPlayer.rayTraceBlocks(5, FluidCollisionMode.ALWAYS)).thenReturn(rtr);
         when(rtr.getHitBlock()).thenReturn(clickedBlock);
 
-        when(location.getWorld()).thenReturn(world);
-        when(location.getBlockX()).thenReturn(0);
-        when(location.getBlockY()).thenReturn(0);
-        when(location.getBlockZ()).thenReturn(0);
         when(mockPlayer.getLocation()).thenReturn(location);
 
         when(mockPlayer.getInventory()).thenReturn(mock(PlayerInventory.class));
@@ -117,15 +88,6 @@ public class ObsidianScoopingListenerTest extends AbstractCommonSetup {
         // Set as survival
         when(mockPlayer.getGameMode()).thenReturn(GameMode.SURVIVAL);
 
-        // Locales
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        when(lm.get(any(), any())).thenReturn("mock translation");
-
-        // Placeholders
-        PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
-        when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenReturn("mock translation");
-
         // World settings Flag
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
@@ -135,14 +97,17 @@ public class ObsidianScoopingListenerTest extends AbstractCommonSetup {
 
         PlayerInventory playerInventory = mock(PlayerInventory.class);
         when(playerInventory.getItemInMainHand()).thenReturn(item);
-        when(playerInventory.getItemInOffHand()).thenReturn(new ItemStack(Material.AIR));
+        ItemStack air = mock(ItemStack.class);
+        when(air.getType()).thenReturn(Material.AIR);
+        when(playerInventory.getItemInOffHand()).thenReturn(air);
         when(mockPlayer.getInventory()).thenReturn(playerInventory);
 
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
     }
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

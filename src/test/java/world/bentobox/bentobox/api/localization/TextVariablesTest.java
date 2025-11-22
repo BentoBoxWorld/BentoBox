@@ -1,8 +1,9 @@
 package world.bentobox.bentobox.api.localization;
 
-import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class just to check that these constants don't accidentally change

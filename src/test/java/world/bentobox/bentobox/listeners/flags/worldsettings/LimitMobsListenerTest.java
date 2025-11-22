@@ -1,44 +1,32 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.managers.IslandWorldManager;
+import world.bentobox.bentobox.CommonTestSetup;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-public class LimitMobsListenerTest {
+public class LimitMobsListenerTest extends CommonTestSetup {
 
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private @NonNull World world;
-    private List<String> list = new ArrayList<>();
+   private List<String> list = new ArrayList<>();
     private LimitMobsListener lml;
     @Mock
     private LivingEntity zombie;
@@ -46,18 +34,14 @@ public class LimitMobsListenerTest {
     private LivingEntity skelly;
     @Mock
     private LivingEntity jockey;
-    @Mock
-    private Location location;
 
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        when(plugin.getIWM()).thenReturn(iwm);
+        super.setUp();
         list.add("SKELETON");
         when(iwm.getMobLimitSettings(world)).thenReturn(list);
         when(iwm.inWorld(world)).thenReturn(true);
@@ -77,11 +61,12 @@ public class LimitMobsListenerTest {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
-        Mockito.framework().clearInlineMocks();
+        super.tearDown();
     }
-
+    
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.LimitMobsListener#onMobSpawn(org.bukkit.event.entity.CreatureSpawnEvent)}.
      */

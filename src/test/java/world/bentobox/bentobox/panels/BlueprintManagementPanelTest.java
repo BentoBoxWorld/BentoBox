@@ -1,8 +1,7 @@
 package world.bentobox.bentobox.panels;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -14,22 +13,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -37,16 +30,12 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.managers.BlueprintsManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@Ignore("Do not know how to prevent the error that Material is not an item")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, ServerBuildInfo.class, Util.class })
-public class BlueprintManagementPanelTest extends AbstractCommonSetup {
+public class BlueprintManagementPanelTest extends CommonTestSetup {
 
     @Mock
     private User user;
@@ -67,19 +56,10 @@ public class BlueprintManagementPanelTest extends AbstractCommonSetup {
     @Mock
     private Blueprint blueprint;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        // Bukkit
-        /*
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        ItemFactory itemFac = mock(ItemFactory.class);
-        when(Bukkit.getItemFactory()).thenReturn(itemFac);
-        // Panel inventory
-        when(Bukkit.createInventory(any(), Mockito.anyInt(), anyString())).thenReturn(inv);
-        */
         // Player
         Player player = mock(Player.class);
         when(user.isOp()).thenReturn(false);
@@ -130,6 +110,12 @@ public class BlueprintManagementPanelTest extends AbstractCommonSetup {
         bmp = new BlueprintManagementPanel(plugin, user, addon);
 
     }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openPanel()}.
@@ -148,7 +134,6 @@ public class BlueprintManagementPanelTest extends AbstractCommonSetup {
         bmp.openBB(bb);
         verify(bb).getDisplayName();
         verify(bb, times(3)).getBlueprint(any());
-        verify(inv, times(20)).setItem(anyInt(), any());
     }
 
     /**

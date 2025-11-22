@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -20,20 +20,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -41,15 +35,12 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class IslandUnbanCommandTest extends RanksManagerBeforeClassTest {
+public class IslandUnbanCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -58,7 +49,8 @@ public class IslandUnbanCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private PlayersManager pm;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         User.setPlugin(plugin);
@@ -90,10 +82,6 @@ public class IslandUnbanCommandTest extends RanksManagerBeforeClassTest {
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-
         // Island Banned list initialization
         when(island.getBanned()).thenReturn(new HashSet<>());
         when(island.isBanned(any())).thenReturn(false);
@@ -103,10 +91,12 @@ public class IslandUnbanCommandTest extends RanksManagerBeforeClassTest {
 
         // IWM friendly name
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-
-        // Server and Plugin Manager for events
-        when(Bukkit.getPluginManager()).thenReturn(pim);
-
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -205,14 +195,14 @@ public class IslandUnbanCommandTest extends RanksManagerBeforeClassTest {
         // when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         UUID targetUUID = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(targetUUID);
-        PowerMockito.mockStatic(User.class);
+        MockedStatic<User> mockedUser = Mockito.mockStatic(User.class);
         User targetUser = mock(User.class);
         when(targetUser.isOp()).thenReturn(false);
         when(targetUser.isPlayer()).thenReturn(true);
         when(targetUser.isOnline()).thenReturn(false);
         when(targetUser.getName()).thenReturn("target");
         when(targetUser.getDisplayName()).thenReturn("&Ctarget");
-        when(User.getInstance(any(UUID.class))).thenReturn(targetUser);
+        mockedUser.when(() -> User.getInstance(any(UUID.class))).thenReturn(targetUser);
         // Mark as banned
         when(island.isBanned(eq(targetUUID))).thenReturn(true);
 

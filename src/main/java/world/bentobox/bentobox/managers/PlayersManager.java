@@ -153,11 +153,12 @@ public class PlayersManager {
     /**
      * Sets the player's name and updates the name to UUID database
      * @param user - the User
+     * @return CompletableFuture true if saved, false if not
      */
-    public void setPlayerName(@NonNull User user) {
+    public CompletableFuture<Boolean> setPlayerName(@NonNull User user) {
         // Ignore any bots
         if (user.getUniqueId() == null) {
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         Players player = getPlayer(user.getUniqueId());
         player.setPlayerName(user.getName());
@@ -168,7 +169,7 @@ public class PlayersManager {
         nameCache.removeIf(name -> user.getUniqueId().equals(name.getUuid()));
         nameCache.add(newName);
         // Add to names database
-        names.saveObjectAsync(newName);
+        return names.saveObjectAsync(newName);
     }
 
     /**

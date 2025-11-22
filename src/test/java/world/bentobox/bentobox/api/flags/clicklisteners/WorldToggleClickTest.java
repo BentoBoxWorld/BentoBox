@@ -10,42 +10,28 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.PluginManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.flags.FlagWorldSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.FlagsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
-public class WorldToggleClickTest {
+public class WorldToggleClickTest extends CommonTestSetup {
 
-    @Mock
-    private IslandWorldManager iwm;
     private WorldToggleClick listener;
     @Mock
     private Panel panel;
@@ -54,26 +40,18 @@ public class WorldToggleClickTest {
     private Flag flag;
     @Mock
     private GameModeAddon addon;
-    @Mock
-    private PluginManager pim;
-    @Mock
-    private World world;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        ServerMocks.newServer();
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         // Island World Manager
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
         when(iwm.getAddon(Mockito.any())).thenReturn(optionalAddon);
-        when(plugin.getIWM()).thenReturn(iwm);
-
+ 
         listener = new WorldToggleClick("test");
 
         // Panel
@@ -87,8 +65,7 @@ public class WorldToggleClickTest {
         when(user.getPlayer()).thenReturn(mock(Player.class));
 
         // Util
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(world);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
 
         // Flags Manager
         FlagsManager fm = mock(FlagsManager.class);
@@ -98,15 +75,12 @@ public class WorldToggleClickTest {
         when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
-        // Event
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
     }
 
-    @After
-    public void tearDown() {
-        ServerMocks.unsetBukkitServer();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

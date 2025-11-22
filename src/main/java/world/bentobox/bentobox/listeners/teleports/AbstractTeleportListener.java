@@ -60,7 +60,7 @@ public abstract class AbstractTeleportListener
      */
     protected Optional<Island> getIsland(Location location)
     {
-        return this.plugin.getIslandsManager().getProtectedIslandAt(location);
+        return this.plugin.getIslands().getProtectedIslandAt(location);
     }
 
 

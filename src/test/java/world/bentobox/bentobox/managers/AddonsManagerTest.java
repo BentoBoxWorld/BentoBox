@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.managers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -16,61 +16,44 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.nio.file.Files;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.github.puregero.multilib.MultiLib;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.Addon.State;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, DefaultPermissions.class, MultiLib.class , ServerBuildInfo.class})
-public class AddonsManagerTest {
+public class AddonsManagerTest extends CommonTestSetup {
 
-    private BentoBox plugin;
     private AddonsManager am;
     @Mock
-    private PluginManager pm;
-    @Mock
     private CommandsManager cm;
+    private MockedStatic<DefaultPermissions> mockedStaticDP;
 
-    /**
-     */
-    @Before
-    public void setup() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.getPluginManager()).thenReturn(pm);
-        // Set up plugin
-        plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
         FlagsManager fm = mock(FlagsManager.class);
         when(plugin.getFlagsManager()).thenReturn(fm);
 
@@ -78,24 +61,19 @@ public class AddonsManagerTest {
 
         // Command Manager
         when(plugin.getCommandsManager()).thenReturn(cm);
-        Settings s = mock(Settings.class);
-        when(s.getDatabaseType()).thenReturn(DatabaseType.MYSQL);
-        // settings
-        when(plugin.getSettings()).thenReturn(s);
+        
+        mockedStaticDP = Mockito.mockStatic(DefaultPermissions.class);
 
-        PowerMockito.mockStatic(DefaultPermissions.class);
-
-        PowerMockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
+        Mockito.mockStatic(MultiLib.class, Mockito.RETURNS_MOCKS);
     }
 
-    /**
-     */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
+        super.tearDown();
         // Delete the addons folder
         File f = new File(plugin.getDataFolder(), "addons");
         Files.deleteIfExists(f.toPath());
-        Mockito.framework().clearInlineMocks();
     }
 
     // TODO - add test cases that actually load an addon
@@ -233,7 +211,7 @@ public class AddonsManagerTest {
         @NonNull
         Listener listener = mock(Listener.class);
         am.registerListener(addon, listener);
-        verify(pm).registerEvents(listener, plugin);
+        verify(pim).registerEvents(listener, plugin);
     }
 
     /**
@@ -435,8 +413,7 @@ public class AddonsManagerTest {
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(perms);
         am.registerPermission(config, "bskyblock.intopten");
-        PowerMockito.verifyStatic(DefaultPermissions.class);
-        DefaultPermissions.registerPermission(eq("bskyblock.intopten"), anyString(), any(PermissionDefault.class));
+        mockedStaticDP.verify(() -> DefaultPermissions.registerPermission(eq("bskyblock.intopten"), anyString(), any(PermissionDefault.class)));
     }
 
     /**
@@ -458,8 +435,7 @@ public class AddonsManagerTest {
         addon.setState(State.ENABLED);
         am.getAddons().add(addon);
         am.registerPermission(config, "[gamemode].intopten");
-        PowerMockito.verifyStatic(DefaultPermissions.class);
-        DefaultPermissions.registerPermission(eq("mygame.intopten"), anyString(), any(PermissionDefault.class));
+        mockedStaticDP.verify(() -> DefaultPermissions.registerPermission(eq("mygame.intopten"), anyString(), any(PermissionDefault.class)));
     }
 
 

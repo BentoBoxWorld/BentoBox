@@ -1,6 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -12,43 +12,30 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.flags.protection.TestWorldSettings;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 
@@ -56,12 +43,8 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  * @author tastybento
  *
  */
-@Ignore("Needs PaperAPI update")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Bukkit.class, ServerBuildInfo.class})
-public class CoarseDirtTillingListenerTest {
+public class CoarseDirtTillingListenerTest extends CommonTestSetup {
 
-    @SuppressWarnings("deprecation")
     private static final List<Material> HOES = Collections.unmodifiableList(Arrays.stream(Material.values())
             .filter(m -> !m.isLegacy()).filter(m -> m.name().endsWith("_HOE")).toList());
     private static final List<Material> NOT_HOES = Collections.unmodifiableList(Arrays.stream(Material.values())
@@ -70,33 +53,20 @@ public class CoarseDirtTillingListenerTest {
     // Class under test
     private CoarseDirtTillingListener ctl;
     @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private World world;
-    @Mock
     private Block clickedBlock;
-    @Mock
-    private Player player;
     @Mock
     private Notifier notifier;
 
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
+        super.setUp();
         // Island World Manager
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        @Nullable
         WorldSettings worldSet = new TestWorldSettings();
         when(iwm.getWorldSettings(any())).thenReturn(worldSet);
-        when(plugin.getIWM()).thenReturn(iwm);
 
         // Block
         when(clickedBlock.getWorld()).thenReturn(world);
@@ -104,10 +74,8 @@ public class CoarseDirtTillingListenerTest {
 
         // Player
         User.setPlugin(plugin);
-        UUID uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);
-        when(player.getGameMode()).thenReturn(GameMode.SURVIVAL);
-        User.getInstance(player);
+         when(mockPlayer.getGameMode()).thenReturn(GameMode.SURVIVAL);
+        User.getInstance(mockPlayer);
 
         // Locales & Placeholders
         LocalesManager lm = mock(LocalesManager.class);
@@ -127,20 +95,19 @@ public class CoarseDirtTillingListenerTest {
         ctl = new CoarseDirtTillingListener();
     }
 
-    /**
-     */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
-        User.clearUsers();
+        super.tearDown();
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
     public void testOnTillingCoarseDirtNotAllowed() {
         ItemStack itemStack = mock(ItemStack.class);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
 
         HOES.forEach(m -> {
             when(itemStack.getType()).thenReturn(m);
@@ -151,14 +118,14 @@ public class CoarseDirtTillingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
     public void testOnTillingCoarseDirtAllowed() {
         // Flag
         Flags.COARSE_DIRT_TILLING.setDefaultSetting(world, true);
         ItemStack itemStack = mock(ItemStack.class);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
         HOES.forEach(m -> {
             when(itemStack.getType()).thenReturn(m);
             ctl.onTillingCoarseDirt(e);
@@ -168,12 +135,12 @@ public class CoarseDirtTillingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
     public void testOnTillingCoarseDirtNotHoe() {
         ItemStack itemStack = mock(ItemStack.class);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
         NOT_HOES.forEach(m -> {
             when(itemStack.getType()).thenReturn(m);
             ctl.onTillingCoarseDirt(e);
@@ -183,49 +150,49 @@ public class CoarseDirtTillingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
     public void testOnTillingCoarseDirtWrongAction() {
         ItemStack itemStack = mock(ItemStack.class);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, itemStack, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_AIR, itemStack, clickedBlock, BlockFace.UP);
         ctl.onTillingCoarseDirt(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
     public void testOnTillingCoarseDirtNullItem() {
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, null, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, null, clickedBlock, BlockFace.UP);
         ctl.onTillingCoarseDirt(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
     public void testOnTillingCoarseDirtNotCoarseDirt() {
         when(clickedBlock.getType()).thenReturn(Material.DIRT);
         ItemStack itemStack = mock(ItemStack.class);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
         ctl.onTillingCoarseDirt(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
     public void testOnTillingCoarseDirtWrongWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         ItemStack itemStack = mock(ItemStack.class);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
 
         HOES.forEach(m -> {
             when(itemStack.getType()).thenReturn(m);
@@ -240,7 +207,7 @@ public class CoarseDirtTillingListenerTest {
      */
     @Test
     public void testOnBreakingPodzolNotPodzol() {
-        BlockBreakEvent e = new BlockBreakEvent(clickedBlock, player);
+        BlockBreakEvent e = new BlockBreakEvent(clickedBlock, mockPlayer);
         ctl.onBreakingPodzol(e);
         verify(clickedBlock, never()).setType(any());
     }
@@ -251,7 +218,7 @@ public class CoarseDirtTillingListenerTest {
     @Test
     public void testOnBreakingPodzol() {
         when(clickedBlock.getType()).thenReturn(Material.PODZOL);
-        BlockBreakEvent e = new BlockBreakEvent(clickedBlock, player);
+        BlockBreakEvent e = new BlockBreakEvent(clickedBlock, mockPlayer);
         ctl.onBreakingPodzol(e);
         verify(clickedBlock).setType(eq(Material.AIR));
         verify(world).dropItemNaturally(any(), any());
@@ -265,7 +232,7 @@ public class CoarseDirtTillingListenerTest {
     public void testOnBreakingPodzolWrongWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(clickedBlock.getType()).thenReturn(Material.PODZOL);
-        BlockBreakEvent e = new BlockBreakEvent(clickedBlock, player);
+        BlockBreakEvent e = new BlockBreakEvent(clickedBlock, mockPlayer);
         ctl.onBreakingPodzol(e);
         verify(clickedBlock, never()).setType(any());
     }
@@ -275,9 +242,9 @@ public class CoarseDirtTillingListenerTest {
      */
     @Test
     public void testOnBreakingPodzolCreative() {
-        when(player.getGameMode()).thenReturn(GameMode.CREATIVE);
+        when(mockPlayer.getGameMode()).thenReturn(GameMode.CREATIVE);
         when(clickedBlock.getType()).thenReturn(Material.PODZOL);
-        BlockBreakEvent e = new BlockBreakEvent(clickedBlock, player);
+        BlockBreakEvent e = new BlockBreakEvent(clickedBlock, mockPlayer);
         ctl.onBreakingPodzol(e);
         verify(clickedBlock, never()).setType(any());
     }
@@ -290,7 +257,7 @@ public class CoarseDirtTillingListenerTest {
         // Flag
         Flags.COARSE_DIRT_TILLING.setDefaultSetting(world, true);
         when(clickedBlock.getType()).thenReturn(Material.PODZOL);
-        BlockBreakEvent e = new BlockBreakEvent(clickedBlock, player);
+        BlockBreakEvent e = new BlockBreakEvent(clickedBlock, mockPlayer);
         ctl.onBreakingPodzol(e);
         verify(clickedBlock, never()).setType(any());
     }

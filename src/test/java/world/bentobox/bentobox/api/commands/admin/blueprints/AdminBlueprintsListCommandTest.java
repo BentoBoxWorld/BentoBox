@@ -1,11 +1,8 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -17,19 +14,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.user.User;
@@ -41,9 +32,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class , ServerBuildInfo.class})
-public class AdminBlueprintsListCommandTest {
+public class AdminBlueprintsListCommandTest extends CommonTestSetup {
 
     @Mock
     private AdminBlueprintCommand ac;
@@ -54,13 +43,10 @@ public class AdminBlueprintsListCommandTest {
     private AdminBlueprintListCommand list;
     private File dataFolder;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();        
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -96,16 +82,14 @@ public class AdminBlueprintsListCommandTest {
 
     }
 
-    /**
-     */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
-        User.clearUsers();
+        super.tearDown();
         Files.walk(dataFolder.toPath())
         .sorted(Comparator.reverseOrder())
         .map(Path::toFile)
         .forEach(File::delete);
-        Mockito.framework().clearInlineMocks();
     }
 
     /**
@@ -113,7 +97,6 @@ public class AdminBlueprintsListCommandTest {
      */
     @Test
     public void testAdminBlueprintListCommand() {
-
         assertEquals("list", list.getLabel());
     }
 

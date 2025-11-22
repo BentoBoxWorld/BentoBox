@@ -1,48 +1,39 @@
 package world.bentobox.bentobox.panels.settings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, IslandsManager.class, ServerBuildInfo.class })
-public class SettingsTabTest extends AbstractCommonSetup {
+public class SettingsTabTest extends CommonTestSetup {
 
     private SettingsTab tab;
     private User user;
     @Mock
     private TabbedPanel parent;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         when(plugin.getFlagsManager()).thenReturn(fm);
@@ -51,6 +42,12 @@ public class SettingsTabTest extends AbstractCommonSetup {
 
         user = User.getInstance(mockPlayer);
 
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Test
@@ -69,7 +66,7 @@ public class SettingsTabTest extends AbstractCommonSetup {
         tab.getFlags();
     }
 
-    @Ignore("Issue with Materials and item checking")
+    //@Ignore("Issue with Materials and item checking")
     @Test
     public void testGetIcon() {
         testSettingsTabWorldUserTypeMode();
@@ -90,12 +87,11 @@ public class SettingsTabTest extends AbstractCommonSetup {
         assertTrue(items.isEmpty());
     }
 
-    @Ignore("Issue with Materials and item checking")
     @Test
     public void testGetTabIcons() {
         testSettingsTabWorldUserTypeMode();
         Map<Integer, PanelItem> icons = tab.getTabIcons();
-        assertTrue(icons.isEmpty());
+        assertFalse(icons.isEmpty());
     }
 
     @Test

@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -11,41 +11,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockFromToEvent;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 
 /**
  * Tests {@link world.bentobox.bentobox.listeners.flags.worldsettings.LiquidsFlowingOutListener}.
- * @author Poslovitch
+ * @author Poslovitch, tastybento
  * @since 1.3.0
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class , ServerBuildInfo.class})
-public class LiquidsFlowingOutListenerTest {
-
-    /* IslandWorldManager */
-    private IslandWorldManager iwm;
+public class LiquidsFlowingOutListenerTest extends CommonTestSetup {
 
     /* Blocks */
     private Block from;
@@ -54,19 +39,11 @@ public class LiquidsFlowingOutListenerTest {
     /* Event */
     private BlockFromToEvent event;
 
-    /* World */
-    private World world;
 
-    /* Islands */
-    private IslandsManager islandsManager;
-
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         /* Blocks */
         from = mock(Block.class);
@@ -74,7 +51,6 @@ public class LiquidsFlowingOutListenerTest {
         to = mock(Block.class);
 
         /* World */
-        world = mock(World.class);
         when(from.getWorld()).thenReturn(world);
 
         // Give them locations
@@ -87,36 +63,29 @@ public class LiquidsFlowingOutListenerTest {
         /* Event */
         event = new BlockFromToEvent(from, to);
 
-        /* Island World Manager */
-        iwm = mock(IslandWorldManager.class);
-        when(plugin.getIWM()).thenReturn(iwm);
+        // By default everything is in world
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
 
-        // WorldSettings and World Flags
+        // World Settings
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
-        when(iwm.getAddon(any())).thenReturn(Optional.empty());
-
-        // By default everything is in world
-        when(iwm.inWorld(any(World.class))).thenReturn(true);
-        when(iwm.inWorld(any(Location.class))).thenReturn(true);
 
         /* Flags */
         // By default, it is not allowed
         Flags.LIQUIDS_FLOWING_OUT.setSetting(world, false);
 
         /* Islands */
-        islandsManager = mock(IslandsManager.class);
-        when(plugin.getIslands()).thenReturn(islandsManager);
         // By default, there should be no island's protection range at toLocation.
-        when(islandsManager.getProtectedIslandAt(toLocation)).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(toLocation)).thenReturn(Optional.empty());
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -166,8 +135,7 @@ public class LiquidsFlowingOutListenerTest {
     @Test
     public void testLiquidFlowsToLocationInIslandProtectionRange() {
         // There's a protected island at the "to"
-        Island island = mock(Island.class);
-        when(islandsManager.getProtectedIslandAt(to.getLocation())).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(to.getLocation())).thenReturn(Optional.of(island));
 
         // Run
         new LiquidsFlowingOutListener().onLiquidFlow(event);
@@ -182,11 +150,10 @@ public class LiquidsFlowingOutListenerTest {
     @Test
     public void testLiquidFlowsToAdjacentIsland() {
         // There's a protected island at the "to"
-        Island island = mock(Island.class);
-        when(islandsManager.getProtectedIslandAt(eq(to.getLocation()))).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(eq(to.getLocation()))).thenReturn(Optional.of(island));
         // There is another island at the "from"
         Island fromIsland = mock(Island.class);
-        when(islandsManager.getProtectedIslandAt(eq(from.getLocation()))).thenReturn(Optional.of(fromIsland));
+        when(im.getProtectedIslandAt(eq(from.getLocation()))).thenReturn(Optional.of(fromIsland));
         // Run
         new LiquidsFlowingOutListener().onLiquidFlow(event);
         assertTrue(event.isCancelled());

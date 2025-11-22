@@ -1,12 +1,12 @@
 package world.bentobox.bentobox.api.user;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
@@ -17,16 +17,12 @@ public class NotifierTest {
 
     private Notifier n;
 
-    /**
-     */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         n = new Notifier();
     }
 
-    /**
-     */
-    @After
+    @AfterEach
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
     }

@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -16,59 +16,44 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
+public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private IslandTeamCommand ic;
-    private UUID uuid;
     @Mock
     private User user;
-    @Mock
-    private IslandsManager im;
     @Mock
     private PlayersManager pm;
     private UUID notUUID;
     @Mock
     private Settings s;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -109,14 +94,11 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
-        // when(im.isOwner(any(), any())).thenReturn(true);
-        // when(im.getOwner(any(), any())).thenReturn(uuid);
         // Island
         when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(island.getMemberSet(anyInt(), any(Boolean.class))).thenReturn(ImmutableSet.of(uuid));
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
@@ -124,19 +106,13 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         // Player Manager
         when(plugin.getPlayers()).thenReturn(pm);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // IWM friendly name
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-        when(plugin.getIWM()).thenReturn(iwm);
 
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
@@ -144,6 +120,13 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
     }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
@@ -198,8 +181,8 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecuteSamePlayer() {
-        PowerMockito.mockStatic(User.class);
-        when(User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
+        MockedStatic<User> mockUser = Mockito.mockStatic(User.class);
+        mockUser.when(() -> User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         when(pm.getUUID(any())).thenReturn(uuid);
@@ -213,8 +196,8 @@ public class IslandTeamTrustCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecutePlayerHasRank() {
-        PowerMockito.mockStatic(User.class);
-        when(User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
+        MockedStatic<User> mockUser = Mockito.mockStatic(User.class);
+        mockUser.when(() -> User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);

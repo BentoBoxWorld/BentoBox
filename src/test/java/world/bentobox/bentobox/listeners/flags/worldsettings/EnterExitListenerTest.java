@@ -14,43 +14,29 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.island.IslandEnterEvent;
 import world.bentobox.bentobox.api.events.island.IslandExitEvent;
-import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.managers.LocalesManager;
-import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -58,9 +44,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
-public class EnterExitListenerTest {
+public class EnterExitListenerTest extends CommonTestSetup {
 
     private static final Integer PROTECTION_RANGE = 200;
     private static final Integer X = 600;
@@ -69,71 +53,36 @@ public class EnterExitListenerTest {
     @Mock
     private User user;
     @Mock
-    private Island island;
-    @Mock
     private Location outside;
     @Mock
     private Location inside;
     @Mock
     private Location anotherWorld;
-    @Mock
-    private LocalesManager lm;
-    @Mock
-    private World world;
-    @Mock
-    private PluginManager pim;
-    @Mock
-    private Notifier notifier;
 
     private EnterExitListener listener;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
-        // Server
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+        super.setUp();
 
         // Settings
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
 
         // Util
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(world);
-        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
+        mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Player
-        Player p = mock(Player.class);
-        when(p.getWorld()).thenReturn(world);
+         when(mockPlayer.getWorld()).thenReturn(world);
         // Sometimes use Mockito.withSettings().verboseLogging()
         User.setPlugin(plugin);
         when(user.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
-
-        // No island for player to begin with (set it later in the tests)
-        IslandsManager im = mock(IslandsManager.class);
-        when(plugin.getIslands()).thenReturn(im);
-
-        // Locales
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
-
-        // Placeholders
-        PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
-        when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
-
-        // Notifier
-        when(plugin.getNotifier()).thenReturn(notifier);
 
         // Island initialization
         Location loc = mock(Location.class);
@@ -181,6 +130,7 @@ public class EnterExitListenerTest {
         when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
         when(im.getProtectedIslandAt(eq(inside2))).thenReturn(opIsland);
         when(im.getProtectedIslandAt(eq(outside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(anotherWorld)).thenReturn(Optional.empty());
 
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
@@ -210,16 +160,16 @@ public class EnterExitListenerTest {
         Flags.ENTER_EXIT_MESSAGES.setSetting(world, true);
 
         // Util translate color codes (used in user translate methods)
-        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-        when(Util.stripColor(any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        mockedUtil.when(() -> Util.stripColor(any())).thenCallRealMethod();
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
-
+    
     /**
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */

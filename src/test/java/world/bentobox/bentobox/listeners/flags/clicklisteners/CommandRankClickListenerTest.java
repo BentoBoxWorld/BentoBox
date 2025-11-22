@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -14,43 +14,27 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
@@ -59,32 +43,17 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
-public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
+public class CommandRankClickListenerTest extends RanksManagerTestSetup {
     @Mock
     private User user;
     @Mock
-    private World world;
-    @Mock
     private TabbedPanel panel;
-    @Mock
-    private IslandWorldManager iwm;
     @Mock
     private @NonNull Inventory inv;
     @Mock
     private GameModeAddon gma;
 
     private CommandRankClickListener crcl;
-    @Mock
-    private Player player;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private @Nullable Island island;
-
-    private UUID uuid = UUID.randomUUID();
     @Mock
     private CommandsManager cm;
     @Mock
@@ -93,23 +62,19 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-
-        // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Island
         when(island.getOwner()).thenReturn(uuid);
         when(island.isAllowed(user, Flags.CHANGE_SETTINGS)).thenReturn(true);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.MEMBER_RANK);
         // IM
-        when(plugin.getIslands()).thenReturn(im);
         when(im.getIsland(world, uuid)).thenReturn(island);
         when(im.getIsland(world, user)).thenReturn(island);
         // IWM
-        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getAddon(any())).thenReturn(Optional.of(gma));
         when(iwm.getPermissionPrefix(world)).thenReturn("oneblock.");
         // Panel
@@ -123,7 +88,7 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         when(user.isOp()).thenReturn(true);
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.hasPermission(anyString())).thenReturn(true);
-        when(user.getPlayer()).thenReturn(player);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.inWorld()).thenReturn(true);
         when(user.getWorld()).thenReturn(world);
         when(user.getTranslationOrNothing(anyString(), anyString()))
@@ -136,8 +101,7 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Util
-        PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
-        when(Util.getWorld(any())).thenReturn(world);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
         // Commands Manager
         when(plugin.getCommandsManager()).thenReturn(cm);
         Map<String, CompositeCommand> map = new HashMap<>();
@@ -152,7 +116,8 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         crcl = new CommandRankClickListener();
     }
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -176,7 +141,7 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         when(user.hasPermission(anyString())).thenReturn(false);
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         verify(user).sendMessage("general.errors.no-permission", TextVariables.PERMISSION, "oneblock.settings.COMMAND_RANKS");
-        verify(player).playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+        verify(mockPlayer).playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
     }
 
     /**
@@ -187,7 +152,7 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         when(island.isAllowed(user, Flags.CHANGE_SETTINGS)).thenReturn(false);
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
-        verify(player).playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+        verify(mockPlayer).playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
     }
 
     /**

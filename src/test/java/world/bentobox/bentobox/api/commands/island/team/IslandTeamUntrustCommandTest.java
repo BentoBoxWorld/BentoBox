@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -20,20 +20,16 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -42,15 +38,12 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
+public class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -62,7 +55,8 @@ public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private Settings s;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -101,12 +95,7 @@ public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
 
         // Player Manager
         pm = mock(PlayersManager.class);
-
         when(plugin.getPlayers()).thenReturn(pm);
-
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -115,10 +104,14 @@ public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
 
         // IWM friendly name
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-        when(plugin.getIWM()).thenReturn(iwm);
-
     }
 
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+    
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUntrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
@@ -172,8 +165,8 @@ public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testExecuteSamePlayer() {
-        PowerMockito.mockStatic(User.class);
-        when(User.getInstance(any(UUID.class))).thenReturn(user);
+        MockedStatic<User> mockUser = Mockito.mockStatic(User.class);
+        mockUser.when(() -> User.getInstance(any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
         when(pm.getUUID(any())).thenReturn(uuid);
@@ -187,8 +180,8 @@ public class IslandTeamUntrustCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testExecutePlayerHasRank() {
-        PowerMockito.mockStatic(User.class);
-        when(User.getInstance(any(UUID.class))).thenReturn(user);
+        MockedStatic<User> mockUser = Mockito.mockStatic(User.class);
+        mockUser.when(() -> User.getInstance(any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);

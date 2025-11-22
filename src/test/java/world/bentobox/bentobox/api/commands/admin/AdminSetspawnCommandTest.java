@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.admin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -12,66 +12,45 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class , ServerBuildInfo.class})
-public class AdminSetspawnCommandTest {
+public class AdminSetspawnCommandTest extends CommonTestSetup {
 
     private CompositeCommand ac;
     private UUID uuid;
     private User user;
-    private IslandsManager im;
-
-    /**
-     */
-    @Before
+ 
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
+        super.setUp();
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Player
-        Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         when(user.getLocation()).thenReturn(mock(Location.class));
         User.setPlugin(plugin);
@@ -81,22 +60,9 @@ public class AdminSetspawnCommandTest {
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getPermissionPrefix()).thenReturn("bskyblock.");
 
-        // Island World Manager
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(plugin.getIWM()).thenReturn(iwm);
-
         // Player has island to begin with
-        im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        // when(im.isOwner(any(),any())).thenReturn(true);
-        // when(im.getOwner(any(),any())).thenReturn(uuid);
-        when(plugin.getIslands()).thenReturn(im);
-
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -104,11 +70,7 @@ public class AdminSetspawnCommandTest {
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Return the reference (USE THIS IN THE FUTURE)
         when(user.getTranslation(Mockito.anyString()))
-                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-
-        // Plugin Manager
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+        .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Confirmable command settings
         Settings settings = mock(Settings.class);
@@ -116,10 +78,10 @@ public class AdminSetspawnCommandTest {
         when(plugin.getSettings()).thenReturn(settings);
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

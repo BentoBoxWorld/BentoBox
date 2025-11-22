@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -15,56 +15,44 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
+public class IslandTeamCoopCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private IslandTeamCommand ic;
-    private UUID uuid;
     @Mock
     private User user;
-    @Mock
-    private IslandsManager im;
     @Mock
     private PlayersManager pm;
     private UUID notUUID;
     @Mock
     private Settings s;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -75,15 +63,11 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.isOp()).thenReturn(false);
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(4);
 
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while (notUUID.equals(uuid)) {
-            notUUID = UUID.randomUUID();
-        }
         when(user.getUniqueId()).thenReturn(uuid);
         when(mockPlayer.getWorld()).thenReturn(world);
         when(user.getPlayer()).thenReturn(mockPlayer);
@@ -98,8 +82,6 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
-        // when(im.isOwner(any(), any())).thenReturn(true);
-        // when(im.getOwner(any(), any())).thenReturn(uuid);
         // Island
         when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(island.getMemberSet(anyInt(), any(Boolean.class))).thenReturn(ImmutableSet.of(uuid));
@@ -107,7 +89,6 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(im.getPrimaryIsland(any(), any())).thenReturn(island);
-        when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
@@ -115,26 +96,26 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
         // Player Manager
         when(plugin.getPlayers()).thenReturn(pm);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(any(), any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // IWM friendly name
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(iwm.getMaxCoopSize(any())).thenReturn(4);
-        when(plugin.getIWM()).thenReturn(iwm);
 
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
         // Placeholder manager
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -190,8 +171,8 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecuteSamePlayer() {
-        PowerMockito.mockStatic(User.class);
-        when(User.getInstance(any(UUID.class))).thenReturn(user);
+        MockedStatic<User> userMock = Mockito.mockStatic(User.class);
+        userMock.when(() -> User.getInstance(any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         when(pm.getUUID(any())).thenReturn(uuid);
@@ -205,8 +186,8 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecutePlayerHasRank() {
-        PowerMockito.mockStatic(User.class);
-        when(User.getInstance(any(UUID.class))).thenReturn(user);
+        MockedStatic<User> userMock = Mockito.mockStatic(User.class);
+        userMock.when(() -> User.getInstance(any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);

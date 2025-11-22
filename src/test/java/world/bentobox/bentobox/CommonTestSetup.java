@@ -1,6 +1,6 @@
 package world.bentobox.bentobox;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeast;
@@ -8,17 +8,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Server;
-import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -33,18 +34,19 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockbukkit.mockbukkit.MockBukkit;
+import org.mockbukkit.mockbukkit.ServerMock;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -54,14 +56,14 @@ import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
-import world.bentobox.bentobox.listeners.flags.protection.TestWorldSettings;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
+import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -76,8 +78,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-public abstract class AbstractCommonSetup {
+public abstract class CommonTestSetup {
 
     protected UUID uuid = UUID.randomUUID();
 
@@ -107,24 +108,41 @@ public abstract class AbstractCommonSetup {
     protected FlagsManager fm;
     @Mock
     protected Spigot spigot;
-    protected Server server;
+    @Mock
+    protected HooksManager hooksManager;
+    @Mock
+    protected BlueprintsManager bm;
+    
+    protected ServerMock server;
+
+    protected MockedStatic<Bukkit> mockedBukkit;
+    protected MockedStatic<Util> mockedUtil;
+    
+    protected AutoCloseable closeable;
+    
+    @Mock
+    protected BukkitScheduler sch;
+    @Mock
+    protected LocalesManager lm;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-
-        server = ServerMocks.newServer();
+        MockitoAnnotations.openMocks(this);
+        // Processes the @Mock annotations and initializes the field
+        closeable = MockitoAnnotations.openMocks(this);
+        server = MockBukkit.mock();
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Version
-        when(Bukkit.getMinecraftVersion()).thenReturn("1.21.10");
         // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        WhiteBox.setInternalState(BentoBox.class, "instance", plugin);
 
-        when(Bukkit.getBukkitVersion()).thenReturn("");
-        when(Bukkit.getPluginManager()).thenReturn(pim);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-
+        // Register the static mock
+        mockedBukkit = Mockito.mockStatic(Bukkit.class, Mockito.RETURNS_DEEP_STUBS);
+        mockedBukkit.when(Bukkit::getMinecraftVersion).thenReturn("1.21.10");
+        mockedBukkit.when(Bukkit::getBukkitVersion).thenReturn("");
+        mockedBukkit.when(Bukkit::getPluginManager).thenReturn(pim);
+        mockedBukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
+        mockedBukkit.when(Bukkit::getServer).thenReturn(server);
         // Location
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
@@ -162,7 +180,7 @@ public abstract class AbstractCommonSetup {
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-        @Nullable
+        // World Settings
         WorldSettings worldSet = new TestWorldSettings();
         when(iwm.getWorldSettings(any())).thenReturn(worldSet);
 
@@ -182,7 +200,6 @@ public abstract class AbstractCommonSetup {
         when(mockPlayer.getMetadata(anyString())).thenReturn(Collections.singletonList(mdv));
 
         // Locales & Placeholders
-        LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
@@ -192,19 +209,32 @@ public abstract class AbstractCommonSetup {
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Fake players
-        Settings settings = mock(Settings.class);
+        Settings settings = new Settings();
         when(plugin.getSettings()).thenReturn(settings);
-        when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
-        PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
-        when(Util.getWorld(any())).thenReturn(mock(World.class));
+        //Util
+        mockedUtil = Mockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
+        Util.setPlugin(plugin);
 
         // Util
-        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Util translate color codes (used in user translate methods)
-        //when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        //mockedUtil.when(() -> translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        
+        // Server & Scheduler
+        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+
+        // Hooks
+        when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
+        when(plugin.getHooks()).thenReturn(hooksManager);
+
+        // Blueprints Manager
+        when(plugin.getBlueprintsManager()).thenReturn(bm);
+
 
         // Tags
+        /*
         for (Material m : Material.values()) {
             if (m.name().contains("_SIGN")) {
                 when(Tag.ALL_SIGNS.isTagged(m)).thenReturn(true);
@@ -226,17 +256,30 @@ public abstract class AbstractCommonSetup {
                 when(Tag.ITEMS_BOATS.isTagged(m)).thenReturn(true);
             }
 
-        }
+        }*/
     }
 
     /**
      * @throws Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        ServerMocks.unsetBukkitServer();
+        // IMPORTANT: Explicitly close the mock to prevent leakage
+        mockedBukkit.closeOnDemand();
+        mockedUtil.closeOnDemand();
+        closeable.close();
+        MockBukkit.unmock();
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
+        deleteAll(new File("database"));
+        deleteAll(new File("database_backup"));
+    }
+    
+    protected static void deleteAll(File file) throws IOException {
+        if (file.exists()) {
+            Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+        }
+
     }
 
     /**
@@ -264,8 +307,8 @@ public abstract class AbstractCommonSetup {
                 .count(); // Count how many times the expected message appears
 
         // Assert that the number of occurrences matches the expectedOccurrences
-        assertEquals("Expected message occurrence mismatch: " + expectedMessage, expectedOccurrences,
-                actualOccurrences);
+        assertEquals(expectedOccurrences,
+                actualOccurrences, "Expected message occurrence mismatch: " + expectedMessage);
     }
 
     /**

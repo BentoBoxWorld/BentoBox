@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -16,37 +16,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
@@ -54,44 +41,26 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, IslandsManager.class , ServerBuildInfo.class})
-public class IslandTeamSetownerCommandTest {
+public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
-    private UUID uuid;
     @Mock
     private User user;
     @Mock
     private Settings s;
     @Mock
-    private IslandsManager im;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private Player player;
-    @Mock
     private CompositeCommand subCommand;
     @Mock
     private PlayersManager pm;
-    @Mock
-    private World world;
     private IslandTeamSetownerCommand its;
-    @Mock
-    private Island island;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        super.setUp();
 
-        PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
-
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        Mockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -106,7 +75,7 @@ public class IslandTeamSetownerCommandTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(player);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         // Return the default value for perm questions by default
         when(user.getPermissionValue(anyString(), anyInt()))
@@ -121,30 +90,19 @@ public class IslandTeamSetownerCommandTest {
 
         // Player has island to begin with
         when(im.hasIsland(any(), Mockito.any(UUID.class))).thenReturn(true);
-        // when(im.isOwner(any(), any())).thenReturn(true);
-        when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         when(im.inTeam(world, uuid)).thenReturn(true);
         when(island.inTeam(uuid)).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-
         // Island World Manager
         TestWorldSettings worldSettings = new TestWorldSettings();
         when(iwm.getWorldSettings(any())).thenReturn(worldSettings);
-        when(plugin.getIWM()).thenReturn(iwm);
         @NonNull
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(world)).thenReturn(ws);
         when(ws.getConcurrentIslands()).thenReturn(3);
-
-        // Plugin Manager
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Island
         when(island.getOwner()).thenReturn(uuid);
@@ -157,10 +115,10 @@ public class IslandTeamSetownerCommandTest {
         its = new IslandTeamSetownerCommand(ic);
     }
 
-    /**
-     */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -226,7 +184,7 @@ public class IslandTeamSetownerCommandTest {
         when(im.inTeam(any(), any())).thenReturn(true);
         //when(im.getOwner(any(), any())).thenReturn(uuid);
         assertFalse(its.canExecute(user, "", List.of()));
-        verify(user).sendMessage("commands.help.header","[label]", null);
+        verify(user).sendMessage("commands.help.header","[label]", "BSkyBlock");
     }
 
     /**

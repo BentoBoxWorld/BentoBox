@@ -1,37 +1,26 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.localization;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BannerMeta;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.util.ItemParser;
 
 /**
@@ -39,28 +28,30 @@ import world.bentobox.bentobox.util.ItemParser;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, ItemParser.class , ServerBuildInfo.class})
-public class BentoBoxLocaleTest {
+public class BentoBoxLocaleTest extends CommonTestSetup {
 
     private BentoBoxLocale localeObject;
-    private BannerMeta bannerMeta;
+    //private BannerMeta bannerMeta;
+    @Mock
+    private ItemStack  banner;
+   private  MockedStatic<ItemParser> mockedItemParser;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(ItemParser.class, Mockito.RETURNS_MOCKS);
-        when(ItemParser.parse(anyString())).thenReturn(new ItemStack(Material.WHITE_BANNER));
-        PowerMockito.mockStatic(Bukkit.class);
+        super.setUp();
+        
+        mockedItemParser = Mockito.mockStatic(ItemParser.class, Mockito.RETURNS_MOCKS);
+        when(banner.getType()).thenReturn(Material.WHITE_BANNER);
+        mockedItemParser.when(() -> ItemParser.parse(anyString())).thenReturn(banner);
+        /*
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);
         bannerMeta = mock(BannerMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
         when(itemFactory.createItemStack(any())).thenThrow(IllegalArgumentException.class);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-
+        mockedBukkit.when(() -> Bukkit.getItemFactory()).thenReturn(itemFactory);
+*/
         Locale locale = Locale.US;
         YamlConfiguration config = new YamlConfiguration();
         config.set("meta.banner", "WHITE_BANNER:1:SMALL_STRIPES:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE");
@@ -72,9 +63,10 @@ public class BentoBoxLocaleTest {
         localeObject = new BentoBoxLocale(locale, config);
     }
 
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

@@ -1,39 +1,28 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameEvent;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockReceiveGameEvent;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@Ignore("Has mocking issues with GameEvent")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, ServerBuildInfo.class })
-public class SculkSensorListenerTest extends AbstractCommonSetup {
+public class SculkSensorListenerTest extends CommonTestSetup {
 
     private SculkSensorListener ssl;
     @Mock
@@ -43,7 +32,7 @@ public class SculkSensorListenerTest extends AbstractCommonSetup {
      * @throws java.lang.Exception
      */
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         // Default is that everything is allowed
@@ -63,6 +52,12 @@ public class SculkSensorListenerTest extends AbstractCommonSetup {
         User.getInstance(mockPlayer);
 
         ssl = new SculkSensorListener();
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

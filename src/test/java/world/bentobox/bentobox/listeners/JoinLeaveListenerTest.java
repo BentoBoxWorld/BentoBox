@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.listeners;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -25,23 +25,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerQuitEvent.QuitReason;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import net.kyori.adventure.text.Component;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -49,9 +45,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.managers.AddonsManager;
-import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.managers.LocalesManager;
-import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
@@ -60,9 +53,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
-public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
+public class JoinLeaveListenerTest extends RanksManagerTestSetup {
 
     private static final String[] NAMES = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry",
             "ian", "joe" };
@@ -80,8 +71,6 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
     @Mock
     private Settings settings;
     @Mock
-    private BukkitScheduler scheduler;
-    @Mock
     private PlayerInventory inv;
     private Set<String> set;
 
@@ -93,10 +82,12 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
     private AddonsManager am;
 
     private AddonDescription desc;
+    
+    @Mock
+    private Component component;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -104,7 +95,6 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
         when(world.getName()).thenReturn("worldname");
 
         // IWM
-        when(plugin.getIWM()).thenReturn(iwm);
         // Reset everything
         when(iwm.isOnLeaveResetEnderChest(any())).thenReturn(true);
         when(iwm.isOnLeaveResetInventory(any())).thenReturn(true);
@@ -118,10 +108,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
         when(iwm.getIslandDistance(any())).thenReturn(100);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
 
-        UUID uuid = UUID.randomUUID();
         // Player
-        when(mockPlayer.getUniqueId()).thenReturn(uuid);
-        when(mockPlayer.getWorld()).thenReturn(world);
         when(mockPlayer.getEnderChest()).thenReturn(chest);
         when(mockPlayer.getName()).thenReturn("tastybento");
         when(mockPlayer.getInventory()).thenReturn(inv);
@@ -140,11 +127,6 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
 
         // Settings
         when(plugin.getSettings()).thenReturn(settings);
-
-        // islands manager
-        when(plugin.getIslands()).thenReturn(im);
-        // player is owner of their island
-        // when(im.isOwner(any(), any())).thenReturn(true);
 
         // Island
         island = new Island(location, uuid, 50);
@@ -166,13 +148,9 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
         memberMap.put(uuid2, RanksManager.COOP_RANK);
         island.setMembers(memberMap);
 
-        // Bukkit
-        when(Bukkit.getScheduler()).thenReturn(scheduler);
-
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Bukkit - online players
-        Map<UUID, String> online = new HashMap<>();
+        server.setPlayers(10);
 
         Set<Player> onlinePlayers = new HashSet<>();
         for (String name : NAMES) {
@@ -181,30 +159,19 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
             when(p1.getUniqueId()).thenReturn(u);
             when(p1.getName()).thenReturn(name);
             when(p1.getWorld()).thenReturn(world);
-            online.put(u, name);
             onlinePlayers.add(p1);
         }
         onlinePlayers.add(mockPlayer);
-        when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
+        mockedBukkit.when(() -> Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         User.setPlugin(plugin);
         User.getInstance(mockPlayer);
 
         // Util
-        when(Util.getWorld(any())).thenReturn(world);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
         // Util translate color codes (used in user translate methods)
-        when(Util.translateColorCodes(anyString()))
-                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-
-        // user text
-        LocalesManager lm = mock(LocalesManager.class);
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        when(lm.get(any(), anyString()))
-                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
-        PlaceholdersManager phm = mock(PlaceholdersManager.class);
-        when(plugin.getPlaceholdersManager()).thenReturn(phm);
-        when(phm.replacePlaceholders(any(), anyString()))
-                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        mockedUtil.when(() -> Util.translateColorCodes(anyString()))
+        .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Addons manager
         when(plugin.getAddonsManager()).thenReturn(am);
@@ -212,7 +179,8 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
         jll = new JoinLeaveListener(plugin);
     }
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -223,7 +191,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testOnPlayerJoinNotKnownNoAutoCreate() {
-        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         jll.onPlayerJoin(event);
         // Verify
         verify(pm, times(3)).getPlayer(any());
@@ -244,7 +212,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
     public void testOnPlayerJoinNullWorld() {
         when(mockPlayer.getWorld()).thenReturn(null); // Null
         when(Util.getWorld(any())).thenReturn(null); // Make null
-        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         jll.onPlayerJoin(event);
         // Verify inventory clear because of kick
         // Check inventory cleared
@@ -263,7 +231,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
         when(pa.getPermission()).thenReturn("acidisland.island.range.1000");
         when(pa.getValue()).thenReturn(true);
         when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
-        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         jll.onPlayerJoin(event);
         // Verify
         checkSpigotMessage("commands.admin.setrange.range-updated");
@@ -283,7 +251,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
         when(pa.getPermission()).thenReturn("acidisland.island.range.10");
         when(pa.getValue()).thenReturn(true);
         when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
-        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         jll.onPlayerJoin(event);
         // Verify
         checkSpigotMessage("commands.admin.setrange.range-updated");
@@ -303,7 +271,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
         when(pa.getPermission()).thenReturn("acidisland.island.range.55");
         when(pa.getValue()).thenReturn(true);
         when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
-        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         jll.onPlayerJoin(event);
         // Verify
         checkSpigotMessage("commands.admin.setrange.range-updated");
@@ -323,7 +291,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
         when(pa.getPermission()).thenReturn("acidisland.island.range.50");
         when(pa.getValue()).thenReturn(true);
         when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
-        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         jll.onPlayerJoin(event);
         // Verify
         verify(mockPlayer, never()).sendMessage(eq("commands.admin.setrange.range-updated"));
@@ -340,7 +308,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
     @Test
     public void testOnPlayerJoinNotKnownAutoCreate() {
         when(iwm.isCreateIslandOnFirstLoginEnabled(eq(world))).thenReturn(true);
-        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "");
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         jll.onPlayerJoin(event);
         // Verify
         verify(pm, times(3)).getPlayer(any());
@@ -381,7 +349,7 @@ public class JoinLeaveListenerTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testOnPlayerQuit() {
-        PlayerQuitEvent event = new PlayerQuitEvent(mockPlayer, "");
+        PlayerQuitEvent event = new PlayerQuitEvent(mockPlayer, component, QuitReason.DISCONNECTED);
         jll.onPlayerQuit(event);
         checkSpigotMessage("commands.island.team.uncoop.all-members-logged-off");
         // Team is now only 1 big

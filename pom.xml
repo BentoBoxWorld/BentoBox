@@ -52,7 +52,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>21</java.version>
         <!-- Non-minecraft related dependencies -->
-        <powermock.version>2.0.9</powermock.version>
+        <junit.version>5.10.2</junit.version>
+        <mockito.version>5.11.0</mockito.version>
+        <mock-bukkit.version>v1.21-SNAPSHOT</mock-bukkit.version>
         <!-- Database related dependencies -->
         <mongodb.version>3.12.12</mongodb.version>
         <mariadb.version>3.0.5</mariadb.version>
@@ -137,10 +139,6 @@
             <url>https://jitpack.io</url>
         </repository>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
-        </repository>
-        <repository>
             <id>codemc-repo</id>
             <url>https://repo.codemc.org/repository/maven-public</url>
         </repository>
@@ -153,6 +151,10 @@
             <url>https://libraries.minecraft.net/</url>
         </repository>
         <!-- Spigot NMS required for world regeneration :( -->
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
+        </repository>
         <repository>
             <id>nms-repo</id>
             <url>https://repo.codemc.io/repository/nms/</url>
@@ -215,29 +217,36 @@
     </repositories>
 
     <dependencies>
+        <!-- Mock Bukkit - used to mock the server in tests -->
+        <dependency>
+            <groupId>com.github.MockBukkit</groupId>
+            <artifactId>MockBukkit</artifactId>
+            <version>${mock-bukkit.version}</version>
+            <scope>test</scope>
+         </dependency>
         <!-- Mockito (Unit testing) This goes at the top to ensure the dependencies are accurate. -->
-        <!-- This is required for PowerMockito to work and must be placed before it -->
         <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.30.2-GA</version>
-       </dependency>
-       <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito2</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>5.11.0</version>
+                <scope>test</scope>
+            </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.12.4</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- For test that need a time to test -->
@@ -526,7 +535,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.14.1</version>
                 <configuration>
                     <release>${java.version}</release>
                 </configuration>
@@ -534,11 +543,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.2</version>
+                <version>3.5.4</version>
                 <!--suppress MavenModelInspection -->
                 <configuration>
                     <argLine>
-                        ${argLine}
+                        -XX:+EnableDynamicAgentLoading
+                        <!--${argLine}-->
                         --add-opens java.base/java.lang=ALL-UNNAMED
                         --add-opens java.base/java.math=ALL-UNNAMED
                         --add-opens java.base/java.io=ALL-UNNAMED

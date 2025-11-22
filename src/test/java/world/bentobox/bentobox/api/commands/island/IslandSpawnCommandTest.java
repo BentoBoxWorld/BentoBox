@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -16,23 +16,17 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -41,15 +35,12 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
-public class IslandSpawnCommandTest extends AbstractCommonSetup {
+public class IslandSpawnCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -61,13 +52,10 @@ public class IslandSpawnCommandTest extends AbstractCommonSetup {
     @Mock
     private BukkitTask task;
     @Mock
-    private PluginManager pim;
-    @Mock
     private Settings s;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -100,13 +88,10 @@ public class IslandSpawnCommandTest extends AbstractCommonSetup {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 
-        // Event register
-        when(Bukkit.getPluginManager()).thenReturn(pim);
-
-        // Settings
+       // Settings
         when(plugin.getSettings()).thenReturn(s);
 
         // IWM
@@ -131,7 +116,8 @@ public class IslandSpawnCommandTest extends AbstractCommonSetup {
         isc = new IslandSpawnCommand(ic);
     }
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

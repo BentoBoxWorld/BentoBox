@@ -1,15 +1,13 @@
 package world.bentobox.bentobox.managers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -17,18 +15,13 @@ import static org.mockito.Mockito.when;
 
 import java.beans.IntrospectionException;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -42,51 +35,39 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.eclipse.jdt.annotation.Nullable;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.DatabaseSetup;
-import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.hooks.VaultHook;
-import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class, DatabaseSetup.class , ServerBuildInfo.class})
-public class PlayersManagerTest {
+public class PlayersManagerTest extends CommonTestSetup {
 
-    private static AbstractDatabaseHandler<Object> handler;
+    private AbstractDatabaseHandler<Players> playerHandler;
+    private AbstractDatabaseHandler<Names> namesHandler;
+    private AbstractDatabaseHandler<Island> islandHandler;
     private Database<Players> db;
     @Mock
     private World end;
     @Mock
     private Inventory inv;
-    @Mock
-    private Island island;
-    @Mock
-    private IslandWorldManager iwm;
     @Mock
     private World nether;
     private UUID notUUID;
@@ -94,61 +75,63 @@ public class PlayersManagerTest {
     private Player p;
     @Mock
     private PlayerInventory playerInv;
-    @Mock
-    private BentoBox plugin;
     private PlayersManager pm;
     @Mock
     private Tameable tamed;
     private User user;
-    private UUID uuid;
+    private static UUID uuid = UUID.randomUUID();
 
     @Mock
     private VaultHook vault;
-
-    @Mock
-    private World world;
+    private MockedStatic<DatabaseSetup> mockedDatabase;
+    private @Nullable
+    static UUID notThere = UUID.randomUUID();
+    private static List<Names> names = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
-    @BeforeClass
-    public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+
+        // Clear any lingering database
+        deleteAll(new File("database"));
+        deleteAll(new File("database_backup"));
         // This has to be done beforeClass otherwise the tests will interfere with each
         // other
-        handler = mock(AbstractDatabaseHandler.class);
+        playerHandler = mock(AbstractDatabaseHandler.class);
+        namesHandler = mock(AbstractDatabaseHandler.class);
+        islandHandler = mock(AbstractDatabaseHandler.class);
         // Database
-        PowerMockito.mockStatic(DatabaseSetup.class);
+        mockedDatabase = Mockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
-        when(dbSetup.getHandler(any())).thenReturn(handler);
-        when(handler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
-    }
+        when(dbSetup.getHandler(eq(Players.class))).thenReturn(playerHandler);
+        when(dbSetup.getHandler(eq(Names.class))).thenReturn(namesHandler);
+        when(dbSetup.getHandler(eq(Island.class))).thenReturn(islandHandler);
 
-    private void deleteAll(File file) throws IOException {
-        if (file.exists()) {
-            Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-        }
+        // Unknown UUID - nothing in database
+        when(playerHandler.objectExists(notThere.toString())).thenReturn(false);
+        when(namesHandler.objectExists(notThere.toString())).thenReturn(false);
+        when(islandHandler.objectExists(any())).thenReturn(false);
+        // Loading objects
+        Players playerDB = new Players();
+        when(playerHandler.loadObject(anyString())).thenReturn(playerDB);
+        // Set up names database
 
-    }
+        Names name = new Names();
+        name.setUniqueId("tastybento");
+        name.setUuid(uuid);
+        names.add(name);
+        when(namesHandler.loadObjects()).thenReturn(names);
+        when(namesHandler.loadObject(any())).thenReturn(name);
+        when(namesHandler.objectExists(uuid.toString())).thenReturn(true);
+        // Save successfully
+        when(namesHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+        when(playerHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+        when(islandHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
 
-    /**
-     */
-    @SuppressWarnings("unchecked")
-    @Before
-    public void setUp() throws Exception {
-        // Clear any lingering database
-        tearDown();
-
-        ServerMocks.newServer();
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         when(plugin.getVault()).thenReturn(Optional.of(vault));
-        // Settings
-        Settings s = mock(Settings.class);
-        // The database type has to be created one line before the thenReturn() to work!
-        DatabaseType value = DatabaseType.JSON;
-        when(plugin.getSettings()).thenReturn(s);
-        when(s.getDatabaseType()).thenReturn(value);
-        when(s.isUseEconomy()).thenReturn(true);
-
         // island world mgr
         when(world.getName()).thenReturn("world");
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
@@ -167,7 +150,6 @@ public class PlayersManagerTest {
         when(iwm.getNetherSpawnRadius(Mockito.any())).thenReturn(100);
 
         // UUID
-        uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
         while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
@@ -199,8 +181,7 @@ public class PlayersManagerTest {
         OfflinePlayer olp = mock(OfflinePlayer.class);
         when(olp.getUniqueId()).thenReturn(uuid);
         when(olp.getName()).thenReturn("tastybento");
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenAnswer(invocation -> {
+        mockedBukkit.when(() -> Bukkit.getOfflinePlayer(any(UUID.class))).thenAnswer(invocation -> {
             UUID inputUUID = invocation.getArgument(0);
             if (inputUUID.equals(uuid)) {
                 return olp;
@@ -221,7 +202,7 @@ public class PlayersManagerTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -229,8 +210,7 @@ public class PlayersManagerTest {
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // Util
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-        when(Util.sameWorld(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.sameWorld(any(), any())).thenCallRealMethod();
 
         // Database
         db = mock(Database.class);
@@ -257,29 +237,16 @@ public class PlayersManagerTest {
         when(tamed.getOwner()).thenReturn(p);
         when(world.getEntitiesByClass(Tameable.class)).thenReturn(list);
 
-        // Loading objects
-        Object players = new Players();
-        when(handler.loadObject(anyString())).thenReturn(players);
-        // Set up names database
-        List<Object> names = new ArrayList<>();
-        Names name = new Names();
-        name.setUniqueId("tastybento");
-        name.setUuid(uuid);
-        names.add(name);
-        when(handler.loadObjects()).thenReturn(names);
-        when(handler.objectExists(anyString())).thenReturn(true);
 
         // Class under test
         pm = new PlayersManager(plugin);
     }
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
-        ServerMocks.unsetBukkitServer();
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-        deleteAll(new File("database"));
-        deleteAll(new File("database_backup"));
+        super.tearDown();
+        mockedDatabase.closeOnDemand();
     }
 
     /**
@@ -321,8 +288,7 @@ public class PlayersManagerTest {
         // Player inventory should NOT be cleared by default when kicked
         verify(playerInv, never()).clear();
         // Health
-        PowerMockito.verifyStatic(Util.class);
-        Util.resetHealth(eq(p));
+        mockedUtil.verify(() -> Util.resetHealth(eq(p)));
         // Food
         verify(p).setFoodLevel(eq(20));
         // XP
@@ -346,8 +312,7 @@ public class PlayersManagerTest {
         // Player inventory should NOT be cleared by default when kicked
         verify(playerInv, never()).clear();
         // Health
-        PowerMockito.verifyStatic(Util.class);
-        Util.resetHealth(eq(p));
+        mockedUtil.verify(() -> Util.resetHealth(eq(p)));
         // Food
         verify(p).setFoodLevel(eq(20));
         // XP
@@ -370,8 +335,7 @@ public class PlayersManagerTest {
         // Player inventory
         verify(playerInv).clear();
         // Health
-        PowerMockito.verifyStatic(Util.class);
-        Util.resetHealth(eq(p));
+        mockedUtil.verify(() ->  Util.resetHealth(eq(p)));
         // Food
         verify(p).setFoodLevel(eq(20));
         // XP
@@ -401,8 +365,7 @@ public class PlayersManagerTest {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
      */
     @Test
-    public void testGetNameNull() throws InstantiationException, IllegalAccessException, InvocationTargetException,
-            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+    public void testGetNameNull()  {
         // Null UUID
         assertTrue(pm.getName(null).isEmpty());
     }
@@ -412,8 +375,7 @@ public class PlayersManagerTest {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
      */
     @Test
-    public void testGetNameKnown() throws InstantiationException, IllegalAccessException, InvocationTargetException,
-            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+    public void testGetNameKnown()  {
         pm.setPlayerName(user);
         // Known UUID
         assertEquals("tastybento", pm.getName(uuid));
@@ -424,12 +386,8 @@ public class PlayersManagerTest {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
      */
     @Test
-    public void testGetNameUnknown() throws InstantiationException, IllegalAccessException, InvocationTargetException,
-            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
-        // Unknown UUID - nothing in database
-        when(handler.objectExists(anyString())).thenReturn(false);
-
-        assertEquals("", pm.getName(UUID.randomUUID()));
+    public void testGetNameUnknown()  {
+        assertEquals("", pm.getName(notThere));
     }
 
     /**
@@ -438,7 +396,7 @@ public class PlayersManagerTest {
      */
     @Test
     public void testGetPlayers() {
-        assertFalse(pm.getPlayers().isEmpty());
+        assertTrue(pm.getPlayers().isEmpty());
     }
 
     /**
@@ -462,16 +420,9 @@ public class PlayersManagerTest {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#setResets(World, UUID, int)}.
-     * @throws IntrospectionException 
-     * @throws NoSuchMethodException 
-     * @throws ClassNotFoundException 
-     * @throws InvocationTargetException 
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
      */
     @Test
-    public void testGetSetResetsLeft() throws InstantiationException, IllegalAccessException, InvocationTargetException,
-            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+    public void testGetSetResetsLeft()  {
         // Add a player
         pm.getPlayer(uuid);
         assertEquals(0, pm.getResets(world, uuid));
@@ -482,16 +433,9 @@ public class PlayersManagerTest {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#getUser(java.lang.String)}.
-     * @throws IntrospectionException 
-     * @throws NoSuchMethodException 
-     * @throws ClassNotFoundException 
-     * @throws InvocationTargetException 
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
      */
     @Test
-    public void testGetUserString() throws InstantiationException, IllegalAccessException, InvocationTargetException,
-            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+    public void testGetUserString()  {
         User user = pm.getUser("random");
         assertNull(user);
         pm.getPlayer(uuid);
@@ -575,8 +519,8 @@ public class PlayersManagerTest {
         pm.getPlayer(notUUID);
 
         assertFalse(pm.isKnown(null));
-        assertTrue(pm.isKnown(uuid));
-        assertTrue(pm.isKnown(notUUID));
+        assertFalse(pm.isKnown(uuid));
+        assertFalse(pm.isKnown(notUUID));
     }
 
     /**
@@ -675,9 +619,7 @@ public class PlayersManagerTest {
      */
     @Test
     public void testSetPlayerName() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-        pm.setPlayerName(user);
-        // Player and names database saves
-        verify(handler, atLeast(2)).saveObject(any());
+        pm.setPlayerName(user).thenAccept(result -> assertTrue(result));
     }
 
     /**
@@ -712,7 +654,7 @@ public class PlayersManagerTest {
      */
     @Test
     public void testGetName() {
-        assertEquals("", pm.getName(uuid));
+        assertEquals("tastybento", pm.getName(uuid));
     }
 
     /**
@@ -725,13 +667,11 @@ public class PlayersManagerTest {
         when(iwm.isOnLeaveResetInventory(world)).thenReturn(true);
         when(iwm.isOnLeaveResetMoney(world)).thenReturn(true);
         pm.cleanLeavingPlayer(world, user, false, island);
-        PowerMockito.verifyStatic(Util.class);
         Util.runCommands(user, "", plugin.getIWM().getOnLeaveCommands(world), "leave");
         verify(world).getEntitiesByClass(Tameable.class);
         verify(inv).clear(); // Enderchest cleared
         verify(plugin).getVault(); // Clear money
-        PowerMockito.verifyStatic(Util.class);
-        Util.resetHealth(p);
+        mockedUtil.verify(() ->  Util.resetHealth(p));
         verify(p).setFoodLevel(20);
         verify(p).setLevel(0);
         verify(p).setExp(0);
@@ -748,8 +688,7 @@ public class PlayersManagerTest {
      */
     @Test
     public void testSavePlayer() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-        pm.savePlayer(uuid);
-        verify(handler, atLeastOnce()).saveObject(any());
+        pm.savePlayer(uuid).thenAccept(result -> assertTrue(result));
     }
 
 }

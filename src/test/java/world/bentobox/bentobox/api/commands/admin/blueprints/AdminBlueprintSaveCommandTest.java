@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -18,44 +18,30 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
-import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.LocalesManager;
-import world.bentobox.bentobox.mocks.ServerMocks;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class , ServerBuildInfo.class})
-public class AdminBlueprintSaveCommandTest {
+public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
 
     @Mock
     private BentoBox plugin;
@@ -69,30 +55,15 @@ public class AdminBlueprintSaveCommandTest {
     private BlueprintClipboard clip;
     private UUID uuid = UUID.randomUUID();
     private File blueprintsFolder;
-    @Mock
-    private BlueprintsManager bm;
     private Blueprint bp = new Blueprint();
 
-    @BeforeClass
-    public static void beforeClass() {
-        ServerMocks.newServer();
-    }
-
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
+        super.setUp();
         // Required for NamespacedKey
         when(plugin.getName()).thenReturn("BentoBox");
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        // Hooks
-        HooksManager hooksManager = mock(HooksManager.class);
-        when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
-        when(plugin.getHooks()).thenReturn(hooksManager);
-
-        clip = new BlueprintClipboard();
-
-        // Blueprints Manager
-        when(plugin.getBlueprintsManager()).thenReturn(bm);
-
+       
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
@@ -113,6 +84,7 @@ public class AdminBlueprintSaveCommandTest {
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getTopLabel()).thenReturn("admin");
 
+        clip = new BlueprintClipboard();
         Map<UUID, BlueprintClipboard> map = new HashMap<>();
         map.put(uuid , clip);
         when(ac.getClipboards()).thenReturn(map);
@@ -124,17 +96,14 @@ public class AdminBlueprintSaveCommandTest {
         when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
+        
         absc = new AdminBlueprintSaveCommand(ac);
     }
 
-    /**
-     */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+        super.tearDown();
         if (blueprintsFolder.exists()) {
             Files.walk(blueprintsFolder.toPath())
             .sorted(Comparator.reverseOrder())
@@ -207,7 +176,6 @@ public class AdminBlueprintSaveCommandTest {
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
-    @Ignore("Paper Biome issue")
     @Test
     public void testExecuteUserStringListOfString() {
         testCanExecute();
@@ -219,7 +187,7 @@ public class AdminBlueprintSaveCommandTest {
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
-    @Ignore("Paper Biome issue")
+   //@Disabled("Paper Biome issue")
     @Test
     public void testExecuteUserStringListOfStringFileExists() {
         testCanExecute();

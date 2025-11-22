@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.listeners.teleports;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -31,45 +31,36 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, ServerBuildInfo.class })
-public class PlayerTeleportListenerTest extends AbstractCommonSetup {
+public class PlayerTeleportListenerTest extends CommonTestSetup {
 
     private PlayerTeleportListener ptl;
     @Mock
     private Block block;
     @Mock
-    private BukkitScheduler scheduler;
+    private BukkitScheduler sch;
 
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         // Bukkit
         when(Bukkit.getAllowNether()).thenReturn(true);
         when(Bukkit.getAllowEnd()).thenReturn(true);
-        when(Bukkit.getScheduler()).thenReturn(scheduler);
 
         // World
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
@@ -87,7 +78,7 @@ public class PlayerTeleportListenerTest extends AbstractCommonSetup {
         when(iwm.isEndIslands(world)).thenReturn(true);
 
         // Util
-        when(Util.getWorld(world)).thenReturn(world);
+        mockedUtil.when(() -> Util.getWorld(world)).thenReturn(world);
 
         // IM
         when(plugin.getIslandsManager()).thenReturn(im);
@@ -101,7 +92,8 @@ public class PlayerTeleportListenerTest extends AbstractCommonSetup {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

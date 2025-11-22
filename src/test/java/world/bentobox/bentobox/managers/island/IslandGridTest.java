@@ -1,32 +1,28 @@
 package world.bentobox.bentobox.managers.island;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.powermock.modules.junit4.PowerMockRunner;
 
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Grid test
  */
-@RunWith(PowerMockRunner.class)
-public class IslandGridTest {
+public class IslandGridTest extends CommonTestSetup {
     
     private IslandGrid ig;
     @Mock
     private IslandCache im;
-    @Mock
-    private Island island;
     @Mock
     private Island island2;
     @Mock
@@ -49,8 +45,9 @@ public class IslandGridTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
+        super.setUp();
         // Islands
         when(island.getMinX()).thenReturn(356);
         when(island.getMinZ()).thenReturn(5678);
@@ -73,8 +70,9 @@ public class IslandGridTest {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -235,7 +233,7 @@ public class IslandGridTest {
 
         // Expected: adding small should be rejected because it lies inside big
         // If this test fails, it reveals the current subMap window is too small to find big.
-        assertFalse("Small island overlaps big island; should have been rejected", ig.addToGrid(small));
+        assertFalse(ig.addToGrid(small), "Small island overlaps big island; should have been rejected");
     }
 
     @Test

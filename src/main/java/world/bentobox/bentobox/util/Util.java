@@ -31,10 +31,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Allay;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Bat;
-import org.bukkit.entity.CopperGolem;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Flying;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Monster;
@@ -557,19 +555,6 @@ public class Util {
 
         // If required version is a full release but current version is SNAPSHOT, it's incompatible
         return !(!isRequiredSnapshot && isVersionSnapshot);
-    }
-
-    /**
-     * Check if the server has access to the Paper API
-     * @return True for Paper environments
-     */
-    public static boolean isPaper() {
-        try {
-            Class.forName("com.destroystokyo.paper.PaperConfig");
-            return true; // Paper-specific class exists
-        } catch (ClassNotFoundException e) {
-            return false; // Not a Paper server
-        }
     }
 
     /**

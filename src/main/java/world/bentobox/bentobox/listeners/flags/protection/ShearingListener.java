@@ -7,7 +7,6 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * Handles shearing
@@ -17,9 +16,7 @@ import world.bentobox.bentobox.util.Util;
 public class ShearingListener extends FlagListener {
 
     public ShearingListener() {
-        if (Util.isPaper()) {
-            Bukkit.getPluginManager().registerEvents(new PaperShearingListener(), getPlugin());
-        }
+        Bukkit.getPluginManager().registerEvents(new PaperShearingListener(), getPlugin());
     }
 
     // Protect sheep

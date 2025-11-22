@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -17,20 +17,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -39,20 +33,17 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
+public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private IslandTeamCommand ic;
     @Mock
-    User user;
+    private User user;
 
     // DUT
     private IslandTeamPromoteCommand ipc;
@@ -66,7 +57,8 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -91,10 +83,8 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
         when(target.getDisplayName()).thenReturn("Target");
         when(target.getUniqueId()).thenReturn(uuid);
 
-        // Managers
-        when(plugin.getIslands()).thenReturn(im);
+        // Manager
         when(plugin.getPlayers()).thenReturn(pm);
-        when(plugin.getIWM()).thenReturn(iwm);
 
         // Translations
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
@@ -123,8 +113,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
         when(island.getMemberSet()).thenReturn(team);
 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.getOfflinePlayer(uuid)).thenReturn(mockPlayer);
+        mockedBukkit.when(() -> Bukkit.getOfflinePlayer(uuid)).thenReturn(mockPlayer);
         when(mockPlayer.getName()).thenReturn("tastybento");
 
 
@@ -132,6 +121,12 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
         idc = new IslandTeamPromoteCommand(ic, "demote");
 
     }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }  
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#IslandTeamPromoteCommand(world.bentobox.bentobox.api.commands.CompositeCommand, java.lang.String)}.
