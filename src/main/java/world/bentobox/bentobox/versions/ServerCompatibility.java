@@ -9,6 +9,9 @@ import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.util.Util;
+
 /**
  * Checks and ensures the current server software is compatible with BentoBox.
  * @author Poslovitch
@@ -246,11 +249,15 @@ public class ServerCompatibility {
      */
     @NonNull
     public ServerSoftware getServerSoftware() {
+        if (Util.isPaper()) {
+            return ServerSoftware.PAPER;
+        }
         String[] parts = Bukkit.getServer().getBukkitVersion().split("-");
         if (parts.length < 2) {
             return ServerSoftware.UNKNOWN.setName(Bukkit.getServer().getBukkitVersion().toUpperCase(Locale.ENGLISH));
         }
         String serverSoftware = Bukkit.getServer().getVersion().split("-")[1];
+        BentoBox.getInstance().logDebug(serverSoftware.toUpperCase(Locale.ENGLISH));
         try {
             return ServerSoftware.valueOf(serverSoftware.toUpperCase(Locale.ENGLISH));
         } catch (IllegalArgumentException e) {
