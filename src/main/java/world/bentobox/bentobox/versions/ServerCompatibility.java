@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -257,7 +256,6 @@ public class ServerCompatibility {
             return ServerSoftware.UNKNOWN.setName(Bukkit.getServer().getBukkitVersion().toUpperCase(Locale.ENGLISH));
         }
         String serverSoftware = Bukkit.getServer().getVersion().split("-")[1];
-        BentoBox.getInstance().logDebug(serverSoftware.toUpperCase(Locale.ENGLISH));
         try {
             return ServerSoftware.valueOf(serverSoftware.toUpperCase(Locale.ENGLISH));
         } catch (IllegalArgumentException e) {
