@@ -211,6 +211,7 @@ public class PlayersManagerTest extends CommonTestSetup {
 
         // Util
         mockedUtil.when(() -> Util.sameWorld(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
 
         // Database
         db = mock(Database.class);

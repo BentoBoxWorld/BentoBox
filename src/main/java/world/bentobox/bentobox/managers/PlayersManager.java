@@ -250,35 +250,35 @@ public class PlayersManager {
 
     /**
      * Add death to player
-     * @param world - world
+     * @param world - world (this includes any nether or end)
      * @param playerUUID - the player's UUID
      */
     public void addDeath(World world, UUID playerUUID) {
         Players p = getPlayer(playerUUID);
-        p.addDeath(world);
+        p.addDeath(Util.getWorld(world));
         handler.saveObject(p);
     }
 
     /**
      * Set death number for player
-     * @param world - world
+     * @param world - world (this includes any nether or end)
      * @param playerUUID - the player's UUID
      * @param deaths - number of deaths
      */
     public void setDeaths(World world, UUID playerUUID, int deaths) {
         Players p = getPlayer(playerUUID);
-        p.setDeaths(world, deaths);
+        p.setDeaths(Util.getWorld(world), deaths);
         handler.saveObject(p);
     }
 
     /**
      * Get number of times player has died since counting began
-     * @param world - world
+     * @param world - world (this includes any nether or end)
      * @param playerUUID - the player's UUID
      * @return number of deaths
      */
     public int getDeaths(World world, UUID playerUUID) {
-        return getPlayer(playerUUID).getDeaths(world);
+        return getPlayer(playerUUID).getDeaths(Util.getWorld(world));
     }
 
     /**
