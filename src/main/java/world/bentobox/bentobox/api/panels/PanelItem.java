@@ -206,7 +206,7 @@ public class PanelItem {
             meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
-            if (originalMeta.hasCustomModelDataComponent()) {
+            if (originalMeta != null && originalMeta.hasCustomModelDataComponent()) {
                 meta.setCustomModelDataComponent(originalMeta.getCustomModelDataComponent());
             }
 
