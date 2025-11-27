@@ -42,15 +42,27 @@ public class PanelItemBuilder {
         return this;
     }
 
+
+    /**
+     * Assigns icon and player name to the panel item.
+     * @param playerName the name of player head icon.
+     * @param icon the original player head icon
+     * @return PanelItemBuilder
+     */
+    public PanelItemBuilder icon(String playerName, ItemStack icon) {
+        this.icon = icon;
+        this.playerHeadName = playerName;
+        return this;
+    }
+
+
     /**
      * Set icon to player's head
      * @param playerName - player's name
      * @return PanelItemBuilder
      */
     public PanelItemBuilder icon(String playerName) {
-        this.icon = new ItemStack(Material.PLAYER_HEAD);
-        this.playerHeadName = playerName;
-        return this;
+        return this.icon(playerName, new ItemStack(Material.PLAYER_HEAD));
     }
 
     public PanelItemBuilder name(@Nullable String name) {

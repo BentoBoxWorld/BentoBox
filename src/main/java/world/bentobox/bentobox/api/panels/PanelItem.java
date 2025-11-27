@@ -193,6 +193,8 @@ public class PanelItem {
     public void setHead(ItemStack itemStack) {
         // update amount before replacing.
         itemStack.setAmount(this.icon.getAmount());
+        ItemMeta originalMeta = this.icon.getItemMeta();
+
         this.icon = itemStack;
 
         // Get the meta
@@ -203,6 +205,11 @@ public class PanelItem {
             meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
             meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
+            if (originalMeta.hasCustomModelDataComponent()) {
+                meta.setCustomModelDataComponent(originalMeta.getCustomModelDataComponent());
+            }
+
             icon.setItemMeta(meta);
         }
         // Create the final item
