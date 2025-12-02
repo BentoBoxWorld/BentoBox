@@ -43,7 +43,6 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  */
 public class NewIsland {
-
     private final BentoBox plugin;
     private Island island;
     private final User user;
@@ -261,7 +260,6 @@ public class NewIsland {
      * 
      * @param oldIsland - old island that will be deleted
      */
-    @SuppressWarnings("null")
     private void postCreationTask(Island oldIsland) {
         // Set initial spawn point if one exists
         if (island.getSpawnPoint(Environment.NORMAL) != null) {
@@ -276,15 +274,9 @@ public class NewIsland {
                 user.getPlayer().setFallDistance(0F);
                 // Teleport player after island is built, then tidy up
                 World nether = plugin.getIWM().getNetherWorld(world);
-                if (nether == null || !user.getWorld().equals(island.getWorld())) {
-                    // If they are in another world or there's no nether there's no need to interfere. 
-                    plugin.getIslands().homeTeleportAsync(world, user.getPlayer(), true).thenRun(() -> tidyUp(oldIsland));
-                } else {
-                    plugin.tagPlayer(user);
-                    // Teleport to nether and back. Remove any advancement if it was given
-                    Util.teleportAsync(user.getPlayer(), nether.getSpawnLocation(), TeleportCause.PLUGIN).thenRun(() -> 
-                    plugin.getIslands().homeTeleportAsync(world, user.getPlayer(), true).thenRun(() -> tidyUp(oldIsland)));
-                }
+                Location loc = new Location(nether, 0, 256, 0);
+                Util.teleportAsync(user.getPlayer(), loc, TeleportCause.PLUGIN).thenRun(() -> 
+                plugin.getIslands().homeTeleportAsync(world, user.getPlayer(), true).thenRun(() -> tidyUp(oldIsland)));
                 return;
             } else {
                 // Notify player they can teleport to their island

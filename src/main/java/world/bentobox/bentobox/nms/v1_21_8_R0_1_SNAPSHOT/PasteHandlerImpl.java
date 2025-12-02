@@ -71,5 +71,4 @@ public class PasteHandlerImpl implements PasteHandler {
         }
         return block;
     }
-    
 }

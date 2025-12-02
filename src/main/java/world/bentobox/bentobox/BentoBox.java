@@ -9,9 +9,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
-import org.bukkit.advancement.Advancement;
-import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -21,8 +18,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
-import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
 
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
@@ -67,7 +62,6 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.WebManager;
 import world.bentobox.bentobox.util.ExpiringMap;
-import world.bentobox.bentobox.util.ExpiringSet;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.versions.ServerCompatibility;
@@ -101,18 +95,11 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     // Notifier
     private Notifier notifier;
-
+    
     // Click limiter
     private ExpiringMap<Pair<UUID, String>, Boolean> lastClick ;
 
     private HeadGetter headGetter;
-
-    // The NamespacedKey for the "Nether Root" advancement ("We Need to Go Deeper")
-    // This key is: minecraft:story/enter_the_nether
-    public static final NamespacedKey NETHER_ROOT_KEY = NamespacedKey.minecraft("story/enter_the_nether");
-
-    // An expiring Set to store the UUIDs of players who have NOT made the nether advancement but might get it due to a new island teleport
-    private final ExpiringSet<UUID> playersMissingNether = new ExpiringSet<>(30, TimeUnit.SECONDS);
 
     private boolean isLoaded;
 
@@ -160,7 +147,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         }
         // Saving the config now.
         saveConfig();
-
+        
         // Set up click timeout
         lastClick = new ExpiringMap<Pair<UUID, String>, Boolean>(getSettings().getClickCooldownMs(), TimeUnit.MILLISECONDS);
 
@@ -271,7 +258,7 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // Register ItemsAdder
         hooksManager.registerHook(new ItemsAdderHook(this));
-
+        
         // Register Oraxen
         hooksManager.registerHook(new OraxenHook(this));
 
@@ -363,7 +350,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         islandDeletionManager = new IslandDeletionManager(this);
         manager.registerEvents(islandDeletionManager, this);
         // Primary Island Listener
-        manager.registerEvents(new PrimaryIslandListener(this), this);        
+        manager.registerEvents(new PrimaryIslandListener(this), this);
     }
 
     @Override
@@ -679,7 +666,7 @@ public class BentoBox extends JavaPlugin implements Listener {
     public boolean isShutdown() {
         return shutdown;
     }
-
+    
     /**
      * Checks if a user can click a GUI or needs to slow down
      * @param user user
@@ -693,31 +680,4 @@ public class BentoBox extends JavaPlugin implements Listener {
         lastClick.put(new Pair<UUID, String>(user.getUniqueId(), panel.getName()), true);
         return false;
     }
-
-    /**
-     * We use a "hack" to force a player's client to load blocks after pasting that teleports them to the nether
-     * and back. This tags the player as doing that and prevents the advancement if they don't have that advancement
-     * already.
-     * @param user user
-     */
-    public void tagPlayer(User user) {
-        Advancement netherRootAdv = Bukkit.getAdvancement(NETHER_ROOT_KEY);
-        if (netherRootAdv != null) {
-            AdvancementProgress progress = user.getPlayer().getAdvancementProgress(netherRootAdv);
-            if (!progress.isDone()) {
-                // Tag them so that if they get the advancement we cancel it
-                playersMissingNether.add(user.getUniqueId());
-            }
-        }
-    }
-
-    @EventHandler
-    public void onAdvancementGrant(PlayerAdvancementCriterionGrantEvent event) {
-        NamespacedKey advancementKey = event.getAdvancement().getKey();
-        if (advancementKey.equals(NETHER_ROOT_KEY)
-                && this.playersMissingNether.remove(event.getPlayer().getUniqueId())) {
-            event.setCancelled(true);
-        }
-    }
-
 }
