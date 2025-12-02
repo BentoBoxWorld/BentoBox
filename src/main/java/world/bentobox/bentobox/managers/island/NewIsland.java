@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BStats;
@@ -23,7 +22,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * Handles the creation and pasting of a new island for a player.
@@ -273,10 +271,7 @@ public class NewIsland {
                 user.getPlayer().setVelocity(new Vector(0, 0, 0));
                 user.getPlayer().setFallDistance(0F);
                 // Teleport player after island is built, then tidy up
-                World nether = plugin.getIWM().getNetherWorld(world);
-                Location loc = new Location(nether, 0, 256, 0);
-                Util.teleportAsync(user.getPlayer(), loc, TeleportCause.PLUGIN).thenRun(() -> 
-                plugin.getIslands().homeTeleportAsync(world, user.getPlayer(), true).thenRun(() -> tidyUp(oldIsland)));
+                plugin.getIslands().homeTeleportAsync(world, user.getPlayer(), true).thenRun(() -> tidyUp(oldIsland));
                 return;
             } else {
                 // Notify player they can teleport to their island
