@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BStats;
@@ -237,8 +238,9 @@ public class NewIsland {
             Bukkit.getScheduler().runTask(plugin, () -> postCreationTask(oldIsland));
         } else {
             // Determine if NMS (native Minecraft server) paste is needed based on player state
-            boolean useNMS = user.isOfflinePlayer() || !user.getWorld().equals(island.getWorld())
-                    || (user.getLocation().distance(island.getCenter()) >= Bukkit.getViewDistance() * 16D);
+            double dist = user.getLocation().distance(island.getCenter());
+            boolean useNMS = (user.getPlayer() instanceof ConsoleCommandSender) || !user.getWorld().equals(island.getWorld())
+                    || (dist >= Bukkit.getViewDistance() * 16D);
             // Paste the blueprint, then run post-creation tasks
             plugin.getBlueprintsManager().paste(addon, island, name, () -> postCreationTask(oldIsland), useNMS);
         }
