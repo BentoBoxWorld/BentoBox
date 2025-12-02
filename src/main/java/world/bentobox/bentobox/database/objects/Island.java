@@ -28,6 +28,7 @@ import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.annotations.Expose;
@@ -2082,15 +2083,35 @@ public class Island implements DataObject, MetaDataAble {
      */
     @Override
     public String toString() {
-        return "Island [changed=" + changed + ", deleted=" + deleted + ", uniqueId=" + uniqueId + ", center=" + center
-                + ", location=" + location + ", range=" + range + ", protectionRange=" + protectionRange
-                + ", maxEverProtectionRange=" + maxEverProtectionRange + ", world=" + world + ", gameMode=" + gameMode
-                + ", name=" + name + ", createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", owner="
-                + owner + ", members=" + members + ", maxMembers=" + maxMembers + ", spawn=" + spawn
-                + ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history + ", spawnPoint="
-                + spawnPoint + ", doNotLoad=" + doNotLoad + ", cooldowns=" + cooldowns + ", commandRanks="
-                + commandRanks + ", reserved=" + reserved + ", metaData=" + metaData + ", homes=" + homes
-                + ", maxHomes=" + maxHomes + "]";
+        MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(this)
+            .add("uniqueId", uniqueId)
+            .add("name", name)
+            .add("owner", owner)
+            .add("world", world)
+            .add("center", center)
+            .add("location", location)
+            .add("range", range)
+            .add("protectionRange", protectionRange)
+            .add("maxEverProtectionRange", maxEverProtectionRange)
+            .add("gameMode", gameMode)
+            .add("members", members)
+            .add("maxMembers", maxMembers)
+            .add("spawn", spawn)
+            .add("purgeProtected", purgeProtected)
+            .add("flags", flags)
+            .add("doNotLoad", doNotLoad)
+            .add("reserved", reserved)
+            .add("metaData", metaData)
+            .add("homesCount", homes != null ? homes.size() : 0)
+            .add("maxHomes", maxHomes);
+
+        // Inline every LogEntry.toString() into a single bracketed list
+        String historyStr = history.stream()
+            .map(LogEntry::toString)
+            .collect(Collectors.joining(", ", "[", "]"));
+        helper.add("history", historyStr);
+
+        return helper.toString();
     }
 
     /**
