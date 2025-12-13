@@ -51,6 +51,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.nms.AbstractMetaData;
@@ -946,5 +948,23 @@ public class Util {
             // Fallback for non-standard version strings
             return SERVER_VERSION.startsWith(targetVersion);
         }
+    }
+    
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder()
+            .character('&')
+            .hexColors() // Enables support for modern hex codes (e.g., &#FF0000) alongside legacy codes.
+            .build();
+    
+    /**
+     * Converts a string containing Bukkit color codes ('&') into an Adventure Component.
+     *
+     * @param legacyString The string with Bukkit color and format codes.
+     * @return The resulting Adventure Component.
+     */
+    public static Component bukkitToAdventure(String legacyString) {
+        if (legacyString == null) {
+            return Component.empty();
+        }
+        return LEGACY_SERIALIZER.deserialize(legacyString);
     }
 }
