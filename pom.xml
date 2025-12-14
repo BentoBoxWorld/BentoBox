@@ -9,7 +9,7 @@
     <version>${revision}</version>
 
     <name>BentoBox</name>
-    <description>Highly scalable and customizable Minecraft Spigot plugin that enables you to run island-type gamemodes.</description>
+    <description>Highly scalable and customizable Minecraft Paper plugin that enables you to run island-type gamemodes.</description>
     <url>https://github.com/BentoBoxWorld/BentoBox</url>
     <inceptionYear>2017</inceptionYear>
 
@@ -61,11 +61,8 @@
         <mysql.version>8.0.27</mysql.version>
         <postgresql.version>42.2.18</postgresql.version>
         <hikaricp.version>5.0.1</hikaricp.version>
-        <!-- More visible way to change dependency versions -->
-        <spigot.version>1.21.10-R0.1-SNAPSHOT</spigot.version>
-        <!-- Might differ from the last Spigot release for short periods 
-            of time -->
-        <paper.version>1.21.10-R0.1-SNAPSHOT</paper.version>
+        <!-- Paper version -->
+        <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
         <bstats.version>3.0.0</bstats.version>
         <vault.version>1.7.1</vault.version>
         <level.version>2.21.3</level.version>
@@ -131,6 +128,10 @@
             <id>apache.snapshots</id>
             <url>https://repository.apache.org/snapshots/</url>
         </pluginRepository>
+        <pluginRepository>
+            <id>bytecode.space</id>
+            <url>https://repo.bytecode.space/repository/maven-public/</url>
+        </pluginRepository>
     </pluginRepositories>
 
     <repositories>
@@ -149,11 +150,6 @@
         <repository>
             <id>minecraft-repo</id>
             <url>https://libraries.minecraft.net/</url>
-        </repository>
-        <!-- Spigot NMS required for world regeneration :( -->
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
         </repository>
         <repository>
             <id>nms-repo</id>
@@ -263,37 +259,6 @@
             <version>${paper.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Spigot API -->
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>${spigot.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-             <groupId>org.spigotmc.</groupId>
-             <artifactId>spigot</artifactId>
-             <version>1.21.6-R0.1-SNAPSHOT</version>
-             <scope>provided</scope>
-        </dependency>
-        <dependency>
-             <groupId>org.spigotmc..</groupId>
-             <artifactId>spigot</artifactId>
-             <version>1.21.5-R0.1-SNAPSHOT</version>
-             <scope>provided</scope>
-        </dependency>
-        <dependency>
-             <groupId>org.spigotmc...</groupId>
-             <artifactId>spigot</artifactId>
-             <version>1.21.4-R0.1-SNAPSHOT</version>
-             <scope>provided</scope>
-        </dependency>
-        <dependency>
-             <groupId>org.spigotmc....</groupId>
-             <artifactId>spigot</artifactId>
-             <version>1.21.3-R0.1-SNAPSHOT</version>
-             <scope>provided</scope>
-        </dependency>
         <!-- Metrics -->
         <dependency>
             <groupId>org.bstats</groupId>
@@ -385,13 +350,6 @@
             <groupId>com.github.apachezy</groupId>
             <artifactId>LangUtils</artifactId>
             <version>3.2.2</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Spigot NMS. Used for chunk deletion and pasting.-->
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Slimefun -->
@@ -496,6 +454,12 @@
             <version>${level.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>ca.bkaw</groupId>
+            <artifactId>paper-nms</artifactId>
+            <version>1.21.11-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -522,6 +486,11 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>ca.bkaw</groupId>
+                <artifactId>paper-nms-maven-plugin</artifactId>
+                <version>1.4.10</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -574,10 +543,17 @@
                     </argLine>
                 </configuration>
             </plugin>
-            <plugin>
+             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.4.1</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <paperweight-mappings-namespace>mojang</paperweight-mappings-namespace>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
