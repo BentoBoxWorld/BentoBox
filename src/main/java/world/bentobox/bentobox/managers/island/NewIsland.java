@@ -237,12 +237,16 @@ public class NewIsland {
             // If noPaste is true, skip blueprint paste and run post-creation immediately
             Bukkit.getScheduler().runTask(plugin, () -> postCreationTask(oldIsland));
         } else {
-            // Determine if NMS (native Minecraft server) paste is needed based on player state
-            double dist = user.getLocation().distance(island.getCenter());
-            boolean useNMS = (user.getPlayer() instanceof ConsoleCommandSender) || !user.getWorld().equals(island.getWorld())
-                    || (dist >= Bukkit.getViewDistance() * 16D);
-            // Paste the blueprint, then run post-creation tasks
-            plugin.getBlueprintsManager().paste(addon, island, name, () -> postCreationTask(oldIsland), useNMS);
+            if (user.getWorld().equals(island.getWorld())) {
+                // Determine if NMS (native Minecraft server) paste is needed based on player state
+                double dist = user.getLocation().distance(island.getCenter());
+                boolean useNMS = (user.getPlayer() instanceof ConsoleCommandSender) || !user.getWorld().equals(island.getWorld())
+                        || (dist >= Bukkit.getViewDistance() * 16D);
+                // Paste the blueprint, then run post-creation tasks
+                plugin.getBlueprintsManager().paste(addon, island, name, () -> postCreationTask(oldIsland), useNMS);
+            } else {
+                plugin.getBlueprintsManager().paste(addon, island, name, () -> postCreationTask(oldIsland), true);
+            }
         }
         // Set default island flags/settings
         island.setFlagsDefaults();
