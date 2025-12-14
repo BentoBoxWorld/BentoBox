@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.nms.v1_21_10_R0_1_SNAPSHOT;
+package world.bentobox.bentobox.nms;
 
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.CraftWorld; // Unversioned import for Paperweight
@@ -7,7 +7,6 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData; // Unversioned import f
 import net.minecraft.core.BlockPos; // New name for BlockPosition
 import net.minecraft.world.level.Level; // New name for World
 import net.minecraft.world.level.chunk.LevelChunk; // New name for Chunk
-import world.bentobox.bentobox.nms.CopyWorldRegenerator;
 
 public class WorldRegeneratorImpl extends CopyWorldRegenerator {
 
