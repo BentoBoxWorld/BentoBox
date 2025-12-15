@@ -273,6 +273,8 @@ tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJ
     relocate("org.bstats", "world.bentobox.bentobox.util.metrics")
     relocate("io.papermc.lib", "world.bentobox.bentobox.paperlib")
     relocate("com.github.puregero.multilib", "world.bentobox.bentobox.multilib")
+    // Remove the "-all" suffix
+    archiveClassifier.set("")
 }
 
 // Ensure the shaded jar is the primary artifact when 'build' is run
@@ -372,4 +374,8 @@ publishing {
             url = uri("https://repo.codemc.org/repository/bentoboxworld/")
         }
     }
+}
+
+base {
+    archivesName.set("BentoBox")
 }
