@@ -241,6 +241,7 @@ dependencies {
 }
 
 paperweight {
+    addServerDependencyTo = configurations.named(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME).map { setOf(it) }
   javaLauncher = javaToolchains.launcherFor {
     // Example scenario:
     // Paper 1.17.1 was originally built with JDK 16 and the bundle
