@@ -27,7 +27,14 @@ plugins {
 
     // Shadow Plugin - shades (embeds) dependencies into the final JAR and minimizes unused code
     id("com.gradleup.shadow") version "9.3.0"
+
+    // Paperweight UserDev - simplifies development against PaperMC with proper mappings and reobfuscation
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
 }
+
+// Add paperweight reobf configuration so the userdev plugin reobfuscates artifacts
+// using the Mojang production mappings as required by paperweight-userdev.
+paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 // ============================================================================
 // PROJECT COORDINATES & VERSIONING
@@ -128,13 +135,16 @@ tasks.withType<JavaCompile> {
 // ============================================================================
 // Defines where dependencies are downloaded from (in order of precedence)
 repositories {
+    // Gradle Plugin Portal - for resolving Gradle plugins
+    gradlePluginPortal()
+    // PaperMC Maven Repository - for Paper API and related libraries
+    maven("https://repo.papermc.io/repository/maven-public/") { name = "PaperMC" } // Paper API
     // Standard Maven Central Repository - most common Java libraries
     mavenCentral() 
 
     // Custom repositories for Minecraft and plugin-specific libraries
     maven("https://jitpack.io") { name = "JitPack" } // GitHub repository packages
     maven("https://repo.codemc.org/repository/maven-public") { name = "CodeMC-Public" }
-    maven("https://repo.papermc.io/repository/maven-public/") { name = "PaperMC" } // Paper API
     maven("https://libraries.minecraft.net/") { name = "MinecraftLibs" } // Official Minecraft libraries
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots") { name = "Spigot-Snapshots" }
     maven("https://repo.codemc.io/repository/nms/") { name = "NMS-Repo" } // NMS (internal Minecraft code)
@@ -173,7 +183,8 @@ dependencies {
 
     // --- Provided/Compile-Only Dependencies: Available at compile time but provided by server ---
     // These are NOT shaded into the final JAR (the server provides them at runtime)
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT") // Bukkit/Spigot/Paper API
+    //compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT") // Bukkit/Spigot/Paper API
+    paperweight.paperDevBundle("1.21.10-R0.1-SNAPSHOT")
     
     // Spigot NMS - Used for internal Minecraft code (chunk deletion and pasting)
     compileOnly("org.spigotmc:spigot:$spigotVersion") {
@@ -227,6 +238,16 @@ dependencies {
         exclude(group = "com.jeff_media", module = "MorePersistentDataTypes")
         exclude(group = "gs.mclo", module = "java")
     }
+}
+
+paperweight {
+  javaLauncher = javaToolchains.launcherFor {
+    // Example scenario:
+    // Paper 1.17.1 was originally built with JDK 16 and the bundle
+    // has not been updated to work with 21+ (but we want to compile with a 25 toolchain)
+        // Use the project's configured Java version for paperweight tools (needs Java 21+)
+        languageVersion = JavaLanguageVersion.of(javaVersion)
+  }
 }
 
 
