@@ -199,16 +199,12 @@ dependencies {
     testImplementation("io.papermc.paper:paper-api:$paperVersion")
     testImplementation("com.github.MilkBowl:VaultAPI:$vaultVersion")
     testImplementation("me.clip:placeholderapi:$placeholderapiVersion")
+    testImplementation("commons-lang:commons-lang:$commonsLangVersion")
 
-    // --- Provided/Compile-Only Dependencies: Available at compile time but provided by server ---
-    // These are NOT shaded into the final JAR (the server provides them at runtime)
-    //compileOnly("io.papermc.paper:paper-api:$paperVersion") // Bukkit/Spigot/Paper API
-    paperweight.paperDevBundle(paperVersion)
-
+    // --- Compile Only Dependencies: Provided by the server at runtime ---
     compileOnly("org.spigotmc:spigot:$spigotVersion") {
         exclude(group = "org.spigotmc", module = "spigot-api")
     }
-
     compileOnly("org.mongodb:mongodb-driver:$mongodbVersion")
     compileOnly("com.zaxxer:HikariCP:$hikaricpVersion")
     compileOnly("com.github.MilkBowl:VaultAPI:$vaultVersion")
@@ -228,17 +224,7 @@ dependencies {
     compileOnly("lol.pyr:znpcsplus-api:$znpcsplusApiVersion")
     compileOnly("de.oliver:FancyHolograms:$fancyHologramsVersion")
     compileOnly("world.bentobox:level:$levelVersion-SNAPSHOT")
-
     compileOnly("commons-lang:commons-lang:$commonsLangVersion")
-    testImplementation("commons-lang:commons-lang:$commonsLangVersion")
-
-    // --- Implementation Dependencies: Shaded into final JAR ---
-    implementation("org.bstats:bstats-bukkit:$bstatsVersion")
-    implementation("javax.xml.bind:jaxb-api:$jaxbApiVersion")
-    implementation("com.github.Marcono1234:gson-record-type-adapter-factory:$gsonRecordTypeAdapterFactoryVersion")
-    implementation("org.eclipse.jdt:org.eclipse.jdt.annotation:$jdtAnnotationVersion")
-    implementation("com.github.puregero:multilib:$multilibVersion")
-
     compileOnly("io.th0rgal:oraxen:$oraxenVersion") {
         exclude(group = "me.gabytm.util", module = "actions-spigot")
         exclude(group = "org.jetbrains", module = "annotations")
@@ -252,6 +238,16 @@ dependencies {
         exclude(group = "com.jeff-media", module = "MorePersistentDataTypes")
         exclude(group = "gs.mclo", module = "java")
     }
+
+    // --- Implementation Dependencies: Shaded into final JAR ---
+    implementation("org.bstats:bstats-bukkit:$bstatsVersion")
+    implementation("javax.xml.bind:jaxb-api:$jaxbApiVersion")
+    implementation("com.github.Marcono1234:gson-record-type-adapter-factory:$gsonRecordTypeAdapterFactoryVersion")
+    implementation("org.eclipse.jdt:org.eclipse.jdt.annotation:$jdtAnnotationVersion")
+    implementation("com.github.puregero:multilib:$multilibVersion")
+
+    // --- Paperweight Development Bundle (Provided by plugin development tools) ---
+    paperweight.paperDevBundle(paperVersion)
 }
 
 paperweight {
