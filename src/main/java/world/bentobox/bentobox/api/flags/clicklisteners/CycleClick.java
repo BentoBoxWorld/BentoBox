@@ -62,7 +62,7 @@ public class CycleClick implements PanelItem.ClickHandler {
     public boolean onClick(Panel panel, User user2, ClickType click, int slot) {
         if (panel.getWorld().isEmpty()) {
             plugin.logError("Panel " + panel.getName()
-                    + " has no world associated with it. Please report this bug to the author.");
+            + " has no world associated with it. Please report this bug to the author.");
             return true;
         }
         // This click listener is used with TabbedPanel and SettingsTabs only
@@ -73,14 +73,17 @@ public class CycleClick implements PanelItem.ClickHandler {
         this.user = user2;
         changeOccurred = false;
         // Permission prefix
-        String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(panel.getWorld().get()));
-        String reqPerm = prefix + "settings." + id;
-        String allPerms = prefix + "settings.*";
-        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)
-                && !user.isOp() && !user.hasPermission(prefix + "admin.settings")) {
-            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, reqPerm);
-            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
-            return true;
+        String prefix = "";
+        if (panel.getWorld().isPresent()) {
+            prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(panel.getWorld().get()));
+            String reqPerm = prefix + "settings." + id;
+            String allPerms = prefix + "settings.*";
+            if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)
+                    && !user.isOp() && !user.hasPermission(prefix + "admin.settings")) {
+                user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, reqPerm);
+                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+                return true;
+            }
         }
         // Left-clicking increases the rank required
         // Right-clicking decreases the rank required
