@@ -12,6 +12,7 @@ import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -25,6 +26,7 @@ import world.bentobox.bentobox.api.user.User;
  * @author tastybento
  *
  */
+@Disabled("NMS Cannot be tested")
 public class BlueprintPasterTest extends CommonTestSetup {
 
     private BlueprintPaster bp;
