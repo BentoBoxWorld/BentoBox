@@ -46,7 +46,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 group = "world.bentobox" // From <groupId>
 
 // Base properties from <properties>
-val buildVersion = "3.10.2"
+val buildVersion = "3.11.0"
 val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
