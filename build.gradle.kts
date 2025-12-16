@@ -306,6 +306,7 @@ tasks.compileTestJava {
 // Set the final JAR filename to match project name and version
 tasks.jar {
     archiveFileName.set("${project.name}-${project.version}.jar")
+    dependsOn("copyLocales")  // Explicit dependency for Gradle 9.0+ strict validation
 }
 
 
