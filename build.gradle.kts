@@ -450,9 +450,32 @@ publishing {
     
     // Configure publication target repository
     repositories {
-        maven {
-            name = "bentoboxworld"
-            url = uri("https://repo.codemc.org/repository/bentoboxworld/") // Where artifacts are uploaded
+        // Allow CI to provide publish URLs via project properties `mavenUrl` and `mavenSnapshotUrl`.
+        // If neither is provided, fall back to the existing BentoBox repository.
+        val mavenUrlProp = project.findProperty("mavenUrl") as String?
+        val mavenSnapshotUrlProp = project.findProperty("mavenSnapshotUrl") as String?
+
+        val publishUrl = if (version.toString().endsWith("SNAPSHOT")) mavenSnapshotUrlProp else mavenUrlProp
+
+        if (publishUrl != null) {
+            maven {
+                url = uri(publishUrl)
+                // Optional credentials passed via project properties `mavenUsername`/`mavenPassword`
+                val username = project.findProperty("mavenUsername") as String?
+                val password = project.findProperty("mavenPassword") as String?
+                if (!username.isNullOrBlank() && !password.isNullOrBlank()) {
+                    credentials {
+                        this.username = username
+                        this.password = password
+                    }
+                }
+            }
+        } else {
+            // Fallback to the existing public repository for manual publishes
+            maven {
+                name = "bentoboxworld"
+                url = uri("https://repo.codemc.org/repository/bentoboxworld/") // Where artifacts are uploaded
+            }
         }
     }
 }
