@@ -406,6 +406,10 @@ tasks.javadoc {
             source = javaVersion
         }
     }
+    dependsOn("copyLocales") // Ensure locales are available before generating javadoc (Gradle 9 validation)
+    // Some external mapped server sources contain type-use annotations that the Javadoc tool
+    // treats as errors. Allow Javadoc to complete without failing the build.
+    isFailOnError = false
 }
 
 // Creates BentoBox-<version>-sources.jar containing all source code
