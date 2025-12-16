@@ -30,6 +30,9 @@ plugins {
 
     // Paperweight UserDev - simplifies development against PaperMC with proper mappings and reobfuscation
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
+    
+    // Sonarcube
+    id("org.sonarqube") version "7.2.1.6560"
 }
 
 // Add paperweight reobf configuration so the userdev plugin reobfuscates artifacts
@@ -248,6 +251,13 @@ paperweight {
     // has not been updated to work with 21+ (but we want to compile with a 25 toolchain)
         // Use the project's configured Java version for paperweight tools (needs Java 21+)
         languageVersion = JavaLanguageVersion.of(javaVersion)
+  }
+}
+
+sonar {
+  properties {
+    property("sonar.projectKey", "BentoBoxWorld_BentoBox")
+    property("sonar.organization", "bentobox-world")
   }
 }
 
