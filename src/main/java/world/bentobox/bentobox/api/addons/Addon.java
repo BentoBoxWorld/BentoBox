@@ -324,7 +324,7 @@ public abstract class Addon {
                         "The embedded resource '" + jarResource + "' cannot be found in " + jar.getName());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            BentoBox.getInstance().logStacktrace(e);
             BentoBox.getInstance().logError(
                     "Could not save from jar file. From " + jarResource + " to " + destinationFolder.getAbsolutePath());
         }

@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState; // New name for IBlockData
 import net.minecraft.world.level.chunk.LevelChunk; // New name for Chunk
 import net.minecraft.world.level.Level; // New name for net.minecraft.world.level.World
-
+import world.bentobox.bentobox.BentoBox;
 // (Your other imports remain the same)
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.database.objects.Island;
@@ -61,7 +61,7 @@ public class PasteHandlerImpl implements PasteHandler {
             // Setting to air
             nmsChunk.setBlockState(bp, AIR, 0); 
         } catch (Exception e) {
-            e.printStackTrace();
+            BentoBox.getInstance().logStacktrace(e);
             // Ignore
         }
         
@@ -69,7 +69,7 @@ public class PasteHandlerImpl implements PasteHandler {
             // Setting the actual block
             nmsChunk.setBlockState(bp, nmsBlockState, 0); 
         } catch (Exception e) {
-            e.printStackTrace();
+            BentoBox.getInstance().logStacktrace(e);
             // Ignore
         }
         
@@ -78,7 +78,7 @@ public class PasteHandlerImpl implements PasteHandler {
         try {
             block.setBlockData(bd, false);
         } catch (Exception e) {
-            e.printStackTrace();
+            BentoBox.getInstance().logStacktrace(e);
             // Ignore
         }
         

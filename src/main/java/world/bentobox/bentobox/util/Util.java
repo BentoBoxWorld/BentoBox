@@ -485,11 +485,11 @@ public class Util {
                 return (CompletableFuture<Chunk>) method.invoke(world, x, z, gen);
             }
         } catch (NoSuchMethodException e) {
-            // Method does not exist, fallback to Spigot behavior
+            // Method does not exist, fallback to default behavior
         } catch (Exception e) {
-            e.printStackTrace(); // Handle other exceptions (optional)
+            BentoBox.getInstance().logStacktrace(e);
         }
-        // Fallback for Spigot servers
+        // Fallback
         return CompletableFuture.completedFuture(world.getChunkAt(x, z, gen));
 
     }

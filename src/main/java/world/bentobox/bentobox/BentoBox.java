@@ -194,7 +194,7 @@ public class BentoBox extends JavaPlugin implements Listener {
                 completeSetup(loadTime);
             } catch (Exception e) {
                 fireCriticalError(e.getMessage(), "");
-                e.printStackTrace();
+                logStacktrace(e);
             }
         });
     }
