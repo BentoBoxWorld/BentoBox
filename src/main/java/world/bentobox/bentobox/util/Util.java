@@ -56,8 +56,11 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.nms.AbstractMetaData;
+import world.bentobox.bentobox.nms.GetMetaData;
 import world.bentobox.bentobox.nms.PasteHandler;
+import world.bentobox.bentobox.nms.PasteHandlerImpl;
 import world.bentobox.bentobox.nms.WorldRegenerator;
+import world.bentobox.bentobox.nms.WorldRegeneratorImpl;
 
 
 /**
@@ -81,7 +84,7 @@ public class Util {
     private static PasteHandler pasteHandler = null;
     private static WorldRegenerator regenerator = null;
 
-    private static AbstractMetaData metaData;
+    private static GetMetaData metaData;
 
     private Util() {}
 
@@ -759,59 +762,13 @@ public class Util {
         Util.regenerator = regenerator;
     }
 
-    private static Pair<String, String> getPrefix() {
-        // Bukkit method that was added in 2011
-        // Example value: 1.20.4-R0.1-SNAPSHOT
-        final String bukkitVersion = "v" + Bukkit.getBukkitVersion().replace('.', '_').replace('-', '_');
-        final String pluginPackageName = plugin.getClass().getPackage().getName();
-        return new Pair<String, String>(pluginPackageName + ".nms." + bukkitVersion, bukkitVersion);
-    }
-
-    /**
-     * Generic method to get NMS handlers with fallback options
-     * @param <T> The type of handler to get
-     * @param handlerClass The class of the handler
-     * @param implName The implementation name (e.g., "PasteHandlerImpl")
-     * @param fallbackSupplier Supplier for the fallback implementation
-     * @param existingHandler The existing handler instance if any
-     * @param logPrefix Prefix for logging messages
-     * @return The handler instance
-     */
-    private static <T> T getNMSHandler(Class<T> handlerClass, 
-            String implName, 
-            java.util.function.Supplier<T> fallbackSupplier,
-            T existingHandler,
-            String logPrefix) {
-        if (existingHandler != null) {
-            return existingHandler;
-        }
-
-        T handler;
-        try {
-            Class<?> clazz = Class.forName(getPrefix().x() + "." + implName);
-            if (handlerClass.isAssignableFrom(clazz)) {
-                handler = handlerClass.cast(clazz.getConstructor().newInstance());
-            } else {
-                throw new IllegalStateException("Class " + clazz.getName() + " does not implement " + handlerClass.getSimpleName());
-            }
-        } catch (Exception e) {
-            plugin.logWarning("No " + logPrefix + " found for " + getPrefix().z() + ", falling back to Bukkit API.");
-            handler = fallbackSupplier.get();
-        }
-        return handler;
-    }
-
     /**
      * Get metadata decoder
      * @return an accelerated metadata class for this server
      */
     public static AbstractMetaData getMetaData() {
         if (metaData == null) {
-            metaData = getNMSHandler(AbstractMetaData.class, 
-                    "GetMetaData",
-                    () -> new world.bentobox.bentobox.nms.fallback.GetMetaData(),
-                    metaData,
-                    "GetMetaData");
+            metaData = new GetMetaData();
         }
         return metaData;
     }
@@ -822,11 +779,7 @@ public class Util {
      */
     public static WorldRegenerator getRegenerator() {
         if (regenerator == null) {
-            regenerator = getNMSHandler(WorldRegenerator.class,
-                    "WorldRegeneratorImpl",
-                    () -> new world.bentobox.bentobox.nms.fallback.WorldRegeneratorImpl(),
-                    regenerator,
-                    "Regenerator");
+            regenerator = new WorldRegeneratorImpl();
         }
         return regenerator;
     }
@@ -837,12 +790,7 @@ public class Util {
      */
     public static PasteHandler getPasteHandler() {
         if (pasteHandler == null) {
-            BentoBox.getInstance().log("Optimizing for " + getPrefix().z());
-            pasteHandler = getNMSHandler(PasteHandler.class,
-                    "PasteHandlerImpl",
-                    () -> new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl(),
-                    pasteHandler,
-                    "PasteHandler");
+            pasteHandler = new PasteHandlerImpl();
         }
         return pasteHandler;
     }
@@ -873,7 +821,6 @@ public class Util {
      * @param input Input that need to be sanitized.
      * @return A sanitized input without illegal characters in names.
      */
-    @SuppressWarnings("deprecation")
     public static String sanitizeInput(String input)
     {
         return Util.stripColor(
