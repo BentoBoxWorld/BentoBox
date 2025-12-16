@@ -53,7 +53,7 @@ val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 // CI/CD Logic (Translates Maven <profiles>)
 // Default version format: 3.10.2-LOCAL-SNAPSHOT
 var finalBuildNumber = buildNumberDefault
-var finalRevision = "$buildVersion$finalBuildNumber$snapshotSuffix"
+var finalRevision = "$buildVersion$snapshotSuffix$finalBuildNumber"
 
 // 'ci' profile logic: Activated by env.BUILD_NUMBER from CI/CD pipeline
 // Overrides build number with actual CI build number
