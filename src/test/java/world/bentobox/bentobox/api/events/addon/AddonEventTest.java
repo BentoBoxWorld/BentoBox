@@ -1,41 +1,35 @@
 package world.bentobox.bentobox.api.events.addon;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginManager;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.Addon;
 
 /**
  * @author tastybento
  */
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class , ServerBuildInfo.class})
-public class AddonEventTest {
+public class AddonEventTest extends CommonTestSetup {
 
     @Mock
     private Addon mockAddon;
 
-    @Mock
-    private PluginManager mockPluginManager;
-
-    @Before
-    public void setUp() {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.getPluginManager()).thenReturn(mockPluginManager);
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Test
@@ -44,7 +38,7 @@ public class AddonEventTest {
         AddonBaseEvent event = addonEvent.builder().addon(mockAddon).reason(AddonEvent.Reason.ENABLE).build();
 
         assertTrue(event instanceof AddonEnableEvent);
-        verify(mockPluginManager).callEvent(event);
+        verify(pim).callEvent(event);
     }
 
     @Test
@@ -53,7 +47,7 @@ public class AddonEventTest {
         AddonBaseEvent event = addonEvent.builder().addon(mockAddon).reason(AddonEvent.Reason.DISABLE).build();
 
         assertTrue(event instanceof AddonDisableEvent);
-        verify(mockPluginManager).callEvent(event);
+        verify(pim).callEvent(event);
     }
 
     @Test
@@ -62,7 +56,7 @@ public class AddonEventTest {
         AddonBaseEvent event = addonEvent.builder().addon(mockAddon).reason(AddonEvent.Reason.LOAD).build();
 
         assertTrue(event instanceof AddonLoadEvent);
-        verify(mockPluginManager).callEvent(event);
+        verify(pim).callEvent(event);
     }
 
     @Test
@@ -71,7 +65,7 @@ public class AddonEventTest {
         AddonBaseEvent event = addonEvent.builder().addon(mockAddon).build(); // Default reason is UNKNOWN
 
         assertTrue(event instanceof AddonGeneralEvent);
-        verify(mockPluginManager).callEvent(event);
+        verify(pim).callEvent(event);
     }
 
     // Add more tests for other aspects like testing keyValues map, etc.

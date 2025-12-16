@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.admin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -21,24 +21,18 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
@@ -47,9 +41,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, RanksManager.class , ServerBuildInfo.class})
-public class AdminGetrankCommandTest {
+public class AdminGetrankCommandTest extends CommonTestSetup {
 
     private static final String[] NAMES = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
 
@@ -57,8 +49,6 @@ public class AdminGetrankCommandTest {
     private CompositeCommand ac;
     @Mock
     private User user;
-    @Mock
-    private IslandsManager im;
     @Mock
     private PlayersManager pm;
 
@@ -71,31 +61,25 @@ public class AdminGetrankCommandTest {
     @Mock
     private Island island;
 
-    /**
-     */
-    @Before
+    private MockedStatic<RanksManager> mockedRanksManager;
+
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         Util.setPlugin(plugin);
 
         // Ranks Manager
-        PowerMockito.mockStatic(RanksManager.class, Mockito.RETURNS_MOCKS);
-        when(RanksManager.getInstance()).thenReturn(rm);
+        mockedRanksManager = Mockito.mockStatic(RanksManager.class);
+        mockedRanksManager.when(() -> RanksManager.getInstance()).thenReturn(rm);
 
         // Players Manager
         when(plugin.getPlayers()).thenReturn(pm);
 
-        // Islands manager
-        when(plugin.getIslands()).thenReturn(im);
-
         // Target
         targetUUID = UUID.randomUUID();
-        Player p = mock(Player.class);
-        when(p.getUniqueId()).thenReturn(targetUUID);
-        User.getInstance(p);
+        when(mockPlayer.getUniqueId()).thenReturn(targetUUID);
+        User.getInstance(mockPlayer);
 
         // Bukkit - online players
         Map<UUID, String> online = new HashMap<>();
@@ -109,18 +93,18 @@ public class AdminGetrankCommandTest {
             online.put(uuid, name);
             onlinePlayers.add(p1);
         }
-        when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
+        mockedBukkit.when(() -> Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         // Command
         c = new AdminGetrankCommand(ac);
     }
 
     /**
+     * @throws Exception 
      */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

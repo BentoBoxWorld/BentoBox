@@ -153,11 +153,12 @@ public class PlayersManager {
     /**
      * Sets the player's name and updates the name to UUID database
      * @param user - the User
+     * @return CompletableFuture true if saved, false if not
      */
-    public void setPlayerName(@NonNull User user) {
+    public CompletableFuture<Boolean> setPlayerName(@NonNull User user) {
         // Ignore any bots
         if (user.getUniqueId() == null) {
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         Players player = getPlayer(user.getUniqueId());
         player.setPlayerName(user.getName());
@@ -168,7 +169,7 @@ public class PlayersManager {
         nameCache.removeIf(name -> user.getUniqueId().equals(name.getUuid()));
         nameCache.add(newName);
         // Add to names database
-        names.saveObjectAsync(newName);
+        return names.saveObjectAsync(newName);
     }
 
     /**
@@ -249,35 +250,35 @@ public class PlayersManager {
 
     /**
      * Add death to player
-     * @param world - world
+     * @param world - world (this includes any nether or end)
      * @param playerUUID - the player's UUID
      */
     public void addDeath(World world, UUID playerUUID) {
         Players p = getPlayer(playerUUID);
-        p.addDeath(world);
+        p.addDeath(Util.getWorld(world));
         handler.saveObject(p);
     }
 
     /**
      * Set death number for player
-     * @param world - world
+     * @param world - world (this includes any nether or end)
      * @param playerUUID - the player's UUID
      * @param deaths - number of deaths
      */
     public void setDeaths(World world, UUID playerUUID, int deaths) {
         Players p = getPlayer(playerUUID);
-        p.setDeaths(world, deaths);
+        p.setDeaths(Util.getWorld(world), deaths);
         handler.saveObject(p);
     }
 
     /**
      * Get number of times player has died since counting began
-     * @param world - world
+     * @param world - world (this includes any nether or end)
      * @param playerUUID - the player's UUID
      * @return number of deaths
      */
     public int getDeaths(World world, UUID playerUUID) {
-        return getPlayer(playerUUID).getDeaths(world);
+        return getPlayer(playerUUID).getDeaths(Util.getWorld(world));
     }
 
     /**

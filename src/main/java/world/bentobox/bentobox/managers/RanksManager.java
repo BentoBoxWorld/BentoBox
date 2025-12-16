@@ -48,11 +48,11 @@ public class RanksManager {
             BANNED_RANK);
 
     @NonNull
-    private static Database<Ranks> handler;
+    private Database<Ranks> handler;
     private static RanksManager instance;
 
     // Private constructor for singleton
-    private RanksManager() {
+    RanksManager() {
         handler = new Database<>(BentoBox.getInstance(), Ranks.class);
         ranks = new LinkedHashMap<>();
         loadRanksFromDatabase();
@@ -67,8 +67,6 @@ public class RanksManager {
     }
 
     public void loadRanksFromDatabase() {
-        // Set up the database handler to store and retrieve Island classes
-        handler = new Database<>(BentoBox.getInstance(), Ranks.class);
         if (!handler.objectExists("BentoBox-Ranks")) {
             // Make the initial object
             DEFAULT_RANKS.forEach(this::ranksPut);
@@ -108,7 +106,7 @@ public class RanksManager {
         return true;
     }
 
-    private void ranksPut(String reference, int value) {
+    private void ranksPut(String reference, Integer value) {
         ranks.put(reference, value);
         // Sort
         ranks = ranks.entrySet().stream().sorted(Map.Entry.comparingByValue())

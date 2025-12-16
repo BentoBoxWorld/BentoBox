@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.lists;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -10,34 +10,23 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 
@@ -45,39 +34,19 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ RanksManager.class, Bukkit.class , ServerBuildInfo.class})
-public class GameModePlaceholderTest {
+public class GameModePlaceholderTest extends CommonTestSetup {
 
-    @Mock
-    private BentoBox plugin;
     @Mock
     private GameModeAddon addon;
     @Mock
     private User user;
     @Mock
-    private Island island;
-    @Mock
     private PlayersManager pm;
-    private UUID uuid;
-    @Mock
-    private World world;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private @Nullable Location location;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        PowerMockito.mockStatic(RanksManager.class, Mockito.RETURNS_MOCKS);
-        uuid = UUID.randomUUID();
+        super.setUp();
         when(addon.getPlayers()).thenReturn(pm);
         when(addon.getIslands()).thenReturn(im);
         when(user.getUniqueId()).thenReturn(uuid);
@@ -97,14 +66,19 @@ public class GameModePlaceholderTest {
         WorldSettings ws = new TestWorldSettings();
         when(addon.getWorldSettings()).thenReturn(ws);
         when(pm.getName(any())).thenReturn("tastybento");
-        when(plugin.getIWM()).thenReturn(iwm);
         when(user.getTranslation(anyString()))
-                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         when(user.getLocation()).thenReturn(location);
         when(im.getIslandAt(any())).thenReturn(Optional.of(island));
         when(user.isPlayer()).thenReturn(true);
         // Max members
         when(im.getMaxMembers(island, RanksManager.MEMBER_RANK)).thenReturn(10);
+    }
+
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -170,7 +144,7 @@ public class GameModePlaceholderTest {
         assertEquals("true", GameModePlaceholder.HAS_ISLAND.getReplacer().onReplace(addon, user, island));
         assertEquals("false", GameModePlaceholder.ON_ISLAND.getReplacer().onReplace(addon, user, island));
         assertEquals("true", GameModePlaceholder.OWNS_ISLAND.getReplacer().onReplace(addon, user, island));
-        assertEquals("", GameModePlaceholder.RANK.getReplacer().onReplace(addon, user, island));
+        assertEquals("ranks.owner", GameModePlaceholder.RANK.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.RESETS.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.RESETS_LEFT.getReplacer().onReplace(addon, user, island));
     }

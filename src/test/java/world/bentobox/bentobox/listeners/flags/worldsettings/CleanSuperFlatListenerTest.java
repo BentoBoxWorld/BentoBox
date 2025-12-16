@@ -20,27 +20,18 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.AddonsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.nms.WorldRegenerator;
 import world.bentobox.bentobox.util.Util;
 
@@ -48,33 +39,20 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
-public class CleanSuperFlatListenerTest {
+public class CleanSuperFlatListenerTest extends CommonTestSetup {
 
-    @Mock
-    private World world;
     @Mock
     private Block block;
     @Mock
     private Chunk chunk;
-    @Mock
-    private IslandWorldManager iwm;
     private CleanSuperFlatListener l;
-    @Mock
-    private BukkitScheduler scheduler;
     @Mock
     private WorldRegenerator regenerator;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         when(plugin.isLoaded()).thenReturn(true);
 
@@ -82,14 +60,12 @@ public class CleanSuperFlatListenerTest {
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(world.getName()).thenReturn("world");
 
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-        when(Util.getWorld(any())).thenReturn(world);
-        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
+        mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Regenerator
-        when(Util.getRegenerator()).thenReturn(regenerator);
+        mockedUtil.when(() -> Util.getRegenerator()).thenReturn(regenerator);
 
         // World Settings
-        when(plugin.getIWM()).thenReturn(iwm);
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
@@ -118,9 +94,6 @@ public class CleanSuperFlatListenerTest {
         l = new CleanSuperFlatListener();
         l.onBentoBoxReady(mock(BentoBoxReadyEvent.class));
 
-        // Scheduler
-        when(Bukkit.getScheduler()).thenReturn(scheduler);
-
         // Addons Manager
         AddonsManager am = mock(AddonsManager.class);
         @Nullable
@@ -128,15 +101,12 @@ public class CleanSuperFlatListenerTest {
 
         when(plugin.getAddonsManager()).thenReturn(am);
         when(am.getDefaultWorldGenerator(anyString(), anyString())).thenReturn(cg);
-        
-        
-        
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -149,7 +119,7 @@ public class CleanSuperFlatListenerTest {
 
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
         l.onChunkLoad(e);
-        verify(scheduler, never()).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
+        verify(sch, never()).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }
 
     /**
@@ -159,7 +129,7 @@ public class CleanSuperFlatListenerTest {
     public void testOnChunkLoadBedrock() {
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
         l.onChunkLoad(e);
-        verify(scheduler).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
+        verify(sch).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }
 
     /**
@@ -171,7 +141,7 @@ public class CleanSuperFlatListenerTest {
 
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
         l.onChunkLoad(e);
-        verify(scheduler, never()).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
+        verify(sch, never()).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }
 
     /**
@@ -182,15 +152,15 @@ public class CleanSuperFlatListenerTest {
         when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
         l.onChunkLoad(e);
-        verify(scheduler).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
+        verify(sch).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
         when(iwm.isNetherGenerate(any())).thenReturn(false);
         when(iwm.isNetherIslands(any())).thenReturn(true);
         l.onChunkLoad(e);
-        verify(scheduler).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
+        verify(sch).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
         when(iwm.isNetherGenerate(any())).thenReturn(true);
         when(iwm.isNetherIslands(any())).thenReturn(false);
         l.onChunkLoad(e);
-        verify(scheduler).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
+        verify(sch).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }
 
     /**
@@ -201,15 +171,15 @@ public class CleanSuperFlatListenerTest {
         when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
         l.onChunkLoad(e);
-        verify(scheduler).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
+        verify(sch).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
         when(iwm.isEndGenerate(any())).thenReturn(false);
         when(iwm.isEndIslands(any())).thenReturn(true);
         l.onChunkLoad(e);
-        verify(scheduler).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
+        verify(sch).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
         when(iwm.isEndGenerate(any())).thenReturn(true);
         when(iwm.isEndIslands(any())).thenReturn(false);
         l.onChunkLoad(e);
-        verify(scheduler).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
+        verify(sch).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }
 
 }

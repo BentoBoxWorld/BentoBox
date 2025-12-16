@@ -96,23 +96,23 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         return true;
     }
 
-    /**
-     * Processes the ownership transfer:
-     * - Fires pre-transfer event
-     * - Updates island ownership
-     * - Fires rank change events for both players
-     * - Logs the transfer in island history
-     * 
-     * @param user current owner executing the command
-     * @param targetUUID2 new owner's UUID
-     * @return true if transfer successful, false if cancelled
-     */
-    @Override
+   @Override
     public boolean execute(User user, String label, List<String> args) {
         return setOwner(user, targetUUID);
 
     }
 
+   /**
+    * Processes the ownership transfer:
+    * - Fires pre-transfer event
+    * - Updates island ownership
+    * - Fires rank change events for both players
+    * - Logs the transfer in island history
+    * 
+    * @param user current owner executing the command
+    * @param targetUUID2 new owner's UUID
+    * @return true if transfer successful, false if cancelled
+    */
     protected boolean setOwner(User user, @NonNull UUID targetUUID2) {
         // Fire event so add-ons can run commands, etc.
         Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());

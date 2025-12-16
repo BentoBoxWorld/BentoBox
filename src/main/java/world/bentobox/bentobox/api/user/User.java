@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
@@ -438,7 +438,7 @@ public class User implements MetaDataAble {
             } else {
                 String[] spl = permission.split(permPrefix);
                 if (spl.length > 1) {
-                    if (!NumberUtils.isNumber(spl[1])) {
+                    if (!NumberUtils.isCreatable(spl[1])) {
                         plugin.logError("Player " + player.getName() + " has permission: '" + permission
                                 + "' <-- the last part MUST be a number! Ignoring...");
                     } else {

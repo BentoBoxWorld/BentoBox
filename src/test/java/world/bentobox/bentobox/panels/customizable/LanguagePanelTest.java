@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.panels.customizable;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -27,44 +27,31 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.BentoBoxLocale;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.managers.LocalesManager;
 
 /**
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, ServerBuildInfo.class , ServerBuildInfo.class})
-public class LanguagePanelTest {
+@Disabled("Unfinished - needs work")
+public class LanguagePanelTest extends CommonTestSetup {
 
     @Mock
-    private BentoBox plugin;
-    @Mock
     private User user;
-    @Mock
-    private LocalesManager lm;
 
     private ArrayList<Locale> localeList;
 
@@ -86,12 +73,10 @@ public class LanguagePanelTest {
      */
     private final Path resourcePath = Paths.get("src","test","resources");
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         // Player
         Player player = mock(Player.class);
         when(user.isOp()).thenReturn(false);
@@ -133,8 +118,7 @@ public class LanguagePanelTest {
         when(lm.getLanguages()).thenReturn(map);
 
         // Panel
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.createInventory(any(), Mockito.anyInt(), anyString())).thenReturn(inv);
+        mockedBukkit.when(() -> Bukkit.createInventory(any(), Mockito.anyInt(), anyString())).thenReturn(inv);
 
         // Item Factory (needed for ItemStack)
         ItemFactory itemF = mock(ItemFactory.class);
@@ -143,10 +127,10 @@ public class LanguagePanelTest {
 
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -204,7 +188,9 @@ public class LanguagePanelTest {
         localeList.add(Locale.CANADA);
         BentoBoxLocale bbl = mock(BentoBoxLocale.class);
         map.put(Locale.CANADA, bbl);
-        when(bbl.getBanner()).thenReturn(new ItemStack(Material.CYAN_BANNER));
+        ItemStack banner = mock(ItemStack.class);
+        when(banner.getType()).thenReturn(Material.CYAN_BANNER);
+        when(bbl.getBanner()).thenReturn(banner);
 
         LanguagePanel.openPanel(command, user);
         verify(inv).setItem(eq(0), argument.capture());

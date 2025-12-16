@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.admin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -21,34 +21,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
@@ -57,9 +45,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
+public class AdminSettingsCommandTest extends RanksManagerTestSetup {
 
     private AdminSettingsCommand asc;
     @Mock
@@ -67,30 +53,17 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private User user;
     @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
     private UUID notUUID;
     @Mock
-    private Player p;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private Island island;
-    @Mock
     private Location spawnPoint;
-    @Mock
-    private World world;
     @Mock
     private World netherWorld;
     @Mock
     private World endWorld;
-    @Mock
-    private PluginManager pluginManager;
-
-    /**
-     */
-    @Before
+ 
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         Util.setPlugin(plugin);
@@ -107,7 +80,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         when(user.isPlayer()).thenReturn(true);
         User.setPlugin(plugin);
@@ -121,10 +94,6 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
         when(netherWorld.getEnvironment()).thenReturn(Environment.NETHER);
         when(endWorld.getEnvironment()).thenReturn(Environment.THE_END);
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -138,37 +107,31 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(user.getTranslation(anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
-        // IWM
-        when(plugin.getIWM()).thenReturn(iwm);
         // Players manager
         when(plugin.getPlayers()).thenReturn(pm);
-        //Island Manager
-        when(plugin.getIslands()).thenReturn(im);
         // Island - player has island
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
 
         // Util
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getUUID(anyString())).thenReturn(uuid);
-        when(Util.tabLimit(any(), any())).thenCallRealMethod();
-        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.getUUID(anyString())).thenReturn(uuid);
+        mockedUtil.when(() -> Util.tabLimit(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Settings
         Settings settings = new Settings();
         when(plugin.getSettings()).thenReturn(settings);
 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);
         ItemMeta bannerMeta = mock(ItemMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+        mockedBukkit.when(() -> Bukkit.getItemFactory()).thenReturn(itemFactory);
         Inventory inventory = mock(Inventory.class);
-        when(Bukkit.createInventory(any(), Mockito.anyInt(), anyString())).thenReturn(inventory);
+        mockedBukkit.when(() -> Bukkit.createInventory(any(), Mockito.anyInt(), anyString())).thenReturn(inventory);
         // Flags manager
-        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
+        mockedBukkit.when(() -> Bukkit.getPluginManager()).thenReturn(pim);
         FlagsManager fm = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(fm);
 
@@ -200,7 +163,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecuteOneArgUnknownPlayer() {
-        when(Util.getUUID(anyString())).thenReturn(null);
+        mockedUtil.when(() -> Util.getUUID(anyString())).thenReturn(null);
         assertFalse(asc.canExecute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tastybento");
     }
@@ -239,7 +202,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecuteOneArgSpawnNoSpawn() {
-        when(Util.getUUID(anyString())).thenReturn(null);
+        mockedUtil.when(() -> Util.getUUID(anyString())).thenReturn(null);
         assertFalse(asc.canExecute(user, "", Collections.singletonList("spawn-island")));
         verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "spawn-island");
     }

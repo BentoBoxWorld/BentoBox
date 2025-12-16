@@ -1,60 +1,57 @@
 package world.bentobox.bentobox.listeners.teleports;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.event.entity.EntityPortalEvent;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class , ServerBuildInfo.class})
-public class EntityTeleportListenerTest extends AbstractCommonSetup {
+public class EntityTeleportListenerTest extends CommonTestSetup {
 
     private EntityTeleportListener etl;
-    @Mock
-    private IslandsManager im;
 
-    /**
-     */
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-
-        when(plugin.getIslands()).thenReturn(im);
-        when(plugin.getIslandsManager()).thenReturn(im);
+        // World Settings
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.of(island));
 
         etl = new EntityTeleportListener(plugin);
+    }
+
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -72,8 +69,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnEntityPortalWrongWorld() {
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-        when(Util.getWorld(any())).thenReturn(null);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(null);
         EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location, 10);
         etl.onEntityPortal(event);
         assertFalse(event.isCancelled());
@@ -118,8 +114,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnEntityPortalTeleportEnabled() {
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-        when(Util.getWorld(any())).thenReturn(world);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
 
         Flags.ENTITY_PORTAL_TELEPORT.setSetting(world, true);
@@ -141,9 +136,8 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
         when(location2.getWorld()).thenReturn(world2);
         when(world2.getEnvironment()).thenReturn(Environment.NETHER);
 
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-        when(Util.getWorld(any())).thenReturn(world2);
-
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world2);
+        
         when(location.getWorld()).thenReturn(world);
         Flags.ENTITY_PORTAL_TELEPORT.setSetting(world, true);
         EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location2, 10);
@@ -164,8 +158,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
         when(location2.getWorld()).thenReturn(world2);
         when(world2.getEnvironment()).thenReturn(Environment.NETHER);
 
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-        when(Util.getWorld(any())).thenReturn(world2);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world2);
 
         Flags.ENTITY_PORTAL_TELEPORT.setSetting(world2, true);
         EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location2, 10);
@@ -189,8 +182,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
         when(location2.getWorld()).thenReturn(world2);
         when(world2.getEnvironment()).thenReturn(Environment.NETHER);
 
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-        when(Util.getWorld(any())).thenReturn(world2);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world2);
 
         Flags.ENTITY_PORTAL_TELEPORT.setSetting(world2, true);
         EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location2, 10);
@@ -205,6 +197,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnEntityEnterPortal() {
+        // TODO
     }
 
     /**
@@ -213,6 +206,7 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnEntityExitPortal() {
+        // TODO
     }
 
 }

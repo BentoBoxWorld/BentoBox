@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.admin.team;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -19,27 +19,17 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -53,9 +43,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class AdminTeamDisbandCommandTest extends AbstractCommonSetup {
+public class AdminTeamDisbandCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -71,7 +59,8 @@ public class AdminTeamDisbandCommandTest extends AbstractCommonSetup {
 
     private AdminTeamDisbandCommand itl;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         Util.setPlugin(plugin);
@@ -112,18 +101,12 @@ public class AdminTeamDisbandCommandTest extends AbstractCommonSetup {
         when(island.getCenter()).thenReturn(location);
         when(location.toVector()).thenReturn(new Vector(1, 2, 3));
         when(im.getOwnedIslands(any(), eq(uuid))).thenReturn(Set.of(island));
-        when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         pm = mock(PlayersManager.class);
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
-
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-        when(Bukkit.getPluginManager()).thenReturn(mock(PluginManager.class));
 
         // Locales & Placeholders
         LocalesManager lm = mock(LocalesManager.class);
@@ -138,21 +121,17 @@ public class AdminTeamDisbandCommandTest extends AbstractCommonSetup {
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-        // Plugin Manager
-        when(Bukkit.getPluginManager()).thenReturn(pim);
-
         // Online players
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-
-        when(Util.getOnlinePlayerList(user)).thenReturn(List.of("tastybento", "BONNe"));
-        when(Util.translateColorCodes(anyString()))
+        mockedUtil.when(() -> Util.getOnlinePlayerList(user)).thenReturn(List.of("tastybento", "BONNe"));
+        mockedUtil.when(() -> Util.translateColorCodes(anyString()))
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // DUT
         itl = new AdminTeamDisbandCommand(ac);
     }
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

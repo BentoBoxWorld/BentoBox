@@ -1,29 +1,27 @@
 package world.bentobox.bentobox.api.panels;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 
@@ -31,10 +29,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class , ServerBuildInfo.class})
-public class PanelItemTest {
+public class PanelItemTest extends CommonTestSetup {
 
     @Mock
     private PanelItemBuilder pib;
@@ -45,14 +40,17 @@ public class PanelItemTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        super.setUp();
         // Builder
         when(pib.getAmount()).thenReturn(2);
         when(pib.getClickHandler()).thenReturn(clickHandler);
         when(pib.getDescription()).thenReturn(List.of("Description", "hello"));
-        when(pib.getIcon()).thenReturn(new ItemStack(Material.STONE));
+        ItemStack stone = mock(ItemStack.class);
+        when(stone.getType()).thenReturn(Material.STONE); 
+        when(pib.getIcon()).thenReturn(stone);
         when(pib.getName()).thenReturn("Name");
         when(pib.getPlayerHeadName()).thenReturn("tastybento");
         pi = new PanelItem(pib);
@@ -61,9 +59,10 @@ public class PanelItemTest {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
-        Mockito.framework().clearInlineMocks();
+        super.tearDown();
     }
 
     /**
@@ -198,7 +197,18 @@ public class PanelItemTest {
      */
     @Test
     public void testSetHead() {
-        pi.setHead(new ItemStack(Material.PLAYER_HEAD));
+        ItemStack ph = mock(ItemStack.class);
+        when(ph.getType()).thenReturn(Material.PLAYER_HEAD);
+        when(ph.getAmount()).thenReturn(1);
+        
+        ItemMeta itemMeta = mock(ItemMeta.class);
+        when(ph.getItemMeta()).thenReturn(itemMeta);
+        pi.setHead(ph);
+        verify(itemMeta).addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        verify(itemMeta).addItemFlags(ItemFlag.HIDE_DESTROYS);
+        verify(itemMeta).addItemFlags(ItemFlag.HIDE_PLACED_ON);
+        verify(itemMeta).addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        verify(ph, times(3)).setItemMeta(itemMeta);
     }
 
 }

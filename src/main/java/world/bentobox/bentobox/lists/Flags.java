@@ -24,7 +24,6 @@ import world.bentobox.bentobox.listeners.flags.protection.DyeListener;
 import world.bentobox.bentobox.listeners.flags.protection.EggListener;
 import world.bentobox.bentobox.listeners.flags.protection.ElytraListener;
 import world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener;
-import world.bentobox.bentobox.listeners.flags.protection.ExperiencePickupListener;
 import world.bentobox.bentobox.listeners.flags.protection.ExplosionListener;
 import world.bentobox.bentobox.listeners.flags.protection.FireListener;
 import world.bentobox.bentobox.listeners.flags.protection.HurtingListener;
@@ -73,7 +72,6 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventor
 import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorsStartingRaidListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * Contains built-in {@link Flag Flags} that are registered by default into the {@link world.bentobox.bentobox.managers.FlagsManager FlagsManager} at startup.
@@ -312,7 +310,7 @@ public final class Flags {
 
     // Experience
     public static final Flag EXPERIENCE_PICKUP = new Flag.Builder("EXPERIENCE_PICKUP", Material.EXPERIENCE_BOTTLE)
-            .listener(Util.isPaper() ? new PaperExperiencePickupListener() : new ExperiencePickupListener()).mode(Flag.Mode.ADVANCED).defaultRank(RanksManager.VISITOR_RANK).build();
+            .listener(new PaperExperiencePickupListener()).mode(Flag.Mode.ADVANCED).defaultRank(RanksManager.VISITOR_RANK).build();
 
     // Command ranks
     public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD).type(Type.SETTING)
@@ -719,7 +717,7 @@ public final class Flags {
      * Deprecated Flags are ignored.
      * @return List of all the flags in this class
      */
-    public static List<Flag> values() {
+    public static final List<Flag> values() {
         return Arrays.stream(Flags.class.getFields())
                 .filter(field -> field.getAnnotation(Deprecated.class) == null) // Ensures it is not deprecated
                 .map(field -> {

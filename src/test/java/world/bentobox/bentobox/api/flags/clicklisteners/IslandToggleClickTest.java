@@ -10,44 +10,29 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.PluginManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.events.flags.FlagSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.FlagsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
-public class IslandToggleClickTest {
+public class IslandToggleClickTest extends CommonTestSetup {
 
-    @Mock
-    private IslandWorldManager iwm;
     private IslandToggleClick listener;
     @Mock
     private TabbedPanel panel;
@@ -56,31 +41,17 @@ public class IslandToggleClickTest {
     @Mock
     private Flag flag;
     @Mock
-    private IslandsManager im;
-    @Mock
-    private Island island;
-    private UUID uuid;
-    @Mock
-    private PluginManager pim;
-    @Mock
     private SettingsTab settingsTab;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        ServerMocks.newServer();
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+       super.setUp();
 
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Island World Manager
-        iwm = mock(IslandWorldManager.class);
-        when(iwm.inWorld(any(World.class))).thenReturn(true);
+         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
-        when(plugin.getIWM()).thenReturn(iwm);
 
         listener = new IslandToggleClick("test");
 
@@ -94,9 +65,8 @@ public class IslandToggleClickTest {
         when(user.hasPermission(Mockito.anyString())).thenReturn(true);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(mock(World.class));
-        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
+        mockedUtil.when(() ->Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         FlagsManager fm = mock(FlagsManager.class);
         when(flag.isSetForWorld(any())).thenReturn(false);
@@ -106,24 +76,20 @@ public class IslandToggleClickTest {
         // Island Manager
         when(island.getOwner()).thenReturn(uuid);
         when(im.getIsland(any(World.class), any(User.class))).thenReturn(island);
-        when(plugin.getIslands()).thenReturn(im);
 
         // Optional island
         Optional<Island> opIsland = Optional.ofNullable(island);
         when(im.getIslandAt(any())).thenReturn(opIsland);
-
-        // Event
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Active tab
         when(panel.getActiveTab()).thenReturn(settingsTab);
         when(settingsTab.getIsland()).thenReturn(island);
     }
 
-    @After
-    public void tearDown() {
-        ServerMocks.unsetBukkitServer();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Test

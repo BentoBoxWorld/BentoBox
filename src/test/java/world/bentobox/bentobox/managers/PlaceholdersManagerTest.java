@@ -10,18 +10,12 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -34,12 +28,8 @@ import world.bentobox.bentobox.lists.GameModePlaceholder;
  * @author tastybento
  * @since 1.5.0
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class} )
-public class PlaceholdersManagerTest {
+public class PlaceholdersManagerTest extends CommonTestSetup {
 
-    @Mock
-    private BentoBox plugin;
     @Mock
     private GameModeAddon addon;
     private PlaceholdersManager pm;
@@ -47,16 +37,11 @@ public class PlaceholdersManagerTest {
     private HooksManager hm;
     @Mock
     private PlaceholderAPIHook hook;
-    @Mock
-    private IslandWorldManager iwm;
-    private Settings settings;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        settings = new Settings();
-        when(plugin.getSettings()).thenReturn(settings);
+        super.setUp();
 
         // Addon
         @NonNull
@@ -84,9 +69,10 @@ public class PlaceholdersManagerTest {
         pm = new PlaceholdersManager(plugin);
     }
 
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**

@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.admin.purge;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -22,27 +22,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -51,54 +44,38 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class , ServerBuildInfo.class})
-public class AdminPurgeCommandTest {
+public class AdminPurgeCommandTest extends CommonTestSetup {
 
-    @Mock
-    private BentoBox plugin;
     @Mock
     private CompositeCommand ac;
     @Mock
     private User user;
-    @Mock
-    private IslandsManager im;
 
     private AdminPurgeCommand apc;
     @Mock
     private Addon addon;
     @Mock
-    private Island island;
-    @Mock
-    private World world;
-    @Mock
     private PlayersManager pm;
-    @Mock
-    private @NonNull Location location;
     @Mock
     private BukkitScheduler scheduler;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        super.setUp();
         // Mock the method to immediately run the Runnable
         when(scheduler.runTaskLater(eq(plugin), any(Runnable.class), anyLong())).thenAnswer(invocation -> {
             Runnable task = invocation.getArgument(1);
             task.run(); // Immediately run the Runnable
             return null; // or return a mock of the Task if needed
         });
-        when(Bukkit.getScheduler()).thenReturn(scheduler);
-
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(scheduler);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -108,16 +85,12 @@ public class AdminPurgeCommandTest {
         when(ac.getAddon()).thenReturn(addon);
         when(ac.getTopLabel()).thenReturn("bsb");
 
-        // Island manager
-        when(plugin.getIslands()).thenReturn(im);
         // No islands by default
         when(im.getIslands()).thenReturn(Collections.emptyList());
         when(im.getIslandsASync()).thenReturn(CompletableFuture.completedFuture(Collections.emptyList()));
 
         // IWM
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-        when(plugin.getIWM()).thenReturn(iwm);
 
         // Island
         when(island.isOwned()).thenReturn(true); // Default owned
@@ -136,9 +109,10 @@ public class AdminPurgeCommandTest {
         apc = new AdminPurgeCommand(ac);
     }
 
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -262,6 +236,7 @@ public class AdminPurgeCommandTest {
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testExecuteUserStringListOfStringNoIslandsTeamIsland() {
         when(island.isPurgeProtected()).thenReturn(false);
@@ -271,10 +246,9 @@ public class AdminPurgeCommandTest {
         when(im.getIslands()).thenReturn(Collections.singleton(island));
 
         // All players are up to date
-        PowerMockito.mockStatic(Bukkit.class);
-        OfflinePlayer op = mock(OfflinePlayer.class);
+         OfflinePlayer op = mock(OfflinePlayer.class);
         when(op.getLastPlayed()).thenReturn(System.currentTimeMillis());
-        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
+        mockedBukkit.when(() -> Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
 
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
         verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
@@ -290,10 +264,9 @@ public class AdminPurgeCommandTest {
         when(island.getOwner()).thenReturn(UUID.randomUUID());
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
-        PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer op = mock(OfflinePlayer.class);
         when(op.getLastPlayed()).thenReturn(System.currentTimeMillis());
-        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
+        mockedBukkit.when(() -> Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
         verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
     }

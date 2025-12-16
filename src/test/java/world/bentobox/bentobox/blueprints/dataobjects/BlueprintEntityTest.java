@@ -1,12 +1,11 @@
 package world.bentobox.bentobox.blueprints.dataobjects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -29,25 +28,19 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.modules.junit4.PowerMockRunner;
 
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.MythicMobRecord;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@Ignore("Cannot mock Villager Professions anynore")
-public class BlueprintEntityTest {
+public class BlueprintEntityTest extends CommonTestSetup {
 
     @Mock
     private Villager villager;
@@ -72,18 +65,26 @@ public class BlueprintEntityTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
+        super.setUp();
         when(villager.getProfession())
                 .thenReturn(Registry.VILLAGER_PROFESSION.get(NamespacedKey.minecraft("librarian")));
         when(villager.getVillagerExperience()).thenReturn(100);
         when(villager.getVillagerLevel()).thenReturn(2);
         when(villager.getVillagerType()).thenReturn(Villager.Type.PLAINS);
+        when(villager.getLocation()).thenReturn(location);
         when(sheep.getColor()).thenReturn(DyeColor.BLUE);
+        when(sheep.getLocation()).thenReturn(location);
         when(wolf.isTamed()).thenReturn(true);
+        when(wolf.getLocation()).thenReturn(location);
         when(chestedHorse.isCarryingChest()).thenReturn(true);
+        when(chestedHorse.getLocation()).thenReturn(location);
         when(horse.getDomestication()).thenReturn(50);
         when(horse.getStyle()).thenReturn(Horse.Style.WHITE_DOTS);
+        when(horse.getLocation()).thenReturn(location);
+        when(cow.getLocation()).thenReturn(location);
 
         blueprint = new BlueprintEntity();
         when(display.getType()).thenReturn(EntityType.PLAYER);
@@ -93,14 +94,16 @@ public class BlueprintEntityTest {
         when(display.isSilent()).thenReturn(false);
         when(display.isInvulnerable()).thenReturn(false);
         when(display.getFireTicks()).thenReturn(0);
+        when(display.getLocation()).thenReturn(location);
     }
 
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
-        Mockito.framework().clearInlineMocks();
+        super.tearDown();
     }
 
 
@@ -142,7 +145,7 @@ public class BlueprintEntityTest {
 
         blueprint.configureEntity(wolf);
 
-        Assert.assertTrue(wolf.isTamed());
+        assertTrue(wolf.isTamed());
     }
 
     @Test
@@ -151,10 +154,11 @@ public class BlueprintEntityTest {
 
         blueprint.setType(EntityType.HORSE);
         blueprint.setChest(true);
+        
 
         blueprint.configureEntity(chestedHorse);
 
-        Assert.assertTrue(chestedHorse.isCarryingChest());
+        assertTrue(chestedHorse.isCarryingChest());
     }
 
     @Test
@@ -166,7 +170,7 @@ public class BlueprintEntityTest {
 
         blueprint.configureEntity(cow);
 
-        Assert.assertFalse(cow.isAdult());
+        assertFalse(cow.isAdult());
     }
 
     @Test
@@ -207,13 +211,13 @@ public class BlueprintEntityTest {
         assertEquals("My Entity", blueprint.getCustomName());
 
         blueprint.setTamed(true);
-        Assert.assertTrue(blueprint.getTamed());
+        assertTrue(blueprint.getTamed());
 
         blueprint.setChest(true);
-        Assert.assertTrue(blueprint.getChest());
+        assertTrue(blueprint.getChest());
 
         blueprint.setAdult(false);
-        Assert.assertFalse(blueprint.getAdult());
+        assertFalse(blueprint.getAdult());
 
         blueprint.setDomestication(75);
         assertEquals(75, blueprint.getDomestication().intValue());
@@ -285,12 +289,11 @@ public class BlueprintEntityTest {
 
     @Test
     public void testSetDisplay() {
-        Location mockLocation = mock(Location.class);
-        when(mockLocation.getWorld()).thenReturn(mockWorld);
-        when(mockLocation.clone()).thenReturn(mockLocation);
+        when(location.getWorld()).thenReturn(mockWorld);
+        when(location.clone()).thenReturn(location);
         when(mockWorld.spawn(any(Location.class), eq(Display.class))).thenReturn(display);
-
-        blueprint.setDisplay(mockLocation);
+        blueprint.storeDisplay(display);
+        blueprint.setDisplay(location);
 
         assertNotNull(blueprint.displayRec);
     }

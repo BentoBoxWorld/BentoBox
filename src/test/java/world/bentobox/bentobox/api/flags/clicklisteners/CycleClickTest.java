@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -20,30 +20,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.events.flags.FlagProtectionChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -52,19 +41,13 @@ import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.FlagsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.mocks.ServerMocks;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class, RanksManager.class , ServerBuildInfo.class})
-public class CycleClickTest {
+public class CycleClickTest extends RanksManagerTestSetup {
 
     private static final Integer PROTECTION_RANGE = 200;
     private static final Integer X = 600;
@@ -73,24 +56,13 @@ public class CycleClickTest {
     private static final int SLOT = 5;
     private static final String LOCK = "LOCK";
     @Mock
-    private BentoBox plugin;
-    private UUID uuid;
-    @Mock
     private User user;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private Island island;
     @Mock
     private Flag flag;
     @Mock
     private TabbedPanel panel;
     @Mock
     private Inventory inv;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private PluginManager pim;
     @Mock
     private SettingsTab settingsTab;
     @Mock
@@ -103,14 +75,10 @@ public class CycleClickTest {
     /**
      * @throws java.lang.Exception - exception
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        ServerMocks.newServer();
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
-        // World
-        World world = mock(World.class);
+        super.setUp();
 
         // Settings
         Settings s = mock(Settings.class);
@@ -128,18 +96,11 @@ public class CycleClickTest {
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        // when(im.isOwner(any(), eq(uuid))).thenReturn(false);
-        when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         PlayersManager pm = mock(PlayersManager.class);
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
-
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -200,8 +161,7 @@ public class CycleClickTest {
         // Provide a current rank value - member
         when(island.getFlag(any())).thenReturn(RanksManager.MEMBER_RANK);
         // Set up up and down ranks
-        PowerMockito.mockStatic(RanksManager.class);
-        when(RanksManager.getInstance()).thenReturn(rm);
+        mockedRanksManager.when(() -> RanksManager.getInstance()).thenReturn(rm);
         when(rm.getRankUpValue(eq(RanksManager.VISITOR_RANK))).thenReturn(RanksManager.COOP_RANK);
         when(rm.getRankUpValue(eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
         when(rm.getRankUpValue(eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.MEMBER_RANK);
@@ -212,18 +172,13 @@ public class CycleClickTest {
         when(rm.getRankDownValue(eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.VISITOR_RANK);
 
         // IslandWorldManager
-        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
 
         // Util
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(world);
-        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
-
-        // Event
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
+        mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         // Active tab
         when(panel.getActiveTab()).thenReturn(settingsTab);
@@ -236,10 +191,10 @@ public class CycleClickTest {
         when(iwm.getHiddenFlags(world)).thenReturn(hiddenFlags);
     }
 
-    @After
-    public void tearDown() {
-        ServerMocks.unsetBukkitServer();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Test
@@ -382,6 +337,6 @@ public class CycleClickTest {
         assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
         assertTrue(hiddenFlags.isEmpty());
         // Verify sounds
-        verify(p, times(2)).playSound((Location) null, (Sound) null, 1F, 1F);
+        verify(p, times(2)).playSound((Location)eq(null), any(Sound.class), eq(1F), eq(1F));
     }
 }

@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -25,25 +25,17 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.util.Vector;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.CommonTestSetup;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class, ServerBuildInfo.class })
-public class BreedingListenerTest extends AbstractCommonSetup {
+public class BreedingListenerTest extends CommonTestSetup {
 
     private ItemStack itemInMainHand;
     private ItemStack itemInOffHand;
@@ -53,7 +45,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
     private static final Material NOT_BREEDABLE_WITH = Material.SEAGRASS;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -79,6 +71,12 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         when(mockPlayer.getInventory()).thenReturn(inv);
 
     }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
 
     /**
      * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
@@ -89,7 +87,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         Vector position = new Vector(0,0,0);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position);
         new BreedingListener().onPlayerInteract(e);
-        assertFalse("Not animal failed", e.isCancelled());
+        assertFalse(e.isCancelled(), "Not animal failed");
     }
 
     /**
@@ -101,7 +99,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         Vector position = new Vector(0,0,0);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position);
         new BreedingListener().onPlayerInteract(e);
-        assertFalse("Animal, nothing in main hand failed", e.isCancelled());
+        assertFalse(e.isCancelled(), "Animal, nothing in main hand failed");
     }
 
     /**
@@ -113,7 +111,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         Vector position = new Vector(0,0,0);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position, EquipmentSlot.OFF_HAND);
         new BreedingListener().onPlayerInteract(e);
-        assertFalse("Animal, nothing in off hand failed", e.isCancelled());
+        assertFalse(e.isCancelled(), "Animal, nothing in off hand failed");
     }
 
 
@@ -135,7 +133,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
 
         when(itemInMainHand.getType()).thenReturn(breedingMat);
         bl.onPlayerInteract(e);
-        assertFalse("Animal, breeding item in main hand, wrong world failed " + breedingMat, e.isCancelled());
+        assertFalse(e.isCancelled(), "Animal, breeding item in main hand, wrong world failed " + breedingMat);
 
         // verify breeding was prevented
         verify(clickedEntity, never()).setBreed(false);
@@ -157,7 +155,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
 
         when(itemInMainHand.getType()).thenReturn(breedingMat);
         bl.onPlayerInteract(e);
-        assertTrue("Animal, breeding item in main hand failed " + breedingMat, e.isCancelled());
+        assertTrue(e.isCancelled(), "Animal, breeding item in main hand failed " + breedingMat);
 
         // verify breeding was prevented
         verify(clickedEntity).setBreed(false);
@@ -180,7 +178,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
 
         when(itemInOffHand.getType()).thenReturn(breedingMat);
         bl.onPlayerInteract(e);
-        assertFalse("Animal, breeding item in off hand, wrong world failed " + breedingMat, e.isCancelled());
+        assertFalse(e.isCancelled(), "Animal, breeding item in off hand, wrong world failed " + breedingMat);
 
         // verify breeding was not prevented
         verify(clickedEntity, never()).setBreed(false);
@@ -201,7 +199,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         Material breedingMat = BREEDABLE_WITH;
         when(itemInOffHand.getType()).thenReturn(breedingMat);
         bl.onPlayerInteract(e);
-        assertTrue("Animal, breeding item in off hand failed " + breedingMat, e.isCancelled());
+        assertTrue(e.isCancelled(), "Animal, breeding item in off hand failed " + breedingMat);
 
         // verify breeding was prevented
         verify(clickedEntity).setBreed(false);
@@ -220,7 +218,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
 
         when(itemInMainHand.getType()).thenReturn(breedingMat);
         bl.onPlayerInteract(e);
-        assertFalse("Animal, breeding item in main hand was prevented " + breedingMat, e.isCancelled());
+        assertFalse(e.isCancelled(), "Animal, breeding item in main hand was prevented " + breedingMat);
 
         // verify breeding was not prevented
         verify(clickedEntity, never()).setBreed(false);

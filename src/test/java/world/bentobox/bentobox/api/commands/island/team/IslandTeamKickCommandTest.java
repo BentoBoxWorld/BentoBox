@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -21,22 +21,16 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
@@ -46,24 +40,19 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
+public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
-    private UUID uuid;
     @Mock
     private User user;
     @Mock
@@ -78,7 +67,8 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
     @Mock
     private Addon addon;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -94,9 +84,6 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while (notUUID.equals(uuid)) {
-            notUUID = UUID.randomUUID();
-        }
         when(target.getUniqueId()).thenReturn(notUUID);
         when(target.isOnline()).thenReturn(true);
         when(target.getName()).thenReturn("poslovitch");
@@ -136,11 +123,6 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
 
         when(plugin.getPlayers()).thenReturn(pm);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-        when(Bukkit.getPluginManager()).thenReturn(mock(PluginManager.class));
-
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(any(), any())).thenReturn("mock translation");
@@ -152,16 +134,10 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(placeholdersManager.replacePlaceholders(any(), any())).thenReturn("mock translation");
 
         // IWM friendly name
-        iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-        when(plugin.getIWM()).thenReturn(iwm);
 
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
-
-        // Plugin Manager
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Island
         when(island.getUniqueId()).thenReturn("uniqueid");
@@ -175,6 +151,12 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(island.getRank(uuid)).thenReturn(RanksManager.OWNER_RANK);
         when(island.getRank(user)).thenReturn(RanksManager.OWNER_RANK);
         when(island.getRank(notUUID)).thenReturn(RanksManager.MEMBER_RANK);
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -440,10 +422,8 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         String[] expectedNames = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george" };
         int i = 0;
         for (String name : r) {
-            assertEquals("Rank " + i, expectedNames[i++], name);
+            assertEquals(expectedNames[i++], name, "Rank " + i);
         }
-        // assertTrue(Arrays.equals(expectedNames, r.toArray()));
-
     }
 
     @Test
@@ -475,7 +455,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         String[] expectedNames = { "george" };
         int i = 0;
         for (String name : r) {
-            assertEquals("Rank " + i, expectedNames[i++], name);
+            assertEquals(expectedNames[i++], name, "Rank " + i);
         }
 
         // assertTrue(Arrays.equals(expectedNames, r.toArray()));

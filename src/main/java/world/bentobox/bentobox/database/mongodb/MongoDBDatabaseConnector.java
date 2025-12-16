@@ -3,7 +3,6 @@ package world.bentobox.bentobox.database.mongodb;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 
 import com.mongodb.MongoClient;

@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.api.flags;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -28,28 +28,20 @@ import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
@@ -58,39 +50,23 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("Needs update to work with PaperAPI")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class, RanksManager.class , ServerBuildInfo.class})
-public class FlagTest {
+public class FlagTest extends RanksManagerTestSetup {
 
     private Flag f;
     @Mock
     private Listener listener;
-    @Mock
-    private World world;
     private Map<String, Boolean> worldFlags;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private BentoBox plugin;
     @Mock
     private LocalesManager lm;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
-        PowerMockito.mockStatic(Util.class);
+        super.setUp();
         // Return world
-        when(Util.getWorld(any())).thenAnswer((Answer<World>) invocation -> invocation.getArgument(0, World.class));
+        mockedUtil.when(() -> Util.getWorld(any())).thenAnswer((Answer<World>) invocation -> invocation.getArgument(0, World.class));
 
         // World Settings
-        when(plugin.getIWM()).thenReturn(iwm);
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         GameModeAddon gma = mock(GameModeAddon.class);
@@ -115,11 +91,10 @@ public class FlagTest {
 
     }
 
-    /**
-     */
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -354,13 +329,9 @@ public class FlagTest {
     /**
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#toPanelItem(BentoBox, User, Island, boolean)}.
      */
+    @Disabled("Panel issue with Paper")
     @Test
     public void testToPanelItem() {
-        BentoBox plugin = mock(BentoBox.class);
-
-        IslandsManager im = mock(IslandsManager.class);
-
-        Island island = mock(Island.class);
         when(island.getFlag(any())).thenReturn(RanksManager.VISITOR_RANK);
 
         User user = mock(User.class);
@@ -378,19 +349,16 @@ public class FlagTest {
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         Optional<Island> oL = Optional.of(island);
         when(im.getIslandAt(any(Location.class))).thenReturn(oL);
-        when(plugin.getIslands()).thenReturn(im);
 
-        PowerMockito.mockStatic(RanksManager.class);
         RanksManager rm = mock(RanksManager.class);
-        when(RanksManager.getInstance()).thenReturn(rm);
+        mockedRanksManager.when(() -> RanksManager.getInstance()).thenReturn(rm);
         when(rm.getRank(RanksManager.VISITOR_RANK)).thenReturn("Visitor");
         when(rm.getRank(RanksManager.OWNER_RANK)).thenReturn("Owner");
-
 
         PanelItem pi = f.toPanelItem(plugin, user, world, island, false);
 
         verify(user).getTranslation("protection.flags.flagID.name");
-        verify(user).getTranslation(eq("protection.panel.flag-item.name-layout"), any());
+        verify(user).getTranslation(eq("protection.panel.flag-item.name-layout"), eq("[name]"), any());
 
         assertEquals(Material.ACACIA_PLANKS, pi.getItem().getType());
     }

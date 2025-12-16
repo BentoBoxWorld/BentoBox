@@ -17,7 +17,8 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -382,12 +383,12 @@ public class LanguagePanel extends AbstractPanel
         if (template.title() != null)
         {
             builder.name(this.user.getTranslation(this.command.getWorld(), template.title(),
-                    TextVariables.NAME, WordUtils.capitalize(locale.getDisplayName(this.user.getLocale()))));
+                    TextVariables.NAME, StringUtils.capitalize(locale.getDisplayName(this.user.getLocale()))));
         }
         else
         {
             builder.name(this.user.getTranslation(reference + "name",
-                    TextVariables.NAME, WordUtils.capitalize(locale.getDisplayName(this.user.getLocale()))));
+                    TextVariables.NAME, StringUtils.capitalize(locale.getDisplayName(this.user.getLocale()))));
         }
 
         final StringBuilder authors = new StringBuilder();

@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -23,20 +23,16 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -49,15 +45,12 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
+public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private IslandTeamCommand ic;
@@ -75,7 +68,8 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
     private UUID notUUID;
 
     @SuppressWarnings("deprecation")
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -91,7 +85,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
                 .thenReturn(new File("src" + File.separator + "main" + File.separator + "resources"));
 
         // Player & users
-        PowerMockito.mockStatic(User.class);
+        MockedStatic<User> mockedUser = Mockito.mockStatic(User.class);
 
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.isOp()).thenReturn(false);
@@ -103,7 +97,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         when(user.isOnline()).thenReturn(true);
         // Permission to invite 3 more players
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        when(User.getInstance(uuid)).thenReturn(user);
+        mockedUser.when(() -> User.getInstance(uuid)).thenReturn(user);
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
         // Vanished players
         when(mockPlayer.canSee(any())).thenReturn(true);
@@ -116,7 +110,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         when(target.isOnline()).thenReturn(true);
         when(target.getName()).thenReturn("target");
         when(target.getDisplayName()).thenReturn("&Ctarget");
-        when(User.getInstance(notUUID)).thenReturn(target);
+        mockedUser.when(() -> User.getInstance(notUUID)).thenReturn(target);
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -169,9 +163,9 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         ItemFactory itemFactory = mock(ItemFactory.class);
         ItemMeta bannerMeta = mock(ItemMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+        mockedBukkit.when(() -> Bukkit.getItemFactory()).thenReturn(itemFactory);
         Inventory inventory = mock(Inventory.class);
-        when(Bukkit.createInventory(eq(null), anyInt(), anyString())).thenReturn(inventory);
+        mockedBukkit.when(() -> Bukkit.createInventory(eq(null), anyInt(), anyString())).thenReturn(inventory);
 
         // Command under test
         itl = new IslandTeamInviteCommand(ic);
@@ -226,7 +220,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
      * Test method for
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
-    @Ignore("PaperAPI Material issue with Material.get")
+    @Disabled("PaperAPI Material issue with Material.get")
     @Test
     public void testCanExecuteNoTarget() {
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));

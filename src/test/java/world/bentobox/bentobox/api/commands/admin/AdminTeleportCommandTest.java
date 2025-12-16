@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.admin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -15,63 +15,42 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
-import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class AdminTeleportCommandTest {
+public class AdminTeleportCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
     @Mock
     private User user;
     @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
     private UUID notUUID;
     @Mock
-    private Player p;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private Island island;
-    @Mock
     private Location spawnPoint;
-    @Mock
-    private World world;
     @Mock
     private World netherWorld;
     @Mock
@@ -79,14 +58,10 @@ public class AdminTeleportCommandTest {
     @Mock
     private PlaceholdersManager phm;
 
-    /**
-     */
-    @Before
+     @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+       super.setUp();
         Util.setPlugin(plugin);
 
         // Command manager
@@ -100,13 +75,13 @@ public class AdminTeleportCommandTest {
         while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
-        when(p.getUniqueId()).thenReturn(uuid);
-        when(p.hasPermission("admin.tp")).thenReturn(true);
-        when(p.hasPermission("admin")).thenReturn(false);
-        when(p.getWorld()).thenReturn(endWorld);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.hasPermission("admin.tp")).thenReturn(true);
+        when(mockPlayer.hasPermission("admin")).thenReturn(false);
+        when(mockPlayer.getWorld()).thenReturn(endWorld);
 
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         when(user.isPlayer()).thenReturn(true);
         when(user.hasPermission("admin.tp")).thenReturn(true);
@@ -127,25 +102,17 @@ public class AdminTeleportCommandTest {
         when(endWorld.getEnvironment()).thenReturn(Environment.THE_END);
 
         // Island World Manager
-        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getNetherWorld(any())).thenReturn(netherWorld);
         when(iwm.getEndWorld(any())).thenReturn(endWorld);
 
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        // when(im.isOwner(any(),any())).thenReturn(true);
-        // when(im.getOwner(any(),any())).thenReturn(uuid);
-        when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
-
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -156,7 +123,6 @@ public class AdminTeleportCommandTest {
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Island location
-        Location location = mock(Location.class);
         Vector vector = mock(Vector.class);
         when(vector.toLocation(any())).thenReturn(location);
         when(location.toVector()).thenReturn(vector);
@@ -176,8 +142,9 @@ public class AdminTeleportCommandTest {
         when(location.toVector()).thenReturn(new Vector(0, 0, 0));
         when(island.getProtectionCenter()).thenReturn(location);
         // Util
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-        when(Util.getUUID(anyString())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.getUUID(anyString())).thenCallRealMethod();
+        CompletableFuture<Chunk> chunk = new CompletableFuture<>();
+        mockedUtil.when(() -> Util.getChunkAtAsync(any())).thenReturn(chunk);
 
         // Placeholder manager
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
@@ -187,10 +154,10 @@ public class AdminTeleportCommandTest {
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+     @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -298,8 +265,8 @@ public class AdminTeleportCommandTest {
 
     @Test
     public void testPermissionsNoRootPermission() {
-        when(p.hasPermission("admin.tp")).thenReturn(true);
-        when(p.hasPermission("admin")).thenReturn(false);
+        when(mockPlayer.hasPermission("admin.tp")).thenReturn(true);
+        when(mockPlayer.hasPermission("admin")).thenReturn(false);
         when(pm.getUUID("tastybento")).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpend");
@@ -308,13 +275,13 @@ public class AdminTeleportCommandTest {
         list[0] = "tpend";
         list[1] = "tastybento";
         // Should fail
-        assertFalse(atc.execute(p, "tpend", list));
+        assertFalse(atc.execute(mockPlayer, "tpend", list));
     }
 
     @Test
     public void testPermissionsHasRootPermission() {
-        when(p.hasPermission("admin.tp")).thenReturn(true);
-        when(p.hasPermission("admin")).thenReturn(true);
+        when(mockPlayer.hasPermission("admin.tp")).thenReturn(true);
+        when(mockPlayer.hasPermission("admin")).thenReturn(true);
         when(pm.getUUID("tastybento")).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpend");
@@ -323,9 +290,9 @@ public class AdminTeleportCommandTest {
         list[0] = "tpend";
         list[1] = "tastybento";
         // Should pass
-        assertTrue(atc.execute(p, "tpend", list));
-        verify(p).hasPermission("admin.tp");
-        verify(p).hasPermission("admin");
+        assertTrue(atc.execute(mockPlayer, "tpend", list));
+        verify(mockPlayer).hasPermission("admin.tp");
+        verify(mockPlayer).hasPermission("admin");
     }
 
 }

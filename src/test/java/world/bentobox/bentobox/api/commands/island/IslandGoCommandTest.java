@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -25,26 +25,19 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.AbstractCommonSetup;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -54,7 +47,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
@@ -66,16 +58,10 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
-public class IslandGoCommandTest extends AbstractCommonSetup {
+public class IslandGoCommandTest extends CommonTestSetup {
     @Mock
     private CompositeCommand ic;
     private User user;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private PluginManager pim;
     @Mock
     private Settings s;
     @Mock
@@ -83,14 +69,11 @@ public class IslandGoCommandTest extends AbstractCommonSetup {
     private IslandGoCommand igc;
     @Mock
     private Notifier notifier;
-    @Mock
-    private World world;
     private @Nullable WorldSettings ws;
     private UUID uuid = UUID.randomUUID();
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -131,10 +114,10 @@ public class IslandGoCommandTest extends AbstractCommonSetup {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
         // Event register
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+        mockedBukkit.when(() -> Bukkit.getPluginManager()).thenReturn(pim);
 
         // Island Banned list initialization
         when(island.getBanned()).thenReturn(new HashSet<>());
@@ -151,9 +134,8 @@ public class IslandGoCommandTest extends AbstractCommonSetup {
         // Just return an empty addon for now
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-        PowerMockito.mockStatic(Util.class);
-        when(Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
-        when(Util.stripColor(any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.stripColor(any())).thenCallRealMethod();
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -169,7 +151,7 @@ public class IslandGoCommandTest extends AbstractCommonSetup {
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Util translate color codes (used in user translate methods)
-        when(Util.translateColorCodes(anyString()))
+        mockedUtil.when(() -> Util.translateColorCodes(anyString()))
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Command
@@ -177,7 +159,8 @@ public class IslandGoCommandTest extends AbstractCommonSetup {
 
     }
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }

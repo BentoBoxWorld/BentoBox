@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.admin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -15,27 +15,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.eclipse.jdt.annotation.NonNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
@@ -44,37 +33,27 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class , ServerBuildInfo.class})
-public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
+public class AdminSetrankCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ac;
     @Mock
     private User user;
     @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
 
     private AdminSetrankCommand c;
 
     private UUID targetUUID;
-    @Mock
-    private @NonNull Location location;
 
-    /**
-     */
-    @Before
+ @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         Util.setPlugin(plugin);
 
         // Players Manager
         when(plugin.getPlayers()).thenReturn(pm);
-
-        // Islands manager
-        when(plugin.getIslands()).thenReturn(im);
 
         // Target
         targetUUID = UUID.randomUUID();
@@ -83,9 +62,8 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
         User.getInstance(p);
 
         // Online players
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getOnlinePlayerList(any())).thenReturn(Collections.singletonList("tastybento"));
-        when(Util.getUUID(anyString())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.getOnlinePlayerList(any())).thenReturn(Collections.singletonList("tastybento"));
+        mockedUtil.when(() -> Util.getUUID(anyString())).thenCallRealMethod();
 
         // Translations
         when(user.getTranslation(anyString()))
@@ -94,10 +72,6 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
         // Command
         c = new AdminSetrankCommand(ac);
 
-        // Plugin Manager
-        PowerMockito.mockStatic(Bukkit.class);
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
     }
 
     /**

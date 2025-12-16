@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -23,22 +23,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.RanksManagerBeforeClassTest;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -52,15 +45,12 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class , ServerBuildInfo.class})
-public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
+public class IslandExpelCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -76,7 +66,8 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
 
     private IslandExpelCommand iec;
     
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -118,10 +109,6 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         when(plugin.getPlayers()).thenReturn(pm);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-
         // Island Banned list initialization
         when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
@@ -132,11 +119,6 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         TestWorldSettings worldSettings = new TestWorldSettings();
         when(iwm.getWorldSettings(any())).thenReturn(worldSettings);
-        when(plugin.getIWM()).thenReturn(iwm);
-
-        // Server and Plugin Manager for events
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         when(island.getWorld()).thenReturn(mock(World.class));
 
@@ -154,7 +136,8 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         iec = new IslandExpelCommand(ic);
     }
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -361,11 +344,10 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         when(t.getServer()).thenReturn(server);
         when(t.getWorld()).thenReturn(world);
         when(t.spigot()).thenReturn(spigot);
-        when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
         User.getInstance(t);
         when(pm.getUUID(anyString())).thenReturn(target);
         when(mockPlayer.canSee(t)).thenReturn(true);
-        when(Bukkit.getPlayer(target)).thenReturn(t);
+        mockedBukkit.when(() -> Bukkit.getPlayer(target)).thenReturn(t);
         return t;
     }
 

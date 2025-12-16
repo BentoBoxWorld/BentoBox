@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.managers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -23,49 +23,31 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class })
-public class LocalesManagerTest {
+public class LocalesManagerTest  extends CommonTestSetup {
 
-    private BentoBox plugin;
     private static final String LOCALE_FOLDER = "locales";
     private static final String BENTOBOX = "BentoBox";
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
-        Settings settings = mock(Settings.class);
-        when(settings.getDefaultLanguage()).thenReturn(Locale.US.toLanguageTag());
-        when(plugin.getSettings()).thenReturn(settings);
+        super.setUp();
     }
 
     /**
@@ -87,8 +69,10 @@ public class LocalesManagerTest {
     /**
      * Deletes the fake locales folder
      */
-    @After
-    public void cleanUp() throws Exception {
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
         // Delete locale folder
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER);
         if (localeDir.exists()) {
@@ -110,9 +94,6 @@ public class LocalesManagerTest {
             .forEach(File::delete);
 
         }
-
-        Mockito.framework().clearInlineMocks();
-
     }
 
     /**
@@ -340,8 +321,8 @@ public class LocalesManagerTest {
         }
 
     }
-    
-    
+
+
 
     private void add(File source, JarOutputStream target) throws IOException
     {
@@ -411,9 +392,9 @@ public class LocalesManagerTest {
         makeFakeLocaleFile();
         LocalesManager lm = new LocalesManager(plugin);
         assertFalse(lm.setTranslation(Locale.GERMAN, "anything.ref", "a translation"));
-        
+
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#setTranslation(Locale, String, String)}.
      */
@@ -424,6 +405,6 @@ public class LocalesManagerTest {
         assertEquals("test string", lm.get("test.test"));
         assertTrue(lm.setTranslation(Locale.US, "test.test", "a translation"));
         assertEquals("a translation", lm.get("test.test"));
-        
+
     }
 }

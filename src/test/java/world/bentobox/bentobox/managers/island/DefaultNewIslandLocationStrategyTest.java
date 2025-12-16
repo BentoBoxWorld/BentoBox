@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.managers.island;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -10,29 +10,18 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import io.papermc.paper.ServerBuildInfo;
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandDeletionManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy.Result;
 import world.bentobox.bentobox.util.Util;
 
@@ -40,22 +29,10 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, Util.class , ServerBuildInfo.class})
-public class DefaultNewIslandLocationStrategyTest {
+public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
 
     private DefaultNewIslandLocationStrategy dnils;
 
-    @Mock
-    private BentoBox plugin;
-    @Mock
-    private Location location;
-    @Mock
-    private World world;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private IslandsManager im;
     @Mock
     private IslandDeletionManager idm;
     @Mock
@@ -67,11 +44,9 @@ public class DefaultNewIslandLocationStrategyTest {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         // Location
         when(location.getWorld()).thenReturn(world);
         when(location.getX()).thenReturn(100D);
@@ -99,11 +74,10 @@ public class DefaultNewIslandLocationStrategyTest {
         when(plugin.getIslandDeletionManager()).thenReturn(idm);
         when(idm.inDeletion(any())).thenReturn(false);
         // Util
-        PowerMockito.mockStatic(Util.class);
         // Return back what the argument was, i.e., no change
-        when(Util.getClosestIsland(any())).thenAnswer((Answer<Location>) invocation -> invocation.getArgument(0, Location.class));
+        mockedUtil.when(() -> Util.getClosestIsland(any())).thenAnswer((Answer<Location>) invocation -> invocation.getArgument(0, Location.class));
         // Default is that chunks have been generated
-        when(Util.isChunkGenerated(any())).thenReturn(true);
+        mockedUtil.when(() -> Util.isChunkGenerated(any())).thenReturn(true);
         // Last island location
         when(im.getLast(eq(world))).thenReturn(location);
         // Class under test
@@ -111,10 +85,11 @@ public class DefaultNewIslandLocationStrategyTest {
     }
 
     /**
+     * @throws Exception 
      */
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -192,7 +167,7 @@ public class DefaultNewIslandLocationStrategyTest {
      */
     @Test
     public void testIsIslandChunkNotGenerated() {
-        when(Util.isChunkGenerated(any())).thenReturn(false);
+        mockedUtil.when(() -> Util.isChunkGenerated(any())).thenReturn(false);
         assertEquals(Result.FREE, dnils.isIsland(location));
     }
 
