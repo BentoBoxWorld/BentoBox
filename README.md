@@ -1,7 +1,7 @@
 # BentoBox
 
 [![Discord](https://img.shields.io/discord/272499714048524288.svg?logo=discord)](https://discord.bentobox.world)
-[![Build Status](https://ci.codemc.io/job/BentoBoxWorld/job/BentoBox-Gradle/badge/icon)](https://ci.codemc.io/job/BentoBoxWorld/job/BentoBox-Gradle/)
+[![Build Status](https://ci.codemc.io/job/BentoBoxWorld/job/BentoBox-Gradle/badge/icon)](https://ci.codemc.io/job/BentoBoxWorld/job/BentoBox/)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_BentoBox&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_BentoBox)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_BentoBox&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_BentoBox)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_BentoBox&metric=security_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_BentoBox)
