@@ -200,7 +200,7 @@ public class AddonsManager {
         Addon addon;
         try {
             Plugin pladdon = Bukkit.getPluginManager().loadPlugin(f);
-            if (pladdon != null && pladdon instanceof Pladdon pl) {
+            if (pladdon instanceof Pladdon pl) {
                 addon = pl.getAddon();
                 addon.setDescription(AddonClassLoader.asDescription(data));
                 // Mark pladdon as enabled.

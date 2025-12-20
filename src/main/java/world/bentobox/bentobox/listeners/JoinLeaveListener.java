@@ -54,7 +54,7 @@ public class JoinLeaveListener implements Listener {
             return;
         }
         // Set the addon in the User object - required to have the right context for prefixes in translations
-        plugin.getIWM().getAddon(event.getPlayer().getWorld()).ifPresent(gm -> user.setAddon(gm));
+        plugin.getIWM().getAddon(event.getPlayer().getWorld()).ifPresent(user::setAddon);
         
         // Get the UUID
         UUID playerUUID = event.getPlayer().getUniqueId();

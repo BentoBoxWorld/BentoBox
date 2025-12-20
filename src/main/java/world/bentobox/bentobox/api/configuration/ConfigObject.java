@@ -10,11 +10,6 @@ import world.bentobox.bentobox.database.objects.DataObject;
  */
 public interface ConfigObject extends DataObject {
 
-    @Override
-    default BentoBox getPlugin() {
-        return BentoBox.getInstance();
-    }
-
     /**
      * @return the uniqueId
      */

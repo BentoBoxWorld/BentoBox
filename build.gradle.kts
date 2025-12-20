@@ -283,15 +283,15 @@ tasks.processResources {
     // This allows version info to be read at runtime by the plugin
     filesMatching(listOf("plugin.yml", "config.yml")) {
         filter { line ->
-            line.replace("\${mysql.version}", mysqlVersion)
-                .replace("\${mariadb.version}", mariadbVersion)
-                .replace("\${postgresql.version}", postgresqlVersion)
-                .replace("\${mongodb.version}", mongodbVersion)
-                .replace("\${hikaricp.version}", hikaricpVersion)
-                .replace("\${build.number}", finalBuildNumber)
-                .replace("\${project.version}", project.version.toString())
-                .replace("\${project.description}", project.description ?: "")
-                .replace("\${revision}", project.version.toString())
+            line.replace($$"${mysql.version}", mysqlVersion)
+                .replace($$"${mariadb.version}", mariadbVersion)
+                .replace($$"${postgresql.version}", postgresqlVersion)
+                .replace($$"${mongodb.version}", mongodbVersion)
+                .replace($$"${hikaricp.version}", hikaricpVersion)
+                .replace($$"${build.number}", finalBuildNumber)
+                .replace($$"${project.version}", project.version.toString())
+                .replace($$"${project.description}", project.description ?: "")
+                .replace($$"${revision}", project.version.toString())
         }
     }
     

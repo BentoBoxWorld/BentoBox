@@ -9,9 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -151,7 +149,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         saveConfig();
         
         // Set up click timeout
-        lastClick = new ExpiringMap<Pair<UUID, String>, Boolean>(getSettings().getClickCooldownMs(), TimeUnit.MILLISECONDS);
+        lastClick = new ExpiringMap<>(getSettings().getClickCooldownMs(), TimeUnit.MILLISECONDS);
 
         // Start Database managers
         playersManager = new PlayersManager(this);
@@ -374,18 +372,6 @@ public class BentoBox extends JavaPlugin implements Listener {
         }
 
 
-    }
-
-    @EventHandler
-    public void onServerStop(ServerCommandEvent e) {
-        /* This is no longer needed as with https://github.com/Multiverse/Multiverse-Core/releases/tag/4.3.12 (or maybe earlier) the issue
-         * is fixed where the generator was not remembered across reboots.
-         */
-        /*
-        if (islandWorldManager != null && (e.getCommand().equalsIgnoreCase("stop") || e.getCommand().equalsIgnoreCase("restart"))) {
-            // Unregister any MV worlds            if () {
-            //islandWorldManager.registerWorldsToMultiverse(false);
-        }*/
     }
 
     /**
@@ -675,11 +661,11 @@ public class BentoBox extends JavaPlugin implements Listener {
      * @return false if they can click and the timeout is started, otherwise true.
      */
     public boolean onTimeout(User user, Panel panel) {
-        if (lastClick.containsKey(new Pair<UUID, String>(user.getUniqueId(), panel.getName()))) {
+        if (lastClick.containsKey(new Pair<>(user.getUniqueId(), panel.getName()))) {
             user.notify("general.errors.slow-down");
             return true;
         }
-        lastClick.put(new Pair<UUID, String>(user.getUniqueId(), panel.getName()), true);
+        lastClick.put(new Pair<>(user.getUniqueId(), panel.getName()), true);
         return false;
     }
 }
