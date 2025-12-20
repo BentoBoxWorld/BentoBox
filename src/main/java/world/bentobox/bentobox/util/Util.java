@@ -77,8 +77,9 @@ public class Util {
 
     private static final String NETHER = "_nether";
     private static final String THE_END = "_the_end";
-
+    private static final String SNAPSHOT = "-SNAPSHOT";
     private static final String SERVER_VERSION = Bukkit.getMinecraftVersion();
+    
     private static String serverVersion = null;
     private static BentoBox plugin = BentoBox.getInstance();
     private static PasteHandler pasteHandler = null;
@@ -540,8 +541,8 @@ public class Util {
      * </p>
      */
     public static boolean isVersionCompatible(String version, String requiredVersion) {
-        String[] versionParts = version.replace("-SNAPSHOT", "").split("\\.");
-        String[] requiredVersionParts = requiredVersion.replace("-SNAPSHOT", "").split("\\.");
+        String[] versionParts = version.replace(SNAPSHOT, "").split("\\.");
+        String[] requiredVersionParts = requiredVersion.replace(SNAPSHOT, "").split("\\.");
 
         for (int i = 0; i < Math.max(versionParts.length, requiredVersionParts.length); i++) {
             int vPart = i < versionParts.length ? Integer.parseInt(versionParts[i]) : 0;
@@ -555,8 +556,8 @@ public class Util {
         }
 
         // If numeric parts are equal, prioritize SNAPSHOT as lower precedence
-        boolean isVersionSnapshot = version.contains("-SNAPSHOT");
-        boolean isRequiredSnapshot = requiredVersion.contains("-SNAPSHOT");
+        boolean isVersionSnapshot = version.contains(SNAPSHOT);
+        boolean isRequiredSnapshot = requiredVersion.contains(SNAPSHOT);
 
         // If required version is a full release but current version is SNAPSHOT, it's incompatible
         return !(!isRequiredSnapshot && isVersionSnapshot);

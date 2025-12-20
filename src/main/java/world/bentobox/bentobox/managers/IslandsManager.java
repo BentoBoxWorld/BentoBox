@@ -68,6 +68,8 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
  */
 public class IslandsManager {
 
+    private static final String SETSPAWN = "bentobox-setspawn";
+
     private final BentoBox plugin;
 
     private final Map<World, Island> spawns = new ConcurrentHashMap<>();
@@ -127,7 +129,7 @@ public class IslandsManager {
             }
         });
         // Set or clear spawn
-        MultiLib.onString(plugin, "bentobox-setspawn", sp -> {
+        MultiLib.onString(plugin, SETSPAWN, sp -> {
             String[] split = sp.split(",");
             if (split.length == 1) {
                 World world = Bukkit.getWorld(split[0]);
@@ -1265,7 +1267,7 @@ public class IslandsManager {
             spawn.setSpawn(true);
             spawns.put(Util.getWorld(spawn.getWorld()), spawn);
             // Tell other servers
-            MultiLib.notify("bentobox-setspawn", spawn.getWorld().getUID() + "," + spawn.getUniqueId());
+            MultiLib.notify(SETSPAWN, spawn.getWorld().getUID() + "," + spawn.getUniqueId());
         }
     }
 
@@ -1281,7 +1283,7 @@ public class IslandsManager {
             spawns.get(world).setSpawn(false);
             spawns.remove(world);
             // Tell other servers
-            MultiLib.notify("bentobox-setspawn", world.getUID().toString());
+            MultiLib.notify(SETSPAWN, world.getUID().toString());
         }
     }
 

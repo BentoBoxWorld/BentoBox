@@ -36,6 +36,14 @@ import world.bentobox.level.Level;
 
 public class AdminPurgeRegionsCommand extends CompositeCommand implements Listener {
 
+    private static final String NONE_FOUND = "commands.admin.purge.none-found";
+    private static final String REGION = "region";
+    private static final String ENTITIES = "entities";
+    private static final String POI = "poi";
+    private static final String DIM_1 = "DIM-1";
+    private static final String IN_WORLD = " in world ";
+    private static final String WILL_BE_DELETED = " will be deleted";
+    
     private volatile boolean inPurge;
     private boolean toBeConfirmed;
     private User user;
@@ -109,7 +117,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
     private boolean deleteEverything() {
         if (deleteableRegions.isEmpty()) {
-            user.sendMessage("commands.admin.purge.none-found"); // Should never happen
+            user.sendMessage(NONE_FOUND); // Should never happen
             return false;
         }
         // Save the worlds
@@ -214,15 +222,15 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
         World world = getWorld();
         File base = world.getWorldFolder();
-        File overworldRegion = new File(base, "region");
-        File overworldEntities = new File(base, "entities");
+        File overworldRegion = new File(base, REGION);
+        File overworldEntities = new File(base, ENTITIES);
         File overworldPoi = new File(base, "poi");
-        File netherRegion    = new File(base, "DIM-1" + File.separator + "region");
-        File netherEntities  = new File(base, "DIM-1" + File.separator + "entities");
-        File netherPoi       = new File(base, "DIM-1" + File.separator + "poi");
-        File endRegion       = new File(base, "DIM1"  + File.separator + "region");
-        File endEntities     = new File(base, "DIM1"  + File.separator + "entities");
-        File endPoi          = new File(base, "DIM1"  + File.separator + "poi");
+        File netherRegion    = new File(base, DIM_1 + File.separator + REGION);
+        File netherEntities  = new File(base, DIM_1 + File.separator + ENTITIES);
+        File netherPoi       = new File(base, DIM_1 + File.separator + POI);
+        File endRegion       = new File(base, "DIM1"  + File.separator + REGION);
+        File endEntities     = new File(base, "DIM1"  + File.separator + ENTITIES);
+        File endPoi          = new File(base, "DIM1"  + File.separator + POI);
 
         // Phase 1: verify none of the files have been updated since the cutoff
         for (Pair<Integer, Integer> coords : deleteableRegions.keySet()) {
@@ -291,13 +299,13 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             // Get the grid that covers this world
             IslandGrid islandGrid = getPlugin().getIslands().getIslandCache().getIslandGrid(world);
             if (islandGrid == null) {
-                Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage("commands.admin.purge.none-found"));
+                Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
                 return;
             }
             TreeMap<Integer, TreeMap<Integer, IslandData>> grid = islandGrid.getGrid();
             if (grid == null) {
                 // There are no islands in this world yet!
-                Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage("commands.admin.purge.none-found"));
+                Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
                 return;
             }
 
@@ -337,7 +345,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                 .forEach(e -> displayEmptyRegion(e.getKey()));
 
             if (deleteableRegions.isEmpty()) {
-                Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage("commands.admin.purge.none-found"));
+                Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
             } else {
                 Bukkit.getScheduler().runTask(getPlugin(), () -> {
                     user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER, String.valueOf(uniqueIslands.size()));
@@ -354,21 +362,21 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     private void displayIsland(Island island) {
         // Log the island data
         if (island.isDeletable()) {
-            getPlugin().log("Deletable island at " + Util.xyz(island.getCenter().toVector()) + " in world " + getWorld().getName() + " will be deleted");
+            getPlugin().log("Deletable island at " + Util.xyz(island.getCenter().toVector()) + IN_WORLD + getWorld().getName() + WILL_BE_DELETED);
             return;
         }
         if (island.getOwner() == null) {
-            getPlugin().log("Unowned island at " + Util.xyz(island.getCenter().toVector()) + " in world " + getWorld().getName() + " will be deleted");
+            getPlugin().log("Unowned island at " + Util.xyz(island.getCenter().toVector()) + IN_WORLD + getWorld().getName() + WILL_BE_DELETED);
             return;
         }
-        getPlugin().log("Island at " + Util.xyz(island.getCenter().toVector()) + " in world " + getWorld().getName() 
+        getPlugin().log("Island at " + Util.xyz(island.getCenter().toVector()) + IN_WORLD + getWorld().getName() 
                 + " owned by " + getPlugin().getPlayers().getName(island.getOwner())
                 + " who last logged in " + formatLocalTimestamp(getPlugin().getPlayers().getLastLoginTimestamp(island.getOwner()))
-                + " will be deleted");
+                + WILL_BE_DELETED);
     }
 
     private void displayEmptyRegion(Pair<Integer, Integer> region) {
-        getPlugin().log("Empty region at r." + region.x() + "." + region.z() + " in world " + getWorld().getName() + " will be deleted (no islands)");
+        getPlugin().log("Empty region at r." + region.x() + "." + region.z() + IN_WORLD + getWorld().getName() + " will be deleted (no islands)");
     }
 
     /**
@@ -444,9 +452,9 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         // Base folders
         World world = this.getWorld();
         File worldDir = world.getWorldFolder();
-        File overworldRegion = new File(worldDir, "region");
-        File netherRegion    = new File(worldDir, "DIM-1" + File.separator + "region");
-        File endRegion       = new File(worldDir, "DIM1"  + File.separator + "region");
+        File overworldRegion = new File(worldDir, REGION);
+        File netherRegion    = new File(worldDir, DIM_1 + File.separator + REGION);
+        File endRegion       = new File(worldDir, "DIM1"  + File.separator + REGION);
 
         // Compute cutoff timestamp
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);

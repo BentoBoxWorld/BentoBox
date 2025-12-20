@@ -37,6 +37,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandTeamPromoteCommand extends CompositeCommand {
 
+    private static final Object PROMOTE = "promote";
+    
     /** The target player for promotion/demotion */
     private User target;
 
@@ -48,7 +50,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.team.promote");
         setOnlyPlayer(true);
-        if (this.getLabel().equals("promote")) {
+        if (this.getLabel().equals(PROMOTE)) {
             setParametersHelp("commands.island.team.promote.parameters");
             setDescription("commands.island.team.promote.description");
         } else {
@@ -105,7 +107,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         }
         // Check if the user is not trying to promote/ demote himself
         if (target.equals(user)) {
-            if (this.getLabel().equals("promote")) {
+            if (this.getLabel().equals(PROMOTE)) {
                 user.sendMessage("commands.island.team.promote.errors.cant-promote-yourself");
             } else {
                 user.sendMessage("commands.island.team.demote.errors.cant-demote-yourself");
@@ -116,7 +118,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         // Check that user is not trying to promote above their own rank
         // Check that user is not trying to demote ranks higher than them
         if (island.getRank(target) >= island.getRank(user)) {
-            if (this.getLabel().equals("promote")) {
+            if (this.getLabel().equals(PROMOTE)) {
                 user.sendMessage("commands.island.team.promote.errors.cant-promote");
             } else {
                 user.sendMessage("commands.island.team.demote.errors.cant-demote");
@@ -150,7 +152,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user);
         assert island != null;
         int currentRank = island.getRank(target);
-        if (this.getLabel().equals("promote")) {
+        if (this.getLabel().equals(PROMOTE)) {
             int nextRank = RanksManager.getInstance().getRankUpValue(currentRank);
             // Stop short of owner
             if (nextRank < RanksManager.OWNER_RANK && currentRank >= RanksManager.MEMBER_RANK

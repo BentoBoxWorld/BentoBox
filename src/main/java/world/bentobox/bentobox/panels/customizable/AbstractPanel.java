@@ -117,7 +117,7 @@ public abstract class AbstractPanel {
                 && actionType.equalsIgnoreCase(action.actionType())) {
             if (actionType.equalsIgnoreCase("NEXT")) {
                 this.pageIndex++;
-            } else if (actionType.equalsIgnoreCase("PREVIOUS")) {
+            } else if (actionType.equalsIgnoreCase(PREVIOUS)) {
                 this.pageIndex--;
             }
             build();
