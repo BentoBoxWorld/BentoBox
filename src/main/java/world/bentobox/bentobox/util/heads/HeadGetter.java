@@ -351,7 +351,6 @@ public class HeadGetter {
         return returnValue;
     }
 
-    @SuppressWarnings("deprecation")
     private static URL getSkinURLFromBase64(String base64) {
         /*
          * Base64 encoded string is in format: { "timestamp": 0, "profileId": "UUID",

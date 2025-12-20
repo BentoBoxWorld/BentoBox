@@ -31,7 +31,7 @@ import world.bentobox.bentobox.managers.AddonsManager;
  * Each addon is loaded with its own {@link AddonClassLoader}, which allows for
  * class isolation and management. This loader also facilitates inter-addon
  * class sharing by coordinating with the {@link AddonsManager}.
- * 
+ * <p>
  * This approach is now rarely used as most addons are now Plugin-based and so are loaded by the server as plugins.
  *
  * @author tastybento, ComminQ

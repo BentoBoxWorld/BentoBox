@@ -124,7 +124,7 @@ public class BentoBoxRankCommand extends CompositeCommand {
             return Optional.empty();
         }
         firstElement = args.get(1);
-        if (args.size() <= 2) {
+        if (args.size() == 2) {
             return Optional.of(List.of("add", REMOVE, "list"));
         }
         if (args.size() > 1 && "add".equals(firstElement)) {

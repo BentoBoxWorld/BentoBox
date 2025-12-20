@@ -1,6 +1,6 @@
 /**
  * This package contains classes and handlers for BentoBox commands.
- * 
+ * <p>
  * Commands allow players and administrators to interact with BentoBox, including
  * managing islands, settings, and other in-game features. This package ensures
  * smooth integration and execution of commands within the plugin.
@@ -15,7 +15,7 @@
  * their own custom help if required, but most of the time it is not.
  * </p>
  * @author tastybento
- * 
+ * <p>
  * Key features:
  * - Command registration and parsing.
  * - Support for custom addon-specific commands.

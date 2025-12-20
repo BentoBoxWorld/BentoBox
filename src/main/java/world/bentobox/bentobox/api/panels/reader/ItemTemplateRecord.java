@@ -28,28 +28,28 @@ import org.eclipse.jdt.annotation.Nullable;
  * @since 1.17.3
  */
 public record ItemTemplateRecord(
-        /**
-         * ItemStack of the Item
+        /*
+          ItemStack of the Item
          */
         @Nullable ItemStack icon,
-        /**
-         * Title of the item
+        /*
+          Title of the item
          */
         @Nullable String title,
-        /**
-         * Lore message of the item
+        /*
+          Lore message of the item
          */
         @Nullable String description,
-        /**
-         * List of Actions for a button
+        /*
+          List of Actions for a button
          */
         @NonNull List<ActionRecords> actions,
-        /**
-         * DataMap that links additional objects for a button.
+        /*
+          DataMap that links additional objects for a button.
          */
         @NonNull Map<String, Object> dataMap,
-        /**
-         * FallBack item if current one is not possible to generate.
+        /*
+          FallBack item if current one is not possible to generate.
          */
         @Nullable ItemTemplateRecord fallback) {
 
@@ -96,20 +96,20 @@ public record ItemTemplateRecord(
      * @param tooltip the tooltip of action
      */
     public record ActionRecords(
-            /**
-             * the click type
+            /*
+              the click type
              */
             ClickType clickType,
-            /**
-             * the string that represents action type
+            /*
+              the string that represents action type
              */
             String actionType,
-            /**
-             * the content of the action
+            /*
+              the content of the action
              */
             String content,
-            /**
-             * the tooltip of action
+            /*
+              the tooltip of action
              */
             String tooltip) {
     }

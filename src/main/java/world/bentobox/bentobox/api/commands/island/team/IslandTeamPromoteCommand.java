@@ -141,7 +141,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
      * - Must be at least member rank
      * For demotion:
      * - Decreases rank but not below member
-     * 
+     * <p>
      * Fires IslandEvent.Reason.RANK_CHANGE on success
      * 
      * @param user command issuer

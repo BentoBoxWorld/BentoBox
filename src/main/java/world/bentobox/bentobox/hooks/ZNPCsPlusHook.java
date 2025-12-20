@@ -23,7 +23,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * Provides copy and pasting of ZNPCS Plus in blueprints https://github.com/Pyrbu/ZNPCsPlus
+ * Provides copy and pasting of ZNPCS Plus in blueprints <a href="https://github.com/Pyrbu/ZNPCsPlus">...</a>
  *
  * @author tastybento
  * @since 3.2.0
@@ -120,7 +120,7 @@ public class ZNPCsPlusHook extends NPCHook {
         return NpcApiProvider.get().getNpcRegistry().getAll().stream()
                 .filter(npc -> npc.getNpc().getWorld().equals(chunk.getWorld())) // Only NPCs in this world
                 .filter(npc -> npc.getNpc().getLocation().toBukkitLocation(chunk.getWorld()).getChunk().equals(chunk)) // Only in this chunk
-                .map(npc -> npc.getId()) // IDs
+                .map(NpcEntry::getId) // IDs
                 .toList();
     }
 

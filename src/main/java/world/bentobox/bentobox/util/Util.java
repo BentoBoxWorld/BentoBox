@@ -130,7 +130,7 @@ public class Util {
      * @return Location
      */
     public static Location getLocationString(final String s) {
-        if (s == null || s.trim().equals("")) {
+        if (s == null || s.trim().isEmpty()) {
             return null;
         }
         final String[] parts = s.split(":");
@@ -839,8 +839,6 @@ public class Util {
      * @param values an array of string values which are potential matches for the enum constants
      * @param <T> the type parameter of the enum
      * @return the first matching enum constant if a match is found; otherwise, returns null
-     * @throws IOException 
-     * @throws NullPointerException if either {@code enumClass} or {@code values} are null
      */
     public static <T extends Enum<T>> T findFirstMatchingEnum(Class<T> enumClass, String... values) {
         if (enumClass == null || values == null) {

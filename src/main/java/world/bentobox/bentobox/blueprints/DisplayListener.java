@@ -16,14 +16,13 @@ import world.bentobox.bentobox.BentoBox;
 
 /**
  * Provides a listener for the Display Objects pasted when a hologram is interacted with
- * https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/player/PlayerInteractAtEntityEvent.html
+ * <a href="https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/player/PlayerInteractAtEntityEvent.html">...</a>
  */
 public class DisplayListener implements Listener {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractAtEntityEvent event) {
-        if (event.getRightClicked() instanceof ArmorStand) {
-            ArmorStand armorStand = (ArmorStand) event.getRightClicked();
+        if (event.getRightClicked() instanceof ArmorStand armorStand) {
             NamespacedKey key = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
 
             if (armorStand.getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
