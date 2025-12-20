@@ -72,6 +72,8 @@ import world.bentobox.bentobox.versions.ServerCompatibility;
  */
 public class BentoBox extends JavaPlugin implements Listener {
 
+    private static final String PANELS = "panels";
+
     private static BentoBox instance;
 
     // Databases
@@ -502,27 +504,27 @@ public class BentoBox extends JavaPlugin implements Listener {
         }
         log("Saving default panels...");
 
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "island_creation_panel.yml"))) {
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "island_creation_panel.yml"))) {
             log("Saving default island_creation_panel...");
             this.saveResource("panels/island_creation_panel.yml", false);
         }
 
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "language_panel.yml"))) {
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "language_panel.yml"))) {
             log("Saving default language_panel...");
             this.saveResource("panels/language_panel.yml", false);
         }
 
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "island_homes_panel.yml"))) {
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "island_homes_panel.yml"))) {
             log("Saving default island_homes_panel...");
             this.saveResource("panels/island_homes_panel.yml", false);
         }
 
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "team_invite_panel.yml"))) {
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "team_invite_panel.yml"))) {
             log("Saving default team_invite_panel...");
             this.saveResource("panels/team_invite_panel.yml", false);
         }
 
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "team_panel.yml"))) {
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "team_panel.yml"))) {
             log("Saving default team_panel...");
             this.saveResource("panels/team_panel.yml", false);
         }
