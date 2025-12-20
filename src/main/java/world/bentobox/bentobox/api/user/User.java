@@ -441,8 +441,7 @@ public class User implements MetaDataAble {
                 String[] spl = permission.split(permPrefix);
                 if (spl.length > 1) {
                     if (!NumberUtils.isCreatable(spl[1])) {
-                        plugin.logError("Player " + player.getName() + " has permission: '" + permission
-                                + "' <-- the last part MUST be a number! Ignoring...");
+                        plugin.logError("Player " + player.getName() + " has permission: '" + permission);
                     } else {
                         int v = Integer.parseInt(spl[1]);
                         if (v < 0) {
@@ -981,7 +980,7 @@ public class User implements MetaDataAble {
                 + (offlinePlayer != null ? "offlinePlayer=" + offlinePlayer + ", " : "")
                 + (playerUUID != null ? "playerUUID=" + playerUUID + ", " : "")
                 + (sender != null ? "sender=" + sender + ", " : "") + (addon != null ? "addon=" + addon + ", " : "")
-                + (getLocation() != null ? "getLocation()=" + getLocation() + ", " : "") + "isPlayer()=" + isPlayer()
+                + "getLocation()=" + getLocation() + "isPlayer()=" + isPlayer()
                 + "]";
     }
 
