@@ -241,7 +241,9 @@ public class User implements MetaDataAble {
      */
     @NonNull
     public Location getLocation() {
-        return Objects.requireNonNull(player, "getLocation can only be called for online players!").getLocation();
+        Player p = Objects.requireNonNull(player, "getLocation can only be called for online players!");
+        Location loc = p.getLocation();
+        return Objects.requireNonNull(loc, "Player's location cannot be null! The player may not have a location (has never played).");
     }
 
     /**
