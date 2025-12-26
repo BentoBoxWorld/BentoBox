@@ -236,10 +236,6 @@ public class PVPListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        if (e.getTo() == null) {
-            return;
-        }
-
         // Get previous island to skip reporting if island is not changed.
         Island previousIsland = this.getIslands().getIslandAt(e.getFrom()).orElse(null);
 

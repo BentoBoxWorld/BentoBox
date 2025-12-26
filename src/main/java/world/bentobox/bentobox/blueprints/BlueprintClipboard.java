@@ -71,9 +71,9 @@ public class BlueprintClipboard {
     private final Map<Vector, BlueprintBlock> bpAttachable = new LinkedHashMap<>();
     private final Map<Vector, BlueprintBlock> bpBlocks = new LinkedHashMap<>();
     private final BentoBox plugin = BentoBox.getInstance();
-    private Optional<MythicMobsHook> mmh;
-    private Optional<FancyNpcsHook> npc;
-    private Optional<ZNPCsPlusHook> znpc;
+    private final Optional<MythicMobsHook> mmh;
+    private final Optional<FancyNpcsHook> npc;
+    private final Optional<ZNPCsPlusHook> znpc;
 
 
     /**
@@ -148,14 +148,10 @@ public class BlueprintClipboard {
             boolean copyBiome, boolean noWater) {
         copying = false;
         // FancyNpcs
-        if (npc.isPresent()) {
-            // Add all the citizens for the area in one go. This is pretty fast.
-            bpEntities.putAll(npc.get().getNpcsInArea(world, vectorsToCopy, origin));
-        }
+        // Add all the citizens for the area in one go. This is pretty fast.
+        npc.ifPresent(fancyNpcsHook -> bpEntities.putAll(fancyNpcsHook.getNpcsInArea(world, vectorsToCopy, origin)));
         // ZNPCsPlus NPCs
-        if (znpc.isPresent()) {
-            bpEntities.putAll(znpc.get().getNpcsInArea(world, vectorsToCopy, origin));
-        }
+        znpc.ifPresent(znpCsPlusHook -> bpEntities.putAll(znpCsPlusHook.getNpcsInArea(world, vectorsToCopy, origin)));
 
         // Repeating copy task
         copyTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {

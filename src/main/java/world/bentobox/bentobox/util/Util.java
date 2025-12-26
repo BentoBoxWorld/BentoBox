@@ -77,8 +77,9 @@ public class Util {
 
     private static final String NETHER = "_nether";
     private static final String THE_END = "_the_end";
-
+    private static final String SNAPSHOT = "-SNAPSHOT";
     private static final String SERVER_VERSION = Bukkit.getMinecraftVersion();
+    
     private static String serverVersion = null;
     private static BentoBox plugin = BentoBox.getInstance();
     private static PasteHandler pasteHandler = null;
@@ -129,7 +130,7 @@ public class Util {
      * @return Location
      */
     public static Location getLocationString(final String s) {
-        if (s == null || s.trim().equals("")) {
+        if (s == null || s.trim().isEmpty()) {
             return null;
         }
         final String[] parts = s.split(":");
@@ -485,11 +486,11 @@ public class Util {
                 return (CompletableFuture<Chunk>) method.invoke(world, x, z, gen);
             }
         } catch (NoSuchMethodException e) {
-            // Method does not exist, fallback to Spigot behavior
+            // Method does not exist, fallback to default behavior
         } catch (Exception e) {
-            e.printStackTrace(); // Handle other exceptions (optional)
+            BentoBox.getInstance().logStacktrace(e);
         }
-        // Fallback for Spigot servers
+        // Fallback
         return CompletableFuture.completedFuture(world.getChunkAt(x, z, gen));
 
     }
@@ -540,8 +541,8 @@ public class Util {
      * </p>
      */
     public static boolean isVersionCompatible(String version, String requiredVersion) {
-        String[] versionParts = version.replace("-SNAPSHOT", "").split("\\.");
-        String[] requiredVersionParts = requiredVersion.replace("-SNAPSHOT", "").split("\\.");
+        String[] versionParts = version.replace(SNAPSHOT, "").split("\\.");
+        String[] requiredVersionParts = requiredVersion.replace(SNAPSHOT, "").split("\\.");
 
         for (int i = 0; i < Math.max(versionParts.length, requiredVersionParts.length); i++) {
             int vPart = i < versionParts.length ? Integer.parseInt(versionParts[i]) : 0;
@@ -555,8 +556,8 @@ public class Util {
         }
 
         // If numeric parts are equal, prioritize SNAPSHOT as lower precedence
-        boolean isVersionSnapshot = version.contains("-SNAPSHOT");
-        boolean isRequiredSnapshot = requiredVersion.contains("-SNAPSHOT");
+        boolean isVersionSnapshot = version.contains(SNAPSHOT);
+        boolean isRequiredSnapshot = requiredVersion.contains(SNAPSHOT);
 
         // If required version is a full release but current version is SNAPSHOT, it's incompatible
         return !(!isRequiredSnapshot && isVersionSnapshot);
@@ -620,7 +621,7 @@ public class Util {
      * @since 1.9.0
      */
     @NonNull
-    public static String stripSpaceAfterColorCodes(@NonNull String textToStrip) {
+    public static String stripSpaceAfterColorCodes(String textToStrip) {
         if (textToStrip == null) return "";
         textToStrip = textToStrip.replaceAll("(" + ChatColor.COLOR_CHAR + ".)[\\s]", "$1");
         return textToStrip;
@@ -838,8 +839,6 @@ public class Util {
      * @param values an array of string values which are potential matches for the enum constants
      * @param <T> the type parameter of the enum
      * @return the first matching enum constant if a match is found; otherwise, returns null
-     * @throws IOException 
-     * @throws NullPointerException if either {@code enumClass} or {@code values} are null
      */
     public static <T extends Enum<T>> T findFirstMatchingEnum(Class<T> enumClass, String... values) {
         if (enumClass == null || values == null) {

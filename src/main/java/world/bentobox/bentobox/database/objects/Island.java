@@ -851,7 +851,6 @@ public class Island implements DataObject, MetaDataAble {
         if (player.getGameMode() == GameMode.SPECTATOR) {
             return false;
         }
-
         return onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK;
     }
 
@@ -1206,7 +1205,7 @@ public class Island implements DataObject, MetaDataAble {
      *  {@link world.bentobox.bentobox.api.addons.GameModeAddon#isEnforceEqualRanges()}
      *  to {@code false}, and also likely set {@link world.bentobox.bentobox.api.addons.GameModeAddon#isFixIslandCenter()}
      *  to {@code false} too.
-     *  
+     * <p>
      *  The protection range can be set to be bigger than this, but will never report as being bigger than this.
      * 
      * @param range the range to set

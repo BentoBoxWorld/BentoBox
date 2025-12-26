@@ -46,7 +46,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 group = "world.bentobox" // From <groupId>
 
 // Base properties from <properties>
-val buildVersion = "3.11.0"
+val buildVersion = "3.11.1"
 val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
@@ -93,6 +93,22 @@ val vaultVersion = "1.7.1"
 val levelVersion = "2.21.3"
 val placeholderapiVersion = "2.11.7"
 val myworldsVersion = "1.19.3-v1"
+val awaitilityVersion = "4.2.2"
+val mythicDistVersion = "5.9.5"
+val multiverseCore5Version = "5.0.0-SNAPSHOT"
+val multiverseCore4Version = "4.3.16"
+val langUtilsVersion = "3.2.2"
+val slimefun4Version = "RC-37"
+val itemsAdderVersion = "4.0.2-beta-release-11"
+val fancyNpcsVersion = "2.4.4"
+val znpcsplusApiVersion = "2.0.0-SNAPSHOT"
+val fancyHologramsVersion = "2.4.1"
+val commonsLangVersion = "2.6"
+val jaxbApiVersion = "2.3.0"
+val gsonRecordTypeAdapterFactoryVersion = "0.3.0"
+val jdtAnnotationVersion = "2.2.600"
+val multilibVersion = "1.1.13"
+val oraxenVersion = "1.193.1"
 
 // Store versions in extra properties for resource filtering (used in plugin.yml, config.yml)
 extra["java.version"] = javaVersion
@@ -176,59 +192,40 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junitVersion")
-    testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion") // Mocking framework
+    testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
-    testImplementation("com.github.MockBukkit:MockBukkit:$mockBukkitVersion") // Bukkit mock server
-    testImplementation("org.awaitility:awaitility:4.2.2") // Async testing helper
-    testImplementation("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT") // Paper API for tests
+    testImplementation("com.github.MockBukkit:MockBukkit:$mockBukkitVersion")
+    testImplementation("org.awaitility:awaitility:$awaitilityVersion")
+    testImplementation("io.papermc.paper:paper-api:$paperVersion")
     testImplementation("com.github.MilkBowl:VaultAPI:$vaultVersion")
     testImplementation("me.clip:placeholderapi:$placeholderapiVersion")
+    testImplementation("commons-lang:commons-lang:$commonsLangVersion")
 
-    // --- Provided/Compile-Only Dependencies: Available at compile time but provided by server ---
-    // These are NOT shaded into the final JAR (the server provides them at runtime)
-    //compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT") // Bukkit/Spigot/Paper API
-    paperweight.paperDevBundle("1.21.10-R0.1-SNAPSHOT")
-    
-    // Spigot NMS - Used for internal Minecraft code (chunk deletion and pasting)
+    // --- Compile Only Dependencies: Provided by the server at runtime ---
     compileOnly("org.spigotmc:spigot:$spigotVersion") {
-        exclude(group = "org.spigotmc", module = "spigot-api") // Already provided by Paper
+        exclude(group = "org.spigotmc", module = "spigot-api")
     }
-
-    // Optional plugins that may be installed on the server
     compileOnly("org.mongodb:mongodb-driver:$mongodbVersion")
-    compileOnly("com.zaxxer:HikariCP:$hikaricpVersion") // Database connection pooling
-    compileOnly("com.github.MilkBowl:VaultAPI:$vaultVersion") // Economy/permission API
-    compileOnly("me.clip:placeholderapi:$placeholderapiVersion") // Placeholder API
+    compileOnly("com.zaxxer:HikariCP:$hikaricpVersion")
+    compileOnly("com.github.MilkBowl:VaultAPI:$vaultVersion")
+    compileOnly("me.clip:placeholderapi:$placeholderapiVersion")
     compileOnly("com.bergerkiller.bukkit:MyWorlds:$myworldsVersion") {
         exclude(group = "org.spigotmc", module = "spigot-api")
     }
-    compileOnly("io.lumine:Mythic-Dist:5.9.5") // Mythic Mobs
-    compileOnly("org.mvplugins.multiverse.core:multiverse-core:5.0.0-SNAPSHOT")
-    compileOnly("com.onarandombox.multiversecore:multiverse-core:4.3.16") {
+    compileOnly("io.lumine:Mythic-Dist:$mythicDistVersion")
+    compileOnly("org.mvplugins.multiverse.core:multiverse-core:$multiverseCore5Version")
+    compileOnly("com.onarandombox.multiversecore:multiverse-core:$multiverseCore4Version") {
         exclude(group = "org.spigotmc", module = "spigot-api")
     }
-    compileOnly("com.github.apachezy:LangUtils:3.2.2")
-    compileOnly("com.github.Slimefun:Slimefun4:RC-37") // Slimefun custom items
-    compileOnly("dev.lone:api-itemsadder:4.0.2-beta-release-11") // ItemsAdder custom items
-    compileOnly("de.oliver:FancyNpcs:2.4.4") // NPC plugin
-    compileOnly("lol.pyr:znpcsplus-api:2.0.0-SNAPSHOT") // Alternative NPC plugin
-    compileOnly("de.oliver:FancyHolograms:2.4.1") // Hologram plugin
-    compileOnly("world.bentobox:level:2.21.3-SNAPSHOT") // BentoBox Level addon
-
-    // Apache Commons Lang - utility library
-    compileOnly("commons-lang:commons-lang:2.6")
-    testImplementation("commons-lang:commons-lang:2.6")
-
-    // --- Implementation Dependencies: Shaded into final JAR ---
-    // These are embedded in the final JAR since they're not commonly available
-    implementation("org.bstats:bstats-bukkit:$bstatsVersion") // Plugin metrics
-    implementation("javax.xml.bind:jaxb-api:2.3.0") // XML serialization
-    implementation("com.github.Marcono1234:gson-record-type-adapter-factory:0.3.0") // JSON serialization
-    implementation("org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600") // Nullability annotations
-    implementation("com.github.puregero:multilib:1.1.13") // Multi-library support
-
-    // Oraxen with custom exclusions (embed only what we need)
-    compileOnly("io.th0rgal:oraxen:1.193.1") {
+    compileOnly("com.github.apachezy:LangUtils:$langUtilsVersion")
+    compileOnly("com.github.Slimefun:Slimefun4:$slimefun4Version")
+    compileOnly("dev.lone:api-itemsadder:$itemsAdderVersion")
+    compileOnly("de.oliver:FancyNpcs:$fancyNpcsVersion")
+    compileOnly("lol.pyr:znpcsplus-api:$znpcsplusApiVersion")
+    compileOnly("de.oliver:FancyHolograms:$fancyHologramsVersion")
+    compileOnly("world.bentobox:level:$levelVersion-SNAPSHOT")
+    compileOnly("commons-lang:commons-lang:$commonsLangVersion")
+    compileOnly("io.th0rgal:oraxen:$oraxenVersion") {
         exclude(group = "me.gabytm.util", module = "actions-spigot")
         exclude(group = "org.jetbrains", module = "annotations")
         exclude(group = "com.ticxo", module = "PlayerAnimator")
@@ -238,9 +235,19 @@ dependencies {
         exclude(group = "org.bstats", module = "bstats-bukkit")
         exclude(group = "com.jeff-media", module = "custom-block-data")
         exclude(group = "com.jeff-media", module = "persistent-data-serializer")
-        exclude(group = "com.jeff_media", module = "MorePersistentDataTypes")
+        exclude(group = "com.jeff-media", module = "MorePersistentDataTypes")
         exclude(group = "gs.mclo", module = "java")
     }
+
+    // --- Implementation Dependencies: Shaded into final JAR ---
+    implementation("org.bstats:bstats-bukkit:$bstatsVersion")
+    implementation("javax.xml.bind:jaxb-api:$jaxbApiVersion")
+    implementation("com.github.Marcono1234:gson-record-type-adapter-factory:$gsonRecordTypeAdapterFactoryVersion")
+    implementation("org.eclipse.jdt:org.eclipse.jdt.annotation:$jdtAnnotationVersion")
+    implementation("com.github.puregero:multilib:$multilibVersion")
+
+    // --- Paperweight Development Bundle (Provided by plugin development tools) ---
+    paperweight.paperDevBundle(paperVersion)
 }
 
 paperweight {
@@ -276,15 +283,15 @@ tasks.processResources {
     // This allows version info to be read at runtime by the plugin
     filesMatching(listOf("plugin.yml", "config.yml")) {
         filter { line ->
-            line.replace("\${mysql.version}", mysqlVersion)
-                .replace("\${mariadb.version}", mariadbVersion)
-                .replace("\${postgresql.version}", postgresqlVersion)
-                .replace("\${mongodb.version}", mongodbVersion)
-                .replace("\${hikaricp.version}", hikaricpVersion)
-                .replace("\${build.number}", finalBuildNumber)
-                .replace("\${project.version}", project.version.toString())
-                .replace("\${project.description}", project.description ?: "")
-                .replace("\${revision}", project.version.toString())
+            line.replace($$"${mysql.version}", mysqlVersion)
+                .replace($$"${mariadb.version}", mariadbVersion)
+                .replace($$"${postgresql.version}", postgresqlVersion)
+                .replace($$"${mongodb.version}", mongodbVersion)
+                .replace($$"${hikaricp.version}", hikaricpVersion)
+                .replace($$"${build.number}", finalBuildNumber)
+                .replace($$"${project.version}", project.version.toString())
+                .replace($$"${project.description}", project.description ?: "")
+                .replace($$"${revision}", project.version.toString())
         }
     }
     

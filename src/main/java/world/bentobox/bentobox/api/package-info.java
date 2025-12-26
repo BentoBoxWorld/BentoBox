@@ -1,6 +1,6 @@
 /**
  * This package provides the core API for interacting with the BentoBox framework.
- * 
+ * <p>
  * It enables developers to integrate their custom plugins or addons with BentoBox,
  * offering simplified access to common functionalities like:
  * - Island management (creation, deletion, permissions).

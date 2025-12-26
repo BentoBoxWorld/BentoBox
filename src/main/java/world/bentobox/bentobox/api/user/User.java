@@ -241,7 +241,9 @@ public class User implements MetaDataAble {
      */
     @NonNull
     public Location getLocation() {
-        return Objects.requireNonNull(player, "getLocation can only be called for online players!").getLocation();
+        Player p = Objects.requireNonNull(player, "getLocation can only be called for online players!");
+        Location loc = p.getLocation();
+        return Objects.requireNonNull(loc, "Player's location cannot be null! The player may not have a location (has never played).");
     }
 
     /**
@@ -439,8 +441,7 @@ public class User implements MetaDataAble {
                 String[] spl = permission.split(permPrefix);
                 if (spl.length > 1) {
                     if (!NumberUtils.isCreatable(spl[1])) {
-                        plugin.logError("Player " + player.getName() + " has permission: '" + permission
-                                + "' <-- the last part MUST be a number! Ignoring...");
+                        plugin.logError("Player " + player.getName() + " has permission: '" + permission);
                     } else {
                         int v = Integer.parseInt(spl[1]);
                         if (v < 0) {
@@ -979,7 +980,7 @@ public class User implements MetaDataAble {
                 + (offlinePlayer != null ? "offlinePlayer=" + offlinePlayer + ", " : "")
                 + (playerUUID != null ? "playerUUID=" + playerUUID + ", " : "")
                 + (sender != null ? "sender=" + sender + ", " : "") + (addon != null ? "addon=" + addon + ", " : "")
-                + (getLocation() != null ? "getLocation()=" + getLocation() + ", " : "") + "isPlayer()=" + isPlayer()
+                + "getLocation()=" + getLocation() + "isPlayer()=" + isPlayer()
                 + "]";
     }
 

@@ -131,32 +131,32 @@ public class BlueprintPaster {
      * Consists of blocks, attached blocks, entities, iterators for the blocks and a speed
      */
     private record Bits(
-            /**
-             * Basic blocks to the pasted (not attached blocks)
+            /*
+              Basic blocks to the pasted (not attached blocks)
              */
             Map<Vector, BlueprintBlock> blocks,
-            /**
-             * Attached blocks
+            /*
+              Attached blocks
              */
             Map<Vector, BlueprintBlock> attached,
-            /**
-             * Entities to be pasted
+            /*
+              Entities to be pasted
              */
             Map<Vector, List<BlueprintEntity>> entities,
-            /**
-             * Basic block pasting iterator
+            /*
+              Basic block pasting iterator
              */
             Iterator<Entry<Vector, BlueprintBlock>> it,
-            /**
-             * Attached block pasting iterator
+            /*
+              Attached block pasting iterator
              */
             Iterator<Entry<Vector, BlueprintBlock>> it2,
-            /**
-             * Entity pasting iterator
+            /*
+              Entity pasting iterator
              */
             Iterator<Entry<Vector, List<BlueprintEntity>>> it3,
-            /**
-             * Paste speed
+            /*
+              Paste speed
              */
             int pasteSpeed) {}
 

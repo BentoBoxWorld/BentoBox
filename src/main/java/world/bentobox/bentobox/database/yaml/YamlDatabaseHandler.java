@@ -598,7 +598,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return switch (object) {
             case null -> "null";
 
-            // UUID has it's own serialization, that is not picked up automatically
+            // UUID has its own serialization, that is not picked up automatically
             case UUID uuid -> object.toString();
 
             // Only the world name is needed for worlds

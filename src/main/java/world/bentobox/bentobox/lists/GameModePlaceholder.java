@@ -427,6 +427,9 @@ public enum GameModePlaceholder {
      * @return String count of the number of members
      */
     private static String getHistoricalMembers(@Nullable Island island) {
+        if (island == null) {
+            return "0";
+        }
         Set<String> uniqueMembers = new HashSet<>();
         for (LogEntry le : island.getHistory()) {
             if (le.getType() == LogType.JOINED) {

@@ -48,6 +48,7 @@ public class LanguagePanel extends AbstractPanel
     // Section: Variables
     // ---------------------------------------------------------------------
 
+    private static final String LANGUAGE_PANEL = "language_panel";
     /**
      * This variable stores filtered elements.
      */
@@ -110,15 +111,15 @@ public class LanguagePanel extends AbstractPanel
         TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
 
         // Set main template.
-        if (this.doesCustomPanelExists(this.command.getAddon(), "language_panel"))
+        if (this.doesCustomPanelExists(this.command.getAddon(), LANGUAGE_PANEL))
         {
             // Addon has its own island creation panel. Use it.
-            panelBuilder.template("language_panel", new File(this.command.getAddon().getDataFolder(), "panels"));
+            panelBuilder.template(LANGUAGE_PANEL, new File(this.command.getAddon().getDataFolder(), "panels"));
         }
         else
         {
             // Use default island creation panel.
-            panelBuilder.template("language_panel", new File(this.plugin.getDataFolder(), "panels"));
+            panelBuilder.template(LANGUAGE_PANEL, new File(this.plugin.getDataFolder(), "panels"));
         }
 
         panelBuilder.user(this.user);

@@ -7,7 +7,7 @@
  * </p>
  * 
  * This package provides utility classes and helpers for common tasks within BentoBox.
- * 
+ * <p>
  * These utilities simplify repetitive tasks like file handling, configuration management,
  * and mathematical calculations. They are used throughout the framework and can be
  * leveraged by addon developers.

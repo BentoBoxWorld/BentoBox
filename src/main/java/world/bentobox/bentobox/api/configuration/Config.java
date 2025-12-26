@@ -65,7 +65,7 @@ public class Config<T> {
                 | ClassNotFoundException | IntrospectionException | NoSuchMethodException | SecurityException e) {
             BentoBox.getInstance().logError("Could not load config object! " + e.getMessage());
             // Required for debugging
-            e.printStackTrace();
+            BentoBox.getInstance().logStacktrace(e);
         }
 
         return null;

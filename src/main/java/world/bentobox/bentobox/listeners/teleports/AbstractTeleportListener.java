@@ -43,8 +43,8 @@ public abstract class AbstractTeleportListener
     AbstractTeleportListener(@NonNull BentoBox bentoBox)
     {
         this.plugin = bentoBox;
-        this.inPortal = new ExpiringSet<UUID>(10, TimeUnit.SECONDS);
-        this.inTeleport = new ExpiringSet<UUID>(10, TimeUnit.SECONDS);
+        this.inPortal = new ExpiringSet<>(10, TimeUnit.SECONDS);
+        this.inTeleport = new ExpiringSet<>(10, TimeUnit.SECONDS);
         this.teleportOrigin = new HashMap<>();
     }
 

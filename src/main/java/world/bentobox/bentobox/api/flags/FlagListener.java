@@ -54,6 +54,8 @@ public abstract class FlagListener implements Listener {
         ISLAND_DELETED
     }
 
+    private static final String WORLD_PROTECTED = "protection.world-protected";
+
     @NonNull
     private BentoBox plugin = BentoBox.getInstance();
     @Nullable
@@ -165,7 +167,7 @@ public abstract class FlagListener implements Listener {
         // Check if the island is deleted - if so, then nothing is allowed by default
         if (island.isPresent() && (island.get().isDeleted() || island.get().isDeletable())) {
             report(user, e, loc, flag, Why.ISLAND_DELETED);
-            noGo(e, flag, silent, "protection.world-protected");
+            noGo(e, flag, silent, WORLD_PROTECTED);
             return false;
         }
 
@@ -186,7 +188,7 @@ public abstract class FlagListener implements Listener {
             return true;
         } else {
             report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
-            noGo(e, flag, silent, "protection.world-protected");
+            noGo(e, flag, silent, WORLD_PROTECTED);
             return false;
         }
     }
@@ -213,7 +215,7 @@ public abstract class FlagListener implements Listener {
             return true;
         }
         report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
-        noGo(e, flag, silent, "protection.world-protected");
+        noGo(e, flag, silent, WORLD_PROTECTED);
         return false;
     }
 

@@ -21,6 +21,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import de.oliver.fancynpcs.api.FancyNpcsPlugin;
 import de.oliver.fancynpcs.api.Npc;
@@ -41,6 +42,9 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
  * @since 3.1.0
  */
 public class FancyNpcsHook extends NPCHook {
+
+    private static final @NotNull String SKIN_IDENTIFIER = "skin.identifier";
+    private static final String ACTIONS = "actions.";
 
     public FancyNpcsHook() {
         super("FancyNpcs", Material.PLAYER_HEAD);
@@ -78,9 +82,9 @@ public class FancyNpcsHook extends NPCHook {
         npcConfig.set("scale", data.getScale());
 
         if (data.getSkinData() != null) {
-            npcConfig.set("skin.identifier", data.getSkinData().getIdentifier());
+            npcConfig.set(SKIN_IDENTIFIER, data.getSkinData().getIdentifier());
         } else {
-            npcConfig.set("skin.identifier", null);
+            npcConfig.set(SKIN_IDENTIFIER, null);
         }
         npcConfig.set("skin.mirrorSkin", data.isMirrorSkin());
 
@@ -103,9 +107,9 @@ public class FancyNpcsHook extends NPCHook {
                     continue;
                 }
 
-                npcConfig.set("actions." + entry.getKey().name() + "." + actionData.order() + ".action",
+                npcConfig.set(ACTIONS + entry.getKey().name() + "." + actionData.order() + ".action",
                         actionData.action().getName());
-                npcConfig.set("actions." + entry.getKey().name() + "." + actionData.order() + ".value",
+                npcConfig.set(ACTIONS + entry.getKey().name() + "." + actionData.order() + ".value",
                         actionData.value());
             }
         }
@@ -136,7 +140,7 @@ public class FancyNpcsHook extends NPCHook {
             location = new Location(pos.getWorld(), x, y, z, yaw, pitch);
 
 
-            String skinIdentifier = npcConfig.getString("skin.identifier", npcConfig.getString("skin.uuid", ""));
+            String skinIdentifier = npcConfig.getString(SKIN_IDENTIFIER, npcConfig.getString("skin.uuid", ""));
 
         boolean mirrorSkin = npcConfig.getBoolean("skin.mirrorSkin");
 
@@ -160,12 +164,12 @@ public class FancyNpcsHook extends NPCHook {
                     }
 
                     List<NpcAction.NpcActionData> actionList = new ArrayList<>();
-                    ConfigurationSection actionsSection = npcConfig.getConfigurationSection("actions." + trigger);
+                    ConfigurationSection actionsSection = npcConfig.getConfigurationSection(ACTIONS + trigger);
                     if (actionsSection != null) {
                         actionsSection.getKeys(false).forEach(order -> {
                             String actionName = npcConfig
-                                    .getString("actions." + trigger + "." + order + ".action");
-                            String value = npcConfig.getString("actions." + trigger + "." + order + ".value");
+                                    .getString(ACTIONS + trigger + "." + order + ".action");
+                            String value = npcConfig.getString(ACTIONS + trigger + "." + order + ".value");
                             NpcAction action = FancyNpcsPlugin.get().getActionManager().getActionByName(actionName);
                             if (action == null) {
                                 BentoBox.getInstance().logWarning("Could not find action: " + actionName);

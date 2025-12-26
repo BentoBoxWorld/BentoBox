@@ -36,6 +36,9 @@ public class IslandHomesPanel extends AbstractPanel
     private static final String ISLAND = "ISLAND";
 
 
+    private static final String ISLAND_HOMES_PANEL = "island_homes_panel";
+
+
     /**
      * This variable stores filtered elements.
      */
@@ -97,15 +100,15 @@ public class IslandHomesPanel extends AbstractPanel
         TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
 
         // Set main template.
-        if (this.doesCustomPanelExists(this.command.getAddon(), "island_homes_panel"))
+        if (this.doesCustomPanelExists(this.command.getAddon(), ISLAND_HOMES_PANEL))
         {
             // Addon has its own island homes panel. Use it.
-            panelBuilder.template("island_homes_panel", new File(this.command.getAddon().getDataFolder(), "panels"));
+            panelBuilder.template(ISLAND_HOMES_PANEL, new File(this.command.getAddon().getDataFolder(), "panels"));
         }
         else
         {
             // Use default island creation panel.
-            panelBuilder.template("island_homes_panel", new File(this.plugin.getDataFolder(), "panels"));
+            panelBuilder.template(ISLAND_HOMES_PANEL, new File(this.plugin.getDataFolder(), "panels"));
         }
 
         panelBuilder.user(this.user);

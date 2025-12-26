@@ -9,9 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -71,6 +69,8 @@ import world.bentobox.bentobox.versions.ServerCompatibility;
  * @author tastybento, Poslovitch
  */
 public class BentoBox extends JavaPlugin implements Listener {
+
+    private static final String PANELS = "panels";
 
     private static BentoBox instance;
 
@@ -149,7 +149,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         saveConfig();
         
         // Set up click timeout
-        lastClick = new ExpiringMap<Pair<UUID, String>, Boolean>(getSettings().getClickCooldownMs(), TimeUnit.MILLISECONDS);
+        lastClick = new ExpiringMap<>(getSettings().getClickCooldownMs(), TimeUnit.MILLISECONDS);
 
         // Start Database managers
         playersManager = new PlayersManager(this);
@@ -194,7 +194,7 @@ public class BentoBox extends JavaPlugin implements Listener {
                 completeSetup(loadTime);
             } catch (Exception e) {
                 fireCriticalError(e.getMessage(), "");
-                e.printStackTrace();
+                logStacktrace(e);
             }
         });
     }
@@ -374,18 +374,6 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     }
 
-    @EventHandler
-    public void onServerStop(ServerCommandEvent e) {
-        /* This is no longer needed as with https://github.com/Multiverse/Multiverse-Core/releases/tag/4.3.12 (or maybe earlier) the issue
-         * is fixed where the generator was not remembered across reboots.
-         */
-        /*
-        if (islandWorldManager != null && (e.getCommand().equalsIgnoreCase("stop") || e.getCommand().equalsIgnoreCase("restart"))) {
-            // Unregister any MV worlds            if () {
-            //islandWorldManager.registerWorldsToMultiverse(false);
-        }*/
-    }
-
     /**
      * Returns the player manager
      * @return the player manager
@@ -502,27 +490,27 @@ public class BentoBox extends JavaPlugin implements Listener {
         }
         log("Saving default panels...");
 
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "island_creation_panel.yml"))) {
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "island_creation_panel.yml"))) {
             log("Saving default island_creation_panel...");
             this.saveResource("panels/island_creation_panel.yml", false);
         }
 
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "language_panel.yml"))) {
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "language_panel.yml"))) {
             log("Saving default language_panel...");
             this.saveResource("panels/language_panel.yml", false);
         }
 
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "island_homes_panel.yml"))) {
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "island_homes_panel.yml"))) {
             log("Saving default island_homes_panel...");
             this.saveResource("panels/island_homes_panel.yml", false);
         }
 
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "team_invite_panel.yml"))) {
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "team_invite_panel.yml"))) {
             log("Saving default team_invite_panel...");
             this.saveResource("panels/team_invite_panel.yml", false);
         }
 
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), "panels", "team_panel.yml"))) {
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "team_panel.yml"))) {
             log("Saving default team_panel...");
             this.saveResource("panels/team_panel.yml", false);
         }
@@ -673,11 +661,11 @@ public class BentoBox extends JavaPlugin implements Listener {
      * @return false if they can click and the timeout is started, otherwise true.
      */
     public boolean onTimeout(User user, Panel panel) {
-        if (lastClick.containsKey(new Pair<UUID, String>(user.getUniqueId(), panel.getName()))) {
+        if (lastClick.containsKey(new Pair<>(user.getUniqueId(), panel.getName()))) {
             user.notify("general.errors.slow-down");
             return true;
         }
-        lastClick.put(new Pair<UUID, String>(user.getUniqueId(), panel.getName()), true);
+        lastClick.put(new Pair<>(user.getUniqueId(), panel.getName()), true);
         return false;
     }
 }

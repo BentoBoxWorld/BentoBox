@@ -3,6 +3,7 @@ package world.bentobox.bentobox.hooks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
 
@@ -11,8 +12,10 @@ import world.bentobox.bentobox.api.hooks.Hook;
 
 public class MultiverseCore4Hook extends Hook implements WorldManagementHook {
 
+    private static final @NotNull String MV_CORE = "Multiverse-Core";
+
     public MultiverseCore4Hook() {
-        super("Multiverse-Core", Material.COMPASS);
+        super(MV_CORE, Material.COMPASS);
     }
 
     /**
@@ -22,7 +25,7 @@ public class MultiverseCore4Hook extends Hook implements WorldManagementHook {
      */
     @Override
     public void registerWorld(World world, boolean islandWorld) {
-        MultiverseCore core = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
+        MultiverseCore core = (MultiverseCore) Bukkit.getPluginManager().getPlugin(MV_CORE);
         if (core == null) {
             return;
         }
@@ -45,7 +48,7 @@ public class MultiverseCore4Hook extends Hook implements WorldManagementHook {
 
     @Override
     public void unregisterWorld(World world) {
-        MultiverseCore core = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
+        MultiverseCore core = (MultiverseCore) Bukkit.getPluginManager().getPlugin(MV_CORE);
         if (core == null) {
             return;
         }

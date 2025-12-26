@@ -58,6 +58,8 @@ public class IslandCreationPanel extends AbstractPanel
      * Button reference
      */
     private static final String BUNDLE_BUTTON_REF = "panels.island_creation.buttons.bundle.";
+    
+    private static final String ISLAND_CREATION_PANEL = "island_creation_panel";
 
     // ---------------------------------------------------------------------
     // Section: Variables
@@ -134,15 +136,15 @@ public class IslandCreationPanel extends AbstractPanel
         TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
 
         // Set main template.
-        if (this.doesCustomPanelExists(this.command.getAddon(), "island_creation_panel"))
+        if (this.doesCustomPanelExists(this.command.getAddon(), ISLAND_CREATION_PANEL))
         {
             // Addon has its own island creation panel. Use it.
-            panelBuilder.template("island_creation_panel", new File(this.command.getAddon().getDataFolder(), "panels"));
+            panelBuilder.template(ISLAND_CREATION_PANEL, new File(this.command.getAddon().getDataFolder(), "panels"));
         }
         else
         {
             // Use default island creation panel.
-            panelBuilder.template("island_creation_panel", new File(this.plugin.getDataFolder(), "panels"));
+            panelBuilder.template(ISLAND_CREATION_PANEL, new File(this.plugin.getDataFolder(), "panels"));
         }
 
         panelBuilder.user(this.user);

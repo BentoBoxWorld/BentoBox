@@ -157,7 +157,7 @@ public class BStats {
             int players = this.connectedPlayerSet.size();
             this.connectedPlayerSet.clear();
 
-            if (players <= 0) return "0";
+            if (players == 0) return "0";
             else if (players <= 10) return "1-10";
             else if (players <= 30) return "11-30";
             else if (players <= 50) return "31-50";
