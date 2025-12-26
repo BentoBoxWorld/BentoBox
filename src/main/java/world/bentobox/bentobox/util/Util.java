@@ -621,7 +621,7 @@ public class Util {
      * @since 1.9.0
      */
     @NonNull
-    public static String stripSpaceAfterColorCodes(@NonNull String textToStrip) {
+    public static String stripSpaceAfterColorCodes(String textToStrip) {
         if (textToStrip == null) return "";
         textToStrip = textToStrip.replaceAll("(" + ChatColor.COLOR_CHAR + ".)[\\s]", "$1");
         return textToStrip;
