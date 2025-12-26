@@ -851,11 +851,6 @@ public class Island implements DataObject, MetaDataAble {
         if (player.getGameMode() == GameMode.SPECTATOR) {
             return false;
         }
-        Location loc = player.getLocation();
-        if (location == null) {
-            // This will only be true if the player has never played.  Allow them to be a visitor.
-            return true;
-        }
         return onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK;
     }
 
