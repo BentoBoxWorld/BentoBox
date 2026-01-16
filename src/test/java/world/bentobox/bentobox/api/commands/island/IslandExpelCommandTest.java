@@ -361,7 +361,7 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target",
                 TextVariables.DISPLAY_NAME, "&Ctarget");
-        verify(im).homeTeleportAsync(any(), any());
+        verify(im).homeTeleportAsync(any(), any(Player.class));
     }
 
     /**
