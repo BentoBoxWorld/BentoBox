@@ -462,7 +462,21 @@ public class IslandsManager {
      */
     @Nullable
     public Island getIsland(@NonNull World world, @NonNull UUID uuid) {
-        return islandCache.getIsland(world, uuid);
+        // Check if player is online and get their current island location
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null && player.isOnline()) {
+            // This island must be in this world and the player must be on the team
+            Optional<Island> currentIsland = getIslandAt(player.getLocation())
+                    .filter(is -> world.equals(is.getWorld()) && is.inTeam(uuid));
+
+            if (currentIsland.isPresent()) {
+                return currentIsland.get();
+            }
+        }
+        // Check cache for last island
+        Island cachedIsland = islandCache.getIsland(world, uuid);
+
+        return cachedIsland;
     }
 
     /**
@@ -1102,6 +1116,8 @@ public class IslandsManager {
         User user = User.getInstance(player);
         user.sendMessage("commands.island.go.teleport");
         goingHome.add(user.getUniqueId());
+        
+        // TODO
         readyPlayer(player);
         this.getAsyncSafeHomeLocation(world, user, name).thenAccept(home -> {
             Island island = getIsland(world, user);
@@ -1802,14 +1818,31 @@ public class IslandsManager {
     }
 
     /**
-     * Convenience method. See {@link IslandCache#getIsland(World, UUID)}
+     * Convenience method. See {@link getIsland(World, UUID)}
      * 
      * @param world world
      * @param uuid  player's UUID
      * @return Island of player or null if there isn't one
      */
     public Island getPrimaryIsland(World world, UUID uuid) {
-        return this.getIslandCache().getIsland(world, uuid);
+        return getIsland(world, uuid);
+    }
+
+    public CompletableFuture<Void> homeTeleportAsync(Island island, User user) {
+        Location loc = island.getHome("");
+        user.sendMessage("commands.island.go.teleport");
+        goingHome.add(user.getUniqueId());
+        readyPlayer(user.getPlayer());
+        return Util.teleportAsync(Objects.requireNonNull(user.getPlayer()), loc).thenAccept(b -> {
+            // Only run the commands if the player is successfully teleported
+            if (Boolean.TRUE.equals(b)) {
+                teleported(island.getWorld(), user, "", false, island);
+                this.setPrimaryIsland(user.getUniqueId(), island);
+            } else {
+                // Remove from mid-teleport set
+                goingHome.remove(user.getUniqueId());
+            }
+        });
     }
 
 }
