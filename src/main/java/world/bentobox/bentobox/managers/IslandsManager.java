@@ -1117,7 +1117,6 @@ public class IslandsManager {
         user.sendMessage("commands.island.go.teleport");
         goingHome.add(user.getUniqueId());
         
-        // TODO
         readyPlayer(player);
         this.getAsyncSafeHomeLocation(world, user, name).thenAccept(home -> {
             Island island = getIsland(world, user);

@@ -1398,13 +1398,11 @@ public class Island implements DataObject, MetaDataAble {
      * @param l          - location
      */
     public void setSpawnPoint(Environment islandType, Location l) {
-        spawnPoint.compute(islandType, (key, value) -> {
-            if (value == null || !value.equals(l)) {
-                setChanged(); // Call setChanged only if the value is updated.
-                return l; // clone??
-            }
-            return value;
-        });
+        if (spawnPoint.containsKey(islandType) && spawnPoint.get(islandType).equals(l)) {
+            return;
+        }
+        spawnPoint.put(islandType, l.clone());
+        setChanged();
     }
 
     /**
