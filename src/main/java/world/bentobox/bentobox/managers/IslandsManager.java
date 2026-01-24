@@ -1829,6 +1829,17 @@ public class IslandsManager {
     }
 
     public CompletableFuture<Void> homeTeleportAsync(Island island, User user) {
+        return homeTeleportAsync(island, user, false);
+    }
+
+    /**
+     * Teleport the user home
+     * @param island island
+     * @param user user
+     * @param newIsland true if this is a new island first time teleport
+     * @return future when it is done
+     */
+    public CompletableFuture<Void> homeTeleportAsync(Island island, User user, boolean newIsland) {
         Location loc = island.getHome("");
         user.sendMessage("commands.island.go.teleport");
         goingHome.add(user.getUniqueId());
@@ -1836,7 +1847,7 @@ public class IslandsManager {
         return Util.teleportAsync(Objects.requireNonNull(user.getPlayer()), loc).thenAccept(b -> {
             // Only run the commands if the player is successfully teleported
             if (Boolean.TRUE.equals(b)) {
-                teleported(island.getWorld(), user, "", false, island);
+                teleported(island.getWorld(), user, "", newIsland, island);
                 this.setPrimaryIsland(user.getUniqueId(), island);
             } else {
                 // Remove from mid-teleport set

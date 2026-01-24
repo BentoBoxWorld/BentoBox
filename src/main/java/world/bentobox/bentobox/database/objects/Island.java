@@ -1401,7 +1401,7 @@ public class Island implements DataObject, MetaDataAble {
         spawnPoint.compute(islandType, (key, value) -> {
             if (value == null || !value.equals(l)) {
                 setChanged(); // Call setChanged only if the value is updated.
-                return l;
+                return l; // clone??
             }
             return value;
         });
