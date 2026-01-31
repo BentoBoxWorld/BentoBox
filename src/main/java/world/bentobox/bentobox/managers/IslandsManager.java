@@ -1839,7 +1839,7 @@ public class IslandsManager {
      * @return future when it is done
      */
     public CompletableFuture<Void> homeTeleportAsync(Island island, User user, boolean newIsland) {
-        Location loc = island.getHome("");
+        Location loc = getHomeLocation(island);
         user.sendMessage("commands.island.go.teleport");
         goingHome.add(user.getUniqueId());
         readyPlayer(user.getPlayer());
