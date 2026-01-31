@@ -1625,7 +1625,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleportAsync(Island, User)}.
      */
     @Test
-    public void testHomeTeleportAsyncIslandUser() {
+    public void testHomeTeleportAsyncIslandUser() throws Exception {
         // Setup
         Island island = mock(Island.class);
         Location homeLoc = mock(Location.class);
@@ -1644,6 +1644,9 @@ public class IslandsManagerTest extends CommonTestSetup {
         // Test
         IslandsManager im = new IslandsManager(plugin);
         CompletableFuture<Void> result = im.homeTeleportAsync(island, user);
+        
+        // Wait for async completion
+        result.get();
         
         // Verify
         assertNotNull(result);
