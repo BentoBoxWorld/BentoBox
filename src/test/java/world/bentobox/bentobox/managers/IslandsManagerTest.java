@@ -1619,4 +1619,178 @@ public class IslandsManagerTest extends CommonTestSetup {
         im.setMaxHomes(island, 40);
         verify(island).setMaxHomes(eq(40));
     }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleportAsync(Island, User)}.
+     */
+    @Test
+    public void testHomeTeleportAsyncIslandUser() {
+        // Setup
+        Island island = mock(Island.class);
+        Location homeLoc = mock(Location.class);
+        when(island.getHome("")).thenReturn(homeLoc);
+        when(island.getWorld()).thenReturn(world);
+        when(user.getPlayer()).thenReturn(player);
+        when(user.getUniqueId()).thenReturn(uuid);
+        
+        // Mock player methods called by readyPlayer
+        when(player.isInsideVehicle()).thenReturn(false);
+        
+        // Mock teleportAsync to return successful future
+        CompletableFuture<Boolean> future = CompletableFuture.completedFuture(true);
+        mockedUtil.when(() -> Util.teleportAsync(eq(player), eq(homeLoc))).thenReturn(future);
+        
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        CompletableFuture<Void> result = im.homeTeleportAsync(island, user);
+        
+        // Verify
+        assertNotNull(result);
+        verify(user).sendMessage("commands.island.go.teleport");
+        verify(island).getHome("");
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleportAsync(Island, User, boolean)}.
+     * Test with a default home location.
+     */
+    @Test
+    public void testHomeTeleportAsyncIslandUserBooleanWithDefaultHome() {
+        // Setup
+        Island island = mock(Island.class);
+        Location homeLoc = mock(Location.class);
+        when(island.getHome("")).thenReturn(homeLoc);
+        when(island.getWorld()).thenReturn(world);
+        when(user.getPlayer()).thenReturn(player);
+        when(user.getUniqueId()).thenReturn(uuid);
+        
+        // Mock player methods called by readyPlayer
+        when(player.isInsideVehicle()).thenReturn(false);
+        
+        // Mock teleportAsync to return successful future
+        CompletableFuture<Boolean> future = CompletableFuture.completedFuture(true);
+        mockedUtil.when(() -> Util.teleportAsync(eq(player), eq(homeLoc))).thenReturn(future);
+        
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        CompletableFuture<Void> result = im.homeTeleportAsync(island, user, false);
+        
+        // Verify
+        assertNotNull(result);
+        verify(user).sendMessage("commands.island.go.teleport");
+        verify(island).getHome("");
+        assertTrue(im.isGoingHome(user));
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleportAsync(Island, User, boolean)}.
+     * Test without a default home location (uses protection center).
+     */
+    @Test
+    public void testHomeTeleportAsyncIslandUserBooleanWithoutDefaultHome() {
+        // Setup
+        Island island = mock(Island.class);
+        Location protectionCenter = mock(Location.class);
+        Location homeLoc = mock(Location.class);
+        when(protectionCenter.clone()).thenReturn(protectionCenter);
+        when(protectionCenter.add(any())).thenReturn(homeLoc);
+        // getHome returns protection center when no home is set
+        when(island.getProtectionCenter()).thenReturn(protectionCenter);
+        when(island.getHome("")).thenReturn(homeLoc);
+        when(island.getWorld()).thenReturn(world);
+        when(user.getPlayer()).thenReturn(player);
+        when(user.getUniqueId()).thenReturn(uuid);
+        
+        // Mock player methods called by readyPlayer
+        when(player.isInsideVehicle()).thenReturn(false);
+        
+        // Mock teleportAsync to return successful future
+        CompletableFuture<Boolean> future = CompletableFuture.completedFuture(true);
+        mockedUtil.when(() -> Util.teleportAsync(eq(player), eq(homeLoc))).thenReturn(future);
+        
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        CompletableFuture<Void> result = im.homeTeleportAsync(island, user, true);
+        
+        // Verify
+        assertNotNull(result);
+        verify(user).sendMessage("commands.island.go.teleport");
+        verify(island).getHome("");
+        assertTrue(im.isGoingHome(user));
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleportAsync(Island, User, boolean)}.
+     * Test with successful teleport - should set primary island.
+     */
+    @Test
+    public void testHomeTeleportAsyncIslandUserBooleanSuccessfulTeleport() throws Exception {
+        // Setup
+        Island island = mock(Island.class);
+        Location homeLoc = mock(Location.class);
+        when(island.getHome("")).thenReturn(homeLoc);
+        when(island.getWorld()).thenReturn(world);
+        when(user.getPlayer()).thenReturn(player);
+        when(user.getUniqueId()).thenReturn(uuid);
+        
+        // Mock player methods called by readyPlayer
+        when(player.isInsideVehicle()).thenReturn(false);
+        
+        // Mock teleportAsync to return successful future
+        CompletableFuture<Boolean> future = CompletableFuture.completedFuture(true);
+        mockedUtil.when(() -> Util.teleportAsync(eq(player), eq(homeLoc))).thenReturn(future);
+        
+        // Mock island cache for setPrimaryIsland
+        IslandCache cache = mock(IslandCache.class);
+        IslandsManager im = new IslandsManager(plugin);
+        
+        // Test
+        CompletableFuture<Void> result = im.homeTeleportAsync(island, user, false);
+        
+        // Wait for async completion
+        result.get();
+        
+        // Verify primary island was set after successful teleport
+        verify(user).sendMessage("commands.island.go.teleport");
+        verify(island).getHome("");
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleportAsync(Island, User, boolean)}.
+     * Test with failed teleport - should not set primary island and remove from goingHome.
+     */
+    @Test
+    public void testHomeTeleportAsyncIslandUserBooleanFailedTeleport() throws Exception {
+        // Setup
+        Island island = mock(Island.class);
+        Location homeLoc = mock(Location.class);
+        when(island.getHome("")).thenReturn(homeLoc);
+        when(island.getWorld()).thenReturn(world);
+        when(user.getPlayer()).thenReturn(player);
+        when(user.getUniqueId()).thenReturn(uuid);
+        
+        // Mock player methods called by readyPlayer
+        when(player.isInsideVehicle()).thenReturn(false);
+        
+        // Mock teleportAsync to return failed future
+        CompletableFuture<Boolean> future = CompletableFuture.completedFuture(false);
+        mockedUtil.when(() -> Util.teleportAsync(eq(player), eq(homeLoc))).thenReturn(future);
+        
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        CompletableFuture<Void> result = im.homeTeleportAsync(island, user, false);
+        
+        // Wait for async completion
+        result.get();
+        
+        // Verify user was removed from goingHome after failed teleport
+        assertFalse(im.isGoingHome(user));
+        verify(user).sendMessage("commands.island.go.teleport");
+        verify(island).getHome("");
+    }
 }
