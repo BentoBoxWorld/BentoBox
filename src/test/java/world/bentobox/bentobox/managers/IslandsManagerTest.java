@@ -1657,7 +1657,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test with a default home location.
      */
     @Test
-    public void testHomeTeleportAsyncIslandUserBooleanWithDefaultHome() {
+    public void testHomeTeleportAsyncIslandUserBooleanWithDefaultHome() throws Exception {
         // Setup
         Island island = mock(Island.class);
         Location homeLoc = mock(Location.class);
@@ -1677,11 +1677,15 @@ public class IslandsManagerTest extends CommonTestSetup {
         IslandsManager im = new IslandsManager(plugin);
         CompletableFuture<Void> result = im.homeTeleportAsync(island, user, false);
         
+        // Wait for async completion
+        result.get();
+        
         // Verify
         assertNotNull(result);
         verify(user).sendMessage("commands.island.go.teleport");
         verify(island).getHome("");
-        assertTrue(im.isGoingHome(user));
+        // User should be removed from goingHome after successful teleport
+        assertFalse(im.isGoingHome(user));
     }
 
     /**
@@ -1690,7 +1694,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test with newIsland parameter set to true.
      */
     @Test
-    public void testHomeTeleportAsyncIslandUserBooleanNewIsland() {
+    public void testHomeTeleportAsyncIslandUserBooleanNewIsland() throws Exception {
         // Setup
         Island island = mock(Island.class);
         Location homeLoc = mock(Location.class);
@@ -1710,11 +1714,15 @@ public class IslandsManagerTest extends CommonTestSetup {
         IslandsManager im = new IslandsManager(plugin);
         CompletableFuture<Void> result = im.homeTeleportAsync(island, user, true);
         
+        // Wait for async completion
+        result.get();
+        
         // Verify
         assertNotNull(result);
         verify(user).sendMessage("commands.island.go.teleport");
         verify(island).getHome("");
-        assertTrue(im.isGoingHome(user));
+        // User should be removed from goingHome after successful teleport
+        assertFalse(im.isGoingHome(user));
     }
 
     /**
