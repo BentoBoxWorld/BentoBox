@@ -1687,18 +1687,13 @@ public class IslandsManagerTest extends CommonTestSetup {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleportAsync(Island, User, boolean)}.
-     * Test without a default home location (uses protection center).
+     * Test with newIsland parameter set to true.
      */
     @Test
-    public void testHomeTeleportAsyncIslandUserBooleanWithoutDefaultHome() {
+    public void testHomeTeleportAsyncIslandUserBooleanNewIsland() {
         // Setup
         Island island = mock(Island.class);
-        Location protectionCenter = mock(Location.class);
         Location homeLoc = mock(Location.class);
-        when(protectionCenter.clone()).thenReturn(protectionCenter);
-        when(protectionCenter.add(any())).thenReturn(homeLoc);
-        // getHome returns protection center when no home is set
-        when(island.getProtectionCenter()).thenReturn(protectionCenter);
         when(island.getHome("")).thenReturn(homeLoc);
         when(island.getWorld()).thenReturn(world);
         when(user.getPlayer()).thenReturn(player);
@@ -1725,7 +1720,7 @@ public class IslandsManagerTest extends CommonTestSetup {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleportAsync(Island, User, boolean)}.
-     * Test with successful teleport - should set primary island.
+     * Test with successful teleport - verifies async completion.
      */
     @Test
     public void testHomeTeleportAsyncIslandUserBooleanSuccessfulTeleport() throws Exception {
@@ -1751,9 +1746,10 @@ public class IslandsManagerTest extends CommonTestSetup {
         // Wait for async completion
         result.get();
         
-        // Verify primary island was set after successful teleport
+        // Verify successful teleport flow completed
         verify(user).sendMessage("commands.island.go.teleport");
         verify(island).getHome("");
+        assertFalse(im.isGoingHome(user)); // Removed from going home after teleport
     }
 
     /**
