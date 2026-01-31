@@ -1744,11 +1744,8 @@ public class IslandsManagerTest extends CommonTestSetup {
         CompletableFuture<Boolean> future = CompletableFuture.completedFuture(true);
         mockedUtil.when(() -> Util.teleportAsync(eq(player), eq(homeLoc))).thenReturn(future);
         
-        // Mock island cache for setPrimaryIsland
-        IslandCache cache = mock(IslandCache.class);
-        IslandsManager im = new IslandsManager(plugin);
-        
         // Test
+        IslandsManager im = new IslandsManager(plugin);
         CompletableFuture<Void> result = im.homeTeleportAsync(island, user, false);
         
         // Wait for async completion
