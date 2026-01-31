@@ -1817,7 +1817,7 @@ public class IslandsManager {
     }
 
     /**
-     * Convenience method. See {@link getIsland(World, UUID)}
+     * Convenience method. See {@link #getIsland(World, UUID)}
      * 
      * @param world world
      * @param uuid  player's UUID
