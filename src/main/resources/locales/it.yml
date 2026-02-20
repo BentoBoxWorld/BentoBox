@@ -1674,14 +1674,10 @@ protection:
         &a
         &a I membri di [prefix_Island] perdono comunque i loro oggetti
         &a se muoiono nella propria [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: I visitatori attivano le incursioni
-      description: |-
-        &a Attiva se i visitatori possono avviare
-        &a una razzia su [prefix_an-island] che stanno
-        &a visitando.
-        &a
-        &a L'effetto di Cattivo Presagio sarà rimosso!
+    RAID_TRIGGER:
+      name: Attivazione incursione
+      description: Imposta il rango minimo dell'isola richiesto per attivare un'incursione
+      hint: Attivazione dell'incursione non consentita
     ENTITY_PORTAL_TELEPORT:
       name: Utilizzo del portale entità
       description: |-

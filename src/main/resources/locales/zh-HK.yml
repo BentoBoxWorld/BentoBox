@@ -1507,13 +1507,10 @@ protection:
         &a 防止玩家失去他們的物品和
         &a 經驗，只適用於他們死在了
         &a 他們是游客的島嶼。
-    VISITOR_TRIGGER_RAID:
-      name: '&a允许/禁止 訪客觸發突襲'
-      description: |-
-        &a 允许/禁止 訪客可以在
-        &a 他訪問的空島中觸發突襲
-        &a
-        &a 不祥之兆 效果會被移除!
+    RAID_TRIGGER:
+      name: 觸發突襲
+      description: 設置觸發突襲所需的島嶼最低等級
+      hint: 不允許觸發突襲
     ENTITY_PORTAL_TELEPORT:
       name: 實體使用傳送門
       description: |-

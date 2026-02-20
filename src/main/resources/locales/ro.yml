@@ -1698,14 +1698,10 @@ protection:
         &o
         Membrii &a Island încă își pierd obiectele
         &a dacă mor pe propria lor insulă!
-    VISITOR_TRIGGER_RAID:
-      name: Vizitatorii declanșează raiduri
-      description: |-
-        &a Comută dacă vizitatorii pot începe
-        &a un raid pe o insulă care sunt
-        &o vizită.
-        &o
-        &efectul Bad Omen va fi eliminat!
+    RAID_TRIGGER:
+      name: Declanșare raid
+      description: Setează rangul minim al insulei necesar pentru a declanșa un raid
+      hint: Declanșarea raidului nu este permisă
     ENTITY_PORTAL_TELEPORT:
       name: Utilizarea portalului entității
       description: |-

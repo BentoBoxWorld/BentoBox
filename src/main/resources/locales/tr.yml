@@ -1578,14 +1578,10 @@ protection:
         &a
         &a Island members still lose their items
         &a if they die on their own island!
-    VISITOR_TRIGGER_RAID:
-      name: Ziyaretçiler saldırıları tetikler
-      description: |-
-        &a Ziyaretçilerin [prefix_an-island] üzerinde
-        &a gerçekleştirdiği bir baskını başlatıp
-        &a başlatamayacaklarını açıp kapatır.
-        &a
-        &a Kötü İşaret etkisi kaldırılacak!
+    RAID_TRIGGER:
+      name: Baskın tetikleyici
+      description: Baskın tetiklemek için gereken minimum ada rütbesini belirler
+      hint: Baskın tetiklemeye izin verilmiyor
     ENTITY_PORTAL_TELEPORT:
       name: Varlık portal kullanımı
       description: |-

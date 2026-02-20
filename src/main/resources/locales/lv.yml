@@ -1684,14 +1684,10 @@ protection:
         &a
         &a [prefix_Island] dalībnieki joprojām zaudē savus priekšmetus
         &a, ja viņi mirst savā [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: Apmeklētāji iedarbojas uz iebrucieniem
-      description: |-
-        &a Pāswitcho, vai apmeklētāji var uzsākt
-        &a uzbrukumu [prefix_an-island], kuru viņi
-        &a apmeklē.
-        &a
-        &a Sliktā pazīme efekts tiks noņemts!
+    RAID_TRIGGER:
+      name: Iebrukuma aktivizēšana
+      description: Iestata minimālo salas rangu, kas nepieciešams iebrukuma aktivizēšanai
+      hint: Iebrukuma aktivizēšana nav atļauta
     ENTITY_PORTAL_TELEPORT:
       name: Entitātes portāla izmantošana
       description: |-

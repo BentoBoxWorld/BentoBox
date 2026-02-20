@@ -1690,9 +1690,10 @@ protection:
     VISITOR_KEEP_INVENTORY:
       name: Les visiteurs gardent l'inventaire au décès
       description: "&a Empêcher les joueurs de perdre leur\n&a objets et expérience s'ils meurent\n&a une île dans laquelle ils sont un visiteur.\n&un\nLes membres de &a Island perdent toujours leurs objets\n&a s'ils meurent sur leur propre île\_!"
-    VISITOR_TRIGGER_RAID:
-      name: Les visiteurs déclenchent des raids
-      description: "&a Active/désactive si les visiteurs peuvent démarrer\n&un raid sur une île où ils se trouvent\n&une visite.\n&un\n&un effet Bad Omen sera supprimé\_!"
+    RAID_TRIGGER:
+      name: Déclencheur de raid
+      description: Définit le rang minimum d'île requis pour déclencher un raid
+      hint: Déclenchement de raid non autorisé
     ENTITY_PORTAL_TELEPORT:
       name: Utilisation du portail d'entité
       description: |-

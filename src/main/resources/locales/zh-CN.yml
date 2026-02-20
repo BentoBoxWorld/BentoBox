@@ -1508,12 +1508,10 @@ protection:
         &a允许&#FAFAD2时: 玩家在他人岛屿死亡不掉落
         &c禁止&#FAFAD2时: 玩家在他人岛屿死亡掉落
         &4岛屿成员在自己的岛屿上死亡时仍然会掉落物品和经验
-    VISITOR_TRIGGER_RAID:
-      name: '&b&l访客触发袭击'
-      description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2访客在他人岛屿上触发袭击
-
-        &#FAFAD2不祥之兆效果将被移除
+    RAID_TRIGGER:
+      name: 触发袭击
+      description: 设置触发袭击所需的岛屿最低等级
+      hint: 不允许触发袭击
     ENTITY_PORTAL_TELEPORT:
       name: '&b&l实体通过传送门'
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2实体(不包括玩家)通过传送门跨越维度'

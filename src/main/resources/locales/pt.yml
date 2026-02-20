@@ -1680,14 +1680,10 @@ protection:
         &a
         &a Membros da Ilha ainda perdem seus itens
         &a se eles morrerem em sua própria ilha!
-    VISITOR_TRIGGER_RAID:
-      name: Visitantes desencadeiam ataques
-      description: |-
-        &a Alterna se os visitantes podem começar
-        &a um ataque a uma ilha que eles são
-        & uma visita.
-        &a
-        &um efeito Bad Omen será removido!
+    RAID_TRIGGER:
+      name: Gatilho de ataque
+      description: Define o nível mínimo de ilha necessário para desencadear um ataque
+      hint: Desencadear ataque não permitido
     ENTITY_PORTAL_TELEPORT:
       name: Uso do portal da entidade
       description: |-

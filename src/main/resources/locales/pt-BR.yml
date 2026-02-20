@@ -1656,14 +1656,10 @@ protection:
         &a
         &a Membros de [prefix_Island] ainda perdem seus itens
         &a se morrerem em seu próprio [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: Visitantes acionam invasões
-      description: |-
-        &a Alterna se os visitantes podem iniciar
-        &a uma invasão em [prefix_an-island] que eles estão
-        &a visitando.
-        &a 
-        &a O efeito de Mau Agouro será removido!
+    RAID_TRIGGER:
+      name: Gatilho de invasão
+      description: Define o rank mínimo de ilha necessário para acionar uma invasão
+      hint: Acionar invasão não permitido
     ENTITY_PORTAL_TELEPORT:
       name: Uso de portal de entidade
       description: |-

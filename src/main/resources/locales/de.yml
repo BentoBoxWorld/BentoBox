@@ -1702,13 +1702,10 @@ protection:
         &a gezähmte Haustiere nur auf die
         &a Heimatinsel des Besitzers gehen
         &a und sie nicht verlassen.
-    VISITOR_TRIGGER_RAID:
-      name: Besucher können Raids auslösen
-      description: |-
-        &a Schaltet um, ob Besucher Rais auf
-        &a Inseln starten können, die sie Besuchen.
-        &a
-        &a Der Bad Omen-Effekt wird entfernt!
+    RAID_TRIGGER:
+      name: Raid auslösen
+      description: Legt den minimalen Inselrang fest, der zum Auslösen eines Raids benötigt wird
+      hint: Raid auslösen nicht erlaubt
     ENTITY_PORTAL_TELEPORT:
       name: Portalnutzung durch Entitäten
       description: |-

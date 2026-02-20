@@ -1662,14 +1662,10 @@ protection:
         &a
         &a Los miembros de [prefix_Island] aún pierden sus objetos
         &a si mueren en su propio [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: Los visitantes desencadenan asaltos
-      description: |-
-        &a Cambia si los visitantes pueden iniciar  
-        &a una incursión en [prefix_an-island] que están  
-        &a visitando.  
-        &a  
-        &a ¡El efecto de Mal Presagio será eliminado!
+    RAID_TRIGGER:
+      name: Activador de asalto
+      description: Establece el rango mínimo de isla requerido para activar un asalto
+      hint: Activar asalto no permitido
     ENTITY_PORTAL_TELEPORT:
       name: Uso de portales de entidad
       description: |-

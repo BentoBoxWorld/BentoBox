@@ -1620,14 +1620,10 @@ protection:
         &A
         Členové &a Island stále ztrácejí své předměty
         &a pokud zemřou na svém vlastním ostrově!
-    VISITOR_TRIGGER_RAID:
-      name: Návštěvníci spouští nájezdy
-      description: |-
-        &a Přepíná, zda mohou návštěvníci začít
-        &a nájezd na ostrov, kterým jsou
-        & návštěva.
-        &A
-        &Efekt Bad Omen bude odstraněn!
+    RAID_TRIGGER:
+      name: Spuštění nájezdu
+      description: Nastavuje minimální rank ostrova potřebný ke spuštění nájezdu
+      hint: Spuštění nájezdu není povoleno
     ENTITY_PORTAL_TELEPORT:
       name: Použití portálu entity
       description: |-

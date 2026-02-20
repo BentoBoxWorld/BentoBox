@@ -1643,13 +1643,10 @@ protection:
         &a Członkowie [prefix_Island] nadal tracą swoje przedmioty
 
         &a jeśli umrą na swoim własnym [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: '[Wizyty] wywołują najazdy'
-      description: |-
-        &a Przełącza, czy odwiedzający mogą rozpocząć  
-        &a rajd na [prefix_an-island], który odwiedzają.  
-        &a  
-        &a Efekt Złego Omen będzie usunięty!
+    RAID_TRIGGER:
+      name: Wyzwalanie najazdu
+      description: Ustawia minimalny rang wyspy wymagany do wyzwolenia najazdu
+      hint: Wyzwalanie najazdu niedozwolone
     ENTITY_PORTAL_TELEPORT:
       name: Użycie portalu jednostki
       description: |-
