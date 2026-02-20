@@ -403,7 +403,7 @@ public class Util {
      */
     @NonNull
     public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location) {
-        return teleportAsync(entity, location, TeleportCause.UNKNOWN);
+        return teleportAsync(entity, location, TeleportCause.PLUGIN);
     }
 
     /**
