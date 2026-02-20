@@ -1002,9 +1002,9 @@ protection:
   command-is-banned: A parancs le van tiltva a látogatók számára
   flags:
     ALLAY:
-      name: Allay interakció
-      description: Engedélyezze az Allaynek való tárgyak átadását és elvitelét
-      hint: Allay interakció letiltva
+      name: Allay és Copper Golem interakció
+      description: Engedélyezze az Allay és Copper Golem számára tárgyak átadását és elvitelét
+      hint: Allay és Copper Golem interakció letiltva
     ANIMAL_NATURAL_SPAWN:
       description: Természetes állati ívás átváltása
       name: Állati természetes ívás

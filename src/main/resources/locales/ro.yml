@@ -990,9 +990,9 @@ protection:
   command-is-banned: Comanda este interzisă vizitatorilor
   flags:
     ALLAY:
-      name: Aly interactiunea
-      description: Permiteți să dați și să luați articole către/de la Allay
-      hint: Interacțiunea lui Allay a fost dezactivată
+      name: Interacțiunea Allay și Copper Golem
+      description: Permiteți să dați și să luați articole către/de la Allay și Copper Golem
+      hint: Interacțiunea Allay și Copper Golem a fost dezactivată
     ANIMAL_NATURAL_SPAWN:
       description: Comutați reproducerea animalelor naturale
       name: Spawn natural animal

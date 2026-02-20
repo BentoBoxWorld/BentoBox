@@ -1005,9 +1005,9 @@ protection:
   command-is-banned: Cette commande est interdite aux visiteurs.
   flags:
     ALLAY:
-      name: Apaiser les interactions
-      description: Autoriser le don et le transport d'objets vers/depuis Allay
-      hint: Interaction apaisante désactivée
+      name: Interaction Allay & Copper Golem
+      description: Autoriser le don et le transport d'objets vers/depuis Allay et Copper Golem
+      hint: Interaction Allay & Copper Golem désactivée
     ANIMAL_NATURAL_SPAWN:
       description: Activer/désactiver le frai naturel des animaux
       name: Frai naturel des animaux

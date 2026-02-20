@@ -1010,9 +1010,9 @@ protection:
   command-is-banned: Der Befehl ist für Besucher verboten
   flags:
     ALLAY:
-      name: Interaktion beruhigen
-      description: Geben und Nehmen von Gegenständen an/von einem Allay
-      hint: Allay-Interaktion deaktiviert
+      name: Allay & Copper Golem Interaktion
+      description: Geben und Nehmen von Gegenständen an/von einem Allay oder Copper Golem
+      hint: Allay & Copper Golem Interaktion deaktiviert
     ANIMAL_NATURAL_SPAWN:
       description: Natürliches Spawnen von Tieren umschalten
       name: Tier

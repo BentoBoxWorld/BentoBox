@@ -949,9 +949,9 @@ protection:
   command-is-banned: Lệnh này bị cấm cho người tham quan
   flags:
     ALLAY:
-      name: Tương tác với Allay
-      description: Cho phép đưa và nhận vật phẩm từ/đến Allay
-      hint: Tương tác Allay đã bị tắt
+      name: Tương tác với Allay và Copper Golem
+      description: Cho phép đưa và nhận vật phẩm từ/đến Allay và Copper Golem
+      hint: Tương tác Allay và Copper Golem đã bị tắt
     ANIMAL_NATURAL_SPAWN:
       description: Bật/Tắt sinh thú tự nhiên
       name: Sinh thú tự nhiên

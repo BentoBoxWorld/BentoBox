@@ -886,9 +886,9 @@ protection:
   command-is-banned: 訪客已被禁止使用此指令
   flags:
     ALLAY:
-      name: '&7與悅靈交互'
-      description: '&7允許/禁止 給予和提取物品自悅靈'
-      hint: '&c已禁止與悅靈交互'
+      name: '&7與悅靈及銅傀儡交互'
+      description: '&7允許/禁止 給予和提取物品自悅靈及銅傀儡'
+      hint: '&c已禁止與悅靈及銅傀儡交互'
     ANIMAL_NATURAL_SPAWN:
       description: 切換天然動物產卵
       name: 動物天然產卵

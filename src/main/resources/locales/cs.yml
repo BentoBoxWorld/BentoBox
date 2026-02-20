@@ -943,9 +943,9 @@ protection:
   command-is-banned: Příkaz je pro návštěvníky zakázán
   flags:
     ALLAY:
-      name: Allay interakce
-      description: Povolit dávání a odebírání předmětů do/z Allay
-      hint: Interakce Allay zakázána
+      name: Allay a Copper Golem interakce
+      description: Povolit dávání a odebírání předmětů do/z Allay a Copper Golem
+      hint: Interakce Allay a Copper Golem zakázána
     ANIMAL_NATURAL_SPAWN:
       description: Přepnout přirozené tření zvířat
       name: Přírodní potěr zvířat

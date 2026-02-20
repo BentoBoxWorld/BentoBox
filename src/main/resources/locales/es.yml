@@ -984,9 +984,9 @@ protection:
   command-is-banned: El comando está prohibido para los visitantes
   flags:
     ALLAY:
-      name: Interacción con Allay
-      description: Permitir dar y recibir artículos de/para Allay
-      hint: Interacción de Allay deshabilitada
+      name: Interacción con Allay y Copper Golem
+      description: Permitir dar y recibir artículos de/para Allay y Copper Golem
+      hint: Interacción de Allay y Copper Golem deshabilitada
     ANIMAL_NATURAL_SPAWN:
       description: Alternar el desove natural de animales
       name: Engendro natural animal

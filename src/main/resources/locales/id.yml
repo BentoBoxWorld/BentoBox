@@ -981,9 +981,9 @@ protection:
   command-is-banned: Perintah dilarang untuk pengunjung
   flags:
     ALLAY:
-      name: Interaksi Allay
-      description: Izinkan memberi dan mengambil barang ke/dari Allay
-      hint: Interaksi Allay dinonaktifkan
+      name: Interaksi Allay & Copper Golem
+      description: Izinkan memberi dan mengambil barang ke/dari Allay dan Copper Golem
+      hint: Interaksi Allay & Copper Golem dinonaktifkan
     ANIMAL_NATURAL_SPAWN:
       description: Alihkan pemijahan hewan secara alami
       name: Pemijahan alami hewan

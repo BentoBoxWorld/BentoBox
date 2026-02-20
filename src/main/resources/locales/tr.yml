@@ -938,9 +938,9 @@ protection:
   command-is-banned: Ziyaretçileri banlar.
   flags:
     ALLAY:
-      name: Allay etkileşimi
-      description: Allay'e eşya verme ve alma işlemlerine izin ver
-      hint: Allay etkileşimi devre dışı bırakıldı
+      name: Allay ve Copper Golem etkileşimi
+      description: Allay ve Copper Golem'e eşya verme ve alma işlemlerine izin ver
+      hint: Allay ve Copper Golem etkileşimi devre dışı bırakıldı
     ANIMAL_NATURAL_SPAWN:
       description: Doğal hayvan yumurtlamasını aç / kapat
       name: Hayvan doğal yumurtlama

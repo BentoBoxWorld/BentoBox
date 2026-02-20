@@ -890,9 +890,9 @@ protection:
   command-is-banned: 방문자는 이명령어를 사용할 수 없습니다
   flags:
     ALLAY:
-      name: 모든 상호작용 Allay
-      description: Allay에게 아이템을 주고 받을 수 있도록 허용합니다.
-      hint: 알레이 상호작용 비활성화됨
+      name: Allay 및 Copper Golem 상호작용
+      description: Allay와 Copper Golem에게 아이템을 주고 받을 수 있도록 허용합니다.
+      hint: 알레이 및 Copper Golem 상호작용 비활성화됨
     ANIMAL_NATURAL_SPAWN:
       description: 자연적 동물생성 여부설정
       name: 자연적 동물 생성

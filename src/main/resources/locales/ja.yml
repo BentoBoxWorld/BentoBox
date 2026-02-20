@@ -868,9 +868,9 @@ protection:
   command-is-banned: コマンドは、訪問者のために禁止され
   flags:
     ALLAY:
-      name: アレイ相互作用
-      description: Allay との間でアイテムの授受を許可する
-      hint: アレイインタラクションが無効になっています
+      name: アレイ・Copper Golem相互作用
+      description: Allay と Copper Golem との間でアイテムの授受を許可する
+      hint: アレイ・Copper Golemインタラクションが無効になっています
     ANIMAL_NATURAL_SPAWN:
       description: 自然な動物の産卵を切り替えます
       name: 動物の自然なスポーン

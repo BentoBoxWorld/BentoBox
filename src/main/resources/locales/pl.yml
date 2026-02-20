@@ -967,9 +967,9 @@ protection:
   command-is-banned: Ta komenda jest zablokowana dla gości.
   flags:
     ALLAY:
-      name: Interakcja z Allayem
-      description: Zezwól na dawanie i zabieranie przedmiotów do/od Allaya
-      hint: Interakcja z Allayem wyłączona
+      name: Interakcja z Allayem i Copper Golemem
+      description: Zezwól na dawanie i zabieranie przedmiotów do/od Allaya i Copper Golema
+      hint: Interakcja z Allayem i Copper Golemem wyłączona
     ANIMAL_NATURAL_SPAWN:
       description: Przełącz naturalne pojawianie się zwierząt
       name: Naturalne spawnowanie zwierząt

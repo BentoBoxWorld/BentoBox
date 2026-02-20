@@ -885,9 +885,9 @@ protection:
   command-is-banned: Команда заборонена для відвідувачів
   flags:
     ALLAY:
-      name: Взаємодія з алаєм
-      description: Дозволити давати/забирати предмети алаю
-      hint: Взаємодію з алаєм вимкнено
+      name: Взаємодія з алаєм і Copper Golem
+      description: Дозволити давати/забирати предмети алаю і Copper Golem
+      hint: Взаємодію з алаєм і Copper Golem вимкнено
     ANIMAL_NATURAL_SPAWN:
       description: Перемикає природний спавн тварин
       name: Природний спавн тварин

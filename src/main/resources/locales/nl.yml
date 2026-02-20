@@ -1006,9 +1006,9 @@ protection:
   command-is-banned: Commando is verboden voor bezoekers
   flags:
     ALLAY:
-      name: Allay-interactie
-      description: Sta toe om items te geven en af te nemen van Allay
-      hint: Allay-interactie uitgeschakeld
+      name: Allay & Copper Golem-interactie
+      description: Sta toe om items te geven en af te nemen van Allay en Copper Golem
+      hint: Allay & Copper Golem-interactie uitgeschakeld
     ANIMAL_NATURAL_SPAWN:
       description: Schakel het natuurlijke uitzetten van dieren in of uit
       name: Dierlijke natuurlijke spawn
