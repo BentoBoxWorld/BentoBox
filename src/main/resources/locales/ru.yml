@@ -972,9 +972,9 @@ protection:
   command-is-banned: Команда запрещена для посетителей
   flags:
     ALLAY:
-      name: Взаимодействие с тихонями
-      description: Позволяет забирать/давать предметы тихоне
-      hint: Взаимодействие с тихонями запрещено
+      name: Взаимодействие с тихонями и Copper Golem
+      description: Позволяет забирать/давать предметы тихоне и Copper Golem
+      hint: Взаимодействие с тихонями и Copper Golem запрещено
     ANIMAL_NATURAL_SPAWN:
       description: переключатель пассивного спавна животных
       name: Пассивный спавн животных

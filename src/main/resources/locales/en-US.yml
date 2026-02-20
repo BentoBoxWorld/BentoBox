@@ -949,9 +949,9 @@ protection:
   command-is-banned: Command is banned for visitors
   flags:
     ALLAY:
-      name: Allay interaction
-      description: Allow giving and taking items to/from Allay
-      hint: Allay interaction disabled
+      name: Allay & Copper Golem interaction
+      description: Allow giving and taking items to/from Allays and Copper Golems
+      hint: Allay & Copper Golem interaction disabled
     ANIMAL_NATURAL_SPAWN:
       description: Toggle natural animal spawning
       name: Animal natural spawn

@@ -891,9 +891,9 @@ protection:
   command-is-banned: 访客已被禁止使用命令
   flags:
     ALLAY:
-      name: '&b&l悦灵'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2对悦灵使用物品或取回物品'
-      hint: 禁止与悦灵交互
+      name: '&b&l悦灵与铜傀儡'
+      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2对悦灵和铜傀儡使用物品或取回物品'
+      hint: 禁止与悦灵和铜傀儡交互
     ANIMAL_NATURAL_SPAWN:
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2动物自然生成'
       name: '&b&l动物自然生成'

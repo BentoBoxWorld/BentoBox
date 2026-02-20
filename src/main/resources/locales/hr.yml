@@ -957,9 +957,9 @@ protection:
   command-is-banned: Naredba je zabranjena za posjetitelje
   flags:
     ALLAY:
-      name: Allay interakcija
-      description: Dopusti davanje i uzimanje predmeta Allayu/od njega
-      hint: Interakcija Allay onemogućena
+      name: Allay i Copper Golem interakcija
+      description: Dopusti davanje i uzimanje predmeta Allayu/Copper Golemu ili od njega
+      hint: Interakcija Allay i Copper Golem onemogućena
     ANIMAL_NATURAL_SPAWN:
       description: Uključi/isključi prirodno mriještenje životinja
       name: Prirodni mrijest životinja

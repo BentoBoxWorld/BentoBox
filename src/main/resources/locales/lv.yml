@@ -964,9 +964,9 @@ protection:
   command-is-banned: Komanda nav atļauta apmeklētājiem
   flags:
     ALLAY:
-      name: Allay mijiedarbība
-      description: Atļaut dot un ņemt priekšmetus no/uz Allay
-      hint: Visu interakciju ar Allay atslēgta
+      name: Allay un Copper Golem mijiedarbība
+      description: Atļaut dot un ņemt priekšmetus no/uz Allay un Copper Golem
+      hint: Interakcija ar Allay un Copper Golem atslēgta
     ANIMAL_NATURAL_SPAWN:
       description: Pārslēgt dabisko dzīvnieku parādīšanos
       name: Dzīvnieku dabiskā parādīšanās

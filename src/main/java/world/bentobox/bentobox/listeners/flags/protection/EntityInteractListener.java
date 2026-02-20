@@ -102,6 +102,17 @@ public class EntityInteractListener extends FlagListener {
                 this.checkIsland(e, p, l, Flags.NAME_TAG);
             }
         }
+        else if (e.getRightClicked().getType().name().equals("COPPER_GOLEM"))
+        {
+            // Copper Golem item giving/taking - reuses ALLAY flag since both entities carry items
+            this.checkIsland(e, p, l, Flags.ALLAY);
+
+            // Check naming
+            if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG))
+            {
+                this.checkIsland(e, p, l, Flags.NAME_TAG);
+            }
+        }
         else if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG))
         {
             // Name tags
