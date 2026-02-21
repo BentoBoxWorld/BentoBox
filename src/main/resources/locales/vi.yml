@@ -1636,14 +1636,10 @@ protection:
         &a
         &a Thành viên đảo vẫn mất đồ
         &a nếu họ chết ở đảo của họ!
-    VISITOR_TRIGGER_RAID:
-      name: Khách truy cập kích hoạt cuộc đột kích.
-      description: |-
-        &a Bật tắt nếu du khách có thể bắt đầu
-        &a một cuộc tấn công vào [prefix_an-island] mà họ đang
-        &a thăm.
-        &a
-        &a Hiệu ứng Bad Omen sẽ bị gỡ bỏ!
+    RAID_TRIGGER:
+      name: Kích hoạt cuộc đột kích
+      description: Đặt cấp độ đảo tối thiểu cần thiết để kích hoạt cuộc đột kích
+      hint: Kích hoạt cuộc đột kích không được phép
     ENTITY_PORTAL_TELEPORT:
       name: Sử dụng cổng thực thể
       description: |-

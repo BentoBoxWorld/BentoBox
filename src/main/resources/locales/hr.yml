@@ -1660,14 +1660,10 @@ protection:
         &a
         Članovi &a Islanda i dalje gube svoje predmete
         &a ako umru na vlastitom otoku!
-    VISITOR_TRIGGER_RAID:
-      name: Posjetitelji izazivaju racije
-      description: |-
-        &a Isključuje mogu li posjetitelji započeti
-        &a napad na otok koji su
-        &a posjet.
-        &a
-        &učinak Bad Omena bit će uklonjen!
+    RAID_TRIGGER:
+      name: Pokretanje racije
+      description: Postavlja minimalni rang otoka potreban za pokretanje racije
+      hint: Pokretanje racije nije dopušteno
     ENTITY_PORTAL_TELEPORT:
       name: Korištenje portala entiteta
       description: |-

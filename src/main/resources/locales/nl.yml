@@ -1708,14 +1708,10 @@ protection:
         &a
         &a [prefix_Island] leden verliezen nog steeds hun items
         &a als ze sterven op hun eigen [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: Bezoekers triggert aanvallen
-      description: |-
-        &a Zet in of bezoekers een aanval kunnen starten
-        &a op [prefix_an-island] die ze aan het
-        &a bezoeken zijn.
-        &a
-        &a Slechte Omen-effect zal worden verwijderd!
+    RAID_TRIGGER:
+      name: Aanval activeren
+      description: Stelt de minimale eilandrang in die nodig is om een aanval te activeren
+      hint: Aanval activeren niet toegestaan
     ENTITY_PORTAL_TELEPORT:
       name: Entiteit portaal gebruik
       description: |-

@@ -1574,14 +1574,10 @@ protection:
         &a
         &a Учасники [prefix_Island] все одно втрачають
         &a свої предмети на власному [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: Відвідувачі запускають рейди
-      description: |-
-        &a Перемикає, чи можуть відвідувачі
-        &a починати рейд на [prefix_an-island],
-        &a який вони відвідують.
-        &a
-        &a Ефект «Погана прикмета» буде знято!
+    RAID_TRIGGER:
+      name: Запуск рейду
+      description: Встановлює мінімальний ранг острова для запуску рейду
+      hint: Запуск рейду не дозволено
     ENTITY_PORTAL_TELEPORT:
       name: Використання порталів сутностями
       description: |-

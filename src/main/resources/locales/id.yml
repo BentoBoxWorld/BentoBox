@@ -1686,14 +1686,10 @@ protection:
         &A
         &a Anggota pulau masih kehilangan item mereka
         &a jika mereka mati di pulau mereka sendiri!
-    VISITOR_TRIGGER_RAID:
-      name: Pengunjung memicu penggerebekan
-      description: |-
-        &a Beralih jika pengunjung dapat memulai
-        &sebuah serangan di sebuah pulau di mana mereka berada
-        & kunjungan.
-        &A
-        &efek Pertanda Buruk akan dihilangkan!
+    RAID_TRIGGER:
+      name: Pemicu penggerebekan
+      description: Menetapkan peringkat pulau minimum yang diperlukan untuk memicu penggerebekan
+      hint: Pemicu penggerebekan tidak diizinkan
     ENTITY_PORTAL_TELEPORT:
       name: Penggunaan portal entitas
       description: |-

@@ -1719,14 +1719,10 @@ protection:
         &a
         &a [prefix_Island] tagjai továbbra is elveszítik tárgyaikat
         &a ha a saját szigetükön halnak meg!
-    VISITOR_TRIGGER_RAID:
-      name: A látogatók rajtaütéseket indítanak el
-      description: |-
-        &a Bekapcsolja, ha a látogatók elkezdhetik
-        &a rajtaütés egy szigeten, ami ők
-        &a látogatás.
-        &a
-        &a Bad Omen effektus el lesz távolítva!
+    RAID_TRIGGER:
+      name: Rajtaütés indítása
+      description: Beállítja a rajtaütés indításához szükséges minimális szigetrangot
+      hint: Rajtaütés indítása nem engedélyezett
     ENTITY_PORTAL_TELEPORT:
       name: Az entitásportál használata
       description: |-

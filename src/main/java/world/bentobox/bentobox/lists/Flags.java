@@ -68,8 +68,8 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.PodzolListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnerSpawnEggsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
+import world.bentobox.bentobox.listeners.flags.protection.RaidTriggerListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorsStartingRaidListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener;
 import world.bentobox.bentobox.managers.RanksManager;
 
@@ -651,12 +651,7 @@ public final class Flags {
      */
     public static final Flag VISITOR_KEEP_INVENTORY = new Flag.Builder("VISITOR_KEEP_INVENTORY", Material.TOTEM_OF_UNDYING).listener(new VisitorKeepInventoryListener()).type(Type.WORLD_SETTING).defaultSetting(false).build();
 
-    /**
-     * Toggles whether island visitors can trigger to start a raid on another player's island.
-     * @since 1.21.0
-     * @see VisitorsStartingRaidListener
-     */
-    public static final Flag VISITOR_TRIGGER_RAID = new Flag.Builder("VISITOR_TRIGGER_RAID", Material.RAVAGER_SPAWN_EGG).listener(new VisitorsStartingRaidListener()).type(Type.WORLD_SETTING).defaultSetting(true).build();
+    // VISITOR_TRIGGER_RAID removed in 1.24.1 - replaced by RAID_TRIGGER protection flag
 
     /**
      * Toggles whether entities can teleport between dimensions using portals.
@@ -704,6 +699,20 @@ public final class Flags {
     public static final Flag CANDLES = new Flag.Builder("CANDLES", Material.CANDLE).mode(Flag.Mode.EXPERT)
             .listener(new CandleListener())
             .type(Type.PROTECTION).build();
+
+    /**
+     * Controls which island rank is required to trigger a raid.
+     * By default, only members and above can trigger raids; visitors' Bad Omen effect will not start a raid.
+     * Replaces the old VISITOR_TRIGGER_RAID world setting with per-island rank-based control.
+     * @since 1.24.1
+     * @see RaidTriggerListener
+     */
+    public static final Flag RAID_TRIGGER = new Flag.Builder("RAID_TRIGGER", Material.RAVAGER_SPAWN_EGG)
+            .listener(new RaidTriggerListener())
+            .type(Type.PROTECTION)
+            .mode(Flag.Mode.ADVANCED)
+            .defaultRank(RanksManager.MEMBER_RANK)
+            .build();
 
     /**
      * Prevents podzol production when large trees grow

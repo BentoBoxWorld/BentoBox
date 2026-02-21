@@ -1533,14 +1533,10 @@ protection:
         &a
         &a アイランドのメンバーはまだアイテムを失っています
         そして、彼らが自分の島で死んだ場合！
-    VISITOR_TRIGGER_RAID:
-      name: 訪問者が襲撃を引き起こす
-      description: |-
-        &a 訪問者が開始できるかどうかを切り替えます
-        &a 彼らがいる島への襲撃
-        &訪問中。
-        &a
-        &a Bad Omen効果が削除されます!
+    RAID_TRIGGER:
+      name: 襲撃のトリガー
+      description: 襲撃を引き起こすために必要な島の最低ランクを設定します
+      hint: 襲撃のトリガーは許可されていません
     ENTITY_PORTAL_TELEPORT:
       name: エンティティポータルの使用法
       description: |-

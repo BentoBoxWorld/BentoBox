@@ -1548,14 +1548,10 @@ protection:
         &a [prefix_an-island]에서 방문자인 경우 보호합니다.
         &a
         &a [prefix_Island] 멤버는 자신의 [prefix_island]에서 죽으면 여전히 아이템을 잃습니다!
-    VISITOR_TRIGGER_RAID:
-      name: 방문자가 습격을 유발합니다.
-      description: |-
-        &a 방문자가 [prefix_an-island]에서
-        &a 레이드를 시작할 수 있는지
-        &a 전환합니다.
-        &a
-        &a 나쁜 징후 효과가 제거됩니다!
+    RAID_TRIGGER:
+      name: 레이드 트리거
+      description: 레이드를 시작하는 데 필요한 최소 섬 등급을 설정합니다
+      hint: 레이드 트리거가 허용되지 않습니다
     ENTITY_PORTAL_TELEPORT:
       name: 엔티티 포털 사용권한
       description: |-

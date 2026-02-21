@@ -1652,14 +1652,10 @@ protection:
         &a
         &a [prefix_Island] members still lose their items
         &a if they die on their own [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: Visitors triggers raids
-      description: |-
-        &a Toggles if visitors can start
-        &a a raid on [prefix_an-island] which they are
-        &a visiting.
-        &a
-        &a Bad Omen effect will be removed!
+    RAID_TRIGGER:
+      name: Raid trigger
+      description: Sets the minimum island rank required to trigger a raid
+      hint: Raid triggering not allowed
     ENTITY_PORTAL_TELEPORT:
       name: Entity portal usage
       description: |-
