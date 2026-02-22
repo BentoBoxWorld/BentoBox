@@ -64,27 +64,27 @@ public abstract class AbstractPanel {
     /**
      * This variable allows to access plugin object.
      */
-    final BentoBox plugin;
+    protected final BentoBox plugin;
 
     /**
      * This variable stores main command that was triggered.
      */
-    final CompositeCommand command;
+    protected final CompositeCommand command;
 
     /**
      * This variable holds user who opens panel. Without it panel cannot be opened.
      */
-    final User user;
+    protected final User user;
 
     /**
      * This variable holds world where panel is opened. Without it panel cannot be opened.
      */
-    String mainLabel;
+    protected String mainLabel;
 
     /**
      * This variable holds current pageIndex for multipage island choosing.
      */
-    int pageIndex;
+    protected int pageIndex;
 
     public AbstractPanel(CompositeCommand command, User user) {
         plugin = command.getPlugin();

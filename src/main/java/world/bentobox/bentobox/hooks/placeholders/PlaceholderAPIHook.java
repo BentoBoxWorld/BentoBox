@@ -3,6 +3,7 @@ package world.bentobox.bentobox.hooks.placeholders;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,15 +29,11 @@ public class PlaceholderAPIHook extends PlaceholderHook {
 
     private BentoBoxPlaceholderExpansion bentoboxExpansion;
     private final Map<Addon, AddonPlaceholderExpansion> addonsExpansions;
-    private final Set<String> bentoBoxPlaceholders;
-    private final Map<Addon, Set<String>> addonPlaceholders;
 
 
     public PlaceholderAPIHook() {
         super();
         this.addonsExpansions = new HashMap<>();
-        this.bentoBoxPlaceholders = new HashSet<>();
-        this.addonPlaceholders = new HashMap<>();
     }
 
     @Override
@@ -55,29 +52,54 @@ public class PlaceholderAPIHook extends PlaceholderHook {
         return "could not register BentoBox's expansion";
     }
 
+    // -------------------------------------------------------------------------
+    // Registration
+    // -------------------------------------------------------------------------
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void registerPlaceholder(@NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
         bentoboxExpansion.registerPlaceholder(placeholder, replacer);
-        this.bentoBoxPlaceholders.add(placeholder);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void registerPlaceholder(@NonNull Addon addon, @NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
-        // Check if the addon expansion does not exist
-        addonsExpansions.computeIfAbsent(addon, k -> {
-            AddonPlaceholderExpansion addonPlaceholderExpansion = new AddonPlaceholderExpansion(addon);
-            addonPlaceholderExpansion.register();
-            this.addonPlaceholders.computeIfAbsent(addon, kk -> new HashSet<>()).add(placeholder);
-            return addonPlaceholderExpansion;
-        });
-        addonsExpansions.get(addon).registerPlaceholder(placeholder, replacer);
+    public void registerPlaceholder(@NonNull String placeholder, @Nullable String description,
+            @NonNull PlaceholderReplacer replacer) {
+        bentoboxExpansion.registerPlaceholder(placeholder, description, replacer);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void registerPlaceholder(@NonNull Addon addon, @NonNull String placeholder,
+            @NonNull PlaceholderReplacer replacer) {
+        registerPlaceholder(addon, placeholder, null, replacer);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void registerPlaceholder(@NonNull Addon addon, @NonNull String placeholder, @Nullable String description,
+            @NonNull PlaceholderReplacer replacer) {
+        // Create the addon expansion if it does not exist yet
+        addonsExpansions.computeIfAbsent(addon, k -> {
+            AddonPlaceholderExpansion expansion = new AddonPlaceholderExpansion(addon);
+            expansion.register();
+            return expansion;
+        });
+        addonsExpansions.get(addon).registerPlaceholder(placeholder, description, replacer);
+    }
+
+    // -------------------------------------------------------------------------
+    // Unregistration
+    // -------------------------------------------------------------------------
 
     /**
      * {@inheritDoc}
@@ -97,6 +119,10 @@ public class PlaceholderAPIHook extends PlaceholderHook {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Query
+    // -------------------------------------------------------------------------
+
     /**
      * {@inheritDoc}
      */
@@ -104,6 +130,120 @@ public class PlaceholderAPIHook extends PlaceholderHook {
     public boolean isPlaceholder(@NonNull Addon addon, @NonNull String placeholder) {
         return addonsExpansions.containsKey(addon) && addonsExpansions.get(addon).isPlaceholder(placeholder);
     }
+
+    /**
+     * Returns the set of BentoBox-core placeholder identifiers (registered without an addon).
+     * @return unmodifiable set of placeholder identifiers, never null.
+     * @since 3.2.0
+     */
+    @NonNull
+    public Set<String> getBentoBoxPlaceholders() {
+        return bentoboxExpansion.getRegisteredPlaceholders();
+    }
+
+    /**
+     * Returns the set of placeholder identifiers registered by the given addon.
+     * @param addon the addon, not null.
+     * @return unmodifiable set of placeholder identifiers, or empty set if the addon has none.
+     * @since 3.2.0
+     */
+    @NonNull
+    public Set<String> getAddonPlaceholders(@NonNull Addon addon) {
+        AddonPlaceholderExpansion exp = addonsExpansions.get(addon);
+        return exp == null ? Set.of() : exp.getRegisteredPlaceholders();
+    }
+
+    /**
+     * Returns all addons that have at least one registered placeholder expansion.
+     * @return unmodifiable set of addons, never null.
+     * @since 3.2.0
+     */
+    @NonNull
+    public Set<Addon> getAddonsWithPlaceholders() {
+        return Set.copyOf(addonsExpansions.keySet());
+    }
+
+    /**
+     * Returns the description for a BentoBox-core placeholder.
+     * @param placeholder the placeholder identifier.
+     * @return Optional containing the description, or empty.
+     * @since 3.2.0
+     */
+    @NonNull
+    public Optional<String> getDescription(@NonNull String placeholder) {
+        return bentoboxExpansion.getDescription(placeholder);
+    }
+
+    /**
+     * Returns the description for an addon placeholder.
+     * @param addon the addon, not null.
+     * @param placeholder the placeholder identifier.
+     * @return Optional containing the description, or empty.
+     * @since 3.2.0
+     */
+    @NonNull
+    public Optional<String> getDescription(@NonNull Addon addon, @NonNull String placeholder) {
+        AddonPlaceholderExpansion exp = addonsExpansions.get(addon);
+        return exp == null ? Optional.empty() : exp.getDescription(placeholder);
+    }
+
+    // -------------------------------------------------------------------------
+    // Enable / disable
+    // -------------------------------------------------------------------------
+
+    /**
+     * Sets whether a BentoBox-core placeholder is enabled.
+     * Disabled placeholders return an empty string instead of their resolved value.
+     * This state is not persisted and resets on server restart.
+     * @param placeholder the placeholder identifier, not null.
+     * @param enabled {@code true} to enable, {@code false} to disable.
+     * @since 3.2.0
+     */
+    public void setEnabled(@NonNull String placeholder, boolean enabled) {
+        bentoboxExpansion.setEnabled(placeholder, enabled);
+    }
+
+    /**
+     * Sets whether an addon placeholder is enabled.
+     * Disabled placeholders return an empty string instead of their resolved value.
+     * This state is not persisted and resets on server restart.
+     * @param addon the addon, not null.
+     * @param placeholder the placeholder identifier, not null.
+     * @param enabled {@code true} to enable, {@code false} to disable.
+     * @since 3.2.0
+     */
+    public void setEnabled(@NonNull Addon addon, @NonNull String placeholder, boolean enabled) {
+        AddonPlaceholderExpansion exp = addonsExpansions.get(addon);
+        if (exp != null) {
+            exp.setEnabled(placeholder, enabled);
+        }
+    }
+
+    /**
+     * Returns whether a BentoBox-core placeholder is currently enabled.
+     * @param placeholder the placeholder identifier.
+     * @return {@code true} if enabled.
+     * @since 3.2.0
+     */
+    public boolean isEnabled(@NonNull String placeholder) {
+        return bentoboxExpansion.isEnabled(placeholder);
+    }
+
+    /**
+     * Returns whether an addon placeholder is currently enabled.
+     * @param addon the addon, not null.
+     * @param placeholder the placeholder identifier.
+     * @return {@code true} if enabled (or if the addon has no expansion registered).
+     * @since 3.2.0
+     */
+    public boolean isEnabled(@NonNull Addon addon, @NonNull String placeholder) {
+        AddonPlaceholderExpansion exp = addonsExpansions.get(addon);
+        return exp == null || exp.isEnabled(placeholder);
+    }
+
+    // -------------------------------------------------------------------------
+    // Replacement
+    // -------------------------------------------------------------------------
 
     /**
      *
@@ -132,6 +272,10 @@ public class PlaceholderAPIHook extends PlaceholderHook {
         return newString;
     }
 
+    // -------------------------------------------------------------------------
+    // Cleanup
+    // -------------------------------------------------------------------------
+
     /**
      * Used for unit testing only
      * @param bentoboxExpansion the bentoboxExpansion to set
@@ -145,7 +289,8 @@ public class PlaceholderAPIHook extends PlaceholderHook {
      */
     @Override
     public void unregisterAll() {
-        this.bentoBoxPlaceholders.forEach(this::unregisterPlaceholder);
-        this.addonPlaceholders.forEach((addon,list) -> list.forEach(placeholder -> this.unregisterPlaceholder(addon, placeholder)));
+        bentoboxExpansion.getRegisteredPlaceholders().forEach(this::unregisterPlaceholder);
+        addonsExpansions.forEach((addon, exp) ->
+            exp.getRegisteredPlaceholders().forEach(ph -> this.unregisterPlaceholder(addon, ph)));
     }
 }

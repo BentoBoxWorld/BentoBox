@@ -2,6 +2,7 @@ package world.bentobox.bentobox.managers;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -37,6 +38,10 @@ public class PlaceholdersManager {
         this.plugin = plugin;
     }
 
+    // -------------------------------------------------------------------------
+    // Registration — BentoBox core
+    // -------------------------------------------------------------------------
+
     /**
      * Registers this placeholder on the behalf of BentoBox.
      * @param placeholder the placeholder to register, not null.
@@ -44,9 +49,29 @@ public class PlaceholdersManager {
      * @param replacer the expression that will return a {@code String} when executed, which will be this placeholder's replacement.
      */
     public void registerPlaceholder(@NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
-        // Register it in PlaceholderAPI
         getPlaceholderAPIHook().ifPresent(hook -> hook.registerPlaceholder(placeholder, replacer));
     }
+
+    /**
+     * Registers this placeholder on the behalf of BentoBox with a plain-English description.
+     * <p>
+     * The description is a plain English string — <strong>not</strong> a locale key — that
+     * briefly explains what the placeholder returns. It is displayed in the Placeholder GUI
+     * and included in the output of {@code /bbox dump-placeholders}.
+     * </p>
+     * @param placeholder the placeholder to register, not null.
+     * @param description a short English description of what the placeholder returns, or null.
+     * @param replacer the expression that will return a {@code String} when executed.
+     * @since 3.2.0
+     */
+    public void registerPlaceholder(@NonNull String placeholder, @Nullable String description,
+            @NonNull PlaceholderReplacer replacer) {
+        getPlaceholderAPIHook().ifPresent(hook -> hook.registerPlaceholder(placeholder, description, replacer));
+    }
+
+    // -------------------------------------------------------------------------
+    // Registration — addon
+    // -------------------------------------------------------------------------
 
     /**
      * Registers this placeholder on the behalf of the specified addon.
@@ -56,13 +81,43 @@ public class PlaceholdersManager {
      *                    It will be appended with the addon's name by the placeholder plugin.
      * @param replacer the expression that will return a {@code String} when executed, which will replace the placeholder.
      */
-    public void registerPlaceholder(@Nullable Addon addon, @NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
+    public void registerPlaceholder(@Nullable Addon addon, @NonNull String placeholder,
+            @NonNull PlaceholderReplacer replacer) {
         if (addon == null) {
             registerPlaceholder(placeholder, replacer);
             return;
         }
-        // Register it in PlaceholderAPI
         getPlaceholderAPIHook().ifPresent(hook -> hook.registerPlaceholder(addon, placeholder, replacer));
+    }
+
+    /**
+     * Registers this placeholder on the behalf of the specified addon with a plain-English description.
+     * <p>
+     * The description is a plain English string — <strong>not</strong> a locale key — that
+     * briefly explains what the placeholder returns. It is displayed in the Placeholder GUI
+     * and included in the output of {@code /bbox dump-placeholders}.
+     * </p>
+     * <p>
+     * Example usage in an addon:
+     * </p>
+     * <pre>{@code
+     * plugin.getPlaceholdersManager().registerPlaceholder(
+     *     this, "my_value", "The current value of my feature", user -> computeValue());
+     * }</pre>
+     * @param addon the addon to register this placeholder on its behalf.
+     *              If null, falls back to {@link #registerPlaceholder(String, String, PlaceholderReplacer)}.
+     * @param placeholder the placeholder to register, not null.
+     * @param description a short English description of what the placeholder returns, or null.
+     * @param replacer the expression that will return a {@code String} when executed.
+     * @since 3.2.0
+     */
+    public void registerPlaceholder(@Nullable Addon addon, @NonNull String placeholder, @Nullable String description,
+            @NonNull PlaceholderReplacer replacer) {
+        if (addon == null) {
+            registerPlaceholder(placeholder, description, replacer);
+            return;
+        }
+        getPlaceholderAPIHook().ifPresent(hook -> hook.registerPlaceholder(addon, placeholder, description, replacer));
     }
 
     /**
@@ -73,7 +128,9 @@ public class PlaceholdersManager {
     public void registerDefaultPlaceholders(@NonNull GameModeAddon addon) {
         Arrays.stream(GameModePlaceholder.values())
         .filter(placeholder -> !isPlaceholder(addon, placeholder.getPlaceholder()))
-        .forEach(placeholder -> registerPlaceholder(addon, placeholder.getPlaceholder(), new DefaultPlaceholder(addon, placeholder)));
+        .forEach(placeholder -> registerPlaceholder(addon, placeholder.getPlaceholder(),
+                placeholder.getDescription(),
+                new DefaultPlaceholder(addon, placeholder)));
         // Register team member placeholders
         registerTeamMemberPlaceholders(addon);
         // Register potential island names and member info
@@ -82,7 +139,9 @@ public class PlaceholdersManager {
 
     private void registerOwnedIslandPlaceholders(@NonNull GameModeAddon addon) {
         int maxIslands = plugin.getIWM().getWorldSettings(addon.getOverWorld()).getConcurrentIslands();
-        IntStream.range(0, maxIslands).forEach(i -> registerPlaceholder(addon, "island_name_" + (i + 1), user -> {
+        IntStream.range(0, maxIslands).forEach(i -> registerPlaceholder(addon, "island_name_" + (i + 1),
+                "Name of the player's island #" + (i + 1),
+                user -> {
             if (user == null)
                 return "";
 
@@ -100,7 +159,9 @@ public class PlaceholdersManager {
 
         // Island_memberlist
         IntStream.range(0, maxIslands)
-                .forEach(i -> registerPlaceholder(addon, "island_memberlist_" + (i + 1), user -> user == null ? ""
+                .forEach(i -> registerPlaceholder(addon, "island_memberlist_" + (i + 1),
+                        "Comma-separated member list for the player's island #" + (i + 1),
+                        user -> user == null ? ""
                         : plugin.getIslands().getIslands(addon.getOverWorld(), user).stream().skip(i).findFirst()
                                 .map(island -> island.getMemberSet().stream()
                                         .map(addon.getPlayers()::getName).collect(Collectors.joining(",")))
@@ -126,7 +187,9 @@ public class PlaceholdersManager {
         for (int i = 1; i <= MAX_TEAM_MEMBER_PLACEHOLDERS; i++) {
             final int count = i;
             // Names
-            registerPlaceholder(addon, "island_member_name_" + i, user -> {
+            registerPlaceholder(addon, "island_member_name_" + i,
+                    "Name of island member #" + i + " (ranked member or above)",
+                    user -> {
                 if (user != null) {
                     Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
                     int j = 1;
@@ -139,7 +202,9 @@ public class PlaceholdersManager {
                 return "";
             });
             // Register ranks
-            registerPlaceholder(addon, "island_member_rank_" + i, user -> {
+            registerPlaceholder(addon, "island_member_rank_" + i,
+                    "Rank of island member #" + i,
+                    user -> {
                 if (user != null) {
                     Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
                     int j = 1;
@@ -152,7 +217,9 @@ public class PlaceholdersManager {
                 return "";
             });
             // Banned
-            registerPlaceholder(addon, "island_banned_name_" + i, user -> {
+            registerPlaceholder(addon, "island_banned_name_" + i,
+                    "Name of banned player #" + i,
+                    user -> {
                 if (user != null) {
                     Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
                     int j = 1;
@@ -165,7 +232,9 @@ public class PlaceholdersManager {
                 return "";
             });
             // Visited Island
-            registerPlaceholder(addon, "visited_island_member_name_" + i, user -> {
+            registerPlaceholder(addon, "visited_island_member_name_" + i,
+                    "Name of member #" + i + " of the island the player is standing on",
+                    user -> {
                 if (user != null) {
                     return plugin.getIslands().getIslandAt(user.getLocation())
                             .filter(island -> addon.inWorld(island.getCenter()))
@@ -182,7 +251,9 @@ public class PlaceholdersManager {
                 }
                 return "";
             });
-            registerPlaceholder(addon, "visited_island_member_rank_" + i, user -> {
+            registerPlaceholder(addon, "visited_island_member_rank_" + i,
+                    "Rank of member #" + i + " of the island the player is standing on",
+                    user -> {
                 if (user != null) {
                     return plugin.getIslands().getIslandAt(user.getLocation())
                             .filter(island -> addon.inWorld(island.getCenter()))
@@ -199,7 +270,9 @@ public class PlaceholdersManager {
                 }
                 return "";
             });
-            registerPlaceholder(addon, "visited_island_banned_name_" + i, user -> {
+            registerPlaceholder(addon, "visited_island_banned_name_" + i,
+                    "Name of banned player #" + i + " on the island the player is standing on",
+                    user -> {
                 if (user != null) {
                     return plugin.getIslands().getIslandAt(user.getLocation())
                             .filter(island -> addon.inWorld(island.getCenter()))
@@ -220,7 +293,9 @@ public class PlaceholdersManager {
         // Counts
         // Number of online members
         // {@since 2.1.0}
-        registerPlaceholder(addon, "island_online_members_count", user -> {
+        registerPlaceholder(addon, "island_online_members_count",
+                "Number of island members currently online",
+                user -> {
             if (user == null)
                 return "";
             Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
@@ -230,7 +305,9 @@ public class PlaceholdersManager {
                     : "";
         });
         // Number of online members of visited island
-        registerPlaceholder(addon, "visited_island_online_members_count", user -> {
+        registerPlaceholder(addon, "visited_island_online_members_count",
+                "Number of members currently online on the island the player is standing on",
+                user -> {
             if (user == null)
                 return "";
             return plugin.getIslands().getIslandAt(user.getLocation())
@@ -240,6 +317,10 @@ public class PlaceholdersManager {
         });
     }
 
+    // -------------------------------------------------------------------------
+    // Unregistration
+    // -------------------------------------------------------------------------
+
     /**
      * Unregisters this placeholder on the behalf of BentoBox.
      * Note that if the placeholder you are trying to unregister has been registered by an addon, you should use {@link #unregisterPlaceholder(Addon, String)} instead.
@@ -247,7 +328,6 @@ public class PlaceholdersManager {
      * @since 1.4.0
      */
     public void unregisterPlaceholder(@NonNull String placeholder) {
-        // Unregister it from PlaceholderAPI
         getPlaceholderAPIHook().ifPresent(hook -> hook.unregisterPlaceholder(placeholder));
     }
 
@@ -263,9 +343,12 @@ public class PlaceholdersManager {
             unregisterPlaceholder(placeholder);
             return;
         }
-        // Unregister it from PlaceholderAPI
         getPlaceholderAPIHook().ifPresent(hook -> hook.unregisterPlaceholder(addon, placeholder));
     }
+
+    // -------------------------------------------------------------------------
+    // Query
+    // -------------------------------------------------------------------------
 
     /**
      * Returns an Optional containing the PlaceholderAPIHook instance, or an empty Optional otherwise.
@@ -289,6 +372,114 @@ public class PlaceholdersManager {
     }
 
     /**
+     * Returns the set of BentoBox-core placeholder identifiers.
+     * @return unmodifiable set of placeholder identifiers, or empty set if PlaceholderAPI is not hooked.
+     * @since 3.2.0
+     */
+    @NonNull
+    public Set<String> getRegisteredBentoBoxPlaceholders() {
+        return getPlaceholderAPIHook().map(PlaceholderAPIHook::getBentoBoxPlaceholders).orElse(Set.of());
+    }
+
+    /**
+     * Returns the set of placeholder identifiers registered by the given addon.
+     * @param addon the addon, not null.
+     * @return unmodifiable set of placeholder identifiers, or empty set if none.
+     * @since 3.2.0
+     */
+    @NonNull
+    public Set<String> getRegisteredPlaceholders(@NonNull Addon addon) {
+        return getPlaceholderAPIHook().map(h -> h.getAddonPlaceholders(addon)).orElse(Set.of());
+    }
+
+    /**
+     * Returns all addons that have at least one registered placeholder.
+     * @return unmodifiable set of addons, or empty set if PlaceholderAPI is not hooked.
+     * @since 3.2.0
+     */
+    @NonNull
+    public Set<Addon> getAddonsWithPlaceholders() {
+        return getPlaceholderAPIHook().map(PlaceholderAPIHook::getAddonsWithPlaceholders).orElse(Set.of());
+    }
+
+    /**
+     * Returns the description for a BentoBox-core placeholder.
+     * @param placeholder the placeholder identifier.
+     * @return Optional containing the plain-English description, or empty if none was registered.
+     * @since 3.2.0
+     */
+    @NonNull
+    public Optional<String> getPlaceholderDescription(@NonNull String placeholder) {
+        return getPlaceholderAPIHook().flatMap(h -> h.getDescription(placeholder));
+    }
+
+    /**
+     * Returns the description for an addon placeholder.
+     * @param addon the addon, not null.
+     * @param placeholder the placeholder identifier.
+     * @return Optional containing the plain-English description, or empty if none was registered.
+     * @since 3.2.0
+     */
+    @NonNull
+    public Optional<String> getPlaceholderDescription(@NonNull Addon addon, @NonNull String placeholder) {
+        return getPlaceholderAPIHook().flatMap(h -> h.getDescription(addon, placeholder));
+    }
+
+    // -------------------------------------------------------------------------
+    // Enable / disable
+    // -------------------------------------------------------------------------
+
+    /**
+     * Sets whether a BentoBox-core placeholder is enabled.
+     * Disabled placeholders return an empty string instead of their resolved value.
+     * This state is not persisted and resets on server restart.
+     * @param placeholder the placeholder identifier, not null.
+     * @param enabled {@code true} to enable, {@code false} to disable.
+     * @since 3.2.0
+     */
+    public void setPlaceholderEnabled(@NonNull String placeholder, boolean enabled) {
+        getPlaceholderAPIHook().ifPresent(h -> h.setEnabled(placeholder, enabled));
+    }
+
+    /**
+     * Sets whether an addon placeholder is enabled.
+     * Disabled placeholders return an empty string instead of their resolved value.
+     * This state is not persisted and resets on server restart.
+     * @param addon the addon, not null.
+     * @param placeholder the placeholder identifier, not null.
+     * @param enabled {@code true} to enable, {@code false} to disable.
+     * @since 3.2.0
+     */
+    public void setPlaceholderEnabled(@NonNull Addon addon, @NonNull String placeholder, boolean enabled) {
+        getPlaceholderAPIHook().ifPresent(h -> h.setEnabled(addon, placeholder, enabled));
+    }
+
+    /**
+     * Returns whether a BentoBox-core placeholder is currently enabled.
+     * @param placeholder the placeholder identifier.
+     * @return {@code true} if enabled (also true when PlaceholderAPI is not hooked).
+     * @since 3.2.0
+     */
+    public boolean isPlaceholderEnabled(@NonNull String placeholder) {
+        return getPlaceholderAPIHook().map(h -> h.isEnabled(placeholder)).orElse(true);
+    }
+
+    /**
+     * Returns whether an addon placeholder is currently enabled.
+     * @param addon the addon, not null.
+     * @param placeholder the placeholder identifier.
+     * @return {@code true} if enabled (also true when PlaceholderAPI is not hooked).
+     * @since 3.2.0
+     */
+    public boolean isPlaceholderEnabled(@NonNull Addon addon, @NonNull String placeholder) {
+        return getPlaceholderAPIHook().map(h -> h.isEnabled(addon, placeholder)).orElse(true);
+    }
+
+    // -------------------------------------------------------------------------
+    // Replacement
+    // -------------------------------------------------------------------------
+
+    /**
      * Replaces the placeholders in this String and returns it.
      * @param player the Player to get the placeholders for or null for non-player-specific placeholders
      * @param string the String to replace the placeholders in.
@@ -305,8 +496,11 @@ public class PlaceholdersManager {
      */
     public void unregisterAll() {
         getPlaceholderAPIHook().ifPresent(PlaceholderAPIHook::unregisterAll);
-
     }
+
+    // -------------------------------------------------------------------------
+    // Internal helpers
+    // -------------------------------------------------------------------------
 
     /**
      * Default placeholder
