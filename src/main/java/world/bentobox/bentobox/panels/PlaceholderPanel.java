@@ -82,6 +82,9 @@ public class PlaceholderPanel extends AbstractPanel {
     private PanelItem createBentoBoxButton(@NonNull ItemTemplateRecord template,
             TemplatedPanel.ItemSlot slot) {
         int count = plugin.getPlaceholdersManager().getRegisteredBentoBoxPlaceholders().size();
+        if (count == 0) {
+            return null;
+        }
 
         PanelItemBuilder builder = new PanelItemBuilder();
         builder.icon(template.icon() != null ? template.icon().clone() : new org.bukkit.inventory.ItemStack(Material.BOOK));

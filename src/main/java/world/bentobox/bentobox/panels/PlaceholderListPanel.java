@@ -281,8 +281,9 @@ public class PlaceholderListPanel extends AbstractPanel {
         boolean leafEnabled = isEnabled(leaf.key());
         boolean anySeriesDisabled = series.rawKeys().stream().anyMatch(k -> !isEnabled(k));
 
+        String seriesPh = "%" + expansionId + "_" + series.displayKey() + "%";
         builder.name(user.getTranslation("panels.placeholder-list.buttons.series.name",
-                "[placeholder]", leafPh + " / " + series.displayKey() + "_{N}"));
+                "[placeholder]", leafPh + " / " + seriesPh));
 
         List<String> lore = new ArrayList<>();
         if (!leaf.description().isBlank()) {
