@@ -2028,9 +2028,15 @@ panels:
         range: '&8 #[min] – #[max] · [count] items'
         disabled: '&c &o (some disabled)'
         hint: '&e Click &7 to toggle all.'
+        # Value samples for series; [index] = numeric suffix, [value] = resolved value
+        sample: '&8 #[index] → &f[value]'
+        sample-empty: '&8 #[index] → &8(empty)'
       # LEAF_SERIES — a placeholder AND a series; left-click to toggle leaf, right-click to toggle all
       leaf-series:
         hint: '&e Left-click &7 to toggle · &e Right-click &7 to toggle all.'
+      # Current resolved value of a placeholder for the viewing player
+      value: '&8 → &f[value]'
+      value-empty: '&8 → &8(empty)'
       back:
         name: '&f&l Back'
         description: '&7 Return to the addon list'

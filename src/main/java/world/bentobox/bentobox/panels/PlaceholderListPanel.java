@@ -61,6 +61,8 @@ public class PlaceholderListPanel extends AbstractPanel {
     private static final String BACK_TYPE = "BACK";
     /** Maximum visible characters per lore description line before wrapping. */
     private static final int LORE_LINE_WIDTH = 38;
+    /** Number of series members to sample in the lore value preview. */
+    private static final int SERIES_SAMPLE_COUNT = 3;
 
     /** {@code null} means the BentoBox core expansion. */
     @Nullable
@@ -200,6 +202,7 @@ public class PlaceholderListPanel extends AbstractPanel {
                     lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
                             "[description]", line)));
         }
+        addValueLine(lore, fullPh);
         if (!enabled) {
             lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.disabled"));
         }
@@ -233,6 +236,7 @@ public class PlaceholderListPanel extends AbstractPanel {
                     lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
                             "[description]", line)));
         }
+        addValueLine(lore, fullPh);
         lore.add(user.getTranslation("panels.placeholder-list.buttons.folder.description",
                 "[count]", String.valueOf(childCount)));
         if (!enabled) {
@@ -257,6 +261,7 @@ public class PlaceholderListPanel extends AbstractPanel {
                     lore.add(user.getTranslation("panels.placeholder-list.buttons.series.description",
                             "[description]", line)));
         }
+        addSeriesSamples(lore, series);
         lore.add(user.getTranslation("panels.placeholder-list.buttons.series.range",
                 "[count]", String.valueOf(series.rawKeys().size()),
                 "[min]", String.valueOf(series.min()),
@@ -285,6 +290,8 @@ public class PlaceholderListPanel extends AbstractPanel {
                     lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
                             "[description]", line)));
         }
+        addValueLine(lore, leafPh);
+        addSeriesSamples(lore, series);
         lore.add(user.getTranslation("panels.placeholder-list.buttons.series.range",
                 "[count]", String.valueOf(series.rawKeys().size()),
                 "[min]", String.valueOf(series.min()),
@@ -513,6 +520,45 @@ public class PlaceholderListPanel extends AbstractPanel {
             case SERIES      -> Material.NAME_TAG;
             case LEAF_SERIES -> Material.WRITABLE_BOOK;
         };
+    }
+
+    /** Resolves the given full placeholder string (e.g. {@code %bskyblock_deaths%}) for the viewing player. */
+    private String resolveValue(String fullPh) {
+        return plugin.getPlaceholdersManager().replacePlaceholders(user.getPlayer(), fullPh);
+    }
+
+    /** Appends a value line to {@code lore}, showing the resolved value or {@code (empty)} if blank. */
+    private void addValueLine(List<String> lore, String fullPh) {
+        String value = resolveValue(fullPh);
+        if (value == null || value.isBlank()) {
+            lore.add(user.getTranslation("panels.placeholder-list.buttons.value-empty"));
+        } else {
+            lore.add(user.getTranslation("panels.placeholder-list.buttons.value",
+                    "[value]", value));
+        }
+    }
+
+    /**
+     * Appends up to {@link #SERIES_SAMPLE_COUNT} resolved sample values from the series
+     * to {@code lore}, labelled by their numeric index.
+     */
+    private void addSeriesSamples(List<String> lore, Series series) {
+        int count = Math.min(SERIES_SAMPLE_COUNT, series.rawKeys().size());
+        for (int i = 0; i < count; i++) {
+            String key = series.rawKeys().get(i);
+            String fullPh = "%" + expansionId + "_" + key + "%";
+            // Extract the numeric part: everything after "stem_"
+            String indexStr = key.substring(series.stem().length() + 1);
+            String value = resolveValue(fullPh);
+            if (value == null || value.isBlank()) {
+                lore.add(user.getTranslation("panels.placeholder-list.buttons.series.sample-empty",
+                        "[index]", indexStr));
+            } else {
+                lore.add(user.getTranslation("panels.placeholder-list.buttons.series.sample",
+                        "[index]", indexStr,
+                        "[value]", value));
+            }
+        }
     }
 
     private boolean isEnabled(String key) {
