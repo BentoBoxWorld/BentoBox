@@ -3,10 +3,10 @@ package world.bentobox.bentobox.panels;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.eclipse.jdt.annotation.NonNull;
 
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -79,9 +79,9 @@ public class CatalogPanel {
             for (CatalogEntry addon : catalog) {
                 PanelItemBuilder itemBuilder = new PanelItemBuilder();
 
-                String name = NamedTextColor.WHITE + addon.getName();
+                String name = ChatColor.WHITE + addon.getName();
                 if (addon.getTag() != null) {
-                    name += " " + NamedTextColor.AQUA + TextDecoration.BOLD
+                    name += " " + ChatColor.AQUA + ChatColor.BOLD
                             + user.getTranslation("catalog.tags." + addon.getTag());
                 }
 
@@ -103,7 +103,7 @@ public class CatalogPanel {
 
                 // Send the link to the releases tab on click
                 itemBuilder.clickHandler((panel, user1, clickType, slot) -> {
-                    user1.sendRawMessage(NamedTextColor.GRAY + "" + TextDecoration.ITALIC + "https://github.com/"
+                    user1.sendRawMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "https://github.com/"
                             + addon.getRepository() + "/releases");
                     return true;
                 });
