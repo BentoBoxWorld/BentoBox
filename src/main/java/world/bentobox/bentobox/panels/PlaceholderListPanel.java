@@ -59,6 +59,8 @@ public class PlaceholderListPanel extends AbstractPanel {
     private static final String PANEL_NAME = "placeholder_list_panel";
     private static final String PLACEHOLDER_TYPE = "PLACEHOLDER";
     private static final String BACK_TYPE = "BACK";
+    /** Maximum visible characters per lore description line before wrapping. */
+    private static final int LORE_LINE_WIDTH = 38;
 
     /** {@code null} means the BentoBox core expansion. */
     @Nullable
@@ -194,8 +196,9 @@ public class PlaceholderListPanel extends AbstractPanel {
 
         List<String> lore = new ArrayList<>();
         if (!leaf.description().isBlank()) {
-            lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
-                    "[description]", leaf.description()));
+            wrapText(leaf.description()).forEach(line ->
+                    lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
+                            "[description]", line)));
         }
         if (!enabled) {
             lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.disabled"));
@@ -226,8 +229,9 @@ public class PlaceholderListPanel extends AbstractPanel {
 
         List<String> lore = new ArrayList<>();
         if (!leaf.description().isBlank()) {
-            lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
-                    "[description]", leaf.description()));
+            wrapText(leaf.description()).forEach(line ->
+                    lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
+                            "[description]", line)));
         }
         lore.add(user.getTranslation("panels.placeholder-list.buttons.folder.description",
                 "[count]", String.valueOf(childCount)));
@@ -249,8 +253,9 @@ public class PlaceholderListPanel extends AbstractPanel {
 
         List<String> lore = new ArrayList<>();
         if (!series.description().isBlank()) {
-            lore.add(user.getTranslation("panels.placeholder-list.buttons.series.description",
-                    "[description]", series.description()));
+            wrapText(series.description()).forEach(line ->
+                    lore.add(user.getTranslation("panels.placeholder-list.buttons.series.description",
+                            "[description]", line)));
         }
         lore.add(user.getTranslation("panels.placeholder-list.buttons.series.range",
                 "[count]", String.valueOf(series.rawKeys().size()),
@@ -276,8 +281,9 @@ public class PlaceholderListPanel extends AbstractPanel {
 
         List<String> lore = new ArrayList<>();
         if (!leaf.description().isBlank()) {
-            lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
-                    "[description]", leaf.description()));
+            wrapText(leaf.description()).forEach(line ->
+                    lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
+                            "[description]", line)));
         }
         lore.add(user.getTranslation("panels.placeholder-list.buttons.series.range",
                 "[count]", String.valueOf(series.rawKeys().size()),
@@ -468,18 +474,34 @@ public class PlaceholderListPanel extends AbstractPanel {
     // -------------------------------------------------------------------------
 
     private String buildBreadcrumb() {
-        String sourceName = addon == null
-                ? plugin.getName()
-                : addon.getDescription().getName();
         if (navigationPath.size() <= 1) {
-            return sourceName;
+            // At root: show the source name
+            return addon == null ? plugin.getName() : addon.getDescription().getName();
         }
-        StringBuilder sb = new StringBuilder(sourceName);
-        // Skip index 0 (root has empty label)
-        for (int i = 1; i < navigationPath.size(); i++) {
-            sb.append(" > ").append(navigationPath.get(i).getLabel());
+        // At a deeper level: show only the current node's label to keep the title short
+        return navigationPath.get(navigationPath.size() - 1).getLabel();
+    }
+
+    /**
+     * Wraps {@code text} at word boundaries so that no line exceeds
+     * {@link #LORE_LINE_WIDTH} characters, returning the wrapped chunks.
+     */
+    private static List<String> wrapText(String text) {
+        if (text == null || text.isBlank()) return List.of();
+        List<String> lines = new ArrayList<>();
+        String[] words = text.split("\\s+");
+        StringBuilder current = new StringBuilder();
+        for (String word : words) {
+            if (!current.isEmpty() && current.length() + 1 + word.length() > LORE_LINE_WIDTH) {
+                lines.add(current.toString());
+                current = new StringBuilder(word);
+            } else {
+                if (!current.isEmpty()) current.append(' ');
+                current.append(word);
+            }
         }
-        return sb.toString();
+        if (!current.isEmpty()) lines.add(current.toString());
+        return lines;
     }
 
     @NonNull

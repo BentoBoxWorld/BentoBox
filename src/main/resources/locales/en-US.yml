@@ -1993,7 +1993,7 @@ panels:
         selected: '&a Currently selected.'
   # The section of translations used in the Placeholder Browser panel (top-level addon list)
   placeholder:
-    title: '&6&l Placeholder Browser'
+    title: '&3&l Placeholder Browser'
     buttons:
       # Button representing the BentoBox core placeholder group
       bentobox:
@@ -2005,7 +2005,7 @@ panels:
         description: '&7 [number] placeholders'
   # The section of translations used in the Placeholder List panel (per-source placeholder list)
   placeholder-list:
-    title: '&6&l [name] Placeholders'
+    title: '&3&l [name]'
     buttons:
       # LEAF — a single placeholder; [placeholder] = full %expansion_id_key% string
       leaf:
