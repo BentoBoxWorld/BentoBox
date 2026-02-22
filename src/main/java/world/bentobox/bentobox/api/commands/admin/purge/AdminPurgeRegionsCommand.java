@@ -224,13 +224,19 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         File base = world.getWorldFolder();
         File overworldRegion = new File(base, REGION);
         File overworldEntities = new File(base, ENTITIES);
-        File overworldPoi = new File(base, "poi");
-        File netherRegion    = new File(base, DIM_1 + File.separator + REGION);
-        File netherEntities  = new File(base, DIM_1 + File.separator + ENTITIES);
-        File netherPoi       = new File(base, DIM_1 + File.separator + POI);
-        File endRegion       = new File(base, "DIM1"  + File.separator + REGION);
-        File endEntities     = new File(base, "DIM1"  + File.separator + ENTITIES);
-        File endPoi          = new File(base, "DIM1"  + File.separator + POI);
+        File overworldPoi = new File(base, POI);
+
+        World netherWorld = getPlugin().getIWM().getNetherWorld(world);
+        File netherBase      = netherWorld != null ? netherWorld.getWorldFolder() : new File(base, DIM_1);
+        File netherRegion    = new File(netherBase, REGION);
+        File netherEntities  = new File(netherBase, ENTITIES);
+        File netherPoi       = new File(netherBase, POI);
+
+        World endWorld = getPlugin().getIWM().getEndWorld(world);
+        File endBase         = endWorld != null ? endWorld.getWorldFolder() : new File(base, "DIM1");
+        File endRegion       = new File(endBase, REGION);
+        File endEntities     = new File(endBase, ENTITIES);
+        File endPoi          = new File(endBase, POI);
 
         // Phase 1: verify none of the files have been updated since the cutoff
         for (Pair<Integer, Integer> coords : deleteableRegions.keySet()) {
@@ -453,22 +459,44 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         World world = this.getWorld();
         File worldDir = world.getWorldFolder();
         File overworldRegion = new File(worldDir, REGION);
-        File netherRegion    = new File(worldDir, DIM_1 + File.separator + REGION);
-        File endRegion       = new File(worldDir, "DIM1"  + File.separator + REGION);
+
+        World netherWorld = getPlugin().getIWM().getNetherWorld(world);
+        File netherRegion = netherWorld != null
+                ? new File(netherWorld.getWorldFolder(), REGION)
+                : new File(worldDir, DIM_1 + File.separator + REGION);
+
+        World endWorld = getPlugin().getIWM().getEndWorld(world);
+        File endRegion = endWorld != null
+                ? new File(endWorld.getWorldFolder(), REGION)
+                : new File(worldDir, "DIM1" + File.separator + REGION);
 
         // Compute cutoff timestamp
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
 
-        // List all .mca files in the overworld region folder
-        File[] files = overworldRegion.listFiles((dir, name) -> name.endsWith(".mca"));
-        if (files == null) return regions;
+        // Collect all candidate region names from overworld, nether, and end.
+        // This ensures orphaned nether/end files are caught even if the overworld
+        // file was already deleted by a previous (buggy) purge run.
+        Set<String> candidateNames = new HashSet<>();
 
-        for (File owFile : files) {
-            // Skip if the overworld file is too recent
-            if (getRegionTimestamp(owFile) >= cutoffMillis) continue;
+        File[] owFiles = overworldRegion.listFiles((dir, name) -> name.endsWith(".mca"));
+        if (owFiles != null) {
+            for (File f : owFiles) candidateNames.add(f.getName());
+        }
+        if (isNether) {
+            File[] nFiles = netherRegion.listFiles((dir, name) -> name.endsWith(".mca"));
+            if (nFiles != null) {
+                for (File f : nFiles) candidateNames.add(f.getName());
+            }
+        }
+        if (isEnd) {
+            File[] eFiles = endRegion.listFiles((dir, name) -> name.endsWith(".mca"));
+            if (eFiles != null) {
+                for (File f : eFiles) candidateNames.add(f.getName());
+            }
+        }
 
+        for (String name : candidateNames) {
             // Parse region coords from filename "r.<x>.<z>.mca"
-            String name = owFile.getName(); // e.g. "r.-2.3.mca"
             String coordsPart = name.substring(2, name.length() - 4);
             String[] parts = coordsPart.split("\\.");
             if (parts.length != 2) continue;  // malformed
@@ -483,18 +511,24 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
             boolean include = true;
 
-            // If nether flag is set, require nether region file also older than cutoff
+            // If the overworld file exists and is too recent, skip
+            File owFile = new File(overworldRegion, name);
+            if (owFile.exists() && getRegionTimestamp(owFile) >= cutoffMillis) {
+                include = false;
+            }
+
+            // If nether flag is set, require nether region file (if it exists) to also be older than cutoff
             if (isNether) {
                 File netherFile = new File(netherRegion, name);
-                if (!netherFile.exists() || getRegionTimestamp(netherFile) >= cutoffMillis) {
+                if (netherFile.exists() && getRegionTimestamp(netherFile) >= cutoffMillis) {
                     include = false;
                 }
             }
 
-            // If end flag is set, require end region file also older than cutoff
+            // If end flag is set, require end region file (if it exists) to also be older than cutoff
             if (isEnd) {
                 File endFile = new File(endRegion, name);
-                if (!endFile.exists() || getRegionTimestamp(endFile) >= cutoffMillis) {
+                if (endFile.exists() && getRegionTimestamp(endFile) >= cutoffMillis) {
                     include = false;
                 }
             }
