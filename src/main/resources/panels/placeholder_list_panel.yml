@@ -1,0 +1,93 @@
+# Placeholder List panel — shows individual placeholders for a BentoBox or addon source.
+# Button types:
+#   PLACEHOLDER — one button per registered placeholder (paginated)
+#   BACK        — return to the Placeholder Browser (placeholder_panel)
+#   NEXT        — advance to the next page of placeholders
+#   PREVIOUS    — go back to the previous page of placeholders
+placeholder_list_panel:
+  title: panels.placeholder-list.title
+  type: INVENTORY
+  background:
+    icon: BLACK_STAINED_GLASS_PANE
+    title: "&b&r"
+  border:
+    icon: BLACK_STAINED_GLASS_PANE
+    title: "&b&r"
+  force-shown: []
+  content:
+    1:
+      2: placeholder_button
+      3: placeholder_button
+      4: placeholder_button
+      5: placeholder_button
+      6: placeholder_button
+      7: placeholder_button
+      8: placeholder_button
+    2:
+      2: placeholder_button
+      3: placeholder_button
+      4: placeholder_button
+      5: placeholder_button
+      6: placeholder_button
+      7: placeholder_button
+      8: placeholder_button
+    3:
+      2: placeholder_button
+      3: placeholder_button
+      4: placeholder_button
+      5: placeholder_button
+      6: placeholder_button
+      7: placeholder_button
+      8: placeholder_button
+    4:
+      2: placeholder_button
+      3: placeholder_button
+      4: placeholder_button
+      5: placeholder_button
+      6: placeholder_button
+      7: placeholder_button
+      8: placeholder_button
+    5:
+      1:
+        icon: tipped_arrow[potion_contents={custom_color:11546150}]
+        title: panels.buttons.previous.name
+        description: panels.buttons.previous.description
+        data:
+          type: PREVIOUS
+          indexing: true
+        actions:
+          previous:
+            click-type: UNKNOWN
+            tooltip: panels.tips.click-to-previous
+      5:
+        icon: ARROW
+        title: panels.placeholder-list.buttons.back.name
+        description: panels.placeholder-list.buttons.back.description
+        data:
+          type: BACK
+        actions:
+          back:
+            click-type: UNKNOWN
+            tooltip: panels.tips.click-to-choose
+      9:
+        icon: tipped_arrow[potion_contents={custom_color:8439583}]
+        title: panels.buttons.next.name
+        description: panels.buttons.next.description
+        data:
+          type: NEXT
+          indexing: true
+        actions:
+          next:
+            click-type: UNKNOWN
+            tooltip: panels.tips.click-to-next
+  reusable:
+    placeholder_button:
+      icon: PAPER
+      title: panels.placeholder-list.buttons.placeholder.name
+      description: panels.placeholder-list.buttons.placeholder.description
+      data:
+        type: PLACEHOLDER
+      actions:
+        toggle:
+          click-type: UNKNOWN
+          tooltip: panels.tips.click-to-toggle
