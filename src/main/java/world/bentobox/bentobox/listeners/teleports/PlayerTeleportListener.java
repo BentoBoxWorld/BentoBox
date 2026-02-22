@@ -93,7 +93,9 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
                 // Check again if still in portal
                 if (this.inPortal.contains(uuid))
                 {
-                    // Create new PlayerPortalEvent
+                    // Create new PlayerPortalEvent and post it through the event bus so that
+                    // protection flag listeners (e.g. PortalListener) can inspect and cancel it
+                    // before BentoBox processes the actual teleportation.
                     PlayerPortalEvent en = new PlayerPortalEvent((Player) entity,
                             event.getLocation(),
                             null,
@@ -102,7 +104,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
                             false,
                             0);
 
-                    this.portalProcess(en, World.Environment.NETHER);
+                    Bukkit.getPluginManager().callEvent(en);
                 }
             }, 40);
             return;
@@ -110,7 +112,9 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
         // End portals are instant transfer
         if (!Bukkit.getAllowEnd() && (type.equals(Material.END_PORTAL) || type.equals(Material.END_GATEWAY)))
         {
-            // Create new PlayerPortalEvent
+            // Create new PlayerPortalEvent and post it through the event bus so that
+            // protection flag listeners (e.g. PortalListener) can inspect and cancel it
+            // before BentoBox processes the actual teleportation.
             PlayerPortalEvent en = new PlayerPortalEvent((Player) entity,
                     event.getLocation(),
                     null,
@@ -119,7 +123,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
                             false,
                             0);
 
-            this.portalProcess(en, World.Environment.THE_END);
+            Bukkit.getPluginManager().callEvent(en);
         }
     }
 
