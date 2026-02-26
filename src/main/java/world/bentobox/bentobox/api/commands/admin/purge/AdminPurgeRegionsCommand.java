@@ -188,6 +188,33 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     }
 
     /**
+     * Resolves the base data folder for a world, accounting for the dimension
+     * subfolder that Minecraft uses for non-overworld environments.
+     * <p>
+     * Overworld data lives directly in the world folder, but Nether data lives
+     * in {@code DIM-1/} and End data lives in {@code DIM1/} subfolders — even
+     * when the world has its own separate folder.
+     *
+     * @param world the world to resolve
+     * @return the base folder containing region/, entities/, poi/ subfolders
+     */
+    private File resolveDataFolder(World world) {
+        File worldFolder = world.getWorldFolder();
+        return switch (world.getEnvironment()) {
+            case NORMAL -> worldFolder;
+            case NETHER -> {
+                File dim = new File(worldFolder, DIM_1);
+                yield dim.isDirectory() ? dim : worldFolder;
+            }
+            case THE_END -> {
+                File dim = new File(worldFolder, "DIM1");
+                yield dim.isDirectory() ? dim : worldFolder;
+            }
+            default -> worldFolder;
+        };
+    }
+
+    /**
      * Deletes a file if it exists, logging an error if deletion fails.
      * Does not log if the parent folder does not exist (normal for entities/poi).
      * @param file the file to delete
@@ -227,13 +254,13 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         File overworldPoi = new File(base, POI);
 
         World netherWorld = getPlugin().getIWM().getNetherWorld(world);
-        File netherBase      = netherWorld != null ? netherWorld.getWorldFolder() : new File(base, DIM_1);
+        File netherBase      = netherWorld != null ? resolveDataFolder(netherWorld) : new File(base, DIM_1);
         File netherRegion    = new File(netherBase, REGION);
         File netherEntities  = new File(netherBase, ENTITIES);
         File netherPoi       = new File(netherBase, POI);
 
         World endWorld = getPlugin().getIWM().getEndWorld(world);
-        File endBase         = endWorld != null ? endWorld.getWorldFolder() : new File(base, "DIM1");
+        File endBase         = endWorld != null ? resolveDataFolder(endWorld) : new File(base, "DIM1");
         File endRegion       = new File(endBase, REGION);
         File endEntities     = new File(endBase, ENTITIES);
         File endPoi          = new File(endBase, POI);
@@ -461,17 +488,39 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         File overworldRegion = new File(worldDir, REGION);
 
         World netherWorld = getPlugin().getIWM().getNetherWorld(world);
-        File netherRegion = netherWorld != null
-                ? new File(netherWorld.getWorldFolder(), REGION)
-                : new File(worldDir, DIM_1 + File.separator + REGION);
+        File netherBase = netherWorld != null
+                ? resolveDataFolder(netherWorld)
+                : new File(worldDir, DIM_1);
+        File netherRegion = new File(netherBase, REGION);
 
         World endWorld = getPlugin().getIWM().getEndWorld(world);
-        File endRegion = endWorld != null
-                ? new File(endWorld.getWorldFolder(), REGION)
-                : new File(worldDir, "DIM1" + File.separator + REGION);
+        File endBase = endWorld != null
+                ? resolveDataFolder(endWorld)
+                : new File(worldDir, "DIM1");
+        File endRegion = new File(endBase, REGION);
 
         // Compute cutoff timestamp
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
+
+        // Log resolved paths for diagnostics
+        getPlugin().log("Purge region folders - Overworld: " + overworldRegion.getAbsolutePath()
+                + " (exists=" + overworldRegion.isDirectory() + ")");
+        if (isNether) {
+            getPlugin().log("Purge region folders - Nether: " + netherRegion.getAbsolutePath()
+                    + " (exists=" + netherRegion.isDirectory() + ")");
+        } else {
+            getPlugin().log("Purge region folders - Nether: disabled (isNetherGenerate="
+                    + getPlugin().getIWM().isNetherGenerate(world) + ", isNetherIslands="
+                    + getPlugin().getIWM().isNetherIslands(world) + ")");
+        }
+        if (isEnd) {
+            getPlugin().log("Purge region folders - End: " + endRegion.getAbsolutePath()
+                    + " (exists=" + endRegion.isDirectory() + ")");
+        } else {
+            getPlugin().log("Purge region folders - End: disabled (isEndGenerate="
+                    + getPlugin().getIWM().isEndGenerate(world) + ", isEndIslands="
+                    + getPlugin().getIWM().isEndIslands(world) + ")");
+        }
 
         // Collect all candidate region names from overworld, nether, and end.
         // This ensures orphaned nether/end files are caught even if the overworld
@@ -482,18 +531,23 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         if (owFiles != null) {
             for (File f : owFiles) candidateNames.add(f.getName());
         }
+        getPlugin().log("Purge found " + (owFiles != null ? owFiles.length : 0) + " overworld region files");
         if (isNether) {
             File[] nFiles = netherRegion.listFiles((dir, name) -> name.endsWith(".mca"));
             if (nFiles != null) {
                 for (File f : nFiles) candidateNames.add(f.getName());
             }
+            getPlugin().log("Purge found " + (nFiles != null ? nFiles.length : 0) + " nether region files");
         }
         if (isEnd) {
             File[] eFiles = endRegion.listFiles((dir, name) -> name.endsWith(".mca"));
             if (eFiles != null) {
                 for (File f : eFiles) candidateNames.add(f.getName());
             }
+            getPlugin().log("Purge found " + (eFiles != null ? eFiles.length : 0) + " end region files");
         }
+
+        getPlugin().log("Purge total candidate region coordinates: " + candidateNames.size());
 
         for (String name : candidateNames) {
             // Parse region coords from filename "r.<x>.<z>.mca"
