@@ -638,6 +638,7 @@ commands:
         dimension-done: '& Ostrov ve [world] je postaven.'
         done: '&a Hotovo! Tvůj ostrov je připraven a čeká na tebe!'
       pick: '&2 Zvol svůj ostrov'
+      cannot-afford: '&c Nemůžeš si to dovolit! Cena: [cost]'
       unknown-blueprint: '&c Tato předloha dosud nebyla načtena.'
       on-first-login: '&a Vítej! Za pár sekund začneme připravovat tvůj ostrov.'
       you-can-teleport-to-your-island: '&a Můžeš se teleportovat na svůj ostrov, kdy budeš chtít.'
@@ -1934,6 +1935,7 @@ panels:
         description: '[description]'
         uses: '&a Používá se [number]/[max]'
         unlimited: '&a Neomezená použití povolená'
+        cost: '&e Cena: [cost]'
   language:
     title: '&2&l Vyberte svůj jazyk'
     edited: '&c Změněno na [lang]'

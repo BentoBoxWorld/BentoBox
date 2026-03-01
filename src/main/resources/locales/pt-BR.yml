@@ -651,6 +651,7 @@ commands:
         dimension-done: '&a [prefix_Igreja] em [mundo] está construída.'
         done: '&a Feito! Sua ilha está pronta e esperando por você!'
       pick: '&2 Escolha uma ilha'
+      cannot-afford: '&c Você não pode pagar isso! Custo: [cost]'
       unknown-blueprint: '&c Esse esquema ainda não foi carregado.'
       on-first-login: '&a Boas vindas! Vamos começar a preparar sua ilha em alguns segundos.'
       you-can-teleport-to-your-island: '&a Você pode teleportar para sua ilha assim que quiser.'
@@ -1976,6 +1977,7 @@ panels:
         description: '[descrição]'
         uses: '&a Usado [number]/[max]'
         unlimited: '&a Usos ilimitados permitidos'
+        cost: '&e Custo: [cost]'
   language:
     title: '&2&l Selecione seu idioma'
     edited: '&c Mudado para [lang]'

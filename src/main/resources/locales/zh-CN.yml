@@ -596,6 +596,7 @@ commands:
         dimension-done: '&b[world]&a中的一座岛屿构建成功.'
         done: '&a岛屿部署完毕! 你的岛屿已准备就绪.'
       pick: '&2选择你的岛屿'
+      cannot-afford: '&c 你买不起！费用: [cost]'
       unknown-blueprint: '&c该蓝图方案尚未加载.'
       on-first-login: '&a欢迎! 我们将在几秒钟内开始创建你的岛屿.'
       you-can-teleport-to-your-island: '&a你可以随时传送到你的岛屿上.'
@@ -1779,6 +1780,7 @@ panels:
         description: '[description]'
         uses: '&a可创建次数: &#FFE4B5[number]&f/&#FFE4B5[max]'
         unlimited: '&a可创建次数: &#1E90FF无限'
+        cost: '&e 费用: [cost]'
   language:
     title: '&2&l选择你的语言'
     edited: '&c 已更改为 [lang]'

@@ -682,6 +682,7 @@ commands:
         dimension-done: '&a Insel in [world] wird gebaut.'
         done: '&a Erledigt! Deine Insel ist bereit und wartet auf dich!'
       pick: '&2 Eine Insel auswählen'
+      cannot-afford: '&c Du kannst dir das nicht leisten! Kosten: [cost]'
       unknown-blueprint: '&c Diese Blaupause wurde noch nicht geladen.'
       on-first-login: >-
         &a Herzlich willkommen! Wir beginnen in wenigen Sekunden mit der
@@ -2025,6 +2026,7 @@ panels:
         description: '[description]'
         uses: '&a Verwendung [number]/[max]'
         unlimited: '&a Unbegrenzte Nutzung erlaubt'
+        cost: '&e Kosten: [cost]'
   language:
     title: '&2&l Sprache wählen'
     edited: '&c Geändert in [lang]'

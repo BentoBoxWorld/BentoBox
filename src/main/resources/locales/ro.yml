@@ -670,6 +670,7 @@ commands:
         dimension-done: '&o Insulă în [lume] este construită.'
         done: '&a Gata! Insula ta este gata și te așteaptă!'
       pick: '&2 Alegeți o insulă'
+      cannot-afford: '&c Nu vă puteți permite acest lucru! Cost: [cost]'
       unknown-blueprint: '&c Acel plan nu a fost încă încărcat.'
       on-first-login: '&o Bun venit! Vom începe să vă pregătim insula în câteva secunde.'
       you-can-teleport-to-your-island: '&a Vă puteți teleporta pe insula dvs. când doriți.'
@@ -2025,6 +2026,7 @@ panels:
         description: '[descriere]'
         uses: '&a Folosit [număr]/[max]'
         unlimited: '&a Utilizări nelimitate permise'
+        cost: '&e Cost: [cost]'
   language:
     title: '&2&l Selectați limba dvs'
     edited: '&c Schimbat în [lang]'

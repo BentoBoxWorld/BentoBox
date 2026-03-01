@@ -657,6 +657,7 @@ commands:
         dimension-done: '&a Остров в [world] построен.'
         done: '&a Готово! Ваш остров готов и ожидает вас!'
       pick: '&2 Выберите остров'
+      cannot-afford: '&c Вы не можете себе это позволить! Стоимость: [cost]'
       unknown-blueprint: '&cЭтот план еще не был загружен.'
       on-first-login: >-
         &aДобро пожаловать! Мы начнём готовить ваш остров через несколько
@@ -1956,6 +1957,7 @@ panels:
         description: '[description]'
         uses: '&a Использовано [number]/[max]'
         unlimited: '&a Неограниченное количество использований разрешено'
+        cost: '&e Стоимость: [cost]'
   language:
     title: '&2&l Выберите ваш язык'
     edited: '&c Изменено на [lang]'

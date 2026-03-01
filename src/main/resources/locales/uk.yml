@@ -582,6 +582,7 @@ commands:
         dimension-done: '&a [prefix_Island] у [world] збудовано.'
         done: '&a Готово! Ваш [prefix_island] чекає на вас!'
       pick: '&2 Оберіть [prefix_an-island]'
+      cannot-afford: '&c Ви не можете собі це дозволити! Вартість: [cost]'
       unknown-blueprint: '&c Це креслення ще не завантажено.'
       on-first-login: '&a Вітаємо! Ми почнемо готувати ваш [prefix_island] за кілька секунд.'
       you-can-teleport-to-your-island: '&a Ви зможете телепортуватися на свій [prefix_island], коли забажаєте.'
@@ -1896,6 +1897,7 @@ panels:
         description: '[description]'
         uses: '&a Використано [number]/[max]'
         unlimited: '&a Необмежені використання дозволені'
+        cost: '&e Вартість: [cost]'
   # The section of translations used in Language Panel
   language:
     title: '&2&l Оберіть мову'
