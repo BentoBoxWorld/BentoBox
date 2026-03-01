@@ -327,8 +327,8 @@ public class PlaceholderListPanel extends AbstractPanel {
                 PlaceholderPanel.openPanel(command, user);
             } else {
                 // Go up one level in the tree
-                navigationPath.remove(navigationPath.size() - 1);
-                PlaceholderNode parent = navigationPath.get(navigationPath.size() - 1);
+                navigationPath.removeLast();
+                PlaceholderNode parent = navigationPath.getLast();
                 displayItems = parent.getDisplayChildren();
                 pageIndex = 0;
                 build();
@@ -487,7 +487,7 @@ public class PlaceholderListPanel extends AbstractPanel {
             return addon == null ? plugin.getName() : addon.getDescription().getName();
         }
         // At a deeper level: show only the current node's label to keep the title short
-        return navigationPath.get(navigationPath.size() - 1).getLabel();
+        return navigationPath.getLast().getLabel();
     }
 
     /**

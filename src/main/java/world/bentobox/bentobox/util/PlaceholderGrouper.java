@@ -112,13 +112,13 @@ public final class PlaceholderGrouper {
 
             if (indices.size() == 1) {
                 // Only one numeric entry → treat as plain Single
-                String rawKey = stem + "_" + indices.get(0);
+                String rawKey = stem + "_" + indices.getFirst();
                 String desc = descriptionLookup.apply(rawKey).orElse("");
                 result.add(new Single(rawKey, desc));
             } else {
                 // Two or more → it's a Series
-                int min = indices.get(0);
-                int max = indices.get(indices.size() - 1);
+                int min = indices.getFirst();
+                int max = indices.getLast();
                 // Use description from the smallest-indexed member, stripping the " #N" suffix
                 String firstKey = stem + "_" + min;
                 String desc = descriptionLookup.apply(firstKey)

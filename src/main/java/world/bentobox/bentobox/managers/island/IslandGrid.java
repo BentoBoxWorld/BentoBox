@@ -88,11 +88,7 @@ public class IslandGrid {
         }
 
         // Check if one rectangle is above the other
-        if (island1MaxZ <= island2.minZ() || island2MaxZ <= island1.minZ()) {
-            return false;
-        }
-
-        return true;
+        return island1MaxZ > island2.minZ() && island2MaxZ > island1.minZ();
     }
 
     /**

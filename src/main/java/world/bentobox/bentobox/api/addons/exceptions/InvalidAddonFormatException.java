@@ -17,6 +17,7 @@ public class InvalidAddonFormatException extends AddonException {
         super(errorMessage);
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     @Override
     public void printStackTrace(){
         super.printStackTrace();

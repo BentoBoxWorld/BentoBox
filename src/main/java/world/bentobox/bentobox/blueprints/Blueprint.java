@@ -52,9 +52,8 @@ public class Blueprint {
      */
     @NonNull
     public String getName() {
-        if (name == null) name = "unnamed";
-        // Force lower case
-        return name;
+        // Ensure non-null return value even if deserialization sets name to null
+        return name == null ? "" : name;
     }
     /**
      * @param name the name to set

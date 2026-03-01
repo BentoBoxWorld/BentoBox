@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.util;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
@@ -106,7 +108,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * @return an iterator over the elements in this set
      */
     @Override
-    public Iterator<E> iterator() {
+    public @NonNull Iterator<E> iterator() {
         // Iterate over the keys of the map
         return scheduledTasks.keySet().iterator();
     }
@@ -115,7 +117,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * Returns an array containing all of the elements in this set.
      */
     @Override
-    public Object[] toArray() {
+    public Object @NonNull [] toArray() {
         return scheduledTasks.keySet().toArray();
     }
 
@@ -128,7 +130,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * @return an array containing all of the elements in this set
      */
     @Override
-    public <T> T[] toArray(T[] a) {
+    public <T> T @NonNull [] toArray(T @NonNull [] a) {
         return scheduledTasks.keySet().toArray(a);
     }
 
@@ -204,7 +206,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * @throws NullPointerException if the specified collection is null
      */
     @Override
-    public boolean containsAll(Collection<?> c) {
+    public boolean containsAll(@NonNull Collection<?> c) {
         if (c == null) {
             throw new NullPointerException("Collection cannot be null.");
         }
@@ -220,7 +222,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * @throws NullPointerException if the specified collection is null or contains a null element
      */
     @Override
-    public boolean addAll(Collection<? extends E> c) {
+    public boolean addAll(@NonNull Collection<? extends E> c) {
         if (c == null) {
             throw new NullPointerException("The specified collection cannot be null.");
         }
@@ -245,7 +247,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * @throws NullPointerException if the specified collection is null
      */
     @Override
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(@NonNull Collection<?> c) {
         if (c == null) {
             throw new NullPointerException("Collection cannot be null.");
         }
@@ -262,7 +264,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * @throws NullPointerException if the specified collection is null
      */
     @Override
-    public boolean removeAll(Collection<?> c) {
+    public boolean removeAll(@NonNull Collection<?> c) {
         if (c == null) {
             throw new NullPointerException("Collection cannot be null.");
         }
@@ -296,7 +298,13 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      */
     @Override
     public boolean equals(Object obj) {
-        return scheduledTasks.keySet().equals(obj);
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Set<?> other)) {
+            return false;
+        }
+        return scheduledTasks.keySet().equals(other);
     }
 
     /**
