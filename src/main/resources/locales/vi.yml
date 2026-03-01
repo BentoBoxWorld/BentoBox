@@ -481,6 +481,13 @@ commands:
           &a Nhấp chuột phải để giảm
         unlimited-times: Vô hạn
         maximum-times: Tối đa [number] lần
+        cost: |
+          &a Chi phí [prefix_Island]
+          &a Nhấp chuột trái +1
+          &a Nhấp chuột phải -1
+          &a Shift để +/-100
+        no-cost: Miễn phí
+        cost-amount: 'Chi phí: [cost]'
     resetflags:
       parameters: '[flag]'
       description: Đặt lại tất cả các đảo về cài đặt cờ mặc định trong config.yml
@@ -637,6 +644,7 @@ commands:
         dimension-done: '&a [prefix_Island] trong [world] đã được xây dựng.'
         done: '&a Xong! Đảo của bạn đã sẵn sàng!'
       pick: '&2 Chọn một đảo'
+      cannot-afford: '&c Bạn không đủ tiền! Chi phí: [cost]'
       unknown-blueprint: '&c Bản vẽ chưa được nạp.'
       on-first-login: '&a Xin chào! Chúng tôi sẽ tạo đảo của bạn trong vài giây nữa.'
       you-can-teleport-to-your-island: '&a Bạn có thể dịch chuyển về đảo nếu bạn muốn.'
@@ -1950,6 +1958,7 @@ panels:
         description: '[description]'
         uses: '&a Đã sử dụng [number]/[max]'
         unlimited: '&a Sử dụng không giới hạn được phép'
+        cost: '&e Chi phí: [cost]'
   language:
     title: '&2&l Chọn ngôn ngữ của bạn'
     edited: '&c Đã chuyển sang [lang]'

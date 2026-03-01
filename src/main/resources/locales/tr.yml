@@ -484,6 +484,13 @@ commands:
           &a Azaltmak için sağ tıklayın
         unlimited-times: Sınırsız
         maximum-times: Max [number] kez
+        cost: |
+          &a [prefix_Island] maliyeti
+          &a Sol tıklama +1
+          &a Sağ tıklama -1
+          &a Shift ile +/-100
+        no-cost: Ücretsiz
+        cost-amount: 'Maliyet: [cost]'
     resetflags:
       parameters: '[bayrak]'
       description: Config.yml'deki tüm adaları varsayılan etiket ayarlarına sıfırla
@@ -632,6 +639,7 @@ commands:
         dimension-done: '&a [prefix_Island] [world] içinde inşa edildi.'
         done: '&5Adan başarıyla oluşturuldu!'
       pick: '&9Ada gözükmüyorsa &e/ada'
+      cannot-afford: '&c Bunu karşılayamazsınız! Maliyet: [cost]'
       unknown-blueprint: '&cŞematik henüz yüklenemedi.'
       on-first-login: '&9Hoşgeldin, adan bir kaç saniye içerisinde hazır olacaktır!'
       you-can-teleport-to-your-island: '&6İstediğiniz zaman adanıza ışınlanabilirsiniz.'
@@ -1852,6 +1860,7 @@ panels:
         description: '[description]'
         uses: '&a Kullanıldı [number]/[max]'
         unlimited: '&a Sınırsız kullanım izni verilir'
+        cost: '&e Maliyet: [cost]'
   language:
     title: '&2&l Dilinizi seçin'
     edited: '&c [lang] olarak değiştirildi'

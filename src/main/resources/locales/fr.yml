@@ -519,6 +519,13 @@ commands:
           &a Clic droit pour décrémenter
         unlimited-times: Illimité
         maximum-times: Max [number] fois
+        cost: |
+          &a Coût de [prefix_Island]
+          &a Clic gauche +1
+          &a Clic droit -1
+          &a Shift pour +/-100
+        no-cost: Gratuit
+        cost-amount: 'Coût : [cost]'
     resetflags:
       parameters: '[flag]'
       description: >-
@@ -685,6 +692,7 @@ commands:
         dimension-done: '&Une île dans [world] est construite.'
         done: '&a C''est fait! Votre île est prête et vous attend!'
       pick: '&2 Choisissez une île'
+      cannot-afford: '&c Vous ne pouvez pas vous le permettre ! Coût : [cost]'
       unknown-blueprint: '&c Ce blueprint n''existe pas.'
       on-first-login: >-
         &bienvenue! Nous commencerons à préparer votre île dans quelques
@@ -1999,6 +2007,7 @@ panels:
         description: '[description]'
         uses: '&a Utilisé [number]/[max]'
         unlimited: '&a Utilisations illimitées autorisées'
+        cost: '&e Coût : [cost]'
   language:
     title: '&2&l Sélectionnez votre langue'
     edited: '&c Changé en [lang]'

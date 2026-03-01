@@ -515,6 +515,13 @@ commands:
           &a Jobb kattintás a csökkentéshez
         unlimited-times: Korlátlan
         maximum-times: Max [number] alkalommal
+        cost: |
+          &a [prefix_Island] költség
+          &a Bal kattintás +1
+          &a Jobb kattintás -1
+          &a Shift +/-100
+        no-cost: Ingyenes
+        cost-amount: 'Költség: [cost]'
     resetflags:
       parameters: '[zászló]'
       description: >-
@@ -677,6 +684,7 @@ commands:
         dimension-done: '&a sziget a [world] épül.'
         done: '&a Kész! A szigeted készen áll és rád vár!'
       pick: '&2 Válasszon ki egy szigetet'
+      cannot-afford: '&c Nem engedheted meg magadnak! Költség: [cost]'
       unknown-blueprint: '&c A tervrajz még nincs betöltve.'
       on-first-login: >-
         &a Üdvözlünk! Néhány másodpercen belül megkezdjük a [prefix_island]
@@ -2046,6 +2054,7 @@ panels:
         description: '[description]'
         uses: '&a Használt [number]/[max]'
         unlimited: '&a Korlátlan használat engedélyezve'
+        cost: '&e Költség: [cost]'
   language:
     title: '&2&l Válaszd ki a nyelved'
     edited: '&c Megváltozott [lang]-ra'

@@ -502,6 +502,13 @@ commands:
           &a Klik kanan untuk menurunkan
         unlimited-times: Tidak Terbatas
         maximum-times: Maksimal [number] kali
+        cost: |
+          &a Biaya [prefix_Island]
+          &a Klik kiri +1
+          &a Klik kanan -1
+          &a Shift untuk +/-100
+        no-cost: Gratis
+        cost-amount: 'Biaya: [cost]'
     resetflags:
       parameters: '[bendera]'
       description: Setel ulang semua pulau ke pengaturan bendera default di config.yml
@@ -655,6 +662,7 @@ commands:
         dimension-done: '&sebuah Pulau di [world] dibangun.'
         done: '&a Selesai! Pulau Anda sudah siap dan menunggu Anda!'
       pick: '&2 Pilih pulau'
+      cannot-afford: '&c Anda tidak mampu membeli ini! Biaya: [cost]'
       unknown-blueprint: '&c Cetak biru itu belum dimuat.'
       on-first-login: >-
         &a Selamat datang! Kami akan mulai mempersiapkan pulau Anda dalam
@@ -2007,6 +2015,7 @@ panels:
         description: '[description]'
         uses: '&a Digunakan [number]/[max]'
         unlimited: '&a Penggunaan tidak terbatas diizinkan'
+        cost: '&e Biaya: [cost]'
   language:
     title: '&2&l Pilih bahasa Anda'
     edited: '&c Diubah menjadi [lang]'

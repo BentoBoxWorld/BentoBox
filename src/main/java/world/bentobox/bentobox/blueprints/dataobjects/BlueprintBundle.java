@@ -67,6 +67,11 @@ public class BlueprintBundle implements DataObject {
     @Expose
     private int times = 0;
 
+    /**
+     * Cost of the bundle. 0 = free
+     */
+    @Expose
+    private double cost = 0;
 
     /**
      * @return the uniqueId
@@ -207,4 +212,17 @@ public class BlueprintBundle implements DataObject {
         this.times = times;
     }
 
+    /**
+     * @return the cost
+     */
+    public double getCost() {
+        return cost;
+    }
+
+    /**
+     * @param cost the cost to set
+     */
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
 }

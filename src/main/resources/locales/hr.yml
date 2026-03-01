@@ -485,6 +485,13 @@ commands:
           &a Desni klik za smanjenje
         unlimited-times: Neograničeno
         maximum-times: Maksimalno [number] puta
+        cost: |
+          &a Cijena [prefix_Island]
+          &a Lijevi klik +1
+          &a Desni klik -1
+          &a Shift za +/-100
+        no-cost: Besplatno
+        cost-amount: 'Cijena: [cost]'
     resetflags:
       parameters: '[zastava]'
       description: Vratite sve otoke na zadane postavke zastavice u config.yml
@@ -640,6 +647,7 @@ commands:
         dimension-done: '&a otok u [svijetu] je izgrađen.'
         done: '&a Gotovo! Vaš otok je spreman i čeka vas!'
       pick: '&2 Odaberite otok'
+      cannot-afford: '&c Ne možete si to priuštiti! Cijena: [cost]'
       unknown-blueprint: '&c Taj nacrt još nije učitan.'
       on-first-login: '&a Dobro došli! Počet ćemo pripremati vaš otok za nekoliko sekundi.'
       you-can-teleport-to-your-island: '&a Možete se teleportirati na svoj otok kad god želite.'
@@ -1979,6 +1987,7 @@ panels:
         description: '[description]'
         uses: '&a Koristio si [number]/[max]'
         unlimited: '&a Neograničena upotreba dozvoljena'
+        cost: '&e Cijena: [cost]'
   language:
     title: '&2&l Odaberite svoj jezik'
     edited: '&c Promijenjeno na [lang]'

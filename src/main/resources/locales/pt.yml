@@ -493,6 +493,13 @@ commands:
           &a Clique direito para diminuir
         unlimited-times: Ilimitado
         maximum-times: Max [number] vezes
+        cost: |
+          &a Custo de [prefix_Island]
+          &a Clique esquerdo +1
+          &a Clique direito -1
+          &a Shift para +/-100
+        no-cost: Grátis
+        cost-amount: 'Custo: [cost]'
     resetflags:
       parameters: '[bandeira]'
       description: >-
@@ -653,6 +660,7 @@ commands:
         dimension-done: '&a Ilha em [mundo] é construída.'
         done: '&a Concluído! Sua ilha está pronta e esperando por você!'
       pick: '&2 Escolha uma estilo:'
+      cannot-afford: '&c Você não pode pagar isso! Custo: [cost]'
       unknown-blueprint: '&c Esse blueprint ainda não foi carregado.'
       on-first-login: '&a Bem-vindo! Começaremos a preparar sua ilha em alguns segundos.'
       you-can-teleport-to-your-island: '&a Você pode se teletransportar para sua ilha quando quiser.'
@@ -1999,6 +2007,7 @@ panels:
         description: '[descrição]'
         uses: '&a Usado [número]/[máx]'
         unlimited: '&a Usos ilimitados permitidos'
+        cost: '&e Custo: [cost]'
   language:
     title: '&2&l Selecione seu idioma'
     edited: '&c Mudado para [lang]'

@@ -516,6 +516,13 @@ commands:
           &a Rechter muisklik om te verlagen
         unlimited-times: Onbeperkt
         maximum-times: Max [number] keer
+        cost: |
+          &a [prefix_Island] kosten
+          &a Linker muisklik +1
+          &a Rechter muisklik -1
+          &a Shift voor +/-100
+        no-cost: Gratis
+        cost-amount: 'Kosten: [cost]'
     resetflags:
       parameters: '[vlag]'
       description: Reset alle eilanden naar de standaard vlaginstellingen in config.yml
@@ -680,6 +687,7 @@ commands:
         dimension-done: '&a [prefix_Island] in [wereld] is gebouwd.'
         done: '&a Klaar! Je eiland staat klaar en wacht op je!'
       pick: '&2 Kies een eiland'
+      cannot-afford: '&c Je kunt dit niet betalen! Kosten: [cost]'
       unknown-blueprint: '&c Die blauwdruk is nog niet geladen.'
       on-first-login: >-
         &a welkom! We zullen binnen een paar seconden beginnen met het
@@ -2026,6 +2034,7 @@ panels:
         description: '[beschrijving]'
         uses: '&a Gebruikt [number]/[max]'
         unlimited: '&a Onbeperkt aantal gebruiken toegestaan'
+        cost: '&e Kosten: [cost]'
   language:
     title: '&2&l Selecteer je taal'
     edited: '&c Gewijzigd naar [lang]'

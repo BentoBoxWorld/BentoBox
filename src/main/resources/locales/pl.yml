@@ -490,6 +490,13 @@ commands:
           &a Prawy klik, aby zmniejszyć
         unlimited-times: Nieograniczone
         maximum-times: Maksymalnie [number] razy
+        cost: |
+          &a Koszt [prefix_Island]
+          &a Lewy klik +1
+          &a Prawy klik -1
+          &a Shift dla +/-100
+        no-cost: Bezpłatne
+        cost-amount: 'Koszt: [cost]'
     resetflags:
       parameters: '[flaga]'
       description: Zresetuj wszystkie wyspy do domyślnych ustawień flag w config.yml
@@ -650,6 +657,7 @@ commands:
         dimension-done: '&a [prefix_Island] w [world] jest zbudowana.'
         done: '&aGotowe! Twoja wyspa jest gotowa i czeka na ciebie!'
       pick: '&2 Wybierz wyspę'
+      cannot-afford: '&c Nie stać cię na to! Koszt: [cost]'
       unknown-blueprint: '&c Ten blueprint nie został jeszcze załadowany.'
       on-first-login: '&a Witamy! Zaczniemy przygotowywać twoją wyspę za kilka sekund.'
       you-can-teleport-to-your-island: '&aMożesz teleportować się na swoją wyspę, kiedy chcesz.'
@@ -1952,6 +1960,7 @@ panels:
         description: '[opis]'
         uses: '&a Użyto [number]/[max]'
         unlimited: '&a Nielimitowane użycia dozwolone'
+        cost: '&e Koszt: [cost]'
   language:
     title: '&2&l Wybierz swój język'
     edited: '&c Zmieniono na [lang]'

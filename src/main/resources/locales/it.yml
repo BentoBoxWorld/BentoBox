@@ -512,6 +512,13 @@ commands:
           &a Clicca destro per decrementare
         unlimited-times: Illimitato
         maximum-times: Massimo [number] volte
+        cost: |
+          &a Costo [prefix_Island]
+          &a Clic sinistro +1
+          &a Clic destro -1
+          &a Shift per +/-100
+        no-cost: Gratuito
+        cost-amount: 'Costo: [cost]'
     resetflags:
       parameters: '[flag]'
       description: Reimposta le impostazioni di tutte le isole a quelle in config.yml
@@ -672,6 +679,7 @@ commands:
         dimension-done: '&a [prefix_Island] in [world] è costruita.'
         done: '&a Fatto! La tua isola è pronta e ti aspetta!'
       pick: '&aScegli un''isola'
+      cannot-afford: '&c Non puoi permettertelo! Costo: [cost]'
       unknown-blueprint: '&cQuella blueprint non è stata ancora caricata.'
       on-first-login: '&a Benvenuto! La tua isola personale sarà pronta tra qualche secondo.'
       you-can-teleport-to-your-island: '&a Puoi teletrasportarti alla isola quando puoi.'
@@ -1975,6 +1983,7 @@ panels:
         description: '[description]'
         uses: '&a Usati [number]/[max]'
         unlimited: '&a Utilizzi illimitati consentiti'
+        cost: '&e Costo: [cost]'
   language:
     title: '&2&l Seleziona la tua lingua'
     edited: '&c Cambiato in [lang]'

@@ -429,6 +429,13 @@ commands:
           &a 右クリックして減少します
         unlimited-times: 無制限
         maximum-times: max [number]
+        cost: |
+          &a [prefix_Island]のコスト
+          &a 左クリック +1
+          &a 右クリック -1
+          &a Shiftで +/-100
+        no-cost: 無料
+        cost-amount: 'コスト: [cost]'
     resetflags:
       parameters: '[flag]'
       description: すべての島をconfig.ymlのデフォルトのフラグ設定にリセットします
@@ -569,6 +576,7 @@ commands:
         dimension-done: '&a [world]に島が建設されます。'
         done: '&a完了しました。あなたの島の準備が整い、あなたを待っています！'
       pick: '&2島を選ぶ'
+      cannot-afford: '&c 購入できません！コスト: [cost]'
       unknown-blueprint: '&cそのブループリントはまだロードされていません。'
       on-first-login: '&aWelcome！数秒で島の準備を開始します。'
       you-can-teleport-to-your-island: '&a必要なときに島にテレポートできます。'
@@ -1839,6 +1847,7 @@ panels:
         description: '[description]'
         uses: '&a 使用[number]/[max]'
         unlimited: '&a 許可されている無制限の使用'
+        cost: '&e コスト: [cost]'
   language:
     title: '&a あなたの言語を選択します'
     edited: '&c [lang]に変更'

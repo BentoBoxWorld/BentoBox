@@ -492,6 +492,13 @@ commands:
           &a Labā peles klikšķis, lai samazinātu
         unlimited-times: Neierobežots
         maximum-times: Maks. [number] reizes
+        cost: |
+          &a [prefix_Island] izmaksas
+          &a Kreisais klikšķis +1
+          &a Labais klikšķis -1
+          &a Shift priekš +/-100
+        no-cost: Bezmaksas
+        cost-amount: 'Izmaksas: [cost]'
     resetflags:
       parameters: '[karogs]'
       description: Atiestatī visu salu noklusējuma karodziņu iestatījumus no config.yml
@@ -642,6 +649,7 @@ commands:
         dimension-done: '&a [prefix_Island] pasaulē [world] ir uzbūvēta.'
         done: '&a Darīts! Tava sala ir gatava un gaida tevi!'
       pick: '&aIzvēlies salas veidu'
+      cannot-afford: '&c Jūs nevarat to atļauties! Izmaksas: [cost]'
       unknown-blueprint: '&cŠī shēma nav ielādēta vai tā neeksistē.'
       on-first-login: >-
         &a Sveicināts! Mums ir nepieciešamas pāris sekundes tavas salas
@@ -2005,6 +2013,7 @@ panels:
         description: '[description]'
         uses: '&a Izmantots [number]/[max]'
         unlimited: '&a Neierobeotas izmantošanas atļautas'
+        cost: '&e Izmaksas: [cost]'
   language:
     title: '&2&l Izvēlieties savu valodu'
     edited: '&c Mainīts uz [lang]'
