@@ -341,87 +341,13 @@ public class PlaceholderListPanel extends AbstractPanel {
     }
 
     @Override
-    @Nullable
-    protected PanelItem createNextButton(@NonNull ItemTemplateRecord template,
-            TemplatedPanel.ItemSlot slot) {
-        int size = displayItems.size();
-        int perPage = slot.amountMap().getOrDefault(PLACEHOLDER_TYPE, 1);
-        if (size <= perPage || (double) size / perPage <= pageIndex + 1) {
-            return null;
-        }
-
-        int nextPage = pageIndex + 2;
-        PanelItemBuilder builder = new PanelItemBuilder();
-
-        if (template.icon() != null) {
-            var clone = template.icon().clone();
-            if ((boolean) template.dataMap().getOrDefault(INDEXING, false)) {
-                clone.setAmount(nextPage);
-            }
-            builder.icon(clone);
-        }
-        if (template.title() != null) {
-            builder.name(user.getTranslation(template.title()));
-        }
-        if (template.description() != null) {
-            builder.description(user.getTranslation(template.description(),
-                    "[number]", String.valueOf(nextPage)));
-        }
-
-        builder.clickHandler((panel, u, clickType, i) -> {
-            template.actions().forEach(action -> {
-                if ((clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
-                        && NEXT.equalsIgnoreCase(action.actionType())) {
-                    pageIndex++;
-                    build();
-                }
-            });
-            return true;
-        });
-
-        addTooltips(builder, template);
-        return builder.build();
+    protected int getPagedItemCount() {
+        return displayItems.size();
     }
 
     @Override
-    @Nullable
-    protected PanelItem createPreviousButton(@NonNull ItemTemplateRecord template,
-            TemplatedPanel.ItemSlot slot) {
-        if (pageIndex == 0) {
-            return null;
-        }
-
-        int prevPage = pageIndex;
-        PanelItemBuilder builder = new PanelItemBuilder();
-
-        if (template.icon() != null) {
-            var clone = template.icon().clone();
-            if ((boolean) template.dataMap().getOrDefault(INDEXING, false)) {
-                clone.setAmount(prevPage);
-            }
-            builder.icon(clone);
-        }
-        if (template.title() != null) {
-            builder.name(user.getTranslation(template.title()));
-        }
-        if (template.description() != null) {
-            builder.description(user.getTranslation(template.description(),
-                    "[number]", String.valueOf(prevPage)));
-        }
-
-        builder.clickHandler((panel, u, clickType, i) -> {
-            template.actions().forEach(action -> {
-                if ((clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
-                        && PREVIOUS.equalsIgnoreCase(action.actionType())) {
-                    pageIndex--;
-                    build();
-                }
-            });
-            return true;
-        });
-
-        addTooltips(builder, template);
-        return builder.build();
+    protected String getPagedItemType() {
+        return PLACEHOLDER_TYPE;
     }
 
     // -------------------------------------------------------------------------
@@ -576,15 +502,4 @@ public class PlaceholderListPanel extends AbstractPanel {
         }
     }
 
-    private void addTooltips(@NonNull PanelItemBuilder builder, @NonNull ItemTemplateRecord template) {
-        List<String> tooltips = template.actions().stream()
-                .filter(a -> a.tooltip() != null)
-                .map(a -> user.getTranslation(a.tooltip()))
-                .filter(t -> !t.isBlank())
-                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
-        if (!tooltips.isEmpty()) {
-            builder.description("");
-            builder.description(tooltips);
-        }
-    }
 }
