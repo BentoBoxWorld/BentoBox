@@ -248,7 +248,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * subcommands until it finds the right object and then runs execute on it.
      */
     @Override
-    public boolean execute(@NonNull CommandSender sender, @NonNull String label, String[] args) {
+    public boolean execute(@NonNull CommandSender sender, @NonNull String label, String @NonNull [] args) {
         // Get the User instance for this sender
         User user = User.getInstance(sender);
         // Fire an event to see if this command should be cancelled
@@ -691,7 +691,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     @Override
     @NonNull
     public List<String> tabComplete(final @NonNull CommandSender sender, final @NonNull String alias,
-            final String[] args) {
+            final String @NonNull [] args) {
         // Get command object based on args entered so far
         CompositeCommand command = getCommandFromArgs(args);
         // Check for console and permissions

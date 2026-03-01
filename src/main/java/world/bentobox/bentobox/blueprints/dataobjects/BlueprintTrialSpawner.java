@@ -13,6 +13,7 @@ import org.bukkit.entity.EntitySnapshot;
 import org.bukkit.entity.EntityType;
 import org.bukkit.loot.LootTable;
 import org.bukkit.spawner.TrialSpawnerConfiguration;
+import org.eclipse.jdt.annotation.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.gson.annotations.Expose;
@@ -227,14 +228,14 @@ public class BlueprintTrialSpawner {
     /**
      * @return the lootTableMap
      */
-    public Map<LootTableSerial, Integer> getLootTableMap() {
+    public @NonNull Map<LootTableSerial, Integer> getLootTableMap() {
         return lootTableMap;
     }
 
     /**
      * @param lootTableMap the lootTableMap to set
      */
-    public void setLootTableMap(Map<LootTableSerial, Integer> lootTableMap) {
+    public void setLootTableMap(@NonNull Map<LootTableSerial, Integer> lootTableMap) {
         this.lootTableMap = lootTableMap;
     }
 
@@ -299,7 +300,7 @@ public class BlueprintTrialSpawner {
         return "BlueprintTrialSpawner [ominous=" + ominous + ", "
                 + (spawnedType != null ? "spawnedType=" + spawnedType + ", " : "") + "addSimulEnts=" + addSimulEnts
                 + ", addSpawnsB4Cool=" + addSpawnsB4Cool + ", baseSimEnts=" + baseSimEnts + ", delay=" + delay + ", "
-                + (lootTableMap != null ? "lootTableMap=" + lootTableMap + ", " : "") + "spawnRange=" + spawnRange
+                + "lootTableMap=" + lootTableMap + ", " + "spawnRange=" + spawnRange
                 + ", requiredPlayerRange=" + requiredPlayerRange + ", playerRange=" + playerRange
                 + ", baseSpawnsB4Cool=" + baseSpawnsB4Cool + "]";
     }

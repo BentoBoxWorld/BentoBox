@@ -127,12 +127,12 @@ public class BentoBoxRankCommand extends CompositeCommand {
         if (args.size() == 2) {
             return Optional.of(List.of("add", REMOVE, "list"));
         }
-        if (args.size() > 1 && "add".equals(firstElement)) {
+        if ("add".equals(firstElement)) {
             List<String> options = new ArrayList<>(RanksManager.DEFAULT_RANKS.keySet());
             options.removeIf(RanksManager.getInstance().getRanks().keySet()::contains);
             return Optional.of(options);
         }
-        if (args.size() > 1 && REMOVE.equals(firstElement)) {
+        if (REMOVE.equals(firstElement)) {
             return Optional.of(new ArrayList<>(RanksManager.getInstance().getRanks().keySet()));
         }
         return Optional.empty();

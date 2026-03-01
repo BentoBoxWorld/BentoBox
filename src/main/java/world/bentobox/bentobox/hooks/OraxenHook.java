@@ -52,10 +52,7 @@ public class OraxenHook extends Hook {
     @Override
     public boolean hook() {
         // See if Oraxen is around
-        if (Bukkit.getPluginManager().getPlugin("Oraxen") == null) {
-            return false;
-        }
-        return true;
+        return Bukkit.getPluginManager().getPlugin("Oraxen") != null;
     }
 
     /**
