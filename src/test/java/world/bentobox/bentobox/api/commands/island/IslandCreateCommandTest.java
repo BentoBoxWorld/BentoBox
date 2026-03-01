@@ -39,6 +39,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
@@ -361,5 +362,123 @@ public class IslandCreateCommandTest extends CommonTestSetup {
         assertTrue(cc.execute(user, "", Collections.emptyList()));
         // Panel is shown, not the creation message
         verify(user, never()).sendMessage("commands.island.create.creating-island");
+    }
+
+    /**
+     * Test method for cost check - cannot afford
+     */
+    @Test
+    public void testMakeIslandWithCostCannotAfford() {
+        // Multiple bundles
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        map.put("default", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        // Economy enabled
+        when(settings.isUseEconomy()).thenReturn(true);
+        // Vault present but cannot afford
+        VaultHook vault = mock(VaultHook.class);
+        when(vault.has(any(User.class), eq(100.0))).thenReturn(false);
+        when(vault.format(eq(100.0))).thenReturn("$100.00");
+        when(plugin.getVault()).thenReturn(Optional.of(vault));
+
+        assertFalse(cc.execute(user, "", List.of("custom")));
+        verify(user).sendMessage("commands.island.create.cannot-afford", "[cost]", "$100.00");
+        verify(user, never()).sendMessage("commands.island.create.creating-island");
+    }
+
+    /**
+     * Test method for cost check - can afford
+     */
+    @Test
+    public void testMakeIslandWithCostCanAfford() {
+        // Multiple bundles
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        map.put("default", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        // Economy enabled
+        when(settings.isUseEconomy()).thenReturn(true);
+        // Vault present and can afford
+        VaultHook vault = mock(VaultHook.class);
+        when(vault.has(any(User.class), eq(100.0))).thenReturn(true);
+        when(vault.format(eq(100.0))).thenReturn("$100.00");
+        when(plugin.getVault()).thenReturn(Optional.of(vault));
+
+        assertTrue(cc.execute(user, "", List.of("custom")));
+        verify(user).sendMessage("commands.island.create.creating-island");
+        verify(vault).withdraw(user, 100.0);
+    }
+
+    /**
+     * Test method for cost check - single bundle ignores cost
+     */
+    @Test
+    public void testMakeIslandCostIgnoredSingleBundle() {
+        // Single bundle with cost
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        when(settings.isUseEconomy()).thenReturn(true);
+
+        assertTrue(cc.execute(user, "", List.of("custom")));
+        verify(user).sendMessage("commands.island.create.creating-island");
+        // No vault interaction
+        verify(plugin, never()).getVault();
+    }
+
+    /**
+     * Test method for cost check - economy disabled ignores cost
+     */
+    @Test
+    public void testMakeIslandCostIgnoredNoEconomy() {
+        // Multiple bundles
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        map.put("default", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        // Economy disabled
+        when(settings.isUseEconomy()).thenReturn(false);
+
+        assertTrue(cc.execute(user, "", List.of("custom")));
+        verify(user).sendMessage("commands.island.create.creating-island");
+    }
+
+    /**
+     * Test method for cost check - no vault ignores cost
+     */
+    @Test
+    public void testMakeIslandCostIgnoredNoVault() {
+        // Multiple bundles
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        map.put("default", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        when(settings.isUseEconomy()).thenReturn(true);
+        // No vault
+        when(plugin.getVault()).thenReturn(Optional.empty());
+
+        assertTrue(cc.execute(user, "", List.of("custom")));
+        verify(user).sendMessage("commands.island.create.creating-island");
     }
 }

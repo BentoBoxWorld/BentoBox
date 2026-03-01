@@ -203,6 +203,10 @@ public class BlueprintManagementPanel {
         }
         // Preferred slot
         pb.item(40, getSlotIcon(addon, bb));
+        // Cost editor
+        if (plugin.getSettings().isUseEconomy() && plugin.getVault().isPresent()) {
+            pb.item(41, getCostIcon(bb));
+        }
         // Panel has a Back icon.
         pb.item(44, new PanelItemBuilder().icon(Material.OAK_DOOR).name(t("back")).clickHandler((panel, u, clickType, slot) -> {
             openPanel();
@@ -228,6 +232,32 @@ public class BlueprintManagementPanel {
                     // Save
                     plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
                     panel.getInventory().setItem(42, getTimesIcon(bb).getItem());
+                    return true;
+                }).build();
+    }
+
+    private PanelItem getCostIcon(BlueprintBundle bb) {
+        return new PanelItemBuilder().icon(Material.GOLD_INGOT).name(t("cost"))
+                .description(bb.getCost() == 0 ? t("no-cost")
+                        : t("cost-amount", TextVariables.COST,
+                                plugin.getVault().map(vault -> vault.format(bb.getCost()))
+                                        .orElse(String.valueOf(bb.getCost()))))
+                .clickHandler((panel, u, clickType, slot) -> {
+                    u.getPlayer().playSound(u.getLocation(), Sound.UI_BUTTON_CLICK, 1F, 1F);
+                    if (clickType == ClickType.LEFT) {
+                        bb.setCost(bb.getCost() + 1.0);
+                    } else if (clickType == ClickType.SHIFT_LEFT) {
+                        bb.setCost(bb.getCost() + 100.0);
+                    } else if (clickType == ClickType.RIGHT && bb.getCost() >= 1.0) {
+                        bb.setCost(bb.getCost() - 1.0);
+                    } else if (clickType == ClickType.SHIFT_RIGHT && bb.getCost() >= 100.0) {
+                        bb.setCost(bb.getCost() - 100.0);
+                    }
+                    if (bb.getCost() < 0) {
+                        bb.setCost(0);
+                    }
+                    plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
+                    panel.getInventory().setItem(41, getCostIcon(bb).getItem());
                     return true;
                 }).build();
     }

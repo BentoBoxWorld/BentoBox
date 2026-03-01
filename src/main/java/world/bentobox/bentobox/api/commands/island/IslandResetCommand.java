@@ -12,6 +12,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
@@ -183,6 +184,9 @@ public class IslandResetCommand extends ConfirmableCommand {
      * @return true if reset was successful
      */
     private boolean resetIsland(User user, String name) {
+        if (!checkCost(user, name, false)) {
+            return false;
+        }
         // Get the player's old island
         Island oldIsland = getIslands().getIsland(getWorld(), user);
         deleteOldIsland(user, oldIsland);
@@ -201,8 +205,47 @@ public class IslandResetCommand extends ConfirmableCommand {
             user.sendMessage(e.getMessage());
             return false;
         }
+        checkCost(user, name, true); // Charge after success
         setCooldown(user.getUniqueId(), getSettings().getResetCooldown());
         return true;
+    }
+
+    /**
+     * Checks if the user can afford the blueprint bundle cost, and optionally charges them.
+     * Cost is only applied when reset charging is enabled, multiple bundles are available,
+     * and economy is enabled.
+     *
+     * @param user The user to check/charge
+     * @param name The blueprint bundle name
+     * @param charge If true, withdraw the cost; if false, just check affordability
+     * @return true if cost check passes (affordable or not applicable), false if cannot afford
+     */
+    private boolean checkCost(User user, String name, boolean charge) {
+        if (!getPlugin().getSettings().isChargeForBlueprintOnReset()) {
+            return true; // Reset cost disabled by config
+        }
+        if (getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon()).size() <= 1) {
+            return true;
+        }
+        if (!getPlugin().getSettings().isUseEconomy()) {
+            return true;
+        }
+        BlueprintBundle bundle = getPlugin().getBlueprintsManager()
+                .getBlueprintBundles(getAddon()).get(name);
+        if (bundle == null || bundle.getCost() <= 0) {
+            return true;
+        }
+        return getPlugin().getVault().map(vault -> {
+            if (!vault.has(user, bundle.getCost())) {
+                user.sendMessage("commands.island.create.cannot-afford",
+                        TextVariables.COST, vault.format(bundle.getCost()));
+                return false;
+            }
+            if (charge) {
+                vault.withdraw(user, bundle.getCost());
+            }
+            return true;
+        }).orElse(true);
     }
 
     /**

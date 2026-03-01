@@ -41,6 +41,11 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.use-economy")
     private boolean useEconomy = true;
 
+    @ConfigComment("Whether to charge the blueprint bundle cost when a player resets their island.")
+    @ConfigComment("If false, only island creation will charge the cost. Default is false.")
+    @ConfigEntry(path = "general.charge-for-blueprint-on-reset")
+    private boolean chargeForBlueprintOnReset = false;
+
     /* COMMANDS */
     @ConfigComment("Console commands to run when BentoBox has loaded all worlds and addons.")
     @ConfigComment("Commands are run as the console.")
@@ -379,6 +384,14 @@ public class Settings implements ConfigObject {
 
     public void setUseEconomy(boolean useEconomy) {
         this.useEconomy = useEconomy;
+    }
+
+    public boolean isChargeForBlueprintOnReset() {
+        return chargeForBlueprintOnReset;
+    }
+
+    public void setChargeForBlueprintOnReset(boolean chargeForBlueprintOnReset) {
+        this.chargeForBlueprintOnReset = chargeForBlueprintOnReset;
     }
 
     public DatabaseType getDatabaseType() {

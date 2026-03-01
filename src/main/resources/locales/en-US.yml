@@ -477,6 +477,13 @@ commands:
           &a Right click to decrement
         unlimited-times: Unlimited
         maximum-times: Max [number] times
+        cost: |
+          &a Bundle cost
+          &a Left click +1
+          &a Right click -1
+          &a Shift for +/-100
+        no-cost: Free
+        cost-amount: 'Cost: [cost]'
     resetflags:
       parameters: '[flag]'
       description: Reset all [prefix_Islands] to default flag settings in config.yml
@@ -629,6 +636,7 @@ commands:
         dimension-done: '&a [prefix_Island] in [world] is constructed.'
         done: '&a Done! Your [prefix_island] is ready and waiting for you!'
       pick: '&2 Pick [prefix_an-island]'
+      cannot-afford: '&c You cannot afford this! Cost: [cost]'
       unknown-blueprint: '&c That blueprint has not been loaded yet.'
       on-first-login: '&a Welcome! We will start preparing your [prefix_island] in
         a few seconds.'
@@ -1973,6 +1981,7 @@ panels:
         description: '[description]'
         uses: '&a Used [number]/[max]'
         unlimited: '&a Unlimited uses allowed'
+        cost: '&e Cost: [cost]'
   # The section of translations used in Language Panel
   language:
     title: '&2&l Select your language'
