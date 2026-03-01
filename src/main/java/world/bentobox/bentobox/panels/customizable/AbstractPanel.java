@@ -1,14 +1,20 @@
 package world.bentobox.bentobox.panels.customizable;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.event.inventory.ClickType;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
+import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
 import world.bentobox.bentobox.api.user.User;
 
@@ -93,10 +99,118 @@ public abstract class AbstractPanel {
         this.pageIndex = 0; // Start with the first page by default
     }
 
-    // Abstract methods for creating next and previous buttons
-    protected abstract PanelItem createNextButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot);
+    /**
+     * Returns the total number of paged items for default next/previous button logic.
+     * Subclasses that rely on the default {@link #createNextButton} / {@link #createPreviousButton}
+     * implementations must override this.
+     */
+    protected int getPagedItemCount() {
+        return 0;
+    }
 
-    protected abstract PanelItem createPreviousButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot);
+    /**
+     * Returns the item-type key used to look up the per-page amount in
+     * {@link TemplatedPanel.ItemSlot#amountMap()}.
+     * Subclasses that rely on the default {@link #createNextButton} / {@link #createPreviousButton}
+     * implementations must override this.
+     */
+    protected String getPagedItemType() {
+        return "";
+    }
+
+    @Nullable
+    protected PanelItem createNextButton(@NonNull ItemTemplateRecord template,
+            TemplatedPanel.ItemSlot slot) {
+        int size = getPagedItemCount();
+        int perPage = slot.amountMap().getOrDefault(getPagedItemType(), 1);
+        if (size <= perPage || (double) size / perPage <= pageIndex + 1) {
+            return null;
+        }
+
+        int nextPage = pageIndex + 2;
+        PanelItemBuilder builder = new PanelItemBuilder();
+
+        if (template.icon() != null) {
+            var clone = template.icon().clone();
+            if ((boolean) template.dataMap().getOrDefault(INDEXING, false)) {
+                clone.setAmount(nextPage);
+            }
+            builder.icon(clone);
+        }
+        if (template.title() != null) {
+            builder.name(user.getTranslation(template.title()));
+        }
+        if (template.description() != null) {
+            builder.description(user.getTranslation(template.description(),
+                    "[number]", String.valueOf(nextPage)));
+        }
+
+        builder.clickHandler((panel, u, clickType, i) -> {
+            template.actions().forEach(action -> {
+                if ((clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
+                        && NEXT.equalsIgnoreCase(action.actionType())) {
+                    pageIndex++;
+                    build();
+                }
+            });
+            return true;
+        });
+
+        addTooltips(builder, template);
+        return builder.build();
+    }
+
+    @Nullable
+    protected PanelItem createPreviousButton(@NonNull ItemTemplateRecord template,
+            TemplatedPanel.ItemSlot slot) {
+        if (pageIndex == 0) {
+            return null;
+        }
+
+        int prevPage = pageIndex;
+        PanelItemBuilder builder = new PanelItemBuilder();
+
+        if (template.icon() != null) {
+            var clone = template.icon().clone();
+            if ((boolean) template.dataMap().getOrDefault(INDEXING, false)) {
+                clone.setAmount(prevPage);
+            }
+            builder.icon(clone);
+        }
+        if (template.title() != null) {
+            builder.name(user.getTranslation(template.title()));
+        }
+        if (template.description() != null) {
+            builder.description(user.getTranslation(template.description(),
+                    "[number]", String.valueOf(prevPage)));
+        }
+
+        builder.clickHandler((panel, u, clickType, i) -> {
+            template.actions().forEach(action -> {
+                if ((clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
+                        && PREVIOUS.equalsIgnoreCase(action.actionType())) {
+                    pageIndex--;
+                    build();
+                }
+            });
+            return true;
+        });
+
+        addTooltips(builder, template);
+        return builder.build();
+    }
+
+    protected void addTooltips(@NonNull PanelItemBuilder builder, @NonNull ItemTemplateRecord template) {
+        List<String> tooltips = template.actions().stream()
+                .filter(a -> a.tooltip() != null)
+                .map(a -> user.getTranslation(a.tooltip()))
+                .filter(t -> !t.isBlank())
+                .collect(Collectors.toCollection(ArrayList::new));
+        if (!tooltips.isEmpty()) {
+            builder.description("");
+            builder.description(tooltips);
+        }
+    }
 
     // Abstract build method to allow each panel to define its own layout
     protected abstract void build();
