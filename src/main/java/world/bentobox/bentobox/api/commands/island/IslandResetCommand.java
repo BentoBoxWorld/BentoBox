@@ -12,7 +12,6 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
@@ -224,28 +223,7 @@ public class IslandResetCommand extends ConfirmableCommand {
         if (!getPlugin().getSettings().isChargeForBlueprintOnReset()) {
             return true; // Reset cost disabled by config
         }
-        if (getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon()).size() <= 1) {
-            return true;
-        }
-        if (!getPlugin().getSettings().isUseEconomy()) {
-            return true;
-        }
-        BlueprintBundle bundle = getPlugin().getBlueprintsManager()
-                .getBlueprintBundles(getAddon()).get(name);
-        if (bundle == null || bundle.getCost() <= 0) {
-            return true;
-        }
-        return getPlugin().getVault().map(vault -> {
-            if (!vault.has(user, bundle.getCost())) {
-                user.sendMessage("commands.island.create.cannot-afford",
-                        TextVariables.COST, vault.format(bundle.getCost()));
-                return false;
-            }
-            if (charge) {
-                vault.withdraw(user, bundle.getCost());
-            }
-            return true;
-        }).orElse(true);
+        return BlueprintCostHelper.checkCost(getPlugin(), getAddon(), user, name, charge);
     }
 
     /**
