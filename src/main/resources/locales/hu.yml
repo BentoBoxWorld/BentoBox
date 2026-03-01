@@ -515,6 +515,13 @@ commands:
           &a Jobb kattintás a csökkentéshez
         unlimited-times: Korlátlan
         maximum-times: Max [number] alkalommal
+        cost: |
+          &a [prefix_Island] költség
+          &a Bal kattintás +1
+          &a Jobb kattintás -1
+          &a Shift +/-100
+        no-cost: Ingyenes
+        cost-amount: 'Költség: [cost]'
     resetflags:
       parameters: '[zászló]'
       description: >-

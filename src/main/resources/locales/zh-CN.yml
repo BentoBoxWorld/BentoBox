@@ -446,6 +446,13 @@ commands:
           &7右键点击 &7- &c减少
         unlimited-times: '&e无限'
         maximum-times: '&f每个玩家最多可用次数: [number]'
+        cost: |
+          &a [prefix_Island]费用
+          &a 左键点击 +1
+          &a 右键点击 -1
+          &a Shift +/-100
+        no-cost: 免费
+        cost-amount: '费用: [cost]'
     resetflags:
       parameters: '&7[flag]'
       description: 将所有岛屿的保护标志设置为config.yml中默认值

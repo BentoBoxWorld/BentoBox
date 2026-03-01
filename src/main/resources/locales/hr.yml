@@ -485,6 +485,13 @@ commands:
           &a Desni klik za smanjenje
         unlimited-times: Neograničeno
         maximum-times: Maksimalno [number] puta
+        cost: |
+          &a Cijena [prefix_Island]
+          &a Lijevi klik +1
+          &a Desni klik -1
+          &a Shift za +/-100
+        no-cost: Besplatno
+        cost-amount: 'Cijena: [cost]'
     resetflags:
       parameters: '[zastava]'
       description: Vratite sve otoke na zadane postavke zastavice u config.yml

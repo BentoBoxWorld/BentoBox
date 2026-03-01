@@ -490,6 +490,13 @@ commands:
           &a Prawy klik, aby zmniejszyć
         unlimited-times: Nieograniczone
         maximum-times: Maksymalnie [number] razy
+        cost: |
+          &a Koszt [prefix_Island]
+          &a Lewy klik +1
+          &a Prawy klik -1
+          &a Shift dla +/-100
+        no-cost: Bezpłatne
+        cost-amount: 'Koszt: [cost]'
     resetflags:
       parameters: '[flaga]'
       description: Zresetuj wszystkie wyspy do domyślnych ustawień flag w config.yml

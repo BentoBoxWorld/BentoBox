@@ -516,6 +516,13 @@ commands:
           &a Rechter muisklik om te verlagen
         unlimited-times: Onbeperkt
         maximum-times: Max [number] keer
+        cost: |
+          &a [prefix_Island] kosten
+          &a Linker muisklik +1
+          &a Rechter muisklik -1
+          &a Shift voor +/-100
+        no-cost: Gratis
+        cost-amount: 'Kosten: [cost]'
     resetflags:
       parameters: '[vlag]'
       description: Reset alle eilanden naar de standaard vlaginstellingen in config.yml

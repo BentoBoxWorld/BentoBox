@@ -481,6 +481,13 @@ commands:
           &a Nhấp chuột phải để giảm
         unlimited-times: Vô hạn
         maximum-times: Tối đa [number] lần
+        cost: |
+          &a Chi phí [prefix_Island]
+          &a Nhấp chuột trái +1
+          &a Nhấp chuột phải -1
+          &a Shift để +/-100
+        no-cost: Miễn phí
+        cost-amount: 'Chi phí: [cost]'
     resetflags:
       parameters: '[flag]'
       description: Đặt lại tất cả các đảo về cài đặt cờ mặc định trong config.yml

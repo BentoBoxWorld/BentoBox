@@ -497,6 +497,13 @@ commands:
           &a Faceți clic dreapta pentru a reduce
         unlimited-times: Nelimitat
         maximum-times: Max [număr] ori
+        cost: |
+          &a Costul [prefix_Island]
+          &a Clic stânga +1
+          &a Clic dreapta -1
+          &a Shift pentru +/-100
+        no-cost: Gratuit
+        cost-amount: 'Cost: [cost]'
     resetflags:
       parameters: '[pavilion]'
       description: >-

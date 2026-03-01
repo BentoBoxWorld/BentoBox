@@ -429,6 +429,13 @@ commands:
           &a 右クリックして減少します
         unlimited-times: 無制限
         maximum-times: max [number]
+        cost: |
+          &a [prefix_Island]のコスト
+          &a 左クリック +1
+          &a 右クリック -1
+          &a Shiftで +/-100
+        no-cost: 無料
+        cost-amount: 'コスト: [cost]'
     resetflags:
       parameters: '[flag]'
       description: すべての島をconfig.ymlのデフォルトのフラグ設定にリセットします

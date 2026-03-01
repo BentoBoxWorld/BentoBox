@@ -490,6 +490,13 @@ commands:
           &a Clique direito para diminuir
         unlimited-times: Ilimitado
         maximum-times: Max [number] vezes
+        cost: |
+          &a Custo de [prefix_Island]
+          &a Clique esquerdo +1
+          &a Clique direito -1
+          &a Shift para +/-100
+        no-cost: Grátis
+        cost-amount: 'Custo: [cost]'
     resetflags:
       parameters: '[opção]'
       description: Reiniciar todas as ilhas para configurações padrão da config.yml

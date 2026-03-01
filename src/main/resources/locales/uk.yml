@@ -437,6 +437,13 @@ commands:
           &a ПКМ — зменшити
         unlimited-times: Без обмежень
         maximum-times: Макс [number] разів
+        cost: |
+          &a Вартість [prefix_Island]
+          &a ЛКМ +1
+          &a ПКМ -1
+          &a Shift для +/-100
+        no-cost: Безкоштовно
+        cost-amount: 'Вартість: [cost]'
     resetflags:
       parameters: '[flag]'
       description: Скинути всі [prefix_Islands] до типових прапорів у config.yml

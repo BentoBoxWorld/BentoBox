@@ -484,6 +484,13 @@ commands:
           &a Azaltmak için sağ tıklayın
         unlimited-times: Sınırsız
         maximum-times: Max [number] kez
+        cost: |
+          &a [prefix_Island] maliyeti
+          &a Sol tıklama +1
+          &a Sağ tıklama -1
+          &a Shift ile +/-100
+        no-cost: Ücretsiz
+        cost-amount: 'Maliyet: [cost]'
     resetflags:
       parameters: '[bayrak]'
       description: Config.yml'deki tüm adaları varsayılan etiket ayarlarına sıfırla

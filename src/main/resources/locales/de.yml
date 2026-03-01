@@ -505,6 +505,13 @@ commands:
           &a Rechtsklick zum Verringern
         unlimited-times: Unbegrenzt
         maximum-times: Max. [number] Mal
+        cost: |
+          &a [prefix_Island]-Kosten
+          &a Linksklick +1
+          &a Rechtsklick -1
+          &a Shift für +/-100
+        no-cost: Kostenlos
+        cost-amount: 'Kosten: [cost]'
     resetflags:
       parameters: '[flag]'
       description: >-

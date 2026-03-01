@@ -478,7 +478,7 @@ commands:
         unlimited-times: Unlimited
         maximum-times: Max [number] times
         cost: |
-          &a Bundle cost
+          &a [prefix_Island] cost
           &a Left click +1
           &a Right click -1
           &a Shift for +/-100

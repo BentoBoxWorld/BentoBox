@@ -491,6 +491,13 @@ commands:
           &a Правый клик для уменьшения
         unlimited-times: Неограниченно
         maximum-times: Максимум [number] раз
+        cost: |
+          &a Стоимость [prefix_Island]
+          &a ЛКМ +1
+          &a ПКМ -1
+          &a Shift для +/-100
+        no-cost: Бесплатно
+        cost-amount: 'Стоимость: [cost]'
     resetflags:
       parameters: '[флаг]'
       description: >-

@@ -519,6 +519,13 @@ commands:
           &a Clic droit pour décrémenter
         unlimited-times: Illimité
         maximum-times: Max [number] fois
+        cost: |
+          &a Coût de [prefix_Island]
+          &a Clic gauche +1
+          &a Clic droit -1
+          &a Shift pour +/-100
+        no-cost: Gratuit
+        cost-amount: 'Coût : [cost]'
     resetflags:
       parameters: '[flag]'
       description: >-

@@ -502,6 +502,13 @@ commands:
           &a Klik kanan untuk menurunkan
         unlimited-times: Tidak Terbatas
         maximum-times: Maksimal [number] kali
+        cost: |
+          &a Biaya [prefix_Island]
+          &a Klik kiri +1
+          &a Klik kanan -1
+          &a Shift untuk +/-100
+        no-cost: Gratis
+        cost-amount: 'Biaya: [cost]'
     resetflags:
       parameters: '[bendera]'
       description: Setel ulang semua pulau ke pengaturan bendera default di config.yml

@@ -477,6 +477,13 @@ commands:
           &a Kliknutím pravým tlačítkem pravým tlačítkem
         unlimited-times: Neomezený
         maximum-times: Max [number] krát
+        cost: |
+          &a Cena [prefix_Island]
+          &a Levý klik +1
+          &a Pravý klik -1
+          &a Shift pro +/-100
+        no-cost: Zdarma
+        cost-amount: 'Cena: [cost]'
     resetflags:
       parameters: '[flag]'
       description: Obnov vlaječky všech ostrovů na výchozí nastavení v souboru config.yml

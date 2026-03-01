@@ -492,6 +492,13 @@ commands:
           &a Labā peles klikšķis, lai samazinātu
         unlimited-times: Neierobežots
         maximum-times: Maks. [number] reizes
+        cost: |
+          &a [prefix_Island] izmaksas
+          &a Kreisais klikšķis +1
+          &a Labais klikšķis -1
+          &a Shift priekš +/-100
+        no-cost: Bezmaksas
+        cost-amount: 'Izmaksas: [cost]'
     resetflags:
       parameters: '[karogs]'
       description: Atiestatī visu salu noklusējuma karodziņu iestatījumus no config.yml
