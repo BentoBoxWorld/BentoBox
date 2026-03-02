@@ -63,14 +63,13 @@ public class EntityInteractListener extends FlagListener {
             this.checkIsland(e, p, l, Flags.RIDING);
         } else if (e.getRightClicked() instanceof RideableMinecart) {
             this.checkIsland(e, p, l, Flags.MINECART);
-        } else if (e.getRightClicked() instanceof StorageMinecart) {
+        } else if (e.getRightClicked() instanceof StorageMinecart
+                || (e.getPlayer().isSneaking() && e.getRightClicked() instanceof ChestBoat)) {
             this.checkIsland(e, p, l, Flags.CHEST);
         } else if (e.getRightClicked() instanceof HopperMinecart) {
             this.checkIsland(e, p, l, Flags.HOPPER);
         } else if (e.getRightClicked() instanceof PoweredMinecart) {
             this.checkIsland(e, p, l, Flags.FURNACE);
-        } else if (e.getPlayer().isSneaking() && e.getRightClicked() instanceof ChestBoat) {
-            this.checkIsland(e, p, l, Flags.CHEST);
         } else if (e.getRightClicked() instanceof Boat) {
             this.checkIsland(e, p, l, Flags.BOAT);
         }

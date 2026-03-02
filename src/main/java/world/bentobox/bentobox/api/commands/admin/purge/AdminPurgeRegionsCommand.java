@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -177,11 +178,15 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                 // Remove the player from the world folder playerdata because they no longer have any island associated with them
                 if (playerData.exists()) {
                     File playerFile = new File(playerData, uuid + ".dat");
-                    if (playerFile.exists() && !playerFile.delete()) {
+                    try {
+                        Files.deleteIfExists(playerFile.toPath());
+                    } catch (IOException ex) {
                         getPlugin().logError("Failed to delete player data file: " + playerFile.getAbsolutePath());
                     }
                     playerFile = new File(playerData, uuid + ".dat_old");
-                    if (playerFile.exists() && !playerFile.delete()) {
+                    try {
+                        Files.deleteIfExists(playerFile.toPath());
+                    } catch (IOException ex) {
                         getPlugin().logError("Failed to delete player data backup file: " + playerFile.getAbsolutePath());
                     }
                 }
@@ -203,7 +208,6 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     private File resolveDataFolder(World world) {
         File worldFolder = world.getWorldFolder();
         return switch (world.getEnvironment()) {
-            case NORMAL -> worldFolder;
             case NETHER -> {
                 File dim = new File(worldFolder, DIM_1);
                 yield dim.isDirectory() ? dim : worldFolder;
@@ -227,13 +231,13 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             // Parent folder missing is normal for entities/poi, do not log
             return true;
         }
-        if (file.exists()) {
-            if (!file.delete()) {
-                getPlugin().logError("Failed to delete file: " + file.getAbsolutePath());
-                return false;
-            }
+        try {
+            Files.deleteIfExists(file.toPath());
+            return true;
+        } catch (IOException e) {
+            getPlugin().logError("Failed to delete file: " + file.getAbsolutePath());
+            return false;
         }
-        return true;
     }
 
     /**
@@ -619,17 +623,17 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             List<Pair<Integer, Integer>> oldRegions,
             TreeMap<Integer, TreeMap<Integer, IslandData>> grid
             ) {
-        final int BLOCKS_PER_REGION = 512;
+        final int blocksPerRegion = 512;
         Map<Pair<Integer, Integer>, Set<String>> regionToIslands = new HashMap<>();
 
         for (Pair<Integer, Integer> region : oldRegions) {
             int rX = region.x();
             int rZ = region.z();
 
-            int regionMinX = rX * BLOCKS_PER_REGION;
-            int regionMinZ = rZ * BLOCKS_PER_REGION;
-            int regionMaxX = regionMinX + BLOCKS_PER_REGION - 1;
-            int regionMaxZ = regionMinZ + BLOCKS_PER_REGION - 1;
+            int regionMinX = rX * blocksPerRegion;
+            int regionMinZ = rZ * blocksPerRegion;
+            int regionMaxX = regionMinX + blocksPerRegion - 1;
+            int regionMaxZ = regionMinZ + blocksPerRegion - 1;
 
             Set<String> ids = new HashSet<>();
 

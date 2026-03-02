@@ -299,7 +299,7 @@ public abstract class FlagListener implements Listener {
      * @param location location where action is taking
      * @return true if PVP is allowed, false if not
      */
-    protected boolean PVPAllowed(Location location) {
+    protected boolean isPvpAllowed(Location location) {
         return plugin.getIslands().getIslandAt(location).map(i -> i.isAllowed(this.getFlag(location.getWorld()))).orElse(false);
     }
 

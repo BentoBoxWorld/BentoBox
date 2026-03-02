@@ -28,8 +28,6 @@ import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.BentoBox;
@@ -437,7 +435,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return the members of the island (owner included)
      * @see #getMembers()
      */
-    public ImmutableSet<UUID> getMemberSet() {
+    public Set<UUID> getMemberSet() {
         return getMemberSet(RanksManager.MEMBER_RANK);
     }
 
@@ -450,11 +448,9 @@ public class Island implements DataObject, MetaDataAble {
      * @see #getMembers()
      * @since 1.5.0
      */
-    public @NonNull ImmutableSet<UUID> getMemberSet(int minimumRank) {
-        Builder<UUID> result = new ImmutableSet.Builder<>();
-        members.entrySet().stream().filter(e -> e.getValue() >= minimumRank).map(Map.Entry::getKey)
-                .forEach(result::add);
-        return result.build();
+    public @NonNull Set<UUID> getMemberSet(int minimumRank) {
+        return Set.copyOf(members.entrySet().stream().filter(e -> e.getValue() >= minimumRank)
+                .map(Map.Entry::getKey).collect(Collectors.toSet()));
     }
 
     /**
@@ -469,13 +465,12 @@ public class Island implements DataObject, MetaDataAble {
      * @see #getMembers()
      * @since 1.5.0
      */
-    public @NonNull ImmutableSet<UUID> getMemberSet(int rank, boolean includeAboveRanks) {
+    public @NonNull Set<UUID> getMemberSet(int rank, boolean includeAboveRanks) {
         if (includeAboveRanks) {
             return getMemberSet(rank);
         }
-        Builder<UUID> result = new ImmutableSet.Builder<>();
-        members.entrySet().stream().filter(e -> e.getValue() == rank).map(Map.Entry::getKey).forEach(result::add);
-        return result.build();
+        return Set.copyOf(members.entrySet().stream().filter(e -> e.getValue() == rank)
+                .map(Map.Entry::getKey).collect(Collectors.toSet()));
     }
 
     /**
@@ -820,25 +815,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     @Nullable
     public BoundingBox getBoundingBox(Environment environment) {
-        BoundingBox boundingBox;
-
-        if (Environment.NORMAL.equals(environment)) {
-            // Return normal world bounding box.
-            boundingBox = new BoundingBox(this.getMinX(), this.world.getMinHeight(), this.getMinZ(), this.getMaxX(),
-                    this.world.getMaxHeight(), this.getMaxZ());
-        } else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled() && this.getEndWorld() != null) {
-            // If end world is generated, return end island bounding box.
-            boundingBox = new BoundingBox(this.getMinX(), this.getEndWorld().getMinHeight(), this.getMinZ(),
-                    this.getMaxX(), this.getEndWorld().getMaxHeight(), this.getMaxZ());
-        } else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled() && this.getNetherWorld() != null) {
-            // If nether world is generated, return nether island bounding box.
-            boundingBox = new BoundingBox(this.getMinX(), this.getNetherWorld().getMinHeight(), this.getMinZ(),
-                    this.getMaxX(), this.getNetherWorld().getMaxHeight(), this.getMaxZ());
-        } else {
-            boundingBox = null;
-        }
-
-        return boundingBox;
+        return buildBoundingBox(environment, this.getMinX(), this.getMinZ(), this.getMaxX(), this.getMaxZ());
     }
 
     /**
@@ -989,27 +966,21 @@ public class Island implements DataObject, MetaDataAble {
      */
     @Nullable
     public BoundingBox getProtectionBoundingBox(Environment environment) {
-        BoundingBox boundingBox;
+        return buildBoundingBox(environment, this.getMinProtectedX(), this.getMinProtectedZ(),
+                this.getMaxProtectedX(), this.getMaxProtectedZ());
+    }
 
-        if (Environment.NORMAL.equals(environment)) {
-            // Return normal world bounding box.
-            boundingBox = new BoundingBox(this.getMinProtectedX(), this.world.getMinHeight(), this.getMinProtectedZ(),
-                    this.getMaxProtectedX(), this.world.getMaxHeight(), this.getMaxProtectedZ());
-        } else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled() && this.getEndWorld() != null) {
-            // If end world is generated, return end island bounding box.
-            boundingBox = new BoundingBox(this.getMinProtectedX(), this.getEndWorld().getMinHeight(),
-                    this.getMinProtectedZ(), this.getMaxProtectedX(), this.getEndWorld().getMaxHeight(),
-                    this.getMaxProtectedZ());
-        } else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled() && this.getNetherWorld() != null) {
-            // If nether world is generated, return nether island bounding box.
-            boundingBox = new BoundingBox(this.getMinProtectedX(), this.getNetherWorld().getMinHeight(),
-                    this.getMinProtectedZ(), this.getMaxProtectedX(), this.getNetherWorld().getMaxHeight(),
-                    this.getMaxProtectedZ());
-        } else {
-            boundingBox = null;
+    /**
+     * Builds a bounding box for the given environment using the specified XZ bounds.
+     * Returns null if the island is not created in the requested dimension.
+     */
+    @Nullable
+    private BoundingBox buildBoundingBox(Environment environment, int minX, int minZ, int maxX, int maxZ) {
+        World targetWorld = this.getWorld(environment);
+        if (targetWorld == null) {
+            return null;
         }
-
-        return boundingBox;
+        return new BoundingBox(minX, targetWorld.getMinHeight(), minZ, maxX, targetWorld.getMaxHeight(), maxZ);
     }
 
     /**
@@ -1173,19 +1144,10 @@ public class Island implements DataObject, MetaDataAble {
         int diffMaxX = Math.abs(getCenter().getBlockX() - this.getMaxProtectedX());
         int diffMinZ = Math.abs(getCenter().getBlockZ() - this.getMinProtectedZ());
         int diffMaxZ = Math.abs(getCenter().getBlockZ() - this.getMaxProtectedZ());
-        if (diffMinX > this.maxEverProtectionRange) {
-            this.maxEverProtectionRange = diffMinX;
+        int maxDiff = Math.max(Math.max(diffMinX, diffMaxX), Math.max(diffMinZ, diffMaxZ));
+        if (maxDiff > this.maxEverProtectionRange) {
+            this.maxEverProtectionRange = maxDiff;
         }
-        if (diffMaxX > this.maxEverProtectionRange) {
-            this.maxEverProtectionRange = diffMaxX;
-        }
-        if (diffMinZ > this.maxEverProtectionRange) {
-            this.maxEverProtectionRange = diffMinZ;
-        }
-        if (diffMaxZ > this.maxEverProtectionRange) {
-            this.maxEverProtectionRange = diffMaxZ;
-        }
-
     }
 
     /**
@@ -1520,13 +1482,12 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.0
      */
     public boolean hasNetherIsland() {
-        World nether = BentoBox.getInstance().getIWM().getNetherWorld(getWorld());
-        return nether != null && (getCenter().toVector().toLocation(nether).getBlock().getType() != Material.AIR);
+        return hasDimensionIsland(Environment.NETHER);
     }
 
     /**
      * Checks whether this island has its nether island mode enabled or not.
-     * 
+     *
      * @return {@code true} if this island has its nether island enabled,
      *         {@code false} otherwise.
      * @since 1.21.0
@@ -1538,19 +1499,30 @@ public class Island implements DataObject, MetaDataAble {
 
     /**
      * Checks whether this island has its end island generated or not.
-     * 
+     *
      * @return {@code true} if this island has its end island generated,
      *         {@code false} otherwise.
      * @since 1.5.0
      */
     public boolean hasEndIsland() {
-        World end = BentoBox.getInstance().getIWM().getEndWorld(getWorld());
-        return end != null && (getCenter().toVector().toLocation(end).getBlock().getType() != Material.AIR);
+        return hasDimensionIsland(Environment.THE_END);
+    }
+
+    /**
+     * Checks whether an island exists in the given dimension by verifying
+     * the center block is not air.
+     *
+     * @param environment the dimension to check
+     * @return true if the island has been generated in that dimension
+     */
+    private boolean hasDimensionIsland(Environment environment) {
+        World dimWorld = this.getWorld(environment);
+        return dimWorld != null && (getCenter().toVector().toLocation(dimWorld).getBlock().getType() != Material.AIR);
     }
 
     /**
      * Checks whether this island has its end island mode enabled or not.
-     * 
+     *
      * @return {@code true} if this island has its end island enabled, {@code false}
      *         otherwise.
      * @since 1.21.0
