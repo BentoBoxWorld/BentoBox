@@ -227,11 +227,9 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             // Parent folder missing is normal for entities/poi, do not log
             return true;
         }
-        if (file.exists()) {
-            if (!file.delete()) {
-                getPlugin().logError("Failed to delete file: " + file.getAbsolutePath());
-                return false;
-            }
+        if (file.exists() && !file.delete()) {
+            getPlugin().logError("Failed to delete file: " + file.getAbsolutePath());
+            return false;
         }
         return true;
     }
@@ -337,7 +335,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                 Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
                 return;
             }
-            TreeMap<Integer, TreeMap<Integer, IslandData>> grid = islandGrid.getGrid();
+            Map<Integer, TreeMap<Integer, IslandData>> grid = islandGrid.getGrid();
             if (grid == null) {
                 // There are no islands in this world yet!
                 Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
@@ -557,7 +555,8 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             String[] parts = coordsPart.split("\\.");
             if (parts.length != 2) continue;  // malformed
 
-            int rx, rz;
+            int rx;
+            int rz;
             try {
                 rx = Integer.parseInt(parts[0]);
                 rz = Integer.parseInt(parts[1]);
@@ -617,7 +616,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      */
     private Map<Pair<Integer, Integer>, Set<String>> mapIslandsToRegions(
             List<Pair<Integer, Integer>> oldRegions,
-            TreeMap<Integer, TreeMap<Integer, IslandData>> grid
+            Map<Integer, TreeMap<Integer, IslandData>> grid
             ) {
         final int BLOCKS_PER_REGION = 512;
         Map<Pair<Integer, Integer>, Set<String>> regionToIslands = new HashMap<>();

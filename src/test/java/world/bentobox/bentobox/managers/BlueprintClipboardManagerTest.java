@@ -48,48 +48,50 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
 
     private File blueprintFolder;
 
-    private final String json = "{\n" +
-            "    \"name\": \"blueprint\",\n" +
-            "    \"attached\": {},\n" +
-            "    \"entities\": {},\n" +
-            "    \"blocks\": [\n" +
-            "        [\n" +
-            "            [3.0, -5.0, 8.0], {\n" +
-            "                \"blockData\": \"minecraft:stone\"\n" +
-            "            }\n" +
-            "        ],\n" +
-            "        [\n" +
-            "            [6.0, -13.0, -20.0], {\n" +
-            "                \"blockData\": \"minecraft:diorite\"\n" +
-            "            }\n" +
-            "        ]\n" +
-            "    ],\n" +
-            "    \"xSize\": 10,\n" +
-            "    \"ySize\": 10,\n" +
-            "    \"zSize\": 10,\n" +
-            "    \"bedrock\": [-2.0, -16.0, -1.0]\n" +
-            "}";
+    private final String json = """
+            {
+                "name": "blueprint",
+                "attached": {},
+                "entities": {},
+                "blocks": [
+                    [
+                        [3.0, -5.0, 8.0], {
+                            "blockData": "minecraft:stone"
+                        }
+                    ],
+                    [
+                        [6.0, -13.0, -20.0], {
+                            "blockData": "minecraft:diorite"
+                        }
+                    ]
+                ],
+                "xSize": 10,
+                "ySize": 10,
+                "zSize": 10,
+                "bedrock": [-2.0, -16.0, -1.0]
+            }""";
 
-    private final String jsonNoBedrock = "{\n" +
-            "    \"name\": \"blueprint\",\n" +
-            "    \"attached\": {},\n" +
-            "    \"entities\": {},\n" +
-            "    \"blocks\": [\n" +
-            "        [\n" +
-            "            [3.0, -5.0, 8.0], {\n" +
-            "                \"blockData\": \"minecraft:stone\"\n" +
-            "            }\n" +
-            "        ],\n" +
-            "        [\n" +
-            "            [6.0, -13.0, -20.0], {\n" +
-            "                \"blockData\": \"minecraft:diorite\"\n" +
-            "            }\n" +
-            "        ]\n" +
-            "    ],\n" +
-            "    \"xSize\": 10,\n" +
-            "    \"ySize\": 10,\n" +
-            "    \"zSize\": 10\n" +
-            "}";
+    private final String jsonNoBedrock = """
+            {
+                "name": "blueprint",
+                "attached": {},
+                "entities": {},
+                "blocks": [
+                    [
+                        [3.0, -5.0, 8.0], {
+                            "blockData": "minecraft:stone"
+                        }
+                    ],
+                    [
+                        [6.0, -13.0, -20.0], {
+                            "blockData": "minecraft:diorite"
+                        }
+                    ]
+                ],
+                "xSize": 10,
+                "ySize": 10,
+                "zSize": 10
+            }""";
 
     private void zip(File targetFile) throws IOException {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + BlueprintsManager.BLUEPRINT_SUFFIX))) {
@@ -111,6 +113,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
 
     /**
      */
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
@@ -137,6 +140,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
 
     /**
      */
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();

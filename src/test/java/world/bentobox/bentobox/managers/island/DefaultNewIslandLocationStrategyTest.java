@@ -44,6 +44,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
 
     /**
      */
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
@@ -85,8 +86,9 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
     }
 
     /**
-     * @throws Exception 
+     * @throws Exception
      */
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();

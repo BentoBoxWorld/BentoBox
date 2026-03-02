@@ -161,7 +161,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
         // Provide a current rank value - member
         when(island.getFlag(any())).thenReturn(RanksManager.MEMBER_RANK);
         // Set up up and down ranks
-        mockedRanksManager.when(() -> RanksManager.getInstance()).thenReturn(rm);
+        mockedRanksManager.when(RanksManager::getInstance).thenReturn(rm);
         when(rm.getRankUpValue(eq(RanksManager.VISITOR_RANK))).thenReturn(RanksManager.COOP_RANK);
         when(rm.getRankUpValue(eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
         when(rm.getRankUpValue(eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.MEMBER_RANK);

@@ -942,7 +942,7 @@ public class PVPListenerTest extends CommonTestSetup {
         verify(mockPlayer, times(5)).getUniqueId();
         verify(cloud).getEntityId();
         verify(tp).getShooter();
-        mockedBukkit.verify(() -> Bukkit.getScheduler());
+        mockedBukkit.verify(Bukkit::getScheduler);
     }
 
     /**
@@ -960,7 +960,7 @@ public class PVPListenerTest extends CommonTestSetup {
         // Verify
         verify(cloud, never()).getEntityId();
         verify(tp).getShooter();
-        mockedBukkit.verify(() -> Bukkit.getScheduler(), never());
+        mockedBukkit.verify(Bukkit::getScheduler, never());
     }
 
     /**

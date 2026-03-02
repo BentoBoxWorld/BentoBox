@@ -163,7 +163,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
         ItemFactory itemFactory = mock(ItemFactory.class);
         ItemMeta bannerMeta = mock(ItemMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
-        mockedBukkit.when(() -> Bukkit.getItemFactory()).thenReturn(itemFactory);
+        mockedBukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
         Inventory inventory = mock(Inventory.class);
         mockedBukkit.when(() -> Bukkit.createInventory(eq(null), anyInt(), anyString())).thenReturn(inventory);
 

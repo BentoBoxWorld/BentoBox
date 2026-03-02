@@ -85,6 +85,7 @@ public class NewIslandTest extends CommonTestSetup {
 
     /**
      */
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
@@ -118,7 +119,7 @@ public class NewIslandTest extends CommonTestSetup {
 
         // Events
         MockedStatic<IslandEvent> mockedIslandEvent = Mockito.mockStatic(IslandEvent.class);
-        mockedIslandEvent.when(() -> IslandEvent.builder()).thenReturn(builder);
+        mockedIslandEvent.when(IslandEvent::builder).thenReturn(builder);
         when(builder.admin(anyBoolean())).thenReturn(builder);
         when(builder.blueprintBundle(any())).thenReturn(builder);
         when(builder.deletedIslandInfo(any())).thenReturn(builder);
@@ -148,16 +149,17 @@ public class NewIslandTest extends CommonTestSetup {
                 .thenAnswer((Answer<Location>) invocation -> invocation.getArgument(0, Location.class));
 
         // Bukkit Scheduler
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(scheduler);
-        mockedBukkit.when(() -> Bukkit.getViewDistance()).thenReturn(10);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(scheduler);
+        mockedBukkit.when(Bukkit::getViewDistance).thenReturn(10);
 
         // Addon
         when(addon.getOverWorld()).thenReturn(world);
     }
 
     /**
-     * @throws Exception 
+     * @throws Exception
      */
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();

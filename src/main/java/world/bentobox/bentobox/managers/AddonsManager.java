@@ -255,10 +255,9 @@ public class AddonsManager {
             // Run the onLoad.
             addon.onLoad();
             // if game mode, get the world name and generate
-            if (addon instanceof GameModeAddon gameMode && !addon.getState().equals(State.DISABLED)) {
-                if (!gameMode.getWorldSettings().getWorldName().isEmpty()) {
-                    worldNames.put(gameMode.getWorldSettings().getWorldName().toLowerCase(Locale.ENGLISH), gameMode);
-                }
+            if (addon instanceof GameModeAddon gameMode && !addon.getState().equals(State.DISABLED)
+                    && !gameMode.getWorldSettings().getWorldName().isEmpty()) {
+                worldNames.put(gameMode.getWorldSettings().getWorldName().toLowerCase(Locale.ENGLISH), gameMode);
             }
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
             // Looks like the addon is incompatible, because it tries to refer to missing classes...

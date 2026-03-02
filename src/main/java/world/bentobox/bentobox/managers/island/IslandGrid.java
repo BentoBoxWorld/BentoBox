@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.managers.island;
 
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -183,7 +184,7 @@ public class IslandGrid {
     /**
      * @return the grid
      */
-    public TreeMap<Integer, TreeMap<Integer, IslandData>> getGrid() {
+    public Map<Integer, TreeMap<Integer, IslandData>> getGrid() {
         return grid;
     }
 

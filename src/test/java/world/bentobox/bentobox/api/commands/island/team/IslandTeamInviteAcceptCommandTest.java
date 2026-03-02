@@ -274,7 +274,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
         IslandBaseEvent ibe = mock(IslandBaseEvent.class);
         when(ibe.isCancelled()).thenReturn(true);
         when(teb.build()).thenReturn(ibe);
-        mockedTeamEvent.when(() -> TeamEvent.builder()).thenReturn(teb);
+        mockedTeamEvent.when(TeamEvent::builder).thenReturn(teb);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
         verify(user, never()).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
         verify(user, never()).sendMessage("commands.island.team.invite.errors.invalid-invite");

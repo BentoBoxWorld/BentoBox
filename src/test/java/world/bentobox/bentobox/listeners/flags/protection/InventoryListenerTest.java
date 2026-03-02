@@ -47,7 +47,7 @@ import world.bentobox.bentobox.CommonTestSetup;
  */
 public class InventoryListenerTest extends CommonTestSetup {
 
-    private final static List<Class<?>> HOLDERS = Arrays.asList(Horse.class, Chest.class,
+    private static final List<Class<?>> HOLDERS = Arrays.asList(Horse.class, Chest.class,
             DoubleChest.class,
             ShulkerBox.class, StorageMinecart.class,
             Dispenser.class,

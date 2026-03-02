@@ -162,7 +162,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
             onlinePlayers.add(p1);
         }
         onlinePlayers.add(mockPlayer);
-        mockedBukkit.when(() -> Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
+        mockedBukkit.when(Bukkit::getOnlinePlayers).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         User.setPlugin(plugin);
         User.getInstance(mockPlayer);
