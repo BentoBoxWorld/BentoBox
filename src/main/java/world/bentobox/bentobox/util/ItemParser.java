@@ -346,13 +346,11 @@ public class ItemParser {
             BannerMeta meta = (BannerMeta) result.getItemMeta();
             if (meta != null) {
                 for (int i = 2; i < part.length; i += 2) {
-                    //if (!Util.inTest()) {
-                        PatternType pt = PatternType.valueOf(part[i]);
-                        DyeColor dc = Enums.getIfPresent(DyeColor.class, part[i + 1]).orNull();
-                        if (dc != null) {
-                            meta.addPattern(new Pattern(dc, pt));
-                        }
-                        //}
+                    PatternType pt = PatternType.valueOf(part[i]);
+                    DyeColor dc = Enums.getIfPresent(DyeColor.class, part[i + 1]).orNull();
+                    if (dc != null) {
+                        meta.addPattern(new Pattern(dc, pt));
+                    }
                 }
                 result.setItemMeta(meta);
             }

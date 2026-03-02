@@ -123,7 +123,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
         when(pm.getPlayer(any())).thenReturn(pls);
         when(pm.isKnown(any())).thenReturn(false);
         when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getName(eq(uuid))).thenReturn("tastybento");
+        when(pm.getName(uuid)).thenReturn("tastybento");
 
         // Settings
         when(plugin.getSettings()).thenReturn(settings);
@@ -294,7 +294,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
         PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         jll.onPlayerJoin(event);
         // Verify
-        verify(mockPlayer, never()).sendMessage(eq("commands.admin.setrange.range-updated"));
+        verify(mockPlayer, never()).sendMessage("commands.admin.setrange.range-updated");
         // Verify that the island protection range is not changed if it is already at
         // that value
         assertEquals(50, island.getProtectionRange());
@@ -307,7 +307,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
      */
     @Test
     public void testOnPlayerJoinNotKnownAutoCreate() {
-        when(iwm.isCreateIslandOnFirstLoginEnabled(eq(world))).thenReturn(true);
+        when(iwm.isCreateIslandOnFirstLoginEnabled(world)).thenReturn(true);
         PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         jll.onPlayerJoin(event);
         // Verify

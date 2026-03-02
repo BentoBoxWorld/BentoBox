@@ -31,7 +31,6 @@ import world.bentobox.bentobox.util.ItemParser;
 public class BentoBoxLocaleTest extends CommonTestSetup {
 
     private BentoBoxLocale localeObject;
-    //private BannerMeta bannerMeta;
     @Mock
     private ItemStack  banner;
    private  MockedStatic<ItemParser> mockedItemParser;

@@ -2,7 +2,6 @@ package world.bentobox.bentobox.managers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,12 +50,12 @@ public class PlaceholdersManagerTest extends CommonTestSetup {
 
         when(plugin.getPlaceholdersManager()).thenReturn(pm);
         // No placeholders registered yet
-        //when(pm.isPlaceholder(any(), any())).thenReturn(false);
+
 
         // Hooks
         when(plugin.getHooks()).thenReturn(hm);
         Optional<Hook> optionalHook = Optional.of(hook);
-        when(hm.getHook(eq("PlaceholderAPI"))).thenReturn(optionalHook);
+        when(hm.getHook("PlaceholderAPI")).thenReturn(optionalHook);
         when(hook.isPlaceholder(any(), any())).thenReturn(false);
 
         // World settings

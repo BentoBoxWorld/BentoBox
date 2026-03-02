@@ -187,7 +187,6 @@ public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
-   //@Disabled("Paper Biome issue")
     @Test
     public void testExecuteUserStringListOfStringFileExists() {
         testCanExecute();

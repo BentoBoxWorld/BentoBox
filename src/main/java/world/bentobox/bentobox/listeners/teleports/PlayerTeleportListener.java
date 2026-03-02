@@ -418,7 +418,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             event.setSearchRadius(this.calculateSearchRadius(event.getTo(), island)));
 
             event.setCanCreatePortal(true);
-            // event.setCreationRadius(16); 16 is default creation radius.
+
         }
         else
         {
