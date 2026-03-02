@@ -42,7 +42,7 @@ import world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport;
  *
  * @author tastybento and BONNe
  */
-public class PlayerTeleportListener extends AbstractTeleportListener implements Listener
+public non-sealed class PlayerTeleportListener extends AbstractTeleportListener implements Listener
 {
     /**
      * Instantiates a new Portal teleportation listener.

@@ -66,7 +66,7 @@ public class ZNPCsPlusHook extends NPCHook {
     public boolean hook() {
         boolean hooked = this.isPluginAvailable();
         // Check version
-        String version = this.getPlugin().getDescription().getVersion();
+        String version = this.getPlugin().getPluginMeta().getVersion();
         if (!Util.isVersionCompatible(version, VERSION)) {
             return false;
         }
@@ -80,7 +80,7 @@ public class ZNPCsPlusHook extends NPCHook {
     public String getFailureCause() {
         // The only failure is wrong version
         return "ZNPCsPlus version " + VERSION + " required or later. You are running "
-                + this.getPlugin().getDescription().getVersion();
+                + this.getPlugin().getPluginMeta().getVersion();
     }
 
     @Override

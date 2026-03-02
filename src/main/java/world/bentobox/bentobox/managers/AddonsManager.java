@@ -101,7 +101,7 @@ public class AddonsManager {
      * @param addon - addon class
      */
     public void registerAddon(Plugin parent, Addon addon) {
-        plugin.log("Registering " + parent.getDescription().getName());
+        plugin.log("Registering " + parent.getPluginMeta().getName());
 
         // Get description in the addon.yml file
         InputStream resource = parent.getResource("addon.yml");
@@ -129,6 +129,8 @@ public class AddonsManager {
 
     }
 
+    // Reflection is required to access JavaPlugin.getFile() which is protected, needed for addon/pladdon loading
+    @SuppressWarnings("java:S3011")
     private void setAddonFile(Plugin parent, Addon addon) throws NoSuchMethodException, SecurityException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Method getFileMethod = JavaPlugin.class.getDeclaredMethod("getFile");
@@ -473,8 +475,7 @@ public class AddonsManager {
 
 
     private boolean isAddonCompatibleWithBentoBox(@NonNull Addon addon) {
-        @SuppressWarnings("deprecation")
-        String v = plugin.getDescription().getVersion();
+        String v = plugin.getPluginMeta().getVersion();
         return isAddonCompatibleWithBentoBox(addon, v);
     }
 

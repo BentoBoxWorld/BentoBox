@@ -21,6 +21,8 @@ public class CommandsManager {
     private final Map<@NonNull String, @NonNull CompositeCommand> commands = new HashMap<>();
     private SimpleCommandMap commandMap;
 
+    // Reflection is required to access Bukkit's internal command map for dynamic command registration
+    @SuppressWarnings("java:S3011")
     public void registerCommand(@NonNull CompositeCommand command) {
         commands.put(command.getLabel(), command);
         // Use reflection to obtain the commandMap method in Bukkit's server.
