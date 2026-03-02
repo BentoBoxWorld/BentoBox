@@ -110,7 +110,6 @@ public class IslandCreateCommandTest extends CommonTestSetup {
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        // when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
         when(island.getOwner()).thenReturn(uuid);
@@ -253,10 +252,10 @@ public class IslandCreateCommandTest extends CommonTestSetup {
         when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
 
         assertTrue(cc.execute(user, "", List.of("custom")));
-        verify(builder).player(eq(user));
+        verify(builder).player(user);
         verify(builder).addon(any());
-        verify(builder).reason(eq(Reason.CREATE));
-        verify(builder).name(eq("custom"));
+        verify(builder).reason(Reason.CREATE);
+        verify(builder).name("custom");
         verify(builder).build();
         verify(user).sendMessage("commands.island.create.creating-island");
     }
@@ -298,7 +297,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteUserStringListOfStringUnknownBundle() {
         assertFalse(cc.execute(user, "", List.of("custom")));
-        verify(user).sendMessage(eq("commands.island.create.unknown-blueprint"));
+        verify(user).sendMessage("commands.island.create.unknown-blueprint");
         verify(user, never()).sendMessage("commands.island.create.creating-island");
     }
 
@@ -323,10 +322,10 @@ public class IslandCreateCommandTest extends CommonTestSetup {
         when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
         when(bpm.validate(any(), any())).thenReturn("custom");
         assertTrue(cc.execute(user, "", Collections.singletonList("custom")));
-        verify(builder).player(eq(user));
+        verify(builder).player(user);
         verify(builder).addon(any());
-        verify(builder).reason(eq(Reason.CREATE));
-        verify(builder).name(eq("custom"));
+        verify(builder).reason(Reason.CREATE);
+        verify(builder).name("custom");
         verify(builder).build();
         verify(user).sendMessage("commands.island.create.creating-island");
     }
@@ -338,7 +337,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteUserStringListOfStringCooldown() {
         assertTrue(cc.execute(user, "", Collections.emptyList()));
-        verify(ic, never()).getSubCommand(eq("reset"));
+        verify(ic, never()).getSubCommand("reset");
     }
 
     /**
@@ -383,7 +382,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
         // Vault present but cannot afford
         VaultHook vault = mock(VaultHook.class);
         when(vault.has(any(User.class), eq(100.0))).thenReturn(false);
-        when(vault.format(eq(100.0))).thenReturn("$100.00");
+        when(vault.format(100.0)).thenReturn("$100.00");
         when(plugin.getVault()).thenReturn(Optional.of(vault));
 
         assertFalse(cc.execute(user, "", List.of("custom")));
@@ -410,7 +409,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
         // Vault present and can afford
         VaultHook vault = mock(VaultHook.class);
         when(vault.has(any(User.class), eq(100.0))).thenReturn(true);
-        when(vault.format(eq(100.0))).thenReturn("$100.00");
+        when(vault.format(100.0)).thenReturn("$100.00");
         when(plugin.getVault()).thenReturn(Optional.of(vault));
 
         assertTrue(cc.execute(user, "", List.of("custom")));

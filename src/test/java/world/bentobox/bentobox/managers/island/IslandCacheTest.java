@@ -254,7 +254,7 @@ public class IslandCacheTest extends CommonTestSetup {
     public void testResetFlag() {
         ic.addIsland(island);
         ic.resetFlag(world, flag);
-        verify(island).setFlag(eq(flag), eq(400));
+        verify(island).setFlag(flag, 400);
     }
 
     /**

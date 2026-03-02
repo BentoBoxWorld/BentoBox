@@ -148,9 +148,9 @@ public class CycleClickTest extends RanksManagerTestSetup {
         when(inside.getBlockZ()).thenReturn(Z);
 
         Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(eq(inside2))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(eq(outside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(inside)).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(inside2)).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(outside)).thenReturn(Optional.empty());
         when(im.getIslandAt(any())).thenReturn(opIsland);
 
         FlagsManager fm = mock(FlagsManager.class);
@@ -202,7 +202,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
         when(user.hasPermission(anyString())).thenReturn(false);
         CycleClick udc = new CycleClick(LOCK);
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, 5));
-        verify(user).sendMessage(eq("general.errors.no-permission"), eq("[permission]"), eq("bskyblock.settings.LOCK"));
+        verify(user).sendMessage("general.errors.no-permission", "[permission]", "bskyblock.settings.LOCK");
     }
 
     @Test
@@ -226,7 +226,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
         // Clicking when Owner should go to Visitor
         when(island.getFlag(any())).thenReturn(RanksManager.OWNER_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
-        verify(island).setFlag(eq(flag), eq(RanksManager.VISITOR_RANK));
+        verify(island).setFlag(flag, RanksManager.VISITOR_RANK);
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 

@@ -53,8 +53,6 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
-
-//@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class, IslandsManager.class , ServerBuildInfo.class})
 public class TestBentoBox extends CommonTestSetup {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID VISITOR_UUID = UUID.randomUUID();
@@ -105,8 +103,6 @@ public class TestBentoBox extends CommonTestSetup {
         when(visitorToIsland.getUniqueId()).thenReturn(VISITOR_UUID);
 
         // Util
-        //PowerMockito.mockStatic(Util.class);
-        //mockedUtil.when(() -> findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         island.setOwner(uuid);
@@ -191,8 +187,6 @@ public class TestBentoBox extends CommonTestSetup {
         assertEquals("/test", testCommand.getUsage());
         assertEquals("test.params", testCommand.getParameters());
 
-        // Test help
-        //assertTrue(testCommand.execute(player,  "test", new String[] {"help"}));
     }
 
     private class TestCommand extends CompositeCommand {

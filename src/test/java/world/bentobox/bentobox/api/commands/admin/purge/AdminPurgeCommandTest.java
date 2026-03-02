@@ -161,7 +161,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteUserStringListOfStringNotNumber() {
         assertFalse(apc.execute(user, "", Collections.singletonList("abc")));
-        verify(user).sendMessage(eq("commands.admin.purge.number-error"));
+        verify(user).sendMessage("commands.admin.purge.number-error");
     }
 
     /**
@@ -170,7 +170,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteUserStringListOfStringZero() {
         assertFalse(apc.execute(user, "", Collections.singletonList("0")));
-        verify(user).sendMessage(eq("commands.admin.purge.days-one-or-more"));
+        verify(user).sendMessage("commands.admin.purge.days-one-or-more");
     }
 
     /**
@@ -179,7 +179,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteUserStringListOfStringNoIslands() {
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
+        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
     }
 
     /**
@@ -190,7 +190,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
         when(island.isPurgeProtected()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
+        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
     }
 
     /**
@@ -202,7 +202,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
         when(island.getWorld()).thenReturn(mock(World.class));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
+        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
     }
 
     /**
@@ -217,7 +217,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
         when(island.isOwned()).thenReturn(false);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
+        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
     }
 
     /**
@@ -230,7 +230,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
         when(island.isSpawn()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
+        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
     }
 
     /**
@@ -251,7 +251,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
         mockedBukkit.when(() -> Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
 
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
+        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
     }
 
     /**
@@ -268,7 +268,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
         when(op.getLastPlayed()).thenReturn(System.currentTimeMillis());
         mockedBukkit.when(() -> Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
+        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
     }
 
     /**
@@ -301,9 +301,9 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
         when(im.getIslandById(any())).thenReturn(opIsland);
         testExecuteUserStringListOfStringIslandsFound();
         assertTrue(apc.execute(user, "", Collections.singletonList("confirm")));
-        verify(im).deleteIsland(eq(island), eq(true), eq(null));
+        verify(im).deleteIsland(island, true, null);
         verify(plugin).log(any());
-        verify(user).sendMessage(eq("commands.admin.purge.see-console-for-status"), eq("[label]"), eq("bsb"));
+        verify(user).sendMessage("commands.admin.purge.see-console-for-status", "[label]", "bsb");
     }
 
     /**
@@ -325,7 +325,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
         testRemoveIslands();
         IslandDeletedEvent e = mock(IslandDeletedEvent.class);
         apc.onIslandDeleted(e);
-        verify(user).sendMessage(eq("commands.admin.purge.completed"));
+        verify(user).sendMessage("commands.admin.purge.completed");
         verify(plugin, Mockito.never()).log("");
     }
 

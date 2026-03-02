@@ -133,14 +133,14 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
         String[] name = { "tastybento", "poslovich" };
 
         // Unknown owner
-        when(pm.getUUID(eq("tastybento"))).thenReturn(null);
-        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID("tastybento")).thenReturn(null);
+        when(pm.getUUID("poslovich")).thenReturn(notUUID);
         assertFalse(itl.execute(user, ac.getLabel(), Arrays.asList(name)));
         verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
 
         // Unknown target
-        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(eq("poslovich"))).thenReturn(null);
+        when(pm.getUUID("tastybento")).thenReturn(uuid);
+        when(pm.getUUID("poslovich")).thenReturn(null);
         assertFalse(itl.execute(user, ac.getLabel(), Arrays.asList(name)));
         verify(user).sendMessage("general.errors.unknown-player", "[name]", "poslovich");
     }
@@ -153,13 +153,13 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 
-        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID("tastybento")).thenReturn(uuid);
+        when(pm.getUUID("poslovich")).thenReturn(notUUID);
 
         when(im.inTeam(any(), eq(notUUID))).thenReturn(true);
         when(island.inTeam(notUUID)).thenReturn(true);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        verify(user).sendMessage(eq("commands.island.team.invite.errors.already-on-team"));
+        verify(user).sendMessage("commands.island.team.invite.errors.already-on-team");
     }
 
     /**
@@ -170,8 +170,8 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 
-        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID("tastybento")).thenReturn(uuid);
+        when(pm.getUUID("poslovich")).thenReturn(notUUID);
 
         // No island,
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
@@ -189,8 +189,8 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 
-        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID("tastybento")).thenReturn(uuid);
+        when(pm.getUUID("poslovich")).thenReturn(notUUID);
 
         // Has island, has team, but not an owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
@@ -212,8 +212,8 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 
-        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID("tastybento")).thenReturn(uuid);
+        when(pm.getUUID("poslovich")).thenReturn(notUUID);
 
         // Has island, has team, is owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
@@ -235,8 +235,8 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 
-        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID("tastybento")).thenReturn(uuid);
+        when(pm.getUUID("poslovich")).thenReturn(notUUID);
 
         // Has island, no team
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
@@ -259,8 +259,8 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 
-        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID("tastybento")).thenReturn(uuid);
+        when(pm.getUUID("poslovich")).thenReturn(notUUID);
 
         // Has island, no team
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
@@ -274,13 +274,13 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
         when(im.getIsland(any(), eq(uuid))).thenReturn(island);
 
         // Player name
-        when(pm.getName(eq(uuid))).thenReturn("tastybento");
-        when(pm.getName(eq(notUUID))).thenReturn("poslovich");
+        when(pm.getName(uuid)).thenReturn("tastybento");
+        when(pm.getName(notUUID)).thenReturn("poslovich");
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Success
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        verify(im).setJoinTeam(eq(island), eq(notUUID));
+        verify(im).setJoinTeam(island, notUUID);
         // Null name for target because it is created out of mocking via User.getPlayer(notUUID)
         verify(user).sendMessage("commands.admin.team.add.success", TextVariables.NAME, null, "[owner]", "tastybento");
     }

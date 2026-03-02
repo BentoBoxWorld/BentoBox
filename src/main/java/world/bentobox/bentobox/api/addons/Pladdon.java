@@ -55,7 +55,6 @@ public abstract class Pladdon extends JavaPlugin {
         if (parentFolder == null || !parentFolder.endsWith(ADDONS_FOLDER)) {
             // The JAR is in the wrong location. It should be in the /plugins/BentoBox/addons/ folder.
             // The logic to move the jar is commented out by default.
-            // moveJar();
         }
     }
 

@@ -76,7 +76,6 @@ public class BlueprintTrialSpawner {
             return new PotentialSpawns(snapshot.getAsString(), spawnRule == null ? null : spawnRule.serialize(),
                     se.getSpawnWeight());
             // Missing
-            // se.getEquipment().getEquipmentLootTable();
         }).toList();
 
         if (potentialSpawns.isEmpty()) {

@@ -192,7 +192,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      */
     @Test
     public void testDelayedTeleportCommandAddonStringStringArray() {
-        verify(pim).registerEvents(eq(dtc), eq(plugin));
+        verify(pim).registerEvents(dtc, plugin);
     }
 
     /**
@@ -202,7 +202,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
     public void testDelayCommandUserStringRunnableZeroDelay() {
         when(settings.getDelayTime()).thenReturn(0);
         dtc.delayCommand(user, HELLO, command);
-        verify(sch).runTask(eq(plugin), eq(command));
+        verify(sch).runTask(plugin, command);
     }
 
     /**
@@ -212,7 +212,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
     public void testDelayCommandUserStringRunnableOp() {
         when(user.isOp()).thenReturn(true);
         dtc.delayCommand(user, HELLO, command);
-        verify(sch).runTask(eq(plugin), eq(command));
+        verify(sch).runTask(plugin, command);
     }
 
     /**
@@ -220,9 +220,9 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      */
     @Test
     public void testDelayCommandUserStringRunnablePermBypassCooldowns() {
-        when(user.hasPermission(eq("nullmod.bypasscooldowns"))).thenReturn(true);
+        when(user.hasPermission("nullmod.bypasscooldowns")).thenReturn(true);
         dtc.delayCommand(user, HELLO, command);
-        verify(sch).runTask(eq(plugin), eq(command));
+        verify(sch).runTask(plugin, command);
     }
 
     /**
@@ -230,9 +230,9 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      */
     @Test
     public void testDelayCommandUserStringRunnablePermBypassDelay() {
-        when(user.hasPermission(eq("nullmod.bypassdelays"))).thenReturn(true);
+        when(user.hasPermission("nullmod.bypassdelays")).thenReturn(true);
         dtc.delayCommand(user, HELLO, command);
-        verify(sch).runTask(eq(plugin), eq(command));
+        verify(sch).runTask(plugin, command);
     }
 
     /**
@@ -241,9 +241,9 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
     @Test
     public void testDelayCommandUserStringRunnableStandStill() {
         dtc.delayCommand(user, HELLO, command);
-        verify(sch, never()).runTask(eq(plugin), eq(command));
-        verify(user).sendRawMessage(eq(HELLO));
-        verify(user).sendMessage(eq("commands.delay.stand-still"), eq("[seconds]"), eq("10"));
+        verify(sch, never()).runTask(plugin, command);
+        verify(user).sendRawMessage(HELLO);
+        verify(user).sendMessage("commands.delay.stand-still", "[seconds]", "10");
         verify(sch).runTaskLater(eq(plugin), any(Runnable.class), eq(200L));
         verify(user, never()).sendMessage("commands.delay.previous-command-cancelled");
     }
@@ -265,9 +265,9 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
     @Test
     public void testDelayCommandUserRunnable() {
         dtc.delayCommand(user, command);
-        verify(sch, never()).runTask(eq(plugin), eq(command));
+        verify(sch, never()).runTask(plugin, command);
         verify(user, never()).sendRawMessage(anyString());
-        verify(user).sendMessage(eq("commands.delay.stand-still"), eq("[seconds]"), eq("10"));
+        verify(user).sendMessage("commands.delay.stand-still", "[seconds]", "10");
         verify(sch).runTaskLater(eq(plugin), any(Runnable.class), eq(200L));
         verify(user, never()).sendMessage("commands.delay.previous-command-cancelled");
 

@@ -248,7 +248,7 @@ public class PVPListenerTest extends CommonTestSetup {
     @Test
     public void testOnEntityDamageNPC() {
         // Player 2 is an NPC
-        when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
+        when(player2.hasMetadata("NPC")).thenReturn(true);
         // PVP is not allowed
         when(island.isAllowed(any())).thenReturn(false);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(mockPlayer, player2,
@@ -268,7 +268,7 @@ public class PVPListenerTest extends CommonTestSetup {
     @Test
     public void testOnEntityDamageNPCAttacks() {
         // Player 2 is an NPC
-        when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
+        when(player2.hasMetadata("NPC")).thenReturn(true);
         // PVP is not allowed
         when(island.isAllowed(any())).thenReturn(false);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player2, mockPlayer,
@@ -701,7 +701,7 @@ public class PVPListenerTest extends CommonTestSetup {
         assertFalse(pfe.isCancelled());
 
         // Disallow PVP , attack on NPC
-        when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
+        when(player2.hasMetadata("NPC")).thenReturn(true);
         when(island.isAllowed(any())).thenReturn(false);
         pfe = new PlayerFishEvent(mockPlayer, player2, hook, null);
         new PVPListener().onFishing(pfe);
