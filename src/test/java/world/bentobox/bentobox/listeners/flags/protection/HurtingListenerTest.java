@@ -22,7 +22,6 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -273,42 +272,6 @@ public class HurtingListenerTest extends CommonTestSetup {
         hl.onFishing(e);
         // Verify
         verify(notifier, never()).notify(user, "protection.protected");
-    }
-
-    /**
-     * Test method for {@link HurtingListener#onPlayerFeedParrots(org.bukkit.event.player.PlayerInteractEntityEvent)}.
-     */
-    @Disabled("Not yet implemented")
-    @Test
-    public void testOnPlayerFeedParrots() {
-        //fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link HurtingListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
-     */
-    @Disabled("Not yet implemented")
-    @Test
-    public void testOnSplashPotionSplash() {
-        //fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link HurtingListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
-     */
-    @Disabled("Not yet implemented")
-    @Test
-    public void testOnLingeringPotionSplash() {
-        //fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link HurtingListener#onLingeringPotionDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
-     */
-    @Disabled("Not yet implemented")
-    @Test
-    public void testOnLingeringPotionDamage() {
-        //fail("Not yet implemented"); // TODO
     }
 
 }

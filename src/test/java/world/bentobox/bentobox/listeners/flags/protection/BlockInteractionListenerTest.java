@@ -2,7 +2,6 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -342,26 +341,6 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
         assertEquals(Event.Result.DENY, e.useInteractedBlock());
         assertEquals(Event.Result.DENY, e.useItemInHand());
         verify(notifier, times(2)).notify(any(), eq("protection.protected"));
-    }
-
-
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
-     */
-    @Disabled("TODO")
-    @Test
-    public void testOnBlockBreak() {
-        fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onDragonEggTeleport(org.bukkit.event.block.BlockFromToEvent)}.
-     */
-    @Disabled("TODO")
-    @Test
-    public void testOnDragonEggTeleport() {
-        fail("Not yet implemented"); // TODO
     }
 
 }
