@@ -104,8 +104,6 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        // when(im.isOwner(any(),any())).thenReturn(true);
-        // when(im.getOwner(any(),any())).thenReturn(uuid);
         when(im.getIsland(world, user)).thenReturn(island);
         when(im.getIslands(world, notUUID)).thenReturn(List.of(island));
         when(plugin.getIslands()).thenReturn(im);

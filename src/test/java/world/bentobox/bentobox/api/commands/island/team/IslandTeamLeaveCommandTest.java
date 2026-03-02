@@ -115,7 +115,7 @@ public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        verify(user).sendMessage(eq("general.errors.no-team"));
+        verify(user).sendMessage("general.errors.no-team");
     }
 
     /**
@@ -127,7 +127,7 @@ public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
         when(island.getOwner()).thenReturn(uuid);
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        verify(user).sendMessage(eq("commands.island.team.leave.cannot-leave"));
+        verify(user).sendMessage("commands.island.team.leave.cannot-leave");
     }
 
     /**
@@ -140,7 +140,7 @@ public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         verify(im).removePlayer(island,uuid);
-        verify(user).sendMessage(eq("commands.island.team.leave.success"));
+        verify(user).sendMessage("commands.island.team.leave.success");
     }
 
     /**
@@ -154,7 +154,7 @@ public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Confirmation required
-        verify(user).sendMessage(eq("commands.confirmation.confirm"), eq("[seconds]"), eq("3"));
+        verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "3");
     }
 
     /**
@@ -187,7 +187,7 @@ public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         verify(im).removePlayer(island, uuid);
         verify(user).sendMessage("commands.island.team.leave.success");
-        verify(pm).addReset(eq(world), eq(uuid));
+        verify(pm).addReset(world, uuid);
         verify(user).sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, "100");
     }
 

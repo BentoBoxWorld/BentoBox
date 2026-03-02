@@ -74,7 +74,6 @@ public class IslandBanlistCommandTest extends RanksManagerTestSetup {
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        // when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -189,6 +188,6 @@ public class IslandBanlistCommandTest extends RanksManagerTestSetup {
     public void testBanlistMaxBanLimit() {
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(15);
         testBanlistBanned();
-        verify(user).sendMessage(eq("commands.island.banlist.you-can-ban"), eq(TextVariables.NUMBER), eq("4"));
+        verify(user).sendMessage("commands.island.banlist.you-can-ban", TextVariables.NUMBER, "4");
     }
 }

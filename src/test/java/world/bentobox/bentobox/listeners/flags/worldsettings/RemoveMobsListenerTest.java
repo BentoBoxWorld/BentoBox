@@ -67,7 +67,7 @@ public class RemoveMobsListenerTest extends CommonTestSetup {
 
 
         Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(inside)).thenReturn(opIsland);
         // On island
         when(im.locationIsOnIsland(any(), any())).thenReturn(true);
 

@@ -75,10 +75,8 @@ public class IslandTeamCommandTest extends RanksManagerTestSetup {
         when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
         when(im.getIsland(world, user)).thenReturn(island);
         // Max members
-        when(im.getMaxMembers(eq(island), eq(RanksManager.MEMBER_RANK))).thenReturn(3);
+        when(im.getMaxMembers(island, RanksManager.MEMBER_RANK)).thenReturn(3);
         // No team members
-        // when(im.getMembers(any(),
-        // any(UUID.class))).thenReturn(Collections.emptySet());
         // Add members
         ImmutableSet<UUID> set = new ImmutableSet.Builder<UUID>().build();
         // No members
@@ -130,7 +128,7 @@ public class IslandTeamCommandTest extends RanksManagerTestSetup {
     public void testCanExecuteUserStringListOfStringNoIsland() {
         when(im.getPrimaryIsland(world, uuid)).thenReturn(null);
         assertFalse(tc.canExecute(user, "team", Collections.emptyList()));
-        verify(user).sendMessage(eq("general.errors.no-island"));
+        verify(user).sendMessage("general.errors.no-island");
     }
 
     /**
@@ -139,9 +137,9 @@ public class IslandTeamCommandTest extends RanksManagerTestSetup {
     @Test
     public void testCanExecuteUserStringListOfStringIslandIsFull() {
         // Max members
-        when(im.getMaxMembers(eq(island), eq(RanksManager.MEMBER_RANK))).thenReturn(0);
+        when(im.getMaxMembers(island, RanksManager.MEMBER_RANK)).thenReturn(0);
         assertTrue(tc.canExecute(user, "team", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.island.team.invite.errors.island-is-full"));
+        verify(user).sendMessage("commands.island.team.invite.errors.island-is-full");
     }
 
     /**

@@ -98,13 +98,12 @@ public class IslandGoCommandTest extends CommonTestSetup {
         when(ic.getTopLabel()).thenReturn("island");
         // Have the create command point to the ic command
         Optional<CompositeCommand> createCommand = Optional.of(ic);
-        when(ic.getSubCommand(eq("create"))).thenReturn(createCommand);
+        when(ic.getSubCommand("create")).thenReturn(createCommand);
         when(ic.getWorld()).thenReturn(world);
 
         // Player has island by default
         when(im.getIslands(world, uuid)).thenReturn(List.of(island));
         when(im.hasIsland(world, uuid)).thenReturn(true);
-        // when(im.isOwner(world, uuid)).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -209,7 +208,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      */
     @Test
     public void testExecuteNoArgsReservedIslandNoCreateCommand() {
-        when(ic.getSubCommand(eq("create"))).thenReturn(Optional.empty());
+        when(ic.getSubCommand("create")).thenReturn(Optional.empty());
 
         when(ic.call(any(), any(), any())).thenReturn(true);
         when(island.isReserved()).thenReturn(true);
@@ -244,7 +243,6 @@ public class IslandGoCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteNoArgsMultipleHomes() {
 
-        // when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
     }
 
@@ -296,7 +294,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
         when(mockPlayer.getLocation()).thenReturn(l);
         PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, l, l);
         igc.onPlayerMove(e);
-        verify(mockPlayer, Mockito.never()).sendMessage(eq("commands.delay.moved-so-command-cancelled"));
+        verify(mockPlayer, Mockito.never()).sendMessage("commands.delay.moved-so-command-cancelled");
     }
 
     /**

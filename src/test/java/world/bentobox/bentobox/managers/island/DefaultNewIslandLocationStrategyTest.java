@@ -3,7 +3,6 @@ package world.bentobox.bentobox.managers.island;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,13 +62,13 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.getIslandDistance(eq(world))).thenReturn(50);
-        when(iwm.getIslandHeight(eq(world))).thenReturn(120);
-        when(iwm.getIslandXOffset(eq(world))).thenReturn(0);
-        when(iwm.getIslandZOffset(eq(world))).thenReturn(0);
-        when(iwm.getIslandStartX(eq(world))).thenReturn(1000);
-        when(iwm.getIslandStartZ(eq(world))).thenReturn(11000);
-        when(iwm.isCheckForBlocks(eq(world))).thenReturn(true);
+        when(iwm.getIslandDistance(world)).thenReturn(50);
+        when(iwm.getIslandHeight(world)).thenReturn(120);
+        when(iwm.getIslandXOffset(world)).thenReturn(0);
+        when(iwm.getIslandZOffset(world)).thenReturn(0);
+        when(iwm.getIslandStartX(world)).thenReturn(1000);
+        when(iwm.getIslandStartZ(world)).thenReturn(11000);
+        when(iwm.isCheckForBlocks(world)).thenReturn(true);
         // Island deletion manager
         when(plugin.getIslandDeletionManager()).thenReturn(idm);
         when(idm.inDeletion(any())).thenReturn(false);
@@ -79,7 +78,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
         // Default is that chunks have been generated
         mockedUtil.when(() -> Util.isChunkGenerated(any())).thenReturn(true);
         // Last island location
-        when(im.getLast(eq(world))).thenReturn(location);
+        when(im.getLast(world)).thenReturn(location);
         // Class under test
         dnils = new DefaultNewIslandLocationStrategy();
     }
@@ -136,10 +135,8 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
         Optional<Island> opIsland = Optional.of(new Island());
         Optional<Island> emptyIsland = Optional.empty();
         count = 0;
-        //long time = System.currentTimeMillis();
         when(im.getIslandAt(any())).thenAnswer(i -> count++ > 10 ? emptyIsland :opIsland);
         assertEquals(location,dnils.getNextLocation(world));
-        //System.out.println(System.currentTimeMillis() - time);
         verify(im).setLast(location);
     }
 
@@ -176,7 +173,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      */
     @Test
     public void testIsIslandUseOwnGenerator() {
-        when(iwm.isUseOwnGenerator(eq(world))).thenReturn(true);
+        when(iwm.isUseOwnGenerator(world)).thenReturn(true);
         assertEquals(Result.FREE, dnils.isIsland(location));
     }
 

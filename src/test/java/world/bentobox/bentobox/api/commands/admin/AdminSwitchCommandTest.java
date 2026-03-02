@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.admin;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -106,7 +105,7 @@ public class AdminSwitchCommandTest extends CommonTestSetup {
      */
     @Test
     public void testExecuteUserStringListOfStringNoMetaData() {
-        when(user.getMetaData(eq("AdminCommandSwitch"))).thenReturn(Optional.empty());
+        when(user.getMetaData("AdminCommandSwitch")).thenReturn(Optional.empty());
         asc.execute(user, "", Collections.emptyList());
         verify(user).getMetaData("AdminCommandSwitch");
         verify(user).sendMessage("commands.admin.switch.removing");
@@ -119,7 +118,7 @@ public class AdminSwitchCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteUserStringListOfStringMetaFalse() {
         MetaDataValue md = new MetaDataValue(false);
-        when(user.getMetaData(eq("AdminCommandSwitch"))).thenReturn(Optional.of(md));
+        when(user.getMetaData("AdminCommandSwitch")).thenReturn(Optional.of(md));
         asc.execute(user, "", Collections.emptyList());
         verify(user).getMetaData("AdminCommandSwitch");
         verify(user).sendMessage("commands.admin.switch.removing");
@@ -132,7 +131,7 @@ public class AdminSwitchCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteUserStringListOfStringMetaTrue() {
         MetaDataValue md = new MetaDataValue(true);
-        when(user.getMetaData(eq("AdminCommandSwitch"))).thenReturn(Optional.of(md));
+        when(user.getMetaData("AdminCommandSwitch")).thenReturn(Optional.of(md));
         asc.execute(user, "", Collections.emptyList());
         verify(user).getMetaData("AdminCommandSwitch");
         verify(user).sendMessage("commands.admin.switch.adding");

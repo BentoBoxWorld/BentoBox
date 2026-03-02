@@ -151,7 +151,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
         when(im.hasIsland(world, notUUID)).thenReturn(false);
         when(im.inTeam(world, notUUID)).thenReturn(false);
         assertFalse(itl.canExecute(user, "", List.of("tastybento")));
-        verify(user).sendMessage(eq("general.errors.player-has-no-island"));
+        verify(user).sendMessage("general.errors.player-has-no-island");
     }
 
     /**
@@ -177,7 +177,6 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
         when(im.hasIsland(world, uuid)).thenReturn(true);
         when(island.hasTeam()).thenReturn(false);
         when(im.inTeam(any(), any())).thenReturn(false);
-        //when(im.getOwner(any(), any())).thenReturn(uuid);
         Island is = mock(Island.class);
         Location loc = mock(Location.class);
         when(loc.toVector()).thenReturn(new Vector(123,123,432));
@@ -197,7 +196,6 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteFailUUID() {
         when(im.inTeam(any(), any())).thenReturn(false);
-        //when(im.getOwner(any(), any())).thenReturn(uuid);
         Island is = mock(Island.class);
         Location loc = mock(Location.class);
         when(loc.toVector()).thenReturn(new Vector(123,123,432));
@@ -218,7 +216,6 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
     public void testCanExecuteSuccess() {
         when(island.hasTeam()).thenReturn(false);
         when(im.inTeam(any(), any())).thenReturn(false);
-        //when(im.getOwner(any(), any())).thenReturn(uuid);
         Island is = mock(Island.class);
         Location loc = mock(Location.class);
         when(loc.toVector()).thenReturn(new Vector(123,123,432));

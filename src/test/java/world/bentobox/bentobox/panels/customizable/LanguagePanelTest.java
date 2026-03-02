@@ -118,7 +118,7 @@ public class LanguagePanelTest extends CommonTestSetup {
     public void testOpenPanelNoLocales() {
         LanguagePanel.openPanel(command, user);
         verify(plugin).getLocalesManager();
-        verify(lm).getAvailableLocales(eq(true));
+        verify(lm).getAvailableLocales(true);
         // Verify error was logged
         verify(plugin).logError("There are no available locales for selection!");
     }

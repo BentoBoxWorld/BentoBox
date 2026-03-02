@@ -396,7 +396,7 @@ public class AddonsManagerTest extends CommonTestSetup {
         am.getAddons().add(addon);
 
         assertTrue(am.setPerms(addon));
-        verify(plugin).logError(eq("Addon mygame: AddonException : Permission default is invalid in addon.yml: [gamemode].intopten.default"));
+        verify(plugin).logError("Addon mygame: AddonException : Permission default is invalid in addon.yml: [gamemode].intopten.default");
     }
 
 

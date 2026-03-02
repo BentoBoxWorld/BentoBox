@@ -182,7 +182,6 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
     @Test
     public void testCanExecuteUserStringListOfStringShowHelp() {
         when(im.inTeam(any(), any())).thenReturn(true);
-        //when(im.getOwner(any(), any())).thenReturn(uuid);
         assertFalse(its.canExecute(user, "", List.of()));
         verify(user).sendMessage("commands.help.header","[label]", "BSkyBlock");
     }
@@ -204,7 +203,6 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
     @Test
     public void testCanExecuteUserStringListOfStringSamePlayer() {
         when(im.inTeam(any(), any())).thenReturn(true);
-        //when(im.getOwner(any(), any())).thenReturn(uuid);
         when(pm.getUUID(anyString())).thenReturn(uuid);
         assertFalse(its.canExecute(user, "", List.of("tastybento")));
         verify(user).sendMessage("commands.island.team.setowner.errors.cant-transfer-to-yourself");
@@ -216,9 +214,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
     @Test
     public void testCanExecuteUserStringListOfStringTargetNotInTeam() {
         when(im.inTeam(any(), any())).thenReturn(true);
-        //when(im.getOwner(any(), any())).thenReturn(uuid);
         when(pm.getUUID(anyString())).thenReturn(UUID.randomUUID());
-        //when(im.getMembers(any(), any())).thenReturn(Set.of(uuid));
         assertFalse(its.canExecute(user, "", List.of("tastybento")));
         verify(user).sendMessage("commands.island.team.setowner.errors.target-is-not-member");
     }

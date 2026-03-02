@@ -113,8 +113,6 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
         // Player has island to begin with
         im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        // when(im.isOwner(any(), any())).thenReturn(true);
-        // when(im.getOwner(any(), any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -167,7 +165,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
-        verify(user).sendMessage(eq("general.errors.no-team"));
+        verify(user).sendMessage("general.errors.no-team");
     }
 
     /**
@@ -185,7 +183,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
         when(island.inTeam(notUUID)).thenReturn(true);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick-rank"), eq(TextVariables.NAME), eq("poslovitch"));
+        verify(user).sendMessage("commands.island.team.kick.cannot-kick-rank", TextVariables.NAME, "poslovitch");
     }
 
     /**
@@ -203,7 +201,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
         when(island.inTeam(notUUID)).thenReturn(true);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick-rank"), eq(TextVariables.NAME), eq("poslovitch"));
+        verify(user).sendMessage("commands.island.team.kick.cannot-kick-rank", TextVariables.NAME, "poslovitch");
     }
 
     /**
@@ -270,7 +268,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(uuid);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick"));
+        verify(user).sendMessage("commands.island.team.kick.cannot-kick");
     }
 
     /**
@@ -281,9 +279,8 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
     public void testExecuteDifferentPlayerNotInTeam() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);
-        // when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("general.errors.not-in-team"));
+        verify(user).sendMessage("general.errors.not-in-team");
     }
 
     /**
@@ -352,7 +349,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(pm.getName(notUUID)).thenReturn("poslovitch");
         Players targetPlayer = mock(Players.class);
-        when(pm.getPlayer(eq(notUUID))).thenReturn(targetPlayer);
+        when(pm.getPlayer(notUUID)).thenReturn(targetPlayer);
 
         when(target.isOnline()).thenReturn(false);
 
@@ -380,7 +377,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         // Confirmation required
-        verify(user).sendMessage(eq("commands.confirmation.confirm"), eq("[seconds]"), eq("0"));
+        verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
     }
 
     /**
@@ -457,9 +454,6 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
         for (String name : r) {
             assertEquals(expectedNames[i++], name, "Rank " + i);
         }
-
-        // assertTrue(Arrays.equals(expectedNames, r.toArray()));
-
     }
 
     @Test

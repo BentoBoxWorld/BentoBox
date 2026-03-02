@@ -2,7 +2,6 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -63,7 +62,7 @@ public class OfflineRedstoneListenerTest extends CommonTestSetup {
         // Island Manager
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(inside)).thenReturn(opIsland);
 
         // Blocks
         when(block.getWorld()).thenReturn(world);
@@ -217,7 +216,7 @@ public class OfflineRedstoneListenerTest extends CommonTestSetup {
         BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
         OfflineRedstoneListener orl = new OfflineRedstoneListener();
         Flags.OFFLINE_REDSTONE.setSetting(world, false);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(inside)).thenReturn(Optional.empty());
         orl.onBlockRedstone(e);
         // Current remains 10
         assertEquals(10, e.getNewCurrent());
@@ -233,7 +232,7 @@ public class OfflineRedstoneListenerTest extends CommonTestSetup {
         BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
         OfflineRedstoneListener orl = new OfflineRedstoneListener();
         Flags.OFFLINE_REDSTONE.setSetting(world, false);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(inside)).thenReturn(Optional.empty());
         orl.onBlockRedstone(e);
         // Current remains 10
         assertEquals(10, e.getNewCurrent());

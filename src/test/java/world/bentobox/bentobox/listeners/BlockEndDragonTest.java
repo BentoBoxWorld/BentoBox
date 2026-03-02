@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -91,7 +90,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
     public void testOnPlayerChangeWorld() {
         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(mockPlayer, world);
         bed.onPlayerChangeWorld(event);
-        verify(block).setType(eq(Material.END_PORTAL), eq(false));
+        verify(block).setType(Material.END_PORTAL, false);
     }
 
     /**
@@ -102,7 +101,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
         when(iwm.isIslandEnd(any())).thenReturn(false);
         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(mockPlayer, world);
         bed.onPlayerChangeWorld(event);
-        verify(block, never()).setType(eq(Material.END_PORTAL), eq(false));
+        verify(block, never()).setType(Material.END_PORTAL, false);
     }
 
     /**
@@ -113,7 +112,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
         when(block.getType()).thenReturn(Material.END_PORTAL);
         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(mockPlayer, world);
         bed.onPlayerChangeWorld(event);
-        verify(block, never()).setType(eq(Material.END_PORTAL), eq(false));
+        verify(block, never()).setType(Material.END_PORTAL, false);
     }
 
     /**
@@ -124,7 +123,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
         Flags.REMOVE_END_EXIT_ISLAND.setSetting(world, false);
         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(mockPlayer, world);
         bed.onPlayerChangeWorld(event);
-        verify(block, never()).setType(eq(Material.END_PORTAL), eq(false));
+        verify(block, never()).setType(Material.END_PORTAL, false);
     }
 
     /**
@@ -135,7 +134,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
         Component component = mock(Component.class);
         PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         bed.onPlayerJoinWorld(event);
-        verify(block).setType(eq(Material.END_PORTAL), eq(false));
+        verify(block).setType(Material.END_PORTAL, false);
     }
 
     /**

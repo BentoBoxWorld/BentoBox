@@ -83,8 +83,6 @@ public class HeadGetter {
     public static void getHead(PanelItem panelItem, HeadRequester requester) {
         // Freshen cache
         // If memory is an issue we sacrifice performance?
-        // cachedHeads.values().removeIf(cache -> System.currentTimeMillis() -
-        // cache.getTimestamp() > TOO_LONG);
 
         HeadCache cache = cachedHeads.get(panelItem.getPlayerHeadName());
 

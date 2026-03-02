@@ -3,7 +3,6 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,7 +48,7 @@ public class PistonPushListenerTest extends CommonTestSetup {
         when(inside.getWorld()).thenReturn(world);
 
         Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(inside)).thenReturn(opIsland);
 
         // Blocks
         when(block.getWorld()).thenReturn(world);
