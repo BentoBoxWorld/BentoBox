@@ -23,7 +23,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -271,15 +270,6 @@ public class PanelTest extends CommonTestSetup {
         assertEquals(Optional.empty(), p.getUser());
         p.setUser(user);
         assertEquals(user, p.getUser().get());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.Panel#setHead(world.bentobox.bentobox.api.panels.PanelItem)}.
-     */
-    @Test
-    @Disabled("New test required for new code")
-    public void testSetHead() {
-        // Not needed for test
     }
 
     /**

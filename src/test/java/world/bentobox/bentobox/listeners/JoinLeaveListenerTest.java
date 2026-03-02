@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -33,6 +34,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
 
@@ -224,11 +228,14 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
+     * Verifies that protection range is updated on join when player has a range permission
+     * that differs from the current range. Clamped to island distance (100).
      */
-    @Test
-    public void testOnPlayerJoinRangeChangeTooLargePerm() {
+    @ParameterizedTest
+    @MethodSource("provideRangeChangePermissions")
+    public void testOnPlayerJoinRangeChangePerm(int permRange, int expectedRange) {
         PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
-        when(pa.getPermission()).thenReturn("acidisland.island.range.1000");
+        when(pa.getPermission()).thenReturn("acidisland.island.range." + permRange);
         when(pa.getValue()).thenReturn(true);
         when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
         PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
@@ -236,49 +243,20 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
         // Verify
         checkSpigotMessage("commands.admin.setrange.range-updated");
         // Verify island setting
-        assertEquals(100, island.getProtectionRange());
+        assertEquals(expectedRange, island.getProtectionRange());
         // Verify log
-        verify(plugin).log("Island protection range changed from 50 to 100 for tastybento due to permission.");
+        verify(plugin).log("Island protection range changed from 50 to " + expectedRange + " for tastybento due to permission.");
     }
 
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
-     */
-    @Test
-    public void testOnPlayerJoinRangeChangeSmallerPerm() {
-        PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
-        when(pa.getPermission()).thenReturn("acidisland.island.range.10");
-        when(pa.getValue()).thenReturn(true);
-        when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
-        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
-        jll.onPlayerJoin(event);
-        // Verify
-        checkSpigotMessage("commands.admin.setrange.range-updated");
-        // Verify island setting
-        assertEquals(10, island.getProtectionRange());
-        // Verify log
-        verify(plugin).log("Island protection range changed from 50 to 10 for tastybento due to permission.");
-    }
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
-     */
-    @Test
-    public void testOnPlayerJoinRangeChangeSmallIncreasePerm() {
-        PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
-        when(pa.getPermission()).thenReturn("acidisland.island.range.55");
-        when(pa.getValue()).thenReturn(true);
-        when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
-        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
-        jll.onPlayerJoin(event);
-        // Verify
-        checkSpigotMessage("commands.admin.setrange.range-updated");
-        // Verify island setting
-        assertEquals(55, island.getProtectionRange());
-        // Verify log
-        verify(plugin).log("Island protection range changed from 50 to 55 for tastybento due to permission.");
+    static Stream<Arguments> provideRangeChangePermissions() {
+        return Stream.of(
+                // Too large perm (1000) is clamped to island distance (100)
+                Arguments.of(1000, 100),
+                // Smaller perm (10) sets range to 10
+                Arguments.of(10, 10),
+                // Small increase perm (55) sets range to 55
+                Arguments.of(55, 55)
+        );
     }
 
     /**

@@ -629,7 +629,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    @Disabled("This fails for some reason on the map getting")
+    @Disabled("Reason: IslandGoCommand.getNameIslandMap static mock integration fails during map retrieval")
     public void testExecuteWithMultipleIslandsAfterCanExecute() {
         // Arrange
         args.add("ValidPlayer");

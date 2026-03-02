@@ -358,7 +358,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Disabled
+    @Disabled("Reason: Block mocks do not return correct BlockData for isSafeLocation checks")
     public void testIsSafeLocationSafe() {
         assertTrue(im.isSafeLocation(location));
     }
@@ -385,13 +385,13 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Disabled("Weird error")
+    @Disabled("Reason: Block mock types are commented out; test body needs rewrite for water submersion check")
     public void testIsSafeLocationSubmerged() {
         assertTrue(im.isSafeLocation(location)); // Since poseidon this is ok
     }
 
     @Test
-    @Disabled()
+    @Disabled("Reason: Material.values() iteration causes mock framework issues with BlockData types")
     public void testCheckIfSafeTrapdoor() {
         for (Material d : Material.values()) {
             if (d.name().contains("DOOR")) {
@@ -408,7 +408,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Disabled
+    @Disabled("Reason: Block mocks do not return correct BlockData for portal type checks")
     public void testIsSafeLocationPortals() {
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.AIR);
@@ -472,7 +472,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Disabled
+    @Disabled("Reason: Block mocks do not return correct BlockData for trapdoor open/closed state")
     public void testTrapDoor() {
         when(ground.getType()).thenReturn(Material.OAK_TRAPDOOR);
         assertFalse( im.isSafeLocation(location), "Open trapdoor");
@@ -484,7 +484,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Disabled
+    @Disabled("Reason: Block mocks do not return correct BlockData for fence/sign/cactus type checks")
     public void testBadBlocks() {
         // Fences
         when(ground.getType()).thenReturn(Material.SPRUCE_FENCE);
@@ -509,7 +509,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    @Disabled
+    @Disabled("Reason: Block mocks do not return correct BlockData for solid block type checks")
     public void testSolidBlocks() {
         when(space1.getType()).thenReturn(Material.STONE);
         assertFalse(im.isSafeLocation(location), "Solid");
@@ -602,7 +602,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getIsland(World, User)}
      */
     @Test
-    @Disabled("Can't get to work yet")
+    @Disabled("Reason: Island cache mock does not integrate with IslandsManager.getIsland(World, User)")
     public void testGetIslandWorldUser()  {
         assertEquals(is, im.getIsland(world, user));
         assertNull(im.getIsland(world, (User) null));
@@ -614,7 +614,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * @throws IOException 
      */
     @Test
-    @Disabled("Can't get this to work")
+    @Disabled("Reason: Database load/mock integration prevents getIsland(World, UUID) from returning expected island")
     public void testGetIsland() throws IOException  {
         im.load();
         assertEquals(is, im.getIsland(staticWorld, owner));
