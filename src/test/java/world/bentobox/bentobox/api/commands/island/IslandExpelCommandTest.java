@@ -54,13 +54,12 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
-    private UUID uuid;
     @Mock
     private User user;
     @Mock
     private PlayersManager pm;
     @Mock
-    private LocalesManager lm;
+    private LocalesManager testLm;
     @Mock
     private Addon addon;
 
@@ -124,8 +123,8 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
 
         // Locales
         Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
-        when(lm.get(any(User.class), anyString())).thenAnswer(answer);
-        when(plugin.getLocalesManager()).thenReturn(lm);
+        when(testLm.get(any(User.class), anyString())).thenAnswer(answer);
+        when(plugin.getLocalesManager()).thenReturn(testLm);
 
         // Placeholders
         PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);

@@ -92,8 +92,6 @@ public class PVPListenerTest extends CommonTestSetup {
     private Zombie zombie;
     @Mock
     private Creeper creeper;
-    @Mock
-    private Notifier notifier;
 
     @Override
     @BeforeEach

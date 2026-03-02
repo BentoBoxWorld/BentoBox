@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -50,8 +51,6 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     private PlayerTeleportListener ptl;
     @Mock
     private Block block;
-    @Mock
-    private BukkitScheduler sch;
 
     /**
      * @throws java.lang.Exception
@@ -492,7 +491,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.onPlayerExitPortal(event);
 
         // Verify that no changes occurred to the event
-        assertEquals(location, event.getRespawnLocation());
+        assertSame(location, event.getRespawnLocation());
     }
 
     @Test
@@ -511,7 +510,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.onPlayerExitPortal(event);
 
         // Verify that no changes occurred to the event
-        assertEquals(location, event.getRespawnLocation());
+        assertSame(location, event.getRespawnLocation());
     }
 
     @Test
@@ -527,7 +526,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.onPlayerExitPortal(event);
 
         // Verify that the respawn location remains unchanged
-        assertEquals(location, event.getRespawnLocation());
+        assertSame(location, event.getRespawnLocation());
     }
 
     @Test
@@ -543,7 +542,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.onPlayerExitPortal(event);
 
         // Verify that the respawn location was updated to the island spawn point
-        assertEquals(location, event.getRespawnLocation());
+        assertSame(location, event.getRespawnLocation());
     }
 
     @Test
@@ -560,7 +559,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.onPlayerExitPortal(event);
 
         // Verify that the respawn location was updated to the island's protection center
-        assertEquals(location, event.getRespawnLocation());
+        assertSame(location, event.getRespawnLocation());
     }
 
     @Test
@@ -576,7 +575,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.onPlayerExitPortal(event);
 
         // Verify that the respawn location was updated to the world spawn location
-        assertEquals(location, event.getRespawnLocation());
+        assertSame(location, event.getRespawnLocation());
     }
 
 

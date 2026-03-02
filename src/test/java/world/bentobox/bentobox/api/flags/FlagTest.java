@@ -57,7 +57,7 @@ public class FlagTest extends RanksManagerTestSetup {
     private Listener listener;
     private Map<String, Boolean> worldFlags;
     @Mock
-    private LocalesManager lm;
+    private LocalesManager testLm;
 
     @Override
     @BeforeEach
@@ -82,9 +82,9 @@ public class FlagTest extends RanksManagerTestSetup {
         when(Bukkit.getItemFactory()).thenReturn(itemF);
         
         // Locales manager
-        when(plugin.getLocalesManager()).thenReturn(lm);
+        when(plugin.getLocalesManager()).thenReturn(testLm);
         // Setting US text is successful
-        when(lm.setTranslation(eq(Locale.US), anyString(), anyString())).thenReturn(true);
+        when(testLm.setTranslation(eq(Locale.US), anyString(), anyString())).thenReturn(true);
 
         // Flag
         f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).type(Flag.Type.PROTECTION).listener(listener).build();

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -115,7 +116,7 @@ public class AddonTest extends CommonTestSetup {
 
     @Test
     public void testGetPlugin() {
-        assertEquals(plugin, test.getPlugin());
+        assertSame(plugin, test.getPlugin());
     }
 
     @Test
@@ -241,7 +242,7 @@ public class AddonTest extends CommonTestSetup {
     public void testGetIslands() {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
-        assertEquals(im, test.getIslands());
+        assertSame(im, test.getIslands());
     }
 
     @Test

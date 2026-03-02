@@ -54,8 +54,6 @@ public class IslandNearCommandTest extends CommonTestSetup {
     @Mock
     private Player pp;
 
-    private UUID uuid;
-
     private IslandNearCommand inc;
     @Mock
     private Block block;

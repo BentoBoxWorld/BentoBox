@@ -236,7 +236,7 @@ public class BreakBlocksListenerTest extends CommonTestSetup {
         when(block.getLocation()).thenReturn(location);
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_AIR, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
-        assertEquals(e.useInteractedBlock(), Result.ALLOW);
+        assertEquals(Result.ALLOW, e.useInteractedBlock());
     }
 
     /**

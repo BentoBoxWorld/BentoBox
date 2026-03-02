@@ -224,9 +224,10 @@ public class BlueprintClipboardManager {
         }
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(unzipFilePath.toFile().getCanonicalPath()))) {
             byte[] bytesIn = new byte[1024];
-            int read;
-            while ((read = zipInputStream.read(bytesIn)) != -1) {
+            int read = zipInputStream.read(bytesIn);
+            while (read != -1) {
                 bos.write(bytesIn, 0, read);
+                read = zipInputStream.read(bytesIn);
             }
         }
     }
@@ -236,9 +237,10 @@ public class BlueprintClipboardManager {
             zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
             try (FileInputStream inputStream = new FileInputStream(targetFile)) {
                 final byte[] buffer = new byte[1024];
-                int length;
-                while((length = inputStream.read(buffer)) >= 0) {
+                int length = inputStream.read(buffer);
+                while (length >= 0) {
                     zipOutputStream.write(buffer, 0, length);
+                    length = inputStream.read(buffer);
                 }
             }
             try {

@@ -23,7 +23,7 @@ public class SettingsTest {
     private Settings s;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         WhiteBox.setInternalState(BentoBox.class, "instance", Mockito.mock(BentoBox.class));
         // Class under test
         s = new Settings();

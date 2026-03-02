@@ -54,7 +54,6 @@ public class AdminResetHomeCommandTest extends CommonTestSetup {
     @Mock
     private PlayersManager pm;
     private UUID notUUID;
-    private UUID uuid;
     private AdminResetHomeCommand instance;
     private String label;
     private ArrayList<String> args = new ArrayList<>();

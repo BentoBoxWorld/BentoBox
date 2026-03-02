@@ -47,8 +47,6 @@ public class TreesGrowingOutsideRangeListenerTest extends CommonTestSetup {
 
     /* Islands */
     @Mock
-    private Island island;
-    @Mock
     private Island anotherIsland;
 
     @Mock

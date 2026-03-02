@@ -40,7 +40,6 @@ public class AdminTeamKickCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
-    private UUID uuid;
     @Mock
     private User user;
     @Mock

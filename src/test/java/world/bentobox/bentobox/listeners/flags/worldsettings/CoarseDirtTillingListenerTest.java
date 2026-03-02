@@ -54,8 +54,6 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
     private CoarseDirtTillingListener ctl;
     @Mock
     private Block clickedBlock;
-    @Mock
-    private Notifier notifier;
 
 
     @Override

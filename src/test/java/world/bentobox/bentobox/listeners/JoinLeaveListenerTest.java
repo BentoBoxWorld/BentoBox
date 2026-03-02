@@ -27,7 +27,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerQuitEvent.QuitReason;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
@@ -70,11 +69,9 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
     private Inventory chest;
     @Mock
     private Settings settings;
-    @Mock
-    private PlayerInventory inv;
     private Set<String> set;
 
-    private @Nullable Island island;
+    private @Nullable Island testIsland;
     @Mock
     private GameModeAddon gameMode;
 
@@ -129,13 +126,13 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
         when(plugin.getSettings()).thenReturn(settings);
 
         // Island
-        island = new Island(location, uuid, 50);
-        island.setWorld(world);
+        testIsland = new Island(location, uuid, 50);
+        testIsland.setWorld(world);
 
-        when(im.getIsland(any(), any(User.class))).thenReturn(island);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        when(im.getIslands()).thenReturn(Collections.singletonList(island));
-        when(im.getIslands(any(UUID.class))).thenReturn(Collections.singletonList(island));
+        when(im.getIsland(any(), any(User.class))).thenReturn(testIsland);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(testIsland);
+        when(im.getIslands()).thenReturn(Collections.singletonList(testIsland));
+        when(im.getIslands(any(UUID.class))).thenReturn(Collections.singletonList(testIsland));
         Map<UUID, Integer> memberMap = new HashMap<>();
 
         memberMap.put(uuid, RanksManager.OWNER_RANK);
@@ -146,7 +143,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
         when(coopPlayer.getWorld()).thenReturn(world);
         User.getInstance(coopPlayer);
         memberMap.put(uuid2, RanksManager.COOP_RANK);
-        island.setMembers(memberMap);
+        testIsland.setMembers(memberMap);
 
 
         // Bukkit - online players
@@ -236,7 +233,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
         // Verify
         checkSpigotMessage("commands.admin.setrange.range-updated");
         // Verify island setting
-        assertEquals(100, island.getProtectionRange());
+        assertEquals(100, testIsland.getProtectionRange());
         // Verify log
         verify(plugin).log("Island protection range changed from 50 to 100 for tastybento due to permission.");
     }
@@ -256,7 +253,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
         // Verify
         checkSpigotMessage("commands.admin.setrange.range-updated");
         // Verify island setting
-        assertEquals(10, island.getProtectionRange());
+        assertEquals(10, testIsland.getProtectionRange());
         // Verify log
         verify(plugin).log("Island protection range changed from 50 to 10 for tastybento due to permission.");
     }
@@ -276,7 +273,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
         // Verify
         checkSpigotMessage("commands.admin.setrange.range-updated");
         // Verify island setting
-        assertEquals(55, island.getProtectionRange());
+        assertEquals(55, testIsland.getProtectionRange());
         // Verify log
         verify(plugin).log("Island protection range changed from 50 to 55 for tastybento due to permission.");
     }
@@ -297,7 +294,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
         verify(mockPlayer, never()).sendMessage(eq("commands.admin.setrange.range-updated"));
         // Verify that the island protection range is not changed if it is already at
         // that value
-        assertEquals(50, island.getProtectionRange());
+        assertEquals(50, testIsland.getProtectionRange());
         // Verify log
         verify(plugin, never()).log("Island protection range changed from 50 to 10 for tastybento due to permission.");
     }
@@ -353,7 +350,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
         jll.onPlayerQuit(event);
         checkSpigotMessage("commands.island.team.uncoop.all-members-logged-off");
         // Team is now only 1 big
-        assertEquals(1, island.getMembers().size());
+        assertEquals(1, testIsland.getMembers().size());
     }
 
 }

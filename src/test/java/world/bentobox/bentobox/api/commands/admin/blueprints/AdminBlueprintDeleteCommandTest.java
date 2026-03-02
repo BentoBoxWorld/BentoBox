@@ -44,9 +44,6 @@ public class AdminBlueprintDeleteCommandTest extends CommonTestSetup {
     private GameModeAddon addon;
     @Mock
     private User user;
-    private UUID uuid = UUID.randomUUID();
-    @Mock
-    private BlueprintsManager bm;
     private Blueprint bp = new Blueprint();
     private AdminBlueprintDeleteCommand abcc;
     private Map<String, Blueprint> map;

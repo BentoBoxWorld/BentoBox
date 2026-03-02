@@ -274,6 +274,7 @@ public class HeadGetter {
 
             return decodedTexture;
         } catch (Exception ignored) {
+            // Failed to fetch texture from Mojang API; fall through to return null
         }
 
         return null;
@@ -322,6 +323,7 @@ public class HeadGetter {
 
             return new Pair<>(UUID.fromString(userIdString), decodedTexture);
         } catch (Exception ignored) {
+            // Failed to fetch texture from mc-heads.net; fall through to return default
         }
 
         // return random uuid and null, to assign some values for cache.

@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.events.addon;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
@@ -78,7 +78,7 @@ public class AddonEnableEventTest extends CommonTestSetup {
      */
     @Test
     public void testGetAddon() {
-        assertEquals(addon, aee.getAddon());
+        assertSame(addon, aee.getAddon());
     }
 
     /**
@@ -95,7 +95,7 @@ public class AddonEnableEventTest extends CommonTestSetup {
     @Test
     public void testSetNewEvent() {
         aee.setNewEvent(aee);
-        assertEquals(aee, aee.getNewEvent().get());
+        assertSame(aee, aee.getNewEvent().get());
     }
 
     /**

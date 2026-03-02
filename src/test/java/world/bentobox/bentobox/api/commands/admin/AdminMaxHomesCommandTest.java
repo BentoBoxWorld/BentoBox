@@ -59,7 +59,6 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
     @Mock
     private PlayersManager pm;
     private UUID notUUID;
-    private UUID uuid;
     private AdminMaxHomesCommand instance;
     private String label;
     private ArrayList<String> args = new ArrayList<>();

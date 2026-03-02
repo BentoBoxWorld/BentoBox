@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -28,13 +26,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
-import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -46,16 +42,11 @@ import world.bentobox.bentobox.managers.LocalesManager;
 public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
 
     @Mock
-    BentoBox plugin;
-    @Mock
     private AdminBlueprintCommand ac;
     @Mock
     private GameModeAddon addon;
     @Mock
     private User user;
-    private UUID uuid = UUID.randomUUID();
-    @Mock
-    private BlueprintsManager bm;
     private Blueprint bp = new Blueprint();
     private AdminBlueprintLoadCommand abcc;
     private Map<String, Blueprint> map;

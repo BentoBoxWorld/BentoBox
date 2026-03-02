@@ -87,6 +87,7 @@ public class BreakBlocksListener extends FlagListener {
             try {
                 m = CaveVinesPlant.class.getMethod("isBerries");
             } catch (NoSuchMethodException ignored2) {
+                // Neither method name exists in this version; BERRIES_CHECK will remain null
             }
         }
         BERRIES_CHECK = m;
