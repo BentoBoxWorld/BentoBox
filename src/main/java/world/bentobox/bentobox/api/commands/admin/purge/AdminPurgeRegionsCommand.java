@@ -43,6 +43,8 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     private static final String DIM_1 = "DIM-1";
     private static final String IN_WORLD = " in world ";
     private static final String WILL_BE_DELETED = " will be deleted";
+    private static final String EXISTS_PREFIX = " (exists=";
+    private static final String PURGE_FOUND = "Purge found ";
     
     private volatile boolean inPurge;
     private boolean toBeConfirmed;
@@ -504,10 +506,10 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
         // Log resolved paths for diagnostics
         getPlugin().log("Purge region folders - Overworld: " + overworldRegion.getAbsolutePath()
-                + " (exists=" + overworldRegion.isDirectory() + ")");
+                + EXISTS_PREFIX + overworldRegion.isDirectory() + ")");
         if (isNether) {
             getPlugin().log("Purge region folders - Nether: " + netherRegion.getAbsolutePath()
-                    + " (exists=" + netherRegion.isDirectory() + ")");
+                    + EXISTS_PREFIX + netherRegion.isDirectory() + ")");
         } else {
             getPlugin().log("Purge region folders - Nether: disabled (isNetherGenerate="
                     + getPlugin().getIWM().isNetherGenerate(world) + ", isNetherIslands="
@@ -515,7 +517,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         }
         if (isEnd) {
             getPlugin().log("Purge region folders - End: " + endRegion.getAbsolutePath()
-                    + " (exists=" + endRegion.isDirectory() + ")");
+                    + EXISTS_PREFIX + endRegion.isDirectory() + ")");
         } else {
             getPlugin().log("Purge region folders - End: disabled (isEndGenerate="
                     + getPlugin().getIWM().isEndGenerate(world) + ", isEndIslands="
@@ -531,20 +533,20 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         if (owFiles != null) {
             for (File f : owFiles) candidateNames.add(f.getName());
         }
-        getPlugin().log("Purge found " + (owFiles != null ? owFiles.length : 0) + " overworld region files");
+        getPlugin().log(PURGE_FOUND + (owFiles != null ? owFiles.length : 0) + " overworld region files");
         if (isNether) {
             File[] nFiles = netherRegion.listFiles((dir, name) -> name.endsWith(".mca"));
             if (nFiles != null) {
                 for (File f : nFiles) candidateNames.add(f.getName());
             }
-            getPlugin().log("Purge found " + (nFiles != null ? nFiles.length : 0) + " nether region files");
+            getPlugin().log(PURGE_FOUND + (nFiles != null ? nFiles.length : 0) + " nether region files");
         }
         if (isEnd) {
             File[] eFiles = endRegion.listFiles((dir, name) -> name.endsWith(".mca"));
             if (eFiles != null) {
                 for (File f : eFiles) candidateNames.add(f.getName());
             }
-            getPlugin().log("Purge found " + (eFiles != null ? eFiles.length : 0) + " end region files");
+            getPlugin().log(PURGE_FOUND + (eFiles != null ? eFiles.length : 0) + " end region files");
         }
 
         getPlugin().log("Purge total candidate region coordinates: " + candidateNames.size());

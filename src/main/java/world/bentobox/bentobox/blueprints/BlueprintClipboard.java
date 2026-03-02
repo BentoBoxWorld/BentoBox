@@ -246,48 +246,50 @@ public class BlueprintClipboard {
     }
 
     private BlueprintBlock bluePrintBlock(Vector pos, Block block, boolean copyBiome) {
-        // Block state
         BlockState blockState = block.getState();
         BlueprintBlock b = new BlueprintBlock(block.getBlockData().getAsString());
 
         if (copyBiome) {
-            // Biome
             b.setBiome(block.getBiome());
         }
-
-        // Signs
         if (blockState instanceof Sign sign) {
             for (Side side : Side.values()) {
                 b.setSignLines(side, Arrays.asList(sign.getSide(side).getLines()));
                 b.setGlowingText(side, sign.getSide(side).isGlowingText());
             }
         }
-        // Set block data
         if (blockState.getBlockData() instanceof Attachable) {
-            // Placeholder for attachment
             bpBlocks.put(pos, new BlueprintBlock("minecraft:air"));
-            // Check for ItemsAdder block
-            plugin.getHooks().getHook("ItemsAdder").ifPresent(hook -> {
-                String iab = ItemsAdderHook.getInCustomRegion(block.getLocation());
-                if (iab != null) {
-                    b.setItemsAdderBlock(iab);
-                }
-            });
+            setItemsAdder(b, block);
             bpAttachable.put(pos, b);
             return null;
         }
 
-        if (block.getType().equals(Material.BEDROCK)) {
-            // Find the highest bedrock
-            if(blueprint.getBedrock() == null) {
-                blueprint.setBedrock(pos);
-            } else {
-                if (pos.getBlockY() > blueprint.getBedrock().getBlockY()) {
-                    blueprint.setBedrock(pos);
-                }
-            }
+        updateBedrock(pos, block);
+        serializeInventory(b, blockState);
+        if (blockState instanceof CreatureSpawner spawner) {
+            b.setCreatureSpawner(getSpawner(spawner));
         }
-        // Chests
+        if (blockState instanceof TrialSpawner spawner) {
+            b.setTrialSpawner(new BlueprintTrialSpawner(spawner.isOminous(),
+                    spawner.isOminous() ? spawner.getOminousConfiguration() : spawner.getNormalConfiguration()));
+        }
+        if (blockState instanceof Banner banner) {
+            b.setBannerPatterns(banner.getPatterns());
+        }
+        setItemsAdder(b, block);
+
+        return b;
+    }
+
+    private void updateBedrock(Vector pos, Block block) {
+        if (block.getType().equals(Material.BEDROCK)
+                && (blueprint.getBedrock() == null || pos.getBlockY() > blueprint.getBedrock().getBlockY())) {
+            blueprint.setBedrock(pos);
+        }
+    }
+
+    private void serializeInventory(BlueprintBlock b, BlockState blockState) {
         if (blockState instanceof InventoryHolder ih) {
             b.setInventory(new HashMap<>());
             for (int i = 0; i < ih.getInventory().getSize(); i++) {
@@ -297,30 +299,15 @@ public class BlueprintClipboard {
                 }
             }
         }
-        if (blockState instanceof CreatureSpawner spawner) {
-            b.setCreatureSpawner(getSpawner(spawner));
-        }
-        if (blockState instanceof TrialSpawner spawner) {
-            if (spawner.isOminous()) {
-                b.setTrialSpawner(new BlueprintTrialSpawner(true, spawner.getOminousConfiguration()));
-            } else {
-                b.setTrialSpawner(new BlueprintTrialSpawner(false, spawner.getNormalConfiguration()));
-            }
-        }
-        // Banners
-        if (blockState instanceof Banner banner) {
-            b.setBannerPatterns(banner.getPatterns());
-        }
+    }
 
-        // ItemsAdder
+    private void setItemsAdder(BlueprintBlock b, Block block) {
         plugin.getHooks().getHook("ItemsAdder").ifPresent(hook -> {
             String iab = ItemsAdderHook.getInCustomRegion(block.getLocation());
             if (iab != null) {
                 b.setItemsAdderBlock(iab);
             }
         });
-
-        return b;
     }
 
     private BlueprintCreatureSpawner getSpawner(CreatureSpawner spawner) {

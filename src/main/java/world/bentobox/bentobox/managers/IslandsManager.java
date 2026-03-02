@@ -1328,35 +1328,11 @@ public class IslandsManager {
             if (island == null) {
                 plugin.logWarning("Null island when loading...");
                 continue;
-            } else if (island.isDeleted()) {
-                // TODO delete from database
             }
-            // Check island distance and if incorrect stop BentoBox
-            else if (!plugin.getSettings().isOverrideSafetyCheck()
-                    && plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::isEnforceEqualRanges).orElse(true)
-                    && island.getWorld() != null
-                    && plugin.getIWM().inWorld(island.getWorld())
-                    && island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld())) {
-                throw new IOException("Island distance mismatch!\n" + "World '" + island.getWorld().getName()
-                        + "' distance " + plugin.getIWM().getIslandDistance(island.getWorld()) + " != island range "
-                        + island.getRange() + "!\n" + "Island ID in database is " + island.getUniqueId() + ".\n"
-                        + "Island distance in config.yml cannot be changed mid-game! Fix config.yml or clean database.");
+            if (island.isDeleted()) {
+                // TODO delete from database
             } else {
-                // Only try to fix the island center if we have to
-                if (!plugin.getSettings().isOverrideSafetyCheck() && plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::isFixIslandCenter).orElse(true)) {
-                    // Fix island center if it is off
-                    fixIslandCenter(island);
-                }
-                islandCache.addIsland(island, true);
-
-                if (island.isSpawn()) {
-                    // Success, set spawn if this is the spawn island.
-                    this.setSpawn(island);
-                } else {
-                    // Successful load
-                    // Clean any null flags out of the island - these can occur for various reasons
-                    island.getFlags().keySet().removeIf(f -> f.startsWith("NULL_FLAG"));
-                }
+                loadIsland(island);
             }
 
             // Update some of their fields
@@ -1365,6 +1341,37 @@ public class IslandsManager {
                         .orElse(""));
             }
         }
+    }
+
+    private void loadIsland(Island island) throws IOException {
+        // Check island distance and if incorrect stop BentoBox
+        if (hasDistanceMismatch(island)) {
+            throw new IOException("Island distance mismatch!\n" + "World '" + island.getWorld().getName()
+                    + "' distance " + plugin.getIWM().getIslandDistance(island.getWorld()) + " != island range "
+                    + island.getRange() + "!\n" + "Island ID in database is " + island.getUniqueId() + ".\n"
+                    + "Island distance in config.yml cannot be changed mid-game! Fix config.yml or clean database.");
+        }
+        // Only try to fix the island center if we have to
+        if (!plugin.getSettings().isOverrideSafetyCheck()
+                && plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::isFixIslandCenter).orElse(true)) {
+            fixIslandCenter(island);
+        }
+        islandCache.addIsland(island, true);
+
+        if (island.isSpawn()) {
+            this.setSpawn(island);
+        } else {
+            // Clean any null flags out of the island - these can occur for various reasons
+            island.getFlags().keySet().removeIf(f -> f.startsWith("NULL_FLAG"));
+        }
+    }
+
+    private boolean hasDistanceMismatch(Island island) {
+        return !plugin.getSettings().isOverrideSafetyCheck()
+                && plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::isEnforceEqualRanges).orElse(true)
+                && island.getWorld() != null
+                && plugin.getIWM().inWorld(island.getWorld())
+                && island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld());
     }
 
     /**

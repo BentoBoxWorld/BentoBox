@@ -11,6 +11,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
@@ -96,10 +97,10 @@ public class PlaceholderPanel extends AbstractPanel {
 
         if (template.description() != null) {
             builder.description(user.getTranslation(template.description(),
-                    "[number]", String.valueOf(count)));
+                    TextVariables.NUMBER, String.valueOf(count)));
         } else {
             builder.description(user.getTranslation("panels.placeholder.buttons.bentobox.description",
-                    "[number]", String.valueOf(count)));
+                    TextVariables.NUMBER, String.valueOf(count)));
         }
 
         builder.clickHandler((panel, u, clickType, i) -> {
@@ -133,20 +134,20 @@ public class PlaceholderPanel extends AbstractPanel {
 
         if (template.title() != null) {
             builder.name(user.getTranslation(template.title(),
-                    "[name]", addon.getDescription().getName()));
+                    TextVariables.NAME, addon.getDescription().getName()));
         } else {
             builder.name(user.getTranslation("panels.placeholder.buttons.addon.name",
-                    "[name]", addon.getDescription().getName()));
+                    TextVariables.NAME, addon.getDescription().getName()));
         }
 
         if (template.description() != null) {
             builder.description(user.getTranslation(template.description(),
-                    "[name]", addon.getDescription().getName(),
-                    "[number]", String.valueOf(count)));
+                    TextVariables.NAME, addon.getDescription().getName(),
+                    TextVariables.NUMBER, String.valueOf(count)));
         } else {
             builder.description(user.getTranslation("panels.placeholder.buttons.addon.description",
-                    "[name]", addon.getDescription().getName(),
-                    "[number]", String.valueOf(count)));
+                    TextVariables.NAME, addon.getDescription().getName(),
+                    TextVariables.NUMBER, String.valueOf(count)));
         }
 
         builder.clickHandler((panel, u, clickType, i) -> {

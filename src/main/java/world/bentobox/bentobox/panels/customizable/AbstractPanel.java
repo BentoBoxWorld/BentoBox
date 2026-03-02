@@ -12,6 +12,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
@@ -142,7 +143,7 @@ public abstract class AbstractPanel {
         }
         if (template.description() != null) {
             builder.description(user.getTranslation(template.description(),
-                    "[number]", String.valueOf(nextPage)));
+                    TextVariables.NUMBER, String.valueOf(nextPage)));
         }
 
         builder.clickHandler((panel, u, clickType, i) -> {
@@ -182,7 +183,7 @@ public abstract class AbstractPanel {
         }
         if (template.description() != null) {
             builder.description(user.getTranslation(template.description(),
-                    "[number]", String.valueOf(prevPage)));
+                    TextVariables.NUMBER, String.valueOf(prevPage)));
         }
 
         builder.clickHandler((panel, u, clickType, i) -> {

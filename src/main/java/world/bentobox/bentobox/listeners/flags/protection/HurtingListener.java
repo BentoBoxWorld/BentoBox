@@ -141,34 +141,33 @@ public class HurtingListener extends FlagListener {
                 if (attacker.equals(entity)) {
                     continue;
                 }
-                // Monsters being hurt
-                if (Util.isHostileEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
-                    for (PotionEffect effect : e.getPotion().getEffects()) {
-                        entity.removePotionEffect(effect.getType());
-                    }
-                }
-
-                // Tamed animals being hurt
-                if (Util.isTamableEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_TAMED_ANIMALS)) {
-                    for (PotionEffect effect : e.getPotion().getEffects()) {
-                        entity.removePotionEffect(effect.getType());
-                    }
-                }
-
-                // Mobs being hurt
-                if (Util.isPassiveEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
-                    for (PotionEffect effect : e.getPotion().getEffects()) {
-                        entity.removePotionEffect(effect.getType());
-                    }
-                }
-
-                // Villagers being hurt
-                if (entity instanceof AbstractVillager && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS)) {
-                    for (PotionEffect effect : e.getPotion().getEffects()) {
-                        entity.removePotionEffect(effect.getType());
-                    }
-                }
+                checkSplashDamage(e, attacker, entity);
             }
+        }
+    }
+
+    private void checkSplashDamage(PotionSplashEvent e, Player attacker, LivingEntity entity) {
+        // Monsters being hurt
+        if (Util.isHostileEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
+            removePotionEffects(e, entity);
+        }
+        // Tamed animals being hurt
+        if (Util.isTamableEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_TAMED_ANIMALS)) {
+            removePotionEffects(e, entity);
+        }
+        // Mobs being hurt
+        if (Util.isPassiveEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
+            removePotionEffects(e, entity);
+        }
+        // Villagers being hurt
+        if (entity instanceof AbstractVillager && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS)) {
+            removePotionEffects(e, entity);
+        }
+    }
+
+    private void removePotionEffects(PotionSplashEvent e, LivingEntity entity) {
+        for (PotionEffect effect : e.getPotion().getEffects()) {
+            entity.removePotionEffect(effect.getType());
         }
     }
 

@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
@@ -59,6 +60,8 @@ public class PlaceholderListPanel extends AbstractPanel {
     private static final String PANEL_NAME = "placeholder_list_panel";
     private static final String PLACEHOLDER_TYPE = "PLACEHOLDER";
     private static final String BACK_TYPE = "BACK";
+    private static final String PLACEHOLDER_VAR = "[placeholder]";
+    private static final String COUNT_VAR = "[count]";
     /** Maximum visible characters per lore description line before wrapping. */
     private static final int LORE_LINE_WIDTH = 38;
     /** Number of series members to sample in the lore value preview. */
@@ -136,7 +139,7 @@ public class PlaceholderListPanel extends AbstractPanel {
         panelBuilder.world(user.getWorld());
 
         // Title shows a breadcrumb: "SourceName > segment > segment"
-        panelBuilder.parameters("[name]", buildBreadcrumb());
+        panelBuilder.parameters(TextVariables.NAME, buildBreadcrumb());
 
         panelBuilder.registerTypeBuilder(PLACEHOLDER_TYPE, this::createNodeButton);
         panelBuilder.registerTypeBuilder(BACK_TYPE, this::createBackButton);
@@ -194,13 +197,13 @@ public class PlaceholderListPanel extends AbstractPanel {
         boolean enabled = isEnabled(leaf.key());
 
         builder.name(user.getTranslation("panels.placeholder-list.buttons.leaf.name",
-                "[placeholder]", fullPh));
+                PLACEHOLDER_VAR, fullPh));
 
         List<String> lore = new ArrayList<>();
         if (!leaf.description().isBlank()) {
             wrapText(leaf.description()).forEach(line ->
                     lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
-                            "[description]", line)));
+                            TextVariables.DESCRIPTION, line)));
         }
         addValueLine(lore, fullPh);
         if (!enabled) {
@@ -217,7 +220,7 @@ public class PlaceholderListPanel extends AbstractPanel {
                 "[label]", node.getLabel()));
         builder.description(
                 user.getTranslation("panels.placeholder-list.buttons.folder.description",
-                        "[count]", String.valueOf(count)),
+                        COUNT_VAR, String.valueOf(count)),
                 user.getTranslation("panels.placeholder-list.buttons.folder.hint"));
     }
 
@@ -228,17 +231,17 @@ public class PlaceholderListPanel extends AbstractPanel {
         int childCount = node.totalPlaceholderCount() - 1; // exclude the leaf itself
 
         builder.name(user.getTranslation("panels.placeholder-list.buttons.leaf.name",
-                "[placeholder]", fullPh));
+                PLACEHOLDER_VAR, fullPh));
 
         List<String> lore = new ArrayList<>();
         if (!leaf.description().isBlank()) {
             wrapText(leaf.description()).forEach(line ->
                     lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
-                            "[description]", line)));
+                            TextVariables.DESCRIPTION, line)));
         }
         addValueLine(lore, fullPh);
         lore.add(user.getTranslation("panels.placeholder-list.buttons.folder.description",
-                "[count]", String.valueOf(childCount)));
+                COUNT_VAR, String.valueOf(childCount)));
         if (!enabled) {
             lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.disabled"));
         }
@@ -253,17 +256,17 @@ public class PlaceholderListPanel extends AbstractPanel {
         boolean anyDisabled = series.rawKeys().stream().anyMatch(k -> !isEnabled(k));
 
         builder.name(user.getTranslation("panels.placeholder-list.buttons.series.name",
-                "[placeholder]", fullPh));
+                PLACEHOLDER_VAR, fullPh));
 
         List<String> lore = new ArrayList<>();
         if (!series.description().isBlank()) {
             wrapText(series.description()).forEach(line ->
                     lore.add(user.getTranslation("panels.placeholder-list.buttons.series.description",
-                            "[description]", line)));
+                            TextVariables.DESCRIPTION, line)));
         }
         addSeriesSamples(lore, series);
         lore.add(user.getTranslation("panels.placeholder-list.buttons.series.range",
-                "[count]", String.valueOf(series.rawKeys().size()),
+                COUNT_VAR, String.valueOf(series.rawKeys().size()),
                 "[min]", String.valueOf(series.min()),
                 "[max]", String.valueOf(series.max())));
         if (anyDisabled) {
@@ -283,18 +286,18 @@ public class PlaceholderListPanel extends AbstractPanel {
 
         String seriesPh = "%" + expansionId + "_" + series.displayKey() + "%";
         builder.name(user.getTranslation("panels.placeholder-list.buttons.series.name",
-                "[placeholder]", leafPh + " / " + seriesPh));
+                PLACEHOLDER_VAR, leafPh + " / " + seriesPh));
 
         List<String> lore = new ArrayList<>();
         if (!leaf.description().isBlank()) {
             wrapText(leaf.description()).forEach(line ->
                     lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
-                            "[description]", line)));
+                            TextVariables.DESCRIPTION, line)));
         }
         addValueLine(lore, leafPh);
         addSeriesSamples(lore, series);
         lore.add(user.getTranslation("panels.placeholder-list.buttons.series.range",
-                "[count]", String.valueOf(series.rawKeys().size()),
+                COUNT_VAR, String.valueOf(series.rawKeys().size()),
                 "[min]", String.valueOf(series.min()),
                 "[max]", String.valueOf(series.max())));
         if (!leafEnabled || anySeriesDisabled) {

@@ -444,6 +444,7 @@ public class AddonsManagerTest extends CommonTestSetup {
 
         @Override
         public void createWorlds() {
+            // Not needed for test
         }
 
         @Override
@@ -458,14 +459,17 @@ public class AddonsManagerTest extends CommonTestSetup {
 
         @Override
         public void saveWorldSettings() {
+            // Not needed for test
         }
 
         @Override
         public void onEnable() {
+            // Not needed for test
         }
 
         @Override
         public void onDisable() {
+            // Not needed for test
         }
 
     }
