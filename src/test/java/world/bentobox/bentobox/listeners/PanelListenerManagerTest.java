@@ -171,13 +171,12 @@ public class PanelListenerManagerTest extends CommonTestSetup {
 
         @Override
         public void setTitle(String title) {
-            
+            // Not needed for test
         }
 
         @Override
         public void setItem(int slot, ItemStack item) {
-            
-
+            // Not needed for test
         }
 
         @Override
@@ -188,8 +187,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
 
         @Override
         public void setCursor(ItemStack item) {
-            
-
+            // Not needed for test
         }
 
         @Override
@@ -217,8 +215,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
 
         @Override
         public void close() {
-            
-
+            // Not needed for test
         }
 
         @Override
@@ -235,8 +232,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
 
         @Override
         public void open() {
-            
-
+            // Not needed for test
         }
 
         @Override

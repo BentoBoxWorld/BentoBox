@@ -84,7 +84,7 @@ public class ZNPCsPlusHook extends NPCHook {
     }
 
     @Override
-    public Map<? extends Vector, ? extends List<BlueprintEntity>> getNpcsInArea(World world, List<Vector> vectorsToCopy,
+    public Map<Vector, List<BlueprintEntity>> getNpcsInArea(World world, List<Vector> vectorsToCopy,
             @Nullable Vector origin) {
         Map<Vector, List<BlueprintEntity>> bpEntities = new HashMap<>();
 

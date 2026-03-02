@@ -55,68 +55,61 @@ public class AdminMaxHomesCommand extends ConfirmableCommand {
             showHelp(this, user);
             return false;
         }
-        // Check arguments
         if (args.size() == 1) {
-            // Player must be in game
-            if (!user.isPlayer()) {
-                user.sendMessage("general.errors.use-in-game");
-                return false;
-            }
-            // Check world
-            if (user.getWorld() != getWorld()) {
-                user.sendMessage("general.errors.wrong-world");
-                return false;
-            }
-            // Arg must be an integer to return true, otherwise false
-            maxHomes = Ints.tryParse(args.getFirst());
-            if (maxHomes == null || maxHomes < 1) {
-                user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.getFirst());
-                return false;
-            }
-            // Get the island the user is standing on
-            boolean onIsland = getIslands().getIslandAt(user.getLocation()).map(is -> {
-                islands.put("", new IslandInfo(is, false));
-                return true;
-            }).orElse(false);
-            if (!onIsland) {
-                user.sendMessage("general.errors.not-on-island");
-                return false;
-            }
-            return true;
+            return canExecuteStandingOnIsland(user, args);
         }
-        // More than one argument
-        // First arg must be a valid player name
+        return canExecuteWithTarget(user, args);
+    }
+
+    private boolean canExecuteStandingOnIsland(User user, List<String> args) {
+        if (!user.isPlayer()) {
+            user.sendMessage("general.errors.use-in-game");
+            return false;
+        }
+        if (user.getWorld() != getWorld()) {
+            user.sendMessage("general.errors.wrong-world");
+            return false;
+        }
+        maxHomes = Ints.tryParse(args.getFirst());
+        if (maxHomes == null || maxHomes < 1) {
+            user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.getFirst());
+            return false;
+        }
+        boolean onIsland = getIslands().getIslandAt(user.getLocation()).map(is -> {
+            islands.put("", new IslandInfo(is, false));
+            return true;
+        }).orElse(false);
+        if (!onIsland) {
+            user.sendMessage("general.errors.not-on-island");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean canExecuteWithTarget(User user, List<String> args) {
         UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
-        // Second arg must be the max homes number
         maxHomes = Ints.tryParse(args.get(1));
         if (maxHomes == null) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
             return false;
         }
-
-        // Get islands
         islands = IslandGoCommand.getNameIslandMap(User.getInstance(targetUUID), getWorld());
         if (islands.isEmpty()) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
         if (args.size() > 2) {
-            // A specific island is mentioned. Parse which one it is and remove the others
-            final String name = String.join(" ", args.subList(2, args.size())); // Join all the args from here with spaces
-
+            final String name = String.join(" ", args.subList(2, args.size()));
             islands.keySet().removeIf(n -> !name.equalsIgnoreCase(n));
-
             if (islands.isEmpty()) {
-                // Failed name check - there are either
                 user.sendMessage("commands.admin.maxhomes.errors.unknown-island", TextVariables.NAME, name);
                 return false;
             }
         }
-
         return true;
     }
 

@@ -85,6 +85,7 @@ public class DefaultHelpCommandTest extends CommonTestSetup {
 
         @Override
         public void setup() {
+            // Not needed for test
         }
 
         @Override

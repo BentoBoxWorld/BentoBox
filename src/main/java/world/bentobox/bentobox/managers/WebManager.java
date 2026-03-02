@@ -193,7 +193,7 @@ public class WebManager {
     private String getContent(@NonNull GitHubRepository repo, String fileName) {
         try {
             String content = repo.getContent(fileName).getContent();
-            return new String(DatatypeConverter.parseBase64Binary(content.replaceAll("_", "/")));
+            return new String(DatatypeConverter.parseBase64Binary(content.replace("_", "/")));
         } catch (Exception e) {
             // Silently fail
         }

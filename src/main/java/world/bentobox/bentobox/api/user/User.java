@@ -641,67 +641,31 @@ public class User implements MetaDataAble {
      * @param message The message to send, containing inline commands in square brackets.
      */
     public void sendRawMessage(String message) {
-        // Create a base TextComponent for the message
         TextComponent baseComponent = new TextComponent();
 
-        // Regex to find inline commands like [run_command: /help] and [hover: click for help!], or unrecognized commands
         Pattern pattern = Pattern.compile("\\[(\\w+): ([^\\]]+)]|\\[\\[(.*?)\\]]");
         Matcher matcher = pattern.matcher(message);
 
-        // Keep track of the current position in the message
         int lastMatchEnd = 0;
         ClickEvent clickEvent = null;
         HoverEvent hoverEvent = null;
 
         while (matcher.find()) {
-            // Add any text before the current match
             if (matcher.start() > lastMatchEnd) {
-                String beforeMatch = message.substring(lastMatchEnd, matcher.start());
-                baseComponent.addExtra(TextComponent.fromLegacy(beforeMatch));
+                baseComponent.addExtra(TextComponent.fromLegacy(message.substring(lastMatchEnd, matcher.start())));
             }
-
-            // Check if it's a recognized command or an unknown bracketed text
             if (matcher.group(1) != null && matcher.group(2) != null) {
-                // Parse the inline command (action) and value
-                String actionType = matcher.group(1).toUpperCase(Locale.ENGLISH); // e.g., RUN_COMMAND, HOVER
-                String actionValue = matcher.group(2); // The command or text to display
-
-                // Apply the first valid click event or hover event encountered
-                switch (actionType) {
-                case "RUN_COMMAND":
-                case "SUGGEST_COMMAND":
-                case "COPY_TO_CLIPBOARD":
-                case "OPEN_URL":
-                    if (clickEvent == null) {
-                        clickEvent = new ClickEvent(ClickEvent.Action.valueOf(actionType), actionValue);
-                    }
-                    break;
-                case "HOVER":
-                    if (hoverEvent == null) {
-                        hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(actionValue));
-                    }
-                    break;
-                default:
-                    // Unrecognized command; preserve it in the output text
-                    baseComponent.addExtra(TextComponent.fromLegacy(matcher.group(0)));
-                }
-
+                clickEvent = parseClickAction(matcher, baseComponent, clickEvent);
+                hoverEvent = parseHoverAction(matcher, hoverEvent);
             } else if (matcher.group(3) != null) {
-                // Unrecognized bracketed text; preserve it in the output
                 baseComponent.addExtra(TextComponent.fromLegacy("[[" + matcher.group(3) + "]]"));
             }
-
-            // Update the last match end position
             lastMatchEnd = matcher.end();
         }
 
-        // Add any remaining text after the last match
         if (lastMatchEnd < message.length()) {
-            String remainingText = message.substring(lastMatchEnd);
-            baseComponent.addExtra(TextComponent.fromLegacy(remainingText));
+            baseComponent.addExtra(TextComponent.fromLegacy(message.substring(lastMatchEnd)));
         }
-
-        // Apply the first encountered ClickEvent and HoverEvent to the entire message
         if (clickEvent != null) {
             baseComponent.setClickEvent(clickEvent);
         }
@@ -709,13 +673,36 @@ public class User implements MetaDataAble {
             baseComponent.setHoverEvent(hoverEvent);
         }
 
-        // Send the final component to the sender
         if (sender != null) {
             sender.spigot().sendMessage(baseComponent);
         } else {
-            // Handle offline player messaging or alternative actions
             Bukkit.getPluginManager().callEvent(new OfflineMessageEvent(this.playerUUID, message));
         }
+    }
+
+    private ClickEvent parseClickAction(Matcher matcher, TextComponent baseComponent, ClickEvent existing) {
+        String actionType = matcher.group(1).toUpperCase(Locale.ENGLISH);
+        String actionValue = matcher.group(2);
+        return switch (actionType) {
+        case "RUN_COMMAND", "SUGGEST_COMMAND", "COPY_TO_CLIPBOARD", "OPEN_URL" ->
+                existing == null ? new ClickEvent(ClickEvent.Action.valueOf(actionType), actionValue) : existing;
+        case "HOVER" -> existing; // handled separately
+        default -> {
+            baseComponent.addExtra(TextComponent.fromLegacy(matcher.group(0)));
+            yield existing;
+        }
+        };
+    }
+
+    private HoverEvent parseHoverAction(Matcher matcher, HoverEvent existing) {
+        if (existing != null) {
+            return existing;
+        }
+        String actionType = matcher.group(1).toUpperCase(Locale.ENGLISH);
+        if ("HOVER".equals(actionType)) {
+            return new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(matcher.group(2)));
+        }
+        return null;
     }
 
     /**

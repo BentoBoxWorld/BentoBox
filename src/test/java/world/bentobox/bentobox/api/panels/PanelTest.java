@@ -279,7 +279,7 @@ public class PanelTest extends CommonTestSetup {
     @Test
     @Disabled("New test required for new code")
     public void testSetHead() {
-
+        // Not needed for test
     }
 
     /**

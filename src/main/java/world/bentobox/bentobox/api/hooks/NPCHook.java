@@ -27,7 +27,7 @@ public abstract class NPCHook extends Hook {
 
     public abstract boolean spawnNpc(String yaml, Location pos) throws InvalidConfigurationException;
 
-    public abstract Map<? extends Vector, ? extends List<BlueprintEntity>> getNpcsInArea(World world,
+    public abstract Map<Vector, List<BlueprintEntity>> getNpcsInArea(World world,
             List<Vector> vectorsToCopy, @Nullable Vector origin);
 
     /**
