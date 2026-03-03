@@ -10,7 +10,8 @@ import world.bentobox.bentobox.api.events.BentoBoxEvent;
  * Base abstract class for addon events
  * @author Poslovitch
  */
-public abstract class AddonBaseEvent extends BentoBoxEvent {
+public abstract sealed class AddonBaseEvent extends BentoBoxEvent
+        permits AddonDisableEvent, AddonEnableEvent, AddonGeneralEvent, AddonLoadEvent {
 
     private final Addon addon;
     private final Map<String, Object> keyValues;

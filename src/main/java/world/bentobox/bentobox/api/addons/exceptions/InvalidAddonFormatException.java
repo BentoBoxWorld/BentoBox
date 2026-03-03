@@ -5,7 +5,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 
-public class InvalidAddonFormatException extends AddonException {
+public final class InvalidAddonFormatException extends AddonException {
 
     /**
      *

@@ -5,7 +5,7 @@ import java.io.Serial;
 /**
  * @since 1.11.0
  */
-public class InvalidAddonDescriptionException extends AddonException {
+public final class InvalidAddonDescriptionException extends AddonException {
 
     /**
      *

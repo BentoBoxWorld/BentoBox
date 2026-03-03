@@ -462,6 +462,9 @@ public class IslandsManager {
      */
     @Nullable
     public Island getIsland(@NonNull World world, @NonNull UUID uuid) {
+        if (world == null || uuid == null) {
+            return null;
+        }
         // Check if player is online and get their current island location
         Player player = Bukkit.getPlayer(uuid);
         if (player != null && player.isOnline()) {

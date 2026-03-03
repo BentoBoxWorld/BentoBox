@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -69,6 +68,11 @@ import world.bentobox.bentobox.nms.WorldRegeneratorImpl;
  * @author Poslovitch
  */
 public class Util {
+    /**
+     * The section sign character used for legacy color codes, replacing ChatColor.COLOR_CHAR.
+     */
+    private static final String COLOR_CHAR = "\u00A7";
+
     /**
      * Use standard color code definition: {@code &<hex>}.
      */
@@ -581,7 +585,6 @@ public class Util {
      * @param textToColor Text which color codes must be parsed.
      * @return String text with parsed colors and stripped whitespaces after them.
      */
-    @SuppressWarnings("deprecation")
     @NonNull
     public static String translateColorCodes(@NonNull String textToColor) {
         // Use matcher to find hex patterns in given text.
@@ -594,22 +597,24 @@ public class Util {
 
             if (group.length() == 6) {
                 // Parses #ffffff to a color text.
-                matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
-                        + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(1)
-                        + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(3)
-                        + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(5));
+                matcher.appendReplacement(buffer, COLOR_CHAR + "x"
+                        + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
+                        + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
+                        + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5));
             } else {
                 // Parses #fff to a color text.
-                matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
-                        + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(0)
-                        + ChatColor.COLOR_CHAR + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(1)
-                        + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(2));
+                matcher.appendReplacement(buffer, COLOR_CHAR + "x"
+                        + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(0)
+                        + COLOR_CHAR + group.charAt(1) + COLOR_CHAR + group.charAt(1)
+                        + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(2));
             }
         }
 
-        // transform normal codes and strip spaces after color code.
-        return Util.stripSpaceAfterColorCodes(
-                ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString()));
+        // Use Adventure's LegacyComponentSerializer to translate '&' color codes
+        // then serialize back with section sign, and strip spaces after color codes.
+        String withHexCodes = matcher.appendTail(buffer).toString();
+        String translated = SECTION_SERIALIZER.serialize(LEGACY_SERIALIZER.deserialize(withHexCodes));
+        return Util.stripSpaceAfterColorCodes(translated);
     }
 
 
@@ -622,7 +627,7 @@ public class Util {
     @NonNull
     public static String stripSpaceAfterColorCodes(String textToStrip) {
         if (textToStrip == null) return "";
-        textToStrip = textToStrip.replaceAll("(" + ChatColor.COLOR_CHAR + ".)[\\s]", "$1");
+        textToStrip = textToStrip.replaceAll("(\u00A7.)[\\s]", "$1");
         return textToStrip;
     }
 
@@ -898,6 +903,11 @@ public class Util {
     private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder()
             .character('&')
             .hexColors() // Enables support for modern hex codes (e.g., &#FF0000) alongside legacy codes.
+            .build();
+
+    private static final LegacyComponentSerializer SECTION_SERIALIZER = LegacyComponentSerializer.builder()
+            .character('\u00A7')
+            .hexColors()
             .build();
     
     /**

@@ -271,7 +271,7 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // Show banner
         User.getInstance(Bukkit.getConsoleSender()).sendMessage("successfully-loaded",
-                TextVariables.VERSION, instance.getDescription().getVersion(),
+                TextVariables.VERSION, instance.getPluginMeta().getVersion(),
                 "[time]", String.valueOf(loadTime + enableTime));
 
         // Poll for blueprints loading to be finished - async so could be a completely variable time

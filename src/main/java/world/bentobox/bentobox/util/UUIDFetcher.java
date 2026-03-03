@@ -18,6 +18,10 @@ import com.google.gson.JsonParser;
  * @since 1.24.1
  */
 public class UUIDFetcher {
+    private UUIDFetcher() {
+        // prevent instantiation
+    }
+
     private static final String API_URL = "https://playerdb.co/api/player/minecraft/%s";
 
     @Nullable

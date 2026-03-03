@@ -584,7 +584,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Store placeholder
         config.set(parent + random, " ");
         // Create comment
-        yamlComments.put(random, "# " + comment.replace(TextVariables.VERSION, Objects.isNull(getAddon()) ? plugin.getDescription().getVersion() : getAddon().getDescription().getVersion()));
+        yamlComments.put(random, "# " + comment.replace(TextVariables.VERSION, Objects.isNull(getAddon()) ? plugin.getPluginMeta().getVersion() : getAddon().getDescription().getVersion()));
     }
 
     /**
