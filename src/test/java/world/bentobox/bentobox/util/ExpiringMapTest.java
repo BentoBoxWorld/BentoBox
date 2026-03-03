@@ -107,12 +107,15 @@ class ExpiringMapTest {
         map.put("y", 20);
 
         ExpiringMap<String, Integer> other = new ExpiringMap<>(1, TimeUnit.HOURS);
-        other.put("x", 10);
-        other.put("y", 20);
+        try {
+            other.put("x", 10);
+            other.put("y", 20);
 
-        assertEquals(map, other);
-        assertEquals(map.hashCode(), other.hashCode());
-        other.shutdown();
+            assertEquals(map, other);
+            assertEquals(map.hashCode(), other.hashCode());
+        } finally {
+            other.shutdown();
+        }
     }
 
     @Test
