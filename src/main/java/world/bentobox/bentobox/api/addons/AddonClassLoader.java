@@ -218,31 +218,28 @@ public class AddonClassLoader extends URLClassLoader {
         if (name.startsWith("world.bentobox.bentobox")) {
             return null;
         }
-        // Check local cache first.
-        Class<?> result = classes.get(name);
-        if (result == null) {
+        // Check local cache first, computing and caching if absent.
+        return classes.computeIfAbsent(name, key -> {
+            Class<?> result = null;
             // Check global cache for classes from other addons.
             if (checkGlobal) {
-                result = loader.getClassByName(name);
+                result = loader.getClassByName(key);
             }
 
             if (result == null) {
                 // Try to find the class in this addon's jar.
                 try {
-                    result = super.findClass(name);
+                    result = super.findClass(key);
                 } catch (ClassNotFoundException | NoClassDefFoundError e) {
                     // Do nothing. The class is not in this jar.
                 }
                 if (result != null) {
                     // Class found in this addon's jar, so add it to the global cache.
-                    loader.setClass(name, result);
-
+                    loader.setClass(key, result);
                 }
             }
-            // Add the class to the local cache.
-            classes.put(name, result);
-        }
-        return result;
+            return result;
+        });
     }
 
     /**

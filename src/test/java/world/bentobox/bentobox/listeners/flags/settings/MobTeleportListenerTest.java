@@ -41,6 +41,7 @@ public class MobTeleportListenerTest extends CommonTestSetup {
     /**
      * @throws java.lang.Exception
      */
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();

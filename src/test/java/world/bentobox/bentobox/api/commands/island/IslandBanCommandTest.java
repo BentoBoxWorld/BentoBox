@@ -325,7 +325,7 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
                 .getOrDefault(invocation.getArgument(0, UUID.class), "tastybento"));
 
         // Return a set of online players
-        mockedBukkit.when(() -> Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
+        mockedBukkit.when(Bukkit::getOnlinePlayers).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         // Set up the user
         User user = mock(User.class);

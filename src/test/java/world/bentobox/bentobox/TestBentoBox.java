@@ -71,6 +71,7 @@ public class TestBentoBox extends CommonTestSetup {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
+        if (mockedStaticIM != null) mockedStaticIM.closeOnDemand();
         super.tearDown();
     }
     
@@ -80,6 +81,7 @@ public class TestBentoBox extends CommonTestSetup {
         super.setUp();
 
         // IslandsManager static
+        //PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
         mockedStaticIM = Mockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
         when(plugin.getCommandsManager()).thenReturn(cm);
 

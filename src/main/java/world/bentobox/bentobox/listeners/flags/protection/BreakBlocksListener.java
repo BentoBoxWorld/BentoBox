@@ -112,7 +112,7 @@ public class BreakBlocksListener extends FlagListener {
             case CAVE_VINES, CAVE_VINES_PLANT -> {
                 try {
                     boolean hasBerries = (Boolean) BERRIES_CHECK
-                            .invoke((CaveVinesPlant) e.getClickedBlock().getBlockData());
+                            .invoke(e.getClickedBlock().getBlockData());
                     if (hasBerries) {
                         this.checkIsland(e, p, l, Flags.HARVEST);
                     }
@@ -128,7 +128,7 @@ public class BreakBlocksListener extends FlagListener {
             return;
         }
         // Only handle hitting things
-        if (!(e.getAction() == Action.LEFT_CLICK_BLOCK) || e.getClickedBlock() == null)
+        if (e.getAction() != Action.LEFT_CLICK_BLOCK || e.getClickedBlock() == null)
         {
             return;
         }

@@ -113,10 +113,10 @@ public class IslandGoCommandTest extends CommonTestSetup {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
         // Event register
-        mockedBukkit.when(() -> Bukkit.getPluginManager()).thenReturn(pim);
+        mockedBukkit.when(Bukkit::getPluginManager).thenReturn(pim);
 
         // Island Banned list initialization
         when(island.getBanned()).thenReturn(new HashSet<>());

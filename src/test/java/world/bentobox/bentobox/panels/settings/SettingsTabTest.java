@@ -69,7 +69,7 @@ public class SettingsTabTest extends CommonTestSetup {
     @Test
     public void testGetIcon() {
         testSettingsTabWorldUserTypeMode();
-        PanelItem icon = tab.getIcon();
+        tab.getIcon();
     }
 
     @Test

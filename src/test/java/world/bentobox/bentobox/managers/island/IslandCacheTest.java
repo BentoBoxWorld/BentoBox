@@ -68,8 +68,8 @@ public class IslandCacheTest extends CommonTestSetup {
         // Database
         mockedDatabaseSetup = Mockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
-        mockedDatabaseSetup.when(() -> DatabaseSetup.getDatabase()).thenReturn(dbSetup);
-        when(dbSetup.getHandler(Island.class)).thenReturn(handler);
+        mockedDatabaseSetup.when(DatabaseSetup::getDatabase).thenReturn(dbSetup);
+        when(dbSetup.getHandler(eq(Island.class))).thenReturn(handler);
         when(handler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
           // IWM
         when(iwm.getDefaultIslandFlags(any())).thenReturn(Collections.singletonMap(flag, 400));
@@ -264,7 +264,7 @@ public class IslandCacheTest extends CommonTestSetup {
     public void testResetAllFlags() {
         ic.addIsland(island);
         BukkitScheduler scheduler = mock(BukkitScheduler.class);
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(scheduler);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(scheduler);
         ic.resetAllFlags(world);
 
         verify(scheduler).runTaskAsynchronously(eq(plugin), any(Runnable.class));

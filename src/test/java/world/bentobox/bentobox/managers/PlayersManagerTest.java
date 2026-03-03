@@ -83,8 +83,7 @@ public class PlayersManagerTest extends CommonTestSetup {
     @Mock
     private VaultHook vault;
     private MockedStatic<DatabaseSetup> mockedDatabase;
-    private @Nullable
-    static UUID notThere = UUID.randomUUID();
+    private static @Nullable UUID notThere = UUID.randomUUID();
     private static List<Names> names = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
@@ -199,7 +198,7 @@ public class PlayersManagerTest extends CommonTestSetup {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);

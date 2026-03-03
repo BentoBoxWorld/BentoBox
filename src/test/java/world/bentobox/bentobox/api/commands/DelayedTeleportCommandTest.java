@@ -78,10 +78,10 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
         when(plugin.getSettings()).thenReturn(settings);
         when(settings.getDelayTime()).thenReturn(10); // 10 seconds
         // Server & Scheduler
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
         when(sch.runTaskLater(any(), any(Runnable.class), anyLong())).thenReturn(task);
         // Plugin manager
-        mockedBukkit.when(() -> Bukkit.getPluginManager()).thenReturn(pim);
+        mockedBukkit.when(Bukkit::getPluginManager).thenReturn(pim);
         // user
         User.setPlugin(plugin);
         UUID uuid = UUID.randomUUID();

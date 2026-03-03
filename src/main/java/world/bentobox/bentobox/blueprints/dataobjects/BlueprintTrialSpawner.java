@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 import com.google.gson.annotations.Expose;
 
+import world.bentobox.bentobox.BentoBox;
+
 /**
  * @author tastybento
  * @since 3.4.2
@@ -107,7 +109,7 @@ public class BlueprintTrialSpawner {
             if (lootTable != null) { // Ensure the LootTable exists
                 result.put(lootTable, value);
             } else {
-                System.err.println("LootTable not found for key: " + key);
+                BentoBox.getInstance().logWarning("LootTable not found for key: " + key);
             }
         }
         return result;
@@ -135,7 +137,7 @@ public class BlueprintTrialSpawner {
                 EntitySnapshot snapshot = Bukkit.getEntityFactory().createEntitySnapshot(ps.snapshot());
                 SpawnRule rule = ps.spawnrule() != null ? SpawnRule.deserialize(ps.spawnrule()) : null;
                 return new SpawnerEntry(snapshot, ps.spawnWeight(), rule);
-            }).collect(Collectors.toList()));
+            }).toList());
         }
         return this.isOminous();
     }

@@ -75,7 +75,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
             task.run(); // Immediately run the Runnable
             return null; // or return a mock of the Task if needed
         });
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(scheduler);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(scheduler);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);

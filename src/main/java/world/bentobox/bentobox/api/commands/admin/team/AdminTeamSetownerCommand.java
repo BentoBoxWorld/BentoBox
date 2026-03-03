@@ -72,6 +72,7 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
         return true;
     }
 
+    @Override
     public boolean execute(User user, String label, List<String> args) {
         Objects.requireNonNull(island);
         Objects.requireNonNull(targetUUID);

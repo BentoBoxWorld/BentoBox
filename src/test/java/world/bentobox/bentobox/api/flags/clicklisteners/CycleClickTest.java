@@ -161,15 +161,15 @@ public class CycleClickTest extends RanksManagerTestSetup {
         // Provide a current rank value - member
         when(island.getFlag(any())).thenReturn(RanksManager.MEMBER_RANK);
         // Set up up and down ranks
-        mockedRanksManager.when(() -> RanksManager.getInstance()).thenReturn(rm);
-        when(rm.getRankUpValue(RanksManager.VISITOR_RANK)).thenReturn(RanksManager.COOP_RANK);
-        when(rm.getRankUpValue(RanksManager.COOP_RANK)).thenReturn(RanksManager.TRUSTED_RANK);
-        when(rm.getRankUpValue(RanksManager.TRUSTED_RANK)).thenReturn(RanksManager.MEMBER_RANK);
-        when(rm.getRankUpValue(RanksManager.MEMBER_RANK)).thenReturn(RanksManager.OWNER_RANK);
-        when(rm.getRankDownValue(RanksManager.OWNER_RANK)).thenReturn(RanksManager.MEMBER_RANK);
-        when(rm.getRankDownValue(RanksManager.MEMBER_RANK)).thenReturn(RanksManager.TRUSTED_RANK);
-        when(rm.getRankDownValue(RanksManager.TRUSTED_RANK)).thenReturn(RanksManager.COOP_RANK);
-        when(rm.getRankDownValue(RanksManager.COOP_RANK)).thenReturn(RanksManager.VISITOR_RANK);
+        mockedRanksManager.when(RanksManager::getInstance).thenReturn(rm);
+        when(rm.getRankUpValue(eq(RanksManager.VISITOR_RANK))).thenReturn(RanksManager.COOP_RANK);
+        when(rm.getRankUpValue(eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
+        when(rm.getRankUpValue(eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.MEMBER_RANK);
+        when(rm.getRankUpValue(eq(RanksManager.MEMBER_RANK))).thenReturn(RanksManager.OWNER_RANK);
+        when(rm.getRankDownValue(eq(RanksManager.OWNER_RANK))).thenReturn(RanksManager.MEMBER_RANK);
+        when(rm.getRankDownValue(eq(RanksManager.MEMBER_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
+        when(rm.getRankDownValue(eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.COOP_RANK);
+        when(rm.getRankDownValue(eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.VISITOR_RANK);
 
         // IslandWorldManager
         when(iwm.inWorld(any(World.class))).thenReturn(true);

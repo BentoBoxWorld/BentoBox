@@ -306,7 +306,7 @@ public class BlueprintEntity {
         frame.setVisible(itemFrame.isVisible);
         frame.setFixed(frame.isFixed());
         frame.setRotation(itemFrame.rotation());
-        frame.setItemDropChance((float)itemFrame.dropChance()); 
+        frame.setItemDropChance(itemFrame.dropChance());
     }
 
     /**

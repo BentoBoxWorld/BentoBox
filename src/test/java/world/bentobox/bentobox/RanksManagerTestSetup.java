@@ -3,6 +3,7 @@ package world.bentobox.bentobox;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -65,6 +66,7 @@ public abstract class RanksManagerTestSetup extends CommonTestSetup {
     protected MockedStatic<RanksManager> mockedRanksManager;
 
     @SuppressWarnings("unchecked")
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
@@ -78,8 +80,8 @@ public abstract class RanksManagerTestSetup extends CommonTestSetup {
         // Database
         mockedDatabaseSetup = Mockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
-        mockedDatabaseSetup.when(() -> DatabaseSetup.getDatabase()).thenReturn(dbSetup);
-        when(dbSetup.getHandler(Ranks.class)).thenReturn(ranksHandler);
+        mockedDatabaseSetup.when(DatabaseSetup::getDatabase).thenReturn(dbSetup);
+        when(dbSetup.getHandler(eq(Ranks.class))).thenReturn(ranksHandler);
         when(ranksHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
         when(dbSetup.getHandler(TeamInvite.class)).thenReturn(invitesHandler);
         when(invitesHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
@@ -119,13 +121,14 @@ public abstract class RanksManagerTestSetup extends CommonTestSetup {
 
         // RanksManager
         mockedRanksManager = Mockito.mockStatic(RanksManager.class, Mockito.RETURNS_MOCKS);
-        mockedRanksManager.when(() -> RanksManager.getInstance()).thenReturn(rm);
+        mockedRanksManager.when(RanksManager::getInstance).thenReturn(rm);
         when(rm.getRanks()).thenReturn(DEFAULT_RANKS);
         when(rm.getRank(anyInt())).thenReturn("");
         // Clear savedObject
         savedObject = null;
     }
 
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();

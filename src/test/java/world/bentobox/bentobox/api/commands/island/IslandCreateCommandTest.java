@@ -127,7 +127,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
 
         // NewIsland
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
         when(builder.player(any())).thenReturn(builder);
         when(builder.name(Mockito.anyString())).thenReturn(builder);
         when(builder.addon(addon)).thenReturn(builder);

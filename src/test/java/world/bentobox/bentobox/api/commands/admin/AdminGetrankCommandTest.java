@@ -70,7 +70,7 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
 
         // Ranks Manager
         mockedRanksManager = Mockito.mockStatic(RanksManager.class);
-        mockedRanksManager.when(() -> RanksManager.getInstance()).thenReturn(rm);
+        mockedRanksManager.when(RanksManager::getInstance).thenReturn(rm);
 
         // Players Manager
         when(plugin.getPlayers()).thenReturn(pm);
@@ -92,15 +92,16 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
             online.put(uuid, name);
             onlinePlayers.add(p1);
         }
-        mockedBukkit.when(() -> Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
+        mockedBukkit.when(Bukkit::getOnlinePlayers).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         // Command
         c = new AdminGetrankCommand(ac);
     }
 
     /**
-     * @throws Exception 
+     * @throws Exception
      */
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();

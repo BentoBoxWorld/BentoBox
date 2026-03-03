@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -147,8 +148,8 @@ public class IslandsManagerTest extends CommonTestSetup {
         // Database
         mockedDatabaseSetup = Mockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
-        mockedDatabaseSetup.when(() -> DatabaseSetup.getDatabase()).thenReturn(dbSetup);
-        when(dbSetup.getHandler(Island.class)).thenReturn(h);
+        mockedDatabaseSetup.when(DatabaseSetup::getDatabase).thenReturn(dbSetup);
+        when(dbSetup.getHandler(eq(Island.class))).thenReturn(h);
         when(h.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
         // Static island
         is =  new Island();
@@ -214,9 +215,9 @@ public class IslandsManagerTest extends CommonTestSetup {
 
         // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
         // version
-        mockedBukkit.when(() -> Bukkit.getVersion())
+        mockedBukkit.when(Bukkit::getVersion)
                 .thenReturn("Paper version git-Paper-225 (MC: 1.14.4) (Implementing API version 1.14.4-R0.1-SNAPSHOT)");
 
         // Standard location
@@ -240,7 +241,7 @@ public class IslandsManagerTest extends CommonTestSetup {
 
         // Online players
         // Return a set of online players
-        mockedBukkit.when(() -> Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> new HashSet<>());
+        mockedBukkit.when(Bukkit::getOnlinePlayers).then((Answer<Set<Player>>) invocation -> new HashSet<>());
 
         // Worlds
         when(plugin.getIWM()).thenReturn(iwm);
@@ -270,7 +271,7 @@ public class IslandsManagerTest extends CommonTestSetup {
         when(user.getLocation()).thenReturn(location);
 
         // Plugin Manager for events
-        mockedBukkit.when(() -> Bukkit.getPluginManager()).thenReturn(pim);
+        mockedBukkit.when(Bukkit::getPluginManager).thenReturn(pim);
 
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
@@ -768,9 +769,11 @@ public class IslandsManagerTest extends CommonTestSetup {
         try {
             im.load();
         } catch (IOException e) {
-            assertEquals("Island distance mismatch!\n" + "World 'world' distance 25 != island range 100!\n"
-                    + "Island ID in database is null.\n"
-                    + "Island distance in config.yml cannot be changed mid-game! Fix config.yml or clean database.",
+            assertEquals("""
+                    Island distance mismatch!
+                    World 'world' distance 25 != island range 100!
+                    Island ID in database is null.
+                    Island distance in config.yml cannot be changed mid-game! Fix config.yml or clean database.""",
                     e.getMessage());
         }
 

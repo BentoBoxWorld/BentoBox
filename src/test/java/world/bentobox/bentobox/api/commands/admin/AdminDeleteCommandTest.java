@@ -49,10 +49,11 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
     private UUID notUUID;
     private UUID uuid;
 
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        
+
         // Util
         Util.setPlugin(plugin);
 
@@ -101,7 +102,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
         BukkitTask task = mock(BukkitTask.class);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 
@@ -111,6 +112,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
         when(plugin.getLocalesManager()).thenReturn(lm);
     }
 
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
