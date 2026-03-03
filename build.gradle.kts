@@ -201,6 +201,7 @@ dependencies {
     // --- Test Dependencies: Only used during testing, not in production ---
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junitVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")

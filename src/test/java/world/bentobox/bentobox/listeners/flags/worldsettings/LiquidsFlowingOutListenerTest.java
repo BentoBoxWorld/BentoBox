@@ -3,7 +3,6 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -150,10 +149,10 @@ public class LiquidsFlowingOutListenerTest extends CommonTestSetup {
     @Test
     public void testLiquidFlowsToAdjacentIsland() {
         // There's a protected island at the "to"
-        when(im.getProtectedIslandAt(eq(to.getLocation()))).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(to.getLocation())).thenReturn(Optional.of(island));
         // There is another island at the "from"
         Island fromIsland = mock(Island.class);
-        when(im.getProtectedIslandAt(eq(from.getLocation()))).thenReturn(Optional.of(fromIsland));
+        when(im.getProtectedIslandAt(from.getLocation())).thenReturn(Optional.of(fromIsland));
         // Run
         new LiquidsFlowingOutListener().onLiquidFlow(event);
         assertTrue(event.isCancelled());

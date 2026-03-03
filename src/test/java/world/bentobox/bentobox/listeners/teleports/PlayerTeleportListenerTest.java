@@ -481,9 +481,6 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      */
     @Test
     public void testOnPlayerExitPortalPlayerAlreadyProcessed() {
-        // Mock a player who is not in teleportOrigin
-        UUID playerId = mockPlayer.getUniqueId();
-
         // Create the event
         @SuppressWarnings("deprecation")
         PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false);

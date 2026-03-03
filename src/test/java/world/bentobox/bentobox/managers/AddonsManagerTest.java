@@ -359,10 +359,11 @@ public class AddonsManagerTest extends CommonTestSetup {
      */
     @Test
     public void testSetPermsHasPerms() throws InvalidConfigurationException {
-        String perms =
-                "  '[gamemode].intopten':\n" +
-                        "    description: Player is in the top ten.\n" +
-                        "    default: true\n";
+        String perms = """
+                  '[gamemode].intopten':
+                    description: Player is in the top ten.
+                    default: true
+                """;
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(perms);
         GameModeAddon addon = new MyGameMode();
@@ -381,10 +382,11 @@ public class AddonsManagerTest extends CommonTestSetup {
      */
     @Test
     public void testSetPermsHasPermsError() throws InvalidConfigurationException {
-        String perms =
-                "  '[gamemode].intopten':\n" +
-                        "    description: Player is in the top ten.\n" +
-                        "    default: trudsfgsde\n";
+        String perms = """
+                  '[gamemode].intopten':
+                    description: Player is in the top ten.
+                    default: trudsfgsde
+                """;
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(perms);
         GameModeAddon addon = new MyGameMode();
@@ -396,7 +398,7 @@ public class AddonsManagerTest extends CommonTestSetup {
         am.getAddons().add(addon);
 
         assertTrue(am.setPerms(addon));
-        verify(plugin).logError(eq("Addon mygame: AddonException : Permission default is invalid in addon.yml: [gamemode].intopten.default"));
+        verify(plugin).logError("Addon mygame: AddonException : Permission default is invalid in addon.yml: [gamemode].intopten.default");
     }
 
 
@@ -406,10 +408,11 @@ public class AddonsManagerTest extends CommonTestSetup {
      */
     @Test
     public void testRegisterPermissionStandardPerm() throws InvalidAddonDescriptionException, InvalidConfigurationException {
-        String perms =
-                "  'bskyblock.intopten':\n" +
-                        "    description: Player is in the top ten.\n" +
-                        "    default: true\n";
+        String perms = """
+                  'bskyblock.intopten':
+                    description: Player is in the top ten.
+                    default: true
+                """;
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(perms);
         am.registerPermission(config, "bskyblock.intopten");
@@ -421,10 +424,11 @@ public class AddonsManagerTest extends CommonTestSetup {
      */
     @Test
     public void testRegisterPermissionGameModePerm() throws InvalidAddonDescriptionException, InvalidConfigurationException {
-        String perms =
-                "  '[gamemode].intopten':\n" +
-                        "    description: Player is in the top ten.\n" +
-                        "    default: true\n";
+        String perms = """
+                  '[gamemode].intopten':
+                    description: Player is in the top ten.
+                    default: true
+                """;
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(perms);
         GameModeAddon addon = new MyGameMode();

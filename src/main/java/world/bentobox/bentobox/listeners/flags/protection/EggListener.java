@@ -34,12 +34,10 @@ public class EggListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEggHit(ProjectileHitEvent e) {
-        if (e.getEntity() instanceof Egg egg) {
-            if (egg.getShooter() instanceof Player player) {
-                if (!checkIsland(e, player, egg.getLocation(), Flags.EGGS)) {
-                    e.setCancelled(true);
-                }
-            }
+        if (e.getEntity() instanceof Egg egg
+                && egg.getShooter() instanceof Player player
+                && !checkIsland(e, player, egg.getLocation(), Flags.EGGS)) {
+            e.setCancelled(true);
         }
     }
 }

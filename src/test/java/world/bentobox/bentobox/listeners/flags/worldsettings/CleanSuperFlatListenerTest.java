@@ -63,7 +63,7 @@ public class CleanSuperFlatListenerTest extends CommonTestSetup {
         mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
         mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Regenerator
-        mockedUtil.when(() -> Util.getRegenerator()).thenReturn(regenerator);
+        mockedUtil.when(Util::getRegenerator).thenReturn(regenerator);
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);

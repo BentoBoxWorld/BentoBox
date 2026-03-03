@@ -168,10 +168,9 @@ public class TemplatedPanel extends Panel {
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
                 // Fill border rows completely, and first/last columns of other rows
-                if (row == 0 || row == numRows - 1 || col == 0 || col == numCols - 1) {
-                    if (itemArray[row][col] == null) {
-                        itemArray[row][col] = template;
-                    }
+                if ((row == 0 || row == numRows - 1 || col == 0 || col == numCols - 1)
+                        && itemArray[row][col] == null) {
+                    itemArray[row][col] = template;
                 }
             }
         }

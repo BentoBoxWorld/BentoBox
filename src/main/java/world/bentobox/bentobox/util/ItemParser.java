@@ -20,7 +20,6 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.bukkit.profile.PlayerProfile;
 import org.eclipse.jdt.annotation.Nullable;
@@ -263,10 +262,7 @@ public class ItemParser {
         }
         PotionMeta potionMeta = (PotionMeta)(result.getItemMeta());
         PotionType type = PotionType.valueOf(part[1].toUpperCase(java.util.Locale.ENGLISH));
-        boolean isUpgraded = !part[2].isEmpty() && !part[2].equalsIgnoreCase("1");
-        boolean isExtended = part[3].equalsIgnoreCase("EXTENDED");
-        PotionData data = new PotionData(type, isExtended, isUpgraded);
-        // TODO: Set extended and u[graded settings.
+        // TODO: Set extended and upgraded settings.
         potionMeta.setBasePotionType(type);
         result.setItemMeta(potionMeta);
         result.setAmount(Integer.parseInt(part[5]));
@@ -346,13 +342,11 @@ public class ItemParser {
             BannerMeta meta = (BannerMeta) result.getItemMeta();
             if (meta != null) {
                 for (int i = 2; i < part.length; i += 2) {
-                    //if (!Util.inTest()) {
-                        PatternType pt = PatternType.valueOf(part[i]);
-                        DyeColor dc = Enums.getIfPresent(DyeColor.class, part[i + 1]).orNull();
-                        if (dc != null) {
-                            meta.addPattern(new Pattern(dc, pt));
-                        }
-                        //}
+                    PatternType pt = PatternType.valueOf(part[i]);
+                    DyeColor dc = Enums.getIfPresent(DyeColor.class, part[i + 1]).orNull();
+                    if (dc != null) {
+                        meta.addPattern(new Pattern(dc, pt));
+                    }
                 }
                 result.setItemMeta(meta);
             }

@@ -102,11 +102,6 @@ public class IslandSetnameCommand extends CompositeCommand {
             return false;
         }
 
-        // Apply colors
-        if (user.hasPermission(getPermissionPrefix() + "island.name.format")) {
-            name = ChatColor.translateAlternateColorCodes('&', name);
-        }
-
         return true;
     }
 

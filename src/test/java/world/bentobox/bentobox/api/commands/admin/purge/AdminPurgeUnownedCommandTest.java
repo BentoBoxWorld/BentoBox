@@ -2,7 +2,6 @@ package world.bentobox.bentobox.api.commands.admin.purge;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -83,14 +82,14 @@ public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
         when(island.isSpawn()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.admin.purge.unowned.unowned-islands"), eq("[number]"), eq("0"));
+        verify(user).sendMessage("commands.admin.purge.unowned.unowned-islands", "[number]", "0");
     }
 
     @Test
     public void testNoPurgeIfIslandIsOwned() {
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.admin.purge.unowned.unowned-islands"), eq("[number]"), eq("0"));
+        verify(user).sendMessage("commands.admin.purge.unowned.unowned-islands", "[number]", "0");
     }
 
     @Disabled("unable to mock CompositeCommand#askConfirmation()")
@@ -100,7 +99,7 @@ public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
         when(island.isUnowned()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.admin.purge.unowned.unowned-islands"), eq("[number]"), eq("1"));
+        verify(user).sendMessage("commands.admin.purge.unowned.unowned-islands", "[number]", "1");
     }
 
     @Test
@@ -108,6 +107,6 @@ public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
         when(island.isPurgeProtected()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.admin.purge.unowned.unowned-islands"), eq("[number]"), eq("0"));
+        verify(user).sendMessage("commands.admin.purge.unowned.unowned-islands", "[number]", "0");
     }
 }

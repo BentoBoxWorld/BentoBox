@@ -170,7 +170,6 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
     @Test
     public void testNoIsland() {
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        //when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("general.errors.no-island");
@@ -212,7 +211,7 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
     public void testBanAlreadyBanned() {
         UUID bannedUser = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(bannedUser);
-        when(island.isBanned(eq(bannedUser))).thenReturn(true);
+        when(island.isBanned(bannedUser)).thenReturn(true);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("commands.island.ban.player-already-banned");
     }
@@ -326,7 +325,7 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
                 .getOrDefault(invocation.getArgument(0, UUID.class), "tastybento"));
 
         // Return a set of online players
-        mockedBukkit.when(() -> Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
+        mockedBukkit.when(Bukkit::getOnlinePlayers).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         // Set up the user
         User user = mock(User.class);

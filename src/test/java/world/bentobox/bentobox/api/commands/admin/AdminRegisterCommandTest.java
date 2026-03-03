@@ -129,6 +129,7 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
         itl = new AdminRegisterCommand(ac);
     }
 
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();

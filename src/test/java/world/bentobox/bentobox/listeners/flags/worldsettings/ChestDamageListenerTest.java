@@ -54,9 +54,6 @@ public class ChestDamageListenerTest extends CommonTestSetup
     public void setUp() throws Exception {
         super.setUp();
 
-        // Tags
-        //when(Tag.SHULKER_BOXES.isTagged(any(Material.class))).thenReturn(false);
-
         Mockito.mockStatic(Flags.class);
 
         FlagsManager flagsManager = new FlagsManager(plugin);

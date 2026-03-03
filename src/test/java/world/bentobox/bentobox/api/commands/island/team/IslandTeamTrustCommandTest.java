@@ -202,7 +202,6 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(im.inTeam(any(), any())).thenReturn(true);
-        // when(im.getMembers(any(), any())).thenReturn(Collections.singleton(notUUID));
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("bento")));
         verify(user).sendMessage("commands.island.team.trust.player-already-trusted");
     }
@@ -226,7 +225,6 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
     public void testCanExecuteCannotAlreadyHasRank() {
         UUID other = UUID.randomUUID();
         when(pm.getUUID(any())).thenReturn(other);
-        // when(im.getMembers(any(), any())).thenReturn(Collections.singleton(other));
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         verify(user).sendMessage("commands.island.team.trust.player-already-trusted");
@@ -239,7 +237,6 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
     public void testExecuteNullIsland() {
         // Can execute
         when(pm.getUUID(any())).thenReturn(notUUID);
-        //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
@@ -256,7 +253,6 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
     public void testExecuteSuccessNoConfirmationTooMany() {
         // Can execute
         when(pm.getUUID(any())).thenReturn(notUUID);
-        //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
@@ -276,12 +272,11 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
         User target = User.getInstance(mockPlayer);
         // Can execute
         when(pm.getUUID(any())).thenReturn(notUUID);
-        // when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
         // Allow 3
-        when(im.getMaxMembers(eq(island), eq(RanksManager.TRUSTED_RANK))).thenReturn(3);
+        when(im.getMaxMembers(island, RanksManager.TRUSTED_RANK)).thenReturn(3);
         // Execute
         when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
@@ -300,7 +295,6 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
         User target = User.getInstance(mockPlayer);
         // Can execute
         when(pm.getUUID(any())).thenReturn(notUUID);
-        //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));

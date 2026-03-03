@@ -23,7 +23,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -83,7 +82,7 @@ public class PanelTest extends CommonTestSetup {
         new Panel(name, items, 10, user, listener);
 
         // The next two lines have to be paired together to verify the static call
-        mockedBukkit.verify(() ->  Bukkit.createInventory(eq(null), eq(18), eq(name)));
+        mockedBukkit.verify(() ->  Bukkit.createInventory(null, 18, name));
 
         verify(listener).setup();
         verify(player).openInventory(any(Inventory.class));
@@ -98,7 +97,7 @@ public class PanelTest extends CommonTestSetup {
         new Panel(name, items, 0, user, listener);
 
         // The next two lines have to be paired together to verify the static call
-        mockedBukkit.verify(() ->  Bukkit.createInventory(eq(null), eq(9), eq(name)));
+        mockedBukkit.verify(() ->  Bukkit.createInventory(null, 9, name));
     }
 
     /**
@@ -110,7 +109,7 @@ public class PanelTest extends CommonTestSetup {
         new Panel(name, items, 100, user, listener);
 
         // The next two lines have to be paired together to verify the static call
-        mockedBukkit.verify(() ->  Bukkit.createInventory(eq(null), eq(54), eq(name)));
+        mockedBukkit.verify(() ->  Bukkit.createInventory(null, 54, name));
     }
 
     /**
@@ -141,7 +140,7 @@ public class PanelTest extends CommonTestSetup {
         new Panel(name, items, 0, user, listener);
 
         // The next two lines have to be paired together to verify the static call
-        mockedBukkit.verify(() ->  Bukkit.createInventory(eq(null), eq(54), eq(name)));
+        mockedBukkit.verify(() ->  Bukkit.createInventory(null, 54, name));
 
         verify(inv, times(54)).setItem(anyInt(), eq(itemStack));
         verify(player).openInventory(any(Inventory.class));
@@ -166,7 +165,7 @@ public class PanelTest extends CommonTestSetup {
         // Panel
         Panel p = new Panel(name, items, 0, user, listener);
 
-        mockedHeadGetter.verify(() -> HeadGetter.getHead(eq(item), eq(p)), times(54));
+        mockedHeadGetter.verify(() -> HeadGetter.getHead(item, p), times(54));
     }
 
     /**
@@ -271,15 +270,6 @@ public class PanelTest extends CommonTestSetup {
         assertEquals(Optional.empty(), p.getUser());
         p.setUser(user);
         assertEquals(user, p.getUser().get());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.Panel#setHead(world.bentobox.bentobox.api.panels.PanelItem)}.
-     */
-    @Test
-    @Disabled("New test required for new code")
-    public void testSetHead() {
-        // Not needed for test
     }
 
     /**
