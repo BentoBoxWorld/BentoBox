@@ -80,7 +80,8 @@ class ExpiringMapTest {
         map.put("a", 1);
 
         ExpiringMap<String, Integer> other = new ExpiringMap<>(1, TimeUnit.HOURS);
-        other.put("b", 2);
+        try {
+            other.put("b", 2);
 
         try {
             assertNotEquals(map, other);
@@ -94,7 +95,8 @@ class ExpiringMapTest {
         map.put("a", 1);
 
         ExpiringMap<String, Integer> other = new ExpiringMap<>(1, TimeUnit.HOURS);
-        other.put("a", 99);
+        try {
+            other.put("a", 99);
 
         try {
             assertNotEquals(map, other);
