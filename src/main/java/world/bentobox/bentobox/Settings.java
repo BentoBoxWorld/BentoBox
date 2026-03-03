@@ -11,8 +11,6 @@ import java.util.Set;
 
 import org.bukkit.Material;
 
-import com.google.common.collect.ImmutableList;
-
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
@@ -1023,7 +1021,7 @@ public class Settings implements ConfigObject {
      * @return an immutable list of readyCommands
      */
     public List<String> getReadyCommands() {
-        return ImmutableList.copyOf(Objects.requireNonNullElse(readyCommands, Collections.emptyList()));
+        return List.copyOf(Objects.requireNonNullElse(readyCommands, Collections.emptyList()));
     }
 
     /**

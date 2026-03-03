@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -434,7 +435,9 @@ public class AddonsManager {
                     deleteWorldFolder(file);
                 }
             }
-            if (!path.delete()) {
+            try {
+                Files.delete(path.toPath());
+            } catch (IOException e) {
                 plugin.logWarning("Failed to delete: " + path.getAbsolutePath());
             }
         }

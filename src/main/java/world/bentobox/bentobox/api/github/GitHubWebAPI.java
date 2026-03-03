@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.github;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -78,8 +79,10 @@ public class GitHubWebAPI {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return fetch(endpoint);
-            } catch (IOException | URISyntaxException e) {
-                throw new RuntimeException("Failed to fetch data from GitHub API", e);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Failed to fetch data from GitHub API", e);
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException("Invalid GitHub API endpoint URI", e);
             }
         }, executor);
     }
