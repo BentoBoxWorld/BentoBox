@@ -38,9 +38,12 @@ class ExpiringMapTest {
     @Test
     void testEqualsEmptyMaps() {
         ExpiringMap<String, Integer> other = new ExpiringMap<>(1, TimeUnit.HOURS);
-        assertEquals(map, other);
-        assertEquals(other, map);
-        other.shutdown();
+        try {
+            assertEquals(map, other);
+            assertEquals(other, map);
+        } finally {
+            other.shutdown();
+        }
     }
 
     @Test
@@ -49,12 +52,15 @@ class ExpiringMapTest {
         map.put("b", 2);
 
         ExpiringMap<String, Integer> other = new ExpiringMap<>(1, TimeUnit.HOURS);
-        other.put("a", 1);
-        other.put("b", 2);
+        try {
+            other.put("a", 1);
+            other.put("b", 2);
 
-        assertEquals(map, other);
-        assertEquals(other, map);
-        other.shutdown();
+            assertEquals(map, other);
+            assertEquals(other, map);
+        } finally {
+            other.shutdown();
+        }
     }
 
     @Test
@@ -74,10 +80,13 @@ class ExpiringMapTest {
         map.put("a", 1);
 
         ExpiringMap<String, Integer> other = new ExpiringMap<>(1, TimeUnit.HOURS);
-        other.put("b", 2);
+        try {
+            other.put("b", 2);
 
-        assertNotEquals(map, other);
-        other.shutdown();
+            assertNotEquals(map, other);
+        } finally {
+            other.shutdown();
+        }
     }
 
     @Test
@@ -85,10 +94,13 @@ class ExpiringMapTest {
         map.put("a", 1);
 
         ExpiringMap<String, Integer> other = new ExpiringMap<>(1, TimeUnit.HOURS);
-        other.put("a", 99);
+        try {
+            other.put("a", 99);
 
-        assertNotEquals(map, other);
-        other.shutdown();
+            assertNotEquals(map, other);
+        } finally {
+            other.shutdown();
+        }
     }
 
     @Test
