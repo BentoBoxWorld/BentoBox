@@ -127,9 +127,9 @@ public class EnterExitListenerTest extends CommonTestSetup {
         when(anotherWorld.toVector()).thenReturn(new Vector(X + PROTECTION_RANGE - 1, Y, Z));
 
         Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(eq(inside2))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(eq(outside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(inside)).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(inside2)).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(outside)).thenReturn(Optional.empty());
         when(im.getProtectedIslandAt(anotherWorld)).thenReturn(Optional.empty());
 
         // Island World Manager

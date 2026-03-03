@@ -85,6 +85,7 @@ public class NewIslandTest extends CommonTestSetup {
 
     /**
      */
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
@@ -118,7 +119,7 @@ public class NewIslandTest extends CommonTestSetup {
 
         // Events
         MockedStatic<IslandEvent> mockedIslandEvent = Mockito.mockStatic(IslandEvent.class);
-        mockedIslandEvent.when(() -> IslandEvent.builder()).thenReturn(builder);
+        mockedIslandEvent.when(IslandEvent::builder).thenReturn(builder);
         when(builder.admin(anyBoolean())).thenReturn(builder);
         when(builder.blueprintBundle(any())).thenReturn(builder);
         when(builder.deletedIslandInfo(any())).thenReturn(builder);
@@ -148,16 +149,17 @@ public class NewIslandTest extends CommonTestSetup {
                 .thenAnswer((Answer<Location>) invocation -> invocation.getArgument(0, Location.class));
 
         // Bukkit Scheduler
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(scheduler);
-        mockedBukkit.when(() -> Bukkit.getViewDistance()).thenReturn(10);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(scheduler);
+        mockedBukkit.when(Bukkit::getViewDistance).thenReturn(10);
 
         // Addon
         when(addon.getOverWorld()).thenReturn(world);
     }
 
     /**
-     * @throws Exception 
+     * @throws Exception
      */
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
@@ -185,15 +187,15 @@ public class NewIslandTest extends CommonTestSetup {
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland)
                 .build();
         // Verifications
-        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
-        verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
+        verify(pm).setDeaths(world, uuid, 0);
         verify(im, never()).setHomeLocation(eq(user), any());
-        verify(island).setProtectionRange(eq(20));
+        verify(island).setProtectionRange(20);
     }
 
     /**
@@ -204,14 +206,14 @@ public class NewIslandTest extends CommonTestSetup {
         when(builder.build()).thenReturn(ire);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.RESET).oldIsland(oldIsland).build();
         // Verifications
-        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
         verify(bpb).getUniqueId();
         verify(ice, never()).getBlueprintBundle();
         verify(ire).getBlueprintBundle();
-        verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
+        verify(pm).setDeaths(world, uuid, 0);
         verify(im, never()).setHomeLocation(eq(user), any());
     }
 
@@ -223,13 +225,13 @@ public class NewIslandTest extends CommonTestSetup {
     public void testBuilderNoOldIsland() throws Exception {
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).build();
         // Verifications
-        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
-        verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
+        verify(pm).setDeaths(world, uuid, 0);
         verify(im, never()).setHomeLocation(eq(user), any());
     }
 
@@ -242,7 +244,7 @@ public class NewIslandTest extends CommonTestSetup {
         when(location.distance(any())).thenReturn(30D);
         NewIsland.builder().addon(addon).name(NAME).player(user).reason(Reason.CREATE).build();
         // Verifications
-        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(island));
         verify(island).setFlagsDefaults();
         verify(bpm).paste(eq(addon), eq(island), eq(NAME), any(Runnable.class), eq(false));
         verify(builder, times(2)).build();
@@ -260,7 +262,7 @@ public class NewIslandTest extends CommonTestSetup {
     public void testBuilderNoOldIslandPasteWithNMS() throws Exception {
         NewIsland.builder().addon(addon).name(NAME).player(user).reason(Reason.CREATE).build();
         // Verifications
-        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(island));
         verify(island).setFlagsDefaults();
         verify(bpm).paste(eq(addon), eq(island), eq(NAME), any(Runnable.class), eq(true));
         verify(builder, times(2)).build();
@@ -278,7 +280,7 @@ public class NewIslandTest extends CommonTestSetup {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
         // Verifications
-        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -286,8 +288,8 @@ public class NewIslandTest extends CommonTestSetup {
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(world, uuid, 0);
         verify(im, never()).setHomeLocation(eq(user), any());
-        verify(island).setProtectionRange(eq(20));
-        verify(island).setReserved(eq(false));
+        verify(island).setProtectionRange(20);
+        verify(island).setReserved(false);
     }
 
     /**
@@ -299,7 +301,7 @@ public class NewIslandTest extends CommonTestSetup {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
         // Verifications
-        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -307,8 +309,7 @@ public class NewIslandTest extends CommonTestSetup {
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(world, uuid, 0);
         verify(im, never()).setHomeLocation(eq(user), any());
-        verify(island).setProtectionRange(eq(20));
-        //verify(plugin).logError("New island for user tastybento was not reserved!");
+        verify(island).setProtectionRange(20);
     }
 
     /**
@@ -321,7 +322,7 @@ public class NewIslandTest extends CommonTestSetup {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
         // Verifications
-        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(eq(island)));
+        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
         verify(builder, times(2)).build();
@@ -329,7 +330,7 @@ public class NewIslandTest extends CommonTestSetup {
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(world, uuid, 0);
         verify(im, never()).setHomeLocation(eq(user), any());
-        verify(island).setProtectionRange(eq(20));
+        verify(island).setProtectionRange(20);
         verify(plugin).logError("New island for user tastybento was not reserved!");
     }
 

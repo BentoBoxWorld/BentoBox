@@ -96,7 +96,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     public void testPaste() {
        CompletableFuture<Boolean> result = bp.paste();
        assertNotNull(result);
-       mockedBukkit.verify(() -> Bukkit.getScheduler());
+       mockedBukkit.verify(Bukkit::getScheduler);
     }
     
     /**
@@ -106,7 +106,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     public void testPaste2() {
         CompletableFuture<Boolean> result = bp2.paste();
         assertNotNull(result);
-        mockedBukkit.verify(() -> Bukkit.getScheduler());
+        mockedBukkit.verify(Bukkit::getScheduler);
     }
 
 

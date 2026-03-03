@@ -42,7 +42,6 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -67,10 +66,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
     @Mock
     private BukkitTask task;
     private IslandGoCommand igc;
-    @Mock
-    private Notifier notifier;
     private @Nullable WorldSettings ws;
-    private UUID uuid = UUID.randomUUID();
 
     @Override
     @BeforeEach
@@ -98,13 +94,12 @@ public class IslandGoCommandTest extends CommonTestSetup {
         when(ic.getTopLabel()).thenReturn("island");
         // Have the create command point to the ic command
         Optional<CompositeCommand> createCommand = Optional.of(ic);
-        when(ic.getSubCommand(eq("create"))).thenReturn(createCommand);
+        when(ic.getSubCommand("create")).thenReturn(createCommand);
         when(ic.getWorld()).thenReturn(world);
 
         // Player has island by default
         when(im.getIslands(world, uuid)).thenReturn(List.of(island));
         when(im.hasIsland(world, uuid)).thenReturn(true);
-        // when(im.isOwner(world, uuid)).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -114,10 +109,10 @@ public class IslandGoCommandTest extends CommonTestSetup {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
         // Event register
-        mockedBukkit.when(() -> Bukkit.getPluginManager()).thenReturn(pim);
+        mockedBukkit.when(Bukkit::getPluginManager).thenReturn(pim);
 
         // Island Banned list initialization
         when(island.getBanned()).thenReturn(new HashSet<>());
@@ -209,7 +204,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      */
     @Test
     public void testExecuteNoArgsReservedIslandNoCreateCommand() {
-        when(ic.getSubCommand(eq("create"))).thenReturn(Optional.empty());
+        when(ic.getSubCommand("create")).thenReturn(Optional.empty());
 
         when(ic.call(any(), any(), any())).thenReturn(true);
         when(island.isReserved()).thenReturn(true);
@@ -244,7 +239,6 @@ public class IslandGoCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteNoArgsMultipleHomes() {
 
-        // when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
     }
 
@@ -296,7 +290,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
         when(mockPlayer.getLocation()).thenReturn(l);
         PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, l, l);
         igc.onPlayerMove(e);
-        verify(mockPlayer, Mockito.never()).sendMessage(eq("commands.delay.moved-so-command-cancelled"));
+        verify(mockPlayer, Mockito.never()).sendMessage("commands.delay.moved-so-command-cancelled");
     }
 
     /**

@@ -92,8 +92,6 @@ public class PVPListenerTest extends CommonTestSetup {
     private Zombie zombie;
     @Mock
     private Creeper creeper;
-    @Mock
-    private Notifier notifier;
 
     @Override
     @BeforeEach
@@ -248,7 +246,7 @@ public class PVPListenerTest extends CommonTestSetup {
     @Test
     public void testOnEntityDamageNPC() {
         // Player 2 is an NPC
-        when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
+        when(player2.hasMetadata("NPC")).thenReturn(true);
         // PVP is not allowed
         when(island.isAllowed(any())).thenReturn(false);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(mockPlayer, player2,
@@ -268,7 +266,7 @@ public class PVPListenerTest extends CommonTestSetup {
     @Test
     public void testOnEntityDamageNPCAttacks() {
         // Player 2 is an NPC
-        when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
+        when(player2.hasMetadata("NPC")).thenReturn(true);
         // PVP is not allowed
         when(island.isAllowed(any())).thenReturn(false);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player2, mockPlayer,
@@ -701,7 +699,7 @@ public class PVPListenerTest extends CommonTestSetup {
         assertFalse(pfe.isCancelled());
 
         // Disallow PVP , attack on NPC
-        when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
+        when(player2.hasMetadata("NPC")).thenReturn(true);
         when(island.isAllowed(any())).thenReturn(false);
         pfe = new PlayerFishEvent(mockPlayer, player2, hook, null);
         new PVPListener().onFishing(pfe);
@@ -942,7 +940,7 @@ public class PVPListenerTest extends CommonTestSetup {
         verify(mockPlayer, times(5)).getUniqueId();
         verify(cloud).getEntityId();
         verify(tp).getShooter();
-        mockedBukkit.verify(() -> Bukkit.getScheduler());
+        mockedBukkit.verify(Bukkit::getScheduler);
     }
 
     /**
@@ -960,7 +958,7 @@ public class PVPListenerTest extends CommonTestSetup {
         // Verify
         verify(cloud, never()).getEntityId();
         verify(tp).getShooter();
-        mockedBukkit.verify(() -> Bukkit.getScheduler(), never());
+        mockedBukkit.verify(Bukkit::getScheduler, never());
     }
 
     /**

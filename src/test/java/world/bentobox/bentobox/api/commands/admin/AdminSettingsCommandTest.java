@@ -127,11 +127,11 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
         ItemFactory itemFactory = mock(ItemFactory.class);
         ItemMeta bannerMeta = mock(ItemMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
-        mockedBukkit.when(() -> Bukkit.getItemFactory()).thenReturn(itemFactory);
+        mockedBukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
         Inventory inventory = mock(Inventory.class);
         mockedBukkit.when(() -> Bukkit.createInventory(any(), Mockito.anyInt(), anyString())).thenReturn(inventory);
         // Flags manager
-        mockedBukkit.when(() -> Bukkit.getPluginManager()).thenReturn(pim);
+        mockedBukkit.when(Bukkit::getPluginManager).thenReturn(pim);
         FlagsManager fm = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(fm);
 

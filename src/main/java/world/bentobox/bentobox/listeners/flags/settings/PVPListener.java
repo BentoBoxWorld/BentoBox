@@ -59,7 +59,7 @@ public class PVPListener extends FlagListener {
                 return;
             }
             // Is PVP allowed here?
-            if (this.PVPAllowed(e.getEntity().getLocation())) {
+            if (this.isPvpAllowed(e.getEntity().getLocation())) {
                 return;
             }
             // Protect visitors
@@ -123,7 +123,7 @@ public class PVPListener extends FlagListener {
                 return;
             }
             // Is PVP allowed here?
-            if (this.PVPAllowed(c.getLocation())) {
+            if (this.isPvpAllowed(c.getLocation())) {
                 return;
             }
             // Protect visitors
@@ -147,7 +147,7 @@ public class PVPListener extends FlagListener {
         if (e.getEntity().getShooter() instanceof Player p && p != null && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
             User user = User.getInstance(p);
             // Is PVP allowed here?
-            if (this.PVPAllowed(e.getEntity().getLocation())) {
+            if (this.isPvpAllowed(e.getEntity().getLocation())) {
                 return;
             }
             // Run through affected entities and cancel the splash for protected players

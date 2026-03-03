@@ -3,7 +3,6 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -67,7 +66,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
         Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(inside)).thenReturn(opIsland);
 
         // Blocks
         when(block.getWorld()).thenReturn(world);
@@ -149,7 +148,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
         BlockGrowEvent e = new BlockGrowEvent(block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
         Flags.OFFLINE_GROWTH.setSetting(world, false);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(inside)).thenReturn(Optional.empty());
         orl.onCropGrow(e);
         // Allow growth
         assertFalse(e.isCancelled());
@@ -165,7 +164,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
         BlockGrowEvent e = new BlockGrowEvent(block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
         Flags.OFFLINE_GROWTH.setSetting(world, false);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(inside)).thenReturn(Optional.empty());
         orl.onCropGrow(e);
         // Allow growth
         assertFalse(e.isCancelled());
@@ -259,7 +258,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
         BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
         Flags.OFFLINE_GROWTH.setSetting(world, false);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(inside)).thenReturn(Optional.empty());
         orl.onSpread(e);
         // Allow growth
         assertFalse(e.isCancelled());
@@ -275,7 +274,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
         BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
         Flags.OFFLINE_GROWTH.setSetting(world, false);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(inside)).thenReturn(Optional.empty());
         orl.onSpread(e);
         // Allow growth
         assertFalse(e.isCancelled());

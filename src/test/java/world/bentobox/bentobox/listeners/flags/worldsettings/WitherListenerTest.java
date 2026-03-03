@@ -3,7 +3,6 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -52,10 +51,10 @@ public class WitherListenerTest extends CommonTestSetup {
     public void setUp() throws Exception {
         super.setUp();
 
-        when(iwm.inWorld(eq(world))).thenReturn(true);
-        when(iwm.inWorld(eq(world2))).thenReturn(false);
-        when(iwm.inWorld(eq(location))).thenReturn(true);
-        when(iwm.inWorld(eq(location2))).thenReturn(false);
+        when(iwm.inWorld(world)).thenReturn(true);
+        when(iwm.inWorld(world2)).thenReturn(false);
+        when(iwm.inWorld(location)).thenReturn(true);
+        when(iwm.inWorld(location2)).thenReturn(false);
         map = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(map);
         when(iwm.getWorldSettings(any())).thenReturn(ws);

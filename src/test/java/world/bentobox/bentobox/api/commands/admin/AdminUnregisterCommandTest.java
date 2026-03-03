@@ -46,7 +46,6 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminUnregisterCommandTest extends CommonTestSetup {
 
-    private UUID uuid = UUID.randomUUID();
     @Mock
     private CompositeCommand ac;
     @Mock

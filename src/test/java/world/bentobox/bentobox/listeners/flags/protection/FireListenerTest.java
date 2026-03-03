@@ -26,7 +26,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -55,7 +54,7 @@ public class FireListenerTest extends CommonTestSetup {
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-        MockedStatic<Flags> mockedFlags = Mockito.mockStatic(Flags.class);
+        Mockito.mockStatic(Flags.class);
 
         FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);

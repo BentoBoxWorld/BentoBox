@@ -477,9 +477,7 @@ public class IslandsManager {
             }
         }
         // Check cache for last island
-        Island cachedIsland = islandCache.getIsland(world, uuid);
-
-        return cachedIsland;
+        return islandCache.getIsland(world, uuid);
     }
 
     /**
@@ -1135,7 +1133,7 @@ public class IslandsManager {
             }
             Util.teleportAsync(Objects.requireNonNull(player), home).thenAccept(b -> {
                 // Only run the commands if the player is successfully teleported
-                if (Boolean.TRUE.equals(b)) {
+                if (b != null && b) {
                     teleported(world, user, name, newIsland, island);
                     result.complete(true);
                 } else {
@@ -1855,7 +1853,7 @@ public class IslandsManager {
         readyPlayer(user.getPlayer());
         return Util.teleportAsync(Objects.requireNonNull(user.getPlayer()), loc).thenAccept(b -> {
             // Only run the commands if the player is successfully teleported
-            if (Boolean.TRUE.equals(b)) {
+            if (b != null && b) {
                 teleported(island.getWorld(), user, "", newIsland, island);
                 this.setPrimaryIsland(user.getUniqueId(), island);
             } else {

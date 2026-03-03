@@ -281,7 +281,6 @@ public class HurtingListenerTest extends CommonTestSetup {
     @Disabled("Not yet implemented")
     @Test
     public void testOnPlayerFeedParrots() {
-        //fail("Not yet implemented"); // TODO
     }
 
     /**
@@ -290,7 +289,6 @@ public class HurtingListenerTest extends CommonTestSetup {
     @Disabled("Not yet implemented")
     @Test
     public void testOnSplashPotionSplash() {
-        //fail("Not yet implemented"); // TODO
     }
 
     /**
@@ -299,7 +297,6 @@ public class HurtingListenerTest extends CommonTestSetup {
     @Disabled("Not yet implemented")
     @Test
     public void testOnLingeringPotionSplash() {
-        //fail("Not yet implemented"); // TODO
     }
 
     /**
@@ -308,7 +305,6 @@ public class HurtingListenerTest extends CommonTestSetup {
     @Disabled("Not yet implemented")
     @Test
     public void testOnLingeringPotionDamage() {
-        //fail("Not yet implemented"); // TODO
     }
 
 }

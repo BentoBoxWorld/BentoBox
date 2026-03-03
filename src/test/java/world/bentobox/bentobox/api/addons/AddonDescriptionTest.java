@@ -24,7 +24,7 @@ public class AddonDescriptionTest {
     private ConfigurationSection configSec;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         configSec = new YamlConfiguration();
         ad = new AddonDescription.Builder("main", "name", "version")
                 .apiVersion("api")

@@ -56,8 +56,6 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     @Mock
     private Location inside;
     @Mock
-    private Notifier notifier;
-    @Mock
     private Location inside2;
 
     @Override
@@ -145,9 +143,9 @@ public class LockAndBanListenerTest extends CommonTestSetup {
         when(inside2.clone()).thenReturn(inside2);
 
         Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(eq(inside2))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(eq(outside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(inside)).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(inside2)).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(outside)).thenReturn(Optional.empty());
 
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
@@ -183,7 +181,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
 
         // Add player to the ban list
-        when(island.isBanned(eq(uuid))).thenReturn(true);
+        when(island.isBanned(uuid)).thenReturn(true);
 
         // Simulate a teleport into an island
         PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, outside, inside);
@@ -204,12 +202,10 @@ public class LockAndBanListenerTest extends CommonTestSetup {
         when(mockPlayer.getLocation()).thenReturn(inside);
 
         // Add player to the ban list
-        when(island.isBanned(eq(uuid))).thenReturn(true);
+        when(island.isBanned(uuid)).thenReturn(true);
 
         // Log them in
         listener.onPlayerLogin(new PlayerJoinEvent(mockPlayer, "join message"));
-        // User should see a message
-        //verify(notifier).notify(any(), anyString());
         // User should be teleported somewhere
         verify(im).homeTeleportAsync(any(), eq(mockPlayer));
         // Call teleport event
@@ -278,14 +274,12 @@ public class LockAndBanListenerTest extends CommonTestSetup {
         when(mockPlayer.getLocation()).thenReturn(outside);
 
         // Add player to the ban list
-        when(island.isBanned(eq(uuid))).thenReturn(true);
+        when(island.isBanned(uuid)).thenReturn(true);
 
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, outside, inside);
         listener.onPlayerMove(e);
         assertTrue(e.isCancelled());
-        // Player should see a message
-        //verify(notifier).notify(any(), anyString());
         // User should NOT be teleported somewhere
         verify(im, never()).homeTeleportAsync(any(), eq(mockPlayer));
     }
@@ -300,13 +294,11 @@ public class LockAndBanListenerTest extends CommonTestSetup {
         when(mockPlayer.getLocation()).thenReturn(inside);
 
         // Add player to the ban list
-        when(island.isBanned(eq(uuid))).thenReturn(true);
+        when(island.isBanned(uuid)).thenReturn(true);
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, inside, inside2);
         listener.onPlayerMove(e);
         assertTrue(e.isCancelled());
-        // Player should see a message
-        //verify(notifier).notify(any(), anyString());
         // User should be teleported somewhere
         verify(sch).runTask(any(), any(Runnable.class));
         // Call teleport event
@@ -325,10 +317,10 @@ public class LockAndBanListenerTest extends CommonTestSetup {
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
 
         // Add player to the ban list
-        when(island.isBanned(eq(uuid))).thenReturn(true);
+        when(island.isBanned(uuid)).thenReturn(true);
 
         // Add the user to the ban list
-        when(island.isBanned(eq(uuid))).thenReturn(true);
+        when(island.isBanned(uuid)).thenReturn(true);
 
         // Create vehicle and put two players in it. One is banned, the other is not
         Vehicle vehicle = mock(Vehicle.class);
@@ -340,8 +332,6 @@ public class LockAndBanListenerTest extends CommonTestSetup {
         when(vehicle.getWorld()).thenReturn(world);
         // Move vehicle
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
-        // Player should see a message and nothing should be sent to Player 2
-        //verify(notifier).notify(any(), anyString());
         // User should be teleported somewhere
         verify(im).homeTeleportAsync(any(), eq(mockPlayer));
         // Player 2 should not be teleported
@@ -370,8 +360,6 @@ public class LockAndBanListenerTest extends CommonTestSetup {
         listener.onPlayerTeleport(e);
         // Should be cancelled
         assertTrue(e.isCancelled());
-        // Player should see a message
-        //verify(notifier).notify(any(), any());
     }
 
     @Test
@@ -403,8 +391,6 @@ public class LockAndBanListenerTest extends CommonTestSetup {
 
         // Log them in
         listener.onPlayerLogin(new PlayerJoinEvent(mockPlayer, "join message"));
-        // User should see a message
-        //verify(notifier).notify(any(), anyString());
         // User should be teleported somewhere
         verify(im).homeTeleportAsync(any(), eq(mockPlayer));
         // Call teleport event
@@ -495,8 +481,6 @@ public class LockAndBanListenerTest extends CommonTestSetup {
         PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, outside, inside);
         listener.onPlayerMove(e);
         assertTrue(e.isCancelled());
-        // Player should see a message
-        //verify(notifier).notify(any(), anyString());
         // User should NOT be teleported somewhere
         verify(im, never()).homeTeleportAsync(any(), eq(mockPlayer));
     }
@@ -599,8 +583,6 @@ public class LockAndBanListenerTest extends CommonTestSetup {
         PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, inside, inside2);
         listener.onPlayerMove(e);
         assertTrue(e.isCancelled());
-        // Player should see a message
-        //verify(notifier).notify(any(), anyString());
         // User should be teleported somewhere
         verify(sch).runTask(any(), any(Runnable.class));
         // Call teleport event
@@ -697,8 +679,6 @@ public class LockAndBanListenerTest extends CommonTestSetup {
         when(vehicle.getWorld()).thenReturn(world);
         // Move vehicle
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
-        // Player should see a message and nothing should be sent to Player 2
-        //verify(notifier).notify(any(), anyString());
         // User should be teleported somewhere
         verify(im).homeTeleportAsync(any(), eq(player));
         // Player 2 should not be teleported

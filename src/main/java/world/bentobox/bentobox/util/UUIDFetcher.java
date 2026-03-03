@@ -44,14 +44,16 @@ public class UUIDFetcher {
             try (BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(connection.getInputStream()))) {
                 StringBuilder response = new StringBuilder();
-                String line;
+                String line = bufferedReader.readLine();
 
-                while ((line = bufferedReader.readLine()) != null)
+                while (line != null) {
                     response.append(line);
+                    line = bufferedReader.readLine();
+                }
 
                 final JsonElement parsed = JsonParser.parseString(response.toString());
 
-                if (parsed == null || !parsed.isJsonObject()) {
+                if (!parsed.isJsonObject()) {
                     return null;
                 }
 

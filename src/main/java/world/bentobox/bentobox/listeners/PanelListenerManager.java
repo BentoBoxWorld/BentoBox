@@ -24,7 +24,7 @@ import world.bentobox.bentobox.util.Util;
 
 public class PanelListenerManager implements Listener {
 
-    private static final HashMap<UUID, Panel> openPanels = new HashMap<>();
+    private static final Map<UUID, Panel> openPanels = new HashMap<>();
 
     @EventHandler(priority = EventPriority.LOW)
     public void onInventoryClick(InventoryClickEvent event) {

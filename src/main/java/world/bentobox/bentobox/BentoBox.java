@@ -263,9 +263,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         hooksManager.registerHook(new OraxenHook(this));
 
         // TODO: re-enable after implementation
-        //hooksManager.registerHook(new DynmapHook());
         // TODO: re-enable after rework
-        //hooksManager.registerHook(new LangUtilsHook());
 
         webManager = new WebManager(this);
 

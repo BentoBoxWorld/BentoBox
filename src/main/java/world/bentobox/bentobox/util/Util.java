@@ -563,7 +563,7 @@ public class Util {
         boolean isRequiredSnapshot = requiredVersion.contains(SNAPSHOT);
 
         // If required version is a full release but current version is SNAPSHOT, it's incompatible
-        return !(!isRequiredSnapshot && isVersionSnapshot);
+        return isRequiredSnapshot || !isVersionSnapshot;
     }
     
     /**

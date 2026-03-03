@@ -49,7 +49,7 @@ public class IslandInfoCommandTest extends RanksManagerTestSetup {
     @Mock
     private PlaceholdersManager phm;
 
-    private Island island;
+    private Island testIsland;
 
     private IslandInfoCommand iic;
 
@@ -85,13 +85,13 @@ public class IslandInfoCommandTest extends RanksManagerTestSetup {
         when(user.getTranslation(anyString(), anyString(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Island manager
-        island = new Island(location, uuid, 100);
-        island.setRange(400);
+        testIsland = new Island(location, uuid, 100);
+        testIsland.setRange(400);
         when(location.toVector()).thenReturn(new Vector(1,2,3));
         when(plugin.getIslands()).thenReturn(im);
-        Optional<Island> optionalIsland = Optional.of(island);
+        Optional<Island> optionalIsland = Optional.of(testIsland);
         when(im.getIslandAt(any())).thenReturn(optionalIsland);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(testIsland);
 
         // Players manager
         when(plugin.getPlayers()).thenReturn(pm);

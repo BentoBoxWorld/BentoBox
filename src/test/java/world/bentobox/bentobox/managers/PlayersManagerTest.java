@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -84,8 +83,7 @@ public class PlayersManagerTest extends CommonTestSetup {
     @Mock
     private VaultHook vault;
     private MockedStatic<DatabaseSetup> mockedDatabase;
-    private @Nullable
-    static UUID notThere = UUID.randomUUID();
+    private static @Nullable UUID notThere = UUID.randomUUID();
     private static List<Names> names = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
@@ -106,9 +104,9 @@ public class PlayersManagerTest extends CommonTestSetup {
         mockedDatabase = Mockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
-        when(dbSetup.getHandler(eq(Players.class))).thenReturn(playerHandler);
-        when(dbSetup.getHandler(eq(Names.class))).thenReturn(namesHandler);
-        when(dbSetup.getHandler(eq(Island.class))).thenReturn(islandHandler);
+        when(dbSetup.getHandler(Players.class)).thenReturn(playerHandler);
+        when(dbSetup.getHandler(Names.class)).thenReturn(namesHandler);
+        when(dbSetup.getHandler(Island.class)).thenReturn(islandHandler);
 
         // Unknown UUID - nothing in database
         when(playerHandler.objectExists(notThere.toString())).thenReturn(false);
@@ -196,13 +194,11 @@ public class PlayersManagerTest extends CommonTestSetup {
         // Player has island to begin with
         IslandsManager im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        // when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
-        // when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -281,19 +277,19 @@ public class PlayersManagerTest extends CommonTestSetup {
         // Player is kicked
         pm.cleanLeavingPlayer(world, user, true, island);
         // Tamed animals
-        verify(tamed).setOwner(eq(null));
+        verify(tamed).setOwner(null);
         // Economy
-        verify(vault).withdraw(eq(user), eq(0D), eq(world));
+        verify(vault).withdraw(user, 0D, world);
         // Enderchest
         verify(inv).clear();
         // Player inventory should NOT be cleared by default when kicked
         verify(playerInv, never()).clear();
         // Health
-        mockedUtil.verify(() -> Util.resetHealth(eq(p)));
+        mockedUtil.verify(() -> Util.resetHealth(p));
         // Food
-        verify(p).setFoodLevel(eq(20));
+        verify(p).setFoodLevel(20);
         // XP
-        verify(p).setTotalExperience(eq(0));
+        verify(p).setTotalExperience(0);
     }
 
     /**
@@ -305,19 +301,19 @@ public class PlayersManagerTest extends CommonTestSetup {
         // Player is kicked
         pm.cleanLeavingPlayer(world, user, true, island);
         // Tamed animals
-        verify(tamed).setOwner(eq(null));
+        verify(tamed).setOwner(null);
         // Economy
-        verify(vault).withdraw(eq(user), eq(0D), eq(world));
+        verify(vault).withdraw(user, 0D, world);
         // Enderchest
         verify(inv, never()).clear();
         // Player inventory should NOT be cleared by default when kicked
         verify(playerInv, never()).clear();
         // Health
-        mockedUtil.verify(() -> Util.resetHealth(eq(p)));
+        mockedUtil.verify(() -> Util.resetHealth(p));
         // Food
-        verify(p).setFoodLevel(eq(20));
+        verify(p).setFoodLevel(20);
         // XP
-        verify(p).setTotalExperience(eq(0));
+        verify(p).setTotalExperience(0);
     }
 
     /**
@@ -328,19 +324,19 @@ public class PlayersManagerTest extends CommonTestSetup {
     public void testCleanLeavingPlayerLeave() {
         pm.cleanLeavingPlayer(world, user, false, island);
         // Tamed animals
-        verify(tamed).setOwner(eq(null));
+        verify(tamed).setOwner(null);
         // Economy
-        verify(vault).withdraw(eq(user), eq(0D), eq(world));
+        verify(vault).withdraw(user, 0D, world);
         // Enderchest
         verify(inv).clear();
         // Player inventory
         verify(playerInv).clear();
         // Health
-        mockedUtil.verify(() ->  Util.resetHealth(eq(p)));
+        mockedUtil.verify(() ->  Util.resetHealth(p));
         // Food
-        verify(p).setFoodLevel(eq(20));
+        verify(p).setFoodLevel(20);
         // XP
-        verify(p).setTotalExperience(eq(0));
+        verify(p).setTotalExperience(0);
     }
 
     /**

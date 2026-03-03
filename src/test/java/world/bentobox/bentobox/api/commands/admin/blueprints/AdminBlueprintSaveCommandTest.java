@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -43,8 +41,6 @@ import world.bentobox.bentobox.managers.LocalesManager;
  */
 public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
 
-    @Mock
-    private BentoBox plugin;
     private AdminBlueprintSaveCommand absc;
     @Mock
     private AdminBlueprintCommand ac;
@@ -53,7 +49,6 @@ public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
     @Mock
     private User user;
     private BlueprintClipboard clip;
-    private UUID uuid = UUID.randomUUID();
     private File blueprintsFolder;
     private Blueprint bp = new Blueprint();
 
@@ -187,7 +182,6 @@ public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
-   //@Disabled("Paper Biome issue")
     @Test
     public void testExecuteUserStringListOfStringFileExists() {
         testCanExecute();

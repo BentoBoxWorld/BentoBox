@@ -43,10 +43,9 @@ public class ZNPCsPlusHook extends NPCHook {
      * @return string serializing the NPC Entry
      */
     String serializeNPC(NpcEntry entry, Vector origin) {
-        String result = NpcApiProvider.get().getNpcSerializerRegistry().getSerializer(YamlConfiguration.class)
+        return NpcApiProvider.get().getNpcSerializerRegistry().getSerializer(YamlConfiguration.class)
                 .serialize(entry)
                 .saveToString();
-        return result;
     }
 
     @Override

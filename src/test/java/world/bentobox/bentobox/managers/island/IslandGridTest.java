@@ -45,6 +45,7 @@ public class IslandGridTest extends CommonTestSetup {
     /**
      * @throws java.lang.Exception
      */
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
@@ -70,6 +71,7 @@ public class IslandGridTest extends CommonTestSetup {
     /**
      * @throws java.lang.Exception
      */
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();

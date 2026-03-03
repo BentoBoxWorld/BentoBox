@@ -42,7 +42,6 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
     private CompositeCommand ic;
     @Mock
     private User user;
-    private UUID uuid;
     @Mock
     private WorldSettings ws;
 
@@ -88,7 +87,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
         when(island.isBanned(any())).thenReturn(false);
         when(island.getOwner()).thenReturn(uuid);
         when(island.onIsland(any())).thenReturn(true);
-        when(im.getMaxHomes(eq(island))).thenReturn(1);
+        when(im.getMaxHomes(island)).thenReturn(1);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
 
@@ -217,7 +216,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
         when(im.getNumberOfHomesIfAdded(eq(island), anyString())).thenReturn(5);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertFalse(isc.canExecute(user, "island", Collections.singletonList("13")));
-        verify(user).sendMessage(eq("commands.island.sethome.too-many-homes"), eq("[number]"), eq("3"));
+        verify(user).sendMessage("commands.island.sethome.too-many-homes", "[number]", "3");
     }
 
     /**
@@ -263,8 +262,8 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertTrue(isc.execute(user, "island", Collections.emptyList()));
-        verify(user).sendRawMessage(eq("commands.island.sethome.nether.confirmation"));
-        verify(user).sendMessage(eq("commands.confirmation.confirm"), eq("[seconds]"), eq("0"));
+        verify(user).sendRawMessage("commands.island.sethome.nether.confirmation");
+        verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
     }
 
     /**
@@ -310,7 +309,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertTrue(isc.execute(user, "island", Collections.emptyList()));
-        verify(user).sendRawMessage(eq("commands.island.sethome.the-end.confirmation"));
-        verify(user).sendMessage(eq("commands.confirmation.confirm"), eq("[seconds]"), eq("0"));
+        verify(user).sendRawMessage("commands.island.sethome.the-end.confirmation");
+        verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
     }
 }

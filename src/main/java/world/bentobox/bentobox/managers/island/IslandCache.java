@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -233,7 +232,7 @@ public class IslandCache {
         return islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).stream().map(this::getIslandById)
                 .filter(Objects::nonNull).filter(island -> w.equals(island.getWorld()))
                 .sorted(Comparator.comparingLong(Island::getCreatedDate))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

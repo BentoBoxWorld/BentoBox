@@ -259,10 +259,9 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         if (entity instanceof Villager villager && bpe instanceof Villager villager2) {
             setVillager(villager, villager2);
         }
-        if (entity instanceof Colorable c && bpe instanceof Colorable cc) {
-            if (c.getColor() != null) {
-                cc.setColor(c.getColor());
-            }
+        if (entity instanceof Colorable c && bpe instanceof Colorable cc
+                && c.getColor() != null) {
+            cc.setColor(c.getColor());
         }
         if (entity instanceof Tameable t && bpe instanceof Tameable tt) {
             tt.setTamed(t.isTamed());
@@ -271,8 +270,9 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
             ch2.setCarryingChest(ch.isCarryingChest());
         }
         // Only set if child. Most animals are adults
-        if (entity instanceof Ageable a && bpe instanceof Ageable aa) {
-            if (a.isAdult()) aa.setAdult();
+        if (entity instanceof Ageable a && bpe instanceof Ageable aa
+                && a.isAdult()) {
+            aa.setAdult();
         }
         if (entity instanceof AbstractHorse horse && bpe instanceof AbstractHorse horse2) {
             horse2.setDomestication(horse.getDomestication());
