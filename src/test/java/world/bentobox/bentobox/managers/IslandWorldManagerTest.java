@@ -41,10 +41,10 @@ import world.bentobox.bentobox.api.flags.Flag;
  */
 public class IslandWorldManagerTest extends CommonTestSetup {
 
-    private IslandWorldManager iwm;
+    private IslandWorldManager testIwm;
 
     @Mock
-    private World world;
+    private World testWorld;
 
     @Mock
     private WorldSettings ws;
@@ -64,12 +64,12 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        iwm = new IslandWorldManager(plugin);
+        testIwm = new IslandWorldManager(plugin);
         // World
-        when(world.getName()).thenReturn("test-world");
-        when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
-        when(world.getMaxHeight()).thenReturn(256);
-        when(location.getWorld()).thenReturn(world);
+        when(testWorld.getName()).thenReturn("test-world");
+        when(testWorld.getEnvironment()).thenReturn(World.Environment.NORMAL);
+        when(testWorld.getMaxHeight()).thenReturn(256);
+        when(location.getWorld()).thenReturn(testWorld);
 
         // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
@@ -83,10 +83,10 @@ public class IslandWorldManagerTest extends CommonTestSetup {
         // Gamemode
         when(ws.getFriendlyName()).thenReturn("friendly");
         when(gm.getWorldSettings()).thenReturn(ws);
-        when(gm.getOverWorld()).thenReturn(world);
+        when(gm.getOverWorld()).thenReturn(testWorld);
         when(gm.getNetherWorld()).thenReturn(netherWorld);
         when(gm.getEndWorld()).thenReturn(endWorld);
-        iwm.addGameMode(gm);
+        testIwm.addGameMode(gm);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testRegisterWorldsToMultiverse() {
-        iwm.registerWorldsToMultiverse(true);
+        testIwm.registerWorldsToMultiverse(true);
     }
 
     /**
@@ -108,7 +108,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testInWorldLocation() {
-        assertTrue(iwm.inWorld(location));
+        assertTrue(testIwm.inWorld(location));
     }
 
     /**
@@ -116,7 +116,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testInWorldLocationNull() {
-        assertFalse(iwm.inWorld((Location)null));
+        assertFalse(testIwm.inWorld((Location)null));
     }
 
     /**
@@ -124,7 +124,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testInWorldWorld() {
-        assertTrue(iwm.inWorld(world));
+        assertTrue(testIwm.inWorld(testWorld));
     }
 
     /**
@@ -132,7 +132,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testInWorldWorldNull() {
-        assertFalse(iwm.inWorld((World)null));
+        assertFalse(testIwm.inWorld((World)null));
     }
 
     /**
@@ -140,7 +140,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetWorlds() {
-        assertTrue(iwm.getWorlds().contains(world));
+        assertTrue(testIwm.getWorlds().contains(testWorld));
     }
 
     /**
@@ -148,7 +148,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetOverWorlds() {
-        assertTrue(iwm.getOverWorlds().contains(world));
+        assertTrue(testIwm.getOverWorlds().contains(testWorld));
     }
 
     /**
@@ -156,7 +156,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetOverWorldNames() {
-        Map<String, String> map = iwm.getOverWorldNames();
+        Map<String, String> map = testIwm.getOverWorldNames();
         map.forEach((k,v) -> {
             assertEquals("test-world", k);
             assertEquals("friendly", v);
@@ -168,8 +168,8 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsKnownFriendlyWorldName() {
-        assertTrue(iwm.isKnownFriendlyWorldName("friendly"));
-        assertFalse(iwm.isKnownFriendlyWorldName("not-friendly"));
+        assertTrue(testIwm.isKnownFriendlyWorldName("friendly"));
+        assertFalse(testIwm.isKnownFriendlyWorldName("not-friendly"));
     }
 
     /**
@@ -183,9 +183,9 @@ public class IslandWorldManagerTest extends CommonTestSetup {
         WorldSettings ws = mock(WorldSettings.class);
         when(ws.getFriendlyName()).thenReturn("friendly2");
         when(gm.getWorldSettings()).thenReturn(ws);
-        when(gm.getOverWorld()).thenReturn(world);
+        when(gm.getOverWorld()).thenReturn(testWorld);
 
-        iwm.addGameMode(gm);
+        testIwm.addGameMode(gm);
     }
 
     /**
@@ -193,7 +193,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetWorldSettings() {
-        assertEquals(ws, iwm.getWorldSettings(world));
+        assertEquals(ws, testIwm.getWorldSettings(testWorld));
     }
 
     /**
@@ -201,8 +201,8 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetOverWorld() {
-        assertEquals(world, iwm.getOverWorld("friendly"));
-        assertNull(iwm.getOverWorld("not-friendly"));
+        assertEquals(testWorld, testIwm.getOverWorld("friendly"));
+        assertNull(testIwm.getOverWorld("not-friendly"));
     }
 
     /**
@@ -210,7 +210,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetIslandDistance() {
-        assertEquals(0, iwm.getIslandDistance(world));
+        assertEquals(0, testIwm.getIslandDistance(testWorld));
     }
 
     /**
@@ -218,7 +218,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetIslandHeight() {
-        assertEquals(0, iwm.getIslandHeight(world));
+        assertEquals(0, testIwm.getIslandHeight(testWorld));
     }
 
     /**
@@ -227,7 +227,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     @Test
     public void testGetIslandHeightOverMax() {
         when(ws.getIslandHeight()).thenReturn(500);
-        assertEquals(255, iwm.getIslandHeight(world));
+        assertEquals(255, testIwm.getIslandHeight(testWorld));
     }
 
     /**
@@ -236,7 +236,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     @Test
     public void testGetIslandHeightSubZero() {
         when(ws.getIslandHeight()).thenReturn(-50);
-        assertEquals(0, iwm.getIslandHeight(world));
+        assertEquals(0, testIwm.getIslandHeight(testWorld));
     }
 
     /**
@@ -244,7 +244,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetIslandProtectionRange() {
-        assertEquals(0, iwm.getIslandProtectionRange(world));
+        assertEquals(0, testIwm.getIslandProtectionRange(testWorld));
     }
 
     /**
@@ -252,7 +252,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetIslandStartX() {
-        assertEquals(0, iwm.getIslandStartX(world));
+        assertEquals(0, testIwm.getIslandStartX(testWorld));
     }
 
     /**
@@ -260,7 +260,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetIslandStartZ() {
-        assertEquals(0, iwm.getIslandStartZ(world));
+        assertEquals(0, testIwm.getIslandStartZ(testWorld));
     }
 
     /**
@@ -268,7 +268,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetIslandXOffset() {
-        assertEquals(0, iwm.getIslandXOffset(world));
+        assertEquals(0, testIwm.getIslandXOffset(testWorld));
     }
 
     /**
@@ -276,7 +276,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetIslandZOffset() {
-        assertEquals(0, iwm.getIslandZOffset(world));
+        assertEquals(0, testIwm.getIslandZOffset(testWorld));
     }
 
     /**
@@ -284,7 +284,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetMaxIslands() {
-        assertEquals(0, iwm.getMaxIslands(world));
+        assertEquals(0, testIwm.getMaxIslands(testWorld));
     }
 
     /**
@@ -292,7 +292,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetNetherSpawnRadius() {
-        assertEquals(0, iwm.getNetherSpawnRadius(world));
+        assertEquals(0, testIwm.getNetherSpawnRadius(testWorld));
     }
 
     /**
@@ -300,7 +300,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetSeaHeight() {
-        assertEquals(0, iwm.getSeaHeight(world));
+        assertEquals(0, testIwm.getSeaHeight(testWorld));
     }
 
     /**
@@ -309,7 +309,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     @Test
     public void testGetWorldName() {
         when(ws.getWorldName()).thenReturn("test-world");
-        assertEquals("test-world", iwm.getWorldName(world));
+        assertEquals("test-world", testIwm.getWorldName(testWorld));
     }
 
     /**
@@ -317,7 +317,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsEndGenerate() {
-        assertFalse(iwm.isEndGenerate(world));
+        assertFalse(testIwm.isEndGenerate(testWorld));
     }
 
     /**
@@ -325,7 +325,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsEndIslands() {
-        assertFalse(iwm.isEndIslands(world));
+        assertFalse(testIwm.isEndIslands(testWorld));
     }
 
     /**
@@ -333,7 +333,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsNetherGenerate() {
-        assertFalse(iwm.isNetherGenerate(world));
+        assertFalse(testIwm.isNetherGenerate(testWorld));
     }
 
     /**
@@ -341,7 +341,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsNetherIslands() {
-        assertFalse(iwm.isNetherIslands(world));
+        assertFalse(testIwm.isNetherIslands(testWorld));
     }
 
     /**
@@ -349,7 +349,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsNether() {
-        assertFalse(iwm.isNether(world));
+        assertFalse(testIwm.isNether(testWorld));
     }
 
     /**
@@ -357,7 +357,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsIslandNether() {
-        assertFalse(iwm.isIslandNether(world));
+        assertFalse(testIwm.isIslandNether(testWorld));
     }
 
     /**
@@ -365,7 +365,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsEnd() {
-        assertFalse(iwm.isEnd(world));
+        assertFalse(testIwm.isEnd(testWorld));
     }
 
     /**
@@ -373,7 +373,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsIslandEnd() {
-        assertFalse(iwm.isIslandEnd(world));
+        assertFalse(testIwm.isIslandEnd(testWorld));
     }
 
     /**
@@ -381,7 +381,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetNetherWorld() {
-        assertEquals(netherWorld, iwm.getNetherWorld(world));
+        assertEquals(netherWorld, testIwm.getNetherWorld(testWorld));
     }
 
     /**
@@ -389,7 +389,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetNetherWorldNull() {
-        assertNull(iwm.getNetherWorld(null));
+        assertNull(testIwm.getNetherWorld(null));
     }
 
     /**
@@ -397,7 +397,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetEndWorld() {
-        assertEquals(endWorld, iwm.getEndWorld(world));
+        assertEquals(endWorld, testIwm.getEndWorld(testWorld));
     }
 
     /**
@@ -405,7 +405,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetEndWorldNull() {
-        assertNull(iwm.getEndWorld(null));
+        assertNull(testIwm.getEndWorld(null));
     }
 
     /**
@@ -413,7 +413,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsDragonSpawn() {
-        assertTrue(iwm.isDragonSpawn(endWorld));
+        assertTrue(testIwm.isDragonSpawn(endWorld));
     }
 
     /**
@@ -421,7 +421,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsDragonSpawnNull() {
-        assertTrue(iwm.isDragonSpawn(null));
+        assertTrue(testIwm.isDragonSpawn(null));
     }
 
     /**
@@ -436,9 +436,9 @@ public class IslandWorldManagerTest extends CommonTestSetup {
         when(ws.getFriendlyName()).thenReturn("fri2");
         when(gm2.getWorldSettings()).thenReturn(ws);
         when(gm2.getOverWorld()).thenReturn(mock(World.class));
-        iwm.addGameMode(gm2);
+        testIwm.addGameMode(gm2);
         // String can be in any order
-        String result = iwm.getFriendlyNames();
+        String result = testIwm.getFriendlyNames();
         assertTrue(result.contains("fri2"));
         assertTrue(result.contains("friendly"));
         assertTrue(result.contains(", "));
@@ -449,8 +449,8 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetIslandWorld() {
-        assertEquals(world, iwm.getIslandWorld("friendly"));
-        assertNull(iwm.getIslandWorld("not-friendly"));
+        assertEquals(testWorld, testIwm.getIslandWorld("friendly"));
+        assertNull(testIwm.getIslandWorld("not-friendly"));
     }
 
     /**
@@ -458,7 +458,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetMaxTeamSize() {
-        assertEquals(0, iwm.getMaxTeamSize(world));
+        assertEquals(0, testIwm.getMaxTeamSize(testWorld));
     }
 
     /**
@@ -466,7 +466,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetMaxHomes() {
-        assertEquals(0, iwm.getMaxHomes(world));
+        assertEquals(0, testIwm.getMaxHomes(testWorld));
     }
 
     /**
@@ -474,7 +474,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetFriendlyName() {
-        assertEquals("friendly", iwm.getFriendlyName(world));
+        assertEquals("friendly", testIwm.getFriendlyName(testWorld));
     }
 
     /**
@@ -483,7 +483,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     @Test
     public void testGetPermissionPrefix() {
         when(ws.getPermissionPrefix()).thenReturn("bsky");
-        assertEquals("bsky.", iwm.getPermissionPrefix(world));
+        assertEquals("bsky.", testIwm.getPermissionPrefix(testWorld));
     }
 
     /**
@@ -493,7 +493,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     public void testGetIvSettings() {
         List<String> list = Collections.singletonList("blah");
         when(ws.getIvSettings()).thenReturn(list);
-        assertEquals(list, iwm.getIvSettings(world));
+        assertEquals(list, testIwm.getIvSettings(testWorld));
     }
 
     /**
@@ -510,7 +510,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     @Test
     public void testGetDefaultGameMode() {
         when(ws.getDefaultGameMode()).thenReturn(GameMode.ADVENTURE);
-        assertEquals(GameMode.ADVENTURE, iwm.getDefaultGameMode(world));
+        assertEquals(GameMode.ADVENTURE, testIwm.getDefaultGameMode(testWorld));
     }
 
     /**
@@ -520,7 +520,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     public void testGetRemoveMobsWhitelist() {
         Set<EntityType> set = new HashSet<>();
         when(ws.getRemoveMobsWhitelist()).thenReturn(set);
-        assertEquals(set, iwm.getRemoveMobsWhitelist(world));
+        assertEquals(set, testIwm.getRemoveMobsWhitelist(testWorld));
     }
 
     /**
@@ -528,7 +528,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsOnJoinResetMoney() {
-        assertFalse(iwm.isOnJoinResetMoney(world));
+        assertFalse(testIwm.isOnJoinResetMoney(testWorld));
     }
 
     /**
@@ -536,7 +536,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsOnJoinResetInventory() {
-        assertFalse(iwm.isOnJoinResetInventory(world));
+        assertFalse(testIwm.isOnJoinResetInventory(testWorld));
     }
 
     /**
@@ -544,7 +544,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsOnJoinResetEnderChest() {
-        assertFalse(iwm.isOnJoinResetEnderChest(world));
+        assertFalse(testIwm.isOnJoinResetEnderChest(testWorld));
     }
 
     /**
@@ -552,7 +552,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsOnLeaveResetMoney() {
-        assertFalse(iwm.isOnLeaveResetMoney(world));
+        assertFalse(testIwm.isOnLeaveResetMoney(testWorld));
     }
 
     /**
@@ -560,7 +560,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsOnLeaveResetInventory() {
-        assertFalse(iwm.isOnLeaveResetInventory(world));
+        assertFalse(testIwm.isOnLeaveResetInventory(testWorld));
     }
 
     /**
@@ -568,7 +568,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsOnLeaveResetEnderChest() {
-        assertFalse(iwm.isOnLeaveResetEnderChest(world));
+        assertFalse(testIwm.isOnLeaveResetEnderChest(testWorld));
     }
 
     /**
@@ -578,7 +578,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     public void testGetDataFolder() {
         File dataFolder = mock(File.class);
         when(gm.getDataFolder()).thenReturn(dataFolder);
-        assertEquals(dataFolder, iwm.getDataFolder(world));
+        assertEquals(dataFolder, testIwm.getDataFolder(testWorld));
     }
 
     /**
@@ -586,7 +586,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetAddon() {
-        assertEquals(gm, iwm.getAddon(world).get());
+        assertEquals(gm, testIwm.getAddon(testWorld).get());
     }
 
     /**
@@ -594,7 +594,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetAddonNull() {
-        assertEquals(Optional.empty(), iwm.getAddon(null));
+        assertEquals(Optional.empty(), testIwm.getAddon(null));
     }
 
     /**
@@ -605,7 +605,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     public void testGetDefaultIslandFlags() {
         Map<Flag, Integer> flags = new HashMap<>();
         when(ws.getDefaultIslandFlags()).thenReturn(flags);
-        assertEquals(flags, iwm.getDefaultIslandFlags(world));
+        assertEquals(flags, testIwm.getDefaultIslandFlags(testWorld));
     }
 
     /**
@@ -615,7 +615,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     public void testGetVisibleSettings() {
         List<String> list = new ArrayList<>();
         when(ws.getHiddenFlags()).thenReturn(list);
-        assertEquals(list, iwm.getHiddenFlags(world));
+        assertEquals(list, testIwm.getHiddenFlags(testWorld));
     }
 
     /**
@@ -626,7 +626,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     public void testGetDefaultIslandSettings() {
         Map<Flag, Integer> flags = new HashMap<>();
         when(ws.getDefaultIslandFlags()).thenReturn(flags);
-        assertEquals(flags,iwm.getDefaultIslandSettings(world));
+        assertEquals(flags,testIwm.getDefaultIslandSettings(testWorld));
     }
 
     /**
@@ -634,7 +634,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsUseOwnGenerator() {
-        assertFalse(iwm.isUseOwnGenerator(world));
+        assertFalse(testIwm.isUseOwnGenerator(testWorld));
     }
 
     /**
@@ -644,7 +644,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     public void testGetVisitorBannedCommands() {
         List<String> list = new ArrayList<>();
         when(ws.getVisitorBannedCommands()).thenReturn(list);
-        assertEquals(list, iwm.getVisitorBannedCommands(world));
+        assertEquals(list, testIwm.getVisitorBannedCommands(testWorld));
     }
 
     /**
@@ -652,7 +652,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsWaterNotSafe() {
-        assertFalse(iwm.isWaterNotSafe(world));
+        assertFalse(testIwm.isWaterNotSafe(testWorld));
     }
 
     /**
@@ -662,7 +662,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
     public void testGetGeoLimitSettings() {
         List<String> list = new ArrayList<>();
         when(ws.getGeoLimitSettings()).thenReturn(list);
-        assertEquals(list, iwm.getGeoLimitSettings(world));
+        assertEquals(list, testIwm.getGeoLimitSettings(testWorld));
     }
 
     /**
@@ -670,7 +670,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetResetLimit() {
-        assertEquals(0,iwm.getResetLimit(world));
+        assertEquals(0,testIwm.getResetLimit(testWorld));
     }
 
     /**
@@ -678,7 +678,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetResetEpoch() {
-        assertEquals(0,iwm.getResetEpoch(world));
+        assertEquals(0,testIwm.getResetEpoch(testWorld));
     }
 
     /**
@@ -686,7 +686,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testSetResetEpoch() {
-        iwm.setResetEpoch(world);
+        testIwm.setResetEpoch(testWorld);
         Mockito.verify(ws).setResetEpoch(Mockito.anyLong());
     }
 
@@ -695,7 +695,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testIsTeamJoinDeathReset() {
-        assertFalse(iwm.isTeamJoinDeathReset(world));
+        assertFalse(testIwm.isTeamJoinDeathReset(testWorld));
     }
 
     /**
@@ -703,7 +703,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetDeathsMax() {
-        assertEquals(0, iwm.getDeathsMax(world));
+        assertEquals(0, testIwm.getDeathsMax(testWorld));
     }
 
     /**
@@ -711,7 +711,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     public void testGetBanLimit() {
-        assertEquals(0, iwm.getBanLimit(world));
+        assertEquals(0, testIwm.getBanLimit(testWorld));
     }
 
 }

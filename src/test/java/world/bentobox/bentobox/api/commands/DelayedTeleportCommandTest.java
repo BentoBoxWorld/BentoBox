@@ -17,7 +17,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.AfterEach;
@@ -29,7 +28,6 @@ import org.mockito.stubbing.Answer;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -42,8 +40,6 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
 public class DelayedTeleportCommandTest extends CommonTestSetup {
 
     private static final String HELLO = "hello";
-    @Mock
-    private BukkitScheduler sch;
 
     private TestClass dtc;
     @Mock
@@ -62,8 +58,6 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
     private Location from;
     @Mock
     private Location to;
-    @Mock
-    private Notifier notifier;
 
     @Override
     @BeforeEach

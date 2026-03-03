@@ -57,9 +57,6 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
 
     private UUID targetUUID;
 
-    @Mock
-    private Island island;
-
     private MockedStatic<RanksManager> mockedRanksManager;
 
     @Override

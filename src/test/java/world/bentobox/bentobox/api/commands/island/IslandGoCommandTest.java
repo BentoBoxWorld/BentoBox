@@ -42,7 +42,6 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -67,10 +66,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
     @Mock
     private BukkitTask task;
     private IslandGoCommand igc;
-    @Mock
-    private Notifier notifier;
     private @Nullable WorldSettings ws;
-    private UUID uuid = UUID.randomUUID();
 
     @Override
     @BeforeEach

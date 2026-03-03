@@ -46,7 +46,6 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
-    private UUID uuid;
     @Mock
     private User user;
     private PlayersManager pm;

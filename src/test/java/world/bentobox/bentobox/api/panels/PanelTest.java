@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.panels;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -192,7 +193,7 @@ public class PanelTest extends CommonTestSetup {
     @Test
     public void testGetListener() {
         Panel p = new Panel(name, items, 10, null, listener);
-        assertEquals(listener, p.getListener().get());
+        assertSame(listener, p.getListener().get());
     }
 
     /**
@@ -201,7 +202,7 @@ public class PanelTest extends CommonTestSetup {
     @Test
     public void testGetUser() {
         Panel p = new Panel(name, items, 10, user, listener);
-        assertEquals(user, p.getUser().get());
+        assertSame(user, p.getUser().get());
 
         p = new Panel(name, items, 10, null, listener);
         assertEquals(Optional.empty(), p.getUser());
@@ -258,7 +259,7 @@ public class PanelTest extends CommonTestSetup {
         Panel p = new Panel(name, items, 10, user, null);
         assertEquals(Optional.empty(), p.getListener());
         p.setListener(listener);
-        assertEquals(listener, p.getListener().get());
+        assertSame(listener, p.getListener().get());
     }
 
     /**
@@ -269,7 +270,7 @@ public class PanelTest extends CommonTestSetup {
         Panel p = new Panel(name, items, 10, null, listener);
         assertEquals(Optional.empty(), p.getUser());
         p.setUser(user);
-        assertEquals(user, p.getUser().get());
+        assertSame(user, p.getUser().get());
     }
 
     /**

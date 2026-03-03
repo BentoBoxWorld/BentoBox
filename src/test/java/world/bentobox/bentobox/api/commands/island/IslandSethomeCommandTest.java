@@ -42,7 +42,6 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
     private CompositeCommand ic;
     @Mock
     private User user;
-    private UUID uuid;
     @Mock
     private WorldSettings ws;
 

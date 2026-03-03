@@ -204,7 +204,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * @throws NullPointerException if the specified collection is null
      */
     @Override
-    public boolean containsAll(@NonNull Collection<?> c) {
+    public boolean containsAll(Collection<?> c) {
         if (c == null) {
             throw new NullPointerException("Collection cannot be null.");
         }
@@ -220,7 +220,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * @throws NullPointerException if the specified collection is null or contains a null element
      */
     @Override
-    public boolean addAll(@NonNull Collection<? extends E> c) {
+    public boolean addAll(Collection<? extends E> c) {
         if (c == null) {
             throw new NullPointerException("The specified collection cannot be null.");
         }
@@ -245,7 +245,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * @throws NullPointerException if the specified collection is null
      */
     @Override
-    public boolean retainAll(@NonNull Collection<?> c) {
+    public boolean retainAll(Collection<?> c) {
         if (c == null) {
             throw new NullPointerException("Collection cannot be null.");
         }
@@ -262,7 +262,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * @throws NullPointerException if the specified collection is null
      */
     @Override
-    public boolean removeAll(@NonNull Collection<?> c) {
+    public boolean removeAll(Collection<?> c) {
         if (c == null) {
             throw new NullPointerException("Collection cannot be null.");
         }

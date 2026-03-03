@@ -2,6 +2,8 @@ package world.bentobox.bentobox.panels.settings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -108,21 +110,21 @@ public class SettingsTabTest extends CommonTestSetup {
     @Test
     public void testGetUser() {
         testSettingsTabWorldUserTypeMode();
-        assertEquals(user, tab.getUser());
+        assertSame(user, tab.getUser());
     }
 
     @Test
     public void testGetWorld() {
         testSettingsTabWorldUserTypeMode();
-        assertEquals(world, tab.getWorld());
+        assertSame(world, tab.getWorld());
     }
 
     @Test
     public void testGetIsland() {
         testSettingsTabWorldUserTypeMode();
-        assertEquals(null, tab.getIsland());
+        assertNull(tab.getIsland());
         tab.setParentPanel(parent);
-        assertEquals(island, tab.getIsland());
+        assertSame(island, tab.getIsland());
     }
 
     @Test

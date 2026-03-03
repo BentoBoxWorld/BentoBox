@@ -46,7 +46,6 @@ public class IslandSetnameCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ic;
-    private UUID uuid;
     @Mock
     private User user;
     @Mock

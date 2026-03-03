@@ -41,7 +41,6 @@ public class IslandHomesCommandTest extends CommonTestSetup {
     private CompositeCommand ic;
     @Mock
     private User user;
-    private UUID uuid;
  
 @Override
     @BeforeEach

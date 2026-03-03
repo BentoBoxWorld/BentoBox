@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -66,7 +67,7 @@ public class UserTest extends CommonTestSetup {
     private static final String TEST_TRANSLATION = "mock &a translation &b [test]";
     private static final String TEST_TRANSLATION_WITH_COLOR = "mock §atranslation §b[test]";
     @Mock
-    private LocalesManager lm;
+    private LocalesManager testLm;
 
     private User user;
 
@@ -99,9 +100,9 @@ public class UserTest extends CommonTestSetup {
         user = User.getInstance(mockPlayer);
 
         // Locales
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        when(lm.get(any(), any())).thenReturn(TEST_TRANSLATION);
-        when(lm.get(any())).thenReturn(TEST_TRANSLATION);
+        when(plugin.getLocalesManager()).thenReturn(testLm);
+        when(testLm.get(any(), any())).thenReturn(TEST_TRANSLATION);
+        when(testLm.get(any())).thenReturn(TEST_TRANSLATION);
 
         // Placeholders
         PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
@@ -129,7 +130,7 @@ public class UserTest extends CommonTestSetup {
 
     @Test
     public void testGetInstancePlayer() {
-        assertEquals(mockPlayer, user.getPlayer());
+        assertSame(mockPlayer, user.getPlayer());
     }
 
     @Test
@@ -143,7 +144,7 @@ public class UserTest extends CommonTestSetup {
     @Test
     public void testRemovePlayer() {
         assertNotNull(User.getInstance(uuid));
-        assertEquals(user, User.getInstance(uuid));
+        assertSame(user, User.getInstance(uuid));
         User.removePlayer(mockPlayer);
         // If the player has been removed from the cache, then code will ask server for player
         // Return null and check if instance is null will show that the player is not in the cache
@@ -200,7 +201,7 @@ public class UserTest extends CommonTestSetup {
     @Test
     public void testGetPlayer() {
         User user = User.getInstance(mockPlayer);
-        assertEquals(mockPlayer, user.getPlayer());
+        assertSame(mockPlayer, user.getPlayer());
     }
 
     @Test
@@ -279,7 +280,7 @@ public class UserTest extends CommonTestSetup {
     @Test
     public void testGetTranslationNoTranslationFound() {
         // Test no translation found
-        when(lm.get(any(), any())).thenReturn(null);
+        when(testLm.get(any(), any())).thenReturn(null);
         assertEquals("a.reference", user.getTranslation("a.reference"));
 
     }
@@ -287,8 +288,8 @@ public class UserTest extends CommonTestSetup {
     @Test
     public void testGetTranslationOrNothing() {
         // Return the original string to pretend that a translation could not be found
-        when(lm.get(any(), any())).thenReturn("fake.reference");
-        when(lm.get(any())).thenReturn("fake.reference");
+        when(testLm.get(any(), any())).thenReturn("fake.reference");
+        when(testLm.get(any())).thenReturn("fake.reference");
 
         User user = User.getInstance(mockPlayer);
         assertEquals("", user.getTranslationOrNothing("fake.reference"));
@@ -310,7 +311,7 @@ public class UserTest extends CommonTestSetup {
         user.setAddon(addon);
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
         when(iwm .getAddon(any())).thenReturn(optionalAddon);
-        when(lm.get(any(), eq("name.a.reference"))).thenReturn("mockmockmock");
+        when(testLm.get(any(), eq("name.a.reference"))).thenReturn("mockmockmock");
         user.sendMessage("a.reference");
         verify(mockPlayer, never()).sendMessage(TEST_TRANSLATION);
         checkSpigotMessage("mockmockmock");
@@ -319,7 +320,7 @@ public class UserTest extends CommonTestSetup {
     @Test
     public void testSendMessageBlankTranslation() {
         // Nothing - blank translation
-        when(lm.get(any(), any())).thenReturn("");
+        when(testLm.get(any(), any())).thenReturn("");
         user.sendMessage("a.reference");
         checkSpigotMessage("a.reference", 0);
     }
@@ -332,7 +333,7 @@ public class UserTest extends CommonTestSetup {
         for (@SuppressWarnings("deprecation") ChatColor cc : ChatColor.values()) {
             allColors.append(cc);
         }
-        when(lm.get(any(), any())).thenReturn(allColors.toString());
+        when(testLm.get(any(), any())).thenReturn(allColors.toString());
         user.sendMessage("a.reference");
         verify(mockPlayer, never()).sendMessage(anyString());
     }
@@ -340,7 +341,7 @@ public class UserTest extends CommonTestSetup {
     @SuppressWarnings("deprecation")
     @Test
     public void testSendMessageColorsAndSpaces() {
-        when(lm.get(any(), any())).thenReturn(ChatColor.COLOR_CHAR + "6 Hello there");
+        when(testLm.get(any(), any())).thenReturn(ChatColor.COLOR_CHAR + "6 Hello there");
         user.sendMessage("a.reference");
         checkSpigotMessage(ChatColor.COLOR_CHAR + "6Hello there");
     }
@@ -369,7 +370,7 @@ public class UserTest extends CommonTestSetup {
         when(plugin.getNotifier()).thenReturn(notifier);
         @SuppressWarnings("deprecation")
         String translation = ChatColor.RED + "" + ChatColor.BOLD + "test translation";
-        when(lm.get(any(), any())).thenReturn(translation);
+        when(testLm.get(any(), any())).thenReturn(translation);
 
         // Set notify
         when(notifier.notify(any(), eq(translation))).thenReturn(true);
@@ -400,7 +401,7 @@ public class UserTest extends CommonTestSetup {
         World world = mock(World.class);
         when(mockPlayer.getWorld()).thenReturn(world);
         User user = User.getInstance(mockPlayer);
-        assertEquals(world, user.getWorld());
+        assertSame(world, user.getWorld());
     }
 
     @Test
