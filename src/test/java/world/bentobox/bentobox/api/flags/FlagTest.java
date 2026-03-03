@@ -351,7 +351,7 @@ public class FlagTest extends RanksManagerTestSetup {
         when(im.getIslandAt(any(Location.class))).thenReturn(oL);
 
         RanksManager rm = mock(RanksManager.class);
-        mockedRanksManager.when(() -> RanksManager.getInstance()).thenReturn(rm);
+        mockedRanksManager.when(RanksManager::getInstance).thenReturn(rm);
         when(rm.getRank(RanksManager.VISITOR_RANK)).thenReturn("Visitor");
         when(rm.getRank(RanksManager.OWNER_RANK)).thenReturn("Owner");
 

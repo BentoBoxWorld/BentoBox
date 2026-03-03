@@ -180,14 +180,14 @@ public class AdminTeleportCommandTest extends CommonTestSetup {
     public void testExecuteUserStringListOfStringEmptyArgs() {
         AdminTeleportCommand atc = new AdminTeleportCommand(ac, "tp");
         assertFalse(atc.canExecute(user, "tp", new ArrayList<>()));
-        verify(user).sendMessage(eq("commands.help.header"), eq(TextVariables.LABEL), eq("BSkyBlock"));
+        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
     }
 
     @Test
     public void testExecuteUserStringListOfStringUnknownTarget() {
         AdminTeleportCommand atc = new AdminTeleportCommand(ac, "tp");
         assertFalse(atc.canExecute(user, "tp", List.of("tastybento")));
-        verify(user).sendMessage(eq("general.errors.unknown-player"), eq(TextVariables.NAME), eq("tastybento"));
+        verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tastybento");
     }
 
     @Test
@@ -196,7 +196,7 @@ public class AdminTeleportCommandTest extends CommonTestSetup {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tp");
         assertFalse(atc.canExecute(user, "tp", List.of("tastybento")));
-        verify(user).sendMessage(eq("general.errors.player-has-no-island"));
+        verify(user).sendMessage("general.errors.player-has-no-island");
     }
 
     /**

@@ -24,9 +24,8 @@ public class LocationTypeAdapter extends TypeAdapter<Location> {
         out.value(location.getX());
         out.value(location.getY());
         out.value(location.getZ());
-        // This is required for 1.19-1.19.2 compatibility.
-        out.value((double) location.getYaw());
-        out.value((double) location.getPitch());
+        out.value(location.getYaw());
+        out.value(location.getPitch());
         out.endArray();
     }
 

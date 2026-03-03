@@ -77,9 +77,6 @@ public class BreedingListener extends FlagListener {
             bi.put(EntityType.ALLAY, Collections.singletonList(Material.AMETHYST_SHARD));
         }
         // Helper
-        //  if (Enums.getIfPresent(EntityType.class, "<name>").isPresent()) {
-        //      bi.put(EntityType.<type>, Collections.singletonList(Material.<material>));
-        //  }
         BREEDING_ITEMS = Collections.unmodifiableMap(bi);
     }
 

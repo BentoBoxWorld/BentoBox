@@ -153,11 +153,9 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
         final ScheduledFuture<?>[] futureHolder = new ScheduledFuture<?>[1];
         
         // 1. Create and schedule the new task. The lambda uses the reference in the array.
-        futureHolder[0] = scheduler.schedule(() -> {
-            // Self-removal: Try to remove the element only if its associated future is still the one 
-            // referenced by the holder at the time of execution.
-            scheduledTasks.remove(e, futureHolder[0]);
-        }, expirationTime, TimeUnit.MILLISECONDS);
+        // Self-removal: removes the element only if its associated future is still the current one.
+        futureHolder[0] = scheduler.schedule(() -> scheduledTasks.remove(e, futureHolder[0]),
+                expirationTime, TimeUnit.MILLISECONDS);
 
         // 2. Atomically replace the old future with the new one.
         // We use the value stored in the array immediately after scheduling.

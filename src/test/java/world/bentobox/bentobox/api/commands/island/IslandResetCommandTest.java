@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -123,7 +122,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         BukkitTask task = mock(BukkitTask.class);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
 
         // IWM friendly name
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
@@ -133,7 +132,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(bpm.validate(any(), any())).thenReturn("custom");
 
         // Give the user some resets
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(3);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(3);
 
         // Island team members
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
@@ -197,13 +196,11 @@ public class IslandResetCommandTest extends CommonTestSetup {
     public void testNoResetsLeft() {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        // Now is owner, but still has team
-        //when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
 
         // Block based on no resets left
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(0);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(0);
 
         assertFalse(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
         verify(user).sendMessage("commands.island.reset.none-left");
@@ -230,12 +227,11 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
         // Reset command, no confirmation required
         assertTrue(irc.execute(user, irc.getLabel(), Collections.emptyList()));
         // TODO Verify that panel was shown
-        // verify(bpm).showPanel(any(), eq(user), eq(irc.getLabel()));
         // Verify event (13 * 2)
         verify(pim, times(14)).callEvent(any(IslandBaseEvent.class));
         // Verify messaging
@@ -270,9 +266,9 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
         // Test with unlimited resets
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(-1);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(-1);
 
         // Reset
         assertTrue(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
@@ -303,9 +299,9 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
         // Test with unlimited resets
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(-1);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(-1);
 
         // Reset
         assertTrue(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
@@ -319,12 +315,10 @@ public class IslandResetCommandTest extends CommonTestSetup {
     public void testConfirmationRequired() throws Exception {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        // Now is owner, but still has team
-        //when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Give the user some resets
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(1);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(1);
 
         // Old island mock
         Island oldIsland = mock(Island.class);
@@ -339,7 +333,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
         // Require confirmation
         when(s.isResetConfirmation()).thenReturn(true);
@@ -389,12 +383,10 @@ public class IslandResetCommandTest extends CommonTestSetup {
     public void testNoConfirmationRequiredCustomSchemHasPermission() throws Exception {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        // Now is owner, but still has team
-        //when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Give the user some resets
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(1);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(1);
         // Set so no confirmation required
         when(s.isResetConfirmation()).thenReturn(false);
 
@@ -411,7 +403,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
         // Bundle exists
         when(bpm.validate(any(), any())).thenReturn("custom");
@@ -446,7 +438,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         // Vault present but cannot afford
         VaultHook vault = mock(VaultHook.class);
         when(vault.has(any(User.class), eq(100.0))).thenReturn(false);
-        when(vault.format(eq(100.0))).thenReturn("$100.00");
+        when(vault.format(100.0)).thenReturn("$100.00");
         when(plugin.getVault()).thenReturn(Optional.of(vault));
 
         assertFalse(irc.execute(user, irc.getLabel(), List.of("custom")));
@@ -479,7 +471,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         // Vault present and can afford
         VaultHook vault = mock(VaultHook.class);
         when(vault.has(any(User.class), eq(100.0))).thenReturn(true);
-        when(vault.format(eq(100.0))).thenReturn("$100.00");
+        when(vault.format(100.0)).thenReturn("$100.00");
         when(plugin.getVault()).thenReturn(Optional.of(vault));
 
         // Mock up NewIsland builder
@@ -491,7 +483,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
         assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
@@ -529,7 +521,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
         assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
@@ -570,7 +562,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
         assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");

@@ -156,7 +156,7 @@ public class UserTest extends CommonTestSetup {
         BentoBox plugin = mock(BentoBox.class);
         User.setPlugin(plugin);
         user.addPerm("testing123");
-        verify(mockPlayer).addAttachment(eq(plugin), eq("testing123"), eq(true));
+        verify(mockPlayer).addAttachment(plugin, "testing123", true);
     }
 
     @Test
@@ -313,7 +313,7 @@ public class UserTest extends CommonTestSetup {
         when(iwm .getAddon(any())).thenReturn(optionalAddon);
         when(testLm.get(any(), eq("name.a.reference"))).thenReturn("mockmockmock");
         user.sendMessage("a.reference");
-        verify(mockPlayer, never()).sendMessage(eq(TEST_TRANSLATION));
+        verify(mockPlayer, never()).sendMessage(TEST_TRANSLATION);
         checkSpigotMessage("mockmockmock");
     }
 

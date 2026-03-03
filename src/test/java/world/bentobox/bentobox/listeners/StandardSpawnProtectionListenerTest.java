@@ -87,16 +87,6 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
         when(mockPlayer.getWorld()).thenReturn(nether);
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         User.getInstance(mockPlayer);
-        // Locales
-        /*
-        LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        // Placeholders
-        PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
-        when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
-         */
         // Block
         when(block.getLocation()).thenReturn(location);
 

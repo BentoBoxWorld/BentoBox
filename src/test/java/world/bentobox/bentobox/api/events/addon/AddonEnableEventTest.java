@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
@@ -96,15 +95,6 @@ public class AddonEnableEventTest extends CommonTestSetup {
     public void testSetNewEvent() {
         aee.setNewEvent(aee);
         assertSame(aee, aee.getNewEvent().get());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.events.BentoBoxEvent#setKeyValues(java.util.Map)}.
-     */
-    @Test
-    @Disabled
-    public void testSetKeyValues() {
-        // No fields to set values for in the class
     }
 
 }

@@ -60,6 +60,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
 
     /**
      */
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
@@ -72,7 +73,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
 
         // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
 
         // Flags Manager
         FlagsManager fm = mock(FlagsManager.class);
@@ -88,6 +89,7 @@ public class IslandWorldManagerTest extends CommonTestSetup {
         testIwm.addGameMode(gm);
     }
 
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();

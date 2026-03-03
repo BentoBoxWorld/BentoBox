@@ -73,11 +73,9 @@ public class IslandCreateCommand extends CompositeCommand {
         // Check if the island is reserved
         @Nullable
         Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
-        if (island != null) {
+        if (island != null && island.isReserved()) {
             // Reserved islands can be made
-            if (island.isReserved()) {
-                return true;
-            }
+            return true;
         }
         // Check if this player is on a team in this world
         if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()

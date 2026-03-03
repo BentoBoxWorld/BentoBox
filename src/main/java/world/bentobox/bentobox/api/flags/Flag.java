@@ -206,12 +206,11 @@ public class Flag implements Comparable<Flag> {
         }
         WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
         if (type.equals(Type.WORLD_SETTING) || type.equals(Type.PROTECTION)) {
-            if (!ws.getWorldFlags().containsKey(getID())) {
-                ws.getWorldFlags().put(getID(), setting);
+            return ws.getWorldFlags().computeIfAbsent(getID(), k -> {
                 // Save config file
                 BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
-            }
-            return ws.getWorldFlags().get(getID());
+                return setting;
+            });
         }
         return setting;
     }

@@ -74,7 +74,6 @@ public class AdminInfoCommandTest extends RanksManagerTestSetup {
         when(user.getWorld()).thenReturn(world);
         when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.isPlayer()).thenReturn(true);
-        //user = User.getInstance(player);
         // Set the User class plugin as this one
         User.setPlugin(plugin);
 

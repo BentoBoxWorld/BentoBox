@@ -132,9 +132,8 @@ public class AdminTeamKickCommandTest extends CommonTestSetup {
     public void testCanExecutePlayerNotInTeam() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         when(pm.getUUID(any())).thenReturn(notUUID);
-        // when(im.getMembers(any(), any())).thenReturn(new HashSet<>());
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("commands.admin.team.kick.not-in-team"));
+        verify(user).sendMessage("commands.admin.team.kick.not-in-team");
     }
 
     /**

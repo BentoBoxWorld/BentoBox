@@ -238,6 +238,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
      * @return the current (existing or computed) value associated with the specified key, or {@code null} if the computed value is {@code null}
      * @throws NullPointerException if the specified key or mappingFunction is null
      */
+    @Override
     public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
         if (key == null || mappingFunction == null) {
             throw new NullPointerException("Key and mappingFunction cannot be null.");

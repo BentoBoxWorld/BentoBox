@@ -114,14 +114,13 @@ public class HurtingListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerFeedParrots(PlayerInteractEntityEvent e) {
-        if (e.getRightClicked() instanceof Parrot parrot) {
-            if ((e.getHand().equals(EquipmentSlot.HAND) && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
-                    || (e.getHand().equals(EquipmentSlot.OFF_HAND) && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE))) {
-                if (parrot.isTamed()) {
-                    checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_TAMED_ANIMALS);
-                } else {
-                    checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
-                }
+        if (e.getRightClicked() instanceof Parrot parrot
+                && ((e.getHand().equals(EquipmentSlot.HAND) && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
+                    || (e.getHand().equals(EquipmentSlot.OFF_HAND) && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE)))) {
+            if (parrot.isTamed()) {
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_TAMED_ANIMALS);
+            } else {
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
             }
         }
     }

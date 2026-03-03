@@ -220,7 +220,7 @@ public class IslandNearCommandTest extends CommonTestSetup {
         when(island.getName()).thenReturn("");
         when(island.isUnowned()).thenReturn(true);
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.island.near.the-following-islands"));
+        verify(user).sendMessage("commands.island.near.the-following-islands");
         verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.north", TextVariables.NAME, "commands.admin.info.unowned");
         verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.east", TextVariables.NAME, "commands.admin.info.unowned");
         verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.south", TextVariables.NAME, "commands.admin.info.unowned");

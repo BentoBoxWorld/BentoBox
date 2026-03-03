@@ -2,7 +2,6 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -60,7 +59,6 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
         inHandItems.put(Material.ENDER_PEARL, Flags.ENDER_PEARL);
         inHandItems.put(Material.BONE_MEAL, Flags.PLACE_BLOCKS);
         clickedBlocks.put(Material.DAMAGED_ANVIL, Flags.ANVIL);
-        //when(Tag.ANVIL.isTagged(Material.DAMAGED_ANVIL)).thenReturn(true);
         clickedBlocks.put(Material.BEACON, Flags.BEACON);
         clickedBlocks.put(Material.WHITE_BED, Flags.BED);
         clickedBlocks.put(Material.COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
@@ -71,7 +69,6 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
         clickedBlocks.put(Material.WEATHERED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
         clickedBlocks.put(Material.OXIDIZED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
         clickedBlocks.put(Material.WAXED_OXIDIZED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
-        //when(Tag.BEDS.isTagged(Material.WHITE_BED)).thenReturn(true);
         clickedBlocks.put(Material.BREWING_STAND, Flags.BREWING);
         clickedBlocks.put(Material.WATER_CAULDRON, Flags.COLLECT_WATER);
         clickedBlocks.put(Material.BARREL, Flags.BARREL);
@@ -80,7 +77,6 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
         clickedBlocks.put(Material.CHEST_MINECART, Flags.CHEST);
         clickedBlocks.put(Material.TRAPPED_CHEST, Flags.TRAPPED_CHEST);
         clickedBlocks.put(Material.SHULKER_BOX, Flags.SHULKER_BOX);
-        //when(Tag.SHULKER_BOXES.isTagged(Material.SHULKER_BOX)).thenReturn(true);
         clickedBlocks.put(Material.FLOWER_POT, Flags.FLOWER_POT);
         clickedBlocks.put(Material.COMPOSTER, Flags.COMPOSTER);
         clickedBlocks.put(Material.DISPENSER, Flags.DISPENSER);
@@ -88,11 +84,8 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
         clickedBlocks.put(Material.HOPPER, Flags.HOPPER);
         clickedBlocks.put(Material.HOPPER_MINECART, Flags.HOPPER);
         clickedBlocks.put(Material.OAK_DOOR, Flags.DOOR);
-        //when(Tag.DOORS.isTagged(Material.OAK_DOOR)).thenReturn(true);
         clickedBlocks.put(Material.IRON_TRAPDOOR, Flags.TRAPDOOR);
-        //when(Tag.TRAPDOORS.isTagged(Material.IRON_TRAPDOOR)).thenReturn(true);
         clickedBlocks.put(Material.SPRUCE_FENCE_GATE, Flags.GATE);
-        //when(Tag.FENCE_GATES.isTagged(Material.SPRUCE_FENCE_GATE)).thenReturn(true);
         clickedBlocks.put(Material.BLAST_FURNACE, Flags.FURNACE);
         clickedBlocks.put(Material.CAMPFIRE, Flags.FURNACE);
         clickedBlocks.put(Material.FURNACE_MINECART, Flags.FURNACE);
@@ -108,7 +101,6 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
         clickedBlocks.put(Material.STONECUTTER, Flags.CRAFTING);
         clickedBlocks.put(Material.LOOM, Flags.CRAFTING);
         clickedBlocks.put(Material.STONE_BUTTON, Flags.BUTTON);
-        //when(Tag.BUTTONS.isTagged(Material.STONE_BUTTON)).thenReturn(true);
         clickedBlocks.put(Material.LEVER, Flags.LEVER);
         clickedBlocks.put(Material.REPEATER, Flags.REDSTONE);
         clickedBlocks.put(Material.COMPARATOR, Flags.REDSTONE);
@@ -123,11 +115,8 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
         clickedBlocks.put(Material.BEEHIVE, Flags.HIVE);
         clickedBlocks.put(Material.BEE_NEST, Flags.HIVE);
         clickedBlocks.put(Material.ACACIA_WALL_HANGING_SIGN, Flags.SIGN_EDITING);
-        //when(Tag.ALL_HANGING_SIGNS.isTagged(Material.ACACIA_HANGING_SIGN)).thenReturn(true);
         clickedBlocks.put(Material.DARK_OAK_SIGN, Flags.SIGN_EDITING);
-        //when(Tag.SIGNS.isTagged(Material.DARK_OAK_SIGN)).thenReturn(true);
         clickedBlocks.put(Material.CHERRY_WALL_SIGN, Flags.SIGN_EDITING);
-        //when(Tag.SIGNS.isTagged(Material.CHERRY_WALL_SIGN)).thenReturn(true);
     }
 
 
@@ -342,26 +331,6 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
         assertEquals(Event.Result.DENY, e.useInteractedBlock());
         assertEquals(Event.Result.DENY, e.useItemInHand());
         verify(notifier, times(2)).notify(any(), eq("protection.protected"));
-    }
-
-
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
-     */
-    @Disabled("TODO")
-    @Test
-    public void testOnBlockBreak() {
-        fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onDragonEggTeleport(org.bukkit.event.block.BlockFromToEvent)}.
-     */
-    @Disabled("TODO")
-    @Test
-    public void testOnDragonEggTeleport() {
-        fail("Not yet implemented"); // TODO
     }
 
 }

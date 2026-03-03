@@ -48,10 +48,11 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
     private PlayersManager pm;
     private UUID notUUID;
 
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        
+
         // Util
         Util.setPlugin(plugin);
 
@@ -100,7 +101,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
         BukkitTask task = mock(BukkitTask.class);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 
@@ -110,6 +111,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
         when(plugin.getLocalesManager()).thenReturn(lm);
     }
 
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
@@ -150,7 +152,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
         when(im.hasIsland(world, notUUID)).thenReturn(false);
         when(im.inTeam(world, notUUID)).thenReturn(false);
         assertFalse(itl.canExecute(user, "", List.of("tastybento")));
-        verify(user).sendMessage(eq("general.errors.player-has-no-island"));
+        verify(user).sendMessage("general.errors.player-has-no-island");
     }
 
     /**
@@ -176,7 +178,6 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
         when(im.hasIsland(world, uuid)).thenReturn(true);
         when(island.hasTeam()).thenReturn(false);
         when(im.inTeam(any(), any())).thenReturn(false);
-        //when(im.getOwner(any(), any())).thenReturn(uuid);
         Island is = mock(Island.class);
         Location loc = mock(Location.class);
         when(loc.toVector()).thenReturn(new Vector(123,123,432));
@@ -196,7 +197,6 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteFailUUID() {
         when(im.inTeam(any(), any())).thenReturn(false);
-        //when(im.getOwner(any(), any())).thenReturn(uuid);
         Island is = mock(Island.class);
         Location loc = mock(Location.class);
         when(loc.toVector()).thenReturn(new Vector(123,123,432));
@@ -217,7 +217,6 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
     public void testCanExecuteSuccess() {
         when(island.hasTeam()).thenReturn(false);
         when(im.inTeam(any(), any())).thenReturn(false);
-        //when(im.getOwner(any(), any())).thenReturn(uuid);
         Island is = mock(Island.class);
         Location loc = mock(Location.class);
         when(loc.toVector()).thenReturn(new Vector(123,123,432));

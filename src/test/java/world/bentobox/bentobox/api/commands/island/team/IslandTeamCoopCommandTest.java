@@ -127,7 +127,7 @@ public class IslandTeamCoopCommandTest extends RanksManagerTestSetup {
         when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage(eq("general.errors.no-island"));
+        verify(user).sendMessage("general.errors.no-island");
     }
 
     /**
@@ -177,7 +177,7 @@ public class IslandTeamCoopCommandTest extends RanksManagerTestSetup {
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         when(pm.getUUID(any())).thenReturn(uuid);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("commands.island.team.coop.cannot-coop-yourself"));
+        verify(user).sendMessage("commands.island.team.coop.cannot-coop-yourself");
     }
 
     /**
@@ -194,7 +194,7 @@ public class IslandTeamCoopCommandTest extends RanksManagerTestSetup {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(island.getMemberSet(anyInt())).thenReturn(ImmutableSet.of(notUUID));
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("bento")));
-        verify(user).sendMessage(eq("commands.island.team.coop.already-has-rank"));
+        verify(user).sendMessage("commands.island.team.coop.already-has-rank");
     }
 
     /**
@@ -205,7 +205,7 @@ public class IslandTeamCoopCommandTest extends RanksManagerTestSetup {
         when(pm.getUUID(any())).thenReturn(uuid);
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("commands.island.team.coop.cannot-coop-yourself"));
+        verify(user).sendMessage("commands.island.team.coop.cannot-coop-yourself");
     }
 
     /**
@@ -219,7 +219,7 @@ public class IslandTeamCoopCommandTest extends RanksManagerTestSetup {
         when(island.getMemberSet(anyInt())).thenReturn(ImmutableSet.of(other));
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("commands.island.team.coop.already-has-rank"));
+        verify(user).sendMessage("commands.island.team.coop.already-has-rank");
     }
 
     /**
@@ -248,7 +248,7 @@ public class IslandTeamCoopCommandTest extends RanksManagerTestSetup {
         // Execute
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("general.errors.general"));
+        verify(user).sendMessage("general.errors.general");
     }
 
     /**
@@ -289,7 +289,7 @@ public class IslandTeamCoopCommandTest extends RanksManagerTestSetup {
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         // Up to 3
-        when(im.getMaxMembers(eq(island), eq(RanksManager.COOP_RANK))).thenReturn(3);
+        when(im.getMaxMembers(island, RanksManager.COOP_RANK)).thenReturn(3);
         // Execute
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));

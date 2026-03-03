@@ -103,8 +103,6 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        // when(im.isOwner(any(),any())).thenReturn(true);
-        // when(im.getOwner(any(),any())).thenReturn(uuid);
         when(im.getIsland(world, user)).thenReturn(island);
         when(im.getIslands(world, notUUID)).thenReturn(List.of(island));
         when(plugin.getIslands()).thenReturn(im);
@@ -122,7 +120,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
         BukkitTask task = mock(BukkitTask.class);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 
@@ -630,7 +628,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    @Disabled("This fails for some reason on the map getting")
+    @Disabled("Reason: IslandGoCommand.getNameIslandMap static mock integration fails during map retrieval")
     public void testExecuteWithMultipleIslandsAfterCanExecute() {
         // Arrange
         args.add("ValidPlayer");

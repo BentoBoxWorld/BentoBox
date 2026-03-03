@@ -113,12 +113,12 @@ public class HiddenCommandTest extends CommonTestSetup {
         // Only the visible command should show in help
         TopLevelCommand tlc = new TopLevelCommand();
         tlc.showHelp(tlc, user);
-        verify(user).sendMessage(eq("commands.help.header"), eq(TextVariables.LABEL), eq("commands.help.console"));
-        verify(user).sendMessage(eq("commands.help.syntax-no-parameters"), eq("[usage]"), eq("/top"), eq(TextVariables.DESCRIPTION), eq("top.description"));
-        verify(user).sendMessage(eq("commands.help.syntax-no-parameters"), eq("[usage]"), eq("/top visible"), eq(TextVariables.DESCRIPTION), eq("visible.description"));
+        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "commands.help.console");
+        verify(user).sendMessage("commands.help.syntax-no-parameters", "[usage]", "/top", TextVariables.DESCRIPTION, "top.description");
+        verify(user).sendMessage("commands.help.syntax-no-parameters", "[usage]", "/top visible", TextVariables.DESCRIPTION, "visible.description");
         verify(user, never()).sendMessage(eq("commands.help.syntax-no-parameters"), eq("[usage]"), eq("/top hidden"), eq(TextVariables.DESCRIPTION), anyString());
         verify(user, never()).sendMessage(eq("commands.help.syntax-no-parameters"), eq("[usage]"), eq("/top hidden2"), eq(TextVariables.DESCRIPTION), anyString());
-        verify(user).sendMessage(eq("commands.help.end"));
+        verify(user).sendMessage("commands.help.end");
 
     }
 

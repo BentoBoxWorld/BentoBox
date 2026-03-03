@@ -36,6 +36,7 @@ public class FlagsManagerTest extends CommonTestSetup {
      */
     private static final int NUMBER_OF_LISTENERS = 56;
 
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
@@ -45,13 +46,14 @@ public class FlagsManagerTest extends CommonTestSetup {
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
-        mockedBukkit.when(() -> Bukkit.getItemFactory()).thenReturn(itemFactory);
+        mockedBukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
 
         // Util
         mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
     }
 
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();

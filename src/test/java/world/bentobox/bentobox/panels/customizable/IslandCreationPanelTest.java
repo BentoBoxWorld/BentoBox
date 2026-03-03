@@ -192,8 +192,8 @@ public class IslandCreationPanelTest extends CommonTestSetup {
         // Set correctly
         verify(inv).setItem(eq(0), any());
         verify(inv).setItem(eq(1), any());
-        verify(meta).setDisplayName(eq("test"));
-        verify(meta).setLore(eq(List.of("A description", "", "panels.tips.click-to-choose")));
+        verify(meta).setDisplayName("test");
+        verify(meta).setLore(List.of("A description", "", "panels.tips.click-to-choose"));
     }
 
     /**
@@ -206,14 +206,14 @@ public class IslandCreationPanelTest extends CommonTestSetup {
         IslandCreationPanel.openPanel(ic, user, "", false);
         verify(inv).setItem(eq(0), any());
         verify(inv).setItem(eq(1), any());
-        verify(meta).setDisplayName(eq("test"));
-        verify(meta).setLore(eq(List.of("A description", "", "panels.tips.click-to-choose")));
+        verify(meta).setDisplayName("test");
+        verify(meta).setLore(List.of("A description", "", "panels.tips.click-to-choose"));
         verify(inv).setItem(eq(0), any());
-        verify(meta).setDisplayName(eq("test2"));
-        verify(meta).setLore(eq(List.of("A description 2", "", "panels.tips.click-to-choose")));
+        verify(meta).setDisplayName("test2");
+        verify(meta).setLore(List.of("A description 2", "", "panels.tips.click-to-choose"));
         verify(inv).setItem(eq(1), any());
-        verify(meta).setDisplayName(eq("test3"));
-        verify(meta).setLore(eq(List.of("A description 3", "", "panels.tips.click-to-choose")));
+        verify(meta).setDisplayName("test3");
+        verify(meta).setLore(List.of("A description 3", "", "panels.tips.click-to-choose"));
     }
 
 }

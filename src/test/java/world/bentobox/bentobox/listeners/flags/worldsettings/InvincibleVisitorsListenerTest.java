@@ -251,13 +251,13 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
         EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
-        verify(mockPlayer, never()).setGameMode(eq(GameMode.SPECTATOR));
+        verify(mockPlayer, never()).setGameMode(GameMode.SPECTATOR);
         verify(pim).callEvent(any(InvincibleVistorFlagDamageRemovalEvent.class));
     }
 
     @Test
     public void testOnVisitorGetDamageNPC() {
-        when(mockPlayer.hasMetadata(eq("NPC"))).thenReturn(true);
+        when(mockPlayer.hasMetadata("NPC")).thenReturn(true);
         EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());

@@ -68,6 +68,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
 
     /**
      */
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();

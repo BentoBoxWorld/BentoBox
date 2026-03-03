@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -63,8 +62,8 @@ public class VisitorKeepInventoryListenerTest extends CommonTestSetup {
         when(location.getWorld()).thenReturn(world);
         when(location.toVector()).thenReturn(new Vector(1,2,3));
         // Turn on why for player
-        when(mockPlayer.getMetadata(eq("bskyblock_world_why_debug"))).thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, true)));
-        when(mockPlayer.getMetadata(eq("bskyblock_world_why_debug_issuer"))).thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, uuid.toString())));
+        when(mockPlayer.getMetadata("bskyblock_world_why_debug")).thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, true)));
+        when(mockPlayer.getMetadata("bskyblock_world_why_debug_issuer")).thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, uuid.toString())));
         User.getInstance(mockPlayer);
 
         // WorldSettings and World Flags
@@ -150,7 +149,7 @@ public class VisitorKeepInventoryListenerTest extends CommonTestSetup {
      */
     @Test
     public void testOnVisitorDeathNotInWorld() {
-        when(iwm.inWorld(eq(world))).thenReturn(false);
+        when(iwm.inWorld(world)).thenReturn(false);
         Flags.VISITOR_KEEP_INVENTORY.setSetting(world, true);
         l.onVisitorDeath(e);
         assertFalse(e.getKeepInventory());

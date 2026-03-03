@@ -51,6 +51,7 @@ public class AddonTest extends CommonTestSetup {
 
     private TestClass test;
 
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();

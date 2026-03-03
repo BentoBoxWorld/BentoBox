@@ -226,7 +226,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
             for (int x = -2; x <= 2; x++) {
                 for (int y = -2; y <= 2; y++) {
                     for (int z = -2; z <= 2; z++) {
-                        when(world.getBlockAt(Mockito.eq(x), Mockito.eq(y), Mockito.eq(z))).thenReturn(obsidianBlock);
+                        when(world.getBlockAt(x, y, z)).thenReturn(obsidianBlock);
                         assertFalse(listener.onPlayerInteract(event));
                     }
                 }

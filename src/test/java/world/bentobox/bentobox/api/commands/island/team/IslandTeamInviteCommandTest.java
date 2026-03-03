@@ -124,8 +124,6 @@ public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
 
         // Player has island to begin with
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        // when(im.isOwner(any(), eq(uuid))).thenReturn(true);
-        // when(im.getOwner(any(), eq(uuid))).thenReturn(uuid);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(im.getIsland(any(), eq(user))).thenReturn(island);
         when(im.getMaxMembers(eq(island), anyInt())).thenReturn(4);
@@ -163,7 +161,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
         ItemFactory itemFactory = mock(ItemFactory.class);
         ItemMeta bannerMeta = mock(ItemMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
-        mockedBukkit.when(() -> Bukkit.getItemFactory()).thenReturn(itemFactory);
+        mockedBukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
         Inventory inventory = mock(Inventory.class);
         mockedBukkit.when(() -> Bukkit.createInventory(eq(null), anyInt(), anyString())).thenReturn(inventory);
 
@@ -191,7 +189,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
     public void testCanExecuteDifferentPlayerInTeam() {
         when(im.inTeam(any(), any())).thenReturn(true);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
-        verify(user).sendMessage(eq("commands.island.team.invite.errors.already-on-team"));
+        verify(user).sendMessage("commands.island.team.invite.errors.already-on-team");
     }
 
     /**
@@ -213,7 +211,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
-        verify(user).sendMessage(eq("general.errors.no-island"));
+        verify(user).sendMessage("general.errors.no-island");
     }
 
     /**
@@ -235,7 +233,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
     public void testCanExecuteOfflinePlayer() {
         when(target.isOnline()).thenReturn(false);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
-        verify(user).sendMessage(eq("general.errors.offline-player"));
+        verify(user).sendMessage("general.errors.offline-player");
     }
 
     /**
@@ -245,7 +243,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
     public void testCanExecuteVanishedPlayer() {
         when(mockPlayer.canSee(any())).thenReturn(false);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
-        verify(user).sendMessage(eq("general.errors.offline-player"));
+        verify(user).sendMessage("general.errors.offline-player");
     }
 
     /**
@@ -255,7 +253,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
     @Test
     public void testCanExecuteSamePlayer() {
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
-        verify(user).sendMessage(eq("commands.island.team.invite.errors.cannot-invite-self"));
+        verify(user).sendMessage("commands.island.team.invite.errors.cannot-invite-self");
     }
 
     /**
@@ -272,9 +270,9 @@ public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
      */
     @Test
     public void testCanExecuteUnknownPlayer() {
-        when(pm.getUUID(eq("target"))).thenReturn(null);
+        when(pm.getUUID("target")).thenReturn(null);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
-        verify(user).sendMessage(eq("general.errors.unknown-player"), eq(TextVariables.NAME), eq("target"));
+        verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "target");
     }
 
     /**
@@ -284,7 +282,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
     public void testCanExecuteFullIsland() {
         when(im.getMaxMembers(eq(island), anyInt())).thenReturn(0);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
-        verify(user).sendMessage(eq("commands.island.team.invite.errors.island-is-full"));
+        verify(user).sendMessage("commands.island.team.invite.errors.island-is-full");
     }
 
     /**
@@ -297,7 +295,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
         testCanExecuteSuccess();
         assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
         verify(pim).callEvent(any(IslandBaseEvent.class));
-        verify(user, never()).sendMessage(eq("commands.island.team.invite.removing-invite"));
+        verify(user, never()).sendMessage("commands.island.team.invite.removing-invite");
         verify(ic).addInvite(Type.TEAM, uuid, notUUID, island);
         verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(target).sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, "tastybento", TextVariables.DISPLAY_NAME, "&Ctastbento");

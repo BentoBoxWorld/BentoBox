@@ -68,11 +68,10 @@ public class SettingsTabTest extends CommonTestSetup {
         tab.getFlags();
     }
 
-    //@Ignore("Issue with Materials and item checking")
     @Test
     public void testGetIcon() {
         testSettingsTabWorldUserTypeMode();
-        PanelItem icon = tab.getIcon();
+        tab.getIcon();
     }
 
     @Test

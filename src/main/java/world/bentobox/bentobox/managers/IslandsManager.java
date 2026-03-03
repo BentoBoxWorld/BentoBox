@@ -474,9 +474,7 @@ public class IslandsManager {
             }
         }
         // Check cache for last island
-        Island cachedIsland = islandCache.getIsland(world, uuid);
-
-        return cachedIsland;
+        return islandCache.getIsland(world, uuid);
     }
 
     /**
