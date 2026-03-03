@@ -37,7 +37,7 @@ public class TagTypeAdapterFactory implements TypeAdapterFactory {
                     throw new IllegalArgumentException("Unsupported Tag type: " + tagType);
                 }
                 
-                return new TagTypeAdapter(gson, registry, tagType);
+                return (TypeAdapter<T>) new TagTypeAdapter<>(gson, registry, tagType);
             }
         }
         return null;
