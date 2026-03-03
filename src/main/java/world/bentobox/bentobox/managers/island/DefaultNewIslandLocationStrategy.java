@@ -73,9 +73,9 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
         if (last == null) {
             // If no island has been created yet, start from the configured offset.
             last = new Location(world,
-                    plugin.getIWM().getIslandXOffset(world) + plugin.getIWM().getIslandStartX(world),
+                    (double) plugin.getIWM().getIslandXOffset(world) + plugin.getIWM().getIslandStartX(world),
                     plugin.getIWM().getIslandHeight(world),
-                    plugin.getIWM().getIslandZOffset(world) + plugin.getIWM().getIslandStartZ(world));
+                    (double) plugin.getIWM().getIslandZOffset(world) + plugin.getIWM().getIslandStartZ(world));
         }
         // Find a free spot by spiraling outwards.
         Map<Result, Integer> result = new EnumMap<>(Result.class);
