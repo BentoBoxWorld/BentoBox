@@ -66,11 +66,12 @@ public class TestBentoBox extends CommonTestSetup {
     private Player visitorToIsland;
     @Mock
     private CommandsManager cm;
-    // Static mock for IslandsManager - kept open for test lifecycle
+    private MockedStatic<IslandsManager> mockedStaticIM;
 
     @Override
     @AfterEach
     public void tearDown() throws Exception {
+        if (mockedStaticIM != null) mockedStaticIM.closeOnDemand();
         super.tearDown();
     }
     
@@ -81,7 +82,7 @@ public class TestBentoBox extends CommonTestSetup {
 
         // IslandsManager static
         //PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
-        Mockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+        mockedStaticIM = Mockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
