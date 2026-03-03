@@ -184,7 +184,7 @@ public class IslandGrid {
     /**
      * @return the grid
      */
-    public Map<Integer, TreeMap<Integer, IslandData>> getGrid() {
+    public TreeMap<Integer, TreeMap<Integer, IslandData>> getGrid() {
         return grid;
     }
 
