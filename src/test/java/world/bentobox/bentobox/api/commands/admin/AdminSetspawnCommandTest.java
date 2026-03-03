@@ -34,7 +34,6 @@ import world.bentobox.bentobox.managers.LocalesManager;
 public class AdminSetspawnCommandTest extends CommonTestSetup {
 
     private CompositeCommand ac;
-    private UUID uuid;
     private User user;
  
     @Override

@@ -45,7 +45,6 @@ public class AdminTeamSetownerCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
-    private UUID uuid = UUID.randomUUID();
     @Mock
     private User user;
     @Mock

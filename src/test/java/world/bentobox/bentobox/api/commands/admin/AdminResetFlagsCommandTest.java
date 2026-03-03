@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -45,11 +44,10 @@ public class AdminResetFlagsCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
-    private final UUID uuid = UUID.randomUUID();
     @Mock
     private PlayersManager pm;
     @Mock
-    private FlagsManager fm;
+    private FlagsManager testFm;
     @Mock
     private Flag flag;
     @Mock
@@ -79,7 +77,7 @@ public class AdminResetFlagsCommandTest extends CommonTestSetup {
         user = User.getInstance(mockPlayer);
 
         // Flags manager
-        when(plugin.getFlagsManager()).thenReturn(fm);
+        when(plugin.getFlagsManager()).thenReturn(testFm);
         when(flag.getType()).thenReturn(Type.PROTECTION);
         when(flag2.getType()).thenReturn(Type.SETTING);
         when(flag3.getType()).thenReturn(Type.WORLD_SETTING);
@@ -91,7 +89,7 @@ public class AdminResetFlagsCommandTest extends CommonTestSetup {
         list.add(flag);
         list.add(flag2);
         list.add(flag3);
-        when(fm.getFlags()).thenReturn(list);
+        when(testFm.getFlags()).thenReturn(list);
 
         // Locales & Placeholders
         LocalesManager lm = mock(LocalesManager.class);

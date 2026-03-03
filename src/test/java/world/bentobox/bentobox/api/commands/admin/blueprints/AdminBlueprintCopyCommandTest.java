@@ -47,9 +47,6 @@ public class AdminBlueprintCopyCommandTest extends CommonTestSetup {
     private User user;
     @Mock
     private BlueprintClipboard clip;
-    private UUID uuid = UUID.randomUUID();
-    @Mock
-    private BlueprintsManager bm;
     private AdminBlueprintCopyCommand abcc;
 
     @Override

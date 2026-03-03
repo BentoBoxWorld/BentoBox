@@ -18,7 +18,7 @@ public class NotifierTest {
     private Notifier n;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         n = new Notifier();
     }
 

@@ -56,8 +56,6 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     @Mock
     private Location inside;
     @Mock
-    private Notifier notifier;
-    @Mock
     private Location inside2;
 
     @Override

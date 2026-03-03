@@ -162,7 +162,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
      * @throws NullPointerException if the specified map is null, or if any key or value in the specified map is null
      */
     @Override
-    public void putAll(@NonNull Map<? extends K, ? extends V> m) {
+    public void putAll(Map<? extends K, ? extends V> m) {
         if (m == null) {
             throw new NullPointerException("The specified map cannot be null.");
         }
@@ -239,7 +239,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
      * @throws NullPointerException if the specified key or mappingFunction is null
      */
     @Override
-    public V computeIfAbsent(K key, @NonNull Function<? super K, ? extends V> mappingFunction) {
+    public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
         if (key == null || mappingFunction == null) {
             throw new NullPointerException("Key and mappingFunction cannot be null.");
         }

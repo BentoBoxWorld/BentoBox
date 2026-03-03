@@ -47,7 +47,6 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
     @Mock
     private PlayersManager pm;
     private UUID notUUID;
-    private UUID uuid;
 
     @Override
     @BeforeEach

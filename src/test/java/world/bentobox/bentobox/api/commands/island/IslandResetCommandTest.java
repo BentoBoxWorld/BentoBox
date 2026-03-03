@@ -72,8 +72,6 @@ public class IslandResetCommandTest extends CommonTestSetup {
 
     private IslandResetCommand irc;
 
-    private UUID uuid;
-
     @Override
     @BeforeEach
     public void setUp() throws Exception {

@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -390,7 +391,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
     @Test
     public void testGetOpenPanels() {
         PanelListenerManager.getOpenPanels().put(uuid, panel);
-        assertEquals(panel, PanelListenerManager.getOpenPanels().get(uuid));
+        assertSame(panel, PanelListenerManager.getOpenPanels().get(uuid));
     }
 
 }

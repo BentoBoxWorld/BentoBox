@@ -31,7 +31,6 @@ import org.mockito.Mockito;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.managers.LocalesManager;
 
 public class ObsidianScoopingListenerTest extends CommonTestSetup {
 
@@ -40,8 +39,6 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     private ItemStack item;
     @Mock
     private Block clickedBlock;
-    @Mock
-    private LocalesManager lm;
     private Material inHand;
     private Material block;
 
