@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.commands.BentoBoxCommand;
 
 public class CommandsManager {
 
@@ -89,5 +90,12 @@ public class CommandsManager {
     @NonNull
     public Set<String> listCommands() {
         return commands.keySet();
+    }
+
+    /**
+     * Registers BentoBox's built-in top-level commands.
+     */
+    public void registerDefaultCommands() {
+        new BentoBoxCommand();
     }
 }

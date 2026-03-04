@@ -11,7 +11,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
@@ -23,29 +22,10 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.DatabaseSetup;
-import world.bentobox.bentobox.hooks.FancyNpcsHook;
-import world.bentobox.bentobox.hooks.ItemsAdderHook;
-import world.bentobox.bentobox.hooks.MultipaperHook;
-import world.bentobox.bentobox.hooks.MultiverseCore4Hook;
-import world.bentobox.bentobox.hooks.MultiverseCore5Hook;
-import world.bentobox.bentobox.hooks.MyWorldsHook;
-import world.bentobox.bentobox.hooks.MythicMobsHook;
-import world.bentobox.bentobox.hooks.OraxenHook;
-import world.bentobox.bentobox.hooks.SlimefunHook;
+import world.bentobox.bentobox.hooks.BentoBoxHookRegistrar;
 import world.bentobox.bentobox.hooks.VaultHook;
-import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
-import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
-import world.bentobox.bentobox.listeners.BannedCommands;
-import world.bentobox.bentobox.listeners.BlockEndDragon;
-import world.bentobox.bentobox.listeners.DeathListener;
-import world.bentobox.bentobox.listeners.JoinLeaveListener;
-import world.bentobox.bentobox.listeners.PanelListenerManager;
-import world.bentobox.bentobox.listeners.PrimaryIslandListener;
-import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
-import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
-import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
+import world.bentobox.bentobox.listeners.BentoBoxListenerRegistrar;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -95,7 +75,7 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     // Notifier
     private Notifier notifier;
-    
+
     // Click limiter
     private ExpiringMap<Pair<UUID, String>, Boolean> lastClick ;
 
@@ -147,7 +127,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         }
         // Saving the config now.
         saveConfig();
-        
+
         // Set up click timeout
         lastClick = new ExpiringMap<>(getSettings().getClickCooldownMs(), TimeUnit.MILLISECONDS);
 
@@ -169,7 +149,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         commandsManager = new CommandsManager();
 
         // Load BentoBox commands
-        new BentoBoxCommand();
+        commandsManager.registerDefaultCommands();
 
         // Start Island Worlds Manager
         islandWorldManager = new IslandWorldManager(this);
@@ -202,19 +182,9 @@ public class BentoBox extends JavaPlugin implements Listener {
     private void completeSetup(long loadTime) {
         final long enableStart = System.currentTimeMillis();
 
-        hooksManager.registerHook(new MultipaperHook());
+        BentoBoxHookRegistrar hookRegistrar = new BentoBoxHookRegistrar(this);
+        hookRegistrar.registerEarlyHooks();
 
-        hooksManager.registerHook(new VaultHook());
-
-        // FancyNpcs
-        hooksManager.registerHook(new FancyNpcsHook());
-        // ZNPCsPlus
-        hooksManager.registerHook(new ZNPCsPlusHook());
-
-        // MythicMobs
-        hooksManager.registerHook(new MythicMobsHook());
-
-        hooksManager.registerHook(new PlaceholderAPIHook());
         // Setup the Placeholders manager
         placeholdersManager = new PlaceholdersManager(this);
 
@@ -245,22 +215,10 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // Register Multiverse hook - MV loads AFTER BentoBox
         // Make sure all worlds are already registered to Multiverse.
-        if (hasClass("org.mvplugins.multiverse.core.MultiverseCore")) {
-            hooksManager.registerHook(new MultiverseCore5Hook());
-        } else if (hasClass("com.onarandombox.MultiverseCore.MultiverseCore")) {
-            hooksManager.registerHook(new MultiverseCore4Hook());
-        }
-        hooksManager.registerHook(new MyWorldsHook());
+        hookRegistrar.registerWorldHooks();
         islandWorldManager.registerWorldsToMultiverse(true);
 
-        // Register Slimefun
-        hooksManager.registerHook(new SlimefunHook());
-
-        // Register ItemsAdder
-        hooksManager.registerHook(new ItemsAdderHook(this));
-        
-        // Register Oraxen
-        hooksManager.registerHook(new OraxenHook(this));
+        hookRegistrar.registerLateHooks();
 
         // TODO: re-enable after implementation
         // TODO: re-enable after rework
@@ -298,15 +256,6 @@ public class BentoBox extends JavaPlugin implements Listener {
         }
     }
 
-    private boolean hasClass(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
     private void fireCriticalError(String message, String error) {
         logError("*****************CRITICAL ERROR!******************");
         logError(message);
@@ -325,30 +274,9 @@ public class BentoBox extends JavaPlugin implements Listener {
      * Registers listeners.
      */
     private void registerListeners() {
-        PluginManager manager = getServer().getPluginManager();
-        // Player join events
-        manager.registerEvents(new JoinLeaveListener(this), this);
-        // Panel listener manager
-        manager.registerEvents(new PanelListenerManager(), this);
-        // Standard Nether/End spawns protection
-        manager.registerEvents(new StandardSpawnProtectionListener(this), this);
-        // Player portals
-        manager.registerEvents(new PlayerTeleportListener(this), this);
-        // Entity portals
-        manager.registerEvents(new EntityTeleportListener(this), this);
-        // End dragon blocking
-        manager.registerEvents(new BlockEndDragon(this), this);
-        // Banned visitor commands
-        manager.registerEvents(new BannedCommands(this), this);
-        // Death counter
-        manager.registerEvents(new DeathListener(this), this);
-        // MV unregister
-        manager.registerEvents(this, this);
-        // Island Delete Manager
-        islandDeletionManager = new IslandDeletionManager(this);
-        manager.registerEvents(islandDeletionManager, this);
-        // Primary Island Listener
-        manager.registerEvents(new PrimaryIslandListener(this), this);
+        BentoBoxListenerRegistrar registrar = new BentoBoxListenerRegistrar(this);
+        registrar.register();
+        islandDeletionManager = registrar.getIslandDeletionManager();
     }
 
     @Override
@@ -652,7 +580,7 @@ public class BentoBox extends JavaPlugin implements Listener {
     public boolean isShutdown() {
         return shutdown;
     }
-    
+
     /**
      * Checks if a user can click a GUI or needs to slow down
      * @param user user
