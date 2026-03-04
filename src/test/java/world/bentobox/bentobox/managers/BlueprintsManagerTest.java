@@ -42,7 +42,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 /**
  * Tests for {@link BlueprintsManager}.
  */
-public class BlueprintsManagerTest extends CommonTestSetup {
+class BlueprintsManagerTest extends CommonTestSetup {
 
     @Mock
     private GameModeAddon addon;
@@ -139,12 +139,12 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testConstructorCreatesManager() {
+    void testConstructorCreatesManager() {
         assertNotNull(manager);
     }
 
     @Test
-    public void testIsBlueprintsLoadedTrueInitially() {
+    void testIsBlueprintsLoadedTrueInitially() {
         assertTrue(manager.isBlueprintsLoaded());
     }
 
@@ -153,14 +153,14 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testGetBlueprintBundlesUnregistered() {
+    void testGetBlueprintBundlesUnregistered() {
         Map<String, BlueprintBundle> result = manager.getBlueprintBundles(addon);
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testGetBlueprintBundlesWithBundle() {
+    void testGetBlueprintBundlesWithBundle() {
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId(BUNDLE_NAME);
         manager.addBlueprintBundle(addon, bb);
@@ -176,12 +176,12 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testGetDefaultBlueprintBundleUnregistered() {
+    void testGetDefaultBlueprintBundleUnregistered() {
         assertNull(manager.getDefaultBlueprintBundle(addon));
     }
 
     @Test
-    public void testGetDefaultBlueprintBundleReturnsDefault() {
+    void testGetDefaultBlueprintBundleReturnsDefault() {
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId(BlueprintsManager.DEFAULT_BUNDLE_NAME);
         manager.addBlueprintBundle(addon, bb);
@@ -192,7 +192,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGetDefaultBlueprintBundleNoDefaultBundle() {
+    void testGetDefaultBlueprintBundleNoDefaultBundle() {
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId("custom");
         manager.addBlueprintBundle(addon, bb);
@@ -205,17 +205,17 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testValidateNullName() {
+    void testValidateNullName() {
         assertNull(manager.validate(addon, null));
     }
 
     @Test
-    public void testValidateNameNotFound() {
+    void testValidateNameNotFound() {
         assertNull(manager.validate(addon, "nonexistent"));
     }
 
     @Test
-    public void testValidateNameFound() {
+    void testValidateNameFound() {
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId(BUNDLE_NAME);
         manager.addBlueprintBundle(addon, bb);
@@ -228,14 +228,14 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testGetBlueprintsUnregistered() {
+    void testGetBlueprintsUnregistered() {
         Map<String, Blueprint> result = manager.getBlueprints(addon);
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testAddBlueprintAddsEntry() {
+    void testAddBlueprintAddsEntry() {
         Blueprint bp = new Blueprint();
         bp.setName("island");
         manager.addBlueprint(addon, bp);
@@ -247,7 +247,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testAddBlueprintReplacesExistingByName() {
+    void testAddBlueprintReplacesExistingByName() {
         Blueprint bp1 = new Blueprint();
         bp1.setName("island");
         Blueprint bp2 = new Blueprint();
@@ -266,7 +266,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testAddBlueprintBundleAddsEntry() {
+    void testAddBlueprintBundleAddsEntry() {
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId("vip");
         manager.addBlueprintBundle(addon, bb);
@@ -275,7 +275,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testAddBlueprintBundleReplacesExisting() {
+    void testAddBlueprintBundleReplacesExisting() {
         BlueprintBundle bb1 = new BlueprintBundle();
         bb1.setUniqueId(BUNDLE_NAME);
         bb1.setDisplayName("Old");
@@ -296,7 +296,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testCheckPermBundleNotFound() {
+    void testCheckPermBundleNotFound() {
         User user = mock(User.class);
         assertFalse(manager.checkPerm(addon, user, "nonexistent"));
         verify(user).sendMessage(eq("general.errors.no-permission"),
@@ -304,7 +304,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCheckPermNoPermission() {
+    void testCheckPermNoPermission() {
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId("vip");
         bb.setRequirePermission(true);
@@ -319,7 +319,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCheckPermAllowed() {
+    void testCheckPermAllowed() {
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId("vip");
         bb.setRequirePermission(true);
@@ -332,7 +332,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCheckPermDefaultBundleAlwaysAllowed() {
+    void testCheckPermDefaultBundleAlwaysAllowed() {
         // Even with requirePermission=true, the default bundle is always allowed.
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId(BlueprintsManager.DEFAULT_BUNDLE_NAME);
@@ -344,7 +344,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCheckPermNoPermissionRequired() {
+    void testCheckPermNoPermissionRequired() {
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId("vip");
         bb.setRequirePermission(false);
@@ -359,7 +359,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testDeleteBlueprintLeavesOtherBlueprints() {
+    void testDeleteBlueprintLeavesOtherBlueprints() {
         Blueprint bp = new Blueprint();
         bp.setName("island");
         manager.addBlueprint(addon, bp);
@@ -370,7 +370,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testDeleteBlueprintRemovesFromListAndFile() throws IOException {
+    void testDeleteBlueprintRemovesFromListAndFile() throws IOException {
         blueprintsFolder.mkdirs();
         Blueprint bp = new Blueprint();
         bp.setName("island");
@@ -387,7 +387,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testDeleteBlueprintCaseInsensitive() {
+    void testDeleteBlueprintCaseInsensitive() {
         Blueprint bp = new Blueprint();
         bp.setName("island");
         manager.addBlueprint(addon, bp);
@@ -402,7 +402,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testDeleteBlueprintBundleRemovesFromMapAndFile() throws IOException {
+    void testDeleteBlueprintBundleRemovesFromMapAndFile() throws IOException {
         blueprintsFolder.mkdirs();
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId(BUNDLE_NAME);
@@ -419,7 +419,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testDeleteBlueprintBundleAddonNotRegisteredDoesNotThrow() {
+    void testDeleteBlueprintBundleAddonNotRegisteredDoesNotThrow() {
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId(BUNDLE_NAME);
         assertDoesNotThrow(() -> manager.deleteBlueprintBundle(addon, bb));
@@ -430,20 +430,20 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testLoadBlueprintsNoFolder() {
+    void testLoadBlueprintsNoFolder() {
         manager.loadBlueprints(addon);
         verify(plugin).logError("There is no blueprint folder for addon TestAddon");
     }
 
     @Test
-    public void testLoadBlueprintsEmptyFolder() {
+    void testLoadBlueprintsEmptyFolder() {
         blueprintsFolder.mkdirs();
         manager.loadBlueprints(addon);
         verify(plugin).logError("No blueprints found for TestAddon");
     }
 
     @Test
-    public void testLoadBlueprintsLoadsFile() throws IOException {
+    void testLoadBlueprintsLoadsFile() throws IOException {
         blueprintsFolder.mkdirs();
         // Write the raw JSON, then zip it into "island.blu"
         File jsonFile = new File(blueprintsFolder, "island");
@@ -463,7 +463,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testExtractDefaultBlueprintsFolderAlreadyExists() {
+    void testExtractDefaultBlueprintsFolderAlreadyExists() {
         blueprintsFolder.mkdirs();
         // If the folder exists the method should return immediately without errors.
         manager.extractDefaultBlueprints(addon);
@@ -475,14 +475,14 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testPasteBundleNotRegistered() {
+    void testPasteBundleNotRegistered() {
         boolean result = manager.paste(addon, island, BUNDLE_NAME, null, true);
         assertFalse(result);
         verify(plugin).logError("Tried to paste 'default' but the bundle is not loaded!");
     }
 
     @Test
-    public void testPasteNoBlueprintsForBundle() {
+    void testPasteNoBlueprintsForBundle() {
         // Bundle is registered but no blueprints are loaded.
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId(BUNDLE_NAME);
@@ -498,7 +498,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testSaveBlueprintCreatesFile() {
+    void testSaveBlueprintCreatesFile() {
         blueprintsFolder.mkdirs();
         Blueprint bp = new Blueprint();
         bp.setName("island");
@@ -515,7 +515,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testSaveBlueprintBundleCreatesFile() throws IOException {
+    void testSaveBlueprintBundleCreatesFile() throws IOException {
         blueprintsFolder.mkdirs();
         BlueprintBundle bb = new BlueprintBundle();
         bb.setUniqueId(BUNDLE_NAME);
@@ -534,7 +534,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    public void testRenameBlueprintSameNameIsNoOp() {
+    void testRenameBlueprintSameNameIsNoOp() {
         Blueprint bp = new Blueprint();
         bp.setName("island");
         manager.addBlueprint(addon, bp);
@@ -547,7 +547,7 @@ public class BlueprintsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testRenameBlueprintNewName() throws IOException {
+    void testRenameBlueprintNewName() throws IOException {
         blueprintsFolder.mkdirs();
         // Create the "old" .blu file so deleteIfExists has something to remove.
         File oldFile = new File(blueprintsFolder,

@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
 
@@ -283,11 +282,12 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         }
 
         // Phase 2: perform deletions
+        DimFolders ow     = new DimFolders(overworldRegion, overworldEntities, overworldPoi);
+        DimFolders nether = new DimFolders(netherRegion,    netherEntities,    netherPoi);
+        DimFolders end    = new DimFolders(endRegion,       endEntities,       endPoi);
         for (Pair<Integer, Integer> coords : deleteableRegions.keySet()) {
             String name = "r." + coords.x() + "." + coords.z() + ".mca";
-            if (!deleteOneRegion(name, overworldRegion, overworldEntities, overworldPoi,
-                    netherRegion, netherEntities, netherPoi,
-                    endRegion, endEntities, endPoi)) {
+            if (!deleteOneRegion(name, ow, nether, end)) {
                 getPlugin().logError("Could not delete all the region/entity/poi files for some reason");
             }
         }
@@ -306,22 +306,23 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         return isEnd && isFileFresh(new File(endRegion, name), cutoffMillis);
     }
 
-    private boolean deleteOneRegion(String name,
-            File owRegion, File owEntities, File owPoi,
-            File netherRegion, File netherEntities, File netherPoi,
-            File endRegion, File endEntities, File endPoi) {
-        boolean ok = deleteIfExists(new File(owRegion, name))
-                   & deleteIfExists(new File(owEntities, name))
-                   & deleteIfExists(new File(owPoi, name));
+    /** Groups the three folder types (region, entities, poi) for one world dimension. */
+    private record DimFolders(File region, File entities, File poi) {}
+
+    private boolean deleteOneRegion(String name, DimFolders overworld, DimFolders nether, DimFolders end) {
+        boolean owRegionOk   = deleteIfExists(new File(overworld.region(),   name));
+        boolean owEntitiesOk = deleteIfExists(new File(overworld.entities(), name));
+        boolean owPoiOk      = deleteIfExists(new File(overworld.poi(),      name));
+        boolean ok = owRegionOk && owEntitiesOk && owPoiOk;
         if (isNether) {
-            ok &= deleteIfExists(new File(netherRegion, name));
-            ok &= deleteIfExists(new File(netherEntities, name));
-            ok &= deleteIfExists(new File(netherPoi, name));
+            ok &= deleteIfExists(new File(nether.region(),   name));
+            ok &= deleteIfExists(new File(nether.entities(), name));
+            ok &= deleteIfExists(new File(nether.poi(),      name));
         }
         if (isEnd) {
-            ok &= deleteIfExists(new File(endRegion, name));
-            ok &= deleteIfExists(new File(endEntities, name));
-            ok &= deleteIfExists(new File(endPoi, name));
+            ok &= deleteIfExists(new File(end.region(),   name));
+            ok &= deleteIfExists(new File(end.entities(), name));
+            ok &= deleteIfExists(new File(end.poi(),      name));
         }
         return ok;
     }
