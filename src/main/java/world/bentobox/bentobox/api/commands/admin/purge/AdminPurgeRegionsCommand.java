@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -153,45 +154,47 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     }
 
     private void deletePlayerFromWorldFolder(String islandID) {
-        File base = getWorld().getWorldFolder();
-        File playerData = new File(base, "playerdata");
-        // Get the island from the cache
-        getPlugin().getIslands().getIslandById(islandID).ifPresent(island -> island.getMemberSet().forEach(uuid -> {
-            // Check if the player has any islands left
-            List<Island> memberOf = new ArrayList<>(getIslands().getIslands(getWorld(), uuid));
-            deleteableRegions.values().forEach(ids -> memberOf.removeIf(i -> ids.contains(i.getUniqueId())));
-            if (memberOf.isEmpty()) {
-                // Do not remove this player if they are Op
-                OfflinePlayer p = Bukkit.getOfflinePlayer(uuid);
-                if (p.isOp()) {
-                    return;
-                }
-                // Do not remove if player logged in recently
-                Long lastLogin = getPlugin().getPlayers().getLastLoginTimestamp(uuid);
-                if (lastLogin == null) {
-                    lastLogin = Bukkit.getOfflinePlayer(uuid).getLastSeen();
-                }
-                long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
-                if (lastLogin >= cutoffMillis) {
-                    return;
-                }
-                // Remove the player from the world folder playerdata because they no longer have any island associated with them
-                if (playerData.exists()) {
-                    File playerFile = new File(playerData, uuid + ".dat");
-                    try {
-                        Files.deleteIfExists(playerFile.toPath());
-                    } catch (IOException ex) {
-                        getPlugin().logError("Failed to delete player data file: " + playerFile.getAbsolutePath());
-                    }
-                    playerFile = new File(playerData, uuid + ".dat_old");
-                    try {
-                        Files.deleteIfExists(playerFile.toPath());
-                    } catch (IOException ex) {
-                        getPlugin().logError("Failed to delete player data backup file: " + playerFile.getAbsolutePath());
-                    }
-                }
-            }
-        }));
+        File playerData = new File(getWorld().getWorldFolder(), "playerdata");
+        getPlugin().getIslands().getIslandById(islandID)
+                .ifPresent(island -> island.getMemberSet()
+                        .forEach(uuid -> maybeDeletePlayerData(uuid, playerData)));
+    }
+
+    private void maybeDeletePlayerData(UUID uuid, File playerData) {
+        List<Island> memberOf = new ArrayList<>(getIslands().getIslands(getWorld(), uuid));
+        deleteableRegions.values().forEach(ids -> memberOf.removeIf(i -> ids.contains(i.getUniqueId())));
+        if (!memberOf.isEmpty()) {
+            return;
+        }
+        if (Bukkit.getOfflinePlayer(uuid).isOp()) {
+            return;
+        }
+        long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
+        if (resolveLastLogin(uuid) >= cutoffMillis) {
+            return;
+        }
+        deletePlayerFiles(uuid, playerData);
+    }
+
+    private long resolveLastLogin(UUID uuid) {
+        Long lastLogin = getPlugin().getPlayers().getLastLoginTimestamp(uuid);
+        return lastLogin != null ? lastLogin : Bukkit.getOfflinePlayer(uuid).getLastSeen();
+    }
+
+    private void deletePlayerFiles(UUID uuid, File playerData) {
+        if (!playerData.exists()) {
+            return;
+        }
+        deletePlayerFile(new File(playerData, uuid + ".dat"), "player data file");
+        deletePlayerFile(new File(playerData, uuid + ".dat_old"), "player data backup file");
+    }
+
+    private void deletePlayerFile(File file, String description) {
+        try {
+            Files.deleteIfExists(file.toPath());
+        } catch (IOException ex) {
+            getPlugin().logError("Failed to delete " + description + ": " + file.getAbsolutePath());
+        }
     }
 
     /**
@@ -247,7 +250,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      *         due to any file being newer than the cutoff
      */
     private boolean deleteRegionFiles() {
-        if (days <= 0) { 
+        if (days <= 0) {
             getPlugin().logError("Days is somehow zero or negative!");
             return false;
         }
@@ -255,77 +258,72 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
         World world = getWorld();
         File base = world.getWorldFolder();
-        File overworldRegion = new File(base, REGION);
+        File overworldRegion   = new File(base, REGION);
         File overworldEntities = new File(base, ENTITIES);
-        File overworldPoi = new File(base, POI);
+        File overworldPoi      = new File(base, POI);
 
         World netherWorld = getPlugin().getIWM().getNetherWorld(world);
-        File netherBase      = netherWorld != null ? resolveDataFolder(netherWorld) : new File(base, DIM_1);
-        File netherRegion    = new File(netherBase, REGION);
-        File netherEntities  = new File(netherBase, ENTITIES);
-        File netherPoi       = new File(netherBase, POI);
+        File netherBase     = netherWorld != null ? resolveDataFolder(netherWorld) : new File(base, DIM_1);
+        File netherRegion   = new File(netherBase, REGION);
+        File netherEntities = new File(netherBase, ENTITIES);
+        File netherPoi      = new File(netherBase, POI);
 
         World endWorld = getPlugin().getIWM().getEndWorld(world);
-        File endBase         = endWorld != null ? resolveDataFolder(endWorld) : new File(base, "DIM1");
-        File endRegion       = new File(endBase, REGION);
-        File endEntities     = new File(endBase, ENTITIES);
-        File endPoi          = new File(endBase, POI);
+        File endBase     = endWorld != null ? resolveDataFolder(endWorld) : new File(base, "DIM1");
+        File endRegion   = new File(endBase, REGION);
+        File endEntities = new File(endBase, ENTITIES);
+        File endPoi      = new File(endBase, POI);
 
         // Phase 1: verify none of the files have been updated since the cutoff
         for (Pair<Integer, Integer> coords : deleteableRegions.keySet()) {
-            int x = coords.x();
-            int z = coords.z();
-            String name = "r." + x + "." + z + ".mca";
-
-            File owFile = new File(overworldRegion, name);
-            if (owFile.exists() && getRegionTimestamp(owFile) >= cutoffMillis) {
+            String name = "r." + coords.x() + "." + coords.z() + ".mca";
+            if (isAnyDimensionFresh(name, overworldRegion, netherRegion, endRegion, cutoffMillis)) {
                 return false;
-            }
-            if (isNether) {
-                File nf = new File(netherRegion, name);
-                if (nf.exists() && getRegionTimestamp(nf) >= cutoffMillis) {
-                    return false;
-                }
-            }
-            if (isEnd) {
-                File ef = new File(endRegion, name);
-                if (ef.exists() && getRegionTimestamp(ef) >= cutoffMillis) {
-                    return false;
-                }
             }
         }
 
         // Phase 2: perform deletions
         for (Pair<Integer, Integer> coords : deleteableRegions.keySet()) {
-            int x = coords.x();
-            int z = coords.z();
-            String name = "r." + x + "." + z + ".mca";
-
-            boolean allDeleted = true;
-
-            // Overworld
-            allDeleted &= deleteIfExists(new File(overworldRegion, name));
-            allDeleted &= deleteIfExists(new File(overworldEntities, name));
-            allDeleted &= deleteIfExists(new File(overworldPoi, name));
-            // Nether
-            if (isNether) {
-                allDeleted &= deleteIfExists(new File(netherRegion, name));
-                allDeleted &= deleteIfExists(new File(netherEntities, name));
-                allDeleted &= deleteIfExists(new File(netherPoi, name));
-            }
-            // End
-            if (isEnd) {
-                allDeleted &= deleteIfExists(new File(endRegion, name));
-                allDeleted &= deleteIfExists(new File(endEntities, name));
-                allDeleted &= deleteIfExists(new File(endPoi, name));
-            }
-
-            if (!allDeleted) {
+            String name = "r." + coords.x() + "." + coords.z() + ".mca";
+            if (!deleteOneRegion(name, overworldRegion, overworldEntities, overworldPoi,
+                    netherRegion, netherEntities, netherPoi,
+                    endRegion, endEntities, endPoi)) {
                 getPlugin().logError("Could not delete all the region/entity/poi files for some reason");
             }
         }
 
         return true;
+    }
+
+    private boolean isFileFresh(File file, long cutoffMillis) {
+        return file.exists() && getRegionTimestamp(file) >= cutoffMillis;
+    }
+
+    private boolean isAnyDimensionFresh(String name, File overworldRegion, File netherRegion,
+            File endRegion, long cutoffMillis) {
+        if (isFileFresh(new File(overworldRegion, name), cutoffMillis)) return true;
+        if (isNether && isFileFresh(new File(netherRegion, name), cutoffMillis)) return true;
+        return isEnd && isFileFresh(new File(endRegion, name), cutoffMillis);
+    }
+
+    private boolean deleteOneRegion(String name,
+            File owRegion, File owEntities, File owPoi,
+            File netherRegion, File netherEntities, File netherPoi,
+            File endRegion, File endEntities, File endPoi) {
+        boolean ok = deleteIfExists(new File(owRegion, name))
+                   & deleteIfExists(new File(owEntities, name))
+                   & deleteIfExists(new File(owPoi, name));
+        if (isNether) {
+            ok &= deleteIfExists(new File(netherRegion, name));
+            ok &= deleteIfExists(new File(netherEntities, name));
+            ok &= deleteIfExists(new File(netherPoi, name));
+        }
+        if (isEnd) {
+            ok &= deleteIfExists(new File(endRegion, name));
+            ok &= deleteIfExists(new File(endEntities, name));
+            ok &= deleteIfExists(new File(endPoi, name));
+        }
+        return ok;
     }
 
     /**
@@ -486,29 +484,40 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      *         the age criteria
      */
     private List<Pair<Integer, Integer>> findOldRegions(int days) {
-        List<Pair<Integer, Integer>> regions = new ArrayList<>();
-
-        // Base folders
         World world = this.getWorld();
         File worldDir = world.getWorldFolder();
         File overworldRegion = new File(worldDir, REGION);
 
         World netherWorld = getPlugin().getIWM().getNetherWorld(world);
-        File netherBase = netherWorld != null
-                ? resolveDataFolder(netherWorld)
-                : new File(worldDir, DIM_1);
+        File netherBase = netherWorld != null ? resolveDataFolder(netherWorld) : new File(worldDir, DIM_1);
         File netherRegion = new File(netherBase, REGION);
 
         World endWorld = getPlugin().getIWM().getEndWorld(world);
-        File endBase = endWorld != null
-                ? resolveDataFolder(endWorld)
-                : new File(worldDir, "DIM1");
+        File endBase = endWorld != null ? resolveDataFolder(endWorld) : new File(worldDir, "DIM1");
         File endRegion = new File(endBase, REGION);
 
-        // Compute cutoff timestamp
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
 
-        // Log resolved paths for diagnostics
+        logRegionFolderPaths(overworldRegion, netherRegion, endRegion, world);
+
+        // Collect all candidate region names from overworld, nether, and end.
+        // This ensures orphaned nether/end files are caught even if the overworld
+        // file was already deleted by a previous (buggy) purge run.
+        Set<String> candidateNames = collectCandidateNames(overworldRegion, netherRegion, endRegion);
+        getPlugin().log("Purge total candidate region coordinates: " + candidateNames.size());
+
+        List<Pair<Integer, Integer>> regions = new ArrayList<>();
+        for (String name : candidateNames) {
+            Pair<Integer, Integer> coords = parseRegionCoords(name);
+            if (coords == null) continue;
+            if (!isAnyDimensionFresh(name, overworldRegion, netherRegion, endRegion, cutoffMillis)) {
+                regions.add(coords);
+            }
+        }
+        return regions;
+    }
+
+    private void logRegionFolderPaths(File overworldRegion, File netherRegion, File endRegion, World world) {
         getPlugin().log("Purge region folders - Overworld: " + overworldRegion.getAbsolutePath()
                 + EXISTS_PREFIX + overworldRegion.isDirectory() + ")");
         if (isNether) {
@@ -527,79 +536,37 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                     + getPlugin().getIWM().isEndGenerate(world) + ", isEndIslands="
                     + getPlugin().getIWM().isEndIslands(world) + ")");
         }
+    }
 
-        // Collect all candidate region names from overworld, nether, and end.
-        // This ensures orphaned nether/end files are caught even if the overworld
-        // file was already deleted by a previous (buggy) purge run.
-        Set<String> candidateNames = new HashSet<>();
-
-        File[] owFiles = overworldRegion.listFiles((dir, name) -> name.endsWith(".mca"));
-        if (owFiles != null) {
-            for (File f : owFiles) candidateNames.add(f.getName());
-        }
-        getPlugin().log(PURGE_FOUND + (owFiles != null ? owFiles.length : 0) + " overworld region files");
+    private Set<String> collectCandidateNames(File overworldRegion, File netherRegion, File endRegion) {
+        Set<String> names = new HashSet<>();
+        addFileNames(names, overworldRegion.listFiles((dir, name) -> name.endsWith(".mca")), "overworld");
         if (isNether) {
-            File[] nFiles = netherRegion.listFiles((dir, name) -> name.endsWith(".mca"));
-            if (nFiles != null) {
-                for (File f : nFiles) candidateNames.add(f.getName());
-            }
-            getPlugin().log(PURGE_FOUND + (nFiles != null ? nFiles.length : 0) + " nether region files");
+            addFileNames(names, netherRegion.listFiles((dir, name) -> name.endsWith(".mca")), "nether");
         }
         if (isEnd) {
-            File[] eFiles = endRegion.listFiles((dir, name) -> name.endsWith(".mca"));
-            if (eFiles != null) {
-                for (File f : eFiles) candidateNames.add(f.getName());
-            }
-            getPlugin().log(PURGE_FOUND + (eFiles != null ? eFiles.length : 0) + " end region files");
+            addFileNames(names, endRegion.listFiles((dir, name) -> name.endsWith(".mca")), "end");
         }
+        return names;
+    }
 
-        getPlugin().log("Purge total candidate region coordinates: " + candidateNames.size());
-
-        for (String name : candidateNames) {
-            // Parse region coords from filename "r.<x>.<z>.mca"
-            String coordsPart = name.substring(2, name.length() - 4);
-            String[] parts = coordsPart.split("\\.");
-            if (parts.length != 2) continue;  // malformed
-
-            int rx;
-            int rz;
-            try {
-                rx = Integer.parseInt(parts[0]);
-                rz = Integer.parseInt(parts[1]);
-            } catch (NumberFormatException ex) {
-                continue;
-            }
-
-            boolean include = true;
-
-            // If the overworld file exists and is too recent, skip
-            File owFile = new File(overworldRegion, name);
-            if (owFile.exists() && getRegionTimestamp(owFile) >= cutoffMillis) {
-                include = false;
-            }
-
-            // If nether flag is set, require nether region file (if it exists) to also be older than cutoff
-            if (isNether) {
-                File netherFile = new File(netherRegion, name);
-                if (netherFile.exists() && getRegionTimestamp(netherFile) >= cutoffMillis) {
-                    include = false;
-                }
-            }
-
-            // If end flag is set, require end region file (if it exists) to also be older than cutoff
-            if (isEnd) {
-                File endFile = new File(endRegion, name);
-                if (endFile.exists() && getRegionTimestamp(endFile) >= cutoffMillis) {
-                    include = false;
-                }
-            }
-
-            if (include) {
-                regions.add(new Pair<>(rx, rz));
-            }
+    private void addFileNames(Set<String> names, File[] files, String dimension) {
+        if (files != null) {
+            for (File f : files) names.add(f.getName());
         }
+        getPlugin().log(PURGE_FOUND + (files != null ? files.length : 0) + " " + dimension + " region files");
+    }
 
-        return regions;
+    private Pair<Integer, Integer> parseRegionCoords(String name) {
+        // Parse region coords from filename "r.<x>.<z>.mca"
+        String coordsPart = name.substring(2, name.length() - 4);
+        String[] parts = coordsPart.split("\\.");
+        if (parts.length != 2) return null;
+        try {
+            return new Pair<>(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+        } catch (NumberFormatException ex) {
+            return null;
+        }
     }
 
     /**
