@@ -129,17 +129,17 @@ public class BlueprintPasterTest extends CommonTestSetup {
     // ===================== Constructor Tests =====================
 
     @Test
-    public void testConstructorWithClipboard() {
+    void testConstructorWithClipboard() {
         assertNotNull(bp2);
     }
 
     @Test
-    public void testConstructorWithIsland() {
+    void testConstructorWithIsland() {
         assertNotNull(bp);
     }
 
     @Test
-    public void testConstructorWithIslandAndBedrock() {
+    void testConstructorWithIslandAndBedrock() {
         // bedrock (1,1,1) subtracted from center (1,2,3) → paste at (0,1,2)
         when(blueprint.getBedrock()).thenReturn(new Vector(1, 1, 1));
         BlueprintPaster bpBedrock = new BlueprintPaster(plugin, blueprint, world, island);
@@ -147,7 +147,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testConstructorYClampedToMaxHeight() {
+    void testConstructorYClampedToMaxHeight() {
         // center above world max — should clamp to maxHeight-1
         when(location.toVector()).thenReturn(new Vector(1, 300, 3));
         BlueprintPaster bpHigh = new BlueprintPaster(plugin, blueprint, world, island);
@@ -155,7 +155,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testConstructorYClampedToMinHeight() {
+    void testConstructorYClampedToMinHeight() {
         // center below world min — should clamp to minHeight
         when(location.toVector()).thenReturn(new Vector(1, -10, 3));
         BlueprintPaster bpLow = new BlueprintPaster(plugin, blueprint, world, island);
@@ -165,25 +165,25 @@ public class BlueprintPasterTest extends CommonTestSetup {
     // ===================== paste() Tests =====================
 
     @Test
-    public void testPasteReturnsNonNullFuture() {
+    void testPasteReturnsNonNullFuture() {
         assertNotNull(bp.paste());
     }
 
     @Test
-    public void testPasteSchedulesTimerTask() {
+    void testPasteSchedulesTimerTask() {
         bp.paste();
         verify(sch).runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong());
     }
 
     @Test
-    public void testPasteUseNMSFalse() {
+    void testPasteUseNMSFalse() {
         CompletableFuture<Boolean> result = bp.paste(false);
         assertNotNull(result);
         verify(sch).runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong());
     }
 
     @Test
-    public void testPasteWithIslandOwnerSendsEstimatedTime() {
+    void testPasteWithIslandOwnerSendsEstimatedTime() {
         // island has owner uuid → User backed by mockPlayer → messages flow via spigot
         bp.paste();
         checkSpigotMessage("commands.island.create.pasting.estimated-time", 1);
@@ -191,14 +191,14 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPasteNoOwnerNoMessages() {
+    void testPasteNoOwnerNoMessages() {
         // clipboard paste: island==null → no owner → no messages
         bp2.paste();
         checkSpigotMessage("commands.island.create.pasting.estimated-time", 0);
     }
 
     @Test
-    public void testPasteNullBlueprintMapsUseEmptyMaps() {
+    void testPasteNullBlueprintMapsUseEmptyMaps() {
         // null getBlocks/getAttached/getEntities → uses empty maps → no NPE
         assertDoesNotThrow(() -> bp.paste());
     }
@@ -206,7 +206,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     // ===================== State Machine Tests =====================
 
     @Test
-    public void testStateChunkLoadToBlocks() {
+    void testStateChunkLoadToBlocks() {
         Runnable task = startPaste(bp);
         // Run 1: CHUNK_LOAD → loadChunk() → (thenRun synchronous) → state=BLOCKS
         task.run();
@@ -214,7 +214,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testStateBlocksEmptyToAttachments() {
+    void testStateBlocksEmptyToAttachments() {
         Runnable task = startPaste(bp);
         task.run(); // CHUNK_LOAD → BLOCKS
         task.run(); // BLOCKS (empty) → ATTACHMENTS
@@ -222,7 +222,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testStateAttachmentsEmptyToEntities() {
+    void testStateAttachmentsEmptyToEntities() {
         Runnable task = startPaste(bp);
         task.run(); // CHUNK_LOAD → BLOCKS
         task.run(); // BLOCKS → ATTACHMENTS
@@ -230,7 +230,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testStateEntitiesEmptyDone_Overworld() {
+    void testStateEntitiesEmptyDone_Overworld() {
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         Runnable task = startPaste(bp);
         task.run(); task.run(); task.run();
@@ -239,7 +239,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testStateEntitiesEmptyDone_Nether() {
+    void testStateEntitiesEmptyDone_Nether() {
         when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
         Runnable task = startPaste(bp);
         task.run(); task.run(); task.run();
@@ -248,7 +248,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testStateEntitiesEmptyDone_End() {
+    void testStateEntitiesEmptyDone_End() {
         when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
         Runnable task = startPaste(bp);
         task.run(); task.run(); task.run();
@@ -257,7 +257,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testStateDoneCompletesClipboardPos() {
+    void testStateDoneCompletesClipboardPos() {
         // clipboard paste (island==null): cancelTask sets pos1/pos2 on clipboard
         ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
         bp2.paste();
@@ -272,7 +272,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testStateDoneIslandNoPosOnClipboard() {
+    void testStateDoneIslandNoPosOnClipboard() {
         // island paste (island!=null): cancelTask does NOT touch clipboard
         Runnable task = startPaste(bp);
         task.run(); task.run(); task.run(); task.run();
@@ -283,7 +283,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testStateCancelCancelsTask() {
+    void testStateCancelCancelsTask() {
         Runnable task = startPaste(bp);
         task.run(); task.run(); task.run(); task.run();
         task.run(); // DONE → CANCEL
@@ -293,7 +293,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testStateCancelCompletesFuture() {
+    void testStateCancelCompletesFuture() {
         ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
         CompletableFuture<Boolean> result = bp.paste();
         verify(sch).runTaskTimer(eq(plugin), captor.capture(), anyLong(), anyLong());
@@ -309,7 +309,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     // ===================== Block / Entity Pasting Tests =====================
 
     @Test
-    public void testPasteWithBlocksCallsPasteHandler() {
+    void testPasteWithBlocksCallsPasteHandler() {
         BlueprintBlock mockBlock = mock(BlueprintBlock.class);
         when(blueprint.getBlocks()).thenReturn(Map.of(new Vector(0, 0, 0), mockBlock));
 
@@ -321,7 +321,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPasteWithBlocksFallback() {
+    void testPasteWithBlocksFallback() {
         BlueprintBlock mockBlock = mock(BlueprintBlock.class);
         when(blueprint.getBlocks()).thenReturn(Map.of(new Vector(0, 0, 0), mockBlock));
 
@@ -334,7 +334,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPasteWithEntitiesSendsEntitiesMessage() {
+    void testPasteWithEntitiesSendsEntitiesMessage() {
         BlueprintEntity mockEntity = mock(BlueprintEntity.class);
         when(blueprint.getEntities()).thenReturn(Map.of(new Vector(0, 0, 0), List.of(mockEntity)));
 
@@ -347,7 +347,7 @@ public class BlueprintPasterTest extends CommonTestSetup {
     }
 
     @Test
-    public void testSinkBlueprintAdjustsY() {
+    void testSinkBlueprintAdjustsY() {
         when(blueprint.isSink()).thenReturn(true);
         when(world.getHighestBlockYAt(any(Location.class), any())).thenReturn(10);
 
