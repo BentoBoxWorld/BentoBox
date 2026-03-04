@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -306,7 +305,7 @@ public abstract class Addon {
                     }
                     // There are two options, use the path of the resource or not
                     File outFile = new File(destinationFolder,
-                            jarResource.replaceAll("/", Matcher.quoteReplacement(File.separator)));
+                            jarResource.replace("/", File.separator));
 
                     if (noPath) {
                         outFile = new File(destinationFolder, outFile.getName());
