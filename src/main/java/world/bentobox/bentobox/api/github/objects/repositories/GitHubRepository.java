@@ -30,7 +30,7 @@ public record GitHubRepository(GitHubWebAPI api, String fullName) {
      * @throws Exception If an error occurs during the request.
      */
     public List<GitHubContributor> getContributors() throws Exception {
-        JsonArray response = api.fetch("repos/" + fullName + "/contributors").getAsJsonArray();
+        JsonArray response = api.fetchArray("repos/" + fullName + "/contributors");
         List<GitHubContributor> contributors = new ArrayList<>();
         response.forEach(element -> {
             JsonObject contributor = element.getAsJsonObject();
@@ -40,5 +40,17 @@ public record GitHubRepository(GitHubWebAPI api, String fullName) {
             ));
         });
         return contributors;
+    }
+
+    /**
+     * Fetches the name of the latest tag for this repository.
+     *
+     * @return the latest tag name (e.g. "3.11.2"), or empty string if none.
+     * @throws Exception if an error occurs during the request.
+     */
+    public String getLatestTagName() throws Exception {
+        JsonArray tags = api.fetchArray("repos/" + fullName + "/tags");
+        if (tags.isEmpty()) return "";
+        return tags.get(0).getAsJsonObject().get("name").getAsString();
     }
 }

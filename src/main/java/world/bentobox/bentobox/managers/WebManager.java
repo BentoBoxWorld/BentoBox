@@ -12,6 +12,8 @@ import javax.xml.bind.DatatypeConverter;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import org.bukkit.Bukkit;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -131,6 +133,10 @@ public class WebManager {
             if (plugin.getSettings().isLogGithubDownloadData()) {
                 plugin.log("Successfully downloaded data from GitHub.");
             }
+
+            if (plugin.getSettings().isCheckBentoBoxUpdates()) {
+                checkForUpdates(gh);
+            }
         });
     }
 
@@ -198,6 +204,54 @@ public class WebManager {
             // Silently fail
         }
         return "";
+    }
+
+    private void checkForUpdates(@NonNull GitHubWebAPI gh) {
+        try {
+            String currentVersion = plugin.getPluginMeta().getVersion();
+            if (currentVersion.contains("LOCAL")) return;
+            String latestTag = new GitHubRepository(gh, "BentoBoxWorld/BentoBox").getLatestTagName();
+            if (!latestTag.isEmpty() && isNewerVersion(currentVersion, latestTag)) {
+                printUpdateBanner(currentVersion, latestTag);
+            }
+        } catch (Exception e) {
+            // Silently fail — same pattern as gatherContributors()
+        }
+    }
+
+    private void printUpdateBanner(String currentVersion, String latestTag) {
+        var cs = Bukkit.getConsoleSender();
+        cs.sendMessage("§6╔══════════════════════════════════════════════╗");
+        cs.sendMessage("§6║  §e★  BentoBox Update Available!  ★           §6║");
+        cs.sendMessage("§6║                                              §6║");
+        cs.sendMessage("§6║  §7Current: §c" + currentVersion);
+        cs.sendMessage("§6║  §7Latest:  §a" + latestTag);
+        cs.sendMessage("§6║                                              §6║");
+        cs.sendMessage("§6║  §7Get it: §bhttps://github.com/BentoBoxWorld/BentoBox/releases");
+        cs.sendMessage("§6╚══════════════════════════════════════════════╝");
+    }
+
+    /**
+     * Returns true if latestTag is strictly newer than currentVersion.
+     * Only the numeric prefix before the first '-' is compared.
+     */
+    static boolean isNewerVersion(String currentVersion, String latestTag) {
+        String current = currentVersion.split("-")[0];
+        String latest = latestTag.replaceFirst("^v", "").split("-")[0];
+        String[] cp = current.split("\\.");
+        String[] lp = latest.split("\\.");
+        int len = Math.max(cp.length, lp.length);
+        for (int i = 0; i < len; i++) {
+            int c = i < cp.length ? parseIntSafe(cp[i]) : 0;
+            int l = i < lp.length ? parseIntSafe(lp[i]) : 0;
+            if (l > c) return true;
+            if (l < c) return false;
+        }
+        return false;
+    }
+
+    private static int parseIntSafe(String s) {
+        try { return Integer.parseInt(s); } catch (NumberFormatException e) { return 0; }
     }
 
     private void gatherContributors(@NonNull GitHubRepository repo) {
