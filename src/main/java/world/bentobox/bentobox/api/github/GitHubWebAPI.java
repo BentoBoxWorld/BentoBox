@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -29,15 +30,7 @@ public class GitHubWebAPI {
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
-    /**
-     * Fetches the content of a given API endpoint.
-     * 
-     * @param endpoint The API endpoint to fetch.
-     * @return The JSON response as a JsonObject.
-     * @throws IOException If an error occurs during the request.
-     * @throws URISyntaxException if URI syntax is wrong
-     */
-    public synchronized JsonObject fetch(String endpoint) throws IOException, URISyntaxException {
+    private synchronized String fetchRaw(String endpoint) throws IOException, URISyntaxException {
         long currentTime = System.currentTimeMillis();
         long timeSinceLastRequest = currentTime - lastRequestTime;
 
@@ -56,7 +49,7 @@ public class GitHubWebAPI {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Accept", "application/vnd.github.v3+json");
-        connection.setRequestProperty("User-Agent", "BentoBox"); // Add User-Agent header
+        connection.setRequestProperty("User-Agent", "BentoBox");
 
         int responseCode = connection.getResponseCode();
         if (responseCode == 403) {
@@ -64,9 +57,32 @@ public class GitHubWebAPI {
         }
 
         try (Scanner scanner = new Scanner(connection.getInputStream())) {
-            String response = scanner.useDelimiter("\\A").next();
-            return JsonParser.parseString(response).getAsJsonObject();
+            return scanner.useDelimiter("\\A").next();
         }
+    }
+
+    /**
+     * Fetches the content of a given API endpoint.
+     *
+     * @param endpoint The API endpoint to fetch.
+     * @return The JSON response as a JsonObject.
+     * @throws IOException If an error occurs during the request.
+     * @throws URISyntaxException if URI syntax is wrong
+     */
+    public synchronized JsonObject fetch(String endpoint) throws IOException, URISyntaxException {
+        return JsonParser.parseString(fetchRaw(endpoint)).getAsJsonObject();
+    }
+
+    /**
+     * Fetches the content of a given API endpoint that returns a JSON array.
+     *
+     * @param endpoint The API endpoint to fetch.
+     * @return The JSON response as a JsonArray.
+     * @throws IOException If an error occurs during the request.
+     * @throws URISyntaxException if URI syntax is wrong
+     */
+    public synchronized JsonArray fetchArray(String endpoint) throws IOException, URISyntaxException {
+        return JsonParser.parseString(fetchRaw(endpoint)).getAsJsonArray();
     }
 
     /**
