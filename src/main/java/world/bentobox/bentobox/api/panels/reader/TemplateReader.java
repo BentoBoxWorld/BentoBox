@@ -211,9 +211,11 @@ public class TemplateReader
             {
                 int value = section.getInt(FORCE_SHOWN);
 
-                if (value > 0 && value < 7)
+                // Force all rows from 1 to value (inclusive), so that force-shown: 6
+                // results in a panel with 6 rows, not just forcing the 6th row alone.
+                for (int i = 0; i < value && i < forceShow.length; i++)
                 {
-                    forceShow[value-1] = true;
+                    forceShow[i] = true;
                 }
             }
             else if (section.isList(FORCE_SHOWN))
