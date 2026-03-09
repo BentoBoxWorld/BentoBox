@@ -28,6 +28,7 @@ import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.BentoBox;
@@ -435,7 +436,8 @@ public class Island implements DataObject, MetaDataAble {
      * @return the members of the island (owner included)
      * @see #getMembers()
      */
-    public Set<UUID> getMemberSet() {
+    @SuppressWarnings("java:S4738") // ImmutableSet is intentional public API; changing return type is binary-incompatible
+    public ImmutableSet<UUID> getMemberSet() {
         return getMemberSet(RanksManager.MEMBER_RANK);
     }
 
@@ -448,8 +450,9 @@ public class Island implements DataObject, MetaDataAble {
      * @see #getMembers()
      * @since 1.5.0
      */
-    public @NonNull Set<UUID> getMemberSet(int minimumRank) {
-        return Set.copyOf(members.entrySet().stream().filter(e -> e.getValue() >= minimumRank)
+    @SuppressWarnings("java:S4738") // ImmutableSet is intentional public API; changing return type is binary-incompatible
+    public @NonNull ImmutableSet<UUID> getMemberSet(int minimumRank) {
+        return ImmutableSet.copyOf(members.entrySet().stream().filter(e -> e.getValue() >= minimumRank)
                 .map(Map.Entry::getKey).collect(Collectors.toSet()));
     }
 
@@ -465,11 +468,12 @@ public class Island implements DataObject, MetaDataAble {
      * @see #getMembers()
      * @since 1.5.0
      */
-    public @NonNull Set<UUID> getMemberSet(int rank, boolean includeAboveRanks) {
+    @SuppressWarnings("java:S4738") // ImmutableSet is intentional public API; changing return type is binary-incompatible
+    public @NonNull ImmutableSet<UUID> getMemberSet(int rank, boolean includeAboveRanks) {
         if (includeAboveRanks) {
             return getMemberSet(rank);
         }
-        return Set.copyOf(members.entrySet().stream().filter(e -> e.getValue() == rank)
+        return ImmutableSet.copyOf(members.entrySet().stream().filter(e -> e.getValue() == rank)
                 .map(Map.Entry::getKey).collect(Collectors.toSet()));
     }
 

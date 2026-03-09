@@ -2,6 +2,8 @@ package world.bentobox.bentobox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
@@ -194,6 +196,8 @@ public abstract class CommonTestSetup {
         when(island.isAllowed(any(User.class), any())).thenReturn(false);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
+        when(island.getMemberSet(anyInt())).thenReturn(ImmutableSet.of(uuid));
+        when(island.getMemberSet(anyInt(), anyBoolean())).thenReturn(ImmutableSet.of(uuid));
 
         // Enable reporting from Flags class
         MetadataValue mdv = new FixedMetadataValue(plugin, "_why_debug");

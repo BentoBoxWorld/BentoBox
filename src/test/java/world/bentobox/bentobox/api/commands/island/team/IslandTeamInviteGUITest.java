@@ -45,6 +45,10 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.TeamInvite;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.managers.CommandsManager;
+import world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand;
+import world.bentobox.bentobox.api.commands.island.team.IslandTeamKickCommand;
+import world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand;
+import world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand;
 
 /**
  * Tests for {@link IslandTeamInviteGUI}.
@@ -72,6 +76,14 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
     private IslandTeamCoopCommand coopCommand;
     @Mock
     private IslandTeamTrustCommand trustCommand;
+    @Mock
+    private IslandTeamKickCommand kickCommand;
+    @Mock
+    private IslandTeamSetownerCommand setOwnerCommand;
+    @Mock
+    private IslandTeamLeaveCommand leaveCommand;
+    @Mock
+    private IslandTeamInviteAcceptCommand acceptCommand;
 
     private IslandTeamInviteGUI gui;
     private User user;
@@ -96,6 +108,11 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
         when(itc.getWorld()).thenReturn(world);
         when(itc.getCoopCommand()).thenReturn(coopCommand);
         when(itc.getTrustCommand()).thenReturn(trustCommand);
+        when(itc.getKickCommand()).thenReturn(kickCommand);
+        when(itc.getSetOwnerCommand()).thenReturn(setOwnerCommand);
+        when(itc.getLeaveCommand()).thenReturn(leaveCommand);
+        when(itc.getAcceptCommand()).thenReturn(acceptCommand);
+        when(itc.getLabel()).thenReturn("team");
 
         when(itic.getLabel()).thenReturn("invite");
 
