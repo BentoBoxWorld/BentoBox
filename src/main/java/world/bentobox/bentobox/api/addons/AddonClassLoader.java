@@ -218,28 +218,33 @@ public class AddonClassLoader extends URLClassLoader {
         if (name.startsWith("world.bentobox.bentobox")) {
             return null;
         }
-        // Check local cache first, computing and caching if absent.
-        return classes.computeIfAbsent(name, key -> {
-            Class<?> result = null;
-            // Check global cache for classes from other addons.
-            if (checkGlobal) {
-                result = loader.getClassByName(key);
-            }
-
-            if (result == null) {
-                // Try to find the class in this addon's jar.
-                try {
-                    result = super.findClass(key);
-                } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                    // Do nothing. The class is not in this jar.
-                }
-                if (result != null) {
-                    // Class found in this addon's jar, so add it to the global cache.
-                    loader.setClass(key, result);
-                }
-            }
+        // Check local cache first. Avoid computeIfAbsent: super.findClass() triggers recursive
+        // class loading which would call findClass() again, causing ConcurrentHashMap to throw
+        // IllegalStateException: Recursive update.
+        Class<?> result = classes.get(name);
+        if (result != null) {
             return result;
-        });
+        }
+        // Check global cache for classes from other addons.
+        if (checkGlobal) {
+            result = loader.getClassByName(name);
+        }
+        if (result == null) {
+            // Try to find the class in this addon's jar.
+            try {
+                result = super.findClass(name);
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
+                // Do nothing. The class is not in this jar.
+            }
+            if (result != null) {
+                // Class found in this addon's jar, so add it to the global cache.
+                loader.setClass(name, result);
+            }
+        }
+        if (result != null) {
+            classes.put(name, result);
+        }
+        return result;
     }
 
     /**
