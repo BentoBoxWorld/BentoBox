@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -15,10 +16,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -212,13 +213,13 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
     }
 
     /**
-     * When the island grid's internal map is null,
+     * When the island grid is empty (no islands),
      * the command should report none found.
      */
     @Test
-    public void testExecuteNullGrid() {
+    void testExecuteEmptyGrid() {
         IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getGrid()).thenReturn(null);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
 
         assertTrue(aprc.execute(user, "regions", List.of("10")));
@@ -232,7 +233,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteNoRegionFiles() throws IOException {
         IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getGrid()).thenReturn(new TreeMap<>());
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
 
         // Create the region directory but leave it empty
@@ -250,7 +251,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteOldRegionFileNoIslands() throws IOException {
         IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getGrid()).thenReturn(new TreeMap<>());
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
 
         // Create a small .mca file — getRegionTimestamp() returns 0 for files < 8192 bytes,
@@ -272,7 +273,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteConfirmDeletesRegions() throws IOException {
         IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getGrid()).thenReturn(new TreeMap<>());
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
 
         Path regionDir = Files.createDirectories(tempDir.resolve("region"));
@@ -308,7 +309,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteRecentRegionFileExcluded() throws IOException {
         IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getGrid()).thenReturn(new TreeMap<>());
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
 
         // Create a valid 8192-byte .mca file with a very recent timestamp so it is excluded.
@@ -356,12 +357,9 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
 
         // Island occupies region r.0.0 (minX=0, minZ=0, range=100)
         IslandGrid.IslandData data = new IslandGrid.IslandData("island-1", 0, 0, 100);
-        TreeMap<Integer, IslandGrid.IslandData> zMap = new TreeMap<>();
-        zMap.put(0, data);
-        TreeMap<Integer, TreeMap<Integer, IslandGrid.IslandData>> gridMap = new TreeMap<>();
-        gridMap.put(0, zMap);
+        Collection<IslandGrid.IslandData> islandList = List.of(data);
         IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getGrid()).thenReturn(gridMap);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(islandList);
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
         when(im.getIslandById("island-1")).thenReturn(Optional.of(island));
 
@@ -393,12 +391,9 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(ownerUUID));
 
         IslandGrid.IslandData data = new IslandGrid.IslandData("island-spawn", 0, 0, 100);
-        TreeMap<Integer, IslandGrid.IslandData> zMap = new TreeMap<>();
-        zMap.put(0, data);
-        TreeMap<Integer, TreeMap<Integer, IslandGrid.IslandData>> gridMap = new TreeMap<>();
-        gridMap.put(0, zMap);
+        Collection<IslandGrid.IslandData> islandList = List.of(data);
         IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getGrid()).thenReturn(gridMap);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(islandList);
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
         when(im.getIslandById("island-spawn")).thenReturn(Optional.of(island));
 
@@ -427,12 +422,9 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(ownerUUID));
 
         IslandGrid.IslandData data = new IslandGrid.IslandData("island-protected", 0, 0, 100);
-        TreeMap<Integer, IslandGrid.IslandData> zMap = new TreeMap<>();
-        zMap.put(0, data);
-        TreeMap<Integer, TreeMap<Integer, IslandGrid.IslandData>> gridMap = new TreeMap<>();
-        gridMap.put(0, zMap);
+        Collection<IslandGrid.IslandData> islandList = List.of(data);
         IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getGrid()).thenReturn(gridMap);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(islandList);
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
         when(im.getIslandById("island-protected")).thenReturn(Optional.of(island));
 
@@ -461,12 +453,9 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
         when(island.getCenter()).thenReturn(location);
 
         IslandGrid.IslandData data = new IslandGrid.IslandData("island-deletable", 0, 0, 100);
-        TreeMap<Integer, IslandGrid.IslandData> zMap = new TreeMap<>();
-        zMap.put(0, data);
-        TreeMap<Integer, TreeMap<Integer, IslandGrid.IslandData>> gridMap = new TreeMap<>();
-        gridMap.put(0, zMap);
+        Collection<IslandGrid.IslandData> islandList = List.of(data);
         IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getGrid()).thenReturn(gridMap);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(islandList);
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
         when(im.getIslandById("island-deletable")).thenReturn(Optional.of(island));
 
@@ -496,12 +485,9 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
         when(island.getCenter()).thenReturn(location);
 
         IslandGrid.IslandData data = new IslandGrid.IslandData("island-deletable", 0, 0, 100);
-        TreeMap<Integer, IslandGrid.IslandData> zMap = new TreeMap<>();
-        zMap.put(0, data);
-        TreeMap<Integer, TreeMap<Integer, IslandGrid.IslandData>> gridMap = new TreeMap<>();
-        gridMap.put(0, zMap);
+        Collection<IslandGrid.IslandData> islandList = List.of(data);
         IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getGrid()).thenReturn(gridMap);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(islandList);
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
         when(im.getIslandById("island-deletable")).thenReturn(Optional.of(island));
 
