@@ -336,15 +336,10 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
     }
 
     /**
-     * Note: {@code canDeleteIsland()} contains an inverted login-check — when a member's last
-     * login is &gt;= the cutoff (i.e. they logged in recently), the method returns {@code false}
-     * ("can delete") instead of {@code true} ("cannot delete"). This test documents the actual
-     * behaviour so the bug is visible and guarded against accidental change.
-     *
-     * Correct behaviour would be: island whose member logged in recently → excluded from purge.
+     * An island whose member logged in recently must be excluded from purge candidates.
      */
     @Test
-    public void testExecuteIslandWithRecentLoginIsIncludedDueToBug() throws IOException {
+    public void testExecuteIslandWithRecentLoginIsExcluded() throws IOException {
         UUID ownerUUID = UUID.randomUUID();
         when(island.getUniqueId()).thenReturn("island-1");
         when(island.getOwner()).thenReturn(ownerUUID);
@@ -363,17 +358,14 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
         when(im.getIslandById("island-1")).thenReturn(Optional.of(island));
 
-        // Owner logged in recently — should protect the island but due to the inverted
-        // login check in canDeleteIsland() it currently does not.
+        // Owner logged in recently — island must be protected from purge
         when(pm.getLastLoginTimestamp(ownerUUID)).thenReturn(System.currentTimeMillis());
 
         Path regionDir = Files.createDirectories(tempDir.resolve("region"));
         Files.createFile(regionDir.resolve("r.0.0.mca"));
 
         assertTrue(aprc.execute(user, "regions", List.of("10")));
-        // BUG: island IS included despite recent login
-        verify(user).sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER, "1");
-        verify(user).sendMessage("commands.admin.purge.regions.confirm", TextVariables.LABEL, "regions");
+        verify(user).sendMessage("commands.admin.purge.none-found");
     }
 
     /**

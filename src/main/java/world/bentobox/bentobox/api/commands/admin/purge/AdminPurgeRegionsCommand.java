@@ -50,15 +50,15 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     private boolean toBeConfirmed;
     private User user;
     private Map<Pair<Integer, Integer>, Set<String>> deleteableRegions;
-    private final boolean isNether;
-    private final boolean isEnd;
+    private boolean isNether;
+    private boolean isEnd;
     private int days;
 
     public AdminPurgeRegionsCommand(CompositeCommand parent) {
         super(parent, "regions");
         getAddon().registerListener(this);
-        isNether = getPlugin().getIWM().isNetherGenerate(getWorld()) && getPlugin().getIWM().isNetherIslands(getWorld());
-        isEnd = getPlugin().getIWM().isEndGenerate(getWorld()) && getPlugin().getIWM().isEndIslands(getWorld());
+        // isNether/isEnd are NOT computed here: IWM may not have loaded the addon world
+        // config yet at command-registration time. They are evaluated lazily in findIslands().
     }
 
     @Override
@@ -200,7 +200,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      * subfolder that Minecraft uses for non-overworld environments.
      * <p>
      * Overworld data lives directly in the world folder, but Nether data lives
-     * in {@code DIM-1/} and End data lives in {@code DIM1/} subfolders — even
+     * in {@code DIM-1/} and End data lives in {@code DIM1/} subfolders - even
      * when the world has its own separate folder.
      *
      * @param world the world to resolve
@@ -327,11 +327,14 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     }
 
     /**
-     * This method is run async! 
+     * This method is run async!
      * @param world world
      * @param days days old
      */
     private void findIslands(World world, int days) {
+        // Evaluate here, not in the constructor - IWM config is loaded by the time a command runs
+        isNether = getPlugin().getIWM().isNetherGenerate(world) && getPlugin().getIWM().isNetherIslands(world);
+        isEnd = getPlugin().getIWM().isEndGenerate(world) && getPlugin().getIWM().isEndIslands(world);
         try {
             // Get the grid that covers this world
             IslandGrid islandGrid = getPlugin().getIslands().getIslandCache().getIslandGrid(world);
@@ -343,17 +346,55 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             List<Pair<Integer, Integer>> oldRegions = this.findOldRegions(days);
             // Get islands that are associated with these regions
             deleteableRegions = this.mapIslandsToRegions(oldRegions, islandGrid);
-            // Remove any region whose island‐set contains at least one island that either isn’t found or fails the deletion check:
-            deleteableRegions.values().removeIf(islandIds ->
-            islandIds.stream()
-            .map(getPlugin().getIslands()::getIslandById)         // Stream<Optional<Island>>
-            .anyMatch(optIsland -> 
-            // If missing (empty) → treat as undeletable (true) - this is a bit conservative but maybe the database is messed up
-            // If present, checkIsland(...) == true means “cannot delete”
-            optIsland.map(this::canDeleteIsland)
-            .orElse(true)
-                    )
-                    );
+            // Filter regions: remove any whose island-set contains at least one island that cannot be deleted.
+            // Track why islands are blocked so we can show a summary report.
+            int islandsOverLevel = 0;
+            int islandsPurgeProtected = 0;
+            int regionsBlockedByLevel = 0;
+            int regionsBlockedByProtection = 0;
+
+            var iter = deleteableRegions.entrySet().iterator();
+            while (iter.hasNext()) {
+                var entry = iter.next();
+                boolean remove = false;
+                boolean regionHasLevelBlock = false;
+                boolean regionHasPurgeBlock = false;
+                for (String id : entry.getValue()) {
+                    Optional<Island> opt = getPlugin().getIslands().getIslandById(id);
+                    if (opt.isEmpty()) {
+                        remove = true;
+                        continue;
+                    }
+                    Island isl = opt.get();
+                    if (canDeleteIsland(isl)) {
+                        remove = true;
+                        if (isl.isPurgeProtected()) {
+                            islandsPurgeProtected++;
+                            regionHasPurgeBlock = true;
+                        }
+                        if (isLevelTooHigh(isl)) {
+                            islandsOverLevel++;
+                            regionHasLevelBlock = true;
+                        }
+                    }
+                }
+                if (remove) {
+                    iter.remove();
+                    if (regionHasLevelBlock) regionsBlockedByLevel++;
+                    if (regionHasPurgeBlock) regionsBlockedByProtection++;
+                }
+            }
+
+            // Summary report
+            if (islandsOverLevel > 0) {
+                getPlugin().log("Purge: " + islandsOverLevel + " island(s) exceed the level threshold of "
+                        + getPlugin().getSettings().getIslandPurgeLevel()
+                        + " - preventing " + regionsBlockedByLevel + " region(s) from being purged");
+            }
+            if (islandsPurgeProtected > 0) {
+                getPlugin().log("Purge: " + islandsPurgeProtected + " island(s) are purge-protected"
+                        + " - preventing " + regionsBlockedByProtection + " region(s) from being purged");
+            }
             // At this point any islands that might be deleted are in the cache, and so we can freely access them
             // 1) Pull out all island IDs,  
             // 2) resolve to Optional<Island>,  
@@ -429,35 +470,45 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     }
 
     /**
-     * Check if an island can be deleted or not. Purge protected, spawn, or unowned islands cannot be deleted.
-     * Islands over a certain level cannot be deleted.
+     * Check if an island cannot be deleted. Purge protected, spawn, or unowned islands cannot be deleted.
+     * Islands whose members recently logged in, or that exceed the level threshold, cannot be deleted.
      * @param island island
-     * @return true means “cannot delete”
+     * @return true means "cannot delete"
      */
     private boolean canDeleteIsland(Island island) {
-        // If the island is deletable, it can be deleted at any time
+        // If the island is marked deletable it can always be purged
         if (island.isDeletable()) {
             return false;
         }
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
-        // Check if owner or team members logged in recently
-        if (island.getMemberSet().stream().map(uuid -> {
+        // Block if ANY member (owner or team) has logged in within the cutoff window
+        boolean recentLogin = island.getMemberSet().stream().anyMatch(uuid -> {
             Long lastLogin = getPlugin().getPlayers().getLastLoginTimestamp(uuid);
             if (lastLogin == null) {
                 lastLogin = Bukkit.getOfflinePlayer(uuid).getLastSeen();
             }
             return lastLogin >= cutoffMillis;
-            }).findFirst().orElse(false)) {
-            return false;
-        }
-        // Level check 
-        boolean levelCheck = getPlugin().getAddonsManager().getAddonByName("Level").map(l -> 
-        ((Level) l).getIslandLevel(getWorld(), island.getOwner()) >= getPlugin().getSettings().getIslandPurgeLevel()).orElse(false);
-        if (levelCheck) {
-            // Island level is too high
+        });
+        if (recentLogin) {
             return true;
         }
-        return island.isPurgeProtected() || island.isSpawn() || !island.isOwned(); 
+        if (isLevelTooHigh(island)) {
+            return true;
+        }
+        return island.isPurgeProtected() || island.isSpawn() || !island.isOwned();
+    }
+
+    /**
+     * Returns true if the island's level meets or exceeds the configured purge threshold.
+     * Returns false when the Level addon is not present.
+     * @param island island to check
+     * @return true if the island level is too high to purge
+     */
+    private boolean isLevelTooHigh(Island island) {
+        return getPlugin().getAddonsManager().getAddonByName("Level")
+                .map(l -> ((Level) l).getIslandLevel(getWorld(), island.getOwner())
+                        >= getPlugin().getSettings().getIslandPurgeLevel())
+                .orElse(false);
     }
 
     /**
@@ -498,6 +549,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         // file was already deleted by a previous (buggy) purge run.
         Set<String> candidateNames = collectCandidateNames(overworldRegion, netherRegion, endRegion);
         getPlugin().log("Purge total candidate region coordinates: " + candidateNames.size());
+        getPlugin().log("Purge checking candidate region(s) against island data, please wait...");
 
         List<Pair<Integer, Integer>> regions = new ArrayList<>();
         for (String name : candidateNames) {
