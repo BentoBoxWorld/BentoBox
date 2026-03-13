@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -340,17 +339,10 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                 Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
                 return;
             }
-            Map<Integer, TreeMap<Integer, IslandData>> grid = islandGrid.getGrid();
-            if (grid == null) {
-                // There are no islands in this world yet!
-                Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
-                return;
-            }
-
             // Find old regions
             List<Pair<Integer, Integer>> oldRegions = this.findOldRegions(days);
             // Get islands that are associated with these regions
-            deleteableRegions = this.mapIslandsToRegions(oldRegions, grid);
+            deleteableRegions = this.mapIslandsToRegions(oldRegions, islandGrid);
             // Remove any region whose island‐set contains at least one island that either isn’t found or fails the deletion check:
             deleteableRegions.values().removeIf(islandIds ->
             islandIds.stream()
@@ -571,59 +563,31 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     }
 
     /**
-     * Maps each old region to the set of island IDs whose island‐squares overlap it.
+     * Maps each old region to the set of island IDs whose island-squares overlap it.
      *
      * <p>Each region covers blocks
-     * [regionX*512 .. regionX*512 + 511] × [regionZ*512 .. regionZ*512 + 511].</p>
+     * [regionX*512 .. regionX*512 + 511] x [regionZ*512 .. regionZ*512 + 511].</p>
      *
-     * <p>Each IslandData provides:
-     * <ul>
-     *   <li>{@code minX}, {@code minZ}: the southwest corner of its square</li>
-     *   <li>{@code range}: half the side‐length of the island square</li>
-     *   <li>{@code id}: the island’s unique identifier</li>
-     * </ul>
-     * The island’s maxX = minX + 2*range, maxZ = minZ + 2*range.</p>
-     *
-     * @param oldRegions the list of region coordinates to process
-     * @param grid       a 2D TreeMap mapping centreX → (centreZ → IslandData)
-     * @return           a map from region coords to the set of overlapping island IDs
+     * @param oldRegions  the list of region coordinates to process
+     * @param islandGrid  the spatial grid to query
+     * @return            a map from region coords to the set of overlapping island IDs
      */
     private Map<Pair<Integer, Integer>, Set<String>> mapIslandsToRegions(
             List<Pair<Integer, Integer>> oldRegions,
-            Map<Integer, TreeMap<Integer, IslandData>> grid
+            IslandGrid islandGrid
             ) {
         final int blocksPerRegion = 512;
         Map<Pair<Integer, Integer>, Set<String>> regionToIslands = new HashMap<>();
 
         for (Pair<Integer, Integer> region : oldRegions) {
-            int rX = region.x();
-            int rZ = region.z();
-
-            int regionMinX = rX * blocksPerRegion;
-            int regionMinZ = rZ * blocksPerRegion;
+            int regionMinX = region.x() * blocksPerRegion;
+            int regionMinZ = region.z() * blocksPerRegion;
             int regionMaxX = regionMinX + blocksPerRegion - 1;
             int regionMaxZ = regionMinZ + blocksPerRegion - 1;
 
             Set<String> ids = new HashSet<>();
-
-            // iterate all islands in the grid
-            for (Map.Entry<Integer, TreeMap<Integer, IslandData>> xEntry : grid.entrySet()) {
-                for (IslandData data : xEntry.getValue().values()) {
-                    int islandMinX = data.minX();
-                    int islandMinZ = data.minZ();
-                    int islandMaxX = islandMinX + 2 * data.range();
-                    int islandMaxZ = islandMinZ + 2 * data.range();
-
-                    // overlap test
-                    boolean overlaps = !(islandMaxX < regionMinX ||
-                            islandMinX > regionMaxX ||
-                            islandMaxZ < regionMinZ ||
-                            islandMinZ > regionMaxZ);
-
-                    if (overlaps) {
-                        ids.add(data.id());
-                    }
-                }
+            for (IslandData data : islandGrid.getIslandsInBounds(regionMinX, regionMinZ, regionMaxX, regionMaxZ)) {
+                ids.add(data.id());
             }
 
             // Always add the region, even if ids is empty
