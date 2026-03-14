@@ -276,6 +276,39 @@ class StandardSpawnProtectionListenerTest extends CommonTestSetup {
 
 
     /**
+     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     * Verifies no NullPointerException occurs when blocks are in a standard end world whose
+     * world object is not directly registered in the island world manager (GitHub issue).
+     */
+    @Test
+    public void testOnExplosionInStandardEndWorldNoNPE() {
+        // Blocks are in the end world (standard end, not island end)
+        when(location.getWorld()).thenReturn(end);
+        // Util.getWorld maps end world -> overworld
+        mockedUtil.when(() -> Util.getWorld(end)).thenReturn(world);
+        // Simulate the end world not being registered in IWM by throwing NPE
+        when(iwm.getWorldSettings(end)).thenThrow(NullPointerException.class);
+
+        List<Block> blockList = new ArrayList<>();
+        blockList.add(block);
+        blockList.add(block);
+        blockList.add(block);
+        blockList.add(block);
+        blockList.add(block);
+        // Make some inside and outside spawn
+        when(location.toVector()).thenReturn(new Vector(0, 0, 0),
+                new Vector(0, 0, 0),
+                new Vector(0, 0, 0),
+                new Vector(0, 0, 0),
+                new Vector(10000, 0, 0));
+        EntityExplodeEvent e = getExplodeEvent(mockPlayer, location, blockList);
+        // Should not throw NullPointerException
+        ssp.onExplosion(e);
+        // 4 blocks inside the spawn should be removed, leaving one
+        assertEquals(1, blockList.size());
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
      */
     @Test

@@ -220,6 +220,60 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     }
 
     /**
+     * Test that a user with maxhomes permission of 1 can set a named (non-numeric) home.
+     * This verifies the fix for issue #1564, where users with maxhomes.1 previously received
+     * an incorrect "missing permission" error instead of being allowed to set a named home.
+     */
+    @Test
+    public void testCanExecuteMaxHomes1WithNamedHome() {
+        // maxHomes = 1 is already set in setUp via when(im.getMaxHomes(island)).thenReturn(1)
+        // Simulate island with default home already set: adding "MyHome" would make 2 homes total
+        when(im.getNumberOfHomesIfAdded(eq(island), eq("MyHome"))).thenReturn(2);
+        IslandSethomeCommand isc = new IslandSethomeCommand(ic);
+        // Should succeed: 2 <= maxHomes + 1 = 2
+        assertTrue(isc.canExecute(user, "island", Collections.singletonList("MyHome")));
+        // Must NOT show any permission error
+        verify(user, never()).sendMessage(eq("general.errors.no-permission"), anyString(), anyString());
+        // Must NOT show too-many-homes error
+        verify(user, never()).sendMessage(eq("commands.island.sethome.too-many-homes"), anyString(), anyString());
+    }
+
+    /**
+     * Test that a user with maxhomes permission of 1 can set a home named "1" (numeric).
+     * This verifies that numeric home names are treated the same as non-numeric names.
+     */
+    @Test
+    public void testCanExecuteMaxHomes1WithNumericHomeOne() {
+        // maxHomes = 1 is already set in setUp
+        // Simulate island with default home: adding "1" would make 2 homes total
+        when(im.getNumberOfHomesIfAdded(eq(island), eq("1"))).thenReturn(2);
+        IslandSethomeCommand isc = new IslandSethomeCommand(ic);
+        // Should succeed: 2 <= maxHomes + 1 = 2
+        assertTrue(isc.canExecute(user, "island", Collections.singletonList("1")));
+        // Must NOT show any permission error
+        verify(user, never()).sendMessage(eq("general.errors.no-permission"), anyString(), anyString());
+    }
+
+    /**
+     * Test that a user with maxhomes permission of 1 cannot set an additional home when already
+     * at the limit (default home + 1 named home = 2 total). The error should be "too-many-homes",
+     * NOT a "missing permission" error. This verifies the fix for issue #1564.
+     */
+    @Test
+    public void testCanExecuteMaxHomes1AtLimitShowsTooManyHomesNotPermissionError() {
+        // maxHomes = 1 is already set in setUp
+        // Simulate island with default + "MyHome" already set: adding "home2" would make 3 homes
+        when(im.getNumberOfHomesIfAdded(eq(island), eq("home2"))).thenReturn(3);
+        IslandSethomeCommand isc = new IslandSethomeCommand(ic);
+        // Should fail: 3 > maxHomes + 1 = 2
+        assertFalse(isc.canExecute(user, "island", Collections.singletonList("home2")));
+        // Must show too-many-homes error (not a permission error)
+        verify(user).sendMessage("commands.island.sethome.too-many-homes", TextVariables.NUMBER, "1");
+        // Must NOT show a missing permission error
+        verify(user, never()).sendMessage(eq("general.errors.no-permission"), anyString(), anyString());
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test

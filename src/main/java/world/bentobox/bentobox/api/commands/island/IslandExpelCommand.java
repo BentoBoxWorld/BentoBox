@@ -150,6 +150,7 @@ public class IslandExpelCommand extends CompositeCommand {
      *       <li>Their home island</li>
      *       <li>Spawn (if exists)</li>
      *       <li>New island (if possible)</li>
+     *       <li>Runs the configured expel command (e.g. "spawn") as a last resort</li>
      *     </ul>
      *   </li>
      * </ul>
@@ -188,6 +189,14 @@ public class IslandExpelCommand extends CompositeCommand {
             user.sendMessage(SUCCESS, TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME,
                     target.getDisplayName());
             return true;
+        } else {
+            // Try the configured expel command as a fallback
+            String expelCmd = getSettings().getExpelCommand();
+            if (expelCmd != null && !expelCmd.isBlank() && target.performCommand(expelCmd)) {
+                user.sendMessage(SUCCESS, TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME,
+                        target.getDisplayName());
+                return true;
+            }
         }
 
         getAddon().logError("Expel: " + target.getName() + " had no island, and one could not be created");
