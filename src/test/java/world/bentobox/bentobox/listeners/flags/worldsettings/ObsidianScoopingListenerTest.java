@@ -207,6 +207,28 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
         assertFalse(listener.onPlayerInteract(event));
     }
 
+    @Test
+    public void testOnPlayerInteractCooldown() {
+        // Set up for a successful scoop
+        inHand = Material.BUCKET;
+        block = Material.OBSIDIAN;
+        when(item.getType()).thenReturn(inHand);
+        when(clickedBlock.getType()).thenReturn(block);
+
+        Block airBlock = mock(Block.class);
+        when(airBlock.getType()).thenReturn(Material.AIR);
+        when(world.getBlockAt(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(airBlock);
+
+        PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
+                BlockFace.EAST);
+
+        // First scoop should succeed
+        assertTrue(listener.onPlayerInteract(event));
+
+        // Second scoop should fail due to cooldown
+        assertFalse(listener.onPlayerInteract(event));
+    }
+
     private void testEvent() {
         when(item.getType()).thenReturn(inHand);
         when(clickedBlock.getType()).thenReturn(block);
