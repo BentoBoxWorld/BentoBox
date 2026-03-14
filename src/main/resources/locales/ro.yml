@@ -1764,6 +1764,7 @@ protection:
         &o entități în afara limitelor insulei.
       name: Daune TNT mondiale
   locked: '&c Această insulă este blocată!'
+  locked-island-bypass: '&6 Această [prefix_island] este blocată, dar ai permisiunea de a o ocoli.'
   protected: '&c Insula protejată: [description].'
   world-protected: '&c Protecție mondială: [description].'
   spawn-protected: '&c Spawn protejat: [description].'

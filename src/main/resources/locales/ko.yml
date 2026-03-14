@@ -1615,6 +1615,7 @@ protection:
         &a 광산차를 허용하세요.
       name: 월드 TNT 피해
   locked: '&c 이 섬은 잠겨있습니다!'
+  locked-island-bypass: '&6 이 [prefix_island]은 잠겨있지만, 당신은 우회할 권한이 있습니다.'
   protected: '&c 섬 보호: [description].'
   world-protected: '&c 월드 보호: [description].'
   spawn-protected: '&c 스폰 보호: [description].'

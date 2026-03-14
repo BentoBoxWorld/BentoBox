@@ -1686,6 +1686,7 @@ protection:
         &a entity mimo hranice ostrova.
       name: Světové poškození TNT
   locked: '&c Tento ostrov je zamčen!'
+  locked-island-bypass: '&6 Tento [prefix_island] je zamčen, ale máte povolení ho obejít.'
   protected: '&c Ostrov chráněn: [description]'
   world-protected: '&c Svět chráněn: [description]'
   spawn-protected: '&c Spawn chráněn: [description]'

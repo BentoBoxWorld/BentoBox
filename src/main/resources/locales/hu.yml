@@ -1785,6 +1785,7 @@ protection:
         &a entitások a [prefix_island] határain kívül.
       name: Világ TNT kár
   locked: '&c Ez a [prefix_island] le van zárva!'
+  locked-island-bypass: '&6 Ez a [prefix_island] le van zárva, de van engedélyed a belépésre.'
   protected: '&c [prefix_Island] védett: [description].'
   world-protected: '&c Világvédett: [description].'
   spawn-protected: '&c Spawn védett: [description].'

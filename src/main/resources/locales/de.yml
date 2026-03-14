@@ -1768,6 +1768,7 @@ protection:
         &a verletzen.
       name: Welt-TNT-Schaden
   locked: '&c Diese Insel ist gesperrt!'
+  locked-island-bypass: '&6 Diese [prefix_island] ist gesperrt, aber du hast die Erlaubnis, sie zu betreten.'
   protected: '&c Insel geschützt: [description]'
   world-protected: '&c Welt geschützt: [description]'
   spawn-protected: '&c Spawn geschützt: [description]'

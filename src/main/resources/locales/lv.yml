@@ -1750,6 +1750,7 @@ protection:
         &a ievainojumus ārpus [prefix_island] robežām.
       name: Pasaule TNT kaitējums
   locked: '&cŠī sala ir slēgta!'
+  locked-island-bypass: '&6Šī [prefix_island] ir slēgta, bet jums ir atļauja to apiet.'
   protected: '&cSala ir aizsargāta: [description]'
   world-protected: '&cPasaule aizsargāta: [description]'
   spawn-protected: '&cSākuma sala ir aizsargāta: [description]'
