@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -19,11 +20,13 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
 import world.bentobox.bentobox.api.events.island.IslandNameEvent;
 import world.bentobox.bentobox.api.events.island.IslandNewIslandEvent;
+import world.bentobox.bentobox.api.events.island.IslandResettedEvent;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
+ * Hook to display island markers on BlueMap.
  * @author tastybento
  * @since 2.1.0
  */
@@ -32,13 +35,9 @@ public class BlueMapHook extends Hook implements Listener {
     private BentoBox plugin = BentoBox.getInstance();
     private BlueMapAPI api;
     /**
-     * One marker set per world; key is the friendly name of the Game Mode
+     * One marker set per game mode; key is the friendly name of the Game Mode
      */
     private Map<String, MarkerSet> markerSets = new HashMap<>();
-    /**
-     * 
-     */
-    private Map<String, String> islands = new HashMap<>();
 
     public BlueMapHook() {
         super("BlueMap", Material.MAP);
@@ -52,82 +51,73 @@ public class BlueMapHook extends Hook implements Listener {
             return false;
         }
         // Register the islands known at hook time
-        BentoBox.getInstance().getAddonsManager().getGameModeAddons().forEach(this::getMarkerSet);
-        // Register this to list for island events
+        BentoBox.getInstance().getAddonsManager().getGameModeAddons().forEach(this::registerGameMode);
+        // Register this to listen for island events
         Bukkit.getPluginManager().registerEvents(this, plugin);
         return true;
     }
 
-    public void getMarkerSet(@NonNull GameModeAddon addon) {
-        BentoBox.getInstance()
-                .logDebug("Settings markers for Game Mode '" + addon.getWorldSettings().getFriendlyName() + "'");
-        MarkerSet markerSet = markerSets.computeIfAbsent(addon.getWorldSettings().getFriendlyName(),
+    /**
+     * Register all islands for a given game mode addon and attach the marker set to BlueMap worlds.
+     * @param addon the game mode addon
+     */
+    public void registerGameMode(@NonNull GameModeAddon addon) {
+        String friendlyName = addon.getWorldSettings().getFriendlyName();
+        BentoBox.getInstance().logDebug("Setting markers for Game Mode '" + friendlyName + "'");
+        MarkerSet markerSet = markerSets.computeIfAbsent(friendlyName,
                 k -> {
                     BentoBox.getInstance().logDebug("Making a new marker set for '" + k + "'");
                     return MarkerSet.builder().toggleable(true).defaultHidden(false).label(k).build();
                 });
-        // Register the island name for each island in this addon
+        // Create a marker for each owned island in this addon's over world
         BentoBox.getInstance().getIslands().getIslands(addon.getOverWorld()).stream()
                 .filter(is -> is.getOwner() != null).forEach(island -> {
                     BentoBox.getInstance().logDebug("Creating marker for " + island.getCenter());
-                    setMarker(markerSet, addon.getWorldSettings().getFriendlyName(), island);
+                    setMarker(markerSet, island);
                     BentoBox.getInstance().logDebug("There are now " + markerSet.getMarkers().size()
-                            + " markers in marketset " + markerSet.getLabel());
+                            + " markers in marker set " + markerSet.getLabel());
         });
         // Over world
-        api.getWorld(addon.getOverWorld()).ifPresent(world -> {
-            BentoBox.getInstance().logDebug("BlueMap knows about " + world.getId());
-            for (BlueMapMap map : world.getMaps()) {
-                BentoBox.getInstance().logDebug("Adding markerSet to " + map.getName() + " map");
-                map.getMarkerSets().put(addon.getWorldSettings().getFriendlyName(), markerSet);
-            }
-        });
-        /*
+        addMarkerSetToWorld(addon.getOverWorld(), friendlyName, markerSet);
         // Nether
-        if (addon.getWorldSettings().isNetherGenerate() && addon.getWorldSettings().isNetherIslands()) {
-            api.getWorld(addon.getNetherWorld()).ifPresent(world -> {
-                for (BlueMapMap map : world.getMaps()) {
-                    map.getMarkerSets().put(addon.getWorldSettings().getFriendlyName(), markerSet);
-                }
-            });
+        if (addon.getWorldSettings().isNetherGenerate() && addon.getWorldSettings().isNetherIslands()
+                && addon.getNetherWorld() != null) {
+            addMarkerSetToWorld(addon.getNetherWorld(), friendlyName, markerSet);
         }
         // End
-        if (addon.getWorldSettings().isEndGenerate() && addon.getWorldSettings().isEndIslands()) {
-            api.getWorld(addon.getEndWorld()).ifPresent(world -> {
-                for (BlueMapMap map : world.getMaps()) {
-                    map.getMarkerSets().put(addon.getWorldSettings().getFriendlyName(), markerSet);
-                }
-            });
+        if (addon.getWorldSettings().isEndGenerate() && addon.getWorldSettings().isEndIslands()
+                && addon.getEndWorld() != null) {
+            addMarkerSetToWorld(addon.getEndWorld(), friendlyName, markerSet);
         }
-        */
     }
 
-    private void setMarker(MarkerSet markerSet, String worldName, Island island) {
-        String name = getIslandName(island);
-        // Check if name is already used
-        int index = 0;
-        String newName = name;
-        while (index++ < Integer.MAX_VALUE && islands.values().contains(newName)) {
-            newName = name + String.valueOf(index);
-        }
-        BentoBox.getInstance().logDebug("Adding a marker called '" + newName + "' to '" + worldName + "'");
-        islands.put(island.getUniqueId(), newName);
-        // Set marker
-        POIMarker marker = POIMarker.builder().label(newName).listed(true).defaultIcon()
+    private void addMarkerSetToWorld(World world, String markerSetId, MarkerSet markerSet) {
+        api.getWorld(world).ifPresent(bmWorld -> {
+            BentoBox.getInstance().logDebug("BlueMap knows about " + bmWorld.getId());
+            for (BlueMapMap map : bmWorld.getMaps()) {
+                BentoBox.getInstance().logDebug("Adding markerSet to " + map.getName() + " map");
+                map.getMarkerSets().put(markerSetId, markerSet);
+            }
+        });
+    }
+
+    private void setMarker(MarkerSet markerSet, Island island) {
+        String label = getIslandLabel(island);
+        BentoBox.getInstance().logDebug("Adding a marker called '" + label + "' for island " + island.getUniqueId());
+        POIMarker marker = POIMarker.builder().label(label).listed(true).defaultIcon()
                 .position(island.getCenter().getX(), island.getCenter().getY(), island.getCenter().getZ())
                 .build();
-        markerSet.put(worldName, marker);
-
+        markerSet.put(island.getUniqueId(), marker);
     }
 
-    private String getIslandName(Island island) {
+    private String getIslandLabel(Island island) {
         if (island.getName() != null && !island.getName().isBlank()) {
             // Name has been set
             return island.getName();
         } else if (island.getOwner() != null) {
             return User.getInstance(island.getOwner()).getName();
         }
-        return "";
+        return island.getUniqueId();
     }
 
     @Override
@@ -135,17 +125,25 @@ public class BlueMapHook extends Hook implements Listener {
         return "the version of BlueMap is incompatible with this hook. Use a newer version.";
     }
 
+    private void add(Island island, GameModeAddon addon) {
+        MarkerSet markerSet = markerSets.computeIfAbsent(addon.getWorldSettings().getFriendlyName(),
+                k -> MarkerSet.builder().label(k).build());
+        setMarker(markerSet, island);
+    }
+
+    private void remove(String islandUniqueId, GameModeAddon addon) {
+        MarkerSet markerSet = markerSets.get(addon.getWorldSettings().getFriendlyName());
+        if (markerSet != null) {
+            markerSet.remove(islandUniqueId);
+        }
+    }
+
     // Listeners
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onNewIsland(IslandNewIslandEvent e) {
         BentoBox.getInstance().logDebug(e.getEventName());
         plugin.getIWM().getAddon(e.getIsland().getWorld()).ifPresent(addon -> add(e.getIsland(), addon));
-    }
-
-    private void add(Island island, GameModeAddon addon) {
-        MarkerSet markerSet = markerSets.computeIfAbsent(addon.getWorldSettings().getFriendlyName(),
-                k -> MarkerSet.builder().label(k).build());
-        this.setMarker(markerSet, addon.getWorldSettings().getFriendlyName(), island);
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -155,20 +153,22 @@ public class BlueMapHook extends Hook implements Listener {
                 .ifPresent(addon -> remove(e.getIsland().getUniqueId(), addon));
     }
 
-    private void remove(String island, GameModeAddon addon) {
-        MarkerSet markerSet = markerSets.get(addon.getWorldSettings().getFriendlyName());
-        if (markerSet != null) {
-            markerSet.remove(islands.get(island));
-            islands.remove(island);
-        }
-
-    }
-
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onIslandDelete(IslandNameEvent e) {
+    public void onIslandName(IslandNameEvent e) {
         BentoBox.getInstance().logDebug(e.getEventName());
         plugin.getIWM().getAddon(e.getIsland().getWorld()).ifPresent(addon -> {
             remove(e.getIsland().getUniqueId(), addon);
+            add(e.getIsland(), addon);
+        });
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onIslandReset(IslandResettedEvent e) {
+        BentoBox.getInstance().logDebug(e.getEventName());
+        plugin.getIWM().getAddon(e.getIsland().getWorld()).ifPresent(addon -> {
+            // Remove marker for old island
+            remove(e.getOldIsland().getUniqueId(), addon);
+            // Add marker for new island
             add(e.getIsland(), addon);
         });
     }
