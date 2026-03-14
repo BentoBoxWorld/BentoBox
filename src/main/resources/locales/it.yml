@@ -269,6 +269,9 @@ commands:
       team-members-title: 'Membri del team:'
       team-owner-format: '&a[name] [rank]'
       team-member-format: '&b[name] [rank]'
+      max-team-size: 'Dimensione massima del team: [number]'
+      max-coop-size: 'Dimensione massima coop: [number]'
+      max-trusted-size: 'Dimensione massima fidata: [number]'
       island-protection-center: 'Area di protezione centro: [xyz]'
       island-center: '[prefix_Island] centro: [xyz]'
       island-coords: 'Coordinate dell''isola: [xz1] to [xz2]'
@@ -1693,6 +1696,13 @@ protection:
         &a Attiva se le entità (non giocatore) possono  
         &a utilizzare i portali per teletrasportarsi tra  
         &a dimensioni
+    WIND_CHARGE:
+      name: Carica di vento
+      description: |-
+        &a Attiva/disattiva l'uso delle cariche di vento.
+        &a Se disabilitato, i visitatori non possono
+        &a usare cariche di vento su questa isola.
+      hint: Uso della carica di vento disabilitato
     WITHER_DAMAGE:
       name: Abilita/disabilita i danni dal Wither
       description: '&a Se attivo, i wither &adanneggeranno  i blocchi e giocatori'

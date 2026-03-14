@@ -270,6 +270,9 @@ commands:
       team-members-title: 'Membrii echipei:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Dimensiune maximă echipă: [number]'
+      max-coop-size: 'Dimensiune maximă coop: [number]'
+      max-trusted-size: 'Dimensiune maximă de încredere: [number]'
       island-protection-center: 'Centrul zonei de protecție: [xyz]'
       island-center: 'Centrul insulei: [xyz]'
       island-coords: 'Coordonatele insulei: [xz1] la [xz2]'
@@ -1717,6 +1720,13 @@ protection:
         &a Comută dacă entitățile (non-jucător) pot
         &a utilizați portaluri pentru a vă teleporta
         &a dimensiuni
+    WIND_CHARGE:
+      name: Încărcătură de vânt
+      description: |-
+        &a Comută utilizarea încărcăturilor de vânt.
+        &a Dacă este dezactivat, vizitatorii nu pot
+        &a folosi încărcături de vânt pe această insulă.
+      hint: Utilizarea încărcăturii de vânt dezactivată
     WITHER_DAMAGE:
       name: Comutați daunele ofilite
       description: |-

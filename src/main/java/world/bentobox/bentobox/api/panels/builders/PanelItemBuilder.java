@@ -111,7 +111,7 @@ public class PanelItemBuilder {
      */
     public PanelItemBuilder description(String description) {
         if (description != null) {
-            Collections.addAll(this.description, description.split("\n"));
+            Collections.addAll(this.description, description.replace("\\n", "\n").split("\n"));
         }
         return this;
     }

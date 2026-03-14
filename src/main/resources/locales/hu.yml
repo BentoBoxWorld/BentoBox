@@ -280,6 +280,9 @@ commands:
       team-members-title: 'Csapattagok:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Maximális csapatméret: [number]'
+      max-coop-size: 'Maximális coop méret: [number]'
+      max-trusted-size: 'Maximális megbízott méret: [number]'
       island-protection-center: 'Védelmi terület középpontja: [xyz]'
       island-center: '[prefix_Island] központja: [xyz]'
       island-coords: '[prefix_Island] koordináták: [xz1] - [xz2]'
@@ -1738,6 +1741,13 @@ protection:
         &a Bekapcsolja, ha az entitások (nem játékos) képesek rá
         &a portálok használatával teleportálhat közöttük
         &a méretek
+    WIND_CHARGE:
+      name: Széltöltet
+      description: |-
+        &a A széltöltet használatát be-/kikapcsolja.
+        &a Ha le van tiltva, a látogatók nem
+        &a használhatnak széltölteteket ezen a szigeten.
+      hint: Széltöltet használata letiltva
     WITHER_DAMAGE:
       name: Kapcsolja be a fonáskárosodást
       description: |-

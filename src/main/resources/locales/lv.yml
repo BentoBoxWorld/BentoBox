@@ -267,6 +267,9 @@ commands:
       team-members-title: 'Komandas biedri:'
       team-owner-format: '&a[name] [rank]'
       team-member-format: '&b[name] [rank]'
+      max-team-size: 'Maksimālais komandas izmērs: [number]'
+      max-coop-size: 'Maksimālais kopā izmērs: [number]'
+      max-trusted-size: 'Maksimālais uzticamo izmērs: [number]'
       island-protection-center: 'Aizsardzības zonas centrs: [xyz]'
       island-center: '[prefix_Island] centrs: [xyz]'
       island-coords: 'Salas kooridinātes: no [xz1] līdz [xz2]'
@@ -1703,6 +1706,13 @@ protection:
         &a Pārslēdz, vai entitātes (ne-spēlētāji) var 
         &a izmantot portalus, lai teleportētos starp 
         &a dimencijām
+    WIND_CHARGE:
+      name: Vēja lādiņš
+      description: |-
+        &a Pārslēdz vēja lādiņu izmantošanu.
+        &a Ja atspējots, apmeklētāji nevar
+        &a izmantot vēja lādiņus šajā salā.
+      hint: Vēja lādiņu izmantošana atspējota
     WITHER_DAMAGE:
       name: Pārslēgt
       description: |-

@@ -274,6 +274,9 @@ commands:
       team-members-title: 'Teammitglieder:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Maximale Teamgröße: [number]'
+      max-coop-size: 'Maximale Coop-Größe: [number]'
+      max-trusted-size: 'Maximale Vertrauensgröße: [number]'
       island-protection-center: 'Mittelpunkt des Schutzbereiches: [xyz]'
       island-center: 'Inselmitte: [xyz]'
       island-coords: 'Koordinaten der Insel: [xz1] bis [xz2]'
@@ -1721,6 +1724,13 @@ protection:
         &a Schaltet um, ob Entitäten (Nicht-Spieler) 
         &a Portale nutzen können, um zwischen
         &a Dimensionen zu teleportieren
+    WIND_CHARGE:
+      name: Windladung
+      description: |-
+        &a Verwendung von Windladungen umschalten.
+        &a Wenn deaktiviert, können Besucher
+        &a auf dieser Insel keine Windladungen verwenden.
+      hint: Verwendung von Windladungen deaktiviert
     WITHER_DAMAGE:
       name: Umschalten von Wither-Schäden
       description: |-

@@ -123,6 +123,26 @@ class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
+    void testDescriptionStringWithActualNewline() {
+        // Actual newline character (from double-quoted YAML e.g. "line1\nline2")
+        PanelItemBuilder builder = new PanelItemBuilder();
+        List<String> test = Arrays.asList("line 1", "line 2");
+        builder.description("line 1\nline 2");
+        PanelItem item = builder.build();
+        assertEquals(test, item.getDescription());
+    }
+
+    @Test
+    void testDescriptionStringWithLiteralBackslashN() {
+        // Literal \n characters (from unquoted/single-quoted YAML e.g. description: line1\nline2)
+        PanelItemBuilder builder = new PanelItemBuilder();
+        List<String> test = Arrays.asList("line 1", "line 2");
+        builder.description("line 1\\nline 2");
+        PanelItem item = builder.build();
+        assertEquals(test, item.getDescription());
+    }
+
+    @Test
     void testClickHandler() {
         PanelItemBuilder builder = new PanelItemBuilder();
         // Test without click handler

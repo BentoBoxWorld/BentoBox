@@ -259,6 +259,9 @@ commands:
       team-members-title: 'Team members:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Max team size: [number]'
+      max-coop-size: 'Max coop size: [number]'
+      max-trusted-size: 'Max trusted size: [number]'
       island-protection-center: 'Protection area center: [xyz]'
       island-center: '[prefix_Island] center: [xyz]'
       island-coords: '[prefix_Island] coordinates: [xz1] to [xz2]'
@@ -1691,6 +1694,13 @@ protection:
         &a Toggles if entities (non-player) can
         &a use portals to teleport between
         &a dimensions
+    WIND_CHARGE:
+      name: Wind charge
+      description: |-
+        &a Toggle wind charge usage.
+        &a If disabled, visitors cannot
+        &a use wind charges on this island.
+      hint: Wind charge use disabled
     WITHER_DAMAGE:
       name: Toggle wither damage
       description: |-
