@@ -50,7 +50,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-public class AdminPurgeCommandTest extends CommonTestSetup {
+class AdminPurgeCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -119,7 +119,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#AdminPurgeCommand(CompositeCommand)}.
      */
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         verify(addon).registerListener(apc);
     }
 
@@ -127,7 +127,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("admin.purge", apc.getPermission());
         assertFalse(apc.isOnlyPlayer());
         assertEquals("commands.admin.purge.parameters", apc.getParameters());
@@ -140,7 +140,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringEmptyArgs() {
+    void testCanExecuteUserStringListOfStringEmptyArgs() {
         assertFalse(apc.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.help.header",
                 "[label]",
@@ -151,7 +151,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringWithArg() {
+    void testCanExecuteUserStringListOfStringWithArg() {
         assertTrue(apc.canExecute(user, "", Collections.singletonList("23")));
     }
 
@@ -159,7 +159,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNotNumber() {
+    void testExecuteUserStringListOfStringNotNumber() {
         assertFalse(apc.execute(user, "", Collections.singletonList("abc")));
         verify(user).sendMessage("commands.admin.purge.number-error");
     }
@@ -168,7 +168,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringZero() {
+    void testExecuteUserStringListOfStringZero() {
         assertFalse(apc.execute(user, "", Collections.singletonList("0")));
         verify(user).sendMessage("commands.admin.purge.days-one-or-more");
     }
@@ -177,7 +177,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoIslands() {
+    void testExecuteUserStringListOfStringNoIslands() {
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
         verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
     }
@@ -186,7 +186,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoIslandsPurgeProtected() {
+    void testExecuteUserStringListOfStringNoIslandsPurgeProtected() {
         when(island.isPurgeProtected()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apc.execute(user, "", Collections.singletonList("10")));
@@ -197,7 +197,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoIslandsWrongWorld() {
+    void testExecuteUserStringListOfStringNoIslandsWrongWorld() {
         when(island.isPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(mock(World.class));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
@@ -209,7 +209,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoIslandsUnowned() {
+    void testExecuteUserStringListOfStringNoIslandsUnowned() {
         when(island.isPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(null);
@@ -224,7 +224,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Makes sure that no spawn islands are deleted
      */
     @Test
-    public void testExecuteUserStringListOfStringOnlyIslandSpawn() {
+    void testExecuteUserStringListOfStringOnlyIslandSpawn() {
         when(island.isPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.isSpawn()).thenReturn(true);
@@ -238,7 +238,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      */
     @SuppressWarnings("deprecation")
     @Test
-    public void testExecuteUserStringListOfStringNoIslandsTeamIsland() {
+    void testExecuteUserStringListOfStringNoIslandsTeamIsland() {
         when(island.isPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
@@ -258,7 +258,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoIslandsRecentLogin() {
+    void testExecuteUserStringListOfStringNoIslandsRecentLogin() {
         when(island.isPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
@@ -275,7 +275,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringIslandsFound() {
+    void testExecuteUserStringListOfStringIslandsFound() {
         when(island.isPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(world);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
@@ -295,7 +295,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#removeIslands()}.
      */
     @Test
-    public void testRemoveIslands() {
+    void testRemoveIslands() {
         @NonNull
         Optional<Island> opIsland = Optional.of(island);
         when(im.getIslandById(any())).thenReturn(opIsland);
@@ -310,7 +310,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#onIslandDeleted(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent)}.
      */
     @Test
-    public void testOnIslandDeletedNotInPurge() {
+    void testOnIslandDeletedNotInPurge() {
         IslandDeletedEvent e = mock(IslandDeletedEvent.class);
         apc.onIslandDeleted(e);
         verify(user, Mockito.never()).sendMessage(any());
@@ -321,7 +321,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#onIslandDeleted(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent)}.
      */
     @Test
-    public void testOnIslandDeletedPurgeCompleted() {
+    void testOnIslandDeletedPurgeCompleted() {
         testRemoveIslands();
         IslandDeletedEvent e = mock(IslandDeletedEvent.class);
         apc.onIslandDeleted(e);
@@ -333,7 +333,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#isInPurge()}.
      */
     @Test
-    public void testIsInPurge() {
+    void testIsInPurge() {
         assertFalse(apc.isInPurge());
         testRemoveIslands();
         assertTrue(apc.isInPurge());
@@ -343,7 +343,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#stop()}.
      */
     @Test
-    public void testStop() {
+    void testStop() {
         testRemoveIslands();
         assertTrue(apc.isInPurge());
         apc.stop();
@@ -354,7 +354,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#setUser(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testSetUser() {
+    void testSetUser() {
         apc.setUser(user);
         apc.removeIslands();
         verify(user, Mockito.times(1)).sendMessage(any());
@@ -367,7 +367,7 @@ public class AdminPurgeCommandTest extends CommonTestSetup {
      * @throws InterruptedException 
      */
     @Test
-    public void testGetOldIslands() throws InterruptedException, ExecutionException, TimeoutException {
+    void testGetOldIslands() throws InterruptedException, ExecutionException, TimeoutException {
         assertTrue(apc.execute(user, "", Collections.singletonList("10"))); // 10 days ago
         // First, ensure that the result is empty
         CompletableFuture<Set<String>> result = apc.getOldIslands(10);

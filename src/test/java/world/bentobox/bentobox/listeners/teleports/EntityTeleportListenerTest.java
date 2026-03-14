@@ -28,7 +28,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class EntityTeleportListenerTest extends CommonTestSetup {
+class EntityTeleportListenerTest extends CommonTestSetup {
 
     private EntityTeleportListener etl;
 
@@ -59,7 +59,7 @@ public class EntityTeleportListenerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#EntityTeleportListener(world.bentobox.bentobox.BentoBox)}.
      */
     @Test
-    public void testEntityTeleportListener() {
+    void testEntityTeleportListener() {
         assertNotNull(etl);
     }
 
@@ -68,7 +68,7 @@ public class EntityTeleportListenerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
-    public void testOnEntityPortalWrongWorld() {
+    void testOnEntityPortalWrongWorld() {
         mockedUtil.when(() -> Util.getWorld(any())).thenReturn(null);
         EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location, 10);
         etl.onEntityPortal(event);
@@ -79,7 +79,7 @@ public class EntityTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
-    public void testOnEntityPortalWrongWorld2() {
+    void testOnEntityPortalWrongWorld2() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location, 10);
         etl.onEntityPortal(event);
@@ -91,7 +91,7 @@ public class EntityTeleportListenerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
-    public void testOnEntityPortalNullTo() {
+    void testOnEntityPortalNullTo() {
         EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, null, 10);
         etl.onEntityPortal(event);
         assertFalse(event.isCancelled());
@@ -102,7 +102,7 @@ public class EntityTeleportListenerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
-    public void testOnEntityPortalTeleportDisabled() {
+    void testOnEntityPortalTeleportDisabled() {
         EntityPortalEvent event = new EntityPortalEvent(mockPlayer, location, location, 10);
         etl.onEntityPortal(event);
         assertTrue(event.isCancelled());
@@ -113,7 +113,7 @@ public class EntityTeleportListenerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
-    public void testOnEntityPortalTeleportEnabled() {
+    void testOnEntityPortalTeleportEnabled() {
         mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
 
@@ -128,7 +128,7 @@ public class EntityTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
-    public void testOnEntityPortalTeleportEnabledMissingWorld() {
+    void testOnEntityPortalTeleportEnabledMissingWorld() {
         when(iwm.isNetherGenerate(any())).thenReturn(false);
 
         Location location2 = mock(Location.class);
@@ -150,7 +150,7 @@ public class EntityTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
-    public void testOnEntityPortalTeleportEnabledIsNotAllowedInConfig() {
+    void testOnEntityPortalTeleportEnabledIsNotAllowedInConfig() {
         when(iwm.isNetherGenerate(any())).thenReturn(false);
 
         Location location2 = mock(Location.class);
@@ -171,7 +171,7 @@ public class EntityTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
-    public void testOnEntityPortalTeleportEnabledIsAllowedInConfig() {
+    void testOnEntityPortalTeleportEnabledIsAllowedInConfig() {
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
 
         when(iwm.isNetherGenerate(any())).thenReturn(true);
@@ -196,7 +196,7 @@ public class EntityTeleportListenerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityEnterPortal(org.bukkit.event.entity.EntityPortalEnterEvent)}.
      */
     @Test
-    public void testOnEntityEnterPortal() {
+    void testOnEntityEnterPortal() {
         // TODO
     }
 
@@ -205,7 +205,7 @@ public class EntityTeleportListenerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityExitPortal(org.bukkit.event.entity.EntityPortalExitEvent)}.
      */
     @Test
-    public void testOnEntityExitPortal() {
+    void testOnEntityExitPortal() {
         // TODO
     }
 

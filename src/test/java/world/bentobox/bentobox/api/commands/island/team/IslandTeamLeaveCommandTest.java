@@ -33,7 +33,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
+class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -111,7 +111,7 @@ public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoTeam() {
+    void testExecuteNoTeam() {
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
@@ -123,7 +123,7 @@ public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteIsOwner() {
+    void testExecuteIsOwner() {
         when(island.getOwner()).thenReturn(uuid);
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
@@ -134,7 +134,7 @@ public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoConfirmation() {
+    void testExecuteNoConfirmation() {
         when(s.isLeaveConfirmation()).thenReturn(false);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
@@ -147,7 +147,7 @@ public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteWithConfirmation() {
+    void testExecuteWithConfirmation() {
         when(s.isLeaveConfirmation()).thenReturn(true);
         // 3 second timeout
         when(s.getConfirmationTime()).thenReturn(3);
@@ -161,7 +161,7 @@ public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteWithLoseResetCheckNoResets() {
+    void testExecuteWithLoseResetCheckNoResets() {
         // Leaves lose resets
         when(iwm.isLeaversLoseReset(any())).thenReturn(true);
 
@@ -176,7 +176,7 @@ public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteWithLoseResetCheckHasResets() {
+    void testExecuteWithLoseResetCheckHasResets() {
         // Leaves lose resets
         when(iwm.isLeaversLoseReset(any())).thenReturn(true);
         when(pm.getResetsLeft(any(),any(UUID.class))).thenReturn(100);
@@ -195,7 +195,7 @@ public class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testCooldown() {
+    void testCooldown() {
         // 10 minutes = 600 seconds
         when(s.getInviteCooldown()).thenReturn(10);
         testExecuteNoConfirmation();

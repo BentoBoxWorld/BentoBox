@@ -40,7 +40,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class BlueprintClipboardManagerTest extends CommonTestSetup {
+class BlueprintClipboardManagerTest extends CommonTestSetup {
 
     private static final String BLUEPRINT = "blueprint";
 
@@ -157,7 +157,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#BlueprintClipboardManager(world.bentobox.bentobox.BentoBox, java.io.File)}.
      */
     @Test
-    public void testBlueprintClipboardManagerBentoBoxFile() {
+    void testBlueprintClipboardManagerBentoBoxFile() {
         new BlueprintClipboardManager(plugin, blueprintFolder);
         assertTrue(blueprintFolder.exists());
     }
@@ -166,7 +166,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#BlueprintClipboardManager(world.bentobox.bentobox.BentoBox, java.io.File, world.bentobox.bentobox.blueprints.BlueprintClipboard)}.
      */
     @Test
-    public void testBlueprintClipboardManagerBentoBoxFileBlueprintClipboard() {
+    void testBlueprintClipboardManagerBentoBoxFileBlueprintClipboard() {
         new BlueprintClipboardManager(plugin, blueprintFolder, clipboard);
         assertTrue(blueprintFolder.exists());
     }
@@ -175,7 +175,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#getClipboard()}.
      */
     @Test
-    public void testGetClipboard() {
+    void testGetClipboard() {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder, clipboard);
         assertEquals(clipboard, bcm.getClipboard());
     }
@@ -184,7 +184,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
      */
     @Test
-    public void testLoadBlueprintNoSuchFile() {
+    void testLoadBlueprintNoSuchFile() {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         try {
             bcm.loadBlueprint("test");
@@ -199,7 +199,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
      */
     @Test
-    public void testLoadBlueprintNoFileInZip() throws IOException {
+    void testLoadBlueprintNoFileInZip() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         YamlConfiguration config = new YamlConfiguration();
@@ -221,7 +221,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
      */
     @Test
-    public void testLoadBlueprintFileInZipJSONError() throws IOException {
+    void testLoadBlueprintFileInZipJSONError() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         YamlConfiguration config = new YamlConfiguration();
@@ -244,7 +244,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
      */
     @Test
-    public void testLoadBlueprintFileInZipNoBedrock() throws IOException {
+    void testLoadBlueprintFileInZipNoBedrock() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
@@ -264,7 +264,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
      */
     @Test
-    public void testLoadBlueprintFileInZip() throws IOException {
+    void testLoadBlueprintFileInZip() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
@@ -285,7 +285,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#load(java.lang.String)}.
      */
     @Test
-    public void testLoadString() throws IOException {
+    void testLoadString() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
@@ -307,7 +307,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#load(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
-    public void testLoadUserString() throws IOException {
+    void testLoadUserString() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
@@ -324,7 +324,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#load(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
-    public void testLoadUserStringFail() throws IOException {
+    void testLoadUserStringFail() throws IOException {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         User user = mock(User.class);
         assertFalse(bcm.load(user, BLUEPRINT));
@@ -336,7 +336,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      */
     @Test
-    public void testSave() throws IOException {
+    void testSave() throws IOException {
         // Load a blueprint, then save it
         blueprintFolder.mkdirs();
         // Make a blueprint file
@@ -357,7 +357,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      */
     @Test
-    public void testSaveBadChars() throws IOException {
+    void testSaveBadChars() throws IOException {
         // Load a blueprint, then save it
         blueprintFolder.mkdirs();
         // Make a blueprint file
@@ -378,7 +378,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      */
     @Test
-    public void testSaveForeignChars() throws IOException {
+    void testSaveForeignChars() throws IOException {
         // Load a blueprint, then save it
         blueprintFolder.mkdirs();
         // Make a blueprint file
@@ -399,7 +399,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      */
     @Test
-    public void testSaveForeignBadChars() throws IOException {
+    void testSaveForeignBadChars() throws IOException {
         // Load a blueprint, then save it
         blueprintFolder.mkdirs();
         // Make a blueprint file
@@ -421,7 +421,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#saveBlueprint(world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    public void testSaveBlueprintNoName() {
+    void testSaveBlueprintNoName() {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         Blueprint blueprint = mock(Blueprint.class);
         when(blueprint.getName()).thenReturn("");
@@ -433,7 +433,7 @@ public class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#saveBlueprint(world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    public void testSaveBlueprintSuccess() {
+    void testSaveBlueprintSuccess() {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         Blueprint blueprint = new Blueprint();
         blueprint.setName("test123");

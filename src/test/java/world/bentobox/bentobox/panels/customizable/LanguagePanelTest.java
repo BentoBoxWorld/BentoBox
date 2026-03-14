@@ -36,7 +36,7 @@ import world.bentobox.bentobox.api.user.User;
  * @author tastybento
  *
  */
-public class LanguagePanelTest extends CommonTestSetup {
+class LanguagePanelTest extends CommonTestSetup {
 
     @Mock
     private User user;
@@ -115,7 +115,7 @@ public class LanguagePanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.panels.customizable.LanguagePanel#openPanel(world.bentobox.bentobox.api.commands.CompositeCommand,world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testOpenPanelNoLocales() {
+    void testOpenPanelNoLocales() {
         LanguagePanel.openPanel(command, user);
         verify(plugin).getLocalesManager();
         verify(lm).getAvailableLocales(true);
@@ -127,7 +127,7 @@ public class LanguagePanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.panels.customizable.LanguagePanel#LanguagePanel(world.bentobox.bentobox.api.commands.CompositeCommand, world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         // Set up locales
         localeList.add(Locale.CANADA);
         localeList.add(Locale.CHINA);
@@ -140,7 +140,7 @@ public class LanguagePanelTest extends CommonTestSetup {
      * Test method to verify panel creation with locales
      */
     @Test
-    public void testLanguagePanelWithLocales() {
+    void testLanguagePanelWithLocales() {
         // Set up locales
         localeList.add(Locale.CANADA);
         localeList.add(Locale.ENGLISH);

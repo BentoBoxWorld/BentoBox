@@ -22,7 +22,7 @@ import world.bentobox.bentobox.api.user.User;
  * @author tastybento
  *
  */
-public class SculkSensorListenerTest extends CommonTestSetup {
+class SculkSensorListenerTest extends CommonTestSetup {
 
     private SculkSensorListener ssl;
     @Mock
@@ -64,7 +64,7 @@ public class SculkSensorListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener#onSculkSensor(org.bukkit.event.block.BlockReceiveGameEvent)}.
      */
     @Test
-    public void testOnSculkSensorNotAllowed() {
+    void testOnSculkSensorNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, mockPlayer);
         ssl.onSculkSensor(e);
@@ -75,7 +75,7 @@ public class SculkSensorListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener#onSculkSensor(org.bukkit.event.block.BlockReceiveGameEvent)}.
      */
     @Test
-    public void testOnSculkSensorAllowed() {
+    void testOnSculkSensorAllowed() {
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, mockPlayer);
         ssl.onSculkSensor(e);
         assertFalse(e.isCancelled());
@@ -85,7 +85,7 @@ public class SculkSensorListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener#onSculkSensor(org.bukkit.event.block.BlockReceiveGameEvent)}.
      */
     @Test
-    public void testOnSculkSensorNotInWorld() {
+    void testOnSculkSensorNotInWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, mockPlayer);
         ssl.onSculkSensor(e);
@@ -96,7 +96,7 @@ public class SculkSensorListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener#onSculkSensor(org.bukkit.event.block.BlockReceiveGameEvent)}.
      */
     @Test
-    public void testOnSculkSensorNotAllowedCalibrated() {
+    void testOnSculkSensorNotAllowedCalibrated() {
         when(block.getType()).thenReturn(Material.CALIBRATED_SCULK_SENSOR);
         when(island.isAllowed(any(), any())).thenReturn(false);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, mockPlayer);
@@ -108,7 +108,7 @@ public class SculkSensorListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener#onSculkSensor(org.bukkit.event.block.BlockReceiveGameEvent)}.
      */
     @Test
-    public void testOnSculkSensorAllowedCalibrated() {
+    void testOnSculkSensorAllowedCalibrated() {
         when(block.getType()).thenReturn(Material.CALIBRATED_SCULK_SENSOR);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, mockPlayer);
         ssl.onSculkSensor(e);
@@ -119,7 +119,7 @@ public class SculkSensorListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener#onSculkSensor(org.bukkit.event.block.BlockReceiveGameEvent)}.
      */
     @Test
-    public void testOnSculkSensorNotInWorldCalibrated() {
+    void testOnSculkSensorNotInWorldCalibrated() {
         when(block.getType()).thenReturn(Material.CALIBRATED_SCULK_SENSOR);
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, mockPlayer);
@@ -131,7 +131,7 @@ public class SculkSensorListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener#onSculkSensor(org.bukkit.event.block.BlockReceiveGameEvent)}.
      */
     @Test
-    public void testOnSculkSensorNotAllowedNotSculk() {
+    void testOnSculkSensorNotAllowedNotSculk() {
         when(block.getType()).thenReturn(Material.SHULKER_BOX);
         when(island.isAllowed(any(), any())).thenReturn(false);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, mockPlayer);
@@ -143,7 +143,7 @@ public class SculkSensorListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener#onSculkSensor(org.bukkit.event.block.BlockReceiveGameEvent)}.
      */
     @Test
-    public void testOnSculkSensorAllowedNotSculk() {
+    void testOnSculkSensorAllowedNotSculk() {
         when(block.getType()).thenReturn(Material.SHULKER_BOX);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, mockPlayer);
         ssl.onSculkSensor(e);
@@ -154,7 +154,7 @@ public class SculkSensorListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener#onSculkSensor(org.bukkit.event.block.BlockReceiveGameEvent)}.
      */
     @Test
-    public void testOnSculkSensorNotInWorldNotSculk() {
+    void testOnSculkSensorNotInWorldNotSculk() {
         when(block.getType()).thenReturn(Material.SHULKER_BOX);
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, mockPlayer);

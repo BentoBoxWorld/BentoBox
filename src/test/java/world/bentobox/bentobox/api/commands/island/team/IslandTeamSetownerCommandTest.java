@@ -41,7 +41,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
+class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -126,7 +126,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("island.team.setowner", its.getPermission());
         assertTrue(its.isOnlyPlayer());
         assertEquals("commands.island.team.setowner.parameters", its.getParameters());
@@ -139,7 +139,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringNullOwner() {
+    void testCanExecuteUserStringListOfStringNullOwner() {
         when(island.getOwner()).thenReturn(null);
         assertFalse(its.canExecute(user, "", List.of("gibby")));
         verify(user).sendMessage("general.errors.not-owner");
@@ -149,7 +149,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringNotInTeamNoIsland() {
+    void testCanExecuteUserStringListOfStringNotInTeamNoIsland() {
         when(im.getPrimaryIsland(any(), any())).thenReturn(null);
         assertFalse(its.canExecute(user, "", List.of("gibby")));
         verify(user).sendMessage("general.errors.no-team");
@@ -159,7 +159,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringNotInTeam() {
+    void testCanExecuteUserStringListOfStringNotInTeam() {
         when(island.inTeam(uuid)).thenReturn(false);
         assertFalse(its.canExecute(user, "", List.of("gibby")));
         verify(user).sendMessage("general.errors.no-team");
@@ -169,7 +169,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringNotOwner() {
+    void testCanExecuteUserStringListOfStringNotOwner() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
         assertFalse(its.canExecute(user, "", List.of("gibby")));
@@ -180,7 +180,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringShowHelp() {
+    void testCanExecuteUserStringListOfStringShowHelp() {
         when(im.inTeam(any(), any())).thenReturn(true);
         assertFalse(its.canExecute(user, "", List.of()));
         verify(user).sendMessage("commands.help.header","[label]", "BSkyBlock");
@@ -190,7 +190,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringUnknownPlayer() {
+    void testCanExecuteUserStringListOfStringUnknownPlayer() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(pm.getUUID(anyString())).thenReturn(null);
         assertFalse(its.canExecute(user, "", List.of("tastybento")));
@@ -201,7 +201,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringSamePlayer() {
+    void testCanExecuteUserStringListOfStringSamePlayer() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(pm.getUUID(anyString())).thenReturn(uuid);
         assertFalse(its.canExecute(user, "", List.of("tastybento")));
@@ -212,7 +212,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringTargetNotInTeam() {
+    void testCanExecuteUserStringListOfStringTargetNotInTeam() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(pm.getUUID(anyString())).thenReturn(UUID.randomUUID());
         assertFalse(its.canExecute(user, "", List.of("tastybento")));
@@ -223,7 +223,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringHasManyConcurrentAndPerm() {
+    void testExecuteUserStringListOfStringHasManyConcurrentAndPerm() {
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(40);
         when(im.getNumberOfConcurrentIslands(any(), eq(world))).thenReturn(20);
         UUID target = UUID.randomUUID();
@@ -240,7 +240,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringSuccess() {
+    void testExecuteUserStringListOfStringSuccess() {
         when(im.inTeam(any(), any())).thenReturn(true);
         UUID target = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(target);
@@ -256,7 +256,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfString() {
+    void testTabCompleteUserStringListOfString() {
         assertTrue(its.tabComplete(user, "", List.of()).get().isEmpty());
     }
 
@@ -265,7 +265,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfStringUnknown() {
+    void testTabCompleteUserStringListOfStringUnknown() {
         assertTrue(its.tabComplete(user, "ta", List.of()).get().isEmpty());
     }
 
@@ -274,7 +274,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfStringMember() {
+    void testTabCompleteUserStringListOfStringMember() {
         UUID target = UUID.randomUUID();
         when(pm.getName(any())).thenReturn("tastybento");
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(target));
@@ -286,7 +286,7 @@ public class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfStringMemberNoIsland() {
+    void testTabCompleteUserStringListOfStringMemberNoIsland() {
         when(im.getPrimaryIsland(any(), any())).thenReturn(null);
         assertTrue(its.tabComplete(user, "", List.of()).isEmpty());
     }

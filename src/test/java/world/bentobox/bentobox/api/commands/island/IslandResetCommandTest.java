@@ -57,7 +57,7 @@ import world.bentobox.bentobox.managers.island.NewIsland;
  * @author tastybento
  *
  */
-public class IslandResetCommandTest extends CommonTestSetup {
+class IslandResetCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -182,7 +182,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * {@link IslandResetCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testNoIsland() {
+    void testNoIsland() {
         // Test the reset command
         // Does not have island
         assertFalse(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
@@ -193,7 +193,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * Test method for {@link IslandResetCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testNoResetsLeft() {
+    void testNoResetsLeft() {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now has no team
@@ -212,7 +212,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testNoConfirmationRequired() throws Exception {
+    void testNoConfirmationRequired() throws Exception {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Set so no confirmation required
@@ -245,7 +245,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * Test method for {@link IslandResetCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testUnlimitedResets() throws Exception {
+    void testUnlimitedResets() throws Exception {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now has no team
@@ -279,7 +279,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * {@link IslandResetCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testNoPaste() throws Exception {
+    void testNoPaste() throws Exception {
         irc = new IslandResetCommand(ic, true);
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
@@ -312,7 +312,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testConfirmationRequired() throws Exception {
+    void testConfirmationRequired() throws Exception {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now has no team
@@ -353,7 +353,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testNoConfirmationRequiredUnknownBlueprint() throws IOException {
+    void testNoConfirmationRequiredUnknownBlueprint() throws IOException {
         // No such bundle
         when(bpm.validate(any(), any())).thenReturn(null);
         // Reset command, no confirmation required
@@ -367,7 +367,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testNoConfirmationRequiredBlueprintNoPerm() throws IOException {
+    void testNoConfirmationRequiredBlueprintNoPerm() throws IOException {
         // Bundle exists
         when(bpm.validate(any(), any())).thenReturn("custom");
         // No permission
@@ -380,7 +380,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testNoConfirmationRequiredCustomSchemHasPermission() throws Exception {
+    void testNoConfirmationRequiredCustomSchemHasPermission() throws Exception {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now has no team
@@ -421,7 +421,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * Test method for reset with cost - cannot afford
      */
     @Test
-    public void testResetIslandWithCostCannotAfford() {
+    void testResetIslandWithCostCannotAfford() {
         // Enable reset charging
         when(s.isChargeForBlueprintOnReset()).thenReturn(true);
         // Multiple bundles
@@ -450,7 +450,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * Test method for reset with cost - can afford
      */
     @Test
-    public void testResetIslandWithCostCanAfford() throws Exception {
+    void testResetIslandWithCostCanAfford() throws Exception {
         // Enable reset charging
         when(s.isChargeForBlueprintOnReset()).thenReturn(true);
         // Now has island
@@ -494,7 +494,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * Test method for reset cost - disabled by config (default)
      */
     @Test
-    public void testResetIslandCostDisabledByConfig() throws Exception {
+    void testResetIslandCostDisabledByConfig() throws Exception {
         // Reset charging disabled (default)
         when(s.isChargeForBlueprintOnReset()).thenReturn(false);
         // Now has island
@@ -533,7 +533,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
      * Test method for reset cost - no vault ignores cost
      */
     @Test
-    public void testResetIslandCostIgnoredNoVault() throws Exception {
+    void testResetIslandCostIgnoredNoVault() throws Exception {
         // Enable reset charging
         when(s.isChargeForBlueprintOnReset()).thenReturn(true);
         // Now has island

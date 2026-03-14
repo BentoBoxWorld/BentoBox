@@ -50,7 +50,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandExpelCommandTest extends RanksManagerTestSetup {
+class IslandExpelCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;

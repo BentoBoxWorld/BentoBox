@@ -47,7 +47,7 @@ import world.bentobox.bentobox.util.Util;
 /**
  * Tests for {@link AdminTeleportUserCommand}.
  */
-public class AdminTeleportUserCommandTest extends CommonTestSetup {
+class AdminTeleportUserCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -168,7 +168,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     // -------------------------------------------------------------------------
 
     @Test
-    public void testSetupMetadata() {
+    void testSetupMetadata() {
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertEquals("tpuser", cmd.getLabel());
         assertEquals("admin.tpuser", cmd.getPermission());
@@ -177,7 +177,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testSetupAllLabels() {
+    void testSetupAllLabels() {
         assertEquals("tpuser",      new AdminTeleportUserCommand(ac, "tpuser").getLabel());
         assertEquals("tpusernether", new AdminTeleportUserCommand(ac, "tpusernether").getLabel());
         assertEquals("tpuserend",    new AdminTeleportUserCommand(ac, "tpuserend").getLabel());
@@ -188,14 +188,14 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     // -------------------------------------------------------------------------
 
     @Test
-    public void testCanExecuteNoArgs() {
+    void testCanExecuteNoArgs() {
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertFalse(cmd.canExecute(user, "tpuser", List.of()));
         verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
     }
 
     @Test
-    public void testCanExecuteOneArgShowsHelp() {
+    void testCanExecuteOneArgShowsHelp() {
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertFalse(cmd.canExecute(user, "tpuser", List.of("teleportee")));
         verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
@@ -206,7 +206,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     // -------------------------------------------------------------------------
 
     @Test
-    public void testCanExecuteUnknownTeleportee() {
+    void testCanExecuteUnknownTeleportee() {
         // pm.getUUID returns null for unknown names (default Mockito behaviour)
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertFalse(cmd.canExecute(user, "tpuser", List.of("unknown", "target")));
@@ -214,7 +214,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCanExecuteTeleporteeOffline() {
+    void testCanExecuteTeleporteeOffline() {
         when(mockPlayer.isOnline()).thenReturn(false);
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertFalse(cmd.canExecute(user, "tpuser", List.of("teleportee", "target")));
@@ -227,7 +227,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
      * This test documents that behaviour.
      */
     @Test
-    public void testCanExecuteUnknownTarget() {
+    void testCanExecuteUnknownTarget() {
         // "bad-target" is not registered → pm.getUUID returns null
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertFalse(cmd.canExecute(user, "tpuser", List.of("teleportee", "bad-target")));
@@ -240,7 +240,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     // -------------------------------------------------------------------------
 
     @Test
-    public void testCanExecuteTargetHasNoIslandOrTeam() {
+    void testCanExecuteTargetHasNoIslandOrTeam() {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
@@ -249,7 +249,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCanExecuteTargetInTeamWithNoOwnIsland() {
+    void testCanExecuteTargetInTeamWithNoOwnIsland() {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
@@ -257,7 +257,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCanExecuteGetSpotReturnsNullIsland() {
+    void testCanExecuteGetSpotReturnsNullIsland() {
         // getIsland returns null → getSpot returns null → no-safe-location
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
@@ -266,7 +266,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCanExecuteGetSpotUsesSpawnPointWhenAvailable() {
+    void testCanExecuteGetSpotUsesSpawnPointWhenAvailable() {
         when(island.getSpawnPoint(Environment.NORMAL)).thenReturn(spawnPoint);
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertTrue(cmd.canExecute(user, "tpuser", List.of("teleportee", "target")));
@@ -277,7 +277,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     // -------------------------------------------------------------------------
 
     @Test
-    public void testCanExecuteTwoArgsOverworld() {
+    void testCanExecuteTwoArgsOverworld() {
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertTrue(cmd.canExecute(user, "tpuser", List.of("teleportee", "target")));
         verify(iwm, never()).getNetherWorld(any());
@@ -285,7 +285,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCanExecuteTwoArgsNether() {
+    void testCanExecuteTwoArgsNether() {
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpusernether");
         assertTrue(cmd.canExecute(user, "tpusernether", List.of("teleportee", "target")));
         verify(iwm).getNetherWorld(world);
@@ -293,7 +293,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCanExecuteTwoArgsEnd() {
+    void testCanExecuteTwoArgsEnd() {
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuserend");
         assertTrue(cmd.canExecute(user, "tpuserend", List.of("teleportee", "target")));
         verify(iwm, never()).getNetherWorld(world);
@@ -301,7 +301,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCanExecuteNetherWorldNull() {
+    void testCanExecuteNetherWorldNull() {
         when(iwm.getNetherWorld(any())).thenReturn(null);
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpusernether");
         assertFalse(cmd.canExecute(user, "tpusernether", List.of("teleportee", "target")));
@@ -309,7 +309,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCanExecuteEndWorldNull() {
+    void testCanExecuteEndWorldNull() {
         when(iwm.getEndWorld(any())).thenReturn(null);
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuserend");
         assertFalse(cmd.canExecute(user, "tpuserend", List.of("teleportee", "target")));
@@ -321,7 +321,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     // -------------------------------------------------------------------------
 
     @Test
-    public void testCanExecuteUnknownIslandName() {
+    void testCanExecuteUnknownIslandName() {
         try (MockedStatic<IslandGoCommand> mockedGo = Mockito.mockStatic(IslandGoCommand.class)) {
             mockedGo.when(() -> IslandGoCommand.getNameIslandMap(any(User.class), any(World.class)))
                     .thenReturn(Map.of("existing-home", new IslandInfo(island, false)));
@@ -334,7 +334,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCanExecuteKnownIslandNameSingleEntry() {
+    void testCanExecuteKnownIslandNameSingleEntry() {
         // names.size() == 1 → warpSpot is not updated, just returns true
         try (MockedStatic<IslandGoCommand> mockedGo = Mockito.mockStatic(IslandGoCommand.class)) {
             mockedGo.when(() -> IslandGoCommand.getNameIslandMap(any(User.class), any(World.class)))
@@ -345,7 +345,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCanExecuteKnownIslandNameMultipleEntriesNoSpawnPoint() {
+    void testCanExecuteKnownIslandNameMultipleEntriesNoSpawnPoint() {
         Island island2 = mock(Island.class);
         when(island2.getProtectionCenter()).thenReturn(location);
         try (MockedStatic<IslandGoCommand> mockedGo = Mockito.mockStatic(IslandGoCommand.class)) {
@@ -361,7 +361,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCanExecuteKnownIslandNameMultipleEntriesWithSpawnPoint() {
+    void testCanExecuteKnownIslandNameMultipleEntriesWithSpawnPoint() {
         Island island2 = mock(Island.class);
         when(island.getSpawnPoint(Environment.NORMAL)).thenReturn(spawnPoint);
         try (MockedStatic<IslandGoCommand> mockedGo = Mockito.mockStatic(IslandGoCommand.class)) {
@@ -377,7 +377,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCanExecuteMultiWordIslandName() {
+    void testCanExecuteMultiWordIslandName() {
         try (MockedStatic<IslandGoCommand> mockedGo = Mockito.mockStatic(IslandGoCommand.class)) {
             mockedGo.when(() -> IslandGoCommand.getNameIslandMap(any(User.class), any(World.class)))
                     .thenReturn(Map.of("my cool island", new IslandInfo(island, true)));
@@ -392,7 +392,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     // -------------------------------------------------------------------------
 
     @Test
-    public void testExecuteTwoArgsUsesNoSafeLocationFailureMessage() {
+    void testExecuteTwoArgsUsesNoSafeLocationFailureMessage() {
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertTrue(cmd.canExecute(user, "tpuser", List.of("teleportee", "target")));
         assertTrue(cmd.execute(user, "tpuser", List.of("teleportee", "target")));
@@ -401,7 +401,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testExecuteThreeArgsUsesManualLocationFailureMessage() {
+    void testExecuteThreeArgsUsesManualLocationFailureMessage() {
         try (MockedStatic<IslandGoCommand> mockedGo = Mockito.mockStatic(IslandGoCommand.class)) {
             mockedGo.when(() -> IslandGoCommand.getNameIslandMap(any(User.class), any(World.class)))
                     .thenReturn(Map.of("myhome", new IslandInfo(island, false)));
@@ -418,20 +418,20 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     // -------------------------------------------------------------------------
 
     @Test
-    public void testTabCompleteEmptyArgs() {
+    void testTabCompleteEmptyArgs() {
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertTrue(cmd.tabComplete(user, "tpuser", List.of()).isEmpty());
     }
 
     @Test
-    public void testTabCompleteOneArg() {
+    void testTabCompleteOneArg() {
         // size == 1 → no matching branch → empty
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertTrue(cmd.tabComplete(user, "tpuser", List.of("t")).isEmpty());
     }
 
     @Test
-    public void testTabCompleteTwoArgs() {
+    void testTabCompleteTwoArgs() {
         mockedUtil.when(() -> Util.getOnlinePlayerList(any())).thenReturn(List.of("alice", "bob"));
         mockedUtil.when(() -> Util.tabLimit(any(), anyString())).thenCallRealMethod();
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
@@ -441,7 +441,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testTabCompleteThreeArgs() {
+    void testTabCompleteThreeArgs() {
         mockedUtil.when(() -> Util.getOnlinePlayerList(any())).thenReturn(List.of("alice"));
         mockedUtil.when(() -> Util.tabLimit(any(), anyString())).thenCallRealMethod();
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
@@ -450,7 +450,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testTabCompleteFourArgsUnresolvableIndex2() {
+    void testTabCompleteFourArgsUnresolvableIndex2() {
         // args.get(2) = "badname" → Util.getUUID → null → empty
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         Optional<List<String>> result = cmd.tabComplete(user, "tpuser", List.of("teleportee", "target", "badname", ""));
@@ -458,7 +458,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testTabCompleteFourArgsKnownUUIDAtIndex2() {
+    void testTabCompleteFourArgsKnownUUIDAtIndex2() {
         // args.get(2) can be a UUID string (edge case in the source that uses index 2 for target)
         try (MockedStatic<IslandGoCommand> mockedGo = Mockito.mockStatic(IslandGoCommand.class)) {
             mockedGo.when(() -> IslandGoCommand.getNameIslandMap(any(User.class), any(World.class)))
@@ -475,7 +475,7 @@ public class AdminTeleportUserCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testTabCompleteFiveOrMoreArgs() {
+    void testTabCompleteFiveOrMoreArgs() {
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertTrue(cmd.tabComplete(user, "tpuser", List.of("a", "b", "c", "d", "e")).isEmpty());
     }

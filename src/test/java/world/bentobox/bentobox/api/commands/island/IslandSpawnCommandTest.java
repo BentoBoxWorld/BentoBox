@@ -40,7 +40,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  * @author tastybento
  *
  */
-public class IslandSpawnCommandTest extends CommonTestSetup {
+class IslandSpawnCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -126,7 +126,7 @@ public class IslandSpawnCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#IslandSpawnCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
-    public void testIslandSpawnCommand() {
+    void testIslandSpawnCommand() {
         assertEquals("spawn", isc.getLabel());
     }
 
@@ -134,7 +134,7 @@ public class IslandSpawnCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("permission.island.spawn", isc.getPermission());
         assertTrue(isc.isOnlyPlayer());
         assertEquals("commands.island.spawn.description", isc.getDescription());
@@ -144,7 +144,7 @@ public class IslandSpawnCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
     }
 
@@ -152,7 +152,7 @@ public class IslandSpawnCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringInWorldNoTeleportFalling() {
+    void testExecuteUserStringListOfStringInWorldNoTeleportFalling() {
         when(mockPlayer.getFallDistance()).thenReturn(10F);
         map.put("PREVENT_TELEPORT_WHEN_FALLING", true);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -164,7 +164,7 @@ public class IslandSpawnCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringInWorldTeleportOkFalling() {
+    void testExecuteUserStringListOfStringInWorldTeleportOkFalling() {
         when(mockPlayer.getFallDistance()).thenReturn(10F);
         map.put("PREVENT_TELEPORT_WHEN_FALLING", false);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -176,7 +176,7 @@ public class IslandSpawnCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringWrongWorldTeleportOkFalling() {
+    void testExecuteUserStringListOfStringWrongWorldTeleportOkFalling() {
         when(mockPlayer.getFallDistance()).thenReturn(10F);
         map.put("PREVENT_TELEPORT_WHEN_FALLING", true);
         when(iwm.inWorld(any(World.class))).thenReturn(false);
@@ -188,7 +188,7 @@ public class IslandSpawnCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringInWorldTeleportNotFalling() {
+    void testExecuteUserStringListOfStringInWorldTeleportNotFalling() {
         when(mockPlayer.getFallDistance()).thenReturn(0F);
         map.put("PREVENT_TELEPORT_WHEN_FALLING", true);
         when(iwm.inWorld(any(World.class))).thenReturn(true);

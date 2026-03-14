@@ -28,7 +28,7 @@ import world.bentobox.bentobox.util.ItemParser;
  * @author tastybento
  *
  */
-public class BentoBoxLocaleTest extends CommonTestSetup {
+class BentoBoxLocaleTest extends CommonTestSetup {
 
     private BentoBoxLocale localeObject;
     @Mock
@@ -72,7 +72,7 @@ public class BentoBoxLocaleTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#get(java.lang.String)}.
      */
     @Test
-    public void testGet() {
+    void testGet() {
         assertEquals("test result", localeObject.get("reference.to.test"));
         assertEquals("missing.reference", localeObject.get("missing.reference"));
     }
@@ -81,7 +81,7 @@ public class BentoBoxLocaleTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#getLanguage()}.
      */
     @Test
-    public void testGetLanguage() {
+    void testGetLanguage() {
         assertEquals(Locale.US.getDisplayLanguage(), localeObject.getLanguage());
         assertEquals("unknown", new BentoBoxLocale(null, new YamlConfiguration()).getLanguage());
     }
@@ -90,7 +90,7 @@ public class BentoBoxLocaleTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#getCountry()}.
      */
     @Test
-    public void testGetCountry() {
+    void testGetCountry() {
         assertEquals(Locale.US.getDisplayCountry(), localeObject.getCountry());
         assertEquals("unknown", new BentoBoxLocale(null, new YamlConfiguration()).getCountry());
     }
@@ -99,7 +99,7 @@ public class BentoBoxLocaleTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#toLanguageTag()}.
      */
     @Test
-    public void testToLanguageTag() {
+    void testToLanguageTag() {
         assertEquals(Locale.US.toLanguageTag(), localeObject.toLanguageTag());
         assertEquals("unknown", new BentoBoxLocale(null, new YamlConfiguration()).toLanguageTag());
     }
@@ -108,7 +108,7 @@ public class BentoBoxLocaleTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#getBanner()}.
      */
     @Test
-    public void testGetBanner() {
+    void testGetBanner() {
         ItemStack banner = localeObject.getBanner();
         assertEquals(Material.WHITE_BANNER, banner.getType());
     }
@@ -117,7 +117,7 @@ public class BentoBoxLocaleTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#getAuthors()}.
      */
     @Test
-    public void testGetAuthors() {
+    void testGetAuthors() {
         assertEquals("tastybento", localeObject.getAuthors().getFirst());
         assertEquals("tastybento2", localeObject.getAuthors().get(1));
     }
@@ -126,7 +126,7 @@ public class BentoBoxLocaleTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#merge(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
-    public void testMerge() {
+    void testMerge() {
         YamlConfiguration config2 = new YamlConfiguration();
         config2.set("meta.banner", "SHOULD NOT BE MERGED");
         List<String> authors = new ArrayList<>();
@@ -149,7 +149,7 @@ public class BentoBoxLocaleTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#contains(java.lang.String)}.
      */
     @Test
-    public void testContains() {
+    void testContains() {
         assertTrue(localeObject.contains("reference.to.test"));
         assertFalse(localeObject.contains("false.reference.to.test"));
     }

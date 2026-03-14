@@ -43,7 +43,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class IslandRespawnListenerTest extends CommonTestSetup {
+class IslandRespawnListenerTest extends CommonTestSetup {
 
     @Mock
     private Location safeLocation;
@@ -108,7 +108,7 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
      * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnPlayerDeathNotIslandWorld() {
+    void testOnPlayerDeathNotIslandWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         List<ItemStack> drops = new ArrayList<>();
         PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
@@ -121,7 +121,7 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
      * {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnPlayerDeathNoFlag() {
+    void testOnPlayerDeathNoFlag() {
         Flags.ISLAND_RESPAWN.setSetting(world, false);
         List<ItemStack> drops = new ArrayList<>();
         PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
@@ -133,7 +133,7 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
      * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnPlayerDeathNotOwnerNotTeam() {
+    void testOnPlayerDeathNotOwnerNotTeam() {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         List<ItemStack> drops = new ArrayList<>();
@@ -146,7 +146,7 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
      * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnPlayerDeathNotOwnerInTeam() {
+    void testOnPlayerDeathNotOwnerInTeam() {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
         List<ItemStack> drops = new ArrayList<>();
@@ -159,7 +159,7 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
      * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnPlayerDeathOwnerNoTeam() {
+    void testOnPlayerDeathOwnerNoTeam() {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         List<ItemStack> drops = new ArrayList<>();
@@ -173,7 +173,7 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
      * {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnPlayerDeath() {
+    void testOnPlayerDeath() {
         List<ItemStack> drops = new ArrayList<>();
         PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
         new IslandRespawnListener().onPlayerDeath(e);
@@ -185,7 +185,7 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
      * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
-    public void testOnPlayerRespawn() {
+    void testOnPlayerRespawn() {
         // Die
         List<ItemStack> drops = new ArrayList<>();
         PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
@@ -206,7 +206,7 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
      * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
-    public void testOnPlayerRespawnWithoutDeath() {
+    void testOnPlayerRespawnWithoutDeath() {
         IslandRespawnListener l = new IslandRespawnListener();
         Location location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
@@ -223,7 +223,7 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
      * Test method for {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
-    public void testOnPlayerRespawnWrongWorld() {
+    void testOnPlayerRespawnWrongWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         // Die
@@ -247,7 +247,7 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
      * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
-    public void testOnPlayerRespawnFlagNotSet() {
+    void testOnPlayerRespawnFlagNotSet() {
         Flags.ISLAND_RESPAWN.setSetting(world, false);
         // Die
         List<ItemStack> drops = new ArrayList<>();

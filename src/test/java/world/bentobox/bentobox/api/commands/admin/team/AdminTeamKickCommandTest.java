@@ -36,7 +36,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminTeamKickCommandTest extends CommonTestSetup {
+class AdminTeamKickCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -108,7 +108,7 @@ public class AdminTeamKickCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamKickCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testCanExecuteNoTarget() {
+    void testCanExecuteNoTarget() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         assertFalse(itl.canExecute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
@@ -118,7 +118,7 @@ public class AdminTeamKickCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamKickCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testCanExecuteUnknownPlayer() {
+    void testCanExecuteUnknownPlayer() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         when(pm.getUUID(any())).thenReturn(null);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
@@ -129,7 +129,7 @@ public class AdminTeamKickCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamKickCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testCanExecutePlayerNotInTeam() {
+    void testCanExecutePlayerNotInTeam() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         when(pm.getUUID(any())).thenReturn(notUUID);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
@@ -140,7 +140,7 @@ public class AdminTeamKickCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamKickCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecute() {
+    void testExecute() {
         when(im.inTeam(any(), any())).thenReturn(true);
         String name = "tastybento";
         when(pm.getUUID(any())).thenReturn(uuid);

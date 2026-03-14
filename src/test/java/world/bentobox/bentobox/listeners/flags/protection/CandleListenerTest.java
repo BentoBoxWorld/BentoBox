@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import world.bentobox.bentobox.CommonTestSetup;
 
 @Disabled("Issues with NotAMock")
-public class CandleListenerTest extends CommonTestSetup {
+class CandleListenerTest extends CommonTestSetup {
 
     private CandleListener l;
     @Mock
@@ -50,7 +50,7 @@ public class CandleListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.CandleListener#onCandleInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnCandleInteract() {
+    void testOnCandleInteract() {
         // Block
         when(block.getType()).thenReturn(Material.CANDLE);
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, null, block, BlockFace.UP);
@@ -62,7 +62,7 @@ public class CandleListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.CandleListener#onCandleInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnCandleCakeInteract() {
+    void testOnCandleCakeInteract() {
         // Block
         when(block.getType()).thenReturn(Material.CANDLE_CAKE);
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, null, block, BlockFace.UP);
@@ -74,7 +74,7 @@ public class CandleListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.CandleListener#onCandleInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnCandleInteractFail() {
+    void testOnCandleInteractFail() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         // Block
         when(block.getType()).thenReturn(Material.CANDLE);
@@ -88,7 +88,7 @@ public class CandleListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.CandleListener#onCandleInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnCandleCakeInteractFail() {
+    void testOnCandleCakeInteractFail() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         // Block
         when(block.getType()).thenReturn(Material.CANDLE_CAKE);

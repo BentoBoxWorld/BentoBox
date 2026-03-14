@@ -40,7 +40,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-public class AdminResetFlagsCommandTest extends CommonTestSetup {
+class AdminResetFlagsCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -125,7 +125,7 @@ public class AdminResetFlagsCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#AdminResetFlagsCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
-    public void testAdminResetFlagsCommand() {
+    void testAdminResetFlagsCommand() {
         assertEquals("resetflags", arf.getLabel());
     }
 
@@ -133,7 +133,7 @@ public class AdminResetFlagsCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertFalse(arf.isOnlyPlayer());
         assertEquals("bskyblock.admin.resetflags", arf.getPermission());
         assertEquals("commands.admin.resetflags.parameters", arf.getParameters());
@@ -144,7 +144,7 @@ public class AdminResetFlagsCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringTwoArgs() {
+    void testExecuteUserStringListOfStringTwoArgs() {
         List<String> args = Arrays.asList("sdfsd", "werwerw");
         assertFalse(arf.execute(user, "", args));
         checkSpigotMessage("commands.help.header");
@@ -154,7 +154,7 @@ public class AdminResetFlagsCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringOneArgNotFlag() {
+    void testExecuteUserStringListOfStringOneArgNotFlag() {
         assertFalse(arf.execute(user, "", Collections.singletonList("FLAG3")));
         checkSpigotMessage("commands.help.header");
     }
@@ -163,7 +163,7 @@ public class AdminResetFlagsCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringOneArgFlag2() {
+    void testExecuteUserStringListOfStringOneArgFlag2() {
         assertTrue(arf.execute(user, "", Collections.singletonList("FLAG2")));
     }
 
@@ -171,7 +171,7 @@ public class AdminResetFlagsCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringOneArgFlag1() {
+    void testExecuteUserStringListOfStringOneArgFlag1() {
         assertTrue(arf.execute(user, "", Collections.singletonList("FLAG1")));
     }
 
@@ -179,7 +179,7 @@ public class AdminResetFlagsCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         assertTrue(arf.execute(user, "", Collections.emptyList()));
     }
 
@@ -187,7 +187,7 @@ public class AdminResetFlagsCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfString() {
+    void testTabCompleteUserStringListOfString() {
         Optional<List<String>> list = arf.tabComplete(user, "", Collections.emptyList());
         assertTrue(list.isPresent());
         assertEquals(2, list.get().size());

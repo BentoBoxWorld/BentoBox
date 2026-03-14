@@ -27,7 +27,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
-public class AdminRangeCommandTest extends CommonTestSetup {
+class AdminRangeCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -93,7 +93,7 @@ public class AdminRangeCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testExecuteConsoleNoArgs() {
+    void testExecuteConsoleNoArgs() {
         AdminRangeCommand arc = new AdminRangeCommand(ac);
         CommandSender sender = mock(CommandSender.class);
         when(sender.spigot()).thenReturn(spigot);
@@ -104,7 +104,7 @@ public class AdminRangeCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testExecutePlayerNoArgs() {
+    void testExecutePlayerNoArgs() {
         AdminRangeCommand arc = new AdminRangeCommand(ac);
         arc.execute(user, "", new ArrayList<>());
         // Show help"

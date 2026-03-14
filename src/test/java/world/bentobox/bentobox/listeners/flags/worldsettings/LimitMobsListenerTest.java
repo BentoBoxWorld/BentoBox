@@ -24,7 +24,7 @@ import world.bentobox.bentobox.CommonTestSetup;
  * @author tastybento
  *
  */
-public class LimitMobsListenerTest extends CommonTestSetup {
+class LimitMobsListenerTest extends CommonTestSetup {
 
    private List<String> list = new ArrayList<>();
     private LimitMobsListener lml;
@@ -71,7 +71,7 @@ public class LimitMobsListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.LimitMobsListener#onMobSpawn(org.bukkit.event.entity.CreatureSpawnEvent)}.
      */
     @Test
-    public void testOnMobSpawn() {
+    void testOnMobSpawn() {
         CreatureSpawnEvent e = new CreatureSpawnEvent(skelly, SpawnReason.NATURAL);
         lml.onMobSpawn(e);
         assertTrue(e.isCancelled());
@@ -81,7 +81,7 @@ public class LimitMobsListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.LimitMobsListener#onMobSpawn(org.bukkit.event.entity.CreatureSpawnEvent)}.
      */
     @Test
-    public void testOnMobSpawnNotInWorld() {
+    void testOnMobSpawnNotInWorld() {
         when(location.getWorld()).thenReturn(mock(World.class));
         CreatureSpawnEvent e = new CreatureSpawnEvent(skelly, SpawnReason.NATURAL);
         lml.onMobSpawn(e);
@@ -92,7 +92,7 @@ public class LimitMobsListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.LimitMobsListener#onMobSpawn(org.bukkit.event.entity.CreatureSpawnEvent)}.
      */
     @Test
-    public void testOnMobSpawnOkayToSpawn() {
+    void testOnMobSpawnOkayToSpawn() {
         CreatureSpawnEvent e = new CreatureSpawnEvent(zombie, SpawnReason.NATURAL);
         lml.onMobSpawn(e);
         assertFalse(e.isCancelled());
@@ -102,7 +102,7 @@ public class LimitMobsListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.LimitMobsListener#onMobSpawn(org.bukkit.event.entity.CreatureSpawnEvent)}.
      */
     @Test
-    public void testOnMobSpawnJockey() {
+    void testOnMobSpawnJockey() {
         CreatureSpawnEvent e = new CreatureSpawnEvent(jockey, SpawnReason.JOCKEY);
         lml.onMobSpawn(e);
         assertTrue(e.isCancelled());

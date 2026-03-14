@@ -27,7 +27,7 @@ import world.bentobox.bentobox.CommonTestSetup;
  * @author tastybento
  *
  */
-public class ExperiencePickupListenerTest extends CommonTestSetup {
+class ExperiencePickupListenerTest extends CommonTestSetup {
 
     private EntityTargetLivingEntityEvent e;
     private ExperiencePickupListener epl;
@@ -55,7 +55,7 @@ public class ExperiencePickupListenerTest extends CommonTestSetup {
      * Test method for {@link ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
      */
     @Test
-    public void testOnExperienceOrbTargetPlayerNotAllowed() {
+    void testOnExperienceOrbTargetPlayerNotAllowed() {
         // Not allowed
         when(island.isAllowed(any(), any())).thenReturn(false);
         epl.onExperienceOrbTargetPlayer(e);
@@ -67,7 +67,7 @@ public class ExperiencePickupListenerTest extends CommonTestSetup {
      * Test method for {@link ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
      */
     @Test
-    public void testOnExperienceOrbTargetPlayerAllowed() {
+    void testOnExperienceOrbTargetPlayerAllowed() {
         epl.onExperienceOrbTargetPlayer(e);
         assertNotNull(e.getTarget());
         verify(notifier, never()).notify(any(), anyString());
@@ -77,7 +77,7 @@ public class ExperiencePickupListenerTest extends CommonTestSetup {
      * Test method for {@link ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
      */
     @Test
-    public void testOnExperienceOrbTargetNotPlayer() {
+    void testOnExperienceOrbTargetNotPlayer() {
         LivingEntity zombie = mock(Zombie.class);
         e = new EntityTargetLivingEntityEvent(entity, zombie, TargetReason.CLOSEST_ENTITY);
         epl.onExperienceOrbTargetPlayer(e);
@@ -89,7 +89,7 @@ public class ExperiencePickupListenerTest extends CommonTestSetup {
      * Test method for {@link ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
      */
     @Test
-    public void testOnExperienceOrbTargetPlayerNotOrb() {
+    void testOnExperienceOrbTargetPlayerNotOrb() {
         entity = mock(ArmorStand.class);
         epl.onExperienceOrbTargetPlayer(e);
         assertNotNull(e.getTarget());

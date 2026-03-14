@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Test;
  * @author tastybento
  *
  */
-public class MetaDataValueTest {
+class MetaDataValueTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.metadata.MetaDataValue#asInt()}.
      */
     @Test
-    public void testAsInt() {
+    void testAsInt() {
         MetaDataValue mdv = new MetaDataValue(123);
         assertEquals(123, mdv.asInt());
     }
@@ -26,7 +26,7 @@ public class MetaDataValueTest {
      * Test method for {@link world.bentobox.bentobox.api.metadata.MetaDataValue#asFloat()}.
      */
     @Test
-    public void testAsFloat() {
+    void testAsFloat() {
         MetaDataValue mdv = new MetaDataValue(123.34F);
         assertEquals(123.34F, mdv.asFloat(), 0F);
     }
@@ -35,7 +35,7 @@ public class MetaDataValueTest {
      * Test method for {@link world.bentobox.bentobox.api.metadata.MetaDataValue#asDouble()}.
      */
     @Test
-    public void testAsDouble() {
+    void testAsDouble() {
         MetaDataValue mdv = new MetaDataValue(123.3444D);
         assertEquals(123.3444D, mdv.asDouble(), 0D);
     }
@@ -44,7 +44,7 @@ public class MetaDataValueTest {
      * Test method for {@link world.bentobox.bentobox.api.metadata.MetaDataValue#asLong()}.
      */
     @Test
-    public void testAsLong() {
+    void testAsLong() {
         MetaDataValue mdv = new MetaDataValue(123456L);
         assertEquals(123456L, mdv.asLong());
     }
@@ -53,7 +53,7 @@ public class MetaDataValueTest {
      * Test method for {@link world.bentobox.bentobox.api.metadata.MetaDataValue#asShort()}.
      */
     @Test
-    public void testAsShort() {
+    void testAsShort() {
         MetaDataValue mdv = new MetaDataValue((short)12);
         assertEquals((short)12, mdv.asShort());
     }
@@ -62,7 +62,7 @@ public class MetaDataValueTest {
      * Test method for {@link world.bentobox.bentobox.api.metadata.MetaDataValue#asByte()}.
      */
     @Test
-    public void testAsByte() {
+    void testAsByte() {
         MetaDataValue mdv = new MetaDataValue((byte)12);
         assertEquals((byte)12, mdv.asByte());
     }
@@ -71,7 +71,7 @@ public class MetaDataValueTest {
      * Test method for {@link world.bentobox.bentobox.api.metadata.MetaDataValue#asBoolean()}.
      */
     @Test
-    public void testAsBoolean() {
+    void testAsBoolean() {
         MetaDataValue mdv = new MetaDataValue(false);
         assertFalse(mdv.asBoolean());
         mdv = new MetaDataValue(true);
@@ -82,7 +82,7 @@ public class MetaDataValueTest {
      * Test method for {@link world.bentobox.bentobox.api.metadata.MetaDataValue#asString()}.
      */
     @Test
-    public void testAsString() {
+    void testAsString() {
         MetaDataValue mdv = new MetaDataValue("a string");
         assertEquals("a string", mdv.asString());
     }

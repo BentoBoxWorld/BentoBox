@@ -35,7 +35,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 
 
-public class MobSpawnListenerTest extends CommonTestSetup {
+class MobSpawnListenerTest extends CommonTestSetup {
 
     @Mock
     private Zombie zombie;
@@ -104,7 +104,7 @@ public class MobSpawnListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testNotInWorld() {
+    void testNotInWorld() {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
@@ -127,7 +127,7 @@ public class MobSpawnListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnNaturalMonsterSpawnBlocked() {
+    void testOnNaturalMonsterSpawnBlocked() {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
@@ -176,7 +176,7 @@ public class MobSpawnListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnNaturalMobSpawnUnBlocked() {
+    void testOnNaturalMobSpawnUnBlocked() {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
@@ -206,7 +206,7 @@ public class MobSpawnListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnNaturalMonsterSpawnBlockedNoIsland() {
+    void testOnNaturalMonsterSpawnBlockedNoIsland() {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
@@ -230,7 +230,7 @@ public class MobSpawnListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnNaturalMobSpawnUnBlockedNoIsland() {
+    void testOnNaturalMobSpawnUnBlockedNoIsland() {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         when(im.getIslandAt(any())).thenReturn(Optional.empty());

@@ -53,7 +53,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
-public class TestBentoBox extends CommonTestSetup {
+class TestBentoBox extends CommonTestSetup {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID VISITOR_UUID = UUID.randomUUID();
     @Mock
@@ -117,7 +117,7 @@ public class TestBentoBox extends CommonTestSetup {
     }
 
     @Test
-    public void testIslandEvent() {
+    void testIslandEvent() {
         // Test island events
         IslandBaseEvent event = TeamEvent.builder()
                 //.island(getIslands().getIsland(playerUUID))
@@ -128,7 +128,7 @@ public class TestBentoBox extends CommonTestSetup {
     }
 
     @Test
-    public void testCommandAPI() {
+    void testCommandAPI() {
         // Test command
         User user = User.getInstance(uuid);
         CompositeCommand testCommand = new TestCommand();
@@ -309,7 +309,7 @@ public class TestBentoBox extends CommonTestSetup {
 
     // Protection tests
     @Test
-    public void testProtection() {
+    void testProtection() {
         User owner = User.getInstance(uuid);
         Island island = new Island();
         island.setOwner(uuid);
@@ -407,7 +407,7 @@ public class TestBentoBox extends CommonTestSetup {
     }
 
     @Test
-    public void testEventProtection() {
+    void testEventProtection() {
         // Test events
 
         TestFlagListener fl = new TestFlagListener(plugin);
@@ -427,7 +427,7 @@ public class TestBentoBox extends CommonTestSetup {
     }
 
     @Test
-    public void testDefaultFlags() {
+    void testDefaultFlags() {
         // Check all the default flags
         FlagsManager fm = new FlagsManager(plugin);
         Collection<Flag> defaultFlags = Flags.values();
@@ -441,7 +441,7 @@ public class TestBentoBox extends CommonTestSetup {
     }
 
     @Test
-    public void testCustomFlags() {
+    void testCustomFlags() {
         // Custom
         TestFlagListener fl = new TestFlagListener(plugin);
         Flag customFlag = new Flag.Builder("CUSTOM_FLAG", Material.DIAMOND).listener(fl).build();

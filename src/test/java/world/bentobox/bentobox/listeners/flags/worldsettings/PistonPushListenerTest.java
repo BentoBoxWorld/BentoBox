@@ -29,7 +29,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-public class PistonPushListenerTest extends CommonTestSetup {
+class PistonPushListenerTest extends CommonTestSetup {
 
     @Mock
     private Block block;
@@ -93,7 +93,7 @@ public class PistonPushListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPistonExtendFlagNotSet() {
+    void testOnPistonExtendFlagNotSet() {
         Flags.PISTON_PUSH.setSetting(world, false);
         BlockPistonExtendEvent e = new BlockPistonExtendEvent(block, blocks, BlockFace.EAST);
         new PistonPushListener().onPistonExtend(e);
@@ -103,7 +103,7 @@ public class PistonPushListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPistonExtendFlagSetOnIsland() {
+    void testOnPistonExtendFlagSetOnIsland() {
 
         // The blocks in the pushed list are all inside the island
         when(island.onIsland(any())).thenReturn(true);
@@ -116,7 +116,7 @@ public class PistonPushListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPistonExtendFlagSetOffIsland() {
+    void testOnPistonExtendFlagSetOffIsland() {
         // The blocks in the pushed list are all outside the island
         when(island.onIsland(any())).thenReturn(false);
 

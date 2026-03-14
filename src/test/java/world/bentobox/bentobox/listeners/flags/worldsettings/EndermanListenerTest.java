@@ -36,7 +36,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class EndermanListenerTest extends CommonTestSetup {
+class EndermanListenerTest extends CommonTestSetup {
 
     private Enderman enderman;
     private Slime slime;
@@ -97,7 +97,7 @@ public class EndermanListenerTest extends CommonTestSetup {
      * Test method for {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
-    public void testNotEnderman() {
+    void testNotEnderman() {
         EndermanListener listener = new EndermanListener();
         Block to = mock(Block.class);
         Material block = Material.ACACIA_DOOR;
@@ -110,7 +110,7 @@ public class EndermanListenerTest extends CommonTestSetup {
      * Test method for {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
-    public void testOnEndermanGriefWrongWorld() {
+    void testOnEndermanGriefWrongWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         EndermanListener listener = new EndermanListener();
@@ -125,7 +125,7 @@ public class EndermanListenerTest extends CommonTestSetup {
      * Test method for {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
-    public void testOnEndermanGriefAllowed() {
+    void testOnEndermanGriefAllowed() {
         Flags.ENDERMAN_GRIEFING.setSetting(world, true);
         EndermanListener listener = new EndermanListener();
         Block to = mock(Block.class);
@@ -139,7 +139,7 @@ public class EndermanListenerTest extends CommonTestSetup {
      * Test method for {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
-    public void testOnEndermanGrief() {
+    void testOnEndermanGrief() {
         EndermanListener listener = new EndermanListener();
         Block to = mock(Block.class);
         Material block = Material.ACACIA_DOOR;

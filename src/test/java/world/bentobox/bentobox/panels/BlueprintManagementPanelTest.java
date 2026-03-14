@@ -35,7 +35,7 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
  * @author tastybento
  *
  */
-public class BlueprintManagementPanelTest extends CommonTestSetup {
+class BlueprintManagementPanelTest extends CommonTestSetup {
 
     @Mock
     private User user;
@@ -121,7 +121,7 @@ public class BlueprintManagementPanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openPanel()}.
      */
     @Test
-    public void testOpenPanel() {
+    void testOpenPanel() {
         bmp.openPanel();
         verify(bpm).getBlueprintBundles(addon);
     }
@@ -130,7 +130,7 @@ public class BlueprintManagementPanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openBB(world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
      */
     @Test
-    public void testOpenBB() {
+    void testOpenBB() {
         bmp.openBB(bb);
         verify(bb).getDisplayName();
         verify(bb, times(3)).getBlueprint(any());
@@ -140,7 +140,7 @@ public class BlueprintManagementPanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBundleIcon(world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
      */
     @Test
-    public void testGetBundleIcon() {
+    void testGetBundleIcon() {
         PanelItem pi = bmp.getBundleIcon(bb);
         assertEquals("commands.admin.blueprint.management.edit-description", pi.getName());
         assertEquals(Material.STONE, pi.getItem().getType());
@@ -151,7 +151,7 @@ public class BlueprintManagementPanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBlueprintItem(world.bentobox.bentobox.api.addons.GameModeAddon, int, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle, world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    public void testGetBlueprintItem() {
+    void testGetBlueprintItem() {
         PanelItem pi = bmp.getBlueprintItem(addon, 0, bb, blueprint);
         assertEquals("blueprint name", pi.getName());
         assertEquals(Material.PAPER, pi.getItem().getType());
@@ -162,7 +162,7 @@ public class BlueprintManagementPanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBlueprintItem(world.bentobox.bentobox.api.addons.GameModeAddon, int, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle, world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    public void testGetBlueprintItemWithDisplayNameAndIcon() {
+    void testGetBlueprintItemWithDisplayNameAndIcon() {
         when(blueprint.getDisplayName()).thenReturn("Display Name");
         when(blueprint.getIcon()).thenReturn(Material.BEACON);
         PanelItem pi = bmp.getBlueprintItem(addon, 0, bb, blueprint);
@@ -175,7 +175,7 @@ public class BlueprintManagementPanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBlueprintItem(world.bentobox.bentobox.api.addons.GameModeAddon, int, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle, world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    public void testGetBlueprintItemWithDisplayNameAndIconInWorldSlot() {
+    void testGetBlueprintItemWithDisplayNameAndIconInWorldSlot() {
         when(blueprint.getDisplayName()).thenReturn("Display Name");
         when(blueprint.getIcon()).thenReturn(Material.BEACON);
         PanelItem pi = bmp.getBlueprintItem(addon, 5, bb, blueprint);

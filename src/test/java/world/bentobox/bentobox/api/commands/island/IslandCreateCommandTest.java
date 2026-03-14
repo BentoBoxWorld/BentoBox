@@ -51,7 +51,7 @@ import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
  * @author tastybento
  *
  */
-public class IslandCreateCommandTest extends CommonTestSetup {
+class IslandCreateCommandTest extends CommonTestSetup {
 
     @Mock
     private User user;
@@ -159,7 +159,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#IslandCreateCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
-    public void testIslandCreateCommand() {
+    void testIslandCreateCommand() {
         assertEquals("create", cc.getLabel());
         assertEquals("new", cc.getAliases().getFirst());
     }
@@ -169,7 +169,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertTrue(cc.isOnlyPlayer());
         assertEquals("commands.island.create.parameters", cc.getParameters());
         assertEquals("commands.island.create.description", cc.getDescription());
@@ -180,7 +180,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringHasIsland() {
+    void testCanExecuteUserStringListOfStringHasIsland() {
         // Currently user has two islands
         when(im.getNumberOfConcurrentIslands(user.getUniqueId(), world)).thenReturn(2);
         // Player has an island
@@ -192,7 +192,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringZeroAllowed() {
+    void testCanExecuteUserStringListOfStringZeroAllowed() {
         when(ws.getConcurrentIslands()).thenReturn(0); // No islands allowed
         assertFalse(cc.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.island.create.you-cannot-make");
@@ -203,7 +203,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringHasPerm() {
+    void testCanExecuteUserStringListOfStringHasPerm() {
         // Currently user has two islands
         when(im.getNumberOfConcurrentIslands(user.getUniqueId(), world)).thenReturn(19);
         // Perm
@@ -217,7 +217,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringHasIslandReserved() {
+    void testCanExecuteUserStringListOfStringHasIslandReserved() {
         @Nullable
         Island island = mock(Island.class);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
@@ -231,7 +231,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringTooManyIslands() {
+    void testCanExecuteUserStringListOfStringTooManyIslands() {
         when(im.getPrimaryIsland(any(), any(UUID.class))).thenReturn(null);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         when(iwm.getMaxIslands(any())).thenReturn(100);
@@ -245,7 +245,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringSuccess() throws Exception {
+    void testExecuteUserStringListOfStringSuccess() throws Exception {
         // Bundle exists
         when(bpm.validate(any(), any())).thenReturn("custom");
         // Has permission
@@ -264,7 +264,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringThrowException() throws Exception {
+    void testExecuteUserStringListOfStringThrowException() throws Exception {
         // Bundle exists
         when(bpm.validate(any(), any())).thenReturn("custom");
         // Has permission
@@ -281,7 +281,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringBundleNoPermission() {
+    void testExecuteUserStringListOfStringBundleNoPermission() {
         // Bundle exists
         when(bpm.validate(any(), any())).thenReturn("custom");
         // No permission
@@ -295,7 +295,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringUnknownBundle() {
+    void testExecuteUserStringListOfStringUnknownBundle() {
         assertFalse(cc.execute(user, "", List.of("custom")));
         verify(user).sendMessage("commands.island.create.unknown-blueprint");
         verify(user, never()).sendMessage("commands.island.create.creating-island");
@@ -306,7 +306,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoBundleNoPanel() {
+    void testExecuteUserStringListOfStringNoBundleNoPanel() {
         // Creates default bundle
         assertTrue(cc.execute(user, "", Collections.emptyList()));
         // do not show panel, just make the island
@@ -317,7 +317,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringKnownBundle() throws Exception {
+    void testExecuteUserStringListOfStringKnownBundle() throws Exception {
         // Has permission
         when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
         when(bpm.validate(any(), any())).thenReturn("custom");
@@ -335,7 +335,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringCooldown() {
+    void testExecuteUserStringListOfStringCooldown() {
         assertTrue(cc.execute(user, "", Collections.emptyList()));
         verify(ic, never()).getSubCommand("reset");
     }
@@ -344,7 +344,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoCooldown() {
+    void testExecuteUserStringListOfStringNoCooldown() {
         when(settings.isResetCooldownOnCreate()).thenReturn(true);
         assertTrue(cc.execute(user, "", Collections.emptyList()));
     }
@@ -354,7 +354,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringShowPanel() {
+    void testExecuteUserStringListOfStringShowPanel() {
         Map<String, BlueprintBundle> map = Map.of("bundle1", new BlueprintBundle(), "bundle2", new BlueprintBundle(),
                 "bundle3", new BlueprintBundle());
         when(bpm.getBlueprintBundles(any())).thenReturn(map);
@@ -367,7 +367,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for cost check - cannot afford
      */
     @Test
-    public void testMakeIslandWithCostCannotAfford() {
+    void testMakeIslandWithCostCannotAfford() {
         // Multiple bundles
         BlueprintBundle bb = new BlueprintBundle();
         bb.setCost(100.0);
@@ -394,7 +394,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for cost check - can afford
      */
     @Test
-    public void testMakeIslandWithCostCanAfford() {
+    void testMakeIslandWithCostCanAfford() {
         // Multiple bundles
         BlueprintBundle bb = new BlueprintBundle();
         bb.setCost(100.0);
@@ -421,7 +421,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for cost check - single bundle ignores cost
      */
     @Test
-    public void testMakeIslandCostIgnoredSingleBundle() {
+    void testMakeIslandCostIgnoredSingleBundle() {
         // Single bundle with cost
         BlueprintBundle bb = new BlueprintBundle();
         bb.setCost(100.0);
@@ -442,7 +442,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for cost check - economy disabled ignores cost
      */
     @Test
-    public void testMakeIslandCostIgnoredNoEconomy() {
+    void testMakeIslandCostIgnoredNoEconomy() {
         // Multiple bundles
         BlueprintBundle bb = new BlueprintBundle();
         bb.setCost(100.0);
@@ -463,7 +463,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
      * Test method for cost check - no vault ignores cost
      */
     @Test
-    public void testMakeIslandCostIgnoredNoVault() {
+    void testMakeIslandCostIgnoredNoVault() {
         // Multiple bundles
         BlueprintBundle bb = new BlueprintBundle();
         bb.setCost(100.0);

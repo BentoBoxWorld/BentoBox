@@ -39,7 +39,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminInfoCommandTest extends RanksManagerTestSetup {
+class AdminInfoCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -112,7 +112,7 @@ public class AdminInfoCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.AdminInfoCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("mod.info", iic.getPermission());
         assertFalse(iic.isOnlyPlayer());
         assertEquals("commands.admin.info.parameters", iic.getParameters());
@@ -123,7 +123,7 @@ public class AdminInfoCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.AdminInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringTooManyArgs() {
+    void testExecuteUserStringListOfStringTooManyArgs() {
         assertFalse(iic.execute(user, "", Arrays.asList("hdhh", "hdhdhd")));
         verify(user).sendMessage("commands.help.header", "[label]", "commands.help.console");
     }
@@ -132,7 +132,7 @@ public class AdminInfoCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.AdminInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoArgsConsole() {
+    void testExecuteUserStringListOfStringNoArgsConsole() {
         CommandSender console = mock(CommandSender.class);
         when(console.spigot()).thenReturn(spigot);
         User sender = User.getInstance(console);
@@ -144,7 +144,7 @@ public class AdminInfoCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.AdminInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoArgsNoIsland() {
+    void testExecuteUserStringListOfStringNoArgsNoIsland() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         assertTrue(iic.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.admin.info.no-island");
@@ -154,7 +154,7 @@ public class AdminInfoCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.AdminInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoArgsSuccess() {
+    void testExecuteUserStringListOfStringNoArgsSuccess() {
         assertTrue(iic.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.admin.info.title");
         verify(user).sendMessage(eq("commands.admin.info.island-uuid"), eq("[uuid]"), any());
@@ -176,7 +176,7 @@ public class AdminInfoCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.AdminInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringArgsSuccess() {
+    void testExecuteUserStringListOfStringArgsSuccess() {
         assertTrue(iic.execute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("commands.admin.info.title");
         verify(user).sendMessage(eq("commands.admin.info.island-uuid"), eq("[uuid]"), any());
@@ -199,7 +199,7 @@ public class AdminInfoCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.AdminInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringArgsNoIsland() {
+    void testExecuteUserStringListOfStringArgsNoIsland() {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         assertFalse(iic.execute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("general.errors.player-has-no-island");
@@ -209,7 +209,7 @@ public class AdminInfoCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.AdminInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringArgsUnknownPlayer() {
+    void testExecuteUserStringListOfStringArgsUnknownPlayer() {
         mockedUtil.when(() -> Util.getUUID(any())).thenReturn(null);
         assertFalse(iic.execute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");

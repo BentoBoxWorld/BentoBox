@@ -30,7 +30,7 @@ import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
 
-public class PanelItemBuilderTest extends CommonTestSetup {
+class PanelItemBuilderTest extends CommonTestSetup {
 
     @Override
     @BeforeEach
@@ -54,7 +54,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     
     @Test
     @Disabled("Hitting item check issue")
-    public void testIconMaterial() {
+    void testIconMaterial() {
         PanelItemBuilder builder = new PanelItemBuilder();
         Material m = mock(Material.class);
         when(m.isItem()).thenReturn(true);
@@ -65,7 +65,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testIconItemStack() {
+    void testIconItemStack() {
         PanelItemBuilder builder = new PanelItemBuilder();
         ItemStack ironOre = mock(ItemStack.class);
         when(ironOre.getType()).thenReturn(Material.IRON_ORE);
@@ -77,7 +77,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
 
     @Test
     @Disabled("Incompatibility with Player Head not being an item")
-    public void testIconString() {
+    void testIconString() {
         PanelItemBuilder builder = new PanelItemBuilder();
         builder.icon("tastybento");
         PanelItem item = builder.build();
@@ -88,7 +88,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testName() {
+    void testName() {
         PanelItemBuilder builder = new PanelItemBuilder();
         builder.name("test");
         PanelItem item = builder.build();
@@ -96,7 +96,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testDescriptionListOfString() {
+    void testDescriptionListOfString() {
         PanelItemBuilder builder = new PanelItemBuilder();
         List<String> test = Arrays.asList("test line 1", "test line 2");
         builder.description(test);
@@ -105,7 +105,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testDescriptionStringArray() {
+    void testDescriptionStringArray() {
         PanelItemBuilder builder = new PanelItemBuilder();
         List<String> test = Arrays.asList("test line 3", "test line 4");
         builder.description("test line 3", "test line 4");
@@ -114,7 +114,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testDescriptionString() {
+    void testDescriptionString() {
         PanelItemBuilder builder = new PanelItemBuilder();
         List<String> test = Collections.singletonList("test line 5");
         builder.description("test line 5");
@@ -123,7 +123,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testClickHandler() {
+    void testClickHandler() {
         PanelItemBuilder builder = new PanelItemBuilder();
         // Test without click handler
         PanelItem item = builder.clickHandler(null).build();
@@ -135,7 +135,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGlow() {
+    void testGlow() {
         PanelItemBuilder builder = new PanelItemBuilder();
         // Test without glowing
         PanelItem item = builder.glow(false).build();

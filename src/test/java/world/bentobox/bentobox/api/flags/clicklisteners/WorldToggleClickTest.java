@@ -30,7 +30,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.util.Util;
 
-public class WorldToggleClickTest extends CommonTestSetup {
+class WorldToggleClickTest extends CommonTestSetup {
 
     private WorldToggleClick listener;
     @Mock
@@ -87,7 +87,7 @@ public class WorldToggleClickTest extends CommonTestSetup {
      * Test for {@link WorldToggleClick#onClick(Panel, User, ClickType, int)}
      */
     @Test
-    public void testOnClickNoPermission() {
+    void testOnClickNoPermission() {
         when(user.hasPermission(anyString())).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         verify(user).sendMessage("general.errors.no-permission", "[permission]", "bskyblock.admin.world.settings.test");
@@ -98,7 +98,7 @@ public class WorldToggleClickTest extends CommonTestSetup {
      * Test for {@link WorldToggleClick#onClick(Panel, User, ClickType, int)}
      */
     @Test
-    public void testOnClick() {
+    void testOnClick() {
         when(user.hasPermission(anyString())).thenReturn(true);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         verify(flag).setSetting(any(), eq(true));

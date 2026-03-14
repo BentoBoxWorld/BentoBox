@@ -18,7 +18,7 @@ import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.managers.PlayersManager;
 
-public class DeathListenerTest extends CommonTestSetup {
+class DeathListenerTest extends CommonTestSetup {
 
     private PlayersManager pm;
     private WorldSettings worldSettings;
@@ -50,7 +50,7 @@ public class DeathListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerDeathEventDeathsCounted() {
+    void testOnPlayerDeathEventDeathsCounted() {
         // Test
         DeathListener dl = new DeathListener(plugin);
 
@@ -60,7 +60,7 @@ public class DeathListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerDeathEventDeathsNotCounted() {
+    void testOnPlayerDeathEventDeathsNotCounted() {
         when(worldSettings.isDeathsCounted()).thenReturn(false);
         // Test
         DeathListener dl = new DeathListener(plugin);
@@ -71,7 +71,7 @@ public class DeathListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerDeathEventDeathsCountedNotInWorld() {
+    void testOnPlayerDeathEventDeathsCountedNotInWorld() {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         // Test
         DeathListener dl = new DeathListener(plugin);

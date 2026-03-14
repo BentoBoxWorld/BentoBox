@@ -49,7 +49,7 @@ import world.bentobox.bentobox.managers.RanksManager;
 /**
  * @author tastybento
  */
-public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
+class IslandTeamKickCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -161,7 +161,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoTeam() {
+    void testExecuteNoTeam() {
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
@@ -172,7 +172,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteLowerTeamRank() {
+    void testExecuteLowerTeamRank() {
         when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRank(notUUID)).thenReturn(RanksManager.SUB_OWNER_RANK);
 
@@ -190,7 +190,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteEqualTeamRank() {
+    void testExecuteEqualTeamRank() {
         when(island.getRank(user)).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(island.getRank(notUUID)).thenReturn(RanksManager.SUB_OWNER_RANK);
 
@@ -208,7 +208,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteLargerTeamRank() {
+    void testExecuteLargerTeamRank() {
         when(island.getRank(user)).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(island.getRank(notUUID)).thenReturn(RanksManager.MEMBER_RANK);
 
@@ -227,7 +227,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoCommandRank() {
+    void testExecuteNoCommandRank() {
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
 
@@ -241,7 +241,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoTarget() {
+    void testExecuteNoTarget() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         // Show help
@@ -252,7 +252,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteUnknownPlayer() {
+    void testExecuteUnknownPlayer() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(null);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
@@ -264,7 +264,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteSamePlayer() {
+    void testExecuteSamePlayer() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(uuid);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
@@ -276,7 +276,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteDifferentPlayerNotInTeam() {
+    void testExecuteDifferentPlayerNotInTeam() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
@@ -288,7 +288,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteDifferentPlayerNoRank() {
+    void testExecuteDifferentPlayerNoRank() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
@@ -301,7 +301,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoConfirmation() {
+    void testExecuteNoConfirmation() {
         when(s.isKickConfirmation()).thenReturn(false);
 
         when(pm.getUUID(any())).thenReturn(notUUID);
@@ -319,7 +319,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoConfirmationKeepInventory() {
+    void testExecuteNoConfirmationKeepInventory() {
         when(iwm.isOnLeaveResetInventory(any())).thenReturn(true);
         when(iwm.isKickedKeepInventory(any())).thenReturn(true);
         when(s.isKickConfirmation()).thenReturn(false);
@@ -341,7 +341,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoConfirmationLoseInventoryOffline() {
+    void testExecuteNoConfirmationLoseInventoryOffline() {
         when(iwm.isOnLeaveResetInventory(any())).thenReturn(true);
         when(iwm.isKickedKeepInventory(any())).thenReturn(false);
         when(s.isKickConfirmation()).thenReturn(false);
@@ -367,7 +367,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteWithConfirmation() {
+    void testExecuteWithConfirmation() {
         when(s.isKickConfirmation()).thenReturn(true);
 
         when(pm.getUUID(any())).thenReturn(notUUID);
@@ -384,7 +384,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandTeamKickCommand#setCooldown(UUID, UUID, int)}
      */
     @Test
-    public void testCooldown() {
+    void testCooldown() {
         // 10 minutes = 600 seconds
         when(s.getInviteCooldown()).thenReturn(10);
         testExecuteNoConfirmation();
@@ -392,7 +392,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testTabCompleteNoArgument() {
+    void testTabCompleteNoArgument() {
 
         Builder<UUID> memberSet = new ImmutableSet.Builder<>();
         for (int j = 0; j < 11; j++) {
@@ -424,7 +424,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testTabCompleteWithArgument() {
+    void testTabCompleteWithArgument() {
 
         Builder<UUID> memberSet = new ImmutableSet.Builder<>();
         for (int j = 0; j < 11; j++) {
@@ -457,7 +457,7 @@ public class IslandTeamKickCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testTabCompleteWithWrongArgument() {
+    void testTabCompleteWithWrongArgument() {
 
         Builder<UUID> memberSet = new ImmutableSet.Builder<>();
         for (int j = 0; j < 11; j++) {

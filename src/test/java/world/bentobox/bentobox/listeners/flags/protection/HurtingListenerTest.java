@@ -55,7 +55,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class HurtingListenerTest extends CommonTestSetup {
+class HurtingListenerTest extends CommonTestSetup {
 
     @Mock
     private Enderman enderman;
@@ -100,7 +100,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageMonsteronMonster() {
+    void testOnEntityDamageMonsteronMonster() {
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, enderman, null, null, 0);
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
@@ -111,7 +111,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamagePlayeronMonster() {
+    void testOnEntityDamagePlayeronMonster() {
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(mockPlayer, enderman, null, null, 0);
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
@@ -124,7 +124,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamagePlayeronMonsterOp() {
+    void testOnEntityDamagePlayeronMonsterOp() {
         when(mockPlayer.isOp()).thenReturn(true);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(mockPlayer, enderman, null, null, 0);
         HurtingListener hl = new HurtingListener();
@@ -137,7 +137,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingDisallowArmorStandCatching() {
+    void testOnFishingDisallowArmorStandCatching() {
         ArmorStand entity = mock(ArmorStand.class);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
@@ -152,7 +152,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingAllowArmorStandCatching() {
+    void testOnFishingAllowArmorStandCatching() {
         ArmorStand entity = mock(ArmorStand.class);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
@@ -169,7 +169,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingDisallowAnimalCatching() {
+    void testOnFishingDisallowAnimalCatching() {
         Animals entity = mock(Animals.class);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
@@ -184,7 +184,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingAllowAnimalsCatching() {
+    void testOnFishingAllowAnimalsCatching() {
         Animals entity = mock(Animals.class);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
@@ -201,7 +201,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingDisallowMonsterCatching() {
+    void testOnFishingDisallowMonsterCatching() {
         Monster entity = mock(Monster.class);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
@@ -216,7 +216,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingAllowMonsterCatching() {
+    void testOnFishingAllowMonsterCatching() {
         Monster entity = mock(Monster.class);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
@@ -233,7 +233,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingDisallowVillagerCatching() {
+    void testOnFishingDisallowVillagerCatching() {
         Villager entity = mock(Villager.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getType()).thenReturn(EntityType.VILLAGER);
@@ -249,7 +249,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingDisallowWanderingTraderCatching() {
+    void testOnFishingDisallowWanderingTraderCatching() {
         WanderingTrader entity = mock(WanderingTrader.class);
         when(entity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         when(entity.getLocation()).thenReturn(location);
@@ -266,7 +266,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingAllowVillagerCatching() {
+    void testOnFishingAllowVillagerCatching() {
         Villager entity = mock(Villager.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getType()).thenReturn(EntityType.VILLAGER);
@@ -284,7 +284,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingAllowWanderingTraderCatching() {
+    void testOnFishingAllowWanderingTraderCatching() {
         WanderingTrader entity = mock(WanderingTrader.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getType()).thenReturn(EntityType.WANDERING_TRADER);
@@ -307,7 +307,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Non-parrot entity → no flag check.
      */
     @Test
-    public void testOnPlayerFeedParrotsNotParrot() {
+    void testOnPlayerFeedParrotsNotParrot() {
         Villager villager = mock(Villager.class);
         when(villager.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, villager, EquipmentSlot.HAND);
@@ -320,7 +320,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Tamed parrot + COOKIE in main hand, island disallows → HURT_TAMED_ANIMALS blocked.
      */
     @Test
-    public void testOnPlayerFeedParrotsTamedCookieMainHandDisallowed() {
+    void testOnPlayerFeedParrotsTamedCookieMainHandDisallowed() {
         Parrot parrot = mock(Parrot.class);
         when(parrot.getLocation()).thenReturn(location);
         when(parrot.isTamed()).thenReturn(true);
@@ -338,7 +338,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Tamed parrot + COOKIE in main hand, island allows → no notification.
      */
     @Test
-    public void testOnPlayerFeedParrotsTamedCookieMainHandAllowed() {
+    void testOnPlayerFeedParrotsTamedCookieMainHandAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(true);
         Parrot parrot = mock(Parrot.class);
         when(parrot.getLocation()).thenReturn(location);
@@ -357,7 +357,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Untamed parrot + COOKIE in main hand → HURT_ANIMALS blocked.
      */
     @Test
-    public void testOnPlayerFeedParrotsUntamedCookieMainHandDisallowed() {
+    void testOnPlayerFeedParrotsUntamedCookieMainHandDisallowed() {
         Parrot parrot = mock(Parrot.class);
         when(parrot.getLocation()).thenReturn(location);
         when(parrot.isTamed()).thenReturn(false);
@@ -375,7 +375,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Tamed parrot + COOKIE in off hand → HURT_TAMED_ANIMALS blocked.
      */
     @Test
-    public void testOnPlayerFeedParrotsTamedCookieOffHandDisallowed() {
+    void testOnPlayerFeedParrotsTamedCookieOffHandDisallowed() {
         Parrot parrot = mock(Parrot.class);
         when(parrot.getLocation()).thenReturn(location);
         when(parrot.isTamed()).thenReturn(true);
@@ -393,7 +393,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Parrot + non-COOKIE item in main hand → no flag check.
      */
     @Test
-    public void testOnPlayerFeedParrotsNonCookieItem() {
+    void testOnPlayerFeedParrotsNonCookieItem() {
         Parrot parrot = mock(Parrot.class);
         when(parrot.getLocation()).thenReturn(location);
         ItemStack stick = mock(ItemStack.class);
@@ -423,7 +423,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Shooter is a non-player entity → nothing happens.
      */
     @Test
-    public void testOnSplashPotionSplashNonPlayerShooter() {
+    void testOnSplashPotionSplashNonPlayerShooter() {
         ThrownPotion tp = mock(ThrownPotion.class);
         Monster shooter = mock(Monster.class);
         when(tp.getShooter()).thenReturn(shooter);
@@ -441,7 +441,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Attacker is in the affected list (self-damage) → skipped.
      */
     @Test
-    public void testOnSplashPotionSplashSelfDamage() {
+    void testOnSplashPotionSplashSelfDamage() {
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(mockPlayer);
         Map<LivingEntity, Double> map = new HashMap<>();
@@ -456,7 +456,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Monster in splash radius, island disallows → HURT_MONSTERS blocked, effects removed.
      */
     @Test
-    public void testOnSplashPotionSplashMonsterDisallowed() {
+    void testOnSplashPotionSplashMonsterDisallowed() {
         PotionEffectType effectType = mock(PotionEffectType.class);
         ThrownPotion tp = mockThrownPotion(effectType);
         when(tp.getShooter()).thenReturn(mockPlayer);
@@ -476,7 +476,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Monster in splash radius, island allows → no notification, no effect removal.
      */
     @Test
-    public void testOnSplashPotionSplashMonsterAllowed() {
+    void testOnSplashPotionSplashMonsterAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(true);
         PotionEffectType effectType = mock(PotionEffectType.class);
         ThrownPotion tp = mockThrownPotion(effectType);
@@ -497,7 +497,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Passive animal in splash radius, island disallows → HURT_ANIMALS blocked.
      */
     @Test
-    public void testOnSplashPotionSplashAnimalDisallowed() {
+    void testOnSplashPotionSplashAnimalDisallowed() {
         PotionEffectType effectType = mock(PotionEffectType.class);
         ThrownPotion tp = mockThrownPotion(effectType);
         when(tp.getShooter()).thenReturn(mockPlayer);
@@ -516,7 +516,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Villager in splash radius, island disallows → HURT_VILLAGERS blocked.
      */
     @Test
-    public void testOnSplashPotionSplashVillagerDisallowed() {
+    void testOnSplashPotionSplashVillagerDisallowed() {
         PotionEffectType effectType = mock(PotionEffectType.class);
         ThrownPotion tp = mockThrownPotion(effectType);
         when(tp.getShooter()).thenReturn(mockPlayer);
@@ -536,7 +536,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Tamed animal in splash radius, island disallows → HURT_TAMED_ANIMALS blocked.
      */
     @Test
-    public void testOnSplashPotionSplashTamedAnimalDisallowed() {
+    void testOnSplashPotionSplashTamedAnimalDisallowed() {
         PotionEffectType effectType = mock(PotionEffectType.class);
         ThrownPotion tp = mockThrownPotion(effectType);
         when(tp.getShooter()).thenReturn(mockPlayer);
@@ -560,7 +560,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Non-player shooter → nothing stored, no scheduler invoked.
      */
     @Test
-    public void testOnLingeringPotionSplashNonPlayerShooter() {
+    void testOnLingeringPotionSplashNonPlayerShooter() {
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(mock(Monster.class));
         org.bukkit.entity.AreaEffectCloud cloud = mock(org.bukkit.entity.AreaEffectCloud.class);
@@ -574,7 +574,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Player shooter → entity ID stored, scheduler task registered.
      */
     @Test
-    public void testOnLingeringPotionSplashPlayerShooter() {
+    void testOnLingeringPotionSplashPlayerShooter() {
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(mockPlayer);
         org.bukkit.entity.AreaEffectCloud cloud = mock(org.bukkit.entity.AreaEffectCloud.class);
@@ -595,7 +595,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Wrong DamageCause → event ignored.
      */
     @Test
-    public void testOnLingeringPotionDamageWrongCause() {
+    void testOnLingeringPotionDamageWrongCause() {
         Monster cloud = mock(Monster.class);
         when(cloud.getEntityId()).thenReturn(99);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(cloud, enderman, DamageCause.MAGIC, null, 5);
@@ -608,7 +608,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Correct cause but damager not in thrownPotions map → event ignored.
      */
     @Test
-    public void testOnLingeringPotionDamageNotInMap() {
+    void testOnLingeringPotionDamageNotInMap() {
         Monster cloud = mock(Monster.class);
         when(cloud.getEntityId()).thenReturn(99);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(cloud, enderman, DamageCause.ENTITY_ATTACK, null, 5);
@@ -621,7 +621,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Damager is in thrownPotions, hits a monster, island disallows → HURT_MONSTERS blocked.
      */
     @Test
-    public void testOnLingeringPotionDamageMonsterDisallowed() {
+    void testOnLingeringPotionDamageMonsterDisallowed() {
         // First, fire a lingering potion to populate thrownPotions
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(mockPlayer);
@@ -647,7 +647,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Damager in thrownPotions, hits monster, island allows → not cancelled.
      */
     @Test
-    public void testOnLingeringPotionDamageMonsterAllowed() {
+    void testOnLingeringPotionDamageMonsterAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(true);
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(mockPlayer);
@@ -671,7 +671,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Self-damage (attacker == entity) → skipped.
      */
     @Test
-    public void testOnLingeringPotionDamageSelfDamage() {
+    void testOnLingeringPotionDamageSelfDamage() {
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(mockPlayer);
         org.bukkit.entity.AreaEffectCloud cloud = mock(org.bukkit.entity.AreaEffectCloud.class);
@@ -697,7 +697,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Non-player entity type → firework not stored.
      */
     @Test
-    public void testOnPlayerShootEventNotPlayer() {
+    void testOnPlayerShootEventNotPlayer() {
         HurtingListener hl = new HurtingListener();
         Firework firework = mock(Firework.class);
         when(firework.getEntityId()).thenReturn(100);
@@ -716,7 +716,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Player shoots an arrow (not a firework) → not stored.
      */
     @Test
-    public void testOnPlayerShootEventNotFirework() {
+    void testOnPlayerShootEventNotFirework() {
         HurtingListener hl = new HurtingListener();
         Projectile arrow = mock(Projectile.class);
         EntityShootBowEvent e = new EntityShootBowEvent(mockPlayer, null, null, arrow, EquipmentSlot.HAND, 1F, false);
@@ -729,7 +729,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Player shoots a firework → stored; subsequent onFireworkDamage on monster is blocked.
      */
     @Test
-    public void testOnPlayerShootEventPlayerFireworkStoredThenDamageBlocked() {
+    void testOnPlayerShootEventPlayerFireworkStoredThenDamageBlocked() {
         HurtingListener hl = new HurtingListener();
         Firework firework = mock(Firework.class);
         when(firework.getEntityId()).thenReturn(101);
@@ -753,7 +753,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Damager is not a Firework → event ignored.
      */
     @Test
-    public void testOnFireworkDamageDamagerNotFirework() {
+    void testOnFireworkDamageDamagerNotFirework() {
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, enderman, DamageCause.ENTITY_EXPLOSION, null, 5);
         new HurtingListener().onFireworkDamage(e);
         assertFalse(e.isCancelled());
@@ -765,7 +765,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Damager is a Firework but not tracked in firedFireworks → event ignored.
      */
     @Test
-    public void testOnFireworkDamageFireworkNotInMap() {
+    void testOnFireworkDamageFireworkNotInMap() {
         Firework firework = mock(Firework.class);
         when(firework.getEntityId()).thenReturn(200);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(firework, enderman, DamageCause.ENTITY_EXPLOSION, null, 5);
@@ -778,7 +778,7 @@ public class HurtingListenerTest extends CommonTestSetup {
      * Player-fired firework, island allows → not cancelled.
      */
     @Test
-    public void testOnFireworkDamageAllowed() {
+    void testOnFireworkDamageAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(true);
         HurtingListener hl = new HurtingListener();
         Firework firework = mock(Firework.class);

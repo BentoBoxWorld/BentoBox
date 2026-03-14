@@ -34,7 +34,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-public class OfflineRedstoneListenerTest extends CommonTestSetup {
+class OfflineRedstoneListenerTest extends CommonTestSetup {
 
     private static final String[] NAMES = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
 
@@ -104,7 +104,7 @@ public class OfflineRedstoneListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneDoNothing() {
+    void testOnBlockRedstoneDoNothing() {
         // Make an event to give some current to block
         BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
         OfflineRedstoneListener orl = new OfflineRedstoneListener();
@@ -118,7 +118,7 @@ public class OfflineRedstoneListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneMembersOnline() {
+    void testOnBlockRedstoneMembersOnline() {
         // Make an event to give some current to block
         BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
         OfflineRedstoneListener orl = new OfflineRedstoneListener();
@@ -136,7 +136,7 @@ public class OfflineRedstoneListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneMembersOffline() {
+    void testOnBlockRedstoneMembersOffline() {
         // Make an event to give some current to block
         BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
         OfflineRedstoneListener orl = new OfflineRedstoneListener();
@@ -154,7 +154,7 @@ public class OfflineRedstoneListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneMembersOfflineOpsOnlineNotOnIsland() {
+    void testOnBlockRedstoneMembersOfflineOpsOnlineNotOnIsland() {
         // Make an event to give some current to block
         BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
         OfflineRedstoneListener orl = new OfflineRedstoneListener();
@@ -172,7 +172,7 @@ public class OfflineRedstoneListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneMembersOfflineOpsOnlineOnIsland() {
+    void testOnBlockRedstoneMembersOfflineOpsOnlineOnIsland() {
         // Make an event to give some current to block
         BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
         OfflineRedstoneListener orl = new OfflineRedstoneListener();
@@ -192,7 +192,7 @@ public class OfflineRedstoneListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneMembersOfflineSpawn() {
+    void testOnBlockRedstoneMembersOfflineSpawn() {
         when(island.isSpawn()).thenReturn(true);
         // Make an event to give some current to block
         BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
@@ -211,7 +211,7 @@ public class OfflineRedstoneListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneNonIsland() {
+    void testOnBlockRedstoneNonIsland() {
         // Make an event to give some current to block
         BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
         OfflineRedstoneListener orl = new OfflineRedstoneListener();
@@ -226,7 +226,7 @@ public class OfflineRedstoneListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneNonBentoBoxWorldIsland() {
+    void testOnBlockRedstoneNonBentoBoxWorldIsland() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         // Make an event to give some current to block
         BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);

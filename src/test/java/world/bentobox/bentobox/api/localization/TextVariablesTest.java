@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
  * Test class just to check that these constants don't accidentally change
  * @author tastybento
  */
-public class TextVariablesTest {
+class TextVariablesTest {
 
     @Test
-    public void test() {
+    void test() {
         assertEquals("[name]", TextVariables.NAME);
         assertEquals("[description]", TextVariables.DESCRIPTION);
         assertEquals("[number]", TextVariables.NUMBER);

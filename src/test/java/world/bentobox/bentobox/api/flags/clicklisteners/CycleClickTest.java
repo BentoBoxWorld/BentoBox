@@ -47,7 +47,7 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
-public class CycleClickTest extends RanksManagerTestSetup {
+class CycleClickTest extends RanksManagerTestSetup {
 
     private static final Integer PROTECTION_RANGE = 200;
     private static final Integer X = 600;
@@ -198,7 +198,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testNoPremission() {
+    void testNoPremission() {
         when(user.hasPermission(anyString())).thenReturn(false);
         CycleClick udc = new CycleClick(LOCK);
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, 5));
@@ -206,7 +206,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testUpDownClick() {
+    void testUpDownClick() {
         CycleClick udc = new CycleClick(LOCK);
         assertNotNull(udc);
     }
@@ -215,7 +215,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    public void testOnLeftClick() {
+    void testOnLeftClick() {
         final int SLOT = 5;
         CycleClick udc = new CycleClick(LOCK);
         // Rank starts at member
@@ -234,7 +234,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    public void testOnLeftClickSetMinMax() {
+    void testOnLeftClickSetMinMax() {
         // Provide a current rank value - coop
         when(island.getFlag(any())).thenReturn(RanksManager.COOP_RANK);
         final int SLOT = 5;
@@ -255,7 +255,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    public void testOnRightClick() {
+    void testOnRightClick() {
         final int SLOT = 5;
         CycleClick udc = new CycleClick(LOCK);
         // Rank starts at member
@@ -274,7 +274,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    public void testOnRightClickMinMaxSet() {
+    void testOnRightClickMinMaxSet() {
         // Provide a current rank value - coop
         when(island.getFlag(any())).thenReturn(RanksManager.TRUSTED_RANK);
         final int SLOT = 5;
@@ -295,7 +295,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    public void testAllClicks() {
+    void testAllClicks() {
         // Test all possible click types
         CycleClick udc = new CycleClick(LOCK);
         Arrays.asList(ClickType.values()).forEach(c -> assertTrue(udc.onClick(panel, user, c, 0)));
@@ -303,7 +303,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testNoWorld() {
+    void testNoWorld() {
         CycleClick udc = new CycleClick(LOCK);
         when(panel.getWorld()).thenReturn(Optional.empty());
         assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
@@ -314,7 +314,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    public void testOnShiftLeftClickNotOp() {
+    void testOnShiftLeftClickNotOp() {
         CycleClick udc = new CycleClick(LOCK);
         // Click shift left
         assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
@@ -325,7 +325,7 @@ public class CycleClickTest extends RanksManagerTestSetup {
      * Test for {@link CycleClick#onClick(world.bentobox.bentobox.api.panels.Panel, User, ClickType, int)}
      */
     @Test
-    public void testOnShiftLeftClickIsOp() {
+    void testOnShiftLeftClickIsOp() {
         when(user.isOp()).thenReturn(true);
         CycleClick udc = new CycleClick(LOCK);
         // Click shift left

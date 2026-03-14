@@ -45,7 +45,7 @@ import world.bentobox.bentobox.CommonTestSetup;
  * @author tastybento
  *
  */
-public class InventoryListenerTest extends CommonTestSetup {
+class InventoryListenerTest extends CommonTestSetup {
 
     private static final List<Class<?>> HOLDERS = Arrays.asList(Horse.class, Chest.class,
             DoubleChest.class,
@@ -83,7 +83,7 @@ public class InventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickEnchantingAllowed() {
+    void testOnInventoryClickEnchantingAllowed() {
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(mockPlayer);
         EnchantingInventory inv = mock(EnchantingInventory.class);
@@ -102,7 +102,7 @@ public class InventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickAllowed() {
+    void testOnInventoryClickAllowed() {
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory inv = mock(Inventory.class);
@@ -133,7 +133,7 @@ public class InventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickAllowedTrappedChest() {
+    void testOnInventoryClickAllowedTrappedChest() {
         type = Material.TRAPPED_CHEST;
         testOnInventoryClickAllowed();
     }
@@ -142,7 +142,7 @@ public class InventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickNullHolder() {
+    void testOnInventoryClickNullHolder() {
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory inv = mock(Inventory.class);
@@ -163,7 +163,7 @@ public class InventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickNotPlayer() {
+    void testOnInventoryClickNotPlayer() {
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(null);
         Inventory inv = mock(Inventory.class);
@@ -184,7 +184,7 @@ public class InventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickNotAllowed() {
+    void testOnInventoryClickNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(mockPlayer);
@@ -215,7 +215,7 @@ public class InventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickEnchantingNotAllowed() {
+    void testOnInventoryClickEnchantingNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(mockPlayer);
@@ -236,7 +236,7 @@ public class InventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickNotAllowedTrappedChest() {
+    void testOnInventoryClickNotAllowedTrappedChest() {
         type = Material.TRAPPED_CHEST;
         testOnInventoryClickNotAllowed();
     }
@@ -246,7 +246,7 @@ public class InventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickOtherHolderAllowed() {
+    void testOnInventoryClickOtherHolderAllowed() {
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory inv = mock(Inventory.class);
@@ -267,7 +267,7 @@ public class InventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickOtherHolderNotAllowed() {
+    void testOnInventoryClickOtherHolderNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(mockPlayer);
@@ -289,7 +289,7 @@ public class InventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickOtherHolderPlayerNotAllowed() {
+    void testOnInventoryClickOtherHolderPlayerNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(mockPlayer);

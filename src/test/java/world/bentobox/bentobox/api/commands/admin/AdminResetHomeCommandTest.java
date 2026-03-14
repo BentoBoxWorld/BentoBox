@@ -45,7 +45,7 @@ import world.bentobox.bentobox.util.Util;
 /**
  * @author tastybento
  */
-public class AdminResetHomeCommandTest extends CommonTestSetup {
+class AdminResetHomeCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -138,7 +138,7 @@ public class AdminResetHomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsIsEmpty() {
+    void testArgsIsEmpty() {
         // Arrange: args is already empty
 
         // Act
@@ -154,7 +154,7 @@ public class AdminResetHomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsSizeGreaterThan1_InvalidPlayer() {
+    void testArgsSizeGreaterThan1_InvalidPlayer() {
         // Arrange
         args.add("UnknownPlayer");
 
@@ -172,7 +172,7 @@ public class AdminResetHomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsSizeGreaterThan2_UnknownIsland() {
+    void testArgsSizeGreaterThan2_UnknownIsland() {
         // Arrange
         args.add("ValidPlayer");
         args.add("UnknownIsland");
@@ -204,7 +204,7 @@ public class AdminResetHomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("mod.resethome", instance.getPermission());
         assertFalse(instance.isOnlyPlayer());
         assertEquals("commands.admin.resethome.parameters", instance.getParameters());
@@ -216,7 +216,7 @@ public class AdminResetHomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabComplete_ArgsSize2_ReturnsPlayerNames() {
+    void testTabComplete_ArgsSize2_ReturnsPlayerNames() {
         // Arrange
         args.add("someArg"); // args.size() == 1
         args.add(""); // args.size() == 2
@@ -237,7 +237,7 @@ public class AdminResetHomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabComplete_ArgsSizeGreaterThan2_ReturnsIslandNames() {
+    void testTabComplete_ArgsSizeGreaterThan2_ReturnsIslandNames() {
         // Arrange
         args.add("someArg");
         args.add("anotherArg");
@@ -270,7 +270,7 @@ public class AdminResetHomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteWithEmptyIslands_ShouldReturnFalse() {
+    void testExecuteWithEmptyIslands_ShouldReturnFalse() {
         // Arrange
         instance.islands = new HashMap<>(); // Empty islands map
 
@@ -286,7 +286,7 @@ public class AdminResetHomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteSuccessful_SingleIsland() {
+    void testExecuteSuccessful_SingleIsland() {
 
         Map<String, IslandInfo> islandsMap = new HashMap<>();
         islandsMap.put("TestIsland", new IslandInfo(island, false));
@@ -305,7 +305,7 @@ public class AdminResetHomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteSuccessful_MultipleIslands() {
+    void testExecuteSuccessful_MultipleIslands() {
         // Arrange
         Island island1 = mock(Island.class);
         Island island2 = mock(Island.class);

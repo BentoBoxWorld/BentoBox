@@ -45,7 +45,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminSettingsCommandTest extends RanksManagerTestSetup {
+class AdminSettingsCommandTest extends RanksManagerTestSetup {
 
     private AdminSettingsCommand asc;
     @Mock
@@ -143,7 +143,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertFalse(asc.isOnlyPlayer());
         assertEquals("admin.settings", asc.getPermission());
         assertEquals("commands.admin.settings.parameters", asc.getParameters());
@@ -154,7 +154,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteEmpty() {
+    void testCanExecuteEmpty() {
         assertTrue(asc.canExecute(user, "", Collections.emptyList()));
     }
 
@@ -162,7 +162,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOneArgUnknownPlayer() {
+    void testCanExecuteOneArgUnknownPlayer() {
         mockedUtil.when(() -> Util.getUUID(anyString())).thenReturn(null);
         assertFalse(asc.canExecute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tastybento");
@@ -172,7 +172,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOneArgKnownPlayerNoIsland() {
+    void testCanExecuteOneArgKnownPlayerNoIsland() {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         assertFalse(asc.canExecute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("general.errors.player-has-no-island");
@@ -182,7 +182,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOneArgKnownPlayerIslandNotOwner() {
+    void testCanExecuteOneArgKnownPlayerIslandNotOwner() {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         assertFalse(asc.canExecute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("general.errors.player-has-no-island");
@@ -192,7 +192,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOneArgKnownPlayer() {
+    void testCanExecuteOneArgKnownPlayer() {
         assertTrue(asc.canExecute(user, "", Collections.singletonList("tastybento")));
         verify(user, never()).sendMessage(anyString());
     }
@@ -201,7 +201,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOneArgSpawnNoSpawn() {
+    void testCanExecuteOneArgSpawnNoSpawn() {
         mockedUtil.when(() -> Util.getUUID(anyString())).thenReturn(null);
         assertFalse(asc.canExecute(user, "", Collections.singletonList("spawn-island")));
         verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "spawn-island");
@@ -211,7 +211,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOneArgSpawnSpawn() {
+    void testCanExecuteOneArgSpawnSpawn() {
         when(im.getSpawn(any())).thenReturn(Optional.of(island));
         assertTrue(asc.canExecute(user, "", Collections.singletonList("spawn-island")));
         verify(user, never()).sendMessage(anyString());
@@ -221,7 +221,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoArgsConsole() {
+    void testExecuteUserStringListOfStringNoArgsConsole() {
         when(user.isPlayer()).thenReturn(false);
         assertFalse(asc.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("general.errors.use-in-game");
@@ -231,7 +231,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringArgs() {
+    void testExecuteUserStringListOfStringArgs() {
         assertTrue(asc.execute(user, "", Arrays.asList("blah", "blah")));
         verify(user).sendMessage("general.success");
     }
@@ -240,7 +240,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfStringTwoArgs() {
+    void testTabCompleteUserStringListOfStringTwoArgs() {
         Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b", "WORLD_TNT"));
         assertFalse(r.isEmpty());
         assertEquals("WORLD_TNT_DAMAGE", r.get().getFirst());
@@ -250,7 +250,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfStringThreeArgs() {
+    void testTabCompleteUserStringListOfStringThreeArgs() {
         Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b", "WORLD_TNT", "BEACO"));
         assertFalse(r.isEmpty());
         assertEquals("BEACON", r.get().getFirst());
@@ -260,7 +260,7 @@ public class AdminSettingsCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSettingsCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfStringFourArgs() {
+    void testTabCompleteUserStringListOfStringFourArgs() {
         Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b", "b", "PVP_OVERWORLD", "t"));
         assertFalse(r.isEmpty());
         // TODO - finish this.

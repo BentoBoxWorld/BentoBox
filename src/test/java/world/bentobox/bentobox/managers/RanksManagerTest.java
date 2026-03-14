@@ -29,7 +29,7 @@ import world.bentobox.bentobox.database.objects.Ranks;
  * @author tastybento
  *
  */
-public class RanksManagerTest extends CommonTestSetup {
+class RanksManagerTest extends CommonTestSetup {
 
     private  AbstractDatabaseHandler<Ranks> handler;
 
@@ -73,7 +73,7 @@ public class RanksManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.RanksManager#addRank(java.lang.String, int)}.
      */
     @Test
-    public void testAddRank() {
+    void testAddRank() {
         assertTrue(rm.addRank("test.rank.reference", 750));
     }
 
@@ -81,7 +81,7 @@ public class RanksManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.RanksManager#removeRank(java.lang.String)}.
      */
     @Test
-    public void testRemoveRank() {
+    void testRemoveRank() {
         assertTrue(rm.addRank("test.rank.reference2", 650));
         assertTrue(rm.removeRank("test.rank.reference2"));
         // Second time should fail
@@ -92,7 +92,7 @@ public class RanksManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.RanksManager#getRankValue(java.lang.String)}.
      */
     @Test
-    public void testGetRankValue() {
+    void testGetRankValue() {
         rm.addRank("test.rank.reference.value", 600);
         assertEquals(600, rm.getRankValue("test.rank.reference.value"));
     }
@@ -101,7 +101,7 @@ public class RanksManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.RanksManager#getRanks()}.
      */
     @Test
-    public void testGetRanks() {
+    void testGetRanks() {
         Map<String, Integer> ranks = rm.getRanks();
         assertTrue(ranks.containsKey(RanksManager.BANNED_RANK_REF));
         assertTrue(ranks.containsKey(RanksManager.VISITOR_RANK_REF));
@@ -113,7 +113,7 @@ public class RanksManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.RanksManager#getRankUpValue(int)}.
      */
     @Test
-    public void testGetNextRankValue() {
+    void testGetNextRankValue() {
         assertEquals(RanksManager.BANNED_RANK, rm.getRankUpValue(-20));
         assertEquals(RanksManager.VISITOR_RANK, rm.getRankUpValue(RanksManager.BANNED_RANK));
         assertEquals(RanksManager.COOP_RANK, rm.getRankUpValue(RanksManager.VISITOR_RANK));
@@ -126,7 +126,7 @@ public class RanksManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.RanksManager#getRankDownValue(int)}.
      */
     @Test
-    public void testGetPreviousRankValue() {
+    void testGetPreviousRankValue() {
         // Lowest rank is Visitor
         assertEquals(RanksManager.VISITOR_RANK, rm.getRankDownValue(-20));
         assertEquals(RanksManager.VISITOR_RANK, rm.getRankDownValue(RanksManager.VISITOR_RANK));
@@ -138,7 +138,7 @@ public class RanksManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.RanksManager#getRank(int)}.
      */
     @Test
-    public void testGetRank() {
+    void testGetRank() {
         assertEquals(RanksManager.BANNED_RANK_REF, rm.getRank(RanksManager.BANNED_RANK));
         assertEquals(RanksManager.VISITOR_RANK_REF, rm.getRank(RanksManager.VISITOR_RANK));
         assertEquals(RanksManager.MEMBER_RANK_REF, rm.getRank(RanksManager.MEMBER_RANK));

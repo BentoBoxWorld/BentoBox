@@ -40,7 +40,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
+class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private IslandTeamCommand itc;
@@ -131,7 +131,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#IslandTeamInviteAcceptCommand(world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand)}.
      */
     @Test
-    public void testIslandTeamInviteAcceptCommand() {
+    void testIslandTeamInviteAcceptCommand() {
         assertEquals("accept", c.getLabel());
     }
 
@@ -140,7 +140,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         // TODO: test permission inheritance?
         assertTrue(c.isOnlyPlayer());
         assertEquals("commands.island.team.invite.accept.description", c.getDescription());
@@ -151,7 +151,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoInvite() {
+    void testCanExecuteNoInvite() {
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
         verify(user).sendMessage("commands.island.team.invite.errors.none-invited-you");
     }
@@ -160,7 +160,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteInTeam() {
+    void testCanExecuteInTeam() {
         when(itc.isInvited(any())).thenReturn(true);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
         verify(user).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
@@ -170,7 +170,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteInvalidInvite() {
+    void testCanExecuteInvalidInvite() {
         when(itc.isInvited(any())).thenReturn(true);
         when(im.inTeam(any(), any())).thenReturn(false);
         when(island.getRank(any(UUID.class))).thenReturn(RanksManager.VISITOR_RANK);
@@ -183,7 +183,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteSubOwnerRankInvite() {
+    void testCanExecuteSubOwnerRankInvite() {
         when(itc.isInvited(any())).thenReturn(true);
         when(im.inTeam(any(), any())).thenReturn(false);
         when(island.getRank(any(UUID.class))).thenReturn(RanksManager.SUB_OWNER_RANK);
@@ -198,7 +198,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteInvalidInviteNull() {
+    void testCanExecuteInvalidInviteNull() {
         when(itc.getInviter(any())).thenReturn(null);
         when(itc.isInvited(any())).thenReturn(true);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
@@ -210,7 +210,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOkay() {
+    void testCanExecuteOkay() {
         when(itc.isInvited(any())).thenReturn(true);
         when(itc.getInviter(any())).thenReturn(notUUID);
         when(itc.getInvite(any())).thenReturn(invite);
@@ -225,7 +225,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOkayTrust() {
+    void testCanExecuteOkayTrust() {
         when(itc.isInvited(any())).thenReturn(true);
         when(itc.getInviter(any())).thenReturn(notUUID);
         when(itc.getInvite(any())).thenReturn(invite);
@@ -242,7 +242,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOkayCoop() {
+    void testCanExecuteOkayCoop() {
         when(itc.isInvited(any())).thenReturn(true);
         when(itc.getInviter(any())).thenReturn(notUUID);
         when(itc.getInvite(any())).thenReturn(invite);
@@ -259,7 +259,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteEventBlocked() {
+    void testCanExecuteEventBlocked() {
         when(itc.isInvited(any())).thenReturn(true);
         when(itc.getInviter(any())).thenReturn(notUUID);
         when(itc.getInvite(any())).thenReturn(invite);
@@ -285,7 +285,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         // Team
         assertTrue(c.execute(user, "accept", Collections.emptyList()));
         verify(user).getTranslation("commands.island.team.invite.accept.confirmation");
@@ -295,7 +295,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringCoop() {
+    void testExecuteUserStringListOfStringCoop() {
         // Coop
         when(invite.getType()).thenReturn(Type.COOP);
         assertTrue(c.execute(user, "accept", Collections.emptyList()));
@@ -306,7 +306,7 @@ public class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringTrust() {
+    void testExecuteUserStringListOfStringTrust() {
         // Trust
         when(invite.getType()).thenReturn(Type.TRUST);
         assertTrue(c.execute(user, "accept", Collections.emptyList()));

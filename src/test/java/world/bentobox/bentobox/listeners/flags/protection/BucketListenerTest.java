@@ -31,7 +31,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class BucketListenerTest extends CommonTestSetup {
+class BucketListenerTest extends CommonTestSetup {
 
 
     private BucketListener l;
@@ -59,7 +59,7 @@ public class BucketListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
      */
     @Test
-    public void testOnBucketEmptyAllowed() {
+    void testOnBucketEmptyAllowed() {
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
         when(block.getRelative(any())).thenReturn(block);
@@ -73,7 +73,7 @@ public class BucketListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
      */
     @Test
-    public void testOnBucketEmptyNotAllowed() {
+    void testOnBucketEmptyNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
@@ -89,7 +89,7 @@ public class BucketListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketFill(org.bukkit.event.player.PlayerBucketFillEvent)}.
      */
     @Test
-    public void testOnBucketFillAllowed() {
+    void testOnBucketFillAllowed() {
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
         when(block.getRelative(any())).thenReturn(block);
@@ -119,7 +119,7 @@ public class BucketListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketFill(org.bukkit.event.player.PlayerBucketFillEvent)}.
      */
     @Test
-    public void testOnBucketFillNotAllowed() {
+    void testOnBucketFillNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
@@ -152,7 +152,7 @@ public class BucketListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketFill(org.bukkit.event.player.PlayerBucketFillEvent)}.
      */
     @Test
-    public void testOnBucketFillMixedAllowed() {
+    void testOnBucketFillMixedAllowed() {
         when(island.isAllowed(any(), eq(Flags.BUCKET))).thenReturn(false);
         when(island.isAllowed(any(), eq(Flags.COLLECT_WATER))).thenReturn(true);
         when(island.isAllowed(any(), eq(Flags.COLLECT_LAVA))).thenReturn(true);
@@ -188,7 +188,7 @@ public class BucketListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnTropicalFishScoopingNotFish() {
+    void testOnTropicalFishScoopingNotFish() {
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, mockPlayer);
         l.onTropicalFishScooping(e);
         assertFalse(e.isCancelled());
@@ -198,7 +198,7 @@ public class BucketListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnTropicalFishScoopingFishNoWaterBucket() {
+    void testOnTropicalFishScoopingFishNoWaterBucket() {
         TropicalFish fish = mock(TropicalFish.class);
         when(fish.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, fish );
@@ -215,7 +215,7 @@ public class BucketListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnTropicalFishScoopingFishWaterBucket() {
+    void testOnTropicalFishScoopingFishWaterBucket() {
         TropicalFish fish = mock(TropicalFish.class);
         when(fish.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, fish );
@@ -232,7 +232,7 @@ public class BucketListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnTropicalFishScoopingFishWaterBucketNotAllowed() {
+    void testOnTropicalFishScoopingFishWaterBucketNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         TropicalFish fish = mock(TropicalFish.class);
         when(fish.getLocation()).thenReturn(location);

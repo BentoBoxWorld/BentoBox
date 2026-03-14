@@ -27,7 +27,7 @@ import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 
-public class SettingsTabTest extends CommonTestSetup {
+class SettingsTabTest extends CommonTestSetup {
 
     private SettingsTab tab;
     private User user;
@@ -53,35 +53,35 @@ public class SettingsTabTest extends CommonTestSetup {
     }
 
     @Test
-    public void testSettingsTabWorldUserType() {
+    void testSettingsTabWorldUserType() {
         tab = new SettingsTab(world, user, Type.PROTECTION);
     }
 
     @Test
-    public void testSettingsTabWorldUserTypeMode() {
+    void testSettingsTabWorldUserTypeMode() {
         tab = new SettingsTab(world, user, Type.PROTECTION, Mode.ADVANCED);
     }
 
     @Test
-    public void testGetFlags() {
+    void testGetFlags() {
         testSettingsTabWorldUserTypeMode();
         tab.getFlags();
     }
 
     @Test
-    public void testGetIcon() {
+    void testGetIcon() {
         testSettingsTabWorldUserTypeMode();
         tab.getIcon();
     }
 
     @Test
-    public void testGetName() {
+    void testGetName() {
         testSettingsTabWorldUserTypeMode();
         assertEquals("protection.panel.PROTECTION.title", tab.getName());
     }
 
     @Test
-    public void testGetPanelItems() {
+    void testGetPanelItems() {
         testSettingsTabWorldUserTypeMode();
         @NonNull
         List<@Nullable PanelItem> items = tab.getPanelItems();
@@ -89,38 +89,38 @@ public class SettingsTabTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGetTabIcons() {
+    void testGetTabIcons() {
         testSettingsTabWorldUserTypeMode();
         Map<Integer, PanelItem> icons = tab.getTabIcons();
         assertFalse(icons.isEmpty());
     }
 
     @Test
-    public void testGetPermission() {
+    void testGetPermission() {
         testSettingsTabWorldUserTypeMode();
         assertEquals("", tab.getPermission());
     }
 
     @Test
-    public void testGetType() {
+    void testGetType() {
         testSettingsTabWorldUserTypeMode();
         assertEquals(Type.PROTECTION, tab.getType());
     }
 
     @Test
-    public void testGetUser() {
+    void testGetUser() {
         testSettingsTabWorldUserTypeMode();
         assertSame(user, tab.getUser());
     }
 
     @Test
-    public void testGetWorld() {
+    void testGetWorld() {
         testSettingsTabWorldUserTypeMode();
         assertSame(world, tab.getWorld());
     }
 
     @Test
-    public void testGetIsland() {
+    void testGetIsland() {
         testSettingsTabWorldUserTypeMode();
         assertNull(tab.getIsland());
         tab.setParentPanel(parent);
@@ -128,14 +128,14 @@ public class SettingsTabTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnClick() {
+    void testOnClick() {
         testSettingsTabWorldUserTypeMode();
         Panel panel = mock(Panel.class);
         tab.onClick(panel, user, ClickType.LEFT, 0);
     }
 
     @Test
-    public void testGetParentPanel() {
+    void testGetParentPanel() {
         testSettingsTabWorldUserTypeMode();
 
         TabbedPanel pp = tab.getParentPanel();
@@ -143,7 +143,7 @@ public class SettingsTabTest extends CommonTestSetup {
     }
 
     @Test
-    public void testSetParentPanel() {
+    void testSetParentPanel() {
         testSettingsTabWorldUserTypeMode();
         tab.setParentPanel(parent);
     }

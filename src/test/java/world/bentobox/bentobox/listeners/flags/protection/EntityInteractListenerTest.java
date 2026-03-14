@@ -38,7 +38,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class EntityInteractListenerTest extends CommonTestSetup {
+class EntityInteractListenerTest extends CommonTestSetup {
 
     private EntityInteractListener eil;
     @Mock
@@ -81,7 +81,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractAtEntity(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractAtEntityArmorStandNoInteraction() {
+    void testOnPlayerInteractAtEntityArmorStandNoInteraction() {
         clickedEntity = mock(ArmorStand.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position, hand);
@@ -94,7 +94,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractAtEntity(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractAtEntityArmorStandAllowed() {
+    void testOnPlayerInteractAtEntityArmorStandAllowed() {
         when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(ArmorStand.class);
         when(clickedEntity.getLocation()).thenReturn(location);
@@ -108,7 +108,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityHorseNoInteraction() {
+    void testOnPlayerInteractEntityHorseNoInteraction() {
         clickedEntity = mock(Horse.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
@@ -121,7 +121,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityHorseAllowed() {
+    void testOnPlayerInteractEntityHorseAllowed() {
         when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(Horse.class);
         when(clickedEntity.getLocation()).thenReturn(location);
@@ -135,7 +135,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityMinecartNoInteraction() {
+    void testOnPlayerInteractEntityMinecartNoInteraction() {
         clickedEntity = mock(RideableMinecart.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
@@ -148,7 +148,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityMinecartAllowed() {
+    void testOnPlayerInteractEntityMinecartAllowed() {
         when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(RideableMinecart.class);
         when(clickedEntity.getLocation()).thenReturn(location);
@@ -162,7 +162,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityBoatNoInteraction() {
+    void testOnPlayerInteractEntityBoatNoInteraction() {
         clickedEntity = mock(Boat.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
@@ -175,7 +175,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityBoatAllowed() {
+    void testOnPlayerInteractEntityBoatAllowed() {
         when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(Boat.class);
         when(clickedEntity.getLocation()).thenReturn(location);
@@ -189,7 +189,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityVillagerNoInteraction() {
+    void testOnPlayerInteractEntityVillagerNoInteraction() {
         clickedEntity = mock(Villager.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
@@ -202,7 +202,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractAtEntityVillagerAllowed() {
+    void testOnPlayerInteractAtEntityVillagerAllowed() {
         when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(Villager.class);
         when(clickedEntity.getLocation()).thenReturn(location);
@@ -232,7 +232,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityNamingVillagerAllowedTradingNoNaming() {
+    void testOnPlayerInteractEntityNamingVillagerAllowedTradingNoNaming() {
         when(island.isAllowed(any(User.class), eq(Flags.TRADING))).thenReturn(true);
         when(island.isAllowed(any(User.class), eq(Flags.NAME_TAG))).thenReturn(false);
         clickedEntity = mock(Villager.class);
@@ -247,7 +247,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityWanderingTraderNoInteraction() {
+    void testOnPlayerInteractEntityWanderingTraderNoInteraction() {
         clickedEntity = mock(WanderingTrader.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
@@ -264,7 +264,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractAtEntityWanderingTraderAllowed() {
+    void testOnPlayerInteractAtEntityWanderingTraderAllowed() {
         when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(WanderingTrader.class);
         when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
@@ -315,7 +315,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntitySheepAllowed() {
+    void testOnPlayerInteractEntitySheepAllowed() {
         clickedEntity = mock(Sheep.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.SHEEP);
@@ -332,7 +332,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntitySheepNameTagNoInteraction() {
+    void testOnPlayerInteractEntitySheepNameTagNoInteraction() {
         clickedEntity = mock(Sheep.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.SHEEP);
@@ -347,7 +347,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Copper Golem interaction should be blocked by the ALLAY flag when not allowed.
      */
     @Test
-    public void testOnPlayerInteractEntityCopperGolemNoInteraction() {
+    void testOnPlayerInteractEntityCopperGolemNoInteraction() {
         clickedEntity = mock(Entity.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.COPPER_GOLEM);
@@ -366,7 +366,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Copper Golem interaction should be allowed when the island permits it.
      */
     @Test
-    public void testOnPlayerInteractEntityCopperGolemAllowed() {
+    void testOnPlayerInteractEntityCopperGolemAllowed() {
         when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(Entity.class);
         when(clickedEntity.getLocation()).thenReturn(location);
@@ -385,7 +385,7 @@ public class EntityInteractListenerTest extends CommonTestSetup {
      * Copper Golem interaction with a name tag should also check NAME_TAG flag.
      */
     @Test
-    public void testOnPlayerInteractEntityCopperGolemNameTagNoInteraction() {
+    void testOnPlayerInteractEntityCopperGolemNameTagNoInteraction() {
         when(island.isAllowed(any(User.class), eq(Flags.ALLAY))).thenReturn(true);
         when(island.isAllowed(any(User.class), eq(Flags.NAME_TAG))).thenReturn(false);
         clickedEntity = mock(Entity.class);

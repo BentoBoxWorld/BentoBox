@@ -28,7 +28,7 @@ import world.bentobox.bentobox.lists.GameModePlaceholder;
  * @author tastybento
  * @since 1.5.0
  */
-public class PlaceholdersManagerTest extends CommonTestSetup {
+class PlaceholdersManagerTest extends CommonTestSetup {
 
     @Mock
     private GameModeAddon addon;
@@ -79,7 +79,7 @@ public class PlaceholdersManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.PlaceholdersManager#registerDefaultPlaceholders(GameModeAddon)}.
      */
     @Test
-    public void testRegisterGameModePlaceholdersAllDefaults() {
+    void testRegisterGameModePlaceholdersAllDefaults() {
         pm.registerDefaultPlaceholders(addon);
         // + 304 because we register team member placeholders up to 50 members (6 per member * 50 = 300) + 4 extra
         // All registrations now use the 4-arg overload (addon, placeholder, description, replacer)
@@ -91,7 +91,7 @@ public class PlaceholdersManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.PlaceholdersManager#registerDefaultPlaceholders(GameModeAddon)}.
      */
     @Test
-    public void testRegisterDefaultPlaceholdersSomePreregistered() {
+    void testRegisterDefaultPlaceholdersSomePreregistered() {
         // Some duplicates
         when(hook.isPlaceholder(any(), any())).thenReturn(false, true, true, false, false, true, false);
 
