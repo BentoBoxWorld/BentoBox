@@ -36,7 +36,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-public class IslandSethomeCommandTest extends CommonTestSetup {
+class IslandSethomeCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -115,7 +115,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#IslandSethomeCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
-    public void testIslandSethomeCommand() {
+    void testIslandSethomeCommand() {
         IslandSethomeCommand cmd = new IslandSethomeCommand(ic);
         assertEquals("sethome", cmd.getName());
     }
@@ -125,7 +125,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertEquals("bskyblock.island.sethome", isc.getPermission());
         assertTrue(isc.isOnlyPlayer());
@@ -136,7 +136,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoIsland() {
+    void testCanExecuteNoIsland() {
         // Player doesn't have an island
         when(im.getIsland(world, user)).thenReturn(null);
 
@@ -149,7 +149,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNotOnIsland() {
+    void testCanExecuteNotOnIsland() {
         when(island.onIsland(any())).thenReturn(false);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertFalse(isc.canExecute(user, "island", Collections.emptyList()));
@@ -162,7 +162,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteTooManyHomes() {
+    void testCanExecuteTooManyHomes() {
         when(im.getMaxHomes(island)).thenReturn(9);
         when(im.getNumberOfHomesIfAdded(eq(island), anyString())).thenReturn(11);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
@@ -176,7 +176,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecute() {
+    void testCanExecute() {
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertTrue(isc.canExecute(user, "island", Collections.emptyList()));
         verify(user, never()).sendMessage("general.errors.no-island");
@@ -188,7 +188,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertTrue(isc.canExecute(user, "island", Collections.emptyList()));
         assertTrue(isc.execute(user, "island", Collections.emptyList()));
@@ -199,7 +199,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringHomeSuccess() {
+    void testExecuteUserStringListOfStringHomeSuccess() {
         when(island.getMaxHomes()).thenReturn(5);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertTrue(isc.canExecute(user, "island", Collections.singletonList("home")));
@@ -211,7 +211,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringMultiHomeTooMany() {
+    void testExecuteUserStringListOfStringMultiHomeTooMany() {
         when(im.getMaxHomes(island)).thenReturn(3);
         when(im.getNumberOfHomesIfAdded(eq(island), anyString())).thenReturn(5);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
@@ -223,7 +223,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNether() {
+    void testExecuteUserStringListOfStringNether() {
         when(iwm.isNether(any())).thenReturn(true);
         WorldSettings ws = mock(WorldSettings.class);
         when(ws.isAllowSetHomeInNether()).thenReturn(true);
@@ -239,7 +239,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNetherNotAllowed() {
+    void testExecuteUserStringListOfStringNetherNotAllowed() {
         when(iwm.isNether(any())).thenReturn(true);
         WorldSettings ws = mock(WorldSettings.class);
         when(ws.isAllowSetHomeInNether()).thenReturn(false);
@@ -254,7 +254,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNetherConfirmation() {
+    void testExecuteUserStringListOfStringNetherConfirmation() {
         when(iwm.isNether(any())).thenReturn(true);
         WorldSettings ws = mock(WorldSettings.class);
         when(ws.isAllowSetHomeInNether()).thenReturn(true);
@@ -270,7 +270,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringEnd() {
+    void testExecuteUserStringListOfStringEnd() {
         when(iwm.isEnd(any())).thenReturn(true);
         WorldSettings ws = mock(WorldSettings.class);
         when(ws.isAllowSetHomeInTheEnd()).thenReturn(true);
@@ -286,7 +286,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringEndNotAllowed() {
+    void testExecuteUserStringListOfStringEndNotAllowed() {
         when(iwm.isEnd(any())).thenReturn(true);
         WorldSettings ws = mock(WorldSettings.class);
         when(ws.isAllowSetHomeInTheEnd()).thenReturn(false);
@@ -301,7 +301,7 @@ public class IslandSethomeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringEndConfirmation() {
+    void testExecuteUserStringListOfStringEndConfirmation() {
         when(iwm.isEnd(any())).thenReturn(true);
         WorldSettings ws = mock(WorldSettings.class);
         when(ws.isAllowSetHomeInTheEnd()).thenReturn(true);

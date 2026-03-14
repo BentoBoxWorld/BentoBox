@@ -44,7 +44,7 @@ import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
-public class IslandCacheTest extends CommonTestSetup {
+class IslandCacheTest extends CommonTestSetup {
 
     private AbstractDatabaseHandler<Island> handler;
     // UUID
@@ -126,7 +126,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test for {@link IslandCache#addIsland(Island)}
      */
     @Test
-    public void testAddIsland() {
+    void testAddIsland() {
         assertTrue(ic.addIsland(island));
         assertEquals(island, ic.getIslandAt(island.getCenter()));
         // Check if they are added
@@ -137,7 +137,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test for {@link IslandCache#addPlayer(UUID, Island)}
      */
     @Test
-    public void testAddPlayer() {
+    void testAddPlayer() {
         ic.addIsland(island);
         UUID playerUUID = UUID.randomUUID();
         ic.addPlayer(playerUUID, island);
@@ -151,7 +151,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test for {@link IslandCache#clear()}
      */
     @Test
-    public void testClear() {
+    void testClear() {
         ic.addIsland(island);
         // Check if they are added
         assertEquals(island, ic.getIsland(world, owner));
@@ -163,7 +163,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test for {@link IslandCache#getIsland(World, UUID)}
      */
     @Test
-    public void testGetUUID() {
+    void testGetUUID() {
         ic.addIsland(island);
         // Check if they are added
         assertEquals(island, ic.getIsland(world, owner));
@@ -179,7 +179,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * @throws InstantiationException 
      */
     @Test
-    public void testGetIslandAtLocation() throws InstantiationException, IllegalAccessException,
+    void testGetIslandAtLocation() throws InstantiationException, IllegalAccessException,
             InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         // Set coords to be in island space
         when(island.inIslandSpace(any(Integer.class), any(Integer.class))).thenReturn(true);
@@ -203,7 +203,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test for {@link IslandCache#hasIsland(World, UUID)}
      */
     @Test
-    public void testHasIsland() {
+    void testHasIsland() {
         ic.addIsland(island);
 
         assertTrue(ic.hasIsland(world, owner));
@@ -214,7 +214,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test for {@link IslandCache#removePlayer(World, UUID)}
      */
     @Test
-    public void testRemovePlayer() {
+    void testRemovePlayer() {
         ic.addIsland(island);
         assertTrue(ic.hasIsland(world, owner));
         assertTrue(ic.hasIsland(world, owner));
@@ -228,7 +228,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test for {@link IslandCache#size()}
      */
     @Test
-    public void testSize() {
+    void testSize() {
         ic.addIsland(island);
         assertEquals(1, ic.size());
     }
@@ -237,7 +237,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test for {@link IslandCache#setOwner(Island, UUID)}
      */
     @Test
-    public void testSetOwner() {
+    void testSetOwner() {
         ic.addIsland(island);
         UUID newOwnerUUID = UUID.randomUUID();
         ic.setOwner(island, newOwnerUUID);
@@ -251,7 +251,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * {@link IslandCache#resetFlag(World, world.bentobox.bentobox.api.flags.Flag)}
      */
     @Test
-    public void testResetFlag() {
+    void testResetFlag() {
         ic.addIsland(island);
         ic.resetFlag(world, flag);
         verify(island).setFlag(flag, 400);
@@ -261,7 +261,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test for {@link IslandCache#resetAllFlags(World)}
      */
     @Test
-    public void testResetAllFlags() {
+    void testResetAllFlags() {
         ic.addIsland(island);
         BukkitScheduler scheduler = mock(BukkitScheduler.class);
         mockedBukkit.when(Bukkit::getScheduler).thenReturn(scheduler);
@@ -274,7 +274,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#IslandCache(world.bentobox.bentobox.database.Database)}.
      */
     @Test
-    public void testIslandCache() {
+    void testIslandCache() {
         assertNotNull(ic);
     }
 
@@ -282,7 +282,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#updateMultiLibIsland(world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testUpdateMultiLibIsland() {
+    void testUpdateMultiLibIsland() {
         // Add island to cache
         ic.setIslandById(island);
         // Copy island
@@ -298,7 +298,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#deleteIslandFromCache(world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testDeleteIslandFromCacheIsland() {
+    void testDeleteIslandFromCacheIsland() {
         // Fill the cache
         ic.addIsland(island);
         ic.setIslandById(island);
@@ -315,7 +315,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#deleteIslandFromCache(java.lang.String)}.
      */
     @Test
-    public void testDeleteIslandFromCacheString() {
+    void testDeleteIslandFromCacheString() {
         // Fill the cache
         ic.addIsland(island);
         ic.setIslandById(island);
@@ -327,7 +327,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIsland(org.bukkit.World, java.util.UUID)}.
      */
     @Test
-    public void testGetIsland() {
+    void testGetIsland() {
         assertNull(ic.getIsland(world, owner));
     }
 
@@ -335,7 +335,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands(org.bukkit.World, java.util.UUID)}.
      */
     @Test
-    public void testGetIslandsWorldUUID() {
+    void testGetIslandsWorldUUID() {
         assertNull(ic.getIsland(world, this.owner));
     }
 
@@ -343,7 +343,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#setPrimaryIsland(java.util.UUID, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testSetPrimaryIsland() {
+    void testSetPrimaryIsland() {
         ic.setPrimaryIsland(owner, island);
     }
 
@@ -351,7 +351,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslandAt(org.bukkit.Location)}.
      */
     @Test
-    public void testGetIslandAt() {
+    void testGetIslandAt() {
         ic.addIsland(island);
         ic.setIslandById(island);
         assertEquals(island, ic.getIslandAt(location));
@@ -361,7 +361,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands()}.
      */
     @Test
-    public void testGetIslands() {
+    void testGetIslands() {
         assertTrue(ic.getIslands().isEmpty());
     }
 
@@ -369,7 +369,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands(org.bukkit.World)}.
      */
     @Test
-    public void testGetIslandsWorld() {
+    void testGetIslandsWorld() {
         assertTrue(ic.getIslands(world).isEmpty());
     }
 
@@ -377,7 +377,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#removePlayer(org.bukkit.World, java.util.UUID)}.
      */
     @Test
-    public void testRemovePlayerWorldUUID() {
+    void testRemovePlayerWorldUUID() {
         assertTrue(ic.getIslands(owner).isEmpty());
     }
 
@@ -385,7 +385,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#removePlayer(world.bentobox.bentobox.database.objects.Island, java.util.UUID)}.
      */
     @Test
-    public void testRemovePlayerIslandUUID() {
+    void testRemovePlayerIslandUUID() {
         ic.addIsland(island);
         ic.setIslandById(island);
         ic.removePlayer(island, owner);
@@ -395,7 +395,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#size(org.bukkit.World)}.
      */
     @Test
-    public void testSizeWorld() {
+    void testSizeWorld() {
         assertEquals(0, ic.size(world));
     }
 
@@ -403,7 +403,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslandById(java.lang.String)}.
      */
     @Test
-    public void testGetIslandById() {
+    void testGetIslandById() {
         ic.addIsland(island);
         ic.setIslandById(island);
 
@@ -414,7 +414,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getAllIslandIds()}.
      */
     @Test
-    public void testGetAllIslandIds() {
+    void testGetAllIslandIds() {
         assertTrue(ic.getAllIslandIds().isEmpty());
     }
 
@@ -422,7 +422,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslands(java.util.UUID)}.
      */
     @Test
-    public void testGetIslandsUUID() {
+    void testGetIslandsUUID() {
         assertTrue(ic.getIslands(owner).isEmpty());
     }
 
@@ -436,7 +436,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * @throws InstantiationException 
      */
     @Test
-    public void testGetIslandsUUIDNoIslands() throws InstantiationException, IllegalAccessException,
+    void testGetIslandsUUIDNoIslands() throws InstantiationException, IllegalAccessException,
             InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         // Test is WIP.
         when(handler.loadObject(anyString())).thenReturn(null);
@@ -447,7 +447,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testAddIslandIslandNullWorld() {
+    void testAddIslandIslandNullWorld() {
         // Null world
         when(island.getWorld()).thenReturn(null);
         assertFalse(ic.addIsland(island));
@@ -457,7 +457,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testAddIslandIslandNullCenter() {
+    void testAddIslandIslandNullCenter() {
         // Try to add an island with a null center
         when(island.getCenter()).thenReturn(null);
         assertFalse(ic.addIsland(island));
@@ -467,7 +467,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testAddIslandIslandDuplicate() {
+    void testAddIslandIslandDuplicate() {
         assertTrue(ic.addIsland(island));
         assertTrue(ic.addIsland(island)); // Okay to add
     }
@@ -476,7 +476,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island, boolean)}.
      */
     @Test
-    public void testAddIslandIslandBooleanNullWorld() {
+    void testAddIslandIslandBooleanNullWorld() {
         // Null world
         when(island.getWorld()).thenReturn(null);
         assertFalse(ic.addIsland(island, true));
@@ -487,7 +487,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island, boolean)}.
      */
     @Test
-    public void testAddIslandIslandBooleanNullCenter() {
+    void testAddIslandIslandBooleanNullCenter() {
         // Try to add an island with a null center
         when(island.getCenter()).thenReturn(null);
         assertFalse(ic.addIsland(island, true));
@@ -498,7 +498,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#addIsland(world.bentobox.bentobox.database.objects.Island, boolean)}.
      */
     @Test
-    public void testAddIslandIslandBooleanDuplicate() {
+    void testAddIslandIslandBooleanDuplicate() {
         // Duplicate
         assertTrue(ic.addIsland(island, true));
         assertTrue(ic.addIsland(island, true));
@@ -513,7 +513,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#loadIsland(java.lang.String)}.
      */
     @Test
-    public void testLoadIsland() {
+    void testLoadIsland() {
         assertNull(ic.loadIsland(""));
         assertNotNull(ic.loadIsland("uniqueId"));
     }
@@ -522,7 +522,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getCachedIslands()}.
      */
     @Test
-    public void testGetCachedIslands() {
+    void testGetCachedIslands() {
         assertTrue(ic.getCachedIslands().isEmpty());
     }
 
@@ -530,7 +530,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslandById(java.lang.String)}.
      */
     @Test
-    public void testGetIslandByIdString() {
+    void testGetIslandByIdString() {
         assertNotNull(ic.getIslandById("uniqueId"));
         assertTrue(ic.isIslandCached("uniqueId"));
     }
@@ -539,7 +539,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#getIslandById(java.lang.String, boolean)}.
      */
     @Test
-    public void testGetIslandByIdStringBoolean() {
+    void testGetIslandByIdStringBoolean() {
         assertNotNull(ic.getIslandById("uniqueId", false));
         assertFalse(ic.isIslandCached("uniqueId"));
     }
@@ -548,7 +548,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#expireIslandById(java.lang.String)}.
      */
     @Test
-    public void testExpireIslandById() {
+    void testExpireIslandById() {
         // Fill the cache
         ic.addIsland(island);
         ic.setIslandById(island);
@@ -564,7 +564,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#setIslandById(world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testSetIslandById() {
+    void testSetIslandById() {
         assertFalse(ic.isIslandId("uniqueId"));
         ic.setIslandById(island);
         assertTrue(ic.isIslandId("uniqueId"));
@@ -574,7 +574,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#isIslandId(java.lang.String)}.
      */
     @Test
-    public void testIsIslandId() {
+    void testIsIslandId() {
         assertFalse(ic.isIslandId("uniqueId"));
     }
 
@@ -582,7 +582,7 @@ public class IslandCacheTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#isIslandCached(java.lang.String)}.
      */
     @Test
-    public void testIsIslandCached() {
+    void testIsIslandCached() {
         assertFalse(ic.isIslandCached("uniqueId"));
     }
 

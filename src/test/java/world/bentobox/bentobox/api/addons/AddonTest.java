@@ -38,7 +38,7 @@ import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
-public class AddonTest extends CommonTestSetup {
+class AddonTest extends CommonTestSetup {
 
     public static int BUFFER_SIZE = 10240;
 
@@ -90,7 +90,7 @@ public class AddonTest extends CommonTestSetup {
     }
 
     @AfterEach
-    public void TearDown() throws Exception {
+    void TearDown() throws Exception {
         super.tearDown();
         Files.deleteIfExists(jarFile.toPath());
         if (dataFolder.exists()) {
@@ -110,29 +110,29 @@ public class AddonTest extends CommonTestSetup {
     }
 
     @Test
-    public void testAddon() {
+    void testAddon() {
         assertNotNull(test);
         assertFalse(test.isEnabled());
     }
 
     @Test
-    public void testGetPlugin() {
+    void testGetPlugin() {
         assertSame(plugin, test.getPlugin());
     }
 
     @Test
-    public void testGetConfig() {
+    void testGetConfig() {
         // No config file
         assertNull(test.getConfig());
     }
 
     @Test
-    public void testGetDataFolder() {
+    void testGetDataFolder() {
         assertEquals(dataFolder, test.getDataFolder());
     }
 
     @Test
-    public void testGetDescription() {
+    void testGetDescription() {
         AddonDescription d = new AddonDescription.Builder("main", "name", "1.0").build();
         assertNull(test.getDescription());
         test.setDescription(d);
@@ -140,27 +140,27 @@ public class AddonTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGetFile() {
+    void testGetFile() {
         assertEquals(jarFile, test.getFile());
     }
 
     @Test
-    public void testGetLogger() {
+    void testGetLogger() {
         assertEquals(plugin.getLogger(), test.getLogger());
     }
 
     @Test
-    public void testGetServer() {
+    void testGetServer() {
         assertEquals(server, test.getServer());
     }
 
     @Test
-    public void testIsEnabled() {
+    void testIsEnabled() {
         assertFalse(test.isEnabled());
     }
 
     @Test
-    public void testRegisterListener() {
+    void testRegisterListener() {
         class TestListener implements Listener {}
         TestListener listener = new TestListener();
         test.registerListener(listener);
@@ -168,7 +168,7 @@ public class AddonTest extends CommonTestSetup {
     }
 
     @Test
-    public void testSaveDefaultConfig() {
+    void testSaveDefaultConfig() {
         test.saveDefaultConfig();
         File testConfig = new File(dataFolder, "config.yml");
         assertTrue(testConfig.exists());
@@ -194,38 +194,38 @@ public class AddonTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGetResource() {
+    void testGetResource() {
         assertNull(test.getResource("nothing"));
     }
 
     @Test
-    public void testGetResourceSomething() {
+    void testGetResourceSomething() {
         assertNotNull(test.getResource("addon.yml"));
     }
 
     @Test
-    public void testSetAddonFile() {
+    void testSetAddonFile() {
         File af = new File("af");
         test.setFile(af);
         assertEquals(af, test.getFile());
     }
 
     @Test
-    public void testSetDataFolder() {
+    void testSetDataFolder() {
         File df = new File("df");
         test.setDataFolder(df);
         assertEquals(df, test.getDataFolder());
     }
 
     @Test
-    public void testSetDescription() {
+    void testSetDescription() {
         AddonDescription desc = new AddonDescription.Builder("main", "name", "2.0").build();
         test.setDescription(desc);
         assertEquals(desc, test.getDescription());
     }
 
     @Test
-    public void testSetEnabled() {
+    void testSetEnabled() {
         test.setState(Addon.State.DISABLED);
         assertFalse(test.isEnabled());
         test.setState(Addon.State.ENABLED);
@@ -233,21 +233,21 @@ public class AddonTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGetPlayers() {
+    void testGetPlayers() {
         PlayersManager pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
         assertEquals(pm, test.getPlayers());
     }
 
     @Test
-    public void testGetIslands() {
+    void testGetIslands() {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         assertSame(im, test.getIslands());
     }
 
     @Test
-    public void testGetAddonByName() {
+    void testGetAddonByName() {
         AddonsManager am = new AddonsManager(plugin);
         when(plugin.getAddonsManager()).thenReturn(am);
         assertEquals(Optional.empty(),test.getAddonByName("addon"));

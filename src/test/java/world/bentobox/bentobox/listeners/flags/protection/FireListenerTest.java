@@ -41,7 +41,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
-public class FireListenerTest extends CommonTestSetup {
+class FireListenerTest extends CommonTestSetup {
 
     private final Map<String, Boolean> worldFlags = new HashMap<>();
 
@@ -109,7 +109,7 @@ public class FireListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testCheckFire() {
+    void testCheckFire() {
         // Island
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
@@ -152,7 +152,7 @@ public class FireListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnBlockBurn() {
+    void testOnBlockBurn() {
         // Island
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
@@ -202,7 +202,7 @@ public class FireListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnBlockSpread() {
+    void testOnBlockSpread() {
         // Island
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
@@ -256,7 +256,7 @@ public class FireListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnBlockIgnite() {
+    void testOnBlockIgnite() {
         // Island
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);

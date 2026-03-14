@@ -32,7 +32,7 @@ import world.bentobox.bentobox.managers.HooksManager;
  * @author tastybento
  *
  */
-public class BlueprintClipboardTest extends CommonTestSetup {
+class BlueprintClipboardTest extends CommonTestSetup {
 
     private BlueprintClipboard bc;
 
@@ -77,7 +77,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#BlueprintClipboard(world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    public void testBlueprintClipboardBlueprint() {
+    void testBlueprintClipboardBlueprint() {
         bc = new BlueprintClipboard(blueprint);
         assertNotNull(bc);
     }
@@ -86,7 +86,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#BlueprintClipboard()}.
      */
     @Test
-    public void testBlueprintClipboard() {
+    void testBlueprintClipboard() {
         assertNotNull(bc);
     }
 
@@ -94,7 +94,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#copy(world.bentobox.bentobox.api.user.User, boolean, boolean)}.
      */
     @Test
-    public void testCopy() {
+    void testCopy() {
         assertFalse(bc.copy(user, false, false, false));
         verify(user, never()).sendMessage("commands.admin.blueprint.mid-copy");
         verify(user).sendMessage("commands.admin.blueprint.need-pos1-pos2");
@@ -104,7 +104,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getVectors(org.bukkit.util.BoundingBox)}.
      */
     @Test
-    public void testGetVectors() {
+    void testGetVectors() {
         BoundingBox bb = new BoundingBox(10.5, 10.5, 10.5, 19.5, 19.5, 19.5);
         List<Vector> list = bc.getVectors(bb);
         assertEquals(1000, list.size());
@@ -131,7 +131,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getOrigin()}.
      */
     @Test
-    public void testGetOrigin() {
+    void testGetOrigin() {
         assertNull(bc.getOrigin());
     }
 
@@ -139,7 +139,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getPos1()}.
      */
     @Test
-    public void testGetPos1() {
+    void testGetPos1() {
         assertNull(bc.getPos1());
     }
 
@@ -147,7 +147,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getPos2()}.
      */
     @Test
-    public void testGetPos2() {
+    void testGetPos2() {
         assertNull(bc.getPos2());
     }
 
@@ -155,7 +155,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#isFull()}.
      */
     @Test
-    public void testIsFull() {
+    void testIsFull() {
         assertFalse(bc.isFull());
     }
 
@@ -163,7 +163,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#setOrigin(org.bukkit.util.Vector)}.
      */
     @Test
-    public void testSetOrigin() {
+    void testSetOrigin() {
         Vector v = new Vector(1,2,3);
         bc.setOrigin(v);
         assertEquals(v, bc.getOrigin());
@@ -173,7 +173,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#setPos1(org.bukkit.Location)}.
      */
     @Test
-    public void testSetPos1() {
+    void testSetPos1() {
         Location l = new Location(world, 1,2,3);
         bc.setPos1(l);
         assertEquals(l, bc.getPos1());
@@ -183,7 +183,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#setPos2(org.bukkit.Location)}.
      */
     @Test
-    public void testSetPos2() {
+    void testSetPos2() {
         Location l = new Location(world, 1,2,3);
         bc.setPos2(l);
         assertEquals(l, bc.getPos2());
@@ -193,7 +193,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getBlueprint()}.
      */
     @Test
-    public void testGetBlueprint() {
+    void testGetBlueprint() {
         assertNull(bc.getBlueprint());
     }
 
@@ -201,7 +201,7 @@ public class BlueprintClipboardTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#setBlueprint(world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    public void testSetBlueprint() {
+    void testSetBlueprint() {
         bc.setBlueprint(blueprint);
         assertEquals(blueprint, bc.getBlueprint());
     }

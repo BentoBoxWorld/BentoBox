@@ -32,7 +32,7 @@ import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
 
-public class ObsidianScoopingListenerTest extends CommonTestSetup {
+class ObsidianScoopingListenerTest extends CommonTestSetup {
 
     private ObsidianScoopingListener listener;
     @Mock
@@ -110,7 +110,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteract() {
+    void testOnPlayerInteract() {
         // Test incorrect items
         inHand = Material.ACACIA_DOOR;
         block = Material.BROWN_MUSHROOM;
@@ -119,7 +119,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractBucketInHand() {
+    void testOnPlayerInteractBucketInHand() {
         // Test incorrect items
         inHand = Material.BUCKET;
         block = Material.BROWN_MUSHROOM;
@@ -128,7 +128,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractObsidianAnvilInHand() {
+    void testOnPlayerInteractObsidianAnvilInHand() {
         // Test with obsidian in hand
         inHand = Material.ANVIL;
         block = Material.OBSIDIAN;
@@ -137,7 +137,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractObsidianBucketInHand() {
+    void testOnPlayerInteractObsidianBucketInHand() {
         // Positive test with 1 bucket in the stack
         inHand = Material.BUCKET;
         block = Material.OBSIDIAN;
@@ -146,7 +146,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractObsidianManyBucketsInHand() {
+    void testOnPlayerInteractObsidianManyBucketsInHand() {
         // Positive test with 1 bucket in the stack
         inHand = Material.BUCKET;
         block = Material.OBSIDIAN;
@@ -158,7 +158,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractNotInWorld() {
+    void testOnPlayerInteractNotInWorld() {
         PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
                 BlockFace.EAST);
         // Test not in world
@@ -168,14 +168,14 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractInWorld() {
+    void testOnPlayerInteractInWorld() {
         // Put player in world
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
     }
 
     @Test
-    public void testOnPlayerInteractGameModes() {
+    void testOnPlayerInteractGameModes() {
         PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
                 BlockFace.EAST);
 
@@ -189,7 +189,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractSurvivalNotOnIsland() {
+    void testOnPlayerInteractSurvivalNotOnIsland() {
         PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
                 BlockFace.EAST);
 
@@ -208,7 +208,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractCooldown() {
+    void testOnPlayerInteractCooldown() {
         // Set up for a successful scoop
         inHand = Material.BUCKET;
         block = Material.OBSIDIAN;

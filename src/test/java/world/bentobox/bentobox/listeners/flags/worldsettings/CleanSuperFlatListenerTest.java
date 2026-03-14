@@ -39,7 +39,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class CleanSuperFlatListenerTest extends CommonTestSetup {
+class CleanSuperFlatListenerTest extends CommonTestSetup {
 
     @Mock
     private Block block;
@@ -113,7 +113,7 @@ public class CleanSuperFlatListenerTest extends CommonTestSetup {
      * Test method for {@link CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
     @Test
-    public void testOnChunkLoadNotBedrockNoFlsg() {
+    void testOnChunkLoadNotBedrockNoFlsg() {
         when(block.getType()).thenReturn(Material.AIR);
         Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
 
@@ -126,7 +126,7 @@ public class CleanSuperFlatListenerTest extends CommonTestSetup {
      * Test method for {@link CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
     @Test
-    public void testOnChunkLoadBedrock() {
+    void testOnChunkLoadBedrock() {
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
         l.onChunkLoad(e);
         verify(sch).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
@@ -136,7 +136,7 @@ public class CleanSuperFlatListenerTest extends CommonTestSetup {
      * Test method for {@link CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
     @Test
-    public void testOnChunkLoadBedrockNoClean() {
+    void testOnChunkLoadBedrockNoClean() {
         Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
 
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
@@ -148,7 +148,7 @@ public class CleanSuperFlatListenerTest extends CommonTestSetup {
      * Test method for {@link CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
     @Test
-    public void testOnChunkLoadBedrockNether() {
+    void testOnChunkLoadBedrockNether() {
         when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
         l.onChunkLoad(e);
@@ -167,7 +167,7 @@ public class CleanSuperFlatListenerTest extends CommonTestSetup {
      * Test method for {@link CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
     @Test
-    public void testOnChunkLoadBedrockEnd() {
+    void testOnChunkLoadBedrockEnd() {
         when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
         l.onChunkLoad(e);

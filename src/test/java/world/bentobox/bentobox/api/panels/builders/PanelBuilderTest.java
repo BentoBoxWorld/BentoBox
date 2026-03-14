@@ -19,7 +19,7 @@ import world.bentobox.bentobox.api.user.User;
  * @author tastybento
  *
  */
-public class PanelBuilderTest extends CommonTestSetup {
+class PanelBuilderTest extends CommonTestSetup {
 
     @Override
     @BeforeEach
@@ -37,7 +37,7 @@ public class PanelBuilderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#name(java.lang.String)}.
      */
     @Test
-    public void testName() {
+    void testName() {
         PanelBuilder pb = new PanelBuilder();
         assertTrue(pb.name("test") instanceof PanelBuilder);
     }
@@ -46,7 +46,7 @@ public class PanelBuilderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#item(world.bentobox.bentobox.api.panels.PanelItem)}.
      */
     @Test
-    public void testItemPanelItem() {
+    void testItemPanelItem() {
         PanelItem pi = mock(PanelItem.class);
         PanelBuilder pb = new PanelBuilder();
         pb = pb.item(pi);
@@ -62,7 +62,7 @@ public class PanelBuilderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#item(int, world.bentobox.bentobox.api.panels.PanelItem)}.
      */
     @Test
-    public void testItemIntPanelItem() {
+    void testItemIntPanelItem() {
         PanelItem pi = mock(PanelItem.class);
         PanelBuilder pb = new PanelBuilder();
         pb = pb.item(0, pi);
@@ -81,7 +81,7 @@ public class PanelBuilderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#size(int)}.
      */
     @Test
-    public void testSize() {
+    void testSize() {
         PanelBuilder pb = new PanelBuilder();
         assertEquals(pb, pb.size(45));
     }
@@ -90,7 +90,7 @@ public class PanelBuilderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#user(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testUser() {
+    void testUser() {
         User user = mock(User.class);
         PanelBuilder pb = new PanelBuilder();
         pb = pb.user(user);
@@ -103,7 +103,7 @@ public class PanelBuilderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#listener(world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testListener() {
+    void testListener() {
         PanelBuilder pb = new PanelBuilder();
         PanelListener listener = mock(PanelListener.class);
         assertEquals(pb, pb.listener(listener));
@@ -113,7 +113,7 @@ public class PanelBuilderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#nextSlot()}.
      */
     @Test
-    public void testNextSlot() {
+    void testNextSlot() {
         PanelItem pi = mock(PanelItem.class);
         PanelBuilder pb = new PanelBuilder();
         assertEquals(0, pb.nextSlot());
@@ -132,7 +132,7 @@ public class PanelBuilderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#slotOccupied(int)}.
      */
     @Test
-    public void testSlotOccupied() {
+    void testSlotOccupied() {
         PanelItem pi = mock(PanelItem.class);
         PanelBuilder pb = new PanelBuilder();
         assertEquals(0, pb.nextSlot());
@@ -153,7 +153,7 @@ public class PanelBuilderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#build()}.
      */
     @Test
-    public void testBuild() {
+    void testBuild() {
         PanelBuilder pb = new PanelBuilder();
         pb.name("test");
         Panel p = pb.build();

@@ -77,7 +77,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class PVPListenerTest extends CommonTestSetup {
+class PVPListenerTest extends CommonTestSetup {
 
     @Mock
     private Player player2;
@@ -212,7 +212,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageNotPlayer() {
+    void testOnEntityDamageNotPlayer() {
         Entity damager = mock(Zombie.class);
         Entity damagee = mock(Creeper.class);
         EntityDamageByEntityEvent e = createDamageEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK);
@@ -224,7 +224,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageSelfDamage() {
+    void testOnEntityDamageSelfDamage() {
         Entity damager = mock(Player.class);
         EntityDamageByEntityEvent e = createDamageEvent(damager, damager, EntityDamageEvent.DamageCause.ENTITY_ATTACK);
         new PVPListener().onEntityDamage(e);
@@ -235,7 +235,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageNPC() {
+    void testOnEntityDamageNPC() {
         // Player 2 is an NPC
         when(player2.hasMetadata("NPC")).thenReturn(true);
         // PVP is not allowed
@@ -252,7 +252,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageNPCAttacks() {
+    void testOnEntityDamageNPCAttacks() {
         // Player 2 is an NPC
         when(player2.hasMetadata("NPC")).thenReturn(true);
         // PVP is not allowed
@@ -269,7 +269,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageOnPlayerByZombie() {
+    void testOnEntityDamageOnPlayerByZombie() {
         Entity damager = mock(Zombie.class);
         Entity damagee = mock(Player.class);
         World world = mock(World.class);
@@ -299,7 +299,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageOnPlayerByZombieVisitorProtected() {
+    void testOnEntityDamageOnPlayerByZombieVisitorProtected() {
         Entity damager = mock(Zombie.class);
         Entity damagee = mock(Player.class);
         World world = mock(World.class);
@@ -328,7 +328,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageOnVisitorByZombieVisitorProtected() {
+    void testOnEntityDamageOnVisitorByZombieVisitorProtected() {
         Entity damager = mock(Zombie.class);
         Entity damagee = mock(Player.class);
         when(damager.getWorld()).thenReturn(world);
@@ -349,7 +349,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageOnVisitorByZombieVisitorProtectedWrongWorld() {
+    void testOnEntityDamageOnVisitorByZombieVisitorProtectedWrongWorld() {
         Entity damager = mock(Zombie.class);
         Entity damagee = mock(Player.class);
         World world = mock(World.class);
@@ -375,7 +375,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageOnVisitorByZombieVisitorProtectedWrongDamage() {
+    void testOnEntityDamageOnVisitorByZombieVisitorProtectedWrongDamage() {
         Entity damager = mock(Zombie.class);
         Entity damagee = mock(Player.class);
         World world = mock(World.class);
@@ -404,7 +404,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageOnVisitorByZombieVisitorNotProtected() {
+    void testOnEntityDamageOnVisitorByZombieVisitorNotProtected() {
         Entity damager = mock(Zombie.class);
         Entity damagee = mock(Player.class);
         World world = mock(World.class);
@@ -441,7 +441,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamagePVPNotAllowed() {
+    void testOnEntityDamagePVPNotAllowed() {
         // No visitor protection
         EntityDamageByEntityEvent e = createDamageEvent(mockPlayer, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK);
         new PVPListener().onEntityDamage(e);
@@ -455,7 +455,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamagePVPNotAllowedInvVisitor() {
+    void testOnEntityDamagePVPNotAllowedInvVisitor() {
         EntityDamageByEntityEvent e = createDamageEvent(mockPlayer, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK);
 
         // Enable visitor protection
@@ -472,7 +472,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageOnPVPAllowed() {
+    void testOnEntityDamageOnPVPAllowed() {
         // PVP is allowed
         when(island.isAllowed(any())).thenReturn(true);
         EntityDamageByEntityEvent e = createDamageEvent(mockPlayer, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK);
@@ -495,7 +495,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageOnPVPNotAllowedProjectile() {
+    void testOnEntityDamageOnPVPNotAllowedProjectile() {
         Projectile p = mock(Projectile.class);
         when(p.getShooter()).thenReturn(mockPlayer);
         when(p.getLocation()).thenReturn(location);
@@ -522,7 +522,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageSelfDamageProjectile() {
+    void testOnEntityDamageSelfDamageProjectile() {
         Projectile p = mock(Projectile.class);
         when(p.getShooter()).thenReturn(mockPlayer);
         when(p.getLocation()).thenReturn(location);
@@ -536,7 +536,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamagePVPAllowedProjectile() {
+    void testOnEntityDamagePVPAllowedProjectile() {
         Projectile p = mock(Projectile.class);
         when(p.getShooter()).thenReturn(mockPlayer);
         when(p.getLocation()).thenReturn(location);
@@ -562,7 +562,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamagePVPAllowedProjectileNullSource() {
+    void testOnEntityDamagePVPAllowedProjectileNullSource() {
         Projectile p = mock(Projectile.class);
         when(p.getShooter()).thenReturn(null);
         when(p.getLocation()).thenReturn(location);
@@ -579,7 +579,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamagePVPAllowedProjectileNonEntitySource() {
+    void testOnEntityDamagePVPAllowedProjectileNonEntitySource() {
         Projectile p = mock(Projectile.class);
         BlockProjectileSource pSource = mock(BlockProjectileSource.class);
         when(p.getShooter()).thenReturn(pSource);
@@ -597,7 +597,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishing() {
+    void testOnFishing() {
         // Fish hook
         FishHook hook = mock(FishHook.class);
         // Catch a zombie - fine
@@ -651,7 +651,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingProtectVisitors() {
+    void testOnFishingProtectVisitors() {
         // Fish hook
         FishHook hook = mock(FishHook.class);
         // Catch a player
@@ -673,7 +673,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingSelfDamage() {
+    void testOnFishingSelfDamage() {
         // Fish hook
         FishHook hook = mock(FishHook.class);
         // Catch a player
@@ -686,7 +686,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
-    public void testOnFishingNoPVPProtectVisitors() {
+    void testOnFishingNoPVPProtectVisitors() {
         // Fish hook
         FishHook hook = mock(FishHook.class);
         // Catch a player
@@ -709,7 +709,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
-    public void testOnSplashPotionSplashWitch() {
+    void testOnSplashPotionSplashWitch() {
         ThrownPotion tp = mock(ThrownPotion.class);
         ProjectileSource witch = mock(Witch.class);
         when(tp.getShooter()).thenReturn(witch);
@@ -722,7 +722,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
-    public void testOnSplashPotionSplashNoPlayers() {
+    void testOnSplashPotionSplashNoPlayers() {
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(mockPlayer);
         when(tp.getWorld()).thenReturn(world);
@@ -742,7 +742,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
-    public void testOnSplashPotionSplash() {
+    void testOnSplashPotionSplash() {
         // Disallow PVP
         when(island.isAllowed(any())).thenReturn(false);
 
@@ -773,7 +773,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
-    public void testOnSplashPotionSplashSelfInflicted() {
+    void testOnSplashPotionSplashSelfInflicted() {
         // Disallow PVP
         when(island.isAllowed(any())).thenReturn(false);
 
@@ -801,7 +801,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
-    public void testOnSplashPotionSplashAllowPVP() {
+    void testOnSplashPotionSplashAllowPVP() {
         // Disallow PVP
         when(island.isAllowed(any())).thenReturn(true);
 
@@ -827,7 +827,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
-    public void testOnSplashPotionSplashAllowPVPProtectVisitors() {
+    void testOnSplashPotionSplashAllowPVPProtectVisitors() {
         // Allow PVP
         when(island.isAllowed(any())).thenReturn(true);
 
@@ -862,7 +862,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
      */
     @Test
-    public void testOnLingeringPotionSplash() {
+    void testOnLingeringPotionSplash() {
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(mockPlayer);
         when(tp.getWorld()).thenReturn(world);
@@ -881,7 +881,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
      */
     @Test
-    public void testOnLingeringPotionSplashNonHuman() {
+    void testOnLingeringPotionSplashNonHuman() {
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(creeper);
         when(tp.getWorld()).thenReturn(world);
@@ -899,7 +899,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
      */
     @Test
-    public void testOnLingeringPotionDamageNoPVP() {
+    void testOnLingeringPotionDamageNoPVP() {
         // Disallow PVP
         when(island.isAllowed(any())).thenReturn(false);
         // Throw a potion
@@ -936,7 +936,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
      */
     @Test
-    public void testOnLingeringPotionDamagePVP() {
+    void testOnLingeringPotionDamagePVP() {
         // Allow PVP
         when(island.isAllowed(any())).thenReturn(true);
         // Throw a potion
@@ -971,7 +971,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
      */
     @Test
-    public void testOnLingeringPotionDamageNoPVPVisitor() {
+    void testOnLingeringPotionDamageNoPVPVisitor() {
         // Disallow PVP
         when(island.isAllowed(any())).thenReturn(false);
         // Throw a potion
@@ -1012,7 +1012,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
      */
     @Test
-    public void testOnLingeringPotionDamagePVPVisitor() {
+    void testOnLingeringPotionDamagePVPVisitor() {
         // Allow PVP
         when(island.isAllowed(any())).thenReturn(true);
         // Throw a potion
@@ -1053,7 +1053,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
      */
     @Test
-    public void testOnPlayerShootFireworkEventNotPlayer() {
+    void testOnPlayerShootFireworkEventNotPlayer() {
         PVPListener listener = new PVPListener();
         ItemStack bow = new ItemStack(Material.CROSSBOW);
         Firework firework = mock(Firework.class);
@@ -1072,7 +1072,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
      */
     @Test
-    public void testOnPlayerShootFireworkEventNotFirework() {
+    void testOnPlayerShootFireworkEventNotFirework() {
         PVPListener listener = new PVPListener();
         ItemStack bow = new ItemStack(Material.CROSSBOW);
         Arrow arrow = mock(Arrow.class);
@@ -1088,7 +1088,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
      */
     @Test
-    public void testOnPlayerShootFireworkEventNoPVPSelfDamage() {
+    void testOnPlayerShootFireworkEventNoPVPSelfDamage() {
         // Disallow PVP
         when(island.isAllowed(any())).thenReturn(false);
         PVPListener listener = new PVPListener();
@@ -1110,7 +1110,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
      */
     @Test
-    public void testOnPlayerShootFireworkEventNoPVP() {
+    void testOnPlayerShootFireworkEventNoPVP() {
         // Disallow PVP
         when(island.isAllowed(any())).thenReturn(false);
         PVPListener listener = new PVPListener();
@@ -1133,7 +1133,7 @@ public class PVPListenerTest extends CommonTestSetup {
      * Test method for {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
      */
     @Test
-    public void testOnPlayerShootFireworkEventPVPAllowed() {
+    void testOnPlayerShootFireworkEventPVPAllowed() {
         // Allow PVP
         when(island.isAllowed(any())).thenReturn(true);
         PVPListener listener = new PVPListener();

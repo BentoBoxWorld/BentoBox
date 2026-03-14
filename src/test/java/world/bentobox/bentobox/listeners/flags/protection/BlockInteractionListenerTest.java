@@ -40,7 +40,7 @@ import world.bentobox.bentobox.lists.Flags;
  *
  */
 @Disabled("Issues with NotAMock")
-public class BlockInteractionListenerTest extends CommonTestSetup {
+class BlockInteractionListenerTest extends CommonTestSetup {
     private EquipmentSlot hand;
 
     private BlockInteractionListener bil;
@@ -157,7 +157,7 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractItemFrameNotAllowed() {
+    void testOnPlayerInteractItemFrameNotAllowed() {
         when(clickedBlock.getType()).thenReturn(itemFrame);
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
@@ -169,7 +169,7 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractItemFrameNotAllowedOtherFlagsOkay() {
+    void testOnPlayerInteractItemFrameNotAllowedOtherFlagsOkay() {
         when(island.isAllowed(any(), eq(Flags.BREAK_BLOCKS))).thenReturn(true);
         when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(true);
         when(clickedBlock.getType()).thenReturn(itemFrame);
@@ -183,7 +183,7 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractNothingInHandPotsNotAllowed() {
+    void testOnPlayerInteractNothingInHandPotsNotAllowed() {
         when(Tag.FLOWER_POTS.isTagged(Material.POTTED_ACACIA_SAPLING)).thenReturn(true);
         when(Tag.FLOWER_POTS.isTagged(Material.POTTED_ALLIUM)).thenReturn(true);
         when(Tag.FLOWER_POTS.isTagged(Material.POTTED_AZALEA_BUSH)).thenReturn(true);
@@ -234,7 +234,7 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractNothingInHandNotAllowed() {
+    void testOnPlayerInteractNothingInHandNotAllowed() {
         when(Tag.COPPER_CHESTS.isTagged(Material.COPPER_CHEST)).thenReturn(true);
         when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.COPPER_GOLEM_STATUE)).thenReturn(true);
         when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.EXPOSED_COPPER_GOLEM_STATUE)).thenReturn(true);
@@ -270,7 +270,7 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractNothingInHandAllowed() {
+    void testOnPlayerInteractNothingInHandAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(true);
         for (Material bm : clickedBlocks.keySet()) {
             // Allow flags
@@ -292,7 +292,7 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractSpawnEggInHandNotAllowed() {
+    void testOnPlayerInteractSpawnEggInHandNotAllowed() {
         when(clickedBlock.getType()).thenReturn(Material.SPAWNER);
         when(item.getType()).thenReturn(Material.BLAZE_SPAWN_EGG);
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
@@ -306,7 +306,7 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractSpawnEggInHandAllowed() {
+    void testOnPlayerInteractSpawnEggInHandAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(true);
         when(clickedBlock.getType()).thenReturn(Material.SPAWNER);
         when(item.getType()).thenReturn(Material.BLAZE_SPAWN_EGG);
@@ -321,7 +321,7 @@ public class BlockInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractSpawnEggInHandOnItemFrameNotAllowed() {
+    void testOnPlayerInteractSpawnEggInHandOnItemFrameNotAllowed() {
         when(island.isAllowed(any(), eq(Flags.BREAK_BLOCKS))).thenReturn(true);
         when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(true);
         when(clickedBlock.getType()).thenReturn(Material.ITEM_FRAME);

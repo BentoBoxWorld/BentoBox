@@ -35,7 +35,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class BlockEndDragonTest extends CommonTestSetup {
+class BlockEndDragonTest extends CommonTestSetup {
 
     private BlockEndDragon bed;
     @Mock
@@ -87,7 +87,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onPlayerChangeWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
      */
     @Test
-    public void testOnPlayerChangeWorld() {
+    void testOnPlayerChangeWorld() {
         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(mockPlayer, world);
         bed.onPlayerChangeWorld(event);
         verify(block).setType(Material.END_PORTAL, false);
@@ -97,7 +97,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onPlayerChangeWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
      */
     @Test
-    public void testOnPlayerChangeWorldNotEnd() {
+    void testOnPlayerChangeWorldNotEnd() {
         when(iwm.isIslandEnd(any())).thenReturn(false);
         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(mockPlayer, world);
         bed.onPlayerChangeWorld(event);
@@ -108,7 +108,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onPlayerChangeWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
      */
     @Test
-    public void testOnPlayerChangeWorldBlockSet() {
+    void testOnPlayerChangeWorldBlockSet() {
         when(block.getType()).thenReturn(Material.END_PORTAL);
         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(mockPlayer, world);
         bed.onPlayerChangeWorld(event);
@@ -119,7 +119,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onPlayerChangeWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
      */
     @Test
-    public void testOnPlayerChangeWorldNoFlag() {
+    void testOnPlayerChangeWorldNoFlag() {
         Flags.REMOVE_END_EXIT_ISLAND.setSetting(world, false);
         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(mockPlayer, world);
         bed.onPlayerChangeWorld(event);
@@ -130,7 +130,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onPlayerJoinWorld(org.bukkit.event.player.PlayerJoinEvent)}.
      */
     @Test
-    public void testOnPlayerJoinWorld() {
+    void testOnPlayerJoinWorld() {
         Component component = mock(Component.class);
         PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         bed.onPlayerJoinWorld(event);
@@ -141,7 +141,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnEndBlockPlace() {
+    void testOnEndBlockPlace() {
         BlockPlaceEvent e = new BlockPlaceEvent(block, null, block, null, mockPlayer, false, null);
         bed.onEndBlockPlace(e);
         assertTrue(e.isCancelled());
@@ -151,7 +151,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnEndBlockPlaceX() {
+    void testOnEndBlockPlaceX() {
         when(block.getX()).thenReturn(23);
         BlockPlaceEvent e = new BlockPlaceEvent(block, null, block, null, mockPlayer, false, null);
         bed.onEndBlockPlace(e);
@@ -161,7 +161,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnEndBlockPlaceZ() {
+    void testOnEndBlockPlaceZ() {
         when(block.getZ()).thenReturn(23);
         BlockPlaceEvent e = new BlockPlaceEvent(block, null, block, null, mockPlayer, false, null);
         bed.onEndBlockPlace(e);
@@ -172,7 +172,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnEndBlockPlaceY() {
+    void testOnEndBlockPlaceY() {
         when(block.getY()).thenReturn(23);
         BlockPlaceEvent e = new BlockPlaceEvent(block, null, block, null, mockPlayer, false, null);
         bed.onEndBlockPlace(e);
@@ -183,7 +183,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnEndBlockPlaceNether() {
+    void testOnEndBlockPlaceNether() {
         when(world.getEnvironment()).thenReturn(Environment.NETHER);
         BlockPlaceEvent e = new BlockPlaceEvent(block, null, block, null, mockPlayer, false, null);
         bed.onEndBlockPlace(e);
@@ -194,7 +194,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnEndBlockPlaceNoFlag() {
+    void testOnEndBlockPlaceNoFlag() {
         Flags.REMOVE_END_EXIT_ISLAND.setSetting(world, false);
         BlockPlaceEvent e = new BlockPlaceEvent(block, null, block, null, mockPlayer, false, null);
         bed.onEndBlockPlace(e);
@@ -205,7 +205,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnEndBlockPlaceWrongWorld() {
+    void testOnEndBlockPlaceWrongWorld() {
         when(iwm.isEndGenerate(any())).thenReturn(false);
         when(iwm.isEndIslands(any())).thenReturn(true);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -230,7 +230,7 @@ public class BlockEndDragonTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnEndBlockBreak() {
+    void testOnEndBlockBreak() {
         BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         bed.onEndBlockBreak(e);
         assertTrue(e.isCancelled());

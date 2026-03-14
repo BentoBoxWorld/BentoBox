@@ -43,7 +43,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class CommandRankClickListenerTest extends RanksManagerTestSetup {
+class CommandRankClickListenerTest extends RanksManagerTestSetup {
     @Mock
     private User user;
     @Mock
@@ -126,7 +126,7 @@ public class CommandRankClickListenerTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
      */
     @Test
-    public void testOnClickWrongWorld() {
+    void testOnClickWrongWorld() {
         when(user.inWorld()).thenReturn(false);
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         verify(user).sendMessage("general.errors.wrong-world");
@@ -136,7 +136,7 @@ public class CommandRankClickListenerTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
      */
     @Test
-    public void testOnClickNoPermission() {
+    void testOnClickNoPermission() {
         when(user.isOp()).thenReturn(false);
         when(user.hasPermission(anyString())).thenReturn(false);
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
@@ -148,7 +148,7 @@ public class CommandRankClickListenerTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
      */
     @Test
-    public void testOnClickNoFlag() {
+    void testOnClickNoFlag() {
         when(island.isAllowed(user, Flags.CHANGE_SETTINGS)).thenReturn(false);
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
@@ -159,7 +159,7 @@ public class CommandRankClickListenerTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
      */
     @Test
-    public void testOnClickDifferentPanelName() {
+    void testOnClickDifferentPanelName() {
         when(panel.getName()).thenReturn("different");
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         verify(inv, never()).setItem(eq(0), any());
@@ -170,7 +170,7 @@ public class CommandRankClickListenerTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
      */
     @Test
-    public void testOnClick() {
+    void testOnClick() {
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         verify(inv).setItem(eq(0), any());
     }
@@ -179,7 +179,7 @@ public class CommandRankClickListenerTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
      */
     @Test
-    public void testOnClickTooManyCommands() {
+    void testOnClickTooManyCommands() {
         Map<String, CompositeCommand> map = new HashMap<>();
         for (int i = 0; i < 55; i++) {
             CompositeCommand cc = mock(CompositeCommand.class);
@@ -201,7 +201,7 @@ public class CommandRankClickListenerTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#getPanelItem(java.lang.String, world.bentobox.bentobox.api.user.User, org.bukkit.World)}.
      */
     @Test
-    public void testGetPanelItem() {
+    void testGetPanelItem() {
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         PanelItem pi = crcl.getPanelItem("test", user, world);
         assertEquals(Material.MAP, pi.getItem().getType());

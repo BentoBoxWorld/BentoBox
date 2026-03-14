@@ -41,7 +41,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
-public class LockAndBanListenerTest extends CommonTestSetup {
+class LockAndBanListenerTest extends CommonTestSetup {
 
     private static final Integer PROTECTION_RANGE = 200;
     private static final Integer X = 600;
@@ -160,7 +160,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testTeleportToNotBannedIsland() {
+    void testTeleportToNotBannedIsland() {
         // Setup location outside island, one inside banned island
         // Make player
         Player player = mock(Player.class);
@@ -176,7 +176,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testTeleportToBannedIsland() {
+    void testTeleportToBannedIsland() {
         // Make player
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
 
@@ -193,7 +193,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
 
     
     @Test
-    public void testLoginToBannedIsland() {
+    void testLoginToBannedIsland() {
         // Make player
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
@@ -217,7 +217,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testVerticalMoveOnly() {
+    void testVerticalMoveOnly() {
         // Move vertically only
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(world);
@@ -237,7 +237,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testVerticalVehicleMoveOnly() {
+    void testVerticalVehicleMoveOnly() {
         // Move vertically only
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(world);
@@ -265,7 +265,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPlayerMoveIntoBannedIsland() {
+    void testPlayerMoveIntoBannedIsland() {
         // Make player
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
@@ -285,7 +285,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPlayerMoveInsideBannedIsland() {
+    void testPlayerMoveInsideBannedIsland() {
         // Make player
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
@@ -310,7 +310,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testVehicleMoveIntoBannedIsland() {
+    void testVehicleMoveIntoBannedIsland() {
         // Make player
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
@@ -349,7 +349,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
      */
 
     @Test
-    public void testTeleportToLockedIsland() {
+    void testTeleportToLockedIsland() {
         // Make player
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Lock island for player
@@ -363,7 +363,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testTeleportToLockedIslandAsMember() {
+    void testTeleportToLockedIslandAsMember() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
@@ -378,7 +378,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testLoginToLockedIsland() {
+    void testLoginToLockedIsland() {
         // Make player
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
@@ -402,7 +402,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testLoginToLockedIslandAsOp() {
+    void testLoginToLockedIslandAsOp() {
         // Make player
         Player player = mock(Player.class);
         when(player.isOp()).thenReturn(true);
@@ -425,7 +425,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testLoginToLockedIslandWithBypassPerm() {
+    void testLoginToLockedIslandWithBypassPerm() {
         // Make player
         Player player = mock(Player.class);
         when(player.isOp()).thenReturn(false);
@@ -449,7 +449,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testLoginToLockedIslandAsMember() {
+    void testLoginToLockedIslandAsMember() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
@@ -466,7 +466,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPlayerMoveIntoLockedIsland() {
+    void testPlayerMoveIntoLockedIsland() {
         // Make player
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
@@ -486,7 +486,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPlayerMoveIntoLockedIslandAsOp() {
+    void testPlayerMoveIntoLockedIslandAsOp() {
         // Make player
         Player player = mock(Player.class);
         when(player.isOp()).thenReturn(true);
@@ -507,7 +507,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPlayerMoveIntoLockedIslandAsNPC() {
+    void testPlayerMoveIntoLockedIslandAsNPC() {
         // Make player
         Player player = mock(Player.class);
         when(player.hasMetadata("NPC")).thenReturn(true);
@@ -527,7 +527,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPlayerMoveIntoLockedIslandWithBypass() {
+    void testPlayerMoveIntoLockedIslandWithBypass() {
         // Make player
         when(mockPlayer.isOp()).thenReturn(false);
         when(mockPlayer.hasPermission(anyString())).thenReturn(true);
@@ -548,7 +548,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPlayerMoveIntoLockedIslandAsMember() {
+    void testPlayerMoveIntoLockedIslandAsMember() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
@@ -568,7 +568,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPlayerMoveInsideLockedIsland() {
+    void testPlayerMoveInsideLockedIsland() {
         // Make player
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
@@ -594,7 +594,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPlayerMoveInsideLockedIslandAsOp() {
+    void testPlayerMoveInsideLockedIslandAsOp() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
@@ -614,7 +614,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPlayerMoveInsideLockedIslandWithBypass() {
+    void testPlayerMoveInsideLockedIslandWithBypass() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
@@ -635,7 +635,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPlayerMoveInsideLockedIslandAsMember() {
+    void testPlayerMoveInsideLockedIslandAsMember() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
@@ -654,7 +654,7 @@ public class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testVehicleMoveIntoLockedIsland() {
+    void testVehicleMoveIntoLockedIsland() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);

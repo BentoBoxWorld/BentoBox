@@ -36,7 +36,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-public class AdminBlueprintDeleteCommandTest extends CommonTestSetup {
+class AdminBlueprintDeleteCommandTest extends CommonTestSetup {
 
     @Mock
     private AdminBlueprintCommand ac;
@@ -99,7 +99,7 @@ public class AdminBlueprintDeleteCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#AdminBlueprintDeleteCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
-    public void testAdminBlueprintDeleteCommand() {
+    void testAdminBlueprintDeleteCommand() {
         assertNotNull(abcc);
     }
 
@@ -107,7 +107,7 @@ public class AdminBlueprintDeleteCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         abcc.setup();
         assertEquals("commands.admin.blueprint.delete.description", abcc.getDescription());
         assertEquals("commands.admin.blueprint.delete.parameters", abcc.getParameters());
@@ -118,7 +118,7 @@ public class AdminBlueprintDeleteCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringHelp() {
+    void testExecuteUserStringListOfStringHelp() {
         assertFalse(abcc.execute(user, "", List.of("1", "2", "3")));
         verify(user).sendMessage("commands.help.header", "[label]", "translation");
     }
@@ -127,7 +127,7 @@ public class AdminBlueprintDeleteCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoBp() {
+    void testExecuteUserStringListOfStringNoBp() {
         assertFalse(abcc.execute(user, "", List.of(" iSlAnd  ")));
         verify(user).sendMessage("commands.admin.blueprint.delete.no-blueprint", TextVariables.NAME, "_island__");
     }
@@ -136,7 +136,7 @@ public class AdminBlueprintDeleteCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringSuccessCaps() {
+    void testExecuteUserStringListOfStringSuccessCaps() {
         assertTrue(abcc.execute(user, "", List.of("KEY")));
         verify(user).getTranslation("commands.admin.blueprint.delete.confirmation");
     }
@@ -145,7 +145,7 @@ public class AdminBlueprintDeleteCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfString() {
+    void testTabCompleteUserStringListOfString() {
         Optional<List<String>> o = abcc.tabComplete(user, "", List.of(""));
         assertTrue(o.isPresent());
         assertEquals("key", o.get().getFirst());

@@ -35,7 +35,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author Poslovitch
  * @since 1.3.0
  */
-public class TreesGrowingOutsideRangeListenerTest extends CommonTestSetup {
+class TreesGrowingOutsideRangeListenerTest extends CommonTestSetup {
 
     /* Event */
     private StructureGrowEvent event;
@@ -133,7 +133,7 @@ public class TreesGrowingOutsideRangeListenerTest extends CommonTestSetup {
      * Asserts that no interaction is done to the event when it does not happen in the world.
      */
     @Test
-    public void testNotInWorld() {
+    void testNotInWorld() {
         // Not in world
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
@@ -148,7 +148,7 @@ public class TreesGrowingOutsideRangeListenerTest extends CommonTestSetup {
      * Asserts that no interaction is done to the event when {@link Flags#TREES_GROWING_OUTSIDE_RANGE} is allowed.
      */
     @Test
-    public void testFlagIsAllowed() {
+    void testFlagIsAllowed() {
         // Allowed
         Flags.TREES_GROWING_OUTSIDE_RANGE.setSetting(world, true);
 
@@ -162,7 +162,7 @@ public class TreesGrowingOutsideRangeListenerTest extends CommonTestSetup {
      * Asserts that the event is cancelled and that there is no interaction with the blocks list when the sapling is outside an island.
      */
     @Test
-    public void testSaplingOutsideIsland() {
+    void testSaplingOutsideIsland() {
         // No protected island at the sapling's location
         when(im.getProtectedIslandAt(sapling.getLocation())).thenReturn(Optional.empty());
 
@@ -176,7 +176,7 @@ public class TreesGrowingOutsideRangeListenerTest extends CommonTestSetup {
      * Asserts that the event is cancelled and that there is no interaction with the blocks list when the sapling is outside an island but inside another island.
      */
     @Test
-    public void testSaplingOutsideIslandButInAnotherIsland() {
+    void testSaplingOutsideIslandButInAnotherIsland() {
         // Sapling is on the island, but some leaves are in another island. For simplicity
         for (BlockState b: blockStates) {
             if (b.getLocation().getBlockY() == 4) {
@@ -193,7 +193,7 @@ public class TreesGrowingOutsideRangeListenerTest extends CommonTestSetup {
      * Asserts that no interaction is done to the event when everything's inside an island.
      */
     @Test
-    public void testTreeFullyInsideIsland() {
+    void testTreeFullyInsideIsland() {
         // Run
         new TreesGrowingOutsideRangeListener().onTreeGrow(event);
         assertEquals(blockStates, event.getBlocks());
@@ -202,7 +202,7 @@ public class TreesGrowingOutsideRangeListenerTest extends CommonTestSetup {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testTreePartiallyOutsideIsland() {
+    void testTreePartiallyOutsideIsland() {
         // Only the first few blocks are inside the island
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.of(island),
                 Optional.of(island),

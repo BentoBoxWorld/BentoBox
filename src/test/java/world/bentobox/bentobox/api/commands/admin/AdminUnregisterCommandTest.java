@@ -44,7 +44,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminUnregisterCommandTest extends CommonTestSetup {
+class AdminUnregisterCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -141,7 +141,7 @@ public class AdminUnregisterCommandTest extends CommonTestSetup {
      * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoTarget() {
+    void testCanExecuteNoTarget() {
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         // Show help
     }
@@ -151,7 +151,7 @@ public class AdminUnregisterCommandTest extends CommonTestSetup {
      * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUnknownPlayer() {
+    void testCanExecuteUnknownPlayer() {
         String[] name = { "tastybento" };
         when(pm.getUUID(any())).thenReturn(null);
         assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
@@ -163,7 +163,7 @@ public class AdminUnregisterCommandTest extends CommonTestSetup {
      * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testCanExecutePlayerFailNoIsland() {
+    void testCanExecutePlayerFailNoIsland() {
         // No island
         when(im.getOwnedIslands(world, uuid)).thenReturn(Set.of());
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
@@ -175,7 +175,7 @@ public class AdminUnregisterCommandTest extends CommonTestSetup {
      * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testCanExecutePlayerFailMoreIsland() {
+    void testCanExecutePlayerFailMoreIsland() {
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
         verify(user).sendMessage("commands.admin.unregister.errors.player-has-more-than-one-island");
         verify(user).sendMessage("commands.admin.unregister.errors.specify-island-location");
@@ -186,7 +186,7 @@ public class AdminUnregisterCommandTest extends CommonTestSetup {
      * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testCanExecutePlayerFailWrongIsland() {
+    void testCanExecutePlayerFailWrongIsland() {
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "1,2,4")));
         verify(user).sendMessage("commands.admin.unregister.errors.unknown-island-location");
     }
@@ -196,7 +196,7 @@ public class AdminUnregisterCommandTest extends CommonTestSetup {
      * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteDiffernetPlayerFailWrongIsland() {
+    void testCanExecuteDiffernetPlayerFailWrongIsland() {
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("BoxManager", "1,2,4")));
         verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "BoxManager");
     }
@@ -206,7 +206,7 @@ public class AdminUnregisterCommandTest extends CommonTestSetup {
      * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testCanExecutePlayerSuccessMultiIsland() {
+    void testCanExecutePlayerSuccessMultiIsland() {
         assertTrue(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "1,2,3")));
         assertTrue(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "4,5,6")));
     }
@@ -215,7 +215,7 @@ public class AdminUnregisterCommandTest extends CommonTestSetup {
      * Test method for {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteSuccessOneIsland() {
+    void testCanExecuteSuccessOneIsland() {
         when(im.getOwnedIslands(world, uuid)).thenReturn(Set.of(island));
         itl.canExecute(user, itl.getLabel(), List.of("tastybento"));
         assertTrue(itl.execute(user, itl.getLabel(), List.of("tastybento")));
@@ -227,7 +227,7 @@ public class AdminUnregisterCommandTest extends CommonTestSetup {
      * Test method for {@link AdminUnregisterCommand#unregisterIsland(User)}
      */
     @Test
-    public void testUnregisterIsland() {
+    void testUnregisterIsland() {
         this.testCanExecuteSuccessOneIsland();
         itl.unregisterIsland(user);
         verify(user).sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, "1,2,3",
@@ -241,7 +241,7 @@ public class AdminUnregisterCommandTest extends CommonTestSetup {
      * Test method for {@link AdminUnregisterCommand#unregisterIsland(User)}
      */
     @Test
-    public void testUnregisterIslandMulti() {
+    void testUnregisterIslandMulti() {
         this.testCanExecutePlayerSuccessMultiIsland();
         itl.unregisterIsland(user);
         verify(user).sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, "4,5,6",
@@ -253,7 +253,7 @@ public class AdminUnregisterCommandTest extends CommonTestSetup {
      * {@link AdminUnregisterCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteHelp() {
+    void testCanExecuteHelp() {
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "help")));
         verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
     }

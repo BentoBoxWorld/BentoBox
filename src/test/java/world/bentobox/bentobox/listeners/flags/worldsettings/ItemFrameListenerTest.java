@@ -40,7 +40,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class ItemFrameListenerTest extends CommonTestSetup  {
+class ItemFrameListenerTest extends CommonTestSetup  {
 
     @Mock
     private Enderman enderman;
@@ -105,7 +105,7 @@ public class ItemFrameListenerTest extends CommonTestSetup  {
      * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnItemFrameDamageEntityDamageByEntityEvent() {
+    void testOnItemFrameDamageEntityDamageByEntityEvent() {
         ItemFrameListener ifl = new ItemFrameListener();
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, entity, cause, null, 0);
@@ -117,7 +117,7 @@ public class ItemFrameListenerTest extends CommonTestSetup  {
      * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testNotItemFrame() {
+    void testNotItemFrame() {
         ItemFrameListener ifl = new ItemFrameListener();
         Creeper creeper = mock(Creeper.class);
         when(creeper.getLocation()).thenReturn(location);
@@ -131,7 +131,7 @@ public class ItemFrameListenerTest extends CommonTestSetup  {
      * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testProjectile() {
+    void testProjectile() {
         ItemFrameListener ifl = new ItemFrameListener();
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Projectile p = mock(Projectile.class);
@@ -145,7 +145,7 @@ public class ItemFrameListenerTest extends CommonTestSetup  {
      * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testPlayerProjectile() {
+    void testPlayerProjectile() {
         ItemFrameListener ifl = new ItemFrameListener();
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Projectile p = mock(Projectile.class);
@@ -160,7 +160,7 @@ public class ItemFrameListenerTest extends CommonTestSetup  {
      * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
-    public void testOnItemFrameDamageHangingBreakByEntityEvent() {
+    void testOnItemFrameDamageHangingBreakByEntityEvent() {
         ItemFrameListener ifl = new ItemFrameListener();
         HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(entity, enderman);
         ifl.onItemFrameDamage(e);

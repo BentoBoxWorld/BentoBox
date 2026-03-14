@@ -48,7 +48,7 @@ import world.bentobox.bentobox.managers.island.IslandGrid;
 /**
  * Tests for {@link AdminPurgeRegionsCommand}.
  */
-public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
+class AdminPurgeRegionsCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -139,7 +139,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * AdminPurgeCommand.setup() creates one instance, and setUp() creates a second — so two calls.
      */
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         verify(addon, times(2)).registerListener(any(AdminPurgeRegionsCommand.class));
     }
 
@@ -147,7 +147,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * Verify command metadata set in setup().
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("admin.purge.regions", aprc.getPermission());
         assertFalse(aprc.isOnlyPlayer());
         assertEquals("commands.admin.purge.regions.parameters", aprc.getParameters());
@@ -158,7 +158,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * canExecute with no args should show help and return false.
      */
     @Test
-    public void testCanExecuteEmptyArgs() {
+    void testCanExecuteEmptyArgs() {
         assertFalse(aprc.canExecute(user, "regions", Collections.emptyList()));
         verify(user).sendMessage(eq("commands.help.header"), any(), any());
     }
@@ -167,7 +167,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * canExecute with a valid argument should return true.
      */
     @Test
-    public void testCanExecuteWithArgs() {
+    void testCanExecuteWithArgs() {
         assertTrue(aprc.canExecute(user, "regions", List.of("10")));
         verify(user, never()).sendMessage("commands.admin.purge.purge-in-progress", TextVariables.LABEL, "bsb");
     }
@@ -176,7 +176,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * A non-numeric argument should produce an error message and return false.
      */
     @Test
-    public void testExecuteNotANumber() {
+    void testExecuteNotANumber() {
         assertFalse(aprc.execute(user, "regions", List.of("notanumber")));
         verify(user).sendMessage("commands.admin.purge.days-one-or-more");
     }
@@ -185,7 +185,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * Zero days is invalid — must be one or more.
      */
     @Test
-    public void testExecuteZeroDays() {
+    void testExecuteZeroDays() {
         assertFalse(aprc.execute(user, "regions", List.of("0")));
         verify(user).sendMessage("commands.admin.purge.days-one-or-more");
     }
@@ -194,7 +194,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * Negative days is invalid.
      */
     @Test
-    public void testExecuteNegativeDays() {
+    void testExecuteNegativeDays() {
         assertFalse(aprc.execute(user, "regions", List.of("-3")));
         verify(user).sendMessage("commands.admin.purge.days-one-or-more");
     }
@@ -204,7 +204,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * the command should report none found.
      */
     @Test
-    public void testExecuteNullIslandGrid() {
+    void testExecuteNullIslandGrid() {
         when(islandCache.getIslandGrid(world)).thenReturn(null);
 
         assertTrue(aprc.execute(user, "regions", List.of("10")));
@@ -231,7 +231,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * When there are no .mca files in the region folder, none-found should be sent.
      */
     @Test
-    public void testExecuteNoRegionFiles() throws IOException {
+    void testExecuteNoRegionFiles() throws IOException {
         IslandGrid grid = mock(IslandGrid.class);
         when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
@@ -249,7 +249,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * the command should propose deletion and ask for confirmation.
      */
     @Test
-    public void testExecuteOldRegionFileNoIslands() throws IOException {
+    void testExecuteOldRegionFileNoIslands() throws IOException {
         IslandGrid grid = mock(IslandGrid.class);
         when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
@@ -271,7 +271,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * the region files and send the success message.
      */
     @Test
-    public void testExecuteConfirmDeletesRegions() throws IOException {
+    void testExecuteConfirmDeletesRegions() throws IOException {
         IslandGrid grid = mock(IslandGrid.class);
         when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
@@ -296,7 +296,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * which is not a valid number).
      */
     @Test
-    public void testExecuteConfirmWithoutPriorScan() {
+    void testExecuteConfirmWithoutPriorScan() {
         assertFalse(aprc.execute(user, "regions", List.of("confirm")));
         verify(user).sendMessage("commands.admin.purge.days-one-or-more");
         verify(user, never()).sendMessage("general.success");
@@ -307,7 +307,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * The command should report none found.
      */
     @Test
-    public void testExecuteRecentRegionFileExcluded() throws IOException {
+    void testExecuteRecentRegionFileExcluded() throws IOException {
         IslandGrid grid = mock(IslandGrid.class);
         when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
         when(islandCache.getIslandGrid(world)).thenReturn(grid);
@@ -339,7 +339,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * An island whose member logged in recently must be excluded from purge candidates.
      */
     @Test
-    public void testExecuteIslandWithRecentLoginIsExcluded() throws IOException {
+    void testExecuteIslandWithRecentLoginIsExcluded() throws IOException {
         UUID ownerUUID = UUID.randomUUID();
         when(island.getUniqueId()).thenReturn("island-1");
         when(island.getOwner()).thenReturn(ownerUUID);
@@ -372,7 +372,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * Spawn islands must never be purged.
      */
     @Test
-    public void testExecuteSpawnIslandNotPurged() throws IOException {
+    void testExecuteSpawnIslandNotPurged() throws IOException {
         UUID ownerUUID = UUID.randomUUID();
         when(island.getUniqueId()).thenReturn("island-spawn");
         when(island.getOwner()).thenReturn(ownerUUID);
@@ -403,7 +403,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * Purge-protected islands must never be purged.
      */
     @Test
-    public void testExecutePurgeProtectedIslandNotPurged() throws IOException {
+    void testExecutePurgeProtectedIslandNotPurged() throws IOException {
         UUID ownerUUID = UUID.randomUUID();
         when(island.getUniqueId()).thenReturn("island-protected");
         when(island.getOwner()).thenReturn(ownerUUID);
@@ -433,7 +433,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * An island marked as deletable should always be eligible regardless of other flags.
      */
     @Test
-    public void testExecuteDeletableIslandIncluded() throws IOException {
+    void testExecuteDeletableIslandIncluded() throws IOException {
         UUID ownerUUID = UUID.randomUUID();
         when(island.getUniqueId()).thenReturn("island-deletable");
         when(island.getOwner()).thenReturn(ownerUUID);
@@ -465,7 +465,7 @@ public class AdminPurgeRegionsCommandTest extends CommonTestSetup {
      * when they have no remaining islands and haven't logged in recently.
      */
     @Test
-    public void testExecuteConfirmDeletesPlayerData() throws IOException {
+    void testExecuteConfirmDeletesPlayerData() throws IOException {
         UUID ownerUUID = UUID.randomUUID();
         when(island.getUniqueId()).thenReturn("island-deletable");
         when(island.getOwner()).thenReturn(ownerUUID);

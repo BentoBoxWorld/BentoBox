@@ -35,7 +35,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-public class IslandHomesCommandTest extends CommonTestSetup {
+class IslandHomesCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -112,7 +112,7 @@ public class IslandHomesCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandHomesCommand#IslandHomesCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
-    public void testIslandHomesCommand() {
+    void testIslandHomesCommand() {
         IslandHomesCommand cmd = new IslandHomesCommand(ic);
         assertEquals("homes", cmd.getName());
     }
@@ -122,7 +122,7 @@ public class IslandHomesCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandHomesCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         IslandHomesCommand isc = new IslandHomesCommand(ic);
         assertEquals("bskyblock.island.homes", isc.getPermission());
         assertTrue(isc.isOnlyPlayer());
@@ -134,7 +134,7 @@ public class IslandHomesCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoIsland() {
+    void testCanExecuteNoIsland() {
         // Player doesn't have an island
         IslandHomesCommand isc = new IslandHomesCommand(ic);
         assertFalse(isc.canExecute(user, "island", Collections.emptyList()));
@@ -145,7 +145,7 @@ public class IslandHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecute() {
+    void testCanExecute() {
         when(im.getIslands(world, user)).thenReturn(List.of(island));
         IslandHomesCommand isc = new IslandHomesCommand(ic);
         assertTrue(isc.canExecute(user, "island", Collections.emptyList()));
@@ -156,7 +156,7 @@ public class IslandHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandHomesCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         IslandHomesCommand isc = new IslandHomesCommand(ic);
         assertTrue(isc.execute(user, "island", Collections.emptyList()));
     }

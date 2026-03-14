@@ -37,7 +37,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandBanlistCommandTest extends RanksManagerTestSetup {
+class IslandBanlistCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -101,7 +101,7 @@ public class IslandBanlistCommandTest extends RanksManagerTestSetup {
      * {@link IslandBanlistCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testWithArgs() {
+    void testWithArgs() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
         assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
         // Verify show help
@@ -112,7 +112,7 @@ public class IslandBanlistCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandBanlistCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testNoIsland() {
+    void testNoIsland() {
         // not in team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
@@ -124,7 +124,7 @@ public class IslandBanlistCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandBanlistCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testTooLowRank() {
+    void testTooLowRank() {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
@@ -137,7 +137,7 @@ public class IslandBanlistCommandTest extends RanksManagerTestSetup {
      * {@link IslandBanlistCommand#execute(User, String, java.util.List)}.
      */
     @Test
-    public void testBanlistNooneBanned() {
+    void testBanlistNooneBanned() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         iubc.canExecute(user, iubc.getLabel(), Collections.emptyList());
@@ -150,7 +150,7 @@ public class IslandBanlistCommandTest extends RanksManagerTestSetup {
      * {@link IslandBanlistCommand#execute(User, String, java.util.List)}.
      */
     @Test
-    public void testBanlistBanned() {
+    void testBanlistBanned() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Make a ban list
@@ -176,7 +176,7 @@ public class IslandBanlistCommandTest extends RanksManagerTestSetup {
      * {@link IslandBanlistCommand#execute(User, String, java.util.List)}.
      */
     @Test
-    public void testBanlistMaxBanNoLimit() {
+    void testBanlistMaxBanNoLimit() {
         testBanlistBanned();
         verify(user, never()).sendMessage(eq("commands.island.banlist.you-can-ban"), anyString(), anyString());
     }
@@ -185,7 +185,7 @@ public class IslandBanlistCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandBanlistCommand#execute(User, String, java.util.List)}.
      */
     @Test
-    public void testBanlistMaxBanLimit() {
+    void testBanlistMaxBanLimit() {
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(15);
         testBanlistBanned();
         verify(user).sendMessage("commands.island.banlist.you-can-ban", TextVariables.NUMBER, "4");

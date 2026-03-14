@@ -27,7 +27,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
-public class DefaultHelpCommandTest extends CommonTestSetup {
+class DefaultHelpCommandTest extends CommonTestSetup {
 
     private User user;
 
@@ -105,7 +105,7 @@ public class DefaultHelpCommandTest extends CommonTestSetup {
      * Test for {@link DefaultHelpCommand}
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         CompositeCommand cc = mock(CompositeCommand.class);
         DefaultHelpCommand dhc = new DefaultHelpCommand(cc);
         assertNotNull(dhc);
@@ -119,7 +119,7 @@ public class DefaultHelpCommandTest extends CommonTestSetup {
      * Test for {@link DefaultHelpCommand#execute(User, String, List)}
      */
     @Test
-    public void testExecuteUserListOfString() {
+    void testExecuteUserListOfString() {
         CompositeCommand parent = mock(CompositeCommand.class);
         when(parent.getLabel()).thenReturn("island");
         when(parent.getUsage()).thenReturn("island");
@@ -143,7 +143,7 @@ public class DefaultHelpCommandTest extends CommonTestSetup {
      * Test for {@link DefaultHelpCommand#execute(User, String, List)}
      */
     @Test
-    public void testExecuteSecondLevelHelp() {
+    void testExecuteSecondLevelHelp() {
         CompositeCommand parent = mock(CompositeCommand.class);
         when(parent.getLabel()).thenReturn("island");
         when(parent.getUsage()).thenReturn("island");
@@ -165,7 +165,7 @@ public class DefaultHelpCommandTest extends CommonTestSetup {
      * Test for {@link DefaultHelpCommand#execute(User, String, List)}
      */
     @Test
-    public void testExecuteDirectHelpHelp() {
+    void testExecuteDirectHelpHelp() {
         CompositeCommand parent = mock(CompositeCommand.class);
         when(parent.getLabel()).thenReturn("island");
         when(parent.getUsage()).thenReturn("island");

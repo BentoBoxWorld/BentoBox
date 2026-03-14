@@ -31,7 +31,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminRangeDisplayCommandTest extends CommonTestSetup {
+class AdminRangeDisplayCommandTest extends CommonTestSetup {
 
     private CompositeCommand ac;
     private User user;
@@ -102,7 +102,7 @@ public class AdminRangeDisplayCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecutePlayerDisplayArgs() {
+    void testExecutePlayerDisplayArgs() {
         AdminRangeDisplayCommand ardc = new AdminRangeDisplayCommand(ac);
         ardc.execute(user, "display", new ArrayList<>());
         // Show display
@@ -119,7 +119,7 @@ public class AdminRangeDisplayCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecutePlayeShowArgs() {
+    void testExecutePlayeShowArgs() {
         AdminRangeDisplayCommand ardc = new AdminRangeDisplayCommand(ac);
         ardc.execute(user, "show", new ArrayList<>());
         // Show display
@@ -137,7 +137,7 @@ public class AdminRangeDisplayCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecutePlayeHideArgs() {
+    void testExecutePlayeHideArgs() {
         AdminRangeDisplayCommand ardc = new AdminRangeDisplayCommand(ac);
         ardc.execute(user, "hide", new ArrayList<>());
         verify(user).sendMessage("commands.admin.range.display.already-off");

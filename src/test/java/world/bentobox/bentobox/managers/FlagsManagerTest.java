@@ -29,7 +29,7 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-public class FlagsManagerTest extends CommonTestSetup {
+class FlagsManagerTest extends CommonTestSetup {
 
     /**
      * Update this value if the number of registered listeners changes
@@ -60,19 +60,19 @@ public class FlagsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testFlagsManager() {
+    void testFlagsManager() {
         assertNotNull(new FlagsManager(plugin));
     }
 
     @Test
-    public void testRegisterDuplicateFlag() {
+    void testRegisterDuplicateFlag() {
         FlagsManager fm = new FlagsManager(plugin);
         // Try to register every single flag - it should fail every time
         Flags.values().forEach(dupe -> assertFalse(fm.registerFlag(dupe)));
     }
 
     @Test
-    public void testRegisterOriginalFlagOriginalListener() {
+    void testRegisterOriginalFlagOriginalListener() {
         when(plugin.isLoaded()).thenReturn(true);
         FlagsManager fm = new FlagsManager(plugin);
         verify(pim, times(NUMBER_OF_LISTENERS)).registerEvents(any(), eq(plugin));
@@ -99,7 +99,7 @@ public class FlagsManagerTest extends CommonTestSetup {
      * Test for {@link FlagsManager#getFlags()}
      */
     @Test
-    public void testGetFlags() {
+    void testGetFlags() {
         FlagsManager fm = new FlagsManager(plugin);
         assertTrue(Flags.values().containsAll(fm.getFlags()));
         assertTrue(fm.getFlags().containsAll(Flags.values()));
@@ -109,7 +109,7 @@ public class FlagsManagerTest extends CommonTestSetup {
      * Test for {@link FlagsManager#getFlag(String)}
      */
     @Test
-    public void testGetFlagByID() {
+    void testGetFlagByID() {
         FlagsManager fm = new FlagsManager(plugin);
         // Test in forward and reverse order so that any duplicates are caught
         Flags.values().stream().sorted().forEach(flag -> assertEquals(flag, fm.getFlag(flag.getID()).get()));
@@ -121,7 +121,7 @@ public class FlagsManagerTest extends CommonTestSetup {
      * Test for {@link FlagsManager#unregister(Flag)}
      */
     @Test
-    public void testUnregisterFlag() {
+    void testUnregisterFlag() {
         MockedStatic<HandlerList> mockedHandler = Mockito.mockStatic(HandlerList.class);
         when(plugin.isLoaded()).thenReturn(true);
         FlagsManager fm = new FlagsManager(plugin);

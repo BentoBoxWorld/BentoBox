@@ -40,7 +40,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminGetrankCommandTest extends CommonTestSetup {
+class AdminGetrankCommandTest extends CommonTestSetup {
 
     private static final String[] NAMES = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
 
@@ -108,7 +108,7 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminGetrankCommand#AdminGetrankCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
-    public void testAdminGetrankCommand() {
+    void testAdminGetrankCommand() {
         assertEquals("getrank", c.getLabel());
     }
 
@@ -116,7 +116,7 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminGetrankCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("admin.getrank", c.getPermission());
         assertFalse(c.isOnlyPlayer());
         assertEquals("commands.admin.getrank.parameters", c.getParameters());
@@ -128,7 +128,7 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminGetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoArgs() {
+    void testCanExecuteNoArgs() {
         assertFalse(c.canExecute(user, "", Collections.emptyList()));
         verify(user).getTranslation("commands.help.console");
     }
@@ -137,7 +137,7 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminGetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUnknownPlayer() {
+    void testCanExecuteUnknownPlayer() {
         assertFalse(c.canExecute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("general.errors.unknown-player",
                 "[name]",
@@ -148,7 +148,7 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminGetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteKnownPlayerNoIsland() {
+    void testCanExecuteKnownPlayerNoIsland() {
         when(pm.getUUID(any())).thenReturn(targetUUID);
         assertFalse(c.canExecute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("general.errors.player-has-no-island");
@@ -158,7 +158,7 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminGetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteKnownPlayerHasIslandSuccess() {
+    void testCanExecuteKnownPlayerHasIslandSuccess() {
         when(pm.getUUID(any())).thenReturn(targetUUID);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(user.getTranslation(anyString())).thenReturn("member");
@@ -171,7 +171,7 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminGetrankCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         // Set the target
         testCanExecuteKnownPlayerHasIslandSuccess();
         when(island.getRank(any(User.class))).thenReturn(RanksManager.SUB_OWNER_RANK);
@@ -190,7 +190,7 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminGetrankCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfStringNoChars() {
+    void testTabCompleteUserStringListOfStringNoChars() {
         Optional<List<String>> result = c.tabComplete(user, "", Collections.emptyList());
         assertFalse(result.isPresent());
     }
@@ -199,7 +199,7 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminGetrankCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfStringWithChars() {
+    void testTabCompleteUserStringListOfStringWithChars() {
         Optional<List<String>> result = c.tabComplete(user, "", Collections.singletonList("g"));
         assertTrue(result.isPresent());
         result.ifPresent(list -> assertEquals(1, list.size()));

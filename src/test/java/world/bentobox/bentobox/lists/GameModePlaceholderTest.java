@@ -34,7 +34,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class GameModePlaceholderTest extends CommonTestSetup {
+class GameModePlaceholderTest extends CommonTestSetup {
 
     @Mock
     private GameModeAddon addon;
@@ -85,7 +85,7 @@ public class GameModePlaceholderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
-    public void testGetReplacerIsland() {
+    void testGetReplacerIsland() {
         assertEquals("0", GameModePlaceholder.ISLAND_BANS_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals("123,456,789", GameModePlaceholder.ISLAND_CENTER.getReplacer().onReplace(addon, user, island));
         assertEquals("123", GameModePlaceholder.ISLAND_CENTER_X.getReplacer().onReplace(addon, user, island));
@@ -112,7 +112,7 @@ public class GameModePlaceholderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
-    public void testGetReplacerNullIsland() {
+    void testGetReplacerNullIsland() {
         island = null;
         assertEquals("", GameModePlaceholder.ISLAND_BANS_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.ISLAND_CENTER.getReplacer().onReplace(addon, user, island));
@@ -138,7 +138,7 @@ public class GameModePlaceholderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
-    public void testGetReplacerPlayer() {
+    void testGetReplacerPlayer() {
         assertEquals("deaths", GameModePlaceholder.DEATHS.getPlaceholder());
         assertEquals("0", GameModePlaceholder.DEATHS.getReplacer().onReplace(addon, user, island));
         assertEquals("true", GameModePlaceholder.HAS_ISLAND.getReplacer().onReplace(addon, user, island));
@@ -153,7 +153,7 @@ public class GameModePlaceholderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
-    public void testGetReplacerPlayerOnIsland() {
+    void testGetReplacerPlayerOnIsland() {
         @Nullable
         World netherWorld = mock(World.class);
         when(addon.getNetherWorld()).thenReturn(netherWorld);
@@ -187,7 +187,7 @@ public class GameModePlaceholderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
-    public void testGetReplacerNullPlayer() {
+    void testGetReplacerNullPlayer() {
         user = null;
         assertEquals("", GameModePlaceholder.DEATHS.getReplacer().onReplace(addon, user, island));
         assertEquals("false", GameModePlaceholder.HAS_ISLAND.getReplacer().onReplace(addon, user, island));
@@ -202,7 +202,7 @@ public class GameModePlaceholderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
-    public void testGetReplacerVisitedIslands() {
+    void testGetReplacerVisitedIslands() {
         assertEquals("0", GameModePlaceholder.VISITED_ISLAND_BANS_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals("123,456,789",
                 GameModePlaceholder.VISITED_ISLAND_CENTER.getReplacer().onReplace(addon, user, island));
@@ -237,7 +237,7 @@ public class GameModePlaceholderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
-    public void testGetReplacerVisitedIslandsNoIsland() {
+    void testGetReplacerVisitedIslandsNoIsland() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         assertEquals("", GameModePlaceholder.VISITED_ISLAND_BANS_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.VISITED_ISLAND_CENTER.getReplacer().onReplace(addon, user, island));
@@ -262,7 +262,7 @@ public class GameModePlaceholderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
-    public void testGetReplacerWorld() {
+    void testGetReplacerWorld() {
         assertEquals("0", GameModePlaceholder.ISLAND_DISTANCE.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.ISLAND_DISTANCE_DIAMETER.getReplacer().onReplace(addon, user, island));
         assertEquals("friendly_name",

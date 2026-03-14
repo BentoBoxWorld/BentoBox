@@ -31,7 +31,7 @@ import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
-public class IslandToggleClickTest extends CommonTestSetup {
+class IslandToggleClickTest extends CommonTestSetup {
 
     private IslandToggleClick listener;
     @Mock
@@ -93,28 +93,28 @@ public class IslandToggleClickTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnClickNoPermission() {
+    void testOnClickNoPermission() {
         when(user.hasPermission(Mockito.anyString())).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         verify(user).sendMessage("general.errors.no-permission", "[permission]", "bskyblock.settings.test");
     }
 
     @Test
-    public void testOnClick() {
+    void testOnClick() {
         listener.onClick(panel, user, ClickType.LEFT, 0);
         verify(island).toggleFlag(flag);
         verify(pim).callEvent(any(FlagSettingChangeEvent.class));
     }
 
     @Test
-    public void testOnClickNoIsland() {
+    void testOnClickNoIsland() {
         when(settingsTab.getIsland()).thenReturn(null);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         verify(island, never()).toggleFlag(flag);
     }
 
     @Test
-    public void testOnClickNotOwner() {
+    void testOnClickNotOwner() {
         // No permission
         when(user.hasPermission(anyString())).thenReturn(false);
         // Pick a different UUID from owner

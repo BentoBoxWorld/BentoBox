@@ -47,7 +47,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  *
  */
 @Disabled("Unfinished - needs works")
-public class IslandCreationPanelTest extends CommonTestSetup {
+class IslandCreationPanelTest extends CommonTestSetup {
 
     @Mock
     private User user;
@@ -186,7 +186,7 @@ public class IslandCreationPanelTest extends CommonTestSetup {
      */
     @SuppressWarnings("deprecation")
     @Test
-    public void testOpenPanel() {
+    void testOpenPanel() {
         icp = new  IslandCreationPanel(ic, user, "", false);
         icp.build();
         // Set correctly
@@ -200,7 +200,7 @@ public class IslandCreationPanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.panels.customizable.IslandCreationPanel#openPanel(world.bentobox.bentobox.api.commands.CompositeCommand, world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
-    public void testOpenPanelSameSlot() {
+    void testOpenPanelSameSlot() {
         when(bb2.getSlot()).thenReturn(5);
         when(bb3.getSlot()).thenReturn(5);
         IslandCreationPanel.openPanel(ic, user, "", false);

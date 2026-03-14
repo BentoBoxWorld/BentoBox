@@ -50,7 +50,7 @@ import world.bentobox.bentobox.util.Util;
 /**
  * @author tastybento
  */
-public class AdminMaxHomesCommandTest extends CommonTestSetup {
+class AdminMaxHomesCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -143,7 +143,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsIsEmpty() {
+    void testArgsIsEmpty() {
         // Arrange: args is already empty
 
         // Act
@@ -159,7 +159,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsSize1_UserNotPlayer() {
+    void testArgsSize1_UserNotPlayer() {
         // Arrange
         args.add("5");
         when(user.isPlayer()).thenReturn(false);
@@ -176,7 +176,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsSize1_WrongWorld() {
+    void testArgsSize1_WrongWorld() {
         // Arrange
         args.add("5");
         when(user.isPlayer()).thenReturn(true);
@@ -197,7 +197,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsSize1_InvalidMaxHomes() {
+    void testArgsSize1_InvalidMaxHomes() {
         // Arrange
         args.add("notanumber");
         when(user.isPlayer()).thenReturn(true);
@@ -217,7 +217,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsSize1_UserNotOnIsland() {
+    void testArgsSize1_UserNotOnIsland() {
         // Arrange
         args.add("5");
         when(user.isPlayer()).thenReturn(true);
@@ -242,7 +242,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsSize1_Success() {
+    void testArgsSize1_Success() {
         // Arrange
         args.add("5");
         when(user.isPlayer()).thenReturn(true);
@@ -267,7 +267,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsSizeGreaterThan1_InvalidPlayer() {
+    void testArgsSizeGreaterThan1_InvalidPlayer() {
         // Arrange
         args.add("UnknownPlayer");
         args.add("5");
@@ -286,7 +286,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsSizeGreaterThan1_InvalidMaxHomes() {
+    void testArgsSizeGreaterThan1_InvalidMaxHomes() {
         // Arrange
         args.add("ValidPlayer");
         args.add("notanumber");
@@ -306,7 +306,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsSizeGreaterThan1_TargetPlayerHasNoIslands() {
+    void testArgsSizeGreaterThan1_TargetPlayerHasNoIslands() {
         // Arrange
         args.add("ValidPlayer");
         args.add("5");
@@ -332,7 +332,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsSizeGreaterThan2_UnknownIsland() {
+    void testArgsSizeGreaterThan2_UnknownIsland() {
         // Arrange
         args.add("ValidPlayer");
         args.add("5");
@@ -362,7 +362,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testArgsSizeGreaterThan1_Success() {
+    void testArgsSizeGreaterThan1_Success() {
         // Arrange
         args.add("ValidPlayer");
         args.add("5");
@@ -390,7 +390,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("mod.maxhomes", instance.getPermission());
         assertFalse(instance.isOnlyPlayer());
         assertEquals("commands.admin.maxhomes.parameters", instance.getParameters());
@@ -402,7 +402,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabComplete_ArgsSize2_ReturnsPlayerNames() {
+    void testTabComplete_ArgsSize2_ReturnsPlayerNames() {
         // Arrange
         args.add("someArg"); // args.size() == 1
         args.add(""); // args.size() == 2
@@ -423,7 +423,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabComplete_ArgsSizeGreaterThan3_ReturnsIslandNames() {
+    void testTabComplete_ArgsSizeGreaterThan3_ReturnsIslandNames() {
         // Arrange
         args.add("someArg");
         args.add("anotherArg");
@@ -456,7 +456,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabComplete_Otherwise_ReturnsListOfOne() {
+    void testTabComplete_Otherwise_ReturnsListOfOne() {
         // Arrange
         args.add(""); // args.size() == 1
 
@@ -472,7 +472,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabComplete_ArgsSize3_ReturnsListOfOne() {
+    void testTabComplete_ArgsSize3_ReturnsListOfOne() {
         // Arrange
         args.add("someArg");
         args.add("anotherArg");
@@ -490,7 +490,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteWithEmptyIslands_ShouldReturnFalse() {
+    void testExecuteWithEmptyIslands_ShouldReturnFalse() {
         // Arrange
         instance.maxHomes = 5; // Set maxHomes to a valid number
         instance.islands = new HashMap<>(); // Empty islands map
@@ -506,7 +506,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteWithMaxHomesLessThanOne_ShouldReturnFalse() {
+    void testExecuteWithMaxHomesLessThanOne_ShouldReturnFalse() {
         // Arrange
         instance.maxHomes = 0; // Invalid maxHomes
         Island island = mock(Island.class);
@@ -526,7 +526,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteSuccessful_SingleIsland() {
+    void testExecuteSuccessful_SingleIsland() {
         // Arrange
         instance.maxHomes = 5;
         Island island = mock(Island.class);
@@ -549,7 +549,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteSuccessful_MultipleIslands() {
+    void testExecuteSuccessful_MultipleIslands() {
         // Arrange
         instance.maxHomes = 3;
         Island island1 = mock(Island.class);
@@ -577,7 +577,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteAfterSuccessfulCanExecute() {
+    void testExecuteAfterSuccessfulCanExecute() {
         // Arrange
         args.add("5");
         when(user.isPlayer()).thenReturn(true);
@@ -607,7 +607,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteWithInvalidMaxHomesAfterCanExecute() {
+    void testExecuteWithInvalidMaxHomesAfterCanExecute() {
         // Arrange
         args.add("-1");
         when(user.isPlayer()).thenReturn(true);
@@ -629,7 +629,7 @@ public class AdminMaxHomesCommandTest extends CommonTestSetup {
      */
     @Test
     @Disabled("Reason: IslandGoCommand.getNameIslandMap static mock integration fails during map retrieval")
-    public void testExecuteWithMultipleIslandsAfterCanExecute() {
+    void testExecuteWithMultipleIslandsAfterCanExecute() {
         // Arrange
         args.add("ValidPlayer");
         args.add("4");

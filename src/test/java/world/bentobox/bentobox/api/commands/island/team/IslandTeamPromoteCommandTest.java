@@ -38,7 +38,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
+class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private IslandTeamCommand ic;
@@ -132,7 +132,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#IslandTeamPromoteCommand(world.bentobox.bentobox.api.commands.CompositeCommand, java.lang.String)}.
      */
     @Test
-    public void testIslandTeamPromoteCommand() {
+    void testIslandTeamPromoteCommand() {
         assertNotNull(ipc);
         assertNotNull(idc);
     }
@@ -141,7 +141,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("island.team.promote", ipc.getPermission());
         assertEquals("island.team.promote", idc.getPermission());
         assertTrue(ipc.isOnlyPlayer());
@@ -158,7 +158,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringShowHelp() {
+    void testCanExecuteUserStringListOfStringShowHelp() {
         assertFalse(ipc.canExecute(user, "promote", List.of())); // Nothing
         verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
     }
@@ -167,7 +167,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringNoTeam() {
+    void testCanExecuteUserStringListOfStringNoTeam() {
         when(im.inTeam(any(), any())).thenReturn(false);
         assertFalse(ipc.canExecute(user, "promote", List.of("tastybento")));
         verify(user).sendMessage("general.errors.no-team");
@@ -177,7 +177,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringInsufficientRank() {
+    void testCanExecuteUserStringListOfStringInsufficientRank() {
         when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
         assertFalse(ipc.canExecute(user, "promote", List.of("tastybento")));
         verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
@@ -187,7 +187,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringUnknownPlayer() {
+    void testCanExecuteUserStringListOfStringUnknownPlayer() {
         when(pm.getUser(anyString())).thenReturn(null);
         assertFalse(ipc.canExecute(user, "promote", List.of("tastybento")));
         verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tastybento");
@@ -197,7 +197,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringSameUser() {
+    void testCanExecuteUserStringListOfStringSameUser() {
         when(pm.getUser(anyString())).thenReturn(user);
         assertFalse(ipc.canExecute(user, "promote", List.of("tastybento")));
         verify(user).sendMessage("commands.island.team.promote.errors.cant-promote-yourself");
@@ -209,7 +209,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringDemoteOwner() {
+    void testCanExecuteUserStringListOfStringDemoteOwner() {
         when(island.getRank(target)).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(idc.canExecute(user, "demote", List.of("target")));
         verify(user).sendMessage("commands.island.team.demote.errors.cant-demote");
@@ -219,7 +219,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringPromoteAboveSelf() {
+    void testCanExecuteUserStringListOfStringPromoteAboveSelf() {
         when(island.getRank(target)).thenReturn(RanksManager.SUB_OWNER_RANK);
         assertFalse(ipc.canExecute(user, "promote", List.of("target")));
         verify(user).sendMessage("commands.island.team.promote.errors.cant-promote");
@@ -229,7 +229,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringSuccess() {
+    void testCanExecuteUserStringListOfStringSuccess() {
         when(island.getRank(target)).thenReturn(RanksManager.MEMBER_RANK);
         assertTrue(ipc.canExecute(user, "promote", List.of("target")));
         assertTrue(idc.canExecute(user, "demote", List.of("target")));
@@ -240,7 +240,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         when(island.getRank(target)).thenReturn(RanksManager.MEMBER_RANK);
         when(rm.getRankUpValue(RanksManager.MEMBER_RANK)).thenReturn(RanksManager.SUB_OWNER_RANK);
         ipc.canExecute(user, "promote", List.of("target"));
@@ -255,7 +255,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfStringNoIsland() {
+    void testTabCompleteUserStringListOfStringNoIsland() {
         when(im.getIsland(world, user)).thenReturn(null);
         Optional<List<String>> options = ipc.tabComplete(user, "promote", List.of("p"));
         assertTrue(options.isEmpty());
@@ -265,7 +265,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfString() {
+    void testTabCompleteUserStringListOfString() {
         Optional<List<String>> options = ipc.tabComplete(user, "promote", List.of("p"));
         assertFalse(options.isEmpty());
         assertTrue(options.get().isEmpty());

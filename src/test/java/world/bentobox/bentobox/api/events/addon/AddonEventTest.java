@@ -15,7 +15,7 @@ import world.bentobox.bentobox.api.addons.Addon;
  * @author tastybento
  */
 
-public class AddonEventTest extends CommonTestSetup {
+class AddonEventTest extends CommonTestSetup {
 
     @Mock
     private Addon mockAddon;
@@ -33,7 +33,7 @@ public class AddonEventTest extends CommonTestSetup {
     }
 
     @Test
-    public void testAddonEventBuilderWithEnableReason() {
+    void testAddonEventBuilderWithEnableReason() {
         AddonEvent addonEvent = new AddonEvent();
         AddonBaseEvent event = addonEvent.builder().addon(mockAddon).reason(AddonEvent.Reason.ENABLE).build();
 
@@ -42,7 +42,7 @@ public class AddonEventTest extends CommonTestSetup {
     }
 
     @Test
-    public void testAddonEventBuilderWithDisableReason() {
+    void testAddonEventBuilderWithDisableReason() {
         AddonEvent addonEvent = new AddonEvent();
         AddonBaseEvent event = addonEvent.builder().addon(mockAddon).reason(AddonEvent.Reason.DISABLE).build();
 
@@ -51,7 +51,7 @@ public class AddonEventTest extends CommonTestSetup {
     }
 
     @Test
-    public void testAddonEventBuilderWithLoadReason() {
+    void testAddonEventBuilderWithLoadReason() {
         AddonEvent addonEvent = new AddonEvent();
         AddonBaseEvent event = addonEvent.builder().addon(mockAddon).reason(AddonEvent.Reason.LOAD).build();
 
@@ -60,7 +60,7 @@ public class AddonEventTest extends CommonTestSetup {
     }
 
     @Test
-    public void testAddonEventBuilderWithUnknownReason() {
+    void testAddonEventBuilderWithUnknownReason() {
         AddonEvent addonEvent = new AddonEvent();
         AddonBaseEvent event = addonEvent.builder().addon(mockAddon).build(); // Default reason is UNKNOWN
 

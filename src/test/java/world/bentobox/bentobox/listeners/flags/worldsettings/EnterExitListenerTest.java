@@ -44,7 +44,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class EnterExitListenerTest extends CommonTestSetup {
+class EnterExitListenerTest extends CommonTestSetup {
 
     private static final Integer PROTECTION_RANGE = 200;
     private static final Integer X = 600;
@@ -174,7 +174,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnMoveInsideIsland() {
+    void testOnMoveInsideIsland() {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, inside);
         listener.onMove(e);
         // Moving in the island should result in no messages to the user
@@ -187,7 +187,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnMoveOutsideIsland() {
+    void testOnMoveOutsideIsland() {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, outside);
         listener.onMove(e);
         // Moving outside the island should result in no messages to the user
@@ -200,7 +200,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnMoveOutsideIslandToNull() {
+    void testOnMoveOutsideIslandToNull() {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, null);
         listener.onMove(e);
         // Moving outside the island should result in no messages to the user
@@ -213,7 +213,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnGoingIntoIslandEmptyIslandName() {
+    void testOnGoingIntoIslandEmptyIslandName() {
         when(island.getName()).thenReturn("");
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, inside);
         listener.onMove(e);
@@ -230,7 +230,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnGoingIntoIslandWithIslandName() {
+    void testOnGoingIntoIslandWithIslandName() {
         when(island.getName()).thenReturn("fancy name");
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, inside);
         listener.onMove(e);
@@ -248,7 +248,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testExitingIslandEmptyIslandName() {
+    void testExitingIslandEmptyIslandName() {
         when(island.getName()).thenReturn("");
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, outside);
         listener.onMove(e);
@@ -265,7 +265,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testExitingIslandEmptyIslandNameToNull() {
+    void testExitingIslandEmptyIslandNameToNull() {
         when(island.getName()).thenReturn("");
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, null);
         listener.onMove(e);
@@ -282,7 +282,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testExitingIslandWithIslandName() {
+    void testExitingIslandWithIslandName() {
         when(island.getName()).thenReturn("fancy name");
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, outside);
         listener.onMove(e);
@@ -301,7 +301,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * @since 1.4.0
      */
     @Test
-    public void testNoNotificationIfDisabled() {
+    void testNoNotificationIfDisabled() {
         // No notifications should be sent
         Flags.ENTER_EXIT_MESSAGES.setSetting(world, false);
 
@@ -318,7 +318,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testEnterIslandTeleport() {
+    void testEnterIslandTeleport() {
         PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), anotherWorld, inside, TeleportCause.PLUGIN);
         listener.onTeleport(e);
         verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
@@ -330,7 +330,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testExitIslandTeleport() {
+    void testExitIslandTeleport() {
         PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), inside, anotherWorld, TeleportCause.PLUGIN);
         listener.onTeleport(e);
         verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
@@ -342,7 +342,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testExitIslandTeleportToNull() {
+    void testExitIslandTeleportToNull() {
         PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), inside, null, TeleportCause.PLUGIN);
         listener.onTeleport(e);
         verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
@@ -355,7 +355,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testEnterIslandTeleportUnowned() {
+    void testEnterIslandTeleportUnowned() {
         when(island.isOwned()).thenReturn(false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), anotherWorld, inside, TeleportCause.PLUGIN);
         listener.onTeleport(e);
@@ -368,7 +368,7 @@ public class EnterExitListenerTest extends CommonTestSetup {
      * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testExitIslandTeleportUnowned() {
+    void testExitIslandTeleportUnowned() {
         when(island.isOwned()).thenReturn(false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), inside, anotherWorld, TeleportCause.PLUGIN);
         listener.onTeleport(e);

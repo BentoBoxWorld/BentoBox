@@ -37,7 +37,7 @@ import world.bentobox.bentobox.util.Util;
 /**
  * @author tastybento
  */
-public class BlueprintPasterTest extends CommonTestSetup {
+class BlueprintPasterTest extends CommonTestSetup {
 
     private BlueprintPaster bp;
     private BlueprintPaster bp2;

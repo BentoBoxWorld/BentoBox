@@ -37,7 +37,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-public class AdminBlueprintCopyCommandTest extends CommonTestSetup {
+class AdminBlueprintCopyCommandTest extends CommonTestSetup {
 
     @Mock
     private AdminBlueprintCommand ac;
@@ -105,7 +105,7 @@ public class AdminBlueprintCopyCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#AdminBlueprintCopyCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
-    public void testAdminBlueprintCopyCommand() {
+    void testAdminBlueprintCopyCommand() {
         assertNotNull(abcc);
     }
 
@@ -113,7 +113,7 @@ public class AdminBlueprintCopyCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         abcc.setup();
         assertEquals("commands.admin.blueprint.copy.description", abcc.getDescription());
         assertEquals("commands.admin.blueprint.copy.parameters", abcc.getParameters());
@@ -124,7 +124,7 @@ public class AdminBlueprintCopyCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringHelp() {
+    void testExecuteUserStringListOfStringHelp() {
         assertFalse(abcc.execute(user, "", List.of("1", "2", "3")));
         verify(user).sendMessage("commands.help.header", "[label]", "translation");
     }
@@ -133,7 +133,7 @@ public class AdminBlueprintCopyCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringSuccess() {
+    void testExecuteUserStringListOfStringSuccess() {
         assertTrue(abcc.execute(user, "", List.of("air", "biome")));
         verify(clip).copy(user, true, true, false);
     }
@@ -142,7 +142,7 @@ public class AdminBlueprintCopyCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringSuccessCaps() {
+    void testExecuteUserStringListOfStringSuccessCaps() {
         assertTrue(abcc.execute(user, "", List.of("AIR", "BIOME")));
         verify(clip).copy(user, true, true, false);
     }
@@ -151,7 +151,7 @@ public class AdminBlueprintCopyCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringJunk() {
+    void testExecuteUserStringListOfStringJunk() {
         assertTrue(abcc.execute(user, "", List.of("junk", "junk")));
         verify(clip).copy(user, false, false, false);
     }
@@ -160,7 +160,7 @@ public class AdminBlueprintCopyCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNothing() {
+    void testExecuteUserStringListOfStringNothing() {
         assertTrue(abcc.execute(user, "", Collections.emptyList()));
         verify(clip).copy(user, false, false, false);
     }
@@ -169,7 +169,7 @@ public class AdminBlueprintCopyCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfString() {
+    void testTabCompleteUserStringListOfString() {
         Optional<List<String>> o = abcc.tabComplete(user, "", List.of(""));
         assertTrue(o.isPresent());
         assertEquals("air", o.get().getFirst());

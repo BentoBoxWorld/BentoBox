@@ -41,7 +41,7 @@ import world.bentobox.bentobox.listeners.flags.protection.TestWorldSettings;
 import world.bentobox.bentobox.lists.Flags;
 
 
-public class EnderChestListenerTest extends CommonTestSetup {
+class EnderChestListenerTest extends CommonTestSetup {
 
     @Mock
     private ItemStack item;
@@ -76,7 +76,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnEnderChestOpenNotRightClick() {
+    void testOnEnderChestOpenNotRightClick() {
         action = Action.LEFT_CLICK_AIR;
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
@@ -86,7 +86,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
 
     @Test
     @Disabled("Issues with NotAMock")
-    public void testOnEnderChestOpenEnderChestNotInWorld() {
+    void testOnEnderChestOpenEnderChestNotInWorld() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Not in world
@@ -98,7 +98,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
 
     @Test
     @Disabled("Issues with NotAMock")
-    public void testOnEnderChestOpenEnderChestOpPlayer() {
+    void testOnEnderChestOpenEnderChestOpPlayer() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Op player
@@ -109,7 +109,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
 
     @Test
     @Disabled("Issues with NotAMock")
-    public void testOnEnderChestOpenEnderChestHasBypassPerm() {
+    void testOnEnderChestOpenEnderChestHasBypassPerm() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Has bypass perm
@@ -120,7 +120,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
 
     @Test
     @Disabled("Issues with NotAMock")
-    public void testOnEnderChestOpenEnderChestOkay() {
+    void testOnEnderChestOpenEnderChestOkay() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Enderchest use is okay
@@ -133,7 +133,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
 
     @Test
     @Disabled("Issues with NotAMock")
-    public void testOnEnderChestOpenEnderChestBlocked() {
+    void testOnEnderChestOpenEnderChestBlocked() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Enderchest use is blocked
@@ -144,7 +144,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnCraftNotEnderChest() {
+    void testOnCraftNotEnderChest() {
         Recipe recipe = mock(Recipe.class);
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.STONE);
@@ -163,7 +163,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnCraftEnderChest() {
+    void testOnCraftEnderChest() {
         Recipe recipe = mock(Recipe.class);
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.ENDER_CHEST);

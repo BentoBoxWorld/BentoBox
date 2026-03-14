@@ -24,7 +24,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class MobTeleportListenerTest extends CommonTestSetup {
+class MobTeleportListenerTest extends CommonTestSetup {
 
     private MobTeleportListener mtl;
 
@@ -74,7 +74,7 @@ public class MobTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnEntityTeleportEventEndermanNotAllowed() {
+    void testOnEntityTeleportEventEndermanNotAllowed() {
         Flags.ENDERMAN_TELEPORT.setSetting(world, false);
         when(island.isAllowed(Flags.ENDERMAN_TELEPORT)).thenReturn(false);
         EntityTeleportEvent e = new EntityTeleportEvent(enderman, from, to);
@@ -86,7 +86,7 @@ public class MobTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnEntityTeleportEventEndermanNotAllowedWrongWorld() {
+    void testOnEntityTeleportEventEndermanNotAllowedWrongWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         Flags.ENDERMAN_TELEPORT.setSetting(world, false);
         when(island.isAllowed(Flags.ENDERMAN_TELEPORT)).thenReturn(false);
@@ -99,7 +99,7 @@ public class MobTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnEntityTeleportEventEndermanNotAllowedNotOnIsland() {
+    void testOnEntityTeleportEventEndermanNotAllowedNotOnIsland() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         Flags.ENDERMAN_TELEPORT.setSetting(world, false);
         EntityTeleportEvent e = new EntityTeleportEvent(enderman, from, to);
@@ -111,7 +111,7 @@ public class MobTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnEntityTeleportEventEndermanAllowedDefault() {
+    void testOnEntityTeleportEventEndermanAllowedDefault() {
         EntityTeleportEvent e = new EntityTeleportEvent(enderman, from, to);
         mtl.onEntityTeleportEvent(e);
         assertFalse(e.isCancelled());
@@ -121,7 +121,7 @@ public class MobTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnEntityTeleportEventOther() {
+    void testOnEntityTeleportEventOther() {
         EntityTeleportEvent e = new EntityTeleportEvent(other, from, to);
         mtl.onEntityTeleportEvent(e);
         assertFalse(e.isCancelled());
@@ -131,7 +131,7 @@ public class MobTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnEntityTeleportEventEndermanNotAllowedButOther() {
+    void testOnEntityTeleportEventEndermanNotAllowedButOther() {
         Flags.ENDERMAN_TELEPORT.setSetting(world, false);
         Flags.SHULKER_TELEPORT.setSetting(world, false);
         when(island.isAllowed(Flags.ENDERMAN_TELEPORT)).thenReturn(false);
@@ -145,7 +145,7 @@ public class MobTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnEntityTeleportEventShulkerNotAllowed() {
+    void testOnEntityTeleportEventShulkerNotAllowed() {
         Flags.SHULKER_TELEPORT.setSetting(world, false);
         when(island.isAllowed(Flags.SHULKER_TELEPORT)).thenReturn(false);
         EntityTeleportEvent e = new EntityTeleportEvent(shulker, from, to);
@@ -157,7 +157,7 @@ public class MobTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnEntityTeleportEventShulkerNotAllowedWrongWorld() {
+    void testOnEntityTeleportEventShulkerNotAllowedWrongWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         Flags.SHULKER_TELEPORT.setSetting(world, false);
         when(island.isAllowed(Flags.SHULKER_TELEPORT)).thenReturn(false);
@@ -170,7 +170,7 @@ public class MobTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnEntityTeleportEventShulkerNotAllowedNotOnIsland() {
+    void testOnEntityTeleportEventShulkerNotAllowedNotOnIsland() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         Flags.SHULKER_TELEPORT.setSetting(world, false);
         EntityTeleportEvent e = new EntityTeleportEvent(shulker, from, to);
@@ -182,7 +182,7 @@ public class MobTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnEntityTeleportEventShulkerAllowedDefault() {
+    void testOnEntityTeleportEventShulkerAllowedDefault() {
         EntityTeleportEvent e = new EntityTeleportEvent(shulker, from, to);
         mtl.onEntityTeleportEvent(e);
         assertFalse(e.isCancelled());

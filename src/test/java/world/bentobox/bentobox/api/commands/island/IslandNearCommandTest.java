@@ -41,7 +41,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-public class IslandNearCommandTest extends CommonTestSetup {
+class IslandNearCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -136,7 +136,7 @@ public class IslandNearCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("island.near", inc.getPermission());
         assertTrue(inc.isOnlyPlayer());
         assertEquals("commands.island.near.parameters", inc.getParameters());
@@ -149,7 +149,7 @@ public class IslandNearCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteWithArgsShowHelp() {
+    void testCanExecuteWithArgsShowHelp() {
         assertFalse(inc.canExecute(user, "near", Collections.singletonList("fghjk")));
         verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
     }
@@ -158,7 +158,7 @@ public class IslandNearCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteHasTeam() {
+    void testCanExecuteHasTeam() {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any())).thenReturn(true);
         assertTrue(inc.canExecute(user, "near", Collections.emptyList()));
@@ -168,7 +168,7 @@ public class IslandNearCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteHasIslandAndTeam() {
+    void testCanExecuteHasIslandAndTeam() {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.inTeam(any(), any())).thenReturn(true);
         assertTrue(inc.canExecute(user, "near", Collections.emptyList()));
@@ -178,7 +178,7 @@ public class IslandNearCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteHasIslandNoTeam() {
+    void testCanExecuteHasIslandNoTeam() {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.inTeam(any(), any())).thenReturn(false);
         assertTrue(inc.canExecute(user, "near", Collections.emptyList()));
@@ -188,7 +188,7 @@ public class IslandNearCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoIslandNoTeam() {
+    void testCanExecuteNoIslandNoTeam() {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any())).thenReturn(false);
         assertFalse(inc.canExecute(user, "near", Collections.emptyList()));
@@ -199,7 +199,7 @@ public class IslandNearCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringAllFourPoints() {
+    void testExecuteUserStringListOfStringAllFourPoints() {
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
         verify(user).sendMessage("commands.island.near.the-following-islands");
         verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.north",
@@ -216,7 +216,7 @@ public class IslandNearCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringUnowned() {
+    void testExecuteUserStringListOfStringUnowned() {
         when(island.getName()).thenReturn("");
         when(island.isUnowned()).thenReturn(true);
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
@@ -231,7 +231,7 @@ public class IslandNearCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoName() {
+    void testExecuteUserStringListOfStringNoName() {
         when(island.getName()).thenReturn("");
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
         verify(user).sendMessage("commands.island.near.the-following-islands");
@@ -253,7 +253,7 @@ public class IslandNearCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoIslands() {
+    void testExecuteUserStringListOfStringNoIslands() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
         verify(user).sendMessage("commands.island.near.the-following-islands");

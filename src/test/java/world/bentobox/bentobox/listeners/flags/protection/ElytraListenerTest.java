@@ -21,7 +21,7 @@ import world.bentobox.bentobox.CommonTestSetup;
  * @author tastybento
  *
  */
-public class ElytraListenerTest extends CommonTestSetup {
+class ElytraListenerTest extends CommonTestSetup {
 
     private ElytraListener el;
 
@@ -52,7 +52,7 @@ public class ElytraListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGlide(org.bukkit.event.entity.EntityToggleGlideEvent)}.
      */
     @Test
-    public void testOnGlideAllowed() {
+    void testOnGlideAllowed() {
         EntityToggleGlideEvent e = new EntityToggleGlideEvent(mockPlayer, false);
         el.onGlide(e);
         assertFalse(e.isCancelled());
@@ -63,7 +63,7 @@ public class ElytraListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGlide(org.bukkit.event.entity.EntityToggleGlideEvent)}.
      */
     @Test
-    public void testOnGlideNotAllowed() {
+    void testOnGlideNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         EntityToggleGlideEvent e = new EntityToggleGlideEvent(mockPlayer, false);
         el.onGlide(e);
@@ -75,7 +75,7 @@ public class ElytraListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGliding(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testGlidingAllowed() {
+    void testGlidingAllowed() {
         PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, location, location);
         el.onGliding(e);
         verify(notifier, never()).notify(any(), anyString());
@@ -86,7 +86,7 @@ public class ElytraListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGliding(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testGlidingNotAllowed() {
+    void testGlidingNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, location, location);
         el.onGliding(e);
@@ -97,7 +97,7 @@ public class ElytraListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGliding(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testGlidingNotGliding() {
+    void testGlidingNotGliding() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         when(mockPlayer.isGliding()).thenReturn(false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, location, location);

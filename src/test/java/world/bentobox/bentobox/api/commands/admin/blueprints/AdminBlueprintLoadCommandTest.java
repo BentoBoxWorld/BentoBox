@@ -39,7 +39,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
+class AdminBlueprintLoadCommandTest extends CommonTestSetup {
 
     @Mock
     private AdminBlueprintCommand ac;
@@ -123,7 +123,7 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#AdminBlueprintLoadCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
-    public void testAdminBlueprintLoadCommand() {
+    void testAdminBlueprintLoadCommand() {
         assertNotNull(abcc);
     }
 
@@ -131,7 +131,7 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         abcc.setup();
         assertEquals("commands.admin.blueprint.load.description", abcc.getDescription());
         assertEquals("commands.admin.blueprint.load.parameters", abcc.getParameters());
@@ -142,7 +142,7 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringHelp() {
+    void testExecuteUserStringListOfStringHelp() {
         assertFalse(abcc.execute(user, "", List.of("1", "2", "3")));
         verify(user).sendMessage("commands.help.header", "[label]", "translation");
     }
@@ -151,7 +151,7 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoLoad() {
+    void testExecuteUserStringListOfStringNoLoad() {
         assertFalse(abcc.execute(user, "", List.of(" iSlAnd  ")));
         verify(user).sendMessage("commands.admin.blueprint.could-not-load");
     }
@@ -161,7 +161,7 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
      */
     @Disabled("Paper Biome issue")
     @Test
-    public void testExecuteUserStringListOfStringSuccessCaps() {
+    void testExecuteUserStringListOfStringSuccessCaps() {
         assertTrue(abcc.execute(user, "", List.of("island")));
         verify(user).sendMessage("general.success");
     }
@@ -170,7 +170,7 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfString() {
+    void testTabCompleteUserStringListOfString() {
         Optional<List<String>> o = abcc.tabComplete(user, "", List.of(""));
         assertTrue(o.isPresent());
         assertEquals("island", o.get().getFirst());
@@ -180,7 +180,7 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfStringIsland() {
+    void testTabCompleteUserStringListOfStringIsland() {
         Optional<List<String>> o = abcc.tabComplete(user, "", List.of("e"));
         assertTrue(o.isPresent());
         assertTrue(o.get().isEmpty());

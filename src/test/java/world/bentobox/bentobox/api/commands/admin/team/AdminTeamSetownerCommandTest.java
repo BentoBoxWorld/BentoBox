@@ -41,7 +41,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminTeamSetownerCommandTest extends CommonTestSetup {
+class AdminTeamSetownerCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -128,7 +128,7 @@ public class AdminTeamSetownerCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamSetownerCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testExecuteNoTarget() {
+    void testExecuteNoTarget() {
         assertFalse(itl.canExecute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
         verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "commands.help.console");
@@ -138,7 +138,7 @@ public class AdminTeamSetownerCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamSetownerCommand#setup()}
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("commands.admin.team.setowner.description", itl.getDescription());
         assertEquals("commands.admin.team.setowner.parameters", itl.getParameters());
         assertTrue(itl.isOnlyPlayer());
@@ -149,7 +149,7 @@ public class AdminTeamSetownerCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamSetownerCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testExecuteUnknownPlayer() {
+    void testExecuteUnknownPlayer() {
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
         verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
     }
@@ -158,7 +158,7 @@ public class AdminTeamSetownerCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamSetownerCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testExecuteMakeOwnerAlreadyOwner() {
+    void testExecuteMakeOwnerAlreadyOwner() {
         when(im.getIslandAt(any())).thenReturn(Optional.of(island));
         when(island.getOwner()).thenReturn(uuid);
         when(Util.getUUID("tastybento")).thenReturn(uuid);
@@ -170,7 +170,7 @@ public class AdminTeamSetownerCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamSetownerCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteSuccess() {
+    void testExecuteSuccess() {
         when(im.getIslandAt(any())).thenReturn(Optional.of(island));
         when(island.getOwner()).thenReturn(notUUID);
         when(Util.getUUID("tastybento")).thenReturn(uuid);
@@ -186,7 +186,7 @@ public class AdminTeamSetownerCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamSetownerCommand#changeOwner(User)}
      */
     @Test
-    public void testChangeOwner() {
+    void testChangeOwner() {
         when(im.getIslandAt(any())).thenReturn(Optional.of(island));
         when(island.getOwner()).thenReturn(notUUID);
         when(Util.getUUID("tastybento")).thenReturn(uuid);
@@ -201,7 +201,7 @@ public class AdminTeamSetownerCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamSetownerCommand#changeOwner(User)}
      */
     @Test
-    public void testChangeOwnerNoOwner() {
+    void testChangeOwnerNoOwner() {
         when(im.getIslandAt(any())).thenReturn(Optional.of(island));
         when(island.getOwner()).thenReturn(null);
         when(Util.getUUID("tastybento")).thenReturn(uuid);

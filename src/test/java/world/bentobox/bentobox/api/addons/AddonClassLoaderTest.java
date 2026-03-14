@@ -39,7 +39,7 @@ import world.bentobox.bentobox.managers.AddonsManager;
  * @author tastybento
  *
  */
-public class AddonClassLoaderTest extends CommonTestSetup {
+class AddonClassLoaderTest extends CommonTestSetup {
 
     private enum mandatoryTags {
         MAIN,
@@ -170,7 +170,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
      * @throws Exception 
      */
     @AfterEach
-    public void TearDown() throws Exception {
+    void TearDown() throws Exception {
         super.tearDown();
         Files.deleteIfExists(jarFile.toPath());
         if (dataFolder.exists()) {
@@ -194,7 +194,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#AddonClassLoader(world.bentobox.bentobox.managers.AddonsManager, org.bukkit.configuration.file.YamlConfiguration, java.io.File, java.lang.ClassLoader)}.
      */
     @Test
-    public void testAddonClassLoader() throws MalformedURLException {
+    void testAddonClassLoader() throws MalformedURLException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
     }
 
@@ -202,7 +202,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
-    public void testAsDescription() throws InvalidAddonDescriptionException {
+    void testAsDescription() throws InvalidAddonDescriptionException {
         YamlConfiguration yml = this.getYaml(List.of());
         @NonNull
         AddonDescription desc = AddonClassLoader.asDescription(yml);
@@ -225,7 +225,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
-    public void testAsDescriptionNoName() {
+    void testAsDescriptionNoName() {
         YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.NAME));
         try {
             AddonClassLoader.asDescription(yml);
@@ -238,7 +238,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
-    public void testAsDescriptionNoAuthors() {
+    void testAsDescriptionNoAuthors() {
         YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.AUTHORS));
         try {
             AddonClassLoader.asDescription(yml);
@@ -251,7 +251,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
-    public void testAsDescriptionNoVersion() {
+    void testAsDescriptionNoVersion() {
         YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.VERSION));
         try {
             AddonClassLoader.asDescription(yml);
@@ -264,7 +264,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
-    public void testAsDescriptionNoMain() {
+    void testAsDescriptionNoMain() {
         YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.MAIN));
         try {
             AddonClassLoader.asDescription(yml);
@@ -277,7 +277,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
-    public void testAsDescriptionUnknownIconMaterial() {
+    void testAsDescriptionUnknownIconMaterial() {
         YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.ICON));
         try {
             AddonClassLoader.asDescription(yml);
@@ -290,7 +290,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#findClass(java.lang.String)}.
      */
     @Test
-    public void testFindClassString() throws IOException {
+    void testFindClassString() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         assertNull(acl.findClass(""));
         assertNull(acl.findClass("world.bentobox.bentobox"));
@@ -301,7 +301,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#findClass(java.lang.String, boolean)}.
      */
     @Test
-    public void testFindClassStringBoolean() throws IOException {
+    void testFindClassStringBoolean() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         assertNull(acl.findClass("", false));
         assertNull(acl.findClass("world.bentobox.bentobox", false));
@@ -312,7 +312,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#getAddon()}.
      */
     @Test
-    public void testGetAddon() throws IOException {
+    void testGetAddon() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         Addon addon = acl.getAddon();
         assertSame(testAddon, addon);
@@ -323,7 +323,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#getClasses()}.
      */
     @Test
-    public void testGetClasses() throws IOException {
+    void testGetClasses() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         Set<String> set = acl.getClasses();
         assertTrue(set.isEmpty());

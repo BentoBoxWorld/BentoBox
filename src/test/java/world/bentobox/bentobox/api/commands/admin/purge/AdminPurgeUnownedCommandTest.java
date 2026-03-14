@@ -24,7 +24,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
  * @author Poslovitch
  *
  */
-public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
+class AdminPurgeUnownedCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -78,7 +78,7 @@ public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
      * Makes sure no spawn islands are purged whatsoever
      */
     @Test
-    public void testNoPurgeIfIslandIsSpawn() {
+    void testNoPurgeIfIslandIsSpawn() {
         when(island.isSpawn()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));
@@ -86,7 +86,7 @@ public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testNoPurgeIfIslandIsOwned() {
+    void testNoPurgeIfIslandIsOwned() {
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.admin.purge.unowned.unowned-islands", "[number]", "0");
@@ -94,7 +94,7 @@ public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
 
     @Disabled("unable to mock CompositeCommand#askConfirmation()")
     @Test
-    public void testPurgeIfIslandIsUnowned() {
+    void testPurgeIfIslandIsUnowned() {
         when(island.isOwned()).thenReturn(false);
         when(island.isUnowned()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
@@ -103,7 +103,7 @@ public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testNoPurgeIfIslandIsPurgeProtected() {
+    void testNoPurgeIfIslandIsPurgeProtected() {
         when(island.isPurgeProtected()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));

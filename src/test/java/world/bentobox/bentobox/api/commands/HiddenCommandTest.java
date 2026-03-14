@@ -29,7 +29,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
  * @author tastybento
  *
  */
-public class HiddenCommandTest extends CommonTestSetup {
+class HiddenCommandTest extends CommonTestSetup {
 
     @Mock
     private User user;
@@ -56,7 +56,7 @@ public class HiddenCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.CompositeCommand#tabComplete(org.bukkit.command.CommandSender, java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testTabCompleteCommandSenderStringStringArrayVisible() {
+    void testTabCompleteCommandSenderStringStringArrayVisible() {
         TopLevelCommand tlc = new TopLevelCommand();
         CommandSender sender = mock(CommandSender.class);
         String[] args = {"v"};
@@ -69,7 +69,7 @@ public class HiddenCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.CompositeCommand#tabComplete(org.bukkit.command.CommandSender, java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testTabCompleteCommandSenderStringStringArrayHidden() {
+    void testTabCompleteCommandSenderStringStringArrayHidden() {
         TopLevelCommand tlc = new TopLevelCommand();
         CommandSender sender = mock(CommandSender.class);
         String[] args = {"h"};
@@ -83,7 +83,7 @@ public class HiddenCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.CompositeCommand#tabComplete(Player, java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testTabCompletePlayerStringStringArrayHidden() {
+    void testTabCompletePlayerStringStringArrayHidden() {
         TopLevelCommand tlc = new TopLevelCommand();
         Player sender = mock(Player.class);
         String[] args = {"h"};
@@ -97,7 +97,7 @@ public class HiddenCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.CompositeCommand#tabComplete(org.bukkit.command.CommandSender, java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testTabCompleteCommandSenderStringStringArrayInvisible() {
+    void testTabCompleteCommandSenderStringStringArrayInvisible() {
         TopLevelCommand tlc = new TopLevelCommand();
         Player sender = mock(Player.class);
         String[] args = {"i"};
@@ -109,7 +109,7 @@ public class HiddenCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.CompositeCommand#showHelp(world.bentobox.bentobox.api.commands.CompositeCommand, world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testShowHelp() {
+    void testShowHelp() {
         // Only the visible command should show in help
         TopLevelCommand tlc = new TopLevelCommand();
         tlc.showHelp(tlc, user);

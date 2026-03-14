@@ -37,7 +37,7 @@ import world.bentobox.bentobox.util.heads.HeadGetter;
  * @author tastybento
  *
  */
-public class PanelTest extends CommonTestSetup {
+class PanelTest extends CommonTestSetup {
 
     private String name;
     private Map<Integer, PanelItem> items;
@@ -78,7 +78,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#Panel(java.lang.String, java.util.Map, int, world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testPanel() {
+    void testPanel() {
         // Panel
         new Panel(name, items, 10, user, listener);
 
@@ -93,7 +93,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#Panel(java.lang.String, java.util.Map, int, world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testPanelZeroSize() {
+    void testPanelZeroSize() {
         // Panel
         new Panel(name, items, 0, user, listener);
 
@@ -105,7 +105,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#Panel(java.lang.String, java.util.Map, int, world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testPanelTooBig() {
+    void testPanelTooBig() {
         // Panel
         new Panel(name, items, 100, user, listener);
 
@@ -117,7 +117,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#Panel(java.lang.String, java.util.Map, int, world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testPanelNullUser() {
+    void testPanelNullUser() {
         // Panel
         new Panel(name, items, 10, null, listener);
         verify(player, never()).openInventory(any(Inventory.class));
@@ -127,7 +127,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#Panel(java.lang.String, java.util.Map, int, world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testPanelWithItems() {
+    void testPanelWithItems() {
         // Items
         ItemStack itemStack = mock(ItemStack.class);
         PanelItem item = mock(PanelItem.class);
@@ -152,7 +152,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#Panel(java.lang.String, java.util.Map, int, world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testPanelWithHeads() {
+    void testPanelWithHeads() {
         // Items
         ItemStack itemStack = mock(ItemStack.class);
         PanelItem item = mock(PanelItem.class);
@@ -173,7 +173,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#getInventory()}.
      */
     @Test
-    public void testGetInventory() {
+    void testGetInventory() {
         Panel p = new Panel(name, items, 10, null, listener);
         assertEquals(inv, p.getInventory());
     }
@@ -182,7 +182,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#getItems()}.
      */
     @Test
-    public void testGetItems() {
+    void testGetItems() {
         Panel p = new Panel(name, items, 10, null, listener);
         assertEquals(items, p.getItems());
     }
@@ -191,7 +191,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#getListener()}.
      */
     @Test
-    public void testGetListener() {
+    void testGetListener() {
         Panel p = new Panel(name, items, 10, null, listener);
         assertSame(listener, p.getListener().get());
     }
@@ -200,7 +200,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#getUser()}.
      */
     @Test
-    public void testGetUser() {
+    void testGetUser() {
         Panel p = new Panel(name, items, 10, user, listener);
         assertSame(user, p.getUser().get());
 
@@ -212,7 +212,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#open(org.bukkit.entity.Player[])}.
      */
     @Test
-    public void testOpenPlayerArray() {
+    void testOpenPlayerArray() {
         Panel p = new Panel(name, items, 10, user, listener);
         p.open(player, player, player);
         verify(player, times(4)).openInventory(inv);
@@ -222,7 +222,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#open(world.bentobox.bentobox.api.user.User[])}.
      */
     @Test
-    public void testOpenUserArray() {
+    void testOpenUserArray() {
         Panel p = new Panel(name, items, 10, user, listener);
         p.open(user, user, user);
         verify(player, times(4)).openInventory(inv);
@@ -232,7 +232,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#setInventory(org.bukkit.inventory.Inventory)}.
      */
     @Test
-    public void testSetInventory() {
+    void testSetInventory() {
         Panel p = new Panel(name, items, 10, user, listener);
         Inventory inventory = mock(Inventory.class);
         p.setInventory(inventory);
@@ -243,7 +243,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#setItems(java.util.Map)}.
      */
     @Test
-    public void testSetItems() {
+    void testSetItems() {
         Panel p = new Panel(name, items, 10, user, listener);
         Map<Integer, PanelItem> newMap = new HashMap<>();
         newMap.put(23, mock(PanelItem.class));
@@ -255,7 +255,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#setListener(world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testSetListener() {
+    void testSetListener() {
         Panel p = new Panel(name, items, 10, user, null);
         assertEquals(Optional.empty(), p.getListener());
         p.setListener(listener);
@@ -266,7 +266,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#setUser(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testSetUser() {
+    void testSetUser() {
         Panel p = new Panel(name, items, 10, null, listener);
         assertEquals(Optional.empty(), p.getUser());
         p.setUser(user);
@@ -277,7 +277,7 @@ public class PanelTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#getName()}.
      */
     @Test
-    public void testGetName() {
+    void testGetName() {
         Panel p = new Panel(name, items, 10, null, listener);
         assertEquals(name, p.getName());
     }

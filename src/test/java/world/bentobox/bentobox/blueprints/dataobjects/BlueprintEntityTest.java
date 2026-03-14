@@ -40,7 +40,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity.MythicMobR
  * @author tastybento
  *
  */
-public class BlueprintEntityTest extends CommonTestSetup {
+class BlueprintEntityTest extends CommonTestSetup {
 
     @Mock
     private Villager villager;
@@ -108,7 +108,7 @@ public class BlueprintEntityTest extends CommonTestSetup {
 
 
     @Test
-    public void testConfigureEntityWithVillager() {
+    void testConfigureEntityWithVillager() {
         BlueprintEntity blueprint = new BlueprintEntity();
 
         blueprint.setType(EntityType.VILLAGER);
@@ -125,7 +125,7 @@ public class BlueprintEntityTest extends CommonTestSetup {
     }
 
     @Test
-    public void testConfigureEntityWithColorable() {
+    void testConfigureEntityWithColorable() {
         BlueprintEntity blueprint = new BlueprintEntity();
 
         blueprint.setType(EntityType.SHEEP);
@@ -137,7 +137,7 @@ public class BlueprintEntityTest extends CommonTestSetup {
     }
 
     @Test
-    public void testConfigureEntityWithTameable() {
+    void testConfigureEntityWithTameable() {
         BlueprintEntity blueprint = new BlueprintEntity();
 
         blueprint.setType(EntityType.WOLF);
@@ -149,7 +149,7 @@ public class BlueprintEntityTest extends CommonTestSetup {
     }
 
     @Test
-    public void testConfigureEntityWithChestedHorse() {
+    void testConfigureEntityWithChestedHorse() {
         BlueprintEntity blueprint = new BlueprintEntity();
 
         blueprint.setType(EntityType.HORSE);
@@ -162,7 +162,7 @@ public class BlueprintEntityTest extends CommonTestSetup {
     }
 
     @Test
-    public void testConfigureEntityWithAgeable() {
+    void testConfigureEntityWithAgeable() {
         BlueprintEntity blueprint = new BlueprintEntity();
 
         blueprint.setType(EntityType.COW);
@@ -174,7 +174,7 @@ public class BlueprintEntityTest extends CommonTestSetup {
     }
 
     @Test
-    public void testConfigureEntityWithAbstractHorse() {
+    void testConfigureEntityWithAbstractHorse() {
         BlueprintEntity blueprint = new BlueprintEntity();
 
         blueprint.setType(EntityType.HORSE);
@@ -186,7 +186,7 @@ public class BlueprintEntityTest extends CommonTestSetup {
     }
 
     @Test
-    public void testConfigureEntityWithHorse() {
+    void testConfigureEntityWithHorse() {
         BlueprintEntity blueprint = new BlueprintEntity();
 
         blueprint.setType(EntityType.HORSE);
@@ -198,7 +198,7 @@ public class BlueprintEntityTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         BlueprintEntity blueprint = new BlueprintEntity();
 
         blueprint.setColor(DyeColor.RED);
@@ -244,7 +244,7 @@ public class BlueprintEntityTest extends CommonTestSetup {
     }
 
     @Test
-    public void testMythicMobs() {
+    void testMythicMobs() {
         BlueprintEntity blueprint = new BlueprintEntity();
         MythicMobRecord mmr = new MythicMobRecord("string", "string2", 10D, 1F, "string3");
         blueprint.setMythicMobsRecord(mmr);
@@ -252,43 +252,43 @@ public class BlueprintEntityTest extends CommonTestSetup {
     }
 
     @Test
-    public void testIsGlowing() {
+    void testIsGlowing() {
         blueprint.setGlowing(true);
         assertTrue(blueprint.isGlowing());
     }
 
     @Test
-    public void testIsGravity() {
+    void testIsGravity() {
         blueprint.setGravity(false);
         assertFalse(blueprint.isGravity());
     }
 
     @Test
-    public void testIsVisualFire() {
+    void testIsVisualFire() {
         blueprint.setVisualFire(true);
         assertTrue(blueprint.isVisualFire());
     }
 
     @Test
-    public void testIsSilent() {
+    void testIsSilent() {
         blueprint.setSilent(true);
         assertTrue(blueprint.isSilent());
     }
 
     @Test
-    public void testIsInvulnerable() {
+    void testIsInvulnerable() {
         blueprint.setInvulnerable(true);
         assertTrue(blueprint.isInvulnerable());
     }
 
     @Test
-    public void testFireTicks() {
+    void testFireTicks() {
         blueprint.setFireTicks(20);
         assertEquals(20, blueprint.getFireTicks());
     }
 
     @Test
-    public void testSetDisplay() {
+    void testSetDisplay() {
         when(location.getWorld()).thenReturn(mockWorld);
         when(location.clone()).thenReturn(location);
         when(mockWorld.spawn(any(Location.class), eq(Display.class))).thenReturn(display);

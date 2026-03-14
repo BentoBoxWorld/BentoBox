@@ -81,7 +81,7 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.Util;
 
-public class IslandsManagerTest extends CommonTestSetup {
+class IslandsManagerTest extends CommonTestSetup {
 
     private AbstractDatabaseHandler<Island> h;
     private MockedStatic<DatabaseSetup> mockedDatabaseSetup;
@@ -357,7 +357,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     @Disabled("Reason: Block mocks do not return correct BlockData for isSafeLocation checks")
-    public void testIsSafeLocationSafe() {
+    void testIsSafeLocationSafe() {
         assertTrue(islandsManager.isSafeLocation(location));
     }
 
@@ -365,7 +365,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    public void testIsSafeLocationNullWorld() {
+    void testIsSafeLocationNullWorld() {
         when(location.getWorld()).thenReturn(null);
         assertFalse(islandsManager.isSafeLocation(location));
     }
@@ -374,7 +374,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    public void testIsSafeLocationNonSolidGround() {
+    void testIsSafeLocationNonSolidGround() {
         when(ground.getType()).thenReturn(Material.WATER);
         assertFalse(islandsManager.isSafeLocation(location));
     }
@@ -384,13 +384,13 @@ public class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     @Disabled("Reason: Block mock types are commented out; test body needs rewrite for water submersion check")
-    public void testIsSafeLocationSubmerged() {
+    void testIsSafeLocationSubmerged() {
         assertTrue(islandsManager.isSafeLocation(location)); // Since poseidon this is ok
     }
 
     @Test
     @Disabled("Reason: Material.values() iteration causes mock framework issues with BlockData types")
-    public void testCheckIfSafeTrapdoor() {
+    void testCheckIfSafeTrapdoor() {
         for (Material d : Material.values()) {
             if (d.name().contains("DOOR")) {
                 for (Material s : Material.values()) {
@@ -407,7 +407,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     @Disabled("Reason: Block mocks do not return correct BlockData for portal type checks")
-    public void testIsSafeLocationPortals() {
+    void testIsSafeLocationPortals() {
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.NETHER_PORTAL);
@@ -451,7 +451,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    public void testIsSafeLocationLava() {
+    void testIsSafeLocationLava() {
         when(ground.getType()).thenReturn(Material.LAVA);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.AIR);
@@ -471,7 +471,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     @Disabled("Reason: Block mocks do not return correct BlockData for trapdoor open/closed state")
-    public void testTrapDoor() {
+    void testTrapDoor() {
         when(ground.getType()).thenReturn(Material.OAK_TRAPDOOR);
         assertFalse( islandsManager.isSafeLocation(location), "Open trapdoor");
         when(ground.getType()).thenReturn(Material.IRON_TRAPDOOR);
@@ -483,7 +483,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     @Disabled("Reason: Block mocks do not return correct BlockData for fence/sign/cactus type checks")
-    public void testBadBlocks() {
+    void testBadBlocks() {
         // Fences
         when(ground.getType()).thenReturn(Material.SPRUCE_FENCE);
         assertFalse( islandsManager.isSafeLocation(location), "Fence :" + Material.SPRUCE_FENCE.toString());
@@ -508,7 +508,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     @Disabled("Reason: Block mocks do not return correct BlockData for solid block type checks")
-    public void testSolidBlocks() {
+    void testSolidBlocks() {
         when(space1.getType()).thenReturn(Material.STONE);
         assertFalse(islandsManager.isSafeLocation(location), "Solid");
 
@@ -538,7 +538,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#createIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testCreateIslandLocation() {
+    void testCreateIslandLocation() {
         Island island = islandsManager.createIsland(location);
         assertNotNull(island);
         assertEquals(island.getCenter().getWorld(), location.getWorld());
@@ -549,7 +549,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#createIsland(org.bukkit.Location, java.util.UUID)}.
      */
     @Test
-    public void testCreateIslandLocationUUID() {
+    void testCreateIslandLocationUUID() {
         UUID owner = UUID.randomUUID();
         Island island = islandsManager.createIsland(location, owner);
         assertNotNull(island);
@@ -562,7 +562,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#deleteIsland(world.bentobox.bentobox.database.objects.Island, boolean)}.
      */
     @Test
-    public void testDeleteIslandIslandBooleanNoBlockRemoval() {
+    void testDeleteIslandIslandBooleanNoBlockRemoval() {
         UUID owner = UUID.randomUUID();
         Island island = islandsManager.createIsland(location, owner);
         islandsManager.deleteIsland(island, false, owner);
@@ -575,7 +575,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#deleteIsland(world.bentobox.bentobox.database.objects.Island, boolean)}.
      */
     @Test
-    public void testDeleteIslandIslandBooleanRemoveBlocks() {
+    void testDeleteIslandIslandBooleanRemoveBlocks() {
         verify(pim, never()).callEvent(any());
         UUID owner = UUID.randomUUID();
         Island island = islandsManager.createIsland(location, owner);
@@ -589,7 +589,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getIslandCount()}.
      */
     @Test
-    public void testGetCount() {
+    void testGetCount() {
         assertEquals(0, islandsManager.getIslandCount());
         islandsManager.createIsland(location, UUID.randomUUID());
         assertEquals(1, islandsManager.getIslandCount());
@@ -601,7 +601,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     @Disabled("Reason: Island cache mock does not integrate with IslandsManager.getIsland(World, User)")
-    public void testGetIslandWorldUser()  {
+    void testGetIslandWorldUser()  {
         assertEquals(is, islandsManager.getIsland(world, user));
         assertNull(islandsManager.getIsland(world, (User) null));
     }
@@ -613,7 +613,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     @Disabled("Reason: Database load/mock integration prevents getIsland(World, UUID) from returning expected island")
-    public void testGetIsland() throws IOException  {
+    void testGetIsland() throws IOException  {
         islandsManager.load();
         assertEquals(is, islandsManager.getIsland(staticWorld, owner));
         assertNull(islandsManager.getIsland(staticWorld, UUID.randomUUID()));
@@ -624,7 +624,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
      */
     @Test
-    public void testGetIslandAtLocation() {
+    void testGetIslandAtLocation() {
         islandsManager.setIslandCache(islandCache);
         // In world, correct island
         assertEquals(optionalIsland, islandsManager.getIslandAt(location));
@@ -651,7 +651,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * @throws InstantiationException 
      */
     @Test
-    public void testGetIslandLocation()  {
+    void testGetIslandLocation()  {
         islandsManager.createIsland(location, uuid);
         assertEquals(world, islandsManager.getIslandLocation(world, uuid).getWorld());
         Location l = islandsManager.getIslandLocation(world, uuid);
@@ -667,7 +667,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getLast(World)}.
      */
     @Test
-    public void testGetLast() {
+    void testGetLast() {
         islandsManager.setLast(location);
         assertEquals(location, islandsManager.getLast(world));
     }
@@ -677,7 +677,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getMembers(World, UUID)}.
      */
     @Test
-    public void testGetMembers() {
+    void testGetMembers() {
         // Mock island cache
         Set<UUID> members = new HashSet<>();
         members.add(UUID.randomUUID());
@@ -690,7 +690,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getProtectedIslandAt(org.bukkit.Location)}.
      */
     @Test
-    public void testGetProtectedIslandAt() {
+    void testGetProtectedIslandAt() {
         // Mock island cache
         Island is = mock(Island.class);
 
@@ -724,7 +724,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getSpawnPoint(World)}.
      */
     @Test
-    public void testGetSpawnPoint() {
+    void testGetSpawnPoint() {
         assertNull(islandsManager.getSpawnPoint(world));
         // Create a spawn island for this world
         Island island = mock(Island.class);
@@ -741,7 +741,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#isAtSpawn(org.bukkit.Location)}.
      */
     @Test
-    public void testIsAtSpawn() {
+    void testIsAtSpawn() {
         assertFalse(islandsManager.isAtSpawn(location));
         Island island = mock(Island.class);
         when(island.getWorld()).thenReturn(world);
@@ -762,7 +762,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * @throws InstantiationException 
      */
     @Test
-    public void testLoad() throws IOException {
+    void testLoad() throws IOException {
         try {
             islandsManager.load();
         } catch (IOException e) {
@@ -777,7 +777,7 @@ public class IslandsManagerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testLoadNoDistanceCheck() throws IOException  {
+    void testLoadNoDistanceCheck() throws IOException  {
         settings.setOverrideSafetyCheck(true);
         islandsManager.load();
         // No exception should be thrown
@@ -788,7 +788,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#locationIsOnIsland(org.bukkit.entity.Player, org.bukkit.Location)}.
      */
     @Test
-    public void testLocationIsOnIsland() {
+    void testLocationIsOnIsland() {
         // Mock island cache
         Island is = mock(Island.class);
 
@@ -827,7 +827,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test method for {@link IslandsManager#userIsOnIsland(World, User)}.
      */
     @Test
-    public void testUserIsOnIsland() {
+    void testUserIsOnIsland() {
         islandsManager.setIslandCache(islandCache);
 
         // ----- CHECK INVALID ARGUMENTS -----
@@ -922,7 +922,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#removePlayer(World, User)}.
      */
     @Test
-    public void testRemovePlayer() {
+    void testRemovePlayer() {
 
         islandsManager.removePlayer(world, uuid);
     }
@@ -932,7 +932,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#removePlayersFromIsland(world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testRemovePlayersFromIsland() {
+    void testRemovePlayersFromIsland() {
 
         Island is = mock(Island.class);
         islandsManager.removePlayersFromIsland(is);
@@ -943,14 +943,14 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#updateIsland(Island)}.
      */
     @Test
-    public void testSave() {
+    void testSave() {
     }
 
     /**
      * Test method for .
      */
     @Test
-    public void testSetIslandName() {
+    void testSetIslandName() {
     }
 
     /**
@@ -958,7 +958,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#setJoinTeam(world.bentobox.bentobox.database.objects.Island, java.util.UUID)}.
      */
     @Test
-    public void testSetJoinTeam() {
+    void testSetJoinTeam() {
     }
 
     /**
@@ -966,14 +966,14 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#setLast(org.bukkit.Location)}.
      */
     @Test
-    public void testSetLast() {
+    void testSetLast() {
     }
 
     /**
      * Test method for .
      */
     @Test
-    public void testSetLeaveTeam() {
+    void testSetLeaveTeam() {
     }
 
     /**
@@ -981,7 +981,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#shutdown()}.
      */
     @Test
-    public void testShutdown() {
+    void testShutdown() {
         // Mock island cache
         Island is = mock(Island.class);
 
@@ -1021,7 +1021,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#clearRank(int, UUID)}.
      */
     @Test
-    public void testClearRank() {
+    void testClearRank() {
         // Mock island cache
         Island is = mock(Island.class);
 
@@ -1063,7 +1063,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#clearArea(Location)}.
      */
     @Test
-    public void testClearAreaWrongWorld() {
+    void testClearAreaWrongWorld() {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         islandsManager.clearArea(location);
         // No entities should be cleared
@@ -1083,7 +1083,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#clearArea(Location)}.
      */
     @Test
-    public void testClearArea() {
+    void testClearArea() {
         islandsManager.clearArea(location);
         // Only the correct entities should be cleared
         verify(zombie).remove();
@@ -1101,7 +1101,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getIslandById(String)}.
      */
     @Test
-    public void testGetIslandByIdString() {
+    void testGetIslandByIdString() {
         Island island = mock(Island.class);
         String uuid = UUID.randomUUID().toString();
         when(islandCache.getIslandById(anyString())).thenReturn(island);
@@ -1115,7 +1115,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
      */
     @Test
-    public void testFixIslandCenter() {
+    void testFixIslandCenter() {
         Island island = mock(Island.class);
         when(island.getWorld()).thenReturn(world);
         // Island center
@@ -1142,7 +1142,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
      */
     @Test
-    public void testFixIslandCenterOff() {
+    void testFixIslandCenterOff() {
         Island island = mock(Island.class);
         when(island.getWorld()).thenReturn(world);
         // Island center
@@ -1177,7 +1177,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
      */
     @Test
-    public void testFixIslandCenterOffStart() {
+    void testFixIslandCenterOffStart() {
         Island island = mock(Island.class);
         when(island.getWorld()).thenReturn(world);
         // Island center
@@ -1212,7 +1212,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
      */
     @Test
-    public void testFixIslandCenterStartOnGrid() {
+    void testFixIslandCenterStartOnGrid() {
         Island island = mock(Island.class);
         when(island.getWorld()).thenReturn(world);
         // Island center
@@ -1239,7 +1239,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
      */
     @Test
-    public void testFixIslandCenterStartOnGridOffset() {
+    void testFixIslandCenterStartOnGridOffset() {
         Island island = mock(Island.class);
         when(island.getWorld()).thenReturn(world);
         // Island center
@@ -1266,7 +1266,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
      */
     @Test
-    public void testFixIslandCenterOffStartOffOffset() {
+    void testFixIslandCenterOffStartOffOffset() {
         Island island = mock(Island.class);
         when(island.getWorld()).thenReturn(world);
         // Island center
@@ -1301,7 +1301,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
      */
     @Test
-    public void testFixIslandCenterNulls() {
+    void testFixIslandCenterNulls() {
         Island island = mock(Island.class);
         when(island.getWorld()).thenReturn(null);
         // Test
@@ -1319,7 +1319,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}.
      */
     @Test
-    public void testGetMaxMembersNoOwner() {
+    void testGetMaxMembersNoOwner() {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(null);
         // Test
@@ -1332,7 +1332,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}.
      */
     @Test
-    public void testGetMaxMembersOfflineOwner() {
+    void testGetMaxMembersOfflineOwner() {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
@@ -1351,7 +1351,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}.
      */
     @Test
-    public void testGetMaxMembersOnlineOwnerNoPerms() {
+    void testGetMaxMembersOnlineOwnerNoPerms() {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
@@ -1370,7 +1370,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}.
      */
     @Test
-    public void testGetMaxMembersOnlineOwnerNoPermsCoopTrust() {
+    void testGetMaxMembersOnlineOwnerNoPermsCoopTrust() {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
@@ -1393,7 +1393,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}
      */
     @Test
-    public void testGetMaxMembersOnlineOwnerNoPermsPreset() {
+    void testGetMaxMembersOnlineOwnerNoPermsPreset() {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
@@ -1411,7 +1411,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}.
      */
     @Test
-    public void testGetMaxMembersOnlineOwnerNoPermsPresetLessThanDefault() {
+    void testGetMaxMembersOnlineOwnerNoPermsPresetLessThanDefault() {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
@@ -1429,7 +1429,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, int)}.
      */
     @Test
-    public void testGetMaxMembersOnlineOwnerHasPerm() {
+    void testGetMaxMembersOnlineOwnerHasPerm() {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
@@ -1454,7 +1454,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#setMaxMembers(Island, int, Integer)}.
      */
     @Test
-    public void testsetMaxMembers() {
+    void testsetMaxMembers() {
         Island island = mock(Island.class);
         // Test
         islandsManager.setMaxMembers(island, RanksManager.MEMBER_RANK, 40);
@@ -1466,7 +1466,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxHomes(Island)}.
      */
     @Test
-    public void testGetMaxHomesOnlineOwnerHasPerm() {
+    void testGetMaxHomesOnlineOwnerHasPerm() {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
@@ -1492,7 +1492,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxHomes(Island)}.
      */
     @Test
-    public void testGetMaxHomesOnlineOwnerHasNoPerm() {
+    void testGetMaxHomesOnlineOwnerHasNoPerm() {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
@@ -1518,7 +1518,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxHomes(Island)}.
      */
     @Test
-    public void testGetMaxHomesIslandSetOnlineOwner() {
+    void testGetMaxHomesIslandSetOnlineOwner() {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
@@ -1544,7 +1544,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxHomes(Island)}.
      */
     @Test
-    public void testGetMaxHomesIslandSetOnlineOwnerLowerPerm() {
+    void testGetMaxHomesIslandSetOnlineOwnerLowerPerm() {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
@@ -1570,7 +1570,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#setMaxHomes(Island, Integer)}.
      */
     @Test
-    public void testsetMaxHomes() {
+    void testsetMaxHomes() {
         Island island = mock(Island.class);
         // Test
         IslandsManager localIM = new IslandsManager(plugin);
@@ -1583,7 +1583,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleportAsync(Island, User)}.
      */
     @Test
-    public void testHomeTeleportAsyncIslandUser() throws Exception {
+    void testHomeTeleportAsyncIslandUser() throws Exception {
         // Setup
         Island island = mock(Island.class);
         Location homeLoc = mock(Location.class);
@@ -1618,7 +1618,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test with a default home location.
      */
     @Test
-    public void testHomeTeleportAsyncIslandUserBooleanWithDefaultHome() throws Exception {
+    void testHomeTeleportAsyncIslandUserBooleanWithDefaultHome() throws Exception {
         // Setup
         Island island = mock(Island.class);
         Location homeLoc = mock(Location.class);
@@ -1655,7 +1655,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test with newIsland parameter set to true.
      */
     @Test
-    public void testHomeTeleportAsyncIslandUserBooleanNewIsland() throws Exception {
+    void testHomeTeleportAsyncIslandUserBooleanNewIsland() throws Exception {
         // Setup
         Island island = mock(Island.class);
         Location homeLoc = mock(Location.class);
@@ -1692,7 +1692,7 @@ public class IslandsManagerTest extends CommonTestSetup {
      * Test with failed teleport - should not set primary island and remove from goingHome.
      */
     @Test
-    public void testHomeTeleportAsyncIslandUserBooleanFailedTeleport() throws Exception {
+    void testHomeTeleportAsyncIslandUserBooleanFailedTeleport() throws Exception {
         // Setup
         Island island = mock(Island.class);
         Location homeLoc = mock(Location.class);

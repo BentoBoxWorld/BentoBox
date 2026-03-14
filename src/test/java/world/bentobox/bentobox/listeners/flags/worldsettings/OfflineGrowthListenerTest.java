@@ -35,7 +35,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-public class OfflineGrowthListenerTest extends CommonTestSetup {
+class OfflineGrowthListenerTest extends CommonTestSetup {
 
     @Mock
     private Location inside;
@@ -93,7 +93,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineGrowthListener#OnCropGrow(BlockGrowEvent)}.
      */
     @Test
-    public void testOnCropGrowDoNothing() {
+    void testOnCropGrowDoNothing() {
         // Make an event to give some current to block
         BlockGrowEvent e = new BlockGrowEvent(block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
@@ -107,7 +107,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineGrowthListener#OnCropGrow(BlockGrowEvent)}.
      */
     @Test
-    public void testOnCropGrowMembersOnline() {
+    void testOnCropGrowMembersOnline() {
         // Make an event to give some current to block
         BlockGrowEvent e = new BlockGrowEvent(block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
@@ -125,7 +125,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineGrowthListener#OnCropGrow(BlockGrowEvent)}.
      */
     @Test
-    public void testOnCropGrowMembersOffline() {
+    void testOnCropGrowMembersOffline() {
         // Make an event to give some current to block
         BlockGrowEvent e = new BlockGrowEvent(block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
@@ -143,7 +143,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineGrowthListener#OnCropGrow(BlockGrowEvent)}.
      */
     @Test
-    public void testOnCropGrowNonIsland() {
+    void testOnCropGrowNonIsland() {
         // Make an event to give some current to block
         BlockGrowEvent e = new BlockGrowEvent(block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
@@ -158,7 +158,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineGrowthListener#OnCropGrow(BlockGrowEvent)}.
      */
     @Test
-    public void testOnCropGrowNonBentoBoxWorldIsland() {
+    void testOnCropGrowNonBentoBoxWorldIsland() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         // Make an event to give some current to block
         BlockGrowEvent e = new BlockGrowEvent(block, blockState);
@@ -174,7 +174,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent)}.
      */
     @Test
-    public void testOnSpreadDoNothing() {
+    void testOnSpreadDoNothing() {
         // Make an event to give some current to block
         BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
@@ -188,7 +188,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent)}.
      */
     @Test
-    public void testOnSpreadMembersOnline() {
+    void testOnSpreadMembersOnline() {
         // Make an event to give some current to block
         BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
@@ -206,7 +206,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent)}.
      */
     @Test
-    public void testOnSpreadMembersOffline() {
+    void testOnSpreadMembersOffline() {
         // Make an event to give some current to block
         BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
@@ -234,7 +234,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent)}.
      */
     @Test
-    public void testOnSpreadMembersOfflineTree() {
+    void testOnSpreadMembersOfflineTree() {
         when(block.getType()).thenReturn(Material.SPRUCE_LOG);
         // Make an event to give some current to block
         BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
@@ -253,7 +253,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent)}.
      */
     @Test
-    public void testOnSpreadNonIsland() {
+    void testOnSpreadNonIsland() {
         // Make an event to give some current to block
         BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
@@ -268,7 +268,7 @@ public class OfflineGrowthListenerTest extends CommonTestSetup {
      * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent)}.
      */
     @Test
-    public void testOnSpreadNonBentoBoxWorldIsland() {
+    void testOnSpreadNonBentoBoxWorldIsland() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         // Make an event to give some current to block
         BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);

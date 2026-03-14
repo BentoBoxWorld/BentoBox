@@ -18,12 +18,12 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
  *
  */
 
-public class SettingsTest {
+class SettingsTest {
 
     private Settings s;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         WhiteBox.setInternalState(BentoBox.class, "instance", Mockito.mock(BentoBox.class));
         // Class under test
         s = new Settings();
@@ -34,7 +34,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#getDefaultLanguage()}.
      */
     @Test
-    public void testGetDefaultLanguage() {
+    void testGetDefaultLanguage() {
         assertEquals("en-US", s.getDefaultLanguage());
     }
 
@@ -43,7 +43,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setDefaultLanguage(java.lang.String)}.
      */
     @Test
-    public void testSetDefaultLanguage() {
+    void testSetDefaultLanguage() {
         s.setDefaultLanguage("test");
         assertEquals("test", s.getDefaultLanguage());
     }
@@ -52,7 +52,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#isUseEconomy()}.
      */
     @Test
-    public void testIsUseEconomy() {
+    void testIsUseEconomy() {
         assertTrue(s.isUseEconomy());
 
     }
@@ -62,7 +62,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setUseEconomy(boolean)}.
      */
     @Test
-    public void testSetUseEconomy() {
+    void testSetUseEconomy() {
         s.setUseEconomy(false);
         assertFalse(s.isUseEconomy());
     }
@@ -71,7 +71,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getDatabaseType()}.
      */
     @Test
-    public void testGetDatabaseType() {
+    void testGetDatabaseType() {
         assertEquals(DatabaseType.JSON, s.getDatabaseType());
     }
 
@@ -80,7 +80,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setDatabaseType(world.bentobox.bentobox.database.DatabaseSetup.DatabaseType)}.
      */
     @Test
-    public void testSetDatabaseType() {
+    void testSetDatabaseType() {
         s.setDatabaseType(DatabaseType.JSON2MONGODB);
         assertEquals(DatabaseType.JSON2MONGODB, s.getDatabaseType());
     }
@@ -89,7 +89,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getDatabaseHost()}.
      */
     @Test
-    public void testGetDatabaseHost() {
+    void testGetDatabaseHost() {
         assertEquals("localhost", s.getDatabaseHost());
     }
 
@@ -98,7 +98,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setDatabaseHost(java.lang.String)}.
      */
     @Test
-    public void testSetDatabaseHost() {
+    void testSetDatabaseHost() {
         s.setDatabaseHost("remotehost");
         assertEquals("remotehost", s.getDatabaseHost());
     }
@@ -107,7 +107,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getDatabasePort()}.
      */
     @Test
-    public void testGetDatabasePort() {
+    void testGetDatabasePort() {
         assertEquals(3306, s.getDatabasePort());
     }
 
@@ -115,7 +115,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#isUseSSL()}.
      */
     @Test
-    public void testIsUseSSL() {
+    void testIsUseSSL() {
         assertFalse(s.isUseSSL());
     }
 
@@ -123,7 +123,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#setUseSSL(boolean)}.
      */
     @Test
-    public void testSetUseSSL() {
+    void testSetUseSSL() {
         s.setUseSSL(false);
         assertFalse(s.isUseSSL());
         s.setUseSSL(true);
@@ -135,7 +135,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setDatabasePort(int)}.
      */
     @Test
-    public void testSetDatabasePort() {
+    void testSetDatabasePort() {
         s.setDatabasePort(1234);
         assertEquals(1234, s.getDatabasePort());
     }
@@ -144,7 +144,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getDatabaseName()}.
      */
     @Test
-    public void testGetDatabaseName() {
+    void testGetDatabaseName() {
         assertEquals("bentobox", s.getDatabaseName());
     }
 
@@ -153,7 +153,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setDatabaseName(java.lang.String)}.
      */
     @Test
-    public void testSetDatabaseName() {
+    void testSetDatabaseName() {
         s.setDatabaseName("fredthedoggy");
         assertEquals("fredthedoggy", s.getDatabaseName());
     }
@@ -163,7 +163,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#getDatabaseUsername()}.
      */
     @Test
-    public void testGetDatabaseUsername() {
+    void testGetDatabaseUsername() {
         assertEquals("username", s.getDatabaseUsername());
     }
 
@@ -172,7 +172,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setDatabaseUsername(java.lang.String)}.
      */
     @Test
-    public void testSetDatabaseUsername() {
+    void testSetDatabaseUsername() {
         s.setDatabaseUsername("BONNe");
         assertEquals("BONNe", s.getDatabaseUsername());
     }
@@ -182,7 +182,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#getDatabasePassword()}.
      */
     @Test
-    public void testGetDatabasePassword() {
+    void testGetDatabasePassword() {
         assertEquals("password", s.getDatabasePassword());
     }
 
@@ -191,7 +191,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setDatabasePassword(java.lang.String)}.
      */
     @Test
-    public void testSetDatabasePassword() {
+    void testSetDatabasePassword() {
         s.setDatabasePassword("afero");
         assertEquals("afero", s.getDatabasePassword());
     }
@@ -201,7 +201,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#getDatabaseBackupPeriod()}.
      */
     @Test
-    public void testGetDatabaseBackupPeriod() {
+    void testGetDatabaseBackupPeriod() {
         assertEquals(5, s.getDatabaseBackupPeriod());
     }
 
@@ -210,7 +210,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setDatabaseBackupPeriod(int)}.
      */
     @Test
-    public void testSetDatabaseBackupPeriod() {
+    void testSetDatabaseBackupPeriod() {
         s.setDatabaseBackupPeriod(10);
         assertEquals(10, s.getDatabaseBackupPeriod());
     }
@@ -219,7 +219,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getFakePlayers()}.
      */
     @Test
-    public void testGetFakePlayers() {
+    void testGetFakePlayers() {
         assertTrue(s.getFakePlayers().isEmpty());
     }
 
@@ -228,7 +228,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setFakePlayers(java.util.Set)}.
      */
     @Test
-    public void testSetFakePlayers() {
+    void testSetFakePlayers() {
         s.setFakePlayers(Collections.singleton("npc"));
         assertTrue(s.getFakePlayers().contains("npc"));
     }
@@ -238,7 +238,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#isClosePanelOnClickOutside()}.
      */
     @Test
-    public void testIsClosePanelOnClickOutside() {
+    void testIsClosePanelOnClickOutside() {
         assertTrue(s.isClosePanelOnClickOutside());
     }
 
@@ -247,7 +247,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setClosePanelOnClickOutside(boolean)}.
      */
     @Test
-    public void testSetClosePanelOnClickOutside() {
+    void testSetClosePanelOnClickOutside() {
         assertTrue(s.isClosePanelOnClickOutside());
         s.setClosePanelOnClickOutside(false);
         assertFalse(s.isClosePanelOnClickOutside());
@@ -257,7 +257,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getInviteCooldown()}.
      */
     @Test
-    public void testGetInviteCooldown() {
+    void testGetInviteCooldown() {
         assertEquals(60, s.getInviteCooldown());
     }
 
@@ -266,7 +266,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setInviteCooldown(int)}.
      */
     @Test
-    public void testSetInviteCooldown() {
+    void testSetInviteCooldown() {
         s.setInviteCooldown(99);
         assertEquals(99, s.getInviteCooldown());
     }
@@ -275,7 +275,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getCoopCooldown()}.
      */
     @Test
-    public void testGetCoopCooldown() {
+    void testGetCoopCooldown() {
         assertEquals(5, s.getCoopCooldown());
     }
 
@@ -284,7 +284,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setCoopCooldown(int)}.
      */
     @Test
-    public void testSetCoopCooldown() {
+    void testSetCoopCooldown() {
         s.setCoopCooldown(15);
         assertEquals(15, s.getCoopCooldown());
     }
@@ -293,7 +293,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getTrustCooldown()}.
      */
     @Test
-    public void testGetTrustCooldown() {
+    void testGetTrustCooldown() {
         assertEquals(5, s.getTrustCooldown());
     }
 
@@ -302,7 +302,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setTrustCooldown(int)}.
      */
     @Test
-    public void testSetTrustCooldown() {
+    void testSetTrustCooldown() {
         s.setTrustCooldown(15);
         assertEquals(15, s.getTrustCooldown());
     }
@@ -311,7 +311,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getBanCooldown()}.
      */
     @Test
-    public void testGetBanCooldown() {
+    void testGetBanCooldown() {
         assertEquals(10, s.getBanCooldown());
     }
 
@@ -319,7 +319,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#setBanCooldown(int)}.
      */
     @Test
-    public void testSetBanCooldown() {
+    void testSetBanCooldown() {
         s.setBanCooldown(99);
         assertEquals(99, s.getBanCooldown());
     }
@@ -328,7 +328,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getResetCooldown()}.
      */
     @Test
-    public void testGetResetCooldown() {
+    void testGetResetCooldown() {
         assertEquals(300, s.getResetCooldown());
     }
 
@@ -337,7 +337,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setResetCooldown(int)}.
      */
     @Test
-    public void testSetResetCooldown() {
+    void testSetResetCooldown() {
         s.setResetCooldown(3);
         assertEquals(3, s.getResetCooldown());
     }
@@ -347,7 +347,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#getConfirmationTime()}.
      */
     @Test
-    public void testGetConfirmationTime() {
+    void testGetConfirmationTime() {
         assertEquals(10, s.getConfirmationTime());
     }
 
@@ -356,7 +356,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setConfirmationTime(int)}.
      */
     @Test
-    public void testSetConfirmationTime() {
+    void testSetConfirmationTime() {
         s.setConfirmationTime(100);
         assertEquals(100, s.getConfirmationTime());
     }
@@ -366,7 +366,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#isKickConfirmation()}.
      */
     @Test
-    public void testIsKickConfirmation() {
+    void testIsKickConfirmation() {
         assertTrue(s.isKickConfirmation());
     }
 
@@ -375,7 +375,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setKickConfirmation(boolean)}.
      */
     @Test
-    public void testSetKickConfirmation() {
+    void testSetKickConfirmation() {
         assertTrue(s.isKickConfirmation());
         s.setKickConfirmation(false);
         assertFalse(s.isKickConfirmation());
@@ -386,7 +386,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#isLeaveConfirmation()}.
      */
     @Test
-    public void testIsLeaveConfirmation() {
+    void testIsLeaveConfirmation() {
         assertTrue(s.isLeaveConfirmation());
     }
 
@@ -395,7 +395,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setLeaveConfirmation(boolean)}.
      */
     @Test
-    public void testSetLeaveConfirmation() {
+    void testSetLeaveConfirmation() {
         assertTrue(s.isLeaveConfirmation());
         s.setLeaveConfirmation(false);
         assertFalse(s.isLeaveConfirmation());
@@ -407,7 +407,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#isResetConfirmation()}.
      */
     @Test
-    public void testIsResetConfirmation() {
+    void testIsResetConfirmation() {
         assertTrue(s.isResetConfirmation());
     }
 
@@ -416,7 +416,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setResetConfirmation(boolean)}.
      */
     @Test
-    public void testSetResetConfirmation() {
+    void testSetResetConfirmation() {
         assertTrue(s.isResetConfirmation());
         s.setResetConfirmation(false);
         assertFalse(s.isResetConfirmation());
@@ -427,7 +427,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getNameMinLength()}.
      */
     @Test
-    public void testGetNameMinLength() {
+    void testGetNameMinLength() {
         assertEquals(4, s.getNameMinLength());
     }
 
@@ -436,7 +436,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setNameMinLength(int)}.
      */
     @Test
-    public void testSetNameMinLength() {
+    void testSetNameMinLength() {
         assertEquals(4, s.getNameMinLength());
         s.setNameMinLength(2);
         assertEquals(2, s.getNameMinLength());
@@ -446,7 +446,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getNameMaxLength()}.
      */
     @Test
-    public void testGetNameMaxLength() {
+    void testGetNameMaxLength() {
         assertEquals(20, s.getNameMaxLength());
     }
 
@@ -455,7 +455,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setNameMaxLength(int)}.
      */
     @Test
-    public void testSetNameMaxLength() {
+    void testSetNameMaxLength() {
         assertEquals(20, s.getNameMaxLength());
         s.setNameMaxLength(2);
         assertEquals(2, s.getNameMaxLength());
@@ -466,7 +466,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#isNameUniqueness()}.
      */
     @Test
-    public void testIsNameUniqueness() {
+    void testIsNameUniqueness() {
         assertFalse(s.isNameUniqueness());
     }
 
@@ -475,7 +475,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setNameUniqueness(boolean)}.
      */
     @Test
-    public void testSetNameUniqueness() {
+    void testSetNameUniqueness() {
         assertFalse(s.isNameUniqueness());
         s.setNameUniqueness(true);
         assertTrue(s.isNameUniqueness());
@@ -485,7 +485,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#setPasteSpeed(int)}.
      */
     @Test
-    public void testSetPasteSpeed() {
+    void testSetPasteSpeed() {
         assertEquals(64, s.getPasteSpeed());
         s.setPasteSpeed(100);
         assertEquals(100, s.getPasteSpeed());
@@ -495,7 +495,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getPasteSpeed()}.
      */
     @Test
-    public void testGetPasteSpeed() {
+    void testGetPasteSpeed() {
         assertEquals(64, s.getPasteSpeed());
     }
 
@@ -503,7 +503,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getDeleteSpeed()}.
      */
     @Test
-    public void testGetDeleteSpeed() {
+    void testGetDeleteSpeed() {
         assertEquals(1, s.getDeleteSpeed());
     }
 
@@ -511,7 +511,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#setDeleteSpeed(int)}.
      */
     @Test
-    public void testSetDeleteSpeed() {
+    void testSetDeleteSpeed() {
         assertEquals(1, s.getDeleteSpeed());
         s.setDeleteSpeed(4);
         assertEquals(4, s.getDeleteSpeed());
@@ -522,7 +522,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#isLogCleanSuperFlatChunks()}.
      */
     @Test
-    public void testIsLogCleanSuperFlatChunks() {
+    void testIsLogCleanSuperFlatChunks() {
         assertTrue(s.isLogCleanSuperFlatChunks());
     }
 
@@ -531,7 +531,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setLogCleanSuperFlatChunks(boolean)}.
      */
     @Test
-    public void testSetLogCleanSuperFlatChunks() {
+    void testSetLogCleanSuperFlatChunks() {
         assertTrue(s.isLogCleanSuperFlatChunks());
         s.setLogCleanSuperFlatChunks(false);
         assertFalse(s.isLogCleanSuperFlatChunks());
@@ -542,7 +542,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#isResetCooldownOnCreate()}.
      */
     @Test
-    public void testIsResetCooldownOnCreate() {
+    void testIsResetCooldownOnCreate() {
         assertTrue(s.isResetCooldownOnCreate());
     }
 
@@ -551,7 +551,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setResetCooldownOnCreate(boolean)}.
      */
     @Test
-    public void testSetResetCooldownOnCreate() {
+    void testSetResetCooldownOnCreate() {
         assertTrue(s.isResetCooldownOnCreate());
         s.setResetCooldownOnCreate(false);
         assertFalse(s.isResetCooldownOnCreate());
@@ -562,7 +562,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#isGithubDownloadData()}.
      */
     @Test
-    public void testIsGithubDownloadData() {
+    void testIsGithubDownloadData() {
         assertTrue(s.isGithubDownloadData());
     }
 
@@ -571,7 +571,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setGithubDownloadData(boolean)}.
      */
     @Test
-    public void testSetGithubDownloadData() {
+    void testSetGithubDownloadData() {
         assertTrue(s.isGithubDownloadData());
         s.setGithubDownloadData(false);
         assertFalse(s.isGithubDownloadData());
@@ -582,7 +582,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#getGithubConnectionInterval()}.
      */
     @Test
-    public void testGetGithubConnectionInterval() {
+    void testGetGithubConnectionInterval() {
         assertEquals(120, s.getGithubConnectionInterval());
     }
 
@@ -591,7 +591,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setGithubConnectionInterval(int)}.
      */
     @Test
-    public void testSetGithubConnectionInterval() {
+    void testSetGithubConnectionInterval() {
         assertEquals(120, s.getGithubConnectionInterval());
         s.setGithubConnectionInterval(20);
         assertEquals(20, s.getGithubConnectionInterval());
@@ -602,7 +602,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#isCheckBentoBoxUpdates()}.
      */
     @Test
-    public void testIsCheckBentoBoxUpdates() {
+    void testIsCheckBentoBoxUpdates() {
         assertTrue(s.isCheckBentoBoxUpdates());
     }
 
@@ -611,7 +611,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setCheckBentoBoxUpdates(boolean)}.
      */
     @Test
-    public void testSetCheckBentoBoxUpdates() {
+    void testSetCheckBentoBoxUpdates() {
         assertTrue(s.isCheckBentoBoxUpdates());
         s.setCheckBentoBoxUpdates(false);
         assertFalse(s.isCheckBentoBoxUpdates());
@@ -622,7 +622,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#isCheckAddonsUpdates()}.
      */
     @Test
-    public void testIsCheckAddonsUpdates() {
+    void testIsCheckAddonsUpdates() {
         assertTrue(s.isCheckAddonsUpdates());
     }
 
@@ -631,7 +631,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setCheckAddonsUpdates(boolean)}.
      */
     @Test
-    public void testSetCheckAddonsUpdates() {
+    void testSetCheckAddonsUpdates() {
         assertTrue(s.isCheckAddonsUpdates());
         s.setCheckAddonsUpdates(false);
         assertFalse(s.isCheckAddonsUpdates());
@@ -642,7 +642,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#isLogGithubDownloadData()}.
      */
     @Test
-    public void testIsLogGithubDownloadData() {
+    void testIsLogGithubDownloadData() {
         assertTrue(s.isLogGithubDownloadData());
     }
 
@@ -651,7 +651,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setLogGithubDownloadData(boolean)}.
      */
     @Test
-    public void testSetLogGithubDownloadData() {
+    void testSetLogGithubDownloadData() {
         assertTrue(s.isLogGithubDownloadData());
         s.setLogGithubDownloadData(false);
         assertFalse(s.isLogGithubDownloadData());
@@ -661,7 +661,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getDelayTime()}.
      */
     @Test
-    public void testGetDelayTime() {
+    void testGetDelayTime() {
         assertEquals(0, s.getDelayTime());
     }
 
@@ -669,7 +669,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#setDelayTime(int)}.
      */
     @Test
-    public void testSetDelayTime() {
+    void testSetDelayTime() {
         assertEquals(0, s.getDelayTime());
         s.setDelayTime(10);
         assertEquals(10, s.getDelayTime());
@@ -679,7 +679,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getClearRadius()}.
      */
     @Test
-    public void testGetClearRadius() {
+    void testGetClearRadius() {
         assertEquals(5, s.getClearRadius());
 
     }
@@ -688,7 +688,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#setClearRadius(int)}.
      */
     @Test
-    public void testSetClearRadius() {
+    void testSetClearRadius() {
         assertEquals(5, s.getClearRadius());
         s.setClearRadius(20);
         assertEquals(20, s.getClearRadius());
@@ -699,7 +699,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#isInviteConfirmation()}.
      */
     @Test
-    public void testIsInviteConfirmation() {
+    void testIsInviteConfirmation() {
         assertFalse(s.isInviteConfirmation());
     }
 
@@ -708,7 +708,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setInviteConfirmation(boolean)}.
      */
     @Test
-    public void testSetInviteConfirmation() {
+    void testSetInviteConfirmation() {
         assertFalse(s.isInviteConfirmation());
         s.setInviteConfirmation(true);
         assertTrue(s.isInviteConfirmation());
@@ -718,7 +718,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.bentobox.Settings#getDatabasePrefix()}.
      */
     @Test
-    public void testGetDatabasePrefix() {
+    void testGetDatabasePrefix() {
         assertEquals("", s.getDatabasePrefix());
     }
 
@@ -727,7 +727,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setDatabasePrefix(java.lang.String)}.
      */
     @Test
-    public void testSetDatabasePrefix() {
+    void testSetDatabasePrefix() {
         assertEquals("", s.getDatabasePrefix());
         s.setDatabasePrefix("Prefix");
         assertEquals("Prefix", s.getDatabasePrefix());
@@ -738,7 +738,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#isKeepPreviousIslandOnReset()}.
      */
     @Test
-    public void testIsKeepPreviousIslandOnReset() {
+    void testIsKeepPreviousIslandOnReset() {
         assertFalse(s.isKeepPreviousIslandOnReset());
     }
 
@@ -747,7 +747,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setKeepPreviousIslandOnReset(boolean)}.
      */
     @Test
-    public void testSetKeepPreviousIslandOnReset() {
+    void testSetKeepPreviousIslandOnReset() {
         assertFalse(s.isKeepPreviousIslandOnReset());
         s.setKeepPreviousIslandOnReset(true);
         assertTrue(s.isKeepPreviousIslandOnReset());
@@ -758,7 +758,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#getMongodbConnectionUri()}.
      */
     @Test
-    public void testGetMongodbConnectionUri() {
+    void testGetMongodbConnectionUri() {
         assertEquals("", s.getMongodbConnectionUri());
     }
 
@@ -767,7 +767,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setMongodbConnectionUri(java.lang.String)}.
      */
     @Test
-    public void testSetMongodbConnectionUri() {
+    void testSetMongodbConnectionUri() {
         assertEquals("", s.getMongodbConnectionUri());
         s.setMongodbConnectionUri("xyz");
         assertEquals("xyz", s.getMongodbConnectionUri());
@@ -778,7 +778,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#getPanelFillerMaterial()}.
      */
     @Test
-    public void testGetPanelFillerMaterial() {
+    void testGetPanelFillerMaterial() {
         assertEquals(Material.LIGHT_BLUE_STAINED_GLASS_PANE, s.getPanelFillerMaterial());
     }
 
@@ -787,7 +787,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setPanelFillerMaterial(org.bukkit.Material)}.
      */
     @Test
-    public void testSetPanelFillerMaterial() {
+    void testSetPanelFillerMaterial() {
         assertEquals(Material.LIGHT_BLUE_STAINED_GLASS_PANE, s.getPanelFillerMaterial());
         s.setPanelFillerMaterial(Material.ACACIA_BOAT);
         assertEquals(Material.ACACIA_BOAT, s.getPanelFillerMaterial());
@@ -798,7 +798,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#getPlayerHeadCacheTime()}.
      */
     @Test
-    public void testGetPlayerHeadCacheTime() {
+    void testGetPlayerHeadCacheTime() {
         assertEquals(60L, s.getPlayerHeadCacheTime());
     }
 
@@ -807,7 +807,7 @@ public class SettingsTest {
      * {@link world.bentobox.bentobox.Settings#setPlayerHeadCacheTime(long)}.
      */
     @Test
-    public void testSetPlayerHeadCacheTime() {
+    void testSetPlayerHeadCacheTime() {
         assertEquals(60L, s.getPlayerHeadCacheTime());
         s.setPlayerHeadCacheTime(0L);
         assertEquals(0L, s.getPlayerHeadCacheTime());

@@ -42,7 +42,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandSetnameCommandTest extends CommonTestSetup {
+class IslandSetnameCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -120,7 +120,7 @@ public class IslandSetnameCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#IslandSetnameCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
-    public void testIslandSetnameCommand() {
+    void testIslandSetnameCommand() {
         assertEquals("setname", isc.getLabel());
 
     }
@@ -129,7 +129,7 @@ public class IslandSetnameCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertTrue(isc.isOnlyPlayer());
         assertEquals("commands.island.setname.parameters", isc.getParameters());
         assertEquals("commands.island.setname.description", isc.getDescription());
@@ -141,7 +141,7 @@ public class IslandSetnameCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testIslandSetnameCommandNoArgs() {
+    void testIslandSetnameCommandNoArgs() {
         assertFalse(isc.canExecute(user, isc.getLabel(), new ArrayList<>()));
         verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
     }
@@ -150,7 +150,7 @@ public class IslandSetnameCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testIslandSetnameCommandNoIsland() {
+    void testIslandSetnameCommandNoIsland() {
         when(im.getIsland(world, user)).thenReturn(null);
         assertFalse(isc.canExecute(user, isc.getLabel(), List.of("name")));
         verify(user).sendMessage("general.errors.no-island");
@@ -160,7 +160,7 @@ public class IslandSetnameCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTooLowRank() {
+    void testTooLowRank() {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(isc.canExecute(user, isc.getLabel(), List.of("name")));
@@ -171,7 +171,7 @@ public class IslandSetnameCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testIslandSetnameCommandNameTooShort() {
+    void testIslandSetnameCommandNameTooShort() {
         assertFalse(isc.canExecute(user, isc.getLabel(), List.of("x")));
         verify(user).sendMessage("commands.island.setname.name-too-short", TextVariables.NUMBER, "4");
     }
@@ -180,7 +180,7 @@ public class IslandSetnameCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testIslandSetnameCommandNameOnlyColors() {
+    void testIslandSetnameCommandNameOnlyColors() {
         assertFalse(isc.canExecute(user, isc.getLabel(), List.of("§b§c§d§e")));
         verify(user).sendMessage("commands.island.setname.name-too-short", TextVariables.NUMBER, "4");
     }
@@ -189,7 +189,7 @@ public class IslandSetnameCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testIslandSetnameCommandNameTooLong() {
+    void testIslandSetnameCommandNameTooLong() {
         assertFalse(isc.canExecute(user, isc.getLabel(), List.of("This is a very long name that is not allowed and will have to be prevented")));
         verify(user).sendMessage("commands.island.setname.name-too-long", TextVariables.NUMBER, "20");
     }
@@ -198,7 +198,7 @@ public class IslandSetnameCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testIslandSetnameCommandAllOK() {
+    void testIslandSetnameCommandAllOK() {
         assertTrue(isc.canExecute(user, isc.getLabel(), List.of("name-okay")));
         verify(user, never()).sendMessage(anyString());
     }
@@ -208,7 +208,7 @@ public class IslandSetnameCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         when(user.hasPermission(anyString())).thenReturn(true);
         assertTrue(isc.execute(user, isc.getLabel(), List.of("name-okay")));
         verify(island).setName("name-okay");

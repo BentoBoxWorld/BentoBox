@@ -40,7 +40,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
+class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private IslandTeamCommand ic;
@@ -132,7 +132,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoisland() {
+    void testCanExecuteNoisland() {
         when(im.hasIsland(any(), Mockito.any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), Mockito.any(UUID.class))).thenReturn(false);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
@@ -144,7 +144,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteLowRank() {
+    void testCanExecuteLowRank() {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
@@ -157,7 +157,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoTarget() {
+    void testCanExecuteNoTarget() {
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
@@ -168,7 +168,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUnknownPlayer() {
+    void testCanExecuteUnknownPlayer() {
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         when(pm.getUUID(any())).thenReturn(null);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
@@ -180,7 +180,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteSamePlayer() {
+    void testCanExecuteSamePlayer() {
         MockedStatic<User> mockUser = Mockito.mockStatic(User.class);
         mockUser.when(() -> User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
@@ -195,7 +195,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecutePlayerHasRank() {
+    void testCanExecutePlayerHasRank() {
         MockedStatic<User> mockUser = Mockito.mockStatic(User.class);
         mockUser.when(() -> User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
@@ -210,7 +210,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteCannottrustSelf() {
+    void testCanExecuteCannottrustSelf() {
         when(pm.getUUID(any())).thenReturn(uuid);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
@@ -222,7 +222,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteCannotAlreadyHasRank() {
+    void testCanExecuteCannotAlreadyHasRank() {
         UUID other = UUID.randomUUID();
         when(pm.getUUID(any())).thenReturn(other);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
@@ -234,7 +234,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteNullIsland() {
+    void testExecuteNullIsland() {
         // Can execute
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
@@ -250,7 +250,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteSuccessNoConfirmationTooMany() {
+    void testExecuteSuccessNoConfirmationTooMany() {
         // Can execute
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
@@ -268,7 +268,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteSuccessNoConfirmation() {
+    void testExecuteSuccessNoConfirmation() {
         User target = User.getInstance(mockPlayer);
         // Can execute
         when(pm.getUUID(any())).thenReturn(notUUID);
@@ -290,7 +290,7 @@ public class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteSuccessConfirmation() {
+    void testExecuteSuccessConfirmation() {
         when(s.isInviteConfirmation()).thenReturn(true);
         User target = User.getInstance(mockPlayer);
         // Can execute

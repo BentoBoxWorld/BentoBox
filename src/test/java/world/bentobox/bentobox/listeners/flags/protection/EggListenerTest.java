@@ -22,7 +22,7 @@ import world.bentobox.bentobox.CommonTestSetup;
  * @author tastybento
  *
  */
-public class EggListenerTest extends CommonTestSetup {
+class EggListenerTest extends CommonTestSetup {
 
     private EggListener el;
 
@@ -49,7 +49,7 @@ public class EggListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EggListener#onEggThrow(org.bukkit.event.player.PlayerEggThrowEvent)}.
      */
     @Test
-    public void testOnEggThrowAllowed() {
+    void testOnEggThrowAllowed() {
         Egg egg = mock(Egg.class);
         when(egg.getLocation()).thenReturn(location);
         PlayerEggThrowEvent e = new PlayerEggThrowEvent(mockPlayer, egg, false, (byte) 0, EntityType.CHICKEN);
@@ -61,7 +61,7 @@ public class EggListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EggListener#onEggThrow(org.bukkit.event.player.PlayerEggThrowEvent)}.
      */
     @Test
-    public void testOnEggThrowNotAllowed() {
+    void testOnEggThrowNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Egg egg = mock(Egg.class);
         when(egg.getLocation()).thenReturn(location);

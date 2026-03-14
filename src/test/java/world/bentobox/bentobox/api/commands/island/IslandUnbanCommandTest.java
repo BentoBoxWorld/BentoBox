@@ -40,7 +40,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandUnbanCommandTest extends RanksManagerTestSetup {
+class IslandUnbanCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -115,7 +115,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
     // Unban user
 
     @Test
-    public void testNoArgs() {
+    void testNoArgs() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         assertFalse(iubc.canExecute(user, iubc.getLabel(), new ArrayList<>()));
     }
@@ -124,7 +124,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testNoIsland() {
+    void testNoIsland() {
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
@@ -135,7 +135,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testTooLowRank() {
+    void testTooLowRank() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
@@ -148,7 +148,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testUnknownUser() {
+    void testUnknownUser() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
 
@@ -161,7 +161,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testBanSelf() {
+    void testBanSelf() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
 
@@ -174,7 +174,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testBanNotBanned() {
+    void testBanNotBanned() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
 
@@ -189,7 +189,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#execute(User, String, List)}
      */
     @Test
-    public void testUnbanUser() {
+    void testUnbanUser() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
 
@@ -220,7 +220,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#tabComplete(User, String, List)}
      */
     @Test
-    public void testTabComplete() {
+    void testTabComplete() {
         Set<UUID> banned = new HashSet<>();
         // Add ten people to the banned list
         for (int i = 0; i < 10; i++) {
@@ -241,7 +241,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#tabComplete(User, String, List)}
      */
     @Test
-    public void testTabCompleteNoIsland() {
+    void testTabCompleteNoIsland() {
         // No island
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);

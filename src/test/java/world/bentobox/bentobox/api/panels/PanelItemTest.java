@@ -29,7 +29,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
  * @author tastybento
  *
  */
-public class PanelItemTest extends CommonTestSetup {
+class PanelItemTest extends CommonTestSetup {
 
     @Mock
     private PanelItemBuilder pib;
@@ -69,7 +69,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#empty()}.
      */
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         PanelItem panelItem = PanelItem.empty();
         assertTrue(panelItem.getName().isEmpty());
     }
@@ -78,7 +78,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#getItem()}.
      */
     @Test
-    public void testGetItem() {
+    void testGetItem() {
         ItemStack i = pi.getItem();
         assertNotNull(i);
         assertEquals(Material.STONE, i.getType());
@@ -88,7 +88,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#getDescription()}.
      */
     @Test
-    public void testGetDescription() {
+    void testGetDescription() {
         assertEquals(2, pi.getDescription().size());
     }
 
@@ -96,7 +96,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#setDescription(java.util.List)}.
      */
     @Test
-    public void testSetDescription() {
+    void testSetDescription() {
         assertEquals(2, pi.getDescription().size());
         pi.setDescription(List.of("1","2","3"));
         assertEquals(3, pi.getDescription().size());
@@ -106,7 +106,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#getName()}.
      */
     @Test
-    public void testGetName() {
+    void testGetName() {
         assertEquals("Name", pi.getName());
     }
 
@@ -114,7 +114,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#setName(java.lang.String)}.
      */
     @Test
-    public void testSetName() {
+    void testSetName() {
         assertEquals("Name", pi.getName());
         pi.setName("Name2");
         assertEquals("Name2", pi.getName());
@@ -124,7 +124,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#isInvisible()}.
      */
     @Test
-    public void testIsInvisible() {
+    void testIsInvisible() {
         assertFalse(pi.isInvisible());
     }
 
@@ -132,7 +132,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#setInvisible(boolean)}.
      */
     @Test
-    public void testSetInvisible() {
+    void testSetInvisible() {
         assertFalse(pi.isInvisible());
         pi.setInvisible(true);
         assertTrue(pi.isInvisible());
@@ -142,7 +142,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#getClickHandler()}.
      */
     @Test
-    public void testGetClickHandler() {
+    void testGetClickHandler() {
         assertEquals(clickHandler, pi.getClickHandler().get());
     }
 
@@ -150,7 +150,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#setClickHandler(world.bentobox.bentobox.api.panels.PanelItem.ClickHandler)}.
      */
     @Test
-    public void testSetClickHandler() {
+    void testSetClickHandler() {
         assertEquals(clickHandler, pi.getClickHandler().get());
         pi.setClickHandler(null);
         assertEquals(Optional.empty(), pi.getClickHandler());
@@ -160,7 +160,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#isGlow()}.
      */
     @Test
-    public void testIsGlow() {
+    void testIsGlow() {
         assertFalse(pi.isGlow());
 
     }
@@ -169,7 +169,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#setGlow(boolean)}.
      */
     @Test
-    public void testSetGlow() {
+    void testSetGlow() {
         assertFalse(pi.isGlow());
         pi.setGlow(true);
         assertTrue(pi.isGlow());
@@ -179,7 +179,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#isPlayerHead()}.
      */
     @Test
-    public void testIsPlayerHead() {
+    void testIsPlayerHead() {
         assertTrue(pi.isPlayerHead());
 
     }
@@ -188,7 +188,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#getPlayerHeadName()}.
      */
     @Test
-    public void testGetPlayerHeadName() {
+    void testGetPlayerHeadName() {
         assertEquals("tastybento", pi.getPlayerHeadName());
     }
 
@@ -196,7 +196,7 @@ public class PanelItemTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#setHead(org.bukkit.inventory.ItemStack)}.
      */
     @Test
-    public void testSetHead() {
+    void testSetHead() {
         ItemStack ph = mock(ItemStack.class);
         when(ph.getType()).thenReturn(Material.PLAYER_HEAD);
         when(ph.getAmount()).thenReturn(1);
