@@ -36,8 +36,28 @@ public class ObsidianScoopingListener extends FlagListener {
 
     /**
      * Cooldown to prevent lava duplication by rapid obsidian scooping.
+     * Initialized lazily on first use so that the configured duration from settings
+     * can be read after BentoBox has fully loaded its configuration.
+     * Changes to the cooldown duration in config require a server restart to take effect.
      */
-    private final ExpiringSet<UUID> cooldowns = new ExpiringSet<>(5, TimeUnit.MINUTES);
+    private volatile ExpiringSet<UUID> cooldowns;
+
+    /**
+     * Returns the cooldown set, initializing it lazily on first use with the
+     * configured duration from {@link world.bentobox.bentobox.Settings#getObsidianScoopingCooldown()}.
+     *
+     * @return the cooldown set
+     */
+    private ExpiringSet<UUID> getCooldowns() {
+        if (cooldowns == null) {
+            synchronized (this) {
+                if (cooldowns == null) {
+                    cooldowns = new ExpiringSet<>(BentoBox.getInstance().getSettings().getObsidianScoopingCooldown(), TimeUnit.MINUTES);
+                }
+            }
+        }
+        return cooldowns;
+    }
 
     /**
      * Enables changing of obsidian back into lava
@@ -98,7 +118,7 @@ public class ObsidianScoopingListener extends FlagListener {
         User user = User.getInstance(player);
         if (getIslands().userIsOnIsland(user.getWorld(), user)) {
             // Check cooldown to prevent lava duplication exploit
-            if (cooldowns.contains(player.getUniqueId())) {
+            if (getCooldowns().contains(player.getUniqueId())) {
                 user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.cooldown");
                 return false;
             }
@@ -109,7 +129,7 @@ public class ObsidianScoopingListener extends FlagListener {
                 return false;
             }
             // Add player to cooldown set to prevent rapid scooping
-            cooldowns.add(player.getUniqueId());
+            getCooldowns().add(player.getUniqueId());
             user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.scooping");
             player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
             e.setCancelled(true);
