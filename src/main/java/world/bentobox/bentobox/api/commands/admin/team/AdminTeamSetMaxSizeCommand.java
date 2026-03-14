@@ -84,7 +84,7 @@ public class AdminTeamSetMaxSizeCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        if (args.size() == 2) {
+        if (args.size() == 3) {
             return Optional.of(Util.tabLimit(new ArrayList<>(Util.getOnlinePlayerList(user)), args.getLast()));
         }
         return Optional.empty();
