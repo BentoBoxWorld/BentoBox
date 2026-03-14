@@ -530,6 +530,8 @@ commands:
           &a Shift +/-100
         no-cost: Ingyenes
         cost-amount: 'Költség: [cost]'
+        next-page: '&f Következő oldal'
+        previous-page: '&f Előző oldal'
     resetflags:
       parameters: '[zászló]'
       description: >-

@@ -527,6 +527,8 @@ commands:
           &a Shift per +/-100
         no-cost: Gratuito
         cost-amount: 'Costo: [cost]'
+        next-page: '&f Pagina successiva'
+        previous-page: '&f Pagina precedente'
     resetflags:
       parameters: '[flag]'
       description: Reimposta le impostazioni di tutte le isole a quelle in config.yml

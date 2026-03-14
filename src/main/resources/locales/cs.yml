@@ -492,6 +492,8 @@ commands:
           &a Shift pro +/-100
         no-cost: Zdarma
         cost-amount: 'Cena: [cost]'
+        next-page: '&f Další stránka'
+        previous-page: '&f Předchozí stránka'
     resetflags:
       parameters: '[flag]'
       description: Obnov vlaječky všech ostrovů na výchozí nastavení v souboru config.yml

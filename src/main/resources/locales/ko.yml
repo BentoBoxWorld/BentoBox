@@ -460,6 +460,8 @@ commands:
           &a Shift +/-100
         no-cost: 무료
         cost-amount: '비용: [cost]'
+        next-page: '&f 다음 페이지'
+        previous-page: '&f 이전 페이지'
     resetflags:
       parameters: '[flag]'
       description: 컨피그의 모든 플래그를 초기화 합니다

@@ -512,6 +512,8 @@ commands:
           &a Shift pentru +/-100
         no-cost: Gratuit
         cost-amount: 'Cost: [cost]'
+        next-page: '&f Pagina următoare'
+        previous-page: '&f Pagina anterioară'
     resetflags:
       parameters: '[pavilion]'
       description: >-

@@ -534,6 +534,8 @@ commands:
           &a Shift pour +/-100
         no-cost: Gratuit
         cost-amount: 'Coût : [cost]'
+        next-page: '&f Page suivante'
+        previous-page: '&f Page précédente'
     resetflags:
       parameters: '[flag]'
       description: >-

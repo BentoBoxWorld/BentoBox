@@ -452,6 +452,8 @@ commands:
           &a Shift для +/-100
         no-cost: Безкоштовно
         cost-amount: 'Вартість: [cost]'
+        next-page: '&f Наступна сторінка'
+        previous-page: '&f Попередня сторінка'
     resetflags:
       parameters: '[flag]'
       description: Скинути всі [prefix_Islands] до типових прапорів у config.yml

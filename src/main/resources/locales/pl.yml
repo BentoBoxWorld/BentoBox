@@ -505,6 +505,8 @@ commands:
           &a Shift dla +/-100
         no-cost: Bezpłatne
         cost-amount: 'Koszt: [cost]'
+        next-page: '&f Następna strona'
+        previous-page: '&f Poprzednia strona'
     resetflags:
       parameters: '[flaga]'
       description: Zresetuj wszystkie wyspy do domyślnych ustawień flag w config.yml

@@ -508,6 +508,8 @@ commands:
           &a Shift para +/-100
         no-cost: Grátis
         cost-amount: 'Custo: [cost]'
+        next-page: '&f Próxima página'
+        previous-page: '&f Página anterior'
     resetflags:
       parameters: '[bandeira]'
       description: >-

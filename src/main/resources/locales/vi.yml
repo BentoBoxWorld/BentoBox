@@ -496,6 +496,8 @@ commands:
           &a Shift để +/-100
         no-cost: Miễn phí
         cost-amount: 'Chi phí: [cost]'
+        next-page: '&f Trang tiếp theo'
+        previous-page: '&f Trang trước'
     resetflags:
       parameters: '[flag]'
       description: Đặt lại tất cả các đảo về cài đặt cờ mặc định trong config.yml

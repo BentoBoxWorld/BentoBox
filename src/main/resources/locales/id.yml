@@ -517,6 +517,8 @@ commands:
           &a Shift untuk +/-100
         no-cost: Gratis
         cost-amount: 'Biaya: [cost]'
+        next-page: '&f Halaman berikutnya'
+        previous-page: '&f Halaman sebelumnya'
     resetflags:
       parameters: '[bendera]'
       description: Setel ulang semua pulau ke pengaturan bendera default di config.yml

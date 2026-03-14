@@ -507,6 +507,8 @@ commands:
           &a Shift priekš +/-100
         no-cost: Bezmaksas
         cost-amount: 'Izmaksas: [cost]'
+        next-page: '&f Nākamā lapa'
+        previous-page: '&f Iepriekšējā lapa'
     resetflags:
       parameters: '[karogs]'
       description: Atiestatī visu salu noklusējuma karodziņu iestatījumus no config.yml
