@@ -68,7 +68,7 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
     
     @Override
     @BeforeEach
-    void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
 
         User.setPlugin(plugin);
@@ -138,7 +138,7 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
 
     @Override
     @AfterEach
-    void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         super.tearDown();
     }
 
