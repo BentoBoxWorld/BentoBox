@@ -70,6 +70,7 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnerSpawnEggsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
 import world.bentobox.bentobox.listeners.flags.protection.RaidTriggerListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnProtectionListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -665,6 +666,15 @@ public final class Flags {
      * @see VisitorKeepInventoryListener
      */
     public static final Flag VISITOR_KEEP_INVENTORY = new Flag.Builder("VISITOR_KEEP_INVENTORY", Material.TOTEM_OF_UNDYING).listener(new VisitorKeepInventoryListener()).type(Type.WORLD_SETTING).defaultSetting(false).build();
+
+    /**
+     * Toggles whether visitors at the spawn island are protected from falling into the void.
+     * When enabled, players who fall into the void while at the spawn island will be
+     * teleported back to the spawn point instead of dying.
+     * @since 2.6.0
+     * @see SpawnProtectionListener
+     */
+    public static final Flag SPAWN_PROTECTION = new Flag.Builder("SPAWN_PROTECTION", Material.BEACON).listener(new SpawnProtectionListener()).type(Type.WORLD_SETTING).defaultSetting(false).build();
 
     // VISITOR_TRIGGER_RAID removed in 1.24.1 - replaced by RAID_TRIGGER protection flag
 
