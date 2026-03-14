@@ -76,6 +76,13 @@ public class IslandInfo {
             user.sendMessage("commands.admin.info.resets-left", TextVariables.NUMBER, resets, "[total]", total);
             // Show team members
             showMembers(user);
+            // Show max team sizes
+            user.sendMessage("commands.admin.info.max-team-size", TextVariables.NUMBER,
+                    String.valueOf(plugin.getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK)));
+            user.sendMessage("commands.admin.info.max-coop-size", TextVariables.NUMBER,
+                    String.valueOf(plugin.getIslands().getMaxMembers(island, RanksManager.COOP_RANK)));
+            user.sendMessage("commands.admin.info.max-trusted-size", TextVariables.NUMBER,
+                    String.valueOf(plugin.getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK)));
         }
         Vector location = island.getProtectionCenter().toVector();
         user.sendMessage("commands.admin.info.island-protection-center", TextVariables.XYZ, Util.xyz(location));
