@@ -1730,6 +1730,7 @@ protection:
         &a entities outside of [prefix_island] limits.
       name: World TNT damage
   locked: '&c This [prefix_island] is locked!'
+  locked-island-bypass: '&6 This [prefix_island] is locked, but you have permission to bypass.'
   protected: '&c [prefix_Island] protected: [description].'
   world-protected: '&c World protected: [description].'
   spawn-protected: '&c Spawn protected: [description].'

@@ -430,6 +430,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         Player player = mock(Player.class);
         when(player.isOp()).thenReturn(false);
         when(player.hasPermission(anyString())).thenReturn(true);
+        when(player.getWorld()).thenReturn(world);
 
         when(player.getUniqueId()).thenReturn(uuid);
         // Give player an island
@@ -442,8 +443,8 @@ class LockAndBanListenerTest extends CommonTestSetup {
 
         // Log them in
         listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
-        // User should not see a message
-        verify(notifier, never()).notify(any(), anyString());
+        // User should see a bypass message
+        verify(notifier).notify(any(), anyString());
         // User should not be teleported somewhere
         verify(im, never()).homeTeleportAsync(any(), eq(player));
     }
@@ -539,12 +540,14 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(mockPlayer.getLocation()).thenReturn(outside);
 
         // Lock island for player
-        when(island.isAllowed(user, Flags.LOCK)).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, outside, inside);
         listener.onPlayerMove(e);
         assertFalse(e.isCancelled());
+        // User should see a bypass notification
+        verify(notifier).notify(any(), anyString());
     }
 
     @Test
@@ -620,18 +623,21 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(player.getUniqueId()).thenReturn(uuid);
         when(player.isOp()).thenReturn(false);
         when(player.hasPermission(anyString())).thenReturn(true);
+        when(player.getWorld()).thenReturn(world);
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Place the player inside island
         when(player.getLocation()).thenReturn(inside);
 
         // Lock island for player
-        when(island.isAllowed(user, Flags.LOCK)).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(player, inside, inside2);
         listener.onPlayerMove(e);
         assertFalse(e.isCancelled());
+        // User should see a bypass notification
+        verify(notifier).notify(any(), anyString());
     }
 
     @Test
