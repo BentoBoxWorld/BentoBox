@@ -951,6 +951,11 @@ commands:
       not-on-island: '&c Người chơi đó không có ở đảo bạn!'
       player-expelled-you: '&b [name]&c  đã trục xuất bạn khỏi đảo của họ!'
       success: '&a Bạn đã trục xuất &b [name] &a khỏi đảo bạn.'
+    lock:
+      description: khóa hoặc mở khóa [prefix_island] bạn
+      locked: '&a [prefix_island] bạn hiện đã bị khóa.'
+      unlocked: '&a [prefix_island] bạn hiện đã được mở khóa.'
+      you-are-locked-out: '&c [prefix_island] này hiện đã bị khóa. Bạn đã bị trục xuất.'
 ranks:
   owner: Chủ Đảo
   sub-owner: Đồng Chủ Đảo

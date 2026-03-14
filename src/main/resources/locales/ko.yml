@@ -892,6 +892,11 @@ commands:
       not-on-island: '&c 그 플레이어는 당신의 섬에 있지 않습니다!'
       player-expelled-you: '&b [name]&c  이 당신을 섬에서 쫓아냈습니다!'
       success: '&a 당신은 &b [name] &a 을 섬에서 쫓아냈습니다.'
+    lock:
+      description: '[prefix_island]을 잠그거나 잠금 해제합니다.'
+      locked: '&a 당신의 [prefix_island]이 잠겼습니다.'
+      unlocked: '&a 당신의 [prefix_island]의 잠금이 해제되었습니다.'
+      you-are-locked-out: '&c 이 [prefix_island]은 잠겨 있습니다. 당신은 추방되었습니다.'
 ranks:
   owner: 섬장
   sub-owner: 부 섬장

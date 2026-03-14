@@ -893,6 +893,11 @@ commands:
       not-on-island: '&c该玩家不在你的岛屿上!'
       player-expelled-you: '&c你被&b[name]&c从TA的岛屿上驱逐了!'
       success: '&a成功将&b[name]&a驱逐出你的岛屿.'
+    lock:
+      description: 锁定或解锁你的[prefix_island]
+      locked: '&a你的[prefix_island]现已锁定.'
+      unlocked: '&a你的[prefix_island]现已解锁.'
+      you-are-locked-out: '&c此[prefix_island]已被锁定，你被驱逐了.'
 ranks:
   owner: 岛主
   sub-owner: 副岛主

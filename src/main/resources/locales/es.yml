@@ -986,6 +986,11 @@ commands:
       not-on-island: '&cEse jugador no está en tu isla!'
       player-expelled-you: '&b[name]&c te expulsó de la isla!'
       success: '&aExpulsastes a &b[name] de la isla.'
+    lock:
+      description: bloquear o desbloquear tu [prefix_island]
+      locked: '&a Tu [prefix_island] ahora está bloqueada.'
+      unlocked: '&a Tu [prefix_island] ahora está desbloqueada.'
+      you-are-locked-out: '&c Esta [prefix_island] ahora está bloqueada. Has sido expulsado/a.'
 ranks:
   owner: Propietario
   sub-owner: Co-Propietario

@@ -966,6 +966,11 @@ commands:
       not-on-island: '&cŠis spēlētājs nav uz tavas salas!'
       player-expelled-you: '&b[name]&c izraidīja tevi no salas!'
       success: '&aTu izmeti spēlētāju &b[name] &ano savas salas.'
+    lock:
+      description: bloķēt vai atbloķēt savu [prefix_island]
+      locked: '&aTavs [prefix_island] tagad ir bloķēts.'
+      unlocked: '&aTavs [prefix_island] tagad ir atbloķēts.'
+      you-are-locked-out: '&cŠis [prefix_island] tagad ir bloķēts. Tu tiki izraidīts/a.'
 ranks:
   owner: Īpašnieks
   sub-owner: Apakšīpašnieks

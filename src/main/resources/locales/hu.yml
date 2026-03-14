@@ -1004,6 +1004,11 @@ commands:
       not-on-island: '&c Az a játékos nincs a szigeteden!'
       player-expelled-you: '&b [name]&c kiutasított a szigetről!'
       success: '&a Kiutasítottad &b [name] &a-t a szigetről.'
+    lock:
+      description: zárd le vagy nyisd fel a [prefix_island]-ed
+      locked: '&a A [prefix_island]-ed most zárolva van.'
+      unlocked: '&a A [prefix_island]-ed zárolása feloldva.'
+      you-are-locked-out: '&c Ez a [prefix_island] most zárolva van. Kiutasítottak.'
 ranks:
   owner: Tulajdonos
   sub-owner: Altulajdonos

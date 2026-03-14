@@ -974,6 +974,11 @@ commands:
       not-on-island: '&cЭтот игрок не на вашем острове!'
       player-expelled-you: '&b [name]&c был выгнан с вашего острова!'
       success: '&a Вы были выгнаны &b[name] &aс его острова.'
+    lock:
+      description: заблокировать или разблокировать ваш [prefix_island]
+      locked: '&a Ваш [prefix_island] теперь заблокирован.'
+      unlocked: '&a Ваш [prefix_island] теперь разблокирован.'
+      you-are-locked-out: '&c Этот [prefix_island] теперь заблокирован. Вы были выгнаны.'
 ranks:
   owner: Владелец
   sub-owner: Семи-владелец

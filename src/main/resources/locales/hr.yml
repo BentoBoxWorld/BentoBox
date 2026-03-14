@@ -959,6 +959,11 @@ commands:
       not-on-island: '&c Taj igrač nije na vašem otoku!'
       player-expelled-you: '&b [name]&c te protjerao s otoka!'
       success: '&a Protjerali ste &b [name] &a s otoka.'
+    lock:
+      description: zaključajte ili otključajte svoj [prefix_island]
+      locked: '&a Vaš [prefix_island] je sada zaključan.'
+      unlocked: '&a Vaš [prefix_island] je sada otključan.'
+      you-are-locked-out: '&c Ovaj [prefix_island] je sada zaključan. Protjerani ste.'
 ranks:
   owner: Vlasnik
   sub-owner: Podvlasnik

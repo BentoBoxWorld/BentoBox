@@ -970,6 +970,11 @@ commands:
       not-on-island: '&c That player is not on your [prefix_island]!'
       player-expelled-you: '&b [name]&c  expelled you from the [prefix_island]!'
       success: '&a You expelled &b [name] &a from the [prefix_island].'
+    lock:
+      description: lock or unlock your [prefix_island]
+      locked: '&a Your [prefix_island] is now locked.'
+      unlocked: '&a Your [prefix_island] is now unlocked.'
+      you-are-locked-out: '&c This [prefix_island] is now locked. You have been expelled.'
 
 ranks:
   owner: Owner

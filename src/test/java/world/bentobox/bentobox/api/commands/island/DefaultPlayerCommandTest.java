@@ -101,8 +101,8 @@ class DefaultPlayerCommandTest extends RanksManagerTestSetup {
         assertEquals("commands.island.help.description", dpc.getDescription());
         assertTrue(dpc.isOnlyPlayer());
         assertEquals("island", dpc.getPermission());
-        // 20 = 19 subcommands + help command
-        assertEquals(20, dpc.getSubCommands().size()); // Update when commands are added or removed
+        // 21 = 20 subcommands + help command
+        assertEquals(21, dpc.getSubCommands().size()); // Update when commands are added or removed
     }
 
     /**

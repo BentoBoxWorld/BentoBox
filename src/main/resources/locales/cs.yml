@@ -945,6 +945,11 @@ commands:
       not-on-island: '&c Tento hráč není na tvém ostrově!'
       player-expelled-you: '&b [name]&c  tě vykázal ze svého ostrova!'
       success: '&a Vykázal jsi &b [name] &a ze svého ostrova.'
+    lock:
+      description: uzamknout nebo odemknout tvůj [prefix_island]
+      locked: '&a Tvůj [prefix_island] je nyní uzamčen.'
+      unlocked: '&a Tvůj [prefix_island] je nyní odemčen.'
+      you-are-locked-out: '&c Tento [prefix_island] je nyní uzamčen. Byl/a jsi vykázán/a.'
 ranks:
   owner: Vlastník
   sub-owner: Spolu-vlastník
