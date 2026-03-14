@@ -260,6 +260,9 @@ commands:
       team-members-title: 'Thành viên đảo:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Kích thước đảo tối đa: [number]'
+      max-coop-size: 'Kích thước hợp tác tối đa: [number]'
+      max-trusted-size: 'Kích thước tin cậy tối đa: [number]'
       island-protection-center: 'Điểm giữa khu vực bảo vệ: [xyz]'
       island-center: 'Điểm trung tâm đảo: [xyz]'
       island-coords: 'Tọa độ đảo: [xz1] đến [xz2]'
@@ -1655,6 +1658,13 @@ protection:
         &a Chuyển đổi xem các thực thể (không phải người chơi) có thể
         &a sử dụng cổng để dịch chuyển giữa
         &a các chiều không gian hay không
+    WIND_CHARGE:
+      name: Đạn gió
+      description: |-
+        &a Chuyển đổi việc sử dụng đạn gió.
+        &a Nếu bị tắt, khách thăm không thể
+        &a sử dụng đạn gió trên đảo này.
+      hint: Sử dụng đạn gió bị tắt
     WITHER_DAMAGE:
       name: Bật/Tắt sát thương khô héo
       description: |-

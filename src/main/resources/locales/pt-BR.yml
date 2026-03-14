@@ -259,6 +259,9 @@ commands:
       team-members-title: 'Membros da equipe:'
       team-owner-format: '&a [nome] [rank]'
       team-member-format: '&b [nome] [ranking]'
+      max-team-size: 'Tamanho máximo da equipe: [number]'
+      max-coop-size: 'Tamanho máximo de coop: [number]'
+      max-trusted-size: 'Tamanho máximo de confiança: [number]'
       island-protection-center: 'Área de proteção centro: [xyz]'
       island-center: '[prefix_Island] centro: [xyz]'
       island-coords: 'Coordenadas da ilha: de [xz1] até [xz2]'
@@ -1675,6 +1678,13 @@ protection:
         &a Alterna se entidades (não-jogadores) podem  
         &a usar portais para teletransportar entre  
         &a dimensões
+    WIND_CHARGE:
+      name: Carga de vento
+      description: |-
+        &a Alterna o uso de cargas de vento.
+        &a Se desativado, visitantes não podem
+        &a usar cargas de vento nesta ilha.
+      hint: Uso de carga de vento desativado
     WITHER_DAMAGE:
       name: Dano de wither
       description: |-

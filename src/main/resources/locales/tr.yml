@@ -261,6 +261,9 @@ commands:
       team-members-title: '&bTakım üyeleri:'
       team-owner-format: '&d[name] [rank]'
       team-member-format: '&d[name] [rank]'
+      max-team-size: 'Maksimum takım boyutu: [number]'
+      max-coop-size: 'Maksimum işbirliği boyutu: [number]'
+      max-trusted-size: 'Maksimum güvenilir boyutu: [number]'
       island-protection-center: 'Korumalı alan merkezi: [xyz]'
       island-center: 'Ada merkezi: [xyz]'
       island-coords: '&bAda kordinatları: [xz1] ile [xz2] arasında'
@@ -1597,6 +1600,13 @@ protection:
         &a Varlıkların (oyuncu olmayan) boyutlar arasında
         &a teleporto olmak için portalları
         &a kullanıp kullanamayacağını açık/kapalı yapar
+    WIND_CHARGE:
+      name: Rüzgar şarjı
+      description: |-
+        &a Rüzgar şarjı kullanımını değiştirir.
+        &a Devre dışıysa, ziyaretçiler bu adada
+        &a rüzgar şarjı kullanamaz.
+      hint: Rüzgar şarjı kullanımı devre dışı
     WITHER_DAMAGE:
       name: Wither hasarını ayarlar.
       description: |-

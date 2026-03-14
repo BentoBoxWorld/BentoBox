@@ -203,6 +203,22 @@ public enum GameModePlaceholder {
             (addon, user, island) -> island == null ? "" : String.valueOf(addon.getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK))),
 
     /**
+     * Returns the maximum number of coops the island can have.
+     * @since 2.6.0
+     */
+    ISLAND_COOP_MAX("island_coop_max",
+            "Maximum number of coops allowed on the player's island",
+            (addon, user, island) -> island == null ? "" : String.valueOf(addon.getIslands().getMaxMembers(island, RanksManager.COOP_RANK))),
+
+    /**
+     * Returns the maximum number of trusted players the island can have.
+     * @since 2.6.0
+     */
+    ISLAND_TRUST_MAX("island_trust_max",
+            "Maximum number of trusted players allowed on the player's island",
+            (addon, user, island) -> island == null ? "" : String.valueOf(addon.getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK))),
+
+    /**
      * Returns the island name.
      */
     ISLAND_NAME("island_name",
@@ -445,6 +461,24 @@ public enum GameModePlaceholder {
             "Maximum number of members allowed on the island the player is standing on",
             (addon, user, island) ->
     getVisitedIsland(addon, user).map(value -> String.valueOf(addon.getIslands().getMaxMembers(value, RanksManager.MEMBER_RANK)))
+    .orElse("")),
+    /**
+     * Returns the maximum number of coops the island the player is standing on can have.
+     * @since 2.6.0
+     */
+    VISITED_ISLAND_COOP_MAX("visited_island_coop_max",
+            "Maximum number of coops allowed on the island the player is standing on",
+            (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(addon.getIslands().getMaxMembers(value, RanksManager.COOP_RANK)))
+    .orElse("")),
+    /**
+     * Returns the maximum number of trusted players the island the player is standing on can have.
+     * @since 2.6.0
+     */
+    VISITED_ISLAND_TRUST_MAX("visited_island_trust_max",
+            "Maximum number of trusted players allowed on the island the player is standing on",
+            (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(addon.getIslands().getMaxMembers(value, RanksManager.TRUSTED_RANK)))
     .orElse("")),
     /**
      * Returns the name of the island the player is standing on.

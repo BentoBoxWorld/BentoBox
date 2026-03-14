@@ -262,6 +262,9 @@ commands:
       team-members-title: 'Состав команды:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Максимальный размер команды: [number]'
+      max-coop-size: 'Максимальный размер кооперации: [number]'
+      max-trusted-size: 'Максимальный размер доверенных: [number]'
       island-protection-center: 'Центр острова: [xyz]'
       island-center: 'Центр острова: [xyz]'
       island-coords: 'Координаты острова: от [xz1] до [xz2]'
@@ -1656,6 +1659,13 @@ protection:
       description: |-
         &a Активация позволит сущностям
         &a использовать портал между измерениями
+    WIND_CHARGE:
+      name: Заряд ветра
+      description: |-
+        &a Переключает использование зарядов ветра.
+        &a Если отключено, посетители не могут
+        &a использовать заряды ветра на этом острове.
+      hint: Использование зарядов ветра отключено
     WITHER_DAMAGE:
       name: Урон от Визера
       description: |-

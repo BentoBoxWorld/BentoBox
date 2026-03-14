@@ -164,6 +164,9 @@ class AdminInfoCommandTest extends RanksManagerTestSetup {
         verify(user).sendMessage("commands.admin.info.resets-left", "[number]", "0", "[total]", "0");
         verify(user).sendMessage("commands.admin.info.team-members-title");
         verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "");
+        verify(user).sendMessage("commands.admin.info.max-team-size", "[number]", "0");
+        verify(user).sendMessage("commands.admin.info.max-coop-size", "[number]", "0");
+        verify(user).sendMessage("commands.admin.info.max-trusted-size", "[number]", "0");
         verify(user).sendMessage("commands.admin.info.island-protection-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.island-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.island-coords", "[xz1]", "-400,0,-400", "[xz2]", "400,0,400");
@@ -186,6 +189,9 @@ class AdminInfoCommandTest extends RanksManagerTestSetup {
         verify(user).sendMessage("commands.admin.info.resets-left", "[number]", "0", "[total]", "0");
         verify(user).sendMessage("commands.admin.info.team-members-title");
         verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "");
+        verify(user).sendMessage("commands.admin.info.max-team-size", "[number]", "0");
+        verify(user).sendMessage("commands.admin.info.max-coop-size", "[number]", "0");
+        verify(user).sendMessage("commands.admin.info.max-trusted-size", "[number]", "0");
         verify(user).sendMessage("commands.admin.info.island-protection-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.island-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.island-coords", "[xz1]", "-400,0,-400", "[xz2]", "400,0,400");

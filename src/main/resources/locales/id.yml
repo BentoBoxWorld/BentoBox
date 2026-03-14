@@ -269,6 +269,9 @@ commands:
       team-members-title: 'Anggota Tim:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Ukuran tim maksimum: [number]'
+      max-coop-size: 'Ukuran kooperasi maksimum: [number]'
+      max-trusted-size: 'Ukuran terpercaya maksimum: [number]'
       island-protection-center: 'Pusat area perlindungan: [xyz]'
       island-center: 'Pusat pulau: [xyz]'
       island-coords: 'Koordinat pulau: [xz1] hingga [xz2]'
@@ -1705,6 +1708,13 @@ protection:
         &a Beralih jika entitas (non-pemain) bisa
         &a gunakan portal untuk berteleportasi
         &sebuah dimensi
+    WIND_CHARGE:
+      name: Muatan angin
+      description: |-
+        &a Mengalihkan penggunaan muatan angin.
+        &a Jika dinonaktifkan, pengunjung tidak
+        &a dapat menggunakan muatan angin di pulau ini.
+      hint: Penggunaan muatan angin dinonaktifkan
     WITHER_DAMAGE:
       name: Alihkan kerusakan layu
       description: |-

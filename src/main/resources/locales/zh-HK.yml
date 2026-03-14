@@ -233,6 +233,9 @@ commands:
       team-members-title: 隊伍成員：
       team-owner-format: '&a[name] [rank]'
       team-member-format: '&b[name] [rank]'
+      max-team-size: '最大隊伍大小：[number]'
+      max-coop-size: '最大合作大小：[number]'
+      max-trusted-size: '最大信任大小：[number]'
       island-protection-center: '保護範圍中心: [xyz]'
       island-center: '島嶼中心: [xyz]'
       island-coords: 島嶼邊界：[xz1] 至 [xz2]
@@ -1525,6 +1528,13 @@ protection:
       description: |-
         &a 允许/禁止 非玩家實體
         &a 使用傳送門，前往其他世界
+    WIND_CHARGE:
+      name: 風彈
+      description: |-
+        &a 切換風彈的使用。
+        &a 如果禁用，訪客將無法
+        &a 在該島嶼上使用風彈。
+      hint: 風彈使用已禁用
     WITHER_DAMAGE:
       name: '&a&l凋零傷害'
       description: |-

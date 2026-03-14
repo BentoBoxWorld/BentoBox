@@ -234,6 +234,9 @@ commands:
       team-members-title: 'Учасники команди:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Максимальний розмір команди: [number]'
+      max-coop-size: 'Максимальний розмір кооперації: [number]'
+      max-trusted-size: 'Максимальний розмір довірених: [number]'
       island-protection-center: 'Центр зони захисту: [xyz]'
       island-center: 'Центр [prefix_Island]: [xyz]'
       island-coords: 'Координати [prefix_Island]: [xz1] до [xz2]'
@@ -1593,6 +1596,13 @@ protection:
         &a Перемикає, чи можуть не-гравці
         &a користуватися порталами для
         &a переміщення між вимірами
+    WIND_CHARGE:
+      name: Вітровий заряд
+      description: |-
+        &a Перемикає використання вітрових зарядів.
+        &a Якщо вимкнено, відвідувачі не можуть
+        &a використовувати вітрові заряди на цьому острові.
+      hint: Використання вітрових зарядів вимкнено
     WITHER_DAMAGE:
       name: Перемикає шкоду від вітер-скелета
       description: |-

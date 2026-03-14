@@ -273,6 +273,9 @@ commands:
       team-members-title: 'Leden van het team:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Maximale teamgrootte: [number]'
+      max-coop-size: 'Maximale coop-grootte: [number]'
+      max-trusted-size: 'Maximale vertrouwde grootte: [number]'
       island-protection-center: 'Beschermingsgebied centrum: [xyz]'
       island-center: 'Eilandcentrum: [xyz]'
       island-coords: 'Eilandcoördinaten: [xz1] tot [xz2]'
@@ -1727,6 +1730,13 @@ protection:
         &a Schakelt in of entiteiten (geen spelers) 
         &a portals kunnen gebruiken om te teleporteren 
         &a tussen dimensies
+    WIND_CHARGE:
+      name: Windlading
+      description: |-
+        &a Schakelt het gebruik van windladingen.
+        &a Als uitgeschakeld, kunnen bezoekers
+        &a geen windladingen gebruiken op dit eiland.
+      hint: Gebruik van windladingen uitgeschakeld
     WITHER_DAMAGE:
       name: Schakel schoftschade in
       description: |-
