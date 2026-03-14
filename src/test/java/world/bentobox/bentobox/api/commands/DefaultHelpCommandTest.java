@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -116,7 +118,7 @@ class DefaultHelpCommandTest extends CommonTestSetup {
     }
 
     /**
-     * Test for {@link DefaultHelpCommand#execute(User, String, List)}
+     * Test for {@link DefaultHelpCommand#execute(User, String, List)} with no args (page 1).
      */
     @Test
     void testExecuteUserListOfString() {
@@ -127,6 +129,7 @@ class DefaultHelpCommandTest extends CommonTestSetup {
         when(parent.getDescription()).thenReturn("description");
         when(parent.getPermission()).thenReturn("permission");
         when(parent.getWorld()).thenReturn(mock(World.class));
+        when(parent.getSubCommands()).thenReturn(new LinkedHashMap<>());
         when(user.getTranslationOrNothing("parameters")).thenReturn("");
         when(user.getTranslation("description")).thenReturn("the main island command");
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
@@ -136,29 +139,77 @@ class DefaultHelpCommandTest extends CommonTestSetup {
         verify(user).getTranslation("description");
         verify(user).sendMessage("commands.help.syntax-no-parameters", "[usage]", "island", "[description]",
                 "the main island command");
+        // Single page: no page indicator
+        verify(user, never()).sendMessage(eq("commands.help.page"), any());
         verify(user).sendMessage("commands.help.end");
     }
 
     /**
-     * Test for {@link DefaultHelpCommand#execute(User, String, List)}
+     * Test for {@link DefaultHelpCommand#execute(User, String, List)} with explicit page 1 arg.
+     * Page 1 should show the same content as no args, with header and footer.
      */
     @Test
-    void testExecuteSecondLevelHelp() {
+    void testExecutePageOneHelp() {
         CompositeCommand parent = mock(CompositeCommand.class);
         when(parent.getLabel()).thenReturn("island");
         when(parent.getUsage()).thenReturn("island");
         when(parent.getParameters()).thenReturn("parameters");
         when(parent.getDescription()).thenReturn("description");
         when(parent.getPermission()).thenReturn("permission");
+        when(parent.getWorld()).thenReturn(mock(World.class));
+        when(parent.getSubCommands()).thenReturn(new LinkedHashMap<>());
         when(user.getTranslationOrNothing("parameters")).thenReturn("");
         when(user.getTranslation("description")).thenReturn("the main island command");
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
         dhc.execute(user, dhc.getLabel(), Collections.singletonList("1"));
-        // There are no header or footer shown
+        // Header and footer are shown for page requests
+        verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
         verify(user).getTranslationOrNothing("parameters");
         verify(user).getTranslation("description");
         verify(user).sendMessage("commands.help.syntax-no-parameters", "[usage]", "island", "[description]",
                 "the main island command");
+        verify(user).sendMessage("commands.help.end");
+    }
+
+    /**
+     * Test for {@link DefaultHelpCommand#execute(User, String, List)} with pagination.
+     * When there are more commands than COMMANDS_PER_PAGE, a page indicator is shown.
+     */
+    @Test
+    void testExecutePaginationShowsPageIndicator() {
+        CompositeCommand parent = mock(CompositeCommand.class);
+        when(parent.getLabel()).thenReturn("island");
+        when(parent.getUsage()).thenReturn("island");
+        when(parent.getParameters()).thenReturn("parameters");
+        when(parent.getDescription()).thenReturn("description");
+        when(parent.getPermission()).thenReturn("permission");
+        when(parent.getWorld()).thenReturn(mock(World.class));
+
+        // Create enough sub-commands to exceed one page
+        LinkedHashMap<String, CompositeCommand> subCommands = new LinkedHashMap<>();
+        for (int i = 1; i <= DefaultHelpCommand.COMMANDS_PER_PAGE; i++) {
+            CompositeCommand sub = mock(CompositeCommand.class);
+            when(sub.getLabel()).thenReturn("sub" + i);
+            when(sub.getUsage()).thenReturn("island sub" + i);
+            when(sub.getParameters()).thenReturn("");
+            when(sub.getDescription()).thenReturn("desc" + i);
+            when(sub.isHidden()).thenReturn(false);
+            when(sub.isOnlyPlayer()).thenReturn(false);
+            when(user.getTranslationOrNothing("")).thenReturn("");
+            when(user.getTranslation("desc" + i)).thenReturn("Sub command " + i);
+            subCommands.put("sub" + i, sub);
+        }
+        when(parent.getSubCommands()).thenReturn(subCommands);
+        when(user.getTranslationOrNothing("parameters")).thenReturn("");
+        when(user.getTranslation("description")).thenReturn("the main island command");
+
+        DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
+        dhc.execute(user, dhc.getLabel(), Collections.emptyList());
+
+        // With parent + COMMANDS_PER_PAGE sub-commands = COMMANDS_PER_PAGE + 1 entries => 2 pages
+        verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
+        verify(user).sendMessage("commands.help.page", "[page]", "1", "[total]", "2");
+        verify(user).sendMessage("commands.help.end");
     }
 
     /**
@@ -178,7 +229,7 @@ class DefaultHelpCommandTest extends CommonTestSetup {
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
         // Test /island help team
         dhc.execute(user, dhc.getLabel(), Collections.singletonList("team"));
-        // There are no header or footer shown
+        // There are no header or footer shown for non-numeric args
         verify(user).getTranslation("commands.help.parameters");
         verify(user).getTranslation("commands.help.description");
         verify(user).sendMessage("commands.help.syntax", "[usage]", "island", "[parameters]", "help-parameters",
