@@ -23,6 +23,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Handles the creation and pasting of a new island for a player.
@@ -283,6 +284,8 @@ public class NewIsland {
             } else {
                 // Notify player they can teleport to their island
                 user.sendMessage("commands.island.create.you-can-teleport-to-your-island");
+                // Apply on-join resets even when not auto-teleporting to the new island
+                applyJoinResets(user);
             }
         } else {
             // If player is offline, remove player data to clear cache
@@ -354,6 +357,40 @@ public class NewIsland {
             }
         }
         return null;
+    }
+
+    /**
+     * Applies on-join resets (health, hunger, XP, inventory, etc.) to the player.
+     * This is used when the player is not auto-teleported to their new island,
+     * ensuring that resets still occur at island creation time.
+     *
+     * @param user the user to apply resets to
+     */
+    private void applyJoinResets(User user) {
+        if (plugin.getIWM().isOnJoinResetEnderChest(world)) {
+            user.getPlayer().getEnderChest().clear();
+        }
+        if (plugin.getIWM().isOnJoinResetInventory(world)) {
+            user.getPlayer().getInventory().clear();
+        }
+        if (plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnJoinResetMoney(world)) {
+            plugin.getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
+        }
+        if (plugin.getIWM().isOnJoinResetHealth(world)) {
+            Util.resetHealth(user.getPlayer());
+        }
+        if (plugin.getIWM().isOnJoinResetHunger(world)) {
+            user.getPlayer().setFoodLevel(20);
+        }
+        if (plugin.getIWM().isOnJoinResetXP(world)) {
+            // Player collected XP (displayed)
+            user.getPlayer().setLevel(0);
+            user.getPlayer().setExp(0);
+            // Player total XP (not displayed)
+            user.getPlayer().setTotalExperience(0);
+        }
+        user.setGameMode(plugin.getIWM().getDefaultGameMode(world));
+        Util.runCommands(user, user.getName(), plugin.getIWM().getOnJoinCommands(world), "join");
     }
 
     /**

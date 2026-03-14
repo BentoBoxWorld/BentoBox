@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -13,8 +15,14 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
+import com.google.common.collect.ImmutableSet;
+
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,10 +33,12 @@ import org.mockito.Mockito;
 import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent.TeamEventBuilder;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.TeamInvite;
 import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -303,7 +313,8 @@ class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     void testExecuteUserStringListOfStringTrust() {
@@ -311,6 +322,115 @@ class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
         when(invite.getType()).thenReturn(Type.TRUST);
         assertTrue(c.execute(user, "accept", Collections.emptyList()));
         verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
+    }
+
+    /**
+     * Test that XP is reset when accepting a team invite and isDisallowTeamMemberIslands is true (default).
+     */
+    @Test
+    void testAcceptTeamInvite_xpResetWhenDisallowTeamMemberIslandsTrue() {
+        // Set up world settings with isDisallowTeamMemberIslands = true (default) and isOnJoinResetXP = true
+        when(itc.getWorld()).thenReturn(world);
+        when(iwm.isOnJoinResetXP(any())).thenReturn(true);
+        when(iwm.getOnJoinCommands(any())).thenReturn(Collections.emptyList());
+
+        // Set up team island
+        String islandId = UUID.randomUUID().toString();
+        when(invite.getIslandID()).thenReturn(islandId);
+        when(invite.getInviter()).thenReturn(notUUID);
+        Island teamIsland = mock(Island.class);
+        when(teamIsland.getOwner()).thenReturn(notUUID);
+        when(teamIsland.getMemberSet(anyInt(), anyBoolean())).thenReturn(ImmutableSet.of());
+        when(im.getIslandById(islandId)).thenReturn(Optional.of(teamIsland));
+        when(im.getMaxMembers(any(), anyInt())).thenReturn(4);
+        when(im.getIslands(any(), any(UUID.class))).thenReturn(Collections.emptyList());
+        when(im.homeTeleportAsync(any(World.class), any(Player.class)))
+                .thenReturn(CompletableFuture.completedFuture(true));
+
+        // Execute
+        c.acceptTeamInvite(user, invite);
+
+        // Verify XP was reset
+        verify(mockPlayer).setLevel(0);
+        verify(mockPlayer).setExp(0F);
+        verify(mockPlayer).setTotalExperience(0);
+    }
+
+    /**
+     * Test that XP is reset when accepting a team invite and isDisallowTeamMemberIslands is false.
+     * This ensures XP resets also work when players are allowed to keep their own islands in a team.
+     */
+    @Test
+    void testAcceptTeamInvite_xpResetWhenDisallowTeamMemberIslandsFalse() {
+        // Override world settings to return isDisallowTeamMemberIslands = false
+        WorldSettings ws = new TestWorldSettings() {
+            @Override
+            public boolean isDisallowTeamMemberIslands() {
+                return false;
+            }
+        };
+        when(itc.getWorld()).thenReturn(world);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        when(iwm.isOnJoinResetXP(any())).thenReturn(true);
+        when(iwm.getOnJoinCommands(any())).thenReturn(Collections.emptyList());
+
+        // Set up team island
+        String islandId = UUID.randomUUID().toString();
+        when(invite.getIslandID()).thenReturn(islandId);
+        when(invite.getInviter()).thenReturn(notUUID);
+        Island teamIsland = mock(Island.class);
+        when(teamIsland.getOwner()).thenReturn(notUUID);
+        when(teamIsland.getMemberSet(anyInt(), anyBoolean())).thenReturn(ImmutableSet.of());
+        when(im.getIslandById(islandId)).thenReturn(Optional.of(teamIsland));
+        when(im.getMaxMembers(any(), anyInt())).thenReturn(4);
+        when(im.homeTeleportAsync(any(World.class), any(Player.class)))
+                .thenReturn(CompletableFuture.completedFuture(true));
+
+        // Execute
+        c.acceptTeamInvite(user, invite);
+
+        // Verify XP was reset even though isDisallowTeamMemberIslands is false
+        verify(mockPlayer).setLevel(0);
+        verify(mockPlayer).setExp(0F);
+        verify(mockPlayer).setTotalExperience(0);
+    }
+
+    /**
+     * Test that XP is NOT reset when isOnJoinResetXP is false and isDisallowTeamMemberIslands is false.
+     */
+    @Test
+    void testAcceptTeamInvite_xpNotResetWhenSettingDisabled() {
+        // Override world settings to return isDisallowTeamMemberIslands = false
+        WorldSettings ws = new TestWorldSettings() {
+            @Override
+            public boolean isDisallowTeamMemberIslands() {
+                return false;
+            }
+        };
+        when(itc.getWorld()).thenReturn(world);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        when(iwm.isOnJoinResetXP(any())).thenReturn(false);
+        when(iwm.getOnJoinCommands(any())).thenReturn(Collections.emptyList());
+
+        // Set up team island
+        String islandId = UUID.randomUUID().toString();
+        when(invite.getIslandID()).thenReturn(islandId);
+        when(invite.getInviter()).thenReturn(notUUID);
+        Island teamIsland = mock(Island.class);
+        when(teamIsland.getOwner()).thenReturn(notUUID);
+        when(teamIsland.getMemberSet(anyInt(), anyBoolean())).thenReturn(ImmutableSet.of());
+        when(im.getIslandById(islandId)).thenReturn(Optional.of(teamIsland));
+        when(im.getMaxMembers(any(), anyInt())).thenReturn(4);
+        when(im.homeTeleportAsync(any(World.class), any(Player.class)))
+                .thenReturn(CompletableFuture.completedFuture(true));
+
+        // Execute
+        c.acceptTeamInvite(user, invite);
+
+        // Verify XP was NOT reset
+        verify(mockPlayer, never()).setLevel(0);
+        verify(mockPlayer, never()).setExp(0F);
+        verify(mockPlayer, never()).setTotalExperience(0);
     }
 
 }
