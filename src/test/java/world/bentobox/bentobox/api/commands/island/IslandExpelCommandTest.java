@@ -64,6 +64,7 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
     private Addon addon;
 
     private IslandExpelCommand iec;
+    private Settings s;
     
     @Override
     @BeforeEach
@@ -77,7 +78,7 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Settings
-        Settings s = mock(Settings.class);
+        s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
@@ -410,6 +411,40 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
         Optional<GameModeAddon> optionalAddon = Optional.of(gma);
         when(iwm.getAddon(any())).thenReturn(optionalAddon);
         when(im.getSpawn(any())).thenReturn(Optional.empty());
+        testCanExecute();
+        when(im.hasIsland(any(), any(User.class))).thenReturn(false);
+        assertFalse(iec.execute(user, "", Collections.singletonList("tasty")));
+        verify(addon).logError("Expel: target had no island, and one could not be created");
+        verify(user).sendMessage("commands.island.expel.cannot-expel");
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Tests expel command fallback when player has no island.
+     */
+    @Test
+    public void testExecuteUserStringListOfStringNoIslandRunExpelCommand() {
+        when(im.getSpawn(any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
+        when(s.getExpelCommand()).thenReturn("spawn");
+        testCanExecute();
+        when(im.hasIsland(any(), any(User.class))).thenReturn(false);
+        assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
+        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target",
+                TextVariables.DISPLAY_NAME, "&Ctarget");
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Tests that expel fails when expel command is blank.
+     */
+    @Test
+    public void testExecuteUserStringListOfStringNoIslandBlankExpelCommand() {
+        when(im.getSpawn(any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
+        when(s.getExpelCommand()).thenReturn("");
         testCanExecute();
         when(im.hasIsland(any(), any(User.class))).thenReturn(false);
         assertFalse(iec.execute(user, "", Collections.singletonList("tasty")));
