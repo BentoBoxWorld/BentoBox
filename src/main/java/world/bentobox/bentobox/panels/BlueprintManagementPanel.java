@@ -49,11 +49,15 @@ public class BlueprintManagementPanel {
     private static final int MAX_WORLD_SLOT = 9;
     private static final int MIN_WORLD_SLOT = 0;
     public static final int MAX_BP_SLOT = 35;
+    private static final int BUNDLES_PER_PAGE = 36;
+    private static final int BLUEPRINTS_PER_PAGE = 18;
     private static final String INSTRUCTION = "instruction";
     private Entry<Integer, Blueprint> selected;
     private final Map<Integer, Blueprint> blueprints = new HashMap<>();
     private final User user;
     private final GameModeAddon addon;
+    private int bundlePage;
+    private int blueprintPage;
 
     /**
      * Class to display the Blueprint Management Panel
@@ -107,18 +111,29 @@ public class BlueprintManagementPanel {
         PanelBuilder pb = new PanelBuilder().name(t("title")).user(user).size(45);
         // Panel has New Blueprint Bundle button - clicking in creates a new bundle
         pb.item(36, getNewBundle(addon));
-        // Get the bundles
+        // Get the bundles sorted by display name
         Comparator<BlueprintBundle> sortByDisplayName = (p, o) -> p.getDisplayName().compareToIgnoreCase(o.getDisplayName());
-        plugin.getBlueprintsManager().getBlueprintBundles(addon).values().stream().limit(36)
-        .sorted(sortByDisplayName)
-        .forEach(bb -> {
+        List<BlueprintBundle> allBundles = plugin.getBlueprintsManager().getBlueprintBundles(addon).values().stream()
+                .sorted(sortByDisplayName).toList();
+        int totalPages = Math.max(1, (int) Math.ceil((double) allBundles.size() / BUNDLES_PER_PAGE));
+        // Clamp page
+        if (bundlePage >= totalPages) {
+            bundlePage = totalPages - 1;
+        }
+        if (bundlePage < 0) {
+            bundlePage = 0;
+        }
+        int start = bundlePage * BUNDLES_PER_PAGE;
+        int end = Math.min(start + BUNDLES_PER_PAGE, allBundles.size());
+        int slot = 0;
+        for (int i = start; i < end; i++) {
+            BlueprintBundle bb = allBundles.get(i);
             // Make item
             PanelItem item = new PanelItemBuilder()
                     .name(bb.getDisplayName())
                     .description(t("edit"), t("rename"))
                     .icon(bb.getIcon())
-                    .clickHandler((panel, u, clickType, slot) -> {
-
+                    .clickHandler((panel, u, clickType, s) -> {
                         u.closeInventory();
                         if (clickType.equals(ClickType.RIGHT)) {
                             // Rename
@@ -129,38 +144,29 @@ public class BlueprintManagementPanel {
                         return true;
                     })
                     .build();
-            // Determine slot
-            if (bb.getSlot() < 0 || bb.getSlot() > MAX_BP_SLOT) {
-                bb.setSlot(0);
-            }
-            if (pb.slotOccupied(bb.getSlot())) {
-                int slot = getFirstAvailableSlot(pb);
-                if (slot == -1) {
-                    // TODO add paging
-                    plugin.logError("Too many blueprint bundles to show!");
-                    pb.item(item);
-                } else {
-                    pb.item(slot, item);
-                }
-            } else {
-                pb.item(bb.getSlot(), item);
-            }
-        });
-
-        pb.build();
-    }
-
-    /**
-     * @param pb - panel builder
-     * @return first available slot, or -1 if none
-     */
-    private static int getFirstAvailableSlot(PanelBuilder pb) {
-        for (int i = 0; i < BlueprintManagementPanel.MAX_BP_SLOT; i++) {
-            if (!pb.slotOccupied(i)) {
-                return i;
-            }
+            pb.item(slot++, item);
         }
-        return -1;
+        // Previous page button
+        if (bundlePage > 0) {
+            pb.item(37, new PanelItemBuilder().icon(Material.ARROW)
+                    .name(t("previous-page"))
+                    .clickHandler((panel, u, clickType, s) -> {
+                        bundlePage--;
+                        openPanel();
+                        return true;
+                    }).build());
+        }
+        // Next page button
+        if (bundlePage < totalPages - 1) {
+            pb.item(38, new PanelItemBuilder().icon(Material.ARROW)
+                    .name(t("next-page"))
+                    .clickHandler((panel, u, clickType, s) -> {
+                        bundlePage++;
+                        openPanel();
+                        return true;
+                    }).build());
+        }
+        pb.build();
     }
 
     /**
@@ -168,9 +174,21 @@ public class BlueprintManagementPanel {
      * @param bb - blueprint bundle
      */
     public void openBB(BlueprintBundle bb) {
-        int index = 18;
-        for (Blueprint bp : plugin.getBlueprintsManager().getBlueprints(addon).values()) {
-            blueprints.put(index++, bp);
+        blueprints.clear();
+        List<Blueprint> allBlueprints = new ArrayList<>(plugin.getBlueprintsManager().getBlueprints(addon).values());
+        int totalPages = Math.max(1, (int) Math.ceil((double) allBlueprints.size() / BLUEPRINTS_PER_PAGE));
+        // Clamp page
+        if (blueprintPage >= totalPages) {
+            blueprintPage = totalPages - 1;
+        }
+        if (blueprintPage < 0) {
+            blueprintPage = 0;
+        }
+        int start = blueprintPage * BLUEPRINTS_PER_PAGE;
+        int end = Math.min(start + BLUEPRINTS_PER_PAGE, allBlueprints.size());
+        int slot = 18;
+        for (int i = start; i < end; i++) {
+            blueprints.put(slot++, allBlueprints.get(i));
         }
         // Create the panel
         PanelBuilder pb = new PanelBuilder().name(bb.getDisplayName()).user(user).size(45).listener(new IconChanger(plugin, addon, this, bb));
@@ -185,7 +203,7 @@ public class BlueprintManagementPanel {
         for (int i = 9; i < 18; i++) {
             pb.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
         }
-        blueprints.entrySet().stream().limit(18).forEach(b -> pb.item(getBlueprintItem(addon, b.getKey(), bb, b.getValue())));
+        blueprints.forEach((key, value) -> pb.item(getBlueprintItem(addon, key, bb, value)));
         // Buttons for non-default bundle
         if (bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
             // Panel has a No Trash icon. If right-clicked it is discarded
@@ -197,6 +215,28 @@ public class BlueprintManagementPanel {
             pb.item(36, getTrashIcon(addon, bb));
             // Toggle permission - default is always allowed
             pb.item(39, getPermissionIcon(addon, bb));
+        }
+        // Previous page button for blueprints
+        if (blueprintPage > 0) {
+            pb.item(37, new PanelItemBuilder().icon(Material.ARROW)
+                    .name(t("previous-page"))
+                    .clickHandler((panel, u, clickType, s) -> {
+                        blueprintPage--;
+                        selected = null;
+                        openBB(bb);
+                        return true;
+                    }).build());
+        }
+        // Next page button for blueprints
+        if (blueprintPage < totalPages - 1) {
+            pb.item(38, new PanelItemBuilder().icon(Material.ARROW)
+                    .name(t("next-page"))
+                    .clickHandler((panel, u, clickType, s) -> {
+                        blueprintPage++;
+                        selected = null;
+                        openBB(bb);
+                        return true;
+                    }).build());
         }
         if (plugin.getSettings().getIslandNumber() > 1) {
             // Number of times allowed
@@ -211,7 +251,7 @@ public class BlueprintManagementPanel {
         // Commands button
         pb.item(43, getCommandsIcon(addon, bb));
         // Panel has a Back icon.
-        pb.item(44, new PanelItemBuilder().icon(Material.OAK_DOOR).name(t("back")).clickHandler((panel, u, clickType, slot) -> {
+        pb.item(44, new PanelItemBuilder().icon(Material.OAK_DOOR).name(t("back")).clickHandler((panel, u, clickType, s) -> {
             openPanel();
             return true;
         }).build());

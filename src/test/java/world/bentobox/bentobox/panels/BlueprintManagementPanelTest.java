@@ -211,4 +211,48 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
         assertEquals("give [player] diamond 1", pi.getDescription().get(1));
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openPanel()}.
+     * Verifies that many bundles (more than 36) are handled via pagination.
+     */
+    @Test
+    void testOpenPanelWithManyBundles() {
+        // Create 40 bundles (more than 36 per page)
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        for (int i = 0; i < 40; i++) {
+            BlueprintBundle bundle = mock(BlueprintBundle.class);
+            when(bundle.getUniqueId()).thenReturn("bundle" + i);
+            when(bundle.getDisplayName()).thenReturn("Bundle " + String.format("%02d", i));
+            when(bundle.getIcon()).thenReturn(Material.STONE);
+            when(bundle.getDescription()).thenReturn(Collections.singletonList("Desc"));
+            when(bundle.getSlot()).thenReturn(i);
+            map.put("bundle" + i, bundle);
+        }
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+
+        bmp.openPanel();
+        // Should not throw and should call getBlueprintBundles
+        verify(bpm).getBlueprintBundles(addon);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openBB(BlueprintBundle)}.
+     * Verifies that many blueprints (more than 18) are handled via pagination.
+     */
+    @Test
+    void testOpenBBWithManyBlueprints() {
+        // Create 25 blueprints (more than 18 per page)
+        Map<String, Blueprint> bpMap = new HashMap<>();
+        for (int i = 0; i < 25; i++) {
+            Blueprint bp = mock(Blueprint.class);
+            when(bp.getName()).thenReturn("bp" + i);
+            when(bp.getIcon()).thenReturn(Material.PAPER);
+            bpMap.put("bp" + i, bp);
+        }
+        when(bpm.getBlueprints(any())).thenReturn(bpMap);
+
+        bmp.openBB(bb);
+        verify(bb).getDisplayName();
+    }
+
 }

@@ -495,6 +495,8 @@ commands:
         cost-amount: 'Cost: [cost]'
         edit-commands: Click to edit commands
         no-commands: No commands set
+        next-page: '&f Next Page'
+        previous-page: '&f Previous Page'
         commands:
           quit: quit
           clear: clear
