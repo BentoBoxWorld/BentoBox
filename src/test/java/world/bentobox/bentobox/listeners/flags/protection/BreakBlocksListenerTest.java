@@ -138,6 +138,38 @@ class BreakBlocksListenerTest extends CommonTestSetup {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
+     * Ensures that breaking sugar cane is governed by the HARVEST flag, not BREAK_BLOCKS.
+     */
+    @Test
+    void testOnBlockSugarCaneHarvestNotAllowed() {
+        when(island.isAllowed(any(), eq(Flags.HARVEST))).thenReturn(false);
+        Block block = mock(Block.class);
+        when(block.getType()).thenReturn(Material.SUGAR_CANE);
+        when(block.getLocation()).thenReturn(location);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
+        bbl.onBlockBreak(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
+     * Ensures that breaking sugar cane is allowed when HARVEST is allowed (even if BREAK_BLOCKS is not).
+     */
+    @Test
+    void testOnBlockSugarCaneHarvestAllowed() {
+        when(island.isAllowed(any(), eq(Flags.BREAK_BLOCKS))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.HARVEST))).thenReturn(true);
+        Block block = mock(Block.class);
+        when(block.getType()).thenReturn(Material.SUGAR_CANE);
+        when(block.getLocation()).thenReturn(location);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
+        bbl.onBlockBreak(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
