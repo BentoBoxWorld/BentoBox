@@ -13,9 +13,12 @@ import org.bukkit.entity.EntitySnapshot;
 import org.bukkit.entity.EntityType;
 import org.bukkit.loot.LootTable;
 import org.bukkit.spawner.TrialSpawnerConfiguration;
+import org.eclipse.jdt.annotation.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.gson.annotations.Expose;
+
+import world.bentobox.bentobox.BentoBox;
 
 /**
  * @author tastybento
@@ -73,7 +76,6 @@ public class BlueprintTrialSpawner {
             return new PotentialSpawns(snapshot.getAsString(), spawnRule == null ? null : spawnRule.serialize(),
                     se.getSpawnWeight());
             // Missing
-            // se.getEquipment().getEquipmentLootTable();
         }).toList();
 
         if (potentialSpawns.isEmpty()) {
@@ -107,7 +109,7 @@ public class BlueprintTrialSpawner {
             if (lootTable != null) { // Ensure the LootTable exists
                 result.put(lootTable, value);
             } else {
-                System.err.println("LootTable not found for key: " + key);
+                BentoBox.getInstance().logWarning("LootTable not found for key: " + key);
             }
         }
         return result;
@@ -135,7 +137,7 @@ public class BlueprintTrialSpawner {
                 EntitySnapshot snapshot = Bukkit.getEntityFactory().createEntitySnapshot(ps.snapshot());
                 SpawnRule rule = ps.spawnrule() != null ? SpawnRule.deserialize(ps.spawnrule()) : null;
                 return new SpawnerEntry(snapshot, ps.spawnWeight(), rule);
-            }).collect(Collectors.toList()));
+            }).toList());
         }
         return this.isOminous();
     }
@@ -227,14 +229,14 @@ public class BlueprintTrialSpawner {
     /**
      * @return the lootTableMap
      */
-    public Map<LootTableSerial, Integer> getLootTableMap() {
+    public @NonNull Map<LootTableSerial, Integer> getLootTableMap() {
         return lootTableMap;
     }
 
     /**
      * @param lootTableMap the lootTableMap to set
      */
-    public void setLootTableMap(Map<LootTableSerial, Integer> lootTableMap) {
+    public void setLootTableMap(@NonNull Map<LootTableSerial, Integer> lootTableMap) {
         this.lootTableMap = lootTableMap;
     }
 
@@ -299,7 +301,7 @@ public class BlueprintTrialSpawner {
         return "BlueprintTrialSpawner [ominous=" + ominous + ", "
                 + (spawnedType != null ? "spawnedType=" + spawnedType + ", " : "") + "addSimulEnts=" + addSimulEnts
                 + ", addSpawnsB4Cool=" + addSpawnsB4Cool + ", baseSimEnts=" + baseSimEnts + ", delay=" + delay + ", "
-                + (lootTableMap != null ? "lootTableMap=" + lootTableMap + ", " : "") + "spawnRange=" + spawnRange
+                + "lootTableMap=" + lootTableMap + ", " + "spawnRange=" + spawnRange
                 + ", requiredPlayerRange=" + requiredPlayerRange + ", playerRange=" + playerRange
                 + ", baseSpawnsB4Cool=" + baseSpawnsB4Cool + "]";
     }

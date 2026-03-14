@@ -83,8 +83,6 @@ public class HeadGetter {
     public static void getHead(PanelItem panelItem, HeadRequester requester) {
         // Freshen cache
         // If memory is an issue we sacrifice performance?
-        // cachedHeads.values().removeIf(cache -> System.currentTimeMillis() -
-        // cache.getTimestamp() > TOO_LONG);
 
         HeadCache cache = cachedHeads.get(panelItem.getPlayerHeadName());
 
@@ -274,6 +272,7 @@ public class HeadGetter {
 
             return decodedTexture;
         } catch (Exception ignored) {
+            // Failed to fetch texture from Mojang API; fall through to return null
         }
 
         return null;
@@ -322,6 +321,7 @@ public class HeadGetter {
 
             return new Pair<>(UUID.fromString(userIdString), decodedTexture);
         } catch (Exception ignored) {
+            // Failed to fetch texture from mc-heads.net; fall through to return default
         }
 
         // return random uuid and null, to assign some values for cache.

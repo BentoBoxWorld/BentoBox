@@ -35,14 +35,14 @@ public class MobTeleportListener extends FlagListener {
         }
         Optional<Island> island = getIslands().getIslandAt(event.getEntity().getLocation());
 
-        if (event.getEntityType().equals(EntityType.ENDERMAN) && Boolean.TRUE.equals(island.map(i -> !i.isAllowed(Flags.ENDERMAN_TELEPORT)).orElseGet(
-                () -> !Flags.ENDERMAN_TELEPORT.isSetForWorld(w)))) {
+        if (event.getEntityType().equals(EntityType.ENDERMAN) && island.map(i -> !i.isAllowed(Flags.ENDERMAN_TELEPORT)).orElseGet(
+                () -> !Flags.ENDERMAN_TELEPORT.isSetForWorld(w))) {
             // Enderman teleport is disabled on island or world. Cancel it.
             event.setCancelled(true);
         }
 
-        if (event.getEntityType().equals(EntityType.SHULKER) && Boolean.TRUE.equals(island.map(i -> !i.isAllowed(Flags.SHULKER_TELEPORT)).orElseGet(
-                () -> !Flags.SHULKER_TELEPORT.isSetForWorld(w)))) {
+        if (event.getEntityType().equals(EntityType.SHULKER) && island.map(i -> !i.isAllowed(Flags.SHULKER_TELEPORT)).orElseGet(
+                () -> !Flags.SHULKER_TELEPORT.isSetForWorld(w))) {
             // Shulker teleport is disabled on island or world. Cancel it.
             event.setCancelled(true);
         }

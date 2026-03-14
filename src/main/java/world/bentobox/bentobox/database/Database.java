@@ -116,7 +116,7 @@ public class Database<T> {
      */
     public boolean saveObject(T instance) {
         saveObjectAsync(instance).thenAccept(r -> {
-            if (Boolean.FALSE.equals(r)) logger.severe(() -> "Could not save object to database!");
+            if (r != null && !r) logger.severe(() -> "Could not save object to database!");
         });
         return true;
     }

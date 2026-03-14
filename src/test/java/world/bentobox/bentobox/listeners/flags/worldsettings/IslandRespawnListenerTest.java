@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -215,7 +216,7 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
         // Respawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, false, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
-        assertEquals(location, ev.getRespawnLocation());
+        assertSame(location, ev.getRespawnLocation());
     }
 
     /**
@@ -238,7 +239,7 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
         // Respawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, false, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
-        assertEquals(location, ev.getRespawnLocation());
+        assertSame(location, ev.getRespawnLocation());
     }
 
     /**
@@ -261,6 +262,6 @@ public class IslandRespawnListenerTest extends CommonTestSetup {
         // Respawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, false, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
-        assertEquals(location, ev.getRespawnLocation());
+        assertSame(location, ev.getRespawnLocation());
     }
 }

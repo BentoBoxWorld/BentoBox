@@ -445,6 +445,13 @@ commands:
           &a 오른쪽 클릭하여 감소
         unlimited-times: 무제한
         maximum-times: 최대 [number] 회
+        cost: |
+          &a [prefix_Island] 비용
+          &a 왼쪽 클릭 +1
+          &a 오른쪽 클릭 -1
+          &a Shift +/-100
+        no-cost: 무료
+        cost-amount: '비용: [cost]'
     resetflags:
       parameters: '[flag]'
       description: 컨피그의 모든 플래그를 초기화 합니다
@@ -589,6 +596,7 @@ commands:
         dimension-done: '&a [prefix_Island]는 [world]에 건축되었습니다.'
         done: '&a 완료! 섬이 준비되었습니다! 그리고 당신을 기다리고 있네요!'
       pick: '&2 섬을 고르세요'
+      cannot-afford: '&c 구매할 수 없습니다! 비용: [cost]'
       unknown-blueprint: '&c 이 섬은 로드되지 않았습니다'
       on-first-login: '&a 환영합니다! 몇 초 후에 섬 준비를 시작할 것입니다.'
       you-can-teleport-to-your-island: '&a 섬으로 이동하고플때 이동할수 있습니다'
@@ -890,9 +898,9 @@ protection:
   command-is-banned: 방문자는 이명령어를 사용할 수 없습니다
   flags:
     ALLAY:
-      name: 모든 상호작용 Allay
-      description: Allay에게 아이템을 주고 받을 수 있도록 허용합니다.
-      hint: 알레이 상호작용 비활성화됨
+      name: Allay 및 Copper Golem 상호작용
+      description: Allay와 Copper Golem에게 아이템을 주고 받을 수 있도록 허용합니다.
+      hint: 알레이 및 Copper Golem 상호작용 비활성화됨
     ANIMAL_NATURAL_SPAWN:
       description: 자연적 동물생성 여부설정
       name: 자연적 동물 생성
@@ -1548,14 +1556,10 @@ protection:
         &a [prefix_an-island]에서 방문자인 경우 보호합니다.
         &a
         &a [prefix_Island] 멤버는 자신의 [prefix_island]에서 죽으면 여전히 아이템을 잃습니다!
-    VISITOR_TRIGGER_RAID:
-      name: 방문자가 습격을 유발합니다.
-      description: |-
-        &a 방문자가 [prefix_an-island]에서
-        &a 레이드를 시작할 수 있는지
-        &a 전환합니다.
-        &a
-        &a 나쁜 징후 효과가 제거됩니다!
+    RAID_TRIGGER:
+      name: 레이드 트리거
+      description: 레이드를 시작하는 데 필요한 최소 섬 등급을 설정합니다
+      hint: 레이드 트리거가 허용되지 않습니다
     ENTITY_PORTAL_TELEPORT:
       name: 엔티티 포털 사용권한
       description: |-
@@ -1841,6 +1845,7 @@ panels:
         description: '[description]'
         uses: '&a 사용됨 [number]/[max]'
         unlimited: '&a 무제한 사용 가능'
+        cost: '&e 비용: [cost]'
   language:
     title: '&2&l 언어를 선택하세요'
     edited: '&c [lang]로 변경됨'

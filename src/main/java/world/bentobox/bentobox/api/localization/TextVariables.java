@@ -39,4 +39,8 @@ public class TextVariables {
      * @since 1.17.2
      */
     public static final String UUID = "[uuid]";
+    /**
+     * @since 3.12.0
+     */
+    public static final String COST = "[cost]";
 }

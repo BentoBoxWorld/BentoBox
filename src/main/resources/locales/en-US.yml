@@ -477,6 +477,13 @@ commands:
           &a Right click to decrement
         unlimited-times: Unlimited
         maximum-times: Max [number] times
+        cost: |
+          &a [prefix_Island] cost
+          &a Left click +1
+          &a Right click -1
+          &a Shift for +/-100
+        no-cost: Free
+        cost-amount: 'Cost: [cost]'
     resetflags:
       parameters: '[flag]'
       description: Reset all [prefix_Islands] to default flag settings in config.yml
@@ -578,6 +585,12 @@ commands:
         success: '&a Removed [rank]'
         failure: '&c Failed to remove [rank]. Unknown rank.'
       list: '&a Registered ranks are as follows:'
+    placeholders:
+      description: open the Placeholder Browser GUI
+    dump-placeholders:
+      description: dump all registered placeholders to a markdown file
+      dumped: '&a Placeholder list written to [file]'
+      error: '&c Could not write placeholder list: [message]'
   confirmation:
     confirm: '&c Type command again within &b [seconds]s&c  to confirm.'
     previous-request-cancelled: '&6 Previous confirmation request cancelled.'
@@ -623,6 +636,7 @@ commands:
         dimension-done: '&a [prefix_Island] in [world] is constructed.'
         done: '&a Done! Your [prefix_island] is ready and waiting for you!'
       pick: '&2 Pick [prefix_an-island]'
+      cannot-afford: '&c You cannot afford this! Cost: [cost]'
       unknown-blueprint: '&c That blueprint has not been loaded yet.'
       on-first-login: '&a Welcome! We will start preparing your [prefix_island] in
         a few seconds.'
@@ -949,9 +963,9 @@ protection:
   command-is-banned: Command is banned for visitors
   flags:
     ALLAY:
-      name: Allay interaction
-      description: Allow giving and taking items to/from Allay
-      hint: Allay interaction disabled
+      name: Allay & Copper Golem interaction
+      description: Allow giving and taking items to/from Allays and Copper Golems
+      hint: Allay & Copper Golem interaction disabled
     ANIMAL_NATURAL_SPAWN:
       description: Toggle natural animal spawning
       name: Animal natural spawn
@@ -1652,14 +1666,10 @@ protection:
         &a
         &a [prefix_Island] members still lose their items
         &a if they die on their own [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: Visitors triggers raids
-      description: |-
-        &a Toggles if visitors can start
-        &a a raid on [prefix_an-island] which they are
-        &a visiting.
-        &a
-        &a Bad Omen effect will be removed!
+    RAID_TRIGGER:
+      name: Raid trigger
+      description: Sets the minimum island rank required to trigger a raid
+      hint: Raid triggering not allowed
     ENTITY_PORTAL_TELEPORT:
       name: Entity portal usage
       description: |-
@@ -1971,6 +1981,7 @@ panels:
         description: '[description]'
         uses: '&a Used [number]/[max]'
         unlimited: '&a Unlimited uses allowed'
+        cost: '&e Cost: [cost]'
   # The section of translations used in Language Panel
   language:
     title: '&2&l Select your language'
@@ -1985,6 +1996,55 @@ panels:
         authors: '&7 Authors: '
         author: '&7 - &b [name]'
         selected: '&a Currently selected.'
+  # The section of translations used in the Placeholder Browser panel (top-level addon list)
+  placeholder:
+    title: '&3&l Placeholder Browser'
+    buttons:
+      # Button representing the BentoBox core placeholder group
+      bentobox:
+        name: '&f&l BentoBox'
+        description: '&7 [number] core placeholders'
+      # Button representing a single addon's placeholder group; [name] = addon name, [number] = count
+      addon:
+        name: '&f&l [name]'
+        description: '&7 [number] placeholders'
+  # The section of translations used in the Placeholder List panel (per-source placeholder list)
+  placeholder-list:
+    title: '&3&l [name]'
+    buttons:
+      # LEAF — a single placeholder; [placeholder] = full %expansion_id_key% string
+      leaf:
+        name: '&b [placeholder]'
+        description: '&7 [description]'
+        disabled: '&c &o (disabled)'
+        hint: '&e Click &7 to toggle.'
+      # FOLDER — a group of sub-placeholders; [label] = compressed segment, [count] = total items
+      folder:
+        name: '&f&l [label]'
+        description: '&7 [count] placeholders'
+        hint: '&e Click &7 to explore.'
+      # LEAF_FOLDER — a placeholder AND a folder; left-click to toggle, right-click to explore
+      leaf-folder:
+        hint: '&e Left-click &7 to toggle · &e Right-click &7 to explore.'
+      # SERIES — a collapsed numeric series; [placeholder] includes {N}, [count]/[min]/[max] = range info
+      series:
+        name: '&b [placeholder]'
+        description: '&7 [description]'
+        range: '&8 #[min] – #[max] · [count] items'
+        disabled: '&c &o (some disabled)'
+        hint: '&e Click &7 to toggle all.'
+        # Value samples for series; [index] = numeric suffix, [value] = resolved value
+        sample: '&8 #[index] → &f[value]'
+        sample-empty: '&8 #[index] → &8(empty)'
+      # LEAF_SERIES — a placeholder AND a series; left-click to toggle leaf, right-click to toggle all
+      leaf-series:
+        hint: '&e Left-click &7 to toggle · &e Right-click &7 to toggle all.'
+      # Current resolved value of a placeholder for the viewing player
+      value: '&8 → &f[value]'
+      value-empty: '&8 → &8(empty)'
+      back:
+        name: '&f&l Back'
+        description: '&7 Return to the addon list'
   # The set of common buttons used in multiple panels.
   buttons:
     # Button that is used in multi-page GUIs which allows to return to previous page.

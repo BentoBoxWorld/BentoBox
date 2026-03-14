@@ -124,7 +124,7 @@ public class IslandTeamUncoopCommandTest extends RanksManagerTestSetup {
         when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         IslandTeamUncoopCommand itl = new IslandTeamUncoopCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage(eq("general.errors.no-island"));
+        verify(user).sendMessage("general.errors.no-island");
     }
 
     /**
@@ -174,7 +174,7 @@ public class IslandTeamUncoopCommandTest extends RanksManagerTestSetup {
         IslandTeamUncoopCommand itl = new IslandTeamUncoopCommand(ic);
         when(pm.getUUID(any())).thenReturn(uuid);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("commands.island.team.uncoop.cannot-uncoop-yourself"));
+        verify(user).sendMessage("commands.island.team.uncoop.cannot-uncoop-yourself");
     }
 
     /**
@@ -192,7 +192,7 @@ public class IslandTeamUncoopCommandTest extends RanksManagerTestSetup {
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
         when(island.inTeam(notUUID)).thenReturn(true);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bento")));
-        verify(user).sendMessage(eq("commands.island.team.uncoop.cannot-uncoop-member"));
+        verify(user).sendMessage("commands.island.team.uncoop.cannot-uncoop-member");
     }
 
     /**

@@ -73,11 +73,9 @@ public class IslandCreateCommand extends CompositeCommand {
         // Check if the island is reserved
         @Nullable
         Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
-        if (island != null) {
+        if (island != null && island.isReserved()) {
             // Reserved islands can be made
-            if (island.isReserved()) {
-                return true;
-            }
+            return true;
         }
         // Check if this player is on a team in this world
         if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()
@@ -197,6 +195,9 @@ public class IslandCreateCommand extends CompositeCommand {
      * @return true if island creation was successful
      */
     private boolean makeIsland(User user, String name) {
+        if (!checkCost(user, name, false)) {
+            return false;
+        }
         user.sendMessage("commands.island.create.creating-island");
         try {
             NewIsland.builder().player(user).addon(getAddon()).reason(Reason.CREATE).name(name).build();
@@ -205,10 +206,15 @@ public class IslandCreateCommand extends CompositeCommand {
             user.sendMessage(e.getMessage());
             return false;
         }
+        checkCost(user, name, true); // Charge after success
         if (getSettings().isResetCooldownOnCreate()) {
             getParent().getSubCommand("reset").ifPresent(
                     resetCommand -> resetCommand.setCooldown(user.getUniqueId(), getSettings().getResetCooldown()));
         }
         return true;
+    }
+
+    private boolean checkCost(User user, String name, boolean charge) {
+        return BlueprintCostHelper.checkCost(getPlugin(), getAddon(), user, name, charge);
     }
 }

@@ -516,6 +516,13 @@ commands:
           &a Rechter muisklik om te verlagen
         unlimited-times: Onbeperkt
         maximum-times: Max [number] keer
+        cost: |
+          &a [prefix_Island] kosten
+          &a Linker muisklik +1
+          &a Rechter muisklik -1
+          &a Shift voor +/-100
+        no-cost: Gratis
+        cost-amount: 'Kosten: [cost]'
     resetflags:
       parameters: '[vlag]'
       description: Reset alle eilanden naar de standaard vlaginstellingen in config.yml
@@ -680,6 +687,7 @@ commands:
         dimension-done: '&a [prefix_Island] in [wereld] is gebouwd.'
         done: '&a Klaar! Je eiland staat klaar en wacht op je!'
       pick: '&2 Kies een eiland'
+      cannot-afford: '&c Je kunt dit niet betalen! Kosten: [cost]'
       unknown-blueprint: '&c Die blauwdruk is nog niet geladen.'
       on-first-login: >-
         &a welkom! We zullen binnen een paar seconden beginnen met het
@@ -1006,9 +1014,9 @@ protection:
   command-is-banned: Commando is verboden voor bezoekers
   flags:
     ALLAY:
-      name: Allay-interactie
-      description: Sta toe om items te geven en af te nemen van Allay
-      hint: Allay-interactie uitgeschakeld
+      name: Allay & Copper Golem-interactie
+      description: Sta toe om items te geven en af te nemen van Allay en Copper Golem
+      hint: Allay & Copper Golem-interactie uitgeschakeld
     ANIMAL_NATURAL_SPAWN:
       description: Schakel het natuurlijke uitzetten van dieren in of uit
       name: Dierlijke natuurlijke spawn
@@ -1708,14 +1716,10 @@ protection:
         &a
         &a [prefix_Island] leden verliezen nog steeds hun items
         &a als ze sterven op hun eigen [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: Bezoekers triggert aanvallen
-      description: |-
-        &a Zet in of bezoekers een aanval kunnen starten
-        &a op [prefix_an-island] die ze aan het
-        &a bezoeken zijn.
-        &a
-        &a Slechte Omen-effect zal worden verwijderd!
+    RAID_TRIGGER:
+      name: Aanval activeren
+      description: Stelt de minimale eilandrang in die nodig is om een aanval te activeren
+      hint: Aanval activeren niet toegestaan
     ENTITY_PORTAL_TELEPORT:
       name: Entiteit portaal gebruik
       description: |-
@@ -2030,6 +2034,7 @@ panels:
         description: '[beschrijving]'
         uses: '&a Gebruikt [number]/[max]'
         unlimited: '&a Onbeperkt aantal gebruiken toegestaan'
+        cost: '&e Kosten: [cost]'
   language:
     title: '&2&l Selecteer je taal'
     edited: '&c Gewijzigd naar [lang]'

@@ -139,7 +139,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
                 || p.hasMetadata("NPC")
                 || !getIWM().getIvSettings(world).contains(e.getCause().name())
                 || getIslands().userIsOnIsland(world, User.getInstance(p))
-                || PVPAllowed(p.getLocation())
+                || isPvpAllowed(p.getLocation())
                 ) {
             return;
         }
@@ -186,7 +186,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
                 !this.getIWM().inWorld(world) ||
                 e.getTarget().hasMetadata("NPC") ||
                 this.getIslands().userIsOnIsland(world, User.getInstance(e.getTarget())) ||
-                this.PVPAllowed(p.getLocation()) ||
+                this.isPvpAllowed(p.getLocation()) ||
                 e.getReason() == EntityTargetEvent.TargetReason.TARGET_DIED ||
                 !this.getIWM().getIvSettings(world).contains(DamageCause.ENTITY_ATTACK.name()))
         {

@@ -502,6 +502,13 @@ commands:
           &a Klik kanan untuk menurunkan
         unlimited-times: Tidak Terbatas
         maximum-times: Maksimal [number] kali
+        cost: |
+          &a Biaya [prefix_Island]
+          &a Klik kiri +1
+          &a Klik kanan -1
+          &a Shift untuk +/-100
+        no-cost: Gratis
+        cost-amount: 'Biaya: [cost]'
     resetflags:
       parameters: '[bendera]'
       description: Setel ulang semua pulau ke pengaturan bendera default di config.yml
@@ -655,6 +662,7 @@ commands:
         dimension-done: '&sebuah Pulau di [world] dibangun.'
         done: '&a Selesai! Pulau Anda sudah siap dan menunggu Anda!'
       pick: '&2 Pilih pulau'
+      cannot-afford: '&c Anda tidak mampu membeli ini! Biaya: [cost]'
       unknown-blueprint: '&c Cetak biru itu belum dimuat.'
       on-first-login: >-
         &a Selamat datang! Kami akan mulai mempersiapkan pulau Anda dalam
@@ -981,9 +989,9 @@ protection:
   command-is-banned: Perintah dilarang untuk pengunjung
   flags:
     ALLAY:
-      name: Interaksi Allay
-      description: Izinkan memberi dan mengambil barang ke/dari Allay
-      hint: Interaksi Allay dinonaktifkan
+      name: Interaksi Allay & Copper Golem
+      description: Izinkan memberi dan mengambil barang ke/dari Allay dan Copper Golem
+      hint: Interaksi Allay & Copper Golem dinonaktifkan
     ANIMAL_NATURAL_SPAWN:
       description: Alihkan pemijahan hewan secara alami
       name: Pemijahan alami hewan
@@ -1686,14 +1694,10 @@ protection:
         &A
         &a Anggota pulau masih kehilangan item mereka
         &a jika mereka mati di pulau mereka sendiri!
-    VISITOR_TRIGGER_RAID:
-      name: Pengunjung memicu penggerebekan
-      description: |-
-        &a Beralih jika pengunjung dapat memulai
-        &sebuah serangan di sebuah pulau di mana mereka berada
-        & kunjungan.
-        &A
-        &efek Pertanda Buruk akan dihilangkan!
+    RAID_TRIGGER:
+      name: Pemicu penggerebekan
+      description: Menetapkan peringkat pulau minimum yang diperlukan untuk memicu penggerebekan
+      hint: Pemicu penggerebekan tidak diizinkan
     ENTITY_PORTAL_TELEPORT:
       name: Penggunaan portal entitas
       description: |-
@@ -2011,6 +2015,7 @@ panels:
         description: '[description]'
         uses: '&a Digunakan [number]/[max]'
         unlimited: '&a Penggunaan tidak terbatas diizinkan'
+        cost: '&e Biaya: [cost]'
   language:
     title: '&2&l Pilih bahasa Anda'
     edited: '&c Diubah menjadi [lang]'

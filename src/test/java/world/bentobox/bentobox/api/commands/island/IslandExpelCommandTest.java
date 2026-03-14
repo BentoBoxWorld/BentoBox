@@ -54,13 +54,12 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
-    private UUID uuid;
     @Mock
     private User user;
     @Mock
     private PlayersManager pm;
     @Mock
-    private LocalesManager lm;
+    private LocalesManager testLm;
     @Mock
     private Addon addon;
 
@@ -124,8 +123,8 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
 
         // Locales
         Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
-        when(lm.get(any(User.class), anyString())).thenAnswer(answer);
-        when(plugin.getLocalesManager()).thenReturn(lm);
+        when(testLm.get(any(User.class), anyString())).thenAnswer(answer);
+        when(plugin.getLocalesManager()).thenReturn(testLm);
 
         // Placeholders
         PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
@@ -234,7 +233,6 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
     public void testCanExecuteSelf() {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(pm.getUUID(anyString())).thenReturn(uuid);
-        //when(im.getMembers(any(), any())).thenReturn(Collections.singleton(uuid));
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.cannot-expel-yourself");
     }
@@ -261,7 +259,6 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         UUID target = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(target);
-        //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("general.errors.offline-player");
     }
@@ -274,7 +271,6 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         Player t = setUpTarget();
         when(mockPlayer.canSee(t)).thenReturn(false);
-        //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("general.errors.offline-player");
     }
@@ -286,7 +282,6 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
     public void testCanExecuteNotOnIsland() {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         setUpTarget();
-        //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.not-on-island");
     }
@@ -300,7 +295,6 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         Player t = setUpTarget();
         when(t.isOp()).thenReturn(true);
-        //when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.cannot-expel");
     }
@@ -361,7 +355,7 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target",
                 TextVariables.DISPLAY_NAME, "&Ctarget");
-        verify(im).homeTeleportAsync(any(), any());
+        verify(im).homeTeleportAsync(any(), any(Player.class));
     }
 
     /**
@@ -399,7 +393,7 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target",
                 TextVariables.DISPLAY_NAME, "&Ctarget");
-        verify(addon).logWarning(eq("Expel: target had no island, so one was created"));
+        verify(addon).logWarning("Expel: target had no island, so one was created");
     }
 
     /**
@@ -419,7 +413,7 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
         testCanExecute();
         when(im.hasIsland(any(), any(User.class))).thenReturn(false);
         assertFalse(iec.execute(user, "", Collections.singletonList("tasty")));
-        verify(addon).logError(eq("Expel: target had no island, and one could not be created"));
+        verify(addon).logError("Expel: target had no island, and one could not be created");
         verify(user).sendMessage("commands.island.expel.cannot-expel");
     }
 
@@ -464,12 +458,12 @@ public class IslandExpelCommandTest extends RanksManagerTestSetup {
         when(p4.getName()).thenReturn("adminPerm");
         when(p4.spigot()).thenReturn(spigot);
         when(mockPlayer.canSee(p4)).thenReturn(true);
-        when(p4.hasPermission(eq("bskyblock.admin.noexpel"))).thenReturn(true);
+        when(p4.hasPermission("bskyblock.admin.noexpel")).thenReturn(true);
         Player p5 = mock(Player.class);
         when(p5.getName()).thenReturn("modPerm");
         when(p5.spigot()).thenReturn(spigot);
         when(mockPlayer.canSee(p5)).thenReturn(true);
-        when(p5.hasPermission(eq("bskyblock.mod.bypassexpel"))).thenReturn(true);
+        when(p5.hasPermission("bskyblock.mod.bypassexpel")).thenReturn(true);
         list.add(p1);
         list.add(p2);
         list.add(p3);

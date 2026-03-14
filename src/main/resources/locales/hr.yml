@@ -485,6 +485,13 @@ commands:
           &a Desni klik za smanjenje
         unlimited-times: Neograničeno
         maximum-times: Maksimalno [number] puta
+        cost: |
+          &a Cijena [prefix_Island]
+          &a Lijevi klik +1
+          &a Desni klik -1
+          &a Shift za +/-100
+        no-cost: Besplatno
+        cost-amount: 'Cijena: [cost]'
     resetflags:
       parameters: '[zastava]'
       description: Vratite sve otoke na zadane postavke zastavice u config.yml
@@ -640,6 +647,7 @@ commands:
         dimension-done: '&a otok u [svijetu] je izgrađen.'
         done: '&a Gotovo! Vaš otok je spreman i čeka vas!'
       pick: '&2 Odaberite otok'
+      cannot-afford: '&c Ne možete si to priuštiti! Cijena: [cost]'
       unknown-blueprint: '&c Taj nacrt još nije učitan.'
       on-first-login: '&a Dobro došli! Počet ćemo pripremati vaš otok za nekoliko sekundi.'
       you-can-teleport-to-your-island: '&a Možete se teleportirati na svoj otok kad god želite.'
@@ -957,9 +965,9 @@ protection:
   command-is-banned: Naredba je zabranjena za posjetitelje
   flags:
     ALLAY:
-      name: Allay interakcija
-      description: Dopusti davanje i uzimanje predmeta Allayu/od njega
-      hint: Interakcija Allay onemogućena
+      name: Allay i Copper Golem interakcija
+      description: Dopusti davanje i uzimanje predmeta Allayu/Copper Golemu ili od njega
+      hint: Interakcija Allay i Copper Golem onemogućena
     ANIMAL_NATURAL_SPAWN:
       description: Uključi/isključi prirodno mriještenje životinja
       name: Prirodni mrijest životinja
@@ -1660,14 +1668,10 @@ protection:
         &a
         Članovi &a Islanda i dalje gube svoje predmete
         &a ako umru na vlastitom otoku!
-    VISITOR_TRIGGER_RAID:
-      name: Posjetitelji izazivaju racije
-      description: |-
-        &a Isključuje mogu li posjetitelji započeti
-        &a napad na otok koji su
-        &a posjet.
-        &a
-        &učinak Bad Omena bit će uklonjen!
+    RAID_TRIGGER:
+      name: Pokretanje racije
+      description: Postavlja minimalni rang otoka potreban za pokretanje racije
+      hint: Pokretanje racije nije dopušteno
     ENTITY_PORTAL_TELEPORT:
       name: Korištenje portala entiteta
       description: |-
@@ -1983,6 +1987,7 @@ panels:
         description: '[description]'
         uses: '&a Koristio si [number]/[max]'
         unlimited: '&a Neograničena upotreba dozvoljena'
+        cost: '&e Cijena: [cost]'
   language:
     title: '&2&l Odaberite svoj jezik'
     edited: '&c Promijenjeno na [lang]'

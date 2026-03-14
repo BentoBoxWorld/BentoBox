@@ -462,6 +462,21 @@ public class IslandsManager {
      */
     @Nullable
     public Island getIsland(@NonNull World world, @NonNull UUID uuid) {
+        if (world == null || uuid == null) {
+            return null;
+        }
+        // Check if player is online and get their current island location
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null && player.isOnline()) {
+            // This island must be in this world and the player must be on the team
+            Optional<Island> currentIsland = getIslandAt(player.getLocation())
+                    .filter(is -> world.equals(is.getWorld()) && is.inTeam(uuid));
+
+            if (currentIsland.isPresent()) {
+                return currentIsland.get();
+            }
+        }
+        // Check cache for last island
         return islandCache.getIsland(world, uuid);
     }
 
@@ -1102,6 +1117,7 @@ public class IslandsManager {
         User user = User.getInstance(player);
         user.sendMessage("commands.island.go.teleport");
         goingHome.add(user.getUniqueId());
+        
         readyPlayer(player);
         this.getAsyncSafeHomeLocation(world, user, name).thenAccept(home -> {
             Island island = getIsland(world, user);
@@ -1117,7 +1133,7 @@ public class IslandsManager {
             }
             Util.teleportAsync(Objects.requireNonNull(player), home).thenAccept(b -> {
                 // Only run the commands if the player is successfully teleported
-                if (Boolean.TRUE.equals(b)) {
+                if (b != null && b) {
                     teleported(world, user, name, newIsland, island);
                     result.complete(true);
                 } else {
@@ -1313,35 +1329,11 @@ public class IslandsManager {
             if (island == null) {
                 plugin.logWarning("Null island when loading...");
                 continue;
-            } else if (island.isDeleted()) {
-                // TODO delete from database
             }
-            // Check island distance and if incorrect stop BentoBox
-            else if (!plugin.getSettings().isOverrideSafetyCheck()
-                    && plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::isEnforceEqualRanges).orElse(true)
-                    && island.getWorld() != null
-                    && plugin.getIWM().inWorld(island.getWorld())
-                    && island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld())) {
-                throw new IOException("Island distance mismatch!\n" + "World '" + island.getWorld().getName()
-                        + "' distance " + plugin.getIWM().getIslandDistance(island.getWorld()) + " != island range "
-                        + island.getRange() + "!\n" + "Island ID in database is " + island.getUniqueId() + ".\n"
-                        + "Island distance in config.yml cannot be changed mid-game! Fix config.yml or clean database.");
+            if (island.isDeleted()) {
+                // TODO delete from database
             } else {
-                // Only try to fix the island center if we have to
-                if (!plugin.getSettings().isOverrideSafetyCheck() && plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::isFixIslandCenter).orElse(true)) {
-                    // Fix island center if it is off
-                    fixIslandCenter(island);
-                }
-                islandCache.addIsland(island, true);
-
-                if (island.isSpawn()) {
-                    // Success, set spawn if this is the spawn island.
-                    this.setSpawn(island);
-                } else {
-                    // Successful load
-                    // Clean any null flags out of the island - these can occur for various reasons
-                    island.getFlags().keySet().removeIf(f -> f.startsWith("NULL_FLAG"));
-                }
+                loadIsland(island);
             }
 
             // Update some of their fields
@@ -1350,6 +1342,37 @@ public class IslandsManager {
                         .orElse(""));
             }
         }
+    }
+
+    private void loadIsland(Island island) throws IOException {
+        // Check island distance and if incorrect stop BentoBox
+        if (hasDistanceMismatch(island)) {
+            throw new IOException("Island distance mismatch!\n" + "World '" + island.getWorld().getName()
+                    + "' distance " + plugin.getIWM().getIslandDistance(island.getWorld()) + " != island range "
+                    + island.getRange() + "!\n" + "Island ID in database is " + island.getUniqueId() + ".\n"
+                    + "Island distance in config.yml cannot be changed mid-game! Fix config.yml or clean database.");
+        }
+        // Only try to fix the island center if we have to
+        if (!plugin.getSettings().isOverrideSafetyCheck()
+                && plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::isFixIslandCenter).orElse(true)) {
+            fixIslandCenter(island);
+        }
+        islandCache.addIsland(island, true);
+
+        if (island.isSpawn()) {
+            this.setSpawn(island);
+        } else {
+            // Clean any null flags out of the island - these can occur for various reasons
+            island.getFlags().keySet().removeIf(f -> f.startsWith("NULL_FLAG"));
+        }
+    }
+
+    private boolean hasDistanceMismatch(Island island) {
+        return !plugin.getSettings().isOverrideSafetyCheck()
+                && plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::isEnforceEqualRanges).orElse(true)
+                && island.getWorld() != null
+                && plugin.getIWM().inWorld(island.getWorld())
+                && island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld());
     }
 
     /**
@@ -1802,14 +1825,42 @@ public class IslandsManager {
     }
 
     /**
-     * Convenience method. See {@link IslandCache#getIsland(World, UUID)}
+     * Convenience method. See {@link #getIsland(World, UUID)}
      * 
      * @param world world
      * @param uuid  player's UUID
      * @return Island of player or null if there isn't one
      */
     public Island getPrimaryIsland(World world, UUID uuid) {
-        return this.getIslandCache().getIsland(world, uuid);
+        return getIsland(world, uuid);
+    }
+
+    public CompletableFuture<Void> homeTeleportAsync(Island island, User user) {
+        return homeTeleportAsync(island, user, false);
+    }
+
+    /**
+     * Teleport the user home
+     * @param island island
+     * @param user user
+     * @param newIsland true if this is a new island first time teleport
+     * @return future when it is done
+     */
+    public CompletableFuture<Void> homeTeleportAsync(Island island, User user, boolean newIsland) {
+        Location loc = island.getHome("");
+        user.sendMessage("commands.island.go.teleport");
+        goingHome.add(user.getUniqueId());
+        readyPlayer(user.getPlayer());
+        return Util.teleportAsync(Objects.requireNonNull(user.getPlayer()), loc).thenAccept(b -> {
+            // Only run the commands if the player is successfully teleported
+            if (b != null && b) {
+                teleported(island.getWorld(), user, "", newIsland, island);
+                this.setPrimaryIsland(user.getUniqueId(), island);
+            } else {
+                // Remove from mid-teleport set
+                goingHome.remove(user.getUniqueId());
+            }
+        });
     }
 
 }

@@ -46,7 +46,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 group = "world.bentobox" // From <groupId>
 
 // Base properties from <properties>
-val buildVersion = "3.11.1"
+val buildVersion = "3.11.2"
 val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
@@ -86,8 +86,7 @@ val mariadbVersion = "3.0.5"
 val mysqlVersion = "8.0.27"
 val postgresqlVersion = "42.2.18"
 val hikaricpVersion = "5.0.1"
-val spigotVersion = "1.21.10-R0.1-SNAPSHOT"
-val paperVersion = "1.21.10-R0.1-SNAPSHOT"
+val paperVersion = "1.21.11-R0.1-SNAPSHOT"
 val bstatsVersion = "3.0.0"
 val vaultVersion = "1.7.1"
 val levelVersion = "2.21.3"
@@ -120,7 +119,6 @@ extra["mariadb.version"] = mariadbVersion
 extra["mysql.version"] = mysqlVersion
 extra["postgresql.version"] = postgresqlVersion
 extra["hikaricp.version"] = hikaricpVersion
-extra["spigot.version"] = spigotVersion
 extra["paper.version"] = paperVersion
 extra["bstats.version"] = bstatsVersion
 extra["vault.version"] = vaultVersion
@@ -146,6 +144,19 @@ java {
 tasks.withType<JavaCompile> {
     // Ensure UTF-8 encoding for all source files
     options.encoding = "UTF-8"
+    // Suppress all deprecation and removal warnings during compilation
+    options.compilerArgs.addAll(listOf("-Xlint:-deprecation", "-Xlint:-removal"))
+    // Set explicit Java release version for Eclipse compatibility
+    options.release.set(21)
+}
+
+tasks.compileTestJava {
+    // Ensure UTF-8 encoding for all source files
+    options.encoding = "UTF-8"
+    // Suppress all deprecation and removal warnings during compilation
+    options.compilerArgs.addAll(listOf("-Xlint:-deprecation", "-Xlint:-removal"))
+    // Set explicit Java release version for Eclipse compatibility
+    options.release.set(21)
 }
 
 
@@ -190,6 +201,7 @@ dependencies {
     // --- Test Dependencies: Only used during testing, not in production ---
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junitVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
@@ -202,9 +214,6 @@ dependencies {
     testImplementation("commons-lang:commons-lang:$commonsLangVersion")
 
     // --- Compile Only Dependencies: Provided by the server at runtime ---
-    compileOnly("org.spigotmc:spigot:$spigotVersion") {
-        exclude(group = "org.spigotmc", module = "spigot-api")
-    }
     compileOnly("org.mongodb:mongodb-driver:$mongodbVersion")
     compileOnly("com.zaxxer:HikariCP:$hikaricpVersion")
     compileOnly("com.github.MilkBowl:VaultAPI:$vaultVersion")
@@ -253,9 +262,6 @@ dependencies {
 paperweight {
     addServerDependencyTo = configurations.named(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME).map { setOf(it) }
   javaLauncher = javaToolchains.launcherFor {
-    // Example scenario:
-    // Paper 1.17.1 was originally built with JDK 16 and the bundle
-    // has not been updated to work with 21+ (but we want to compile with a 25 toolchain)
         // Use the project's configured Java version for paperweight tools (needs Java 21+)
         languageVersion = JavaLanguageVersion.of(javaVersion)
   }

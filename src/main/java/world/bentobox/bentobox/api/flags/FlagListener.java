@@ -154,14 +154,8 @@ public abstract class FlagListener implements Listener {
 
         // Protection flag
         // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
-        if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
-                && (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypassprotect")
-                        || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".everywhere"))) {
-            if (user.isOp()) {
-                report(user, e, loc, flag,  Why.OP);
-            } else {
-                report(user, e, loc, flag,  Why.BYPASS_EVERYWHERE);
-            }
+        if (hasBypassEverywhere(loc, flag)) {
+            report(user, e, loc, flag, user.isOp() ? Why.OP : Why.BYPASS_EVERYWHERE);
             return true;
         }
         // Check if the island is deleted - if so, then nothing is allowed by default
@@ -184,13 +178,18 @@ public abstract class FlagListener implements Listener {
         }
         // The player is in the world, but not on an island, so general world settings apply
         if (flag.isSetForWorld(loc.getWorld())) {
-            report(user, e, loc, flag,  Why.ALLOWED_IN_WORLD);
+            report(user, e, loc, flag, Why.ALLOWED_IN_WORLD);
             return true;
-        } else {
-            report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
-            noGo(e, flag, silent, WORLD_PROTECTED);
-            return false;
         }
+        report(user, e, loc, flag, Why.NOT_ALLOWED_IN_WORLD);
+        noGo(e, flag, silent, WORLD_PROTECTED);
+        return false;
+    }
+
+    private boolean hasBypassEverywhere(Location loc, Flag flag) {
+        return !user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
+                && (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypassprotect")
+                        || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".everywhere"));
     }
 
     private boolean processBypass(@NonNull Flag flag, Island island, @NonNull Event e, @NonNull Location loc, boolean silent) {
@@ -300,7 +299,7 @@ public abstract class FlagListener implements Listener {
      * @param location location where action is taking
      * @return true if PVP is allowed, false if not
      */
-    protected boolean PVPAllowed(Location location) {
+    protected boolean isPvpAllowed(Location location) {
         return plugin.getIslands().getIslandAt(location).map(i -> i.isAllowed(this.getFlag(location.getWorld()))).orElse(false);
     }
 

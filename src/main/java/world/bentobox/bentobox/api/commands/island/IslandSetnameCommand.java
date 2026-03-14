@@ -3,8 +3,6 @@ package world.bentobox.bentobox.api.commands.island;
 import java.util.List;
 import java.util.Objects;
 
-import org.bukkit.ChatColor;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -104,7 +102,7 @@ public class IslandSetnameCommand extends CompositeCommand {
 
         // Apply colors
         if (user.hasPermission(getPermissionPrefix() + "island.name.format")) {
-            name = ChatColor.translateAlternateColorCodes('&', name);
+            name = Util.translateColorCodes(name);
         }
 
         return true;
@@ -129,7 +127,7 @@ public class IslandSetnameCommand extends CompositeCommand {
 
         // Apply colors
         if (user.hasPermission(getPermissionPrefix() + "island.name.format")) {
-            name = ChatColor.translateAlternateColorCodes('&', name);
+            name = Util.translateColorCodes(name);
         }
 
         // Everything's good!

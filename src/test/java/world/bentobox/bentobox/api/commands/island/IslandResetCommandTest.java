@@ -14,6 +14,9 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -39,7 +42,9 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -66,8 +71,6 @@ public class IslandResetCommandTest extends CommonTestSetup {
     private BlueprintsManager bpm;
 
     private IslandResetCommand irc;
-
-    private UUID uuid;
 
     @Override
     @BeforeEach
@@ -119,7 +122,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         BukkitTask task = mock(BukkitTask.class);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
 
         // IWM friendly name
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
@@ -129,7 +132,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(bpm.validate(any(), any())).thenReturn("custom");
 
         // Give the user some resets
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(3);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(3);
 
         // Island team members
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
@@ -193,13 +196,11 @@ public class IslandResetCommandTest extends CommonTestSetup {
     public void testNoResetsLeft() {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        // Now is owner, but still has team
-        //when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
 
         // Block based on no resets left
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(0);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(0);
 
         assertFalse(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
         verify(user).sendMessage("commands.island.reset.none-left");
@@ -226,12 +227,11 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
         // Reset command, no confirmation required
         assertTrue(irc.execute(user, irc.getLabel(), Collections.emptyList()));
         // TODO Verify that panel was shown
-        // verify(bpm).showPanel(any(), eq(user), eq(irc.getLabel()));
         // Verify event (13 * 2)
         verify(pim, times(14)).callEvent(any(IslandBaseEvent.class));
         // Verify messaging
@@ -266,9 +266,9 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
         // Test with unlimited resets
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(-1);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(-1);
 
         // Reset
         assertTrue(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
@@ -299,9 +299,9 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
         // Test with unlimited resets
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(-1);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(-1);
 
         // Reset
         assertTrue(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
@@ -315,12 +315,10 @@ public class IslandResetCommandTest extends CommonTestSetup {
     public void testConfirmationRequired() throws Exception {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        // Now is owner, but still has team
-        //when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Give the user some resets
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(1);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(1);
 
         // Old island mock
         Island oldIsland = mock(Island.class);
@@ -335,7 +333,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
         // Require confirmation
         when(s.isResetConfirmation()).thenReturn(true);
@@ -385,12 +383,10 @@ public class IslandResetCommandTest extends CommonTestSetup {
     public void testNoConfirmationRequiredCustomSchemHasPermission() throws Exception {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        // Now is owner, but still has team
-        //when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Give the user some resets
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(1);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(1);
         // Set so no confirmation required
         when(s.isResetConfirmation()).thenReturn(false);
 
@@ -407,7 +403,7 @@ public class IslandResetCommandTest extends CommonTestSetup {
         when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
         // Bundle exists
         when(bpm.validate(any(), any())).thenReturn("custom");
@@ -419,5 +415,156 @@ public class IslandResetCommandTest extends CommonTestSetup {
         // Verify event (13 * 2)
         verify(pim, times(14)).callEvent(any(IslandBaseEvent.class));
 
+    }
+
+    /**
+     * Test method for reset with cost - cannot afford
+     */
+    @Test
+    public void testResetIslandWithCostCannotAfford() {
+        // Enable reset charging
+        when(s.isChargeForBlueprintOnReset()).thenReturn(true);
+        // Multiple bundles
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        map.put("default", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        // Economy enabled
+        when(s.isUseEconomy()).thenReturn(true);
+        // Vault present but cannot afford
+        VaultHook vault = mock(VaultHook.class);
+        when(vault.has(any(User.class), eq(100.0))).thenReturn(false);
+        when(vault.format(100.0)).thenReturn("$100.00");
+        when(plugin.getVault()).thenReturn(Optional.of(vault));
+
+        assertFalse(irc.execute(user, irc.getLabel(), List.of("custom")));
+        verify(user).sendMessage("commands.island.create.cannot-afford", "[cost]", "$100.00");
+        verify(user, never()).sendMessage("commands.island.create.creating-island");
+    }
+
+    /**
+     * Test method for reset with cost - can afford
+     */
+    @Test
+    public void testResetIslandWithCostCanAfford() throws Exception {
+        // Enable reset charging
+        when(s.isChargeForBlueprintOnReset()).thenReturn(true);
+        // Now has island
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        // Set so no confirmation required
+        when(s.isResetConfirmation()).thenReturn(false);
+        // Multiple bundles
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        map.put("default", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        // Economy enabled
+        when(s.isUseEconomy()).thenReturn(true);
+        // Vault present and can afford
+        VaultHook vault = mock(VaultHook.class);
+        when(vault.has(any(User.class), eq(100.0))).thenReturn(true);
+        when(vault.format(100.0)).thenReturn("$100.00");
+        when(plugin.getVault()).thenReturn(Optional.of(vault));
+
+        // Mock up NewIsland builder
+        NewIsland.Builder builder = mock(NewIsland.Builder.class);
+        when(builder.player(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
+        when(builder.reason(any())).thenReturn(builder);
+        when(builder.name(any())).thenReturn(builder);
+        when(builder.addon(any())).thenReturn(builder);
+        when(builder.build()).thenReturn(mock(Island.class));
+        MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
+
+        assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
+        verify(user).sendMessage("commands.island.create.creating-island");
+        verify(vault).withdraw(user, 100.0);
+    }
+
+    /**
+     * Test method for reset cost - disabled by config (default)
+     */
+    @Test
+    public void testResetIslandCostDisabledByConfig() throws Exception {
+        // Reset charging disabled (default)
+        when(s.isChargeForBlueprintOnReset()).thenReturn(false);
+        // Now has island
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        // Set so no confirmation required
+        when(s.isResetConfirmation()).thenReturn(false);
+        // Multiple bundles with cost
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        map.put("default", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        when(s.isUseEconomy()).thenReturn(true);
+
+        // Mock up NewIsland builder
+        NewIsland.Builder builder = mock(NewIsland.Builder.class);
+        when(builder.player(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
+        when(builder.reason(any())).thenReturn(builder);
+        when(builder.name(any())).thenReturn(builder);
+        when(builder.addon(any())).thenReturn(builder);
+        when(builder.build()).thenReturn(mock(Island.class));
+        MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
+
+        assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
+        verify(user).sendMessage("commands.island.create.creating-island");
+        // No vault interaction since charging is disabled
+        verify(plugin, never()).getVault();
+    }
+
+    /**
+     * Test method for reset cost - no vault ignores cost
+     */
+    @Test
+    public void testResetIslandCostIgnoredNoVault() throws Exception {
+        // Enable reset charging
+        when(s.isChargeForBlueprintOnReset()).thenReturn(true);
+        // Now has island
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        // Set so no confirmation required
+        when(s.isResetConfirmation()).thenReturn(false);
+        // Multiple bundles with cost
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        map.put("default", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        when(s.isUseEconomy()).thenReturn(true);
+        // No vault
+        when(plugin.getVault()).thenReturn(Optional.empty());
+
+        // Mock up NewIsland builder
+        NewIsland.Builder builder = mock(NewIsland.Builder.class);
+        when(builder.player(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
+        when(builder.reason(any())).thenReturn(builder);
+        when(builder.name(any())).thenReturn(builder);
+        when(builder.addon(any())).thenReturn(builder);
+        when(builder.build()).thenReturn(mock(Island.class));
+        MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
+
+        assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
+        verify(user).sendMessage("commands.island.create.creating-island");
     }
 }

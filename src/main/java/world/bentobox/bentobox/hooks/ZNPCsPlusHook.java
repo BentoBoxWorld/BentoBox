@@ -43,10 +43,9 @@ public class ZNPCsPlusHook extends NPCHook {
      * @return string serializing the NPC Entry
      */
     String serializeNPC(NpcEntry entry, Vector origin) {
-        String result = NpcApiProvider.get().getNpcSerializerRegistry().getSerializer(YamlConfiguration.class)
+        return NpcApiProvider.get().getNpcSerializerRegistry().getSerializer(YamlConfiguration.class)
                 .serialize(entry)
                 .saveToString();
-        return result;
     }
 
     @Override
@@ -66,7 +65,7 @@ public class ZNPCsPlusHook extends NPCHook {
     public boolean hook() {
         boolean hooked = this.isPluginAvailable();
         // Check version
-        String version = this.getPlugin().getDescription().getVersion();
+        String version = this.getPlugin().getPluginMeta().getVersion();
         if (!Util.isVersionCompatible(version, VERSION)) {
             return false;
         }
@@ -80,11 +79,11 @@ public class ZNPCsPlusHook extends NPCHook {
     public String getFailureCause() {
         // The only failure is wrong version
         return "ZNPCsPlus version " + VERSION + " required or later. You are running "
-                + this.getPlugin().getDescription().getVersion();
+                + this.getPlugin().getPluginMeta().getVersion();
     }
 
     @Override
-    public Map<? extends Vector, ? extends List<BlueprintEntity>> getNpcsInArea(World world, List<Vector> vectorsToCopy,
+    public Map<Vector, List<BlueprintEntity>> getNpcsInArea(World world, List<Vector> vectorsToCopy,
             @Nullable Vector origin) {
         Map<Vector, List<BlueprintEntity>> bpEntities = new HashMap<>();
 

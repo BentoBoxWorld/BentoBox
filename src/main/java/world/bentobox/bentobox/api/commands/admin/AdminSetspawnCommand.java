@@ -2,11 +2,10 @@ package world.bentobox.bentobox.api.commands.admin;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.World;
-
-import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
@@ -65,7 +64,7 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
                 .build();
             }
             // If island is owned, then unregister the owner and any members
-            new ImmutableSet.Builder<UUID>().addAll(i.getMembers().keySet()).build()
+            Set.copyOf(i.getMembers().keySet())
                     .forEach(m -> getIslands().removePlayer(i, m));
         }
         getIslands().setSpawn(i);

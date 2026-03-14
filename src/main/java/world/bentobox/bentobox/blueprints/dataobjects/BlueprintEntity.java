@@ -201,29 +201,28 @@ public class BlueprintEntity {
             this.setAdult(false);
         }
         if (entity instanceof AbstractHorse horse) {
-            this.setDomestication(horse.getDomestication());
-            this.setInventory(new HashMap<>());
-            for (int i = 0; i < horse.getInventory().getSize(); i++) {
-                ItemStack item = horse.getInventory().getItem(i);
-                if (item != null) {
-                    this.getInventory().put(i, item);
-                }
-            }
+            serializeHorseInventory(horse);
         }
-
         if (entity instanceof Horse horse) {
             this.setStyle(horse.getStyle());
         }
-
-        // Display entities
         if (entity instanceof Display disp) {
             this.storeDisplay(disp);
         }
-        // ItemFrames
         if (entity instanceof ItemFrame frame) {
             this.setItemFrame(new ItemFrameRec(frame.getItem(), frame.getRotation(), frame.isFixed(), frame.isVisible(), frame.getItemDropChance()));
         }
+    }
 
+    private void serializeHorseInventory(AbstractHorse horse) {
+        this.setDomestication(horse.getDomestication());
+        this.setInventory(new HashMap<>());
+        for (int i = 0; i < horse.getInventory().getSize(); i++) {
+            ItemStack item = horse.getInventory().getItem(i);
+            if (item != null) {
+                this.getInventory().put(i, item);
+            }
+        }
     }
 
     /**
@@ -256,11 +255,10 @@ public class BlueprintEntity {
         e.setSilent(isSilent());
         e.setInvulnerable(isInvulnerable());
         e.setFireTicks(getFireTicks());
-        
+
         if (e instanceof ItemFrame frame) {
             setFrame(frame);
         }
-
         if (e instanceof Villager villager) {
             setVillager(villager);
         }
@@ -273,6 +271,13 @@ public class BlueprintEntity {
         if (chest != null && e instanceof ChestedHorse chestedHorse) {
             chestedHorse.setCarryingChest(chest);
         }
+        configureAgeable(e);
+        configureHorse(e);
+        // Shift to the in-block location (remove the 0.5 that the location serializer used)
+        e.getLocation().add(new Vector(x - 0.5D, y, z - 0.5D));
+    }
+
+    private void configureAgeable(Entity e) {
         if (adult != null && e instanceof Ageable ageable) {
             if (adult) {
                 ageable.setAdult();
@@ -280,18 +285,18 @@ public class BlueprintEntity {
                 ageable.setBaby();
             }
         }
+    }
+
+    private void configureHorse(Entity e) {
         if (e instanceof AbstractHorse horse) {
             if (domestication != null) horse.setDomestication(domestication);
             if (inventory != null) {
                 inventory.forEach((index, item) -> horse.getInventory().setItem(index, item));
-
             }
         }
         if (style != null && e instanceof Horse horse) {
             horse.setStyle(style);
         }
-        // Shift to the in-block location (remove the 0.5 that the location serializer used)
-        e.getLocation().add(new Vector(x - 0.5D, y, z - 0.5D));
     }
     private void setFrame(ItemFrame frame) {
         if (this.itemFrame == null) {
@@ -301,7 +306,7 @@ public class BlueprintEntity {
         frame.setVisible(itemFrame.isVisible);
         frame.setFixed(frame.isFixed());
         frame.setRotation(itemFrame.rotation());
-        frame.setItemDropChance((float)itemFrame.dropChance()); 
+        frame.setItemDropChance(itemFrame.dropChance());
     }
 
     /**

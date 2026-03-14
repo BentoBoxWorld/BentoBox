@@ -2,8 +2,10 @@ package world.bentobox.bentobox.listeners.teleports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -24,6 +26,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
@@ -34,6 +37,7 @@ import org.bukkit.util.Vector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -47,8 +51,6 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     private PlayerTeleportListener ptl;
     @Mock
     private Block block;
-    @Mock
-    private BukkitScheduler sch;
 
     /**
      * @throws java.lang.Exception
@@ -301,6 +303,33 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         verify(Bukkit.getScheduler(), times(1)).runTaskLater(eq(plugin), any(Runnable.class), eq(40L));
     }
 
+    /**
+     * Test that when nether is disabled on the server, the scheduled task fires a PlayerPortalEvent
+     * through the Bukkit event bus (so PortalListener flag checks run) instead of calling
+     * portalProcess() directly.
+     */
+    @Test
+    public void testOnPlayerPortalNetherPortalDisabledCallsEvent() {
+        when(Bukkit.getAllowNether()).thenReturn(false);
+        when(Util.getWorld(location.getWorld())).thenReturn(world);
+        when(plugin.getIWM().inWorld(world)).thenReturn(true);
+        when(block.getType()).thenReturn(Material.NETHER_PORTAL);
+
+        EntityPortalEnterEvent e = new EntityPortalEnterEvent(mockPlayer, location);
+        ptl.onPlayerPortal(e);
+
+        // Capture and execute the scheduled Runnable
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(Bukkit.getScheduler()).runTaskLater(eq(plugin), runnableCaptor.capture(), eq(40L));
+        runnableCaptor.getValue().run();
+
+        // Verify callEvent was called with a PlayerPortalEvent with NETHER_PORTAL cause
+        ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
+        verify(pim).callEvent(eventCaptor.capture());
+        assertInstanceOf(PlayerPortalEvent.class, eventCaptor.getValue());
+        assertEquals(TeleportCause.NETHER_PORTAL, ((PlayerPortalEvent) eventCaptor.getValue()).getCause());
+    }
+
     @Test
     public void testOnPlayerPortalEndPortalDisabled() {
         // Mock configuration for End disabled
@@ -320,6 +349,12 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
 
         // Verify the event behavior indirectly by confirming the origin world was stored
         assertEquals(location.getWorld(), ptl.getTeleportOrigin().get(mockPlayer.getUniqueId()));
+
+        // Verify callEvent was called with a PlayerPortalEvent with END_PORTAL cause
+        ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
+        verify(pim).callEvent(eventCaptor.capture());
+        assertInstanceOf(PlayerPortalEvent.class, eventCaptor.getValue());
+        assertEquals(TeleportCause.END_PORTAL, ((PlayerPortalEvent) eventCaptor.getValue()).getCause());
     }
 
     @Test
@@ -341,6 +376,12 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
 
         // Verify the event behavior indirectly by confirming the origin world was stored
         assertEquals(location.getWorld(), ptl.getTeleportOrigin().get(mockPlayer.getUniqueId()));
+
+        // Verify callEvent was called with a PlayerPortalEvent with END_GATEWAY cause
+        ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
+        verify(pim).callEvent(eventCaptor.capture());
+        assertInstanceOf(PlayerPortalEvent.class, eventCaptor.getValue());
+        assertEquals(TeleportCause.END_GATEWAY, ((PlayerPortalEvent) eventCaptor.getValue()).getCause());
     }
 
     @Test
@@ -439,9 +480,6 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      */
     @Test
     public void testOnPlayerExitPortalPlayerAlreadyProcessed() {
-        // Mock a player who is not in teleportOrigin
-        UUID playerId = mockPlayer.getUniqueId();
-
         // Create the event
         @SuppressWarnings("deprecation")
         PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false);
@@ -450,7 +488,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.onPlayerExitPortal(event);
 
         // Verify that no changes occurred to the event
-        assertEquals(location, event.getRespawnLocation());
+        assertSame(location, event.getRespawnLocation());
     }
 
     @Test
@@ -469,7 +507,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.onPlayerExitPortal(event);
 
         // Verify that no changes occurred to the event
-        assertEquals(location, event.getRespawnLocation());
+        assertSame(location, event.getRespawnLocation());
     }
 
     @Test
@@ -485,7 +523,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.onPlayerExitPortal(event);
 
         // Verify that the respawn location remains unchanged
-        assertEquals(location, event.getRespawnLocation());
+        assertSame(location, event.getRespawnLocation());
     }
 
     @Test
@@ -501,7 +539,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.onPlayerExitPortal(event);
 
         // Verify that the respawn location was updated to the island spawn point
-        assertEquals(location, event.getRespawnLocation());
+        assertSame(location, event.getRespawnLocation());
     }
 
     @Test
@@ -518,7 +556,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.onPlayerExitPortal(event);
 
         // Verify that the respawn location was updated to the island's protection center
-        assertEquals(location, event.getRespawnLocation());
+        assertSame(location, event.getRespawnLocation());
     }
 
     @Test
@@ -534,7 +572,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.onPlayerExitPortal(event);
 
         // Verify that the respawn location was updated to the world spawn location
-        assertEquals(location, event.getRespawnLocation());
+        assertSame(location, event.getRespawnLocation());
     }
 
 

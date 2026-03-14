@@ -267,7 +267,8 @@ public class NewIsland {
     private void postCreationTask(Island oldIsland) {
         // Set initial spawn point if one exists
         if (island.getSpawnPoint(Environment.NORMAL) != null) {
-            plugin.getIslands().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL));
+            plugin.getIslands().setHomeLocation(island, island.getSpawnPoint(Environment.NORMAL), "");
+            plugin.getIslands().setPrimaryIsland(user.getUniqueId(), island);
         }
         // If player is online, handle teleportation and movement
         if (user.isOnline()) {
@@ -277,7 +278,7 @@ public class NewIsland {
                 user.getPlayer().setVelocity(new Vector(0, 0, 0));
                 user.getPlayer().setFallDistance(0F);
                 // Teleport player after island is built, then tidy up
-                plugin.getIslands().homeTeleportAsync(world, user.getPlayer(), true).thenRun(() -> tidyUp(oldIsland));
+                plugin.getIslands().homeTeleportAsync(island, user, true).thenRun(() -> tidyUp(oldIsland));
                 return;
             } else {
                 // Notify player they can teleport to their island

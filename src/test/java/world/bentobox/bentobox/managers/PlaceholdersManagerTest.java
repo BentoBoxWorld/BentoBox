@@ -2,7 +2,6 @@ package world.bentobox.bentobox.managers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,6 +20,7 @@ import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.hooks.Hook;
+import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
 import world.bentobox.bentobox.lists.GameModePlaceholder;
 
@@ -50,12 +50,12 @@ public class PlaceholdersManagerTest extends CommonTestSetup {
 
         when(plugin.getPlaceholdersManager()).thenReturn(pm);
         // No placeholders registered yet
-        //when(pm.isPlaceholder(any(), any())).thenReturn(false);
+
 
         // Hooks
         when(plugin.getHooks()).thenReturn(hm);
         Optional<Hook> optionalHook = Optional.of(hook);
-        when(hm.getHook(eq("PlaceholderAPI"))).thenReturn(optionalHook);
+        when(hm.getHook("PlaceholderAPI")).thenReturn(optionalHook);
         when(hook.isPlaceholder(any(), any())).thenReturn(false);
 
         // World settings
@@ -81,8 +81,10 @@ public class PlaceholdersManagerTest extends CommonTestSetup {
     @Test
     public void testRegisterGameModePlaceholdersAllDefaults() {
         pm.registerDefaultPlaceholders(addon);
-        // + 300 because we register team member placeholders up to 50 members
-        verify(hook, times(GameModePlaceholder.values().length + 304)).registerPlaceholder(any(), anyString(), any());
+        // + 304 because we register team member placeholders up to 50 members (6 per member * 50 = 300) + 4 extra
+        // All registrations now use the 4-arg overload (addon, placeholder, description, replacer)
+        verify(hook, times(GameModePlaceholder.values().length + 304))
+                .registerPlaceholder(any(GameModeAddon.class), anyString(), anyString(), any(PlaceholderReplacer.class));
     }
 
     /**
@@ -95,8 +97,8 @@ public class PlaceholdersManagerTest extends CommonTestSetup {
 
         pm.registerDefaultPlaceholders(addon);
 
-        // 3 less registrations for this addon
-        verify(hook, times(GameModePlaceholder.values().length - 3 + 304)).registerPlaceholder(any(), anyString(),
-                any());
+        // 3 less registrations for this addon (3 GameModePlaceholder values pre-registered)
+        verify(hook, times(GameModePlaceholder.values().length - 3 + 304))
+                .registerPlaceholder(any(GameModeAddon.class), anyString(), anyString(), any(PlaceholderReplacer.class));
     }
 }

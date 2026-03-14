@@ -34,7 +34,8 @@ import world.bentobox.bentobox.util.Util;
 /**
  * This abstract class contains all common methods for entity and player teleportation.
  */
-public abstract class AbstractTeleportListener
+public abstract sealed class AbstractTeleportListener
+        permits EntityTeleportListener, PlayerTeleportListener
 {
     /**
      * Instance of Teleportation processor.

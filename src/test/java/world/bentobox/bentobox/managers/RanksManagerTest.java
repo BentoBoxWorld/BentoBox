@@ -14,7 +14,6 @@ import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -55,7 +54,7 @@ public class RanksManagerTest extends CommonTestSetup {
         // Database
         mockedDatabaseSetup = Mockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
-        mockedDatabaseSetup.when(() -> DatabaseSetup.getDatabase()).thenReturn(dbSetup);
+        mockedDatabaseSetup.when(DatabaseSetup::getDatabase).thenReturn(dbSetup);
         when(dbSetup.getHandler(eq(Ranks.class))).thenReturn(handler);
         when(handler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
 
@@ -139,7 +138,6 @@ public class RanksManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.RanksManager#getRank(int)}.
      */
     @Test
-    @Disabled
     public void testGetRank() {
         assertEquals(RanksManager.BANNED_RANK_REF, rm.getRank(RanksManager.BANNED_RANK));
         assertEquals(RanksManager.VISITOR_RANK_REF, rm.getRank(RanksManager.VISITOR_RANK));

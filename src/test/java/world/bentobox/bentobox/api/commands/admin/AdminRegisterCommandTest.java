@@ -48,7 +48,6 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
-    private UUID uuid;
     @Mock
     private User user;
     @Mock
@@ -129,6 +128,7 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
         itl = new AdminRegisterCommand(ac);
     }
 
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();

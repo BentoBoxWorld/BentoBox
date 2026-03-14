@@ -444,6 +444,13 @@ commands:
           &a 右鍵單擊以減少
         unlimited-times: 無限
         maximum-times: 最大[number]次
+        cost: |
+          &a [prefix_Island]費用
+          &a 左鍵點擊 +1
+          &a 右鍵點擊 -1
+          &a Shift +/-100
+        no-cost: 免費
+        cost-amount: '費用: [cost]'
     resetflags:
       parameters: '[旗幟]'
       description: 將所有島嶼的保護標志設置為 config.yml 中默認的狀態
@@ -587,6 +594,7 @@ commands:
         dimension-done: '&a在[world]的島嶼已完成構建。'
         done: '&a完成！ 您的島嶼已准備就緒！'
       pick: '&9&l選擇島嶼方案'
+      cannot-afford: '&c 你買不起！費用: [cost]'
       unknown-blueprint: '&c該藍圖方案尚未加載。'
       on-first-login: '&a歡迎！我們將在幾秒鐘內開始創建您的島嶼！'
       you-can-teleport-to-your-island: '&a您可以在任何時傳送到您的島嶼。'
@@ -886,9 +894,9 @@ protection:
   command-is-banned: 訪客已被禁止使用此指令
   flags:
     ALLAY:
-      name: '&7與悅靈交互'
-      description: '&7允許/禁止 給予和提取物品自悅靈'
-      hint: '&c已禁止與悅靈交互'
+      name: '&7與悅靈及銅傀儡交互'
+      description: '&7允許/禁止 給予和提取物品自悅靈及銅傀儡'
+      hint: '&c已禁止與悅靈及銅傀儡交互'
     ANIMAL_NATURAL_SPAWN:
       description: 切換天然動物產卵
       name: 動物天然產卵
@@ -1507,13 +1515,10 @@ protection:
         &a 防止玩家失去他們的物品和
         &a 經驗，只適用於他們死在了
         &a 他們是游客的島嶼。
-    VISITOR_TRIGGER_RAID:
-      name: '&a允许/禁止 訪客觸發突襲'
-      description: |-
-        &a 允许/禁止 訪客可以在
-        &a 他訪問的空島中觸發突襲
-        &a
-        &a 不祥之兆 效果會被移除!
+    RAID_TRIGGER:
+      name: 觸發突襲
+      description: 設置觸發突襲所需的島嶼最低等級
+      hint: 不允許觸發突襲
     ENTITY_PORTAL_TELEPORT:
       name: 實體使用傳送門
       description: |-
@@ -1775,6 +1780,7 @@ panels:
         description: '[description]'
         uses: '&a 使用[number]/[max]'
         unlimited: '&a 允許無限用途'
+        cost: '&e 費用: [cost]'
   language:
     title: '&2&l 選擇您的語言'
     edited: '&c 更改為[lang]'

@@ -2,6 +2,8 @@ package world.bentobox.bentobox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
@@ -194,6 +196,8 @@ public abstract class CommonTestSetup {
         when(island.isAllowed(any(User.class), any())).thenReturn(false);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
+        when(island.getMemberSet(anyInt())).thenReturn(ImmutableSet.of(uuid));
+        when(island.getMemberSet(anyInt(), anyBoolean())).thenReturn(ImmutableSet.of(uuid));
 
         // Enable reporting from Flags class
         MetadataValue mdv = new FixedMetadataValue(plugin, "_why_debug");
@@ -220,10 +224,8 @@ public abstract class CommonTestSetup {
         // Util
         mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Util translate color codes (used in user translate methods)
-        //mockedUtil.when(() -> translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-        
         // Server & Scheduler
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
 
         // Hooks
         when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
@@ -302,7 +304,7 @@ public abstract class CommonTestSetup {
         List<TextComponent> capturedMessages = captor.getAllValues();
 
         // Count the number of occurrences of the expectedMessage in the captured messages
-        long actualOccurrences = capturedMessages.stream().map(component -> component.toLegacyText()) // Convert each TextComponent to plain text
+        long actualOccurrences = capturedMessages.stream().map(tc -> tc.toLegacyText()) // Convert each TextComponent to plain text
                 .filter(messageText -> messageText.contains(expectedMessage)) // Check if the message contains the expected text
                 .count(); // Count how many times the expected message appears
 
@@ -319,7 +321,6 @@ public abstract class CommonTestSetup {
      * @return
      */
     public EntityExplodeEvent getExplodeEvent(Entity entity, Location l, List<Block> list) {
-        //return new EntityExplodeEvent(entity, l, list, 0, null);
         return new EntityExplodeEvent(entity, l, list, 0, null);
     }
 

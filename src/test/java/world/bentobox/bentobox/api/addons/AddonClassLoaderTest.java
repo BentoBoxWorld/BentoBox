@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.addons;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
@@ -67,6 +68,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
 
     /**
      */
+    @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
@@ -313,7 +315,7 @@ public class AddonClassLoaderTest extends CommonTestSetup {
     public void testGetAddon() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         Addon addon = acl.getAddon();
-        assertEquals(addon, testAddon);
+        assertSame(testAddon, addon);
         acl.close();
     }
 

@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.events.island;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -32,7 +33,7 @@ public class IslandEventTest extends CommonTestSetup {
     @Mock
     private IslandDeletion deletedIslandInfo;
     
-    private Island island;
+    private Island testIsland;
 
     @Override
     @BeforeEach
@@ -41,9 +42,9 @@ public class IslandEventTest extends CommonTestSetup {
         Mockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         // Island
-        island = new Island();
+        testIsland = new Island();
         when(location.clone()).thenReturn(location);
-        island.setCenter(location);
+        testIsland.setCenter(location);
     }
 
     @Override
@@ -58,11 +59,11 @@ public class IslandEventTest extends CommonTestSetup {
     @Test
     public void testIslandEvent() {
         for (Reason reason: Reason.values()) {
-            IslandEvent e = new IslandEvent(island, uuid, false, location, reason);
+            IslandEvent e = new IslandEvent(testIsland, uuid, false, location, reason);
             assertEquals(reason, e.getReason());
-            assertEquals(island, e.getIsland());
+            assertSame(testIsland, e.getIsland());
             assertEquals(uuid, e.getPlayerUUID());
-            assertEquals(location, e.getLocation());
+            assertSame(location, e.getLocation());
         }
     }
 
@@ -77,9 +78,9 @@ public class IslandEventTest extends CommonTestSetup {
                     .blueprintBundle(blueprintBundle)
                     .deletedIslandInfo(deletedIslandInfo)
                     .involvedPlayer(uuid)
-                    .island(island)
+                    .island(testIsland)
                     .location(location)
-                    .oldIsland(island)
+                    .oldIsland(testIsland)
                     .protectionRange(120, 100)
                     .reason(reason)
                     .build();

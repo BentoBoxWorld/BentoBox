@@ -493,6 +493,13 @@ commands:
           &a Clique direito para diminuir
         unlimited-times: Ilimitado
         maximum-times: Max [number] vezes
+        cost: |
+          &a Custo de [prefix_Island]
+          &a Clique esquerdo +1
+          &a Clique direito -1
+          &a Shift para +/-100
+        no-cost: Grátis
+        cost-amount: 'Custo: [cost]'
     resetflags:
       parameters: '[bandeira]'
       description: >-
@@ -653,6 +660,7 @@ commands:
         dimension-done: '&a Ilha em [mundo] é construída.'
         done: '&a Concluído! Sua ilha está pronta e esperando por você!'
       pick: '&2 Escolha uma estilo:'
+      cannot-afford: '&c Você não pode pagar isso! Custo: [cost]'
       unknown-blueprint: '&c Esse blueprint ainda não foi carregado.'
       on-first-login: '&a Bem-vindo! Começaremos a preparar sua ilha em alguns segundos.'
       you-can-teleport-to-your-island: '&a Você pode se teletransportar para sua ilha quando quiser.'
@@ -973,9 +981,9 @@ protection:
   command-is-banned: Comando é proibido para visitantes
   flags:
     ALLAY:
-      name: Acalmar a interação
-      description: Permitir dar e receber itens de/para Allay
-      hint: Interação de dissipação desativada
+      name: Interação com Allay e Copper Golem
+      description: Permitir dar e receber itens de/para Allay e Copper Golem
+      hint: Interação com Allay e Copper Golem desativada
     ANIMAL_NATURAL_SPAWN:
       description: Alternar a desova natural de animais
       name: Desova natural de animais
@@ -1680,14 +1688,10 @@ protection:
         &a
         &a Membros da Ilha ainda perdem seus itens
         &a se eles morrerem em sua própria ilha!
-    VISITOR_TRIGGER_RAID:
-      name: Visitantes desencadeiam ataques
-      description: |-
-        &a Alterna se os visitantes podem começar
-        &a um ataque a uma ilha que eles são
-        & uma visita.
-        &a
-        &um efeito Bad Omen será removido!
+    RAID_TRIGGER:
+      name: Gatilho de ataque
+      description: Define o nível mínimo de ilha necessário para desencadear um ataque
+      hint: Desencadear ataque não permitido
     ENTITY_PORTAL_TELEPORT:
       name: Uso do portal da entidade
       description: |-
@@ -2003,6 +2007,7 @@ panels:
         description: '[descrição]'
         uses: '&a Usado [número]/[máx]'
         unlimited: '&a Usos ilimitados permitidos'
+        cost: '&e Custo: [cost]'
   language:
     title: '&2&l Selecione seu idioma'
     edited: '&c Mudado para [lang]'

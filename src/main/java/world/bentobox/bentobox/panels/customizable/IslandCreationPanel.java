@@ -443,6 +443,13 @@ public class IslandCreationPanel extends AbstractPanel
             }
         }
 
+        // Show cost if bundle has a cost, economy is enabled, and Vault is available
+        if (bundle.getCost() > 0 && plugin.getSettings().isUseEconomy()) {
+            plugin.getVault().ifPresent(vault ->
+                builder.description(this.user.getTranslation(BUNDLE_BUTTON_REF + "cost",
+                        TextVariables.COST, vault.format(bundle.getCost()))));
+        }
+
         if (usedUp) {
             if (plugin.getSettings().isHideUsedBlueprints()) {
                 // Do not show used up blueprints

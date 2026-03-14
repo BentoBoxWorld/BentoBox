@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.api.configuration;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 /**

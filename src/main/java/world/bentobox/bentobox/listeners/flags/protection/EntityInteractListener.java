@@ -45,66 +45,38 @@ public class EntityInteractListener extends FlagListener {
         Player p = e.getPlayer();
         Location l = e.getRightClicked().getLocation();
 
-        if (e.getRightClicked() instanceof Vehicle)
-        {
-            if (e.getRightClicked() instanceof Animals)
-            {
-                // Animal riding
-                this.checkIsland(e, p, l, Flags.RIDING);
-            }
-            else if (e.getRightClicked() instanceof RideableMinecart)
-            {
-                // Minecart riding
-                this.checkIsland(e, p, l, Flags.MINECART);
-            }
-            else if (e.getRightClicked() instanceof StorageMinecart)
-            {
-                this.checkIsland(e, p, l, Flags.CHEST);
-            }
-            else if (e.getRightClicked() instanceof HopperMinecart)
-            {
-                this.checkIsland(e, p, l, Flags.HOPPER);
-            }
-            else if (e.getRightClicked() instanceof PoweredMinecart)
-            {
-                this.checkIsland(e, p, l, Flags.FURNACE);
-            }
-            else if (e.getPlayer().isSneaking() && e.getRightClicked() instanceof ChestBoat)
-            {
-                // Access to chest boat since 1.19
-                this.checkIsland(e, p, l, Flags.CHEST);
-            }
-            else if (e.getRightClicked() instanceof Boat)
-            {
-                // Boat riding
-                this.checkIsland(e, p, l, Flags.BOAT);
-            }
+        if (e.getRightClicked() instanceof Vehicle) {
+            handleVehicleInteract(e, p, l);
+            return;
         }
-        else if (e.getRightClicked() instanceof Villager && !(e.getRightClicked() instanceof WanderingTrader))
-        {
-            // Villager trading
-            // Check naming and check trading
+        if (e.getRightClicked() instanceof Villager && !(e.getRightClicked() instanceof WanderingTrader)) {
             this.checkIsland(e, p, l, Flags.TRADING);
-
-            if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG))
-            {
-                this.checkIsland(e, p, l, Flags.NAME_TAG);
-            }
-        }
-        else if (e.getRightClicked() instanceof Allay)
-        {
-            // Allay item giving/taking
+        } else if (e.getRightClicked() instanceof Allay
+                || e.getRightClicked().getType().name().equals("COPPER_GOLEM")) {
             this.checkIsland(e, p, l, Flags.ALLAY);
-
-            // Check naming
-            if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG))
-            {
-                this.checkIsland(e, p, l, Flags.NAME_TAG);
-            }
         }
-        else if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG))
-        {
-            // Name tags
+        checkNameTag(e, p, l);
+    }
+
+    private void handleVehicleInteract(PlayerInteractEntityEvent e, Player p, Location l) {
+        if (e.getRightClicked() instanceof Animals) {
+            this.checkIsland(e, p, l, Flags.RIDING);
+        } else if (e.getRightClicked() instanceof RideableMinecart) {
+            this.checkIsland(e, p, l, Flags.MINECART);
+        } else if (e.getRightClicked() instanceof StorageMinecart
+                || (e.getPlayer().isSneaking() && e.getRightClicked() instanceof ChestBoat)) {
+            this.checkIsland(e, p, l, Flags.CHEST);
+        } else if (e.getRightClicked() instanceof HopperMinecart) {
+            this.checkIsland(e, p, l, Flags.HOPPER);
+        } else if (e.getRightClicked() instanceof PoweredMinecart) {
+            this.checkIsland(e, p, l, Flags.FURNACE);
+        } else if (e.getRightClicked() instanceof Boat) {
+            this.checkIsland(e, p, l, Flags.BOAT);
+        }
+    }
+
+    private void checkNameTag(PlayerInteractEntityEvent e, Player p, Location l) {
+        if (p.getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
             this.checkIsland(e, p, l, Flags.NAME_TAG);
         }
     }

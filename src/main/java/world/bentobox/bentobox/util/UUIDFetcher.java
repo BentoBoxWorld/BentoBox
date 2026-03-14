@@ -18,6 +18,10 @@ import com.google.gson.JsonParser;
  * @since 1.24.1
  */
 public class UUIDFetcher {
+    private UUIDFetcher() {
+        // prevent instantiation
+    }
+
     private static final String API_URL = "https://playerdb.co/api/player/minecraft/%s";
 
     @Nullable
@@ -40,14 +44,16 @@ public class UUIDFetcher {
             try (BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(connection.getInputStream()))) {
                 StringBuilder response = new StringBuilder();
-                String line;
+                String line = bufferedReader.readLine();
 
-                while ((line = bufferedReader.readLine()) != null)
+                while (line != null) {
                     response.append(line);
+                    line = bufferedReader.readLine();
+                }
 
                 final JsonElement parsed = JsonParser.parseString(response.toString());
 
-                if (parsed == null || !parsed.isJsonObject()) {
+                if (!parsed.isJsonObject()) {
                     return null;
                 }
 

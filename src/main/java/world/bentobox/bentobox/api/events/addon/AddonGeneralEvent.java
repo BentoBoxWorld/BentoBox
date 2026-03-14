@@ -12,7 +12,7 @@ import world.bentobox.bentobox.api.addons.Addon;
  * @author tastybento
  *
  */
-public class AddonGeneralEvent extends AddonBaseEvent {
+public final class AddonGeneralEvent extends AddonBaseEvent {
 
     private static final HandlerList handlers = new HandlerList();
 

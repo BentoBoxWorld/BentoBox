@@ -54,7 +54,6 @@ public class AdminResetHomeCommandTest extends CommonTestSetup {
     @Mock
     private PlayersManager pm;
     private UUID notUUID;
-    private UUID uuid;
     private AdminResetHomeCommand instance;
     private String label;
     private ArrayList<String> args = new ArrayList<>();
@@ -113,7 +112,7 @@ public class AdminResetHomeCommandTest extends CommonTestSetup {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
         BukkitTask task = mock(BukkitTask.class);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 

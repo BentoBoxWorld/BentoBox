@@ -54,8 +54,6 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
     private CoarseDirtTillingListener ctl;
     @Mock
     private Block clickedBlock;
-    @Mock
-    private Notifier notifier;
 
 
     @Override
@@ -220,7 +218,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
         when(clickedBlock.getType()).thenReturn(Material.PODZOL);
         BlockBreakEvent e = new BlockBreakEvent(clickedBlock, mockPlayer);
         ctl.onBreakingPodzol(e);
-        verify(clickedBlock).setType(eq(Material.AIR));
+        verify(clickedBlock).setType(Material.AIR);
         verify(world).dropItemNaturally(any(), any());
     }
 

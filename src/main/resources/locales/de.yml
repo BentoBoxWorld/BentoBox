@@ -505,6 +505,13 @@ commands:
           &a Rechtsklick zum Verringern
         unlimited-times: Unbegrenzt
         maximum-times: Max. [number] Mal
+        cost: |
+          &a [prefix_Island]-Kosten
+          &a Linksklick +1
+          &a Rechtsklick -1
+          &a Shift für +/-100
+        no-cost: Kostenlos
+        cost-amount: 'Kosten: [cost]'
     resetflags:
       parameters: '[flag]'
       description: >-
@@ -675,6 +682,7 @@ commands:
         dimension-done: '&a Insel in [world] wird gebaut.'
         done: '&a Erledigt! Deine Insel ist bereit und wartet auf dich!'
       pick: '&2 Eine Insel auswählen'
+      cannot-afford: '&c Du kannst dir das nicht leisten! Kosten: [cost]'
       unknown-blueprint: '&c Diese Blaupause wurde noch nicht geladen.'
       on-first-login: >-
         &a Herzlich willkommen! Wir beginnen in wenigen Sekunden mit der
@@ -1010,9 +1018,9 @@ protection:
   command-is-banned: Der Befehl ist für Besucher verboten
   flags:
     ALLAY:
-      name: Interaktion beruhigen
-      description: Geben und Nehmen von Gegenständen an/von einem Allay
-      hint: Allay-Interaktion deaktiviert
+      name: Allay & Copper Golem Interaktion
+      description: Geben und Nehmen von Gegenständen an/von einem Allay oder Copper Golem
+      hint: Allay & Copper Golem Interaktion deaktiviert
     ANIMAL_NATURAL_SPAWN:
       description: Natürliches Spawnen von Tieren umschalten
       name: Tier
@@ -1702,13 +1710,10 @@ protection:
         &a gezähmte Haustiere nur auf die
         &a Heimatinsel des Besitzers gehen
         &a und sie nicht verlassen.
-    VISITOR_TRIGGER_RAID:
-      name: Besucher können Raids auslösen
-      description: |-
-        &a Schaltet um, ob Besucher Rais auf
-        &a Inseln starten können, die sie Besuchen.
-        &a
-        &a Der Bad Omen-Effekt wird entfernt!
+    RAID_TRIGGER:
+      name: Raid auslösen
+      description: Legt den minimalen Inselrang fest, der zum Auslösen eines Raids benötigt wird
+      hint: Raid auslösen nicht erlaubt
     ENTITY_PORTAL_TELEPORT:
       name: Portalnutzung durch Entitäten
       description: |-
@@ -2021,6 +2026,7 @@ panels:
         description: '[description]'
         uses: '&a Verwendung [number]/[max]'
         unlimited: '&a Unbegrenzte Nutzung erlaubt'
+        cost: '&e Kosten: [cost]'
   language:
     title: '&2&l Sprache wählen'
     edited: '&c Geändert in [lang]'

@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -58,9 +57,6 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
 
     private UUID targetUUID;
 
-    @Mock
-    private Island island;
-
     private MockedStatic<RanksManager> mockedRanksManager;
 
     @Override
@@ -71,7 +67,7 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
 
         // Ranks Manager
         mockedRanksManager = Mockito.mockStatic(RanksManager.class);
-        mockedRanksManager.when(() -> RanksManager.getInstance()).thenReturn(rm);
+        mockedRanksManager.when(RanksManager::getInstance).thenReturn(rm);
 
         // Players Manager
         when(plugin.getPlayers()).thenReturn(pm);
@@ -93,15 +89,16 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
             online.put(uuid, name);
             onlinePlayers.add(p1);
         }
-        mockedBukkit.when(() -> Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
+        mockedBukkit.when(Bukkit::getOnlinePlayers).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         // Command
         c = new AdminGetrankCommand(ac);
     }
 
     /**
-     * @throws Exception 
+     * @throws Exception
      */
+    @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
@@ -182,11 +179,11 @@ public class AdminGetrankCommandTest extends CommonTestSetup {
         when(island.getOwner()).thenReturn(targetUUID);
         when(pm.getName(targetUUID)).thenReturn("tastybento");
         assertTrue(c.execute(user, "", Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("commands.admin.getrank.rank-is"),
-                eq("[rank]"),
-                eq("sub-owner"),
-                eq("[name]"),
-                eq("tastybento"));
+        verify(user).sendMessage("commands.admin.getrank.rank-is",
+                "[rank]",
+                "sub-owner",
+                "[name]",
+                "tastybento");
     }
 
     /**

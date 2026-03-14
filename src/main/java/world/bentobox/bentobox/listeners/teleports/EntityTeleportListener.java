@@ -36,7 +36,7 @@ import world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport;
  *
  * @author BONNe
  */
-public class EntityTeleportListener extends AbstractTeleportListener implements Listener
+public non-sealed class EntityTeleportListener extends AbstractTeleportListener implements Listener
 {
     /**
      * Instance of Teleportation processor.

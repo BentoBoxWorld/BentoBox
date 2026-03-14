@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.util;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
@@ -106,7 +108,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * @return an iterator over the elements in this set
      */
     @Override
-    public Iterator<E> iterator() {
+    public @NonNull Iterator<E> iterator() {
         // Iterate over the keys of the map
         return scheduledTasks.keySet().iterator();
     }
@@ -115,7 +117,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * Returns an array containing all of the elements in this set.
      */
     @Override
-    public Object[] toArray() {
+    public Object @NonNull [] toArray() {
         return scheduledTasks.keySet().toArray();
     }
 
@@ -128,7 +130,7 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      * @return an array containing all of the elements in this set
      */
     @Override
-    public <T> T[] toArray(T[] a) {
+    public <T> T @NonNull [] toArray(T @NonNull [] a) {
         return scheduledTasks.keySet().toArray(a);
     }
 
@@ -151,11 +153,9 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
         final ScheduledFuture<?>[] futureHolder = new ScheduledFuture<?>[1];
         
         // 1. Create and schedule the new task. The lambda uses the reference in the array.
-        futureHolder[0] = scheduler.schedule(() -> {
-            // Self-removal: Try to remove the element only if its associated future is still the one 
-            // referenced by the holder at the time of execution.
-            scheduledTasks.remove(e, futureHolder[0]);
-        }, expirationTime, TimeUnit.MILLISECONDS);
+        // Self-removal: removes the element only if its associated future is still the current one.
+        futureHolder[0] = scheduler.schedule(() -> scheduledTasks.remove(e, futureHolder[0]),
+                expirationTime, TimeUnit.MILLISECONDS);
 
         // 2. Atomically replace the old future with the new one.
         // We use the value stored in the array immediately after scheduling.
@@ -296,7 +296,13 @@ public class ExpiringSet<E> implements Set<E>, AutoCloseable {
      */
     @Override
     public boolean equals(Object obj) {
-        return scheduledTasks.keySet().equals(obj);
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Set<?> other)) {
+            return false;
+        }
+        return scheduledTasks.keySet().equals(other);
     }
 
     /**

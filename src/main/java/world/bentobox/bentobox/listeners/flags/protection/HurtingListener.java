@@ -114,14 +114,13 @@ public class HurtingListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerFeedParrots(PlayerInteractEntityEvent e) {
-        if (e.getRightClicked() instanceof Parrot parrot) {
-            if ((e.getHand().equals(EquipmentSlot.HAND) && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
-                    || (e.getHand().equals(EquipmentSlot.OFF_HAND) && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE))) {
-                if (parrot.isTamed()) {
-                    checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_TAMED_ANIMALS);
-                } else {
-                    checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
-                }
+        if (e.getRightClicked() instanceof Parrot parrot
+                && ((e.getHand().equals(EquipmentSlot.HAND) && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
+                    || (e.getHand().equals(EquipmentSlot.OFF_HAND) && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE)))) {
+            if (parrot.isTamed()) {
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_TAMED_ANIMALS);
+            } else {
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
             }
         }
     }
@@ -141,34 +140,33 @@ public class HurtingListener extends FlagListener {
                 if (attacker.equals(entity)) {
                     continue;
                 }
-                // Monsters being hurt
-                if (Util.isHostileEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
-                    for (PotionEffect effect : e.getPotion().getEffects()) {
-                        entity.removePotionEffect(effect.getType());
-                    }
-                }
-
-                // Tamed animals being hurt
-                if (Util.isTamableEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_TAMED_ANIMALS)) {
-                    for (PotionEffect effect : e.getPotion().getEffects()) {
-                        entity.removePotionEffect(effect.getType());
-                    }
-                }
-
-                // Mobs being hurt
-                if (Util.isPassiveEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
-                    for (PotionEffect effect : e.getPotion().getEffects()) {
-                        entity.removePotionEffect(effect.getType());
-                    }
-                }
-
-                // Villagers being hurt
-                if (entity instanceof AbstractVillager && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS)) {
-                    for (PotionEffect effect : e.getPotion().getEffects()) {
-                        entity.removePotionEffect(effect.getType());
-                    }
-                }
+                checkSplashDamage(e, attacker, entity);
             }
+        }
+    }
+
+    private void checkSplashDamage(PotionSplashEvent e, Player attacker, LivingEntity entity) {
+        // Monsters being hurt
+        if (Util.isHostileEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
+            removePotionEffects(e, entity);
+        }
+        // Tamed animals being hurt
+        if (Util.isTamableEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_TAMED_ANIMALS)) {
+            removePotionEffects(e, entity);
+        }
+        // Mobs being hurt
+        if (Util.isPassiveEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
+            removePotionEffects(e, entity);
+        }
+        // Villagers being hurt
+        if (entity instanceof AbstractVillager && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS)) {
+            removePotionEffects(e, entity);
+        }
+    }
+
+    private void removePotionEffects(PotionSplashEvent e, LivingEntity entity) {
+        for (PotionEffect effect : e.getPotion().getEffects()) {
+            entity.removePotionEffect(effect.getType());
         }
     }
 

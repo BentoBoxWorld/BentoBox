@@ -494,6 +494,13 @@ commands:
           &a Clic derecho para decrementar
         unlimited-times: Ilimitado
         maximum-times: Max [number] veces
+        cost: |
+          &a Costo de [prefix_Island]
+          &a Clic izquierdo +1
+          &a Clic derecho -1
+          &a Shift para +/-100
+        no-cost: Gratis
+        cost-amount: 'Costo: [cost]'
     resetflags:
       parameters: '[bandera]'
       description: >-
@@ -660,6 +667,7 @@ commands:
         dimension-done: '&a [prefix_Island] en [world] está construida.'
         done: '&aYa esta hecho! ¡Tu isla está lista y esperándote!'
       pick: '&aElige una isla'
+      cannot-afford: '&c ¡No puedes pagar esto! Costo: [cost]'
       unknown-blueprint: '&cEse esquema no se ha cargado todavía.'
       on-first-login: '&aBienvenido! Comenzaremos a preparar su isla en unos segundos.'
       you-can-teleport-to-your-island: '&aPuedes teletransportarte a tu isla cuando lo desees.'
@@ -984,9 +992,9 @@ protection:
   command-is-banned: El comando está prohibido para los visitantes
   flags:
     ALLAY:
-      name: Interacción con Allay
-      description: Permitir dar y recibir artículos de/para Allay
-      hint: Interacción de Allay deshabilitada
+      name: Interacción con Allay y Copper Golem
+      description: Permitir dar y recibir artículos de/para Allay y Copper Golem
+      hint: Interacción de Allay y Copper Golem deshabilitada
     ANIMAL_NATURAL_SPAWN:
       description: Alternar el desove natural de animales
       name: Engendro natural animal
@@ -1662,14 +1670,10 @@ protection:
         &a
         &a Los miembros de [prefix_Island] aún pierden sus objetos
         &a si mueren en su propio [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: Los visitantes desencadenan asaltos
-      description: |-
-        &a Cambia si los visitantes pueden iniciar  
-        &a una incursión en [prefix_an-island] que están  
-        &a visitando.  
-        &a  
-        &a ¡El efecto de Mal Presagio será eliminado!
+    RAID_TRIGGER:
+      name: Activador de asalto
+      description: Establece el rango mínimo de isla requerido para activar un asalto
+      hint: Activar asalto no permitido
     ENTITY_PORTAL_TELEPORT:
       name: Uso de portales de entidad
       description: |-
@@ -1964,6 +1968,7 @@ panels:
         description: '[description]'
         uses: '&a Usado [number]/[max]'
         unlimited: '&a Usos ilimitados permitidos'
+        cost: '&e Costo: [cost]'
   language:
     title: '&2&l Selecciona tu idioma'
     edited: '&c Cambiado a [lang]'

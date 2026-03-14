@@ -48,7 +48,7 @@ public class AdminInfoCommandTest extends RanksManagerTestSetup {
     @Mock
     private PlayersManager pm;
 
-    private Island island;
+    private Island testIsland;
 
     private AdminInfoCommand iic;
 
@@ -74,7 +74,6 @@ public class AdminInfoCommandTest extends RanksManagerTestSetup {
         when(user.getWorld()).thenReturn(world);
         when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.isPlayer()).thenReturn(true);
-        //user = User.getInstance(player);
         // Set the User class plugin as this one
         User.setPlugin(plugin);
 
@@ -93,13 +92,13 @@ public class AdminInfoCommandTest extends RanksManagerTestSetup {
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Island manager
-        island = new Island(location, uuid, 100);
-        island.setRange(400);
+        testIsland = new Island(location, uuid, 100);
+        testIsland.setRange(400);
         when(location.toVector()).thenReturn(new Vector(1, 2, 3));
         when(plugin.getIslands()).thenReturn(im);
-        Optional<Island> optionalIsland = Optional.of(island);
+        Optional<Island> optionalIsland = Optional.of(testIsland);
         when(im.getIslandAt(any())).thenReturn(optionalIsland);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(testIsland);
 
         // Players manager
         when(plugin.getPlayers()).thenReturn(pm);

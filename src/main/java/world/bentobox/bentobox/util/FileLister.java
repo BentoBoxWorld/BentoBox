@@ -48,6 +48,8 @@ public class FileLister{
         return result;
     }
 
+    // Reflection is required to access JavaPlugin.getFile() which is protected
+    @SuppressWarnings("java:S3011")
     public List<String> listJar(String folderPath) throws IOException {
         List<String> result = new ArrayList<>();
         // Look in the JAR

@@ -5,22 +5,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
 
@@ -43,20 +43,22 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     private static final String DIM_1 = "DIM-1";
     private static final String IN_WORLD = " in world ";
     private static final String WILL_BE_DELETED = " will be deleted";
+    private static final String EXISTS_PREFIX = " (exists=";
+    private static final String PURGE_FOUND = "Purge found ";
     
     private volatile boolean inPurge;
     private boolean toBeConfirmed;
     private User user;
     private Map<Pair<Integer, Integer>, Set<String>> deleteableRegions;
-    private final boolean isNether;
-    private final boolean isEnd;
+    private boolean isNether;
+    private boolean isEnd;
     private int days;
 
     public AdminPurgeRegionsCommand(CompositeCommand parent) {
         super(parent, "regions");
         getAddon().registerListener(this);
-        isNether = getPlugin().getIWM().isNetherGenerate(getWorld()) && getPlugin().getIWM().isNetherIslands(getWorld());
-        isEnd = getPlugin().getIWM().isEndGenerate(getWorld()) && getPlugin().getIWM().isEndIslands(getWorld());
+        // isNether/isEnd are NOT computed here: IWM may not have loaded the addon world
+        // config yet at command-registration time. They are evaluated lazily in findIslands().
     }
 
     @Override
@@ -150,41 +152,73 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     }
 
     private void deletePlayerFromWorldFolder(String islandID) {
-        File base = getWorld().getWorldFolder();
-        File playerData = new File(base, "playerdata");
-        // Get the island from the cache
-        getPlugin().getIslands().getIslandById(islandID).ifPresent(island -> island.getMemberSet().forEach(uuid -> {
-            // Check if the player has any islands left
-            List<Island> memberOf = new ArrayList<>(getIslands().getIslands(getWorld(), uuid));
-            deleteableRegions.values().forEach(ids -> memberOf.removeIf(i -> ids.contains(i.getUniqueId())));
-            if (memberOf.isEmpty()) {
-                // Do not remove this player if they are Op
-                OfflinePlayer p = Bukkit.getOfflinePlayer(uuid);
-                if (p.isOp()) {
-                    return;
-                }
-                // Do not remove if player logged in recently
-                Long lastLogin = getPlugin().getPlayers().getLastLoginTimestamp(uuid);
-                if (lastLogin == null) {
-                    lastLogin = Bukkit.getOfflinePlayer(uuid).getLastSeen();
-                }
-                long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
-                if (lastLogin >= cutoffMillis) {
-                    return;
-                }
-                // Remove the player from the world folder playerdata because they no longer have any island associated with them
-                if (playerData.exists()) {
-                    File playerFile = new File(playerData, uuid + ".dat");
-                    if (playerFile.exists() && !playerFile.delete()) {
-                        getPlugin().logError("Failed to delete player data file: " + playerFile.getAbsolutePath());
-                    }
-                    playerFile = new File(playerData, uuid + ".dat_old");
-                    if (playerFile.exists() && !playerFile.delete()) {
-                        getPlugin().logError("Failed to delete player data backup file: " + playerFile.getAbsolutePath());
-                    }
-                }
+        File playerData = new File(getWorld().getWorldFolder(), "playerdata");
+        getPlugin().getIslands().getIslandById(islandID)
+                .ifPresent(island -> island.getMemberSet()
+                        .forEach(uuid -> maybeDeletePlayerData(uuid, playerData)));
+    }
+
+    private void maybeDeletePlayerData(UUID uuid, File playerData) {
+        List<Island> memberOf = new ArrayList<>(getIslands().getIslands(getWorld(), uuid));
+        deleteableRegions.values().forEach(ids -> memberOf.removeIf(i -> ids.contains(i.getUniqueId())));
+        if (!memberOf.isEmpty()) {
+            return;
+        }
+        if (Bukkit.getOfflinePlayer(uuid).isOp()) {
+            return;
+        }
+        long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
+        if (resolveLastLogin(uuid) >= cutoffMillis) {
+            return;
+        }
+        deletePlayerFiles(uuid, playerData);
+    }
+
+    private long resolveLastLogin(UUID uuid) {
+        Long lastLogin = getPlugin().getPlayers().getLastLoginTimestamp(uuid);
+        return lastLogin != null ? lastLogin : Bukkit.getOfflinePlayer(uuid).getLastSeen();
+    }
+
+    private void deletePlayerFiles(UUID uuid, File playerData) {
+        if (!playerData.exists()) {
+            return;
+        }
+        deletePlayerFile(new File(playerData, uuid + ".dat"), "player data file");
+        deletePlayerFile(new File(playerData, uuid + ".dat_old"), "player data backup file");
+    }
+
+    private void deletePlayerFile(File file, String description) {
+        try {
+            Files.deleteIfExists(file.toPath());
+        } catch (IOException ex) {
+            getPlugin().logError("Failed to delete " + description + ": " + file.getAbsolutePath());
+        }
+    }
+
+    /**
+     * Resolves the base data folder for a world, accounting for the dimension
+     * subfolder that Minecraft uses for non-overworld environments.
+     * <p>
+     * Overworld data lives directly in the world folder, but Nether data lives
+     * in {@code DIM-1/} and End data lives in {@code DIM1/} subfolders - even
+     * when the world has its own separate folder.
+     *
+     * @param world the world to resolve
+     * @return the base folder containing region/, entities/, poi/ subfolders
+     */
+    private File resolveDataFolder(World world) {
+        File worldFolder = world.getWorldFolder();
+        return switch (world.getEnvironment()) {
+            case NETHER -> {
+                File dim = new File(worldFolder, DIM_1);
+                yield dim.isDirectory() ? dim : worldFolder;
             }
-        }));
+            case THE_END -> {
+                File dim = new File(worldFolder, "DIM1");
+                yield dim.isDirectory() ? dim : worldFolder;
+            }
+            default -> worldFolder;
+        };
     }
 
     /**
@@ -198,13 +232,13 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             // Parent folder missing is normal for entities/poi, do not log
             return true;
         }
-        if (file.exists()) {
-            if (!file.delete()) {
-                getPlugin().logError("Failed to delete file: " + file.getAbsolutePath());
-                return false;
-            }
+        try {
+            Files.deleteIfExists(file.toPath());
+            return true;
+        } catch (IOException e) {
+            getPlugin().logError("Failed to delete file: " + file.getAbsolutePath());
+            return false;
         }
-        return true;
     }
 
     /**
@@ -214,7 +248,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      *         due to any file being newer than the cutoff
      */
     private boolean deleteRegionFiles() {
-        if (days <= 0) { 
+        if (days <= 0) {
             getPlugin().logError("Days is somehow zero or negative!");
             return false;
         }
@@ -222,66 +256,37 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
         World world = getWorld();
         File base = world.getWorldFolder();
-        File overworldRegion = new File(base, REGION);
+        File overworldRegion   = new File(base, REGION);
         File overworldEntities = new File(base, ENTITIES);
-        File overworldPoi = new File(base, "poi");
-        File netherRegion    = new File(base, DIM_1 + File.separator + REGION);
-        File netherEntities  = new File(base, DIM_1 + File.separator + ENTITIES);
-        File netherPoi       = new File(base, DIM_1 + File.separator + POI);
-        File endRegion       = new File(base, "DIM1"  + File.separator + REGION);
-        File endEntities     = new File(base, "DIM1"  + File.separator + ENTITIES);
-        File endPoi          = new File(base, "DIM1"  + File.separator + POI);
+        File overworldPoi      = new File(base, POI);
+
+        World netherWorld = getPlugin().getIWM().getNetherWorld(world);
+        File netherBase     = netherWorld != null ? resolveDataFolder(netherWorld) : new File(base, DIM_1);
+        File netherRegion   = new File(netherBase, REGION);
+        File netherEntities = new File(netherBase, ENTITIES);
+        File netherPoi      = new File(netherBase, POI);
+
+        World endWorld = getPlugin().getIWM().getEndWorld(world);
+        File endBase     = endWorld != null ? resolveDataFolder(endWorld) : new File(base, "DIM1");
+        File endRegion   = new File(endBase, REGION);
+        File endEntities = new File(endBase, ENTITIES);
+        File endPoi      = new File(endBase, POI);
 
         // Phase 1: verify none of the files have been updated since the cutoff
         for (Pair<Integer, Integer> coords : deleteableRegions.keySet()) {
-            int x = coords.x();
-            int z = coords.z();
-            String name = "r." + x + "." + z + ".mca";
-
-            File owFile = new File(overworldRegion, name);
-            if (owFile.exists() && getRegionTimestamp(owFile) >= cutoffMillis) {
+            String name = "r." + coords.x() + "." + coords.z() + ".mca";
+            if (isAnyDimensionFresh(name, overworldRegion, netherRegion, endRegion, cutoffMillis)) {
                 return false;
-            }
-            if (isNether) {
-                File nf = new File(netherRegion, name);
-                if (nf.exists() && getRegionTimestamp(nf) >= cutoffMillis) {
-                    return false;
-                }
-            }
-            if (isEnd) {
-                File ef = new File(endRegion, name);
-                if (ef.exists() && getRegionTimestamp(ef) >= cutoffMillis) {
-                    return false;
-                }
             }
         }
 
         // Phase 2: perform deletions
+        DimFolders ow     = new DimFolders(overworldRegion, overworldEntities, overworldPoi);
+        DimFolders nether = new DimFolders(netherRegion,    netherEntities,    netherPoi);
+        DimFolders end    = new DimFolders(endRegion,       endEntities,       endPoi);
         for (Pair<Integer, Integer> coords : deleteableRegions.keySet()) {
-            int x = coords.x();
-            int z = coords.z();
-            String name = "r." + x + "." + z + ".mca";
-
-            boolean allDeleted = true;
-
-            // Overworld
-            allDeleted &= deleteIfExists(new File(overworldRegion, name));
-            allDeleted &= deleteIfExists(new File(overworldEntities, name));
-            allDeleted &= deleteIfExists(new File(overworldPoi, name));
-            // Nether
-            if (isNether) {
-                allDeleted &= deleteIfExists(new File(netherRegion, name));
-                allDeleted &= deleteIfExists(new File(netherEntities, name));
-                allDeleted &= deleteIfExists(new File(netherPoi, name));
-            }
-            // End
-            if (isEnd) {
-                allDeleted &= deleteIfExists(new File(endRegion, name));
-                allDeleted &= deleteIfExists(new File(endEntities, name));
-                allDeleted &= deleteIfExists(new File(endPoi, name));
-            }
-
-            if (!allDeleted) {
+            String name = "r." + coords.x() + "." + coords.z() + ".mca";
+            if (!deleteOneRegion(name, ow, nether, end)) {
                 getPlugin().logError("Could not delete all the region/entity/poi files for some reason");
             }
         }
@@ -289,12 +294,47 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         return true;
     }
 
+    private boolean isFileFresh(File file, long cutoffMillis) {
+        return file.exists() && getRegionTimestamp(file) >= cutoffMillis;
+    }
+
+    private boolean isAnyDimensionFresh(String name, File overworldRegion, File netherRegion,
+            File endRegion, long cutoffMillis) {
+        if (isFileFresh(new File(overworldRegion, name), cutoffMillis)) return true;
+        if (isNether && isFileFresh(new File(netherRegion, name), cutoffMillis)) return true;
+        return isEnd && isFileFresh(new File(endRegion, name), cutoffMillis);
+    }
+
+    /** Groups the three folder types (region, entities, poi) for one world dimension. */
+    private record DimFolders(File region, File entities, File poi) {}
+
+    private boolean deleteOneRegion(String name, DimFolders overworld, DimFolders nether, DimFolders end) {
+        boolean owRegionOk   = deleteIfExists(new File(overworld.region(),   name));
+        boolean owEntitiesOk = deleteIfExists(new File(overworld.entities(), name));
+        boolean owPoiOk      = deleteIfExists(new File(overworld.poi(),      name));
+        boolean ok = owRegionOk && owEntitiesOk && owPoiOk;
+        if (isNether) {
+            ok &= deleteIfExists(new File(nether.region(),   name));
+            ok &= deleteIfExists(new File(nether.entities(), name));
+            ok &= deleteIfExists(new File(nether.poi(),      name));
+        }
+        if (isEnd) {
+            ok &= deleteIfExists(new File(end.region(),   name));
+            ok &= deleteIfExists(new File(end.entities(), name));
+            ok &= deleteIfExists(new File(end.poi(),      name));
+        }
+        return ok;
+    }
+
     /**
-     * This method is run async! 
+     * This method is run async!
      * @param world world
      * @param days days old
      */
     private void findIslands(World world, int days) {
+        // Evaluate here, not in the constructor - IWM config is loaded by the time a command runs
+        isNether = getPlugin().getIWM().isNetherGenerate(world) && getPlugin().getIWM().isNetherIslands(world);
+        isEnd = getPlugin().getIWM().isEndGenerate(world) && getPlugin().getIWM().isEndIslands(world);
         try {
             // Get the grid that covers this world
             IslandGrid islandGrid = getPlugin().getIslands().getIslandCache().getIslandGrid(world);
@@ -302,28 +342,59 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                 Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
                 return;
             }
-            TreeMap<Integer, TreeMap<Integer, IslandData>> grid = islandGrid.getGrid();
-            if (grid == null) {
-                // There are no islands in this world yet!
-                Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
-                return;
-            }
-
             // Find old regions
             List<Pair<Integer, Integer>> oldRegions = this.findOldRegions(days);
             // Get islands that are associated with these regions
-            deleteableRegions = this.mapIslandsToRegions(oldRegions, grid);
-            // Remove any region whose island‐set contains at least one island that either isn’t found or fails the deletion check:
-            deleteableRegions.values().removeIf(islandIds ->
-            islandIds.stream()
-            .map(getPlugin().getIslands()::getIslandById)         // Stream<Optional<Island>>
-            .anyMatch(optIsland -> 
-            // If missing (empty) → treat as undeletable (true) - this is a bit conservative but maybe the database is messed up
-            // If present, checkIsland(...) == true means “cannot delete”
-            optIsland.map(this::canDeleteIsland)
-            .orElse(true)
-                    )
-                    );
+            deleteableRegions = this.mapIslandsToRegions(oldRegions, islandGrid);
+            // Filter regions: remove any whose island-set contains at least one island that cannot be deleted.
+            // Track why islands are blocked so we can show a summary report.
+            int islandsOverLevel = 0;
+            int islandsPurgeProtected = 0;
+            int regionsBlockedByLevel = 0;
+            int regionsBlockedByProtection = 0;
+
+            var iter = deleteableRegions.entrySet().iterator();
+            while (iter.hasNext()) {
+                var entry = iter.next();
+                boolean remove = false;
+                boolean regionHasLevelBlock = false;
+                boolean regionHasPurgeBlock = false;
+                for (String id : entry.getValue()) {
+                    Optional<Island> opt = getPlugin().getIslands().getIslandById(id);
+                    if (opt.isEmpty()) {
+                        remove = true;
+                        continue;
+                    }
+                    Island isl = opt.get();
+                    if (canDeleteIsland(isl)) {
+                        remove = true;
+                        if (isl.isPurgeProtected()) {
+                            islandsPurgeProtected++;
+                            regionHasPurgeBlock = true;
+                        }
+                        if (isLevelTooHigh(isl)) {
+                            islandsOverLevel++;
+                            regionHasLevelBlock = true;
+                        }
+                    }
+                }
+                if (remove) {
+                    iter.remove();
+                    if (regionHasLevelBlock) regionsBlockedByLevel++;
+                    if (regionHasPurgeBlock) regionsBlockedByProtection++;
+                }
+            }
+
+            // Summary report
+            if (islandsOverLevel > 0) {
+                getPlugin().log("Purge: " + islandsOverLevel + " island(s) exceed the level threshold of "
+                        + getPlugin().getSettings().getIslandPurgeLevel()
+                        + " - preventing " + regionsBlockedByLevel + " region(s) from being purged");
+            }
+            if (islandsPurgeProtected > 0) {
+                getPlugin().log("Purge: " + islandsPurgeProtected + " island(s) are purge-protected"
+                        + " - preventing " + regionsBlockedByProtection + " region(s) from being purged");
+            }
             // At this point any islands that might be deleted are in the cache, and so we can freely access them
             // 1) Pull out all island IDs,  
             // 2) resolve to Optional<Island>,  
@@ -399,35 +470,45 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     }
 
     /**
-     * Check if an island can be deleted or not. Purge protected, spawn, or unowned islands cannot be deleted.
-     * Islands over a certain level cannot be deleted.
+     * Check if an island cannot be deleted. Purge protected, spawn, or unowned islands cannot be deleted.
+     * Islands whose members recently logged in, or that exceed the level threshold, cannot be deleted.
      * @param island island
-     * @return true means “cannot delete”
+     * @return true means "cannot delete"
      */
     private boolean canDeleteIsland(Island island) {
-        // If the island is deletable, it can be deleted at any time
+        // If the island is marked deletable it can always be purged
         if (island.isDeletable()) {
             return false;
         }
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
-        // Check if owner or team members logged in recently
-        if (island.getMemberSet().stream().map(uuid -> {
+        // Block if ANY member (owner or team) has logged in within the cutoff window
+        boolean recentLogin = island.getMemberSet().stream().anyMatch(uuid -> {
             Long lastLogin = getPlugin().getPlayers().getLastLoginTimestamp(uuid);
             if (lastLogin == null) {
                 lastLogin = Bukkit.getOfflinePlayer(uuid).getLastSeen();
             }
             return lastLogin >= cutoffMillis;
-            }).findFirst().orElse(false)) {
-            return false;
-        }
-        // Level check 
-        boolean levelCheck = getPlugin().getAddonsManager().getAddonByName("Level").map(l -> 
-        ((Level) l).getIslandLevel(getWorld(), island.getOwner()) >= getPlugin().getSettings().getIslandPurgeLevel()).orElse(false);
-        if (levelCheck) {
-            // Island level is too high
+        });
+        if (recentLogin) {
             return true;
         }
-        return island.isPurgeProtected() || island.isSpawn() || !island.isOwned(); 
+        if (isLevelTooHigh(island)) {
+            return true;
+        }
+        return island.isPurgeProtected() || island.isSpawn() || !island.isOwned();
+    }
+
+    /**
+     * Returns true if the island's level meets or exceeds the configured purge threshold.
+     * Returns false when the Level addon is not present.
+     * @param island island to check
+     * @return true if the island level is too high to purge
+     */
+    private boolean isLevelTooHigh(Island island) {
+        return getPlugin().getAddonsManager().getAddonByName("Level")
+                .map(l -> ((Level) l).getIslandLevel(getWorld(), island.getOwner())
+                        >= getPlugin().getSettings().getIslandPurgeLevel())
+                .orElse(false);
     }
 
     /**
@@ -447,120 +528,118 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      *         the age criteria
      */
     private List<Pair<Integer, Integer>> findOldRegions(int days) {
-        List<Pair<Integer, Integer>> regions = new ArrayList<>();
-
-        // Base folders
         World world = this.getWorld();
         File worldDir = world.getWorldFolder();
         File overworldRegion = new File(worldDir, REGION);
-        File netherRegion    = new File(worldDir, DIM_1 + File.separator + REGION);
-        File endRegion       = new File(worldDir, "DIM1"  + File.separator + REGION);
 
-        // Compute cutoff timestamp
+        World netherWorld = getPlugin().getIWM().getNetherWorld(world);
+        File netherBase = netherWorld != null ? resolveDataFolder(netherWorld) : new File(worldDir, DIM_1);
+        File netherRegion = new File(netherBase, REGION);
+
+        World endWorld = getPlugin().getIWM().getEndWorld(world);
+        File endBase = endWorld != null ? resolveDataFolder(endWorld) : new File(worldDir, "DIM1");
+        File endRegion = new File(endBase, REGION);
+
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
 
-        // List all .mca files in the overworld region folder
-        File[] files = overworldRegion.listFiles((dir, name) -> name.endsWith(".mca"));
-        if (files == null) return regions;
+        logRegionFolderPaths(overworldRegion, netherRegion, endRegion, world);
 
-        for (File owFile : files) {
-            // Skip if the overworld file is too recent
-            if (getRegionTimestamp(owFile) >= cutoffMillis) continue;
+        // Collect all candidate region names from overworld, nether, and end.
+        // This ensures orphaned nether/end files are caught even if the overworld
+        // file was already deleted by a previous (buggy) purge run.
+        Set<String> candidateNames = collectCandidateNames(overworldRegion, netherRegion, endRegion);
+        getPlugin().log("Purge total candidate region coordinates: " + candidateNames.size());
+        getPlugin().log("Purge checking candidate region(s) against island data, please wait...");
 
-            // Parse region coords from filename "r.<x>.<z>.mca"
-            String name = owFile.getName(); // e.g. "r.-2.3.mca"
-            String coordsPart = name.substring(2, name.length() - 4);
-            String[] parts = coordsPart.split("\\.");
-            if (parts.length != 2) continue;  // malformed
-
-            int rx, rz;
-            try {
-                rx = Integer.parseInt(parts[0]);
-                rz = Integer.parseInt(parts[1]);
-            } catch (NumberFormatException ex) {
-                continue;
-            }
-
-            boolean include = true;
-
-            // If nether flag is set, require nether region file also older than cutoff
-            if (isNether) {
-                File netherFile = new File(netherRegion, name);
-                if (!netherFile.exists() || getRegionTimestamp(netherFile) >= cutoffMillis) {
-                    include = false;
-                }
-            }
-
-            // If end flag is set, require end region file also older than cutoff
-            if (isEnd) {
-                File endFile = new File(endRegion, name);
-                if (!endFile.exists() || getRegionTimestamp(endFile) >= cutoffMillis) {
-                    include = false;
-                }
-            }
-
-            if (include) {
-                regions.add(new Pair<>(rx, rz));
+        List<Pair<Integer, Integer>> regions = new ArrayList<>();
+        for (String name : candidateNames) {
+            Pair<Integer, Integer> coords = parseRegionCoords(name);
+            if (coords == null) continue;
+            if (!isAnyDimensionFresh(name, overworldRegion, netherRegion, endRegion, cutoffMillis)) {
+                regions.add(coords);
             }
         }
-
         return regions;
     }
 
+    private void logRegionFolderPaths(File overworldRegion, File netherRegion, File endRegion, World world) {
+        getPlugin().log("Purge region folders - Overworld: " + overworldRegion.getAbsolutePath()
+                + EXISTS_PREFIX + overworldRegion.isDirectory() + ")");
+        if (isNether) {
+            getPlugin().log("Purge region folders - Nether: " + netherRegion.getAbsolutePath()
+                    + EXISTS_PREFIX + netherRegion.isDirectory() + ")");
+        } else {
+            getPlugin().log("Purge region folders - Nether: disabled (isNetherGenerate="
+                    + getPlugin().getIWM().isNetherGenerate(world) + ", isNetherIslands="
+                    + getPlugin().getIWM().isNetherIslands(world) + ")");
+        }
+        if (isEnd) {
+            getPlugin().log("Purge region folders - End: " + endRegion.getAbsolutePath()
+                    + EXISTS_PREFIX + endRegion.isDirectory() + ")");
+        } else {
+            getPlugin().log("Purge region folders - End: disabled (isEndGenerate="
+                    + getPlugin().getIWM().isEndGenerate(world) + ", isEndIslands="
+                    + getPlugin().getIWM().isEndIslands(world) + ")");
+        }
+    }
+
+    private Set<String> collectCandidateNames(File overworldRegion, File netherRegion, File endRegion) {
+        Set<String> names = new HashSet<>();
+        addFileNames(names, overworldRegion.listFiles((dir, name) -> name.endsWith(".mca")), "overworld");
+        if (isNether) {
+            addFileNames(names, netherRegion.listFiles((dir, name) -> name.endsWith(".mca")), "nether");
+        }
+        if (isEnd) {
+            addFileNames(names, endRegion.listFiles((dir, name) -> name.endsWith(".mca")), "end");
+        }
+        return names;
+    }
+
+    private void addFileNames(Set<String> names, File[] files, String dimension) {
+        if (files != null) {
+            for (File f : files) names.add(f.getName());
+        }
+        getPlugin().log(PURGE_FOUND + (files != null ? files.length : 0) + " " + dimension + " region files");
+    }
+
+    private Pair<Integer, Integer> parseRegionCoords(String name) {
+        // Parse region coords from filename "r.<x>.<z>.mca"
+        String coordsPart = name.substring(2, name.length() - 4);
+        String[] parts = coordsPart.split("\\.");
+        if (parts.length != 2) return null;
+        try {
+            return new Pair<>(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
     /**
-     * Maps each old region to the set of island IDs whose island‐squares overlap it.
+     * Maps each old region to the set of island IDs whose island-squares overlap it.
      *
      * <p>Each region covers blocks
-     * [regionX*512 .. regionX*512 + 511] × [regionZ*512 .. regionZ*512 + 511].</p>
+     * [regionX*512 .. regionX*512 + 511] x [regionZ*512 .. regionZ*512 + 511].</p>
      *
-     * <p>Each IslandData provides:
-     * <ul>
-     *   <li>{@code minX}, {@code minZ}: the southwest corner of its square</li>
-     *   <li>{@code range}: half the side‐length of the island square</li>
-     *   <li>{@code id}: the island’s unique identifier</li>
-     * </ul>
-     * The island’s maxX = minX + 2*range, maxZ = minZ + 2*range.</p>
-     *
-     * @param oldRegions the list of region coordinates to process
-     * @param grid       a 2D TreeMap mapping centreX → (centreZ → IslandData)
-     * @return           a map from region coords to the set of overlapping island IDs
+     * @param oldRegions  the list of region coordinates to process
+     * @param islandGrid  the spatial grid to query
+     * @return            a map from region coords to the set of overlapping island IDs
      */
     private Map<Pair<Integer, Integer>, Set<String>> mapIslandsToRegions(
             List<Pair<Integer, Integer>> oldRegions,
-            TreeMap<Integer, TreeMap<Integer, IslandData>> grid
+            IslandGrid islandGrid
             ) {
-        final int BLOCKS_PER_REGION = 512;
+        final int blocksPerRegion = 512;
         Map<Pair<Integer, Integer>, Set<String>> regionToIslands = new HashMap<>();
 
         for (Pair<Integer, Integer> region : oldRegions) {
-            int rX = region.x();
-            int rZ = region.z();
-
-            int regionMinX = rX * BLOCKS_PER_REGION;
-            int regionMinZ = rZ * BLOCKS_PER_REGION;
-            int regionMaxX = regionMinX + BLOCKS_PER_REGION - 1;
-            int regionMaxZ = regionMinZ + BLOCKS_PER_REGION - 1;
+            int regionMinX = region.x() * blocksPerRegion;
+            int regionMinZ = region.z() * blocksPerRegion;
+            int regionMaxX = regionMinX + blocksPerRegion - 1;
+            int regionMaxZ = regionMinZ + blocksPerRegion - 1;
 
             Set<String> ids = new HashSet<>();
-
-            // iterate all islands in the grid
-            for (Map.Entry<Integer, TreeMap<Integer, IslandData>> xEntry : grid.entrySet()) {
-                for (IslandData data : xEntry.getValue().values()) {
-                    int islandMinX = data.minX();
-                    int islandMinZ = data.minZ();
-                    int islandMaxX = islandMinX + 2 * data.range();
-                    int islandMaxZ = islandMinZ + 2 * data.range();
-
-                    // overlap test
-                    boolean overlaps = !(islandMaxX < regionMinX ||
-                            islandMinX > regionMaxX ||
-                            islandMaxZ < regionMinZ ||
-                            islandMinZ > regionMaxZ);
-
-                    if (overlaps) {
-                        ids.add(data.id());
-                    }
-                }
+            for (IslandData data : islandGrid.getIslandsInBounds(regionMinX, regionMinZ, regionMaxX, regionMaxZ)) {
+                ids.add(data.id());
             }
 
             // Always add the region, even if ids is empty

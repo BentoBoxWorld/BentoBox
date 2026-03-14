@@ -497,6 +497,13 @@ commands:
           &a Faceți clic dreapta pentru a reduce
         unlimited-times: Nelimitat
         maximum-times: Max [număr] ori
+        cost: |
+          &a Costul [prefix_Island]
+          &a Clic stânga +1
+          &a Clic dreapta -1
+          &a Shift pentru +/-100
+        no-cost: Gratuit
+        cost-amount: 'Cost: [cost]'
     resetflags:
       parameters: '[pavilion]'
       description: >-
@@ -663,6 +670,7 @@ commands:
         dimension-done: '&o Insulă în [lume] este construită.'
         done: '&a Gata! Insula ta este gata și te așteaptă!'
       pick: '&2 Alegeți o insulă'
+      cannot-afford: '&c Nu vă puteți permite acest lucru! Cost: [cost]'
       unknown-blueprint: '&c Acel plan nu a fost încă încărcat.'
       on-first-login: '&o Bun venit! Vom începe să vă pregătim insula în câteva secunde.'
       you-can-teleport-to-your-island: '&a Vă puteți teleporta pe insula dvs. când doriți.'
@@ -990,9 +998,9 @@ protection:
   command-is-banned: Comanda este interzisă vizitatorilor
   flags:
     ALLAY:
-      name: Aly interactiunea
-      description: Permiteți să dați și să luați articole către/de la Allay
-      hint: Interacțiunea lui Allay a fost dezactivată
+      name: Interacțiunea Allay și Copper Golem
+      description: Permiteți să dați și să luați articole către/de la Allay și Copper Golem
+      hint: Interacțiunea Allay și Copper Golem a fost dezactivată
     ANIMAL_NATURAL_SPAWN:
       description: Comutați reproducerea animalelor naturale
       name: Spawn natural animal
@@ -1698,14 +1706,10 @@ protection:
         &o
         Membrii &a Island încă își pierd obiectele
         &a dacă mor pe propria lor insulă!
-    VISITOR_TRIGGER_RAID:
-      name: Vizitatorii declanșează raiduri
-      description: |-
-        &a Comută dacă vizitatorii pot începe
-        &a un raid pe o insulă care sunt
-        &o vizită.
-        &o
-        &efectul Bad Omen va fi eliminat!
+    RAID_TRIGGER:
+      name: Declanșare raid
+      description: Setează rangul minim al insulei necesar pentru a declanșa un raid
+      hint: Declanșarea raidului nu este permisă
     ENTITY_PORTAL_TELEPORT:
       name: Utilizarea portalului entității
       description: |-
@@ -2022,6 +2026,7 @@ panels:
         description: '[descriere]'
         uses: '&a Folosit [număr]/[max]'
         unlimited: '&a Utilizări nelimitate permise'
+        cost: '&e Cost: [cost]'
   language:
     title: '&2&l Selectați limba dvs'
     edited: '&c Schimbat în [lang]'

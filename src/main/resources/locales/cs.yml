@@ -477,6 +477,13 @@ commands:
           &a Kliknutím pravým tlačítkem pravým tlačítkem
         unlimited-times: Neomezený
         maximum-times: Max [number] krát
+        cost: |
+          &a Cena [prefix_Island]
+          &a Levý klik +1
+          &a Pravý klik -1
+          &a Shift pro +/-100
+        no-cost: Zdarma
+        cost-amount: 'Cena: [cost]'
     resetflags:
       parameters: '[flag]'
       description: Obnov vlaječky všech ostrovů na výchozí nastavení v souboru config.yml
@@ -631,6 +638,7 @@ commands:
         dimension-done: '& Ostrov ve [world] je postaven.'
         done: '&a Hotovo! Tvůj ostrov je připraven a čeká na tebe!'
       pick: '&2 Zvol svůj ostrov'
+      cannot-afford: '&c Nemůžeš si to dovolit! Cena: [cost]'
       unknown-blueprint: '&c Tato předloha dosud nebyla načtena.'
       on-first-login: '&a Vítej! Za pár sekund začneme připravovat tvůj ostrov.'
       you-can-teleport-to-your-island: '&a Můžeš se teleportovat na svůj ostrov, kdy budeš chtít.'
@@ -943,9 +951,9 @@ protection:
   command-is-banned: Příkaz je pro návštěvníky zakázán
   flags:
     ALLAY:
-      name: Allay interakce
-      description: Povolit dávání a odebírání předmětů do/z Allay
-      hint: Interakce Allay zakázána
+      name: Allay a Copper Golem interakce
+      description: Povolit dávání a odebírání předmětů do/z Allay a Copper Golem
+      hint: Interakce Allay a Copper Golem zakázána
     ANIMAL_NATURAL_SPAWN:
       description: Přepnout přirozené tření zvířat
       name: Přírodní potěr zvířat
@@ -1620,14 +1628,10 @@ protection:
         &A
         Členové &a Island stále ztrácejí své předměty
         &a pokud zemřou na svém vlastním ostrově!
-    VISITOR_TRIGGER_RAID:
-      name: Návštěvníci spouští nájezdy
-      description: |-
-        &a Přepíná, zda mohou návštěvníci začít
-        &a nájezd na ostrov, kterým jsou
-        & návštěva.
-        &A
-        &Efekt Bad Omen bude odstraněn!
+    RAID_TRIGGER:
+      name: Spuštění nájezdu
+      description: Nastavuje minimální rank ostrova potřebný ke spuštění nájezdu
+      hint: Spuštění nájezdu není povoleno
     ENTITY_PORTAL_TELEPORT:
       name: Použití portálu entity
       description: |-
@@ -1931,6 +1935,7 @@ panels:
         description: '[description]'
         uses: '&a Používá se [number]/[max]'
         unlimited: '&a Neomezená použití povolená'
+        cost: '&e Cena: [cost]'
   language:
     title: '&2&l Vyberte svůj jazyk'
     edited: '&c Změněno na [lang]'

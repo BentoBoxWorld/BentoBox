@@ -57,7 +57,7 @@ public class FlagTest extends RanksManagerTestSetup {
     private Listener listener;
     private Map<String, Boolean> worldFlags;
     @Mock
-    private LocalesManager lm;
+    private LocalesManager testLm;
 
     @Override
     @BeforeEach
@@ -82,9 +82,9 @@ public class FlagTest extends RanksManagerTestSetup {
         when(Bukkit.getItemFactory()).thenReturn(itemF);
         
         // Locales manager
-        when(plugin.getLocalesManager()).thenReturn(lm);
+        when(plugin.getLocalesManager()).thenReturn(testLm);
         // Setting US text is successful
-        when(lm.setTranslation(eq(Locale.US), anyString(), anyString())).thenReturn(true);
+        when(testLm.setTranslation(eq(Locale.US), anyString(), anyString())).thenReturn(true);
 
         // Flag
         f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).type(Flag.Type.PROTECTION).listener(listener).build();
@@ -351,7 +351,7 @@ public class FlagTest extends RanksManagerTestSetup {
         when(im.getIslandAt(any(Location.class))).thenReturn(oL);
 
         RanksManager rm = mock(RanksManager.class);
-        mockedRanksManager.when(() -> RanksManager.getInstance()).thenReturn(rm);
+        mockedRanksManager.when(RanksManager::getInstance).thenReturn(rm);
         when(rm.getRank(RanksManager.VISITOR_RANK)).thenReturn("Visitor");
         when(rm.getRank(RanksManager.OWNER_RANK)).thenReturn("Owner");
 

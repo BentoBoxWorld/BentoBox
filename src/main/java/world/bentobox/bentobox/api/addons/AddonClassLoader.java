@@ -6,11 +6,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -42,7 +42,7 @@ public class AddonClassLoader extends URLClassLoader {
     /**
      * A cache of classes that have been loaded by this class loader.
      */
-    private final Map<String, Class<?>> classes = new HashMap<>();
+    private final Map<String, Class<?>> classes = new ConcurrentHashMap<>();
     /**
      * The addon instance that was loaded by this class loader.
      */
@@ -218,28 +218,30 @@ public class AddonClassLoader extends URLClassLoader {
         if (name.startsWith("world.bentobox.bentobox")) {
             return null;
         }
-        // Check local cache first.
+        // Check local cache first. Avoid computeIfAbsent: super.findClass() triggers recursive
+        // class loading which would call findClass() again, causing ConcurrentHashMap to throw
+        // IllegalStateException: Recursive update.
         Class<?> result = classes.get(name);
+        if (result != null) {
+            return result;
+        }
+        // Check global cache for classes from other addons.
+        if (checkGlobal) {
+            result = loader.getClassByName(name);
+        }
         if (result == null) {
-            // Check global cache for classes from other addons.
-            if (checkGlobal) {
-                result = loader.getClassByName(name);
+            // Try to find the class in this addon's jar.
+            try {
+                result = super.findClass(name);
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
+                // Do nothing. The class is not in this jar.
             }
-
-            if (result == null) {
-                // Try to find the class in this addon's jar.
-                try {
-                    result = super.findClass(name);
-                } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                    // Do nothing. The class is not in this jar.
-                }
-                if (result != null) {
-                    // Class found in this addon's jar, so add it to the global cache.
-                    loader.setClass(name, result);
-
-                }
+            if (result != null) {
+                // Class found in this addon's jar, so add it to the global cache.
+                loader.setClass(name, result);
             }
-            // Add the class to the local cache.
+        }
+        if (result != null) {
             classes.put(name, result);
         }
         return result;

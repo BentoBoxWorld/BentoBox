@@ -101,10 +101,13 @@ public class IslandGoCommand extends DelayedTeleportCommand {
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        // Get a map of potential names - this includes island names and home names
         Map<String, IslandInfo> names = getNameIslandMap(user, getWorld());
-        // Check if the home is known
+        // Check if the name is known if one is given
         if (!args.isEmpty()) {
+            // Assemble the arguments into one string
             final String name = String.join(" ", args);
+            // If the name is not in the list
             if (!names.containsKey(name)) {
                 // Failed home name check
                 user.sendMessage("commands.island.go.unknown-home");
@@ -112,11 +115,13 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                 names.keySet().forEach(n -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, n));
                 return false;
             } else {
+                // We know where this location is. Now work out if it's an island name or a home name
                 IslandInfo info = names.get(name);
                 getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
                 if (!info.islandName) {
-                    this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), name)
-                            .thenAccept((r) -> {
+                    // This is a home name, not an island name
+                    this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), name) // Teleport to the named home for this player
+                            .thenAccept(r -> {
                                 if (r) {
                                     // Success
                                     getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
@@ -127,8 +132,12 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                             }));
                     return true;
                 }
+               // Not a home name, an island name, so teleport to the island
+                this.delayCommand(user, () -> getIslands().homeTeleportAsync(info.island(), user));
+                return true;
             }
         }
+        
         this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer()));
         return true;
     }
@@ -151,7 +160,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         }
         return false;
     }
-    
+
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.getLast() : "";
@@ -164,7 +173,15 @@ public class IslandGoCommand extends DelayedTeleportCommand {
      * Record to store island information and whether the name refers to
      * an island name or a home location.
      */
-    public record IslandInfo(Island island, boolean islandName) {
+    public record IslandInfo(
+            /**
+             * The island
+             */
+            Island island, 
+            /**
+             * True if this is an island name as opposed to a home name
+             */
+            boolean islandName) {
     }
 
     /**
@@ -197,7 +214,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
             }
             // Add homes. Homes do not need an island specified
             island.getHomes().keySet().stream().filter(n -> !n.isBlank())
-                    .forEach(n -> islandMap.put(n, new IslandInfo(island, false)));
+            .forEach(n -> islandMap.put(n, new IslandInfo(island, false)));
         }
 
         return islandMap;

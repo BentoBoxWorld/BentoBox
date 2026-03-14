@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
@@ -107,7 +107,7 @@ public class ObsidianScoopingListener extends FlagListener {
     private void givePlayerLava(Player player, Block b, ItemStack bucket) {
         // Remove one empty bucket and add a lava bucket to the player's inventory
         bucket.setAmount(bucket.getAmount() - 1);
-        HashMap<Integer, ItemStack> map = player.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
+        Map<Integer, ItemStack> map = player.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
         if (!map.isEmpty()) {
             map.values().forEach(i -> player.getWorld().dropItem(player.getLocation(), i));
         }

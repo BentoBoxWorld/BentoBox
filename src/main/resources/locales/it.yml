@@ -512,6 +512,13 @@ commands:
           &a Clicca destro per decrementare
         unlimited-times: Illimitato
         maximum-times: Massimo [number] volte
+        cost: |
+          &a Costo [prefix_Island]
+          &a Clic sinistro +1
+          &a Clic destro -1
+          &a Shift per +/-100
+        no-cost: Gratuito
+        cost-amount: 'Costo: [cost]'
     resetflags:
       parameters: '[flag]'
       description: Reimposta le impostazioni di tutte le isole a quelle in config.yml
@@ -672,6 +679,7 @@ commands:
         dimension-done: '&a [prefix_Island] in [world] è costruita.'
         done: '&a Fatto! La tua isola è pronta e ti aspetta!'
       pick: '&aScegli un''isola'
+      cannot-afford: '&c Non puoi permettertelo! Costo: [cost]'
       unknown-blueprint: '&cQuella blueprint non è stata ancora caricata.'
       on-first-login: '&a Benvenuto! La tua isola personale sarà pronta tra qualche secondo.'
       you-can-teleport-to-your-island: '&a Puoi teletrasportarti alla isola quando puoi.'
@@ -993,9 +1001,9 @@ protection:
   command-is-banned: Il comando è bannato per i visitatori
   flags:
     ALLAY:
-      name: Interazione con Allay
-      description: Consenti di dare e prendere oggetti da/verso [Allay]
-      hint: Interazione con l'Allay disabilitata
+      name: Interazione con Allay e Copper Golem
+      description: Consenti di dare e prendere oggetti da/verso Allay e Copper Golem
+      hint: Interazione con Allay e Copper Golem disabilitata
     ANIMAL_NATURAL_SPAWN:
       description: Attiva o disattiva la generazione naturale degli animali
       name: Animale spawn naturale
@@ -1674,14 +1682,10 @@ protection:
         &a
         &a I membri di [prefix_Island] perdono comunque i loro oggetti
         &a se muoiono nella propria [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: I visitatori attivano le incursioni
-      description: |-
-        &a Attiva se i visitatori possono avviare
-        &a una razzia su [prefix_an-island] che stanno
-        &a visitando.
-        &a
-        &a L'effetto di Cattivo Presagio sarà rimosso!
+    RAID_TRIGGER:
+      name: Attivazione incursione
+      description: Imposta il rango minimo dell'isola richiesto per attivare un'incursione
+      hint: Attivazione dell'incursione non consentita
     ENTITY_PORTAL_TELEPORT:
       name: Utilizzo del portale entità
       description: |-
@@ -1979,6 +1983,7 @@ panels:
         description: '[description]'
         uses: '&a Usati [number]/[max]'
         unlimited: '&a Utilizzi illimitati consentiti'
+        cost: '&e Costo: [cost]'
   language:
     title: '&2&l Seleziona la tua lingua'
     edited: '&c Cambiato in [lang]'

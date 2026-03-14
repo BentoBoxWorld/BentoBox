@@ -360,125 +360,102 @@ public class LanguagePanel extends AbstractPanel
     {
         if (locale == null)
         {
-            // return as locale is null. Empty button will be created.
             return null;
         }
 
         final String reference = "panels.language.buttons.language.";
-
-        // Get settings for island.
         PanelItemBuilder builder = new PanelItemBuilder();
-
         BentoBoxLocale language = this.plugin.getLocalesManager().getLanguages().get(locale);
+        String displayName = StringUtils.capitalize(locale.getDisplayName(this.user.getLocale()));
 
-        if (template.icon() != null)
-        {
+        // Icon
+        if (template.icon() != null) {
             builder.icon(template.icon().clone());
-        }
-        else
-        {
+        } else {
             builder.icon(Objects.requireNonNullElseGet(language.getBanner(),
                     () -> new ItemStack(Material.WHITE_BANNER, 1)));
         }
 
-        if (template.title() != null)
-        {
+        // Title
+        if (template.title() != null) {
             builder.name(this.user.getTranslation(this.command.getWorld(), template.title(),
-                    TextVariables.NAME, StringUtils.capitalize(locale.getDisplayName(this.user.getLocale()))));
-        }
-        else
-        {
+                    TextVariables.NAME, displayName));
+        } else {
             builder.name(this.user.getTranslation(reference + "name",
-                    TextVariables.NAME, StringUtils.capitalize(locale.getDisplayName(this.user.getLocale()))));
+                    TextVariables.NAME, displayName));
         }
 
-        final StringBuilder authors = new StringBuilder();
-        authors.append(this.user.getTranslation(reference + "authors"));
+        // Description
+        builder.description(buildLocaleDescription(template, reference, language, locale));
 
-        for (String author : language.getAuthors())
-        {
-            authors.append("\n").append(this.user.getTranslation(reference + "author", TextVariables.NAME, author));
-        }
-
-        final StringBuilder selected = new StringBuilder();
-
-        if (this.user.getLocale().equals(locale))
-        {
-            selected.append(this.user.getTranslation(reference + "selected"));
-        }
-
-        String descriptionText;
-
-        if (template.description() != null)
-        {
-            descriptionText = this.user.getTranslationOrNothing(template.description(),
-                    AUTHORS, authors.toString(), SELECTED, selected.toString());
-        }
-        else
-        {
-            descriptionText = this.user.getTranslationOrNothing(reference + "description",
-                    AUTHORS, authors.toString(), SELECTED, selected.toString());
-        }
-
-        descriptionText = descriptionText.replaceAll("(?m)^[ \\t]*\\r?\\n", "").
-                replaceAll("(?<!\\\\)\\|", "\n").replaceAll("\\\\\\|", "|");
-
-        builder.description(descriptionText);
-
-        // Display actions only for non-selected locales.
-        List<ItemTemplateRecord.ActionRecords> actions = template.actions().stream().
-                filter(action -> !this.user.getLocale().equals(locale)
+        // Actions and click handler
+        List<ItemTemplateRecord.ActionRecords> actions = template.actions().stream()
+                .filter(action -> !this.user.getLocale().equals(locale)
                         && (SELECT_ACTION.equalsIgnoreCase(action.actionType())
                                 || COMMANDS_ACTION.equalsIgnoreCase(action.actionType())))
                 .toList();
 
-        // Add ClickHandler
-        builder.clickHandler((panel, user, clickType, i) ->
-        {
-            actions.forEach(action -> {
-                if (clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
-                {
-                    if (SELECT_ACTION.equalsIgnoreCase(action.actionType()))
-                    {
-                        this.plugin.getPlayers().setLocale(this.user.getUniqueId(), locale.toLanguageTag());
-                        this.user.sendMessage("panels.language.edited", "[lang]",
-                                WordUtils.capitalize(locale.getDisplayName(this.user.getLocale())));
-
-                        // Rebuild panel
-                        this.build();
-                    }
-                    else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType()))
-                    {
-                        Util.runCommands(user,
-                                Arrays.stream(action.content()
-                                        .replaceAll(Pattern.quote(TextVariables.LABEL), this.command.getTopLabel())
-                                        .split("\n")).
-                                toList(),
-                                "CHANGE_LOCALE_COMMANDS");
-                    }
-                }
-            });
-
-            // Always return true.
+        builder.clickHandler((panel, user, clickType, i) -> {
+            handleLocaleClick(actions, clickType, locale, user);
             return true;
         });
 
-        // Collect tooltips.
-        List<String> tooltips = actions.stream().
-                filter(action -> action.tooltip() != null)
+        appendTooltips(builder, actions);
+        return builder.build();
+    }
+
+    private String buildLocaleDescription(ItemTemplateRecord template, String reference,
+            BentoBoxLocale language, Locale locale) {
+        StringBuilder authors = new StringBuilder();
+        authors.append(this.user.getTranslation(reference + "authors"));
+        for (String author : language.getAuthors()) {
+            authors.append("\n").append(this.user.getTranslation(reference + "author", TextVariables.NAME, author));
+        }
+
+        String selected = this.user.getLocale().equals(locale)
+                ? this.user.getTranslation(reference + "selected") : "";
+
+        String descKey = template.description() != null ? template.description() : reference + "description";
+        String descriptionText = this.user.getTranslationOrNothing(descKey,
+                AUTHORS, authors.toString(), SELECTED, selected);
+
+        return descriptionText.replaceAll("(?m)^[ \\t]*\\r?\\n", "")
+                .replaceAll("(?<!\\\\)\\|", "\n").replace("\\|", "|");
+    }
+
+    private void handleLocaleClick(List<ItemTemplateRecord.ActionRecords> actions,
+            ClickType clickType, Locale locale, User user) {
+        actions.forEach(action -> {
+            if (clickType != action.clickType() && action.clickType() != ClickType.UNKNOWN) {
+                return;
+            }
+            if (SELECT_ACTION.equalsIgnoreCase(action.actionType())) {
+                this.plugin.getPlayers().setLocale(this.user.getUniqueId(), locale.toLanguageTag());
+                this.user.sendMessage("panels.language.edited", "[lang]",
+                        WordUtils.capitalize(locale.getDisplayName(this.user.getLocale())));
+                this.build();
+            } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())) {
+                Util.runCommands(user,
+                        Arrays.stream(action.content()
+                                .replaceAll(Pattern.quote(TextVariables.LABEL), this.command.getTopLabel())
+                                .split("\n"))
+                        .toList(),
+                        "CHANGE_LOCALE_COMMANDS");
+            }
+        });
+    }
+
+    private void appendTooltips(PanelItemBuilder builder, List<ItemTemplateRecord.ActionRecords> actions) {
+        List<String> tooltips = actions.stream()
+                .filter(action -> action.tooltip() != null)
                 .map(action -> this.user.getTranslation(this.command.getWorld(), action.tooltip()))
                 .filter(text -> !text.isBlank())
                 .collect(Collectors.toCollection(() -> new ArrayList<>(actions.size())));
 
-        // Add tooltips.
-        if (!tooltips.isEmpty())
-        {
-            // Empty line and tooltips.
+        if (!tooltips.isEmpty()) {
             builder.description("");
             builder.description(tooltips);
         }
-
-        return builder.build();
     }
 
 

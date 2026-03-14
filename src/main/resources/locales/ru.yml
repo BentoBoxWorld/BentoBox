@@ -491,6 +491,13 @@ commands:
           &a Правый клик для уменьшения
         unlimited-times: Неограниченно
         maximum-times: Максимум [number] раз
+        cost: |
+          &a Стоимость [prefix_Island]
+          &a ЛКМ +1
+          &a ПКМ -1
+          &a Shift для +/-100
+        no-cost: Бесплатно
+        cost-amount: 'Стоимость: [cost]'
     resetflags:
       parameters: '[флаг]'
       description: >-
@@ -650,6 +657,7 @@ commands:
         dimension-done: '&a Остров в [world] построен.'
         done: '&a Готово! Ваш остров готов и ожидает вас!'
       pick: '&2 Выберите остров'
+      cannot-afford: '&c Вы не можете себе это позволить! Стоимость: [cost]'
       unknown-blueprint: '&cЭтот план еще не был загружен.'
       on-first-login: >-
         &aДобро пожаловать! Мы начнём готовить ваш остров через несколько
@@ -972,9 +980,9 @@ protection:
   command-is-banned: Команда запрещена для посетителей
   flags:
     ALLAY:
-      name: Взаимодействие с тихонями
-      description: Позволяет забирать/давать предметы тихоне
-      hint: Взаимодействие с тихонями запрещено
+      name: Взаимодействие с тихонями и Copper Golem
+      description: Позволяет забирать/давать предметы тихоне и Copper Golem
+      hint: Взаимодействие с тихонями и Copper Golem запрещено
     ANIMAL_NATURAL_SPAWN:
       description: переключатель пассивного спавна животных
       name: Пассивный спавн животных
@@ -1638,14 +1646,10 @@ protection:
         &a
         &a Участники острова все еще будут терять вещи,
         &a если будут умирать на своем острове!
-    VISITOR_TRIGGER_RAID:
-      name: Посетители могут призывать рейд
-      description: |-
-        &a Активация позволит посетителям с эффектом
-        &a Зловещего предзнаменовения активировать рейд
-        &a на чужом острове.
-        &a
-        &a В противном случае эффект просто снимется!
+    RAID_TRIGGER:
+      name: Запуск рейда
+      description: Устанавливает минимальный ранг острова для запуска рейда
+      hint: Запуск рейда не разрешён
     ENTITY_PORTAL_TELEPORT:
       name: Использование портала сущностями
       description: |-
@@ -1953,6 +1957,7 @@ panels:
         description: '[description]'
         uses: '&a Использовано [number]/[max]'
         unlimited: '&a Неограниченное количество использований разрешено'
+        cost: '&e Стоимость: [cost]'
   language:
     title: '&2&l Выберите ваш язык'
     edited: '&c Изменено на [lang]'

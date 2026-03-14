@@ -490,6 +490,13 @@ commands:
           &a Clique direito para diminuir
         unlimited-times: Ilimitado
         maximum-times: Max [number] vezes
+        cost: |
+          &a Custo de [prefix_Island]
+          &a Clique esquerdo +1
+          &a Clique direito -1
+          &a Shift para +/-100
+        no-cost: Grátis
+        cost-amount: 'Custo: [cost]'
     resetflags:
       parameters: '[opção]'
       description: Reiniciar todas as ilhas para configurações padrão da config.yml
@@ -644,6 +651,7 @@ commands:
         dimension-done: '&a [prefix_Igreja] em [mundo] está construída.'
         done: '&a Feito! Sua ilha está pronta e esperando por você!'
       pick: '&2 Escolha uma ilha'
+      cannot-afford: '&c Você não pode pagar isso! Custo: [cost]'
       unknown-blueprint: '&c Esse esquema ainda não foi carregado.'
       on-first-login: '&a Boas vindas! Vamos começar a preparar sua ilha em alguns segundos.'
       you-can-teleport-to-your-island: '&a Você pode teleportar para sua ilha assim que quiser.'
@@ -966,9 +974,9 @@ protection:
   command-is-banned: Esse comando está banido para visitantes
   flags:
     ALLAY:
-      name: Interação com Allay
-      description: Permitir dar e pegar itens do/para Allay
-      hint: Interação com Allay desabilitada
+      name: Interação com Allay e Copper Golem
+      description: Permitir dar e pegar itens do/para Allay e Copper Golem
+      hint: Interação com Allay e Copper Golem desabilitada
     ANIMAL_NATURAL_SPAWN:
       description: Permitir nascimento natural de animais
       name: Nascimento natural de animais
@@ -1656,14 +1664,10 @@ protection:
         &a
         &a Membros de [prefix_Island] ainda perdem seus itens
         &a se morrerem em seu próprio [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: Visitantes acionam invasões
-      description: |-
-        &a Alterna se os visitantes podem iniciar
-        &a uma invasão em [prefix_an-island] que eles estão
-        &a visitando.
-        &a 
-        &a O efeito de Mau Agouro será removido!
+    RAID_TRIGGER:
+      name: Gatilho de invasão
+      description: Define o rank mínimo de ilha necessário para acionar uma invasão
+      hint: Acionar invasão não permitido
     ENTITY_PORTAL_TELEPORT:
       name: Uso de portal de entidade
       description: |-
@@ -1973,6 +1977,7 @@ panels:
         description: '[descrição]'
         uses: '&a Usado [number]/[max]'
         unlimited: '&a Usos ilimitados permitidos'
+        cost: '&e Custo: [cost]'
   language:
     title: '&2&l Selecione seu idioma'
     edited: '&c Mudado para [lang]'

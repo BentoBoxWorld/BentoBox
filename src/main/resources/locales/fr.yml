@@ -519,6 +519,13 @@ commands:
           &a Clic droit pour décrémenter
         unlimited-times: Illimité
         maximum-times: Max [number] fois
+        cost: |
+          &a Coût de [prefix_Island]
+          &a Clic gauche +1
+          &a Clic droit -1
+          &a Shift pour +/-100
+        no-cost: Gratuit
+        cost-amount: 'Coût : [cost]'
     resetflags:
       parameters: '[flag]'
       description: >-
@@ -685,6 +692,7 @@ commands:
         dimension-done: '&Une île dans [world] est construite.'
         done: '&a C''est fait! Votre île est prête et vous attend!'
       pick: '&2 Choisissez une île'
+      cannot-afford: '&c Vous ne pouvez pas vous le permettre ! Coût : [cost]'
       unknown-blueprint: '&c Ce blueprint n''existe pas.'
       on-first-login: >-
         &bienvenue! Nous commencerons à préparer votre île dans quelques
@@ -1005,9 +1013,9 @@ protection:
   command-is-banned: Cette commande est interdite aux visiteurs.
   flags:
     ALLAY:
-      name: Apaiser les interactions
-      description: Autoriser le don et le transport d'objets vers/depuis Allay
-      hint: Interaction apaisante désactivée
+      name: Interaction Allay & Copper Golem
+      description: Autoriser le don et le transport d'objets vers/depuis Allay et Copper Golem
+      hint: Interaction Allay & Copper Golem désactivée
     ANIMAL_NATURAL_SPAWN:
       description: Activer/désactiver le frai naturel des animaux
       name: Frai naturel des animaux
@@ -1690,9 +1698,10 @@ protection:
     VISITOR_KEEP_INVENTORY:
       name: Les visiteurs gardent l'inventaire au décès
       description: "&a Empêcher les joueurs de perdre leur\n&a objets et expérience s'ils meurent\n&a une île dans laquelle ils sont un visiteur.\n&un\nLes membres de &a Island perdent toujours leurs objets\n&a s'ils meurent sur leur propre île\_!"
-    VISITOR_TRIGGER_RAID:
-      name: Les visiteurs déclenchent des raids
-      description: "&a Active/désactive si les visiteurs peuvent démarrer\n&un raid sur une île où ils se trouvent\n&une visite.\n&un\n&un effet Bad Omen sera supprimé\_!"
+    RAID_TRIGGER:
+      name: Déclencheur de raid
+      description: Définit le rang minimum d'île requis pour déclencher un raid
+      hint: Déclenchement de raid non autorisé
     ENTITY_PORTAL_TELEPORT:
       name: Utilisation du portail d'entité
       description: |-
@@ -1998,6 +2007,7 @@ panels:
         description: '[description]'
         uses: '&a Utilisé [number]/[max]'
         unlimited: '&a Utilisations illimitées autorisées'
+        cost: '&e Coût : [cost]'
   language:
     title: '&2&l Sélectionnez votre langue'
     edited: '&c Changé en [lang]'

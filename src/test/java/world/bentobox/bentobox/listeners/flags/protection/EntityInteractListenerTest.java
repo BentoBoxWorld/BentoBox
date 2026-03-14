@@ -342,4 +342,59 @@ public class EntityInteractListenerTest extends CommonTestSetup {
         assertTrue(e.isCancelled());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     * Copper Golem interaction should be blocked by the ALLAY flag when not allowed.
+     */
+    @Test
+    public void testOnPlayerInteractEntityCopperGolemNoInteraction() {
+        clickedEntity = mock(Entity.class);
+        when(clickedEntity.getLocation()).thenReturn(location);
+        when(clickedEntity.getType()).thenReturn(EntityType.COPPER_GOLEM);
+        // Use a non-name-tag item so only the ALLAY check fires
+        ItemStack mockStone = mock(ItemStack.class);
+        when(mockStone.getType()).thenReturn(Material.STONE);
+        when(inv.getItemInMainHand()).thenReturn(mockStone);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
+        eil.onPlayerInteractEntity(e);
+        verify(notifier).notify(any(), eq("protection.protected"));
+        assertTrue(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     * Copper Golem interaction should be allowed when the island permits it.
+     */
+    @Test
+    public void testOnPlayerInteractEntityCopperGolemAllowed() {
+        when(island.isAllowed(any(User.class), any())).thenReturn(true);
+        clickedEntity = mock(Entity.class);
+        when(clickedEntity.getLocation()).thenReturn(location);
+        when(clickedEntity.getType()).thenReturn(EntityType.COPPER_GOLEM);
+        ItemStack mockStone = mock(ItemStack.class);
+        when(mockStone.getType()).thenReturn(Material.STONE);
+        when(inv.getItemInMainHand()).thenReturn(mockStone);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
+        eil.onPlayerInteractEntity(e);
+        verify(notifier, never()).notify(any(), eq("protection.protected"));
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     * Copper Golem interaction with a name tag should also check NAME_TAG flag.
+     */
+    @Test
+    public void testOnPlayerInteractEntityCopperGolemNameTagNoInteraction() {
+        when(island.isAllowed(any(User.class), eq(Flags.ALLAY))).thenReturn(true);
+        when(island.isAllowed(any(User.class), eq(Flags.NAME_TAG))).thenReturn(false);
+        clickedEntity = mock(Entity.class);
+        when(clickedEntity.getLocation()).thenReturn(location);
+        when(clickedEntity.getType()).thenReturn(EntityType.COPPER_GOLEM);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
+        eil.onPlayerInteractEntity(e);
+        verify(notifier).notify(any(), eq("protection.protected"));
+        assertTrue(e.isCancelled());
+    }
+
 }

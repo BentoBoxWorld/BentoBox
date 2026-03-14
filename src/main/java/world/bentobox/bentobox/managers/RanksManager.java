@@ -41,7 +41,7 @@ public class RanksManager {
     public static final int BANNED_RANK = -1;
 
     // The store of ranks
-    private static LinkedHashMap<String, Integer> ranks = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, Integer> ranks = new LinkedHashMap<>();
     public static final Map<String, Integer> DEFAULT_RANKS = Map.of(ADMIN_RANK_REF, ADMIN_RANK, MOD_RANK_REF, MOD_RANK,
             OWNER_RANK_REF, OWNER_RANK, SUB_OWNER_RANK_REF, SUB_OWNER_RANK, MEMBER_RANK_REF, MEMBER_RANK,
             TRUSTED_RANK_REF, TRUSTED_RANK, COOP_RANK_REF, COOP_RANK, VISITOR_RANK_REF, VISITOR_RANK, BANNED_RANK_REF,
@@ -54,7 +54,7 @@ public class RanksManager {
     // Private constructor for singleton
     RanksManager() {
         handler = new Database<>(BentoBox.getInstance(), Ranks.class);
-        ranks = new LinkedHashMap<>();
+        ranks.clear();
         loadRanksFromDatabase();
     }
 
@@ -108,9 +108,11 @@ public class RanksManager {
 
     private void ranksPut(String reference, Integer value) {
         ranks.put(reference, value);
-        // Sort
-        ranks = ranks.entrySet().stream().sorted(Map.Entry.comparingByValue())
+        // Sort in place by value
+        LinkedHashMap<String, Integer> sorted = ranks.entrySet().stream().sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        ranks.clear();
+        ranks.putAll(sorted);
         save();
     }
 

@@ -70,16 +70,16 @@ public class PhysicalInteractionListener extends FlagListener
     }
 
     private boolean checkBlocks(Event e, Player player, Block block) {
-        Map<Tag<Material>, Flag> TAG_TO_FLAG = Map.of(Tag.WOODEN_BUTTONS, Flags.BUTTON, Tag.PRESSURE_PLATES,
+        Map<Tag<Material>, Flag> tagToFlag = Map.of(Tag.WOODEN_BUTTONS, Flags.BUTTON, Tag.PRESSURE_PLATES,
                 Flags.PRESSURE_PLATE, Tag.FENCE_GATES, Flags.GATE, Tag.DOORS, Flags.DOOR, Tag.CANDLE_CAKES,
                 Flags.CANDLES, Tag.CANDLES, Flags.CANDLES);
-        Map<Material, Flag> MAT_TO_FLAG = Map.of(Material.LEVER, Flags.LEVER, Material.TRIPWIRE, Flags.REDSTONE,
+        Map<Material, Flag> matToFlag = Map.of(Material.LEVER, Flags.LEVER, Material.TRIPWIRE, Flags.REDSTONE,
                 Material.TARGET, Flags.REDSTONE, Material.DECORATED_POT, Flags.BREAK_BLOCKS);
-        boolean result = TAG_TO_FLAG.entrySet().stream().filter(entry -> entry.getKey().isTagged(block.getType()))
+        boolean result = tagToFlag.entrySet().stream().filter(entry -> entry.getKey().isTagged(block.getType()))
                 .findFirst().map(entry -> this.checkIsland(e, player, block.getLocation(), entry.getValue()))
                 .orElse(true);
-        if (result && MAT_TO_FLAG.containsKey(block.getType())) {
-            result = this.checkIsland(e, player, block.getLocation(), MAT_TO_FLAG.get(block.getType()));
+        if (result && matToFlag.containsKey(block.getType())) {
+            result = this.checkIsland(e, player, block.getLocation(), matToFlag.get(block.getType()));
 
         }
 

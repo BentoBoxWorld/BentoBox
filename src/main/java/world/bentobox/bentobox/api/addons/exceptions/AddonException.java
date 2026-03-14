@@ -11,7 +11,9 @@ import java.io.Serial;
  * @author Poslovitch
  * @since 1.0
  */
-public abstract class AddonException extends Exception {
+public abstract sealed class AddonException extends Exception
+        permits AddonRequestException, InvalidAddonDescriptionException,
+               InvalidAddonFormatException, InvalidAddonInheritException {
 
     /**
      * The serial version UID for serialization.

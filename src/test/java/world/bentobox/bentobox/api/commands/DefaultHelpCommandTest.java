@@ -68,7 +68,7 @@ public class DefaultHelpCommandTest extends CommonTestSetup {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        mockedBukkit.when(() -> Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
 
         // IWM friendly name
         IslandWorldManager iwm = mock(IslandWorldManager.class);
@@ -85,6 +85,7 @@ public class DefaultHelpCommandTest extends CommonTestSetup {
 
         @Override
         public void setup() {
+            // Not needed for test
         }
 
         @Override

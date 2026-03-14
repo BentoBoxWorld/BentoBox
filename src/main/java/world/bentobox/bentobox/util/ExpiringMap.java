@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.util;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -188,7 +190,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
      * @return a set view of the keys contained in this map
      */
     @Override
-    public Set<K> keySet() {
+    public @NonNull Set<K> keySet() {
         return map.keySet();
     }
 
@@ -204,7 +206,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
      * @return a collection view of the values contained in this map
      */
     @Override
-    public Collection<V> values() {
+    public @NonNull Collection<V> values() {
         return map.values();
     }
 
@@ -219,7 +221,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
      * @return a set view of the mappings contained in this map
      */
     @Override
-    public Set<Entry<K, V>> entrySet() {
+    public @NonNull Set<Entry<K, V>> entrySet() {
         return map.entrySet();
     }
 
@@ -236,6 +238,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
      * @return the current (existing or computed) value associated with the specified key, or {@code null} if the computed value is {@code null}
      * @throws NullPointerException if the specified key or mappingFunction is null
      */
+    @Override
     public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
         if (key == null || mappingFunction == null) {
             throw new NullPointerException("Key and mappingFunction cannot be null.");
@@ -266,6 +269,33 @@ public class ExpiringMap<K, V> implements Map<K, V> {
      */
     public void shutdown() {
         scheduler.shutdown();
+    }
+
+    /**
+     * Compares the specified object with this map for equality.
+     *
+     * @param obj object to be compared for equality with this map
+     * @return {@code true} if the specified object is equal to this map
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Map<?, ?> other)) {
+            return false;
+        }
+        return map.equals(other);
+    }
+
+    /**
+     * Returns the hash code value for this map.
+     *
+     * @return the hash code value for this map
+     */
+    @Override
+    public int hashCode() {
+        return map.hashCode();
     }
 
 }

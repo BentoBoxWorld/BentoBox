@@ -515,6 +515,13 @@ commands:
           &a Jobb kattintás a csökkentéshez
         unlimited-times: Korlátlan
         maximum-times: Max [number] alkalommal
+        cost: |
+          &a [prefix_Island] költség
+          &a Bal kattintás +1
+          &a Jobb kattintás -1
+          &a Shift +/-100
+        no-cost: Ingyenes
+        cost-amount: 'Költség: [cost]'
     resetflags:
       parameters: '[zászló]'
       description: >-
@@ -677,6 +684,7 @@ commands:
         dimension-done: '&a sziget a [world] épül.'
         done: '&a Kész! A szigeted készen áll és rád vár!'
       pick: '&2 Válasszon ki egy szigetet'
+      cannot-afford: '&c Nem engedheted meg magadnak! Költség: [cost]'
       unknown-blueprint: '&c A tervrajz még nincs betöltve.'
       on-first-login: >-
         &a Üdvözlünk! Néhány másodpercen belül megkezdjük a [prefix_island]
@@ -1002,9 +1010,9 @@ protection:
   command-is-banned: A parancs le van tiltva a látogatók számára
   flags:
     ALLAY:
-      name: Allay interakció
-      description: Engedélyezze az Allaynek való tárgyak átadását és elvitelét
-      hint: Allay interakció letiltva
+      name: Allay és Copper Golem interakció
+      description: Engedélyezze az Allay és Copper Golem számára tárgyak átadását és elvitelét
+      hint: Allay és Copper Golem interakció letiltva
     ANIMAL_NATURAL_SPAWN:
       description: Természetes állati ívás átváltása
       name: Állati természetes ívás
@@ -1719,14 +1727,10 @@ protection:
         &a
         &a [prefix_Island] tagjai továbbra is elveszítik tárgyaikat
         &a ha a saját szigetükön halnak meg!
-    VISITOR_TRIGGER_RAID:
-      name: A látogatók rajtaütéseket indítanak el
-      description: |-
-        &a Bekapcsolja, ha a látogatók elkezdhetik
-        &a rajtaütés egy szigeten, ami ők
-        &a látogatás.
-        &a
-        &a Bad Omen effektus el lesz távolítva!
+    RAID_TRIGGER:
+      name: Rajtaütés indítása
+      description: Beállítja a rajtaütés indításához szükséges minimális szigetrangot
+      hint: Rajtaütés indítása nem engedélyezett
     ENTITY_PORTAL_TELEPORT:
       name: Az entitásportál használata
       description: |-
@@ -2050,6 +2054,7 @@ panels:
         description: '[description]'
         uses: '&a Használt [number]/[max]'
         unlimited: '&a Korlátlan használat engedélyezve'
+        cost: '&e Költség: [cost]'
   language:
     title: '&2&l Válaszd ki a nyelved'
     edited: '&c Megváltozott [lang]-ra'

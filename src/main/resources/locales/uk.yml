@@ -437,6 +437,13 @@ commands:
           &a ПКМ — зменшити
         unlimited-times: Без обмежень
         maximum-times: Макс [number] разів
+        cost: |
+          &a Вартість [prefix_Island]
+          &a ЛКМ +1
+          &a ПКМ -1
+          &a Shift для +/-100
+        no-cost: Безкоштовно
+        cost-amount: 'Вартість: [cost]'
     resetflags:
       parameters: '[flag]'
       description: Скинути всі [prefix_Islands] до типових прапорів у config.yml
@@ -575,6 +582,7 @@ commands:
         dimension-done: '&a [prefix_Island] у [world] збудовано.'
         done: '&a Готово! Ваш [prefix_island] чекає на вас!'
       pick: '&2 Оберіть [prefix_an-island]'
+      cannot-afford: '&c Ви не можете собі це дозволити! Вартість: [cost]'
       unknown-blueprint: '&c Це креслення ще не завантажено.'
       on-first-login: '&a Вітаємо! Ми почнемо готувати ваш [prefix_island] за кілька секунд.'
       you-can-teleport-to-your-island: '&a Ви зможете телепортуватися на свій [prefix_island], коли забажаєте.'
@@ -885,9 +893,9 @@ protection:
   command-is-banned: Команда заборонена для відвідувачів
   flags:
     ALLAY:
-      name: Взаємодія з алаєм
-      description: Дозволити давати/забирати предмети алаю
-      hint: Взаємодію з алаєм вимкнено
+      name: Взаємодія з алаєм і Copper Golem
+      description: Дозволити давати/забирати предмети алаю і Copper Golem
+      hint: Взаємодію з алаєм і Copper Golem вимкнено
     ANIMAL_NATURAL_SPAWN:
       description: Перемикає природний спавн тварин
       name: Природний спавн тварин
@@ -1574,14 +1582,10 @@ protection:
         &a
         &a Учасники [prefix_Island] все одно втрачають
         &a свої предмети на власному [prefix_island]!
-    VISITOR_TRIGGER_RAID:
-      name: Відвідувачі запускають рейди
-      description: |-
-        &a Перемикає, чи можуть відвідувачі
-        &a починати рейд на [prefix_an-island],
-        &a який вони відвідують.
-        &a
-        &a Ефект «Погана прикмета» буде знято!
+    RAID_TRIGGER:
+      name: Запуск рейду
+      description: Встановлює мінімальний ранг острова для запуску рейду
+      hint: Запуск рейду не дозволено
     ENTITY_PORTAL_TELEPORT:
       name: Використання порталів сутностями
       description: |-
@@ -1893,6 +1897,7 @@ panels:
         description: '[description]'
         uses: '&a Використано [number]/[max]'
         unlimited: '&a Необмежені використання дозволені'
+        cost: '&e Вартість: [cost]'
   # The section of translations used in Language Panel
   language:
     title: '&2&l Оберіть мову'

@@ -52,7 +52,7 @@ public class AdminTeleportUserCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        if (args.isEmpty() || args.size() == 1) {
+        if (args.size() < 2) {
             this.showHelp(this, user);
             return false;
         }

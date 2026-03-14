@@ -39,6 +39,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
@@ -109,7 +110,6 @@ public class IslandCreateCommandTest extends CommonTestSetup {
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        // when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
         when(island.getOwner()).thenReturn(uuid);
@@ -127,7 +127,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
 
         // NewIsland
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
-        mockedNewIsland.when(() -> NewIsland.builder()).thenReturn(builder);
+        mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
         when(builder.player(any())).thenReturn(builder);
         when(builder.name(Mockito.anyString())).thenReturn(builder);
         when(builder.addon(addon)).thenReturn(builder);
@@ -252,10 +252,10 @@ public class IslandCreateCommandTest extends CommonTestSetup {
         when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
 
         assertTrue(cc.execute(user, "", List.of("custom")));
-        verify(builder).player(eq(user));
+        verify(builder).player(user);
         verify(builder).addon(any());
-        verify(builder).reason(eq(Reason.CREATE));
-        verify(builder).name(eq("custom"));
+        verify(builder).reason(Reason.CREATE);
+        verify(builder).name("custom");
         verify(builder).build();
         verify(user).sendMessage("commands.island.create.creating-island");
     }
@@ -297,7 +297,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteUserStringListOfStringUnknownBundle() {
         assertFalse(cc.execute(user, "", List.of("custom")));
-        verify(user).sendMessage(eq("commands.island.create.unknown-blueprint"));
+        verify(user).sendMessage("commands.island.create.unknown-blueprint");
         verify(user, never()).sendMessage("commands.island.create.creating-island");
     }
 
@@ -322,10 +322,10 @@ public class IslandCreateCommandTest extends CommonTestSetup {
         when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
         when(bpm.validate(any(), any())).thenReturn("custom");
         assertTrue(cc.execute(user, "", Collections.singletonList("custom")));
-        verify(builder).player(eq(user));
+        verify(builder).player(user);
         verify(builder).addon(any());
-        verify(builder).reason(eq(Reason.CREATE));
-        verify(builder).name(eq("custom"));
+        verify(builder).reason(Reason.CREATE);
+        verify(builder).name("custom");
         verify(builder).build();
         verify(user).sendMessage("commands.island.create.creating-island");
     }
@@ -337,7 +337,7 @@ public class IslandCreateCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteUserStringListOfStringCooldown() {
         assertTrue(cc.execute(user, "", Collections.emptyList()));
-        verify(ic, never()).getSubCommand(eq("reset"));
+        verify(ic, never()).getSubCommand("reset");
     }
 
     /**
@@ -361,5 +361,123 @@ public class IslandCreateCommandTest extends CommonTestSetup {
         assertTrue(cc.execute(user, "", Collections.emptyList()));
         // Panel is shown, not the creation message
         verify(user, never()).sendMessage("commands.island.create.creating-island");
+    }
+
+    /**
+     * Test method for cost check - cannot afford
+     */
+    @Test
+    public void testMakeIslandWithCostCannotAfford() {
+        // Multiple bundles
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        map.put("default", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        // Economy enabled
+        when(settings.isUseEconomy()).thenReturn(true);
+        // Vault present but cannot afford
+        VaultHook vault = mock(VaultHook.class);
+        when(vault.has(any(User.class), eq(100.0))).thenReturn(false);
+        when(vault.format(100.0)).thenReturn("$100.00");
+        when(plugin.getVault()).thenReturn(Optional.of(vault));
+
+        assertFalse(cc.execute(user, "", List.of("custom")));
+        verify(user).sendMessage("commands.island.create.cannot-afford", "[cost]", "$100.00");
+        verify(user, never()).sendMessage("commands.island.create.creating-island");
+    }
+
+    /**
+     * Test method for cost check - can afford
+     */
+    @Test
+    public void testMakeIslandWithCostCanAfford() {
+        // Multiple bundles
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        map.put("default", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        // Economy enabled
+        when(settings.isUseEconomy()).thenReturn(true);
+        // Vault present and can afford
+        VaultHook vault = mock(VaultHook.class);
+        when(vault.has(any(User.class), eq(100.0))).thenReturn(true);
+        when(vault.format(100.0)).thenReturn("$100.00");
+        when(plugin.getVault()).thenReturn(Optional.of(vault));
+
+        assertTrue(cc.execute(user, "", List.of("custom")));
+        verify(user).sendMessage("commands.island.create.creating-island");
+        verify(vault).withdraw(user, 100.0);
+    }
+
+    /**
+     * Test method for cost check - single bundle ignores cost
+     */
+    @Test
+    public void testMakeIslandCostIgnoredSingleBundle() {
+        // Single bundle with cost
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        when(settings.isUseEconomy()).thenReturn(true);
+
+        assertTrue(cc.execute(user, "", List.of("custom")));
+        verify(user).sendMessage("commands.island.create.creating-island");
+        // No vault interaction
+        verify(plugin, never()).getVault();
+    }
+
+    /**
+     * Test method for cost check - economy disabled ignores cost
+     */
+    @Test
+    public void testMakeIslandCostIgnoredNoEconomy() {
+        // Multiple bundles
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        map.put("default", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        // Economy disabled
+        when(settings.isUseEconomy()).thenReturn(false);
+
+        assertTrue(cc.execute(user, "", List.of("custom")));
+        verify(user).sendMessage("commands.island.create.creating-island");
+    }
+
+    /**
+     * Test method for cost check - no vault ignores cost
+     */
+    @Test
+    public void testMakeIslandCostIgnoredNoVault() {
+        // Multiple bundles
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCost(100.0);
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", bb);
+        map.put("default", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        when(settings.isUseEconomy()).thenReturn(true);
+        // No vault
+        when(plugin.getVault()).thenReturn(Optional.empty());
+
+        assertTrue(cc.execute(user, "", List.of("custom")));
+        verify(user).sendMessage("commands.island.create.creating-island");
     }
 }

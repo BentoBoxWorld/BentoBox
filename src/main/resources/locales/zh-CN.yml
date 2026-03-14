@@ -446,6 +446,13 @@ commands:
           &7右键点击 &7- &c减少
         unlimited-times: '&e无限'
         maximum-times: '&f每个玩家最多可用次数: [number]'
+        cost: |
+          &a [prefix_Island]费用
+          &a 左键点击 +1
+          &a 右键点击 -1
+          &a Shift +/-100
+        no-cost: 免费
+        cost-amount: '费用: [cost]'
     resetflags:
       parameters: '&7[flag]'
       description: 将所有岛屿的保护标志设置为config.yml中默认值
@@ -589,6 +596,7 @@ commands:
         dimension-done: '&b[world]&a中的一座岛屿构建成功.'
         done: '&a岛屿部署完毕! 你的岛屿已准备就绪.'
       pick: '&2选择你的岛屿'
+      cannot-afford: '&c 你买不起！费用: [cost]'
       unknown-blueprint: '&c该蓝图方案尚未加载.'
       on-first-login: '&a欢迎! 我们将在几秒钟内开始创建你的岛屿.'
       you-can-teleport-to-your-island: '&a你可以随时传送到你的岛屿上.'
@@ -891,9 +899,9 @@ protection:
   command-is-banned: 访客已被禁止使用命令
   flags:
     ALLAY:
-      name: '&b&l悦灵'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2对悦灵使用物品或取回物品'
-      hint: 禁止与悦灵交互
+      name: '&b&l悦灵与铜傀儡'
+      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2对悦灵和铜傀儡使用物品或取回物品'
+      hint: 禁止与悦灵和铜傀儡交互
     ANIMAL_NATURAL_SPAWN:
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2动物自然生成'
       name: '&b&l动物自然生成'
@@ -1508,12 +1516,10 @@ protection:
         &a允许&#FAFAD2时: 玩家在他人岛屿死亡不掉落
         &c禁止&#FAFAD2时: 玩家在他人岛屿死亡掉落
         &4岛屿成员在自己的岛屿上死亡时仍然会掉落物品和经验
-    VISITOR_TRIGGER_RAID:
-      name: '&b&l访客触发袭击'
-      description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2访客在他人岛屿上触发袭击
-
-        &#FAFAD2不祥之兆效果将被移除
+    RAID_TRIGGER:
+      name: 触发袭击
+      description: 设置触发袭击所需的岛屿最低等级
+      hint: 不允许触发袭击
     ENTITY_PORTAL_TELEPORT:
       name: '&b&l实体通过传送门'
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2实体(不包括玩家)通过传送门跨越维度'
@@ -1774,6 +1780,7 @@ panels:
         description: '[description]'
         uses: '&a可创建次数: &#FFE4B5[number]&f/&#FFE4B5[max]'
         unlimited: '&a可创建次数: &#1E90FF无限'
+        cost: '&e 费用: [cost]'
   language:
     title: '&2&l选择你的语言'
     edited: '&c 已更改为 [lang]'

@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.events.addon;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
@@ -78,7 +77,7 @@ public class AddonEnableEventTest extends CommonTestSetup {
      */
     @Test
     public void testGetAddon() {
-        assertEquals(addon, aee.getAddon());
+        assertSame(addon, aee.getAddon());
     }
 
     /**
@@ -95,16 +94,7 @@ public class AddonEnableEventTest extends CommonTestSetup {
     @Test
     public void testSetNewEvent() {
         aee.setNewEvent(aee);
-        assertEquals(aee, aee.getNewEvent().get());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.events.BentoBoxEvent#setKeyValues(java.util.Map)}.
-     */
-    @Test
-    @Disabled
-    public void testSetKeyValues() {
-        // No fields to set values for in the class
+        assertSame(aee, aee.getNewEvent().get());
     }
 
 }

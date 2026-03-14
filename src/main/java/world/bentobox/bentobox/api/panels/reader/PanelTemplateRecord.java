@@ -109,7 +109,7 @@ public record PanelTemplateRecord(Panel.Type type,
 
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return "PanelTemplateRecord {type=" + type +
                 ", title=" + title +
                 ", border=" + border +
