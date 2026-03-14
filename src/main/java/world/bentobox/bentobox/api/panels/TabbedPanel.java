@@ -93,11 +93,13 @@ public class TabbedPanel extends Panel implements PanelListener {
         if (tpb.isHideIfEmpty()) {
             tpb.getTabs().values().removeIf(t -> !t.equals(tab) && t.getPanelItems().stream().noneMatch(Objects::nonNull));
         }
+        // Get the panel items first so that Tab can update its internal state (e.g., currentMode)
+        // before setupHeader calls getTabIcons(), which may depend on that state.
+        List<PanelItem> panelItems = tab.getPanelItems();
         // Set up the tabbed header
         setupHeader(tab, items);
         // Show the active tab
         if (tpb.getTabs().containsKey(activeTab)) {
-            List<PanelItem> panelItems = tab.getPanelItems();
             // Adds the flag items
             panelItems.stream().filter(Objects::nonNull).skip(page * ITEMS_PER_PAGE).limit(page * ITEMS_PER_PAGE + ITEMS_PER_PAGE).forEach(i -> items.put(items.lastKey() + 1, i));
             // set up the footer
