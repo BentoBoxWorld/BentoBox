@@ -115,7 +115,7 @@ public class DefaultHelpCommand extends CompositeCommand {
         for (int i = start; i < end; i++) {
             String[] entry = helpEntries.get(i);
             // entry[0] = usage, entry[1] = params, entry[2] = description
-            if (entry[1].isEmpty()) {
+            if (entry[1] == null || entry[1].isEmpty()) {
                 user.sendMessage(HELP_SYNTAX_NO_PARAMETERS_REF, USAGE_PLACEHOLDER, entry[0], DESC_PLACEHOLDER, entry[2]);
             } else {
                 user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, entry[0], PARAMS_PLACEHOLDER, entry[1], DESC_PLACEHOLDER, entry[2]);
@@ -176,7 +176,7 @@ public class DefaultHelpCommand extends CompositeCommand {
         String usage = command.getUsage();
         String params = user.getTranslationOrNothing(command.getParameters());
         String desc = user.getTranslation(command.getDescription());
-        entries.add(new String[]{usage, params, desc});
+        entries.add(new String[]{usage, params != null ? params : "", desc});
     }
 
     /**

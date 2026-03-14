@@ -36,7 +36,7 @@ public class BentoBoxHelpCommand extends DefaultHelpCommand {
                 .forEach(v -> {
                     String params = user.getTranslationOrNothing(v.getParameters());
                     String desc = user.getTranslationOrNothing(v.getDescription()) + " (" + v.getAddon().getDescription().getName() + ")";
-                    entries.add(new String[]{v.getUsage(), params, desc});
+                    entries.add(new String[]{v.getUsage(), params != null ? params : "", desc});
                 });
         return entries;
     }
