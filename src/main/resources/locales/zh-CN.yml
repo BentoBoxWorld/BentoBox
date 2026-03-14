@@ -1561,6 +1561,7 @@ protection:
         &#FAFAD2对岛屿保护范围之外的方块和实体造成破坏和伤害
       name: '&b&l边界TNT保护'
   locked: '&c这个岛屿已被锁定!'
+  locked-island-bypass: '&6 这个[prefix_island]已被锁定，但你有权限绕过。'
   protected: '&c岛屿保护: [description].'
   world-protected: '&c世界保护: [description].'
   spawn-protected: '&c出生点保护: [description].'

@@ -1743,6 +1743,7 @@ protection:
         &sebuah entitas di luar batas pulau.
       name: Kerusakan TNT dunia
   locked: '&c Pulau ini terkunci!'
+  locked-island-bypass: '&6 [prefix_Island] ini terkunci, tetapi kamu memiliki izin untuk melewatinya.'
   protected: '&c Pulau dilindungi: [deskripsi].'
   world-protected: '&c Dunia dilindungi: [deskripsi].'
   spawn-protected: '&c Bibit dilindungi: [deskripsi].'

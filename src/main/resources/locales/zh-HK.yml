@@ -1562,6 +1562,7 @@ protection:
         &7和TNT礦車破壞方塊和實體
       name: '&a&l世界TNT傷害'
   locked: '&c本島嶼已被鎖定!'
+  locked-island-bypass: '&6 本[prefix_island]已被鎖定，但您有權限繞過。'
   protected: '&c島嶼保護：[description]'
   world-protected: '&c世界保護: [description].'
   spawn-protected: '&c生成保護：[description]'

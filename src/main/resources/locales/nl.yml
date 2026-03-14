@@ -1765,6 +1765,7 @@ protection:
         &a entiteit buiten de eilandgrenzen.
       name: Wereld TNT-schade
   locked: '&c Dit eiland is op slot!'
+  locked-island-bypass: '&6 Dit [prefix_island] is op slot, maar je hebt toestemming om dit te negeren.'
   protected: '&c Eiland beschermd: [omschrijving].'
   world-protected: '&c Wereld beschermd: [omschrijving].'
   spawn-protected: '&c Spawn beschermd: [omschrijving].'

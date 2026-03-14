@@ -1694,6 +1694,7 @@ protection:
         &a за пределами острова.
       name: Разрушение блоков через TNT
   locked: '&cЭтот остров заблокирован!'
+  locked-island-bypass: '&6 Этот [prefix_island] заблокирован, но у вас есть разрешение на вход.'
   protected: '&cОстров защищен: [description].'
   world-protected: '&cМир защищен: [description].'
   spawn-protected: '&cСпавн защищен: [description].'

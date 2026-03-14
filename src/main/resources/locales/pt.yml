@@ -1737,6 +1737,7 @@ protection:
         &a entidades fora dos limites da ilha.
       name: Danos mundiais de TNT
   locked: '&c Esta ilha está trancada!'
+  locked-island-bypass: '&6 Esta [prefix_island] está trancada, mas tem permissão para aceder.'
   protected: '&c Ilha protegida: [descrição].'
   world-protected: '&c Protegido mundialmente: [descrição].'
   spawn-protected: '&c Spawn protegido: [descrição].'

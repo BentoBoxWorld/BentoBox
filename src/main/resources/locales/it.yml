@@ -1729,6 +1729,7 @@ protection:
         &a entità al di fuori dei limiti di [prefix_island].
       name: Danno TNT nel mondo
   locked: '&cQuest''isola è bloccata!'
+  locked-island-bypass: '&6Questa [prefix_island] è bloccata, ma hai il permesso di accedervi.'
   protected: '&cIsola protetta: [description]'
   world-protected: '&c Mondo protetto: [description]'
   spawn-protected: '&cSpawn protetto: [description]'

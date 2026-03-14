@@ -1635,6 +1635,7 @@ protection:
         &a varlıklara zarar vermesine izin verin.
       name: Dünya TNT hasarı
   locked: '&4Bu ada kilitli!'
+  locked-island-bypass: '&6 Bu [prefix_island] kilitli, ancak geçiş izniniz var.'
   protected: '&4Ada korunuyor: [description]'
   world-protected: '&cDünya korunuyor: [description]'
   spawn-protected: '&4Spawn koruması: [description]'

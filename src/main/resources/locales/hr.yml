@@ -1717,6 +1717,7 @@ protection:
         &a entiteta izvan granica otoka.
       name: Svjetska TNT šteta
   locked: '&c Ovaj otok je zaključan!'
+  locked-island-bypass: '&6 Ovaj [prefix_island] je zaključan, ali imate dozvolu za pristup.'
   protected: '&c Otok zaštićen: [opis].'
   world-protected: '&c Svijet zaštićen: [opis].'
   spawn-protected: '&c Spawn zaštićeno: [opis].'

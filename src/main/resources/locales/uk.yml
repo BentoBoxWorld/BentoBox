@@ -1631,6 +1631,7 @@ protection:
         &a за межами [prefix_island].
       name: Світова шкода від ТНТ
   locked: '&c Цей [prefix_island] заблоковано!'
+  locked-island-bypass: '&6 Цей [prefix_island] заблоковано, але у вас є дозвіл на вхід.'
   protected: '&c [prefix_Island] захищено: [description].'
   world-protected: '&c Світ захищено: [description].'
   spawn-protected: '&c Спавн захищено: [description].'

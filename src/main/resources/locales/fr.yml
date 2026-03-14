@@ -1747,6 +1747,7 @@ protection:
         &a entités en dehors des limites de l’île.
       name: Dommages mondiaux au TNT
   locked: '&c Cette île est verrouillée!'
+  locked-island-bypass: '&6 Cette [prefix_island] est verrouillée, mais vous avez la permission de la traverser.'
   protected: '&c Île protégée: [description]'
   world-protected: '&c Monde protégé: [description]'
   spawn-protected: '&c Spawn protégé: [description]'

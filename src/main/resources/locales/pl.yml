@@ -1699,6 +1699,7 @@ protection:
         &a jednostkom poza granicami [prefix_island].
       name: Świat uszkodzenia TNT
   locked: '&cTa wyspa jest zamknięta!'
+  locked-island-bypass: '&6 Ta [prefix_island] jest zamknięta, ale masz uprawnienia, by ją ominąć.'
   protected: '&cWyspa chroniona: [description]'
   world-protected: '&c Świat chroniony: [description]'
   spawn-protected: '&c Spawn chroniony: [description]'

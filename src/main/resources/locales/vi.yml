@@ -1693,6 +1693,7 @@ protection:
         &a ở ngoài đảo.
       name: Sát thường từ TNT ngoài đảo
   locked: '&c Đảo đã khóa!'
+  locked-island-bypass: '&6 [prefix_Island] này đã bị khóa, nhưng bạn có quyền đi qua.'
   protected: '&c Đảo đã bảo vệ: [description].'
   world-protected: '&c Thế giới đã bảo vệ: [description].'
   spawn-protected: '&c Điểm triệu hồi đã bảo vệ: [description].'

@@ -1590,6 +1590,7 @@ protection:
         &a島の制限外のエンティティ。
       name: 世界のTNTダメージ
   locked: 島はロックされている!
+  locked-island-bypass: '&6この[prefix_island]はロックされていますが、あなたはバイパスする権限を持っています。'
   protected: '島保護: [description]'
   world-protected: '&c世界保護: [description]'
   spawn-protected: '&c保護されたスポーン: [description]'
