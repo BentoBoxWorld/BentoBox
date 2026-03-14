@@ -60,6 +60,7 @@ commands:
     syntax: '&b [usage] &a [parameters]&7 : &e [description]'
     syntax-no-parameters: '&b [usage]&7 : &e [description]'
     end: '&7 ================================='
+    page: '&7 Page &e[page]&7 of &e[total]'
     parameters: '[command]'
     description: help command
     console: Console
