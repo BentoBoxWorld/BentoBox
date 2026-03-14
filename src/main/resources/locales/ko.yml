@@ -1567,6 +1567,13 @@ protection:
         &a 엔티티(비플레이어)가 차원 간 텔레포트 
         &a 위해 포털을 사용할 수 있는지
         &a 토글합니다.
+    WIND_CHARGE:
+      name: 바람 충전
+      description: |-
+        &a 바람 충전 사용을 전환합니다.
+        &a 비활성화된 경우 방문자는 이 섬에서
+        &a 바람 충전을 사용할 수 없습니다.
+      hint: 바람 충전 사용이 비활성화됨
     WITHER_DAMAGE:
       name: 위더 데미지 설정
       description: |-

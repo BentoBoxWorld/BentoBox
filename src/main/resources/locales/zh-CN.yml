@@ -1524,6 +1524,13 @@ protection:
     ENTITY_PORTAL_TELEPORT:
       name: '&b&l实体通过传送门'
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2实体(不包括玩家)通过传送门跨越维度'
+    WIND_CHARGE:
+      name: 风弹
+      description: |-
+        &a 切换风弹的使用。
+        &a 如果禁用，访客将无法
+        &a 在该岛屿上使用风弹。
+      hint: 风弹使用已禁用
     WITHER_DAMAGE:
       name: '&b&l凋灵破坏'
       description: |-

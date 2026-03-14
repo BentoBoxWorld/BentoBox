@@ -1703,6 +1703,13 @@ protection:
         &a Pārslēdz, vai entitātes (ne-spēlētāji) var 
         &a izmantot portalus, lai teleportētos starp 
         &a dimencijām
+    WIND_CHARGE:
+      name: Vēja lādiņš
+      description: |-
+        &a Pārslēdz vēja lādiņu izmantošanu.
+        &a Ja atspējots, apmeklētāji nevar
+        &a izmantot vēja lādiņus šajā salā.
+      hint: Vēja lādiņu izmantošana atspējota
     WITHER_DAMAGE:
       name: Pārslēgt
       description: |-

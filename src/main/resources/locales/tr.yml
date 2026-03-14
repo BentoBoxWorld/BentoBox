@@ -1597,6 +1597,13 @@ protection:
         &a Varlıkların (oyuncu olmayan) boyutlar arasında
         &a teleporto olmak için portalları
         &a kullanıp kullanamayacağını açık/kapalı yapar
+    WIND_CHARGE:
+      name: Rüzgar şarjı
+      description: |-
+        &a Rüzgar şarjı kullanımını değiştirir.
+        &a Devre dışıysa, ziyaretçiler bu adada
+        &a rüzgar şarjı kullanamaz.
+      hint: Rüzgar şarjı kullanımı devre dışı
     WITHER_DAMAGE:
       name: Wither hasarını ayarlar.
       description: |-
