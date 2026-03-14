@@ -946,10 +946,10 @@ commands:
       player-expelled-you: '&b [name]&c  tě vykázal ze svého ostrova!'
       success: '&a Vykázal jsi &b [name] &a ze svého ostrova.'
     lock:
-      description: uzamknout nebo odemknout tvůj ostrov
-      locked: '&a Tvůj ostrov je nyní uzamčen.'
-      unlocked: '&a Tvůj ostrov je nyní odemčen.'
-      you-are-locked-out: '&c Tento ostrov je nyní uzamčen. Byl/a jsi vykázán/a.'
+      description: uzamknout nebo odemknout tvůj [prefix_island]
+      locked: '&a Tvůj [prefix_island] je nyní uzamčen.'
+      unlocked: '&a Tvůj [prefix_island] je nyní odemčen.'
+      you-are-locked-out: '&c Tento [prefix_island] je nyní uzamčen. Byl/a jsi vykázán/a.'
 ranks:
   owner: Vlastník
   sub-owner: Spolu-vlastník

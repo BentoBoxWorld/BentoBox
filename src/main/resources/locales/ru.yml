@@ -975,10 +975,10 @@ commands:
       player-expelled-you: '&b [name]&c был выгнан с вашего острова!'
       success: '&a Вы были выгнаны &b[name] &aс его острова.'
     lock:
-      description: заблокировать или разблокировать ваш остров
-      locked: '&a Ваш остров теперь заблокирован.'
-      unlocked: '&a Ваш остров теперь разблокирован.'
-      you-are-locked-out: '&c Этот остров теперь заблокирован. Вы были выгнаны.'
+      description: заблокировать или разблокировать ваш [prefix_island]
+      locked: '&a Ваш [prefix_island] теперь заблокирован.'
+      unlocked: '&a Ваш [prefix_island] теперь разблокирован.'
+      you-are-locked-out: '&c Этот [prefix_island] теперь заблокирован. Вы были выгнаны.'
 ranks:
   owner: Владелец
   sub-owner: Семи-владелец

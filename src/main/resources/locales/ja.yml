@@ -871,10 +871,10 @@ commands:
       player-expelled-you: '&b [name]&cはあなたを島から追放しました！'
       success: '&a島から&b [name]&aを追放した。'
     lock:
-      description: 島をロックまたはアンロックする
-      locked: '&aあなたの島はロックされました。'
-      unlocked: '&aあなたの島のロックが解除されました。'
-      you-are-locked-out: '&cこの島はロックされました。あなたは追放されました。'
+      description: '[prefix_island]をロックまたはアンロックする'
+      locked: '&aあなたの[prefix_island]はロックされました。'
+      unlocked: '&aあなたの[prefix_island]のロックが解除されました。'
+      you-are-locked-out: '&cこの[prefix_island]はロックされました。あなたは追放されました。'
 ranks:
   owner: 所有者
   sub-owner: サブ所有者

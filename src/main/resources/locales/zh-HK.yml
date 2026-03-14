@@ -889,10 +889,10 @@ commands:
       player-expelled-you: '&c您被 &b[name] &c驅逐出他的島嶼！'
       success: '&a已把 &b[name] &a從您的島上驅逐出去。'
     lock:
-      description: 鎖定或解鎖您的島嶼
-      locked: '&a您的島嶼現已鎖定。'
-      unlocked: '&a您的島嶼現已解鎖。'
-      you-are-locked-out: '&c此島嶼現已鎖定。您被驅逐了。'
+      description: 鎖定或解鎖您的[prefix_island]
+      locked: '&a您的[prefix_island]現已鎖定。'
+      unlocked: '&a您的[prefix_island]現已解鎖。'
+      you-are-locked-out: '&c此[prefix_island]現已鎖定。您被驅逐了。'
 ranks:
   owner: 島主
   sub-owner: 副島主

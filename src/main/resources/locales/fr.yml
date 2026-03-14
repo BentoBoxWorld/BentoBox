@@ -1008,10 +1008,10 @@ commands:
       player-expelled-you: '&b [name] &c vous a expulsé de l''île!'
       success: '&a Vous avez expulsé &b [name] &a de l''île.'
     lock:
-      description: verrouiller ou déverrouiller votre île
-      locked: '&a Votre île est maintenant verrouillée.'
-      unlocked: '&a Votre île est maintenant déverrouillée.'
-      you-are-locked-out: '&c Cette île est maintenant verrouillée. Vous avez été expulsé.e.'
+      description: verrouiller ou déverrouiller votre [prefix_island]
+      locked: '&a Votre [prefix_island] est maintenant verrouillée.'
+      unlocked: '&a Votre [prefix_island] est maintenant déverrouillée.'
+      you-are-locked-out: '&c Ce [prefix_island] est maintenant verrouillée. Vous avez été expulsé.e.'
 ranks:
   owner: Propriétaire
   sub-owner: Sous-propriétaire

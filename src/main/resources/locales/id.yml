@@ -984,10 +984,10 @@ commands:
       player-expelled-you: '&b [nama]&c mengusirmu dari pulau!'
       success: '&a Anda mengusir &b [nama] &a dari pulau.'
     lock:
-      description: kunci atau buka kunci pulau Anda
-      locked: '&a Pulau Anda sekarang terkunci.'
-      unlocked: '&a Pulau Anda sekarang tidak terkunci.'
-      you-are-locked-out: '&c Pulau ini sekarang terkunci. Anda telah diusir.'
+      description: kunci atau buka kunci [prefix_island] Anda
+      locked: '&a [prefix_island] Anda sekarang terkunci.'
+      unlocked: '&a [prefix_island] Anda sekarang tidak terkunci.'
+      you-are-locked-out: '&c [prefix_island] ini sekarang terkunci. Anda telah diusir.'
 ranks:
   owner: Pemilik
   sub-owner: Sub-Pemilik
