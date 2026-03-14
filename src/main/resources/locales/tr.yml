@@ -940,6 +940,11 @@ commands:
       not-on-island: '&4Bu misafir şuanda adanda değil!'
       player-expelled-you: '&d[name] &4seni adadan attı!'
       success: '&d[name] &9oyuncusunu adadan attın!'
+    lock:
+      description: Adanı kilitle veya kilidini aç.
+      locked: '&a Adan artık kilitli.'
+      unlocked: '&a Adanın kilidi açıldı.'
+      you-are-locked-out: '&c Bu ada kilitli. Adadan atıldın.'
 ranks:
   owner: Ada-Sahibi
   sub-owner: Yardımcı

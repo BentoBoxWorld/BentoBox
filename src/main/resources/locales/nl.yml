@@ -1008,6 +1008,11 @@ commands:
       not-on-island: '&c Die speler is niet op jouw eiland!'
       player-expelled-you: '&b [name] &c hebben je van het eiland verdreven!'
       success: '&a Je hebt &b [name] &a van het eiland verdreven.'
+    lock:
+      description: sluit je eiland af of open het
+      locked: '&a Je eiland is nu afgesloten.'
+      unlocked: '&a Je eiland is nu open.'
+      you-are-locked-out: '&c Dit eiland is nu afgesloten. Je bent verwijderd.'
 ranks:
   owner: Eigenaar
   sub-owner: Ondereigenaar

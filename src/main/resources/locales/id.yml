@@ -983,6 +983,11 @@ commands:
       not-on-island: '&c Pemain itu tidak ada di pulau Anda!'
       player-expelled-you: '&b [nama]&c mengusirmu dari pulau!'
       success: '&a Anda mengusir &b [nama] &a dari pulau.'
+    lock:
+      description: kunci atau buka kunci pulau Anda
+      locked: '&a Pulau Anda sekarang terkunci.'
+      unlocked: '&a Pulau Anda sekarang tidak terkunci.'
+      you-are-locked-out: '&c Pulau ini sekarang terkunci. Anda telah diusir.'
 ranks:
   owner: Pemilik
   sub-owner: Sub-Pemilik

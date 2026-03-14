@@ -969,6 +969,11 @@ commands:
       not-on-island: '&c Tego gracza nie ma na twojej wyspie!'
       player-expelled-you: '&b [name]&c wyprosił cię ze swojej wyspy.'
       success: '&a Wyprosiłeś gracza &b [name] &a ze swojej wyspy.'
+    lock:
+      description: zablokuj lub odblokuj swoją wyspę
+      locked: '&a Twoja wyspa jest teraz zablokowana.'
+      unlocked: '&a Twoja wyspa jest teraz odblokowana.'
+      you-are-locked-out: '&c Ta wyspa jest teraz zablokowana. Zostałeś/aś wypędzony/a.'
 ranks:
   owner: Lider
   sub-owner: Współlider

@@ -1007,6 +1007,11 @@ commands:
       not-on-island: '&c Ce joueur n''est pas sur votre île!'
       player-expelled-you: '&b [name] &c vous a expulsé de l''île!'
       success: '&a Vous avez expulsé &b [name] &a de l''île.'
+    lock:
+      description: verrouiller ou déverrouiller votre île
+      locked: '&a Votre île est maintenant verrouillée.'
+      unlocked: '&a Votre île est maintenant déverrouillée.'
+      you-are-locked-out: '&c Cette île est maintenant verrouillée. Vous avez été expulsé.e.'
 ranks:
   owner: Propriétaire
   sub-owner: Sous-propriétaire

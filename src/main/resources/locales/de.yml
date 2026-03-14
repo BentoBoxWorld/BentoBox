@@ -1012,6 +1012,11 @@ commands:
       not-on-island: '&c Dieser Spieler ist nicht auf deiner Insel!'
       player-expelled-you: '&b [name]&c hat dich von der Insel vertrieben!'
       success: '&a Du hast&b [name]&a von der Insel vertrieben.'
+    lock:
+      description: Deine Insel sperren oder entsperren
+      locked: '&a Deine Insel ist jetzt gesperrt.'
+      unlocked: '&a Deine Insel ist jetzt entsperrt.'
+      you-are-locked-out: '&c Diese Insel ist jetzt gesperrt. Du wurdest vertrieben.'
 ranks:
   owner: Besitzer
   sub-owner: Mitbesitzer

@@ -968,6 +968,11 @@ commands:
       not-on-island: '&c Esse jogador não está na sua ilha!'
       player-expelled-you: '&b [name]&c  te retirou da ilha!'
       success: '&a Você retirou &b [name] &a da ilha.'
+    lock:
+      description: bloquear ou desbloquear sua ilha
+      locked: '&a Sua ilha agora está bloqueada.'
+      unlocked: '&a Sua ilha agora está desbloqueada.'
+      you-are-locked-out: '&c Esta ilha agora está bloqueada. Você foi expulso/a.'
 ranks:
   owner: Dono
   sub-owner: Vice-dono

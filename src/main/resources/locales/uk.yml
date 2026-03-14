@@ -885,6 +885,11 @@ commands:
       not-on-island: '&c Цього гравця немає на вашому [prefix_island]!'
       player-expelled-you: '&b [name]&c вигнав(ла) вас із [prefix_island]!'
       success: '&a Ви вигнали &b [name] &a з [prefix_island].'
+    lock:
+      description: заблокувати або розблокувати ваш [prefix_island]
+      locked: '&a Ваш [prefix_island] тепер заблокований.'
+      unlocked: '&a Ваш [prefix_island] тепер розблокований.'
+      you-are-locked-out: '&c Цей [prefix_island] тепер заблокований. Вас вигнали.'
 
 ranks:
   owner: Власник

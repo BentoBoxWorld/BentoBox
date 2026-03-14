@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -141,6 +140,7 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testCanExecuteNoIsland() {
+        when(im.getIsland(any(), any(User.class))).thenReturn(null);
         assertFalse(ilc.canExecute(user, "lock", Collections.emptyList()));
         verify(user).sendMessage("general.errors.no-island");
     }
@@ -150,7 +150,6 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testCanExecuteLowRank() {
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(ilc.canExecute(user, "lock", Collections.emptyList()));
@@ -162,16 +161,16 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testCanExecuteHasIsland() {
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         assertTrue(ilc.canExecute(user, "lock", Collections.emptyList()));
         verify(user, never()).sendMessage(anyString());
     }
 
     /**
-     * Test canExecute when player is in a team (but has no own island).
+     * Test canExecute when player is in a team — getIsland returns the team island.
      */
     @Test
     void testCanExecuteInTeam() {
+        // getIsland returns island by default; team member scenario uses the same path
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
         assertTrue(ilc.canExecute(user, "lock", Collections.emptyList()));
         verify(user, never()).sendMessage(anyString());
@@ -182,9 +181,10 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testExecuteLockIsland() {
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         // Island is currently unlocked (VISITOR_RANK = 0)
         when(island.getFlag(eq(Flags.LOCK))).thenReturn(RanksManager.VISITOR_RANK);
+        // Prime the island field via canExecute
+        assertTrue(ilc.canExecute(user, "lock", Collections.emptyList()));
 
         assertTrue(ilc.execute(user, "lock", Collections.emptyList()));
 
@@ -197,9 +197,10 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testExecuteUnlockIsland() {
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         // Island is currently locked (MEMBER_RANK = 500)
         when(island.getFlag(eq(Flags.LOCK))).thenReturn(RanksManager.MEMBER_RANK);
+        // Prime the island field via canExecute
+        assertTrue(ilc.canExecute(user, "lock", Collections.emptyList()));
 
         assertTrue(ilc.execute(user, "lock", Collections.emptyList()));
 
@@ -212,7 +213,6 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testExecuteLockWithVisitorsOnIsland() {
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(island.getFlag(eq(Flags.LOCK))).thenReturn(RanksManager.VISITOR_RANK);
 
         // Set up a visitor on the island
@@ -233,6 +233,8 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
         // Visitor has an island to go home to
         when(im.hasIsland(any(), eq(visitorUUID))).thenReturn(true);
 
+        // Prime the island field via canExecute
+        assertTrue(ilc.canExecute(user, "lock", Collections.emptyList()));
         assertTrue(ilc.execute(user, "lock", Collections.emptyList()));
 
         verify(island).setFlag(eq(Flags.LOCK), eq(RanksManager.MEMBER_RANK));
@@ -246,7 +248,6 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testExecuteLockWithVisitorsNoHome() {
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(island.getFlag(eq(Flags.LOCK))).thenReturn(RanksManager.VISITOR_RANK);
 
         // Set up a visitor
@@ -268,6 +269,8 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
         when(im.inTeam(any(), eq(visitorUUID))).thenReturn(false);
         when(im.getSpawn(any())).thenReturn(Optional.of(island));
 
+        // Prime the island field via canExecute
+        assertTrue(ilc.canExecute(user, "lock", Collections.emptyList()));
         assertTrue(ilc.execute(user, "lock", Collections.emptyList()));
 
         verify(island).setFlag(eq(Flags.LOCK), eq(RanksManager.MEMBER_RANK));
@@ -281,7 +284,6 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testExecuteLockMembersNotExpelled() {
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(island.getFlag(eq(Flags.LOCK))).thenReturn(RanksManager.VISITOR_RANK);
 
         // Set up a team member on the island
@@ -297,6 +299,8 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
         when(island.inTeam(eq(memberUUID))).thenReturn(true);
         when(island.getPlayersOnIsland()).thenReturn(List.of(memberPlayer));
 
+        // Prime the island field via canExecute
+        assertTrue(ilc.canExecute(user, "lock", Collections.emptyList()));
         assertTrue(ilc.execute(user, "lock", Collections.emptyList()));
 
         verify(island).setFlag(eq(Flags.LOCK), eq(RanksManager.MEMBER_RANK));
@@ -307,13 +311,11 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
     }
 
     /**
-     * Test execute when island is null (safety check).
+     * Test execute safety check - returns false when island field is null (canExecute not called first).
      */
     @Test
     void testExecuteNoIsland() {
-        when(im.getIsland(any(), any(User.class))).thenReturn(null);
-
+        // island field is null because canExecute was never called
         assertFalse(ilc.execute(user, "lock", Collections.emptyList()));
-        verify(user).sendMessage("general.errors.no-island");
     }
 }

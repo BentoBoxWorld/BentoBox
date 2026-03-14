@@ -992,6 +992,11 @@ commands:
       not-on-island: '&c Acest jucător nu se află pe insula ta!'
       player-expelled-you: '&b [name] &c v-a expulzat de pe insulă!'
       success: '&a Ați expulzat &b [name] &a din insulă.'
+    lock:
+      description: blochează sau deblochează insula ta
+      locked: '&a Insula ta este acum blocată.'
+      unlocked: '&a Insula ta este acum deblocată.'
+      you-are-locked-out: '&c Această insulă este acum blocată. Ați fost expulzat/ă.'
 ranks:
   owner: Proprietar
   sub-owner: Sub-proprietar

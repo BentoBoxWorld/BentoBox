@@ -1,7 +1,8 @@
 package world.bentobox.bentobox.api.commands.island;
 
 import java.util.List;
-import java.util.Objects;
+
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -35,6 +36,12 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 public class IslandLockCommand extends CompositeCommand {
 
+    /**
+     * Cached island instance for the command execution.
+     * Set during canExecute and used in execute.
+     */
+    private @Nullable Island island;
+
     public IslandLockCommand(CompositeCommand islandCommand) {
         super(islandCommand, "lock");
     }
@@ -49,14 +56,13 @@ public class IslandLockCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        // Player must have an island or be in a team
-        if (!getIslands().inTeam(getWorld(), user.getUniqueId()) && !getIslands().hasIsland(getWorld(), user)) {
+        island = getIslands().getIsland(getWorld(), user);
+        if (island == null) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
         // Check rank to use command
-        Island island = getIslands().getIsland(getWorld(), user);
-        int rank = Objects.requireNonNull(island).getRank(user);
+        int rank = island.getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
                     user.getTranslation(RanksManager.getInstance().getRank(rank)));
@@ -67,9 +73,8 @@ public class IslandLockCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Island island = getIslands().getIsland(getWorld(), user);
+        // Defensive safety check in case execute is called without canExecute
         if (island == null) {
-            user.sendMessage("general.errors.no-island");
             return false;
         }
 
