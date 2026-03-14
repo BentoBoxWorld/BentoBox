@@ -499,6 +499,8 @@ commands:
           &a Shift ile +/-100
         no-cost: Ücretsiz
         cost-amount: 'Maliyet: [cost]'
+        next-page: '&f Sonraki sayfa'
+        previous-page: '&f Önceki sayfa'
     resetflags:
       parameters: '[bayrak]'
       description: Config.yml'deki tüm adaları varsayılan etiket ayarlarına sıfırla

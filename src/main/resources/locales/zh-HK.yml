@@ -459,6 +459,8 @@ commands:
           &a Shift +/-100
         no-cost: 免費
         cost-amount: '費用: [cost]'
+        next-page: '&f 下一頁'
+        previous-page: '&f 上一頁'
     resetflags:
       parameters: '[旗幟]'
       description: 將所有島嶼的保護標志設置為 config.yml 中默認的狀態

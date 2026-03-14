@@ -506,6 +506,8 @@ commands:
           &a Shift для +/-100
         no-cost: Бесплатно
         cost-amount: 'Стоимость: [cost]'
+        next-page: '&f Следующая страница'
+        previous-page: '&f Предыдущая страница'
     resetflags:
       parameters: '[флаг]'
       description: >-

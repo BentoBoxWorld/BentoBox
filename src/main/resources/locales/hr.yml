@@ -500,6 +500,8 @@ commands:
           &a Shift za +/-100
         no-cost: Besplatno
         cost-amount: 'Cijena: [cost]'
+        next-page: '&f Sljedeća stranica'
+        previous-page: '&f Prethodna stranica'
     resetflags:
       parameters: '[zastava]'
       description: Vratite sve otoke na zadane postavke zastavice u config.yml

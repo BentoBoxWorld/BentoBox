@@ -444,6 +444,8 @@ commands:
           &a Shiftで +/-100
         no-cost: 無料
         cost-amount: 'コスト: [cost]'
+        next-page: '&f 次のページ'
+        previous-page: '&f 前のページ'
     resetflags:
       parameters: '[flag]'
       description: すべての島をconfig.ymlのデフォルトのフラグ設定にリセットします

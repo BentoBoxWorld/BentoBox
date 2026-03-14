@@ -505,6 +505,8 @@ commands:
           &a Shift para +/-100
         no-cost: Grátis
         cost-amount: 'Custo: [cost]'
+        next-page: '&f Próxima página'
+        previous-page: '&f Página anterior'
     resetflags:
       parameters: '[opção]'
       description: Reiniciar todas as ilhas para configurações padrão da config.yml
