@@ -82,6 +82,7 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
 
         // Settings related commands
         new IslandSettingsCommand(this);
+        new IslandLockCommand(this);
         new IslandSetnameCommand(this);
         new IslandResetnameCommand(this);
         new IslandLanguageCommand(this);
