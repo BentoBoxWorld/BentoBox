@@ -1665,6 +1665,13 @@ protection:
         &a Przełącza, czy byty (nie-gracze) mogą
         &a używać portali do teleportacji między
         &a wymiarami
+    WIND_CHARGE:
+      name: Ładunek wiatru
+      description: |-
+        &a Przełącza użycie ładunków wiatru.
+        &a Jeśli wyłączone, odwiedzający nie mogą
+        &a używać ładunków wiatru na tej wyspie.
+      hint: Użycie ładunku wiatru wyłączone
     WITHER_DAMAGE:
       name: Przełącz obrażenia od Withera
       description: |-

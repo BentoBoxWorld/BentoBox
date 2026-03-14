@@ -1682,6 +1682,13 @@ protection:
         &a Prebacuje ako entiteti (koji nisu igrači) mogu
         &a koristiti portale za teleportiranje između
         &a dimenzije
+    WIND_CHARGE:
+      name: Vjetreni naboj
+      description: |-
+        &a Prebacuje upotrebu vjetrenih naboja.
+        &a Ako je onemogućeno, posjetitelji ne mogu
+        &a koristiti vjetrene naboje na ovom otoku.
+      hint: Upotreba vjetrenih naboja onemogućena
     WITHER_DAMAGE:
       name: Prebaci oštećenje venuća
       description: |-

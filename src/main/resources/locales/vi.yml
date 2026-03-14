@@ -1658,6 +1658,13 @@ protection:
         &a Chuyển đổi xem các thực thể (không phải người chơi) có thể
         &a sử dụng cổng để dịch chuyển giữa
         &a các chiều không gian hay không
+    WIND_CHARGE:
+      name: Đạn gió
+      description: |-
+        &a Chuyển đổi việc sử dụng đạn gió.
+        &a Nếu bị tắt, khách thăm không thể
+        &a sử dụng đạn gió trên đảo này.
+      hint: Sử dụng đạn gió bị tắt
     WITHER_DAMAGE:
       name: Bật/Tắt sát thương khô héo
       description: |-

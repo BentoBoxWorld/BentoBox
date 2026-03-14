@@ -1696,6 +1696,13 @@ protection:
         &a Attiva se le entità (non giocatore) possono  
         &a utilizzare i portali per teletrasportarsi tra  
         &a dimensioni
+    WIND_CHARGE:
+      name: Carica di vento
+      description: |-
+        &a Attiva/disattiva l'uso delle cariche di vento.
+        &a Se disabilitato, i visitatori non possono
+        &a usare cariche di vento su questa isola.
+      hint: Uso della carica di vento disabilitato
     WITHER_DAMAGE:
       name: Abilita/disabilita i danni dal Wither
       description: '&a Se attivo, i wither &adanneggeranno  i blocchi e giocatori'

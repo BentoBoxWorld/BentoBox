@@ -41,6 +41,7 @@ import world.bentobox.bentobox.listeners.flags.protection.SculkShriekerListener;
 import world.bentobox.bentobox.listeners.flags.protection.ShearingListener;
 import world.bentobox.bentobox.listeners.flags.protection.TeleportationListener;
 import world.bentobox.bentobox.listeners.flags.protection.ThrowingListener;
+import world.bentobox.bentobox.listeners.flags.protection.WindChargeListener;
 import world.bentobox.bentobox.listeners.flags.settings.DecayListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobSpawnListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener;
@@ -244,6 +245,20 @@ public final class Flags {
      * @see ThrowingListener
      */
     public static final Flag EXPERIENCE_BOTTLE_THROWING = new Flag.Builder("EXPERIENCE_BOTTLE_THROWING", Material.EXPERIENCE_BOTTLE).build();
+
+    /**
+     * Prevents players from using wind charges.
+     * Wind charges can be used to push entities (including players and mobs) and to
+     * interact with activatable blocks such as buttons, levers, trapdoors, fence gates,
+     * bells and candles in the area of their explosion.
+     * @since 2.6.0
+     * @see WindChargeListener
+     */
+    public static final Flag WIND_CHARGE = new Flag.Builder("WIND_CHARGE",
+            Enums.getIfPresent(Material.class, "WIND_CHARGE").or(Material.BARRIER))
+            .listener(new WindChargeListener())
+            .mode(Flag.Mode.ADVANCED)
+            .build();
 
     /*
      * Fire

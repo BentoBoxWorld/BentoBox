@@ -1680,6 +1680,13 @@ protection:
         &a Toggles if entities (non-player) can
         &a use portals to teleport between
         &a dimensions
+    WIND_CHARGE:
+      name: Wind charge
+      description: |-
+        &a Toggle wind charge usage.
+        &a If disabled, visitors cannot
+        &a use wind charges on this island.
+      hint: Wind charge use disabled
     WITHER_DAMAGE:
       name: Toggle wither damage
       description: |-

@@ -1528,6 +1528,13 @@ protection:
       description: |-
         &a 允许/禁止 非玩家實體
         &a 使用傳送門，前往其他世界
+    WIND_CHARGE:
+      name: 風彈
+      description: |-
+        &a 切換風彈的使用。
+        &a 如果禁用，訪客將無法
+        &a 在該島嶼上使用風彈。
+      hint: 風彈使用已禁用
     WITHER_DAMAGE:
       name: '&a&l凋零傷害'
       description: |-

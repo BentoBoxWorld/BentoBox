@@ -1741,6 +1741,13 @@ protection:
         &a Bekapcsolja, ha az entitások (nem játékos) képesek rá
         &a portálok használatával teleportálhat közöttük
         &a méretek
+    WIND_CHARGE:
+      name: Széltöltet
+      description: |-
+        &a A széltöltet használatát be-/kikapcsolja.
+        &a Ha le van tiltva, a látogatók nem
+        &a használhatnak széltölteteket ezen a szigeten.
+      hint: Széltöltet használata letiltva
     WITHER_DAMAGE:
       name: Kapcsolja be a fonáskárosodást
       description: |-

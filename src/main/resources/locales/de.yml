@@ -1724,6 +1724,13 @@ protection:
         &a Schaltet um, ob Entitäten (Nicht-Spieler) 
         &a Portale nutzen können, um zwischen
         &a Dimensionen zu teleportieren
+    WIND_CHARGE:
+      name: Windladung
+      description: |-
+        &a Verwendung von Windladungen umschalten.
+        &a Wenn deaktiviert, können Besucher
+        &a auf dieser Insel keine Windladungen verwenden.
+      hint: Verwendung von Windladungen deaktiviert
     WITHER_DAMAGE:
       name: Umschalten von Wither-Schäden
       description: |-
