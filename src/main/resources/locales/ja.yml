@@ -1555,6 +1555,13 @@ protection:
         &a
         &a アイランドのメンバーはまだアイテムを失っています
         そして、彼らが自分の島で死んだ場合！
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: 襲撃のトリガー
       description: 襲撃を引き起こすために必要な島の最低ランクを設定します

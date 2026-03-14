@@ -1712,6 +1712,13 @@ protection:
     VISITOR_KEEP_INVENTORY:
       name: Les visiteurs gardent l'inventaire au décès
       description: "&a Empêcher les joueurs de perdre leur\n&a objets et expérience s'ils meurent\n&a une île dans laquelle ils sont un visiteur.\n&un\nLes membres de &a Island perdent toujours leurs objets\n&a s'ils meurent sur leur propre île\_!"
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Déclencheur de raid
       description: Définit le rang minimum d'île requis pour déclencher un raid

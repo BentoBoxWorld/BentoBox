@@ -1570,6 +1570,13 @@ protection:
         &a [prefix_an-island]에서 방문자인 경우 보호합니다.
         &a
         &a [prefix_Island] 멤버는 자신의 [prefix_island]에서 죽으면 여전히 아이템을 잃습니다!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: 레이드 트리거
       description: 레이드를 시작하는 데 필요한 최소 섬 등급을 설정합니다

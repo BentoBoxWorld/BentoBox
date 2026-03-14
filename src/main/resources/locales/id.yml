@@ -1708,6 +1708,13 @@ protection:
         &A
         &a Anggota pulau masih kehilangan item mereka
         &a jika mereka mati di pulau mereka sendiri!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Pemicu penggerebekan
       description: Menetapkan peringkat pulau minimum yang diperlukan untuk memicu penggerebekan

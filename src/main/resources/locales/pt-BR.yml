@@ -1678,6 +1678,13 @@ protection:
         &a
         &a Membros de [prefix_Island] ainda perdem seus itens
         &a se morrerem em seu próprio [prefix_island]!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Gatilho de invasão
       description: Define o rank mínimo de ilha necessário para acionar uma invasão

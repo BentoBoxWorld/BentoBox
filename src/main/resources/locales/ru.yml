@@ -1660,6 +1660,13 @@ protection:
         &a
         &a Участники острова все еще будут терять вещи,
         &a если будут умирать на своем острове!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Запуск рейда
       description: Устанавливает минимальный ранг острова для запуска рейда
