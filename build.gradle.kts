@@ -108,6 +108,7 @@ val gsonRecordTypeAdapterFactoryVersion = "0.3.0"
 val jdtAnnotationVersion = "2.2.600"
 val multilibVersion = "1.1.13"
 val oraxenVersion = "1.193.1"
+val blueMapApiVersion = "v2.6.2"
 
 // Store versions in extra properties for resource filtering (used in plugin.yml, config.yml)
 extra["java.version"] = javaVersion
@@ -234,6 +235,8 @@ dependencies {
     compileOnly("de.oliver:FancyHolograms:$fancyHologramsVersion")
     compileOnly("world.bentobox:level:$levelVersion-SNAPSHOT")
     compileOnly("commons-lang:commons-lang:$commonsLangVersion")
+    compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:$blueMapApiVersion")
+    testImplementation("com.github.BlueMap-Minecraft:BlueMapAPI:$blueMapApiVersion")
     compileOnly("io.th0rgal:oraxen:$oraxenVersion") {
         exclude(group = "me.gabytm.util", module = "actions-spigot")
         exclude(group = "org.jetbrains", module = "annotations")
