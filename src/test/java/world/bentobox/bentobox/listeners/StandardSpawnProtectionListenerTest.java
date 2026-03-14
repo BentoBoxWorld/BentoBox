@@ -74,6 +74,7 @@ class StandardSpawnProtectionListenerTest extends CommonTestSetup {
         when(iwm.isEndIslands(any())).thenReturn(false);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.getNetherSpawnRadius(any())).thenReturn(25);
+        when(iwm.getEndSpawnRadius(any())).thenReturn(25);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         // Util
@@ -185,6 +186,53 @@ class StandardSpawnProtectionListenerTest extends CommonTestSetup {
         when(mockPlayer.getWorld()).thenReturn(end);
         when(spawnLocation.getWorld()).thenReturn(end);
         when(iwm.isEndIslands(any())).thenReturn(true);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
+        ssp.onBlockPlace(e);
+        assertFalse(e.isCancelled());
+        checkSpigotMessage("protection.spawn-protected", 0);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Verifies that end spawn is protected when player is in standard end world.
+     */
+    @Test
+    void testOnBlockPlaceDisallowedInStandardEnd() {
+        when(location.getWorld()).thenReturn(end);
+        when(mockPlayer.getWorld()).thenReturn(end);
+        when(spawnLocation.getWorld()).thenReturn(end);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
+        ssp.onBlockPlace(e);
+        assertTrue(e.isCancelled());
+        checkSpigotMessage("protection.spawn-protected");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Verifies that end spawn is NOT protected when endSpawnRadius is 0.
+     */
+    @Test
+    void testOnBlockPlaceAllowedInStandardEndZeroRadius() {
+        when(location.getWorld()).thenReturn(end);
+        when(mockPlayer.getWorld()).thenReturn(end);
+        when(spawnLocation.getWorld()).thenReturn(end);
+        when(iwm.getEndSpawnRadius(any())).thenReturn(0);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
+        ssp.onBlockPlace(e);
+        assertFalse(e.isCancelled());
+        checkSpigotMessage("protection.spawn-protected", 0);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Verifies that end spawn is NOT protected when end portals are active.
+     */
+    @Test
+    void testOnBlockPlaceAllowedInStandardEndWithEndPortals() {
+        when(location.getWorld()).thenReturn(end);
+        when(mockPlayer.getWorld()).thenReturn(end);
+        when(spawnLocation.getWorld()).thenReturn(end);
+        when(ws.isMakeEndPortals()).thenReturn(true);
         BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
         assertFalse(e.isCancelled());

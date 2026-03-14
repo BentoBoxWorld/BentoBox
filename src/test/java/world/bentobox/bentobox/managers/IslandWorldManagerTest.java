@@ -296,6 +296,14 @@ class IslandWorldManagerTest extends CommonTestSetup {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getEndSpawnRadius(org.bukkit.World)}.
+     */
+    @Test
+    void testGetEndSpawnRadius() {
+        assertEquals(0, testIwm.getEndSpawnRadius(testWorld));
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getSeaHeight(org.bukkit.World)}.
      */
     @Test
