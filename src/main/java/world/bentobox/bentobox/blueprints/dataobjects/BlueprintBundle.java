@@ -74,6 +74,15 @@ public class BlueprintBundle implements DataObject {
     private double cost = 0;
 
     /**
+     * Commands to run when this bundle is pasted (i.e., when an island is created with it).
+     * Supports [player] and [owner] placeholders.
+     * Commands prefixed with [SUDO] are run as the player; all others are run as console.
+     * @since 2.6.0
+     */
+    @Expose
+    private List<String> commands = new ArrayList<>();
+
+    /**
      * @return the uniqueId
      */
     @Override
@@ -224,5 +233,24 @@ public class BlueprintBundle implements DataObject {
      */
     public void setCost(double cost) {
         this.cost = cost;
+    }
+
+    /**
+     * @return the list of commands to run when this bundle is pasted
+     * @since 2.6.0
+     */
+    public List<String> getCommands() {
+        if (commands == null) {
+            commands = new ArrayList<>();
+        }
+        return commands;
+    }
+
+    /**
+     * @param commands the commands to set
+     * @since 2.6.0
+     */
+    public void setCommands(List<String> commands) {
+        this.commands = commands;
     }
 }

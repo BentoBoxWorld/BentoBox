@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -80,6 +81,7 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
         when(bb.getDisplayName()).thenReturn("test");
         when(bb.getIcon()).thenReturn(Material.STONE);
         when(bb.getDescription()).thenReturn(Collections.singletonList("A description"));
+        when(bb.getCommands()).thenReturn(Collections.emptyList());
         when(bb.getSlot()).thenReturn(5);
         // Too small slot for panel
         when(bb2.getUniqueId()).thenReturn("test2");
@@ -182,6 +184,31 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
         assertEquals("Display Name", pi.getName());
         assertEquals(Material.BEACON, pi.getItem().getType());
         assertEquals("commands.admin.blueprint.management.remove", pi.getDescription().getFirst());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getCommandsIcon}.
+     */
+    @Test
+    void testGetCommandsIconNoCommands() {
+        when(bb.getCommands()).thenReturn(Collections.emptyList());
+        PanelItem pi = bmp.getCommandsIcon(addon, bb);
+        assertEquals("commands.admin.blueprint.management.edit-commands", pi.getName());
+        assertEquals(Material.COMMAND_BLOCK, pi.getItem().getType());
+        assertEquals("commands.admin.blueprint.management.no-commands", pi.getDescription().getFirst());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getCommandsIcon}.
+     */
+    @Test
+    void testGetCommandsIconWithCommands() {
+        when(bb.getCommands()).thenReturn(List.of("say hello [player]", "give [player] diamond 1"));
+        PanelItem pi = bmp.getCommandsIcon(addon, bb);
+        assertEquals("commands.admin.blueprint.management.edit-commands", pi.getName());
+        assertEquals(Material.COMMAND_BLOCK, pi.getItem().getType());
+        assertEquals("say hello [player]", pi.getDescription().getFirst());
+        assertEquals("give [player] diamond 1", pi.getDescription().get(1));
     }
 
 }
