@@ -1461,6 +1461,7 @@ protection:
         &a Pozwala na przemianę Obsydianu
         &a pustym wiaderkiem z powrotem na lawę.
       scooping: '&a Zmieniam obsydian z powrotem w lawę. Następnym razem uważaj!'
+      cooldown: '&c Musisz poczekać, zanim będziesz mógł zebrać kolejny blok obsydianu.'
       obsidian-nearby: >-
         &c W pobliżu znajdują się obsydianowe bloki, nie można zebrać tego bloku
         w lawę.

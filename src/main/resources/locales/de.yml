@@ -1510,6 +1510,7 @@ protection:
 
         &a Hilft Neulingen und reduziert Resets.
       scooping: '&a Obsidian wieder in Lava verwandelt. Sei nächstes Mal vorsichtig!'
+      cooldown: '&c Du musst warten, bevor du einen weiteren Obsidianblock schöpfen kannst.'
       obsidian-nearby: >-
         &c Es gibt Obsidianblöcke in der Nähe, du kannst diesen Block nicht in
         Lava umwandeln.

@@ -1532,6 +1532,7 @@ protection:
         &a ha vannak más obszidián blokkok
         &a 2 blokk sugarú körben.
       scooping: '&a Az obszidián visszaváltása lávává. Legyen óvatos legközelebb!'
+      cooldown: '&c Várnia kell, mielőtt újabb obszidián blokkot meríthet.'
       obsidian-nearby: >-
         &c Obszidián blokkok vannak a közelben, ezt a tömböt nem lehet lávába
         szedni.

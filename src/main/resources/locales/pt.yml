@@ -1493,6 +1493,7 @@ protection:
       scooping: >-
         &a Transformando obsidiana de volta em lava. Seja cuidadoso da próxima
         vez!
+      cooldown: '&c Deve esperar antes de recolher outro bloco de obsidiana.'
       obsidian-nearby: >-
         &c Existem blocos de obsidiana próximos, você não pode transformar este
         bloco em lava.

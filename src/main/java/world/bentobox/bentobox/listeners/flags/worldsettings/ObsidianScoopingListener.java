@@ -3,6 +3,8 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
@@ -23,6 +25,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.ExpiringSet;
 
 /**
  * Enables changing of obsidian back into lava
@@ -30,6 +33,11 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  */
 public class ObsidianScoopingListener extends FlagListener {
+
+    /**
+     * Cooldown to prevent lava duplication by rapid obsidian scooping.
+     */
+    private final ExpiringSet<UUID> cooldowns = new ExpiringSet<>(5, TimeUnit.MINUTES);
 
     /**
      * Enables changing of obsidian back into lava
@@ -89,11 +97,18 @@ public class ObsidianScoopingListener extends FlagListener {
         }
         User user = User.getInstance(player);
         if (getIslands().userIsOnIsland(user.getWorld(), user)) {
+            // Check cooldown to prevent lava duplication exploit
+            if (cooldowns.contains(player.getUniqueId())) {
+                user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.cooldown");
+                return false;
+            }
             // Look around to see if this is a lone obsidian block
             if (getBlocksAround(b).stream().anyMatch(block -> block.getType().equals(Material.OBSIDIAN))) {
                 user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.obsidian-nearby");
                 return false;
             }
+            // Add player to cooldown set to prevent rapid scooping
+            cooldowns.add(player.getUniqueId());
             user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.scooping");
             player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
             e.setCancelled(true);

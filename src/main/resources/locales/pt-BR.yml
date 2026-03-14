@@ -1476,6 +1476,7 @@ protection:
         &a com balde se houver outros blocos de obsidiana
         &a dentro de um raio de 2-blocos.
       scooping: '&a Transformando sua obsidiana em lava. Tome cuidado da próxima vez!'
+      cooldown: '&c Você deve esperar antes de recolher outro bloco de obsidiana.'
       obsidian-nearby: >-
         &c Há blocos de obsidiana próximos, você não pode coletar esse bloco com
         balde.

@@ -1475,6 +1475,7 @@ protection:
         &a ako postoje drugi blokovi opsidijana
         &a unutar radijusa od 2 bloka.
       scooping: '&a Pretvaranje opsidijana natrag u lavu. Budite oprezni sljedeći put!'
+      cooldown: '&c Morate pričekati prije nego što možete pokupiti još jedan blok opsidijana.'
       obsidian-nearby: >-
         &c U blizini su blokovi od opsidijana, ne možete zagrabiti ovaj blok u
         lavu.

@@ -1510,6 +1510,7 @@ protection:
       scooping: >-
         &a Retour de l'obsidienne en lave. Soyez plus prudent la prochaine fois
         !
+      cooldown: '&c Vous devez attendre avant de ramasser un autre bloc d''obsidienne.'
       obsidian-nearby: >-
         &c Il y a d'autres blocs d'obsidienne à proximité, vous ne pouvez pas
         transformer ce bloc en lave.
