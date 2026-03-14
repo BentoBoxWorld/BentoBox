@@ -344,6 +344,12 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.safe-spot-search-range", since = "1.21.0")
     private int safeSpotSearchRange = 16;
 
+    @ConfigComment("The command to run as the expelled player if they have no island and no spawn is set.")
+    @ConfigComment("This is typically provided by other plugins like EssentialsX.")
+    @ConfigComment("Leave blank to do nothing in this situation.")
+    @ConfigEntry(path = "island.expel.command", since = "3.11.3")
+    private String expelCommand = "spawn";
+
     /* WEB */
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
     @ConfigComment("Disabling this will result in the deactivation of the update checker and of some other")
@@ -1029,6 +1035,24 @@ public class Settings implements ConfigObject {
      */
     public void setReadyCommands(List<String> readyCommands) {
         this.readyCommands = readyCommands;
+    }
+
+    /**
+     * Gets the command to run as the expelled player when they have no island and no spawn is set.
+     *
+     * @return the expel command
+     */
+    public String getExpelCommand() {
+        return expelCommand;
+    }
+
+    /**
+     * Sets the command to run as the expelled player when they have no island and no spawn is set.
+     *
+     * @param expelCommand the expel command to set
+     */
+    public void setExpelCommand(String expelCommand) {
+        this.expelCommand = expelCommand;
     }
 
     /**
