@@ -1480,7 +1480,7 @@ protection:
         &aSamazina sākšanas no jauna.
       scooping: '&a Pārvēršot obsidianu atpakaļ lavā. Nākamreiz esi uzmanīgs!'
       cooldown: '&c Jums jāgaida, pirms varat uzsūkt vēl vienu obsidiāna bloku.'
-      obsidian-nearby: '&c Netālu ir obsidiāna bloki, tu nevar uzsūkt šo bloku lavā.'
+      obsidian-nearby: '&c Netālu ir obsidiāna bloki, tu nevar uzsūkt šo bloku lavā. ([radius])'
     OFFLINE_GROWTH:
       description: |-
         &aKad ir izslēgts, augi neaugs uz

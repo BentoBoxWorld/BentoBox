@@ -1449,7 +1449,7 @@ protection:
         &a zpět do lávy. Chrání nováčky. Redukuje restarty.
       scooping: '&a Změna obsidiánu zpět na lávu. Příště pozor!'
       cooldown: '&c Musíte počkat, než budete moci nabrat další obsidiánový blok.'
-      obsidian-nearby: '&c Nedaleko jsou obsidiánové bloky, tento blok nemůžete nabrat do lávy.'
+      obsidian-nearby: '&c Nedaleko jsou obsidiánové bloky, tento blok nemůžete nabrat do lávy. ([radius])'
     OFFLINE_GROWTH:
       description: |-
         &a Je-li zakázáno, rostliny

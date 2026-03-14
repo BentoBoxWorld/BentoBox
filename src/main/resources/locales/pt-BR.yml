@@ -1487,7 +1487,7 @@ protection:
       cooldown: '&c Você deve esperar antes de recolher outro bloco de obsidiana.'
       obsidian-nearby: >-
         &c Há blocos de obsidiana próximos, você não pode coletar esse bloco com
-        balde.
+        balde. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Quando desabilitado, plantas

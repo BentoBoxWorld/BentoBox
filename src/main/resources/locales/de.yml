@@ -1521,7 +1521,7 @@ protection:
       cooldown: '&c Du musst warten, bevor du einen weiteren Obsidianblock schöpfen kannst.'
       obsidian-nearby: >-
         &c Es gibt Obsidianblöcke in der Nähe, du kannst diesen Block nicht in
-        Lava umwandeln.
+        Lava umwandeln. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Wenn deaktiviert, wachsen Pflanzen 

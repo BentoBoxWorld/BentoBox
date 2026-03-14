@@ -1504,7 +1504,7 @@ protection:
       cooldown: '&c Devi aspettare prima di raccogliere un altro blocco di ossidiana.'
       obsidian-nearby: >-
         &c Ci sono blocchi di ossidiana vicini, non puoi riciclare questo blocco
-        in lava.
+        in lava. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &aSe disabilitato, le piante

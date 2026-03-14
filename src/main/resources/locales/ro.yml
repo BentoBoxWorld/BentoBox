@@ -1522,7 +1522,7 @@ protection:
       cooldown: '&c Trebuie să așteptați înainte de a colecta un alt bloc de obsidian.'
       obsidian-nearby: >-
         &c Există blocuri de obsidian în apropiere, nu puteți scoate acest bloc
-        în lavă.
+        în lavă. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Când este dezactivat, plantele

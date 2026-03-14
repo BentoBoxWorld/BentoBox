@@ -1543,7 +1543,7 @@ protection:
       cooldown: '&c Várnia kell, mielőtt újabb obszidián blokkot meríthet.'
       obsidian-nearby: >-
         &c Obszidián blokkok vannak a közelben, ezt a tömböt nem lehet lávába
-        szedni.
+        szedni. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Letiltott állapotban növények

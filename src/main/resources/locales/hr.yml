@@ -1486,7 +1486,7 @@ protection:
       cooldown: '&c Morate pričekati prije nego što možete pokupiti još jedan blok opsidijana.'
       obsidian-nearby: >-
         &c U blizini su blokovi od opsidijana, ne možete zagrabiti ovaj blok u
-        lavu.
+        lavu. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Kada je onemogućeno, biljke
