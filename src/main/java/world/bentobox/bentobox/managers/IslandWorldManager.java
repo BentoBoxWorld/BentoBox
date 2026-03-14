@@ -329,6 +329,14 @@ public class IslandWorldManager {
     }
 
     /**
+     * @return the endSpawnRadius
+     * @since 2.4.3
+     */
+    public int getEndSpawnRadius(@NonNull World world) {
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getEndSpawnRadius() : 0;
+    }
+
+    /**
      * @return the seaHeight
      */
     public int getSeaHeight(@NonNull World world) {
