@@ -284,6 +284,9 @@ commands:
       team-members-title: 'Membres de l''équipe :'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Taille maximale de l''équipe : [number]'
+      max-coop-size: 'Taille maximale de coopération : [number]'
+      max-trusted-size: 'Taille maximale de confiance : [number]'
       island-protection-center: "Centre de la zone de protection\_: [xyz]"
       island-center: "Centre de l'île\_: [xyz]"
       island-coords: 'Coordonnées de l''île : [xz1] to [xz2]'
