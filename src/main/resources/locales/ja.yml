@@ -1356,6 +1356,7 @@ protection:
         初心者を保護します。
         リセットを減らします。
       scooping: '&a黒曜石を溶岩に戻す。次回は気をつけて！'
+      cooldown: '&c次の黒曜石ブロックをすくうには、しばらく待つ必要があります。'
       obsidian-nearby: '&c近くに黒曜石のブロックがあり、このブロックを溶岩にすくい上げることはできません。'
     OFFLINE_GROWTH:
       description: |-

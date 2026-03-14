@@ -1344,6 +1344,7 @@ protection:
         &4注意: 如果黑曜石附近2格范围内有其它黑曜石
         &4则不能把黑曜石变回熔岩
       scooping: '&a已将黑曜石变回熔岩.'
+      cooldown: '&c你必须等待一段时间才能再次收集黑曜石。'
       obsidian-nearby: '&c附近有其它黑曜石, 这个黑曜石不能变回熔岩.'
     OFFLINE_GROWTH:
       description: |-

@@ -1482,6 +1482,7 @@ protection:
         &a si hay otros bloques de obsidiana
         &a dentro de un radio de 2 bloques.
       scooping: '&aobsidiana cambio de vuelta a lava. ¡Ten mas cuidado la próxima vez!'
+      cooldown: '&c Debes esperar antes de recoger otro bloque de obsidiana.'
       obsidian-nearby: >-
         &c Hay bloques de obsidiana cerca, no puedes recoger este bloque en
         lava.

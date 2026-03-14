@@ -1499,6 +1499,7 @@ protection:
         &a jika ada blok obsidian lainnya
         &a dalam radius 2 blok.
       scooping: '&a Mengubah obsidian kembali menjadi lava. Lain kali hati-hati!'
+      cooldown: '&c Anda harus menunggu sebelum mengambil blok obsidian lagi.'
       obsidian-nearby: >-
         &c Ada blok obsidian di dekatnya, Anda tidak dapat memasukkan blok ini
         ke dalam lava.

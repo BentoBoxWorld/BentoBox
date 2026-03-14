@@ -1493,6 +1493,7 @@ protection:
         &a se ci sono altri blocchi di ossidiana
         &anel raggio di 2 blocchi.
       scooping: '&a Recuperando la ossidiana in lava. Stai attento la prossima volta!'
+      cooldown: '&c Devi aspettare prima di raccogliere un altro blocco di ossidiana.'
       obsidian-nearby: >-
         &c Ci sono blocchi di ossidiana vicini, non puoi riciclare questo blocco
         in lava.

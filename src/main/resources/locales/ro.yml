@@ -1511,6 +1511,7 @@ protection:
         &a dacă există alte blocuri de obsidian
         &a pe o rază de 2 blocuri.
       scooping: '&a Obsidian în schimbare în lavă. Fii atent data viitoare!'
+      cooldown: '&c Trebuie să așteptați înainte de a colecta un alt bloc de obsidian.'
       obsidian-nearby: >-
         &c Există blocuri de obsidian în apropiere, nu puteți scoate acest bloc
         în lavă.

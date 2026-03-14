@@ -1458,6 +1458,7 @@ protection:
         &a nếu xung quanh có khối hắc diệm thạch
         &a trong bán kính 2 khối.
       scooping: '&a Đang chuyển hắc diệm thạch thành nham thạch. Lần sau hãy cẩn thận!'
+      cooldown: '&c Bạn phải đợi trước khi có thể xúc thêm hắc diệm thạch.'
       obsidian-nearby: '&c Có hắc diệm thạch xung quanh. Bạn không thể xúc thành nham thạch.'
     OFFLINE_GROWTH:
       description: |-

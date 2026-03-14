@@ -1416,6 +1416,7 @@ protection:
         &aobsidyeni kovayla sağ tıkladığınızda
         &ageri alamayacağınızı ayarlar!
       scooping: '&6Obsidyen lava dönüştürüldü, daha dikkatli ol!'
+      cooldown: '&cBaşka bir obsidyen bloğu almadan önce beklemelisiniz.'
       obsidian-nearby: '&cEtrafta başka obsidyenler varken bu obsidyeni lava dönüştüremezsin!'
     OFFLINE_GROWTH:
       description: |-
