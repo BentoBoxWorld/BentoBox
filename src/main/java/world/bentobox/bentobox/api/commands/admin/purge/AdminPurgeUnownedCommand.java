@@ -51,7 +51,7 @@ public class AdminPurgeUnownedCommand extends ConfirmableCommand {
         return getPlugin().getIslands().getIslands().stream()
                 .filter(i -> !i.isSpawn())
                 .filter(i -> !i.isPurgeProtected())
-                .filter(i -> i.getWorld().equals(this.getWorld()))
+                .filter(i -> this.getWorld().equals(i.getWorld()))
                 .filter(Island::isUnowned)
                 .map(Island::getUniqueId)
                 .collect(Collectors.toSet());
