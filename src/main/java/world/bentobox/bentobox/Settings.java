@@ -347,7 +347,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("The command to run as the expelled player if they have no island and no spawn is set.")
     @ConfigComment("This is typically provided by other plugins like EssentialsX.")
     @ConfigComment("Leave blank to do nothing in this situation.")
-    @ConfigEntry(path = "island.expel.command", since = "1.24.2")
+    @ConfigEntry(path = "island.expel.command", since = "3.11.3")
     private String expelCommand = "spawn";
 
     /* WEB */
