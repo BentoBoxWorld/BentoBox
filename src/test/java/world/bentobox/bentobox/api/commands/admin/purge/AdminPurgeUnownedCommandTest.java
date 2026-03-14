@@ -103,6 +103,15 @@ public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
     }
 
     @Test
+    public void testNoPurgeIfIslandWorldIsNull() {
+        when(island.getWorld()).thenReturn(null);
+        when(island.isUnowned()).thenReturn(true);
+        when(im.getIslands()).thenReturn(Collections.singleton(island));
+        assertTrue(apuc.execute(user, "", Collections.emptyList()));
+        verify(user).sendMessage("commands.admin.purge.unowned.unowned-islands", "[number]", "0");
+    }
+
+    @Test
     public void testNoPurgeIfIslandIsPurgeProtected() {
         when(island.isPurgeProtected()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
