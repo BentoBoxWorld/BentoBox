@@ -194,6 +194,11 @@ commands:
           &c Avertissement : ce joueur possède maintenant [number] îles. C'est
           plus que ce qui est autorisé par les paramètres ou les permissions :
           [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: rayon de la zone de protection de l'île
       invalid-value:

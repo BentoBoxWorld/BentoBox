@@ -159,6 +159,11 @@ commands:
         confirmation: '&a [prefix_island]の所有者に[xyz]の所有者になるように[name]を設定したいですか？'
         success: '&b [name]&aがこの島の所有者になりました。'
         extra-islands: '&c 警告：このプレーヤーは現在、[number]島を所有しています。これは、設定またはパーマで許可されている以上のものです：[max]。'
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: 管理島の範囲コマンド
       invalid-value:
