@@ -26,6 +26,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
+import world.bentobox.bentobox.blueprints.conversation.CommandsPrompt;
 import world.bentobox.bentobox.blueprints.conversation.DescriptionPrompt;
 import world.bentobox.bentobox.blueprints.conversation.NameConversationPrefix;
 import world.bentobox.bentobox.blueprints.conversation.NamePrompt;
@@ -207,6 +208,8 @@ public class BlueprintManagementPanel {
         if (plugin.getSettings().isUseEconomy() && plugin.getVault().isPresent()) {
             pb.item(41, getCostIcon(bb));
         }
+        // Commands button
+        pb.item(43, getCommandsIcon(addon, bb));
         // Panel has a Back icon.
         pb.item(44, new PanelItemBuilder().icon(Material.OAK_DOOR).name(t("back")).clickHandler((panel, u, clickType, slot) -> {
             openPanel();
@@ -504,6 +507,40 @@ public class BlueprintManagementPanel {
         .withPrefix(new NameConversationPrefix())
         .withTimeout(90)
         .withFirstPrompt(new DescriptionPrompt(addon, bb))
+        .buildConversation(whom).begin();
+    }
+
+    /**
+     * Gets the panel item for the commands button
+     * @param addon - game mode addon
+     * @param bb - blueprint bundle
+     * @return panel item
+     */
+    protected PanelItem getCommandsIcon(GameModeAddon addon, BlueprintBundle bb) {
+        List<String> cmds = bb.getCommands();
+        return new PanelItemBuilder().icon(Material.COMMAND_BLOCK).name(t("edit-commands"))
+                .description(cmds.isEmpty() ? List.of(t("no-commands")) : cmds)
+                .clickHandler((panel, u, clickType, slot) -> {
+                    u.closeInventory();
+                    askForCommands(u.getPlayer(), addon, bb);
+                    return true;
+                }).build();
+    }
+
+    /**
+     * Opens a conversation to collect commands for the blueprint bundle
+     * @param whom - the conversable player
+     * @param addon - game mode addon
+     * @param bb - blueprint bundle
+     */
+    public void askForCommands(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
+        new ConversationFactory(BentoBox.getInstance())
+        .withModality(true)
+        .withLocalEcho(false)
+        .withPrefix(new NameConversationPrefix())
+        .withTimeout(90)
+        .withFirstPrompt(new CommandsPrompt(addon, bb))
+        .withEscapeSequence(t("commands.quit"))
         .buildConversation(whom).begin();
     }
 

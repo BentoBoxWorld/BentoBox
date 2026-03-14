@@ -492,6 +492,20 @@ commands:
           &a Shift for +/-100
         no-cost: Free
         cost-amount: 'Cost: [cost]'
+        edit-commands: Click to edit commands
+        no-commands: No commands set
+        commands:
+          quit: quit
+          clear: clear
+          instructions: |
+            Enter commands to run when blueprint [name] is pasted.
+            Supports [player] and [owner] placeholders.
+            Prefix with [SUDO] to run as the player.
+            Type 'clear' to remove all commands in this session.
+            Type 'quit' on a line by itself to finish.
+          default-color: ''
+          success: Success!
+          cancelling: Cancelling
     resetflags:
       parameters: '[flag]'
       description: Reset all [prefix_Islands] to default flag settings in config.yml
