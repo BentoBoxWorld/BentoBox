@@ -358,6 +358,15 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.obsidian-scooping-radius", since = "3.11.3")
     private int obsidianScoopingRadius = 2;
 
+    @ConfigComment("The duration of the cooldown (in minutes) applied after a player scoops an obsidian block")
+    @ConfigComment("into a lava bucket using the OBSIDIAN_SCOOPING flag. During this cooldown, the player")
+    @ConfigComment("cannot scoop another obsidian block. This prevents lava bucket duplication exploits")
+    @ConfigComment("caused by rapidly scooping obsidian near water.")
+    @ConfigComment("Minimum value is 1 minute. Default is 1 minute.")
+    @ConfigComment("Note: Changes to this value require a server restart to take effect.")
+    @ConfigEntry(path = "island.obsidian-scooping-cooldown", since = "3.11.4")
+    private int obsidianScoopingCooldown = 1;
+
     /* WEB */
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
     @ConfigComment("Disabling this will result in the deactivation of the update checker and of some other")
@@ -1081,6 +1090,30 @@ public class Settings implements ConfigObject {
      */
     public void setObsidianScoopingRadius(int obsidianScoopingRadius) {
         this.obsidianScoopingRadius = Math.max(0, Math.min(15, obsidianScoopingRadius));
+    }
+
+    /**
+     * Gets the cooldown duration (in minutes) for the OBSIDIAN_SCOOPING flag.
+     * After a player scoops obsidian into a lava bucket, they must wait this long
+     * before they can scoop again. This prevents lava bucket duplication exploits.
+     *
+     * @return the obsidian scooping cooldown in minutes (minimum 1)
+     * @since 3.11.4
+     */
+    public int getObsidianScoopingCooldown() {
+        return obsidianScoopingCooldown;
+    }
+
+    /**
+     * Sets the cooldown duration (in minutes) for the OBSIDIAN_SCOOPING flag.
+     * After a player scoops obsidian into a lava bucket, they must wait this long
+     * before they can scoop again. This prevents lava bucket duplication exploits.
+     *
+     * @param obsidianScoopingCooldown the cooldown duration in minutes (minimum 1)
+     * @since 3.11.4
+     */
+    public void setObsidianScoopingCooldown(int obsidianScoopingCooldown) {
+        this.obsidianScoopingCooldown = Math.max(1, obsidianScoopingCooldown);
     }
 
     /**
