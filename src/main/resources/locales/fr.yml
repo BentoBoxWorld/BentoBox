@@ -1709,6 +1709,13 @@ protection:
         &a Bascule si les entités (non-joueurs) peuvent
         &a utiliser des portails pour se téléporter entre
         &a dimensions
+    WIND_CHARGE:
+      name: Charge de vent
+      description: |-
+        &a Active/désactive l'utilisation des charges de vent.
+        &a Si désactivé, les visiteurs ne peuvent
+        &a pas utiliser de charges de vent sur cette île.
+      hint: Utilisation des charges de vent désactivée
     WITHER_DAMAGE:
       name: Activer/désactiver les dégâts de wither
       description: |-

@@ -1727,6 +1727,13 @@ protection:
         &a Schakelt in of entiteiten (geen spelers) 
         &a portals kunnen gebruiken om te teleporteren 
         &a tussen dimensies
+    WIND_CHARGE:
+      name: Windlading
+      description: |-
+        &a Schakelt het gebruik van windladingen.
+        &a Als uitgeschakeld, kunnen bezoekers
+        &a geen windladingen gebruiken op dit eiland.
+      hint: Gebruik van windladingen uitgeschakeld
     WITHER_DAMAGE:
       name: Schakel schoftschade in
       description: |-

@@ -1675,6 +1675,13 @@ protection:
         &a Alterna se entidades (não-jogadores) podem  
         &a usar portais para teletransportar entre  
         &a dimensões
+    WIND_CHARGE:
+      name: Carga de vento
+      description: |-
+        &a Alterna o uso de cargas de vento.
+        &a Se desativado, visitantes não podem
+        &a usar cargas de vento nesta ilha.
+      hint: Uso de carga de vento desativado
     WITHER_DAMAGE:
       name: Dano de wither
       description: |-

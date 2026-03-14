@@ -1705,6 +1705,13 @@ protection:
         &a Beralih jika entitas (non-pemain) bisa
         &a gunakan portal untuk berteleportasi
         &sebuah dimensi
+    WIND_CHARGE:
+      name: Muatan angin
+      description: |-
+        &a Mengalihkan penggunaan muatan angin.
+        &a Jika dinonaktifkan, pengunjung tidak
+        &a dapat menggunakan muatan angin di pulau ini.
+      hint: Penggunaan muatan angin dinonaktifkan
     WITHER_DAMAGE:
       name: Alihkan kerusakan layu
       description: |-

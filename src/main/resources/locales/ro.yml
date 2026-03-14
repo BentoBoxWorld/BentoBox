@@ -1717,6 +1717,13 @@ protection:
         &a Comută dacă entitățile (non-jucător) pot
         &a utilizați portaluri pentru a vă teleporta
         &a dimensiuni
+    WIND_CHARGE:
+      name: Încărcătură de vânt
+      description: |-
+        &a Comută utilizarea încărcăturilor de vânt.
+        &a Dacă este dezactivat, vizitatorii nu pot
+        &a folosi încărcături de vânt pe această insulă.
+      hint: Utilizarea încărcăturii de vânt dezactivată
     WITHER_DAMAGE:
       name: Comutați daunele ofilite
       description: |-

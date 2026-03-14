@@ -1639,6 +1639,13 @@ protection:
         &a Přepíná, pokud mohou entity (nehráče).
         &a pomocí portálů se mezi nimi teleportovat
         &a rozměry
+    WIND_CHARGE:
+      name: Větrný výboj
+      description: |-
+        &a Přepíná použití větrného výboje.
+        &a Je-li zakázáno, návštěvníci nemohou
+        &a na tomto ostrově používat větrné výboje.
+      hint: Použití větrného výboje zakázáno
     WITHER_DAMAGE:
       name: Přepnout poškození witherem
       description: |-
