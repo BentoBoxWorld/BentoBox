@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.flags;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -14,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
@@ -52,6 +54,24 @@ public abstract class FlagListener implements Listener {
         SETTING_NOT_ALLOWED_IN_WORLD,
         NULL_LOCATION,
         ISLAND_DELETED
+    }
+
+    /**
+     * Reason for an addon debug report sent via the why debug API.
+     * Used by addon developers to categorize why something happened or was blocked.
+     * @since 2.6.0
+     */
+    public enum Reason {
+        /** Informational message */
+        INFO,
+        /** Warning message */
+        WARNING,
+        /** Error message */
+        ERROR,
+        /** Something was bypassed */
+        BYPASS,
+        /** Some required data was missing */
+        MISSING_DATA
     }
 
     private static final String WORLD_PROTECTED = "protection.world-protected";
@@ -257,6 +277,66 @@ public abstract class FlagListener implements Listener {
                 }
             }
         }
+    }
+
+    /**
+     * Report an addon debug message for the admin why command.
+     * Iterates over all online players and notifies any admin who has why-debug enabled
+     * for a player in the location's world.
+     * @param loc location of the event
+     * @param message message to report
+     * @since 2.6.0
+     */
+    public void report(@NonNull Location loc, @NonNull String message) {
+        report(null, loc, message, Reason.INFO);
+    }
+
+    /**
+     * Report an addon debug message for the admin why command.
+     * Iterates over all online players and notifies any admin who has why-debug enabled
+     * for a player in the location's world.
+     * @param addon the addon reporting, or null
+     * @param loc location of the event
+     * @param message message to report
+     * @since 2.6.0
+     */
+    public void report(@Nullable Addon addon, @NonNull Location loc, @NonNull String message) {
+        report(addon, loc, message, Reason.INFO);
+    }
+
+    /**
+     * Report an addon debug message for the admin why command.
+     * Iterates over all online players and notifies any admin who has why-debug enabled
+     * for a player in the location's world.
+     * @param addon the addon reporting, or null
+     * @param loc location of the event
+     * @param message message to report
+     * @param reason reason category for the report
+     * @since 2.6.0
+     */
+    public void report(@Nullable Addon addon, @NonNull Location loc, @NonNull String message, @NonNull Reason reason) {
+        if (loc.getWorld() == null) {
+            return;
+        }
+        String prefix = addon != null ? "[" + addon.getDescription().getName() + "] " : "";
+        String whyMessage = "Why: " + prefix + message + " - " + reason.name() + " in world "
+                + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector());
+        Bukkit.getOnlinePlayers().stream()
+                .filter(p -> p.getMetadata(loc.getWorld().getName() + "_why_debug").stream()
+                        .filter(m -> m.getOwningPlugin().equals(getPlugin()))
+                        .findFirst().map(MetadataValue::asBoolean).orElse(false))
+                .forEach(p -> {
+                    plugin.log(whyMessage);
+                    String issuerUUID = p.getMetadata(loc.getWorld().getName() + "_why_debug_issuer").stream()
+                            .filter(m -> getPlugin().equals(m.getOwningPlugin()))
+                            .findFirst().map(MetadataValue::asString).orElse("");
+                    if (!issuerUUID.isEmpty()) {
+                        User issuer = User.getInstance(UUID.fromString(issuerUUID));
+                        if (issuer.isPlayer()) {
+                            issuer.sendRawMessage(whyMessage);
+                        }
+                    }
+                });
     }
 
     /**
