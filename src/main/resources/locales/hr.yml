@@ -185,6 +185,11 @@ commands:
         extra-islands: >-
           &c Upozorenje: ovaj igrač sada posjeduje [number] otoka. To je više od
           dopuštenog prema postavkama ili dozvolama: [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: admin island range command
       invalid-value:

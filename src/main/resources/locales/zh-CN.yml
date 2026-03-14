@@ -165,6 +165,11 @@ commands:
         confirmation: '&a你确定要把[name]设置为[xyz]的岛主吗?'
         success: '&b[name]&a已被设置为当前岛屿的岛主.'
         extra-islands: '&c警告: 该玩家当前拥有[number]个岛屿, 最多仅可以拥有[max]个岛屿.'
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: 岛屿保护范围管理员命令
       invalid-value:
