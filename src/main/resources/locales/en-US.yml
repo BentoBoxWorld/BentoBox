@@ -1497,8 +1497,8 @@ protection:
         &a within the configured radius.
       scooping: '&a Changing obsidian back into lava. Be careful next time!'
       cooldown: '&c You must wait before scooping another obsidian block.'
-      obsidian-nearby: '&c There are obsidian blocks within [radius] blocks of this
-        obsidian. You cannot scoop it up into lava.'
+      obsidian-nearby: '&c There are obsidian blocks within a [radius]-block radius
+        of this obsidian. You cannot scoop it up into lava.'
     OFFLINE_GROWTH:
       description: |-
         &a When disabled, plants

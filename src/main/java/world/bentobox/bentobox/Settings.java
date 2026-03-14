@@ -1080,7 +1080,7 @@ public class Settings implements ConfigObject {
      * @since 3.11.3
      */
     public void setObsidianScoopingRadius(int obsidianScoopingRadius) {
-        this.obsidianScoopingRadius = obsidianScoopingRadius;
+        this.obsidianScoopingRadius = Math.max(0, Math.min(15, obsidianScoopingRadius));
     }
 
     /**
