@@ -1534,7 +1534,7 @@ protection:
       cooldown: '&c Je moet wachten voordat je nog een obsidiaanblok kunt scheppen.'
       obsidian-nearby: >-
         &c Er zijn obsidiaanblokken in de buurt, je kunt dit blok niet in lava
-        scheppen.
+        scheppen. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Wanneer uitgeschakeld, planten

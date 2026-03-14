@@ -1472,7 +1472,7 @@ protection:
       cooldown: '&c Musisz poczekać, zanim będziesz mógł zebrać kolejny blok obsydianu.'
       obsidian-nearby: >-
         &c W pobliżu znajdują się obsydianowe bloki, nie można zebrać tego bloku
-        w lawę.
+        w lawę. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Kiedy wyłączone, rośliny

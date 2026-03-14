@@ -102,9 +102,10 @@ public class ObsidianScoopingListener extends FlagListener {
                 user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.cooldown");
                 return false;
             }
+            int radius = BentoBox.getInstance().getSettings().getObsidianScoopingRadius();
             // Look around to see if this is a lone obsidian block
-            if (getBlocksAround(b).stream().anyMatch(block -> block.getType().equals(Material.OBSIDIAN))) {
-                user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.obsidian-nearby");
+            if (radius > 0 && getBlocksAround(b, radius).stream().anyMatch(block -> block.getType().equals(Material.OBSIDIAN))) {
+                user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.obsidian-nearby", "[radius]", String.valueOf(radius));
                 return false;
             }
             // Add player to cooldown set to prevent rapid scooping
@@ -130,11 +131,11 @@ public class ObsidianScoopingListener extends FlagListener {
         b.setType(Material.AIR);
     }
 
-    private List<Block> getBlocksAround(Block b) {
+    private List<Block> getBlocksAround(Block b, int radius) {
         List<Block> blocksAround = new ArrayList<>();
-        for (int x = -2; x <= 2; x++) {
-            for (int y = -2; y <= 2; y++) {
-                for (int z = -2; z <= 2; z++) {
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
                     blocksAround.add(b.getWorld().getBlockAt(b.getX() + x, b.getY() + y, b.getZ() + z));
                 }
             }

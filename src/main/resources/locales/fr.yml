@@ -1521,7 +1521,7 @@ protection:
       cooldown: '&c Vous devez attendre avant de ramasser un autre bloc d''obsidienne.'
       obsidian-nearby: >-
         &c Il y a d'autres blocs d'obsidienne à proximité, vous ne pouvez pas
-        transformer ce bloc en lave.
+        transformer ce bloc en lave. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Lorsque désactivé, les plantes

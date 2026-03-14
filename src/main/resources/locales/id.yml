@@ -1510,7 +1510,7 @@ protection:
       cooldown: '&c Anda harus menunggu sebelum mengambil blok obsidian lagi.'
       obsidian-nearby: >-
         &c Ada blok obsidian di dekatnya, Anda tidak dapat memasukkan blok ini
-        ke dalam lava.
+        ke dalam lava. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Saat dinonaktifkan, tanaman

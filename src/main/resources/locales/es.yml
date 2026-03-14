@@ -1493,7 +1493,7 @@ protection:
       cooldown: '&c Debes esperar antes de recoger otro bloque de obsidiana.'
       obsidian-nearby: >-
         &c Hay bloques de obsidiana cerca, no puedes recoger este bloque en
-        lava.
+        lava. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &aCuando se deshabilita, las plantas

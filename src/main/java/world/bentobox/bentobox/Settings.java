@@ -350,6 +350,14 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.expel.command", since = "3.11.3")
     private String expelCommand = "spawn";
 
+    @ConfigComment("The radius (in blocks) around an obsidian block to check for other obsidian blocks")
+    @ConfigComment("when a player tries to scoop it up with an empty bucket (OBSIDIAN_SCOOPING flag).")
+    @ConfigComment("If any obsidian is found within this radius, the scooping is denied.")
+    @ConfigComment("Set to 0 to disable the check and allow any lone obsidian block to be scooped.")
+    @ConfigComment("Range: 0 to 15. Default is 2.")
+    @ConfigEntry(path = "island.obsidian-scooping-radius", since = "3.11.3")
+    private int obsidianScoopingRadius = 2;
+
     /* WEB */
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
     @ConfigComment("Disabling this will result in the deactivation of the update checker and of some other")
@@ -1053,6 +1061,26 @@ public class Settings implements ConfigObject {
      */
     public void setExpelCommand(String expelCommand) {
         this.expelCommand = expelCommand;
+    }
+
+    /**
+     * Gets the radius used by the OBSIDIAN_SCOOPING flag to check for nearby obsidian blocks.
+     *
+     * @return the obsidian scooping radius (0-15)
+     * @since 3.11.3
+     */
+    public int getObsidianScoopingRadius() {
+        return obsidianScoopingRadius;
+    }
+
+    /**
+     * Sets the radius used by the OBSIDIAN_SCOOPING flag to check for nearby obsidian blocks.
+     *
+     * @param obsidianScoopingRadius the radius to set (0-15)
+     * @since 3.11.3
+     */
+    public void setObsidianScoopingRadius(int obsidianScoopingRadius) {
+        this.obsidianScoopingRadius = obsidianScoopingRadius;
     }
 
     /**
