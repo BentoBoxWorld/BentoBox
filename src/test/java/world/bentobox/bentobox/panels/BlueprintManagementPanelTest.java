@@ -225,7 +225,6 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
             when(bundle.getDisplayName()).thenReturn("Bundle " + String.format("%02d", i));
             when(bundle.getIcon()).thenReturn(Material.STONE);
             when(bundle.getDescription()).thenReturn(Collections.singletonList("Desc"));
-            when(bundle.getSlot()).thenReturn(i);
             map.put("bundle" + i, bundle);
         }
         when(bpm.getBlueprintBundles(any())).thenReturn(map);

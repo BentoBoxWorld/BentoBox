@@ -105,6 +105,8 @@ public class BlueprintManagementPanel {
      * Opens the management panel
      */
     public void openPanel() {
+        // Reset blueprint page when returning to the main panel
+        blueprintPage = 0;
         // Show panel of blueprint bundles
         // Clicking on a bundle opens up the bundle edit panel
         // Create the panel
@@ -139,6 +141,7 @@ public class BlueprintManagementPanel {
                             // Rename
                             askForName(u.getPlayer(), addon, bb);
                         } else {
+                            blueprintPage = 0;
                             openBB(bb);
                         }
                         return true;
