@@ -131,8 +131,9 @@ public class SettingsTab implements Tab, ClickHandler {
     public List<@Nullable PanelItem> getPanelItems() {
         List<Flag> flags = getFlags();
         int i = 0;
-        // Jump past empty tabs
-        while (flags.isEmpty() && i++ < Flag.Mode.values().length) {
+        // Jump past empty tabs or tabs where all flags are invisible to the user
+        while ((flags.isEmpty() || flags.stream().allMatch(f -> !isVisibleToUser(f)))
+                && i++ < Flag.Mode.values().length) {
             currentMode.put(user.getUniqueId(), currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC).getNext());
             flags = getFlags();
         }
@@ -164,29 +165,31 @@ public class SettingsTab implements Tab, ClickHandler {
             icons.put(5, Flags.LOCK.toPanelItem(plugin, user, world, island, false));
         }
 
-        // Add the mode icon
-        switch (currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC)) {
-        case ADVANCED -> icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
-                .name(user.getTranslation(PROTECTION_PANEL + "mode.advanced.name"))
-                .description(user.getTranslation(PROTECTION_PANEL + "mode.advanced.description"), "",
-                        user.getTranslation(CLICK_TO_SWITCH,
-                                TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.expert.name")))
-                .clickHandler(this)
-                .build());
-        case EXPERT -> icons.put(7, new PanelItemBuilder().icon(Material.NETHER_BRICK)
-                .name(user.getTranslation(PROTECTION_PANEL + "mode.expert.name"))
-                .description(user.getTranslation(PROTECTION_PANEL + "mode.expert.description"), "",
-                        user.getTranslation(CLICK_TO_SWITCH,
-                                TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.basic.name")))
-                .clickHandler(this)
-                .build());
-        default -> icons.put(7, new PanelItemBuilder().icon(Material.IRON_INGOT)
-                .name(user.getTranslation(PROTECTION_PANEL + "mode.basic.name"))
-                .description(user.getTranslation(PROTECTION_PANEL + "mode.basic.description"), "",
-                        user.getTranslation(CLICK_TO_SWITCH,
-                                TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.advanced.name")))
-                .clickHandler(this)
-                .build());
+        // Add the mode icon only when there are flags visible to the user
+        if (hasVisibleFlags()) {
+            switch (currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC)) {
+            case ADVANCED -> icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
+                    .name(user.getTranslation(PROTECTION_PANEL + "mode.advanced.name"))
+                    .description(user.getTranslation(PROTECTION_PANEL + "mode.advanced.description"), "",
+                            user.getTranslation(CLICK_TO_SWITCH,
+                                    TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.expert.name")))
+                    .clickHandler(this)
+                    .build());
+            case EXPERT -> icons.put(7, new PanelItemBuilder().icon(Material.NETHER_BRICK)
+                    .name(user.getTranslation(PROTECTION_PANEL + "mode.expert.name"))
+                    .description(user.getTranslation(PROTECTION_PANEL + "mode.expert.description"), "",
+                            user.getTranslation(CLICK_TO_SWITCH,
+                                    TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.basic.name")))
+                    .clickHandler(this)
+                    .build());
+            default -> icons.put(7, new PanelItemBuilder().icon(Material.IRON_INGOT)
+                    .name(user.getTranslation(PROTECTION_PANEL + "mode.basic.name"))
+                    .description(user.getTranslation(PROTECTION_PANEL + "mode.basic.description"), "",
+                            user.getTranslation(CLICK_TO_SWITCH,
+                                    TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.advanced.name")))
+                    .clickHandler(this)
+                    .build());
+            }
         }
 
         // Add the reset everything to default - it's only in the player's settings panel 
@@ -214,6 +217,32 @@ public class SettingsTab implements Tab, ClickHandler {
                     .build());
         }
         return icons;
+    }
+
+    /**
+     * Check whether a flag is visible to the current user (i.e., not hidden or user is op).
+     * @param flag - flag to check
+     * @return {@code true} if the flag is visible to the user
+     */
+    private boolean isVisibleToUser(Flag flag) {
+        return user.isOp() || !plugin.getIWM().getHiddenFlags(world).contains(flag.getID());
+    }
+
+    /**
+     * Check whether there are any flags of this tab's type that are visible to the current user
+     * across all modes. Ops always see all flags.
+     * @return {@code true} if at least one flag is visible
+     */
+    private boolean hasVisibleFlags() {
+        if (user.isOp()) {
+            return true;
+        }
+        List<String> hiddenFlags = plugin.getIWM().getHiddenFlags(world);
+        var addon = plugin.getIWM().getAddon(world);
+        return plugin.getFlagsManager().getFlags().stream()
+                .filter(f -> f.getType().equals(type) && !f.getMode().equals(Mode.TOP_ROW))
+                .filter(f -> addon.isEmpty() || f.getGameModes().isEmpty() || f.getGameModes().contains(addon.get()))
+                .anyMatch(f -> !hiddenFlags.contains(f.getID()));
     }
 
     /* (non-Javadoc)
