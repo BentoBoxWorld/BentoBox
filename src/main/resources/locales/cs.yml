@@ -1642,6 +1642,13 @@ protection:
         &A
         Členové &a Island stále ztrácejí své předměty
         &a pokud zemřou na svém vlastním ostrově!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Spuštění nájezdu
       description: Nastavuje minimální rank ostrova potřebný ke spuštění nájezdu

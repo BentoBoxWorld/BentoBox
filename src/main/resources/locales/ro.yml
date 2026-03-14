@@ -1720,6 +1720,13 @@ protection:
         &o
         Membrii &a Island încă își pierd obiectele
         &a dacă mor pe propria lor insulă!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Declanșare raid
       description: Setează rangul minim al insulei necesar pentru a declanșa un raid

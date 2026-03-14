@@ -1741,6 +1741,13 @@ protection:
         &a
         &a [prefix_Island] tagjai továbbra is elveszítik tárgyaikat
         &a ha a saját szigetükön halnak meg!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Rajtaütés indítása
       description: Beállítja a rajtaütés indításához szükséges minimális szigetrangot

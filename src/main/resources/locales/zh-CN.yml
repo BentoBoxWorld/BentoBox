@@ -1530,6 +1530,13 @@ protection:
         &a允许&#FAFAD2时: 玩家在他人岛屿死亡不掉落
         &c禁止&#FAFAD2时: 玩家在他人岛屿死亡掉落
         &4岛屿成员在自己的岛屿上死亡时仍然会掉落物品和经验
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: 触发袭击
       description: 设置触发袭击所需的岛屿最低等级

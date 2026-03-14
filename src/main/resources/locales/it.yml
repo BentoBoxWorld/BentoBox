@@ -1696,6 +1696,13 @@ protection:
         &a
         &a I membri di [prefix_Island] perdono comunque i loro oggetti
         &a se muoiono nella propria [prefix_island]!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Attivazione incursione
       description: Imposta il rango minimo dell'isola richiesto per attivare un'incursione

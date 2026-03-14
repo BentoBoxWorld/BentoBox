@@ -1730,6 +1730,13 @@ protection:
         &a
         &a [prefix_Island] leden verliezen nog steeds hun items
         &a als ze sterven op hun eigen [prefix_island]!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Aanval activeren
       description: Stelt de minimale eilandrang in die nodig is om een aanval te activeren

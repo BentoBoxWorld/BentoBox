@@ -1658,6 +1658,13 @@ protection:
         &a
         &a Thành viên đảo vẫn mất đồ
         &a nếu họ chết ở đảo của họ!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Kích hoạt cuộc đột kích
       description: Đặt cấp độ đảo tối thiểu cần thiết để kích hoạt cuộc đột kích

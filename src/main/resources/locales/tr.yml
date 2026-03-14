@@ -1600,6 +1600,13 @@ protection:
         &a
         &a Island members still lose their items
         &a if they die on their own island!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Baskın tetikleyici
       description: Baskın tetiklemek için gereken minimum ada rütbesini belirler

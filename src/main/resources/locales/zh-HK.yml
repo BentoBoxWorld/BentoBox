@@ -1529,6 +1529,13 @@ protection:
         &a 防止玩家失去他們的物品和
         &a 經驗，只適用於他們死在了
         &a 他們是游客的島嶼。
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: 觸發突襲
       description: 設置觸發突襲所需的島嶼最低等級

@@ -1724,6 +1724,13 @@ protection:
         &a gezähmte Haustiere nur auf die
         &a Heimatinsel des Besitzers gehen
         &a und sie nicht verlassen.
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Raid auslösen
       description: Legt den minimalen Inselrang fest, der zum Auslösen eines Raids benötigt wird
