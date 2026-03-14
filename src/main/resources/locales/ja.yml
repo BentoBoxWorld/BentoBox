@@ -224,6 +224,9 @@ commands:
       team-members-title: チームメンバー
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'チーム最大人数: [number]'
+      max-coop-size: '協力最大人数: [number]'
+      max-trusted-size: '信頼最大人数: [number]'
       island-protection-center: 保護地域センター：[xyz]
       island-center: 島の中心：[xyz]
       island-coords: ' 島座標: [xz1] - [xz2]'
