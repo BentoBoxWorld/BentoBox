@@ -32,6 +32,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public abstract class FlagListener implements Listener {
 
+    private static final String WHY = "Why: ";
+
     /**
      * Reason for why flag was allowed or disallowed
      * Used by admins for debugging player actions
@@ -264,8 +266,8 @@ public abstract class FlagListener implements Listener {
         // A quick way to debug flag listener unit tests is to add this line here: System.out.println(why.name()); NOSONAR
         if (user != null && user.isPlayer() && user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
                 .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(MetadataValue::asBoolean).orElse(false)) {
-            String whyEvent = "Why: " + e.getEventName() + " in world " + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector());
-            String whyBypass = "Why: " + user.getName() + " " + flag.getID() + " - " + why.name();
+            String whyEvent = WHY + e.getEventName() + " in world " + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector());
+            String whyBypass = WHY + user.getName() + " " + flag.getID() + " - " + why.name();
 
             plugin.log(whyEvent);
             plugin.log(whyBypass);
@@ -323,7 +325,7 @@ public abstract class FlagListener implements Listener {
             return;
         }
         String prefix = addon != null ? "[" + addon.getDescription().getName() + "] " : "";
-        String whyMessage = "Why: " + prefix + message + " - " + reason.name() + " in world "
+        String whyMessage = WHY + prefix + message + " - " + reason.name() + " in world "
                 + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector());
         Bukkit.getOnlinePlayers().stream()
                 .filter(p -> p.getMetadata(loc.getWorld().getName() + "_why_debug").stream()
