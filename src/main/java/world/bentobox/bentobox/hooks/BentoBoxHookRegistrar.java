@@ -12,6 +12,7 @@ public class BentoBoxHookRegistrar {
 
     private static final String MV5_CLASS = "org.mvplugins.multiverse.core.MultiverseCore";
     private static final String MV4_CLASS = "com.onarandombox.MultiverseCore.MultiverseCore";
+    private static final String BLUEMAP_CLASS = "de.bluecolored.bluemap.api.BlueMapAPI";
 
     private final BentoBox plugin;
     private final HooksManager hooksManager;
@@ -54,7 +55,9 @@ public class BentoBoxHookRegistrar {
         hooksManager.registerHook(new SlimefunHook());
         hooksManager.registerHook(new ItemsAdderHook(plugin));
         hooksManager.registerHook(new OraxenHook(plugin));
-        hooksManager.registerHook(new BlueMapHook());
+        if (hasClass(BLUEMAP_CLASS)) {
+            hooksManager.registerHook(new BlueMapHook());
+        }
     }
 
     private boolean hasClass(String className) {
