@@ -411,7 +411,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         if (settings == null) {
             // Settings did not load correctly. Disable plugin.
             logError("Settings did not load correctly - disabling plugin - please check config.yml");
-            getPluginLoader().disablePlugin(this);
+            this.setEnabled(false);
             return false;
         }
         log("Saving default panels...");
