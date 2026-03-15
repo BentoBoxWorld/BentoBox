@@ -22,7 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -53,15 +52,12 @@ class PanelItemBuilderTest extends CommonTestSetup {
     }
     
     @Test
-    @Disabled("Hitting item check issue")
     void testIconMaterial() {
         PanelItemBuilder builder = new PanelItemBuilder();
-        Material m = mock(Material.class);
-        when(m.isItem()).thenReturn(true);
-        builder.icon(m);
+        builder.icon(Material.STONE);
         PanelItem item = builder.build();
         assertNotNull(item.getItem().getType());
-        assertEquals(m, item.getItem().getType());
+        assertEquals(Material.STONE, item.getItem().getType());
     }
 
     @Test
@@ -75,17 +71,7 @@ class PanelItemBuilderTest extends CommonTestSetup {
         assertEquals(Material.IRON_ORE, item.getItem().getType());
     }
 
-    @Test
-    @Disabled("Incompatibility with Player Head not being an item")
-    void testIconString() {
-        PanelItemBuilder builder = new PanelItemBuilder();
-        builder.icon("tastybento");
-        PanelItem item = builder.build();
-        assertNotNull(item.getItem().getType());
-        SkullMeta skullMeta = (SkullMeta) item.getItem().getItemMeta();
-        assertNull(skullMeta.getOwningPlayer());
-        assertEquals(Material.PLAYER_HEAD, item.getItem().getType());
-    }
+    // Removed testIconString — PLAYER_HEAD not classified as item in Paper
 
     @Test
     void testName() {

@@ -10,7 +10,6 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
@@ -92,11 +91,11 @@ class AdminPurgeUnownedCommandTest extends CommonTestSetup {
         verify(user).sendMessage("commands.admin.purge.unowned.unowned-islands", "[number]", "0");
     }
 
-    @Disabled("unable to mock CompositeCommand#askConfirmation()")
     @Test
     void testPurgeIfIslandIsUnowned() {
         when(island.isOwned()).thenReturn(false);
         when(island.isUnowned()).thenReturn(true);
+        when(island.getWorld()).thenReturn(world);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.admin.purge.unowned.unowned-islands", "[number]", "1");

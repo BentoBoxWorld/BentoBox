@@ -22,7 +22,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -312,26 +311,6 @@ class NewIslandTest extends CommonTestSetup {
         verify(island).setProtectionRange(20);
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     */
-    @Test
-    @Disabled("Not done")
-    void testBuilderHasIslandFailnoReserve() throws Exception {
-        when(island.isReserved()).thenReturn(false);
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
-        // Verifications
-        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(island));
-        verify(island).setFlagsDefaults();
-        verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
-        verify(builder, times(2)).build();
-        verify(bpb).getUniqueId();
-        verify(ice).getBlueprintBundle();
-        verify(pm).setDeaths(world, uuid, 0);
-        verify(im, never()).setHomeLocation(eq(user), any());
-        verify(island).setProtectionRange(20);
-        verify(plugin).logError("New island for user tastybento was not reserved!");
-    }
+    // Removed testBuilderHasIslandFailnoReserve — test was unfinished and expected nonexistent logError call
 
 }

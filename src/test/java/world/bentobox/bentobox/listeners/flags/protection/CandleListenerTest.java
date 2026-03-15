@@ -7,20 +7,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import world.bentobox.bentobox.CommonTestSetup;
 
-@Disabled("Issues with NotAMock")
 class CandleListenerTest extends CommonTestSetup {
 
     private CandleListener l;
@@ -38,9 +35,6 @@ class CandleListenerTest extends CommonTestSetup {
 
         when(block.getLocation()).thenReturn(location);
 
-        // Tags
-        when(Tag.CANDLES.isTagged(any(Material.class))).thenReturn(true);
-        when(Tag.CANDLE_CAKES.isTagged(any(Material.class))).thenReturn(true);
 
         // Listener
         l = new CandleListener();

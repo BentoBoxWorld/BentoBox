@@ -24,7 +24,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -218,13 +217,7 @@ class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
      * Test method for
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
-    @Disabled("PaperAPI Material issue with Material.get")
-    @Test
-    void testCanExecuteNoTarget() {
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
-        // Show panel
-        verify(mockPlayer).openInventory(any(Inventory.class));
-    }
+    // Removed testCanExecuteNoTarget — PaperAPI Material.get incompatibility
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.

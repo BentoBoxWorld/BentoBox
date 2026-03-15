@@ -55,7 +55,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -355,11 +354,7 @@ class IslandsManagerTest extends CommonTestSetup {
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
-    @Test
-    @Disabled("Reason: Block mocks do not return correct BlockData for isSafeLocation checks")
-    void testIsSafeLocationSafe() {
-        assertTrue(islandsManager.isSafeLocation(location));
-    }
+    // Removed testIsSafeLocationSafe — MockBukkit does not return correct BlockData for isSafeLocation
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
@@ -382,70 +377,14 @@ class IslandsManagerTest extends CommonTestSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
-    @Test
-    @Disabled("Reason: Block mock types are commented out; test body needs rewrite for water submersion check")
-    void testIsSafeLocationSubmerged() {
-        assertTrue(islandsManager.isSafeLocation(location)); // Since poseidon this is ok
-    }
+    // Removed testIsSafeLocationSubmerged — MockBukkit does not support water submersion checks
 
-    @Test
-    @Disabled("Reason: Material.values() iteration causes mock framework issues with BlockData types")
-    void testCheckIfSafeTrapdoor() {
-        for (Material d : Material.values()) {
-            if (d.name().contains("DOOR")) {
-                for (Material s : Material.values()) {
-                    if (s.name().contains("_SIGN") && !s.isLegacy()) {
-                        assertFalse( islandsManager.checkIfSafe(world, d, s, Material.AIR), "Fail " + d.name() + " " + s.name());
-                    }
-                }
-            }
-        }
-    }
+    // Removed testCheckIfSafeTrapdoor — Material.values() iteration causes mock framework issues
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
-    @Test
-    @Disabled("Reason: Block mocks do not return correct BlockData for portal type checks")
-    void testIsSafeLocationPortals() {
-        when(ground.getType()).thenReturn(Material.STONE);
-        when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.NETHER_PORTAL);
-        assertTrue(islandsManager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.STONE);
-        when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.END_PORTAL);
-        assertFalse(islandsManager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.STONE);
-        when(space1.getType()).thenReturn(Material.NETHER_PORTAL);
-        when(space2.getType()).thenReturn(Material.AIR);
-        assertTrue(islandsManager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.STONE);
-        when(space1.getType()).thenReturn(Material.END_PORTAL);
-        when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse(islandsManager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.NETHER_PORTAL);
-        when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse(islandsManager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.END_PORTAL);
-        when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse(islandsManager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.END_GATEWAY);
-        when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse(islandsManager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.STONE);
-        when(space1.getType()).thenReturn(Material.END_GATEWAY);
-        when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse(islandsManager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.STONE);
-        when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.END_GATEWAY);
-        assertFalse(islandsManager.isSafeLocation(location));
-
-    }
+    // Removed testIsSafeLocationPortals — MockBukkit does not return correct BlockData for portal types
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
@@ -469,69 +408,17 @@ class IslandsManagerTest extends CommonTestSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
-    @Test
-    @Disabled("Reason: Block mocks do not return correct BlockData for trapdoor open/closed state")
-    void testTrapDoor() {
-        when(ground.getType()).thenReturn(Material.OAK_TRAPDOOR);
-        assertFalse( islandsManager.isSafeLocation(location), "Open trapdoor");
-        when(ground.getType()).thenReturn(Material.IRON_TRAPDOOR);
-        assertFalse(islandsManager.isSafeLocation(location), "Open iron trapdoor");
-    }
+    // Removed testTrapDoor — MockBukkit does not return correct BlockData for trapdoor state
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
-    @Test
-    @Disabled("Reason: Block mocks do not return correct BlockData for fence/sign/cactus type checks")
-    void testBadBlocks() {
-        // Fences
-        when(ground.getType()).thenReturn(Material.SPRUCE_FENCE);
-        assertFalse( islandsManager.isSafeLocation(location), "Fence :" + Material.SPRUCE_FENCE.toString());
-        // Signs
-        sign = Material.BIRCH_SIGN;
-        when(ground.getType()).thenReturn(sign);
-        assertFalse(islandsManager.isSafeLocation(location), "Sign");
-        wallSign = Material.ACACIA_WALL_SIGN;
-        when(ground.getType()).thenReturn(wallSign);
-        assertFalse(islandsManager.isSafeLocation(location), "Sign");
-        // Bad Blocks
-        Material[] badMats = {Material.CACTUS, Material.OAK_BOAT};
-        Arrays.asList(badMats).forEach(m -> {
-            when(ground.getType()).thenReturn(m);
-            assertFalse(islandsManager.isSafeLocation(location), "Bad mat :" + m.toString());
-        });
-
-    }
+    // Removed testBadBlocks — MockBukkit does not return correct BlockData for fence/sign/cactus types
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
-    @Test
-    @Disabled("Reason: Block mocks do not return correct BlockData for solid block type checks")
-    void testSolidBlocks() {
-        when(space1.getType()).thenReturn(Material.STONE);
-        assertFalse(islandsManager.isSafeLocation(location), "Solid");
-
-        when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.STONE);
-        assertFalse(islandsManager.isSafeLocation(location), "Solid");
-
-        when(space1.getType()).thenReturn(wallSign);
-        when(space2.getType()).thenReturn(Material.AIR);
-        assertTrue(islandsManager.isSafeLocation(location), "Wall sign 1");
-
-        when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(wallSign);
-        assertTrue(islandsManager.isSafeLocation(location), "Wall sign 2");
-
-        when(space1.getType()).thenReturn(sign);
-        when(space2.getType()).thenReturn(Material.AIR);
-        assertTrue(islandsManager.isSafeLocation(location), "Wall sign 1");
-
-        when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(sign);
-        assertTrue(islandsManager.isSafeLocation(location), "Wall sign 2");
-    }
+    // Removed testSolidBlocks — MockBukkit does not return correct BlockData for solid block checks
 
     /**
      * Test method for
@@ -599,25 +486,14 @@ class IslandsManagerTest extends CommonTestSetup {
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#getIsland(World, User)}
      */
-    @Test
-    @Disabled("Reason: Island cache mock does not integrate with IslandsManager.getIsland(World, User)")
-    void testGetIslandWorldUser()  {
-        assertEquals(is, islandsManager.getIsland(world, user));
-        assertNull(islandsManager.getIsland(world, (User) null));
-    }
+    // Removed testGetIslandWorldUser — Island cache mock does not integrate with IslandsManager.getIsland
 
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#getIsland(World, UUID)}.
      * @throws IOException 
      */
-    @Test
-    @Disabled("Reason: Database load/mock integration prevents getIsland(World, UUID) from returning expected island")
-    void testGetIsland() throws IOException  {
-        islandsManager.load();
-        assertEquals(is, islandsManager.getIsland(staticWorld, owner));
-        assertNull(islandsManager.getIsland(staticWorld, UUID.randomUUID()));
-    }
+    // Removed testGetIsland — Database load/mock integration prevents proper testing
 
     /**
      * Test method for

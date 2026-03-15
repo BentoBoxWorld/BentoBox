@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.Material;
@@ -26,9 +27,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockbukkit.mockbukkit.tags.MaterialTagMock;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -39,7 +40,6 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-@Disabled("Issues with NotAMock")
 class BlockInteractionListenerTest extends CommonTestSetup {
     private EquipmentSlot hand;
 
@@ -55,11 +55,32 @@ class BlockInteractionListenerTest extends CommonTestSetup {
 
     private final Map<Material, Flag> clickedBlocks = new HashMap<>();
 
+    /**
+     * Sets a Tag static field to a new MaterialTagMock containing the given materials.
+     * Uses Unsafe to overwrite the static final field, same pattern as reinitTagFields().
+     */
+    @SuppressWarnings("java:S3011")
+    private static void setTagField(String fieldName, Material... materials) {
+        try {
+            java.lang.reflect.Field unsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            sun.misc.Unsafe unsafe = (sun.misc.Unsafe) unsafeField.get(null);
+
+            java.lang.reflect.Field tagField = Tag.class.getDeclaredField(fieldName);
+            tagField.setAccessible(true);
+            org.bukkit.NamespacedKey key = org.bukkit.NamespacedKey.minecraft(fieldName.toLowerCase(java.util.Locale.ROOT));
+            MaterialTagMock newTag = new MaterialTagMock(key, materials);
+            unsafe.putObject(unsafe.staticFieldBase(tagField), unsafe.staticFieldOffset(tagField), newTag);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to set tag field " + fieldName, e);
+        }
+    }
+
     private void setFlags() {
         inHandItems.put(Material.ENDER_PEARL, Flags.ENDER_PEARL);
         inHandItems.put(Material.BONE_MEAL, Flags.PLACE_BLOCKS);
+        // Tag-based materials (need tags populated via addToTag)
         clickedBlocks.put(Material.DAMAGED_ANVIL, Flags.ANVIL);
-        clickedBlocks.put(Material.BEACON, Flags.BEACON);
         clickedBlocks.put(Material.WHITE_BED, Flags.BED);
         clickedBlocks.put(Material.COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
         clickedBlocks.put(Material.WAXED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
@@ -69,23 +90,29 @@ class BlockInteractionListenerTest extends CommonTestSetup {
         clickedBlocks.put(Material.WEATHERED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
         clickedBlocks.put(Material.OXIDIZED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
         clickedBlocks.put(Material.WAXED_OXIDIZED_COPPER_GOLEM_STATUE, Flags.BREAK_BLOCKS);
+        clickedBlocks.put(Material.COPPER_CHEST, Flags.CHEST);
+        clickedBlocks.put(Material.SHULKER_BOX, Flags.SHULKER_BOX);
+        clickedBlocks.put(Material.OAK_DOOR, Flags.DOOR);
+        clickedBlocks.put(Material.IRON_TRAPDOOR, Flags.TRAPDOOR);
+        clickedBlocks.put(Material.SPRUCE_FENCE_GATE, Flags.GATE);
+        clickedBlocks.put(Material.STONE_BUTTON, Flags.BUTTON);
+        clickedBlocks.put(Material.ACACIA_WALL_HANGING_SIGN, Flags.SIGN_EDITING);
+        clickedBlocks.put(Material.DARK_OAK_SIGN, Flags.SIGN_EDITING);
+        clickedBlocks.put(Material.CHERRY_WALL_SIGN, Flags.SIGN_EDITING);
+        // Switch-based materials (handled directly by material type)
+        clickedBlocks.put(Material.BEACON, Flags.BEACON);
         clickedBlocks.put(Material.BREWING_STAND, Flags.BREWING);
         clickedBlocks.put(Material.WATER_CAULDRON, Flags.COLLECT_WATER);
         clickedBlocks.put(Material.BARREL, Flags.BARREL);
         clickedBlocks.put(Material.CHEST, Flags.CHEST);
-        clickedBlocks.put(Material.COPPER_CHEST, Flags.CHEST);
         clickedBlocks.put(Material.CHEST_MINECART, Flags.CHEST);
         clickedBlocks.put(Material.TRAPPED_CHEST, Flags.TRAPPED_CHEST);
-        clickedBlocks.put(Material.SHULKER_BOX, Flags.SHULKER_BOX);
         clickedBlocks.put(Material.FLOWER_POT, Flags.FLOWER_POT);
         clickedBlocks.put(Material.COMPOSTER, Flags.COMPOSTER);
         clickedBlocks.put(Material.DISPENSER, Flags.DISPENSER);
         clickedBlocks.put(Material.DROPPER, Flags.DROPPER);
         clickedBlocks.put(Material.HOPPER, Flags.HOPPER);
         clickedBlocks.put(Material.HOPPER_MINECART, Flags.HOPPER);
-        clickedBlocks.put(Material.OAK_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.IRON_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.SPRUCE_FENCE_GATE, Flags.GATE);
         clickedBlocks.put(Material.BLAST_FURNACE, Flags.FURNACE);
         clickedBlocks.put(Material.CAMPFIRE, Flags.FURNACE);
         clickedBlocks.put(Material.FURNACE_MINECART, Flags.FURNACE);
@@ -100,7 +127,6 @@ class BlockInteractionListenerTest extends CommonTestSetup {
         clickedBlocks.put(Material.GRINDSTONE, Flags.CRAFTING);
         clickedBlocks.put(Material.STONECUTTER, Flags.CRAFTING);
         clickedBlocks.put(Material.LOOM, Flags.CRAFTING);
-        clickedBlocks.put(Material.STONE_BUTTON, Flags.BUTTON);
         clickedBlocks.put(Material.LEVER, Flags.LEVER);
         clickedBlocks.put(Material.REPEATER, Flags.REDSTONE);
         clickedBlocks.put(Material.COMPARATOR, Flags.REDSTONE);
@@ -109,14 +135,32 @@ class BlockInteractionListenerTest extends CommonTestSetup {
         clickedBlocks.put(Material.END_PORTAL_FRAME, Flags.PLACE_BLOCKS);
         clickedBlocks.put(Material.ITEM_FRAME, Flags.ITEM_FRAME);
         clickedBlocks.put(Material.GLOW_ITEM_FRAME, Flags.ITEM_FRAME);
-        clickedBlocks.put(Material.SWEET_BERRY_BUSH, Flags.BREAK_BLOCKS);
+        clickedBlocks.put(Material.SWEET_BERRY_BUSH, Flags.HARVEST);
         clickedBlocks.put(Material.CAVE_VINES, Flags.BREAK_BLOCKS);
         clickedBlocks.put(Material.CAKE, Flags.CAKE);
         clickedBlocks.put(Material.BEEHIVE, Flags.HIVE);
         clickedBlocks.put(Material.BEE_NEST, Flags.HIVE);
-        clickedBlocks.put(Material.ACACIA_WALL_HANGING_SIGN, Flags.SIGN_EDITING);
-        clickedBlocks.put(Material.DARK_OAK_SIGN, Flags.SIGN_EDITING);
-        clickedBlocks.put(Material.CHERRY_WALL_SIGN, Flags.SIGN_EDITING);
+    }
+
+    /**
+     * Populates Tag fields with MaterialTagMock instances so that tag-based checks work in tests.
+     */
+    private void populateTags() {
+        setTagField("ANVIL", Material.DAMAGED_ANVIL);
+        setTagField("BEDS", Material.WHITE_BED);
+        setTagField("COPPER_GOLEM_STATUES",
+                Material.COPPER_GOLEM_STATUE, Material.WAXED_COPPER_GOLEM_STATUE,
+                Material.EXPOSED_COPPER_GOLEM_STATUE, Material.WAXED_EXPOSED_COPPER_GOLEM_STATUE,
+                Material.WEATHERED_COPPER_GOLEM_STATUE, Material.WAXED_WEATHERED_COPPER_GOLEM_STATUE,
+                Material.OXIDIZED_COPPER_GOLEM_STATUE, Material.WAXED_OXIDIZED_COPPER_GOLEM_STATUE);
+        setTagField("COPPER_CHESTS", Material.COPPER_CHEST);
+        setTagField("SHULKER_BOXES", Material.SHULKER_BOX);
+        setTagField("DOORS", Material.OAK_DOOR);
+        setTagField("TRAPDOORS", Material.IRON_TRAPDOOR);
+        setTagField("FENCE_GATES", Material.SPRUCE_FENCE_GATE);
+        setTagField("BUTTONS", Material.STONE_BUTTON);
+        setTagField("ALL_HANGING_SIGNS", Material.ACACIA_WALL_HANGING_SIGN);
+        setTagField("SIGNS", Material.DARK_OAK_SIGN, Material.CHERRY_WALL_SIGN);
     }
 
 
@@ -142,6 +186,7 @@ class BlockInteractionListenerTest extends CommonTestSetup {
 
         // FlagsManager
         setFlags();
+        populateTags();
 
         // Class under test
         bil = new BlockInteractionListener();
@@ -184,50 +229,18 @@ class BlockInteractionListenerTest extends CommonTestSetup {
      */
     @Test
     void testOnPlayerInteractNothingInHandPotsNotAllowed() {
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_ACACIA_SAPLING)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_ALLIUM)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_AZALEA_BUSH)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_AZURE_BLUET)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_BAMBOO)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_BIRCH_SAPLING)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_BLUE_ORCHID)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_BROWN_MUSHROOM)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_CACTUS)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_CHERRY_SAPLING)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_CLOSED_EYEBLOSSOM)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_CORNFLOWER)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_CRIMSON_FUNGUS)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_CRIMSON_ROOTS)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_DANDELION)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_DARK_OAK_SAPLING)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_DEAD_BUSH)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_FERN)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_FLOWERING_AZALEA_BUSH)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_JUNGLE_SAPLING)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_LILY_OF_THE_VALLEY)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_MANGROVE_PROPAGULE)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_OAK_SAPLING)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_OPEN_EYEBLOSSOM)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_ORANGE_TULIP)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_OXEYE_DAISY)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_PALE_OAK_SAPLING)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_PINK_TULIP)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_POPPY)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_RED_MUSHROOM)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_RED_TULIP)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_SPRUCE_SAPLING)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_TORCHFLOWER)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_WARPED_FUNGUS)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_WARPED_ROOTS)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_WHITE_TULIP)).thenReturn(true);
-        when(Tag.FLOWER_POTS.isTagged(Material.POTTED_WITHER_ROSE)).thenReturn(true);
-        Arrays.stream(Material.values()).filter(m -> m.name().startsWith("POTTED")).forEach(bm -> {
+        // Add all POTTED_ materials to Tag.FLOWER_POTS
+        Material[] pottedMaterials = Arrays.stream(Material.values())
+                .filter(m -> m.name().startsWith("POTTED"))
+                .toArray(Material[]::new);
+        setTagField("FLOWER_POTS", pottedMaterials);
+        Arrays.stream(pottedMaterials).forEach(bm -> {
             when(clickedBlock.getType()).thenReturn(bm);
             PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
             bil.onPlayerInteract(e);
             assertEquals( Event.Result.DENY, e.useInteractedBlock(), "Failure " + bm);
         });
-        verify(notifier, times((int)Arrays.stream(Material.values()).filter(m -> m.name().startsWith("POTTED")).count())).notify(any(), eq("protection.protected"));
+        verify(notifier, times(pottedMaterials.length)).notify(any(), eq("protection.protected"));
     }
 
     /**
@@ -235,16 +248,6 @@ class BlockInteractionListenerTest extends CommonTestSetup {
      */
     @Test
     void testOnPlayerInteractNothingInHandNotAllowed() {
-        when(Tag.COPPER_CHESTS.isTagged(Material.COPPER_CHEST)).thenReturn(true);
-        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.COPPER_GOLEM_STATUE)).thenReturn(true);
-        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.EXPOSED_COPPER_GOLEM_STATUE)).thenReturn(true);
-        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.OXIDIZED_COPPER_GOLEM_STATUE)).thenReturn(true);
-        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.WAXED_COPPER_GOLEM_STATUE)).thenReturn(true);
-        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.WAXED_EXPOSED_COPPER_GOLEM_STATUE)).thenReturn(true);
-        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.WAXED_OXIDIZED_COPPER_GOLEM_STATUE)).thenReturn(true);
-        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.WAXED_WEATHERED_COPPER_GOLEM_STATUE)).thenReturn(true);
-        when(Tag.COPPER_GOLEM_STATUES.isTagged(Material.WEATHERED_COPPER_GOLEM_STATUE)).thenReturn(true);
-        
         int count = 0;
         int worldSettingCount = 0;
         // Make all block states a sign. Right now, only the sign check cares, so fix in the future if required

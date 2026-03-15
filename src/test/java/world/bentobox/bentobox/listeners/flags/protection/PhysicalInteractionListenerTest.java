@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Cow;
@@ -33,7 +34,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -42,7 +42,6 @@ import world.bentobox.bentobox.CommonTestSetup;
  * @author tastybento
  *
  */
-@Disabled("Issues with NotAMock")
 class PhysicalInteractionListenerTest extends CommonTestSetup {
 
     private ItemStack item;
@@ -216,9 +215,10 @@ class PhysicalInteractionListenerTest extends CommonTestSetup {
         when(entity.getShooter()).thenReturn(source);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
+        // The listener checks Tag.WOODEN_BUTTONS and Tag.PRESSURE_PLATES (not all buttons)
         Arrays.stream(Material.values())
         .filter(m -> !m.name().contains("LEGACY"))
-        .filter(m -> m.name().contains("PRESSURE_PLATE") || m.name().contains("BUTTON")).forEach(p -> {
+        .filter(m -> Tag.WOODEN_BUTTONS.isTagged(m) || Tag.PRESSURE_PLATES.isTagged(m)).forEach(p -> {
             when(block.getType()).thenReturn(p);
             EntityInteractEvent e = new EntityInteractEvent(entity, block);
             PhysicalInteractionListener i = new PhysicalInteractionListener();

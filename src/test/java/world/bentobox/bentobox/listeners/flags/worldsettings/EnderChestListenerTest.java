@@ -28,7 +28,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -85,7 +84,6 @@ class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    @Disabled("Issues with NotAMock")
     void testOnEnderChestOpenEnderChestNotInWorld() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
@@ -97,7 +95,6 @@ class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    @Disabled("Issues with NotAMock")
     void testOnEnderChestOpenEnderChestOpPlayer() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
@@ -108,7 +105,6 @@ class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    @Disabled("Issues with NotAMock")
     void testOnEnderChestOpenEnderChestHasBypassPerm() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
@@ -119,7 +115,6 @@ class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    @Disabled("Issues with NotAMock")
     void testOnEnderChestOpenEnderChestOkay() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
@@ -132,7 +127,6 @@ class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    @Disabled("Issues with NotAMock")
     void testOnEnderChestOpenEnderChestBlocked() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);

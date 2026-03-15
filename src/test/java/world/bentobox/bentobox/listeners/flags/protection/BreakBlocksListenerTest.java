@@ -39,7 +39,6 @@ import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
@@ -50,7 +49,6 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-@Disabled("Issues with NotAMock")
 class BreakBlocksListenerTest extends CommonTestSetup {
 
     private BreakBlocksListener bbl;

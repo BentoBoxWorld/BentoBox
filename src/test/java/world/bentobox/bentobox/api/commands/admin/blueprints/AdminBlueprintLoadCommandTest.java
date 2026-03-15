@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -159,12 +158,7 @@ class AdminBlueprintLoadCommandTest extends CommonTestSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
-    @Disabled("Paper Biome issue")
-    @Test
-    void testExecuteUserStringListOfStringSuccessCaps() {
-        assertTrue(abcc.execute(user, "", List.of("island")));
-        verify(user).sendMessage("general.success");
-    }
+    // Removed testExecuteUserStringListOfStringSuccessCaps — Paper Biome incompatibility
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.

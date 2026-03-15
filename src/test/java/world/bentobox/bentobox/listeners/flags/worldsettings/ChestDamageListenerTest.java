@@ -27,7 +27,6 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -119,7 +118,6 @@ class ChestDamageListenerTest extends CommonTestSetup
     /**
      * Test method for {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
-    @Disabled("Issues with NotAMock")
     @Test
     void testOnExplosionChestDamageNotAllowed() {
         // Srt the flag to not allow chest damage
