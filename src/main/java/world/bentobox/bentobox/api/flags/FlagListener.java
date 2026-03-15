@@ -179,7 +179,7 @@ public abstract class FlagListener implements Listener {
             return true;
         }
         // Check if the island is deleted - if so, then nothing is allowed by default
-        if (island.isPresent() && (island.get().isDeleted() || island.get().isDeletable())) {
+        if (isDeletedIsland(island)) {
             report(user, e, loc, flag, Why.ISLAND_DELETED);
             noGo(e, flag, silent, WORLD_PROTECTED);
             return false;
@@ -204,6 +204,10 @@ public abstract class FlagListener implements Listener {
         report(user, e, loc, flag, Why.NOT_ALLOWED_IN_WORLD);
         noGo(e, flag, silent, WORLD_PROTECTED);
         return false;
+    }
+
+    private boolean isDeletedIsland(Optional<Island> island) {
+        return island.isPresent() && (island.get().isDeleted() || island.get().isDeletable());
     }
 
     private boolean hasBypassEverywhere(Location loc, Flag flag) {
