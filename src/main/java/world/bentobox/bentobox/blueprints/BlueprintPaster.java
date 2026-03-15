@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.bukkit.Bukkit;
 import org.bukkit.HeightMap;
@@ -55,7 +56,7 @@ public class BlueprintPaster {
      * It is used to fine-tune the estimated pasting time.
      * @since 1.11.1
      */
-    private static long chunkLoadTime = 0;
+    private static final AtomicLong chunkLoadTime = new AtomicLong(0);
 
     private final BentoBox plugin;
     private final PasteHandler paster = Util.getPasteHandler();
@@ -315,9 +316,7 @@ public class BlueprintPaster {
         currentTask = Util.getChunkAtAsync(location).thenRun(() -> {
             pasteState = PasteState.BLOCKS;
             long duration = System.currentTimeMillis() - timer;
-            if (duration > chunkLoadTime) {
-                chunkLoadTime = duration;
-            }
+            chunkLoadTime.updateAndGet(current -> Math.max(current, duration));
             // Adjust location if this is a sinking blueprint to put it on the ocean floor
             // Mayday! Mayday! We are sinking! ... What are you sinking about? https://youtu.be/gmOTpIVxji8?si=DC-u4qWRTN5fdWd8
             if (this.blueprint.isSink() && !sink) {
@@ -332,7 +331,7 @@ public class BlueprintPaster {
     private void tellOwner(User user, int blocksSize, int attachedSize, int entitiesSize, int pasteSpeed) {
         // Estimated time:
         double total = (double) blocksSize + attachedSize + entitiesSize;
-        BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D) + (chunkLoadTime / 1000.0D)).setScale(1, RoundingMode.UP);
+        BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D) + (chunkLoadTime.get() / 1000.0D)).setScale(1, RoundingMode.UP);
         user.sendMessage("commands.island.create.pasting.estimated-time", TextVariables.NUMBER, String.valueOf(time.doubleValue()));
         // We're pasting blocks!
         user.sendMessage("commands.island.create.pasting.blocks", TextVariables.NUMBER, String.valueOf(blocksSize + attachedSize));
