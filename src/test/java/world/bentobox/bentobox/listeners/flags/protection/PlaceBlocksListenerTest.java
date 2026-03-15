@@ -29,7 +29,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -39,7 +38,6 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-@Disabled("Issues with NotAMock")
 class PlaceBlocksListenerTest extends CommonTestSetup {
 
     private PlaceBlocksListener pbl;
@@ -186,7 +184,6 @@ class PlaceBlocksListenerTest extends CommonTestSetup {
     /**
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
-    @Disabled("Issues with NotAMock")
     @Test
     void testOnBlockCropsAllowedNotCrop() {
         when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
@@ -300,7 +297,6 @@ class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    @Disabled("Issues with NotAMock")
     void testOnPlayerInteract() {
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.ARMOR_STAND, Material.FIREWORK_ROCKET, Material.ITEM_FRAME, Material.END_CRYSTAL, Material.CHEST, Material.TRAPPED_CHEST, Material.JUNGLE_BOAT);
@@ -317,7 +313,6 @@ class PlaceBlocksListenerTest extends CommonTestSetup {
     /**
      * Test method for {@link PlaceBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
-    @Disabled("Issues with NotAMock")
     @Test
     void testOnPlayerInteractNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);

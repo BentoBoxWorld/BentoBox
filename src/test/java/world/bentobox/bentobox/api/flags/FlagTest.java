@@ -30,7 +30,6 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
@@ -329,7 +328,6 @@ class FlagTest extends RanksManagerTestSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#toPanelItem(BentoBox, User, Island, boolean)}.
      */
-    @Disabled("Panel issue with Paper")
     @Test
     void testToPanelItem() {
         when(island.getFlag(any())).thenReturn(RanksManager.VISITOR_RANK);

@@ -28,7 +28,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -627,38 +626,6 @@ class AdminMaxHomesCommandTest extends CommonTestSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminMaxHomesCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
-    @Test
-    @Disabled("Reason: IslandGoCommand.getNameIslandMap static mock integration fails during map retrieval")
-    void testExecuteWithMultipleIslandsAfterCanExecute() {
-        // Arrange
-        args.add("ValidPlayer");
-        args.add("4");
-
-        UUID playerUUID = UUID.randomUUID();
-        when(pm.getUUID("ValidPlayer")).thenReturn(playerUUID);
-
-
-        Island island1 = mock(Island.class);
-        Island island2 = mock(Island.class);
-        Map<String, IslandInfo> islandsMap = new HashMap<>();
-        islandsMap.put("IslandA", new IslandInfo(island1, false));
-        islandsMap.put("IslandB", new IslandInfo(island2, true));
-        instance.islands = islandsMap;
-        when(IslandGoCommand.getNameIslandMap(user, world)).thenReturn(islandsMap);
-
-        // Act
-        boolean canExecuteResult = instance.canExecute(user, label, args);
-        boolean executeResult = instance.execute(user, label, args);
-
-        // Assert
-        assertTrue(canExecuteResult);
-        assertTrue(executeResult);
-        verify(island1).setMaxHomes(4);
-        verify(island2).setMaxHomes(4);
-        verify(user).sendMessage("commands.admin.maxhomes.max-homes-set", TextVariables.NAME, "IslandA",
-                TextVariables.NUMBER, "4");
-        verify(user).sendMessage("commands.admin.maxhomes.max-homes-set", TextVariables.NAME, "IslandB",
-                TextVariables.NUMBER, "4");
-    }
+    // Removed testExecuteWithMultipleIslandsAfterCanExecute — IslandGoCommand static mock integration issues
 
 }
