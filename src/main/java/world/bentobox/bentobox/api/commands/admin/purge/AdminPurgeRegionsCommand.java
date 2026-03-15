@@ -326,6 +326,10 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         return ok;
     }
 
+    /** Tracks island-level and region-level block counts during filtering. */
+    private record FilterStats(int islandsOverLevel, int islandsPurgeProtected,
+            int regionsBlockedByLevel, int regionsBlockedByProtection) {}
+
     /**
      * This method is run async!
      * @param world world
@@ -346,87 +350,100 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
             List<Pair<Integer, Integer>> oldRegions = this.findOldRegions(days);
             // Get islands that are associated with these regions
             deleteableRegions = this.mapIslandsToRegions(oldRegions, islandGrid);
-            // Filter regions: remove any whose island-set contains at least one island that cannot be deleted.
-            // Track why islands are blocked so we can show a summary report.
-            int islandsOverLevel = 0;
-            int islandsPurgeProtected = 0;
-            int regionsBlockedByLevel = 0;
-            int regionsBlockedByProtection = 0;
-
-            var iter = deleteableRegions.entrySet().iterator();
-            while (iter.hasNext()) {
-                var entry = iter.next();
-                boolean remove = false;
-                boolean regionHasLevelBlock = false;
-                boolean regionHasPurgeBlock = false;
-                for (String id : entry.getValue()) {
-                    Optional<Island> opt = getPlugin().getIslands().getIslandById(id);
-                    if (opt.isEmpty()) {
-                        remove = true;
-                        continue;
-                    }
-                    Island isl = opt.get();
-                    if (canDeleteIsland(isl)) {
-                        remove = true;
-                        if (isl.isPurgeProtected()) {
-                            islandsPurgeProtected++;
-                            regionHasPurgeBlock = true;
-                        }
-                        if (isLevelTooHigh(isl)) {
-                            islandsOverLevel++;
-                            regionHasLevelBlock = true;
-                        }
-                    }
-                }
-                if (remove) {
-                    iter.remove();
-                    if (regionHasLevelBlock) regionsBlockedByLevel++;
-                    if (regionHasPurgeBlock) regionsBlockedByProtection++;
-                }
-            }
-
-            // Summary report
-            if (islandsOverLevel > 0) {
-                getPlugin().log("Purge: " + islandsOverLevel + " island(s) exceed the level threshold of "
-                        + getPlugin().getSettings().getIslandPurgeLevel()
-                        + " - preventing " + regionsBlockedByLevel + " region(s) from being purged");
-            }
-            if (islandsPurgeProtected > 0) {
-                getPlugin().log("Purge: " + islandsPurgeProtected + " island(s) are purge-protected"
-                        + " - preventing " + regionsBlockedByProtection + " region(s) from being purged");
-            }
-            // At this point any islands that might be deleted are in the cache, and so we can freely access them
-            // 1) Pull out all island IDs,  
-            // 2) resolve to Optional<Island>,  
-            // 3) flatten to Island,  
-            // 4) collect into a Set to dedupe,  
-            // 5) display each:
-            Set<Island> uniqueIslands = deleteableRegions.values().stream()      // Collection<Set<String>>
-                    .flatMap(Set::stream)                                           // Stream<String>
-                    .map(getPlugin().getIslands()::getIslandById)                   // Stream<Optional<Island>>
-                    .flatMap(Optional::stream)                                      // Stream<Island>
-                    .collect(Collectors.toSet());                                   // Set<Island> (deduped)
-
-            // Display to the user
-            uniqueIslands.forEach(this::displayIsland);
-
-            // Display empty regions
-            deleteableRegions.entrySet().stream()
-                .filter(e -> e.getValue().isEmpty())
-                .forEach(e -> displayEmptyRegion(e.getKey()));
-
-            if (deleteableRegions.isEmpty()) {
-                Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
-            } else {
-                Bukkit.getScheduler().runTask(getPlugin(), () -> {
-                    user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER, String.valueOf(uniqueIslands.size()));
-                    user.sendMessage("commands.admin.purge.regions.confirm", TextVariables.LABEL, this.getLabel());
-                    user.sendMessage("general.beta"); // TODO Remove beta in the future
-                    this.toBeConfirmed = true;
-                });
-            }
+            // Filter regions and log summary
+            FilterStats stats = filterNonDeletableRegions();
+            logFilterStats(stats);
+            // Display results and prompt for confirmation
+            displayResultsAndPrompt();
         } finally {
             inPurge = false;
+        }
+    }
+
+    /**
+     * Removes regions from {@code deleteableRegions} whose island-set contains
+     * at least one island that cannot be deleted, and returns blocking statistics.
+     */
+    private FilterStats filterNonDeletableRegions() {
+        int islandsOverLevel = 0;
+        int islandsPurgeProtected = 0;
+        int regionsBlockedByLevel = 0;
+        int regionsBlockedByProtection = 0;
+
+        var iter = deleteableRegions.entrySet().iterator();
+        while (iter.hasNext()) {
+            var entry = iter.next();
+            int[] regionCounts = evaluateRegionIslands(entry.getValue());
+            if (regionCounts[0] > 0) { // shouldRemove
+                iter.remove();
+                islandsOverLevel += regionCounts[1];
+                islandsPurgeProtected += regionCounts[2];
+                if (regionCounts[1] > 0) regionsBlockedByLevel++;
+                if (regionCounts[2] > 0) regionsBlockedByProtection++;
+            }
+        }
+        return new FilterStats(islandsOverLevel, islandsPurgeProtected,
+                regionsBlockedByLevel, regionsBlockedByProtection);
+    }
+
+    /**
+     * Evaluates a set of island IDs for a single region.
+     * @return int array: [shouldRemove (0 or 1), levelBlockCount, purgeProtectedCount]
+     */
+    private int[] evaluateRegionIslands(Set<String> islandIds) {
+        int shouldRemove = 0;
+        int levelBlocked = 0;
+        int purgeBlocked = 0;
+        for (String id : islandIds) {
+            Optional<Island> opt = getPlugin().getIslands().getIslandById(id);
+            if (opt.isEmpty()) {
+                shouldRemove = 1;
+                continue;
+            }
+            Island isl = opt.get();
+            if (canDeleteIsland(isl)) {
+                shouldRemove = 1;
+                if (isl.isPurgeProtected()) purgeBlocked++;
+                if (isLevelTooHigh(isl)) levelBlocked++;
+            }
+        }
+        return new int[] { shouldRemove, levelBlocked, purgeBlocked };
+    }
+
+    private void logFilterStats(FilterStats stats) {
+        if (stats.islandsOverLevel() > 0) {
+            getPlugin().log("Purge: " + stats.islandsOverLevel() + " island(s) exceed the level threshold of "
+                    + getPlugin().getSettings().getIslandPurgeLevel()
+                    + " - preventing " + stats.regionsBlockedByLevel() + " region(s) from being purged");
+        }
+        if (stats.islandsPurgeProtected() > 0) {
+            getPlugin().log("Purge: " + stats.islandsPurgeProtected() + " island(s) are purge-protected"
+                    + " - preventing " + stats.regionsBlockedByProtection() + " region(s) from being purged");
+        }
+    }
+
+    private void displayResultsAndPrompt() {
+        Set<Island> uniqueIslands = deleteableRegions.values().stream()
+                .flatMap(Set::stream)
+                .map(getPlugin().getIslands()::getIslandById)
+                .flatMap(Optional::stream)
+                .collect(Collectors.toSet());
+
+        uniqueIslands.forEach(this::displayIsland);
+
+        deleteableRegions.entrySet().stream()
+            .filter(e -> e.getValue().isEmpty())
+            .forEach(e -> displayEmptyRegion(e.getKey()));
+
+        if (deleteableRegions.isEmpty()) {
+            Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
+        } else {
+            Bukkit.getScheduler().runTask(getPlugin(), () -> {
+                user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER, String.valueOf(uniqueIslands.size()));
+                user.sendMessage("commands.admin.purge.regions.confirm", TextVariables.LABEL, this.getLabel());
+                user.sendMessage("general.beta"); // TODO Remove beta in the future
+                this.toBeConfirmed = true;
+            });
         }
     }
 
