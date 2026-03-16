@@ -317,27 +317,6 @@ class TNTListenerTest extends CommonTestSetup {
 
     @Test
     void testOnEntityExplosion() {
-        /*
-         * org.bukkit.event.entity.EntityDamageByEntityEvent.EntityDamageByEntityEvent(
-         * @NotNull @NotNull Entity damager, 
-         * @NotNull @NotNull Entity damagee, 
-         * @NotNull @NotNull DamageCause cause, 
-         * @NotNull @NotNull DamageSource damageSource, 
-         * @NotNull @NotNull Map<DamageModifier, Double> modifiers, 
-         * @NotNull @NotNull Map<DamageModifier, ?> modifierFunctions, 
-         * boolean critical)
-        
-         Attempt to use newer event. This works but then other errors appear. Go figure.
-        
-        @NotNull
-        Map<DamageModifier, Double> modifiers = new HashMap<>();
-        modifiers.put(DamageModifier.BASE, 0.0D);
-        @NotNull
-        Map<DamageModifier, ? extends Function<? super Double, Double>> modifier = new HashMap<>();
-        modifier.put(DamageModifier.BASE, null);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION,
-                DamageSource.builder(DamageType.EXPLOSION).build(), modifiers, modifier, false);
-                */
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION,
                 null, 20D);
         listener.onExplosion(e);

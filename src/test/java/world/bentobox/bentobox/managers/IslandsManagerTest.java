@@ -124,9 +124,6 @@ class IslandsManagerTest extends CommonTestSetup {
     @Mock
     private static World staticWorld;
 
-    private Material sign;
-    private Material wallSign;
-
     // Class under test
     IslandsManager islandsManager;
 
@@ -327,10 +324,6 @@ class IslandsManagerTest extends CommonTestSetup {
         // database must be mocked here
         db = mock(Database.class);
 
-        // Signs
-        sign = Material.BIRCH_SIGN;
-        wallSign = Material.ACACIA_WALL_SIGN;
-
         // Util strip spaces
         mockedUtil.when(() -> Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
 
@@ -436,11 +429,11 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testCreateIslandLocationUUID() {
-        UUID owner = UUID.randomUUID();
-        Island island = islandsManager.createIsland(location, owner);
+        UUID localOwner = UUID.randomUUID();
+        Island island = islandsManager.createIsland(location, localOwner);
         assertNotNull(island);
         assertEquals(island.getCenter().getWorld(), location.getWorld());
-        assertEquals(owner, island.getOwner());
+        assertEquals(localOwner, island.getOwner());
     }
 
     /**
@@ -449,9 +442,9 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testDeleteIslandIslandBooleanNoBlockRemoval() {
-        UUID owner = UUID.randomUUID();
-        Island island = islandsManager.createIsland(location, owner);
-        islandsManager.deleteIsland(island, false, owner);
+        UUID localOwner = UUID.randomUUID();
+        Island island = islandsManager.createIsland(location, localOwner);
+        islandsManager.deleteIsland(island, false, localOwner);
         assertNull(island.getOwner());
         verify(pim).callEvent(any(IslandDeleteEvent.class));
     }
@@ -463,9 +456,9 @@ class IslandsManagerTest extends CommonTestSetup {
     @Test
     void testDeleteIslandIslandBooleanRemoveBlocks() {
         verify(pim, never()).callEvent(any());
-        UUID owner = UUID.randomUUID();
-        Island island = islandsManager.createIsland(location, owner);
-        islandsManager.deleteIsland(island, true, owner);
+        UUID localOwner = UUID.randomUUID();
+        Island island = islandsManager.createIsland(location, localOwner);
+        islandsManager.deleteIsland(island, true, localOwner);
         assertNull(island.getOwner());
         verify(pim).callEvent(any(IslandDeleteEvent.class));
     }
@@ -562,30 +555,30 @@ class IslandsManagerTest extends CommonTestSetup {
     @Test
     void testGetProtectedIslandAt() {
         // Mock island cache
-        Island is = mock(Island.class);
+        Island localIsland = mock(Island.class);
 
-        when(islandCache.getIslandAt(any(Location.class))).thenReturn(is);
+        when(islandCache.getIslandAt(any(Location.class))).thenReturn(localIsland);
 
         // In world
 
         islandsManager.setIslandCache(islandCache);
 
-        Optional<Island> optionalIsland = Optional.ofNullable(is);
+        Optional<Island> localOptionalIsland = Optional.ofNullable(localIsland);
         // In world, correct island
-        when(is.onIsland(any())).thenReturn(true);
-        assertEquals(optionalIsland, islandsManager.getProtectedIslandAt(location));
+        when(localIsland.onIsland(any())).thenReturn(true);
+        assertEquals(localOptionalIsland, islandsManager.getProtectedIslandAt(location));
 
         // Not in protected space
-        when(is.onIsland(any())).thenReturn(false);
+        when(localIsland.onIsland(any())).thenReturn(false);
         assertEquals(Optional.empty(), islandsManager.getProtectedIslandAt(location));
 
-        islandsManager.setSpawn(is);
+        islandsManager.setSpawn(localIsland);
         // In world, correct island
-        when(is.onIsland(any())).thenReturn(true);
-        assertEquals(optionalIsland, islandsManager.getProtectedIslandAt(location));
+        when(localIsland.onIsland(any())).thenReturn(true);
+        assertEquals(localOptionalIsland, islandsManager.getProtectedIslandAt(location));
 
         // Not in protected space
-        when(is.onIsland(any())).thenReturn(false);
+        when(localIsland.onIsland(any())).thenReturn(false);
         assertEquals(Optional.empty(), islandsManager.getProtectedIslandAt(location));
     }
 
@@ -660,17 +653,17 @@ class IslandsManagerTest extends CommonTestSetup {
     @Test
     void testLocationIsOnIsland() {
         // Mock island cache
-        Island is = mock(Island.class);
+        Island localIsland = mock(Island.class);
 
-        when(islandCache.getIslandAt(any(Location.class))).thenReturn(is);
+        when(islandCache.getIslandAt(any(Location.class))).thenReturn(localIsland);
 
         // In world
-        when(is.onIsland(any())).thenReturn(true);
+        when(localIsland.onIsland(any())).thenReturn(true);
 
         Builder<UUID> members = new ImmutableSet.Builder<>();
         members.add(uuid);
-        when(is.getMemberSet()).thenReturn(members.build());
-        when(is.inTeam(uuid)).thenReturn(true);
+        when(localIsland.getMemberSet()).thenReturn(members.build());
+        when(localIsland.inTeam(uuid)).thenReturn(true);
 
         when(player.getUniqueId()).thenReturn(uuid);
 
@@ -682,14 +675,14 @@ class IslandsManagerTest extends CommonTestSetup {
 
         // No members
         Builder<UUID> mem = new ImmutableSet.Builder<>();
-        when(is.getMemberSet()).thenReturn(mem.build());
-        when(is.inTeam(uuid)).thenReturn(false);
+        when(localIsland.getMemberSet()).thenReturn(mem.build());
+        when(localIsland.inTeam(uuid)).thenReturn(false);
         assertFalse(islandsManager.locationIsOnIsland(player, location));
 
         // Not on island
-        when(is.getMemberSet()).thenReturn(members.build());
-        when(is.inTeam(uuid)).thenReturn(true);
-        when(is.onIsland(any())).thenReturn(false);
+        when(localIsland.getMemberSet()).thenReturn(members.build());
+        when(localIsland.inTeam(uuid)).thenReturn(true);
+        when(localIsland.onIsland(any())).thenReturn(false);
         assertFalse(islandsManager.locationIsOnIsland(player, location));
     }
 
@@ -804,8 +797,8 @@ class IslandsManagerTest extends CommonTestSetup {
     @Test
     void testRemovePlayersFromIsland() {
 
-        Island is = mock(Island.class);
-        islandsManager.removePlayersFromIsland(is);
+        Island localIsland = mock(Island.class);
+        islandsManager.removePlayersFromIsland(localIsland);
     }
 
     /**
@@ -853,15 +846,15 @@ class IslandsManagerTest extends CommonTestSetup {
     @Test
     void testShutdown() {
         // Mock island cache
-        Island is = mock(Island.class);
+        Island localIsland = mock(Island.class);
 
         Collection<Island> collection = new ArrayList<>();
-        collection.add(is);
+        collection.add(localIsland);
         when(islandCache.getCachedIslands()).thenReturn(collection);
 
         islandsManager.setIslandCache(islandCache);
         Map<UUID, Integer> members = new HashMap<>();
-        when(is.getMembers()).thenReturn(members);
+        when(localIsland.getMembers()).thenReturn(members);
         // -- The user is the owner of the island --
         members.put(user.getUniqueId(), RanksManager.OWNER_RANK);
         // Add some members
@@ -893,15 +886,15 @@ class IslandsManagerTest extends CommonTestSetup {
     @Test
     void testClearRank() {
         // Mock island cache
-        Island is = mock(Island.class);
+        Island localIsland = mock(Island.class);
 
         Collection<Island> collection = new ArrayList<>();
-        collection.add(is);
+        collection.add(localIsland);
         when(islandCache.getCachedIslands()).thenReturn(collection);
 
         islandsManager.setIslandCache(islandCache);
         Map<UUID, Integer> members = new HashMap<>();
-        when(is.getMembers()).thenReturn(members);
+        when(localIsland.getMembers()).thenReturn(members);
         // -- The user is the owner of the island --
         members.put(user.getUniqueId(), RanksManager.OWNER_RANK);
         // Add some members

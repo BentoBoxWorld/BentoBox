@@ -149,8 +149,8 @@ class AdminBlueprintSaveCommandTest extends CommonTestSetup {
      */
     @Test
     void testCanExecuteNoBedrock() {
-        Blueprint bp = new Blueprint();
-        clip.setBlueprint(bp);
+        Blueprint localBp = new Blueprint();
+        clip.setBlueprint(localBp);
         assertFalse(absc.canExecute(user, "", List.of("")));
         verify(user).sendMessage("commands.admin.blueprint.bedrock-required");
     }

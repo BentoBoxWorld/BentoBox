@@ -211,8 +211,8 @@ class AdminTeamDisbandCommandTest extends CommonTestSetup {
      */
     @Test
     void testTabCompleteNoArgs() {
-        AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        Optional<List<String>> list = itl.tabComplete(user, "", List.of(""));
+        AdminTeamDisbandCommand localItl = new AdminTeamDisbandCommand(ac);
+        Optional<List<String>> list = localItl.tabComplete(user, "", List.of(""));
         assertTrue(list.isEmpty());
     }
 
@@ -224,8 +224,8 @@ class AdminTeamDisbandCommandTest extends CommonTestSetup {
         when(Util.getUUID("tastybento")).thenReturn(uuid);
         when(pm.getName(uuid)).thenReturn("tastybento");
 
-        AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        Optional<List<String>> list = itl.tabComplete(user, "", List.of("tasty"));
+        AdminTeamDisbandCommand localItl = new AdminTeamDisbandCommand(ac);
+        Optional<List<String>> list = localItl.tabComplete(user, "", List.of("tasty"));
         assertTrue(list.isEmpty());
     }
 
@@ -237,8 +237,8 @@ class AdminTeamDisbandCommandTest extends CommonTestSetup {
         when(Util.getUUID("tastybento")).thenReturn(uuid);
         when(pm.getName(uuid)).thenReturn("tastybento");
 
-        AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        Optional<List<String>> list = itl.tabComplete(user, "", List.of("tastybento", "1"));
+        AdminTeamDisbandCommand localItl = new AdminTeamDisbandCommand(ac);
+        Optional<List<String>> list = localItl.tabComplete(user, "", List.of("tastybento", "1"));
         assertTrue(list.isEmpty());
     }
 
@@ -250,8 +250,8 @@ class AdminTeamDisbandCommandTest extends CommonTestSetup {
         when(Util.getUUID("tastybento")).thenReturn(uuid);
         when(pm.getName(uuid)).thenReturn("tastybento");
 
-        AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        Optional<List<String>> list = itl.tabComplete(user, "", List.of("tastybento", "1,2,3", "ddd"));
+        AdminTeamDisbandCommand localItl = new AdminTeamDisbandCommand(ac);
+        Optional<List<String>> list = localItl.tabComplete(user, "", List.of("tastybento", "1,2,3", "ddd"));
         assertFalse(list.isEmpty());
     }
 

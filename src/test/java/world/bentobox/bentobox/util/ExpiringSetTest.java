@@ -85,7 +85,7 @@ class ExpiringSetTest {
 
     @Test
     void testNotEqualsNonSet() {
-        assertFalse(set.equals("not a set"));
+        assertNotEquals("not a set", set);
     }
 
     @Test

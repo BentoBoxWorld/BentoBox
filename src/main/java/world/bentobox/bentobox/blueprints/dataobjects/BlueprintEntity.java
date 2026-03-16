@@ -605,6 +605,7 @@ public class BlueprintEntity {
                             td.getFacing(), td.getLineWidth(), td.getTextOpacity(), td.isShadowed(), td.isSeeThrough(),
                             td.isDefaultBackground());
             default -> {
+                // Display entity subtype not recognized; no blueprint data to extract
             }
         }
         // Store location within block

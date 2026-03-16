@@ -169,6 +169,7 @@ class MobSpawnListenerTest extends CommonTestSetup {
                     assertFalse(e.isCancelled(), "Should be not blocked: " + reason.toString());
                 }
                 default -> {
+                    // Other spawn reasons are not tested by this parameterized case; no assertion needed
                 }
             }
         }

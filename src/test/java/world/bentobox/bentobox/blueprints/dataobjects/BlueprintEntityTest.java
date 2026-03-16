@@ -109,14 +109,14 @@ class BlueprintEntityTest extends CommonTestSetup {
 
     @Test
     void testConfigureEntityWithVillager() {
-        BlueprintEntity blueprint = new BlueprintEntity();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
 
-        blueprint.setType(EntityType.VILLAGER);
-        blueprint.setProfession(Profession.LIBRARIAN);
-        blueprint.setExperience(100);
-        blueprint.setVillagerType(Villager.Type.PLAINS);
+        localBlueprint.setType(EntityType.VILLAGER);
+        localBlueprint.setProfession(Profession.LIBRARIAN);
+        localBlueprint.setExperience(100);
+        localBlueprint.setVillagerType(Villager.Type.PLAINS);
 
-        blueprint.configureEntity(villager);
+        localBlueprint.configureEntity(villager);
 
         assertEquals(Profession.LIBRARIAN, villager.getProfession());
         assertEquals(100, villager.getVillagerExperience());
@@ -126,129 +126,129 @@ class BlueprintEntityTest extends CommonTestSetup {
 
     @Test
     void testConfigureEntityWithColorable() {
-        BlueprintEntity blueprint = new BlueprintEntity();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
 
-        blueprint.setType(EntityType.SHEEP);
-        blueprint.setColor(DyeColor.BLUE);
+        localBlueprint.setType(EntityType.SHEEP);
+        localBlueprint.setColor(DyeColor.BLUE);
 
-        blueprint.configureEntity(sheep);
+        localBlueprint.configureEntity(sheep);
 
         assertEquals(DyeColor.BLUE, sheep.getColor());
     }
 
     @Test
     void testConfigureEntityWithTameable() {
-        BlueprintEntity blueprint = new BlueprintEntity();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
 
-        blueprint.setType(EntityType.WOLF);
-        blueprint.setTamed(true);
+        localBlueprint.setType(EntityType.WOLF);
+        localBlueprint.setTamed(true);
 
-        blueprint.configureEntity(wolf);
+        localBlueprint.configureEntity(wolf);
 
         assertTrue(wolf.isTamed());
     }
 
     @Test
     void testConfigureEntityWithChestedHorse() {
-        BlueprintEntity blueprint = new BlueprintEntity();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
 
-        blueprint.setType(EntityType.HORSE);
-        blueprint.setChest(true);
-        
+        localBlueprint.setType(EntityType.HORSE);
+        localBlueprint.setChest(true);
 
-        blueprint.configureEntity(chestedHorse);
+
+        localBlueprint.configureEntity(chestedHorse);
 
         assertTrue(chestedHorse.isCarryingChest());
     }
 
     @Test
     void testConfigureEntityWithAgeable() {
-        BlueprintEntity blueprint = new BlueprintEntity();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
 
-        blueprint.setType(EntityType.COW);
-        blueprint.setAdult(false);
+        localBlueprint.setType(EntityType.COW);
+        localBlueprint.setAdult(false);
 
-        blueprint.configureEntity(cow);
+        localBlueprint.configureEntity(cow);
 
         assertFalse(cow.isAdult());
     }
 
     @Test
     void testConfigureEntityWithAbstractHorse() {
-        BlueprintEntity blueprint = new BlueprintEntity();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
 
-        blueprint.setType(EntityType.HORSE);
-        blueprint.setDomestication(50);
+        localBlueprint.setType(EntityType.HORSE);
+        localBlueprint.setDomestication(50);
 
-        blueprint.configureEntity(horse);
+        localBlueprint.configureEntity(horse);
 
         assertEquals(50, horse.getDomestication());
     }
 
     @Test
     void testConfigureEntityWithHorse() {
-        BlueprintEntity blueprint = new BlueprintEntity();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
 
-        blueprint.setType(EntityType.HORSE);
-        blueprint.setStyle(Style.WHITE_DOTS);
+        localBlueprint.setType(EntityType.HORSE);
+        localBlueprint.setStyle(Style.WHITE_DOTS);
 
-        blueprint.configureEntity(horse);
+        localBlueprint.configureEntity(horse);
 
         assertEquals(Style.WHITE_DOTS, horse.getStyle());
     }
 
     @Test
     void testGettersAndSetters() {
-        BlueprintEntity blueprint = new BlueprintEntity();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
 
-        blueprint.setColor(DyeColor.RED);
-        assertEquals(DyeColor.RED, blueprint.getColor());
+        localBlueprint.setColor(DyeColor.RED);
+        assertEquals(DyeColor.RED, localBlueprint.getColor());
 
-        blueprint.setType(EntityType.CREEPER);
-        assertEquals(EntityType.CREEPER, blueprint.getType());
+        localBlueprint.setType(EntityType.CREEPER);
+        assertEquals(EntityType.CREEPER, localBlueprint.getType());
 
-        blueprint.setCustomName("My Entity");
-        assertEquals("My Entity", blueprint.getCustomName());
+        localBlueprint.setCustomName("My Entity");
+        assertEquals("My Entity", localBlueprint.getCustomName());
 
-        blueprint.setTamed(true);
-        assertTrue(blueprint.getTamed());
+        localBlueprint.setTamed(true);
+        assertTrue(localBlueprint.getTamed());
 
-        blueprint.setChest(true);
-        assertTrue(blueprint.getChest());
+        localBlueprint.setChest(true);
+        assertTrue(localBlueprint.getChest());
 
-        blueprint.setAdult(false);
-        assertFalse(blueprint.getAdult());
+        localBlueprint.setAdult(false);
+        assertFalse(localBlueprint.getAdult());
 
-        blueprint.setDomestication(75);
-        assertEquals(75, blueprint.getDomestication().intValue());
+        localBlueprint.setDomestication(75);
+        assertEquals(75, localBlueprint.getDomestication().intValue());
 
         Map<Integer, ItemStack> inventory = new HashMap<>();
         inventory.put(1, new ItemStack(Material.DIAMOND));
-        blueprint.setInventory(inventory);
-        assertEquals(inventory, blueprint.getInventory());
+        localBlueprint.setInventory(inventory);
+        assertEquals(inventory, localBlueprint.getInventory());
 
-        blueprint.setStyle(Style.WHITE);
-        assertEquals(Style.WHITE, blueprint.getStyle());
+        localBlueprint.setStyle(Style.WHITE);
+        assertEquals(Style.WHITE, localBlueprint.getStyle());
 
-        blueprint.setLevel(5);
-        assertEquals(5, blueprint.getLevel().intValue());
+        localBlueprint.setLevel(5);
+        assertEquals(5, localBlueprint.getLevel().intValue());
 
-        blueprint.setProfession(Profession.FARMER);
-        assertEquals(Profession.FARMER, blueprint.getProfession());
+        localBlueprint.setProfession(Profession.FARMER);
+        assertEquals(Profession.FARMER, localBlueprint.getProfession());
 
-        blueprint.setExperience(500);
-        assertEquals(500, blueprint.getExperience().intValue());
+        localBlueprint.setExperience(500);
+        assertEquals(500, localBlueprint.getExperience().intValue());
 
-        blueprint.setVillagerType(Villager.Type.TAIGA);
-        assertEquals(Villager.Type.TAIGA, blueprint.getVillagerType());
+        localBlueprint.setVillagerType(Villager.Type.TAIGA);
+        assertEquals(Villager.Type.TAIGA, localBlueprint.getVillagerType());
     }
 
     @Test
     void testMythicMobs() {
-        BlueprintEntity blueprint = new BlueprintEntity();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
         MythicMobRecord mmr = new MythicMobRecord("string", "string2", 10D, 1F, "string3");
-        blueprint.setMythicMobsRecord(mmr);
-        assertEquals(mmr, blueprint.getMythicMobsRecord());
+        localBlueprint.setMythicMobsRecord(mmr);
+        assertEquals(mmr, localBlueprint.getMythicMobsRecord());
     }
 
     @Test

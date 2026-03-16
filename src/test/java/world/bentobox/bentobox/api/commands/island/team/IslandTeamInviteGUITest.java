@@ -63,7 +63,6 @@ import world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerComman
 class IslandTeamInviteGUITest extends RanksManagerTestSetup {
 
     private static final int SLOT_PREVIOUS = 1;
-    private static final int SLOT_SEARCH = 4;
     private static final int SLOT_NEXT = 7;
     private static final int SLOT_FIRST_PROSPECT = 10;
     private static final int SLOT_BACK = 53;

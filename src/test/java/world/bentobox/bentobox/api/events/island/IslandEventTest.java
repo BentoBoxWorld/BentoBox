@@ -107,6 +107,7 @@ class IslandEventTest extends CommonTestSetup {
                 case UNLOCK -> assertTrue(e instanceof IslandUnlockEvent);
                 case UNREGISTERED -> assertTrue(e instanceof IslandUnregisteredEvent);
                 default -> {
+                    // Remaining Reason values do not have a dedicated event subtype; no assertion needed
                 }
             }
         }

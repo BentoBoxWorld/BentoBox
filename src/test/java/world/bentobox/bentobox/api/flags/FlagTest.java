@@ -104,8 +104,8 @@ class FlagTest extends RanksManagerTestSetup {
         Flag flag1 = new Flag.Builder("id", Material.ACACIA_BOAT).build();
         Flag flag2 = new Flag.Builder("id", Material.ACACIA_BOAT).build();
         Flag flag3 = new Flag.Builder("id2", Material.ACACIA_BUTTON).build();
-        assertTrue(flag1.hashCode() == flag2.hashCode());
-        assertFalse(flag1.hashCode() == flag3.hashCode());
+        assertEquals(flag1.hashCode(), flag2.hashCode());
+        assertNotEquals(flag1.hashCode(), flag3.hashCode());
     }
 
     /**

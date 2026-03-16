@@ -24,7 +24,7 @@ public abstract class AbstractAdminRangeCommand extends CompositeCommand {
     protected @Nullable UUID targetUUID;
     protected Island targetIsland;
 
-    public AbstractAdminRangeCommand(CompositeCommand parent, String string) {
+    protected AbstractAdminRangeCommand(CompositeCommand parent, String string) {
         super(parent, string);
     }
 

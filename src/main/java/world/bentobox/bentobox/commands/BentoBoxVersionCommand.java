@@ -70,16 +70,16 @@ public class BentoBoxVersionCommand extends CompositeCommand {
             return worlds;
         }
         GameModeAddon addon = addonOptional.get();
-        worlds += dimensionSuffix(user, addon, "general.worlds.nether",
+        worlds += dimensionSuffix(user, "general.worlds.nether",
                 addon.getNetherWorld() != null && getIWM().isNetherGenerate(addon.getOverWorld()),
                 getIWM().isNetherIslands(addon.getOverWorld()));
-        worlds += dimensionSuffix(user, addon, "general.worlds.the-end",
+        worlds += dimensionSuffix(user, "general.worlds.the-end",
                 addon.getEndWorld() != null && getIWM().isEndGenerate(addon.getOverWorld()),
                 getIWM().isEndIslands(addon.getOverWorld()));
         return worlds;
     }
 
-    private String dimensionSuffix(User user, GameModeAddon addon, String translationKey,
+    private String dimensionSuffix(User user, String translationKey,
             boolean isGenerated, boolean isIslands) {
         if (!isGenerated) {
             return "";

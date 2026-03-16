@@ -179,13 +179,13 @@ class IslandWorldManagerTest extends CommonTestSetup {
     void testAddGameMode() {
         // Add a second one
         // Gamemode
-        GameModeAddon gm = mock(GameModeAddon.class);
-        WorldSettings ws = mock(WorldSettings.class);
-        when(ws.getFriendlyName()).thenReturn("friendly2");
-        when(gm.getWorldSettings()).thenReturn(ws);
-        when(gm.getOverWorld()).thenReturn(testWorld);
+        GameModeAddon localGm = mock(GameModeAddon.class);
+        WorldSettings localWs = mock(WorldSettings.class);
+        when(localWs.getFriendlyName()).thenReturn("friendly2");
+        when(localGm.getWorldSettings()).thenReturn(localWs);
+        when(localGm.getOverWorld()).thenReturn(testWorld);
 
-        testIwm.addGameMode(gm);
+        testIwm.addGameMode(localGm);
     }
 
     /**
@@ -440,9 +440,9 @@ class IslandWorldManagerTest extends CommonTestSetup {
         // Add a second one
         // Gamemode
         GameModeAddon gm2 = mock(GameModeAddon.class);
-        WorldSettings ws = mock(WorldSettings.class);
-        when(ws.getFriendlyName()).thenReturn("fri2");
-        when(gm2.getWorldSettings()).thenReturn(ws);
+        WorldSettings localWs = mock(WorldSettings.class);
+        when(localWs.getFriendlyName()).thenReturn("fri2");
+        when(gm2.getWorldSettings()).thenReturn(localWs);
         when(gm2.getOverWorld()).thenReturn(mock(World.class));
         testIwm.addGameMode(gm2);
         // String can be in any order

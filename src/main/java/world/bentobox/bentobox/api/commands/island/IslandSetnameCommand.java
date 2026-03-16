@@ -100,11 +100,6 @@ public class IslandSetnameCommand extends CompositeCommand {
             return false;
         }
 
-        // Apply colors
-        if (user.hasPermission(getPermissionPrefix() + "island.name.format")) {
-            name = Util.translateColorCodes(name);
-        }
-
         return true;
     }
 

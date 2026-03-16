@@ -170,7 +170,7 @@ class SettingsTabTest extends CommonTestSetup {
         testSettingsTabWorldUserTypeMode();
 
         TabbedPanel pp = tab.getParentPanel();
-        assertEquals(pp, null);
+        assertEquals(null, pp);
     }
 
     @Test

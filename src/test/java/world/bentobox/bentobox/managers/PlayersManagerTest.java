@@ -435,11 +435,11 @@ class PlayersManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetUserString()  {
-        User user = pm.getUser("random");
-        assertNull(user);
+        User localUser = pm.getUser("random");
+        assertNull(localUser);
         pm.getPlayer(uuid);
-        user = pm.getUser("tastybento");
-        assertEquals("tastybento", user.getName());
+        localUser = pm.getUser("tastybento");
+        assertEquals("tastybento", localUser.getName());
     }
 
     /**
@@ -448,8 +448,8 @@ class PlayersManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetUserUUID() {
-        UUID uuid = pm.getUUID("unknown");
-        assertNull(uuid);
+        UUID localUuid = pm.getUUID("unknown");
+        assertNull(localUuid);
     }
 
     /**
@@ -633,8 +633,8 @@ class PlayersManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetPlayer() {
-        Players p = pm.getPlayer(uuid);
-        assertNotNull(p);
+        Players localPlayer = pm.getPlayer(uuid);
+        assertNotNull(localPlayer);
     }
 
     /**

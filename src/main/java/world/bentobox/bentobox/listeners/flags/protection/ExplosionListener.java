@@ -1,6 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,9 +18,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-
-import com.google.common.base.Enums;
-import com.google.common.base.Optional;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
@@ -41,7 +40,7 @@ public class ExplosionListener extends FlagListener {
             return null;
         }
         for (String value : values) {
-            Optional<T> enumConstant = Enums.getIfPresent(enumClass, value.toUpperCase());
+            Optional<T> enumConstant = Arrays.stream(enumClass.getEnumConstants()).filter(e -> e.name().equals(value.toUpperCase())).findFirst();
             if (enumConstant.isPresent()) {
                 return enumConstant.get();
             }

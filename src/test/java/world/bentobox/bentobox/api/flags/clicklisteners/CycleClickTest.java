@@ -216,16 +216,16 @@ class CycleClickTest extends RanksManagerTestSetup {
      */
     @Test
     void testOnLeftClick() {
-        final int SLOT = 5;
+        final int localSlot = 5;
         CycleClick udc = new CycleClick(LOCK);
         // Rank starts at member
         // Click left
-        assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
+        assertTrue(udc.onClick(panel, user, ClickType.LEFT, localSlot));
         verify(island).setFlag(flag, RanksManager.OWNER_RANK);
         // Check rollover
         // Clicking when Owner should go to Visitor
         when(island.getFlag(any())).thenReturn(RanksManager.OWNER_RANK);
-        assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
+        assertTrue(udc.onClick(panel, user, ClickType.LEFT, localSlot));
         verify(island).setFlag(flag, RanksManager.VISITOR_RANK);
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
@@ -237,16 +237,16 @@ class CycleClickTest extends RanksManagerTestSetup {
     void testOnLeftClickSetMinMax() {
         // Provide a current rank value - coop
         when(island.getFlag(any())).thenReturn(RanksManager.COOP_RANK);
-        final int SLOT = 5;
+        final int localSlot = 5;
         CycleClick udc = new CycleClick(LOCK, RanksManager.COOP_RANK, RanksManager.MEMBER_RANK);
         // Rank starts at member
         // Click left
-        assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
+        assertTrue(udc.onClick(panel, user, ClickType.LEFT, localSlot));
         verify(island).setFlag(flag, RanksManager.TRUSTED_RANK);
         // Check rollover
         // Clicking when Member should go to Coop
         when(island.getFlag(any())).thenReturn(RanksManager.MEMBER_RANK);
-        assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
+        assertTrue(udc.onClick(panel, user, ClickType.LEFT, localSlot));
         verify(island).setFlag(flag, RanksManager.COOP_RANK);
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
@@ -256,16 +256,16 @@ class CycleClickTest extends RanksManagerTestSetup {
      */
     @Test
     void testOnRightClick() {
-        final int SLOT = 5;
+        final int localSlot = 5;
         CycleClick udc = new CycleClick(LOCK);
         // Rank starts at member
         // Right click - down rank to Trusted
-        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
+        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, localSlot));
         verify(island).setFlag(flag, RanksManager.TRUSTED_RANK);
         // Check rollover
         // Clicking when Visitor should go to Owner
         when(island.getFlag(any())).thenReturn(RanksManager.VISITOR_RANK);
-        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
+        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, localSlot));
         verify(island).setFlag(flag, RanksManager.OWNER_RANK);
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
@@ -277,16 +277,16 @@ class CycleClickTest extends RanksManagerTestSetup {
     void testOnRightClickMinMaxSet() {
         // Provide a current rank value - coop
         when(island.getFlag(any())).thenReturn(RanksManager.TRUSTED_RANK);
-        final int SLOT = 5;
+        final int localSlot = 5;
         CycleClick udc = new CycleClick(LOCK, RanksManager.COOP_RANK, RanksManager.MEMBER_RANK);
         // Rank starts at member
         // Right click
-        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
+        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, localSlot));
         verify(island).setFlag(flag, RanksManager.COOP_RANK);
         // Check rollover
         // Clicking when Coop should go to Member
         when(island.getFlag(any())).thenReturn(RanksManager.COOP_RANK);
-        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
+        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, localSlot));
         verify(island).setFlag(flag, RanksManager.MEMBER_RANK);
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }

@@ -237,25 +237,25 @@ class ObsidianScoopingListenerTest extends CommonTestSetup {
         Block airBlock = mock(Block.class);
         when(airBlock.getType()).thenReturn(Material.AIR);
 
-        ObsidianScoopingListener listener = new ObsidianScoopingListener();
+        ObsidianScoopingListener localListener = new ObsidianScoopingListener();
         PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
                 BlockFace.EAST);
         if (!item.getType().equals(Material.BUCKET)
                 || !clickedBlock.getType().equals(Material.OBSIDIAN)) {
-            assertFalse(listener.onPlayerInteract(event));
+            assertFalse(localListener.onPlayerInteract(event));
         } else {
             // Test with obby close by in any of the possible locations
             for (int x = -2; x <= 2; x++) {
                 for (int y = -2; y <= 2; y++) {
                     for (int z = -2; z <= 2; z++) {
                         when(world.getBlockAt(x, y, z)).thenReturn(obsidianBlock);
-                        assertFalse(listener.onPlayerInteract(event));
+                        assertFalse(localListener.onPlayerInteract(event));
                     }
                 }
             }
             // Test where the area is free of obby
             when(world.getBlockAt(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(airBlock);
-            assertTrue(listener.onPlayerInteract(event));
+            assertTrue(localListener.onPlayerInteract(event));
         }
     }
 }

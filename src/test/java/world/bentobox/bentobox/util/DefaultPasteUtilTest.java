@@ -431,9 +431,9 @@ class DefaultPasteUtilTest extends CommonTestSetup {
     @Test
     void testSpawnBlueprintEntityNoHooksForMythicMobsFallsThrough() {
         // getMythicMobsRecord is non-null but MythicMobs hook is absent → Bukkit spawn
-        BlueprintEntity.MythicMobRecord record =
+        BlueprintEntity.MythicMobRecord mythicMobRecord =
                 new BlueprintEntity.MythicMobRecord("Zombie", null, 1.0, 1.0f, null);
-        when(blueprintEntity.getMythicMobsRecord()).thenReturn(record);
+        when(blueprintEntity.getMythicMobsRecord()).thenReturn(mythicMobRecord);
         when(blueprintEntity.getType()).thenReturn(EntityType.ZOMBIE);
         Entity e = mock(Entity.class);
         when(world.spawnEntity(any(), any(EntityType.class))).thenReturn(e);

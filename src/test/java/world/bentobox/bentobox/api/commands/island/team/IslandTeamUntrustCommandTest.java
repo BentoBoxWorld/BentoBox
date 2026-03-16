@@ -210,24 +210,24 @@ class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         IslandTeamUntrustCommand ibc = new IslandTeamUntrustCommand(ic);
         // Set up the user
-        User user = mock(User.class);
-        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        User localUser = mock(User.class);
+        when(localUser.getUniqueId()).thenReturn(UUID.randomUUID());
         // Get the tab-complete list with one argument
         LinkedList<String> args = new LinkedList<>();
         args.add("");
-        Optional<List<String>> result = ibc.tabComplete(user, "", args);
+        Optional<List<String>> result = ibc.tabComplete(localUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("d");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(localUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("fr");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(localUser, "", args);
         assertFalse(result.isPresent());
     }
 
