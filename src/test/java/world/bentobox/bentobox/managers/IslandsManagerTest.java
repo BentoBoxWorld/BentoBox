@@ -814,6 +814,7 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testSetIslandName() {
+        // TODO: implement test
     }
 
     /**
@@ -822,6 +823,7 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testSetJoinTeam() {
+        // TODO: implement test
     }
 
     /**
@@ -830,6 +832,7 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testSetLast() {
+        // TODO: implement test
     }
 
     /**
@@ -837,6 +840,7 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testSetLeaveTeam() {
+        // TODO: implement test
     }
 
     /**

@@ -379,7 +379,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return completableFuture;
     }
 
-    @SuppressWarnings("unchecked")
     private void processFile(CompletableFuture<Boolean> completableFuture, T instance) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
         // This is the Yaml Configuration that will be used and saved at the end
         YamlConfiguration config = new YamlConfiguration();
@@ -406,45 +405,16 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             Method method = propertyDescriptor.getReadMethod();
             // Invoke the read method to get the value. We have no idea what type of value it is.
             Object value = method.invoke(instance);
-            String storageLocation = field.getName();
 
-            // Check if there is an annotation on the field
-            ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
-
-            // If there is a config path annotation or adapter then deal with them
-            if (configEntry != null && !configEntry.path().isEmpty()) {
-                if (configEntry.hidden()) {
-                    // If the annotation tells us to not print the config entry, then we won't.
-                    continue;
-                }
-
-                // Get the storage location
-                storageLocation = configEntry.path();
-
-                // Get path for comments
-                String parent = "";
-                if (storageLocation.contains(".")) {
-                    parent = storageLocation.substring(0, storageLocation.lastIndexOf('.')) + ".";
-                }
-                handleComments(field, config, yamlComments, parent);
-                handleConfigEntryComments(configEntry, config, yamlComments, parent);
+            // Process ConfigEntry annotation; returns null if the field should be skipped (hidden)
+            String storageLocation = processConfigEntry(field, field.getName(), config, yamlComments);
+            if (storageLocation == null) {
+                continue;
             }
 
             if (!checkAdapter(field, config, storageLocation, value)) {
-                // Set the filename if it has not be set already
-                if (filename.isEmpty() && method.getName().equals("getUniqueId")) {
-                    // Save the name for when the file is saved
-                    filename = getFilename(propertyDescriptor, instance, (String)value);
-                }
-                // Collections need special serialization
-                if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
-                    serializeMap((Map<Object,Object>)value, config, storageLocation);
-                } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
-                    serializeSet((Set<Object>)value, config, storageLocation);
-                } else {
-                    // For all other data that doesn't need special serialization
-                    config.set(storageLocation, serialize(value));
-                }
+                filename = resolveFilename(filename, propertyDescriptor, method, instance, value);
+                serializeFieldValue(propertyDescriptor, value, storageLocation, config);
             }
         }
         // If the filename has not been set by now then we have a problem
@@ -454,6 +424,79 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
         // Save
         save(completableFuture, filename, config.saveToString(), path, yamlComments);
+    }
+
+    /**
+     * Processes the {@link ConfigEntry} annotation on a field and registers any associated comments.
+     * Returns the storage location to use for this field, or {@code null} if the field is marked
+     * hidden and should be skipped entirely.
+     *
+     * @param field           the field being processed
+     * @param defaultLocation the default storage location (the field name)
+     * @param config          the YAML configuration being built
+     * @param yamlComments    the comment map being built
+     * @return the resolved storage location, or {@code null} if the field should be skipped
+     */
+    @Nullable
+    private String processConfigEntry(Field field, String defaultLocation, YamlConfiguration config, Map<String, String> yamlComments) {
+        ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
+        if (configEntry == null || configEntry.path().isEmpty()) {
+            return defaultLocation;
+        }
+        // If the annotation tells us to not print the config entry, signal skip with null.
+        if (configEntry.hidden()) {
+            return null;
+        }
+        String storageLocation = configEntry.path();
+        // Determine the parent path for comments
+        String parent = storageLocation.contains(".")
+                ? storageLocation.substring(0, storageLocation.lastIndexOf('.')) + "."
+                : "";
+        handleComments(field, config, yamlComments, parent);
+        handleConfigEntryComments(configEntry, config, yamlComments, parent);
+        return storageLocation;
+    }
+
+    /**
+     * Resolves and returns the filename to use when saving the YAML file.
+     * If the filename has already been determined (non-empty), it is returned unchanged.
+     * Otherwise, when the read method is {@code getUniqueId}, the unique id value is used
+     * (generating one if necessary) and stored back on the instance.
+     *
+     * @param currentFilename the filename resolved so far (may be empty)
+     * @param pd              the property descriptor for the current field
+     * @param method          the read method for the current field
+     * @param instance        the object being serialized
+     * @param value           the value returned by the read method
+     * @return the (possibly updated) filename
+     */
+    private String resolveFilename(String currentFilename, PropertyDescriptor pd, Method method, T instance, Object value) throws IllegalAccessException, InvocationTargetException {
+        if (currentFilename.isEmpty() && method.getName().equals("getUniqueId")) {
+            return getFilename(pd, instance, (String) value);
+        }
+        return currentFilename;
+    }
+
+    /**
+     * Serializes a field value into the YAML configuration at the given storage location.
+     * Maps and Sets receive special collection serialization; all other values go through
+     * the standard {@link #serialize(Object)} path.
+     *
+     * @param pd              the property descriptor for the field (used to determine the type)
+     * @param value           the value to serialize
+     * @param storageLocation the YAML key to write to
+     * @param config          the YAML configuration being built
+     */
+    @SuppressWarnings("unchecked")
+    private void serializeFieldValue(PropertyDescriptor pd, Object value, String storageLocation, YamlConfiguration config) {
+        if (Map.class.isAssignableFrom(pd.getPropertyType()) && value != null) {
+            serializeMap((Map<Object, Object>) value, config, storageLocation);
+        } else if (Set.class.isAssignableFrom(pd.getPropertyType()) && value != null) {
+            serializeSet((Set<Object>) value, config, storageLocation);
+        } else {
+            // For all other data that doesn't need special serialization
+            config.set(storageLocation, serialize(value));
+        }
     }
 
     private void save(CompletableFuture<Boolean> completableFuture, String name, String data, String path, Map<String, String> yamlComments) {

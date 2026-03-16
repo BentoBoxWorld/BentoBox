@@ -389,9 +389,25 @@ public class IslandCreationPanel extends AbstractPanel
             return null;
         }
 
-        // Get settings for island.
         PanelItemBuilder builder = new PanelItemBuilder();
+        applyTemplate(builder, template, bundle);
+        boolean usedUp = addUsageLimitInfo(builder, bundle);
+        addCostInfo(builder, bundle);
+        if (usedUp && plugin.getSettings().isHideUsedBlueprints()) return null;
+        if (!usedUp) addClickHandler(builder, template, bundle);
+        return builder.build();
+    }
 
+
+    /**
+     * Applies icon, title, and description from the template (if present) or falls back to bundle defaults.
+     *
+     * @param builder  the item builder to populate
+     * @param template the template record, whose fields may be null
+     * @param bundle   the blueprint bundle providing defaults
+     */
+    private void applyTemplate(PanelItemBuilder builder, ItemTemplateRecord template, BlueprintBundle bundle)
+    {
         if (template.icon() != null)
         {
             builder.icon(template.icon().clone());
@@ -422,83 +438,107 @@ public class IslandCreationPanel extends AbstractPanel
             builder.description(this.user.getTranslation(BUNDLE_BUTTON_REF + "description",
                     TextVariables.DESCRIPTION, String.join("\n", bundle.getDescription())));
         }
-        boolean usedUp = false;
-        if (plugin.getSettings().getIslandNumber() > 1) {
-            // Show how many times this bundle can be used
-            int maxTimes = bundle.getTimes();
-            if (maxTimes > 0) {
-                long uses = plugin.getIslands().getIslands(world, user).stream()
-                        .filter(is -> is.getMetaData("bundle")
-                                .map(mdv -> bundle.getDisplayName().equalsIgnoreCase(mdv.asString())
-                                        && !(reset && is.isPrimary(user.getUniqueId()))) // If this is a reset, then ignore the use of the island being reset
-                                .orElse(false))
-                        .count();
-                builder.description(this.user.getTranslation(BUNDLE_BUTTON_REF + "uses", TextVariables.NUMBER,
-                        String.valueOf(uses), "[max]", String.valueOf(maxTimes)));
-                if (uses >= maxTimes) {
-                    usedUp = true;
-                }
-            } else {
-                builder.description(this.user.getTranslation(BUNDLE_BUTTON_REF + "unlimited"));
-            }
-        }
+    }
 
-        // Show cost if bundle has a cost, economy is enabled, and Vault is available
-        if (bundle.getCost() > 0 && plugin.getSettings().isUseEconomy()) {
+
+    /**
+     * Appends usage-limit description lines when the island number setting is greater than 1.
+     *
+     * @param builder the item builder to populate
+     * @param bundle  the blueprint bundle being described
+     * @return true if the bundle has been used up (uses &ge; maxTimes), false otherwise
+     */
+    private boolean addUsageLimitInfo(PanelItemBuilder builder, BlueprintBundle bundle)
+    {
+        if (plugin.getSettings().getIslandNumber() <= 1)
+        {
+            return false;
+        }
+        int maxTimes = bundle.getTimes();
+        if (maxTimes > 0)
+        {
+            long uses = plugin.getIslands().getIslands(world, user).stream()
+                    .filter(is -> is.getMetaData("bundle")
+                            .map(mdv -> bundle.getDisplayName().equalsIgnoreCase(mdv.asString())
+                                    && !(reset && is.isPrimary(user.getUniqueId()))) // If this is a reset, then ignore the use of the island being reset
+                            .orElse(false))
+                    .count();
+            builder.description(this.user.getTranslation(BUNDLE_BUTTON_REF + "uses", TextVariables.NUMBER,
+                    String.valueOf(uses), "[max]", String.valueOf(maxTimes)));
+            return uses >= maxTimes;
+        }
+        else
+        {
+            builder.description(this.user.getTranslation(BUNDLE_BUTTON_REF + "unlimited"));
+            return false;
+        }
+    }
+
+
+    /**
+     * Appends a cost description line when the bundle has a cost, economy is enabled, and Vault is available.
+     *
+     * @param builder the item builder to populate
+     * @param bundle  the blueprint bundle being described
+     */
+    private void addCostInfo(PanelItemBuilder builder, BlueprintBundle bundle)
+    {
+        if (bundle.getCost() > 0 && plugin.getSettings().isUseEconomy())
+        {
             plugin.getVault().ifPresent(vault ->
                 builder.description(this.user.getTranslation(BUNDLE_BUTTON_REF + "cost",
                         TextVariables.COST, vault.format(bundle.getCost()))));
         }
+    }
 
-        if (usedUp) {
-            if (plugin.getSettings().isHideUsedBlueprints()) {
-                // Do not show used up blueprints
-                return null;
-            }
-        } else {
-            List<ItemTemplateRecord.ActionRecords> actions = template.actions().stream()
-                    .filter(action -> SELECT_ACTION.equalsIgnoreCase(action.actionType())
-                            || COMMANDS_ACTION.equalsIgnoreCase(action.actionType()))
-                    .toList();
-            // Add ClickHandler
-            builder.clickHandler((panel, user, clickType, i) -> {
-                actions.forEach(action -> {
-                    if (clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
-                    {
-                        if (SELECT_ACTION.equalsIgnoreCase(action.actionType())) {
-                            user.closeInventory();
-                            this.command.execute(user, this.mainLabel,
-                                    Collections.singletonList(bundle.getUniqueId()));
-                        } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())) {
-                            Util.runCommands(user,
-                                    Arrays.stream(action.content()
-                                            .replaceAll(Pattern.quote(TextVariables.LABEL),
-                                                    this.command.getTopLabel())
-                                            .split("\n")).toList(),
-                                    ISLAND_CREATION_COMMANDS);
-                        }
+
+    /**
+     * Attaches a click handler and tooltip descriptions for SELECT and COMMANDS actions defined in the template.
+     *
+     * @param builder  the item builder to populate
+     * @param template the template record containing action definitions
+     * @param bundle   the blueprint bundle to select on click
+     */
+    private void addClickHandler(PanelItemBuilder builder, ItemTemplateRecord template, BlueprintBundle bundle)
+    {
+        List<ItemTemplateRecord.ActionRecords> actions = template.actions().stream()
+                .filter(action -> SELECT_ACTION.equalsIgnoreCase(action.actionType())
+                        || COMMANDS_ACTION.equalsIgnoreCase(action.actionType()))
+                .toList();
+
+        builder.clickHandler((panel, user, clickType, i) -> {
+            actions.forEach(action -> {
+                if (clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
+                {
+                    if (SELECT_ACTION.equalsIgnoreCase(action.actionType())) {
+                        user.closeInventory();
+                        this.command.execute(user, this.mainLabel,
+                                Collections.singletonList(bundle.getUniqueId()));
+                    } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())) {
+                        Util.runCommands(user,
+                                Arrays.stream(action.content()
+                                        .replaceAll(Pattern.quote(TextVariables.LABEL),
+                                                this.command.getTopLabel())
+                                        .split("\n")).toList(),
+                                ISLAND_CREATION_COMMANDS);
                     }
-                });
-
-                // Always return true.
-                return true;
+                }
             });
+            return true;
+        });
 
-            // Collect tooltips.
-            List<String> tooltips = actions.stream().filter(action -> action.tooltip() != null)
-                    .map(action -> this.user.getTranslation(this.command.getWorld(), action.tooltip()))
-                    .filter(Objects::nonNull)
-                    .filter(text -> !text.isBlank())
-                    .collect(Collectors.toCollection(() -> new ArrayList<>(actions.size())));
+        // Collect and add tooltips.
+        List<String> tooltips = actions.stream().filter(action -> action.tooltip() != null)
+                .map(action -> this.user.getTranslation(this.command.getWorld(), action.tooltip()))
+                .filter(Objects::nonNull)
+                .filter(text -> !text.isBlank())
+                .collect(Collectors.toCollection(() -> new ArrayList<>(actions.size())));
 
-            // Add tooltips.
-            if (!tooltips.isEmpty()) {
-                // Empty line and tooltips.
-                builder.description("");
-                builder.description(tooltips);
-            }
+        if (!tooltips.isEmpty())
+        {
+            builder.description("");
+            builder.description(tooltips);
         }
-        return builder.build();
     }
 
     // ---------------------------------------------------------------------

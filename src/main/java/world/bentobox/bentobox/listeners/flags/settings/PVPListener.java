@@ -63,17 +63,11 @@ public class PVPListener extends FlagListener {
                 return;
             }
             // Protect visitors
-            if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && protectedVisitor(player)) {
-                if (e.getDamager() instanceof Player p && p != null) {
-                    User.getInstance(p).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
-                } else if (e.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Player sh && sh != null) {
-                    User.getInstance(sh).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
-                }
-                e.setCancelled(true);
-            } else {
-                // PVP check
-                respond(e, e.getDamager(), e.getEntity(), getFlag(e.getEntity().getWorld()));
+            if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && handleVisitorProtection(e, player)) {
+                return;
             }
+            // PVP check
+            respond(e, e.getDamager(), e.getEntity(), getFlag(e.getEntity().getWorld()));
         }
     }
 
@@ -185,6 +179,27 @@ public class PVPListener extends FlagListener {
             }
         }
         return false;
+    }
+
+    /**
+     * Handles visitor protection for direct entity attacks. Notifies the damager and cancels
+     * the event if the target is a protected visitor.
+     *
+     * @param e      - event
+     * @param player - the player being attacked
+     * @return true if the event was cancelled because the player is a protected visitor
+     */
+    private boolean handleVisitorProtection(EntityDamageByEntityEvent e, Player player) {
+        if (!protectedVisitor(player)) {
+            return false;
+        }
+        if (e.getDamager() instanceof Player p) {
+            User.getInstance(p).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
+        } else if (e.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Player sh) {
+            User.getInstance(sh).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
+        }
+        e.setCancelled(true);
+        return true;
     }
 
     private boolean protectedVisitor(LivingEntity entity) {
