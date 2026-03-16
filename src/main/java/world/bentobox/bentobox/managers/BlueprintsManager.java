@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
@@ -545,10 +546,14 @@ public class BlueprintsManager {
      * @since 2.6.0
      */
     private void runBlueprintCommands(BlueprintBundle bb, Island island) {
-        if (bb.getCommands().isEmpty() || island == null || island.getOwner() == null) {
+        if (bb.getCommands().isEmpty() || island == null) {
             return;
         }
-        User owner = User.getInstance(island.getOwner());
+        UUID islandOwner = island.getOwner();
+        if (islandOwner == null) {
+            return;
+        }
+        User owner = User.getInstance(islandOwner);
         if (owner != null) {
             Util.runCommands(owner, bb.getCommands(), "blueprint");
         }

@@ -120,7 +120,7 @@ class SQLDatabaseConnectorTest extends CommonTestSetup {
     }
 
     @Test
-    void testCreateConnection_whenDataSourceNull_createsNew() throws SQLException {
+    void testCreateConnection_whenDataSourceNull_createsNew() {
         try (MockedConstruction<HikariDataSource> mocked = Mockito.mockConstruction(HikariDataSource.class,
                 (ds, context) -> {
                     Connection conn = mock(Connection.class);
@@ -137,7 +137,7 @@ class SQLDatabaseConnectorTest extends CommonTestSetup {
     }
 
     @Test
-    void testCreateConnection_whenDataSourceNull_sqlExceptionSetsNull() throws SQLException {
+    void testCreateConnection_whenDataSourceNull_sqlExceptionSetsNull() {
         try (MockedConstruction<HikariDataSource> mocked = Mockito.mockConstruction(HikariDataSource.class,
                 (ds, context) -> {
                     when(ds.getConnection()).thenThrow(new SQLException("Connection failed"));

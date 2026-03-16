@@ -228,7 +228,7 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     public void testCanExecuteMaxHomes1WithNamedHome() {
         // maxHomes = 1 is already set in setUp via when(im.getMaxHomes(island)).thenReturn(1)
         // Simulate island with default home already set: adding "MyHome" would make 2 homes total
-        when(im.getNumberOfHomesIfAdded(eq(island), eq("MyHome"))).thenReturn(2);
+        when(im.getNumberOfHomesIfAdded(island, "MyHome")).thenReturn(2);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         // Should succeed: 2 <= maxHomes + 1 = 2
         assertTrue(isc.canExecute(user, "island", Collections.singletonList("MyHome")));
@@ -246,7 +246,7 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     public void testCanExecuteMaxHomes1WithNumericHomeOne() {
         // maxHomes = 1 is already set in setUp
         // Simulate island with default home: adding "1" would make 2 homes total
-        when(im.getNumberOfHomesIfAdded(eq(island), eq("1"))).thenReturn(2);
+        when(im.getNumberOfHomesIfAdded(island, "1")).thenReturn(2);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         // Should succeed: 2 <= maxHomes + 1 = 2
         assertTrue(isc.canExecute(user, "island", Collections.singletonList("1")));
@@ -263,7 +263,7 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     public void testCanExecuteMaxHomes1AtLimitShowsTooManyHomesNotPermissionError() {
         // maxHomes = 1 is already set in setUp
         // Simulate island with default + "MyHome" already set: adding "home2" would make 3 homes
-        when(im.getNumberOfHomesIfAdded(eq(island), eq("home2"))).thenReturn(3);
+        when(im.getNumberOfHomesIfAdded(island, "home2")).thenReturn(3);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         // Should fail: 3 > maxHomes + 1 = 2
         assertFalse(isc.canExecute(user, "island", Collections.singletonList("home2")));

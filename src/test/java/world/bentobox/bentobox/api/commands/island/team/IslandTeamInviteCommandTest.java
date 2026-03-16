@@ -12,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;

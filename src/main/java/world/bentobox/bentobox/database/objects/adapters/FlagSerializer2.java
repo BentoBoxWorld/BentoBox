@@ -29,7 +29,7 @@ public class FlagSerializer2 implements AdapterInterface<Map<Flag, Integer>, Map
             }
         } else {
             for (Entry<String, Boolean> en : ((Map<String, Boolean>)object).entrySet()) {
-                BentoBox.getInstance().getFlagsManager().getFlag(en.getKey()).ifPresent(flag -> result.put(flag, en.getValue() ? 0 : -1));
+                BentoBox.getInstance().getFlagsManager().getFlag(en.getKey()).ifPresent(flag -> result.put(flag, Boolean.TRUE.equals(en.getValue()) ? 0 : -1));
             }
         }
         return result;

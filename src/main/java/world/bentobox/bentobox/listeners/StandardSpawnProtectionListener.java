@@ -145,7 +145,7 @@ public class StandardSpawnProtectionListener implements Listener {
                 || !plugin.getIWM().inWorld(Util.getWorld(player.getWorld()))
                 || (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().isNetherIslands(player.getWorld()))
                 || (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().getWorldSettings(player.getWorld()).isMakeNetherPortals())
-                || (player.getWorld().getEnvironment().equals(World.Environment.THE_END) && (plugin.getIWM().isEndIslands(player.getWorld()) || plugin.getIWM().getWorldSettings(Util.getWorld(player.getWorld())).isMakeEndPortals())));
+                || (player.getWorld().getEnvironment().equals(World.Environment.THE_END) && (plugin.getIWM().isEndIslands(player.getWorld()) || plugin.getIWM().getWorldSettings(player.getWorld()).isMakeEndPortals())));
 
     }
 }

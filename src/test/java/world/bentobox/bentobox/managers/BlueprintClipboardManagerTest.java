@@ -324,7 +324,7 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#load(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
-    void testLoadUserStringFail() throws IOException {
+    void testLoadUserStringFail() {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         User user = mock(User.class);
         assertFalse(bcm.load(user, BLUEPRINT));

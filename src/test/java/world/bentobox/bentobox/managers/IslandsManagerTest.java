@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -145,7 +144,7 @@ class IslandsManagerTest extends CommonTestSetup {
         mockedDatabaseSetup = Mockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         mockedDatabaseSetup.when(DatabaseSetup::getDatabase).thenReturn(dbSetup);
-        when(dbSetup.getHandler(eq(Island.class))).thenReturn(h);
+        when(dbSetup.getHandler(Island.class)).thenReturn(h);
         when(h.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
         // Static island
         is =  new Island();
@@ -554,11 +553,6 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetMembers() {
-        // Mock island cache
-        Set<UUID> members = new HashSet<>();
-        members.add(UUID.randomUUID());
-        members.add(UUID.randomUUID());
-        members.add(UUID.randomUUID());
     }
 
     /**

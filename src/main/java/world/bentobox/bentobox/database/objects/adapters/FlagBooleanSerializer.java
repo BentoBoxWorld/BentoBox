@@ -36,7 +36,7 @@ public class FlagBooleanSerializer implements AdapterInterface<Map<String, Integ
         {
             for (Entry<String, Boolean> en : ((Map<String, Boolean>) object).entrySet())
             {
-                result.put(en.getKey(), en.getValue() ? 0 : -1);
+                result.put(en.getKey(), Boolean.TRUE.equals(en.getValue()) ? 0 : -1);
             }
         }
 

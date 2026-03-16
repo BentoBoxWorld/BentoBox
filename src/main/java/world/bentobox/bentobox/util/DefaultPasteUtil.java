@@ -218,7 +218,7 @@ public class DefaultPasteUtil {
         k.setDisplay(location);
         // FancyNpc entity
         if (k.getNpc() != null
-                && plugin.getHooks().getHook("FancyNpcs").filter(mmh -> mmh instanceof FancyNpcsHook).map(mmh -> {
+                && plugin.getHooks().getHook("FancyNpcs").filter(FancyNpcsHook.class::isInstance).map(mmh -> {
                     try {
                         return ((FancyNpcsHook) mmh).spawnNpc(k.getNpc(), location);
                     } catch (InvalidConfigurationException e) {
@@ -231,7 +231,7 @@ public class DefaultPasteUtil {
         }
         // ZNPCsPlus
         if (k.getNpc() != null
-                && plugin.getHooks().getHook("ZNPCsPlus").filter(mmh -> mmh instanceof ZNPCsPlusHook).map(znpch -> {
+                && plugin.getHooks().getHook("ZNPCsPlus").filter(ZNPCsPlusHook.class::isInstance).map(znpch -> {
                     try {
                         return ((ZNPCsPlusHook) znpch).spawnNpc(k.getNpc(), location);
                     } catch (InvalidConfigurationException e) {

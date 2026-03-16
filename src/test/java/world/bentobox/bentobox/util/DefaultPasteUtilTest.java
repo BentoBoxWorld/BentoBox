@@ -18,7 +18,6 @@ import static org.mockito.Mockito.withSettings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Material;
@@ -214,21 +213,21 @@ class DefaultPasteUtilTest extends CommonTestSetup {
     // -------------------------------------------------------------------------
 
     @Test
-    void testSetBlockReturnsDoneAndSetsBlockData() throws Exception {
+    void testSetBlockReturnsDoneAndSetsBlockData() {
         CompletableFuture<Void> future = DefaultPasteUtil.setBlock(island, location, bpBlock);
         assertTrue(future.isDone());
         verify(block).setBlockData(blockData, false);
     }
 
     @Test
-    void testSetBlockSetsBiomeWhenPresent() throws Exception {
+    void testSetBlockSetsBiomeWhenPresent() {
         when(bpBlock.getBiome()).thenReturn(biome);
         DefaultPasteUtil.setBlock(island, location, bpBlock);
         verify(block).setBiome(biome);
     }
 
     @Test
-    void testSetBlockSkipsBiomeWhenNull() throws Exception {
+    void testSetBlockSkipsBiomeWhenNull() {
         when(bpBlock.getBiome()).thenReturn(null);
         DefaultPasteUtil.setBlock(island, location, bpBlock);
         verify(block, never()).setBiome(any());

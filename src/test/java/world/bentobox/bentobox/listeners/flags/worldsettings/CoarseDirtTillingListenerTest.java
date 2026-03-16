@@ -32,7 +32,6 @@ import org.mockito.stubbing.Answer;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.flags.protection.TestWorldSettings;
 import world.bentobox.bentobox.lists.Flags;

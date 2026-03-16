@@ -363,8 +363,8 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
         clickProspect(ClickType.LEFT);
 
         verify(sch).runTask(eq(plugin), any(Runnable.class));
-        verify(itic).canExecute(eq(user), eq("invite"), eq(List.of("target")));
-        verify(itic).execute(eq(user), eq("invite"), eq(List.of("target")));
+        verify(itic).canExecute(user, "invite", List.of("target"));
+        verify(itic).execute(user, "invite", List.of("target"));
     }
 
     @Test
@@ -388,8 +388,8 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
         clickProspect(ClickType.RIGHT);
 
         verify(sch).runTask(eq(plugin), any(Runnable.class));
-        verify(coopCommand).canExecute(eq(user), eq("invite"), eq(List.of("target")));
-        verify(coopCommand).execute(eq(user), eq("invite"), eq(List.of("target")));
+        verify(coopCommand).canExecute(user, "invite", List.of("target"));
+        verify(coopCommand).execute(user, "invite", List.of("target"));
     }
 
     @Test
@@ -402,8 +402,8 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
         clickProspect(ClickType.SHIFT_LEFT);
 
         verify(sch).runTask(eq(plugin), any(Runnable.class));
-        verify(trustCommand).canExecute(eq(user), eq("invite"), eq(List.of("target")));
-        verify(trustCommand).execute(eq(user), eq("invite"), eq(List.of("target")));
+        verify(trustCommand).canExecute(user, "invite", List.of("target"));
+        verify(trustCommand).execute(user, "invite", List.of("target"));
     }
 
     @Test

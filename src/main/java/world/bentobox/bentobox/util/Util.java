@@ -391,7 +391,7 @@ public class Util {
     }
 
     public static boolean isTamableEntity(Entity entity) {
-        return entity instanceof Tameable && ((Tameable) entity).isTamed();
+        return entity instanceof Tameable tameable && tameable.isTamed();
     }
 
     /*

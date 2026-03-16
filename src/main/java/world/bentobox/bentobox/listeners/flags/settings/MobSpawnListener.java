@@ -51,8 +51,8 @@ public class MobSpawnListener extends FlagListener
 
         Optional<Island> island = getIslands().getIslandAt(event.getPlayer().getLocation());
 
-        if (island.map(i -> !i.isAllowed(Flags.MONSTER_NATURAL_SPAWN)).orElseGet(
-                () -> !Flags.MONSTER_NATURAL_SPAWN.isSetForWorld(event.getWorld())))
+        if (Boolean.TRUE.equals(island.map(i -> !i.isAllowed(Flags.MONSTER_NATURAL_SPAWN)).orElseGet(
+                () -> !Flags.MONSTER_NATURAL_SPAWN.isSetForWorld(event.getWorld()))))
         {
             // Monster spawning is disabled on island or world. Cancel the raid.
             event.setCancelled(true);
@@ -75,8 +75,8 @@ public class MobSpawnListener extends FlagListener
 
         Optional<Island> island = getIslands().getIslandAt(event.getRaid().getLocation());
 
-        if (island.map(i -> !i.isAllowed(Flags.MONSTER_NATURAL_SPAWN)).orElseGet(
-                () -> !Flags.MONSTER_NATURAL_SPAWN.isSetForWorld(event.getWorld())))
+        if (Boolean.TRUE.equals(island.map(i -> !i.isAllowed(Flags.MONSTER_NATURAL_SPAWN)).orElseGet(
+                () -> !Flags.MONSTER_NATURAL_SPAWN.isSetForWorld(event.getWorld()))))
         {
             // CHEATERS. PUNISH THEM.
             event.getWinners().forEach(player ->

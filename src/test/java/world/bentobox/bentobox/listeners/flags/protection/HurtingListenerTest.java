@@ -28,7 +28,6 @@ import org.bukkit.entity.Slime;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.WanderingTrader;
-import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;

@@ -11,8 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.EnumMap;
 import java.util.Map;
 
 import org.bukkit.Material;
@@ -51,9 +50,9 @@ class BlockInteractionListenerTest extends CommonTestSetup {
     
     private Material itemFrame = Material.ITEM_FRAME;
 
-    private final Map<Material, Flag> inHandItems = new HashMap<>();
+    private final Map<Material, Flag> inHandItems = new EnumMap<>(Material.class);
 
-    private final Map<Material, Flag> clickedBlocks = new HashMap<>();
+    private final Map<Material, Flag> clickedBlocks = new EnumMap<>(Material.class);
 
     /**
      * Sets a Tag static field to a new MaterialTagMock containing the given materials.

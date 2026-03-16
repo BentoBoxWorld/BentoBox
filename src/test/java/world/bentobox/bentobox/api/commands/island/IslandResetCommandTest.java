@@ -353,7 +353,7 @@ class IslandResetCommandTest extends CommonTestSetup {
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
-    void testNoConfirmationRequiredUnknownBlueprint() throws IOException {
+    void testNoConfirmationRequiredUnknownBlueprint() {
         // No such bundle
         when(bpm.validate(any(), any())).thenReturn(null);
         // Reset command, no confirmation required
@@ -367,7 +367,7 @@ class IslandResetCommandTest extends CommonTestSetup {
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
-    void testNoConfirmationRequiredBlueprintNoPerm() throws IOException {
+    void testNoConfirmationRequiredBlueprintNoPerm() {
         // Bundle exists
         when(bpm.validate(any(), any())).thenReturn("custom");
         // No permission

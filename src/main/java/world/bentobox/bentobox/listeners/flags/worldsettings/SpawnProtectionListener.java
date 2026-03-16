@@ -33,7 +33,7 @@ public class SpawnProtectionListener extends FlagListener {
             return;
         }
         World world = Util.getWorld(p.getWorld());
-        if (!getIWM().inWorld(world) || !Flags.SPAWN_PROTECTION.isSetForWorld(world)) {
+        if (world == null || !getIWM().inWorld(world) || !Flags.SPAWN_PROTECTION.isSetForWorld(world)) {
             return;
         }
         // Check if the player is at the spawn island (X/Z within spawn bounds)

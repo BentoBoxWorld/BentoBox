@@ -469,7 +469,11 @@ public class IslandsManager {
         Player player = Bukkit.getPlayer(uuid);
         if (player != null && player.isOnline()) {
             // This island must be in this world and the player must be on the team
-            Optional<Island> currentIsland = getIslandAt(player.getLocation())
+            Location playerLocation = player.getLocation();
+            if (playerLocation == null) {
+                return islandCache.getIsland(world, uuid);
+            }
+            Optional<Island> currentIsland = getIslandAt(playerLocation)
                     .filter(is -> world.equals(is.getWorld()) && is.inTeam(uuid));
 
             if (currentIsland.isPresent()) {
