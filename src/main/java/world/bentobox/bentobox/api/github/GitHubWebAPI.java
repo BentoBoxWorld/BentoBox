@@ -36,7 +36,7 @@ public class GitHubWebAPI {
 
         if (timeSinceLastRequest < RATE_LIMIT_INTERVAL_MS) {
             try {
-                Thread.sleep(RATE_LIMIT_INTERVAL_MS - timeSinceLastRequest);
+                wait(RATE_LIMIT_INTERVAL_MS - timeSinceLastRequest);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new IOException("Thread interrupted while waiting for rate limit", e);
