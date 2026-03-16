@@ -126,11 +126,11 @@ class PlaceholderListPanelTest extends CommonTestSetup {
     void testOpenPanelCoreWithPlaceholders() {
         when(phm.getRegisteredBentoBoxPlaceholders())
                 .thenReturn(Set.of("version", "online_players", "max_players"));
-        when(phm.getPlaceholderDescription(eq("version")))
+        when(phm.getPlaceholderDescription("version"))
                 .thenReturn(Optional.of("Current BentoBox version"));
-        when(phm.getPlaceholderDescription(eq("online_players")))
+        when(phm.getPlaceholderDescription("online_players"))
                 .thenReturn(Optional.of("Number of online players"));
-        when(phm.getPlaceholderDescription(eq("max_players")))
+        when(phm.getPlaceholderDescription("max_players"))
                 .thenReturn(Optional.empty());
 
         assertDoesNotThrow(() -> PlaceholderListPanel.openPanel(command, user, null));
@@ -147,14 +147,14 @@ class PlaceholderListPanelTest extends CommonTestSetup {
     void testOpenPanelAddonWithPlaceholders() {
         when(phm.getRegisteredPlaceholders(addon))
                 .thenReturn(Set.of("island_level", "island_rank"));
-        when(phm.getPlaceholderDescription(eq(addon), eq("island_level")))
+        when(phm.getPlaceholderDescription(addon, "island_level"))
                 .thenReturn(Optional.of("The island's level"));
-        when(phm.getPlaceholderDescription(eq(addon), eq("island_rank")))
+        when(phm.getPlaceholderDescription(addon, "island_rank"))
                 .thenReturn(Optional.empty());
 
         assertDoesNotThrow(() -> PlaceholderListPanel.openPanel(command, user, addon));
         verify(phm).getRegisteredPlaceholders(addon);
-        verify(phm, never()).getPlaceholderDescription(eq("island_level"));
+        verify(phm, never()).getPlaceholderDescription("island_level");
     }
 
     @Test

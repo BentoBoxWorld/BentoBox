@@ -1663,7 +1663,7 @@ public class Island implements DataObject, MetaDataAble {
         if (this.reserved == null) {
             this.reserved = false;
         }
-        if (this.reserved != reserved) {
+        if (!this.reserved.equals(reserved)) {
             this.reserved = reserved;
             setChanged();
         }

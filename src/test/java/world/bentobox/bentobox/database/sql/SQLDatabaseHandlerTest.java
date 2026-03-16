@@ -13,7 +13,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -506,7 +505,7 @@ class SQLDatabaseHandlerTest extends CommonTestSetup {
     // ── store (via saveObject sync path): async-guard branch ─────────────────
 
     @Test
-    void testStore_asyncTrueAndPluginDisabled_doesNotComplete() throws Exception {
+    void testStore_asyncTrueAndPluginDisabled_doesNotComplete() {
         // saveObject must see isEnabled()=true to enqueue (async path)
         when(plugin.isEnabled()).thenReturn(true);
         CompletableFuture<Boolean> future = handler.saveObject(new TestDataObject());

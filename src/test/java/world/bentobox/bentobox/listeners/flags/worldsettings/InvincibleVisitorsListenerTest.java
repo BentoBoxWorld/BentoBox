@@ -136,13 +136,6 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
         ivSettings.add(EntityDamageEvent.DamageCause.VOID.name());
         when(iwm.getIvSettings(any())).thenReturn(ivSettings);
 
-        /*
-        ItemFactory itemF = mock(ItemFactory.class);
-        ItemMeta imeta = mock(ItemMeta.class);
-        when(itemF.getItemMeta(any())).thenReturn(imeta);
-        when(Bukkit.getItemFactory()).thenReturn(itemF);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
-         */
         Inventory top = mock(Inventory.class);
         when(top.getSize()).thenReturn(9);
         when(panel.getInventory()).thenReturn(top);

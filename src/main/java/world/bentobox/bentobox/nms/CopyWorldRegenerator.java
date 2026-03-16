@@ -323,6 +323,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                 toBanner.setPatterns(banner.getPatterns());
             }
             default -> {
+                // Block state type not handled above requires no additional copy logic
             }
         }
     }

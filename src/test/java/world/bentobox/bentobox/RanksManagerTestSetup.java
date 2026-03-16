@@ -81,7 +81,7 @@ public abstract class RanksManagerTestSetup extends CommonTestSetup {
         mockedDatabaseSetup = Mockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         mockedDatabaseSetup.when(DatabaseSetup::getDatabase).thenReturn(dbSetup);
-        when(dbSetup.getHandler(eq(Ranks.class))).thenReturn(ranksHandler);
+        when(dbSetup.getHandler(Ranks.class)).thenReturn(ranksHandler);
         when(ranksHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
         when(dbSetup.getHandler(TeamInvite.class)).thenReturn(invitesHandler);
         when(invitesHandler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));

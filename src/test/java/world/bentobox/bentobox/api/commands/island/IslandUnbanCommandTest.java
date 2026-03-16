@@ -229,9 +229,9 @@ class IslandUnbanCommandTest extends RanksManagerTestSetup {
         when(island.getBanned()).thenReturn(banned);
         when(pm.getName(any())).thenReturn("a", "b", "c", "d", "e", "f", "g", "h", "i", "j");
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        User user = mock(User.class);
-        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
-        Optional<List<String>> result = iubc.tabComplete(user, "", new LinkedList<>());
+        User targetUser = mock(User.class);
+        when(targetUser.getUniqueId()).thenReturn(UUID.randomUUID());
+        Optional<List<String>> result = iubc.tabComplete(targetUser, "", new LinkedList<>());
         assertTrue(result.isPresent());
         String[] names = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" };
         assertTrue(Arrays.equals(names, result.get().toArray()));
@@ -246,24 +246,24 @@ class IslandUnbanCommandTest extends RanksManagerTestSetup {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         // Set up the user
-        User user = mock(User.class);
-        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        User targetUser = mock(User.class);
+        when(targetUser.getUniqueId()).thenReturn(UUID.randomUUID());
         // Get the tab-complete list with one argument
         LinkedList<String> args = new LinkedList<>();
         args.add("");
-        Optional<List<String>> result = iubc.tabComplete(user, "", args);
+        Optional<List<String>> result = iubc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("d");
-        result = iubc.tabComplete(user, "", args);
+        result = iubc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("fr");
-        result = iubc.tabComplete(user, "", args);
+        result = iubc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
     }
 }

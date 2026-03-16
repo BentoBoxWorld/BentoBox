@@ -5,15 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -144,7 +141,7 @@ class BlueMapHookTest extends CommonTestSetup {
     @Test
     void testHookRegistersEvents() {
         hook.hook();
-        verify(pim).registerEvents(eq(hook), eq(plugin));
+        verify(pim).registerEvents(hook, plugin);
     }
 
     @Test

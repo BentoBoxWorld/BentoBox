@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
@@ -45,9 +46,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
-import com.google.common.base.Enums;
-import com.google.common.base.Optional;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -391,7 +389,7 @@ public class Util {
     }
 
     public static boolean isTamableEntity(Entity entity) {
-        return entity instanceof Tameable && ((Tameable) entity).isTamed();
+        return entity instanceof Tameable tameable && tameable.isTamed();
     }
 
     /*
@@ -849,7 +847,7 @@ public class Util {
             return null;
         }
         for (String value : values) {
-            Optional<T> enumConstant = Enums.getIfPresent(enumClass, value.toUpperCase());
+            Optional<T> enumConstant = Arrays.stream(enumClass.getEnumConstants()).filter(e -> e.name().equals(value.toUpperCase())).findFirst();
             if (enumConstant.isPresent()) {
                 return enumConstant.get();
             }

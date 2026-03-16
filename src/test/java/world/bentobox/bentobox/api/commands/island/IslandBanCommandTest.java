@@ -275,24 +275,24 @@ class IslandBanCommandTest extends RanksManagerTestSetup {
         // No island
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         // Set up the user
-        User user = mock(User.class);
-        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        User targetUser = mock(User.class);
+        when(targetUser.getUniqueId()).thenReturn(UUID.randomUUID());
         // Get the tab-complete list with one argument
         LinkedList<String> args = new LinkedList<>();
         args.add("");
-        Optional<List<String>> result = ibc.tabComplete(user, "", args);
+        Optional<List<String>> result = ibc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("d");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("fr");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
     }
 
@@ -327,30 +327,30 @@ class IslandBanCommandTest extends RanksManagerTestSetup {
         mockedBukkit.when(Bukkit::getOnlinePlayers).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         // Set up the user
-        User user = mock(User.class);
-        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        User targetUser = mock(User.class);
+        when(targetUser.getUniqueId()).thenReturn(UUID.randomUUID());
         Player player = mock(Player.class);
         // Player can see every other player except Ian
         when(player.canSee(any(Player.class))).thenAnswer((Answer<Boolean>) invocation -> {
             Player p = invocation.getArgument(0, Player.class);
             return !p.getName().equals("ian");
         });
-        when(user.getPlayer()).thenReturn(player);
+        when(targetUser.getPlayer()).thenReturn(player);
 
         // Get the tab-complete list with no argument
-        Optional<List<String>> result = ibc.tabComplete(user, "", new LinkedList<>());
+        Optional<List<String>> result = ibc.tabComplete(targetUser, "", new LinkedList<>());
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one argument
         LinkedList<String> args = new LinkedList<>();
         args.add("");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("d");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(targetUser, "", args);
         assertTrue(result.isPresent());
         List<String> r = result.get().stream().sorted().toList();
         // Compare the expected with the actual
@@ -360,7 +360,7 @@ class IslandBanCommandTest extends RanksManagerTestSetup {
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("fr");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(targetUser, "", args);
         assertTrue(result.isPresent());
         r = result.get().stream().sorted().toList();
         // Compare the expected with the actual

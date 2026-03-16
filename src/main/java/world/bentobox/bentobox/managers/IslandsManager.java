@@ -149,7 +149,7 @@ public class IslandsManager {
      * 
      * @param h - handler
      */
-    public void setHandler(@NonNull Database<Island> h) {
+    public static void setHandler(@NonNull Database<Island> h) {
         handler = h;
     }
 
@@ -469,7 +469,11 @@ public class IslandsManager {
         Player player = Bukkit.getPlayer(uuid);
         if (player != null && player.isOnline()) {
             // This island must be in this world and the player must be on the team
-            Optional<Island> currentIsland = getIslandAt(player.getLocation())
+            Location playerLocation = player.getLocation();
+            if (playerLocation == null) {
+                return islandCache.getIsland(world, uuid);
+            }
+            Optional<Island> currentIsland = getIslandAt(playerLocation)
                     .filter(is -> world.equals(is.getWorld()) && is.inTeam(uuid));
 
             if (currentIsland.isPresent()) {
@@ -1516,24 +1520,35 @@ public class IslandsManager {
 
     /**
      * Save the all the cached islands to the database
-     * 
+     *
      * @param schedule true if we should let the task run over multiple ticks to
      *                 reduce lag spikes
      */
     public void saveAll(boolean schedule) {
         if (!schedule) {
-            for (Island island : islandCache.getCachedIslands()) {
-                if (island.isChanged()) {
-                    try {
-                        saveIsland(island);
-                    } catch (Exception e) {
-                        plugin.logError("Could not save island to database when running sync! " + e.getMessage());
-                    }
-                }
-            }
-            return;
+            saveAllSync();
+        } else {
+            saveAllScheduled();
         }
+    }
 
+    private void trySaveIsland(Island island) {
+        if (island.isChanged()) {
+            try {
+                saveIsland(island);
+            } catch (Exception e) {
+                plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+            }
+        }
+    }
+
+    private void saveAllSync() {
+        for (Island island : islandCache.getCachedIslands()) {
+            trySaveIsland(island);
+        }
+    }
+
+    private void saveAllScheduled() {
         isSaveTaskRunning = true;
         Queue<Island> queue = new LinkedList<>(islandCache.getCachedIslands());
         new BukkitRunnable() {
@@ -1546,13 +1561,7 @@ public class IslandsManager {
                         cancel();
                         return;
                     }
-                    if (island.isChanged()) {
-                        try {
-                            saveIsland(island);
-                        } catch (Exception e) {
-                            plugin.logError("Could not save island to database when running sync! " + e.getMessage());
-                        }
-                    }
+                    trySaveIsland(island);
                 }
             }
         }.runTaskTimer(plugin, 0, 1);

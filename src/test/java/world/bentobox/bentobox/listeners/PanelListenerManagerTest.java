@@ -249,8 +249,8 @@ class PanelListenerManagerTest extends CommonTestSetup {
      */
     @Test
     void testOnInventoryClickOutsideUnknownPanel() {
-        SlotType type = SlotType.OUTSIDE;
-        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
+        SlotType localType = SlotType.OUTSIDE;
+        InventoryClickEvent e = new InventoryClickEvent(view, localType, 0, click, inv);
         plm.onInventoryClick(e);
         verify(mockPlayer, never()).closeInventory();
     }
@@ -262,8 +262,8 @@ class PanelListenerManagerTest extends CommonTestSetup {
     void testOnInventoryClickOutsideKnownPanel() {
         // Put a panel in the list
         PanelListenerManager.getOpenPanels().put(uuid, panel);
-        SlotType type = SlotType.OUTSIDE;
-        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
+        SlotType localType = SlotType.OUTSIDE;
+        InventoryClickEvent e = new InventoryClickEvent(view, localType, 0, click, inv);
         plm.onInventoryClick(e);
         verify(mockPlayer).closeInventory();
     }

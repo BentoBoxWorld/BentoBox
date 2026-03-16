@@ -123,7 +123,7 @@ public class BlueprintPaster {
         // Calculate location for pasting
         this.location = island.getProtectionCenter().toVector().subtract(off).toLocation(world);
         // Ensure the y coordinate is within the world limits
-        int y = Math.min(world.getMaxHeight() - 1, Math.max(world.getMinHeight(), location.getBlockY()));
+        int y = Math.clamp(location.getBlockY(), world.getMinHeight(), world.getMaxHeight() - 1);
         location.setY(y);
     }
 

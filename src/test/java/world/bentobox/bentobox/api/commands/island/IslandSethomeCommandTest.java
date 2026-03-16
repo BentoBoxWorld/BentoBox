@@ -228,7 +228,7 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     public void testCanExecuteMaxHomes1WithNamedHome() {
         // maxHomes = 1 is already set in setUp via when(im.getMaxHomes(island)).thenReturn(1)
         // Simulate island with default home already set: adding "MyHome" would make 2 homes total
-        when(im.getNumberOfHomesIfAdded(eq(island), eq("MyHome"))).thenReturn(2);
+        when(im.getNumberOfHomesIfAdded(island, "MyHome")).thenReturn(2);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         // Should succeed: 2 <= maxHomes + 1 = 2
         assertTrue(isc.canExecute(user, "island", Collections.singletonList("MyHome")));
@@ -246,7 +246,7 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     public void testCanExecuteMaxHomes1WithNumericHomeOne() {
         // maxHomes = 1 is already set in setUp
         // Simulate island with default home: adding "1" would make 2 homes total
-        when(im.getNumberOfHomesIfAdded(eq(island), eq("1"))).thenReturn(2);
+        when(im.getNumberOfHomesIfAdded(island, "1")).thenReturn(2);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         // Should succeed: 2 <= maxHomes + 1 = 2
         assertTrue(isc.canExecute(user, "island", Collections.singletonList("1")));
@@ -263,7 +263,7 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     public void testCanExecuteMaxHomes1AtLimitShowsTooManyHomesNotPermissionError() {
         // maxHomes = 1 is already set in setUp
         // Simulate island with default + "MyHome" already set: adding "home2" would make 3 homes
-        when(im.getNumberOfHomesIfAdded(eq(island), eq("home2"))).thenReturn(3);
+        when(im.getNumberOfHomesIfAdded(island, "home2")).thenReturn(3);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         // Should fail: 3 > maxHomes + 1 = 2
         assertFalse(isc.canExecute(user, "island", Collections.singletonList("home2")));
@@ -279,10 +279,10 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     @Test
     void testExecuteUserStringListOfStringNether() {
         when(iwm.isNether(any())).thenReturn(true);
-        WorldSettings ws = mock(WorldSettings.class);
-        when(ws.isAllowSetHomeInNether()).thenReturn(true);
-        when(ws.isRequireConfirmationToSetHomeInNether()).thenReturn(false);
-        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        WorldSettings localWs = mock(WorldSettings.class);
+        when(localWs.isAllowSetHomeInNether()).thenReturn(true);
+        when(localWs.isRequireConfirmationToSetHomeInNether()).thenReturn(false);
+        when(iwm.getWorldSettings(any())).thenReturn(localWs);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertTrue(isc.canExecute(user, "island", Collections.emptyList()));
         assertTrue(isc.execute(user, "island", Collections.emptyList()));
@@ -295,10 +295,10 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     @Test
     void testExecuteUserStringListOfStringNetherNotAllowed() {
         when(iwm.isNether(any())).thenReturn(true);
-        WorldSettings ws = mock(WorldSettings.class);
-        when(ws.isAllowSetHomeInNether()).thenReturn(false);
-        when(ws.isRequireConfirmationToSetHomeInNether()).thenReturn(false);
-        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        WorldSettings localWs = mock(WorldSettings.class);
+        when(localWs.isAllowSetHomeInNether()).thenReturn(false);
+        when(localWs.isRequireConfirmationToSetHomeInNether()).thenReturn(false);
+        when(iwm.getWorldSettings(any())).thenReturn(localWs);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertFalse(isc.execute(user, "island", Collections.emptyList()));
         verify(user).sendMessage("commands.island.sethome.nether.not-allowed");
@@ -310,10 +310,10 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     @Test
     void testExecuteUserStringListOfStringNetherConfirmation() {
         when(iwm.isNether(any())).thenReturn(true);
-        WorldSettings ws = mock(WorldSettings.class);
-        when(ws.isAllowSetHomeInNether()).thenReturn(true);
-        when(ws.isRequireConfirmationToSetHomeInNether()).thenReturn(true);
-        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        WorldSettings localWs = mock(WorldSettings.class);
+        when(localWs.isAllowSetHomeInNether()).thenReturn(true);
+        when(localWs.isRequireConfirmationToSetHomeInNether()).thenReturn(true);
+        when(iwm.getWorldSettings(any())).thenReturn(localWs);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertTrue(isc.execute(user, "island", Collections.emptyList()));
         verify(user).sendRawMessage("commands.island.sethome.nether.confirmation");
@@ -326,10 +326,10 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     @Test
     void testExecuteUserStringListOfStringEnd() {
         when(iwm.isEnd(any())).thenReturn(true);
-        WorldSettings ws = mock(WorldSettings.class);
-        when(ws.isAllowSetHomeInTheEnd()).thenReturn(true);
-        when(ws.isRequireConfirmationToSetHomeInNether()).thenReturn(false);
-        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        WorldSettings localWs = mock(WorldSettings.class);
+        when(localWs.isAllowSetHomeInTheEnd()).thenReturn(true);
+        when(localWs.isRequireConfirmationToSetHomeInNether()).thenReturn(false);
+        when(iwm.getWorldSettings(any())).thenReturn(localWs);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertTrue(isc.canExecute(user, "island", Collections.emptyList()));
         assertTrue(isc.execute(user, "island", Collections.emptyList()));
@@ -342,10 +342,10 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     @Test
     void testExecuteUserStringListOfStringEndNotAllowed() {
         when(iwm.isEnd(any())).thenReturn(true);
-        WorldSettings ws = mock(WorldSettings.class);
-        when(ws.isAllowSetHomeInTheEnd()).thenReturn(false);
-        when(ws.isRequireConfirmationToSetHomeInTheEnd()).thenReturn(false);
-        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        WorldSettings localWs = mock(WorldSettings.class);
+        when(localWs.isAllowSetHomeInTheEnd()).thenReturn(false);
+        when(localWs.isRequireConfirmationToSetHomeInTheEnd()).thenReturn(false);
+        when(iwm.getWorldSettings(any())).thenReturn(localWs);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertFalse(isc.execute(user, "island", Collections.emptyList()));
         verify(user).sendMessage("commands.island.sethome.the-end.not-allowed");
@@ -357,10 +357,10 @@ class IslandSethomeCommandTest extends CommonTestSetup {
     @Test
     void testExecuteUserStringListOfStringEndConfirmation() {
         when(iwm.isEnd(any())).thenReturn(true);
-        WorldSettings ws = mock(WorldSettings.class);
-        when(ws.isAllowSetHomeInTheEnd()).thenReturn(true);
-        when(ws.isRequireConfirmationToSetHomeInTheEnd()).thenReturn(true);
-        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        WorldSettings localWs = mock(WorldSettings.class);
+        when(localWs.isAllowSetHomeInTheEnd()).thenReturn(true);
+        when(localWs.isRequireConfirmationToSetHomeInTheEnd()).thenReturn(true);
+        when(iwm.getWorldSettings(any())).thenReturn(localWs);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertTrue(isc.execute(user, "island", Collections.emptyList()));
         verify(user).sendRawMessage("commands.island.sethome.the-end.confirmation");

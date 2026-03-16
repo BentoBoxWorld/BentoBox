@@ -62,6 +62,7 @@ public class PlaceholderListPanel extends AbstractPanel {
     private static final String BACK_TYPE = "BACK";
     private static final String PLACEHOLDER_VAR = "[placeholder]";
     private static final String COUNT_VAR = "[count]";
+    private static final String LEAF_DESCRIPTION_KEY = "panels.placeholder-list.buttons.leaf.description";
     /** Maximum visible characters per lore description line before wrapping. */
     private static final int LORE_LINE_WIDTH = 38;
     /** Number of series members to sample in the lore value preview. */
@@ -202,7 +203,7 @@ public class PlaceholderListPanel extends AbstractPanel {
         List<String> lore = new ArrayList<>();
         if (!leaf.description().isBlank()) {
             wrapText(leaf.description()).forEach(line ->
-                    lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
+                    lore.add(user.getTranslation(LEAF_DESCRIPTION_KEY,
                             TextVariables.DESCRIPTION, line)));
         }
         addValueLine(lore, fullPh);
@@ -236,7 +237,7 @@ public class PlaceholderListPanel extends AbstractPanel {
         List<String> lore = new ArrayList<>();
         if (!leaf.description().isBlank()) {
             wrapText(leaf.description()).forEach(line ->
-                    lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
+                    lore.add(user.getTranslation(LEAF_DESCRIPTION_KEY,
                             TextVariables.DESCRIPTION, line)));
         }
         addValueLine(lore, fullPh);
@@ -291,7 +292,7 @@ public class PlaceholderListPanel extends AbstractPanel {
         List<String> lore = new ArrayList<>();
         if (!leaf.description().isBlank()) {
             wrapText(leaf.description()).forEach(line ->
-                    lore.add(user.getTranslation("panels.placeholder-list.buttons.leaf.description",
+                    lore.add(user.getTranslation(LEAF_DESCRIPTION_KEY,
                             TextVariables.DESCRIPTION, line)));
         }
         addValueLine(lore, leafPh);

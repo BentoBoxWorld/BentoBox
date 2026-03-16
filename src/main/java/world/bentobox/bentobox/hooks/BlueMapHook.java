@@ -113,7 +113,10 @@ public class BlueMapHook extends Hook implements Listener {
         if (island.getName() != null && !island.getName().isBlank()) {
             return island.getName();
         } else if (island.getOwner() != null) {
-            return User.getInstance(island.getOwner()).getName();
+            User owner = User.getInstance(island.getOwner());
+            if (owner != null) {
+                return owner.getName();
+            }
         }
         return island.getUniqueId();
     }

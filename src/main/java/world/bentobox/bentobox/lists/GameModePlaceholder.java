@@ -174,10 +174,13 @@ public enum GameModePlaceholder {
      */
     ISLAND_MAX_HOMES("island_max_homes",
             "Maximum number of homes allowed on the player's island",
-            (addon, user, island) -> island == null ? ""
-                    : String.valueOf(
-                            island.getMaxHomes() == null ? addon.getPlugin().getIWM().getMaxHomes(island.getWorld())
-                                    : island.getMaxHomes())),
+            (addon, user, island) -> {
+                if (island == null) return "";
+                int maxHomes = island.getMaxHomes() == null
+                        ? addon.getPlugin().getIWM().getMaxHomes(island.getWorld())
+                        : island.getMaxHomes();
+                return String.valueOf(maxHomes);
+            }),
     /**
      * Returns the amount of players that are at least MEMBER on this island.
      * @since 1.5.0

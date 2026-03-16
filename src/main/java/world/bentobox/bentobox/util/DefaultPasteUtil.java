@@ -216,39 +216,8 @@ public class DefaultPasteUtil {
     static boolean spawnBlueprintEntity(BlueprintEntity k, Location location, Island island) {
         // Display Entity (holograms, etc.)
         k.setDisplay(location);
-        // FancyNpc entity
-        if (k.getNpc() != null
-                && plugin.getHooks().getHook("FancyNpcs").filter(mmh -> mmh instanceof FancyNpcsHook).map(mmh -> {
-                    try {
-                        return ((FancyNpcsHook) mmh).spawnNpc(k.getNpc(), location);
-                    } catch (InvalidConfigurationException e) {
-                        plugin.logError("FancyNpc loading failed in blueprint.");
-                        return false;
-                    }
-                }).orElse(false)) {
-            // Npc has spawned.
-            return false;
-        }
-        // ZNPCsPlus
-        if (k.getNpc() != null
-                && plugin.getHooks().getHook("ZNPCsPlus").filter(mmh -> mmh instanceof ZNPCsPlusHook).map(znpch -> {
-                    try {
-                        return ((ZNPCsPlusHook) znpch).spawnNpc(k.getNpc(), location);
-                    } catch (InvalidConfigurationException e) {
-                        plugin.logError("ZNPCsPlus loading failed in blueprint.");
-                        return false;
-                    }
-                }).orElse(false)) {
-            // Npc has spawned.
-            return false;
-        }
-
-        // Mythic Mobs entity
-        if (k.getMythicMobsRecord() != null && plugin.getHooks().getHook("MythicMobs")
-                .filter(mmh -> mmh instanceof MythicMobsHook)
-                .map(mmh -> ((MythicMobsHook) mmh).spawnMythicMob(k.getMythicMobsRecord(), location))
-                .orElse(false)) {
-            // MythicMob has spawned.
+        // Try to spawn via plugin hooks (FancyNpcs, ZNPCsPlus, MythicMobs)
+        if (trySpawnPluginEntity(k, location)) {
             return false;
         }
         if (k.getType() == null) {
@@ -256,27 +225,79 @@ public class DefaultPasteUtil {
             return false;
         }
         Entity e = location.getWorld().spawnEntity(location, k.getType());
-        if (k.getCustomName() != null) {
-            String customName = k.getCustomName();
-
-            if (island != null) {
-                // Parse any placeholders in the entity's name, if the owner's connected (he should)
-                Optional<Player> owner = Optional.ofNullable(island.getOwner()).map(User::getInstance)
-                        .map(User::getPlayer);
-                if (owner.isPresent()) {
-                    // Parse for the player's name first (in case placeholders might need it)
-                    customName = customName.replace(TextVariables.NAME, owner.get().getName());
-                    // Now parse the placeholders
-                    customName = plugin.getPlaceholdersManager().replacePlaceholders(owner.get(), customName);
-                }
-            }
-
-            // Actually set the custom name
-            e.customName(Component.text(customName));
-        }
+        applyCustomName(e, k, island);
         k.configureEntity(e);
 
         return true;
+    }
+
+    /**
+     * Attempt to spawn a blueprint entity using plugin hooks (FancyNpcs, ZNPCsPlus, MythicMobs).
+     *
+     * @param k        the blueprint entity definition
+     * @param location location to spawn the entity
+     * @return true if any hook successfully spawned the entity, false otherwise
+     */
+    private static boolean trySpawnPluginEntity(BlueprintEntity k, Location location) {
+        // FancyNpcs entity
+        if (k.getNpc() != null
+                && plugin.getHooks().getHook("FancyNpcs").filter(FancyNpcsHook.class::isInstance).map(mmh -> {
+                    try {
+                        return ((FancyNpcsHook) mmh).spawnNpc(k.getNpc(), location);
+                    } catch (InvalidConfigurationException e) {
+                        plugin.logError("FancyNpc loading failed in blueprint.");
+                        return false;
+                    }
+                }).orElse(false)) {
+            return true;
+        }
+        // ZNPCsPlus
+        if (k.getNpc() != null
+                && plugin.getHooks().getHook("ZNPCsPlus").filter(ZNPCsPlusHook.class::isInstance).map(znpch -> {
+                    try {
+                        return ((ZNPCsPlusHook) znpch).spawnNpc(k.getNpc(), location);
+                    } catch (InvalidConfigurationException e) {
+                        plugin.logError("ZNPCsPlus loading failed in blueprint.");
+                        return false;
+                    }
+                }).orElse(false)) {
+            return true;
+        }
+        // MythicMobs entity
+        if (k.getMythicMobsRecord() != null && plugin.getHooks().getHook("MythicMobs")
+                .filter(mmh -> mmh instanceof MythicMobsHook)
+                .map(mmh -> ((MythicMobsHook) mmh).spawnMythicMob(k.getMythicMobsRecord(), location))
+                .orElse(false)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Apply a custom name to an entity, resolving placeholders against the island owner if present.
+     *
+     * @param e      the entity to name
+     * @param k      the blueprint entity definition (source of the custom name)
+     * @param island the island being pasted (may be null)
+     */
+    private static void applyCustomName(Entity e, BlueprintEntity k, Island island) {
+        if (k.getCustomName() == null) {
+            return;
+        }
+        String customName = k.getCustomName();
+        if (island != null) {
+            // Parse any placeholders in the entity's name, if the owner's connected (he should)
+            Optional<Player> owner = Optional.ofNullable(island.getOwner()).map(User::getInstance)
+                    .map(User::getPlayer);
+            if (owner.isPresent()) {
+                // Parse for the player's name first (in case placeholders might need it)
+                customName = customName.replace(TextVariables.NAME, owner.get().getName());
+                // Now parse the placeholders
+                customName = plugin.getPlaceholdersManager().replacePlaceholders(owner.get(), customName);
+            }
+        }
+        // Actually set the custom name
+        e.customName(Component.text(customName));
     }
 
     /**
@@ -295,16 +316,7 @@ public class DefaultPasteUtil {
         BlockFace bf = (bd instanceof WallSign ws) ? ws.getFacing()
                 : ((org.bukkit.block.data.type.Sign) bd).getRotation();
         // Handle spawn sign
-        if (side == Side.FRONT && island != null && !lines.isEmpty() && lines.getFirst().equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
-            if (bd instanceof Waterlogged wl && wl.isWaterlogged()) {
-                block.setType(Material.WATER);
-            } else {
-                block.setType(Material.AIR);
-            }
-            // Orient to face same direction as sign
-            Location spawnPoint = new Location(block.getWorld(), block.getX() + 0.5D, block.getY(),
-                    block.getZ() + 0.5D, Util.blockFaceToFloat(bf.getOppositeFace()), 30F);
-            island.setSpawnPoint(block.getWorld().getEnvironment(), spawnPoint);
+        if (handleSpawnSign(island, block, bf, bd, side, lines)) {
             return;
         }
         // Get the name of the player
@@ -315,10 +327,58 @@ public class DefaultPasteUtil {
         // Handle locale text for starting sign
         Sign s = (org.bukkit.block.Sign) block.getState();
         SignSide signSide = s.getSide(side);
+        writeLocalizedSignText(signSide, island, lines, name);
+        signSide.setGlowingText(glow);
+        // Update the sign
+        s.update();
+    }
+
+    /**
+     * Handle a spawn-point sign: replace the sign block with air/water, set the island spawn point,
+     * and return true so the caller can skip normal sign writing.
+     *
+     * @param island the island being pasted (may be null)
+     * @param block  the sign block
+     * @param bf     the block face direction the sign is facing
+     * @param bd     the block data of the sign
+     * @param side   the side of the sign being processed
+     * @param lines  the text lines stored in the blueprint for this side
+     * @return true if this was a spawn sign and no further sign processing is needed
+     */
+    private static boolean handleSpawnSign(Island island, Block block, BlockFace bf, BlockData bd, Side side, List<String> lines) {
+        if (side != Side.FRONT || island == null || lines.isEmpty()
+                || !lines.getFirst().equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
+            return false;
+        }
+        if (bd instanceof Waterlogged wl && wl.isWaterlogged()) {
+            block.setType(Material.WATER);
+        } else {
+            block.setType(Material.AIR);
+        }
+        // Orient to face same direction as sign
+        Location spawnPoint = new Location(block.getWorld(), block.getX() + 0.5D, block.getY(),
+                block.getZ() + 0.5D, Util.blockFaceToFloat(bf.getOppositeFace()), 30F);
+        island.setSpawnPoint(block.getWorld().getEnvironment(), spawnPoint);
+        return true;
+    }
+
+    /**
+     * Write localized or literal text to the given sign side.
+     * <p>
+     * If the first line equals {@link TextVariables#START_TEXT} and an owner user is present,
+     * locale strings are fetched and written; otherwise the blueprint lines are pasted verbatim.
+     *
+     * @param signSide the sign side to write to
+     * @param island   the island being pasted (may be null)
+     * @param lines    the text lines stored in the blueprint
+     * @param name     the island owner's player name (empty string when unknown)
+     */
+    private static void writeLocalizedSignText(SignSide signSide, Island island, List<String> lines, String name) {
         // Sign text must be stored under the addon's name.sign.line0,1,2,3 in the yaml file
         if (island != null && !lines.isEmpty() && lines.getFirst().equalsIgnoreCase(TextVariables.START_TEXT)) {
             // Get the addon that is operating in this world
-            String addonName = plugin.getIWM().getAddon(island.getWorld()).map(addon -> addon.getDescription().getName().toLowerCase(Locale.ENGLISH)).orElse("");
+            String addonName = plugin.getIWM().getAddon(island.getWorld())
+                    .map(addon -> addon.getDescription().getName().toLowerCase(Locale.ENGLISH)).orElse("");
             Optional<User> user = Optional.ofNullable(island.getOwner()).map(User::getInstance);
             if (user.isPresent()) {
                 for (int i = 0; i < 4; i++) {
@@ -332,8 +392,5 @@ public class DefaultPasteUtil {
                 signSide.setLine(i, lines.get(i));
             }
         }
-        signSide.setGlowingText(glow);
-        // Update the sign
-        s.update();
     }
 }

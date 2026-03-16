@@ -120,8 +120,8 @@ class PlaceholderGrouperTest {
         Set<String> keys = Set.of("island_count", "island_count_1", "island_count_2");
         List<PlaceholderItem> result = PlaceholderGrouper.group(keys, NO_DESC);
         assertEquals(2, result.size());
-        long singles = result.stream().filter(i -> i instanceof Single).count();
-        long series  = result.stream().filter(i -> i instanceof Series).count();
+        long singles = result.stream().filter(Single.class::isInstance).count();
+        long series  = result.stream().filter(Series.class::isInstance).count();
         assertEquals(1, singles, "expected exactly one Single");
         assertEquals(1, series,  "expected exactly one Series");
     }

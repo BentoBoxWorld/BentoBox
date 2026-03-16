@@ -140,9 +140,9 @@ class EnderChestListenerTest extends CommonTestSetup {
     @Test
     void testOnCraftNotEnderChest() {
         Recipe recipe = mock(Recipe.class);
-        ItemStack item = mock(ItemStack.class);
-        when(item.getType()).thenReturn(Material.STONE);
-        when(recipe.getResult()).thenReturn(item);
+        ItemStack localItem = mock(ItemStack.class);
+        when(localItem.getType()).thenReturn(Material.STONE);
+        when(recipe.getResult()).thenReturn(localItem);
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory top = mock(Inventory.class);
@@ -150,8 +150,8 @@ class EnderChestListenerTest extends CommonTestSetup {
         when(view.getTopInventory()).thenReturn(top);
         SlotType type = SlotType.RESULT;
         ClickType click = ClickType.LEFT;
-        InventoryAction action = InventoryAction.PICKUP_ONE;
-        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, action);
+        InventoryAction localAction = InventoryAction.PICKUP_ONE;
+        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, localAction);
         new EnderChestListener().onCraft(e);
         assertFalse(e.isCancelled());
     }
@@ -159,9 +159,9 @@ class EnderChestListenerTest extends CommonTestSetup {
     @Test
     void testOnCraftEnderChest() {
         Recipe recipe = mock(Recipe.class);
-        ItemStack item = mock(ItemStack.class);
-        when(item.getType()).thenReturn(Material.ENDER_CHEST);
-        when(recipe.getResult()).thenReturn(item);
+        ItemStack localItem = mock(ItemStack.class);
+        when(localItem.getType()).thenReturn(Material.ENDER_CHEST);
+        when(recipe.getResult()).thenReturn(localItem);
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory top = mock(Inventory.class);
@@ -169,8 +169,8 @@ class EnderChestListenerTest extends CommonTestSetup {
         when(view.getTopInventory()).thenReturn(top);
         SlotType type = SlotType.RESULT;
         ClickType click = ClickType.LEFT;
-        InventoryAction action = InventoryAction.PICKUP_ONE;
-        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, action);
+        InventoryAction localAction = InventoryAction.PICKUP_ONE;
+        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, localAction);
         new EnderChestListener().onCraft(e);
         assertTrue(e.isCancelled());
     }

@@ -81,7 +81,6 @@ class TestBentoBox extends CommonTestSetup {
         super.setUp();
 
         // IslandsManager static
-        //PowerMockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
         mockedStaticIM = Mockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
         when(plugin.getCommandsManager()).thenReturn(cm);
 

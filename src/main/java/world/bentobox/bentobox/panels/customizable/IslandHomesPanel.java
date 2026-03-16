@@ -380,25 +380,25 @@ public class IslandHomesPanel extends AbstractPanel
      * @return name and island info
      */
     private Map<String, IslandInfo> getNameIslandMap(User user) {
-        Map<String, IslandInfo> islandMap = new HashMap<>();
+        Map<String, IslandInfo> localIslandMap = new HashMap<>();
         int index = 0;
         for (Island island : command.getIslands().getIslands(command.getWorld(), user.getUniqueId())) {
             index++;
             if (island.getName() != null && !island.getName().isBlank()) {
                 // Name has been set
-                islandMap.put(island.getName(), new IslandInfo(island, true));
+                localIslandMap.put(island.getName(), new IslandInfo(island, true));
             } else {
                 // Name has not been set
                 String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
                         user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index;
-                islandMap.put(text, new IslandInfo(island, true));
+                localIslandMap.put(text, new IslandInfo(island, true));
             }
             // Add homes. Homes do not need an island specified
             island.getHomes().keySet().stream().filter(n -> !n.isBlank())
-                    .forEach(n -> islandMap.put(n, new IslandInfo(island, false)));
+                    .forEach(n -> localIslandMap.put(n, new IslandInfo(island, false)));
         }
 
-        return islandMap;
+        return localIslandMap;
 
     }
 

@@ -364,7 +364,7 @@ class LocalesManagerTest  extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#reloadLanguages()}.
      */
     @Test
-    void testReloadLanguagesNoLocaleFolder() throws IOException {
+    void testReloadLanguagesNoLocaleFolder() {
         AddonsManager am = mock(AddonsManager.class);
         List<Addon> none = new ArrayList<>();
         when(am.getAddons()).thenReturn(none);

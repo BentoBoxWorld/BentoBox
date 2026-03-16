@@ -43,8 +43,8 @@ public class LeashListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerLeashHitch(final HangingPlaceEvent e) {
-        EntityType LEASH_HITCH = Util.findFirstMatchingEnum(EntityType.class, "LEASH_HITCH", "LEASH_KNOT");
-        if (e.getEntity().getType().equals(LEASH_HITCH)) {
+        EntityType leashHitch = Util.findFirstMatchingEnum(EntityType.class, "LEASH_HITCH", "LEASH_KNOT");
+        if (e.getEntity().getType().equals(leashHitch)) {
             checkIsland(e, e.getPlayer(), e.getEntity().getLocation(), Flags.LEASH);
         }
     }

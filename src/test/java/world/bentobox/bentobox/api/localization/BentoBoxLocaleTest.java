@@ -43,14 +43,6 @@ class BentoBoxLocaleTest extends CommonTestSetup {
         mockedItemParser = Mockito.mockStatic(ItemParser.class, Mockito.RETURNS_MOCKS);
         when(banner.getType()).thenReturn(Material.WHITE_BANNER);
         mockedItemParser.when(() -> ItemParser.parse(anyString())).thenReturn(banner);
-        /*
-        // Mock item factory (for itemstacks)
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        bannerMeta = mock(BannerMeta.class);
-        when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
-        when(itemFactory.createItemStack(any())).thenThrow(IllegalArgumentException.class);
-        mockedBukkit.when(() -> Bukkit.getItemFactory()).thenReturn(itemFactory);
-*/
         Locale locale = Locale.US;
         YamlConfiguration config = new YamlConfiguration();
         config.set("meta.banner", "WHITE_BANNER:1:SMALL_STRIPES:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE");
@@ -109,8 +101,8 @@ class BentoBoxLocaleTest extends CommonTestSetup {
      */
     @Test
     void testGetBanner() {
-        ItemStack banner = localeObject.getBanner();
-        assertEquals(Material.WHITE_BANNER, banner.getType());
+        ItemStack localBanner = localeObject.getBanner();
+        assertEquals(Material.WHITE_BANNER, localBanner.getType());
     }
 
     /**

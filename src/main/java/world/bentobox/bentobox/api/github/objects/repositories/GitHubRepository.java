@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.api.github.objects.repositories;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +29,10 @@ public record GitHubRepository(GitHubWebAPI api, String fullName) {
      * Fetches the list of contributors to the repository.
      *
      * @return A list of GitHubContributor objects.
-     * @throws Exception If an error occurs during the request.
+     * @throws IOException If an I/O error occurs during the request.
+     * @throws URISyntaxException If the request URI is malformed.
      */
-    public List<GitHubContributor> getContributors() throws Exception {
+    public List<GitHubContributor> getContributors() throws IOException, URISyntaxException {
         JsonArray response = api.fetchArray("repos/" + fullName + "/contributors");
         List<GitHubContributor> contributors = new ArrayList<>();
         response.forEach(element -> {
@@ -46,9 +49,10 @@ public record GitHubRepository(GitHubWebAPI api, String fullName) {
      * Fetches the name of the latest tag for this repository.
      *
      * @return the latest tag name (e.g. "3.11.2"), or empty string if none.
-     * @throws Exception if an error occurs during the request.
+     * @throws IOException if an I/O error occurs during the request.
+     * @throws URISyntaxException if the request URI is malformed.
      */
-    public String getLatestTagName() throws Exception {
+    public String getLatestTagName() throws IOException, URISyntaxException {
         JsonArray tags = api.fetchArray("repos/" + fullName + "/tags");
         if (tags.isEmpty()) return "";
         return tags.get(0).getAsJsonObject().get("name").getAsString();

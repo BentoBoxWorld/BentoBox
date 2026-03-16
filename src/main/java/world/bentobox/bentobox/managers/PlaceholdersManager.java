@@ -215,10 +215,10 @@ public class PlaceholdersManager {
     private void registerOnlineMemberCountPlaceholders(@NonNull GameModeAddon addon) {
         registerPlaceholder(addon, "island_online_members_count",
                 "Number of island members currently online",
-                user -> resolveOwnIsland(addon, user, island -> countOnlineMembers(island)));
+                user -> resolveOwnIsland(addon, user, this::countOnlineMembers));
         registerPlaceholder(addon, "visited_island_online_members_count",
                 "Number of members currently online on the island the player is standing on",
-                user -> resolveVisitedIsland(addon, user, island -> countOnlineMembers(island)));
+                user -> resolveVisitedIsland(addon, user, this::countOnlineMembers));
     }
 
     private String countOnlineMembers(Island island) {

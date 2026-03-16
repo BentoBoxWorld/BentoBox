@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.junit.jupiter.api.AfterEach;

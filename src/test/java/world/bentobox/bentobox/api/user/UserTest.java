@@ -123,9 +123,9 @@ class UserTest extends CommonTestSetup {
 
     @Test
     void testGetInstanceCommandSender() {
-        User user = User.getInstance(sender);
-        assertNotNull(user);
-        assertEquals(sender,user.getSender());
+        User localUser = User.getInstance(sender);
+        assertNotNull(localUser);
+        assertEquals(sender,localUser.getSender());
     }
 
     @Test
@@ -136,9 +136,9 @@ class UserTest extends CommonTestSetup {
     @Test
     void testGetInstanceUUID() {
         UUID uuid = UUID.randomUUID();
-        User user = User.getInstance(uuid);
-        assertNotNull(user);
-        assertEquals(uuid,user.getUniqueId());
+        User localUser = User.getInstance(uuid);
+        assertNotNull(localUser);
+        assertEquals(uuid,localUser.getUniqueId());
     }
 
     @Test
@@ -165,8 +165,8 @@ class UserTest extends CommonTestSetup {
         PermissionAttachmentInfo perm = new PermissionAttachmentInfo(sender, "perm", null, false);
         value.add(perm);
         when(sender.getEffectivePermissions()).thenReturn(value );
-        User user = User.getInstance(sender);
-        assertEquals(value, user.getEffectivePermissions());
+        User localUser = User.getInstance(sender);
+        assertEquals(value, localUser.getEffectivePermissions());
     }
 
     @Test
@@ -174,48 +174,48 @@ class UserTest extends CommonTestSetup {
         PlayerInventory value = mock(PlayerInventory.class);
         when(mockPlayer.getInventory()).thenReturn(value);
         assertEquals(value, mockPlayer.getInventory());
-        User user = User.getInstance(mockPlayer);
-        assertNotNull(user.getInventory());
-        assertEquals(value, user.getInventory());
+        User localUser = User.getInstance(mockPlayer);
+        assertNotNull(localUser.getInventory());
+        assertEquals(value, localUser.getInventory());
     }
 
     @Test
     void testGetLocation() {
         Location loc = mock(Location.class);
         when(mockPlayer.getLocation()).thenReturn(loc);
-        User user = User.getInstance(mockPlayer);
-        assertNotNull(user.getLocation());
-        assertEquals(loc, user.getLocation());
+        User localUser = User.getInstance(mockPlayer);
+        assertNotNull(localUser.getLocation());
+        assertEquals(loc, localUser.getLocation());
     }
 
     @Test
     void testGetName() {
         String name = "tastybento";
         when(mockPlayer.getName()).thenReturn(name);
-        User user = User.getInstance(mockPlayer);
-        assertNotNull(user.getName());
-        assertEquals(name, user.getName());
+        User localUser = User.getInstance(mockPlayer);
+        assertNotNull(localUser.getName());
+        assertEquals(name, localUser.getName());
 
     }
 
     @Test
     void testGetPlayer() {
-        User user = User.getInstance(mockPlayer);
-        assertSame(mockPlayer, user.getPlayer());
+        User localUser = User.getInstance(mockPlayer);
+        assertSame(mockPlayer, localUser.getPlayer());
     }
 
     @Test
     void testIsPlayer() {
-        User user = User.getInstance(sender);
-        assertFalse(user.isPlayer());
-        user = User.getInstance(mockPlayer);
-        assertTrue(user.isPlayer());
+        User localUser = User.getInstance(sender);
+        assertFalse(localUser.isPlayer());
+        localUser = User.getInstance(mockPlayer);
+        assertTrue(localUser.isPlayer());
     }
 
     @Test
     void testGetSender() {
-        User user = User.getInstance(sender);
-        assertEquals(sender, user.getSender());
+        User localUser = User.getInstance(sender);
+        assertEquals(sender, localUser.getSender());
     }
 
     @Test
@@ -291,9 +291,9 @@ class UserTest extends CommonTestSetup {
         when(testLm.get(any(), any())).thenReturn("fake.reference");
         when(testLm.get(any())).thenReturn("fake.reference");
 
-        User user = User.getInstance(mockPlayer);
-        assertEquals("", user.getTranslationOrNothing("fake.reference"));
-        assertEquals("", user.getTranslationOrNothing("fake.reference", "[test]", "variable"));
+        User localUser = User.getInstance(mockPlayer);
+        assertEquals("", localUser.getTranslationOrNothing("fake.reference"));
+        assertEquals("", localUser.getTranslationOrNothing("fake.reference", "[test]", "variable"));
     }
 
     @Test
@@ -400,8 +400,8 @@ class UserTest extends CommonTestSetup {
     void testGetWorld() {
         World world = mock(World.class);
         when(mockPlayer.getWorld()).thenReturn(world);
-        User user = User.getInstance(mockPlayer);
-        assertSame(world, user.getWorld());
+        User localUser = User.getInstance(mockPlayer);
+        assertSame(world, localUser.getWorld());
     }
 
     @Test
@@ -412,9 +412,9 @@ class UserTest extends CommonTestSetup {
 
     @Test
     void testGetLocalePlayer() {
-        PlayersManager pm = mock(PlayersManager.class);
-        when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getLocale(any())).thenReturn("en-US");
+        PlayersManager localPm = mock(PlayersManager.class);
+        when(plugin.getPlayers()).thenReturn(localPm);
+        when(localPm.getLocale(any())).thenReturn("en-US");
 
         // Confirm that Locale object is correctly obtained
         assertEquals(Locale.US, user.getLocale());
@@ -422,9 +422,9 @@ class UserTest extends CommonTestSetup {
 
     @Test
     void testGetLocaleConsole() {
-        PlayersManager pm = mock(PlayersManager.class);
-        when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getLocale(any())).thenReturn("en-US");
+        PlayersManager localPm = mock(PlayersManager.class);
+        when(plugin.getPlayers()).thenReturn(localPm);
+        when(localPm.getLocale(any())).thenReturn("en-US");
 
         // Confirm that Locale object is correctly obtained
         Locale locale = Locale.US;
@@ -469,7 +469,7 @@ class UserTest extends CommonTestSetup {
         User user1 = User.getInstance(uuid);
         User user2 = User.getInstance(uuid);
         assertEquals(user1, user2);
-        assertTrue(user1.hashCode() == user2.hashCode());
+        assertEquals(user1.hashCode(), user2.hashCode());
     }
 
     /**

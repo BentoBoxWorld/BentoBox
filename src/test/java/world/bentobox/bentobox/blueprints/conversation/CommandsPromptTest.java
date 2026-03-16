@@ -85,7 +85,7 @@ class CommandsPromptTest extends CommonTestSetup {
                 "commands.admin.blueprint.management.commands.clear");
         // Should return this (same prompt) after clearing
         assertInstanceOf(CommandsPrompt.class, next);
-        verify(context).setSessionData(eq("commands"), eq(new ArrayList<>()));
+        verify(context).setSessionData("commands", new ArrayList<>());
     }
 
     @Test

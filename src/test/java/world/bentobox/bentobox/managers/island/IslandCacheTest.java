@@ -69,7 +69,7 @@ class IslandCacheTest extends CommonTestSetup {
         mockedDatabaseSetup = Mockito.mockStatic(DatabaseSetup.class);
         DatabaseSetup dbSetup = mock(DatabaseSetup.class);
         mockedDatabaseSetup.when(DatabaseSetup::getDatabase).thenReturn(dbSetup);
-        when(dbSetup.getHandler(eq(Island.class))).thenReturn(handler);
+        when(dbSetup.getHandler(Island.class)).thenReturn(handler);
         when(handler.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
           // IWM
         when(iwm.getDefaultIslandFlags(any())).thenReturn(Collections.singletonMap(flag, 400));
@@ -171,16 +171,9 @@ class IslandCacheTest extends CommonTestSetup {
 
     /**
      * Test for {@link IslandCache#getIslandAt(Location)}
-     * @throws IntrospectionException 
-     * @throws NoSuchMethodException 
-     * @throws ClassNotFoundException 
-     * @throws InvocationTargetException 
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
      */
     @Test
-    void testGetIslandAtLocation() throws InstantiationException, IllegalAccessException,
-            InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+    void testGetIslandAtLocation() {
         // Set coords to be in island space
         when(island.inIslandSpace(any(Integer.class), any(Integer.class))).thenReturn(true);
         // Set plugin

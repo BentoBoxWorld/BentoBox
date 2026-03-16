@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Assertions;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -433,11 +435,11 @@ class PlayersManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetUserString()  {
-        User user = pm.getUser("random");
-        assertNull(user);
+        User localUser = pm.getUser("random");
+        assertNull(localUser);
         pm.getPlayer(uuid);
-        user = pm.getUser("tastybento");
-        assertEquals("tastybento", user.getName());
+        localUser = pm.getUser("tastybento");
+        assertEquals("tastybento", localUser.getName());
     }
 
     /**
@@ -446,8 +448,8 @@ class PlayersManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetUserUUID() {
-        UUID uuid = pm.getUUID("unknown");
-        assertNull(uuid);
+        UUID localUuid = pm.getUUID("unknown");
+        assertNull(localUuid);
     }
 
     /**
@@ -610,13 +612,10 @@ class PlayersManagerTest extends CommonTestSetup {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#setPlayerName(world.bentobox.bentobox.api.user.User)}.
-     * @throws IntrospectionException 
-     * @throws InvocationTargetException 
-     * @throws IllegalAccessException 
      */
     @Test
-    void testSetPlayerName() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-        pm.setPlayerName(user).thenAccept(result -> assertTrue(result));
+    void testSetPlayerName() {
+        pm.setPlayerName(user).thenAccept(Assertions::assertTrue);
     }
 
     /**
@@ -634,8 +633,8 @@ class PlayersManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetPlayer() {
-        Players p = pm.getPlayer(uuid);
-        assertNotNull(p);
+        Players localPlayer = pm.getPlayer(uuid);
+        assertNotNull(localPlayer);
     }
 
     /**
@@ -679,13 +678,10 @@ class PlayersManagerTest extends CommonTestSetup {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#savePlayer(java.util.UUID)}.
-     * @throws IntrospectionException 
-     * @throws InvocationTargetException 
-     * @throws IllegalAccessException 
      */
     @Test
-    void testSavePlayer() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-        pm.savePlayer(uuid).thenAccept(result -> assertTrue(result));
+    void testSavePlayer() {
+        pm.savePlayer(uuid).thenAccept(Assertions::assertTrue);
     }
 
 }

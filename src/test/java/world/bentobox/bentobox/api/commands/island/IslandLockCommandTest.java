@@ -29,7 +29,6 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -182,13 +181,13 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
     @Test
     void testExecuteLockIsland() {
         // Island is currently unlocked (VISITOR_RANK = 0)
-        when(island.getFlag(eq(Flags.LOCK))).thenReturn(RanksManager.VISITOR_RANK);
+        when(island.getFlag(Flags.LOCK)).thenReturn(RanksManager.VISITOR_RANK);
         // Prime the island field via canExecute
         assertTrue(ilc.canExecute(user, "lock", Collections.emptyList()));
 
         assertTrue(ilc.execute(user, "lock", Collections.emptyList()));
 
-        verify(island).setFlag(eq(Flags.LOCK), eq(RanksManager.MEMBER_RANK));
+        verify(island).setFlag(Flags.LOCK, RanksManager.MEMBER_RANK);
         verify(user).sendMessage("commands.island.lock.locked");
     }
 
@@ -198,13 +197,13 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
     @Test
     void testExecuteUnlockIsland() {
         // Island is currently locked (MEMBER_RANK = 500)
-        when(island.getFlag(eq(Flags.LOCK))).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getFlag(Flags.LOCK)).thenReturn(RanksManager.MEMBER_RANK);
         // Prime the island field via canExecute
         assertTrue(ilc.canExecute(user, "lock", Collections.emptyList()));
 
         assertTrue(ilc.execute(user, "lock", Collections.emptyList()));
 
-        verify(island).setFlag(eq(Flags.LOCK), eq(RanksManager.VISITOR_RANK));
+        verify(island).setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
         verify(user).sendMessage("commands.island.lock.unlocked");
     }
 
@@ -213,7 +212,7 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testExecuteLockWithVisitorsOnIsland() {
-        when(island.getFlag(eq(Flags.LOCK))).thenReturn(RanksManager.VISITOR_RANK);
+        when(island.getFlag(Flags.LOCK)).thenReturn(RanksManager.VISITOR_RANK);
 
         // Set up a visitor on the island
         UUID visitorUUID = UUID.randomUUID();
@@ -226,7 +225,7 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
 
         // Visitor is on the island but NOT a team member
         when(island.onIsland(any(Location.class))).thenReturn(true);
-        when(island.inTeam(eq(visitorUUID))).thenReturn(false);
+        when(island.inTeam(visitorUUID)).thenReturn(false);
         when(island.getPlayersOnIsland()).thenReturn(List.of(visitorPlayer));
         mockedBukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(visitorPlayer));
 
@@ -237,7 +236,7 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
         assertTrue(ilc.canExecute(user, "lock", Collections.emptyList()));
         assertTrue(ilc.execute(user, "lock", Collections.emptyList()));
 
-        verify(island).setFlag(eq(Flags.LOCK), eq(RanksManager.MEMBER_RANK));
+        verify(island).setFlag(Flags.LOCK, RanksManager.MEMBER_RANK);
         verify(user).sendMessage("commands.island.lock.locked");
         // Visitor is sent home
         verify(im).homeTeleportAsync(any(), eq(visitorPlayer));
@@ -248,7 +247,7 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testExecuteLockWithVisitorsNoHome() {
-        when(island.getFlag(eq(Flags.LOCK))).thenReturn(RanksManager.VISITOR_RANK);
+        when(island.getFlag(Flags.LOCK)).thenReturn(RanksManager.VISITOR_RANK);
 
         // Set up a visitor
         UUID visitorUUID = UUID.randomUUID();
@@ -260,7 +259,7 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
         User.getInstance(visitorPlayer);
 
         when(island.onIsland(any(Location.class))).thenReturn(true);
-        when(island.inTeam(eq(visitorUUID))).thenReturn(false);
+        when(island.inTeam(visitorUUID)).thenReturn(false);
         when(island.getPlayersOnIsland()).thenReturn(List.of(visitorPlayer));
         mockedBukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(visitorPlayer));
 
@@ -273,7 +272,7 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
         assertTrue(ilc.canExecute(user, "lock", Collections.emptyList()));
         assertTrue(ilc.execute(user, "lock", Collections.emptyList()));
 
-        verify(island).setFlag(eq(Flags.LOCK), eq(RanksManager.MEMBER_RANK));
+        verify(island).setFlag(Flags.LOCK, RanksManager.MEMBER_RANK);
         verify(user).sendMessage("commands.island.lock.locked");
         // Visitor is sent to spawn
         verify(im).spawnTeleport(any(), eq(visitorPlayer));
@@ -284,7 +283,7 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testExecuteLockMembersNotExpelled() {
-        when(island.getFlag(eq(Flags.LOCK))).thenReturn(RanksManager.VISITOR_RANK);
+        when(island.getFlag(Flags.LOCK)).thenReturn(RanksManager.VISITOR_RANK);
 
         // Set up a team member on the island
         UUID memberUUID = UUID.randomUUID();
@@ -296,14 +295,14 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
 
         when(island.onIsland(any(Location.class))).thenReturn(true);
         // This player IS a team member
-        when(island.inTeam(eq(memberUUID))).thenReturn(true);
+        when(island.inTeam(memberUUID)).thenReturn(true);
         when(island.getPlayersOnIsland()).thenReturn(List.of(memberPlayer));
 
         // Prime the island field via canExecute
         assertTrue(ilc.canExecute(user, "lock", Collections.emptyList()));
         assertTrue(ilc.execute(user, "lock", Collections.emptyList()));
 
-        verify(island).setFlag(eq(Flags.LOCK), eq(RanksManager.MEMBER_RANK));
+        verify(island).setFlag(Flags.LOCK, RanksManager.MEMBER_RANK);
         verify(user).sendMessage("commands.island.lock.locked");
         // Team member is NOT teleported away
         verify(im, never()).homeTeleportAsync(any(), eq(memberPlayer));

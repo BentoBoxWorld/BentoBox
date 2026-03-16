@@ -122,7 +122,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                     // This is a home name, not an island name
                     this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), name) // Teleport to the named home for this player
                             .thenAccept(r -> {
-                                if (r) {
+                                if (Boolean.TRUE.equals(r)) {
                                     // Success
                                     getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
                                 } else {

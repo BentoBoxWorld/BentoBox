@@ -84,15 +84,15 @@ class GeoLimitClickListenerTest extends CommonTestSetup {
     void testOnClickNoPermission() {
         when(user.hasPermission(anyString())).thenReturn(false);
         assertTrue(listener.onClick(panel, user, ClickType.LEFT, 0));
-        verify(user).sendMessage(eq("general.errors.no-permission"), eq("[permission]"),
-                eq("bskyblock.admin.settings.GEO_LIMIT_MOBS"));
+        verify(user).sendMessage("general.errors.no-permission", "[permission]",
+                "bskyblock.admin.settings.GEO_LIMIT_MOBS");
         verify(mockPlayer).playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
     }
 
     @Test
     void testOnClickWithPermission() {
         assertTrue(listener.onClick(panel, user, ClickType.LEFT, 0));
-        verify(user, never()).sendMessage(eq("general.errors.wrong-world"));
+        verify(user, never()).sendMessage("general.errors.wrong-world");
         verify(user, never()).sendMessage(eq("general.errors.no-permission"), anyString(), anyString());
         verify(user).closeInventory();
     }
