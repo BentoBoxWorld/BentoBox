@@ -217,6 +217,7 @@ dependencies {
     // --- Compile Only Dependencies: Provided by the server at runtime ---
     compileOnly("org.mongodb:mongodb-driver:$mongodbVersion")
     compileOnly("com.zaxxer:HikariCP:$hikaricpVersion")
+    testImplementation("com.zaxxer:HikariCP:$hikaricpVersion")
     compileOnly("com.github.MilkBowl:VaultAPI:$vaultVersion")
     compileOnly("me.clip:placeholderapi:$placeholderapiVersion")
     compileOnly("com.bergerkiller.bukkit:MyWorlds:$myworldsVersion") {
