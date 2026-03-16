@@ -621,77 +621,95 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Nullable
     private Object deserialize(Object value, Class<?> clazz) {
-        // If value is already null, then it can be nothing else
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof String && value.equals("null")) {
-            // If the value is null as a string, return null
+        // If value is already null or the string "null", return null
+        if (value == null || "null".equals(value)) {
             return null;
         }
         // Bukkit may have deserialized the object already
         if (clazz.equals(value.getClass())) {
             return value;
         }
-        // Types that need to be deserialized
+        // Integer to Long promotion
         if (clazz.equals(Long.class) && value.getClass().equals(Integer.class)) {
             return Long.valueOf((Integer) value);
         }
-        if (value.getClass().equals(String.class)) {
-            if (clazz.equals(Integer.class)) {
-                return Integer.valueOf((String) value);
+        // String-based conversions
+        if (value instanceof String stringValue) {
+            Object converted = deserializeString(stringValue, clazz);
+            if (converted != null) {
+                return converted;
             }
-            if (clazz.equals(Long.class)) {
-                return Long.valueOf((String) value);
-            }
-            if (clazz.equals(Double.class)) {
-                return Double.valueOf((String) value);
-            }
-            if (clazz.equals(Float.class)) {
-                return Float.valueOf((String) value);
-            }
-        }
-        if (clazz.equals(UUID.class)) {
-            value = UUID.fromString((String)value);
-        }
-        // Bukkit Types
-        if (clazz.equals(Location.class)) {
-            // Get Location from String - may be null...
-            value = Util.getLocationString(((String)value));
-        }
-        if (clazz.equals(World.class)) {
-            // Get world by name - may be null...
-            value = Bukkit.getWorld((String)value);
         }
         // Enums
         if (Enum.class.isAssignableFrom(clazz)) {
-            //Custom enums are a child of the Enum class.
-            // Find out the value
-            Class<Enum> enumClass = (Class<Enum>)clazz;
-            try {
-                String name = ((String)value).toUpperCase(Locale.ENGLISH);
-                // Backwards compatibility for upgrade to 1.16.1
-                if (name.equals("PIG_ZOMBIE") || name.equals("ZOMBIFIED_PIGLIN")) {
-                    return Enums.getIfPresent(EntityType.class, "ZOMBIFIED_PIGLIN")
-                            .or(Enums.getIfPresent(EntityType.class, "PIG_ZOMBIE").or(EntityType.PIG));
-                }
-                // Backwards compatibility for upgrade to 1.20.4
-                if (name.equals("GRASS") && Enums.getIfPresent(EntityType.class, "SHORT_GRASS").isPresent()) {
-                    return Enums.getIfPresent(EntityType.class, "SHORT_GRASS");
-                }
-                value = Enum.valueOf(enumClass, name);
-            } catch (Exception e) {
-                // This value does not exist - probably admin typed it wrongly
-                // Show what is available and pick one at random
-                plugin.logError("Error in YML file: " + value + " is not a valid value in the enum " + clazz.getCanonicalName() + "!");
-                plugin.logError("Options are : ");
-                for (Field fields : enumClass.getFields()) {
-                    plugin.logError(fields.getName());
-                }
-                value = null;
-            }
+            return deserializeEnum((String) value, (Class<Enum>) clazz);
         }
         return value;
+    }
+
+    /**
+     * Deserialize a string value into the target class type.
+     * Handles numeric types, UUID, Location, and World.
+     * @param value the string value
+     * @param clazz the target class
+     * @return the deserialized object, or null if this method does not handle the target class
+     */
+    @Nullable
+    private Object deserializeString(String value, Class<?> clazz) {
+        if (clazz.equals(Integer.class)) {
+            return Integer.valueOf(value);
+        }
+        if (clazz.equals(Long.class)) {
+            return Long.valueOf(value);
+        }
+        if (clazz.equals(Double.class)) {
+            return Double.valueOf(value);
+        }
+        if (clazz.equals(Float.class)) {
+            return Float.valueOf(value);
+        }
+        if (clazz.equals(UUID.class)) {
+            return UUID.fromString(value);
+        }
+        if (clazz.equals(Location.class)) {
+            return Util.getLocationString(value);
+        }
+        if (clazz.equals(World.class)) {
+            return Bukkit.getWorld(value);
+        }
+        return null;
+    }
+
+    /**
+     * Deserialize a string value into an enum constant, with backwards compatibility handling.
+     * @param value the string value
+     * @param enumClass the target enum class
+     * @return the enum constant, or null if invalid
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Nullable
+    private Object deserializeEnum(String value, Class<Enum> enumClass) {
+        try {
+            String name = value.toUpperCase(Locale.ENGLISH);
+            // Backwards compatibility for upgrade to 1.16.1
+            if (name.equals("PIG_ZOMBIE") || name.equals("ZOMBIFIED_PIGLIN")) {
+                return Enums.getIfPresent(EntityType.class, "ZOMBIFIED_PIGLIN")
+                        .or(Enums.getIfPresent(EntityType.class, "PIG_ZOMBIE").or(EntityType.PIG));
+            }
+            // Backwards compatibility for upgrade to 1.20.4
+            if (name.equals("GRASS") && Enums.getIfPresent(EntityType.class, "SHORT_GRASS").isPresent()) {
+                return Enums.getIfPresent(EntityType.class, "SHORT_GRASS");
+            }
+            return Enum.valueOf(enumClass, name);
+        } catch (Exception e) {
+            // This value does not exist - probably admin typed it wrongly
+            plugin.logError("Error in YML file: " + value + " is not a valid value in the enum " + enumClass.getCanonicalName() + "!");
+            plugin.logError("Options are : ");
+            for (Field fields : enumClass.getFields()) {
+                plugin.logError(fields.getName());
+            }
+            return null;
+        }
     }
 
     @Override
