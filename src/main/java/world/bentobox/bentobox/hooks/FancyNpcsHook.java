@@ -121,125 +121,126 @@ public class FancyNpcsHook extends NPCHook {
         YamlConfiguration npcConfig = new YamlConfiguration();
         npcConfig.loadFromString(yaml);
 
-        String name = UUID.randomUUID().toString(); // Create a unique name
-
-        UUID creator = UUID.randomUUID(); // Random creator
-
-        String displayName = npcConfig.getString("displayName", "<empty>");
         EntityType type = EntityType.valueOf(npcConfig.getString("type", "PLAYER").toUpperCase(Locale.ENGLISH));
 
-            // Create the spawn location
-            Location location;
-            double x = pos.getBlockX();
-            double y = pos.getBlockY();
-            double z = pos.getBlockZ();
-            // Add in the yaw and pitch
-            float yaw = (float) npcConfig.getDouble("location.yaw");
-            float pitch = (float) npcConfig.getDouble("location.pitch");
+        // Build spawn location from position block coords + stored yaw/pitch
+        float yaw = (float) npcConfig.getDouble("location.yaw");
+        float pitch = (float) npcConfig.getDouble("location.pitch");
+        Location location = new Location(pos.getWorld(), pos.getBlockX(), pos.getBlockY(), pos.getBlockZ(), yaw, pitch);
 
-            location = new Location(pos.getWorld(), x, y, z, yaw, pitch);
+        // Build NpcData
+        NpcData data = new NpcData(UUID.randomUUID().toString(), UUID.randomUUID(), location)
+                .setDisplayName(npcConfig.getString("displayName", "<empty>"))
+                .setSkin(npcConfig.getString(SKIN_IDENTIFIER, npcConfig.getString("skin.uuid", "")))
+                .setLocation(location)
+                .setShowInTab(npcConfig.getBoolean("showInTab"))
+                .setSpawnEntity(npcConfig.getBoolean("spawnEntity"))
+                .setCollidable(npcConfig.getBoolean("collidable", true))
+                .setGlowing(npcConfig.getBoolean("glowing"))
+                .setGlowingColor(NamedTextColor.NAMES.value(npcConfig.getString("glowingColor", "white")))
+                .setType(type)
+                .setTurnToPlayer(npcConfig.getBoolean("turnToPlayer"))
+                .setActions(parseActions(npcConfig))
+                .setInteractionCooldown((float) npcConfig.getDouble("interactionCooldown", 0))
+                .setScale((float) npcConfig.getDouble("scale", 1))
+                .setMirrorSkin(npcConfig.getBoolean("skin.mirrorSkin"));
 
+        parseAttributes(npcConfig, type).forEach(data::addAttribute);
 
-            String skinIdentifier = npcConfig.getString(SKIN_IDENTIFIER, npcConfig.getString("skin.uuid", ""));
+        Npc npc = FancyNpcsPlugin.get().getNpcAdapter().apply(data);
+        parseEquipment(npcConfig, npc);
 
-        boolean mirrorSkin = npcConfig.getBoolean("skin.mirrorSkin");
-
-            boolean showInTab = npcConfig.getBoolean("showInTab");
-            boolean spawnEntity = npcConfig.getBoolean("spawnEntity");
-            boolean collidable = npcConfig.getBoolean("collidable", true);
-            boolean glowing = npcConfig.getBoolean("glowing");
-            NamedTextColor glowingColor = NamedTextColor.NAMES
-                    .value(npcConfig.getString("glowingColor", "white"));
-            boolean turnToPlayer = npcConfig.getBoolean("turnToPlayer");
-
-            Map<ActionTrigger, List<NpcAction.NpcActionData>> actions = new ConcurrentHashMap<>();
-
-            ConfigurationSection actiontriggerSection = npcConfig.getConfigurationSection("actions");
-            if (actiontriggerSection != null) {
-                actiontriggerSection.getKeys(false).forEach(trigger -> {
-                    ActionTrigger actionTrigger = ActionTrigger.getByName(trigger);
-                    if (actionTrigger == null) {
-                        BentoBox.getInstance().logWarning("Could not find action trigger: " + trigger);
-                        return;
-                    }
-
-                    List<NpcAction.NpcActionData> actionList = new ArrayList<>();
-                    ConfigurationSection actionsSection = npcConfig.getConfigurationSection(ACTIONS + trigger);
-                    if (actionsSection != null) {
-                        actionsSection.getKeys(false).forEach(order -> {
-                            String actionName = npcConfig
-                                    .getString(ACTIONS + trigger + "." + order + ".action");
-                            String value = npcConfig.getString(ACTIONS + trigger + "." + order + ".value");
-                            NpcAction action = FancyNpcsPlugin.get().getActionManager().getActionByName(actionName);
-                            if (action == null) {
-                                BentoBox.getInstance().logWarning("Could not find action: " + actionName);
-                                return;
-                            }
-
-                            try {
-                                actionList.add(new NpcAction.NpcActionData(Integer.parseInt(order), action, value));
-                            } catch (NumberFormatException e) {
-                                BentoBox.getInstance().logWarning("Could not parse order: " + order);
-                            }
-                        });
-
-                        actions.put(actionTrigger, actionList);
-                    }
-                });
-            }
-
-            float interactionCooldown = (float) npcConfig.getDouble("interactionCooldown", 0);
-            float scale = (float) npcConfig.getDouble("scale", 1);
-
-            Map<NpcAttribute, String> attributes = new HashMap<>();
-            if (npcConfig.isConfigurationSection("attributes")) {
-                for (String attrName : npcConfig.getConfigurationSection("attributes").getKeys(false)) {
-                    NpcAttribute attribute = FancyNpcsPlugin.get().getAttributeManager().getAttributeByName(type,
-                            attrName);
-                    if (attribute == null) {
-                        BentoBox.getInstance().logWarning("Could not find attribute: " + attrName);
-                        continue;
-                    }
-
-                    String value = npcConfig.getString("attributes." + attrName);
-                    if (!attribute.isValidValue(value)) {
-                        BentoBox.getInstance().logWarning("Invalid value for attribute: " + attrName);
-                        continue;
-                    }
-
-                    attributes.put(attribute, value);
-                }
-            }
-
-            FancyNpcsPlugin.get().getNpcManager().getNpc(name);
-
-            // When we make a copy, we need to use a new ID
-            String newId = UUID.randomUUID().toString();
-
-            NpcData data = new NpcData(newId, creator, location).setDisplayName(displayName).setSkin(skinIdentifier)
-                    .setLocation(location).setShowInTab(showInTab).setSpawnEntity(spawnEntity).setCollidable(collidable)
-                    .setGlowing(glowing).setGlowingColor(glowingColor).setType(type).setTurnToPlayer(turnToPlayer)
-                    .setActions(actions).setInteractionCooldown(interactionCooldown).setScale(scale)
-                    .setMirrorSkin(mirrorSkin);
-            attributes.forEach(data::addAttribute);
-
-            Npc npc = FancyNpcsPlugin.get().getNpcAdapter().apply(data);
-
-            if (npcConfig.isConfigurationSection("equipment")) {
-                for (String equipmentSlotStr : npcConfig.getConfigurationSection("equipment").getKeys(false)) {
-                    NpcEquipmentSlot equipmentSlot = NpcEquipmentSlot.parse(equipmentSlotStr);
-                    ItemStack item = npcConfig.getItemStack("equipment." + equipmentSlotStr);
-                    npc.getData().addEquipment(equipmentSlot, item);
-                }
-            }
-
-            Bukkit.getScheduler().runTask(getPlugin(), () -> {
-                FancyNpcsPlugin.get().getNpcManager().registerNpc(npc);
-                npc.create();
-                npc.spawnForAll();
-            });
+        Bukkit.getScheduler().runTask(getPlugin(), () -> {
+            FancyNpcsPlugin.get().getNpcManager().registerNpc(npc);
+            npc.create();
+            npc.spawnForAll();
+        });
 
         return true;
+    }
+
+    /**
+     * Parse action triggers and their action data from the YAML config.
+     */
+    private Map<ActionTrigger, List<NpcAction.NpcActionData>> parseActions(YamlConfiguration npcConfig) {
+        Map<ActionTrigger, List<NpcAction.NpcActionData>> actions = new ConcurrentHashMap<>();
+        ConfigurationSection actionTriggerSection = npcConfig.getConfigurationSection("actions");
+        if (actionTriggerSection == null) {
+            return actions;
+        }
+        for (String trigger : actionTriggerSection.getKeys(false)) {
+            ActionTrigger actionTrigger = ActionTrigger.getByName(trigger);
+            if (actionTrigger == null) {
+                BentoBox.getInstance().logWarning("Could not find action trigger: " + trigger);
+                continue;
+            }
+            ConfigurationSection actionsSection = npcConfig.getConfigurationSection(ACTIONS + trigger);
+            if (actionsSection != null) {
+                actions.put(actionTrigger, parseActionList(npcConfig, trigger, actionsSection));
+            }
+        }
+        return actions;
+    }
+
+    /**
+     * Parse a list of NpcActionData entries for a single trigger.
+     */
+    private List<NpcAction.NpcActionData> parseActionList(YamlConfiguration npcConfig, String trigger,
+            ConfigurationSection actionsSection) {
+        List<NpcAction.NpcActionData> actionList = new ArrayList<>();
+        for (String order : actionsSection.getKeys(false)) {
+            String actionName = npcConfig.getString(ACTIONS + trigger + "." + order + ".action");
+            String value = npcConfig.getString(ACTIONS + trigger + "." + order + ".value");
+            NpcAction action = FancyNpcsPlugin.get().getActionManager().getActionByName(actionName);
+            if (action == null) {
+                BentoBox.getInstance().logWarning("Could not find action: " + actionName);
+                continue;
+            }
+            try {
+                actionList.add(new NpcAction.NpcActionData(Integer.parseInt(order), action, value));
+            } catch (NumberFormatException e) {
+                BentoBox.getInstance().logWarning("Could not parse order: " + order);
+            }
+        }
+        return actionList;
+    }
+
+    /**
+     * Parse NPC attributes from the YAML config.
+     */
+    private Map<NpcAttribute, String> parseAttributes(YamlConfiguration npcConfig, EntityType type) {
+        Map<NpcAttribute, String> attributes = new HashMap<>();
+        if (!npcConfig.isConfigurationSection("attributes")) {
+            return attributes;
+        }
+        for (String attrName : npcConfig.getConfigurationSection("attributes").getKeys(false)) {
+            NpcAttribute attribute = FancyNpcsPlugin.get().getAttributeManager().getAttributeByName(type, attrName);
+            if (attribute == null) {
+                BentoBox.getInstance().logWarning("Could not find attribute: " + attrName);
+                continue;
+            }
+            String value = npcConfig.getString("attributes." + attrName);
+            if (!attribute.isValidValue(value)) {
+                BentoBox.getInstance().logWarning("Invalid value for attribute: " + attrName);
+                continue;
+            }
+            attributes.put(attribute, value);
+        }
+        return attributes;
+    }
+
+    /**
+     * Parse equipment from the YAML config and apply it to the NPC.
+     */
+    private void parseEquipment(YamlConfiguration npcConfig, Npc npc) {
+        if (!npcConfig.isConfigurationSection("equipment")) {
+            return;
+        }
+        for (String equipmentSlotStr : npcConfig.getConfigurationSection("equipment").getKeys(false)) {
+            NpcEquipmentSlot equipmentSlot = NpcEquipmentSlot.parse(equipmentSlotStr);
+            ItemStack item = npcConfig.getItemStack("equipment." + equipmentSlotStr);
+            npc.getData().addEquipment(equipmentSlot, item);
+        }
     }
 
     @Override
