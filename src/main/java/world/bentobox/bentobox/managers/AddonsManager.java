@@ -197,6 +197,7 @@ public class AddonsManager {
         }
     }
 
+    @SuppressWarnings("java:S2095") // AddonClassLoader is intentionally kept open for the addon's lifetime; closed in disableAddons()/disable()
     private PladdonData loadPladdon(YamlConfiguration data, @NonNull File f) throws InvalidAddonInheritException,
             MalformedURLException, InvalidAddonDescriptionException, InstantiationException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException, InvalidDescriptionException {
@@ -554,6 +555,13 @@ public class AddonsManager {
         listeners.clear();
         pladdons.clear();
         addons.clear();
+        loaders.values().forEach(loader -> {
+            try {
+                loader.close();
+            } catch (IOException e) {
+                plugin.logError("Error closing class loader: " + e.getMessage());
+            }
+        });
         loaders.clear();
         classes.clear();
     }
@@ -774,6 +782,12 @@ public class AddonsManager {
             Set<String> unmodifiableSet = Collections.unmodifiableSet(loaders.get(addon).getClasses());
             for (String className : unmodifiableSet) {
                 classes.remove(className);
+            }
+            try {
+                loaders.get(addon).close();
+            } catch (IOException e) {
+                plugin.logError(
+                        "Error closing class loader for " + addon.getDescription().getName() + ": " + e.getMessage());
             }
             addon.setState(State.DISABLED);
             loaders.remove(addon);
