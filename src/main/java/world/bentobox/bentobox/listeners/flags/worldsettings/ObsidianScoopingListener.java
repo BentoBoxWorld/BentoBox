@@ -40,6 +40,7 @@ public class ObsidianScoopingListener extends FlagListener {
      * can be read after BentoBox has fully loaded its configuration.
      * Changes to the cooldown duration in config require a server restart to take effect.
      */
+    @SuppressWarnings("java:S3077") // volatile is correct here for double-checked locking lazy init
     private volatile ExpiringSet<UUID> cooldowns;
 
     /**
