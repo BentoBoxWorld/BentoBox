@@ -546,6 +546,26 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetMembers() {
+        // Set up members map on the island
+        Map<UUID, Integer> members = new HashMap<>();
+        UUID ownerUUID = UUID.randomUUID();
+        UUID memberUUID = UUID.randomUUID();
+        UUID coopUUID = UUID.randomUUID();
+        members.put(ownerUUID, RanksManager.OWNER_RANK);
+        members.put(memberUUID, RanksManager.MEMBER_RANK);
+        members.put(coopUUID, RanksManager.COOP_RANK);
+        when(island.getMembers()).thenReturn(members);
+
+        islandsManager.setIslandCache(islandCache);
+
+        // Retrieve island through the manager and verify members
+        Island retrievedIsland = islandsManager.getIsland(world, uuid);
+        assertNotNull(retrievedIsland);
+        Map<UUID, Integer> result = retrievedIsland.getMembers();
+        assertEquals(3, result.size());
+        assertEquals(RanksManager.OWNER_RANK, result.get(ownerUUID));
+        assertEquals(RanksManager.MEMBER_RANK, result.get(memberUUID));
+        assertEquals(RanksManager.COOP_RANK, result.get(coopUUID));
     }
 
     /**

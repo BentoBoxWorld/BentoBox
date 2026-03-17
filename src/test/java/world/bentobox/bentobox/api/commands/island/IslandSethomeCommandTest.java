@@ -225,7 +225,7 @@ class IslandSethomeCommandTest extends CommonTestSetup {
      * an incorrect "missing permission" error instead of being allowed to set a named home.
      */
     @Test
-    public void testCanExecuteMaxHomes1WithNamedHome() {
+    void testCanExecuteMaxHomes1WithNamedHome() {
         // maxHomes = 1 is already set in setUp via when(im.getMaxHomes(island)).thenReturn(1)
         // Simulate island with default home already set: adding "MyHome" would make 2 homes total
         when(im.getNumberOfHomesIfAdded(island, "MyHome")).thenReturn(2);
@@ -243,7 +243,7 @@ class IslandSethomeCommandTest extends CommonTestSetup {
      * This verifies that numeric home names are treated the same as non-numeric names.
      */
     @Test
-    public void testCanExecuteMaxHomes1WithNumericHomeOne() {
+    void testCanExecuteMaxHomes1WithNumericHomeOne() {
         // maxHomes = 1 is already set in setUp
         // Simulate island with default home: adding "1" would make 2 homes total
         when(im.getNumberOfHomesIfAdded(island, "1")).thenReturn(2);
@@ -260,7 +260,7 @@ class IslandSethomeCommandTest extends CommonTestSetup {
      * NOT a "missing permission" error. This verifies the fix for issue #1564.
      */
     @Test
-    public void testCanExecuteMaxHomes1AtLimitShowsTooManyHomesNotPermissionError() {
+    void testCanExecuteMaxHomes1AtLimitShowsTooManyHomesNotPermissionError() {
         // maxHomes = 1 is already set in setUp
         // Simulate island with default + "MyHome" already set: adding "home2" would make 3 homes
         when(im.getNumberOfHomesIfAdded(island, "home2")).thenReturn(3);

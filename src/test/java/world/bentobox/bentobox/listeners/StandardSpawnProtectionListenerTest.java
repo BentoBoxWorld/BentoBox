@@ -329,7 +329,7 @@ class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * world object is not directly registered in the island world manager (GitHub issue).
      */
     @Test
-    public void testOnExplosionInStandardEndWorldNoNPE() {
+    void testOnExplosionInStandardEndWorldNoNPE() {
         // Blocks are in the end world (standard end, not island end)
         when(location.getWorld()).thenReturn(end);
         // Util.getWorld maps end world -> overworld
