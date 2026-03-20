@@ -465,20 +465,22 @@ publishing {
         }
     }
     
-    // Configure publication target repository
+    // Configure publication target repository (CodeMC Nexus)
     repositories {
-        val mavenUrl: String? by project
-        val mavenSnapshotUrl: String? by project
+        val isSnapshot = version.toString().endsWith("SNAPSHOT")
+        val repoUrl = if (isSnapshot) {
+            "https://repo.codemc.io/repository/bentoboxworld/"
+        } else {
+            "https://repo.codemc.io/repository/bentoboxworld/"
+        }
 
-        (if(version.toString().endsWith("SNAPSHOT")) mavenSnapshotUrl else mavenUrl)?.let { url ->
-            maven(url) {
-                val mavenUsername: String? by project
-                val mavenPassword: String? by project
-                if(mavenUsername != null && mavenPassword != null) {
-                    credentials {
-                        username = mavenUsername
-                        password = mavenPassword
-                    }
+        maven(repoUrl) {
+            val mavenUsername: String? by project
+            val mavenPassword: String? by project
+            if (mavenUsername != null && mavenPassword != null) {
+                credentials {
+                    username = mavenUsername
+                    password = mavenPassword
                 }
             }
         }
