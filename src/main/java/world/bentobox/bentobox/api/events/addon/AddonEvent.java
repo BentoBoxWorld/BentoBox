@@ -25,7 +25,7 @@ public class AddonEvent {
         return new AddonEventBuilder();
     }
 
-    public class AddonEventBuilder {
+    public static class AddonEventBuilder {
         // Here field are NOT final. They are just used for the building.
         private Addon addon;
         private Reason reason = Reason.UNKNOWN;

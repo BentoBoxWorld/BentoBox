@@ -1,0 +1,86 @@
+# Placeholder Browser panel — shows BentoBox and each addon as a selectable entry.
+# Button types:
+#   BENTOBOX — the BentoBox core placeholder group (always one, shown first)
+#   ADDON    — one button per addon that has registered placeholders (paginated)
+#   NEXT     — advance to the next page of addons
+#   PREVIOUS — go back to the previous page of addons
+placeholder_panel:
+  title: panels.placeholder.title
+  type: INVENTORY
+  background:
+    icon: BLACK_STAINED_GLASS_PANE
+    title: "&b&r"
+  border:
+    icon: BLACK_STAINED_GLASS_PANE
+    title: "&b&r"
+  force-shown: []
+  content:
+    1:
+      5: bentobox_button
+    2:
+      2: addon_button
+      3: addon_button
+      4: addon_button
+      5: addon_button
+      6: addon_button
+      7: addon_button
+      8: addon_button
+    3:
+      2: addon_button
+      3: addon_button
+      4: addon_button
+      5: addon_button
+      6: addon_button
+      7: addon_button
+      8: addon_button
+    4:
+      2: addon_button
+      3: addon_button
+      4: addon_button
+      5: addon_button
+      6: addon_button
+      7: addon_button
+      8: addon_button
+    5:
+      1:
+        icon: tipped_arrow[potion_contents={custom_color:11546150}]
+        title: panels.buttons.previous.name
+        description: panels.buttons.previous.description
+        data:
+          type: PREVIOUS
+          indexing: true
+        actions:
+          previous:
+            click-type: UNKNOWN
+            tooltip: panels.tips.click-to-previous
+      9:
+        icon: tipped_arrow[potion_contents={custom_color:8439583}]
+        title: panels.buttons.next.name
+        description: panels.buttons.next.description
+        data:
+          type: NEXT
+          indexing: true
+        actions:
+          next:
+            click-type: UNKNOWN
+            tooltip: panels.tips.click-to-next
+  reusable:
+    bentobox_button:
+      icon: BOOK
+      title: panels.placeholder.buttons.bentobox.name
+      description: panels.placeholder.buttons.bentobox.description
+      data:
+        type: BENTOBOX
+      actions:
+        view:
+          click-type: UNKNOWN
+          tooltip: panels.tips.click-to-choose
+    addon_button:
+      title: panels.placeholder.buttons.addon.name
+      description: panels.placeholder.buttons.addon.description
+      data:
+        type: ADDON
+      actions:
+        view:
+          click-type: UNKNOWN
+          tooltip: panels.tips.click-to-choose

@@ -3,9 +3,12 @@ package world.bentobox.bentobox.nms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+
+import javax.annotation.Nonnull;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -17,6 +20,8 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ChestedHorse;
@@ -30,13 +35,21 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.material.Colorable;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import io.papermc.lib.PaperLib;
+import net.kyori.adventure.text.Component;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
+import world.bentobox.bentobox.hooks.FancyNpcsHook;
+import world.bentobox.bentobox.hooks.ItemsAdderHook;
+import world.bentobox.bentobox.hooks.OraxenHook;
+import world.bentobox.bentobox.hooks.SlimefunHook;
+import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
 import world.bentobox.bentobox.util.MyBiomeGrid;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Regenerates by using a seed world. The seed world is created using the same generator as the game
@@ -45,10 +58,20 @@ import world.bentobox.bentobox.util.MyBiomeGrid;
  *
  */
 public abstract class CopyWorldRegenerator implements WorldRegenerator {
+
     private final BentoBox plugin;
+    private final Optional<FancyNpcsHook> npc;
+    private final Optional<ZNPCsPlusHook> znpc;
 
     protected CopyWorldRegenerator() {
         this.plugin = BentoBox.getInstance();
+        // Fancy NPCs Hook
+        npc = plugin.getHooks().getHook("FancyNpcs").filter(FancyNpcsHook.class::isInstance)
+                .map(FancyNpcsHook.class::cast);
+        // ZNPCs Plus Hook
+        znpc = plugin.getHooks().getHook("ZNPCsPlus").filter(ZNPCsPlusHook.class::isInstance)
+                .map(ZNPCsPlusHook.class::cast);
+
     }
 
     /**
@@ -68,7 +91,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     public CompletableFuture<Void> regenerate(GameModeAddon gm, IslandDeletion di, World world) {
         return gm.isUsesNewChunkGeneration() ? regenerateCopy(gm, di, world) : regenerateSimple(gm, di, world);
     }
-    
+
     public CompletableFuture<Void> regenerateCopy(GameModeAddon gm, IslandDeletion di, World world) {
         CompletableFuture<Void> bigFuture = new CompletableFuture<>();
         new BukkitRunnable() {
@@ -91,7 +114,10 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     }
                     final int x = chunkX;
                     final int z = chunkZ;
-                    newTasks.add(regenerateChunk(di, world, x, z));
+                    // Only add chunks that are generated
+                    if (world.getChunkAt(x, z, false).isGenerated()) {
+                        newTasks.add(regenerateChunk(di, world, x, z));
+                    }
                     chunkZ++;
                     if (chunkZ > di.getMaxZChunk()) {
                         chunkZ = di.getMinZChunk();
@@ -110,14 +136,21 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     @Override
     public CompletableFuture<Void> regenerateChunk(Chunk chunk) {
-        return regenerateChunk(null, chunk.getWorld(), chunk.getX(), chunk.getZ()); 
+        return regenerateChunk(null, chunk.getWorld(), chunk.getX(), chunk.getZ());
     }
 
-    private CompletableFuture<Void> regenerateChunk(@Nullable IslandDeletion di, World world, int chunkX, int chunkZ) {
+    private CompletableFuture<Void> regenerateChunk(@Nullable IslandDeletion di, @NonNull World world, int chunkX,
+            int chunkZ) {
+
+        // Check if chunk has been generated
+        if (!world.getChunkAt(chunkX, chunkZ, false).isGenerated()) {
+            return CompletableFuture.completedFuture(null);
+        }
+
         CompletableFuture<Chunk> seedWorldFuture = getSeedWorldChunk(world, chunkX, chunkZ);
 
         // Set up a future to get the chunk requests using Paper's Lib. If Paper is used, this should be done async
-        CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
+        CompletableFuture<Chunk> chunkFuture = Util.getChunkAtAsync(world, chunkX, chunkZ);
 
         // If there is no island, do not clean chunk
         CompletableFuture<Void> cleanFuture = di != null ? cleanChunk(chunkFuture, di) : CompletableFuture.completedFuture(null);
@@ -132,7 +165,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                 copyChunkDataToChunk(chunkTo, chunkFrom, di != null ? di.getBox() : null);
 
             } catch (InterruptedException | ExecutionException e) {
-                Thread.currentThread().interrupt();                
+                Thread.currentThread().interrupt();
             }
         });
         return CompletableFuture.allOf(cleanFuture, copyFuture);
@@ -141,7 +174,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     private CompletableFuture<Chunk> getSeedWorldChunk(World world, int chunkX, int chunkZ) {
         World seed = Bukkit.getWorld(world.getName() + "/bentobox");
         if (seed == null) return CompletableFuture.completedFuture(null);
-        return PaperLib.getChunkAtAsync(seed, chunkX, chunkZ);
+        return Util.getChunkAtAsync(seed, chunkX, chunkZ);
     }
 
     /**
@@ -159,11 +192,20 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                 );
 
         // Similarly, when the chunk is loaded, remove all the entities in the chunk apart from players
-        CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk -> 
-        // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
-        Arrays.stream(chunk.getEntities())
-        .filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
-        .forEach(Entity::remove));
+        CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk -> {
+            // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
+            Arrays.stream(chunk.getEntities())
+            .filter(e -> !(e instanceof Player)
+                    && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
+            .forEach(Entity::remove);
+            // Remove any NPCs
+            // Fancy NPCs Hook
+            npc.ifPresent(hook -> hook.removeNPCsInChunk(chunk));
+            // ZNPCs Plus Hook
+            znpc.ifPresent(hook -> hook.removeNPCsInChunk(chunk));
+
+        });
+
         return CompletableFuture.allOf(invFuture, entitiesFuture);
     }
 
@@ -178,6 +220,9 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         double baseZ = toChunk.getZ() << 4;
         int minHeight = toChunk.getWorld().getMinHeight();
         int maxHeight = toChunk.getWorld().getMaxHeight();
+        Optional<SlimefunHook> slimefunHook = plugin.getHooks().getHook("Slimefun").map(SlimefunHook.class::cast);
+        Optional<ItemsAdderHook> itemsAdderHook = plugin.getHooks().getHook("ItemsAdder").map(ItemsAdderHook.class::cast);
+        Optional<Hook> oraxenHook = plugin.getHooks().getHook("Oraxen");
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 if (limitBox != null && !limitBox.contains(baseX + x, 0, baseZ + z)) {
@@ -189,9 +234,17 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
                         toChunk.getBlock(x, y, z).setBiome(fromChunk.getBlock(x, y, z).getBiome());
                     }
+                    // Delete any 3rd party blocks
+                    Location loc = new Location(toChunk.getWorld(), baseX + x, y, baseZ + z);
+                    slimefunHook.ifPresent(hook -> hook.clearBlockInfo(loc, true));
+                    // Oraxen
+                    oraxenHook.ifPresent(h -> OraxenHook.clearBlockInfo(loc));
                 }
             }
         }
+        // Items Adder
+        itemsAdderHook.ifPresent(hook -> ItemsAdderHook.deleteAllCustomBlocksInChunk(toChunk));
+
         // Entities
         Arrays.stream(fromChunk.getEntities()).forEach(e -> processEntity(e, e.getLocation().toVector().toLocation(toChunk.getWorld())));
 
@@ -199,36 +252,37 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         Arrays.stream(fromChunk.getTileEntities()).forEach(bs -> processTileEntity(bs.getBlock(), bs.getLocation().toVector().toLocation(toChunk.getWorld()).getBlock()));
     }
 
+    @SuppressWarnings("deprecation")
     private void processEntity(Entity entity, Location location) {
-            Entity bpe = location.getWorld().spawnEntity(location, entity.getType());
-            bpe.setCustomName(entity.getCustomName());
-            if (entity instanceof Villager villager && bpe instanceof Villager villager2) {
-                setVillager(villager, villager2);
-            }
-            if (entity instanceof Colorable c && bpe instanceof Colorable cc) {
-                if (c.getColor() != null) {
-                    cc.setColor(c.getColor());
-                }
-            }
-            if (entity instanceof Tameable t && bpe instanceof Tameable tt) {
-                tt.setTamed(t.isTamed());
-            }
-            if (entity instanceof ChestedHorse ch && bpe instanceof ChestedHorse ch2) {
-                ch2.setCarryingChest(ch.isCarryingChest());
-            }
-            // Only set if child. Most animals are adults
-            if (entity instanceof Ageable a && bpe instanceof Ageable aa) {
-                if (a.isAdult()) aa.setAdult();
-            }
-            if (entity instanceof AbstractHorse horse && bpe instanceof AbstractHorse horse2) {
-                horse2.setDomestication(horse.getDomestication());
-                horse2.getInventory().setContents(horse.getInventory().getContents());
-            }
-
-            if (entity instanceof Horse horse && bpe instanceof Horse horse2) {
-                horse2.setStyle(horse.getStyle());
-            }
+        Entity bpe = location.getWorld().spawnEntity(location, entity.getType());
+        bpe.setCustomName(entity.getCustomName());
+        if (entity instanceof Villager villager && bpe instanceof Villager villager2) {
+            setVillager(villager, villager2);
         }
+        if (entity instanceof Colorable c && bpe instanceof Colorable cc
+                && c.getColor() != null) {
+            cc.setColor(c.getColor());
+        }
+        if (entity instanceof Tameable t && bpe instanceof Tameable tt) {
+            tt.setTamed(t.isTamed());
+        }
+        if (entity instanceof ChestedHorse ch && bpe instanceof ChestedHorse ch2) {
+            ch2.setCarryingChest(ch.isCarryingChest());
+        }
+        // Only set if child. Most animals are adults
+        if (entity instanceof Ageable a && bpe instanceof Ageable aa
+                && a.isAdult()) {
+            aa.setAdult();
+        }
+        if (entity instanceof AbstractHorse horse && bpe instanceof AbstractHorse horse2) {
+            horse2.setDomestication(horse.getDomestication());
+            horse2.getInventory().setContents(horse.getInventory().getContents());
+        }
+
+        if (entity instanceof Horse horse && bpe instanceof Horse horse2) {
+            horse2.setStyle(horse.getStyle());
+        }
+    }
 
     /**
      * Set the villager stats
@@ -241,39 +295,57 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         villager2.setProfession(v.getProfession());
         villager2.setVillagerType(v.getVillagerType());
     }
-    
+
     private void processTileEntity(Block fromBlock, Block toBlock) {
         // Block state
         BlockState blockState = fromBlock.getState();
         BlockState b = toBlock.getState();
 
         // Signs
-        if (blockState instanceof Sign fromSign && b instanceof Sign toSign) {
-            int i = 0;
-            for (String line : fromSign.getLines()) {
-                toSign.setLine(i++, line);  
+        switch (blockState) {
+            case Sign fromSign when b instanceof Sign toSign -> {
+                for (Side side : Side.values()) {
+                    writeSign(fromSign, toSign, side);
+                }
             }
-            toSign.setGlowingText(fromSign.isGlowingText());
-        }
-        // Chests
-        else if (blockState instanceof InventoryHolder ih && b instanceof InventoryHolder toChest) {
-            toChest.getInventory().setContents(ih.getInventory().getContents());
-        }
-        // Spawner type
-        else if (blockState instanceof CreatureSpawner spawner && b instanceof CreatureSpawner toSpawner) {
-            toSpawner.setSpawnedType(spawner.getSpawnedType());
-        }
+            // Chests
+            case InventoryHolder ih when b instanceof InventoryHolder toChest ->
+                    toChest.getInventory().setContents(ih.getInventory().getContents());
 
-        // Banners
-        else if (blockState instanceof Banner banner && b instanceof Banner toBanner) {
-            toBanner.setBaseColor(banner.getBaseColor());
-            toBanner.setPatterns(banner.getPatterns());
+            // Spawner type
+            case CreatureSpawner spawner when b instanceof CreatureSpawner toSpawner ->
+                    toSpawner.setSpawnedType(spawner.getSpawnedType());
+
+
+            // Banners
+            case Banner banner when b instanceof Banner toBanner -> {
+                toBanner.setBaseColor(banner.getBaseColor());
+                toBanner.setPatterns(banner.getPatterns());
+            }
+            default -> {
+                // Block state type not handled above requires no additional copy logic
+            }
         }
     }
-    
+
+
+    private void writeSign(Sign fromSign, Sign toSign, Side side) {
+        SignSide fromSide = fromSign.getSide(side);
+        SignSide toSide = toSign.getSide(side);
+        int i = 0;
+
+        for (Component line : fromSide.lines()) {
+            toSide.line(i++, line);
+        }
+        toSide.setGlowingText(fromSide.isGlowingText());
+    }
 
     public CompletableFuture<Void> regenerateSimple(GameModeAddon gm, IslandDeletion di, World world) {
         CompletableFuture<Void> bigFuture = new CompletableFuture<>();
+        if (world == null) {
+            bigFuture.complete(null);
+            return bigFuture;
+        }
         new BukkitRunnable() {
             private int chunkX = di.getMinXChunk();
             private int chunkZ = di.getMinZChunk();
@@ -312,8 +384,9 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     }
 
     @SuppressWarnings("deprecation")
-    private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, World world, int chunkX, int chunkZ) {
-        CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
+    private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, @Nonnull World world,
+            int chunkX, int chunkZ) {
+        CompletableFuture<Chunk> chunkFuture = Util.getChunkAtAsync(world, chunkX, chunkZ);
         CompletableFuture<Void> invFuture = chunkFuture.thenAccept(chunk ->
         Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
         .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
@@ -349,6 +422,8 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         double baseZ = chunk.getZ() << 4;
         int minHeight = chunk.getWorld().getMinHeight();
         int maxHeight = chunk.getWorld().getMaxHeight();
+        Optional<Hook> slimefunHook = plugin.getHooks().getHook("Slimefun");
+        Optional<Hook> oraxenHook = plugin.getHooks().getHook("Oraxen");
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 if (!limitBox.contains(baseX + x, 0, baseZ + z)) {
@@ -360,8 +435,15 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
                         chunk.getBlock(x, y, z).setBiome(biomeGrid.getBiome(x, y, z));
                     }
+                    // Delete any 3rd party blocks
+                    Location loc = new Location(chunk.getWorld(), baseX + x, y, baseZ + z);
+                    slimefunHook.ifPresent(sf -> ((SlimefunHook) sf).clearBlockInfo(loc, true));
+                    // Oraxen
+                    oraxenHook.ifPresent(h -> OraxenHook.clearBlockInfo(loc));
                 }
             }
         }
+        // Items Adder
+        plugin.getHooks().getHook("ItemsAdder").ifPresent(hook -> ItemsAdderHook.deleteAllCustomBlocksInChunk(chunk));
     }
 }

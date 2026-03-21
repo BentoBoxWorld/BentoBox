@@ -17,18 +17,10 @@ import org.eclipse.jdt.annotation.NonNull;
 @SuppressWarnings("deprecation")
 public class MyBiomeGrid implements BiomeGrid {
     Map<Vector, Biome> map = new HashMap<>();
-    private Biome defaultBiome;
+    private final Biome defaultBiome;
     public MyBiomeGrid(Environment environment) {
         switch (environment) {
-        case NETHER -> {
-            try {
-                // 1.16 onwards
-                defaultBiome = Biome.valueOf("NETHER_WASTES");
-            } catch (Exception e) {
-                // Before 1.16
-                defaultBiome = Biome.valueOf("NETHER");
-            }
-        }
+        case NETHER -> defaultBiome = Biome.NETHER_WASTES;
         case THE_END -> defaultBiome = Biome.THE_END;
         default -> defaultBiome = Biome.PLAINS;
         }

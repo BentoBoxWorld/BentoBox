@@ -8,17 +8,16 @@ package world.bentobox.bentobox.database.json.adapters;
 
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Registry;
 import org.bukkit.block.Biome;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-
 
 /**
  * Minecraft 1.18 reworked their biomes, and a lot of things were renamed or removed.
@@ -32,11 +31,12 @@ public  final class BiomeTypeAdapter extends TypeAdapter<Biome>
      */
     final Map<String, Biome> biomeMap;
 
+    @SuppressWarnings("deprecation")
     public BiomeTypeAdapter() {
         this.biomeMap = new HashMap<>();
 
         // Put in current values.
-        Arrays.stream(Biome.values()).forEach(biome -> this.biomeMap.put(biome.name(), biome));
+        Registry.BIOME.forEach(biome -> this.biomeMap.put(biome.name(), biome));
 
         // Put in renamed biomes values.
         this.biomeMap.put("TALL_BIRCH_FOREST", Biome.OLD_GROWTH_BIRCH_FOREST);

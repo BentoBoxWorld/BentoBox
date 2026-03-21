@@ -1,12 +1,16 @@
 package world.bentobox.bentobox;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
@@ -15,28 +19,18 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.DatabaseSetup;
-import world.bentobox.bentobox.hooks.MultiverseCoreHook;
-import world.bentobox.bentobox.hooks.MyWorldsHook;
+import world.bentobox.bentobox.hooks.BentoBoxHookRegistrar;
 import world.bentobox.bentobox.hooks.VaultHook;
-import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
-import world.bentobox.bentobox.listeners.BannedCommands;
-import world.bentobox.bentobox.listeners.BlockEndDragon;
-import world.bentobox.bentobox.listeners.DeathListener;
-import world.bentobox.bentobox.listeners.JoinLeaveListener;
-import world.bentobox.bentobox.listeners.PanelListenerManager;
-import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
-import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
-import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
+import world.bentobox.bentobox.listeners.BentoBoxListenerRegistrar;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.HooksManager;
-import world.bentobox.bentobox.managers.IslandChunkDeletionManager;
 import world.bentobox.bentobox.managers.IslandDeletionManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -45,6 +39,8 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.WebManager;
+import world.bentobox.bentobox.util.ExpiringMap;
+import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.versions.ServerCompatibility;
 
@@ -52,7 +48,9 @@ import world.bentobox.bentobox.versions.ServerCompatibility;
  * Main BentoBox class
  * @author tastybento, Poslovitch
  */
-public class BentoBox extends JavaPlugin {
+public class BentoBox extends JavaPlugin implements Listener {
+
+    private static final String PANELS = "panels";
 
     private static BentoBox instance;
 
@@ -66,12 +64,10 @@ public class BentoBox extends JavaPlugin {
     private AddonsManager addonsManager;
     private FlagsManager flagsManager;
     private IslandWorldManager islandWorldManager;
-    private RanksManager ranksManager;
     private BlueprintsManager blueprintsManager;
     private HooksManager hooksManager;
     private PlaceholdersManager placeholdersManager;
     private IslandDeletionManager islandDeletionManager;
-    private IslandChunkDeletionManager islandChunkDeletionManager;
     private WebManager webManager;
 
     // Settings
@@ -79,6 +75,9 @@ public class BentoBox extends JavaPlugin {
 
     // Notifier
     private Notifier notifier;
+
+    // Click limiter
+    private ExpiringMap<Pair<UUID, String>, Boolean> lastClick ;
 
     private HeadGetter headGetter;
 
@@ -96,12 +95,14 @@ public class BentoBox extends JavaPlugin {
 
     @Override
     public void onEnable(){
+        setInstance(this);
+
         if (!ServerCompatibility.getInstance().checkCompatibility().isCanLaunch()) {
             // The server's most likely incompatible.
             // Show a warning
             logWarning("************ Disclaimer **************");
             logWarning("BentoBox may not be compatible with this server!");
-            logWarning("BentoBox is tested only on the following Spigot versions:");
+            logWarning("BentoBox is tested only on the following Paper versions:");
 
             List<String> versions = ServerCompatibility.ServerVersion.getVersions(ServerCompatibility.Compatibility.COMPATIBLE, ServerCompatibility.Compatibility.SUPPORTED)
                     .stream().map(ServerCompatibility.ServerVersion::toString).toList();
@@ -117,7 +118,6 @@ public class BentoBox extends JavaPlugin {
 
         // Save the default config from config.yml
         saveDefaultConfig();
-        setInstance(this);
         // Load Flags
         flagsManager = new FlagsManager(this);
 
@@ -128,6 +128,9 @@ public class BentoBox extends JavaPlugin {
         // Saving the config now.
         saveConfig();
 
+        // Set up click timeout
+        lastClick = new ExpiringMap<>(getSettings().getClickCooldownMs(), TimeUnit.MILLISECONDS);
+
         // Start Database managers
         playersManager = new PlayersManager(this);
         // Check if this plugin is now disabled (due to bad database handling)
@@ -135,7 +138,6 @@ public class BentoBox extends JavaPlugin {
             return;
         }
         islandsManager = new IslandsManager(this);
-        ranksManager = new RanksManager();
 
         // Start head getter
         headGetter = new HeadGetter(this);
@@ -147,7 +149,7 @@ public class BentoBox extends JavaPlugin {
         commandsManager = new CommandsManager();
 
         // Load BentoBox commands
-        new BentoBoxCommand();
+        commandsManager.registerDefaultCommands();
 
         // Start Island Worlds Manager
         islandWorldManager = new IslandWorldManager(this);
@@ -172,16 +174,17 @@ public class BentoBox extends JavaPlugin {
                 completeSetup(loadTime);
             } catch (Exception e) {
                 fireCriticalError(e.getMessage(), "");
-                e.printStackTrace();
+                logStacktrace(e);
             }
         });
     }
 
     private void completeSetup(long loadTime) {
         final long enableStart = System.currentTimeMillis();
-        hooksManager.registerHook(new VaultHook());
 
-        hooksManager.registerHook(new PlaceholderAPIHook());
+        BentoBoxHookRegistrar hookRegistrar = new BentoBoxHookRegistrar(this);
+        hookRegistrar.registerEarlyHooks();
+
         // Setup the Placeholders manager
         placeholdersManager = new PlaceholdersManager(this);
 
@@ -195,26 +198,13 @@ public class BentoBox extends JavaPlugin {
         registerListeners();
 
         // Load islands from database - need to wait until all the worlds are loaded
+        log("Loading islands from database...");
         try {
             islandsManager.load();
         } catch (Exception e) {
             fireCriticalError(e.getMessage(), "Could not load islands!");
             return;
         }
-
-        // Save islands & players data every X minutes
-        Bukkit.getScheduler().runTaskTimer(instance, () -> {
-            if (!playersManager.isSaveTaskRunning()) {
-                playersManager.saveAll(true);
-            } else {
-                getLogger().warning("Tried to start a player data save task while the previous auto save was still running!");
-            }
-            if (!islandsManager.isSaveTaskRunning()) {
-                islandsManager.saveAll(true);
-            } else {
-                getLogger().warning("Tried to start a island data save task while the previous auto save was still running!");
-            }
-        }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
 
         // Make sure all flag listeners are registered.
         flagsManager.registerListeners();
@@ -225,14 +215,13 @@ public class BentoBox extends JavaPlugin {
 
         // Register Multiverse hook - MV loads AFTER BentoBox
         // Make sure all worlds are already registered to Multiverse.
-        hooksManager.registerHook(new MultiverseCoreHook());
-        hooksManager.registerHook(new MyWorldsHook());
-        islandWorldManager.registerWorldsToMultiverse();
+        hookRegistrar.registerWorldHooks();
+        islandWorldManager.registerWorldsToMultiverse(true);
+
+        hookRegistrar.registerLateHooks();
 
         // TODO: re-enable after implementation
-        //hooksManager.registerHook(new DynmapHook());
         // TODO: re-enable after rework
-        //hooksManager.registerHook(new LangUtilsHook());
 
         webManager = new WebManager(this);
 
@@ -240,7 +229,7 @@ public class BentoBox extends JavaPlugin {
 
         // Show banner
         User.getInstance(Bukkit.getConsoleSender()).sendMessage("successfully-loaded",
-                TextVariables.VERSION, instance.getDescription().getVersion(),
+                TextVariables.VERSION, instance.getPluginMeta().getVersion(),
                 "[time]", String.valueOf(loadTime + enableTime));
 
         // Poll for blueprints loading to be finished - async so could be a completely variable time
@@ -250,6 +239,8 @@ public class BentoBox extends JavaPlugin {
                 // Tell all addons that everything is loaded
                 isLoaded = true;
                 this.addonsManager.allLoaded();
+                // Run ready commands
+                settings.getReadyCommands().forEach(cmd -> Bukkit.getServer().dispatchCommand(getServer().getConsoleSender(), cmd));
                 // Fire plugin ready event - this should go last after everything else
                 Bukkit.getPluginManager().callEvent(new BentoBoxReadyEvent());
                 instance.log("All blueprints loaded.");
@@ -283,33 +274,17 @@ public class BentoBox extends JavaPlugin {
      * Registers listeners.
      */
     private void registerListeners() {
-        PluginManager manager = getServer().getPluginManager();
-        // Player join events
-        manager.registerEvents(new JoinLeaveListener(this), this);
-        // Panel listener manager
-        manager.registerEvents(new PanelListenerManager(), this);
-        // Standard Nether/End spawns protection
-        manager.registerEvents(new StandardSpawnProtectionListener(this), this);
-        // Player portals
-        manager.registerEvents(new PlayerTeleportListener(this), this);
-        // Entity portals
-        manager.registerEvents(new EntityTeleportListener(this), this);
-        // End dragon blocking
-        manager.registerEvents(new BlockEndDragon(this), this);
-        // Banned visitor commands
-        manager.registerEvents(new BannedCommands(this), this);
-        // Death counter
-        manager.registerEvents(new DeathListener(this), this);
-        // Island Delete Manager
-        islandChunkDeletionManager = new IslandChunkDeletionManager(this);
-        islandDeletionManager = new IslandDeletionManager(this);
-        manager.registerEvents(islandDeletionManager, this);
+        BentoBoxListenerRegistrar registrar = new BentoBoxListenerRegistrar(this);
+        registrar.register();
+        islandDeletionManager = registrar.getIslandDeletionManager();
     }
 
     @Override
     public void onDisable() {
         // Stop all async database tasks
         shutdown = true;
+
+        HeadGetter.shutdown();
 
         if (addonsManager != null) {
             addonsManager.disableAddons();
@@ -321,6 +296,8 @@ public class BentoBox extends JavaPlugin {
         if (islandsManager != null) {
             islandsManager.shutdown();
         }
+
+
     }
 
     /**
@@ -399,9 +376,11 @@ public class BentoBox extends JavaPlugin {
 
     /**
      * @return the ranksManager
+     * @deprecated Just use {@code RanksManager.getInstance()}
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public RanksManager getRanksManager() {
-        return ranksManager;
+        return RanksManager.getInstance();
     }
 
     /**
@@ -432,9 +411,36 @@ public class BentoBox extends JavaPlugin {
         if (settings == null) {
             // Settings did not load correctly. Disable plugin.
             logError("Settings did not load correctly - disabling plugin - please check config.yml");
-            getPluginLoader().disablePlugin(this);
+            this.setEnabled(false);
             return false;
         }
+        log("Saving default panels...");
+
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "island_creation_panel.yml"))) {
+            log("Saving default island_creation_panel...");
+            this.saveResource("panels/island_creation_panel.yml", false);
+        }
+
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "language_panel.yml"))) {
+            log("Saving default language_panel...");
+            this.saveResource("panels/language_panel.yml", false);
+        }
+
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "island_homes_panel.yml"))) {
+            log("Saving default island_homes_panel...");
+            this.saveResource("panels/island_homes_panel.yml", false);
+        }
+
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "team_invite_panel.yml"))) {
+            log("Saving default team_invite_panel...");
+            this.saveResource("panels/team_invite_panel.yml", false);
+        }
+
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "team_panel.yml"))) {
+            log("Saving default team_panel...");
+            this.saveResource("panels/team_panel.yml", false);
+        }
+
         return true;
     }
 
@@ -532,13 +538,6 @@ public class BentoBox extends JavaPlugin {
     }
 
     /**
-     * @return the islandChunkDeletionManager
-     */
-    public IslandChunkDeletionManager getIslandChunkDeletionManager() {
-        return islandChunkDeletionManager;
-    }
-
-    /**
      * @return an optional of the Bstats instance
      * @since 1.1
      */
@@ -580,5 +579,19 @@ public class BentoBox extends JavaPlugin {
      */
     public boolean isShutdown() {
         return shutdown;
+    }
+
+    /**
+     * Checks if a user can click a GUI or needs to slow down
+     * @param user user
+     * @return false if they can click and the timeout is started, otherwise true.
+     */
+    public boolean onTimeout(User user, Panel panel) {
+        if (lastClick.containsKey(new Pair<>(user.getUniqueId(), panel.getName()))) {
+            user.notify("general.errors.slow-down");
+            return true;
+        }
+        lastClick.put(new Pair<>(user.getUniqueId(), panel.getName()), true);
+        return false;
     }
 }

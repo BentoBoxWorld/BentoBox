@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -18,6 +19,7 @@ import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.events.flags.InvincibleVistorFlagDamageRemovalEvent;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -52,6 +54,10 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
 
         String ivPanelName = user.getTranslation("protection.flags.INVINCIBLE_VISITORS.name");
         if (panel.getName().equals(ivPanelName)) {
+            if (BentoBox.getInstance().onTimeout(user, panel)) {
+                return true;
+            }
+
             // This is a click on the IV panel
             String itemName = panel.getItems().get(slot).getName();
             DamageCause c = getEnum(user, itemName);
@@ -130,13 +136,21 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         World world = e.getEntity().getWorld();
         if (!(e.getEntity() instanceof Player p)
                 || !getIWM().inWorld(world)
-                || e.getEntity().hasMetadata("NPC")
+                || p.hasMetadata("NPC")
                 || !getIWM().getIvSettings(world).contains(e.getCause().name())
-                || getIslands().userIsOnIsland(world, User.getInstance(e.getEntity()))
-                || PVPAllowed(p.getLocation())
+                || getIslands().userIsOnIsland(world, User.getInstance(p))
+                || isPvpAllowed(p.getLocation())
                 ) {
             return;
         }
+        // Fire event
+        InvincibleVistorFlagDamageRemovalEvent event = new InvincibleVistorFlagDamageRemovalEvent(p, e.getCause());
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            // Give others a chance to ignore the protection
+            return;
+        }
+
         // Player is a visitor and should be protected from damage
         e.setCancelled(true);
         // Handle the void - teleport player back to island in a safe spot
@@ -169,12 +183,12 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         World world = e.getEntity().getWorld();
 
         if (!(e.getTarget() instanceof Player p) ||
-            !this.getIWM().inWorld(world) ||
-            e.getTarget().hasMetadata("NPC") ||
-            this.getIslands().userIsOnIsland(world, User.getInstance(e.getTarget())) ||
-            this.PVPAllowed(p.getLocation()) ||
-            e.getReason() == EntityTargetEvent.TargetReason.TARGET_DIED ||
-            !this.getIWM().getIvSettings(world).contains(DamageCause.ENTITY_ATTACK.name()))
+                !this.getIWM().inWorld(world) ||
+                e.getTarget().hasMetadata("NPC") ||
+                this.getIslands().userIsOnIsland(world, User.getInstance(e.getTarget())) ||
+                this.isPvpAllowed(p.getLocation()) ||
+                e.getReason() == EntityTargetEvent.TargetReason.TARGET_DIED ||
+                !this.getIWM().getIvSettings(world).contains(DamageCause.ENTITY_ATTACK.name()))
         {
             return;
         }
@@ -182,5 +196,6 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         // Cancel targeting event.
         e.setCancelled(true);
     }
+
 }
 

@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -24,38 +24,28 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
@@ -63,41 +53,25 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Test for island go command
+ * 
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
-public class IslandGoCommandTest {
+class IslandGoCommandTest extends CommonTestSetup {
     @Mock
     private CompositeCommand ic;
     private User user;
     @Mock
-    private IslandsManager im;
-    @Mock
-    private Island island;
-    @Mock
-    private PluginManager pim;
-    @Mock
     private Settings s;
     @Mock
     private BukkitTask task;
-    @Mock
-    private Player player;
     private IslandGoCommand igc;
-    @Mock
-    private Notifier notifier;
-    @Mock
-    private World world;
     private @Nullable WorldSettings ws;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -107,26 +81,25 @@ public class IslandGoCommandTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        when(player.isOp()).thenReturn(false);
-        UUID uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);
-        when(player.getName()).thenReturn("tastybento");
-        when(player.getWorld()).thenReturn(world);
-        user = User.getInstance(player);
+        when(mockPlayer.isOp()).thenReturn(false);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getName()).thenReturn("tastybento");
+        when(mockPlayer.getWorld()).thenReturn(world);
+        user = User.getInstance(mockPlayer);
         // Set the User class plugin as this one
         User.setPlugin(plugin);
-
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ic.getTopLabel()).thenReturn("island");
         // Have the create command point to the ic command
         Optional<CompositeCommand> createCommand = Optional.of(ic);
-        when(ic.getSubCommand(eq("create"))).thenReturn(createCommand);
+        when(ic.getSubCommand("create")).thenReturn(createCommand);
+        when(ic.getWorld()).thenReturn(world);
 
-        // No island for player to begin with (set it later in the tests)
-        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        // Player has island by default
+        when(im.getIslands(world, uuid)).thenReturn(List.of(island));
+        when(im.hasIsland(world, uuid)).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -136,11 +109,10 @@ public class IslandGoCommandTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
         // Event register
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+        mockedBukkit.when(Bukkit::getPluginManager).thenReturn(pim);
 
         // Island Banned list initialization
         when(island.getBanned()).thenReturn(new HashSet<>());
@@ -157,7 +129,8 @@ public class IslandGoCommandTest {
         // Just return an empty addon for now
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-        PowerMockito.mockStatic(Util.class);
+        mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+        mockedUtil.when(() -> Util.stripColor(any())).thenCallRealMethod();
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -165,52 +138,53 @@ public class IslandGoCommandTest {
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Return the same string
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
-        when(phm.replacePlaceholders(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(phm.replacePlaceholders(any(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
         // Notifier
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Util translate color codes (used in user translate methods)
-        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        mockedUtil.when(() -> Util.translateColorCodes(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Command
         igc = new IslandGoCommand(ic);
 
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteMidTeleport() {
+    void testExecuteMidTeleport() {
         when(im.isGoingHome(user)).thenReturn(true);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
-        verify(player).sendMessage("commands.island.go.teleport");
+        checkSpigotMessage("commands.island.go.in-progress");
     }
 
     /**
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsNoIsland() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
+    void testExecuteNoArgsNoIsland() {
+        when(im.getIslands(world, uuid)).thenReturn(List.of());
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
-        verify(player).sendMessage("general.errors.no-island");
+        checkSpigotMessage("general.errors.no-island");
     }
 
     /**
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgs() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+    void testExecuteNoArgs() {
         assertTrue(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
     }
 
@@ -218,8 +192,7 @@ public class IslandGoCommandTest {
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsReservedIsland() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+    void testExecuteNoArgsReservedIsland() {
         when(ic.call(any(), any(), any())).thenReturn(true);
         when(island.isReserved()).thenReturn(true);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
@@ -230,9 +203,9 @@ public class IslandGoCommandTest {
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsReservedIslandNoCreateCommand() {
-        when(ic.getSubCommand(eq("create"))).thenReturn(Optional.empty());
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+    void testExecuteNoArgsReservedIslandNoCreateCommand() {
+        when(ic.getSubCommand("create")).thenReturn(Optional.empty());
+
         when(ic.call(any(), any(), any())).thenReturn(true);
         when(island.isReserved()).thenReturn(true);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
@@ -243,20 +216,20 @@ public class IslandGoCommandTest {
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsNoTeleportWhenFalling() {
+    void testExecuteNoArgsNoTeleportWhenFalling() {
         Flags.PREVENT_TELEPORT_WHEN_FALLING.setSetting(world, true);
-        when(player.getFallDistance()).thenReturn(10F);
+        when(mockPlayer.getFallDistance()).thenReturn(10F);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
-        verify(player).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
+        checkSpigotMessage("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint");
     }
 
     /**
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsNoTeleportWhenFallingNotFalling() {
+    void testExecuteNoArgsNoTeleportWhenFallingNotFalling() {
         Flags.PREVENT_TELEPORT_WHEN_FALLING.setSetting(world, true);
-        when(player.getFallDistance()).thenReturn(0F);
+        when(mockPlayer.getFallDistance()).thenReturn(0F);
         assertTrue(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
     }
 
@@ -264,9 +237,8 @@ public class IslandGoCommandTest {
      * Test method for {@link IslandGoCommand#execute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsMultipleHomes() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
+    void testExecuteNoArgsMultipleHomes() {
+
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
     }
 
@@ -274,115 +246,82 @@ public class IslandGoCommandTest {
      * Test method for {@link IslandGoCommand#execute(User, String, List)}
      */
     @Test
-    public void testExecuteArgs1MultipleHomes() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("1")));
+    void testExecuteArgs1MultipleHomes() {
+        assertFalse(igc.execute(user, igc.getLabel(), Collections.singletonList("1")));
+        checkSpigotMessage("commands.island.go.unknown-home");
+        checkSpigotMessage("commands.island.sethome.homes-are");
+        checkSpigotMessage("commands.island.sethome.home-list-syntax");
     }
 
     /**
      * Test method for {@link IslandGoCommand#execute(User, String, List)}
      */
     @Test
-    public void testExecuteArgs2MultipleHomes() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("2")));
-    }
-
-
-    /**
-     * Test method for {@link IslandGoCommand#execute(User, String, List)}
-     */
-    @Test
-    public void testExecuteArgsJunkMultipleHomes() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("sdfghhj")));
-    }
-
-    /**
-     * Test method for {@link IslandGoCommand#execute(User, String, List)}
-     */
-    @Test
-    public void testExecuteNoArgsDelay() {
+    void testExecuteNoArgsDelay() {
         when(s.getDelayTime()).thenReturn(10);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
-        verify(player).sendMessage(eq("commands.delay.stand-still"));
+        checkSpigotMessage("commands.delay.stand-still");
     }
 
     /**
      * Test method for {@link IslandGoCommand#execute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsDelayTwice() {
+    void testExecuteNoArgsDelayTwice() {
         when(s.getDelayTime()).thenReturn(10);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
         // Twice
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
         verify(task).cancel();
-        verify(player).sendMessage(eq("commands.delay.previous-command-cancelled"));
-        verify(player, Mockito.times(2)).sendMessage(eq("commands.delay.stand-still"));
-    }
-
-    /**
-     * Test method for {@link IslandGoCommand#execute(User, String, List)}
-     */
-    @Test
-    public void testExecuteNoArgsDelayMultiHome() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        when(s.getDelayTime()).thenReturn(10);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("2")));
-        verify(player).sendMessage(eq("commands.delay.stand-still"));
+        checkSpigotMessage("commands.delay.previous-command-cancelled");
+        checkSpigotMessage("commands.delay.stand-still", 2);
     }
 
     /**
      * Test method for {@link IslandGoCommand#onPlayerMove(PlayerMoveEvent)}
      */
     @Test
-    public void testOnPlayerMoveHeadMoveNothing() {
+    void testOnPlayerMoveHeadMoveNothing() {
         Location l = mock(Location.class);
         Vector vector = mock(Vector.class);
         when(l.toVector()).thenReturn(vector);
-        when(player.getLocation()).thenReturn(l);
-        PlayerMoveEvent e = new PlayerMoveEvent(player, l, l);
+        when(mockPlayer.getLocation()).thenReturn(l);
+        PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, l, l);
         igc.onPlayerMove(e);
-        verify(player, Mockito.never()).sendMessage(eq("commands.delay.moved-so-command-cancelled"));
+        verify(mockPlayer, Mockito.never()).sendMessage("commands.delay.moved-so-command-cancelled");
     }
 
     /**
      * Test method for {@link IslandGoCommand#onPlayerMove(PlayerMoveEvent)}
      */
     @Test
-    public void testOnPlayerMoveHeadMoveTeleportPending() {
+    void testOnPlayerMoveHeadMoveTeleportPending() {
         Location l = mock(Location.class);
         Vector vector = mock(Vector.class);
         when(l.toVector()).thenReturn(vector);
-        when(player.getLocation()).thenReturn(l);
+        when(mockPlayer.getLocation()).thenReturn(l);
         testExecuteNoArgsDelay();
-        PlayerMoveEvent e = new PlayerMoveEvent(player, l, l);
+        PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, l, l);
         igc.onPlayerMove(e);
-        verify(player, Mockito.never()).sendMessage(eq("commands.delay.moved-so-command-cancelled"));
+        checkSpigotMessage("commands.delay.moved-so-command-cancelled", 0);
     }
 
     /**
      * Test method for {@link IslandGoCommand#onPlayerMove(PlayerMoveEvent)}
      */
     @Test
-    public void testOnPlayerMovePlayerMoveTeleportPending() {
+    void testOnPlayerMovePlayerMoveTeleportPending() {
         Location l = mock(Location.class);
         Vector vector = mock(Vector.class);
         when(l.toVector()).thenReturn(vector);
-        when(player.getLocation()).thenReturn(l);
+        when(mockPlayer.getLocation()).thenReturn(l);
         testExecuteNoArgsDelay();
         Location l2 = mock(Location.class);
         Vector vector2 = mock(Vector.class);
         when(l2.toVector()).thenReturn(vector2);
-        PlayerMoveEvent e = new PlayerMoveEvent(player, l, l2);
+        PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, l, l2);
         igc.onPlayerMove(e);
         verify(notifier).notify(any(), eq("commands.delay.moved-so-command-cancelled"));
     }

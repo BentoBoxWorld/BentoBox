@@ -11,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
@@ -59,6 +60,18 @@ public class GeoLimitMobsListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMobDeath(final EntityDeathEvent e) {
         mobSpawnTracker.remove(e.getEntity());
+    }
+
+    /**
+     * Track projectiles launched from within an island so they can be geo-limited.
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onProjectileLaunch(final ProjectileLaunchEvent e) {
+        if (getIWM().inWorld(e.getEntity().getLocation())
+                && getIWM().getGeoLimitSettings(e.getEntity().getLocation().getWorld()).contains(e.getEntityType().name())) {
+            getIslands().getIslandAt(e.getEntity().getLocation()).ifPresent(i -> mobSpawnTracker.put(e.getEntity(), i));
+        }
     }
 
     /**

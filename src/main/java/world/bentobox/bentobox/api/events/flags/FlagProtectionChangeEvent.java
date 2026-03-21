@@ -12,7 +12,7 @@ import world.bentobox.bentobox.database.objects.Island;
  * @author tastybento
  * @since 1.6.0
  */
-public class FlagProtectionChangeEvent extends FlagChangeEvent {
+public final class FlagProtectionChangeEvent extends FlagChangeEvent {
 
     private final Island island;
     private final int setTo;

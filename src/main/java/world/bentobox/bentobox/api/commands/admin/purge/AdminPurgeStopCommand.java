@@ -13,7 +13,7 @@ public class AdminPurgeStopCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        inheritPermission();
+        setPermission("admin.purge.stop");
         setOnlyPlayer(false);
         setDescription("commands.admin.purge.stop.description");
     }

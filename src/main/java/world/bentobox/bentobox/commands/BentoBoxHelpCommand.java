@@ -23,17 +23,21 @@ public class BentoBoxHelpCommand extends DefaultHelpCommand {
         super(parent);
     }
 
+    /**
+     * Collects all help entries including addon-registered top-level commands.
+     */
     @Override
-    public boolean execute(User user, String label, List<String> args) {
-        super.execute(user, label, args);
-        // Show registered addon commands
+    protected List<String[]> getHelpEntries(User user) {
+        List<String[]> entries = super.getHelpEntries(user);
+        // Add registered addon commands
         getPlugin().getCommandsManager().getCommands().values().stream()
-        .filter(cc -> cc.getAddon() != null)
-        .sorted(Comparator.comparing(CompositeCommand::getName))
-        .forEach(v -> showPrettyHelp(user, v.getUsage(),
-                user.getTranslationOrNothing(v.getParameters()),
-                user.getTranslationOrNothing(v.getDescription()) + " (" + v.getAddon().getDescription().getName() + ")"));
-        user.sendMessage("commands.help.end");
-        return true;
+                .filter(cc -> cc.getAddon() != null)
+                .sorted(Comparator.comparing(CompositeCommand::getName))
+                .forEach(v -> {
+                    String params = user.getTranslationOrNothing(v.getParameters());
+                    String desc = user.getTranslationOrNothing(v.getDescription()) + " (" + v.getAddon().getDescription().getName() + ")";
+                    entries.add(new String[]{v.getUsage(), params != null ? params : "", desc});
+                });
+        return entries;
     }
 }

@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.api.configuration;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 /**
@@ -9,11 +8,6 @@ import world.bentobox.bentobox.database.objects.DataObject;
  * @since 1.5.0
  */
 public interface ConfigObject extends DataObject {
-
-    @Override
-    default BentoBox getPlugin() {
-        return BentoBox.getInstance();
-    }
 
     /**
      * @return the uniqueId

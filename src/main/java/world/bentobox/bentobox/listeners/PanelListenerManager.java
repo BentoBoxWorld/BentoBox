@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,12 +20,13 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.util.Util;
 
 public class PanelListenerManager implements Listener {
 
-    private static final HashMap<UUID, Panel> openPanels = new HashMap<>();
+    private static final Map<UUID, Panel> openPanels = new HashMap<>();
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onInventoryClick(InventoryClickEvent event) {
         User user = User.getInstance(event.getWhoClicked()); // The player that clicked the item
         InventoryView view = event.getView();
@@ -39,7 +39,7 @@ public class PanelListenerManager implements Listener {
             event.setCancelled(true);
 
             // Check the name of the panel - strip colors. Note that black is removed from titles automatically by the server.
-            if (ChatColor.stripColor(view.getTitle()).equals(ChatColor.stripColor(openPanels.get(user.getUniqueId()).getName()))) {
+            if (Util.stripColor(view.getTitle()).equals(Util.stripColor(openPanels.get(user.getUniqueId()).getName()))) {
                 // Close inventory if clicked outside and if setting is true
                 if (BentoBox.getInstance().getSettings().isClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
                     event.getWhoClicked().closeInventory();
@@ -61,6 +61,7 @@ public class PanelListenerManager implements Listener {
                     // Refresh
                     l.refreshPanel();
                 });
+
             } else {
                 // Wrong name - delete this panel
                 openPanels.remove(user.getUniqueId());

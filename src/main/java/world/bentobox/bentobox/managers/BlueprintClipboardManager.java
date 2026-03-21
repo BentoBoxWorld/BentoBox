@@ -108,7 +108,9 @@ public class BlueprintClipboardManager {
             bp = gson.fromJson(fr, Blueprint.class);
         } catch (Exception e) {
             plugin.logError("Blueprint has JSON error: " + zipFile.getName());
+            plugin.logStacktrace(e);
             throw new IOException("Blueprint has JSON error: " + zipFile.getName());
+            
         }
         Files.delete(file.toPath());
         // Bedrock check and set
@@ -214,14 +216,18 @@ public class BlueprintClipboardManager {
     }
 
     private void unzipFiles(final ZipInputStream zipInputStream, final Path unzipFilePath) throws IOException {
-        if (!unzipFilePath.toFile().getCanonicalPath().startsWith(blueprintFolder.getCanonicalPath())) {
-            throw new IOException("Entry is outside of the target directory");
+        // Prevent directory traversal attacks by normalizing the path
+        if (!unzipFilePath.startsWith(blueprintFolder.getCanonicalFile().toPath().normalize())) {
+            throw new IOException(
+                    "Blueprint file is trying to write outside of the target directory! Blocked attempt to write to "
+                            + unzipFilePath);
         }
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(unzipFilePath.toFile().getCanonicalPath()))) {
             byte[] bytesIn = new byte[1024];
-            int read;
-            while ((read = zipInputStream.read(bytesIn)) != -1) {
+            int read = zipInputStream.read(bytesIn);
+            while (read != -1) {
                 bos.write(bytesIn, 0, read);
+                read = zipInputStream.read(bytesIn);
             }
         }
     }
@@ -231,9 +237,10 @@ public class BlueprintClipboardManager {
             zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
             try (FileInputStream inputStream = new FileInputStream(targetFile)) {
                 final byte[] buffer = new byte[1024];
-                int length;
-                while((length = inputStream.read(buffer)) >= 0) {
+                int length = inputStream.read(buffer);
+                while (length >= 0) {
                     zipOutputStream.write(buffer, 0, length);
+                    length = inputStream.read(buffer);
                 }
             }
             try {

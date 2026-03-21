@@ -17,7 +17,7 @@ public class AdminPurgeUnownedCommand extends ConfirmableCommand {
 
     @Override
     public void setup() {
-        inheritPermission();
+        setPermission("admin.purge.unowned");
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.purge.unowned.parameters");
         setDescription("commands.admin.purge.unowned.description");
@@ -50,8 +50,8 @@ public class AdminPurgeUnownedCommand extends ConfirmableCommand {
     Set<String> getUnownedIslands() {
         return getPlugin().getIslands().getIslands().stream()
                 .filter(i -> !i.isSpawn())
-                .filter(i -> !i.getPurgeProtected())
-                .filter(i -> i.getWorld().equals(this.getWorld()))
+                .filter(i -> !i.isPurgeProtected())
+                .filter(i -> this.getWorld().equals(i.getWorld()))
                 .filter(Island::isUnowned)
                 .map(Island::getUniqueId)
                 .collect(Collectors.toSet());

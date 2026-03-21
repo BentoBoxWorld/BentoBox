@@ -1,9 +1,8 @@
 package world.bentobox.bentobox.api.commands.admin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,18 +12,13 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
@@ -36,9 +30,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class})
-public class AdminSwitchCommandTest {
+class AdminSwitchCommandTest extends CommonTestSetup {
 
     private AdminSwitchCommand asc;
     @Mock
@@ -49,13 +41,10 @@ public class AdminSwitchCommandTest {
     private Player p;
     private UUID notUUID;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         Util.setPlugin(plugin);
 
         // Command manager
@@ -83,10 +72,10 @@ public class AdminSwitchCommandTest {
         asc = new AdminSwitchCommand(ac);
     }
 
-    /**
-     */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
+        super.tearDown();
     }
 
 
@@ -94,7 +83,7 @@ public class AdminSwitchCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("mod.switch", asc.getPermission());
         assertTrue(asc.isOnlyPlayer());
         assertEquals("commands.admin.switch.parameters", asc.getParameters());
@@ -105,7 +94,7 @@ public class AdminSwitchCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecute() {
+    void testCanExecute() {
         assertFalse(asc.canExecute(user, "", Collections.singletonList("hello")));
         verify(user).sendMessage("commands.help.header", TextVariables.LABEL, null);
         assertTrue(asc.canExecute(user, "", Collections.emptyList()));
@@ -115,8 +104,8 @@ public class AdminSwitchCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoMetaData() {
-        when(user.getMetaData(eq("AdminCommandSwitch"))).thenReturn(Optional.empty());
+    void testExecuteUserStringListOfStringNoMetaData() {
+        when(user.getMetaData("AdminCommandSwitch")).thenReturn(Optional.empty());
         asc.execute(user, "", Collections.emptyList());
         verify(user).getMetaData("AdminCommandSwitch");
         verify(user).sendMessage("commands.admin.switch.removing");
@@ -127,9 +116,9 @@ public class AdminSwitchCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringMetaFalse() {
+    void testExecuteUserStringListOfStringMetaFalse() {
         MetaDataValue md = new MetaDataValue(false);
-        when(user.getMetaData(eq("AdminCommandSwitch"))).thenReturn(Optional.of(md));
+        when(user.getMetaData("AdminCommandSwitch")).thenReturn(Optional.of(md));
         asc.execute(user, "", Collections.emptyList());
         verify(user).getMetaData("AdminCommandSwitch");
         verify(user).sendMessage("commands.admin.switch.removing");
@@ -140,9 +129,9 @@ public class AdminSwitchCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringMetaTrue() {
+    void testExecuteUserStringListOfStringMetaTrue() {
         MetaDataValue md = new MetaDataValue(true);
-        when(user.getMetaData(eq("AdminCommandSwitch"))).thenReturn(Optional.of(md));
+        when(user.getMetaData("AdminCommandSwitch")).thenReturn(Optional.of(md));
         asc.execute(user, "", Collections.emptyList());
         verify(user).getMetaData("AdminCommandSwitch");
         verify(user).sendMessage("commands.admin.switch.adding");

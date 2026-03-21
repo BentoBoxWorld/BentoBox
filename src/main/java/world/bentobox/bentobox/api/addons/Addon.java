@@ -20,17 +20,44 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 
+import com.github.puregero.multilib.MultiLib;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.request.AddonRequestHandler;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
- * Add-on class for BentoBox. Extend this to create an add-on. The operation
- * and methods are very similar to Bukkit's JavaPlugin.
+ * The main class for a BentoBox addon.
+ * <p>
+ * To create an addon, you must extend this class. The operation and methods are
+ * very similar to Bukkit's {@code JavaPlugin}.
+ * <p>
+ * Each addon must have an {@code addon.yml} file in its root directory. This file
+ * contains metadata about the addon, such as its name, version, and main class.
+ * <p>
+ * Example of a simple addon main class:
+ * <pre>
+ * public class MyAddon extends Addon {
+ *
+ *     {@literal @}Override
+ *     public void onEnable() {
+ *         // Addon startup logic
+ *         getLogger().info("MyAddon has been enabled!");
+ *     }
+ *
+ *     {@literal @}Override
+ *     public void onDisable() {
+ *         // Addon shutdown logic
+ *         getLogger().info("MyAddon has been disabled!");
+ *     }
+ * }
+ * </pre>
  *
  * @author tastybento, ComminQ_Q
+ * @since 1.0
  */
 public abstract class Addon {
 
@@ -44,6 +71,10 @@ public abstract class Addon {
 
     protected Addon() {
         state = State.DISABLED;
+        if (!Util.inTest()) {
+            // If the config is updated, update the config.
+            MultiLib.onString(getPlugin(), "bentobox-config-update", v -> this.reloadConfig());
+        }
     }
 
     /**
@@ -63,7 +94,7 @@ public abstract class Addon {
     /**
      * Executes code when loading the addon.
      * This is called before {@link #onEnable()}.
-     * This <b>must</b> be used to setup configuration, worlds and commands.
+     * This <b>must</b> be used to set up configuration, worlds and commands.
      */
     public void onLoad() {}
 
@@ -188,7 +219,7 @@ public abstract class Addon {
                 yamlConfig = new YamlConfiguration();
                 yamlConfig.load(yamlFile);
             } catch (Exception e) {
-                Bukkit.getLogger().severe(() -> "Could not load config.yml: " + e.getMessage());
+                BentoBox.getInstance().logError("Could not load config.yml: " + e.getMessage());
             }
         }
         return yamlConfig;
@@ -210,7 +241,7 @@ public abstract class Addon {
         try {
             getConfig().save(new File(dataFolder, ADDON_CONFIG_FILENAME));
         } catch (IOException e) {
-            Bukkit.getLogger().severe("Could not save config! " + this.getDescription().getName() + " " + e.getMessage());
+            BentoBox.getInstance().logError("Could not save config! " + this.getDescription().getName() + " " + e.getMessage());
         }
     }
 
@@ -259,7 +290,7 @@ public abstract class Addon {
      * @return file written, or null if none
      */
     public File saveResource(String jarResource, File destinationFolder, boolean replace, boolean noPath) {
-        if (jarResource == null || jarResource.equals("")) {
+        if (jarResource == null || jarResource.isEmpty()) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
 
@@ -273,7 +304,9 @@ public abstract class Addon {
                                 "The embedded resource '" + jarResource + "' cannot be found in " + jar.getName());
                     }
                     // There are two options, use the path of the resource or not
-                    File outFile = new File(destinationFolder, jarResource);
+                    File outFile = new File(destinationFolder,
+                            jarResource.replace("/", File.separator));
+
                     if (noPath) {
                         outFile = new File(destinationFolder, outFile.getName());
                     }
@@ -290,6 +323,7 @@ public abstract class Addon {
                         "The embedded resource '" + jarResource + "' cannot be found in " + jar.getName());
             }
         } catch (IOException e) {
+            BentoBox.getInstance().logStacktrace(e);
             BentoBox.getInstance().logError(
                     "Could not save from jar file. From " + jarResource + " to " + destinationFolder.getAbsolutePath());
         }
@@ -304,7 +338,7 @@ public abstract class Addon {
      * @throws InvalidConfigurationException - if the yaml is malformed
      */
     public YamlConfiguration getYamlFromJar(String jarResource) throws IOException, InvalidConfigurationException {
-        if (jarResource == null || jarResource.equals("")) {
+        if (jarResource == null || jarResource.isEmpty()) {
             throw new IllegalArgumentException("jarResource cannot be null or empty");
         }
         YamlConfiguration result = new YamlConfiguration();
@@ -326,7 +360,7 @@ public abstract class Addon {
      * @return resource or null if there is a problem
      */
     public InputStream getResource(String jarResource) {
-        if (jarResource == null || jarResource.equals("")) {
+        if (jarResource == null || jarResource.isEmpty()) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
 
@@ -339,7 +373,7 @@ public abstract class Addon {
                 }
             }
         } catch (IOException e) {
-            Bukkit.getLogger().severe("Could not open from jar file. " + jarResource);
+            BentoBox.getInstance().logError("Could not open from jar file. " + jarResource);
         }
         return null;
     }
@@ -393,7 +427,7 @@ public abstract class Addon {
     public IslandsManager getIslands() {
         return getPlugin().getIslands();
     }
-    
+
     /**
      * Get Islands Manager
      * @return Islands manager

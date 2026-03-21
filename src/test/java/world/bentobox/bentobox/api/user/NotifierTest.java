@@ -1,33 +1,29 @@
 package world.bentobox.bentobox.api.user;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
  * @author tastybento
  *
  */
-public class NotifierTest {
+class NotifierTest {
 
     private Notifier n;
 
-    /**
-     */
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         n = new Notifier();
     }
 
-    /**
-     */
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         Mockito.framework().clearInlineMocks();
     }
 
@@ -35,7 +31,7 @@ public class NotifierTest {
      * Test method for {@link world.bentobox.bentobox.api.user.Notifier#notify(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
-    public void testNotifyUserString() {
+    void testNotifyUserString() {
         User user = mock(User.class);
         String message = "a message";
         assertTrue(n.notify(user, message));
@@ -46,7 +42,7 @@ public class NotifierTest {
      * Test method for {@link world.bentobox.bentobox.api.user.Notifier#notify(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
-    public void testNotifyUserStringMultisend() {
+    void testNotifyUserStringMultisend() {
         User user = mock(User.class);
         String message = "a message";
         assertTrue(n.notify(user, message));
@@ -61,7 +57,7 @@ public class NotifierTest {
      * Test method for {@link world.bentobox.bentobox.api.user.Notifier#notify(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
-    public void testNotifyUserStringMultisendWaitSend() throws InterruptedException {
+    void testNotifyUserStringMultisendWaitSend() throws InterruptedException {
         User user = mock(User.class);
         String message = "a message";
         assertTrue(n.notify(user, message));

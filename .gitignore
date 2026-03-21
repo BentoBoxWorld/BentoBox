@@ -30,7 +30,6 @@ $RECYCLE.BIN/
 *.log
 *.ctxt
 .mtj.tmp/
-*.jar
 *.war
 *.nar
 *.ear
@@ -86,3 +85,4 @@ nbactions.xml
 nb-configuration.xml
 .nb-gradle/
 /BentoBox/
+/placeholder-dump.md

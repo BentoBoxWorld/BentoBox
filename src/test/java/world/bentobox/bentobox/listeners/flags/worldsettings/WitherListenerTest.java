@@ -1,9 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -22,70 +20,50 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Bukkit.class} )
-public class WitherListenerTest {
+class WitherListenerTest extends CommonTestSetup {
 
     private WitherListener wl;
     @Mock
-    private Location location;
-    @Mock
     private Location location2;
     @Mock
-    private World world;
-    @Mock
     private World world2;
-    @Mock
-    private IslandWorldManager iwm;
 
     private List<Block> blocks;
     @Mock
     private @Nullable WorldSettings ws;
     private Map<String, Boolean> map;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.inWorld(eq(world))).thenReturn(true);
-        when(iwm.inWorld(eq(location))).thenReturn(true);
+        super.setUp();
+
+        when(iwm.inWorld(world)).thenReturn(true);
+        when(iwm.inWorld(world2)).thenReturn(false);
+        when(iwm.inWorld(location)).thenReturn(true);
+        when(iwm.inWorld(location2)).thenReturn(false);
         map = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(map);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
-
-        when(location.getWorld()).thenReturn(world);
-        when(location.getBlockX()).thenReturn(0);
-        when(location.getBlockY()).thenReturn(0);
-        when(location.getBlockZ()).thenReturn(0);
 
         when(location2.getWorld()).thenReturn(world2);
         when(location2.getBlockX()).thenReturn(0);
         when(location2.getBlockY()).thenReturn(0);
         when(location2.getBlockZ()).thenReturn(0);
+        when(location2.clone()).thenReturn(location2); // Paper
 
         blocks = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
@@ -102,24 +80,23 @@ public class WitherListenerTest {
         Flags.WITHER_DAMAGE.setSetting(world, false);
     }
 
-    /**
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionWither() {
+    void testOnExplosionWither() {
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.WITHER);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        when(location.clone()).thenReturn(location);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         wl.onExplosion(e);
         assertTrue(blocks.isEmpty());
     }
@@ -129,12 +106,12 @@ public class WitherListenerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionWitherWrongWorld() {
+    void testOnExplosionWitherWrongWorld() {
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location2);
         when(entity.getWorld()).thenReturn(world2);
         when(entity.getType()).thenReturn(EntityType.WITHER);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location2, blocks, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location2, blocks);
         wl.onExplosion(e);
         assertFalse(blocks.isEmpty());
     }
@@ -143,13 +120,13 @@ public class WitherListenerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionWitherAllowed() {
+    void testOnExplosionWitherAllowed() {
         Flags.WITHER_DAMAGE.setSetting(world, true);
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.WITHER);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         wl.onExplosion(e);
         assertFalse(blocks.isEmpty());
 
@@ -159,12 +136,13 @@ public class WitherListenerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionWitherSkull() {
+    void testOnExplosionWitherSkull() {
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.WITHER_SKULL);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        when(location.clone()).thenReturn(location);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         wl.onExplosion(e);
         assertTrue(blocks.isEmpty());
     }
@@ -173,12 +151,12 @@ public class WitherListenerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionNotWither() {
+    void testOnExplosionNotWither() {
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
         when(entity.getType()).thenReturn(EntityType.DRAGON_FIREBALL);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
+        EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
         wl.onExplosion(e);
         assertFalse(blocks.isEmpty());
     }
@@ -187,7 +165,7 @@ public class WitherListenerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
-    public void testWitherChangeBlocks() {
+    void testWitherChangeBlocks() {
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
@@ -205,7 +183,7 @@ public class WitherListenerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
-    public void testWitherChangeBlocksWrongWorld() {
+    void testWitherChangeBlocksWrongWorld() {
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location2);
         when(entity.getWorld()).thenReturn(world2);
@@ -223,7 +201,7 @@ public class WitherListenerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
-    public void testWitherChangeBlocksAllowed() {
+    void testWitherChangeBlocksAllowed() {
         Flags.WITHER_DAMAGE.setSetting(world, true);
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);

@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.api.addons;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
 import java.io.File;
@@ -22,21 +22,15 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.managers.AddonsManager;
 
@@ -45,15 +39,14 @@ import world.bentobox.bentobox.managers.AddonsManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( { BentoBox.class, Bukkit.class })
-public class AddonClassLoaderTest {
+class AddonClassLoaderTest extends CommonTestSetup {
 
     private enum mandatoryTags {
         MAIN,
         NAME,
         VERSION,
-        AUTHORS
+        AUTHORS,
+        ICON
     }
     /**
      * Used for file writing etc.
@@ -73,15 +66,12 @@ public class AddonClassLoaderTest {
     @Mock
     private AddonsManager am;
 
-    private BentoBox plugin;
-
     /**
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         // To start include everything
         makeAddon(List.of());
         testAddon = new TestClass();
@@ -129,7 +119,11 @@ public class AddonClassLoaderTest {
         r.set("repository", "repo");
         r.set("depend", "Level, Warps");
         r.set("softdepend", "Boxed, AcidIsland");
-        r.set("icon", "IRON_INGOT");
+        if (!missingTags.contains(mandatoryTags.ICON)) {
+            r.set("icon", "IRON_INGOT");
+        } else {
+            r.set("icon", "unkOwnMateriaL");
+        }
         r.set("api-version", "1.21-SNAPSHOT");
         return r;
     }
@@ -173,9 +167,11 @@ public class AddonClassLoaderTest {
     }
 
     /**
+     * @throws Exception 
      */
-    @After
-    public void TearDown() throws IOException {
+    @AfterEach
+    void TearDown() throws Exception {
+        super.tearDown();
         Files.deleteIfExists(jarFile.toPath());
         if (dataFolder.exists()) {
             Files.walk(dataFolder.toPath())
@@ -183,7 +179,6 @@ public class AddonClassLoaderTest {
             .map(Path::toFile)
             .forEach(File::delete);
         }
-        Mockito.framework().clearInlineMocks();
     }
 
     class TestClass extends Addon {
@@ -199,7 +194,7 @@ public class AddonClassLoaderTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#AddonClassLoader(world.bentobox.bentobox.managers.AddonsManager, org.bukkit.configuration.file.YamlConfiguration, java.io.File, java.lang.ClassLoader)}.
      */
     @Test
-    public void testAddonClassLoader() throws MalformedURLException {
+    void testAddonClassLoader() throws MalformedURLException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
     }
 
@@ -207,7 +202,7 @@ public class AddonClassLoaderTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
-    public void testAsDescription() throws InvalidAddonDescriptionException {
+    void testAsDescription() throws InvalidAddonDescriptionException {
         YamlConfiguration yml = this.getYaml(List.of());
         @NonNull
         AddonDescription desc = AddonClassLoader.asDescription(yml);
@@ -230,7 +225,7 @@ public class AddonClassLoaderTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
-    public void testAsDescriptionNoName() {
+    void testAsDescriptionNoName() {
         YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.NAME));
         try {
             AddonClassLoader.asDescription(yml);
@@ -243,7 +238,7 @@ public class AddonClassLoaderTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
-    public void testAsDescriptionNoAuthors() {
+    void testAsDescriptionNoAuthors() {
         YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.AUTHORS));
         try {
             AddonClassLoader.asDescription(yml);
@@ -256,7 +251,7 @@ public class AddonClassLoaderTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
-    public void testAsDescriptionNoVersion() {
+    void testAsDescriptionNoVersion() {
         YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.VERSION));
         try {
             AddonClassLoader.asDescription(yml);
@@ -269,7 +264,7 @@ public class AddonClassLoaderTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
-    public void testAsDescriptionNoMain() {
+    void testAsDescriptionNoMain() {
         YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.MAIN));
         try {
             AddonClassLoader.asDescription(yml);
@@ -279,43 +274,60 @@ public class AddonClassLoaderTest {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
+     */
+    @Test
+    void testAsDescriptionUnknownIconMaterial() {
+        YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.ICON));
+        try {
+            AddonClassLoader.asDescription(yml);
+        } catch (InvalidAddonDescriptionException e) {
+            assertEquals("AddonException : 'icon' tag refers to an unknown Material: unkOwnMateriaL", e.getMessage());
+        }
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#findClass(java.lang.String)}.
      */
     @Test
-    public void testFindClassString() throws MalformedURLException {
+    void testFindClassString() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         assertNull(acl.findClass(""));
         assertNull(acl.findClass("world.bentobox.bentobox"));
+        acl.close();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#findClass(java.lang.String, boolean)}.
      */
     @Test
-    public void testFindClassStringBoolean() throws MalformedURLException {
+    void testFindClassStringBoolean() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         assertNull(acl.findClass("", false));
         assertNull(acl.findClass("world.bentobox.bentobox", false));
+        acl.close();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#getAddon()}.
      */
     @Test
-    public void testGetAddon() throws MalformedURLException {
+    void testGetAddon() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         Addon addon = acl.getAddon();
-        assertEquals(addon, testAddon);
+        assertSame(testAddon, addon);
+        acl.close();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#getClasses()}.
      */
     @Test
-    public void testGetClasses() throws MalformedURLException {
+    void testGetClasses() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         Set<String> set = acl.getClasses();
         assertTrue(set.isEmpty());
+        acl.close();
     }
 
 }

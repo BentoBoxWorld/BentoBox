@@ -1,6 +1,12 @@
 package world.bentobox.bentobox.commands;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -8,8 +14,7 @@ import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
-import world.bentobox.bentobox.database.objects.Names;
-import world.bentobox.bentobox.database.objects.Players;
+import world.bentobox.bentobox.database.objects.DataObject;
 
 /**
  * Forces migration from one database to another
@@ -20,6 +25,8 @@ import world.bentobox.bentobox.database.objects.Players;
 public class BentoBoxMigrateCommand extends ConfirmableCommand {
 
     private static final String MIGRATED = "commands.bentobox.migrate.migrated";
+    private Queue<Class<? extends DataObject>> classQueue;
+    private BukkitTask task;
 
     /**
      * Reloads settings, addons and localization command
@@ -38,20 +45,24 @@ public class BentoBoxMigrateCommand extends ConfirmableCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         this.askConfirmation(user, () -> {
-            // Migrate BentoBox data
-            user.sendMessage("commands.bentobox.migrate.players");
-            new Database<>(getPlugin(), Players.class).loadObjects();
-            user.sendMessage(MIGRATED);
-            user.sendMessage("commands.bentobox.migrate.names");
-            new Database<>(getPlugin(), Names.class).loadObjects();
-            user.sendMessage(MIGRATED);
-            // Migrate addons data
             user.sendMessage("commands.bentobox.migrate.addons");
-            getPlugin().getAddonsManager().getDataObjects().forEach(t -> {
-                user.sendMessage("commands.bentobox.migrate.class", TextVariables.DESCRIPTION, BentoBox.getInstance().getSettings().getDatabasePrefix() + t.getCanonicalName());
-                new Database<>(getPlugin(), t).loadObjects();
-                user.sendMessage(MIGRATED);
-            });
+            Set<Class<? extends DataObject>> classSet = getPlugin().getAddonsManager().getDataObjects();
+            classSet.addAll(Database.getDataobjects());
+            // Put classSet into classQueue
+            classQueue = new LinkedList<>(classSet);
+            // Start a scheduler to step through these in a reasonable time
+            task = Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
+                Class<? extends DataObject> t = classQueue.poll();
+                if (t != null) {
+                    user.sendMessage("commands.bentobox.migrate.class", TextVariables.DESCRIPTION,
+                            BentoBox.getInstance().getSettings().getDatabasePrefix() + t.getCanonicalName());
+                    new Database<>(getPlugin(), t).loadObjects();
+                    user.sendMessage(MIGRATED);
+                } else {
+                    user.sendMessage("commands.bentobox.migrate.completed");
+                    task.cancel();
+                }
+            }, 0, 20L);
         });
         return true;
     }

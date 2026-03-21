@@ -61,7 +61,26 @@ public class BlueprintBundle implements DataObject {
     @Expose
     private int slot = 0;
 
+    /**
+     * Number of times this bundle can be used by a single player. 0 = unlimited
+     */
+    @Expose
+    private int times = 0;
 
+    /**
+     * Cost of the bundle. 0 = free
+     */
+    @Expose
+    private double cost = 0;
+
+    /**
+     * Commands to run when this bundle is pasted (i.e., when an island is created with it).
+     * Supports [player] and [owner] placeholders.
+     * Commands prefixed with [SUDO] are run as the player; all others are run as console.
+     * @since 2.6.0
+     */
+    @Expose
+    private List<String> commands = new ArrayList<>();
 
     /**
      * @return the uniqueId
@@ -188,4 +207,50 @@ public class BlueprintBundle implements DataObject {
         this.slot = slot;
     }
 
+    /**
+     * @return the times
+     */
+    public int getTimes() {
+        return times;
+    }
+
+    /**
+     * @param times the times to set
+     */
+    public void setTimes(int times) {
+        this.times = times;
+    }
+
+    /**
+     * @return the cost
+     */
+    public double getCost() {
+        return cost;
+    }
+
+    /**
+     * @param cost the cost to set
+     */
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
+    /**
+     * @return the list of commands to run when this bundle is pasted
+     * @since 2.6.0
+     */
+    public List<String> getCommands() {
+        if (commands == null) {
+            commands = new ArrayList<>();
+        }
+        return commands;
+    }
+
+    /**
+     * @param commands the commands to set
+     * @since 2.6.0
+     */
+    public void setCommands(List<String> commands) {
+        this.commands = commands;
+    }
 }

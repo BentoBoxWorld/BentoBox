@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.managers;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,11 +30,13 @@ public class IslandDeletionManager implements Listener {
      */
     private final Database<IslandDeletion> handler;
     private final Set<Location> inDeletion;
+    private final IslandChunkDeletionManager islandChunkDeletionManager;
 
     public IslandDeletionManager(BentoBox plugin) {
         this.plugin = plugin;
         handler = new Database<>(plugin, IslandDeletion.class);
         inDeletion = new HashSet<>();
+        islandChunkDeletionManager = new IslandChunkDeletionManager(plugin);
     }
 
     /**
@@ -44,19 +45,17 @@ public class IslandDeletionManager implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
-        // Load list of islands that were mid deletion and delete them
+        // Load list of islands that were mid-deletion and delete them
         List<IslandDeletion> toBeDeleted = handler.loadObjects();
-        List<IslandDeletion> toBeRemoved = new ArrayList<>();
         if (!toBeDeleted.isEmpty()) {
             plugin.log("There are " + toBeDeleted.size() + " islands pending deletion.");
             toBeDeleted.forEach(di -> {
                 if (di.getLocation() == null || di.getLocation().getWorld() == null) {
                     plugin.logError("Island queued for deletion refers to a non-existent game world. Skipping...");
-                    toBeRemoved.add(di);
                 } else {
                     plugin.log("Resuming deletion of island at " + di.getLocation().getWorld().getName() + " " + Util.xyz(di.getLocation().toVector()));
                     inDeletion.add(di.getLocation());
-                    plugin.getIslandChunkDeletionManager().add(di);
+                    this.islandChunkDeletionManager.add(di);
                 }
             });
         }
@@ -86,4 +85,12 @@ public class IslandDeletionManager implements Listener {
     public boolean inDeletion(Location location) {
         return inDeletion.contains(location);
     }
+
+    /**
+     * @return the islandChunkDeletionManager
+     */
+    public IslandChunkDeletionManager getIslandChunkDeletionManager() {
+        return islandChunkDeletionManager;
+    }
+
 }

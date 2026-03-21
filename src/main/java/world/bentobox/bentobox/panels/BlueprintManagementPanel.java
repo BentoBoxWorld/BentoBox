@@ -26,6 +26,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
+import world.bentobox.bentobox.blueprints.conversation.CommandsPrompt;
 import world.bentobox.bentobox.blueprints.conversation.DescriptionPrompt;
 import world.bentobox.bentobox.blueprints.conversation.NameConversationPrefix;
 import world.bentobox.bentobox.blueprints.conversation.NamePrompt;
@@ -48,11 +49,15 @@ public class BlueprintManagementPanel {
     private static final int MAX_WORLD_SLOT = 9;
     private static final int MIN_WORLD_SLOT = 0;
     public static final int MAX_BP_SLOT = 35;
+    private static final int BUNDLES_PER_PAGE = 36;
+    private static final int BLUEPRINTS_PER_PAGE = 18;
     private static final String INSTRUCTION = "instruction";
     private Entry<Integer, Blueprint> selected;
     private final Map<Integer, Blueprint> blueprints = new HashMap<>();
     private final User user;
     private final GameModeAddon addon;
+    private int bundlePage;
+    private int blueprintPage;
 
     /**
      * Class to display the Blueprint Management Panel
@@ -77,10 +82,21 @@ public class BlueprintManagementPanel {
         environmentToBlueprint = Map.of(World.Environment.NORMAL, normalBlueprint, World.Environment.NETHER, netherBlueprint, World.Environment.THE_END, endBlueprint);
     }
 
+    /**
+     * Translate "commands.admin.blueprint.management." + t reference
+     * @param t - end of reference
+     * @return translation
+     */
     private String t(String t) {
         return user.getTranslation("commands.admin.blueprint.management." + t);
     }
 
+    /**
+     * Translate "commands.admin.blueprint.management." + t + vars reference
+     * @param t end of reference
+     * @param vars any other parameters
+     * @return translation
+     */
     private String t(String t, String... vars) {
         return user.getTranslation("commands.admin.blueprint.management." + t, vars);
     }
@@ -89,66 +105,71 @@ public class BlueprintManagementPanel {
      * Opens the management panel
      */
     public void openPanel() {
+        // Reset blueprint page when returning to the main panel
+        blueprintPage = 0;
         // Show panel of blueprint bundles
         // Clicking on a bundle opens up the bundle edit panel
         // Create the panel
         PanelBuilder pb = new PanelBuilder().name(t("title")).user(user).size(45);
         // Panel has New Blueprint Bundle button - clicking in creates a new bundle
         pb.item(36, getNewBundle(addon));
-        // Get the bundles
+        // Get the bundles sorted by display name
         Comparator<BlueprintBundle> sortByDisplayName = (p, o) -> p.getDisplayName().compareToIgnoreCase(o.getDisplayName());
-        plugin.getBlueprintsManager().getBlueprintBundles(addon).values().stream().limit(36)
-        .sorted(sortByDisplayName)
-        .forEach(bb -> {
+        List<BlueprintBundle> allBundles = plugin.getBlueprintsManager().getBlueprintBundles(addon).values().stream()
+                .sorted(sortByDisplayName).toList();
+        int totalPages = Math.max(1, (int) Math.ceil((double) allBundles.size() / BUNDLES_PER_PAGE));
+        // Clamp page
+        if (bundlePage >= totalPages) {
+            bundlePage = totalPages - 1;
+        }
+        if (bundlePage < 0) {
+            bundlePage = 0;
+        }
+        int start = bundlePage * BUNDLES_PER_PAGE;
+        int end = Math.min(start + BUNDLES_PER_PAGE, allBundles.size());
+        int slot = 0;
+        for (int i = start; i < end; i++) {
+            BlueprintBundle bb = allBundles.get(i);
             // Make item
             PanelItem item = new PanelItemBuilder()
                     .name(bb.getDisplayName())
                     .description(t("edit"), t("rename"))
                     .icon(bb.getIcon())
-                    .clickHandler((panel, u, clickType, slot) -> {
-
+                    .clickHandler((panel, u, clickType, s) -> {
                         u.closeInventory();
                         if (clickType.equals(ClickType.RIGHT)) {
                             // Rename
                             askForName(u.getPlayer(), addon, bb);
                         } else {
+                            blueprintPage = 0;
                             openBB(bb);
                         }
                         return true;
                     })
                     .build();
-            // Determine slot
-            if (bb.getSlot() < 0 || bb.getSlot() > MAX_BP_SLOT) {
-                bb.setSlot(0);
-            }
-            if (pb.slotOccupied(bb.getSlot())) {
-                int slot = getFirstAvailableSlot(pb);
-                if (slot == -1) {
-                    // TODO add paging
-                    plugin.logError("Too many blueprint bundles to show!");
-                    pb.item(item);
-                } else {
-                    pb.item(slot, item);
-                }
-            } else {
-                pb.item(bb.getSlot(), item);
-            }
-        });
-
-        pb.build();
-    }
-
-    /**
-     * @param pb - panel builder
-     * @return first available slot, or -1 if none
-     */
-    private static int getFirstAvailableSlot(PanelBuilder pb) {
-        for (int i = 0; i < BlueprintManagementPanel.MAX_BP_SLOT; i++) {
-            if (!pb.slotOccupied(i)) {
-                return i;
-            }
+            pb.item(slot++, item);
         }
-        return -1;
+        // Previous page button
+        if (bundlePage > 0) {
+            pb.item(37, new PanelItemBuilder().icon(Material.ARROW)
+                    .name(t("previous-page"))
+                    .clickHandler((panel, u, clickType, s) -> {
+                        bundlePage--;
+                        openPanel();
+                        return true;
+                    }).build());
+        }
+        // Next page button
+        if (bundlePage < totalPages - 1) {
+            pb.item(38, new PanelItemBuilder().icon(Material.ARROW)
+                    .name(t("next-page"))
+                    .clickHandler((panel, u, clickType, s) -> {
+                        bundlePage++;
+                        openPanel();
+                        return true;
+                    }).build());
+        }
+        pb.build();
     }
 
     /**
@@ -156,9 +177,21 @@ public class BlueprintManagementPanel {
      * @param bb - blueprint bundle
      */
     public void openBB(BlueprintBundle bb) {
-        int index = 18;
-        for (Blueprint bp : plugin.getBlueprintsManager().getBlueprints(addon).values()) {
-            blueprints.put(index++, bp);
+        blueprints.clear();
+        List<Blueprint> allBlueprints = new ArrayList<>(plugin.getBlueprintsManager().getBlueprints(addon).values());
+        int totalPages = Math.max(1, (int) Math.ceil((double) allBlueprints.size() / BLUEPRINTS_PER_PAGE));
+        // Clamp page
+        if (blueprintPage >= totalPages) {
+            blueprintPage = totalPages - 1;
+        }
+        if (blueprintPage < 0) {
+            blueprintPage = 0;
+        }
+        int start = blueprintPage * BLUEPRINTS_PER_PAGE;
+        int end = Math.min(start + BLUEPRINTS_PER_PAGE, allBlueprints.size());
+        int slot = 18;
+        for (int i = start; i < end; i++) {
+            blueprints.put(slot++, allBlueprints.get(i));
         }
         // Create the panel
         PanelBuilder pb = new PanelBuilder().name(bb.getDisplayName()).user(user).size(45).listener(new IconChanger(plugin, addon, this, bb));
@@ -173,29 +206,106 @@ public class BlueprintManagementPanel {
         for (int i = 9; i < 18; i++) {
             pb.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
         }
-        blueprints.entrySet().stream().limit(18).forEach(b -> pb.item(getBlueprintItem(addon, b.getKey(), bb, b.getValue())));
+        blueprints.forEach((key, value) -> pb.item(getBlueprintItem(addon, key, bb, value)));
         // Buttons for non-default bundle
         if (bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
-            // Panel has a No Trash icon. If right clicked it is discarded
+            // Panel has a No Trash icon. If right-clicked it is discarded
             pb.item(36, getNoTrashIcon());
             // Toggle permission - default is always allowed
             pb.item(39, getNoPermissionIcon());
         } else {
-            // Panel has a Trash icon. If right clicked it is discarded
+            // Panel has a Trash icon. If right-clicked it is discarded
             pb.item(36, getTrashIcon(addon, bb));
             // Toggle permission - default is always allowed
             pb.item(39, getPermissionIcon(addon, bb));
         }
+        // Previous page button for blueprints
+        if (blueprintPage > 0) {
+            pb.item(37, new PanelItemBuilder().icon(Material.ARROW)
+                    .name(t("previous-page"))
+                    .clickHandler((panel, u, clickType, s) -> {
+                        blueprintPage--;
+                        selected = null;
+                        openBB(bb);
+                        return true;
+                    }).build());
+        }
+        // Next page button for blueprints
+        if (blueprintPage < totalPages - 1) {
+            pb.item(38, new PanelItemBuilder().icon(Material.ARROW)
+                    .name(t("next-page"))
+                    .clickHandler((panel, u, clickType, s) -> {
+                        blueprintPage++;
+                        selected = null;
+                        openBB(bb);
+                        return true;
+                    }).build());
+        }
+        if (plugin.getSettings().getIslandNumber() > 1) {
+            // Number of times allowed
+            pb.item(42, getTimesIcon(bb));
+        }
         // Preferred slot
         pb.item(40, getSlotIcon(addon, bb));
+        // Cost editor
+        if (plugin.getSettings().isUseEconomy() && plugin.getVault().isPresent()) {
+            pb.item(41, getCostIcon(bb));
+        }
+        // Commands button
+        pb.item(43, getCommandsIcon(addon, bb));
         // Panel has a Back icon.
-        pb.item(44, new PanelItemBuilder().icon(Material.OAK_DOOR).name(t("back")).clickHandler((panel, u, clickType, slot) -> {
+        pb.item(44, new PanelItemBuilder().icon(Material.OAK_DOOR).name(t("back")).clickHandler((panel, u, clickType, s) -> {
             openPanel();
             return true;
         }).build());
 
         pb.build();
 
+    }
+
+    private PanelItem getTimesIcon(BlueprintBundle bb) {
+        return new PanelItemBuilder().icon(Material.CLOCK).name(t("times"))
+                .description(bb.getTimes() == 0 ? t("unlimited-times")
+                        : t("maximum-times", TextVariables.NUMBER, String.valueOf(bb.getTimes())))
+                .clickHandler((panel, u, clickType, slot) -> {
+                    // Left click up, right click down
+                    u.getPlayer().playSound(u.getLocation(), Sound.UI_BUTTON_CLICK, 1F, 1F);
+                    if (clickType == ClickType.LEFT) {
+                        bb.setTimes(bb.getTimes() + 1);
+                    } else if (clickType == ClickType.RIGHT && bb.getTimes() > 0) {
+                        bb.setTimes(bb.getTimes() - 1);
+                    }
+                    // Save
+                    plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
+                    panel.getInventory().setItem(42, getTimesIcon(bb).getItem());
+                    return true;
+                }).build();
+    }
+
+    private PanelItem getCostIcon(BlueprintBundle bb) {
+        return new PanelItemBuilder().icon(Material.GOLD_INGOT).name(t("cost"))
+                .description(bb.getCost() == 0 ? t("no-cost")
+                        : t("cost-amount", TextVariables.COST,
+                                plugin.getVault().map(vault -> vault.format(bb.getCost()))
+                                        .orElse(String.valueOf(bb.getCost()))))
+                .clickHandler((panel, u, clickType, slot) -> {
+                    u.getPlayer().playSound(u.getLocation(), Sound.UI_BUTTON_CLICK, 1F, 1F);
+                    if (clickType == ClickType.LEFT) {
+                        bb.setCost(bb.getCost() + 1.0);
+                    } else if (clickType == ClickType.SHIFT_LEFT) {
+                        bb.setCost(bb.getCost() + 100.0);
+                    } else if (clickType == ClickType.RIGHT && bb.getCost() >= 1.0) {
+                        bb.setCost(bb.getCost() - 1.0);
+                    } else if (clickType == ClickType.SHIFT_RIGHT && bb.getCost() >= 100.0) {
+                        bb.setCost(bb.getCost() - 100.0);
+                    }
+                    if (bb.getCost() < 0) {
+                        bb.setCost(0);
+                    }
+                    plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
+                    panel.getInventory().setItem(41, getCostIcon(bb).getItem());
+                    return true;
+                }).build();
     }
 
     /**
@@ -440,6 +550,40 @@ public class BlueprintManagementPanel {
         .withPrefix(new NameConversationPrefix())
         .withTimeout(90)
         .withFirstPrompt(new DescriptionPrompt(addon, bb))
+        .buildConversation(whom).begin();
+    }
+
+    /**
+     * Gets the panel item for the commands button
+     * @param addon - game mode addon
+     * @param bb - blueprint bundle
+     * @return panel item
+     */
+    protected PanelItem getCommandsIcon(GameModeAddon addon, BlueprintBundle bb) {
+        List<String> cmds = bb.getCommands();
+        return new PanelItemBuilder().icon(Material.COMMAND_BLOCK).name(t("edit-commands"))
+                .description(cmds.isEmpty() ? List.of(t("no-commands")) : cmds)
+                .clickHandler((panel, u, clickType, slot) -> {
+                    u.closeInventory();
+                    askForCommands(u.getPlayer(), addon, bb);
+                    return true;
+                }).build();
+    }
+
+    /**
+     * Opens a conversation to collect commands for the blueprint bundle
+     * @param whom - the conversable player
+     * @param addon - game mode addon
+     * @param bb - blueprint bundle
+     */
+    public void askForCommands(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
+        new ConversationFactory(BentoBox.getInstance())
+        .withModality(true)
+        .withLocalEcho(false)
+        .withPrefix(new NameConversationPrefix())
+        .withTimeout(90)
+        .withFirstPrompt(new CommandsPrompt(addon, bb))
+        .withEscapeSequence(t("commands.quit"))
         .buildConversation(whom).begin();
     }
 

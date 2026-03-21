@@ -12,7 +12,7 @@ import world.bentobox.bentobox.api.flags.Flag;
  * @author tastybento
  * @since 1.6.0
  */
-public class FlagWorldSettingChangeEvent extends FlagChangeEvent {
+public final class FlagWorldSettingChangeEvent extends FlagChangeEvent {
 
     private final World world;
     private final boolean setTo;

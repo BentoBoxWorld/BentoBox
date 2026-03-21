@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -10,7 +10,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -27,24 +26,21 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener;
+import world.bentobox.bentobox.listeners.flags.protection.TestWorldSettings;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Util.class, Bukkit.class })
-public class EnderChestListenerTest extends AbstractCommonSetup {
+
+class EnderChestListenerTest extends CommonTestSetup {
 
     @Mock
     private ItemStack item;
@@ -53,14 +49,17 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
     private Action action;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
+        WorldSettings worldSet = new TestWorldSettings();
+        when(iwm.getWorldSettings(any())).thenReturn(worldSet);
+
         // Ender chest use is not allowed by default
         Flags.ENDER_CHEST.setSetting(world, false);
 
         // No special perms
-        when(player.hasPermission(anyString())).thenReturn(false);
+        when(mockPlayer.hasPermission(anyString())).thenReturn(false);
 
         // Action, Item and clicked block
         action = Action.RIGHT_CLICK_BLOCK;
@@ -68,20 +67,26 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
         when(clickedBlock.getLocation()).thenReturn(location);
         when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
     }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
 
     @Test
-    public void testOnEnderChestOpenNotRightClick() {
+    void testOnEnderChestOpenNotRightClick() {
         action = Action.LEFT_CLICK_AIR;
         BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         new BlockInteractionListener().onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
     }
 
     @Test
-    public void testOnEnderChestOpenEnderChestNotInWorld() {
+    void testOnEnderChestOpenEnderChestNotInWorld() {
         BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Not in world
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
@@ -90,29 +95,29 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
     }
 
     @Test
-    public void testOnEnderChestOpenEnderChestOpPlayer() {
+    void testOnEnderChestOpenEnderChestOpPlayer() {
         BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Op player
-        when(player.isOp()).thenReturn(true);
+        when(mockPlayer.isOp()).thenReturn(true);
         new BlockInteractionListener().onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
     }
 
     @Test
-    public void testOnEnderChestOpenEnderChestHasBypassPerm() {
+    void testOnEnderChestOpenEnderChestHasBypassPerm() {
         BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Has bypass perm
-        when(player.hasPermission(anyString())).thenReturn(true);
+        when(mockPlayer.hasPermission(anyString())).thenReturn(true);
         new BlockInteractionListener().onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
     }
 
     @Test
-    public void testOnEnderChestOpenEnderChestOkay() {
+    void testOnEnderChestOpenEnderChestOkay() {
         BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Enderchest use is okay
         Flags.ENDER_CHEST.setSetting(world, true);
         BlockInteractionListener bil = new BlockInteractionListener();
@@ -122,9 +127,9 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
     }
 
     @Test
-    public void testOnEnderChestOpenEnderChestBlocked() {
+    void testOnEnderChestOpenEnderChestBlocked() {
         BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Enderchest use is blocked
         Flags.ENDER_CHEST.setSetting(world, false);
         new BlockInteractionListener().onPlayerInteract(e);
@@ -133,39 +138,39 @@ public class EnderChestListenerTest extends AbstractCommonSetup {
     }
 
     @Test
-    public void testOnCraftNotEnderChest() {
+    void testOnCraftNotEnderChest() {
         Recipe recipe = mock(Recipe.class);
-        ItemStack item = mock(ItemStack.class);
-        when(item.getType()).thenReturn(Material.STONE);
-        when(recipe.getResult()).thenReturn(item);
+        ItemStack localItem = mock(ItemStack.class);
+        when(localItem.getType()).thenReturn(Material.STONE);
+        when(recipe.getResult()).thenReturn(localItem);
         InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
+        when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory top = mock(Inventory.class);
         when(top.getSize()).thenReturn(9);
         when(view.getTopInventory()).thenReturn(top);
         SlotType type = SlotType.RESULT;
         ClickType click = ClickType.LEFT;
-        InventoryAction action = InventoryAction.PICKUP_ONE;
-        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, action);
+        InventoryAction localAction = InventoryAction.PICKUP_ONE;
+        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, localAction);
         new EnderChestListener().onCraft(e);
         assertFalse(e.isCancelled());
     }
 
     @Test
-    public void testOnCraftEnderChest() {
+    void testOnCraftEnderChest() {
         Recipe recipe = mock(Recipe.class);
-        ItemStack item = mock(ItemStack.class);
-        when(item.getType()).thenReturn(Material.ENDER_CHEST);
-        when(recipe.getResult()).thenReturn(item);
+        ItemStack localItem = mock(ItemStack.class);
+        when(localItem.getType()).thenReturn(Material.ENDER_CHEST);
+        when(recipe.getResult()).thenReturn(localItem);
         InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
+        when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory top = mock(Inventory.class);
         when(top.getSize()).thenReturn(9);
         when(view.getTopInventory()).thenReturn(top);
         SlotType type = SlotType.RESULT;
         ClickType click = ClickType.LEFT;
-        InventoryAction action = InventoryAction.PICKUP_ONE;
-        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, action);
+        InventoryAction localAction = InventoryAction.PICKUP_ONE;
+        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, localAction);
         new EnderChestListener().onCraft(e);
         assertTrue(e.isCancelled());
     }

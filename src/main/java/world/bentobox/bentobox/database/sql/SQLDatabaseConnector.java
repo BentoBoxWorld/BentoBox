@@ -5,12 +5,12 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
@@ -98,7 +98,8 @@ public abstract class SQLDatabaseConnector implements DatabaseConnector
         if (types.isEmpty())
         {
             dataSource.close();
-            Bukkit.getLogger().info("Closed database connection");
+            clearDataSource();
+            BentoBox.getInstance().log("Closed database connection");
         }
     }
 
@@ -121,23 +122,42 @@ public abstract class SQLDatabaseConnector implements DatabaseConnector
         // Only make one connection to the database
         if (dataSource == null)
         {
-            try
-            {
-                dataSource = new HikariDataSource(this.createConfig());
-
-                // Test connection
-                try (Connection connection = dataSource.getConnection())
-                {
-                    connection.isValid(5 * 1000);
-                }
-            }
-            catch (SQLException e)
-            {
-                Bukkit.getLogger().severe("Could not connect to the database! " + e.getMessage());
-                dataSource = null;
-            }
+            initDataSource(this.createConfig());
         }
 
         return dataSource;
+    }
+
+    /**
+     * Initializes the shared static dataSource from the given config.
+     * Static method so that instance methods do not write to a static field (S2696).
+     * @param config the HikariConfig to use
+     */
+    private static void initDataSource(HikariConfig config)
+    {
+        try
+        {
+            dataSource = new HikariDataSource(config);
+
+            // Test connection
+            try (Connection connection = dataSource.getConnection())
+            {
+                connection.isValid(5 * 1000);
+            }
+        }
+        catch (SQLException e)
+        {
+            BentoBox.getInstance().logError("Could not connect to the database! " + e.getMessage());
+            dataSource = null;
+        }
+    }
+
+    /**
+     * Clears the shared static dataSource reference.
+     * Static method so that instance methods do not write to a static field (S2696).
+     */
+    private static void clearDataSource()
+    {
+        dataSource = null;
     }
 }

@@ -22,7 +22,7 @@ public class AdminBlueprintListCommand extends CompositeCommand
     @Override
     public void setup()
     {
-        this.inheritPermission();
+        setPermission("admin.blueprint.list");
         this.setDescription("commands.admin.blueprint.list.description");
     }
 
@@ -54,8 +54,8 @@ public class AdminBlueprintListCommand extends CompositeCommand
         FilenameFilter blueprintFilter = (File dir, String name) -> name.endsWith(BlueprintsManager.BLUEPRINT_SUFFIX);
 
         List<String> blueprintList = Arrays.stream(Objects.requireNonNull(blueprints.list(blueprintFilter))).
-            map(name -> name.substring(0, name.length() - BlueprintsManager.BLUEPRINT_SUFFIX.length())).
-            toList();
+                map(name -> name.substring(0, name.length() - BlueprintsManager.BLUEPRINT_SUFFIX.length())).
+                toList();
 
         if (blueprintList.isEmpty())
         {

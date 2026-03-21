@@ -37,7 +37,7 @@ public class FlagsManager {
 
     public FlagsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
-
+        
         // Register default flags
         Flags.values().forEach(f -> registerFlag(null, f));
     }

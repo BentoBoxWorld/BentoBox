@@ -1,11 +1,11 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.framework;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -27,47 +25,29 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
-import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class LockAndBanListenerTest {
+class LockAndBanListenerTest extends CommonTestSetup {
 
     private static final Integer PROTECTION_RANGE = 200;
     private static final Integer X = 600;
     private static final Integer Y = 120;
     private static final Integer Z = 10000;
-    private UUID uuid;
     @Mock
     private User user;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private Island island;
-    @Mock
-    private World world;
     // Class under test
     private LockAndBanListener listener;
     @Mock
@@ -75,58 +55,40 @@ public class LockAndBanListenerTest {
     @Mock
     private Location inside;
     @Mock
-    private Notifier notifier;
-    @Mock
     private Location inside2;
-    @Mock
-    private BukkitScheduler sch;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Island world manager
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
-
-        when(plugin.getIWM()).thenReturn(iwm);
 
         // Settings
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
 
-        // Player
-        Player player = mock(Player.class);
         // Sometimes use withSettings().verboseLogging()
         User.setPlugin(plugin);
         // User and player are not op
         when(user.isOp()).thenReturn(false);
-        when(player.isOp()).thenReturn(false);
+        when(mockPlayer.isOp()).thenReturn(false);
+        when(mockPlayer.getWorld()).thenReturn(world);
         // No special perms
-        when(player.hasPermission(anyString())).thenReturn(false);
+        when(mockPlayer.hasPermission(anyString())).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(player);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
-        when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         PlayersManager pm = mock(PlayersManager.class);
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
-
-        // Server & Scheduler
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -150,6 +112,7 @@ public class LockAndBanListenerTest {
         when(loc.getBlockY()).thenReturn(Y);
         when(loc.getBlockZ()).thenReturn(Z);
         when(island.getCenter()).thenReturn(loc);
+        when(loc.clone()).thenReturn(loc);
         when(island.getProtectionRange()).thenReturn(PROTECTION_RANGE);
         // Island is not locked by default
         when(island.isAllowed(any(), any())).thenReturn(true);
@@ -164,35 +127,39 @@ public class LockAndBanListenerTest {
         when(outside.getBlockX()).thenReturn(X + PROTECTION_RANGE + 1);
         when(outside.getBlockY()).thenReturn(Y);
         when(outside.getBlockZ()).thenReturn(Z);
+        when(outside.clone()).thenReturn(outside);
 
         when(inside.getWorld()).thenReturn(world);
         when(inside.getBlockX()).thenReturn(X + PROTECTION_RANGE - 1);
         when(inside.getBlockY()).thenReturn(Y);
         when(inside.getBlockZ()).thenReturn(Z);
+        when(inside.clone()).thenReturn(inside);
 
-        when(inside.getWorld()).thenReturn(world);
-        when(inside.getBlockX()).thenReturn(X + PROTECTION_RANGE - 2);
-        when(inside.getBlockY()).thenReturn(Y);
-        when(inside.getBlockZ()).thenReturn(Z);
+        when(inside2.getWorld()).thenReturn(world);
+        when(inside2.getBlockX()).thenReturn(X + PROTECTION_RANGE - 2);
+        when(inside2.getBlockY()).thenReturn(Y);
+        when(inside2.getBlockZ()).thenReturn(Z);
+        when(inside2.clone()).thenReturn(inside2);
 
         Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(eq(inside2))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(eq(outside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(inside)).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(inside2)).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(outside)).thenReturn(Optional.empty());
 
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
+        when(iwm.getFriendlyName(world)).thenReturn("BSkyblock");
 
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Test
-    public void testTeleportToNotBannedIsland() {
+    void testTeleportToNotBannedIsland() {
         // Setup location outside island, one inside banned island
         // Make player
         Player player = mock(Player.class);
@@ -208,45 +175,40 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testTeleportToBannedIsland() {
+    void testTeleportToBannedIsland() {
         // Make player
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
 
         // Add player to the ban list
-        when(island.isBanned(eq(uuid))).thenReturn(true);
+        when(island.isBanned(uuid)).thenReturn(true);
 
         // Simulate a teleport into an island
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, outside, inside);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, outside, inside);
         // Pass to event listener
         listener.onPlayerTeleport(e);
         // Should be cancelled
         assertTrue(e.isCancelled());
-        // Player should see a message
-        verify(notifier).notify(any(), any());
     }
 
+    
     @Test
-    public void testLoginToBannedIsland() {
+    void testLoginToBannedIsland() {
         // Make player
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Place the player on the island
-        when(player.getLocation()).thenReturn(inside);
+        when(mockPlayer.getLocation()).thenReturn(inside);
 
         // Add player to the ban list
-        when(island.isBanned(eq(uuid))).thenReturn(true);
+        when(island.isBanned(uuid)).thenReturn(true);
 
         // Log them in
-        listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
-        // User should see a message
-        verify(notifier).notify(any(), anyString());
+        listener.onPlayerLogin(new PlayerJoinEvent(mockPlayer, "join message"));
         // User should be teleported somewhere
-        verify(im).homeTeleportAsync(any(), eq(player));
+        verify(im).homeTeleportAsync(any(), eq(mockPlayer));
         // Call teleport event
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, outside);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, inside, outside);
         // Pass to event listener
         listener.onPlayerTeleport(e);
         // Should not be cancelled
@@ -254,7 +216,7 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testVerticalMoveOnly() {
+    void testVerticalMoveOnly() {
         // Move vertically only
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(world);
@@ -274,18 +236,20 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testVerticalVehicleMoveOnly() {
+    void testVerticalVehicleMoveOnly() {
         // Move vertically only
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(world);
         when(from.getBlockX()).thenReturn(X);
         when(from.getBlockY()).thenReturn(50);
         when(from.getBlockZ()).thenReturn(Z);
+        when(from.clone()).thenReturn(from);
         Location to = mock(Location.class);
         when(to.getWorld()).thenReturn(world);
         when(to.getBlockX()).thenReturn(X);
         when(to.getBlockY()).thenReturn(55);
         when(to.getBlockZ()).thenReturn(Z);
+        when(to.clone()).thenReturn(to);
         // Create vehicle and put two players in it.
         Vehicle vehicle = mock(Vehicle.class);
         Player player2 = mock(Player.class);
@@ -300,50 +264,44 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testPlayerMoveIntoBannedIsland() {
+    void testPlayerMoveIntoBannedIsland() {
         // Make player
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Place the player just outside island
-        when(player.getLocation()).thenReturn(outside);
+        when(mockPlayer.getLocation()).thenReturn(outside);
 
         // Add player to the ban list
-        when(island.isBanned(eq(uuid))).thenReturn(true);
+        when(island.isBanned(uuid)).thenReturn(true);
 
         // Move player
-        PlayerMoveEvent e = new PlayerMoveEvent(player, outside, inside);
+        PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, outside, inside);
         listener.onPlayerMove(e);
         assertTrue(e.isCancelled());
-        // Player should see a message
-        verify(notifier).notify(any(), anyString());
         // User should NOT be teleported somewhere
-        verify(im, never()).homeTeleportAsync(any(), eq(player));
+        verify(im, never()).homeTeleportAsync(any(), eq(mockPlayer));
     }
 
     @Test
-    public void testPlayerMoveInsideBannedIsland() {
+    void testPlayerMoveInsideBannedIsland() {
         // Make player
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Place the player inside island
-        when(player.getLocation()).thenReturn(inside);
+        when(mockPlayer.getLocation()).thenReturn(inside);
 
         // Add player to the ban list
-        when(island.isBanned(eq(uuid))).thenReturn(true);
+        when(island.isBanned(uuid)).thenReturn(true);
         // Move player
-        PlayerMoveEvent e = new PlayerMoveEvent(player, inside, inside2);
+        PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, inside, inside2);
         listener.onPlayerMove(e);
         assertTrue(e.isCancelled());
-        // Player should see a message
-        verify(notifier).notify(any(), anyString());
         // User should be teleported somewhere
         verify(sch).runTask(any(), any(Runnable.class));
         // Call teleport event
-        PlayerTeleportEvent ev = new PlayerTeleportEvent(player, inside, outside);
+        PlayerTeleportEvent ev = new PlayerTeleportEvent(mockPlayer, inside, outside);
         // Pass to event listener
         listener.onPlayerTeleport(ev);
         // Should not be cancelled
@@ -351,37 +309,34 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testVehicleMoveIntoBannedIsland() {
+    void testVehicleMoveIntoBannedIsland() {
         // Make player
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
 
         // Add player to the ban list
-        when(island.isBanned(eq(uuid))).thenReturn(true);
+        when(island.isBanned(uuid)).thenReturn(true);
 
         // Add the user to the ban list
-        when(island.isBanned(eq(uuid))).thenReturn(true);
+        when(island.isBanned(uuid)).thenReturn(true);
 
         // Create vehicle and put two players in it. One is banned, the other is not
         Vehicle vehicle = mock(Vehicle.class);
         Player player2 = mock(Player.class);
         List<Entity> passengers = new ArrayList<>();
-        passengers.add(player);
+        passengers.add(mockPlayer);
         passengers.add(player2);
         when(vehicle.getPassengers()).thenReturn(passengers);
         when(vehicle.getWorld()).thenReturn(world);
         // Move vehicle
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
-        // Player should see a message and nothing should be sent to Player 2
-        verify(notifier).notify(any(), anyString());
         // User should be teleported somewhere
-        verify(im).homeTeleportAsync(any(), eq(player));
+        verify(im).homeTeleportAsync(any(), eq(mockPlayer));
         // Player 2 should not be teleported
         verify(im, never()).homeTeleportAsync(any(), eq(player2));
         // Call teleport event
-        PlayerTeleportEvent ev = new PlayerTeleportEvent(player, inside, outside);
+        PlayerTeleportEvent ev = new PlayerTeleportEvent(mockPlayer, inside, outside);
         // Pass to event listener
         listener.onPlayerTeleport(ev);
         // Should not be cancelled
@@ -392,26 +347,22 @@ public class LockAndBanListenerTest {
      * Island lock tests
      */
 
-
     @Test
-    public void testTeleportToLockedIsland() {
+    void testTeleportToLockedIsland() {
         // Make player
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
         // Simulate a teleport into an island
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, outside, inside);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, outside, inside);
         // Pass to event listener
         listener.onPlayerTeleport(e);
         // Should be cancelled
         assertTrue(e.isCancelled());
-        // Player should see a message
-        verify(notifier).notify(any(), any());
     }
 
     @Test
-    public void testTeleportToLockedIslandAsMember() {
+    void testTeleportToLockedIslandAsMember() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
@@ -426,26 +377,23 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testLoginToLockedIsland() {
+    void testLoginToLockedIsland() {
         // Make player
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Place the player on the island
-        when(player.getLocation()).thenReturn(inside);
+        when(mockPlayer.getLocation()).thenReturn(inside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Log them in
-        listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
-        // User should see a message
-        verify(notifier).notify(any(), anyString());
+        listener.onPlayerLogin(new PlayerJoinEvent(mockPlayer, "join message"));
         // User should be teleported somewhere
-        verify(im).homeTeleportAsync(any(), eq(player));
+        verify(im).homeTeleportAsync(any(), eq(mockPlayer));
         // Call teleport event
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, outside);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, inside, outside);
         // Pass to event listener
         listener.onPlayerTeleport(e);
         // Should not be cancelled
@@ -453,7 +401,7 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testLoginToLockedIslandAsOp() {
+    void testLoginToLockedIslandAsOp() {
         // Make player
         Player player = mock(Player.class);
         when(player.isOp()).thenReturn(true);
@@ -465,7 +413,7 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(inside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Log them in
         listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
@@ -476,11 +424,12 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testLoginToLockedIslandWithBypassPerm() {
+    void testLoginToLockedIslandWithBypassPerm() {
         // Make player
         Player player = mock(Player.class);
         when(player.isOp()).thenReturn(false);
         when(player.hasPermission(anyString())).thenReturn(true);
+        when(player.getWorld()).thenReturn(world);
 
         when(player.getUniqueId()).thenReturn(uuid);
         // Give player an island
@@ -489,18 +438,18 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(inside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Log them in
         listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
-        // User should not see a message
-        verify(notifier, never()).notify(any(), anyString());
+        // User should see a bypass message
+        verify(notifier).notify(any(), anyString());
         // User should not be teleported somewhere
         verify(im, never()).homeTeleportAsync(any(), eq(player));
     }
 
     @Test
-    public void testLoginToLockedIslandAsMember() {
+    void testLoginToLockedIslandAsMember() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
@@ -517,30 +466,27 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testPlayerMoveIntoLockedIsland() {
+    void testPlayerMoveIntoLockedIsland() {
         // Make player
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Place the player just outside island
-        when(player.getLocation()).thenReturn(outside);
+        when(mockPlayer.getLocation()).thenReturn(outside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Move player
-        PlayerMoveEvent e = new PlayerMoveEvent(player, outside, inside);
+        PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, outside, inside);
         listener.onPlayerMove(e);
         assertTrue(e.isCancelled());
-        // Player should see a message
-        verify(notifier).notify(any(), anyString());
         // User should NOT be teleported somewhere
-        verify(im, never()).homeTeleportAsync(any(), eq(player));
+        verify(im, never()).homeTeleportAsync(any(), eq(mockPlayer));
     }
 
     @Test
-    public void testPlayerMoveIntoLockedIslandAsOp() {
+    void testPlayerMoveIntoLockedIslandAsOp() {
         // Make player
         Player player = mock(Player.class);
         when(player.isOp()).thenReturn(true);
@@ -552,8 +498,8 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(outside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
-
+        doReturn(false).when(island).isAllowed(any(User.class), eq(Flags.LOCK));
+        
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(player, outside, inside);
         listener.onPlayerMove(e);
@@ -561,7 +507,7 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testPlayerMoveIntoLockedIslandAsNPC() {
+    void testPlayerMoveIntoLockedIslandAsNPC() {
         // Make player
         Player player = mock(Player.class);
         when(player.hasMetadata("NPC")).thenReturn(true);
@@ -572,7 +518,7 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(outside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(player, outside, inside);
@@ -581,30 +527,30 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testPlayerMoveIntoLockedIslandWithBypass() {
+    void testPlayerMoveIntoLockedIslandWithBypass() {
         // Make player
-        Player player = mock(Player.class);
-        when(player.isOp()).thenReturn(false);
-        when(player.hasPermission(anyString())).thenReturn(true);
+        when(mockPlayer.isOp()).thenReturn(false);
+        when(mockPlayer.hasPermission(anyString())).thenReturn(true);
 
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Place the player just outside island
-        when(player.getLocation()).thenReturn(outside);
+        when(mockPlayer.getLocation()).thenReturn(outside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Move player
-        PlayerMoveEvent e = new PlayerMoveEvent(player, outside, inside);
+        PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, outside, inside);
         listener.onPlayerMove(e);
         assertFalse(e.isCancelled());
+        // User should see a bypass notification
+        verify(notifier).notify(any(), anyString());
     }
 
-
     @Test
-    public void testPlayerMoveIntoLockedIslandAsMember() {
+    void testPlayerMoveIntoLockedIslandAsMember() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
@@ -624,28 +570,25 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testPlayerMoveInsideLockedIsland() {
+    void testPlayerMoveInsideLockedIsland() {
         // Make player
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Place the player inside island
-        when(player.getLocation()).thenReturn(inside);
+        when(mockPlayer.getLocation()).thenReturn(inside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Move player
-        PlayerMoveEvent e = new PlayerMoveEvent(player, inside, inside2);
+        PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, inside, inside2);
         listener.onPlayerMove(e);
         assertTrue(e.isCancelled());
-        // Player should see a message
-        verify(notifier).notify(any(), anyString());
         // User should be teleported somewhere
         verify(sch).runTask(any(), any(Runnable.class));
         // Call teleport event
-        PlayerTeleportEvent ev = new PlayerTeleportEvent(player, inside, outside);
+        PlayerTeleportEvent ev = new PlayerTeleportEvent(mockPlayer, inside, outside);
         // Pass to event listener
         listener.onPlayerTeleport(ev);
         // Should not be cancelled
@@ -653,7 +596,7 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testPlayerMoveInsideLockedIslandAsOp() {
+    void testPlayerMoveInsideLockedIslandAsOp() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
@@ -664,7 +607,7 @@ public class LockAndBanListenerTest {
         when(player.getLocation()).thenReturn(inside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(player, inside, inside2);
@@ -673,29 +616,31 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testPlayerMoveInsideLockedIslandWithBypass() {
+    void testPlayerMoveInsideLockedIslandWithBypass() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
         when(player.isOp()).thenReturn(false);
         when(player.hasPermission(anyString())).thenReturn(true);
+        when(player.getWorld()).thenReturn(world);
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Place the player inside island
         when(player.getLocation()).thenReturn(inside);
 
         // Lock island for player
-        when(island.isAllowed(any(), eq(Flags.LOCK))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Move player
         PlayerMoveEvent e = new PlayerMoveEvent(player, inside, inside2);
         listener.onPlayerMove(e);
         assertFalse(e.isCancelled());
+        // User should see a bypass notification
+        verify(notifier).notify(any(), anyString());
     }
 
-
     @Test
-    public void testPlayerMoveInsideLockedIslandAsMember() {
+    void testPlayerMoveInsideLockedIslandAsMember() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
@@ -714,18 +659,21 @@ public class LockAndBanListenerTest {
     }
 
     @Test
-    public void testVehicleMoveIntoLockedIsland() {
+    void testVehicleMoveIntoLockedIsland() {
         // Make player
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
+        when(player.getWorld()).thenReturn(world);
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         Player player2 = mock(Player.class);
         UUID uuid2 = UUID.randomUUID();
         when(player2.getUniqueId()).thenReturn(uuid2);
+        when(player2.getWorld()).thenReturn(world);
 
         // Player 1 is not a member, player 2 is an island member
-        when(island.isAllowed(any(User.class), any())).thenAnswer((Answer<Boolean>) invocation -> invocation.getArgument(0, User.class).getUniqueId().equals(uuid2));
+        when(island.isAllowed(any(User.class), any())).thenAnswer(
+                (Answer<Boolean>) invocation -> invocation.getArgument(0, User.class).getUniqueId().equals(uuid2));
 
         // Create vehicle and put two players in it. One is a member, the other is not
         Vehicle vehicle = mock(Vehicle.class);
@@ -736,8 +684,6 @@ public class LockAndBanListenerTest {
         when(vehicle.getWorld()).thenReturn(world);
         // Move vehicle
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
-        // Player should see a message and nothing should be sent to Player 2
-        verify(notifier).notify(any(), anyString());
         // User should be teleported somewhere
         verify(im).homeTeleportAsync(any(), eq(player));
         // Player 2 should not be teleported

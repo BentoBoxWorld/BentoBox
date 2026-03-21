@@ -10,7 +10,8 @@ import world.bentobox.bentobox.api.flags.Flag;
  * @author Poslovitch
  * @since 1.6.0
  */
-public abstract class FlagChangeEvent extends BentoBoxEvent {
+public abstract sealed class FlagChangeEvent extends BentoBoxEvent
+        permits FlagProtectionChangeEvent, FlagSettingChangeEvent, FlagWorldSettingChangeEvent {
 
     private final UUID player;
     private final Flag editedFlag;

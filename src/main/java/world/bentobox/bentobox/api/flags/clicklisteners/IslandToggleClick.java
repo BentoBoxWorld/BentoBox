@@ -17,11 +17,12 @@ import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * Toggles a island setting on/off
+ * Toggles an island setting on/off
  * @author tastybento
  *
  */
@@ -45,40 +46,42 @@ public class IslandToggleClick implements ClickHandler {
 
         // Permission prefix
         String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld()));
-        String reqPerm = prefix + "settings." + id;
-        String allPerms = prefix + "settings.*";
-        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)
-                && !user.isOp() && !user.hasPermission(prefix + "admin.settings")) {
-            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, reqPerm);
+        if (!hasSettingsPermission(user, prefix)) {
+            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, prefix + "settings." + id);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
         // Get the island for this tab
         Island island = st.getIsland();
-        if (island != null && (user.isOp() || island.isAllowed(user, Flags.CHANGE_SETTINGS) || user.hasPermission(prefix + "admin.settings")))
-        {
+        if (island != null && canChangeSettings(user, island, prefix)) {
             plugin.getFlagsManager().getFlag(id).ifPresent(flag ->
-            {
-                if (click.equals(ClickType.SHIFT_LEFT) && user.isOp())
-                {
-                    shiftLeftClick(user, flag);
-                }
-                else
-                {
-                    // Check cooldown
-                    if (!user.isOp() && island.isCooldown(flag))
-                    {
-                        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
-                        user.notify("protection.panel.flag-item.setting-cooldown");
-                        return;
-                    }
-                    toggleFlag(user, flag, island);
-                }
-            });
+                    handleFlagClick(user, click, flag, island));
         } else {
             reportError(user, island);
         }
         return true;
+    }
+
+    private boolean hasSettingsPermission(User user, String prefix) {
+        return user.isOp() || user.hasPermission(prefix + "settings." + id)
+                || user.hasPermission(prefix + "settings.*")
+                || user.hasPermission(prefix + "admin.settings");
+    }
+
+    private boolean canChangeSettings(User user, Island island, String prefix) {
+        return user.isOp() || island.isAllowed(user, Flags.CHANGE_SETTINGS)
+                || user.hasPermission(prefix + "admin.settings");
+    }
+
+    private void handleFlagClick(User user, ClickType click, Flag flag, Island island) {
+        if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
+            shiftLeftClick(user, flag);
+        } else if (!user.isOp() && island.isCooldown(flag)) {
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
+            user.notify("protection.panel.flag-item.setting-cooldown");
+        } else {
+            toggleFlag(user, flag, island);
+        }
     }
 
     private void toggleFlag(User user, Flag flag, Island island) {
@@ -112,7 +115,7 @@ public class IslandToggleClick implements ClickHandler {
             // Player is not the allowed to change settings.
             user.sendMessage("general.errors.insufficient-rank",
                     TextVariables.RANK,
-                    user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user))));
+                    user.getTranslation(RanksManager.getInstance().getRank(Objects.requireNonNull(island).getRank(user))));
         }
 
         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);

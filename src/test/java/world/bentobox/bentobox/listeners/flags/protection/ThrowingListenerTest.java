@@ -1,42 +1,32 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Witch;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
-import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.CommonTestSetup;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
-public class ThrowingListenerTest extends AbstractCommonSetup {
+class ThrowingListenerTest extends CommonTestSetup {
 
     private ThrowingListener tl;
 
-    /**
-     */
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         // Default is that everything is allowed
@@ -44,15 +34,21 @@ public class ThrowingListenerTest extends AbstractCommonSetup {
         // Thrown listener
         tl = new ThrowingListener();
     }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
 
     /**
      * Test method for {@link ThrowingListener#onPlayerThrowPotion(org.bukkit.event.entity.ProjectileLaunchEvent)}.
      */
     @Test
-    public void testOnPlayerThrowPotion() {
+    void testOnPlayerThrowPotion() {
         ThrownPotion entity = mock(ThrownPotion.class);
         when(entity.getLocation()).thenReturn(location);
-        when(entity.getShooter()).thenReturn(player);
+        when(entity.getShooter()).thenReturn(mockPlayer);
         ProjectileLaunchEvent e = new ProjectileLaunchEvent(entity);
         tl.onPlayerThrowPotion(e);
         assertFalse(e.isCancelled());
@@ -63,11 +59,11 @@ public class ThrowingListenerTest extends AbstractCommonSetup {
      * Test method for {@link ThrowingListener#onPlayerThrowPotion(org.bukkit.event.entity.ProjectileLaunchEvent)}.
      */
     @Test
-    public void testOnPlayerThrowPotionNotAllowed() {
+    void testOnPlayerThrowPotionNotAllowed() {
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
         ThrownPotion entity = mock(ThrownPotion.class);
         when(entity.getLocation()).thenReturn(location);
-        when(entity.getShooter()).thenReturn(player);
+        when(entity.getShooter()).thenReturn(mockPlayer);
         ProjectileLaunchEvent e = new ProjectileLaunchEvent(entity);
         tl.onPlayerThrowPotion(e);
         assertTrue(e.isCancelled());
@@ -78,7 +74,7 @@ public class ThrowingListenerTest extends AbstractCommonSetup {
      * Test method for {@link ThrowingListener#onPlayerThrowPotion(org.bukkit.event.entity.ProjectileLaunchEvent)}.
      */
     @Test
-    public void testOnPlayerThrowPotionNonHuman() {
+    void testOnPlayerThrowPotionNonHuman() {
         ThrownPotion entity = mock(ThrownPotion.class);
         when(entity.getLocation()).thenReturn(location);
         Witch witch = mock(Witch.class);
@@ -97,7 +93,7 @@ public class ThrowingListenerTest extends AbstractCommonSetup {
      * Test method for {@link ThrowingListener#onPlayerThrowPotion(org.bukkit.event.entity.ProjectileLaunchEvent)}.
      */
     @Test
-    public void testOnPlayerThrowPotionNotAllowedNonHuman() {
+    void testOnPlayerThrowPotionNotAllowedNonHuman() {
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
         ThrownPotion entity = mock(ThrownPotion.class);
         when(entity.getLocation()).thenReturn(location);

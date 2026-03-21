@@ -1,84 +1,69 @@
 package world.bentobox.bentobox.api.events.island;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.plugin.PluginManager;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
+import world.bentobox.bentobox.managers.IslandsManager;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Bukkit.class })
-public class IslandEventTest {
+class IslandEventTest extends CommonTestSetup {
 
-    private Island island;
-    private UUID uuid;
-    @Mock
-    private Location location;
     @Mock
     private @NonNull BlueprintBundle blueprintBundle;
     @Mock
     private IslandDeletion deletedIslandInfo;
-    @Mock
-    private PluginManager pim;
+    
+    private Island testIsland;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        uuid = UUID.randomUUID();
-        // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+        super.setUp();
+        Mockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
+
         // Island
-        island = new Island();
+        testIsland = new Island();
         when(location.clone()).thenReturn(location);
-        island.setCenter(location);
+        testIsland.setCenter(location);
     }
 
-    /**
-     */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.events.island.IslandEvent#IslandEvent(world.bentobox.bentobox.database.objects.Island, java.util.UUID, boolean, org.bukkit.Location, world.bentobox.bentobox.api.events.island.IslandEvent.Reason)}.
      */
     @Test
-    public void testIslandEvent() {
+    void testIslandEvent() {
         for (Reason reason: Reason.values()) {
-            IslandEvent e = new IslandEvent(island, uuid, false, location, reason);
+            IslandEvent e = new IslandEvent(testIsland, uuid, false, location, reason);
             assertEquals(reason, e.getReason());
-            assertEquals(island, e.getIsland());
+            assertSame(testIsland, e.getIsland());
             assertEquals(uuid, e.getPlayerUUID());
-            assertEquals(location, e.getLocation());
+            assertSame(location, e.getLocation());
         }
     }
 
@@ -86,16 +71,16 @@ public class IslandEventTest {
      * Test method for {@link world.bentobox.bentobox.api.events.island.IslandEvent#builder()}.
      */
     @Test
-    public void testBuilder() {
+    void testBuilder() {
         for (Reason reason: Reason.values()) {
             IslandBaseEvent e = IslandEvent.builder()
                     .admin(true)
                     .blueprintBundle(blueprintBundle)
                     .deletedIslandInfo(deletedIslandInfo)
                     .involvedPlayer(uuid)
-                    .island(island)
+                    .island(testIsland)
                     .location(location)
-                    .oldIsland(island)
+                    .oldIsland(testIsland)
                     .protectionRange(120, 100)
                     .reason(reason)
                     .build();
@@ -122,6 +107,7 @@ public class IslandEventTest {
                 case UNLOCK -> assertTrue(e instanceof IslandUnlockEvent);
                 case UNREGISTERED -> assertTrue(e instanceof IslandUnregisteredEvent);
                 default -> {
+                    // Remaining Reason values do not have a dedicated event subtype; no assertion needed
                 }
             }
         }

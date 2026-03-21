@@ -1,10 +1,11 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.lang.reflect.Method;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.AbstractArrow;
+import org.bukkit.block.data.type.CaveVinesPlant;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.ItemFrame;
@@ -19,6 +20,8 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
+
+import com.google.common.base.Enums;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
@@ -35,22 +38,26 @@ public class BreakBlocksListener extends FlagListener {
         Player p = e.getPlayer();
         Location l = e.getBlock().getLocation();
         Material m = e.getBlock().getType();
-        switch (m)
-        {
-        case MELON -> this.checkIsland(e, p, l, Flags.HARVEST);
-        case PUMPKIN -> this.checkIsland(e, p, l, Flags.HARVEST);
-        default -> {
+        if (m.equals(Material.MELON) || m.equals(Material.PUMPKIN)) {
+            this.checkIsland(e, p, l, Flags.HARVEST);
+        } else {
             // Crops
-            if (Tag.CROPS.isTagged(m) 
-                    && !m.equals(Material.MELON_STEM) 
-                    && !m.equals(Material.PUMPKIN_STEM) 
-                    && !m.equals(Material.ATTACHED_MELON_STEM) 
-                    && !m.equals(Material.ATTACHED_PUMPKIN_STEM)) {
+            if ((Tag.CROPS.isTagged(m)
+                    && !m.equals(Material.MELON_STEM)
+                    && !m.equals(Material.PUMPKIN_STEM)
+                    && !m.equals(Material.ATTACHED_MELON_STEM)
+                    && !m.equals(Material.ATTACHED_PUMPKIN_STEM))
+                    || m == Material.COCOA
+                    || m == Material.SWEET_BERRY_BUSH
+                    || m == Material.BAMBOO
+                    || m == Material.NETHER_WART
+                    || m == Material.CACTUS
+                    || m == Material.SUGAR_CANE
+                    ) {
                 this.checkIsland(e,  p,  l, Flags.HARVEST);
             } else {
                 checkIsland(e, p, l, Flags.BREAK_BLOCKS);
             }
-        }
         }
     }
 
@@ -71,6 +78,21 @@ public class BreakBlocksListener extends FlagListener {
         }
     }
 
+    private static final Method BERRIES_CHECK;
+
+    static {
+        Method m = null;
+        try {
+            m = CaveVinesPlant.class.getMethod("hasBerries");
+        } catch (NoSuchMethodException ignored) {
+            try {
+                m = CaveVinesPlant.class.getMethod("isBerries");
+            } catch (NoSuchMethodException ignored2) {
+                // Neither method name exists in this version; BERRIES_CHECK will remain null
+            }
+        }
+        BERRIES_CHECK = m;
+    }
     /**
      * Handles breaking objects
      *
@@ -79,14 +101,43 @@ public class BreakBlocksListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e)
     {
-        // Only handle hitting things
-        if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getClickedBlock() == null)
-        {
+        if (e.getClickedBlock() == null) {
             return;
         }
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
         Material m = e.getClickedBlock().getType();
+        // Right click handling
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Material clickedType = e.getClickedBlock().getType();
+            switch (clickedType) {
+            case CAVE_VINES, CAVE_VINES_PLANT -> {
+                try {
+                    boolean hasBerries = (Boolean) BERRIES_CHECK
+                            .invoke(e.getClickedBlock().getBlockData());
+                    if (hasBerries) {
+                        this.checkIsland(e, p, l, Flags.HARVEST);
+                    }
+                } catch (ReflectiveOperationException ex) {
+                    getPlugin().logStacktrace(ex);
+                }
+            }
+            case SWEET_BERRY_BUSH -> this.checkIsland(e, p, l, Flags.HARVEST);
+            case ROOTED_DIRT -> this.checkIsland(e, p, l, Flags.BREAK_BLOCKS);
+            default -> { // Do nothing
+            }
+            }
+            return;
+        }
+        // Only handle hitting things
+        if (e.getAction() != Action.LEFT_CLICK_BLOCK || e.getClickedBlock() == null)
+        {
+            return;
+        }
+        if (Enums.getIfPresent(Material.class, "TRIAL_SPAWNER").isPresent() && m.equals(Material.TRIAL_SPAWNER)) {
+            this.checkIsland(e, p, l, Flags.BREAK_SPAWNERS);
+            return;
+        }
         switch (m)
         {
         case CAKE -> this.checkIsland(e, p, l, Flags.BREAK_BLOCKS);
@@ -167,25 +218,21 @@ public class BreakBlocksListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onProjectileHitBreakBlock(ProjectileHitEvent e) {
-        // We want to make sure this is an actual projectile (arrow or trident)
-        if (!(e.getEntity() instanceof AbstractArrow)) {
+        if (e.getHitBlock() == null) {
             return;
         }
 
-        // We want to make sure it hit a CHORUS_FLOWER
-        if (e.getHitBlock() == null || !e.getHitBlock().getType().equals(Material.CHORUS_FLOWER)) {
+        // Check if the hit block is a Chorus Flower or a Decorated Pot
+        if(!(e.getHitBlock().getType().equals(Material.CHORUS_FLOWER) ||
+                e.getHitBlock().getType().equals(Material.DECORATED_POT))) {
             return;
         }
 
         // Find out who fired the arrow
         if (e.getEntity().getShooter() instanceof Player s &&
                 !checkIsland(e, s, e.getHitBlock().getLocation(), Flags.BREAK_BLOCKS)) {
-            final BlockData data = e.getHitBlock().getBlockData();
-            // We seemingly can't prevent the block from being destroyed
-            // So we need to put it back with a slight delay (yup, this is hacky - it makes the block flicker sometimes)
-            e.getHitBlock().setType(Material.AIR); // prevents the block from dropping a chorus flower
-            getPlugin().getServer().getScheduler().runTask(getPlugin(), () -> e.getHitBlock().setBlockData(data, true));
-            // Sorry, this might also cause some ghost blocks!
+
+            e.setCancelled(true); // Prevents the block from being destroyed
         }
     }
 }

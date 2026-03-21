@@ -13,6 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.eclipse.jdt.annotation.NonNull;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -173,6 +174,16 @@ public interface WorldSettings extends ConfigObject {
      * @return the netherSpawnRadius
      */
     int getNetherSpawnRadius();
+
+    /**
+     * Get the radius of the spawn protection area for the standard (vanilla) End world.
+     * This is only used when the end world is not an island end world.
+     * @return the end spawn protection radius, defaults to 0 (no protection)
+     * @since 2.4.3
+     */
+    default int getEndSpawnRadius() {
+        return 0;
+    }
 
     /**
      * @return the permission prefix
@@ -549,6 +560,7 @@ public interface WorldSettings extends ConfigObject {
      * Returns all aliases for main admin command.
      * It is assumed that all aliases are split with whitespace between them.
      * String cannot be empty.
+     * The first command listed is the "label" in the API, and after that are the aliases
      * Default value: {@code getFriendlyName() + "admin"} (to retain backward compatibility).
      * @return String value
      * @since 1.13.0
@@ -563,6 +575,7 @@ public interface WorldSettings extends ConfigObject {
      * Returns all aliases for main player command.
      * It is assumed that all aliases are split with whitespace between them.
      * String cannot be empty.
+     * The first command listed is the "label" in the API, and after that are the aliases
      * Default value: {@code getFriendlyName()} (to retain backward compatibility).
      * @return String value
      * @since 1.13.0
@@ -574,7 +587,7 @@ public interface WorldSettings extends ConfigObject {
 
 
     /**
-     * Returns sub-command for users when they execute main user command and they have an
+     * Returns sub-command for users when they execute main user command, and they have an
      * island.
      * If defined sub-command does not exist in accessible user command list, then it will
      * still call "go" sub-command.
@@ -589,7 +602,7 @@ public interface WorldSettings extends ConfigObject {
 
 
     /**
-     * Returns default sub-command for users when they execute main user command and they
+     * Returns default sub-command for users when they execute main user command, and they
      * do not have an island.
      * If defined sub-command does not exist in accessible user command list, then it will
      * still call "create" sub-command.
@@ -630,6 +643,24 @@ public interface WorldSettings extends ConfigObject {
      * @since 1.16.0
      */
     default boolean isCheckForBlocks() {
+        return true;
+    }
+
+    /**
+     * Get the number of concurrent islands a player can have in the world
+     * @return 1 by default
+     * @since 2.0.0
+     */
+    default int getConcurrentIslands() {
+        return BentoBox.getInstance().getSettings().getIslandNumber();
+    }
+
+    /**
+     * Remove islands when players join a team and not allow players to have other islands if they are in a team.
+     * @return true or false
+     * @since 2.3.0
+     */
+    default boolean isDisallowTeamMemberIslands() {
         return true;
     }
 }

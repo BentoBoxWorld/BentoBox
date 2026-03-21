@@ -41,7 +41,7 @@ public class DescriptionPrompt extends StringPrompt {
             for (String line : ((List<String>) context.getSessionData(DESCRIPTION))) {
                 sb.append(user.getTranslation("commands.admin.blueprint.management.description.default-color"));
                 sb.append(line);
-                sb.append(System.getProperty("line.separator"));
+                sb.append(System.lineSeparator());
             }
             return sb.toString();
         }

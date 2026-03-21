@@ -1,11 +1,8 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -17,18 +14,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.user.User;
@@ -40,9 +32,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class AdminBlueprintsListCommandTest {
+class AdminBlueprintsListCommandTest extends CommonTestSetup {
 
     @Mock
     private AdminBlueprintCommand ac;
@@ -53,13 +43,10 @@ public class AdminBlueprintsListCommandTest {
     private AdminBlueprintListCommand list;
     private File dataFolder;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();        
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -95,24 +82,21 @@ public class AdminBlueprintsListCommandTest {
 
     }
 
-    /**
-     */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
-        User.clearUsers();
+        super.tearDown();
         Files.walk(dataFolder.toPath())
         .sorted(Comparator.reverseOrder())
         .map(Path::toFile)
         .forEach(File::delete);
-        Mockito.framework().clearInlineMocks();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#AdminBlueprintListCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
-    public void testAdminBlueprintListCommand() {
-
+    void testAdminBlueprintListCommand() {
         assertEquals("list", list.getLabel());
     }
 
@@ -120,7 +104,7 @@ public class AdminBlueprintsListCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("commands.admin.blueprint.list.description", list.getDescription());
     }
 
@@ -128,7 +112,7 @@ public class AdminBlueprintsListCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecute() {
+    void testCanExecute() {
         assertTrue(list.canExecute(user, "", Collections.emptyList()));
         assertFalse(list.canExecute(user, "", Collections.singletonList("extraneous")));
     }
@@ -137,7 +121,7 @@ public class AdminBlueprintsListCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoBlueprintsFolder() {
+    void testExecuteUserStringListOfStringNoBlueprintsFolder() {
         assertFalse(list.execute(user, "", Collections.emptyList()));
         Mockito.verify(user).sendMessage("commands.admin.blueprint.list.no-blueprints");
     }
@@ -146,7 +130,7 @@ public class AdminBlueprintsListCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoBlueprintsFilesEmptyFolder() {
+    void testExecuteUserStringListOfStringNoBlueprintsFilesEmptyFolder() {
         File blueprintFolder = new File(dataFolder, "blueprints");
         blueprintFolder.mkdirs();
         assertFalse(list.execute(user, "", Collections.emptyList()));
@@ -157,7 +141,7 @@ public class AdminBlueprintsListCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoBlueprintsFiles() throws IOException {
+    void testExecuteUserStringListOfStringNoBlueprintsFiles() throws IOException {
         File blueprintFolder = new File(dataFolder, "blueprints");
         blueprintFolder.mkdirs();
         new File(blueprintFolder, "random.txt").createNewFile();
@@ -169,7 +153,7 @@ public class AdminBlueprintsListCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringWithBlueprintsFiles() throws IOException {
+    void testExecuteUserStringListOfStringWithBlueprintsFiles() throws IOException {
         File blueprintFolder = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
         blueprintFolder.mkdirs();
         new File(blueprintFolder, "island" + BlueprintsManager.BLUEPRINT_SUFFIX).createNewFile();

@@ -10,10 +10,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -33,6 +36,13 @@ import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import com.google.common.base.Enums;
+
+import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.OfflineMessageEvent;
@@ -42,13 +52,15 @@ import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * Combines {@link Player}, {@link OfflinePlayer} and {@link CommandSender} to provide convenience methods related to
- * localization and generic interactions.
+ * Combines {@link Player}, {@link OfflinePlayer} and {@link CommandSender} to
+ * provide convenience methods related to localization and generic interactions.
  * <br/>
- * Therefore, a User could usually be a Player, an OfflinePlayer or the server's console.
- * Preliminary checks should be performed before trying to run methods that relies on a specific implementation.
- * <br/><br/>
- * It is good practice to use the User instance whenever possible instead of Player or CommandSender.
+ * Therefore, a User could usually be a Player, an OfflinePlayer or the server's
+ * console. Preliminary checks should be performed before trying to run methods
+ * that relies on a specific implementation. <br/>
+ * <br/>
+ * It is good practice to use the User instance whenever possible instead of
+ * Player or CommandSender.
  *
  * @author tastybento
  */
@@ -60,19 +72,23 @@ public class User implements MetaDataAble {
     private static final Map<Particle, Class<?>> VALIDATION_CHECK;
     static {
         Map<Particle, Class<?>> v = new EnumMap<>(Particle.class);
-        v.put(Particle.REDSTONE, Particle.DustOptions.class);
-        v.put(Particle.ITEM_CRACK, ItemStack.class);
-        v.put(Particle.BLOCK_CRACK, BlockData.class);
-        v.put(Particle.BLOCK_DUST, BlockData.class);
+        v.put(Enums.getIfPresent(Particle.class, "DUST")
+                .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME)), Particle.DustOptions.class);
+        if (Enums.getIfPresent(Particle.class, "ITEM").isPresent()) {
+            // 1.20.6 Particles
+            v.put(Particle.ITEM, ItemStack.class);
+            v.put(Particle.ITEM_COBWEB, ItemStack.class);
+            v.put(Particle.BLOCK, BlockData.class);
+            v.put(Particle.DUST_PILLAR, BlockData.class);
+            v.put(Particle.ENTITY_EFFECT, Color.class);
+        }
         v.put(Particle.FALLING_DUST, BlockData.class);
         v.put(Particle.BLOCK_MARKER, BlockData.class);
         v.put(Particle.DUST_COLOR_TRANSITION, DustTransition.class);
         v.put(Particle.VIBRATION, Vibration.class);
         v.put(Particle.SCULK_CHARGE, Float.class);
         v.put(Particle.SHRIEK, Integer.class);
-        v.put(Particle.LEGACY_BLOCK_CRACK, BlockData.class);
-        v.put(Particle.LEGACY_BLOCK_DUST, BlockData.class);
-        v.put(Particle.LEGACY_FALLING_DUST, BlockData.class);
+
         VALIDATION_CHECK = Collections.unmodifiableMap(v);
     }
 
@@ -85,6 +101,7 @@ public class User implements MetaDataAble {
 
     /**
      * Gets an instance of User from a CommandSender
+     * 
      * @param sender - command sender, e.g. console
      * @return user - user
      */
@@ -99,6 +116,7 @@ public class User implements MetaDataAble {
 
     /**
      * Gets an instance of User from a Player object.
+     * 
      * @param player - the player
      * @return user - user
      */
@@ -113,6 +131,7 @@ public class User implements MetaDataAble {
     /**
      * Gets an instance of User from a UUID. This will always return a user object.
      * If the player is offline then the getPlayer value will be null.
+     * 
      * @param uuid - UUID
      * @return user - user
      */
@@ -127,6 +146,7 @@ public class User implements MetaDataAble {
 
     /**
      * Gets an instance of User from an OfflinePlayer
+     * 
      * @param offlinePlayer offline Player
      * @return user
      * @since 1.3.0
@@ -141,12 +161,12 @@ public class User implements MetaDataAble {
 
     /**
      * Removes this player from the User cache and player manager cache
+     * 
      * @param player the player
      */
     public static void removePlayer(Player player) {
         if (player != null) {
             users.remove(player.getUniqueId());
-            BentoBox.getInstance().getPlayers().removePlayer(player);
         }
     }
 
@@ -193,6 +213,7 @@ public class User implements MetaDataAble {
 
     /**
      * Used for testing
+     * 
      * @param p - plugin
      */
     public static void setPlugin(BentoBox p) {
@@ -200,11 +221,12 @@ public class User implements MetaDataAble {
     }
 
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        return sender.getEffectivePermissions();
+        return sender == null ? Set.of() : sender.getEffectivePermissions();
     }
 
     /**
      * Get the user's inventory
+     * 
      * @return player's inventory
      */
     @NonNull
@@ -214,15 +236,19 @@ public class User implements MetaDataAble {
 
     /**
      * Get the user's location
+     * 
      * @return location
      */
     @NonNull
     public Location getLocation() {
-        return Objects.requireNonNull(player, "getLocation can only be called for online players!").getLocation();
+        Player p = Objects.requireNonNull(player, "getLocation can only be called for online players!");
+        Location loc = p.getLocation();
+        return Objects.requireNonNull(loc, "Player's location cannot be null! The player may not have a location (has never played).");
     }
 
     /**
      * Get the user's name
+     * 
      * @return player's name
      */
     @NonNull
@@ -232,16 +258,31 @@ public class User implements MetaDataAble {
 
     /**
      * Get the user's display name
-     * @return player's display name if the player is online otherwise just their name
+     * 
+     * @return player's display name if the player is online otherwise just their
+     *         name
      * @since 1.22.1
      */
+    @SuppressWarnings("deprecation")
     @NonNull
     public String getDisplayName() {
         return player != null ? player.getDisplayName() : plugin.getPlayers().getName(playerUUID);
     }
 
     /**
+     * Get the user's display name as a text Component
+     * 
+     * @return player's display name if the player is online otherwise just their
+     *         name
+     * @since 3.4.0
+     */
+    public Component displayName() {
+        return player != null ? player.displayName() : Component.text(plugin.getPlayers().getName(playerUUID));
+    }
+
+    /**
      * Check if the User is a player before calling this method. {@link #isPlayer()}
+     * 
      * @return the player
      */
     @NonNull
@@ -258,6 +299,7 @@ public class User implements MetaDataAble {
 
     /**
      * Use {@link #isOfflinePlayer()} before calling this method
+     * 
      * @return the offline player
      * @since 1.3.0
      */
@@ -285,19 +327,24 @@ public class User implements MetaDataAble {
 
     /**
      * @param permission permission string
-     * @return true if permission is empty or null or if the player has that permission or if the player is op.
+     * @return true if permission is empty or null or if the player has that
+     *         permission or if the player is op.
      */
     public boolean hasPermission(@Nullable String permission) {
-        return permission == null || permission.isEmpty() || isOp() || sender.hasPermission(permission);
+        return permission == null || permission.isEmpty() || isOp() || (sender != null && sender.hasPermission(permission));
     }
 
     /**
      * Removes permission from user
+     * 
      * @param name - Name of the permission to remove
      * @return true if successful
      * @since 1.5.0
      */
     public boolean removePerm(String name) {
+        if (player == null) {
+            return false;
+        }
         for (PermissionAttachmentInfo p : player.getEffectivePermissions()) {
             if (p.getPermission().equals(name) && p.getAttachment() != null) {
                 player.removeAttachment(p.getAttachment());
@@ -310,11 +357,13 @@ public class User implements MetaDataAble {
 
     /**
      * Add a permission to user
+     * 
      * @param name - Name of the permission to attach
      * @return The PermissionAttachment that was just created
      * @since 1.5.0
      */
     public PermissionAttachment addPerm(String name) {
+        assert player != null;
         return player.addAttachment(plugin, name, true);
     }
 
@@ -324,6 +373,7 @@ public class User implements MetaDataAble {
 
     /**
      * Checks if user is Op
+     * 
      * @return true if user is Op
      */
     public boolean isOp() {
@@ -337,30 +387,42 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Get the maximum value of a numerical permission setting.
-     * If a player is given an explicit negative number then this is treated as "unlimited" and returned immediately.
-     * @param permissionPrefix the start of the perm, e.g., {@code plugin.mypermission}
-     * @param defaultValue the default value; the result may be higher or lower than this
+     * Get the maximum value of a numerical permission setting. If a player is given
+     * an explicit negative number then this is treated as "unlimited" and returned
+     * immediately.
+     * 
+     * @param permissionPrefix the start of the perm, e.g.,
+     *                         {@code plugin.mypermission}
+     * @param defaultValue     the default value; the result may be higher or lower
+     *                         than this
      * @return max value
      */
     public int getPermissionValue(String permissionPrefix, int defaultValue) {
         // If requester is console, then return the default value
-        if (!isPlayer()) return defaultValue;
+        if (!isPlayer() || player == null)
+            return defaultValue;
 
         // If there is a dot at the end of the permissionPrefix, remove it
         if (permissionPrefix.endsWith(".")) {
-            permissionPrefix = permissionPrefix.substring(0, permissionPrefix.length()-1);
+            permissionPrefix = permissionPrefix.substring(0, permissionPrefix.length() - 1);
         }
 
         final String permPrefix = permissionPrefix + ".";
 
-        List<String> permissions = player.getEffectivePermissions().stream()
-                .filter(PermissionAttachmentInfo::getValue) // Must be a positive permission, not a negative one
-                .map(PermissionAttachmentInfo::getPermission)
-                .filter(permission -> permission.startsWith(permPrefix))
+        List<String> permissions = player.getEffectivePermissions().stream().filter(PermissionAttachmentInfo::getValue) // Must
+                // be
+                // a
+                // positive
+                // permission,
+                // not
+                // a
+                // negative
+                // one
+                .map(PermissionAttachmentInfo::getPermission).filter(permission -> permission.startsWith(permPrefix))
                 .toList();
 
-        if (permissions.isEmpty()) return defaultValue;
+        if (permissions.isEmpty())
+            return defaultValue;
 
         return iteratePerms(permissions, permPrefix, defaultValue);
 
@@ -368,6 +430,9 @@ public class User implements MetaDataAble {
 
     private int iteratePerms(List<String> permissions, String permPrefix, int defaultValue) {
         int value = 0;
+        if (player == null) {
+            return 0;
+        }
         for (String permission : permissions) {
             if (permission.contains(permPrefix + "*")) {
                 // 'Star' permission
@@ -375,8 +440,8 @@ public class User implements MetaDataAble {
             } else {
                 String[] spl = permission.split(permPrefix);
                 if (spl.length > 1) {
-                    if (!NumberUtils.isNumber(spl[1])) {
-                        plugin.logError("Player " + player.getName() + " has permission: '" + permission + "' <-- the last part MUST be a number! Ignoring...");
+                    if (!NumberUtils.isCreatable(spl[1])) {
+                        plugin.logError("Player " + player.getName() + " has permission: '" + permission);
                     } else {
                         int v = Integer.parseInt(spl[1]);
                         if (v < 0) {
@@ -393,27 +458,32 @@ public class User implements MetaDataAble {
 
     /**
      * Gets a translation for a specific world
-     * @param world - world of translation
+     * 
+     * @param world     - world of translation
      * @param reference - reference found in a locale file
-     * @param variables - variables to insert into translated string. Variables go in pairs, for example
-     *                  "[name]", "tastybento"
-     * @return Translated string with colors converted, or the reference if nothing has been found
+     * @param variables - variables to insert into translated string. Variables go
+     *                  in pairs, for example "[name]", "tastybento"
+     * @return Translated string with colors converted, or the reference if nothing
+     *         has been found
      * @since 1.3.0
      */
     public String getTranslation(World world, String reference, String... variables) {
         // Get translation.
-        String addonPrefix = plugin.getIWM()
-                .getAddon(world).map(a -> a.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".").orElse("");
+        String addonPrefix = plugin.getIWM().getAddon(world)
+                .map(a -> a.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".").orElse("");
         return Util.translateColorCodes(translate(addonPrefix, reference, variables));
     }
 
     /**
-     * Gets a translation of this reference for this user with colors converted. Translations may be overridden by Addons
-     * by using the same reference prefixed by the addon name (from the Addon Description) in lower case.
+     * Gets a translation of this reference for this user with colors converted.
+     * Translations may be overridden by Addons by using the same reference prefixed
+     * by the addon name (from the Addon Description) in lower case.
+     * 
      * @param reference - reference found in a locale file
-     * @param variables - variables to insert into translated string. Variables go in pairs, for example
-     *                  "[name]", "tastybento"
-     * @return Translated string with colors converted, or the reference if nothing has been found
+     * @param variables - variables to insert into translated string. Variables go
+     *                  in pairs, for example "[name]", "tastybento"
+     * @return Translated string with colors converted, or the reference if nothing
+     *         has been found
      */
     public String getTranslation(String reference, String... variables) {
         // Get addonPrefix
@@ -422,11 +492,13 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Gets a translation of this reference for this user without colors translated. Translations may be overridden by Addons
-     * by using the same reference prefixed by the addon name (from the Addon Description) in lower case.
+     * Gets a translation of this reference for this user without colors translated.
+     * Translations may be overridden by Addons by using the same reference prefixed
+     * by the addon name (from the Addon Description) in lower case.
+     * 
      * @param reference - reference found in a locale file
-     * @param variables - variables to insert into translated string. Variables go in pairs, for example
-     *                  "[name]", "tastybento"
+     * @param variables - variables to insert into translated string. Variables go
+     *                  in pairs, for example "[name]", "tastybento"
      * @return Translated string or the reference if nothing has been found
      * @since 1.17.4
      */
@@ -460,41 +532,54 @@ public class User implements MetaDataAble {
     private String replacePrefixes(String translation, String[] variables) {
         for (String prefix : plugin.getLocalesManager().getAvailablePrefixes(this)) {
             String prefixTranslation = getTranslation("prefixes." + prefix);
-            // Replace the [gamemode] text variable
-            prefixTranslation = prefixTranslation.replace("[gamemode]", addon != null ? addon.getDescription().getName() : "[gamemode]");
-            // Replace the [friendly_name] text variable
-            prefixTranslation = prefixTranslation.replace("[friendly_name]", isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
 
             // Replace the prefix in the actual message
             translation = translation.replace("[prefix_" + prefix + "]", prefixTranslation);
-        }
-
-        // Then replace variables
-        if (variables.length > 1) {
-            for (int i = 0; i < variables.length; i += 2) {
-                translation = translation.replace(variables[i], variables[i + 1]);
-            }
         }
 
         // Then replace Placeholders, this will only work if this is a player
         if (player != null) {
             translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
         }
+
+        // Then replace variables
+        if (variables.length > 1) {
+            for (int i = 0; i < variables.length; i += 2) {
+                // Prevent a NPE if the substituting variable is null
+                if (variables[i + 1] != null) {
+                    translation = translation.replace(variables[i], variables[i + 1]);
+                }
+            }
+        }
+
+        // Replace game mode and friendly name in general
+        // Replace the [gamemode] text variable
+        if (addon != null && addon.getDescription() != null) {
+            translation = translation.replace("[gamemode]", addon.getDescription().getName());
+        }
+        if (player != null) {
+            // Replace the [friendly_name] text variable
+            translation = translation.replace("[friendly_name]",
+                    isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
+        }
         return translation;
     }
 
     private String replaceVars(String reference, String[] variables) {
-
+        // Replace Placeholders, this will only work if this is a player
+        if (player != null) {
+            reference = plugin.getPlaceholdersManager().replacePlaceholders(player, reference);
+        }
+        // Validate variables array length
+        if (variables.length % 2 != 0) {
+            throw new IllegalArgumentException(
+                    "Variable replacements must be in pairs (key, value), but got odd number: " + variables.length);
+        }
         // Then replace variables
         if (variables.length > 1) {
             for (int i = 0; i < variables.length; i += 2) {
                 reference = reference.replace(variables[i], variables[i + 1]);
             }
-        }
-
-        // Then replace Placeholders, this will only work if this is a player
-        if (player != null) {
-            reference = plugin.getPlaceholdersManager().replacePlaceholders(player, reference);
         }
 
         // If no translation has been found, return the reference for debug purposes.
@@ -503,10 +588,12 @@ public class User implements MetaDataAble {
 
     /**
      * Gets a translation of this reference for this user.
+     * 
      * @param reference - reference found in a locale file
-     * @param variables - variables to insert into translated string. Variables go in pairs, for example
-     *                  "[name]", "tastybento"
-     * @return Translated string with colors converted, or a blank String if nothing has been found
+     * @param variables - variables to insert into translated string. Variables go
+     *                  in pairs, for example "[name]", "tastybento"
+     * @return Translated string with colors converted, or a blank String if nothing
+     *         has been found
      */
     public String getTranslationOrNothing(String reference, String... variables) {
         String translation = getTranslation(reference, variables);
@@ -515,31 +602,113 @@ public class User implements MetaDataAble {
 
     /**
      * Send a message to sender if message is not empty.
+     * 
      * @param reference - language file reference
      * @param variables - CharSequence target, replacement pairs
      */
     public void sendMessage(String reference, String... variables) {
         String message = getTranslation(reference, variables);
-        if (!ChatColor.stripColor(message).trim().isEmpty()) {
+        String noColors = message.replaceAll("(?i)§[0-9A-FK-ORX]", "").trim();
+        if (!noColors.isEmpty()) {
             sendRawMessage(message);
         }
     }
 
     /**
-     * Sends a message to sender without any modification (colors, multi-lines, placeholders).
-     * @param message - the message to send
+     * Sends a raw message to the sender, parsing inline commands embedded within square brackets.
+     * <p>
+     * The method supports embedding clickable and hoverable actions into the message text using inline commands.
+     * Recognized commands are:
+     * <ul>
+     *   <li><code>[run_command: &lt;command&gt;]</code> - Runs the specified command when the message is clicked.</li>
+     *   <li><code>[suggest_command: &lt;command&gt;]</code> - Suggests the specified command in the chat input.</li>
+     *   <li><code>[copy_to_clipboard: &lt;text&gt;]</code> - Copies the specified text to the player's clipboard.</li>
+     *   <li><code>[open_url: &lt;url&gt;]</code> - Opens the specified URL when the message is clicked.</li>
+     *   <li><code>[hover: &lt;text&gt;]</code> - Shows the specified text when the message is hovered over.</li>
+     * </ul>
+     * <p>
+     * The commands can be placed anywhere in the message and will apply to the entire message component.
+     * If multiple commands of the same type are provided, only the first one encountered will be applied.
+     * Unrecognized or invalid commands enclosed in square brackets will be preserved in the output text.
+     * <p>
+     * Example usage:
+     * <pre>
+     * sendRawMessage("Hello [not-a-command: hello][run_command: /help] World [hover: This is a hover text]");
+     * </pre>
+     * The above message will display "Hello [not-a-command: hello] World" where clicking the message runs the "/help" command,
+     * and hovering over the message shows "This is a hover text".
+     *
+     * @param message The message to send, containing inline commands in square brackets.
      */
     public void sendRawMessage(String message) {
+        TextComponent baseComponent = new TextComponent();
+
+        Pattern pattern = Pattern.compile("\\[(\\w+): ([^\\]]+)]|\\[\\[(.*?)\\]]");
+        Matcher matcher = pattern.matcher(message);
+
+        int lastMatchEnd = 0;
+        ClickEvent clickEvent = null;
+        HoverEvent hoverEvent = null;
+
+        while (matcher.find()) {
+            if (matcher.start() > lastMatchEnd) {
+                baseComponent.addExtra(TextComponent.fromLegacy(message.substring(lastMatchEnd, matcher.start())));
+            }
+            if (matcher.group(1) != null && matcher.group(2) != null) {
+                clickEvent = parseClickAction(matcher, baseComponent, clickEvent);
+                hoverEvent = parseHoverAction(matcher, hoverEvent);
+            } else if (matcher.group(3) != null) {
+                baseComponent.addExtra(TextComponent.fromLegacy("[[" + matcher.group(3) + "]]"));
+            }
+            lastMatchEnd = matcher.end();
+        }
+
+        if (lastMatchEnd < message.length()) {
+            baseComponent.addExtra(TextComponent.fromLegacy(message.substring(lastMatchEnd)));
+        }
+        if (clickEvent != null) {
+            baseComponent.setClickEvent(clickEvent);
+        }
+        if (hoverEvent != null) {
+            baseComponent.setHoverEvent(hoverEvent);
+        }
+
         if (sender != null) {
-            sender.sendMessage(message);
+            sender.spigot().sendMessage(baseComponent);
         } else {
-            // Offline player fire event
             Bukkit.getPluginManager().callEvent(new OfflineMessageEvent(this.playerUUID, message));
         }
     }
 
+    private ClickEvent parseClickAction(Matcher matcher, TextComponent baseComponent, ClickEvent existing) {
+        String actionType = matcher.group(1).toUpperCase(Locale.ENGLISH);
+        String actionValue = matcher.group(2);
+        return switch (actionType) {
+        case "RUN_COMMAND", "SUGGEST_COMMAND", "COPY_TO_CLIPBOARD", "OPEN_URL" ->
+                existing == null ? new ClickEvent(ClickEvent.Action.valueOf(actionType), actionValue) : existing;
+        case "HOVER" -> existing; // handled separately
+        default -> {
+            baseComponent.addExtra(TextComponent.fromLegacy(matcher.group(0)));
+            yield existing;
+        }
+        };
+    }
+
+    private HoverEvent parseHoverAction(Matcher matcher, HoverEvent existing) {
+        if (existing != null) {
+            return existing;
+        }
+        String actionType = matcher.group(1).toUpperCase(Locale.ENGLISH);
+        if ("HOVER".equals(actionType)) {
+            return new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(matcher.group(2)));
+        }
+        return null;
+    }
+
     /**
-     * Sends a message to sender if message is not empty and if the same wasn't sent within the previous Notifier.NOTIFICATION_DELAY seconds.
+     * Sends a message to sender if message is not empty and if the same wasn't sent
+     * within the previous Notifier.NOTIFICATION_DELAY seconds.
+     * 
      * @param reference - language file reference
      * @param variables - CharSequence target, replacement pairs
      *
@@ -547,14 +716,16 @@ public class User implements MetaDataAble {
      */
     public void notify(String reference, String... variables) {
         String message = getTranslation(reference, variables);
-        if (!ChatColor.stripColor(message).trim().isEmpty() && sender != null) {
+        if (!Util.stripColor(message).trim().isEmpty() && sender != null) {
             plugin.getNotifier().notify(this, message);
         }
     }
 
     /**
-     * Sends a message to sender if message is not empty and if the same wasn't sent within the previous Notifier.NOTIFICATION_DELAY seconds.
-     * @param world - the world the translation should come from
+     * Sends a message to sender if message is not empty and if the same wasn't sent
+     * within the previous Notifier.NOTIFICATION_DELAY seconds.
+     * 
+     * @param world     - the world the translation should come from
      * @param reference - language file reference
      * @param variables - CharSequence target, replacement pairs
      *
@@ -563,29 +734,37 @@ public class User implements MetaDataAble {
      */
     public void notify(World world, String reference, String... variables) {
         String message = getTranslation(world, reference, variables);
-        if (!ChatColor.stripColor(message).trim().isEmpty() && sender != null) {
+        if (!Util.stripColor(message).trim().isEmpty() && sender != null) {
             plugin.getNotifier().notify(this, message);
         }
     }
 
     /**
      * Sets the user's game mode
+     * 
      * @param mode - GameMode
      */
     public void setGameMode(GameMode mode) {
-        player.setGameMode(mode);
+        if (player != null) {
+            player.setGameMode(mode);
+        }
     }
 
     /**
-     * Teleports user to this location. If the user is in a vehicle, they will exit first.
+     * Teleports user to this location. If the user is in a vehicle, they will exit
+     * first.
+     * 
      * @param location - the location
      */
     public void teleport(Location location) {
-        player.teleport(location);
+        if (player != null) {
+            player.teleport(location);
+        }
     }
 
     /**
      * Gets the current world this entity resides in
+     * 
      * @return World - world
      */
     @NonNull
@@ -603,6 +782,7 @@ public class User implements MetaDataAble {
 
     /**
      * Get the user's locale
+     * 
      * @return Locale
      */
     public Locale getLocale() {
@@ -613,8 +793,8 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Forces an update of the user's complete inventory.
-     * Deprecated, but there is no current alternative.
+     * Forces an update of the user's complete inventory. Deprecated, but there is
+     * no current alternative.
      */
     public void updateInventory() {
         player.updateInventory();
@@ -622,6 +802,7 @@ public class User implements MetaDataAble {
 
     /**
      * Performs a command as the player
+     * 
      * @param command - command to execute
      * @return true if the command was successful, otherwise false
      */
@@ -629,9 +810,10 @@ public class User implements MetaDataAble {
         PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getPlayer(), command);
         Bukkit.getPluginManager().callEvent(event);
 
-        // only perform the command, if the event wasn't cancelled by an other plugin:
+        // only perform the command, if the event wasn't cancelled by another plugin:
         if (!event.isCancelled()) {
-            return getPlayer().performCommand(event.getMessage());
+            return getPlayer().performCommand(
+                    event.getMessage().startsWith("/") ? event.getMessage().substring(1) : event.getMessage());
         }
         // Cancelled, but it was recognized, so return true
         return true;
@@ -639,6 +821,7 @@ public class User implements MetaDataAble {
 
     /**
      * Checks if a user is in one of the game worlds
+     * 
      * @return true if user is, false if not
      */
     public boolean inWorld() {
@@ -646,80 +829,74 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Spawn particles to the player.
-     * They are only displayed if they are within the server's view distance.
-     * @param particle Particle to display.
+     * Spawn particles to the player. They are only displayed if they are within the
+     * server's view distance.
+     * 
+     * @param particle    Particle to display.
      * @param dustOptions Particle.DustOptions for the particle to display.
-     *                    Cannot be null when particle is {@link Particle#REDSTONE}.
-     * @param x X coordinate of the particle to display.
-     * @param y Y coordinate of the particle to display.
-     * @param z Z coordinate of the particle to display.
+     * @param x           X coordinate of the particle to display.
+     * @param y           Y coordinate of the particle to display.
+     * @param z           Z coordinate of the particle to display.
      */
-    public void spawnParticle(Particle particle, @Nullable Object dustOptions, double x, double y, double z)
-    {
+    public void spawnParticle(Particle particle, @Nullable Object dustOptions, double x, double y, double z) {
         Class<?> expectedClass = VALIDATION_CHECK.get(particle);
-        if (expectedClass == null) throw new IllegalArgumentException("Unexpected value: " + particle);
+        if (expectedClass == null) {
+            throw new IllegalArgumentException("Unexpected value: " + particle + "\nExpected one of:"
+                    + VALIDATION_CHECK.keySet().stream().map(Particle::name).collect(Collectors.joining(", ")));
+        }
 
         if (!(expectedClass.isInstance(dustOptions))) {
-            throw new IllegalArgumentException("A non-null " + expectedClass.getSimpleName() + " must be provided when using Particle." + particle + " as particle.");
+            throw new IllegalArgumentException("A non-null " + expectedClass.getSimpleName()
+                    + " must be provided when using Particle." + particle + " as particle.");
         }
 
         // Check if this particle is beyond the viewing distance of the server
-        if (this.player != null
-                && this.player.getLocation().toVector().distanceSquared(new Vector(x, y, z)) <
-                (Bukkit.getServer().getViewDistance() * 256 * Bukkit.getServer().getViewDistance()))
-        {
-            if (particle.equals(Particle.REDSTONE))
-            {
+        if (this.player != null && this.player.getLocation().toVector().distanceSquared(new Vector(x, y,
+                z)) < (Bukkit.getServer().getViewDistance() * 256 * Bukkit.getServer().getViewDistance())) {
+            if (particle.equals(Enums.getIfPresent(Particle.class, "DUST")
+                    .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME)))) {
                 player.spawnParticle(particle, x, y, z, 1, 0, 0, 0, 1, dustOptions);
-            }
-            else if (dustOptions != null)
-            {
+            } else if (dustOptions != null) {
                 player.spawnParticle(particle, x, y, z, 1, dustOptions);
-            }
-            else
-            {
-                // This will never be called unless the value in VALIDATION_CHECK is null in the future
+            } else {
+                // This will never be called unless the value in VALIDATION_CHECK is null in the
+                // future
                 player.spawnParticle(particle, x, y, z, 1);
             }
         }
     }
 
-
     /**
-     * Spawn particles to the player.
-     * They are only displayed if they are within the server's view distance.
-     * Compatibility method for older usages.
-     * @param particle Particle to display.
+     * Spawn particles to the player. They are only displayed if they are within the
+     * server's view distance. Compatibility method for older usages.
+     * 
+     * @param particle    Particle to display.
      * @param dustOptions Particle.DustOptions for the particle to display.
-     *                    Cannot be null when particle is {@link Particle#REDSTONE}.
-     * @param x X coordinate of the particle to display.
-     * @param y Y coordinate of the particle to display.
-     * @param z Z coordinate of the particle to display.
+     * @param x           X coordinate of the particle to display.
+     * @param y           Y coordinate of the particle to display.
+     * @param z           Z coordinate of the particle to display.
      */
-    public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, double x, double y, double z)
-    {
+    public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, double x, double y, double z) {
         this.spawnParticle(particle, (Object) dustOptions, x, y, z);
     }
 
-
     /**
-     * Spawn particles to the player.
-     * They are only displayed if they are within the server's view distance.
-     * @param particle Particle to display.
+     * Spawn particles to the player. They are only displayed if they are within the
+     * server's view distance.
+     * 
+     * @param particle    Particle to display.
      * @param dustOptions Particle.DustOptions for the particle to display.
-     *                    Cannot be null when particle is {@link Particle#REDSTONE}.
-     * @param x X coordinate of the particle to display.
-     * @param y Y coordinate of the particle to display.
-     * @param z Z coordinate of the particle to display.
+     * @param x           X coordinate of the particle to display.
+     * @param y           Y coordinate of the particle to display.
+     * @param z           Z coordinate of the particle to display.
      */
-    public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, int x, int y, int z)
-    {
+    public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, int x, int y, int z) {
         this.spawnParticle(particle, dustOptions, (double) x, (double) y, (double) z);
     }
 
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -730,7 +907,9 @@ public class User implements MetaDataAble {
         return result;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -746,11 +925,13 @@ public class User implements MetaDataAble {
         }
         if (playerUUID == null) {
             return other.playerUUID == null;
-        } else return playerUUID.equals(other.playerUUID);
+        } else
+            return playerUUID.equals(other.playerUUID);
     }
 
     /**
      * Set the addon context when a command is executed
+     * 
      * @param addon - the addon executing the command
      */
     public void setAddon(Addon addon) {
@@ -758,15 +939,14 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Get all the meta data for this user
+     * Get all the metadata for this user
+     * 
      * @return the metaData
      * @since 1.15.4
      */
     @Override
     public Optional<Map<String, MetaDataValue>> getMetaData() {
-        Players p = plugin
-                .getPlayers()
-                .getPlayer(playerUUID);
+        Players p = plugin.getPlayers().getPlayer(playerUUID);
         return Objects.requireNonNull(p, "Unknown player for " + playerUUID).getMetaData();
     }
 
@@ -776,11 +956,19 @@ public class User implements MetaDataAble {
      */
     @Override
     public void setMetaData(Map<String, MetaDataValue> metaData) {
-        Players p = plugin
-                .getPlayers()
-                .getPlayer(playerUUID);
+        Players p = plugin.getPlayers().getPlayer(playerUUID);
 
         Objects.requireNonNull(p, "Unknown player for " + playerUUID).setMetaData(metaData);
+    }
+
+    @Override
+    public String toString() {
+        return "User [" + (player != null ? "player=" + player + ", " : "")
+                + (offlinePlayer != null ? "offlinePlayer=" + offlinePlayer + ", " : "")
+                + (playerUUID != null ? "playerUUID=" + playerUUID + ", " : "")
+                + (sender != null ? "sender=" + sender + ", " : "") + (addon != null ? "addon=" + addon + ", " : "")
+                + "getLocation()=" + getLocation() + "isPlayer()=" + isPlayer()
+                + "]";
     }
 
 }

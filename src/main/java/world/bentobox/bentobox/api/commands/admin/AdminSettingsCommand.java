@@ -9,14 +9,12 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
@@ -87,14 +85,14 @@ public class AdminSettingsCommand extends CompositeCommand {
     }
 
     private boolean getIsland(User user, List<String> args) {
-        if (args.get(0).equalsIgnoreCase(SPAWN_ISLAND) && getIslands().getSpawn(getWorld()).isPresent()) {
+        if (args.getFirst().equalsIgnoreCase(SPAWN_ISLAND) && getIslands().getSpawn(getWorld()).isPresent()) {
             island = getIslands().getSpawn(getWorld()).get();
             return true;
         }
         // Get target player
-        @Nullable UUID targetUUID = Util.getUUID(args.get(0));
+        @Nullable UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         island = getIslands().getIsland(getWorld(), targetUUID);
@@ -107,51 +105,66 @@ public class AdminSettingsCommand extends CompositeCommand {
 
     /**
      * Check that this command is correct to set a setting
+     *
      * @param user - user
      * @param args - args
      * @return true if the syntax is correct
      */
     private boolean checkSyntax(User user, List<String> args) {
-        // Update the flag lists
         this.makeLists();
-        if (args.size() == 2) {
-            // Should be a world setting
-            // If world settings, then active/disabled, otherwise player flags
-            if (worldSettingFlagNames.contains(args.get(0).toUpperCase(Locale.ENGLISH))) {
-                if (checkActiveDisabled(user, args.get(1))) {
-                    flag = getPlugin().getFlagsManager().getFlag(args.get(0).toUpperCase(Locale.ENGLISH));
-                    return true;
-                }
-            } else {
-                this.showHelp(this, user);
-                return false;
-            }
-        } else if (args.size() > 2) {
-            // Get island
-            if (!getIsland(user, args)) {
-                return false;
-            }
 
-            if (!settingFlagNames.contains(args.get(1).toUpperCase(Locale.ENGLISH))
-                    && !protectionFlagNames.contains(args.get(1).toUpperCase(Locale.ENGLISH))) {
-                user.sendMessage("commands.admin.settings.unknown-flag", TextVariables.NAME, args.get(2));
-                return false;
+        int argSize = args.size();
+
+        if (argSize == 2) {
+            return checkWorldSetting(user, args);
+        } else if (argSize > 2) {
+            return checkIslandSetting(user, args);
+        }
+
+        return false;
+    }
+
+    private boolean checkWorldSetting(User user, List<String> args) {
+        String arg0 = args.getFirst().toUpperCase(Locale.ENGLISH);
+
+        if (worldSettingFlagNames.contains(arg0)) {
+            if (checkActiveDisabled(user, args.get(1))) {
+                flag = getPlugin().getFlagsManager().getFlag(args.getFirst().toUpperCase(Locale.ENGLISH));
+                return true;
             }
-            // Set flag
-            flag = getPlugin().getFlagsManager().getFlag(args.get(1).toUpperCase(Locale.ENGLISH));
-            // Check settings
-            if (flag.isPresent()) {
-                if (flag.get().getType().equals(Type.SETTING)) {
-                    return checkActiveDisabled(user, args.get(2));
-                } else {
-                    // Protection flag
-                    return checkRank(user, String.join(" ", args.subList(2, args.size())));
-                }
-            }
+        } else {
+            this.showHelp(this, user);
+            return false;
         }
         return false;
     }
 
+    private boolean checkIslandSetting(User user, List<String> args) {
+        // Get island
+        if (!getIsland(user, args)) {
+            return false;
+        }
+
+        String arg1 = args.get(1).toUpperCase(Locale.ENGLISH);
+
+        if (!settingFlagNames.contains(arg1) && !protectionFlagNames.contains(arg1)) {
+            user.sendMessage("commands.admin.settings.unknown-flag", TextVariables.NAME, args.get(2));
+            return false;
+        }
+        // Set flag
+        flag = getPlugin().getFlagsManager().getFlag(arg1);
+        // Check settings
+        if (flag.isPresent()) {
+            if (flag.get().getType().equals(Type.SETTING)) {
+                return checkActiveDisabled(user, args.get(2));
+            } else {
+                // Protection flag
+                return checkRank(user, String.join(" ", args.subList(2, args.size())));
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Check the rank given.
@@ -160,9 +173,9 @@ public class AdminSettingsCommand extends CompositeCommand {
      * @return true if rank is valid
      */
     private boolean checkRank(User user, String string) {
-        for (Entry<String, Integer> en : getPlugin().getRanksManager().getRanks().entrySet()) {
+        for (Entry<String, Integer> en : RanksManager.getInstance().getRanks().entrySet()) {
             if (en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK
-                    && string.equalsIgnoreCase(ChatColor.stripColor(user.getTranslation(en.getKey())))) {
+                    && string.equalsIgnoreCase(Util.stripColor(user.getTranslation(en.getKey())))) {
                 // We have a winner
                 rank = en.getValue();
                 return true;
@@ -173,8 +186,8 @@ public class AdminSettingsCommand extends CompositeCommand {
     }
 
     private boolean checkActiveDisabled(User user, String string) {
-        String active = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
-        String disabled = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
+        String active = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
+        String disabled = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
         if (!string.equalsIgnoreCase(active) && !string.equalsIgnoreCase(disabled)) {
             user.sendMessage("commands.admin.settings.unknown-setting", TextVariables.NAME, string);
             return false;
@@ -189,14 +202,8 @@ public class AdminSettingsCommand extends CompositeCommand {
             // Command line setting
             flag.ifPresent(f -> {
                 switch (f.getType()) {
-                case PROTECTION -> {
-                    island.setFlag(f, rank);
-                    getIslands().save(island);
-                }
-                case SETTING -> {
-                    island.setSettingsFlag(f, activeState);
-                    getIslands().save(island);
-                }
+                case PROTECTION -> island.setFlag(f, rank);
+                case SETTING -> island.setSettingsFlag(f, activeState);
                 case WORLD_SETTING -> f.setSetting(getWorld(), activeState);
                 default -> {
                     // Do nothing
@@ -211,12 +218,11 @@ public class AdminSettingsCommand extends CompositeCommand {
             user.sendMessage("general.errors.use-in-game");
             return false;
         }
-        getPlayers().setFlagsDisplayMode(user.getUniqueId(), Mode.EXPERT);
         if (args.isEmpty()) {
             new TabbedPanelBuilder()
             .user(user)
             .world(getWorld())
-            .tab(1, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING))
+                    .tab(1, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING, Flag.Mode.EXPERT))
             .tab(2, new WorldDefaultSettingsTab(getWorld(), user))
             .startingSlot(1)
             .size(54)
@@ -227,8 +233,8 @@ public class AdminSettingsCommand extends CompositeCommand {
         new TabbedPanelBuilder()
         .user(user)
         .world(island.getWorld())
-        .tab(1, new SettingsTab(user, island, Flag.Type.PROTECTION))
-        .tab(2, new SettingsTab(user, island, Flag.Type.SETTING))
+                .island(island).tab(1, new SettingsTab(getWorld(), user, Flag.Type.PROTECTION, Flag.Mode.EXPERT))
+                .tab(2, new SettingsTab(getWorld(), user, Flag.Type.SETTING, Flag.Mode.EXPERT))
         .startingSlot(1)
         .size(54)
         .build().openPanel();
@@ -239,10 +245,10 @@ public class AdminSettingsCommand extends CompositeCommand {
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         // Update with the latest lists
         this.makeLists();
-        String active = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
-        String disabled = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
+        String active = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
+        String disabled = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
         List<String> options = new ArrayList<>();
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.size() == 2) {
             // Player names or world settings
             options = Util.tabLimit(Util.getOnlinePlayerList(user), lastArg);
@@ -262,8 +268,7 @@ public class AdminSettingsCommand extends CompositeCommand {
         } else if (args.size() == 4) {
             // Get flag in previous argument
             options = getPlugin().getFlagsManager().getFlag(args.get(2).toUpperCase(Locale.ENGLISH)).map(f -> switch (f.getType()) {
-            case PROTECTION -> getPlugin().getRanksManager()
-            .getRanks().entrySet().stream()
+            case PROTECTION -> RanksManager.getInstance().getRanks().entrySet().stream()
             .filter(en -> en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK)
             .map(Entry::getKey)
             .map(user::getTranslation).toList();

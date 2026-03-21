@@ -24,6 +24,6 @@ public class BentoBoxPlaceholderExpansion extends BasicPlaceholderExpansion {
 
     @Override
     public @NonNull String getVersion() {
-        return plugin.getDescription().getVersion();
+        return plugin.getPluginMeta().getVersion();
     }
 }

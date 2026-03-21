@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -20,6 +21,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Handles respawning back on island
+ * 
  * @author tastybento
  *
  */
@@ -29,6 +31,7 @@ public class IslandRespawnListener extends FlagListener {
 
     /**
      * Tag players who die in island space and have an island
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
@@ -40,33 +43,34 @@ public class IslandRespawnListener extends FlagListener {
         if (!Flags.ISLAND_RESPAWN.isSetForWorld(world)) {
             return; // world doesn't have the island respawn flag
         }
-        if (!getIslands().hasIsland(world, e.getEntity().getUniqueId()) && !getIslands().inTeam(world, e.getEntity().getUniqueId())) {
+        if (!getIslands().hasIsland(world, e.getEntity().getUniqueId())
+                && !getIslands().inTeam(world, e.getEntity().getUniqueId())) {
             return; // doesn't have an island in this world
         }
-
         respawn.put(e.getEntity().getUniqueId(), world.getUID());
     }
 
     /**
      * Place players back on their island if respawn on island is true and active
+     * 
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         final UUID worldUUID = respawn.remove(e.getPlayer().getUniqueId());
         if (worldUUID == null) {
             return; // no respawn world set
         }
 
-        final World world = e.getPlayer().getServer().getWorld(worldUUID);
+        final World world = Bukkit.getWorld(worldUUID);
         if (world == null) {
             return; // world no longer available
         }
         World w = Util.getWorld(world);
         String ownerName = e.getPlayer().getName();
         if (w != null) {
-            final Location respawnLocation = getIslands().getSafeHomeLocation(w, User.getInstance(e.getPlayer().getUniqueId()), "");
-            if (respawnLocation != null) {
+            final Location respawnLocation = getIslands().getHomeLocation(world, e.getPlayer().getUniqueId());
+            if (respawnLocation != null && getIslands().isSafeLocation(respawnLocation)) {
                 e.setRespawnLocation(respawnLocation);
                 // Get the island owner name
                 Island island = BentoBox.getInstance().getIslands().getIsland(w, User.getInstance(e.getPlayer()));

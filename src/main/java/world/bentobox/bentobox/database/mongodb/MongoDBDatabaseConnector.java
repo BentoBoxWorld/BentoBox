@@ -3,7 +3,6 @@ package world.bentobox.bentobox.database.mongodb;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 
 import com.mongodb.MongoClient;
@@ -13,6 +12,7 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
@@ -74,7 +74,7 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
         types.remove(type);
         if (types.isEmpty() && client != null) {
             client.close();
-            Bukkit.getLogger().info("Closed database connection");
+            BentoBox.getInstance().log("Closed database connection");
         }
     }
 

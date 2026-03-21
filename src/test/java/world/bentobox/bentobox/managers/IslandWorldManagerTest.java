@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.managers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -24,41 +24,27 @@ import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
-public class IslandWorldManagerTest {
+class IslandWorldManagerTest extends CommonTestSetup {
+
+    private IslandWorldManager testIwm;
 
     @Mock
-    private BentoBox plugin;
-
-    private IslandWorldManager iwm;
-
-    @Mock
-    private Location location;
-
-    @Mock
-    private World world;
+    private World testWorld;
 
     @Mock
     private WorldSettings ws;
@@ -74,21 +60,20 @@ public class IslandWorldManagerTest {
 
     /**
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        iwm = new IslandWorldManager(plugin);
+        super.setUp();
+        testIwm = new IslandWorldManager(plugin);
         // World
-        when(world.getName()).thenReturn("test-world");
-        when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
-        when(world.getMaxHeight()).thenReturn(256);
-        when(location.getWorld()).thenReturn(world);
+        when(testWorld.getName()).thenReturn("test-world");
+        when(testWorld.getEnvironment()).thenReturn(World.Environment.NORMAL);
+        when(testWorld.getMaxHeight()).thenReturn(256);
+        when(location.getWorld()).thenReturn(testWorld);
 
         // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
 
         // Flags Manager
         FlagsManager fm = mock(FlagsManager.class);
@@ -98,79 +83,80 @@ public class IslandWorldManagerTest {
         // Gamemode
         when(ws.getFriendlyName()).thenReturn("friendly");
         when(gm.getWorldSettings()).thenReturn(ws);
-        when(gm.getOverWorld()).thenReturn(world);
+        when(gm.getOverWorld()).thenReturn(testWorld);
         when(gm.getNetherWorld()).thenReturn(netherWorld);
         when(gm.getEndWorld()).thenReturn(endWorld);
-        iwm.addGameMode(gm);
+        testIwm.addGameMode(gm);
     }
 
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#registerWorldsToMultiverse()}.
      */
     @Test
-    public void testRegisterWorldsToMultiverse() {
-        iwm.registerWorldsToMultiverse();
+    void testRegisterWorldsToMultiverse() {
+        testIwm.registerWorldsToMultiverse(true);
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#inWorld(org.bukkit.Location)}.
      */
     @Test
-    public void testInWorldLocation() {
-        assertTrue(iwm.inWorld(location));
+    void testInWorldLocation() {
+        assertTrue(testIwm.inWorld(location));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#inWorld(org.bukkit.Location)}.
      */
     @Test
-    public void testInWorldLocationNull() {
-        assertFalse(iwm.inWorld((Location)null));
+    void testInWorldLocationNull() {
+        assertFalse(testIwm.inWorld((Location)null));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#inWorld(org.bukkit.World)}.
      */
     @Test
-    public void testInWorldWorld() {
-        assertTrue(iwm.inWorld(world));
+    void testInWorldWorld() {
+        assertTrue(testIwm.inWorld(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#inWorld(org.bukkit.World)}.
      */
     @Test
-    public void testInWorldWorldNull() {
-        assertFalse(iwm.inWorld((World)null));
+    void testInWorldWorldNull() {
+        assertFalse(testIwm.inWorld((World)null));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getWorlds()}.
      */
     @Test
-    public void testGetWorlds() {
-        assertTrue(iwm.getWorlds().contains(world));
+    void testGetWorlds() {
+        assertTrue(testIwm.getWorlds().contains(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getOverWorlds()}.
      */
     @Test
-    public void testGetOverWorlds() {
-        assertTrue(iwm.getOverWorlds().contains(world));
+    void testGetOverWorlds() {
+        assertTrue(testIwm.getOverWorlds().contains(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getOverWorldNames()}.
      */
     @Test
-    public void testGetOverWorldNames() {
-        Map<String, String> map = iwm.getOverWorldNames();
+    void testGetOverWorldNames() {
+        Map<String, String> map = testIwm.getOverWorldNames();
         map.forEach((k,v) -> {
             assertEquals("test-world", k);
             assertEquals("friendly", v);
@@ -181,278 +167,286 @@ public class IslandWorldManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isKnownFriendlyWorldName(java.lang.String)}.
      */
     @Test
-    public void testIsKnownFriendlyWorldName() {
-        assertTrue(iwm.isKnownFriendlyWorldName("friendly"));
-        assertFalse(iwm.isKnownFriendlyWorldName("not-friendly"));
+    void testIsKnownFriendlyWorldName() {
+        assertTrue(testIwm.isKnownFriendlyWorldName("friendly"));
+        assertFalse(testIwm.isKnownFriendlyWorldName("not-friendly"));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#addGameMode(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
-    public void testAddGameMode() {
+    void testAddGameMode() {
         // Add a second one
         // Gamemode
-        GameModeAddon gm = mock(GameModeAddon.class);
-        WorldSettings ws = mock(WorldSettings.class);
-        when(ws.getFriendlyName()).thenReturn("friendly2");
-        when(gm.getWorldSettings()).thenReturn(ws);
-        when(gm.getOverWorld()).thenReturn(world);
+        GameModeAddon localGm = mock(GameModeAddon.class);
+        WorldSettings localWs = mock(WorldSettings.class);
+        when(localWs.getFriendlyName()).thenReturn("friendly2");
+        when(localGm.getWorldSettings()).thenReturn(localWs);
+        when(localGm.getOverWorld()).thenReturn(testWorld);
 
-        iwm.addGameMode(gm);
+        testIwm.addGameMode(localGm);
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getWorldSettings(org.bukkit.World)}.
      */
     @Test
-    public void testGetWorldSettings() {
-        assertEquals(ws, iwm.getWorldSettings(world));
+    void testGetWorldSettings() {
+        assertEquals(ws, testIwm.getWorldSettings(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getOverWorld(java.lang.String)}.
      */
     @Test
-    public void testGetOverWorld() {
-        assertEquals(world, iwm.getOverWorld("friendly"));
-        assertNull(iwm.getOverWorld("not-friendly"));
+    void testGetOverWorld() {
+        assertEquals(testWorld, testIwm.getOverWorld("friendly"));
+        assertNull(testIwm.getOverWorld("not-friendly"));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandDistance(org.bukkit.World)}.
      */
     @Test
-    public void testGetIslandDistance() {
-        assertEquals(0, iwm.getIslandDistance(world));
+    void testGetIslandDistance() {
+        assertEquals(0, testIwm.getIslandDistance(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandHeight(org.bukkit.World)}.
      */
     @Test
-    public void testGetIslandHeight() {
-        assertEquals(0, iwm.getIslandHeight(world));
+    void testGetIslandHeight() {
+        assertEquals(0, testIwm.getIslandHeight(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandHeight(org.bukkit.World)}.
      */
     @Test
-    public void testGetIslandHeightOverMax() {
+    void testGetIslandHeightOverMax() {
         when(ws.getIslandHeight()).thenReturn(500);
-        assertEquals(255, iwm.getIslandHeight(world));
+        assertEquals(255, testIwm.getIslandHeight(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandHeight(org.bukkit.World)}.
      */
     @Test
-    public void testGetIslandHeightSubZero() {
+    void testGetIslandHeightSubZero() {
         when(ws.getIslandHeight()).thenReturn(-50);
-        assertEquals(0, iwm.getIslandHeight(world));
+        assertEquals(0, testIwm.getIslandHeight(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandProtectionRange(org.bukkit.World)}.
      */
     @Test
-    public void testGetIslandProtectionRange() {
-        assertEquals(0, iwm.getIslandProtectionRange(world));
+    void testGetIslandProtectionRange() {
+        assertEquals(0, testIwm.getIslandProtectionRange(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandStartX(org.bukkit.World)}.
      */
     @Test
-    public void testGetIslandStartX() {
-        assertEquals(0, iwm.getIslandStartX(world));
+    void testGetIslandStartX() {
+        assertEquals(0, testIwm.getIslandStartX(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandStartZ(org.bukkit.World)}.
      */
     @Test
-    public void testGetIslandStartZ() {
-        assertEquals(0, iwm.getIslandStartZ(world));
+    void testGetIslandStartZ() {
+        assertEquals(0, testIwm.getIslandStartZ(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandXOffset(org.bukkit.World)}.
      */
     @Test
-    public void testGetIslandXOffset() {
-        assertEquals(0, iwm.getIslandXOffset(world));
+    void testGetIslandXOffset() {
+        assertEquals(0, testIwm.getIslandXOffset(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandZOffset(org.bukkit.World)}.
      */
     @Test
-    public void testGetIslandZOffset() {
-        assertEquals(0, iwm.getIslandZOffset(world));
+    void testGetIslandZOffset() {
+        assertEquals(0, testIwm.getIslandZOffset(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getMaxIslands(org.bukkit.World)}.
      */
     @Test
-    public void testGetMaxIslands() {
-        assertEquals(0, iwm.getMaxIslands(world));
+    void testGetMaxIslands() {
+        assertEquals(0, testIwm.getMaxIslands(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getNetherSpawnRadius(org.bukkit.World)}.
      */
     @Test
-    public void testGetNetherSpawnRadius() {
-        assertEquals(0, iwm.getNetherSpawnRadius(world));
+    void testGetNetherSpawnRadius() {
+        assertEquals(0, testIwm.getNetherSpawnRadius(testWorld));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getEndSpawnRadius(org.bukkit.World)}.
+     */
+    @Test
+    void testGetEndSpawnRadius() {
+        assertEquals(0, testIwm.getEndSpawnRadius(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getSeaHeight(org.bukkit.World)}.
      */
     @Test
-    public void testGetSeaHeight() {
-        assertEquals(0, iwm.getSeaHeight(world));
+    void testGetSeaHeight() {
+        assertEquals(0, testIwm.getSeaHeight(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getWorldName(org.bukkit.World)}.
      */
     @Test
-    public void testGetWorldName() {
+    void testGetWorldName() {
         when(ws.getWorldName()).thenReturn("test-world");
-        assertEquals("test-world", iwm.getWorldName(world));
+        assertEquals("test-world", testIwm.getWorldName(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isEndGenerate(org.bukkit.World)}.
      */
     @Test
-    public void testIsEndGenerate() {
-        assertFalse(iwm.isEndGenerate(world));
+    void testIsEndGenerate() {
+        assertFalse(testIwm.isEndGenerate(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isEndIslands(org.bukkit.World)}.
      */
     @Test
-    public void testIsEndIslands() {
-        assertFalse(iwm.isEndIslands(world));
+    void testIsEndIslands() {
+        assertFalse(testIwm.isEndIslands(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isNetherGenerate(org.bukkit.World)}.
      */
     @Test
-    public void testIsNetherGenerate() {
-        assertFalse(iwm.isNetherGenerate(world));
+    void testIsNetherGenerate() {
+        assertFalse(testIwm.isNetherGenerate(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isNetherIslands(org.bukkit.World)}.
      */
     @Test
-    public void testIsNetherIslands() {
-        assertFalse(iwm.isNetherIslands(world));
+    void testIsNetherIslands() {
+        assertFalse(testIwm.isNetherIslands(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isNether(org.bukkit.World)}.
      */
     @Test
-    public void testIsNether() {
-        assertFalse(iwm.isNether(world));
+    void testIsNether() {
+        assertFalse(testIwm.isNether(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isIslandNether(org.bukkit.World)}.
      */
     @Test
-    public void testIsIslandNether() {
-        assertFalse(iwm.isIslandNether(world));
+    void testIsIslandNether() {
+        assertFalse(testIwm.isIslandNether(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isEnd(org.bukkit.World)}.
      */
     @Test
-    public void testIsEnd() {
-        assertFalse(iwm.isEnd(world));
+    void testIsEnd() {
+        assertFalse(testIwm.isEnd(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isIslandEnd(org.bukkit.World)}.
      */
     @Test
-    public void testIsIslandEnd() {
-        assertFalse(iwm.isIslandEnd(world));
+    void testIsIslandEnd() {
+        assertFalse(testIwm.isIslandEnd(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getNetherWorld(org.bukkit.World)}.
      */
     @Test
-    public void testGetNetherWorld() {
-        assertEquals(netherWorld, iwm.getNetherWorld(world));
+    void testGetNetherWorld() {
+        assertEquals(netherWorld, testIwm.getNetherWorld(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getNetherWorld(org.bukkit.World)}.
      */
     @Test
-    public void testGetNetherWorldNull() {
-        assertNull(iwm.getNetherWorld(null));
+    void testGetNetherWorldNull() {
+        assertNull(testIwm.getNetherWorld(null));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getEndWorld(org.bukkit.World)}.
      */
     @Test
-    public void testGetEndWorld() {
-        assertEquals(endWorld, iwm.getEndWorld(world));
+    void testGetEndWorld() {
+        assertEquals(endWorld, testIwm.getEndWorld(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getEndWorld(org.bukkit.World)}.
      */
     @Test
-    public void testGetEndWorldNull() {
-        assertNull(iwm.getEndWorld(null));
+    void testGetEndWorldNull() {
+        assertNull(testIwm.getEndWorld(null));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isDragonSpawn(org.bukkit.World)}.
      */
     @Test
-    public void testIsDragonSpawn() {
-        assertTrue(iwm.isDragonSpawn(endWorld));
+    void testIsDragonSpawn() {
+        assertTrue(testIwm.isDragonSpawn(endWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isDragonSpawn(org.bukkit.World)}.
      */
     @Test
-    public void testIsDragonSpawnNull() {
-        assertTrue(iwm.isDragonSpawn(null));
+    void testIsDragonSpawnNull() {
+        assertTrue(testIwm.isDragonSpawn(null));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getFriendlyNames()}.
      */
     @Test
-    public void testGetFriendlyNames() {
+    void testGetFriendlyNames() {
         // Add a second one
         // Gamemode
         GameModeAddon gm2 = mock(GameModeAddon.class);
-        WorldSettings ws = mock(WorldSettings.class);
-        when(ws.getFriendlyName()).thenReturn("fri2");
-        when(gm2.getWorldSettings()).thenReturn(ws);
+        WorldSettings localWs = mock(WorldSettings.class);
+        when(localWs.getFriendlyName()).thenReturn("fri2");
+        when(gm2.getWorldSettings()).thenReturn(localWs);
         when(gm2.getOverWorld()).thenReturn(mock(World.class));
-        iwm.addGameMode(gm2);
+        testIwm.addGameMode(gm2);
         // String can be in any order
-        String result = iwm.getFriendlyNames();
+        String result = testIwm.getFriendlyNames();
         assertTrue(result.contains("fri2"));
         assertTrue(result.contains("friendly"));
         assertTrue(result.contains(", "));
@@ -462,59 +456,59 @@ public class IslandWorldManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandWorld(java.lang.String)}.
      */
     @Test
-    public void testGetIslandWorld() {
-        assertEquals(world, iwm.getIslandWorld("friendly"));
-        assertNull(iwm.getIslandWorld("not-friendly"));
+    void testGetIslandWorld() {
+        assertEquals(testWorld, testIwm.getIslandWorld("friendly"));
+        assertNull(testIwm.getIslandWorld("not-friendly"));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getMaxTeamSize(org.bukkit.World)}.
      */
     @Test
-    public void testGetMaxTeamSize() {
-        assertEquals(0, iwm.getMaxTeamSize(world));
+    void testGetMaxTeamSize() {
+        assertEquals(0, testIwm.getMaxTeamSize(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getMaxHomes(org.bukkit.World)}.
      */
     @Test
-    public void testGetMaxHomes() {
-        assertEquals(0, iwm.getMaxHomes(world));
+    void testGetMaxHomes() {
+        assertEquals(0, testIwm.getMaxHomes(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getFriendlyName(org.bukkit.World)}.
      */
     @Test
-    public void testGetFriendlyName() {
-        assertEquals("friendly", iwm.getFriendlyName(world));
+    void testGetFriendlyName() {
+        assertEquals("friendly", testIwm.getFriendlyName(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getPermissionPrefix(org.bukkit.World)}.
      */
     @Test
-    public void testGetPermissionPrefix() {
+    void testGetPermissionPrefix() {
         when(ws.getPermissionPrefix()).thenReturn("bsky");
-        assertEquals("bsky.", iwm.getPermissionPrefix(world));
+        assertEquals("bsky.", testIwm.getPermissionPrefix(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIvSettings(org.bukkit.World)}.
      */
     @Test
-    public void testGetIvSettings() {
+    void testGetIvSettings() {
         List<String> list = Collections.singletonList("blah");
         when(ws.getIvSettings()).thenReturn(list);
-        assertEquals(list, iwm.getIvSettings(world));
+        assertEquals(list, testIwm.getIvSettings(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isWorldFlag(org.bukkit.World, world.bentobox.bentobox.api.flags.Flag)}.
      */
     @Test
-    public void testIsWorldFlag() {
+    void testIsWorldFlag() {
         // TODO
     }
 
@@ -522,183 +516,185 @@ public class IslandWorldManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDefaultGameMode(org.bukkit.World)}.
      */
     @Test
-    public void testGetDefaultGameMode() {
+    void testGetDefaultGameMode() {
         when(ws.getDefaultGameMode()).thenReturn(GameMode.ADVENTURE);
-        assertEquals(GameMode.ADVENTURE, iwm.getDefaultGameMode(world));
+        assertEquals(GameMode.ADVENTURE, testIwm.getDefaultGameMode(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getRemoveMobsWhitelist(org.bukkit.World)}.
      */
     @Test
-    public void testGetRemoveMobsWhitelist() {
+    void testGetRemoveMobsWhitelist() {
         Set<EntityType> set = new HashSet<>();
         when(ws.getRemoveMobsWhitelist()).thenReturn(set);
-        assertEquals(set, iwm.getRemoveMobsWhitelist(world));
+        assertEquals(set, testIwm.getRemoveMobsWhitelist(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnJoinResetMoney(org.bukkit.World)}.
      */
     @Test
-    public void testIsOnJoinResetMoney() {
-        assertFalse(iwm.isOnJoinResetMoney(world));
+    void testIsOnJoinResetMoney() {
+        assertFalse(testIwm.isOnJoinResetMoney(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnJoinResetInventory(org.bukkit.World)}.
      */
     @Test
-    public void testIsOnJoinResetInventory() {
-        assertFalse(iwm.isOnJoinResetInventory(world));
+    void testIsOnJoinResetInventory() {
+        assertFalse(testIwm.isOnJoinResetInventory(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnJoinResetEnderChest(org.bukkit.World)}.
      */
     @Test
-    public void testIsOnJoinResetEnderChest() {
-        assertFalse(iwm.isOnJoinResetEnderChest(world));
+    void testIsOnJoinResetEnderChest() {
+        assertFalse(testIwm.isOnJoinResetEnderChest(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnLeaveResetMoney(org.bukkit.World)}.
      */
     @Test
-    public void testIsOnLeaveResetMoney() {
-        assertFalse(iwm.isOnLeaveResetMoney(world));
+    void testIsOnLeaveResetMoney() {
+        assertFalse(testIwm.isOnLeaveResetMoney(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnLeaveResetInventory(org.bukkit.World)}.
      */
     @Test
-    public void testIsOnLeaveResetInventory() {
-        assertFalse(iwm.isOnLeaveResetInventory(world));
+    void testIsOnLeaveResetInventory() {
+        assertFalse(testIwm.isOnLeaveResetInventory(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnLeaveResetEnderChest(org.bukkit.World)}.
      */
     @Test
-    public void testIsOnLeaveResetEnderChest() {
-        assertFalse(iwm.isOnLeaveResetEnderChest(world));
+    void testIsOnLeaveResetEnderChest() {
+        assertFalse(testIwm.isOnLeaveResetEnderChest(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDataFolder(org.bukkit.World)}.
      */
     @Test
-    public void testGetDataFolder() {
+    void testGetDataFolder() {
         File dataFolder = mock(File.class);
         when(gm.getDataFolder()).thenReturn(dataFolder);
-        assertEquals(dataFolder, iwm.getDataFolder(world));
+        assertEquals(dataFolder, testIwm.getDataFolder(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getAddon(org.bukkit.World)}.
      */
     @Test
-    public void testGetAddon() {
-        assertEquals(gm, iwm.getAddon(world).get());
+    void testGetAddon() {
+        assertEquals(gm, testIwm.getAddon(testWorld).get());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getAddon(org.bukkit.World)}.
      */
     @Test
-    public void testGetAddonNull() {
-        assertEquals(Optional.empty(), iwm.getAddon(null));
+    void testGetAddonNull() {
+        assertEquals(Optional.empty(), testIwm.getAddon(null));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDefaultIslandFlags(org.bukkit.World)}.
      */
+    @SuppressWarnings("removal")
     @Test
-    public void testGetDefaultIslandFlags() {
+    void testGetDefaultIslandFlags() {
         Map<Flag, Integer> flags = new HashMap<>();
         when(ws.getDefaultIslandFlags()).thenReturn(flags);
-        assertEquals(flags, iwm.getDefaultIslandFlags(world));
+        assertEquals(flags, testIwm.getDefaultIslandFlags(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getHiddenFlags(org.bukkit.World)}.
      */
     @Test
-    public void testGetVisibleSettings() {
+    void testGetVisibleSettings() {
         List<String> list = new ArrayList<>();
         when(ws.getHiddenFlags()).thenReturn(list);
-        assertEquals(list, iwm.getHiddenFlags(world));
+        assertEquals(list, testIwm.getHiddenFlags(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDefaultIslandSettings(org.bukkit.World)}.
      */
+    @SuppressWarnings("removal")
     @Test
-    public void testGetDefaultIslandSettings() {
+    void testGetDefaultIslandSettings() {
         Map<Flag, Integer> flags = new HashMap<>();
         when(ws.getDefaultIslandFlags()).thenReturn(flags);
-        assertEquals(flags,iwm.getDefaultIslandSettings(world));
+        assertEquals(flags,testIwm.getDefaultIslandSettings(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isUseOwnGenerator(org.bukkit.World)}.
      */
     @Test
-    public void testIsUseOwnGenerator() {
-        assertFalse(iwm.isUseOwnGenerator(world));
+    void testIsUseOwnGenerator() {
+        assertFalse(testIwm.isUseOwnGenerator(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getVisitorBannedCommands(org.bukkit.World)}.
      */
     @Test
-    public void testGetVisitorBannedCommands() {
+    void testGetVisitorBannedCommands() {
         List<String> list = new ArrayList<>();
         when(ws.getVisitorBannedCommands()).thenReturn(list);
-        assertEquals(list, iwm.getVisitorBannedCommands(world));
+        assertEquals(list, testIwm.getVisitorBannedCommands(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isWaterNotSafe(org.bukkit.World)}.
      */
     @Test
-    public void testIsWaterNotSafe() {
-        assertFalse(iwm.isWaterNotSafe(world));
+    void testIsWaterNotSafe() {
+        assertFalse(testIwm.isWaterNotSafe(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getGeoLimitSettings(org.bukkit.World)}.
      */
     @Test
-    public void testGetGeoLimitSettings() {
+    void testGetGeoLimitSettings() {
         List<String> list = new ArrayList<>();
         when(ws.getGeoLimitSettings()).thenReturn(list);
-        assertEquals(list, iwm.getGeoLimitSettings(world));
+        assertEquals(list, testIwm.getGeoLimitSettings(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getResetLimit(org.bukkit.World)}.
      */
     @Test
-    public void testGetResetLimit() {
-        assertEquals(0,iwm.getResetLimit(world));
+    void testGetResetLimit() {
+        assertEquals(0,testIwm.getResetLimit(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getResetEpoch(org.bukkit.World)}.
      */
     @Test
-    public void testGetResetEpoch() {
-        assertEquals(0,iwm.getResetEpoch(world));
+    void testGetResetEpoch() {
+        assertEquals(0,testIwm.getResetEpoch(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#setResetEpoch(org.bukkit.World)}.
      */
     @Test
-    public void testSetResetEpoch() {
-        iwm.setResetEpoch(world);
+    void testSetResetEpoch() {
+        testIwm.setResetEpoch(testWorld);
         Mockito.verify(ws).setResetEpoch(Mockito.anyLong());
     }
 
@@ -706,24 +702,24 @@ public class IslandWorldManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isTeamJoinDeathReset(org.bukkit.World)}.
      */
     @Test
-    public void testIsTeamJoinDeathReset() {
-        assertFalse(iwm.isTeamJoinDeathReset(world));
+    void testIsTeamJoinDeathReset() {
+        assertFalse(testIwm.isTeamJoinDeathReset(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDeathsMax(org.bukkit.World)}.
      */
     @Test
-    public void testGetDeathsMax() {
-        assertEquals(0, iwm.getDeathsMax(world));
+    void testGetDeathsMax() {
+        assertEquals(0, testIwm.getDeathsMax(testWorld));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getBanLimit(org.bukkit.World)}.
      */
     @Test
-    public void testGetBanLimit() {
-        assertEquals(0, iwm.getBanLimit(world));
+    void testGetBanLimit() {
+        assertEquals(0, testIwm.getBanLimit(testWorld));
     }
 
 }

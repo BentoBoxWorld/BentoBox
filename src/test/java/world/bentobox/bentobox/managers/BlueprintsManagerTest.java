@@ -1,11 +1,16 @@
 package world.bentobox.bentobox.managers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -15,672 +20,586 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarOutputStream;
-import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Server;
-import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
-import world.bentobox.bentobox.blueprints.BlueprintPaster;
-import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
-import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * @author tastybento
- *
+ * Tests for {@link BlueprintsManager}.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, BlueprintPaster.class} )
-public class BlueprintsManagerTest {
+class BlueprintsManagerTest extends CommonTestSetup {
 
-    public static int BUFFER_SIZE = 10240;
-
-    @Mock
-    private BentoBox plugin;
     @Mock
     private GameModeAddon addon;
-    @Mock
-    private Island island;
-    @Mock
-    private BukkitScheduler scheduler;
 
+    private BlueprintsManager manager;
     private File dataFolder;
-    private File jarFile;
+    private File blueprintsFolder;
 
-    private TestClass test;
+    private static final String BUNDLE_NAME = "default";
 
-    private Blueprint defaultBp;
+    /** A minimal valid blueprint in JSON form (will be zipped into a .blu file). */
+    private static final String BLUEPRINT_JSON = """
+            {
+                "name": "island",
+                "attached": {},
+                "entities": {},
+                "blocks": [
+                    [
+                        [0.0, 0.0, 0.0], {
+                            "blockData": "minecraft:bedrock"
+                        }
+                    ]
+                ],
+                "xSize": 10,
+                "ySize": 10,
+                "zSize": 10,
+                "bedrock": [0.0, 0.0, 0.0]
+            }""";
 
-    @Mock
-    private World world;
-
-    @Mock
-    private User user;
-
-    @Mock
-    private BukkitTask task;
-
-    private int times;
-    @Mock
-    private Server server;
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Make the addon
-        dataFolder = new File("dataFolder");
-        jarFile = new File("addon.jar");
-        makeAddon();
-        test = new TestClass();
-        test.setDataFolder(dataFolder);
-        test.setFile(jarFile);
-        // Default blueprint
-        defaultBp = new Blueprint();
-        defaultBp.setName("bedrock");
-        defaultBp.setDescription(Collections.singletonList(ChatColor.AQUA + "A bedrock block"));
-        defaultBp.setBedrock(new Vector(0,0,0));
-        Map<Vector, BlueprintBlock> map = new HashMap<>();
-        map.put(new Vector(0,0,0), new BlueprintBlock("minecraft:bedrock"));
-        defaultBp.setBlocks(map);
-        // Scheduler
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(scheduler);
-        when(server.getBukkitVersion()).thenReturn("version");
-        when(Bukkit.getServer()).thenReturn(server);
+        super.setUp();
 
-    }
+        dataFolder = new File("test-bm-" + System.nanoTime());
+        blueprintsFolder = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
 
-    /**
-     * Fake Addon class
-     *
-     */
-    private class TestClass extends Addon {
-        @Override
-        public void onEnable() { }
-
-        @Override
-        public void onDisable() { }
-    }
-
-    public void makeAddon() throws Exception {
-        // Make a blueprint folder
-        File blueprintFolder = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
-        blueprintFolder.mkdirs();
-        // Make a blueprint file
-        YamlConfiguration config = new YamlConfiguration();
-        config.set("hello", "this is a test");
-        File configFile = new File(blueprintFolder, "blueprint.blu");
-        config.save(configFile);
-        // Make a blueprint bundle
-        YamlConfiguration yml = new YamlConfiguration();
-        yml.set("name", "TestAddon");
-        File ymlFile = new File(blueprintFolder, "bundle.json");
-        yml.save(ymlFile);
-        // Make an archive file
-        // Put them into a jar file
-        createJarArchive(jarFile, blueprintFolder, Arrays.asList(configFile, ymlFile));
-        // Clean up
-        Files.deleteIfExists(configFile.toPath());
-        Files.deleteIfExists(ymlFile.toPath());
-        // Remove folder
-        deleteDir(blueprintFolder.toPath());
-        // Mocks
-        when(addon.getDataFolder()).thenReturn(dataFolder);
-        when(addon.getFile()).thenReturn(jarFile);
-        when(addon.getOverWorld()).thenReturn(world);
-        when(addon.getPermissionPrefix()).thenReturn("bskyblock.");
-        // Desc
-        AddonDescription desc = new AddonDescription.Builder("main", "name", "1.0").build();
+        AddonDescription desc = new AddonDescription.Builder("main", "TestAddon", "1.0").build();
         when(addon.getDescription()).thenReturn(desc);
+        when(addon.getDataFolder()).thenReturn(dataFolder);
+        when(addon.getPermissionPrefix()).thenReturn("testaddon.");
 
+        // Run async tasks synchronously so file-writing tests are deterministic.
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenAnswer(inv -> {
+            ((Runnable) inv.getArgument(1)).run();
+            return mock(BukkitTask.class);
+        });
+
+        manager = new BlueprintsManager(plugin);
     }
 
-    /**
-     */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
-        // Clean up file system
-        deleteDir(dataFolder.toPath());
-        // Delete addon.jar
-        Files.deleteIfExists(jarFile.toPath());
-
-        Mockito.framework().clearInlineMocks();
+        super.tearDown();
+        deleteFolder(dataFolder);
     }
 
-    private void deleteDir(Path path) throws Exception {
-        if (path.toFile().isDirectory()) {
-            // Clean up file system
-            Files.walk(path)
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
+    // -----------------------------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------------------------
+
+    private void deleteFolder(File folder) throws IOException {
+        if (folder != null && folder.exists()) {
+            Files.walk(folder.toPath())
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
         }
-        Files.deleteIfExists(path);
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#extractDefaultBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Zips {@code sourceFile} into {@code <parent>/<entryName>.blu}, then
+     * deletes the original file. Mirrors what BlueprintClipboardManager does.
      */
-    @Test
-    public void testExtractDefaultBlueprintsFolderExists() throws IOException {
-        // Make the default folder
-        File bpFile = new File("datafolder", "blueprints");
-        bpFile.mkdirs();
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.extractDefaultBlueprints(addon);
-        // Nothing should happen
-        assertEquals(0, bpFile.listFiles().length);
-        // Clean up
-        Files.deleteIfExists(bpFile.toPath());
+    private void zipBlueprint(File sourceFile, String entryName) throws IOException {
+        File zipFile = new File(sourceFile.getParentFile(),
+                entryName + BlueprintsManager.BLUEPRINT_SUFFIX);
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile));
+                FileInputStream fis = new FileInputStream(sourceFile)) {
+            zos.putNextEntry(new ZipEntry(sourceFile.getName()));
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = fis.read(buf)) >= 0) {
+                zos.write(buf, 0, len);
+            }
+            zos.closeEntry();
+        }
+        Files.delete(sourceFile.toPath());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#extractDefaultBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
-     */
+    // -----------------------------------------------------------------------
+    // Constructor / isBlueprintsLoaded
+    // -----------------------------------------------------------------------
+
     @Test
-    public void testExtractDefaultBlueprints() {
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.extractDefaultBlueprints(addon);
-        verify(addon).saveResource(eq("blueprints/bundle.json"), eq(false));
-        verify(addon).saveResource(eq("blueprints/blueprint.blu"), eq(false));
+    void testConstructorCreatesManager() {
+        assertNotNull(manager);
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#extractDefaultBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
-     */
     @Test
-    public void testExtractDefaultBlueprintsThrowError() throws NullPointerException {
-        // Give it a folder instead of a jar file
-        when(addon.getFile()).thenReturn(dataFolder);
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.extractDefaultBlueprints(addon);
-        verify(plugin).logError(Mockito.startsWith("Could not load blueprint files from addon jar dataFolder"));
+    void testIsBlueprintsLoadedTrueInitially() {
+        assertTrue(manager.isBlueprintsLoaded());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#getBlueprintBundles(world.bentobox.bentobox.api.addons.GameModeAddon)}.
-     */
+    // -----------------------------------------------------------------------
+    // getBlueprintBundles
+    // -----------------------------------------------------------------------
+
     @Test
-    public void testGetBlueprintBundles() {
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        assertTrue(bpm.getBlueprintBundles(addon).isEmpty());
+    void testGetBlueprintBundlesUnregistered() {
+        Map<String, BlueprintBundle> result = manager.getBlueprintBundles(addon);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprintBundles(world.bentobox.bentobox.api.addons.GameModeAddon)}.
-     */
     @Test
-    public void testLoadBlueprintBundlesNoBlueprintFolder() {
-        // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
-            invocation.getArgument(1,Runnable.class).run();
-            verify(plugin).logError(eq("There is no blueprint folder for addon name"));
-            verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
-            File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
-            File d = new File(blueprints, "default.json");
-            assertTrue(d.exists());
-            return task;
-        });
-
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.loadBlueprintBundles(addon);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprintBundles(world.bentobox.bentobox.api.addons.GameModeAddon)}.
-     */
-    @Test
-    public void testLoadBlueprintBundles() {
-        // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
-            invocation.getArgument(1,Runnable.class).run();
-            verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
-            return task;
-        });
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.extractDefaultBlueprints(addon);
-        bpm.loadBlueprintBundles(addon);
-
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
-     */
-    @Test
-    public void testLoadBlueprintsFail() {
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.loadBlueprints(addon);
-        verify(plugin).logError("No blueprints found for name");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
-     */
-    @Test
-    public void testLoadBlueprintsFailZero() {
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.extractDefaultBlueprints(addon);
-        bpm.loadBlueprints(addon);
-        verify(plugin).logError("No blueprints found for name");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
-     */
-    @Test
-    public void testLoadBlueprints() {
-        // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
-            invocation.getArgument(1,Runnable.class).run();
-            return task;
-        });
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        // Load once (makes default files too)
-        bpm.loadBlueprintBundles(addon);
-        // Load them again
-        bpm.loadBlueprints(addon);
-        verify(plugin, Mockito.times(2)).log("Loaded blueprint 'bedrock' for name");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#addBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint)}.
-     */
-    @Test
-    public void testAddBlueprint() {
-        // add blueprint
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.addBlueprint(addon, defaultBp);
-        verify(plugin).log(eq("Added blueprint 'bedrock' for name"));
-        // Add it again, it should replace the previous one
-        bpm.addBlueprint(addon, defaultBp);
-        assertEquals(1, bpm.getBlueprints(addon).size());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#saveBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint)}.
-     */
-    @Test
-    public void testSaveBlueprint() {
-        // Save it
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.saveBlueprint(addon, defaultBp);
-        File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
-        File d = new File(blueprints, "bedrock.blu");
-        assertTrue(d.exists());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#saveBlueprintBundle(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
-     */
-    @Test
-    public void testSaveBlueprintBundle() {
-        // Make bundle
+    void testGetBlueprintBundlesWithBundle() {
         BlueprintBundle bb = new BlueprintBundle();
-        bb.setIcon(Material.PAPER);
-        bb.setUniqueId("bundle");
-        bb.setDisplayName("A bundle");
-        bb.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints"));
-        // Save it
-        File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
+        bb.setUniqueId(BUNDLE_NAME);
+        manager.addBlueprintBundle(addon, bb);
 
-        // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
-            invocation.getArgument(1,Runnable.class).run();
-            File d = new File(blueprints, "bundle.json");
-            assertTrue(d.exists());
-            return task;
-        });
-
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.saveBlueprintBundle(addon, bb);
+        Map<String, BlueprintBundle> result = manager.getBlueprintBundles(addon);
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey(BUNDLE_NAME));
+        assertEquals(bb, result.get(BUNDLE_NAME));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#saveBlueprintBundles()}.
-     */
+    // -----------------------------------------------------------------------
+    // getDefaultBlueprintBundle
+    // -----------------------------------------------------------------------
+
     @Test
-    public void testSaveBlueprintBundles() {
-        // Make bundle
+    void testGetDefaultBlueprintBundleUnregistered() {
+        assertNull(manager.getDefaultBlueprintBundle(addon));
+    }
+
+    @Test
+    void testGetDefaultBlueprintBundleReturnsDefault() {
         BlueprintBundle bb = new BlueprintBundle();
-        bb.setIcon(Material.PAPER);
-        bb.setUniqueId("bundle");
-        bb.setDisplayName("A bundle");
-        bb.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints"));
-        // Add it
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.addBlueprintBundle(addon, bb);
-        // Add another
+        bb.setUniqueId(BlueprintsManager.DEFAULT_BUNDLE_NAME);
+        manager.addBlueprintBundle(addon, bb);
+
+        BlueprintBundle result = manager.getDefaultBlueprintBundle(addon);
+        assertNotNull(result);
+        assertEquals(BlueprintsManager.DEFAULT_BUNDLE_NAME, result.getUniqueId());
+    }
+
+    @Test
+    void testGetDefaultBlueprintBundleNoDefaultBundle() {
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId("custom");
+        manager.addBlueprintBundle(addon, bb);
+
+        assertNull(manager.getDefaultBlueprintBundle(addon));
+    }
+
+    // -----------------------------------------------------------------------
+    // validate
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testValidateNullName() {
+        assertNull(manager.validate(addon, null));
+    }
+
+    @Test
+    void testValidateNameNotFound() {
+        assertNull(manager.validate(addon, "nonexistent"));
+    }
+
+    @Test
+    void testValidateNameFound() {
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId(BUNDLE_NAME);
+        manager.addBlueprintBundle(addon, bb);
+
+        assertEquals(BUNDLE_NAME, manager.validate(addon, BUNDLE_NAME));
+    }
+
+    // -----------------------------------------------------------------------
+    // addBlueprint / getBlueprints
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testGetBlueprintsUnregistered() {
+        Map<String, Blueprint> result = manager.getBlueprints(addon);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testAddBlueprintAddsEntry() {
+        Blueprint bp = new Blueprint();
+        bp.setName("island");
+        manager.addBlueprint(addon, bp);
+
+        Map<String, Blueprint> result = manager.getBlueprints(addon);
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey("island"));
+        verify(plugin).log("Added blueprint 'island' for TestAddon");
+    }
+
+    @Test
+    void testAddBlueprintReplacesExistingByName() {
+        Blueprint bp1 = new Blueprint();
+        bp1.setName("island");
+        Blueprint bp2 = new Blueprint();
+        bp2.setName("island");
+
+        manager.addBlueprint(addon, bp1);
+        manager.addBlueprint(addon, bp2);
+
+        Map<String, Blueprint> result = manager.getBlueprints(addon);
+        assertEquals(1, result.size());
+        assertEquals(bp2, result.get("island"));
+    }
+
+    // -----------------------------------------------------------------------
+    // addBlueprintBundle
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testAddBlueprintBundleAddsEntry() {
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId("vip");
+        manager.addBlueprintBundle(addon, bb);
+
+        assertTrue(manager.getBlueprintBundles(addon).containsKey("vip"));
+    }
+
+    @Test
+    void testAddBlueprintBundleReplacesExisting() {
+        BlueprintBundle bb1 = new BlueprintBundle();
+        bb1.setUniqueId(BUNDLE_NAME);
+        bb1.setDisplayName("Old");
         BlueprintBundle bb2 = new BlueprintBundle();
-        bb2.setIcon(Material.PAPER);
-        bb2.setUniqueId("bundle2");
-        bb2.setDisplayName("A bundle2");
-        bb2.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints2"));
-        // Add
-        bpm.addBlueprintBundle(addon, bb2);
-        // check that there are 2 in there
-        assertEquals(2, bpm.getBlueprintBundles(addon).size());
-        File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
-        File d = new File(blueprints, "bundle.json");
-        File d2 = new File(blueprints, "bundle2.json");
-        times = 0;
-        // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
-            invocation.getArgument(1,Runnable.class).run();
-            // Verify
-            times++;
-            if (times > 2) {
-                assertTrue(d.exists());
-                assertTrue(d2.exists());
-            }
-            return task;
-        });
-        // Save
-        bpm.saveBlueprintBundles();
+        bb2.setUniqueId(BUNDLE_NAME);
+        bb2.setDisplayName("New");
+
+        manager.addBlueprintBundle(addon, bb1);
+        manager.addBlueprintBundle(addon, bb2);
+
+        Map<String, BlueprintBundle> bundles = manager.getBlueprintBundles(addon);
+        assertEquals(1, bundles.size());
+        assertEquals("New", bundles.get(BUNDLE_NAME).getDisplayName());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#getBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
-     */
+    // -----------------------------------------------------------------------
+    // checkPerm
+    // -----------------------------------------------------------------------
+
     @Test
-    public void testGetBlueprints() {
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        assertTrue(bpm.getBlueprints(addon).isEmpty());
+    void testCheckPermBundleNotFound() {
+        User user = mock(User.class);
+        assertFalse(manager.checkPerm(addon, user, "nonexistent"));
+        verify(user).sendMessage(eq("general.errors.no-permission"),
+                eq(TextVariables.PERMISSION), anyString());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#paste(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.database.objects.Island, java.lang.String)}.
-     */
     @Test
-    public void testPasteGameModeAddonIslandStringFail() {
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.paste(addon, island, "random");
-        verify(plugin).logError("Tried to paste 'random' but the bundle is not loaded!");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#paste(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.database.objects.Island, java.lang.String)}.
-     */
-    @Test
-    public void testPasteGameModeAddonIslandStringNoBlueprintsLoaded() {
-        // Make bundle
+    void testCheckPermNoPermission() {
         BlueprintBundle bb = new BlueprintBundle();
-        bb.setIcon(Material.PAPER);
-        bb.setUniqueId("bundle");
-        bb.setDisplayName("A bundle");
-        bb.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints"));
-        // Add it
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.addBlueprintBundle(addon, bb);
-        // paste it
-        bpm.paste(addon, island, "bundle");
-        verify(plugin).logError("No blueprints loaded for bundle 'bundle'!");
+        bb.setUniqueId("vip");
+        bb.setRequirePermission(true);
+        manager.addBlueprintBundle(addon, bb);
+
+        User user = mock(User.class);
+        when(user.hasPermission(anyString())).thenReturn(false);
+
+        assertFalse(manager.checkPerm(addon, user, "vip"));
+        verify(user).sendMessage(eq("general.errors.no-permission"),
+                eq(TextVariables.PERMISSION), anyString());
     }
 
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#paste(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.database.objects.Island, java.lang.String)}.
-     */
     @Test
-    public void testPasteGameModeAddonIslandStringNoNormalBlueprint() {
-        // Make bundle
+    void testCheckPermAllowed() {
         BlueprintBundle bb = new BlueprintBundle();
-        bb.setIcon(Material.PAPER);
-        bb.setUniqueId("bundle");
-        bb.setDisplayName("A bundle");
-        bb.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints"));
-        // Set no environments
-        // Add it
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.addBlueprintBundle(addon, bb);
-        bpm.addBlueprint(addon, defaultBp);
-        // paste it
-        bpm.paste(addon, island, "bundle");
-        verify(plugin).logError("Blueprint bundle has no normal world blueprint, using default");
+        bb.setUniqueId("vip");
+        bb.setRequirePermission(true);
+        manager.addBlueprintBundle(addon, bb);
+
+        User user = mock(User.class);
+        when(user.hasPermission("testaddon.island.create.vip")).thenReturn(true);
+
+        assertTrue(manager.checkPerm(addon, user, "vip"));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#validate(world.bentobox.bentobox.api.addons.GameModeAddon, java.lang.String)}.
-     */
     @Test
-    public void testValidateNull() {
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        assertNull(bpm.validate(addon, null));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#validate(world.bentobox.bentobox.api.addons.GameModeAddon, java.lang.String)}.
-     */
-    @Test
-    public void testValidateInvalid() {
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        assertNull(bpm.validate(addon, "invalid"));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#validate(world.bentobox.bentobox.api.addons.GameModeAddon, java.lang.String)}.
-     */
-    @Test
-    public void testValidate() {
-        // Make bundle
+    void testCheckPermDefaultBundleAlwaysAllowed() {
+        // Even with requirePermission=true, the default bundle is always allowed.
         BlueprintBundle bb = new BlueprintBundle();
-        bb.setIcon(Material.PAPER);
-        bb.setUniqueId("bundle");
-        bb.setDisplayName("A bundle");
-        bb.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints"));
-        // This blueprint is used for all environments
-        bb.setBlueprint(World.Environment.NORMAL, defaultBp);
-        bb.setBlueprint(World.Environment.NETHER, defaultBp);
-        bb.setBlueprint(World.Environment.THE_END, defaultBp);
-        // Add it
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.addBlueprintBundle(addon, bb);
-        assertEquals("bundle", bpm.validate(addon, "bundle"));
-        // Not there
-        assertNull(bpm.validate(addon, "buNdle2"));
+        bb.setUniqueId(BlueprintsManager.DEFAULT_BUNDLE_NAME);
+        bb.setRequirePermission(true);
+        manager.addBlueprintBundle(addon, bb);
+
+        User user = mock(User.class);
+        assertTrue(manager.checkPerm(addon, user, BlueprintsManager.DEFAULT_BUNDLE_NAME));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#checkPerm(world.bentobox.bentobox.api.addons.Addon, world.bentobox.bentobox.api.user.User, java.lang.String)}.
-     */
     @Test
-    public void testCheckPermNoBundles() {
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        assertFalse(bpm.checkPerm(addon, user, "name"));
-        verify(user).sendMessage(eq("general.errors.no-permission"), eq(TextVariables.PERMISSION), eq("bskyblock.island.create.name"));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#checkPerm(world.bentobox.bentobox.api.addons.Addon, world.bentobox.bentobox.api.user.User, java.lang.String)}.
-     */
-    @Test
-    public void testCheckPermBundlesNoPremissionRequired() {
-        // Make bundle
+    void testCheckPermNoPermissionRequired() {
         BlueprintBundle bb = new BlueprintBundle();
-        bb.setIcon(Material.PAPER);
-        bb.setUniqueId("bundle");
-        bb.setDisplayName("A bundle");
-        bb.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints"));
-        // This blueprint is used for all environments
-        bb.setBlueprint(World.Environment.NORMAL, defaultBp);
-        bb.setBlueprint(World.Environment.NETHER, defaultBp);
-        bb.setBlueprint(World.Environment.THE_END, defaultBp);
-        // No permissions required
+        bb.setUniqueId("vip");
         bb.setRequirePermission(false);
-        // Add it
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.addBlueprintBundle(addon, bb);
-        // Check perm
-        assertTrue(bpm.checkPerm(addon, user, "bundle"));
-        verify(user, Mockito.never()).sendMessage(eq("general.errors.no-permission"), eq(TextVariables.PERMISSION), eq("bskyblock.island.create.bundle"));
+        manager.addBlueprintBundle(addon, bb);
+
+        User user = mock(User.class);
+        assertTrue(manager.checkPerm(addon, user, "vip"));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#checkPerm(world.bentobox.bentobox.api.addons.Addon, world.bentobox.bentobox.api.user.User, java.lang.String)}.
-     */
+    // -----------------------------------------------------------------------
+    // deleteBlueprint
+    // -----------------------------------------------------------------------
+
     @Test
-    public void testCheckPermBundlesPremissionRequired() {
-        // Make bundle
+    void testDeleteBlueprintLeavesOtherBlueprints() {
+        Blueprint bp = new Blueprint();
+        bp.setName("island");
+        manager.addBlueprint(addon, bp);
+
+        manager.deleteBlueprint(addon, "nonexistent");
+
+        assertEquals(1, manager.getBlueprints(addon).size());
+    }
+
+    @Test
+    void testDeleteBlueprintRemovesFromListAndFile() throws IOException {
+        blueprintsFolder.mkdirs();
+        Blueprint bp = new Blueprint();
+        bp.setName("island");
+        manager.addBlueprint(addon, bp);
+
+        File file = new File(blueprintsFolder, "island" + BlueprintsManager.BLUEPRINT_SUFFIX);
+        Files.writeString(file.toPath(), "dummy");
+        assertTrue(file.exists());
+
+        manager.deleteBlueprint(addon, "island");
+
+        assertTrue(manager.getBlueprints(addon).isEmpty());
+        assertFalse(file.exists());
+    }
+
+    @Test
+    void testDeleteBlueprintCaseInsensitive() {
+        Blueprint bp = new Blueprint();
+        bp.setName("island");
+        manager.addBlueprint(addon, bp);
+
+        manager.deleteBlueprint(addon, "ISLAND");
+
+        assertTrue(manager.getBlueprints(addon).isEmpty());
+    }
+
+    // -----------------------------------------------------------------------
+    // deleteBlueprintBundle
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testDeleteBlueprintBundleRemovesFromMapAndFile() throws IOException {
+        blueprintsFolder.mkdirs();
         BlueprintBundle bb = new BlueprintBundle();
-        bb.setIcon(Material.PAPER);
-        bb.setUniqueId("bundle");
-        bb.setDisplayName("A bundle");
-        bb.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints"));
-        // This blueprint is used for all environments
-        bb.setBlueprint(World.Environment.NORMAL, defaultBp);
-        bb.setBlueprint(World.Environment.NETHER, defaultBp);
-        bb.setBlueprint(World.Environment.THE_END, defaultBp);
-        // Permission required
-        bb.setRequirePermission(true);
-        // Add it
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.addBlueprintBundle(addon, bb);
-        assertFalse(bpm.checkPerm(addon, user, "bundle"));
-        verify(user).sendMessage(eq("general.errors.no-permission"), eq(TextVariables.PERMISSION), eq("bskyblock.island.create.bundle"));
+        bb.setUniqueId(BUNDLE_NAME);
+        manager.addBlueprintBundle(addon, bb);
+
+        File file = new File(blueprintsFolder, BUNDLE_NAME + ".json");
+        Files.writeString(file.toPath(), "{}");
+        assertTrue(file.exists());
+
+        manager.deleteBlueprintBundle(addon, bb);
+
+        assertTrue(manager.getBlueprintBundles(addon).isEmpty());
+        assertFalse(file.exists());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#checkPerm(world.bentobox.bentobox.api.addons.Addon, world.bentobox.bentobox.api.user.User, java.lang.String)}.
-     */
     @Test
-    public void testCheckPermBundlesDefault() {
-        // Make bundle
+    void testDeleteBlueprintBundleAddonNotRegisteredDoesNotThrow() {
         BlueprintBundle bb = new BlueprintBundle();
-        bb.setIcon(Material.PAPER);
-        bb.setUniqueId("default");
-        bb.setDisplayName("A bundle");
-        bb.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints"));
-        // This blueprint is used for all environments
-        bb.setBlueprint(World.Environment.NORMAL, defaultBp);
-        bb.setBlueprint(World.Environment.NETHER, defaultBp);
-        bb.setBlueprint(World.Environment.THE_END, defaultBp);
-        // Permission required
-        bb.setRequirePermission(true);
-        // Add it
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.addBlueprintBundle(addon, bb);
-        assertTrue(bpm.checkPerm(addon, user, "default"));
+        bb.setUniqueId(BUNDLE_NAME);
+        assertDoesNotThrow(() -> manager.deleteBlueprintBundle(addon, bb));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#deleteBlueprintBundle(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
-     */
+    // -----------------------------------------------------------------------
+    // loadBlueprints
+    // -----------------------------------------------------------------------
+
     @Test
-    public void testDeleteBlueprintBundle() throws IOException {
-        // Make bundle
+    void testLoadBlueprintsNoFolder() {
+        manager.loadBlueprints(addon);
+        verify(plugin).logError("There is no blueprint folder for addon TestAddon");
+    }
+
+    @Test
+    void testLoadBlueprintsEmptyFolder() {
+        blueprintsFolder.mkdirs();
+        manager.loadBlueprints(addon);
+        verify(plugin).logError("No blueprints found for TestAddon");
+    }
+
+    @Test
+    void testLoadBlueprintsLoadsFile() throws IOException {
+        blueprintsFolder.mkdirs();
+        // Write the raw JSON, then zip it into "island.blu"
+        File jsonFile = new File(blueprintsFolder, "island");
+        Files.writeString(jsonFile.toPath(), BLUEPRINT_JSON);
+        zipBlueprint(jsonFile, "island");
+
+        manager.loadBlueprints(addon);
+
+        Map<String, Blueprint> blueprints = manager.getBlueprints(addon);
+        assertEquals(1, blueprints.size());
+        assertTrue(blueprints.containsKey("island"));
+        verify(plugin).log("Loaded blueprint 'island' for TestAddon");
+    }
+
+    // -----------------------------------------------------------------------
+    // extractDefaultBlueprints
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testExtractDefaultBlueprintsFolderAlreadyExists() {
+        blueprintsFolder.mkdirs();
+        // If the folder exists the method should return immediately without errors.
+        manager.extractDefaultBlueprints(addon);
+        verify(plugin, never()).logError(anyString());
+    }
+
+    // -----------------------------------------------------------------------
+    // paste
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testPasteBundleNotRegistered() {
+        boolean result = manager.paste(addon, island, BUNDLE_NAME, null, true);
+        assertFalse(result);
+        verify(plugin).logError("Tried to paste 'default' but the bundle is not loaded!");
+    }
+
+    @Test
+    void testPasteNoBlueprintsForBundle() {
+        // Bundle is registered but no blueprints are loaded.
         BlueprintBundle bb = new BlueprintBundle();
-        bb.setIcon(Material.PAPER);
-        bb.setUniqueId("bundle");
-        bb.setDisplayName("A bundle");
-        bb.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints"));
-        // Create a dummy file
-        File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
-        blueprints.mkdirs();
-        File d = new File(blueprints, "bundle.json");
-        Files.createFile(d.toPath());
+        bb.setUniqueId(BUNDLE_NAME);
+        manager.addBlueprintBundle(addon, bb);
 
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
-            invocation.getArgument(1,Runnable.class).run();
-
-            // Verify
-            assertFalse(d.exists());
-            return task;
-        });
-
-        // Delete it
-        bpm.deleteBlueprintBundle(addon, bb);
-
+        boolean result = manager.paste(addon, island, BUNDLE_NAME, null, true);
+        assertFalse(result);
+        verify(plugin).logError("No blueprints loaded for bundle 'default'!");
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#renameBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint, java.lang.String, java.lang.String)}.
-     */
+    // -----------------------------------------------------------------------
+    // saveBlueprint
+    // -----------------------------------------------------------------------
+
     @Test
-    public void testRenameBlueprint() {
-        // Save it
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.saveBlueprint(addon, defaultBp);
-        bpm.addBlueprint(addon, defaultBp);
-        File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
-        File d = new File(blueprints, "bedrock.blu");
-        assertTrue(d.exists());
-        // Rename it
-        bpm.renameBlueprint(addon, defaultBp, "bedrock2", "");
-        assertFalse(d.exists());
-        d = new File(blueprints, "bedrock2.blu");
-        assertTrue(d.exists());
+    void testSaveBlueprintCreatesFile() {
+        blueprintsFolder.mkdirs();
+        Blueprint bp = new Blueprint();
+        bp.setName("island");
+
+        boolean result = manager.saveBlueprint(addon, bp);
+
+        assertTrue(result);
+        File saved = new File(blueprintsFolder, "island" + BlueprintsManager.BLUEPRINT_SUFFIX);
+        assertTrue(saved.exists());
     }
 
-    /*
-     * Utility methods
-     */
-    private void createJarArchive(File archiveFile, File folder, List<File> tobeJaredList) {
-        byte[] buffer = new byte[BUFFER_SIZE];
-        // Open archive file
-        try (FileOutputStream stream = new FileOutputStream(archiveFile)) {
-            try (JarOutputStream out = new JarOutputStream(stream, new Manifest())) {
-                for (File j: tobeJaredList) addFile(folder, buffer, stream, out, j);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.out.println("Error: " + ex.getMessage());
-        }
+    // -----------------------------------------------------------------------
+    // saveBlueprintBundle (async, runs synchronously in test)
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testSaveBlueprintBundleCreatesFile() throws IOException {
+        blueprintsFolder.mkdirs();
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId(BUNDLE_NAME);
+        bb.setDisplayName("Test Bundle");
+
+        manager.saveBlueprintBundle(addon, bb);
+
+        File savedFile = new File(blueprintsFolder, BUNDLE_NAME + ".json");
+        assertTrue(savedFile.exists());
+        String content = Files.readString(savedFile.toPath());
+        assertTrue(content.contains(BUNDLE_NAME));
     }
 
-    private void addFile(File folder, byte[] buffer, FileOutputStream stream, JarOutputStream out, File tobeJared) throws IOException {
-        if (tobeJared == null || !tobeJared.exists() || tobeJared.isDirectory())
-            return;
-        // Add archive entry
-        JarEntry jarAdd = new JarEntry(folder.getName() + "/" + tobeJared.getName());
-        jarAdd.setTime(tobeJared.lastModified());
-        out.putNextEntry(jarAdd);
-        // Write file to archive
-        try (FileInputStream in = new FileInputStream(tobeJared)) {
-            while (true) {
-                int nRead = in.read(buffer, 0, buffer.length);
-                if (nRead <= 0)
-                    break;
-                out.write(buffer, 0, nRead);
-            }
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            e.printStackTrace();
-        }
+    // -----------------------------------------------------------------------
+    // renameBlueprint
+    // -----------------------------------------------------------------------
 
+    @Test
+    void testRenameBlueprintSameNameIsNoOp() {
+        Blueprint bp = new Blueprint();
+        bp.setName("island");
+        manager.addBlueprint(addon, bp);
+
+        manager.renameBlueprint(addon, bp, "island", "Island Display");
+
+        // Name should be unchanged; method returns early.
+        assertEquals("island", bp.getName());
+        assertTrue(manager.getBlueprints(addon).containsKey("island"));
     }
 
+    @Test
+    void testRenameBlueprintNewName() throws IOException {
+        blueprintsFolder.mkdirs();
+        // Create the "old" .blu file so deleteIfExists has something to remove.
+        File oldFile = new File(blueprintsFolder,
+                "island" + BlueprintsManager.BLUEPRINT_SUFFIX);
+        Files.writeString(oldFile.toPath(), "dummy");
+
+        Blueprint bp = new Blueprint();
+        bp.setName("island");
+        manager.addBlueprint(addon, bp);
+
+        manager.renameBlueprint(addon, bp, "newisland", "New Island");
+
+        assertFalse(oldFile.exists());
+        assertEquals("newisland", bp.getName());
+        assertEquals("New Island", bp.getDisplayName());
+
+        Map<String, Blueprint> blueprints = manager.getBlueprints(addon);
+        assertFalse(blueprints.containsKey("island"));
+        assertTrue(blueprints.containsKey("newisland"));
+    }
+
+    // -----------------------------------------------------------------------
+    // BlueprintBundle commands
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testBlueprintBundleCommandsDefaultEmpty() {
+        BlueprintBundle bb = new BlueprintBundle();
+        assertNotNull(bb.getCommands());
+        assertTrue(bb.getCommands().isEmpty());
+    }
+
+    @Test
+    void testBlueprintBundleSetCommands() {
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCommands(List.of("say hello", "give [player] diamond 1"));
+        assertEquals(2, bb.getCommands().size());
+        assertEquals("say hello", bb.getCommands().get(0));
+        assertEquals("give [player] diamond 1", bb.getCommands().get(1));
+    }
+
+    @Test
+    void testBlueprintBundleCommandsSerializedInJson() throws IOException {
+        blueprintsFolder.mkdirs();
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId(BUNDLE_NAME);
+        bb.setCommands(List.of("say hello [player]"));
+        manager.saveBlueprintBundle(addon, bb);
+
+        File savedFile = new File(blueprintsFolder, BUNDLE_NAME + ".json");
+        String content = Files.readString(savedFile.toPath());
+        assertTrue(content.contains("say hello [player]"), "Commands should be serialised into JSON");
+    }
 }

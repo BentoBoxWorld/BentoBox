@@ -71,11 +71,12 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
     public @NonNull List<PanelItem> getPanelItems() {
         // Different description and click handlers
         return getFlags().stream().map(f -> {
-            PanelItem i = f.toPanelItem(plugin, user, null, false);
+            PanelItem i = f.toPanelItem(plugin, user, world, island, false);
             // Replace the click handler with WorldToggleClick
             i.setClickHandler(new WorldToggleClick(f.getID()));
             // Replace the description
-            String worldSetting = f.isSetForWorld(user.getWorld()) ? user.getTranslation("protection.panel.flag-item.setting-active")
+            String worldSetting = f.isSetForWorld(world)
+                    ? user.getTranslation("protection.panel.flag-item.setting-active")
                     : user.getTranslation("protection.panel.flag-item.setting-disabled");
             i.setDescription(Arrays.asList(user.getTranslation("protection.panel.flag-item.setting-layout",
                     TextVariables.DESCRIPTION, user.getTranslation(f.getDescriptionReference()),

@@ -15,6 +15,19 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 public interface Tab {
 
+    /**
+     * @return the tabbed panel that owns this tab
+     */
+    default TabbedPanel getParentPanel() {
+        return null;
+    }
+
+    /**
+     * @param parent set the tabbed panel that owns this tab
+     */
+    default void setParentPanel(TabbedPanel parent) {
+    }
+
     // The icon that should be shown at the top of the tabbed panel
     PanelItem getIcon();
 

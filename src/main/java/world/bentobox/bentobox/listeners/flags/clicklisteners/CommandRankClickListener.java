@@ -2,9 +2,9 @@ package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -16,34 +16,44 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 /**
+ * 
  * @author tastybento
  *
  */
 public class CommandRankClickListener implements ClickHandler {
 
     private final BentoBox plugin = BentoBox.getInstance();
+    private Island island;
 
     /* (non-Javadoc)
      * @see world.bentobox.bentobox.api.panels.PanelItem.ClickHandler#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)
      */
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
+        // This click listener is used with TabbedPanel and SettingsTabs only
+        TabbedPanel tp = (TabbedPanel)panel;
+        SettingsTab st = (SettingsTab)tp.getActiveTab();
+        // Get the island for this tab
+        island = st.getIsland();
+
         // Get the world
         if (!user.inWorld()) {
             user.sendMessage("general.errors.wrong-world");
             return true;
         }
 
-        // Check if has permission
+        // Check if user has permission
         World w = Objects.requireNonNull(Util.getWorld(panel.getWorld().orElse(user.getWorld())));
         String prefix = plugin.getIWM().getPermissionPrefix(w);
         String reqPerm = prefix + "settings." + Flags.COMMAND_RANKS.getID();
@@ -55,22 +65,24 @@ public class CommandRankClickListener implements ClickHandler {
             return true;
         }
 
-        // Get the user's island
-        Island island = plugin.getIslands().getIsland(panel.getWorld().orElse(user.getWorld()), user.getUniqueId());
-        if (island == null || island.getOwner() == null || !island.isAllowed(user, Flags.CHANGE_SETTINGS)) {
-            user.sendMessage("general.errors.insufficient-rank",
-                TextVariables.RANK,
-                user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user))));
-
+        // Check if user has rank enough on the island
+        //Island island = plugin.getIslands().getIsland(panel.getWorld().orElse(user.getWorld()), user.getUniqueId());
+        if (!island.isAllowed(user, Flags.CHANGE_SETTINGS)) {
+            String rank = user.getTranslation(RanksManager.getInstance().getRank(Objects.requireNonNull(island).getRank(user)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, rank);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
 
+
         String panelName = user.getTranslation("protection.flags.COMMAND_RANKS.name");
         if (panel.getName().equals(panelName)) {
             // This is a click on the panel
+            if (plugin.onTimeout(user, panel)) {
+                return true;
+            }
             // Slot relates to the command
-            String c = getCommands(panel.getWorld().orElse(user.getWorld())).get(slot);
+            String c = getCommands(panel.getWorld().orElse(user.getWorld()), user).get(slot);
             // Apply change to panel
             panel.getInventory().setItem(slot, getPanelItem(c, user, panel.getWorld().orElse(user.getWorld())).getItem());
         } else {
@@ -87,9 +99,9 @@ public class CommandRankClickListener implements ClickHandler {
         PanelBuilder pb = new PanelBuilder();
         pb.user(user).name(panelName).world(world);
         // Make panel items
-        getCommands(world).forEach(c -> pb.item(getPanelItem(c, user, world)));
-        pb.build();
-
+        getCommands(world, user).forEach(c -> pb.item(getPanelItem(c, user, world)));
+        Panel p = pb.build();
+        p.setIsland(island);
     }
 
     /**
@@ -100,15 +112,22 @@ public class CommandRankClickListener implements ClickHandler {
      * @return panel item for this command
      */
     public PanelItem getPanelItem(String c, User user, World world) {
-        Island island = plugin.getIslands().getIsland(world, user);
         PanelItemBuilder pib = new PanelItemBuilder();
-        pib.name(c);
+        pib.name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, c));
         pib.clickHandler(new CommandCycleClick(this, c));
         pib.icon(Material.MAP);
-        // TODO: use specific layout
-        String d = user.getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION, "");
+        String result = "";
+        // Remove the first word (everything before the first space)
+        String[] words = c.split(" ", 2); // Split into two parts, the first word and the rest
+        if (words.length > 1) {
+            result = words[1].replace(" ", "-"); // Replace spaces with hyphens
+        }
+        String ref = "protection.panel.flag-item.command-instructions." + result.toLowerCase(Locale.ENGLISH);
+        String commandDescription = user.getTranslationOrNothing(ref);
+        String d = user.getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION,
+                commandDescription);
         pib.description(d);
-        plugin.getRanksManager().getRanks().forEach((reference, score) -> {
+        RanksManager.getInstance().getRanks().forEach((reference, score) -> {
             if (score >= RanksManager.MEMBER_RANK && score < island.getRankCommand(c)) {
                 pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
             } else if (score <= RanksManager.OWNER_RANK && score > island.getRankCommand(c)) {
@@ -117,19 +136,19 @@ public class CommandRankClickListener implements ClickHandler {
                 pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
             }
         });
+        pib.invisible(plugin.getIWM().getHiddenFlags(world).contains(CommandCycleClick.COMMAND_RANK_PREFIX + c));
         return pib.build();
     }
 
-    private List<String> getCommands(World world) {
-        List<String> result = new ArrayList<>();
-        plugin.getCommandsManager().getCommands().values().stream()
-        .filter(c -> c.getWorld() != null &&  c.getWorld().equals(world))
-        .forEach(c -> result.addAll(getCmdRecursively("/", c)));
-        if (result.size() > 49) {
-            Bukkit.getLogger().severe("Number of rank setting commands is too big for GUI");
-            result.subList(49, result.size()).clear();
-        }
-        return result;
+    private List<String> getCommands(World world, User user) {
+        List<String> hiddenItems = plugin.getIWM().getHiddenFlags(world);
+        return plugin.getCommandsManager().getCommands().values().stream()
+                .filter(c -> c.getWorld() != null && c.getWorld().equals(world)) // Only allow commands in this world
+                .filter(c -> c.testPermission(user.getSender())) // Only allow them to see commands they have permission to see
+                .flatMap(c -> getCmdRecursively("/", c).stream())
+                .filter(label -> user.isOp() || !hiddenItems.contains(CommandCycleClick.COMMAND_RANK_PREFIX + label)) // Hide any hidden commands
+                .limit(49) // Silently limit to 49
+                .toList();
     }
 
     /**

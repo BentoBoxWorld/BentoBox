@@ -11,16 +11,16 @@ package world.bentobox.bentobox.database.objects.adapters;
 public interface AdapterInterface<S,V> {
 
     /**
-     * Serialize object
-     * @param object - object to serialize
-     * @return serialized object
+     * Deserialize object
+     * @param object - object to deserialize
+     * @return deserialized object
      */
     S deserialize(Object object);
 
     /**
-     * Deserialize object
-     * @param object - object to deserialize
-     * @return deserialized object
+     * Serialize object
+     * @param object - object to serialize
+     * @return serialized object
      */
     V serialize(Object object);
 }

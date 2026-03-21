@@ -1,6 +1,9 @@
 package world.bentobox.bentobox.api.commands.admin.range;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -8,20 +11,13 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -35,21 +31,15 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class AdminRangeDisplayCommandTest {
+class AdminRangeDisplayCommandTest extends CommonTestSetup {
 
     private CompositeCommand ac;
     private User user;
 
-
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         Util.setPlugin(plugin);
 
         // Command manager
@@ -57,17 +47,15 @@ public class AdminRangeDisplayCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Player
-        Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
         UUID notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         User.setPlugin(plugin);
 
@@ -77,83 +65,82 @@ public class AdminRangeDisplayCommandTest {
 
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
-
 
         // Player has island to begin with
         IslandsManager im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
-        when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
-        when(im.getOwner(Mockito.any(),Mockito.any())).thenReturn(uuid);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         PlayersManager pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
         Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer );
+        when(lm.get(any(), any())).thenAnswer(answer);
         when(plugin.getLocalesManager()).thenReturn(lm);
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecutePlayerDisplayArgs() {
+    void testExecutePlayerDisplayArgs() {
         AdminRangeDisplayCommand ardc = new AdminRangeDisplayCommand(ac);
         ardc.execute(user, "display", new ArrayList<>());
         // Show display
-        Mockito.verify(user).sendMessage("commands.admin.range.display.showing");
-        Mockito.verify(user).sendMessage("commands.admin.range.display.hint");
+        verify(user).sendMessage("commands.admin.range.display.showing");
+        verify(user).sendMessage("commands.admin.range.display.hint");
         // Run command again
         ardc.execute(user, "display", new ArrayList<>());
         // Remove
-        Mockito.verify(user).sendMessage("commands.admin.range.display.hiding");
+        verify(user).sendMessage("commands.admin.range.display.hiding");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecutePlayeShowArgs() {
+    void testExecutePlayeShowArgs() {
         AdminRangeDisplayCommand ardc = new AdminRangeDisplayCommand(ac);
         ardc.execute(user, "show", new ArrayList<>());
         // Show display
-        Mockito.verify(user).sendMessage("commands.admin.range.display.showing");
-        Mockito.verify(user).sendMessage("commands.admin.range.display.hint");
+        verify(user).sendMessage("commands.admin.range.display.showing");
+        verify(user).sendMessage("commands.admin.range.display.hint");
         // Run command again
         ardc.execute(user, "show", new ArrayList<>());
-        Mockito.verify(user).sendMessage("commands.admin.range.display.already-on");
+        verify(user).sendMessage("commands.admin.range.display.already-on");
         ardc.execute(user, "hide", new ArrayList<>());
-        Mockito.verify(user).sendMessage("commands.admin.range.display.hiding");
+        verify(user).sendMessage("commands.admin.range.display.hiding");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeDisplayCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecutePlayeHideArgs() {
+    void testExecutePlayeHideArgs() {
         AdminRangeDisplayCommand ardc = new AdminRangeDisplayCommand(ac);
         ardc.execute(user, "hide", new ArrayList<>());
-        Mockito.verify(user).sendMessage("commands.admin.range.display.already-off");
+        verify(user).sendMessage("commands.admin.range.display.already-off");
     }
 
 }

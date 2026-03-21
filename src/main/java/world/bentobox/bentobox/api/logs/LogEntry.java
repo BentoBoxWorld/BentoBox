@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.api.logs;
 
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -15,20 +14,102 @@ import com.google.gson.annotations.Expose;
  * An {@link world.bentobox.bentobox.database.objects.adapters.AdapterInterface AdapterInterface} is provided to be able to save/retrieve
  * a list of instances of this object to/from the database: {@link world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter LogEntryListAdapter}.
  *
- * @author Poslovitch
+ * @author Poslovitch, tastybento
+ * 
  */
 public class LogEntry {
     @Expose
     private final long timestamp;
     @Expose
-    private final String type;
+    private final LogType type;
+    @Expose
+    private final String customType;
     @Expose
     private final Map<String, String> data;
+
+    /**
+     * This is a log enum. If you are a developer and need more make a PR. Or use the string one.
+     */
+    public enum LogType {
+        /**
+         * Something removed
+         */
+        REMOVE,
+        /**
+         * Something added
+         */
+        ADD,
+        /**
+         * Island unregistered
+         */
+        UNREGISTER,
+        /**
+         * Player banned
+         */
+        BAN,
+        /**
+         * Something was completed
+         */
+        COMPELTE,
+        /**
+         * Island became unowned
+         */
+        UNOWNED,
+        /**
+         * Island became spawn
+         */
+        SPAWN,
+        /**
+         * Player unbanned
+         */
+        UNBAN,
+        /**
+         * Player joined
+         */
+        JOINED,
+        /**
+         * New owner made
+         */
+        NEWOWNER,
+        /**
+         * Player trusted
+         */
+        TRUSTED,
+        /**
+         * Player cooped
+         */
+        COOP,
+        /**
+         * Unknown reason
+         */
+        UNKNOWN,
+        /**
+         * Island reset or a reset of some kind
+         */
+        RESET,
+        /**
+         * Everything was reset
+         */
+        RESET_ALL,
+        /**
+         * New thing
+         */
+        NEW,
+        /**
+         * Something duplicated
+         */
+        DUPLICATE,
+        /**
+         * General info
+         */
+        INFO,
+    }
 
     private LogEntry(@NonNull Builder builder) {
         this.timestamp = builder.timestamp;
         this.type = builder.type;
         this.data = builder.data;
+        this.customType = builder.customType;
     }
 
     public long getTimestamp() {
@@ -36,7 +117,7 @@ public class LogEntry {
     }
 
     @NonNull
-    public String getType() {
+    public LogType getType() {
         return type;
     }
 
@@ -47,13 +128,25 @@ public class LogEntry {
 
     public static class Builder {
         private long timestamp;
-        private final String type;
+        private final LogType type;
         private Map<String, String> data;
+        private final String customType;
 
-        public Builder(@NonNull String type) {
+        public Builder(LogType type) {
             this.timestamp = System.currentTimeMillis();
-            this.type = type.toUpperCase(Locale.ENGLISH);
+            this.type = type;
             this.data = new LinkedHashMap<>();
+            this.customType = null;
+        }
+
+        /**
+         * @param customType log type
+         */
+        public Builder(String customType) {
+            this.timestamp = System.currentTimeMillis();
+            this.type = LogType.UNKNOWN;
+            this.data = new LinkedHashMap<>();
+            this.customType = customType;
         }
 
         public Builder timestamp(long timestamp) {
