@@ -16,6 +16,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
@@ -580,11 +581,22 @@ public class Util {
     /**
      * This method translates color codes in given string and strips whitespace after them.
      * This code parses both: hex and old color codes.
+     * Multi-line strings are processed line by line to ensure each line retains its own
+     * color codes, since Adventure's LegacyComponentSerializer may omit repeated color
+     * codes for consecutive segments of the same color.
      * @param textToColor Text which color codes must be parsed.
      * @return String text with parsed colors and stripped whitespaces after them.
      */
     @NonNull
     public static String translateColorCodes(@NonNull String textToColor) {
+        // Process each line independently so color codes are not lost at line boundaries.
+        // Adventure's LegacyComponentSerializer omits repeated §X codes when consecutive
+        // components share the same color, causing lines 2+ to lose their color when split.
+        if (textToColor.contains("\n")) {
+            return Arrays.stream(textToColor.split("\n", -1))
+                    .map(Util::translateColorCodes)
+                    .collect(Collectors.joining("\n"));
+        }
         // Use matcher to find hex patterns in given text.
         Matcher matcher = HEX_PATTERN.matcher(textToColor);
         // Increase buffer size by 32 like it is in bungee cord api. Use buffer because it is sync.
