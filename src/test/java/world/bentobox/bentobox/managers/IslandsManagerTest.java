@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -33,6 +34,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -50,6 +52,7 @@ import org.bukkit.entity.Wither;
 import org.bukkit.entity.Zombie;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
@@ -190,6 +193,7 @@ class IslandsManagerTest extends CommonTestSetup {
         User.setPlugin(plugin);
         // Set up user already
         when(player.getUniqueId()).thenReturn(uuid);
+        when(player.getLocation()).thenReturn(location);
         User.getInstance(player);
 
         // Locales
@@ -219,6 +223,8 @@ class IslandsManagerTest extends CommonTestSetup {
         when(location.clone()).thenReturn(location);
         Chunk chunk = mock(Chunk.class);
         when(location.getChunk()).thenReturn(chunk);
+        // Vector
+        when(location.toVector()).thenReturn(new Vector(100D, 120D, 100D));
         when(space1.getRelative(BlockFace.DOWN)).thenReturn(ground);
         when(space1.getRelative(BlockFace.UP)).thenReturn(space2);
         // A safe spot
@@ -297,13 +303,17 @@ class IslandsManagerTest extends CommonTestSetup {
         when(cow.getType()).thenReturn(EntityType.COW);
         when(wither.getType()).thenReturn(EntityType.WITHER);
         when(wither.getRemoveWhenFarAway()).thenReturn(true);
+        when(wither.getLocation()).thenReturn(location);
         when(creeper.getType()).thenReturn(EntityType.CREEPER);
         when(creeper.getRemoveWhenFarAway()).thenReturn(true);
+        when(creeper.getLocation()).thenReturn(location);
         when(pufferfish.getType()).thenReturn(EntityType.PUFFERFISH);
+        when(pufferfish.getLocation()).thenReturn(location);
         // Named monster
         when(skelly.getType()).thenReturn(EntityType.SKELETON);
         when(skelly.customName()).thenReturn(Component.text("Skelly"));
         when(skelly.getRemoveWhenFarAway()).thenReturn(true);
+        when(skelly.getLocation()).thenReturn(location);
 
         Collection<Entity> collection = new ArrayList<>();
         collection.add(player);
@@ -970,7 +980,8 @@ class IslandsManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.IslandsManager#clearArea(Location)}.
      */
     @Test
-    void testClearArea() {
+    void testClearAreaRemove() {
+        settings.setTeleportRemoveMobs(true);
         islandsManager.clearArea(location);
         // Only the correct entities should be cleared
         verify(zombie).remove();
@@ -981,6 +992,34 @@ class IslandsManagerTest extends CommonTestSetup {
         verify(creeper).remove();
         verify(pufferfish, never()).remove();
         verify(skelly, never()).remove();
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#clearArea(Location)}.
+     */
+    @Test
+    void testClearArea() {
+        islandsManager.clearArea(location);
+        // Only the correct entities should be flung
+        verify(zombie, never()).remove();
+        verify(player, never()).remove();
+        verify(cow, never()).remove();
+        verify(slime, never()).remove();
+        verify(wither, never()).remove();
+        verify(creeper, never()).remove();
+        verify(pufferfish, never()).remove();
+        verify(skelly, never()).remove();
+        
+        verify(zombie).setVelocity(any(Vector.class));
+        verify(slime).setVelocity(any(Vector.class));
+        verify(creeper).setVelocity(any(Vector.class));
+        verify(player, never()).setVelocity(any(Vector.class));
+        verify(cow, never()).setVelocity(any(Vector.class));
+        verify(wither, never()).setVelocity(any(Vector.class));
+        verify(pufferfish, never()).setVelocity(any(Vector.class));
+        verify(skelly, never()).setVelocity(any(Vector.class));
+        
+        verify(world).playSound(zombie, Sound.ENTITY_ILLUSIONER_HURT, 1F, 5F);
     }
 
     /**

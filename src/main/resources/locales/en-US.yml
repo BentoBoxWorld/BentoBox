@@ -704,7 +704,6 @@ commands:
       home-set: '&6 Your [prefix_island] home has been set to your current location.'
       homes-are: '&6 [prefix_Island] homes are:'
       home-list-syntax: '&6 [name]'
-      click-to-teleport: '&oClick to teleport'
       nether:
         not-allowed: '&c You are not allowed to set your home in the Nether.'
         confirmation: '&c Are you sure you want to set your home in the Nether?'
@@ -1600,9 +1599,9 @@ protection:
       name: Remove end exit [prefix_island]
     REMOVE_MOBS:
       description: |-
-        &a Remove monsters when
-        &a teleporting to [prefix_island]
-      name: Remove monsters
+        &a Push monsters away when
+        &a teleporting to island
+      name: Fling back monsters
     RIDING:
       description: Toggle riding
       name: Animal riding

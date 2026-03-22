@@ -86,6 +86,10 @@ general:
   # /!\ This feature is experimental and might not work as expected or might not work at all.
   fakeplayers:
   - '[CoFH]'
+  # Flingback power. How far hostile mobs will be flung back when a player teleports into them.
+  flingback: 5.0
+  # Remove mobs on teleport.
+  teleport-remove-mobs: false
 panel:
   # Panel click cooldown. Value is in milliseconds. Prevents players spamming button presses in GUIs.
   click-cooldown-ms: 250

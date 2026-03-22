@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -71,6 +73,7 @@ public class IslandsManager {
     private static final String SETSPAWN = "bentobox-setspawn";
 
     private final BentoBox plugin;
+    private final Random rand = new Random();
 
     private final Map<World, Island> spawns = new ConcurrentHashMap<>();
 
@@ -1702,7 +1705,30 @@ public class IslandsManager {
                 .filter(en -> Util.isHostileEntity(en)
                         && !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType())
                         && !(en instanceof PufferFish) && ((LivingEntity) en).getRemoveWhenFarAway())
-                .filter(en -> en.customName() == null).forEach(Entity::remove);
+                .filter(en -> en.customName() == null)
+                .forEach(e -> flingOrKill(e, loc));
+    }
+
+    private void flingOrKill(Entity e, Location loc) {
+        if (plugin.getSettings().isTeleportRemoveMobs()) {
+            e.remove();
+            return;
+        }
+        Vector entVec = e.getLocation().toVector();
+        double dist = plugin.getSettings().getFlingback() - entVec.distance(loc.toVector());
+        if (dist < 1) {
+            dist = 1;
+        }
+        Vector direction = entVec.subtract(loc.toVector());
+        if (direction.lengthSquared() < 3) {
+            // On top of us
+            direction.add(new Vector(rand.nextDouble(), 0, rand.nextDouble()));
+        }
+        // Add a bit of lift
+        direction.add(new Vector(0, rand.nextDouble(), 0));
+        direction.multiply(dist);
+        loc.getWorld().playSound(e, Sound.ENTITY_ILLUSIONER_HURT, 1F, 5F);
+        e.setVelocity(direction);
     }
 
     /**

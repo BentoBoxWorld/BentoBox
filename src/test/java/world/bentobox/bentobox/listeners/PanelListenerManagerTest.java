@@ -165,8 +165,7 @@ class PanelListenerManagerTest extends CommonTestSetup {
         }
 
         @Override
-        public String getOriginalTitle() {
-            
+        public String getOriginalTitle() {            
             return "";
         }
 
