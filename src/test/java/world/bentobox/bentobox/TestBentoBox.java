@@ -1,11 +1,12 @@
 package world.bentobox.bentobox;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -31,13 +32,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -46,16 +46,14 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
+import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class})
-public class TestBentoBox extends AbstractCommonSetup {
+class TestBentoBox extends CommonTestSetup {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID VISITOR_UUID = UUID.randomUUID();
     @Mock
@@ -68,33 +66,48 @@ public class TestBentoBox extends AbstractCommonSetup {
     private Player visitorToIsland;
     @Mock
     private CommandsManager cm;
+    private MockedStatic<IslandsManager> mockedStaticIM;
 
     @Override
-    @Before
+    @AfterEach
+    public void tearDown() throws Exception {
+        if (mockedStaticIM != null) mockedStaticIM.closeOnDemand();
+        super.tearDown();
+    }
+    
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
+        // IslandsManager static
+        mockedStaticIM = Mockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
 
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
-        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
+        mockedBukkit.when(() -> Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("tastybento");
 
-        when(player.hasPermission(anyString())).thenReturn(true);
+        when(mockPlayer.hasPermission(anyString())).thenReturn(true);
 
+        when(location.getWorld()).thenReturn(world);
         when(ownerOfIsland.getLocation()).thenReturn(location);
         when(visitorToIsland.getLocation()).thenReturn(location);
         when(location.clone()).thenReturn(location);
 
-        when(player.getUniqueId()).thenReturn(MEMBER_UUID);
+        when(mockPlayer.getUniqueId()).thenReturn(MEMBER_UUID);
         when(ownerOfIsland.getUniqueId()).thenReturn(uuid);
         when(visitorToIsland.getUniqueId()).thenReturn(VISITOR_UUID);
 
+        // Util
+        mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+
         island.setOwner(uuid);
         island.setProtectionRange(100);
+        island.setCenter(location);
         HashMap<UUID, Integer> members = new HashMap<>();
         members.put(uuid, RanksManager.OWNER_RANK);
         members.put(MEMBER_UUID, RanksManager.MEMBER_RANK);
@@ -103,7 +116,7 @@ public class TestBentoBox extends AbstractCommonSetup {
     }
 
     @Test
-    public void testIslandEvent() {
+    void testIslandEvent() {
         // Test island events
         IslandBaseEvent event = TeamEvent.builder()
                 //.island(getIslands().getIsland(playerUUID))
@@ -114,7 +127,7 @@ public class TestBentoBox extends AbstractCommonSetup {
     }
 
     @Test
-    public void testCommandAPI() {
+    void testCommandAPI() {
         // Test command
         User user = User.getInstance(uuid);
         CompositeCommand testCommand = new TestCommand();
@@ -124,7 +137,7 @@ public class TestBentoBox extends AbstractCommonSetup {
         assertTrue(testCommand.execute(user, testCommand.getLabel(), new ArrayList<>()));
         assertEquals("test",testCommand.getLabel());
         assertEquals(2, testCommand.getAliases().size());
-        assertEquals("t", testCommand.getAliases().get(0));
+        assertEquals("t", testCommand.getAliases().getFirst());
         assertTrue(testCommand.isOnlyPlayer());
         assertNull(testCommand.getParent());
         assertEquals("default.permission", testCommand.getPermission());
@@ -138,44 +151,42 @@ public class TestBentoBox extends AbstractCommonSetup {
         }
         String[] args = {""};
         // Results are alphabetically sorted
-        when(Util.tabLimit(any(), any())).thenCallRealMethod();
-        assertEquals(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(player, "test", args));
+        mockedUtil.when(() -> Util.tabLimit(any(), any())).thenCallRealMethod();
+        assertEquals(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(mockPlayer, "test", args));
         assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(sender, "test", args));
         args[0] = "su";
-        assertEquals(Arrays.asList("sub1","sub2"), testCommand.tabComplete(player, "test", args));
+        assertEquals(Arrays.asList("sub1","sub2"), testCommand.tabComplete(mockPlayer, "test", args));
         args[0] = "d";
-        assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(player, "test", args));
+        assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(mockPlayer, "test", args));
         args[0] = "sub1";
-        assertEquals(Collections.emptyList(), testCommand.tabComplete(player, "test", args));
+        assertEquals(Collections.emptyList(), testCommand.tabComplete(mockPlayer, "test", args));
         String[] args2 = {"sub2",""};
-        assertEquals(Arrays.asList("help", "subsub"), testCommand.tabComplete(player, "test", args2));
+        assertEquals(Arrays.asList("help", "subsub"), testCommand.tabComplete(mockPlayer, "test", args2));
         args2[1] = "s";
-        assertEquals(Collections.singletonList("subsub"), testCommand.tabComplete(player, "test", args2));
+        assertEquals(Collections.singletonList("subsub"), testCommand.tabComplete(mockPlayer, "test", args2));
         String[] args3 = {"sub2","subsub", ""};
-        assertEquals(Arrays.asList("help", "subsubsub"), testCommand.tabComplete(player, "test", args3));
+        assertEquals(Arrays.asList("help", "subsubsub"), testCommand.tabComplete(mockPlayer, "test", args3));
         // Test for overridden tabcomplete
         assertEquals(Arrays.asList("Ben", "Bill", "Florian", "Ted", "help"),
-                testCommand.tabComplete(player, "test", new String[] {"sub2", "subsub", "subsubsub", ""}));
+                testCommand.tabComplete(mockPlayer, "test", new String[] {"sub2", "subsub", "subsubsub", ""}));
         // Test for partial word
         assertEquals(Arrays.asList("Ben", "Bill"),
-                testCommand.tabComplete(player, "test", new String[] {"sub2", "subsub", "subsubsub", "b"}));
+                testCommand.tabComplete(mockPlayer, "test", new String[] {"sub2", "subsub", "subsubsub", "b"}));
 
         // Test command arguments
         CompositeCommand argCmd = new Test3ArgsCommand();
         argCmd.setOnlyPlayer(true);
         argCmd.setPermission("default.permission");
-        assertTrue(argCmd.execute(player, "args", new String[]{"give", "100", "ben"}));
-        assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub"}));
-        assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben"}));
-        assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben", "100"}));
-        assertTrue(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben", "100", "today"}));
+        assertTrue(argCmd.execute(mockPlayer, "args", new String[]{"give", "100", "ben"}));
+        assertFalse(testCommand.execute(mockPlayer,  "test", new String[] {"sub2", "subsub", "subsubsub"}));
+        assertFalse(testCommand.execute(mockPlayer,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben"}));
+        assertFalse(testCommand.execute(mockPlayer,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben", "100"}));
+        assertTrue(testCommand.execute(mockPlayer,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben", "100", "today"}));
 
         // Usage tests
         assertEquals("/test", testCommand.getUsage());
         assertEquals("test.params", testCommand.getParameters());
 
-        // Test help
-        //assertTrue(testCommand.execute(player,  "test", new String[] {"help"}));
     }
 
     private class TestCommand extends CompositeCommand {
@@ -273,7 +284,7 @@ public class TestBentoBox extends AbstractCommonSetup {
 
         @Override
         public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            String lastArg = !args.isEmpty() ? args.getLast() : "";
             List<String> options = new ArrayList<>(Arrays.asList("Florian", "Ben", "Bill", "Ted"));
             return Optional.of(Util.tabLimit(options, lastArg));
         }
@@ -297,7 +308,7 @@ public class TestBentoBox extends AbstractCommonSetup {
 
     // Protection tests
     @Test
-    public void testProtection() {
+    void testProtection() {
         User owner = User.getInstance(uuid);
         Island island = new Island();
         island.setOwner(uuid);
@@ -395,41 +406,41 @@ public class TestBentoBox extends AbstractCommonSetup {
     }
 
     @Test
-    public void testEventProtection() {
+    void testEventProtection() {
         // Test events
 
         TestFlagListener fl = new TestFlagListener(plugin);
 
         // checking events - vistor
         Event e3 = new BlockBreakEvent(block, visitorToIsland);
-        Assert.assertFalse(fl.checkIsland(e3, visitorToIsland, location, Flags.BREAK_BLOCKS, true));
+        assertFalse(fl.checkIsland(e3, visitorToIsland, location, Flags.BREAK_BLOCKS, true));
 
         // checking events - owner
         Event e = new BlockBreakEvent(block, ownerOfIsland);
-        Assert.assertTrue(fl.checkIsland(e, ownerOfIsland, location, Flags.BREAK_BLOCKS, true));
+        assertTrue(fl.checkIsland(e, ownerOfIsland, location, Flags.BREAK_BLOCKS, true));
 
         // checking events - member
-        Event e2 = new BlockBreakEvent(block, player);
-        Assert.assertTrue(fl.checkIsland(e2, player, location, Flags.BREAK_BLOCKS, true));
+        Event e2 = new BlockBreakEvent(block, mockPlayer);
+        assertTrue(fl.checkIsland(e2, mockPlayer, location, Flags.BREAK_BLOCKS, true));
 
     }
 
     @Test
-    public void testDefaultFlags() {
+    void testDefaultFlags() {
         // Check all the default flags
         FlagsManager fm = new FlagsManager(plugin);
         Collection<Flag> defaultFlags = Flags.values();
         Collection<Flag> f = fm.getFlags();
         for (Flag flag : defaultFlags) {
-            assertTrue(flag.getID(), f.contains(flag));
+            assertTrue( f.contains(flag), flag.getID());
         }
         for (Flag flag : f) {
-            assertTrue(flag.getID(), defaultFlags.contains(flag));
+            assertTrue(defaultFlags.contains(flag), flag.getID());
         }
     }
 
     @Test
-    public void testCustomFlags() {
+    void testCustomFlags() {
         // Custom
         TestFlagListener fl = new TestFlagListener(plugin);
         Flag customFlag = new Flag.Builder("CUSTOM_FLAG", Material.DIAMOND).listener(fl).build();

@@ -7,6 +7,7 @@
 package world.bentobox.bentobox.listeners.teleports;
 
 
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -35,7 +36,7 @@ import world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport;
  *
  * @author BONNe
  */
-public class EntityTeleportListener extends AbstractTeleportListener implements Listener
+public non-sealed class EntityTeleportListener extends AbstractTeleportListener implements Listener
 {
     /**
      * Instance of Teleportation processor.
@@ -46,7 +47,6 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
     {
         super(bentoBox);
     }
-
 
     /**
      * This listener checks entity portal events and triggers appropriate methods to transfer
@@ -77,8 +77,29 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
             event.setCancelled(true);
             return;
         }
-        // Trigger event processor.
-        this.portalProcess(event, event.getTo().getWorld().getEnvironment());
+
+        // Check which teleportation is happening.
+
+        World.Environment source = fromWorld.getEnvironment();
+        World.Environment destination = event.getTo().getWorld().getEnvironment();
+
+        if (World.Environment.NETHER == source && World.Environment.NORMAL == destination ||
+            World.Environment.NORMAL == source && World.Environment.NETHER == destination)
+        {
+            // Nether to overworld or opposite
+            this.portalProcess(event, World.Environment.NETHER);
+        }
+        else if (World.Environment.THE_END == source && World.Environment.NORMAL == destination ||
+            World.Environment.NORMAL == source && World.Environment.THE_END == destination)
+        {
+            // end to overworld or opposite
+            this.portalProcess(event, World.Environment.THE_END);
+        }
+        else
+        {
+            // unknown teleportation
+            this.portalProcess(event, event.getTo().getWorld().getEnvironment());
+        }
     }
 
 
@@ -99,13 +120,10 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
         Entity entity = event.getEntity();
         Material type = event.getLocation().getBlock().getType();
         UUID uuid = entity.getUniqueId();
-
-        if (this.inPortal.contains(uuid))
-        {
-            // Already in process.
+        if (entity.getPortalCooldown() > 0) {
             return;
         }
-
+        
         World fromWorld = event.getLocation().getWorld();
         World overWorld = Util.getWorld(fromWorld);
 
@@ -120,26 +138,15 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
             // Teleportation is disabled. Cancel processing.
             return;
         }
-
-        this.inPortal.add(uuid);
         // Add original world for respawning.
         this.teleportOrigin.put(uuid, fromWorld);
 
         // Entities are teleported instantly.
         if (!Bukkit.getAllowNether() && type.equals(Material.NETHER_PORTAL))
         {
-            if (fromWorld == overWorld)
-            {
-                this.portalProcess(
-                    new EntityPortalEvent(entity, event.getLocation(), event.getLocation(), 0),
-                    World.Environment.NETHER);
-            }
-            else
-            {
-                this.portalProcess(
-                    new EntityPortalEvent(entity, event.getLocation(), event.getLocation(), 0),
-                    World.Environment.NORMAL);
-            }
+            this.portalProcess(
+                new EntityPortalEvent(entity, event.getLocation(), event.getLocation(), 0),
+                World.Environment.NETHER);
 
             // Do not process anything else.
             return;
@@ -148,18 +155,9 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
         // Entities are teleported instantly.
         if (!Bukkit.getAllowEnd() && (type.equals(Material.END_PORTAL) || type.equals(Material.END_GATEWAY)))
         {
-            if (fromWorld == this.getNetherEndWorld(overWorld, World.Environment.THE_END))
-            {
-                this.portalProcess(
-                    new EntityPortalEvent(entity, event.getLocation(), event.getLocation(), 0),
-                    World.Environment.NORMAL);
-            }
-            else
-            {
-                this.portalProcess(
-                    new EntityPortalEvent(entity, event.getLocation(), event.getLocation(), 0),
-                    World.Environment.THE_END);
-            }
+            this.portalProcess(
+                new EntityPortalEvent(entity, event.getLocation(), event.getLocation(), 0),
+                World.Environment.THE_END);
         }
     }
 
@@ -172,12 +170,6 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityExitPortal(EntityPortalExitEvent event)
     {
-        if (!this.inPortal.contains(event.getEntity().getUniqueId()))
-        {
-            return;
-        }
-
-        this.inPortal.remove(event.getEntity().getUniqueId());
         this.inTeleport.remove(event.getEntity().getUniqueId());
         this.teleportOrigin.remove(event.getEntity().getUniqueId());
     }
@@ -224,32 +216,24 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
         }
         this.inTeleport.add(event.getEntity().getUniqueId());
 
-        // Get target world.
-        World toWorld;
-
-        if (environment.equals(World.Environment.NORMAL))
-        {
-            toWorld = overWorld;
-        }
-        else
-        {
-            toWorld = this.getNetherEndWorld(overWorld, environment);
-        }
-
-        if (!overWorld.equals(toWorld) && !this.isIslandWorld(overWorld, environment))
+        if (fromWorld.equals(overWorld) && !this.isIslandWorld(overWorld, environment))
         {
             // This is not island world. Use standard nether or end world teleportation.
-            this.handleToStandardNetherOrEnd(event, overWorld, toWorld);
+            this.handleToStandardNetherOrEnd(event, overWorld, environment);
             return;
         }
-        
-        if (!overWorld.equals(fromWorld) && !this.isIslandWorld(overWorld, environment))
+
+        if (!fromWorld.equals(overWorld) && !this.isIslandWorld(overWorld, environment))
         {
             // If entering a portal in the other world, teleport to a portal in overworld if
             // there is one
-            this.handleFromStandardNetherOrEnd(event, overWorld, toWorld.getEnvironment());
+            this.handleFromStandardNetherOrEnd(event, overWorld, environment);
             return;
         }
+
+        // To the nether/end or overworld.
+        World toWorld = !fromWorld.getEnvironment().equals(environment) ?
+            this.getNetherEndWorld(overWorld, environment) : overWorld;
         
         // Set the destination location
         // If portals cannot be created, then destination is the spawn point, otherwise it's the vector
@@ -286,7 +270,7 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
             // Let the server teleport
             return;
         }
-        
+
         if (environment.equals(World.Environment.THE_END))
         {
             // Prevent death from hitting the ground while calculating location.
@@ -324,10 +308,11 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
      * Handle teleport to standard nether or end
      * @param event - EntityPortalEvent
      * @param overWorld - over world
-     * @param toWorld - to world
+     * @param environment - to target environment
      */
-    private void handleToStandardNetherOrEnd(EntityPortalEvent event, World overWorld, World toWorld)
+    private void handleToStandardNetherOrEnd(EntityPortalEvent event, World overWorld, World.Environment environment)
     {
+        World toWorld = Objects.requireNonNull(this.getNetherEndWorld(overWorld, environment));
         Location spawnPoint = toWorld.getSpawnLocation();
 
         // If going to the nether and nether portals are active then just teleport to approx location
@@ -345,7 +330,7 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
             toWorld.setSpawnLocation(100, 50, 0);
         }
 
-        if (this.isAllowedOnServer(toWorld.getEnvironment()))
+        if (this.isAllowedOnServer(environment))
         {
             // To Standard Nether or end
             event.setTo(spawnPoint);

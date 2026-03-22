@@ -1,11 +1,11 @@
 package world.bentobox.bentobox.api.addons;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,43 +22,27 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemFactory;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( { BentoBox.class, Bukkit.class })
-public class AddonTest {
+class AddonTest extends CommonTestSetup {
 
     public static int BUFFER_SIZE = 10240;
 
-    @Mock
-    static BentoBox plugin;
     static JavaPlugin javaPlugin;
-    private Server server;
     @Mock
     private AddonsManager am;
     private File dataFolder;
@@ -67,35 +51,12 @@ public class AddonTest {
 
     private TestClass test;
 
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        server = mock(Server.class);
-        World world = mock(World.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
-
-        PluginManager pluginManager = mock(PluginManager.class);
-
-
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
-        when(Bukkit.getServer()).thenReturn(server);
-        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-
-        plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
+        super.setUp();
         // Addons manager
         when(plugin.getAddonsManager()).thenReturn(am);
-
-
-        // Mock item factory (for itemstacks)
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        when(server.getItemFactory()).thenReturn(itemFactory);
-        ItemMeta itemMeta = mock(ItemMeta.class);
-        when(itemFactory.getItemMeta(any())).thenReturn(itemMeta);
 
         // Make the addon
         dataFolder = new File("dataFolder");
@@ -128,8 +89,9 @@ public class AddonTest {
         Files.deleteIfExists(ymlFile.toPath());
     }
 
-    @After
-    public void TearDown() throws IOException {
+    @AfterEach
+    void TearDown() throws Exception {
+        super.tearDown();
         Files.deleteIfExists(jarFile.toPath());
         if (dataFolder.exists()) {
             Files.walk(dataFolder.toPath())
@@ -137,7 +99,6 @@ public class AddonTest {
             .map(Path::toFile)
             .forEach(File::delete);
         }
-        Mockito.framework().clearInlineMocks();
     }
 
     class TestClass extends Addon {
@@ -149,29 +110,29 @@ public class AddonTest {
     }
 
     @Test
-    public void testAddon() {
+    void testAddon() {
         assertNotNull(test);
         assertFalse(test.isEnabled());
     }
 
     @Test
-    public void testGetPlugin() {
-        assertEquals(plugin, test.getPlugin());
+    void testGetPlugin() {
+        assertSame(plugin, test.getPlugin());
     }
 
     @Test
-    public void testGetConfig() {
+    void testGetConfig() {
         // No config file
         assertNull(test.getConfig());
     }
 
     @Test
-    public void testGetDataFolder() {
+    void testGetDataFolder() {
         assertEquals(dataFolder, test.getDataFolder());
     }
 
     @Test
-    public void testGetDescription() {
+    void testGetDescription() {
         AddonDescription d = new AddonDescription.Builder("main", "name", "1.0").build();
         assertNull(test.getDescription());
         test.setDescription(d);
@@ -179,27 +140,27 @@ public class AddonTest {
     }
 
     @Test
-    public void testGetFile() {
+    void testGetFile() {
         assertEquals(jarFile, test.getFile());
     }
 
     @Test
-    public void testGetLogger() {
+    void testGetLogger() {
         assertEquals(plugin.getLogger(), test.getLogger());
     }
 
     @Test
-    public void testGetServer() {
+    void testGetServer() {
         assertEquals(server, test.getServer());
     }
 
     @Test
-    public void testIsEnabled() {
+    void testIsEnabled() {
         assertFalse(test.isEnabled());
     }
 
     @Test
-    public void testRegisterListener() {
+    void testRegisterListener() {
         class TestListener implements Listener {}
         TestListener listener = new TestListener();
         test.registerListener(listener);
@@ -207,68 +168,64 @@ public class AddonTest {
     }
 
     @Test
-    public void testSaveDefaultConfig() {
+    void testSaveDefaultConfig() {
         test.saveDefaultConfig();
         File testConfig = new File(dataFolder, "config.yml");
         assertTrue(testConfig.exists());
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testSaveResourceStringBooleanEmptyName() {
-        test.saveResource("", true);
+        Assertions.assertThrows( IllegalArgumentException.class, () -> test.saveResource("", true));
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testSaveResourceStringBooleanSaveANull() {
-        test.saveResource(null, true);
+        Assertions.assertThrows( IllegalArgumentException.class, () -> test.saveResource(null, true));
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testSaveResourceStringBooleanNoFile() {
-        test.saveResource("no_such_file", true);
+        Assertions.assertThrows( IllegalArgumentException.class, () -> test.saveResource("no_such_file", true));
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testSaveResourceStringFileBooleanBoolean() {
         test.saveResource("no_such_file", jarFile, false, false);
         test.saveResource("no_such_file", jarFile, false, true);
         test.saveResource("no_such_file", jarFile, true, false);
-        test.saveResource("no_such_file", jarFile, true, true);
+        Assertions.assertThrows( IllegalArgumentException.class, () -> test.saveResource("no_such_file", jarFile, true, true));
     }
 
     @Test
-    public void testGetResource() {
+    void testGetResource() {
         assertNull(test.getResource("nothing"));
     }
 
     @Test
-    public void testGetResourceSomething() {
+    void testGetResourceSomething() {
         assertNotNull(test.getResource("addon.yml"));
     }
 
     @Test
-    public void testSetAddonFile() {
+    void testSetAddonFile() {
         File af = new File("af");
         test.setFile(af);
         assertEquals(af, test.getFile());
     }
 
     @Test
-    public void testSetDataFolder() {
+    void testSetDataFolder() {
         File df = new File("df");
         test.setDataFolder(df);
         assertEquals(df, test.getDataFolder());
     }
 
     @Test
-    public void testSetDescription() {
+    void testSetDescription() {
         AddonDescription desc = new AddonDescription.Builder("main", "name", "2.0").build();
         test.setDescription(desc);
         assertEquals(desc, test.getDescription());
     }
 
     @Test
-    public void testSetEnabled() {
+    void testSetEnabled() {
         test.setState(Addon.State.DISABLED);
         assertFalse(test.isEnabled());
         test.setState(Addon.State.ENABLED);
@@ -276,21 +233,21 @@ public class AddonTest {
     }
 
     @Test
-    public void testGetPlayers() {
+    void testGetPlayers() {
         PlayersManager pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
         assertEquals(pm, test.getPlayers());
     }
 
     @Test
-    public void testGetIslands() {
+    void testGetIslands() {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
-        assertEquals(im, test.getIslands());
+        assertSame(im, test.getIslands());
     }
 
     @Test
-    public void testGetAddonByName() {
+    void testGetAddonByName() {
         AddonsManager am = new AddonsManager(plugin);
         when(plugin.getAddonsManager()).thenReturn(am);
         assertEquals(Optional.empty(),test.getAddonByName("addon"));

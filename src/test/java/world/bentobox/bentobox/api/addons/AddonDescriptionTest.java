@@ -1,6 +1,8 @@
 package world.bentobox.bentobox.api.addons;
 
-import static org.junit.Assert.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -8,25 +10,21 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-public class AddonDescriptionTest {
+
+class AddonDescriptionTest {
 
     private @NonNull AddonDescription ad;
     private ConfigurationSection configSec;
 
-    /**
-     */
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         configSec = new YamlConfiguration();
         ad = new AddonDescription.Builder("main", "name", "version")
                 .apiVersion("api")
@@ -45,7 +43,7 @@ public class AddonDescriptionTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getName()}.
      */
     @Test
-    public void testGetName() {
+    void testGetName() {
         assertEquals("name", ad.getName());
     }
 
@@ -53,7 +51,7 @@ public class AddonDescriptionTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getMain()}.
      */
     @Test
-    public void testGetMain() {
+    void testGetMain() {
         assertEquals("main", ad.getMain());
     }
 
@@ -61,7 +59,7 @@ public class AddonDescriptionTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getVersion()}.
      */
     @Test
-    public void testGetVersion() {
+    void testGetVersion() {
         assertEquals("version", ad.getVersion());
     }
 
@@ -69,7 +67,7 @@ public class AddonDescriptionTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getDescription()}.
      */
     @Test
-    public void testGetDescription() {
+    void testGetDescription() {
         assertEquals("description", ad.getDescription());
     }
 
@@ -77,31 +75,31 @@ public class AddonDescriptionTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getAuthors()}.
      */
     @Test
-    public void testGetAuthors() {
-        assertEquals("tastybento", ad.getAuthors().get(0));
+    void testGetAuthors() {
+        assertEquals("tastybento", ad.getAuthors().getFirst());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getDependencies()}.
      */
     @Test
-    public void testGetDependencies() {
-        assertEquals("dep1", ad.getDependencies().get(0));
+    void testGetDependencies() {
+        assertEquals("dep1", ad.getDependencies().getFirst());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getSoftDependencies()}.
      */
     @Test
-    public void testGetSoftDependencies() {
-        assertEquals("sdep1", ad.getSoftDependencies().get(0));
+    void testGetSoftDependencies() {
+        assertEquals("sdep1", ad.getSoftDependencies().getFirst());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#isMetrics()}.
      */
     @Test
-    public void testIsMetrics() {
+    void testIsMetrics() {
         assertTrue(ad.isMetrics());
     }
 
@@ -109,7 +107,7 @@ public class AddonDescriptionTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getRepository()}.
      */
     @Test
-    public void testGetRepository() {
+    void testGetRepository() {
         assertEquals("repo", ad.getRepository());
     }
 
@@ -117,7 +115,7 @@ public class AddonDescriptionTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getIcon()}.
      */
     @Test
-    public void testGetIcon() {
+    void testGetIcon() {
         assertEquals(Material.ACACIA_BOAT, ad.getIcon());
     }
 
@@ -125,7 +123,7 @@ public class AddonDescriptionTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getApiVersion()}.
      */
     @Test
-    public void testGetApiVersion() {
+    void testGetApiVersion() {
         assertEquals("api", ad.getApiVersion());
     }
 
@@ -133,7 +131,7 @@ public class AddonDescriptionTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getPermissions()}.
      */
     @Test
-    public void testGetPermissions() {
+    void testGetPermissions() {
         assertEquals(configSec, ad.getPermissions());
     }
 
@@ -141,7 +139,7 @@ public class AddonDescriptionTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#toString()}.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("AddonDescription [name=name, version=version]", ad.toString());
     }
 

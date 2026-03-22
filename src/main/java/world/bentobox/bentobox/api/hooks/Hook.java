@@ -69,5 +69,7 @@ public abstract class Hook {
      * Returns an explanation that will be sent to the user to tell them why the hook process did not succeed.
      * @return the probable causes why the hook process did not succeed.
      */
-    public abstract String getFailureCause();
+    public String getFailureCause() {
+        return "";
+    }
 }

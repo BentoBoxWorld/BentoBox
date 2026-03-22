@@ -1,7 +1,7 @@
 name: BentoBox
 main: world.bentobox.bentobox.BentoBox
 version: ${project.version}${build.number}
-api-version: "1.18"
+api-version: "1.21"
 
 authors: [tastybento, Poslovitch]
 contributors: ["The BentoBoxWorld Community"]
@@ -17,15 +17,17 @@ softdepend:
   - Vault
   - PlaceholderAPI
   - dynmap
-  - WorldBorderAPI
   - BsbMongo
-  - WorldGeneratorApi
   - AdvancedChests
   - LangUtils
   - WildStacker
   - LuckPerms
-  - HolographicDisplays
   - EconomyPlus
+  - MythicMobs
+  - ZNPCsPlus
+  - FancyNpcs
+  - FancyHolograms
+  - BlueMap
 
 libraries:
   - mysql:mysql-connector-java:${mysql.version}
@@ -60,4 +62,6 @@ permissions:
   bentobox.version:
     description: Allows to use /bentobox version
     default: op
-  
+  bentobox.perms:
+    description: Allow use of '/bentobox perms' command
+    default: op

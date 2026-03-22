@@ -3,6 +3,8 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.Tag;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,15 +16,19 @@ import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import com.google.common.base.Enums;
+
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
+ * Provides protection for placing blocks.
  * @author tastybento
  */
 public class PlaceBlocksListener extends FlagListener
 {
-    public static final Set<Material> SEEDS = Set.of(Material.BEETROOT_SEEDS, Material.MELON_SEEDS, Material.WHEAT_SEEDS);
+    public static final Set<Material> SEEDS = Set.of(Material.MELON_SEEDS, Material.WHEAT_SEEDS,
+            Material.SWEET_BERRIES);
     /**
      * Check blocks being placed in general
      *
@@ -41,10 +47,21 @@ public class PlaceBlocksListener extends FlagListener
             // Books can only be placed on lecterns and as such are protected by the LECTERN flag.
             return;
         }
-        // Crops
-        if (against.equals(Material.FARMLAND) && SEEDS.contains(e.getItemInHand().getType())) {
+        // Glowberries
+        if (e.getItemInHand().getType() == Material.GLOW_BERRIES
+                && e.getBlock().getRelative(BlockFace.UP).equals(e.getBlockAgainst())) {
             this.checkIsland(e, e.getPlayer(), e.getBlock().getLocation(), Flags.CROP_PLANTING);
-        } else {        
+            return;
+        }
+        // Crops
+        Material item = e.getItemInHand().getType();
+        if ((against.equals(Material.FARMLAND) && (SEEDS.contains(item)
+                || Tag.ITEMS_VILLAGER_PLANTABLE_SEEDS.isTagged(item)))
+                || item == Material.SUGAR_CANE
+                || item == Material.COCOA_BEANS
+                || item == Material.NETHER_WART) {
+            this.checkIsland(e, e.getPlayer(), e.getBlock().getLocation(), Flags.CROP_PLANTING);
+        } else {
             this.checkIsland(e, e.getPlayer(), e.getBlock().getLocation(), Flags.PLACE_BLOCKS);
         }
     }
@@ -120,11 +137,12 @@ public class PlaceBlocksListener extends FlagListener
                     e.getMaterial() == Material.ITEM_FRAME ||
                     e.getMaterial() == Material.GLOW_ITEM_FRAME ||
                     e.getMaterial() == Material.CHEST ||
+                    e.getMaterial() == Enums.getIfPresent(Material.class, "COPPER_CHEST").or(Material.CHEST) ||
                     e.getMaterial() == Material.TRAPPED_CHEST)
             {
                 this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
             }
-            else if (e.getMaterial().name().contains("BOAT"))
+            else if (Tag.ITEMS_BOATS.isTagged(e.getMaterial()))
             {
                 this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.BOAT);
             }

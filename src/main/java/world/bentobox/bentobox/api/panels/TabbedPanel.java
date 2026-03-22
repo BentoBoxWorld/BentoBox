@@ -43,7 +43,10 @@ public class TabbedPanel extends Panel implements PanelListener {
      */
     public TabbedPanel(TabbedPanelBuilder tpb) {
         this.tpb = tpb;
+        // Set world
         this.setWorld(tpb.getWorld());
+        // Set island context in Panel
+        this.setIsland(tpb.getIsland());
     }
 
     /* (non-Javadoc)
@@ -71,6 +74,7 @@ public class TabbedPanel extends Panel implements PanelListener {
      * @param page - the page of the tab to show (if multi paged)
      */
     public void openPanel(int activeTab, int page) {
+
         if (!tpb.getTabs().containsKey(activeTab)) {
             // Request to open a non-existent tab
             throw new InvalidParameterException("Attempt to open a non-existent tab in a tabbed panel. Missing tab #" + activeTab);
@@ -85,21 +89,19 @@ public class TabbedPanel extends Panel implements PanelListener {
         TreeMap<Integer, PanelItem> items = new TreeMap<>();
         // Get the tab
         Tab tab = tpb.getTabs().get(activeTab);
-
         // Remove any tabs that have no items, if required
         if (tpb.isHideIfEmpty()) {
             tpb.getTabs().values().removeIf(t -> !t.equals(tab) && t.getPanelItems().stream().noneMatch(Objects::nonNull));
         }
-
+        // Get the panel items first so that Tab can update its internal state (e.g., currentMode)
+        // before setupHeader calls getTabIcons(), which may depend on that state.
+        List<PanelItem> panelItems = tab.getPanelItems();
         // Set up the tabbed header
         setupHeader(tab, items);
-
         // Show the active tab
         if (tpb.getTabs().containsKey(activeTab)) {
-            List<PanelItem> panelItems = tab.getPanelItems();
             // Adds the flag items
             panelItems.stream().filter(Objects::nonNull).skip(page * ITEMS_PER_PAGE).limit(page * ITEMS_PER_PAGE + ITEMS_PER_PAGE).forEach(i -> items.put(items.lastKey() + 1, i));
-
             // set up the footer
             setupFooter(items);
             // Add forward and backward icons
@@ -169,6 +171,10 @@ public class TabbedPanel extends Panel implements PanelListener {
 
     @Override
     public void onInventoryClick(User user, InventoryClickEvent event) {
+        if (plugin.onTimeout(user, this)) {
+            event.setCancelled(true);
+            return;
+        }
         // Trap top row tab clicks
         if (event.isLeftClick() && tpb.getTabs().containsKey(event.getRawSlot())
                 && (tpb.getTabs().get(event.getRawSlot()).getPermission().isEmpty()
@@ -179,6 +185,7 @@ public class TabbedPanel extends Panel implements PanelListener {
             // Reset the closed flag
             closed = false;
         }
+
     }
 
     /**
@@ -208,4 +215,5 @@ public class TabbedPanel extends Panel implements PanelListener {
     public void setActiveTab(int activeTab) {
         this.activeTab = activeTab;
     }
+
 }

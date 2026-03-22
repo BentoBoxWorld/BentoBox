@@ -2,7 +2,8 @@ package world.bentobox.bentobox.util;
 
 
 /**
- * Class to store pairs of objects, e.g. coordinates
+ * Class to store pairs of objects, e.g. coordinates.
+ * This could be done now as a record, but due to legacy code referencing it, it stays as a class.
  * @author tastybento
  *
  * @param <X> the x part of the pair
@@ -11,6 +12,16 @@ package world.bentobox.bentobox.util;
 public class Pair<X, Z> {
     public final X x;
     public final Z z;
+    
+    /**
+     * Static factory method to create a Pair.
+     * @param x the x part
+     * @param z the z part
+     * @return a new Pair containing x and z
+     */
+    public static <X, Z> Pair<X, Z> of(X x, Z z) {
+        return new Pair<>(x, z);
+    }
 
     public Pair(X x, Z z) {
         this.x = x;
@@ -80,6 +91,14 @@ public class Pair<X, Z> {
         if (z == null) {
             return other.z == null;
         } else return z.equals(other.z);
+    }
+    
+    public X x() {
+        return x;
+    }
+
+    public Z z() {
+        return z;
     }
     
 }

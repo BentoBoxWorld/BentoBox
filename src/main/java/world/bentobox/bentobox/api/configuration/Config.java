@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
@@ -64,9 +63,9 @@ public class Config<T> {
             return handler.loadObject(uniqueId);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | ClassNotFoundException | IntrospectionException | NoSuchMethodException | SecurityException e) {
-            logger.severe(() -> "Could not load config object! " + e.getMessage());
+            BentoBox.getInstance().logError("Could not load config object! " + e.getMessage());
             // Required for debugging
-            logger.severe(ExceptionUtils.getStackTrace(e));
+            BentoBox.getInstance().logStacktrace(e);
         }
 
         return null;
@@ -86,7 +85,7 @@ public class Config<T> {
      * @param instance to save
      */
     public boolean saveConfigObject(T instance) {
-        // Set the addon (may be null)
+        // Set the addon (maybe null)
         handler.setAddon(addon);
         try {
             handler.saveObject(instance);

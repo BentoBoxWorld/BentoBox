@@ -22,6 +22,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.common.base.Enums;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.util.ItemParser;
 
@@ -83,19 +84,34 @@ public class TemplateReader
     {
         if (!panelLocation.exists())
         {
+            BentoBox.getInstance().logError("Panel Template reader: Folder does not exist");
             // Return null because folder does not exist.
             return null;
         }
 
         File file = new File(panelLocation, templateName.endsWith(YML) ? templateName : templateName + YML);
-
+        String absolutePath = file.getAbsolutePath();
         if (!file.exists())
         {
-            // Return as file does not exist.
-            return null;
+            // Try to get it from the JAR
+
+            String keyword = "panels/";
+
+            // Find the index of the keyword "panels/"
+            int index = absolutePath.indexOf(keyword);
+
+            // If the keyword is found, extract the substring starting from that index
+            if (index != -1) {
+                BentoBox.getInstance().saveResource(absolutePath.substring(index), false);
+            } else {
+                BentoBox.getInstance().logError(file.getAbsolutePath() + " does not exist for panel template");
+                // Return as file does not exist.
+                return null;
+            }
+
         }
 
-        final String panelKey = file.getAbsolutePath() + ":" + panelName;
+        final String panelKey = absolutePath + ":" + panelName;
 
         // Check if panel is already crafted.
         if (TemplateReader.loadedPanels.containsKey(panelKey))
@@ -117,6 +133,8 @@ public class TemplateReader
         }
         catch (IOException | InvalidConfigurationException e)
         {
+            BentoBox.getInstance().logError("Error loading template");
+            BentoBox.getInstance().logStacktrace(e);
             rec = null;
         }
 
@@ -133,6 +151,7 @@ public class TemplateReader
     {
         if (configurationSection == null)
         {
+            BentoBox.getInstance().logError("No configuration section!");
             // No data to return.
             return null;
         }
@@ -142,53 +161,8 @@ public class TemplateReader
                 Enums.getIfPresent(Panel.Type.class, configurationSection.getString(TYPE, "INVENTORY")).
                 or(Panel.Type.INVENTORY);
 
-        PanelTemplateRecord.TemplateItem borderItem = null;
-
-        // Read Border Icon.
-        if (configurationSection.isConfigurationSection(BORDER))
-        {
-            // Process border icon if it contains more options.
-            ConfigurationSection borderSection = configurationSection.getConfigurationSection(BORDER);
-
-            if (borderSection != null)
-            {
-                borderItem = new PanelTemplateRecord.TemplateItem(
-                        ItemParser.parse((borderSection.getString(ICON, Material.AIR.name()))),
-                        borderSection.getString(TITLE, null),
-                        borderSection.getString(DESCRIPTION, null));
-            }
-        }
-        else if (configurationSection.isString(BORDER))
-        {
-            // Process border icon if it contains only icon.
-
-            borderItem = new PanelTemplateRecord.TemplateItem(
-                    ItemParser.parse((configurationSection.getString(BORDER, Material.AIR.name()))));
-        }
-
-        PanelTemplateRecord.TemplateItem backgroundItem = null;
-
-        // Read Background block
-        if (configurationSection.isConfigurationSection(BACKGROUND))
-        {
-            // Process border icon if it contains more options.
-            ConfigurationSection backgroundSection = configurationSection.getConfigurationSection(BACKGROUND);
-
-            if (backgroundSection != null)
-            {
-                backgroundItem = new PanelTemplateRecord.TemplateItem(
-                        ItemParser.parse((backgroundSection.getString(ICON, Material.AIR.name()))),
-                        backgroundSection.getString(TITLE, null),
-                        backgroundSection.getString(DESCRIPTION, null));
-            }
-        }
-        else if (configurationSection.isString(BACKGROUND))
-        {
-            // Process background icon if it contains only icon.
-
-            backgroundItem = new PanelTemplateRecord.TemplateItem(
-                    ItemParser.parse((configurationSection.getString(BACKGROUND, Material.AIR.name()))));
-        }
+        PanelTemplateRecord.TemplateItem borderItem = readTemplateItem(configurationSection, BORDER);
+        PanelTemplateRecord.TemplateItem backgroundItem = readTemplateItem(configurationSection, BACKGROUND);
 
         // Read reusable
         Map<String, ItemTemplateRecord> panelItemDataMap = new HashMap<>();
@@ -210,41 +184,9 @@ public class TemplateReader
         // Read content
         ConfigurationSection content = configurationSection.getConfigurationSection(CONTENT);
 
-        if (content == null)
+        if (content != null)
         {
-            // Return empty template.
-            return template;
-        }
-
-        for (int rowIndex = 0; rowIndex < 6; rowIndex++)
-        {
-            // Read each line.
-            if (content.isConfigurationSection(String.valueOf(rowIndex + 1)))
-            {
-                ConfigurationSection line = content.getConfigurationSection(String.valueOf(rowIndex + 1));
-
-                if (line != null)
-                {
-                    // Populate existing lines with items.
-                    for (int columnIndex = 0; columnIndex < 9; columnIndex++)
-                    {
-                        if (line.isConfigurationSection(String.valueOf(columnIndex + 1)))
-                        {
-                            // If it contains a section, then build a new button template from it.
-                            template.addButtonTemplate(rowIndex,
-                                    columnIndex,
-                                    readPanelItemTemplate(line.getConfigurationSection(String.valueOf(columnIndex + 1)), null, panelItemDataMap));
-                        }
-                        else if (line.isString(String.valueOf(columnIndex + 1)))
-                        {
-                            // If it contains just a single word, assume it is a reusable.
-                            template.addButtonTemplate(rowIndex,
-                                    columnIndex,
-                                    panelItemDataMap.get(line.getString(String.valueOf(columnIndex + 1))));
-                        }
-                    }
-                }
-            }
+            populateContentGrid(template, content, panelItemDataMap);
         }
 
         // Garbage collector.
@@ -269,9 +211,11 @@ public class TemplateReader
             {
                 int value = section.getInt(FORCE_SHOWN);
 
-                if (value > 0 && value < 7)
+                // Force all rows from 1 to value (inclusive), so that force-shown: 6
+                // results in a panel with 6 rows, not just forcing the 6th row alone.
+                for (int i = 0; i < value && i < forceShow.length; i++)
                 {
-                    forceShow[value-1] = true;
+                    forceShow[i] = true;
                 }
             }
             else if (section.isList(FORCE_SHOWN))
@@ -318,20 +262,7 @@ public class TemplateReader
             return null;
         }
 
-        ItemTemplateRecord fallback;
-
-        if (section.isConfigurationSection(FALLBACK))
-        {
-            fallback = readPanelItemTemplate(section.getConfigurationSection(FALLBACK));
-        }
-        else if (section.isString(FALLBACK) && reusableItemMap != null)
-        {
-            fallback = reusableItemMap.get(section.getString(FALLBACK));
-        }
-        else
-        {
-            fallback = null;
-        }
+        ItemTemplateRecord fallback = readFallback(section, reusableItemMap);
 
         // Create Item Record
         ItemTemplateRecord itemRecord = new ItemTemplateRecord(ItemParser.parse(section.getString(ICON)),
@@ -357,67 +288,12 @@ public class TemplateReader
 
             if (actionSection != null)
             {
-                actionSection.getKeys(false).forEach(actionKey -> {
-                    ClickType clickType = Enums.getIfPresent(ClickType.class, actionKey.toUpperCase()).orNull();
-
-                    if (clickType != null)
-                    {
-                        ConfigurationSection actionDataSection = actionSection.getConfigurationSection(actionKey);
-
-                        if (actionDataSection != null)
-                        {
-                            ItemTemplateRecord.ActionRecords actionData =
-                                    new ItemTemplateRecord.ActionRecords(clickType,
-                                            actionDataSection.getString(TYPE),
-                                            actionDataSection.getString(CONTENT),
-                                            actionDataSection.getString(TOOLTIP));
-                            itemRecord.addAction(actionData);
-                        }
-                    }
-                    else
-                    {
-                        ConfigurationSection actionDataSection = actionSection.getConfigurationSection(actionKey);
-
-                        if (actionDataSection != null && actionDataSection.contains(CLICK_TYPE))
-                        {
-                            clickType = Enums.getIfPresent(ClickType.class,
-                                    actionDataSection.getString(CLICK_TYPE, "UNKNOWN").toUpperCase()).
-                                    or(ClickType.UNKNOWN);
-
-                            ItemTemplateRecord.ActionRecords actionData =
-                                    new ItemTemplateRecord.ActionRecords(clickType,
-                                            actionKey,
-                                            actionDataSection.getString(CONTENT),
-                                            actionDataSection.getString(TOOLTIP));
-                            itemRecord.addAction(actionData);
-                        }
-                    }
-                });
+                readActionsFromSection(actionSection, itemRecord);
             }
         }
         else if (section.isList(ACTIONS))
         {
-            // Read Click data as list which allows to have duplicate click types.
-
-            List<Map<?, ?>> actionList = section.getMapList(ACTIONS);
-
-            if (!actionList.isEmpty())
-            {
-                actionList.forEach(valueMap -> {
-                    ClickType clickType = Enums.getIfPresent(ClickType.class,
-                            String.valueOf(valueMap.get(CLICK_TYPE)).toUpperCase()).orNull();
-
-                    if (clickType != null)
-                    {
-                        ItemTemplateRecord.ActionRecords actionData =
-                                new ItemTemplateRecord.ActionRecords(clickType,
-                                        valueMap.containsKey(TYPE) ? String.valueOf(valueMap.get(TYPE)) : null,
-                                                valueMap.containsKey(CONTENT) ? String.valueOf(valueMap.get(CONTENT)) : null,
-                                                        valueMap.containsKey(TOOLTIP) ? String.valueOf(valueMap.get(TOOLTIP)) : null);
-                        itemRecord.addAction(actionData);
-                    }
-                });
-            }
+            readActionsFromList(section.getMapList(ACTIONS), itemRecord);
         }
 
         // Add item to the map
@@ -427,6 +303,127 @@ public class TemplateReader
         }
 
         return itemRecord;
+    }
+
+
+    /**
+     * Reads a border or background TemplateItem from the given parent section and key.
+     * Handles both section and plain-string formats.
+     */
+    private static PanelTemplateRecord.TemplateItem readTemplateItem(ConfigurationSection parent, String key)
+    {
+        if (parent.isConfigurationSection(key))
+        {
+            ConfigurationSection section = parent.getConfigurationSection(key);
+            if (section == null) return null;
+            return new PanelTemplateRecord.TemplateItem(
+                    ItemParser.parse(section.getString(ICON, Material.AIR.name())),
+                    section.getString(TITLE, null),
+                    section.getString(DESCRIPTION, null));
+        }
+        else if (parent.isString(key))
+        {
+            return new PanelTemplateRecord.TemplateItem(
+                    ItemParser.parse(parent.getString(key, Material.AIR.name())));
+        }
+        return null;
+    }
+
+
+    /**
+     * Populates the panel template grid from a content configuration section.
+     */
+    private static void populateContentGrid(PanelTemplateRecord template,
+            ConfigurationSection content,
+            Map<String, ItemTemplateRecord> panelItemDataMap)
+    {
+        for (int rowIndex = 0; rowIndex < 6; rowIndex++)
+        {
+            String rowKey = String.valueOf(rowIndex + 1);
+            ConfigurationSection line = content.getConfigurationSection(rowKey);
+            if (line == null) continue;
+
+            for (int colIndex = 0; colIndex < 9; colIndex++)
+            {
+                String colKey = String.valueOf(colIndex + 1);
+                if (line.isConfigurationSection(colKey))
+                {
+                    template.addButtonTemplate(rowIndex, colIndex,
+                            readPanelItemTemplate(line.getConfigurationSection(colKey), null, panelItemDataMap));
+                }
+                else if (line.isString(colKey))
+                {
+                    template.addButtonTemplate(rowIndex, colIndex,
+                            panelItemDataMap.get(line.getString(colKey)));
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Reads the fallback item for a panel item template section.
+     */
+    private static ItemTemplateRecord readFallback(ConfigurationSection section,
+            Map<String, ItemTemplateRecord> reusableItemMap)
+    {
+        if (section.isConfigurationSection(FALLBACK))
+        {
+            return readPanelItemTemplate(section.getConfigurationSection(FALLBACK));
+        }
+        else if (section.isString(FALLBACK) && reusableItemMap != null)
+        {
+            return reusableItemMap.get(section.getString(FALLBACK));
+        }
+        return null;
+    }
+
+
+    /**
+     * Reads action records from a ConfigurationSection and adds them to the item record.
+     */
+    private static void readActionsFromSection(ConfigurationSection actionSection,
+            ItemTemplateRecord itemRecord)
+    {
+        actionSection.getKeys(false).forEach(actionKey -> {
+            ConfigurationSection actionDataSection = actionSection.getConfigurationSection(actionKey);
+            if (actionDataSection == null) return;
+            ClickType clickType = Enums.getIfPresent(ClickType.class, actionKey.toUpperCase()).orNull();
+            if (clickType != null)
+            {
+                itemRecord.addAction(new ItemTemplateRecord.ActionRecords(clickType,
+                        actionDataSection.getString(TYPE),
+                        actionDataSection.getString(CONTENT),
+                        actionDataSection.getString(TOOLTIP)));
+            }
+            else if (actionDataSection.contains(CLICK_TYPE))
+            {
+                clickType = Enums.getIfPresent(ClickType.class,
+                        actionDataSection.getString(CLICK_TYPE, "UNKNOWN").toUpperCase())
+                        .or(ClickType.UNKNOWN);
+                itemRecord.addAction(new ItemTemplateRecord.ActionRecords(clickType,
+                        actionKey,
+                        actionDataSection.getString(CONTENT),
+                        actionDataSection.getString(TOOLTIP)));
+            }
+        });
+    }
+
+
+    /**
+     * Reads action records from a list of maps and adds them to the item record.
+     */
+    private static void readActionsFromList(List<Map<?, ?>> actionList, ItemTemplateRecord itemRecord)
+    {
+        actionList.forEach(valueMap -> {
+            ClickType clickType = Enums.getIfPresent(ClickType.class,
+                    String.valueOf(valueMap.get(CLICK_TYPE)).toUpperCase()).orNull();
+            if (clickType == null) return;
+            itemRecord.addAction(new ItemTemplateRecord.ActionRecords(clickType,
+                    valueMap.containsKey(TYPE) ? String.valueOf(valueMap.get(TYPE)) : null,
+                    valueMap.containsKey(CONTENT) ? String.valueOf(valueMap.get(CONTENT)) : null,
+                    valueMap.containsKey(TOOLTIP) ? String.valueOf(valueMap.get(TOOLTIP)) : null));
+        });
     }
 
 

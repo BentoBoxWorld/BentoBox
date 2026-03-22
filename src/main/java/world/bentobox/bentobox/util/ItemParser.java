@@ -1,7 +1,10 @@
 package world.bentobox.bentobox.util;
 
-import java.lang.reflect.Field;
+import java.net.URI;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.Locale;
 import java.util.MissingFormatArgumentException;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,12 +20,13 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
+import org.bukkit.profile.PlayerProfile;
 import org.eclipse.jdt.annotation.Nullable;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import com.google.common.base.Enums;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import world.bentobox.bentobox.BentoBox;
 
@@ -33,6 +37,7 @@ import world.bentobox.bentobox.BentoBox;
  *
  * @author tastybento, Poslovitch
  */
+@SuppressWarnings("removal")
 public class ItemParser {
 
     private ItemParser() {} // private constructor to hide the implicit public one.
@@ -59,6 +64,34 @@ public class ItemParser {
             return defaultItemStack;
         }
 
+        ItemStack returnValue;
+
+        try {
+            // Check if item can be parsed using bukkit item factory.
+            returnValue = Bukkit.getItemFactory().createItemStack(text);
+        }
+        catch (IllegalArgumentException exception) {
+            returnValue = ItemParser.parseOld(text, defaultItemStack);
+        }
+
+        return returnValue;
+    }
+
+
+    /**
+     * Parse given string to ItemStack.
+     * @param text String value of item stack.
+     * @param defaultItemStack Material that should be returned if parsing failed.
+     * @return ItemStack of parsed item or defaultItemStack.
+     */
+    @Nullable
+    private static ItemStack parseOld(@Nullable String text, @Nullable ItemStack defaultItemStack) {
+
+        if (text == null || text.isBlank()) {
+            // Text does not exist or is empty.
+            return defaultItemStack;
+        }
+
         ItemStack returnValue = defaultItemStack;
 
         String[] part = text.split(":");
@@ -66,16 +99,15 @@ public class ItemParser {
         try {
             // Because I am lazy, and do not want to rewrite every parser, I will just add custom data as
             // parameter and remove that array part form input data.
-            Optional<String> first = Arrays.stream(part).filter(field -> field.matches("(CMD-[0-9]*)")).findFirst();
+            Optional<String> first = Arrays.stream(part).filter(field -> field.matches("(CMD-\\d*)")).findFirst();
             Integer customModelData = null;
-
             if (first.isPresent()) {
                 // Ugly and fast way how to get rid of customData field.
                 String[] copyParts = new String[part.length - 1];
                 int j = 0;
 
                 for (String field : part) {
-                    if (!field.matches("(CMD-[0-9]*)")) {
+                    if (!field.matches("(CMD-\\d*)")) {
                         copyParts[j++] = field;
                     }
                 }
@@ -91,6 +123,7 @@ public class ItemParser {
                 // Parse material directly. It does not have any extra properties.
                 returnValue = new ItemStack(Material.valueOf(part[0].toUpperCase()));
             }
+
             // Material-specific handling
             else if (part[0].contains("POTION") || part[0].equalsIgnoreCase("TIPPED_ARROW")) {
                 // Parse Potions and Tipped Arrows
@@ -111,26 +144,34 @@ public class ItemParser {
                 returnValue = parseItemDurabilityAndQuantity(part);
             }
 
-            if (returnValue != null
-                    // If wrapper is just for code-style null-pointer checks.
-                    && customModelData != null) {
-                // We have custom data model. Now assign it to the item-stack.
-                ItemMeta itemMeta = returnValue.getItemMeta();
-
-                // Another null-pointer check for materials that does not have item meta.
-                if (itemMeta != null) {
-                    itemMeta.setCustomModelData(customModelData);
-                    // Update meta to the return item.
-                    returnValue.setItemMeta(itemMeta);
-                }
+            // Update item meta with custom data model.
+            if (returnValue != null && customModelData != null) {
+                ItemParser.setCustomModelData(returnValue, customModelData);
             }
-
         } catch (Exception exception) {
             BentoBox.getInstance().logError("Could not parse item " + text + " " + exception.getLocalizedMessage());
             returnValue = defaultItemStack;
         }
 
         return returnValue;
+    }
+
+
+    /**
+     * This method assigns custom model data to the item stack.
+     * @param returnValue Item stack that should be updated.
+     * @param customModelData Integer value of custom model data.
+     */
+    private static void setCustomModelData(ItemStack returnValue, Integer customModelData) {
+        // We have custom data model. Now assign it to the item-stack.
+        ItemMeta itemMeta = returnValue.getItemMeta();
+
+        // Another null-pointer check for materials that does not have item meta.
+        if (itemMeta != null) {
+            itemMeta.setCustomModelData(customModelData);
+            // Update meta to the return item.
+            returnValue.setItemMeta(itemMeta);
+        }
     }
 
 
@@ -182,17 +223,19 @@ public class ItemParser {
     /**
      * This method parses array of 6 items into an item stack.
      * Format:
-     * <pre>{@code 
+     * <pre>{@code
      *      POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
      * }</pre>
      * Example:
-     * <pre>{@code 
+     * <pre>{@code
      *      POTION:STRENGTH:1:EXTENDED:SPLASH:1
      * }</pre>
      * @param part String array that contains 6 elements.
      * @return Potion with given properties.
+     * @deprecated due to the spigot potion changes.
      */
-    private static ItemStack parsePotion(String[] part) {
+    @Deprecated
+    private static ItemStack parsePotionOld(String[] part) {
         if (part.length != 6) {
             throw new MissingFormatArgumentException("Potion parsing requires 6 parts.");
         }
@@ -219,12 +262,65 @@ public class ItemParser {
         }
         PotionMeta potionMeta = (PotionMeta)(result.getItemMeta());
         PotionType type = PotionType.valueOf(part[1].toUpperCase(java.util.Locale.ENGLISH));
-        boolean isUpgraded = !part[2].isEmpty() && !part[2].equalsIgnoreCase("1");
-        boolean isExtended = part[3].equalsIgnoreCase("EXTENDED");
-        PotionData data = new PotionData(type, isExtended, isUpgraded);
-        potionMeta.setBasePotionData(data);
+        // TODO: Set extended and upgraded settings.
+        potionMeta.setBasePotionType(type);
         result.setItemMeta(potionMeta);
         result.setAmount(Integer.parseInt(part[5]));
+        return result;
+    }
+
+
+    /**
+     * This method parses array of 6 items into an item stack.
+     * Format:
+     * <pre>{@code
+     *      POTION:<POTION_TYPE>:QTY
+     * }</pre>
+     * Example:
+     * <pre>{@code
+     *      POTION:STRENGTH:1
+     * }</pre>
+     * @link <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html">Potion Type</a>
+     * @param part String array that contains 3 elements.
+     * @return Potion with given properties.
+     */
+    private static ItemStack parsePotion(String[] part) {
+        if (part.length == 6) {
+            BentoBox.getInstance().logWarning("The old potion parsing detected for " + part[0] +
+                    ". Please update your configs, as SPIGOT changed potion types.");
+            return parsePotionOld(part);
+        }
+
+        if (part.length != 3) {
+            throw new MissingFormatArgumentException("Potion parsing requires 3 parts.");
+        }
+
+        /*
+            # Format POTION:<POTION_TYPE>:QTY
+            # Potion Type can be found out in: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html
+            # Examples:
+            # POTION:STRENGTH:1
+            # POTION:INSTANT_DAMAGE:2
+            # POTION:JUMP:1
+            # POTION:WEAKNESS:1   -  any weakness potion
+         */
+
+        Material material = Material.matchMaterial(part[0]);
+
+        if (material == null) {
+            BentoBox.getInstance().logWarning("Could not parse potion item " + part[0] + " so using a regular potion.");
+            material = Material.POTION;
+        }
+
+        ItemStack result = new ItemStack(material, Integer.parseInt(part[2]));
+
+        if (result.getItemMeta() instanceof PotionMeta meta) {
+            PotionType potionType = Enums.getIfPresent(PotionType.class, part[1].toUpperCase(Locale.ENGLISH)).
+                    or(PotionType.WATER);
+            meta.setBasePotionType(potionType);
+            result.setItemMeta(meta);
+        }
+
         return result;
     }
 
@@ -234,7 +330,7 @@ public class ItemParser {
      * @param part String array that contains at least 2 elements.
      * @return Banner as item stack.
      */
-    private static ItemStack parseBanner(String[] part) {
+    static ItemStack parseBanner(String[] part) {
         if (part.length >= 2) {
             Material bannerMat = Material.getMaterial(part[0]);
             if (bannerMat == null) {
@@ -246,7 +342,11 @@ public class ItemParser {
             BannerMeta meta = (BannerMeta) result.getItemMeta();
             if (meta != null) {
                 for (int i = 2; i < part.length; i += 2) {
-                    meta.addPattern(new Pattern(DyeColor.valueOf(part[i + 1]), PatternType.valueOf(part[i])));
+                    PatternType pt = PatternType.valueOf(part[i]);
+                    DyeColor dc = Enums.getIfPresent(DyeColor.class, part[i + 1]).orNull();
+                    if (dc != null) {
+                        meta.addPattern(new Pattern(dc, pt));
+                    }
                 }
                 result.setItemMeta(meta);
             }
@@ -261,13 +361,13 @@ public class ItemParser {
     /**
      * This method parses array of 2 to 3 elements that represents player head.
      * Format:
-     * <pre>{@code 
+     * <pre>{@code
      *    PLAYER_HEAD:<STRING/Trimmed UUID/UUID/Texture>:QTY
      *    PLAYER_HEAD:<STRING/Trimmed UUID/UUID/Texture>
      *    PLAYER_HEAD:QTY
      * }</pre>
      * Example:
-     * <pre>{@code 
+     * <pre>{@code
      *    PLAYER_HEAD:1
      *    PLAYER_HEAD:BONNe1704
      *    PLAYER_HEAD:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWY1ZjE1OTg4NmNjNTMxZmZlYTBkOGFhNWY5MmVkNGU1ZGE2NWY3MjRjMDU3MGFmODZhOTBiZjAwYzY3YzQyZSJ9fX0:1
@@ -275,7 +375,6 @@ public class ItemParser {
      * @param part String array that contains at least 2 elements.
      * @return Player head with given properties.
      */
-    @SuppressWarnings("deprecation")
     private static ItemStack parsePlayerHead(String[] part) {
         ItemStack playerHead;
 
@@ -293,36 +392,59 @@ public class ItemParser {
 
         // Set correct Skull texture
         try {
-            SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
+            if (playerHead.getItemMeta() instanceof SkullMeta meta)
+            {
+                PlayerProfile profile;
 
-            if (part[1].length() < 17) {
-                // Minecraft player names are in length between 3 and 16 chars.
-                meta.setOwner(part[1]);
-            } else if (part[1].length() == 32) {
-                // trimmed UUID length are 32 chars.
-                meta.setOwningPlayer(Bukkit.getOfflinePlayer(
-                        UUID.fromString(part[1].replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"))));
-            } else if (part[1].length() == 36) {
-                // full UUID length are 36 chars.
-                meta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(part[1])));
-            } else {
-                // If chars are more than 36, apparently it is base64 encoded texture.
-                GameProfile profile = new GameProfile(UUID.randomUUID(), "");
-                profile.getProperties().put("textures", new Property("textures", part[1]));
+                if (part[1].length() < 17) {
+                    // Minecraft player names are in length between 3 and 16 chars.
+                    profile = Bukkit.createPlayerProfile(part[1]);
+                } else if (part[1].length() == 32) {
+                    // trimmed UUID length are 32 chars.
+                    profile = Bukkit.createPlayerProfile(UUID.fromString(part[1].replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5")));
+                } else if (part[1].length() == 36) {
+                    // full UUID length are 36 chars.
+                    profile = Bukkit.createPlayerProfile(UUID.fromString(part[1]));
+                } else {
+                    // If chars are more than 36, apparently it is base64 encoded texture.
+                    profile = Bukkit.createPlayerProfile(UUID.randomUUID(), "");
+                    profile.getTextures().setSkin(ItemParser.getSkinURLFromBase64(part[1]));
+                }
 
-                // Null pointer will be caught and ignored.
-                Field profileField = meta.getClass().getDeclaredField("profile");
-                profileField.setAccessible(true);
-                profileField.set(meta, profile);
+                // Apply item meta.
+                meta.setOwnerProfile(profile);
+                playerHead.setItemMeta(meta);
             }
-
-            // Apply new meta to the item.
-            playerHead.setItemMeta(meta);
         } catch (Exception ignored) {
-            // Ignored
+            // Could not parse player head.
+            BentoBox.getInstance().logError("Could not parse player head item " + part[1] + " so using a Steve head.");
         }
 
         return playerHead;
+    }
+
+
+    /**
+     * This method parses base64 encoded string into URL.
+     * @param base64 Base64 encoded string.
+     * @return URL of the skin.
+     */
+    private static URL getSkinURLFromBase64(String base64) {
+        /*
+         * Base64 encoded string is in format: { "timestamp": 0, "profileId": "UUID",
+         * "profileName": "USERNAME", "textures": { "SKIN": { "url":
+         * "https://textures.minecraft.net/texture/TEXTURE_ID" }, "CAPE": { "url":
+         * "https://textures.minecraft.net/texture/TEXTURE_ID" } } }
+         */
+        try {
+            String decoded = new String(Base64.getDecoder().decode(base64));
+            JsonObject json = new Gson().fromJson(decoded, JsonObject.class);
+            String url = json.getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
+            return new URI(url).toURL();
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
 
@@ -332,7 +454,7 @@ public class ItemParser {
      * @return {@code true} if value is integer, {@code false} otherwise.
      */
     private static boolean isNumeric(String string) {
-        if(string == null || string.equals("")) {
+        if(string == null || string.isEmpty()) {
             return false;
         }
 

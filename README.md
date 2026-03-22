@@ -1,8 +1,7 @@
 # BentoBox
 
 [![Discord](https://img.shields.io/discord/272499714048524288.svg?logo=discord)](https://discord.bentobox.world)
-[![Build Status](https://ci.codemc.org/buildStatus/icon?job=BentoBoxWorld/BentoBox)](https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_BentoBox&metric=ncloc)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_BentoBox)
+[![Build Status](https://ci.codemc.io/job/BentoBoxWorld/job/BentoBox/badge/icon)](https://ci.codemc.io/job/BentoBoxWorld/job/BentoBox/)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_BentoBox&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_BentoBox)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_BentoBox&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_BentoBox)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_BentoBox&metric=security_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_BentoBox)
@@ -112,9 +111,10 @@ repositories {
 }
 
 dependencies {
-  compileOnly 'world.bentobox:bentobox:PUT-VERSION-HERE'
+  compileOnly 'world.bentobox:bentobox:PUT-VERSION-HERE-SNAPSHOT'
 }
 ```
+**Note:** Due to a Gradle issue with versions for Maven, you need to use -SNAPSHOT at the end.
 
 ### History
 

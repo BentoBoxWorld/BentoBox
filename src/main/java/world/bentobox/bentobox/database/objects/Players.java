@@ -6,10 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.Nullable;
@@ -31,8 +29,6 @@ import world.bentobox.bentobox.util.Util;
 @Table(name = "Players")
 public class Players implements DataObject, MetaDataAble {
     @Expose
-    private Map<Location, Integer> homeLocations = new HashMap<>();
-    @Expose
     private String uniqueId;
     @Expose
     private String playerName;
@@ -42,6 +38,8 @@ public class Players implements DataObject, MetaDataAble {
     private String locale = "";
     @Expose
     private Map<String, Integer> deaths = new HashMap<>();
+    @Expose
+    private Long lastLogin;
 
     /**
      * This variable stores set of worlds where user inventory must be cleared.
@@ -58,7 +56,7 @@ public class Players implements DataObject, MetaDataAble {
     private Flag.Mode flagsDisplayMode = Flag.Mode.BASIC;
 
     /**
-     * A place to store meta data for this player.
+     * A place to store metadata for this player.
      * @since 1.15.4
      */
     @Expose
@@ -77,79 +75,12 @@ public class Players implements DataObject, MetaDataAble {
      */
     public Players(BentoBox plugin, UUID uniqueId) {
         this.uniqueId = uniqueId.toString();
-        homeLocations = new HashMap<>();
         locale = "";
         // Try to get player's name
         this.playerName = Bukkit.getOfflinePlayer(uniqueId).getName();
         if (this.playerName == null) {
             this.playerName = uniqueId.toString();
         }
-    }
-
-    /**
-     * Gets the default home location.
-     * @param world - world to check
-     * @return Location - home location in world
-     * @deprecated Homes are stored in the Island object now
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    @Nullable
-    public Location getHomeLocation(World world) {
-        return getHomeLocation(world, 1); // Default
-    }
-
-    /**
-     * Gets the home location by number for world
-     * @param world - includes world and any related nether or end worlds
-     * @param number - a number
-     * @return Location of this home or null if not available
-     * @deprecated Homes are stored in the island object now
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    @Nullable
-    public Location getHomeLocation(World world, int number) {
-        // Remove any lost worlds/locations
-        homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null);
-        return homeLocations.entrySet().stream()
-                .filter(en -> Util.sameWorld(en.getKey().getWorld(), world) && en.getValue() == number)
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElse(null);
-    }
-
-    /**
-     * @param world - world
-     * @return Map of home locations
-     * @deprecated Homes are stored in the island object now
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public Map<Location, Integer> getHomeLocations(World world) {
-        // Remove any lost worlds/locations
-        homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null);
-        return homeLocations.entrySet().stream().filter(e -> Util.sameWorld(e.getKey().getWorld(),world))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    /**
-     * @return the homeLocations
-     * @deprecated Homes are stored in the Island object now
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public Map<Location, Integer> getHomeLocations() {
-        // Remove any lost worlds/locations
-        homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null);
-        return homeLocations;
-    }
-
-    /**
-     * @param homeLocations the homeLocations to set
-     * @deprecated Homes are stored in the Island object now
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public void setHomeLocations(Map<Location, Integer> homeLocations) {
-        this.homeLocations = homeLocations;
-        // Remove any lost worlds/locations
-        homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null);
     }
 
     /**
@@ -203,45 +134,11 @@ public class Players implements DataObject, MetaDataAble {
     }
 
     /**
-     * Stores the home location of the player in a String format
-     *
-     * @param l a Bukkit location
-     * @deprecated Home locations are stored in islands
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public void setHomeLocation(final Location l) {
-        setHomeLocation(l, 1);
-    }
-
-    /**
-     * Stores the numbered home location of the player. Numbering starts at 1.
-     * @param location - the location
-     * @param number - a number
-     * @deprecated Home locations are no longer stored for players. They are stored in islands.
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public void setHomeLocation(Location location, int number) {
-        // Remove any home locations in the same world with the same number
-        homeLocations.entrySet().removeIf(e -> e.getKey() == null || (Util.sameWorld(location.getWorld(), e.getKey().getWorld()) && e.getValue().equals(number)));
-        homeLocations.put(location, number);
-    }
-
-    /**
      * Set the uuid for this player object
      * @param uuid - UUID
      */
     public void setPlayerUUID(UUID uuid) {
         uniqueId = uuid.toString();
-    }
-
-    /**
-     * Clears all home Locations in world
-     * @param world - world
-     * @deprecated Home locations are no longer stored for players. Use {@link world.bentobox.bentobox.managers.IslandsManager}
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public void clearHomeLocations(World world) {
-        homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null || Util.sameWorld(l.getWorld(), world));
     }
 
     /**
@@ -351,24 +248,6 @@ public class Players implements DataObject, MetaDataAble {
     }
 
     /**
-     * Returns the display mode for the Flags in the Settings Panel.
-     * @return the display mode for the Flags in the Settings Panel.
-     * @since 1.6.0
-     */
-    public Flag.Mode getFlagsDisplayMode() {
-        return flagsDisplayMode;
-    }
-
-    /**
-     * Sets the display mode for the Flags in the Settings Panel.
-     * @param flagsDisplayMode the display mode for the Flags in the Settings Panel.
-     * @since 1.6.0
-     */
-    public void setFlagsDisplayMode(Flag.Mode flagsDisplayMode) {
-        this.flagsDisplayMode = flagsDisplayMode;
-    }
-
-    /**
      * @return the metaData
      * @since 1.15.5
      * @see User#getMetaData()
@@ -377,8 +256,30 @@ public class Players implements DataObject, MetaDataAble {
     public Optional<Map<String, MetaDataValue>> getMetaData() {
         if (metaData == null) {
             metaData = new HashMap<>();
+        } else if (isImmutable(metaData)) {
+            metaData = new HashMap<>(metaData); // Convert immutable map to mutable
         }
         return Optional.of(metaData);
+    }
+
+    private boolean isImmutable(Map<String, MetaDataValue> map) {
+        try {
+            String testKey = "testKey";
+            MetaDataValue testValue = new MetaDataValue("test");
+
+            // If the map already contains keys, use one of them
+            if (!map.isEmpty()) {
+                String existingKey = map.keySet().iterator().next();
+                map.put(existingKey, map.get(existingKey)); // Attempt to replace value
+            } else {
+                // Use a unique key-value pair
+                map.put(testKey, testValue);
+                map.remove(testKey);
+            }
+            return false; // No exception means the map is mutable
+        } catch (UnsupportedOperationException e) {
+            return true; // Exception means the map is immutable
+        }
     }
 
     /**
@@ -388,8 +289,26 @@ public class Players implements DataObject, MetaDataAble {
      */
     @Override
     public void setMetaData(Map<String, MetaDataValue> metaData) {
+        if (isImmutable(metaData)) {
+            throw new IllegalArgumentException("Provided map is immutable and cannot be set.");
+        }
         this.metaData = metaData;
     }
 
+    /**
+     * @return the lastLogin, Unix timestamp, or null if never logged in since this was tracked
+     * @since 2.6.0
+     */
+    @Nullable
+    public Long getLastLogin() {
+        return lastLogin;
+    }
+
+    /**
+     * @param lastLogin the lastLogin to set
+     */
+    public void setLastLogin(Long lastLogin) {
+        this.lastLogin = lastLogin;
+    }
 
 }

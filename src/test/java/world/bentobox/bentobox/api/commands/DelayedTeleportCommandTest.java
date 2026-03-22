@@ -17,27 +17,17 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.events.command.CommandEvent;
-import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -47,17 +37,9 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, CommandEvent.class})
-public class DelayedTeleportCommandTest {
+class DelayedTeleportCommandTest extends CommonTestSetup {
 
     private static final String HELLO = "hello";
-    @Mock
-    private BentoBox plugin;
-    @Mock
-    private BukkitScheduler sch;
-    @Mock
-    private PluginManager pim;
 
     private TestClass dtc;
     @Mock
@@ -76,15 +58,11 @@ public class DelayedTeleportCommandTest {
     private Location from;
     @Mock
     private Location to;
-    @Mock
-    private Notifier notifier;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
@@ -94,17 +72,17 @@ public class DelayedTeleportCommandTest {
         when(plugin.getSettings()).thenReturn(settings);
         when(settings.getDelayTime()).thenReturn(10); // 10 seconds
         // Server & Scheduler
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
         when(sch.runTaskLater(any(), any(Runnable.class), anyLong())).thenReturn(task);
         // Plugin manager
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+        mockedBukkit.when(Bukkit::getPluginManager).thenReturn(pim);
         // user
         User.setPlugin(plugin);
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getLocation()).thenReturn(from);
         when(player.getUniqueId()).thenReturn(uuid);
+        when(player.getWorld()).thenReturn(world);
         User.getInstance(player);
         // Locations
         when(to.toVector()).thenReturn(new Vector(1,2,3));
@@ -118,6 +96,8 @@ public class DelayedTeleportCommandTest {
 
         when(plugin.getLocalesManager()).thenReturn(lm);
 
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+        when(plugin.getIWM()).thenReturn(iwm);
 
         String[] alias = {};
         // Class under test
@@ -142,6 +122,7 @@ public class DelayedTeleportCommandTest {
 
         @Override
         public void setup() {
+            // Not needed for test
         }
 
         @Override
@@ -151,17 +132,17 @@ public class DelayedTeleportCommandTest {
 
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerMoveNoCooldown() {
+    void testOnPlayerMoveNoCooldown() {
         PlayerMoveEvent e = new PlayerMoveEvent(player, from, to);
         dtc.onPlayerMove(e);
         verify(notifier, never()).notify(any(), anyString());
@@ -171,7 +152,7 @@ public class DelayedTeleportCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerMoveCommandCancelled() {
+    void testOnPlayerMoveCommandCancelled() {
         testDelayCommandUserStringRunnableStandStill();
         PlayerMoveEvent e = new PlayerMoveEvent(player, from, to);
         dtc.onPlayerMove(e);
@@ -182,7 +163,7 @@ public class DelayedTeleportCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerMoveHeadMove() {
+    void testOnPlayerMoveHeadMove() {
         testDelayCommandUserStringRunnableStandStill();
         PlayerMoveEvent e = new PlayerMoveEvent(player, from, from);
         dtc.onPlayerMove(e);
@@ -193,7 +174,7 @@ public class DelayedTeleportCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerTeleport() {
+    void testOnPlayerTeleport() {
         testDelayCommandUserStringRunnableStandStill();
         PlayerTeleportEvent e = new PlayerTeleportEvent(player, from, to);
         dtc.onPlayerTeleport(e);
@@ -204,59 +185,59 @@ public class DelayedTeleportCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#DelayedTeleportCommand(world.bentobox.bentobox.api.addons.Addon, java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testDelayedTeleportCommandAddonStringStringArray() {
-        verify(pim).registerEvents(eq(dtc), eq(plugin));
+    void testDelayedTeleportCommandAddonStringStringArray() {
+        verify(pim).registerEvents(dtc, plugin);
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnableZeroDelay() {
+    void testDelayCommandUserStringRunnableZeroDelay() {
         when(settings.getDelayTime()).thenReturn(0);
         dtc.delayCommand(user, HELLO, command);
-        verify(sch).runTask(eq(plugin), eq(command));
+        verify(sch).runTask(plugin, command);
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnableOp() {
+    void testDelayCommandUserStringRunnableOp() {
         when(user.isOp()).thenReturn(true);
         dtc.delayCommand(user, HELLO, command);
-        verify(sch).runTask(eq(plugin), eq(command));
+        verify(sch).runTask(plugin, command);
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnablePermBypassCooldowns() {
-        when(user.hasPermission(eq("nullmod.bypasscooldowns"))).thenReturn(true);
+    void testDelayCommandUserStringRunnablePermBypassCooldowns() {
+        when(user.hasPermission("nullmod.bypasscooldowns")).thenReturn(true);
         dtc.delayCommand(user, HELLO, command);
-        verify(sch).runTask(eq(plugin), eq(command));
+        verify(sch).runTask(plugin, command);
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnablePermBypassDelay() {
-        when(user.hasPermission(eq("nullmod.bypassdelays"))).thenReturn(true);
+    void testDelayCommandUserStringRunnablePermBypassDelay() {
+        when(user.hasPermission("nullmod.bypassdelays")).thenReturn(true);
         dtc.delayCommand(user, HELLO, command);
-        verify(sch).runTask(eq(plugin), eq(command));
+        verify(sch).runTask(plugin, command);
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnableStandStill() {
+    void testDelayCommandUserStringRunnableStandStill() {
         dtc.delayCommand(user, HELLO, command);
-        verify(sch, never()).runTask(eq(plugin), eq(command));
-        verify(user).sendRawMessage(eq(HELLO));
-        verify(user).sendMessage(eq("commands.delay.stand-still"), eq("[seconds]"), eq("10"));
+        verify(sch, never()).runTask(plugin, command);
+        verify(user).sendRawMessage(HELLO);
+        verify(user).sendMessage("commands.delay.stand-still", "[seconds]", "10");
         verify(sch).runTaskLater(eq(plugin), any(Runnable.class), eq(200L));
         verify(user, never()).sendMessage("commands.delay.previous-command-cancelled");
     }
@@ -265,7 +246,7 @@ public class DelayedTeleportCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnableStandStillDuplicate() {
+    void testDelayCommandUserStringRunnableStandStillDuplicate() {
         dtc.delayCommand(user, HELLO, command);
         dtc.delayCommand(user, HELLO, command);
         verify(user).sendMessage("commands.delay.previous-command-cancelled");
@@ -276,11 +257,11 @@ public class DelayedTeleportCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserRunnable() {
+    void testDelayCommandUserRunnable() {
         dtc.delayCommand(user, command);
-        verify(sch, never()).runTask(eq(plugin), eq(command));
+        verify(sch, never()).runTask(plugin, command);
         verify(user, never()).sendRawMessage(anyString());
-        verify(user).sendMessage(eq("commands.delay.stand-still"), eq("[seconds]"), eq("10"));
+        verify(user).sendMessage("commands.delay.stand-still", "[seconds]", "10");
         verify(sch).runTaskLater(eq(plugin), any(Runnable.class), eq(200L));
         verify(user, never()).sendMessage("commands.delay.previous-command-cancelled");
 

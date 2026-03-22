@@ -1,28 +1,32 @@
 package world.bentobox.bentobox.util;
 
+import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang.Validate;
+import javax.annotation.Nonnull;
+
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Allay;
 import org.bukkit.entity.Animals;
@@ -37,18 +41,23 @@ import org.bukkit.entity.PufferFish;
 import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Snowman;
+import org.bukkit.entity.Tameable;
 import org.bukkit.entity.WaterMob;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import io.papermc.lib.PaperLib;
-import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.nms.AbstractMetaData;
+import world.bentobox.bentobox.nms.GetMetaData;
 import world.bentobox.bentobox.nms.PasteHandler;
+import world.bentobox.bentobox.nms.PasteHandlerImpl;
 import world.bentobox.bentobox.nms.WorldRegenerator;
+import world.bentobox.bentobox.nms.WorldRegeneratorImpl;
 
 
 /**
@@ -59,15 +68,26 @@ import world.bentobox.bentobox.nms.WorldRegenerator;
  */
 public class Util {
     /**
+     * The section sign character used for legacy color codes, replacing ChatColor.COLOR_CHAR.
+     */
+    private static final String COLOR_CHAR = "\u00A7";
+
+    /**
      * Use standard color code definition: {@code &<hex>}.
      */
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
+
     private static final String NETHER = "_nether";
     private static final String THE_END = "_the_end";
+    private static final String SNAPSHOT = "-SNAPSHOT";
+    private static final String SERVER_VERSION = Bukkit.getMinecraftVersion();
+    
     private static String serverVersion = null;
     private static BentoBox plugin = BentoBox.getInstance();
     private static PasteHandler pasteHandler = null;
     private static WorldRegenerator regenerator = null;
+
+    private static GetMetaData metaData;
 
     private Util() {}
 
@@ -100,9 +120,6 @@ public class Util {
         int dist = plugin.getIWM().getIslandDistance(location.getWorld()) * 2;
         long x = Math.round((double) location.getBlockX() / dist) * dist + plugin.getIWM().getIslandXOffset(location.getWorld());
         long z = Math.round((double) location.getBlockZ() / dist) * dist + plugin.getIWM().getIslandZOffset(location.getWorld());
-        if (location.getBlockX() == x && location.getBlockZ() == z) {
-            return location;
-        }
         int y = plugin.getIWM().getIslandHeight(location.getWorld());
         return new Location(location.getWorld(), x, y, z);
     }
@@ -115,7 +132,7 @@ public class Util {
      * @return Location
      */
     public static Location getLocationString(final String s) {
-        if (s == null || s.trim().equals("")) {
+        if (s == null || s.trim().isEmpty()) {
             return null;
         }
         final String[] parts = s.split(":");
@@ -351,14 +368,29 @@ public class Util {
      * @since 1.4.0
      */
     public static boolean isPassiveEntity(Entity entity) {
-        // IronGolem and Snowman extends Golem, but Shulker also extends Golem
-        // Fishes, Dolphin and Squid extends WaterMob | Excludes PufferFish
-        // Bat extends Mob
-        // Most of passive mobs extends Animals
+        if (entity == null || entity.getType() == null) {
+            return true;
+        }
+        // Check built-in class hierarchy for common passive mobs
+        boolean isPassiveByClass = entity instanceof Animals
+                || entity instanceof IronGolem 
+                || entity instanceof Snowman 
+                || entity instanceof Bat 
+                || entity instanceof Allay;
 
-        return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
-                entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat ||
-                entity instanceof Allay;
+        // Check WaterMob hierarchy, excluding PufferFish (hostile)
+        boolean isPassiveWaterMob = entity instanceof WaterMob && !(entity instanceof PufferFish);
+
+        // Check for newer entity types by their enum name (String comparison is safe across versions)
+        boolean isCopperGolem = entity.getType().name().equals("COPPER_GOLEM");
+        // And the sniffer
+        boolean isSniffer = entity.getType().name().equals("SNIFFER");
+
+        return isPassiveByClass || isPassiveWaterMob || isCopperGolem || isSniffer;
+    }
+
+    public static boolean isTamableEntity(Entity entity) {
+        return entity instanceof Tameable tameable && tameable.isTamed();
     }
 
     /*
@@ -372,8 +404,8 @@ public class Util {
      * @return Future that completes with the result of the teleport
      */
     @NonNull
-    public static CompletableFuture<Boolean> teleportAsync(@NonNull Entity entity, @NonNull Location location) {
-        return PaperLib.teleportAsync(entity, location);
+    public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location) {
+        return teleportAsync(entity, location, TeleportCause.PLUGIN);
     }
 
     /**
@@ -383,11 +415,26 @@ public class Util {
      * @param cause The cause for the teleportation
      * @return Future that completes with the result of the teleport
      */
+    @SuppressWarnings("unchecked")
     @NonNull
-    public static CompletableFuture<Boolean> teleportAsync(@NonNull Entity entity, @NonNull Location location, TeleportCause cause) {
-        return PaperLib.teleportAsync(entity, location, cause);
+    public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location,
+            TeleportCause cause) {
+        try {
+            // Use reflection to check if the method exists
+            Method method = Entity.class.getMethod("teleportAsync", Location.class, TeleportCause.class);
+            if (method != null) {
+                // Invoke the method using reflection on the entity instance
+                return (CompletableFuture<Boolean>) method.invoke(entity, location, cause);
+            }
+        } catch (NoSuchMethodException e) {
+            // Method does not exist, fallback to Spigot behavior
+        } catch (Exception e) {
+            plugin.logStacktrace(e); // Report other exceptions
+        }
+        // Fallback for Spigot servers
+        entity.teleport(location, cause);
+        return CompletableFuture.completedFuture(true);
     }
-
     /**
      * Gets the chunk at the target location, loading it asynchronously if needed.
      * @param loc Location to get chunk for
@@ -395,7 +442,8 @@ public class Util {
      */
     @NonNull
     public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull Location loc) {
-        return getChunkAtAsync(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, true);
+        return getChunkAtAsync(Objects.requireNonNull(loc.getWorld()), loc.getBlockX() >> 4, loc.getBlockZ() >> 4,
+                true);
     }
 
     /**
@@ -406,7 +454,7 @@ public class Util {
      */
     @NonNull
     public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull Location loc, boolean gen) {
-        return getChunkAtAsync(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, gen);
+        return getChunkAtAsync(Objects.requireNonNull(loc.getWorld()), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, gen);
     }
 
     /**
@@ -417,7 +465,7 @@ public class Util {
      * @return Future that completes with the chunk
      */
     @NonNull
-    public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull World world, int x, int z) {
+    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z) {
         return getChunkAtAsync(world, x, z, true);
     }
 
@@ -429,9 +477,24 @@ public class Util {
      * @param gen Should the chunk generate or not. Only respected on some MC versions, 1.13 for CB, 1.12 for Paper
      * @return Future that completes with the chunk, or null if the chunk did not exists and generation was not requested.
      */
+    @SuppressWarnings("unchecked")
     @NonNull
-    public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull World world, int x, int z, boolean gen) {
-        return PaperLib.getChunkAtAsync(world, x, z, gen);
+    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z, boolean gen) {
+        try {
+            // Use reflection to check if the method exists
+            Method method = World.class.getMethod("getChunkAtAsync", int.class, int.class, boolean.class);
+            if (method != null) {
+                // Invoke the method using reflection
+                return (CompletableFuture<Chunk>) method.invoke(world, x, z, gen);
+            }
+        } catch (NoSuchMethodException e) {
+            // Method does not exist, fallback to default behavior
+        } catch (Exception e) {
+            BentoBox.getInstance().logStacktrace(e);
+        }
+        // Fallback
+        return CompletableFuture.completedFuture(world.getChunkAt(x, z, gen));
+
     }
 
     /**
@@ -440,7 +503,7 @@ public class Util {
      * @return If the chunk is generated or not
      */
     public static boolean isChunkGenerated(@NonNull Location loc) {
-        return isChunkGenerated(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
+        return isChunkGenerated(Objects.requireNonNull(loc.getWorld()), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
     }
 
     /**
@@ -450,97 +513,90 @@ public class Util {
      * @param z Z coordinate of the chunk to checl
      * @return If the chunk is generated or not
      */
-    public static boolean isChunkGenerated(@NonNull World world, int x, int z) {
-        return PaperLib.isChunkGenerated(world, x, z);
+    public static boolean isChunkGenerated(@Nonnull World world, int x, int z) {
+        return world.isChunkGenerated(x, z);
     }
 
     /**
-     * Get's a BlockState, optionally not using a snapshot
-     * @param block The block to get a State of
-     * @param useSnapshot Whether or not to use a snapshot when supported
-     * @return The BlockState
-     */
-    @NonNull
-    public static BlockStateSnapshotResult getBlockState(@NonNull Block block, boolean useSnapshot) {
-        return PaperLib.getBlockState(block, useSnapshot);
-    }
-
-    /**
-     * Detects if the current MC version is at least the following version.
+     * Checks if the given version is compatible with the required version.
+     * 
      * <p>
-     * Assumes 0 patch version.
-     *
-     * @param minor Min Minor Version
-     * @return Meets the version requested
+     * A version is considered compatible if:
+     * <ul>
+     *   <li>The major, minor, and patch components of the given version are greater than or equal to those of the required version.</li>
+     *   <li>If the numeric components are equal, the absence of "-SNAPSHOT" in the given version takes precedence (i.e., release versions are considered more compatible than SNAPSHOT versions).</li>
+     * </ul>
+     * </p>
+     * 
+     * @param version          the version to check, in the format "major.minor.patch[-SNAPSHOT]".
+     * @param requiredVersion  the required version, in the format "major.minor.patch[-SNAPSHOT]".
+     * @return {@code true} if the given version is compatible with the required version; {@code false} otherwise.
+     * 
+     * <p>
+     * Examples:
+     * <ul>
+     *   <li>{@code isVersionCompatible("2.1.0", "2.0.0-SNAPSHOT")} returns {@code true}</li>
+     *   <li>{@code isVersionCompatible("2.0.0", "2.0.0-SNAPSHOT")} returns {@code true}</li>
+     *   <li>{@code isVersionCompatible("2.0.0-SNAPSHOT", "2.0.0")} returns {@code false}</li>
+     *   <li>{@code isVersionCompatible("1.9.9", "2.0.0-SNAPSHOT")} returns {@code false}</li>
+     * </ul>
+     * </p>
      */
-    public static boolean isVersion(int minor) {
-        return PaperLib.isVersion(minor);
-    }
+    public static boolean isVersionCompatible(String version, String requiredVersion) {
+        String[] versionParts = version.replace(SNAPSHOT, "").split("\\.");
+        String[] requiredVersionParts = requiredVersion.replace(SNAPSHOT, "").split("\\.");
 
-    /**
-     * Detects if the current MC version is at least the following version.
-     * @param minor Min Minor Version
-     * @param patch Min Patch Version
-     * @return Meets the version requested
-     */
-    public static boolean isVersion(int minor, int patch) {
-        return PaperLib.isVersion(minor, patch);
-    }
+        for (int i = 0; i < Math.max(versionParts.length, requiredVersionParts.length); i++) {
+            int vPart = i < versionParts.length ? Integer.parseInt(versionParts[i]) : 0;
+            int rPart = i < requiredVersionParts.length ? Integer.parseInt(requiredVersionParts[i]) : 0;
 
-    /**
-     * Gets the current Minecraft Minor version. IE: 1.13.1 returns 13
-     * @return The Minor Version
-     */
-    public static int getMinecraftVersion() {
-        return PaperLib.getMinecraftVersion();
-    }
+            if (vPart > rPart) {
+                return true;
+            } else if (vPart < rPart) {
+                return false;
+            }
+        }
 
-    /**
-     * Gets the current Minecraft Patch version. IE: 1.13.1 returns 1
-     * @return The Patch Version
-     */
-    public static int getMinecraftPatchVersion() {
-        return PaperLib.getMinecraftPatchVersion();
-    }
+        // If numeric parts are equal, prioritize SNAPSHOT as lower precedence
+        boolean isVersionSnapshot = version.contains(SNAPSHOT);
+        boolean isRequiredSnapshot = requiredVersion.contains(SNAPSHOT);
 
-    /**
-     * Check if the server has access to the Spigot API
-     * @return True for Spigot <em>and</em> Paper environments
-     */
-    public static boolean isSpigot() {
-        return PaperLib.isSpigot();
+        // If required version is a full release but current version is SNAPSHOT, it's incompatible
+        return isRequiredSnapshot || !isVersionSnapshot;
     }
-
+    
     /**
      * Check if the server has access to the Paper API
      * @return True for Paper environments
      */
     public static boolean isPaper() {
-        return !isJUnitTest() && PaperLib.isPaper();
-    }
-
-    /**
-     * I don't like doing this, but otherwise we need to set a flag in every test
-     */
-    private static boolean isJUnitTest() {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        for (StackTraceElement element : stackTrace) {
-            if (element.getClassName().startsWith("org.junit.")) {
-                return true;
-            }
+        try {
+            Class.forName("com.destroystokyo.paper.PaperConfig");
+            return true; // Paper-specific class exists
+        } catch (ClassNotFoundException e) {
+            return false; // Not a Paper server
         }
-        return false;
     }
-
 
     /**
      * This method translates color codes in given string and strips whitespace after them.
      * This code parses both: hex and old color codes.
+     * Multi-line strings are processed line by line to ensure each line retains its own
+     * color codes, since Adventure's LegacyComponentSerializer may omit repeated color
+     * codes for consecutive segments of the same color.
      * @param textToColor Text which color codes must be parsed.
      * @return String text with parsed colors and stripped whitespaces after them.
      */
     @NonNull
     public static String translateColorCodes(@NonNull String textToColor) {
+        // Process each line independently so color codes are not lost at line boundaries.
+        // Adventure's LegacyComponentSerializer omits repeated §X codes when consecutive
+        // components share the same color, causing lines 2+ to lose their color when split.
+        if (textToColor.contains("\n")) {
+            return Arrays.stream(textToColor.split("\n", -1))
+                    .map(Util::translateColorCodes)
+                    .collect(Collectors.joining("\n"));
+        }
         // Use matcher to find hex patterns in given text.
         Matcher matcher = HEX_PATTERN.matcher(textToColor);
         // Increase buffer size by 32 like it is in bungee cord api. Use buffer because it is sync.
@@ -551,22 +607,24 @@ public class Util {
 
             if (group.length() == 6) {
                 // Parses #ffffff to a color text.
-                matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
-                        + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(1)
-                        + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(3)
-                        + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(5));
+                matcher.appendReplacement(buffer, COLOR_CHAR + "x"
+                        + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
+                        + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
+                        + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5));
             } else {
                 // Parses #fff to a color text.
-                matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
-                        + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(0)
-                        + ChatColor.COLOR_CHAR + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(1)
-                        + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(2));
+                matcher.appendReplacement(buffer, COLOR_CHAR + "x"
+                        + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(0)
+                        + COLOR_CHAR + group.charAt(1) + COLOR_CHAR + group.charAt(1)
+                        + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(2));
             }
         }
 
-        // transform normal codes and strip spaces after color code.
-        return Util.stripSpaceAfterColorCodes(
-                ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString()));
+        // Use Adventure's LegacyComponentSerializer to translate '&' color codes
+        // then serialize back with section sign, and strip spaces after color codes.
+        String withHexCodes = matcher.appendTail(buffer).toString();
+        String translated = SECTION_SERIALIZER.serialize(LEGACY_SERIALIZER.deserialize(withHexCodes));
+        return Util.stripSpaceAfterColorCodes(translated);
     }
 
 
@@ -577,9 +635,9 @@ public class Util {
      * @since 1.9.0
      */
     @NonNull
-    public static String stripSpaceAfterColorCodes(@NonNull String textToStrip) {
-        Validate.notNull(textToStrip, "Cannot strip null text");
-        textToStrip = textToStrip.replaceAll("(" + ChatColor.COLOR_CHAR + ".)[\\s]", "$1");
+    public static String stripSpaceAfterColorCodes(String textToStrip) {
+        if (textToStrip == null) return "";
+        textToStrip = textToStrip.replaceAll("(\u00A7.)[\\s]", "$1");
         return textToStrip;
     }
 
@@ -701,8 +759,14 @@ public class Util {
      * @param player - player
      */
     public static void resetHealth(Player player) {
-        double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
-        player.setHealth(maxHealth);
+        try {
+            // Paper
+            double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
+            player.setHealth(maxHealth);
+        } catch (Exception e) {
+            // Spigot
+            player.setHealth(20D);
+        }
     }
 
     /**
@@ -714,63 +778,36 @@ public class Util {
     }
 
     /**
+     * Get metadata decoder
+     * @return an accelerated metadata class for this server
+     */
+    public static AbstractMetaData getMetaData() {
+        if (metaData == null) {
+            metaData = new GetMetaData();
+        }
+        return metaData;
+    }
+
+    /**
      * Get the regenerator the plugin will use
      * @return an accelerated regenerator class for this server
      */
     public static WorldRegenerator getRegenerator() {
         if (regenerator == null) {
-            String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
-            String pluginPackageName = plugin.getClass().getPackage().getName();
-            String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
-            WorldRegenerator handler;
-            try {
-                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".WorldRegeneratorImpl");
-                if (WorldRegenerator.class.isAssignableFrom(clazz)) {
-                    handler = (WorldRegenerator) clazz.getConstructor().newInstance();
-                } else {
-                    throw new IllegalStateException("Class " + clazz.getName() + " does not implement WorldRegenerator");
-                }
-            } catch (Exception e) {
-                plugin.logWarning("No Regenerator found for " + version + ", falling back to Bukkit API.");
-                handler = new world.bentobox.bentobox.nms.fallback.WorldRegeneratorImpl();
-            }
-            setRegenerator(handler);
+            regenerator = new WorldRegeneratorImpl();
         }
         return regenerator;
     }
-    
+
     /**
      * Checks what version the server is running and picks the appropriate NMS handler, or fallback
      * @return PasteHandler
      */
     public static PasteHandler getPasteHandler() {
         if (pasteHandler == null) {
-            String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
-            String pluginPackageName = plugin.getClass().getPackage().getName();
-            String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
-            PasteHandler handler;
-            try {
-                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".PasteHandlerImpl");
-                if (PasteHandler.class.isAssignableFrom(clazz)) {
-                    handler = (PasteHandler) clazz.getConstructor().newInstance();
-                } else {
-                    throw new IllegalStateException("Class " + clazz.getName() + " does not implement PasteHandler");
-                }
-            } catch (Exception e) {
-                plugin.logWarning("No PasteHandler found for " + version + ", falling back to Bukkit API.");
-                handler = new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl();
-            }
-            setPasteHandler(handler);
+            pasteHandler = new PasteHandlerImpl();
         }
         return pasteHandler;
-    }
-
-    /**
-     * Set the paste handler the plugin will use
-     * @param pasteHandler the NMS paster
-     */
-    public static void setPasteHandler(PasteHandler pasteHandler) {
-        Util.pasteHandler = pasteHandler;
     }
 
     /**
@@ -801,8 +838,98 @@ public class Util {
      */
     public static String sanitizeInput(String input)
     {
-        return ChatColor.stripColor(
+        return Util.stripColor(
                 Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).
                 toLowerCase();
+    }
+
+    /**
+     * Attempts to find the first matching enum constant from an array of possible string representations.
+     * This method sequentially checks each string against the enum constants of the specified enum class
+     * by normalizing the string values to uppercase before comparison, enhancing the likelihood of a match
+     * if the enum constants are defined in uppercase.
+     *
+     * @param enumClass the Class object of the enum type to be checked against
+     * @param values an array of string values which are potential matches for the enum constants
+     * @param <T> the type parameter of the enum
+     * @return the first matching enum constant if a match is found; otherwise, returns null
+     */
+    public static <T extends Enum<T>> T findFirstMatchingEnum(Class<T> enumClass, String... values) {
+        if (enumClass == null || values == null) {
+            return null;
+        }
+        for (String value : values) {
+            Optional<T> enumConstant = Arrays.stream(enumClass.getEnumConstants()).filter(e -> e.name().equals(value.toUpperCase())).findFirst();
+            if (enumConstant.isPresent()) {
+                return enumConstant.get();
+            }
+        }
+        return null; // Return null if no match is found
+    }
+
+    /**
+     * This checks the stack trace for @Test to determine if a test is calling the code and skips.
+     * @return true if it's a test.
+     */
+    public static boolean inTest() {
+        return Arrays.stream(Thread.currentThread().getStackTrace()).anyMatch(e -> e.getClassName().endsWith("Test"));
+    }
+
+    /**
+     * Strings old-style §-based color codes (used by ChatColor) from text
+     * @param input text with color codes
+     * @return  unformatted text
+     */
+    public static String stripColor(String input) {
+        return input.replaceAll("(?i)§[0-9A-FK-ORX]", ""); // Use regex because it's fast and reliable
+    }
+
+    /**
+     * Simple utility method to check if the server version is at least the target version.
+     */
+    public static boolean isVersionAtLeast(String targetVersion) {
+        // Simple string comparison may be sufficient for minor versions, 
+        // but a proper numeric check is safer for major releases.
+        try {
+            // Get major, minor, patch versions
+            String[] currentParts = SERVER_VERSION.split("\\.");
+            String[] targetParts = targetVersion.split("\\.");
+
+            for (int i = 0; i < targetParts.length; i++) {
+                int current = (i < currentParts.length) ? Integer.parseInt(currentParts[i]) : 0;
+                int target = Integer.parseInt(targetParts[i]);
+
+                if (current > target) return true;
+                if (current < target) return false;
+            }
+            // All parts checked are equal (e.g., 1.21.9 vs 1.21.9)
+            return true;
+        } catch (NumberFormatException e) {
+            // Fallback for non-standard version strings
+            return SERVER_VERSION.startsWith(targetVersion);
+        }
+    }
+    
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder()
+            .character('&')
+            .hexColors() // Enables support for modern hex codes (e.g., &#FF0000) alongside legacy codes.
+            .build();
+
+    private static final LegacyComponentSerializer SECTION_SERIALIZER = LegacyComponentSerializer.builder()
+            .character('\u00A7')
+            .hexColors()
+            .build();
+    
+    /**
+     * Converts a string containing Bukkit color codes ('&') into an Adventure Component.
+     *
+     * @param legacyString The string with Bukkit color and format codes.
+     * @return The resulting Adventure Component.
+     */
+    public static Component bukkitToAdventure(String legacyString) {
+        if (legacyString == null) {
+            return Component.empty();
+        }
+        return LEGACY_SERIALIZER.deserialize(legacyString);
     }
 }

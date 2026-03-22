@@ -116,6 +116,25 @@ public class Flag implements Comparable<Flag> {
         }
     }
 
+    /**
+     * Options for hiding of sub flags
+     * @since 2.4.3
+     */
+    public enum HideWhen {
+        /**
+         * Never hide sub-flags
+         */
+        NEVER,
+        /**
+         * Hide subflags if the setting of the parent flag is true
+         */
+        SETTING_TRUE,
+        /**
+         * Hide subflags if the setting of the parent flag is false
+         */
+        SETTING_FALSE
+    }
+
     private static final String PROTECTION_FLAGS = "protection.flags.";
 
     private final String id;
@@ -131,6 +150,9 @@ public class Flag implements Comparable<Flag> {
     private final int cooldown;
     private final Mode mode;
     private final Set<Flag> subflags;
+    private final HideWhen hideWhen;
+    private boolean isSubFlag;
+    private Flag parentFlag;
 
     private Flag(Builder builder) {
         this.id = builder.id;
@@ -148,6 +170,9 @@ public class Flag implements Comparable<Flag> {
         this.addon = builder.addon;
         this.mode = builder.mode;
         this.subflags = builder.subflags;
+        this.hideWhen = builder.hideWhen;
+        this.isSubFlag = false;
+        this.parentFlag = null;
     }
 
     public String getID() {
@@ -181,12 +206,11 @@ public class Flag implements Comparable<Flag> {
         }
         WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
         if (type.equals(Type.WORLD_SETTING) || type.equals(Type.PROTECTION)) {
-            if (!ws.getWorldFlags().containsKey(getID())) {
-                ws.getWorldFlags().put(getID(), setting);
+            return ws.getWorldFlags().computeIfAbsent(getID(), k -> {
                 // Save config file
                 BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
-            }
-            return ws.getWorldFlags().get(getID());
+                return setting;
+            });
         }
         return setting;
     }
@@ -274,6 +298,28 @@ public class Flag implements Comparable<Flag> {
      */
     public Addon getAddon() {
         return addon;
+    }
+
+    /**
+     * Get when sub-flags should be hidden
+     * @return hideWhen
+     */
+    public HideWhen getHideWhen() {
+        return hideWhen;
+    }
+
+    /**
+     * @return the isSubFlag
+     */
+    public boolean isSubFlag() {
+        return isSubFlag;
+    }
+
+    /**
+     * @return the parentFlag
+     */
+    public Flag getParentFlag() {
+        return parentFlag;
     }
 
     /* (non-Javadoc)
@@ -374,38 +420,43 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
-     * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
+     * Converts a flag to a panel item. The content of the flag will change depending on whom the user is and where they are.
      * @param plugin - plugin
      * @param user - user that will see this flag
+     * @param world - the world this flag is being shown for. If island is present, then world is the same as the island.
      * @param island - target island, if any
      * @param invisible - true if this flag is not visible to players
      * @return - PanelItem for this flag or null if item is invisible to user
      */
     @Nullable
-    public PanelItem toPanelItem(BentoBox plugin, User user, @Nullable Island island, boolean invisible) {
+    public PanelItem toPanelItem(BentoBox plugin, User user, World world, @Nullable Island island, boolean invisible) {
         // Invisibility
         if (!user.isOp() && invisible) {
             return null;
         }
-        // Start the flag conversion
         PanelItemBuilder pib = new PanelItemBuilder()
                 .icon(ItemParser.parse(user.getTranslationOrNothing(this.getIconReference()), new ItemStack(icon)))
-                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
+                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME,
+                        user.getTranslation(getNameReference())))
                 .clickHandler(clickHandler)
                 .invisible(invisible);
         if (hasSubPanel()) {
             pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             return pib.build();
         }
+
         return switch (getType()) {
         case PROTECTION -> createProtectionFlag(plugin, user, island, pib).build();
         case SETTING -> createSettingFlag(user, island, pib).build();
-        case WORLD_SETTING -> createWorldSettingFlag(user, pib).build();
+        case WORLD_SETTING -> createWorldSettingFlag(user, world, pib).build();
+
         };
+
     }
 
-    private PanelItemBuilder createWorldSettingFlag(User user, PanelItemBuilder pib) {
-        String worldSetting = this.isSetForWorld(user.getWorld()) ? user.getTranslation("protection.panel.flag-item.setting-active")
+    private PanelItemBuilder createWorldSettingFlag(User user, World world, PanelItemBuilder pib) {
+        String worldSetting = this.isSetForWorld(world)
+                ? user.getTranslation("protection.panel.flag-item.setting-active")
                 : user.getTranslation("protection.panel.flag-item.setting-disabled");
         pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
                 , "[setting]", worldSetting));
@@ -427,19 +478,24 @@ public class Flag implements Comparable<Flag> {
 
     private PanelItemBuilder createProtectionFlag(BentoBox plugin, User user, Island island, PanelItemBuilder pib) {
         if (island != null) {
+            int y = island.getFlag(this);
             // Protection flag
+
             pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
                     TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
-            plugin.getRanksManager().getRanks().forEach((reference, score) -> {
-                if (score > RanksManager.BANNED_RANK && score < island.getFlag(this)) {
+
+            RanksManager.getInstance().getRanks().forEach((reference, score) -> {
+
+                if (score > RanksManager.BANNED_RANK && score < y) {
                     pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
-                } else if (score <= RanksManager.OWNER_RANK && score > island.getFlag(this)) {
+                } else if (score <= RanksManager.OWNER_RANK && score > y) {
                     pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank") + user.getTranslation(reference));
-                } else if (score == island.getFlag(this)) {
+                } else if (score == y) {
                     pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
                 }
             });
         }
+
         return pib;
     }
 
@@ -467,7 +523,7 @@ public class Flag implements Comparable<Flag> {
     public Set<Flag> getSubflags() {
         return subflags;
     }
-    
+
     /**
      * Set the name of this flag for a specified locale. This enables the flag's name to be assigned via API. It will not be stored anywhere
      * and must be rewritten using this call every time the flag is built.
@@ -480,7 +536,7 @@ public class Flag implements Comparable<Flag> {
     public boolean setTranslatedName(Locale locale, String name) {
         return BentoBox.getInstance().getLocalesManager().setTranslation(locale, getNameReference(), name);
     }
-    
+
     /**
      * Set the name of this flag for a specified locale. This enables the flag's name to be assigned via API. It will not be stored anywhere
      * and must be rewritten using this call every time the flag is built.
@@ -542,6 +598,9 @@ public class Flag implements Comparable<Flag> {
 
         // Subflags
         private final Set<Flag> subflags;
+
+        // Hide when indicator
+        private HideWhen hideWhen = HideWhen.NEVER;
 
         /**
          * Builder for making flags
@@ -669,6 +728,21 @@ public class Flag implements Comparable<Flag> {
          */
         public Builder subflags(Flag... flags) {
             this.subflags.addAll(Arrays.asList(flags));
+            for (Flag flag : flags) {
+                flag.isSubFlag = true;
+            }
+            return this;
+        }
+
+        /**
+         * When should sub-flags be hidden, if ever
+         * {@see HideWhen}
+         * @param hideWhen hide when indicator
+         * @return Builder - flag builder
+         * @since 2.4.3
+         */
+        public Builder hideWhen(HideWhen hideWhen) {
+            this.hideWhen = hideWhen;
             return this;
         }
 
@@ -679,15 +753,15 @@ public class Flag implements Comparable<Flag> {
         public Flag build() {
             // If no clickHandler has been set, then apply default ones
             if (clickHandler == null) {
-                switch (type) {
-                case SETTING -> clickHandler = new IslandToggleClick(id);
-                case WORLD_SETTING -> clickHandler = new WorldToggleClick(id);
-                default -> clickHandler = new CycleClick(id);
-                }
+                clickHandler = switch (type) {
+                case SETTING -> new IslandToggleClick(id);
+                case WORLD_SETTING -> new WorldToggleClick(id);
+                default -> new CycleClick(id);
+                };
             }
-
-            return new Flag(this);
+            Flag flag = new Flag(this);
+            subflags.forEach(subflag -> subflag.parentFlag = flag);
+            return flag;
         }
     }
-
 }

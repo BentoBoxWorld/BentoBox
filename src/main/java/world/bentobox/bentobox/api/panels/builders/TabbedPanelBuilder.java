@@ -9,6 +9,7 @@ import org.bukkit.World;
 import world.bentobox.bentobox.api.panels.Tab;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Builds {@link TabbedPanel}'s
@@ -23,6 +24,17 @@ public class TabbedPanelBuilder {
     private World world;
     private User user;
     private boolean hideIfEmpty;
+    private Island island;
+
+    /**
+     * Set the island related to this panel
+     * @param island island
+     * @return PanelBuilder - PanelBuilder
+     */
+    public TabbedPanelBuilder island(Island island) {
+        this.island = island;
+        return this;
+    }
 
     /**
      * Forces panel to be a specific number of slots.
@@ -97,7 +109,10 @@ public class TabbedPanelBuilder {
         if (!tabs.isEmpty() && !tabs.containsKey(startingSlot)) {
             startingSlot = ((TreeMap<Integer, Tab>)tabs).firstKey();
         }
-        return new TabbedPanel(this);
+        TabbedPanel tp = new TabbedPanel(this);
+        // Set tab parents
+        tabs.values().forEach(tab -> tab.setParentPanel(tp));
+        return tp;
     }
 
     /**
@@ -142,6 +157,12 @@ public class TabbedPanelBuilder {
         return hideIfEmpty;
     }
 
+    /**
+     * @return the island
+     */
+    public Island getIsland() {
+        return island;
+    }
 
 
 }

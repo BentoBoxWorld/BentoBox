@@ -9,6 +9,8 @@ import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.util.Util;
+
 /**
  * Checks and ensures the current server software is compatible with BentoBox.
  * @author Poslovitch
@@ -23,7 +25,8 @@ public class ServerCompatibility {
         return instance;
     }
 
-    private ServerCompatibility() { }
+    private ServerCompatibility() {
+    }
 
     // ---- CONTENT ----
 
@@ -70,14 +73,9 @@ public class ServerCompatibility {
      * Any software that is not listed here is implicitly considered as "INCOMPATIBLE".
      */
     public enum ServerSoftware {
-        CRAFTBUKKIT(Compatibility.INCOMPATIBLE),
-        BUKKIT(Compatibility.INCOMPATIBLE),
-        GLOWSTONE(Compatibility.INCOMPATIBLE),
-        SPIGOT(Compatibility.COMPATIBLE),
-        PAPER(Compatibility.SUPPORTED),
-        PURPUR(Compatibility.SUPPORTED),
-        TACOSPIGOT(Compatibility.NOT_SUPPORTED),
-        AKARIN(Compatibility.NOT_SUPPORTED),
+        CRAFTBUKKIT(Compatibility.INCOMPATIBLE), BUKKIT(Compatibility.INCOMPATIBLE),
+        GLOWSTONE(Compatibility.INCOMPATIBLE), SPIGOT(Compatibility.COMPATIBLE), PAPER(Compatibility.SUPPORTED),
+        PURPUR(Compatibility.SUPPORTED), TACOSPIGOT(Compatibility.NOT_SUPPORTED), AKARIN(Compatibility.NOT_SUPPORTED),
         /**
          * @since 1.14.0
          */
@@ -120,105 +118,59 @@ public class ServerCompatibility {
      * Any version that is not listed here is implicitly considered as "INCOMPATIBLE".
      */
     public enum ServerVersion {
-        V1_13(Compatibility.INCOMPATIBLE),
-        V1_13_1(Compatibility.INCOMPATIBLE),
-        V1_13_2(Compatibility.INCOMPATIBLE),
         /**
-         * @since 1.5.0
+         * @since 2.4.0
          */
-        V1_14(Compatibility.INCOMPATIBLE),
+        V1_21(Compatibility.INCOMPATIBLE),
         /**
-         * @since 1.5.0
+         * @since 2.5.0
          */
-        V1_14_1(Compatibility.INCOMPATIBLE),
-        /**
-         * @since 1.5.0
-         */
-        V1_14_2(Compatibility.INCOMPATIBLE),
-        /**
-         * @since 1.6.0
-         */
-        V1_14_3(Compatibility.INCOMPATIBLE),
-        /**
-         * @since 1.6.0
-         */
-        V1_14_4(Compatibility.INCOMPATIBLE),
-        /**
-         * @since 1.9.2
-         */
-        V1_15(Compatibility.INCOMPATIBLE),
-        /**
-         * @since 1.10.0
-         */
-        V1_15_1(Compatibility.INCOMPATIBLE),
-        /**
-         * @since 1.11.0
-         */
-        V1_15_2(Compatibility.INCOMPATIBLE),
-        /**
-         * @since 1.14.0
-         */
-        V1_16_1(Compatibility.INCOMPATIBLE),
-        /**
-         * @since 1.15.0
-         */
-        V1_16_2(Compatibility.INCOMPATIBLE),
-        /**
-         * @since 1.15.1
-         */
-        V1_16_3(Compatibility.INCOMPATIBLE),
+        V1_21_1(Compatibility.INCOMPATIBLE),
 
         /**
-         * @since 1.15.3
+         * @since 2.7.0
          */
-        V1_16_4(Compatibility.INCOMPATIBLE),
+        V1_21_2(Compatibility.INCOMPATIBLE),
 
         /**
-         * @since 1.16.0
+         * @since 3.0.0
          */
-        V1_16_5(Compatibility.INCOMPATIBLE),
+        V1_21_3(Compatibility.NOT_SUPPORTED),
 
         /**
-         * @since 1.17.0
+         * @since 3.0.1
          */
-        V1_17(Compatibility.INCOMPATIBLE),
+        V1_21_4(Compatibility.NOT_SUPPORTED),
         /**
-         * @since 1.17.1
+         * @since 3.3.3
          */
-        V1_17_1(Compatibility.INCOMPATIBLE),
+        V1_21_5(Compatibility.COMPATIBLE),
         /**
-         * @since 1.19.0
+         * @since 3.5.0
          */
-        V1_18(Compatibility.INCOMPATIBLE),
+        V1_21_6(Compatibility.COMPATIBLE),
         /**
-         * @since 1.19.0
+         * @since 3.6.0
          */
-        V1_18_1(Compatibility.INCOMPATIBLE),
+        V1_21_7(Compatibility.COMPATIBLE),
         /**
-         * @since 1.20.1
+         * @since 3.7.0
          */
-        V1_18_2(Compatibility.INCOMPATIBLE),
+        V1_21_8(Compatibility.COMPATIBLE),
         /**
-         * @since 1.21.0
+         * @since 3.8.0
          */
-        V1_19(Compatibility.COMPATIBLE),
+        V1_21_9(Compatibility.NOT_SUPPORTED),
         /**
-         * @since 1.21.0
+         * @since 3.8.0
          */
-        V1_19_1(Compatibility.COMPATIBLE),
+        V1_21_10(Compatibility.COMPATIBLE)
+        ,
         /**
-         * @since 1.21.0
+         * @since 3.11.0
          */
-        V1_19_2(Compatibility.COMPATIBLE),
-        /**
-         * @since 1.22.0
-         */
-        V1_19_3(Compatibility.COMPATIBLE),
-        /**
-         * @since 1.22.1
-         */
-        V1_19_4(Compatibility.COMPATIBLE),
-        ;
+        V1_21_11(Compatibility.COMPATIBLE)
+        ,;
 
         private final Compatibility compatibility;
 
@@ -260,7 +212,6 @@ public class ServerCompatibility {
         if (result == null) {
             // Check the server version first
             ServerVersion version = getServerVersion();
-
             if (version == null || version.getCompatibility().equals(Compatibility.INCOMPATIBLE)) {
                 // 'Version = null' means that it's not listed. And therefore, it's implicitly incompatible.
                 result = Compatibility.INCOMPATIBLE;
@@ -275,12 +226,14 @@ public class ServerCompatibility {
                 return result;
             }
 
-            if (software.getCompatibility().equals(Compatibility.NOT_SUPPORTED) || version.getCompatibility().equals(Compatibility.NOT_SUPPORTED)) {
+            if (software.getCompatibility().equals(Compatibility.NOT_SUPPORTED)
+                    || version.getCompatibility().equals(Compatibility.NOT_SUPPORTED)) {
                 result = Compatibility.NOT_SUPPORTED;
                 return result;
             }
 
-            if (software.getCompatibility().equals(Compatibility.SUPPORTED) || version.getCompatibility().equals(Compatibility.SUPPORTED)) {
+            if (software.getCompatibility().equals(Compatibility.SUPPORTED)
+                    || version.getCompatibility().equals(Compatibility.SUPPORTED)) {
                 result = Compatibility.SUPPORTED;
                 return result;
             }
@@ -300,9 +253,12 @@ public class ServerCompatibility {
      */
     @NonNull
     public ServerSoftware getServerSoftware() {
-        String[] parts = Bukkit.getServer().getVersion().split("-");
+        if (Util.isPaper()) {
+            return ServerSoftware.PAPER;
+        }
+        String[] parts = Bukkit.getServer().getBukkitVersion().split("-");
         if (parts.length < 2) {
-            return ServerSoftware.UNKNOWN.setName(Bukkit.getServer().getVersion().toUpperCase(Locale.ENGLISH));
+            return ServerSoftware.UNKNOWN.setName(Bukkit.getServer().getBukkitVersion().toUpperCase(Locale.ENGLISH));
         }
         String serverSoftware = Bukkit.getServer().getVersion().split("-")[1];
         try {

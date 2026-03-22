@@ -108,13 +108,26 @@ public class StandardSpawnProtectionListener implements Listener {
      * @return true if in the spawn area, false if not
      */
     private boolean atSpawn(@NonNull Location location) {
-        if (plugin.getIWM().getWorldSettings(location.getWorld()).isMakeNetherPortals()) {
+        // Use the overworld to look up game settings, as sub-worlds (nether/end) may not be
+        // directly registered in the game mode map when using standard (non-island) worlds.
+        World gameWorld = Util.getWorld(location.getWorld());
+        if (gameWorld == null || !plugin.getIWM().inWorld(gameWorld)) {
+            return false;
+        }
+        World.Environment env = location.getWorld().getEnvironment();
+        if (env == World.Environment.NETHER && plugin.getIWM().getWorldSettings(gameWorld).isMakeNetherPortals()) {
             // If nether portals are active, there is no common spawn
+            return false;
+        }
+        if (env == World.Environment.THE_END && plugin.getIWM().getWorldSettings(gameWorld).isMakeEndPortals()) {
+            // If end portals are active, there is no common spawn
             return false;
         }
         Vector p = location.toVector().multiply(new Vector(1, 0, 1));
         Vector spawn = location.getWorld().getSpawnLocation().toVector().multiply(new Vector(1, 0, 1));
-        int radius = plugin.getIWM().getNetherSpawnRadius(location.getWorld());
+        int radius = env == World.Environment.THE_END
+                ? plugin.getIWM().getEndSpawnRadius(gameWorld)
+                : plugin.getIWM().getNetherSpawnRadius(gameWorld);
         Vector diff = p.subtract(spawn);
         return Math.abs(diff.getBlockX()) <= radius && Math.abs(diff.getBlockZ()) <= radius;
     }
@@ -132,7 +145,7 @@ public class StandardSpawnProtectionListener implements Listener {
                 || !plugin.getIWM().inWorld(Util.getWorld(player.getWorld()))
                 || (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().isNetherIslands(player.getWorld()))
                 || (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().getWorldSettings(player.getWorld()).isMakeNetherPortals())
-                || (player.getWorld().getEnvironment().equals(World.Environment.THE_END) && plugin.getIWM().isEndIslands(player.getWorld())));
+                || (player.getWorld().getEnvironment().equals(World.Environment.THE_END) && (plugin.getIWM().isEndIslands(player.getWorld()) || plugin.getIWM().getWorldSettings(player.getWorld()).isMakeEndPortals())));
 
     }
 }

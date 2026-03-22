@@ -10,19 +10,45 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * This is default player command class. It contains all necessary parts for main /[gamemode] command.
+ * Provides the default implementation for the main player command in a game mode (e.g., /island, /bskyblock).
+ * <p>
+ * This class automatically sets up all standard island management commands and handles
+ * the default action when a player types the base command with no arguments.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Configurable command aliases via game mode settings</li>
+ *   <li>Automatic registration of standard sub-commands</li>
+ *   <li>Configurable default actions for new and existing players</li>
+ *   <li>Player-only command restriction</li>
+ * </ul>
+ * <p>
+ * Command categories registered:
+ * <ul>
+ *   <li>Teleportation (go, spawn)</li>
+ *   <li>Island Creation (create, reset)</li>
+ *   <li>Information (info)</li>
+ *   <li>Settings (settings, setname, resetname, language)</li>
+ *   <li>Moderation (ban, unban, banlist, expel)</li>
+ *   <li>Navigation (near)</li>
+ *   <li>Team Management (team and sub-commands)</li>
+ *   <li>Home Management (sethome, delhome, renamehome, homes)</li>
+ * </ul>
+ * 
  * @since 1.13.0
  * @author BONNe
  */
 public abstract class DefaultPlayerCommand extends CompositeCommand {
 
     /**
-     * This is the top-level command constructor for commands that have no parent.
+     * Creates the default player command for a game mode.
+     * Uses the first alias from config as the main label.
      *
-     * @param addon   - GameMode addon
+     * @param addon The game mode addon creating this command
      */
     protected DefaultPlayerCommand(GameModeAddon addon) {
         // Register command with alias from config.
+        // The first command listed is the "label" and the others are aliases.
         super(addon,
                 addon.getWorldSettings().getPlayerCommandAliases().split(" ")[0],
                 addon.getWorldSettings().getPlayerCommandAliases().split(" "));
@@ -56,6 +82,7 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
 
         // Settings related commands
         new IslandSettingsCommand(this);
+        new IslandLockCommand(this);
         new IslandSetnameCommand(this);
         new IslandResetnameCommand(this);
         new IslandLanguageCommand(this);
@@ -83,8 +110,19 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
 
 
     /**
-     * Defines what will be executed when this command is run.
-     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User, String, List)
+     * Handles the execution of the base command with no arguments.
+     * <p>
+     * Behavior:
+     * <ul>
+     *   <li>If user has an island: Executes the configured default player action (default: "go")</li>
+     *   <li>If user has no island: Executes the configured default new player action (default: "create")</li>
+     * </ul>
+     * The default actions can be configured in the game mode's world settings.
+     *
+     * @param user  The user executing the command
+     * @param label The command label used
+     * @param args  Command arguments (must be empty for default behavior)
+     * @return true if the command was executed successfully
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
@@ -107,6 +145,19 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
         }
     }
 
+    /**
+     * Executes a sub-command or direct command based on the configured action.
+     * <p>
+     * If the command is a registered sub-command, it will be executed through the command system.
+     * Otherwise, it will be executed directly through the server's command system, allowing
+     * integration with other plugins (e.g., DeluxeMenus).
+     *
+     * @param user            The user executing the command
+     * @param label          The command label used
+     * @param command        The configured action to execute
+     * @param defaultSubCommand Fallback sub-command if no action is configured
+     * @return true if the command was executed successfully
+     */
     private boolean runCommand(User user, String label, String command, String defaultSubCommand) {
         if (command == null || command.isEmpty()) {
             command = defaultSubCommand;

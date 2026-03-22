@@ -2,34 +2,31 @@ package world.bentobox.bentobox.blueprints;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.ChestedHorse;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.block.TrialSpawner;
+import org.bukkit.block.data.Attachable;
+import org.bukkit.block.sign.Side;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
-import org.bukkit.entity.Villager;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Attachable;
-import org.bukkit.material.Colorable;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -42,6 +39,11 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintTrialSpawner;
+import world.bentobox.bentobox.hooks.FancyNpcsHook;
+import world.bentobox.bentobox.hooks.ItemsAdderHook;
+import world.bentobox.bentobox.hooks.MythicMobsHook;
+import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
 
 /**
  * The clipboard provides the holding spot for an active blueprint that is being
@@ -53,6 +55,9 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
  */
 public class BlueprintClipboard {
 
+    /**
+     * Used to filter out hidden DisplayEntity armor stands when copying
+     */
     private @Nullable Blueprint blueprint;
     private @Nullable Location pos1;
     private @Nullable Location pos2;
@@ -66,16 +71,31 @@ public class BlueprintClipboard {
     private final Map<Vector, BlueprintBlock> bpAttachable = new LinkedHashMap<>();
     private final Map<Vector, BlueprintBlock> bpBlocks = new LinkedHashMap<>();
     private final BentoBox plugin = BentoBox.getInstance();
+    private final Optional<MythicMobsHook> mmh;
+    private final Optional<FancyNpcsHook> npc;
+    private final Optional<ZNPCsPlusHook> znpc;
+
 
     /**
      * Create a clipboard for blueprint
      * @param blueprint - the blueprint to load into the clipboard
      */
     public BlueprintClipboard(@NonNull Blueprint blueprint) {
+        this();
         this.blueprint = blueprint;
     }
 
-    public BlueprintClipboard() { }
+    public BlueprintClipboard() {
+        // Fancy NPCs Hook
+        npc = plugin.getHooks().getHook("FancyNpcs").filter(FancyNpcsHook.class::isInstance)
+                .map(FancyNpcsHook.class::cast);
+        // MythicMobs Hook
+        mmh = plugin.getHooks().getHook("MythicMobs").filter(MythicMobsHook.class::isInstance)
+                .map(MythicMobsHook.class::cast);
+        // ZNPCs Plus Hook
+        znpc = plugin.getHooks().getHook("ZNPCsPlus").filter(ZNPCsPlusHook.class::isInstance)
+                .map(ZNPCsPlusHook.class::cast);
+    }
 
     /**
      * Copy the blocks between pos1 and pos2 into the clipboard for a user.
@@ -84,7 +104,7 @@ public class BlueprintClipboard {
      * @param user - user
      * @return true if successful, false if pos1 or pos2 are undefined.
      */
-    public boolean copy(User user, boolean copyAir, boolean copyBiome) {
+    public boolean copy(User user, boolean copyAir, boolean copyBiome, boolean noWater) {
         if (copying) {
             user.sendMessage("commands.admin.blueprint.mid-copy");
             return false;
@@ -119,29 +139,40 @@ public class BlueprintClipboard {
 
         int speed = plugin.getSettings().getPasteSpeed();
         List<Vector> vectorsToCopy = getVectors(toCopy);
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> copyAsync(world, user, vectorsToCopy, speed, copyAir, copyBiome));
+        Bukkit.getScheduler().runTaskAsynchronously(plugin,
+                () -> copyAsync(world, user, vectorsToCopy, speed, copyAir, copyBiome, noWater));
         return true;
     }
 
-    private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir, boolean copyBiome) {
+    private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir,
+            boolean copyBiome, boolean noWater) {
         copying = false;
+        // FancyNpcs
+        // Add all the citizens for the area in one go. This is pretty fast.
+        npc.ifPresent(fancyNpcsHook -> bpEntities.putAll(fancyNpcsHook.getNpcsInArea(world, vectorsToCopy, origin)));
+        // ZNPCsPlus NPCs
+        znpc.ifPresent(znpCsPlusHook -> bpEntities.putAll(znpCsPlusHook.getNpcsInArea(world, vectorsToCopy, origin)));
+
+        // Repeating copy task
         copyTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             if (copying) {
                 return;
             }
             copying = true;
+            NamespacedKey key = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
             vectorsToCopy.stream().skip(index).limit(speed).forEach(v -> {
-                List<LivingEntity> ents = world.getLivingEntities().stream()
+                List<Entity> ents = world.getEntities().stream()
                         .filter(Objects::nonNull)
                         .filter(e -> !(e instanceof Player))
-                        .filter(e -> new Vector(Math.rint(e.getLocation().getX()),
-                                Math.rint(e.getLocation().getY()),
-                                Math.rint(e.getLocation().getZ())).equals(v))
+                        .filter(e -> !e.getPersistentDataContainer().has(key, PersistentDataType.STRING)) // Do not copy hidden display entities
+                        .filter(e -> new Vector(e.getLocation().getBlockX(), e.getLocation().getBlockY(),
+                                e.getLocation().getBlockZ()).equals(v))
                         .toList();
-                if (copyBlock(v.toLocation(world), copyAir, copyBiome, ents)) {
+                if (copyBlock(v.toLocation(world), copyAir, copyBiome, ents, noWater)) {
                     count++;
                 }
             });
+
             index += speed;
             int percent = (int)(index * 100 / (double)vectorsToCopy.size());
             if (percent != lastPercentage && percent % 10 == 0) {
@@ -166,11 +197,11 @@ public class BlueprintClipboard {
      * @param b - bounding box
      * @return - list of vectors
      */
-    private List<Vector> getVectors(BoundingBox b) {
+    protected List<Vector> getVectors(BoundingBox b) {
         List<Vector> r = new ArrayList<>();
-        for (int y = (int)b.getMinY(); y <= b.getMaxY(); y++) {
-            for (int x = (int)b.getMinX(); x <= b.getMaxX(); x++) {
-                for (int z = (int)b.getMinZ(); z <= b.getMaxZ(); z++) {
+        for (int y = (int) Math.floor(b.getMinY()); y <= b.getMaxY(); y++) {
+            for (int x = (int) Math.floor(b.getMinX()); x <= b.getMaxX(); x++) {
+                for (int z = (int) Math.floor(b.getMinZ()); z <= b.getMaxZ(); z++) {
                     r.add(new Vector(x,y,z));
                 }
             }
@@ -178,9 +209,12 @@ public class BlueprintClipboard {
         return r;
     }
 
-    private boolean copyBlock(Location l, boolean copyAir, boolean copyBiome, Collection<LivingEntity> entities) {
+    private boolean copyBlock(Location l, boolean copyAir, boolean copyBiome, List<Entity> ents, boolean noWater) {
         Block block = l.getBlock();
-        if (!copyAir && block.getType().equals(Material.AIR) && entities.isEmpty()) {
+        if (!copyAir && block.getType().equals(Material.AIR) && ents.isEmpty()) {
+            return false;
+        }
+        if (noWater && block.getType() == Material.WATER && ents.isEmpty()) {
             return false;
         }
         // Create position
@@ -191,17 +225,19 @@ public class BlueprintClipboard {
         Vector pos = new Vector(x, y, z);
 
         // Set entities
-        List<BlueprintEntity> bpEnts = setEntities(entities);
+        List<BlueprintEntity> bpEnts = setEntities(ents);
         // Store
         if (!bpEnts.isEmpty()) {
             bpEntities.put(pos, bpEnts);
         }
 
         // Return if this is just air block
-        if (!copyAir && block.getType().equals(Material.AIR) && !entities.isEmpty()) {
+        if (!copyAir && block.getType().equals(Material.AIR) && !ents.isEmpty()) {
             return true;
         }
-
+        if (noWater && block.getType().equals(Material.WATER) && !ents.isEmpty()) {
+            return true;
+        }
         BlueprintBlock b = bluePrintBlock(pos, block, copyBiome);
         if (b != null) {
             this.bpBlocks.put(pos, b);
@@ -210,40 +246,50 @@ public class BlueprintClipboard {
     }
 
     private BlueprintBlock bluePrintBlock(Vector pos, Block block, boolean copyBiome) {
-        // Block state
         BlockState blockState = block.getState();
         BlueprintBlock b = new BlueprintBlock(block.getBlockData().getAsString());
 
         if (copyBiome) {
-            // Biome
             b.setBiome(block.getBiome());
         }
-
-        // Signs
         if (blockState instanceof Sign sign) {
-            b.setSignLines(Arrays.asList(sign.getLines()));
-            b.setGlowingText(sign.isGlowingText());
+            for (Side side : Side.values()) {
+                b.setSignLines(side, Arrays.asList(sign.getSide(side).getLines()));
+                b.setGlowingText(side, sign.getSide(side).isGlowingText());
+            }
         }
-        // Set block data
-        if (blockState.getData() instanceof Attachable) {
-            // Placeholder for attachment
+        if (blockState.getBlockData() instanceof Attachable) {
             bpBlocks.put(pos, new BlueprintBlock("minecraft:air"));
+            setItemsAdder(b, block);
             bpAttachable.put(pos, b);
             return null;
         }
 
-        if (block.getType().equals(Material.BEDROCK)) {
-            // Find highest bedrock
-            if(blueprint.getBedrock() == null) {
-                blueprint.setBedrock(pos);
-            } else {
-                if (pos.getBlockY() > blueprint.getBedrock().getBlockY()) {
-                    blueprint.setBedrock(pos);
-                }
-            }
+        updateBedrock(pos, block);
+        serializeInventory(b, blockState);
+        if (blockState instanceof CreatureSpawner spawner) {
+            b.setCreatureSpawner(getSpawner(spawner));
         }
+        if (blockState instanceof TrialSpawner spawner) {
+            b.setTrialSpawner(new BlueprintTrialSpawner(spawner.isOminous(),
+                    spawner.isOminous() ? spawner.getOminousConfiguration() : spawner.getNormalConfiguration()));
+        }
+        if (blockState instanceof Banner banner) {
+            b.setBannerPatterns(banner.getPatterns());
+        }
+        setItemsAdder(b, block);
 
-        // Chests
+        return b;
+    }
+
+    private void updateBedrock(Vector pos, Block block) {
+        if (block.getType().equals(Material.BEDROCK)
+                && (blueprint.getBedrock() == null || pos.getBlockY() > blueprint.getBedrock().getBlockY())) {
+            blueprint.setBedrock(pos);
+        }
+    }
+
+    private void serializeInventory(BlueprintBlock b, BlockState blockState) {
         if (blockState instanceof InventoryHolder ih) {
             b.setInventory(new HashMap<>());
             for (int i = 0; i < ih.getInventory().getSize(); i++) {
@@ -253,17 +299,15 @@ public class BlueprintClipboard {
                 }
             }
         }
+    }
 
-        if (blockState instanceof CreatureSpawner spawner) {
-            b.setCreatureSpawner(getSpawner(spawner));
-        }
-
-        // Banners
-        if (blockState instanceof Banner banner) {
-            b.setBannerPatterns(banner.getPatterns());
-        }
-
-        return b;
+    private void setItemsAdder(BlueprintBlock b, Block block) {
+        plugin.getHooks().getHook("ItemsAdder").ifPresent(hook -> {
+            String iab = ItemsAdderHook.getInCustomRegion(block.getLocation());
+            if (iab != null) {
+                b.setItemsAdderBlock(iab);
+            }
+        });
     }
 
     private BlueprintCreatureSpawner getSpawner(CreatureSpawner spawner) {
@@ -278,57 +322,21 @@ public class BlueprintClipboard {
         return cs;
     }
 
-    private List<BlueprintEntity> setEntities(Collection<LivingEntity> entities) {
+    /**
+     * Deals with any entities that are in this block. Technically, this could be more than one, but is usually one.
+     * @param ents collection of entities
+     * @return Serialized list of entities
+     */
+    private List<BlueprintEntity> setEntities(List<Entity> ents) {
         List<BlueprintEntity> bpEnts = new ArrayList<>();
-        for (LivingEntity entity: entities) {
-            BlueprintEntity bpe = new BlueprintEntity();
-            bpe.setType(entity.getType());
-            bpe.setCustomName(entity.getCustomName());
-            if (entity instanceof Villager villager) {
-                setVillager(villager, bpe);
-            }
-            if (entity instanceof Colorable c && c.getColor() != null) {
-                bpe.setColor(c.getColor());
-            }
-            if (entity instanceof Tameable tameable) {
-                bpe.setTamed(tameable.isTamed());
-            }
-            if (entity instanceof ChestedHorse chestedHorse) {
-                bpe.setChest(chestedHorse.isCarryingChest());
-            }
-            // Only set if child. Most animals are adults
-            if (entity instanceof Ageable ageable && !ageable.isAdult()) {
-                bpe.setAdult(false);
-            }
-            if (entity instanceof AbstractHorse horse) {
-                bpe.setDomestication(horse.getDomestication());
-                bpe.setInventory(new HashMap<>());
-                for (int i = 0; i < horse.getInventory().getSize(); i++) {
-                    ItemStack item = horse.getInventory().getItem(i);
-                    if (item != null) {
-                        bpe.getInventory().put(i, item);
-                    }
-                }
-            }
-
-            if (entity instanceof Horse horse) {
-                bpe.setStyle(horse.getStyle());
-            }
+        for (Entity entity : ents) {
+            BlueprintEntity bpe = new BlueprintEntity(entity);
+            // Mythic mob check
+            mmh.filter(mm -> mm.isMythicMob(entity)).map(mm -> mm.getMythicMob(entity))
+                    .ifPresent(bpe::setMythicMobsRecord);
             bpEnts.add(bpe);
         }
         return bpEnts;
-    }
-
-    /**
-     * Set the villager stats
-     * @param v - villager
-     * @param bpe - Blueprint Entity
-     */
-    private void setVillager(Villager v, BlueprintEntity bpe) {
-        bpe.setExperience(v.getVillagerExperience());
-        bpe.setLevel(v.getVillagerLevel());
-        bpe.setProfession(v.getProfession());
-        bpe.setVillagerType(v.getVillagerType());
     }
 
     /**

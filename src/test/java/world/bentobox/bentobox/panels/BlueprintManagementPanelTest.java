@@ -1,8 +1,7 @@
 package world.bentobox.bentobox.panels;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -11,27 +10,21 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
@@ -43,12 +36,8 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
-public class BlueprintManagementPanelTest {
+class BlueprintManagementPanelTest extends CommonTestSetup {
 
-    @Mock
-    private BentoBox plugin;
     @Mock
     private User user;
     @Mock
@@ -68,19 +57,10 @@ public class BlueprintManagementPanelTest {
     @Mock
     private Blueprint blueprint;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
-        ItemFactory itemFac = mock(ItemFactory.class);
-        when(Bukkit.getItemFactory()).thenReturn(itemFac);
-        // Panel inventory
-        when(Bukkit.createInventory(any(), Mockito.anyInt(), any())).thenReturn(inv);
-
+        super.setUp();
         // Player
         Player player = mock(Player.class);
         when(user.isOp()).thenReturn(false);
@@ -101,6 +81,7 @@ public class BlueprintManagementPanelTest {
         when(bb.getDisplayName()).thenReturn("test");
         when(bb.getIcon()).thenReturn(Material.STONE);
         when(bb.getDescription()).thenReturn(Collections.singletonList("A description"));
+        when(bb.getCommands()).thenReturn(Collections.emptyList());
         when(bb.getSlot()).thenReturn(5);
         // Too small slot for panel
         when(bb2.getUniqueId()).thenReturn("test2");
@@ -123,25 +104,26 @@ public class BlueprintManagementPanelTest {
         // Blueprint
         when(blueprint.getName()).thenReturn("blueprint name");
 
+        // Settings
+        Settings settings = new Settings();
+        when(plugin.getSettings()).thenReturn(settings);
 
         // Set up
         bmp = new BlueprintManagementPanel(plugin, user, addon);
 
     }
-
-    /**
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openPanel()}.
      */
     @Test
-    public void testOpenPanel() {
+    void testOpenPanel() {
         bmp.openPanel();
         verify(bpm).getBlueprintBundles(addon);
     }
@@ -150,59 +132,126 @@ public class BlueprintManagementPanelTest {
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openBB(world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
      */
     @Test
-    public void testOpenBB() {
+    void testOpenBB() {
         bmp.openBB(bb);
         verify(bb).getDisplayName();
         verify(bb, times(3)).getBlueprint(any());
-        verify(inv, times(20)).setItem(anyInt(), any());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBundleIcon(world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
      */
     @Test
-    public void testGetBundleIcon() {
+    void testGetBundleIcon() {
         PanelItem pi = bmp.getBundleIcon(bb);
         assertEquals("commands.admin.blueprint.management.edit-description", pi.getName());
         assertEquals(Material.STONE, pi.getItem().getType());
-        assertEquals("A description", pi.getDescription().get(0));
+        assertEquals("A description", pi.getDescription().getFirst());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBlueprintItem(world.bentobox.bentobox.api.addons.GameModeAddon, int, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle, world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    public void testGetBlueprintItem() {
+    void testGetBlueprintItem() {
         PanelItem pi = bmp.getBlueprintItem(addon, 0, bb, blueprint);
         assertEquals("blueprint name", pi.getName());
         assertEquals(Material.PAPER, pi.getItem().getType());
-        assertEquals("commands.admin.blueprint.management.blueprint-instruction", pi.getDescription().get(0));
+        assertEquals("commands.admin.blueprint.management.blueprint-instruction", pi.getDescription().getFirst());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBlueprintItem(world.bentobox.bentobox.api.addons.GameModeAddon, int, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle, world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    public void testGetBlueprintItemWithDisplayNameAndIcon() {
+    void testGetBlueprintItemWithDisplayNameAndIcon() {
         when(blueprint.getDisplayName()).thenReturn("Display Name");
         when(blueprint.getIcon()).thenReturn(Material.BEACON);
         PanelItem pi = bmp.getBlueprintItem(addon, 0, bb, blueprint);
         assertEquals("Display Name", pi.getName());
         assertEquals(Material.BEACON, pi.getItem().getType());
-        assertEquals("commands.admin.blueprint.management.blueprint-instruction", pi.getDescription().get(0));
+        assertEquals("commands.admin.blueprint.management.blueprint-instruction", pi.getDescription().getFirst());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBlueprintItem(world.bentobox.bentobox.api.addons.GameModeAddon, int, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle, world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    public void testGetBlueprintItemWithDisplayNameAndIconInWorldSlot() {
+    void testGetBlueprintItemWithDisplayNameAndIconInWorldSlot() {
         when(blueprint.getDisplayName()).thenReturn("Display Name");
         when(blueprint.getIcon()).thenReturn(Material.BEACON);
         PanelItem pi = bmp.getBlueprintItem(addon, 5, bb, blueprint);
         assertEquals("Display Name", pi.getName());
         assertEquals(Material.BEACON, pi.getItem().getType());
-        assertEquals("commands.admin.blueprint.management.remove", pi.getDescription().get(0));
+        assertEquals("commands.admin.blueprint.management.remove", pi.getDescription().getFirst());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getCommandsIcon}.
+     */
+    @Test
+    void testGetCommandsIconNoCommands() {
+        when(bb.getCommands()).thenReturn(Collections.emptyList());
+        PanelItem pi = bmp.getCommandsIcon(addon, bb);
+        assertEquals("commands.admin.blueprint.management.edit-commands", pi.getName());
+        assertEquals(Material.COMMAND_BLOCK, pi.getItem().getType());
+        assertEquals("commands.admin.blueprint.management.no-commands", pi.getDescription().getFirst());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getCommandsIcon}.
+     */
+    @Test
+    void testGetCommandsIconWithCommands() {
+        when(bb.getCommands()).thenReturn(List.of("say hello [player]", "give [player] diamond 1"));
+        PanelItem pi = bmp.getCommandsIcon(addon, bb);
+        assertEquals("commands.admin.blueprint.management.edit-commands", pi.getName());
+        assertEquals(Material.COMMAND_BLOCK, pi.getItem().getType());
+        assertEquals("say hello [player]", pi.getDescription().getFirst());
+        assertEquals("give [player] diamond 1", pi.getDescription().get(1));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openPanel()}.
+     * Verifies that many bundles (more than 36) are handled via pagination.
+     */
+    @Test
+    void testOpenPanelWithManyBundles() {
+        // Create 40 bundles (more than 36 per page)
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        for (int i = 0; i < 40; i++) {
+            BlueprintBundle bundle = mock(BlueprintBundle.class);
+            when(bundle.getUniqueId()).thenReturn("bundle" + i);
+            when(bundle.getDisplayName()).thenReturn("Bundle " + String.format("%02d", i));
+            when(bundle.getIcon()).thenReturn(Material.STONE);
+            when(bundle.getDescription()).thenReturn(Collections.singletonList("Desc"));
+            map.put("bundle" + i, bundle);
+        }
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+
+        bmp.openPanel();
+        // Should not throw and should call getBlueprintBundles
+        verify(bpm).getBlueprintBundles(addon);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openBB(BlueprintBundle)}.
+     * Verifies that many blueprints (more than 18) are handled via pagination.
+     */
+    @Test
+    void testOpenBBWithManyBlueprints() {
+        // Create 25 blueprints (more than 18 per page)
+        Map<String, Blueprint> bpMap = new HashMap<>();
+        for (int i = 0; i < 25; i++) {
+            Blueprint bp = mock(Blueprint.class);
+            when(bp.getName()).thenReturn("bp" + i);
+            when(bp.getIcon()).thenReturn(Material.PAPER);
+            bpMap.put("bp" + i, bp);
+        }
+        when(bpm.getBlueprints(any())).thenReturn(bpMap);
+
+        bmp.openBB(bb);
+        verify(bb).getDisplayName();
     }
 
 }

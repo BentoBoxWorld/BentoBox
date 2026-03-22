@@ -1,16 +1,11 @@
 package world.bentobox.bentobox.util.heads;
 
-import java.lang.reflect.Field;
 import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-
-import world.bentobox.bentobox.BentoBox;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
 
 
 /**
@@ -35,9 +30,9 @@ public class HeadCache
     private final UUID userId;
 
     /**
-     * Base64 Encoded texture link to given player skin.
+     * Player profile for cached head.
      */
-    public final String encodedTextureLink;
+    public final PlayerProfile playerProfile;
 
     /**
      * Time when head was created. Setting it to 0 will result in keeping head in cache
@@ -54,31 +49,29 @@ public class HeadCache
     /**
      * Constructor HeadCache creates a new HeadCache instance.
      *
-     * @param userName           of type String
-     * @param userId             of type String
-     * @param encodedTextureLink of type String
+     * @param userName      of type String
+     * @param userId        of type String
+     * @param playerProfile of type PlayerProfile
      */
-    public HeadCache(String userName, UUID userId, String encodedTextureLink)
+    public HeadCache(String userName, UUID userId, PlayerProfile playerProfile)
     {
-        this(userName, userId, encodedTextureLink, System.currentTimeMillis());
+        this(userName, userId, playerProfile, System.currentTimeMillis());
     }
 
 
     /**
      * Constructor HeadCache creates a new HeadCache instance.
      *
-     * @param userName           of type String
-     * @param userId             of type UUID
-     * @param encodedTextureLink of type String
-     * @param timestamp          of type long
+     * @param userName      of type String
+     * @param userId        of type UUID
+     * @param playerProfile of type String
+     * @param timestamp     of type long
      */
     public HeadCache(String userName,
-        UUID userId,
-        String encodedTextureLink,
-        long timestamp)
+            UUID userId, PlayerProfile playerProfile, long timestamp)
     {
         this.userName = userName;
-        this.encodedTextureLink = encodedTextureLink;
+        this.playerProfile = playerProfile;
         this.userId = userId;
         this.timestamp = timestamp;
     }
@@ -99,25 +92,16 @@ public class HeadCache
     public ItemStack getPlayerHead()
     {
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
-        ItemMeta meta = item.getItemMeta();
+        SkullMeta meta = (SkullMeta) item.getItemMeta();
 
         // Set correct Skull texture
-        if (meta != null && this.encodedTextureLink != null && !this.encodedTextureLink.isEmpty())
+        if (meta != null && this.playerProfile != null)
         {
-            GameProfile profile = new GameProfile(this.userId, this.userName);
-            profile.getProperties().put("textures",
-                new Property("textures", this.encodedTextureLink));
-
-            try
-            {
-                Field profileField = meta.getClass().getDeclaredField("profile");
-                profileField.setAccessible(true);
-                profileField.set(meta, profile);
+            try {
+                meta.setOwnerProfile(this.playerProfile);
                 item.setItemMeta(meta);
-            }
-            catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e)
-            {
-                BentoBox.getInstance().log("Error while creating Skull Icon");
+            } catch (Exception e) {
+                // Do nothing - there was an error getting the head
             }
         }
 

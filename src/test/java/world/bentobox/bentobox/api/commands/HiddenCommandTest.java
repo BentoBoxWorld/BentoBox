@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.commands;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -13,19 +13,14 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.bukkit.entity.Player;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.events.command.CommandEvent;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -34,22 +29,15 @@ import world.bentobox.bentobox.managers.CommandsManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, CommandEvent.class})
-public class HiddenCommandTest {
-
-    @Mock
-    private BentoBox plugin;
+class HiddenCommandTest extends CommonTestSetup {
 
     @Mock
     private User user;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
@@ -58,44 +46,60 @@ public class HiddenCommandTest {
 
     }
 
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.CompositeCommand#tabComplete(org.bukkit.command.CommandSender, java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testTabCompleteCommandSenderStringStringArrayVisible() {
+    void testTabCompleteCommandSenderStringStringArrayVisible() {
         TopLevelCommand tlc = new TopLevelCommand();
         CommandSender sender = mock(CommandSender.class);
         String[] args = {"v"};
         List<String> opList = tlc.tabComplete(sender, "top", args);
         assertFalse(opList.isEmpty());
-        assertEquals("visible", opList.get(0));
+        assertEquals("visible", opList.getFirst());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.CompositeCommand#tabComplete(org.bukkit.command.CommandSender, java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testTabCompleteCommandSenderStringStringArrayHidden() {
+    void testTabCompleteCommandSenderStringStringArrayHidden() {
         TopLevelCommand tlc = new TopLevelCommand();
         CommandSender sender = mock(CommandSender.class);
         String[] args = {"h"};
         List<String> opList = tlc.tabComplete(sender, "top", args);
+        assertEquals(2, opList.size());
+        assertEquals("help", opList.getFirst()); // Console can see all commands
+        assertEquals("hidden", opList.get(1)); // Console can see all commands
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.CompositeCommand#tabComplete(Player, java.lang.String, java.lang.String[])}.
+     */
+    @Test
+    void testTabCompletePlayerStringStringArrayHidden() {
+        TopLevelCommand tlc = new TopLevelCommand();
+        Player sender = mock(Player.class);
+        String[] args = {"h"};
+        List<String> opList = tlc.tabComplete(sender, "top", args);
+        opList.forEach(System.out::println);
         assertEquals(1, opList.size());
-        assertEquals("help", opList.get(0)); // Only help
+        assertEquals("help", opList.getFirst()); // Only help
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.CompositeCommand#tabComplete(org.bukkit.command.CommandSender, java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testTabCompleteCommandSenderStringStringArrayInvisible() {
+    void testTabCompleteCommandSenderStringStringArrayInvisible() {
         TopLevelCommand tlc = new TopLevelCommand();
-        CommandSender sender = mock(CommandSender.class);
+        Player sender = mock(Player.class);
         String[] args = {"i"};
         List<String> opList = tlc.tabComplete(sender, "top", args);
         assertTrue(opList.isEmpty());
@@ -105,16 +109,16 @@ public class HiddenCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.CompositeCommand#showHelp(world.bentobox.bentobox.api.commands.CompositeCommand, world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testShowHelp() {
+    void testShowHelp() {
         // Only the visible command should show in help
         TopLevelCommand tlc = new TopLevelCommand();
         tlc.showHelp(tlc, user);
-        verify(user).sendMessage(eq("commands.help.header"), eq(TextVariables.LABEL), eq("commands.help.console"));
-        verify(user).sendMessage(eq("commands.help.syntax-no-parameters"), eq("[usage]"), eq("/top"), eq(TextVariables.DESCRIPTION), eq("top.description"));
-        verify(user).sendMessage(eq("commands.help.syntax-no-parameters"), eq("[usage]"), eq("/top visible"), eq(TextVariables.DESCRIPTION), eq("visible.description"));
+        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "commands.help.console");
+        verify(user).sendMessage("commands.help.syntax-no-parameters", "[usage]", "/top", TextVariables.DESCRIPTION, "top.description");
+        verify(user).sendMessage("commands.help.syntax-no-parameters", "[usage]", "/top visible", TextVariables.DESCRIPTION, "visible.description");
         verify(user, never()).sendMessage(eq("commands.help.syntax-no-parameters"), eq("[usage]"), eq("/top hidden"), eq(TextVariables.DESCRIPTION), anyString());
         verify(user, never()).sendMessage(eq("commands.help.syntax-no-parameters"), eq("[usage]"), eq("/top hidden2"), eq(TextVariables.DESCRIPTION), anyString());
-        verify(user).sendMessage(eq("commands.help.end"));
+        verify(user).sendMessage("commands.help.end");
 
     }
 

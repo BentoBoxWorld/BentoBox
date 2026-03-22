@@ -1,1262 +1,1132 @@
-/**
- *
- */
 package world.bentobox.bentobox.database.objects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.block.Block;
-import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
+import org.bukkit.util.BoundingBox;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.FlagsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Pair;
+import world.bentobox.bentobox.util.Util;
 
-/**
- * @author tastybento
- *
- */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class})
-public class IslandTest {
+class IslandTest extends CommonTestSetup {
 
-    private static final int DISTANCE = 400;
-    private final UUID uuid = UUID.randomUUID();
-    private final UUID m = UUID.randomUUID();
-    private Island i;
-    @Mock
-    private @NonNull Location location;
-    @Mock
-    private BentoBox plugin;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private World world;
-    @Mock
-    private User user;
-    @Mock
-    private CommandsManager cm;
+    private Island island; // real Island under test (shadows the mock in CommonTestSetup)
+    private Location center;
+    private UUID ownerUUID;
 
-
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
-        // Max range
-        when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.getIslandDistance(any())).thenReturn(DISTANCE);
+        // IWM stubs needed by the Island constructor and spatial methods
+        when(iwm.getIslandDistance(any())).thenReturn(100);
+        when(iwm.getDefaultIslandFlags(any())).thenReturn(Collections.emptyMap());
+        when(iwm.getDefaultIslandSettings(any())).thenReturn(Collections.emptyMap());
 
-        // Location
-        when(location.clone()).thenReturn(location);
-        when(world.getName()).thenReturn("bskyblock_world");
-        when(location.getWorld()).thenReturn(world);
+        // Util.sameWorld for spatial tests
+        mockedUtil.when(() -> Util.sameWorld(any(), any())).thenReturn(true);
+
+        // World environment
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
-        when(world.toString()).thenReturn(null);
+        when(world.getMinHeight()).thenReturn(-64);
+        when(world.getMaxHeight()).thenReturn(320);
 
-        // User
-        when(user.getUniqueId()).thenReturn(uuid);
+        // Create a real Location for the center
+        center = new Location(world, 0, 64, 0);
 
-        // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.getOnlinePlayers()).thenReturn(Collections.emptyList());
+        ownerUUID = UUID.randomUUID();
 
-        FlagsManager fm = new FlagsManager(plugin);
-        // Flags
+        // Create the real Island under test
+        island = new Island(center, ownerUUID, 50);
+    }
+
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    // ======================== Constructors ========================
+
+    @Test
+    void testNoArgConstructor() {
+        Island i = new Island();
+        assertNotNull(i.getUniqueId());
+        assertNull(i.getOwner());
+        assertTrue(i.getMembers().isEmpty());
+    }
+
+    @Test
+    void testLocationConstructor() {
+        assertEquals(ownerUUID, island.getOwner());
+        assertEquals(0, island.getCenter().getBlockX());
+        assertEquals(64, island.getCenter().getBlockY());
+        assertEquals(0, island.getCenter().getBlockZ());
+        assertEquals(100, island.getRange()); // from iwm.getIslandDistance
+        assertEquals(50, island.getRawProtectionRange());
+        assertEquals(RanksManager.OWNER_RANK, island.getRank(ownerUUID));
+        assertTrue(island.getCreatedDate() > 0);
+    }
+
+    @Test
+    void testCopyConstructor() {
+        island.setName("TestIsland");
+        island.addMember(UUID.randomUUID());
+        island.addHome("home1", new Location(world, 10, 65, 10));
+
+        Island copy = new Island(island);
+
+        assertEquals(island.getUniqueId(), copy.getUniqueId());
+        assertEquals(island.getName(), copy.getName());
+        assertEquals(island.getOwner(), copy.getOwner());
+        assertEquals(island.getMembers().size(), copy.getMembers().size());
+        assertEquals(island.getHomes().size(), copy.getHomes().size());
+    }
+
+    @Test
+    void testCopyConstructorDeepCopy() {
+        island.addHome("test", new Location(world, 5, 65, 5));
+        Island copy = new Island(island);
+
+        // Modifying copy's homes shouldn't affect original
+        copy.addHome("newHome", new Location(world, 20, 65, 20));
+        assertFalse(island.getHomes().containsKey("newhome"));
+    }
+
+    // ======================== Member Management ========================
+
+    @Test
+    void testAddMember() {
+        UUID memberUUID = UUID.randomUUID();
+        island.addMember(memberUUID);
+        assertEquals(RanksManager.MEMBER_RANK, island.getRank(memberUUID));
+    }
+
+    @Test
+    void testAddMemberIdempotent() {
+        UUID memberUUID = UUID.randomUUID();
+        island.addMember(memberUUID);
+        island.addMember(memberUUID); // should not throw or change rank
+        assertEquals(RanksManager.MEMBER_RANK, island.getRank(memberUUID));
+    }
+
+    @Test
+    void testBan() {
+        UUID targetUUID = UUID.randomUUID();
+        boolean result = island.ban(ownerUUID, targetUUID);
+        assertTrue(result);
+        assertTrue(island.isBanned(targetUUID));
+        assertEquals(RanksManager.BANNED_RANK, island.getRank(targetUUID));
+        assertFalse(island.getHistory().isEmpty());
+    }
+
+    @Test
+    void testBanExistingMember() {
+        UUID memberUUID = UUID.randomUUID();
+        island.addMember(memberUUID);
+        island.ban(ownerUUID, memberUUID);
+        assertTrue(island.isBanned(memberUUID));
+        assertFalse(island.getMemberSet().contains(memberUUID));
+    }
+
+    @Test
+    void testUnban() {
+        UUID targetUUID = UUID.randomUUID();
+        island.ban(ownerUUID, targetUUID);
+        boolean result = island.unban(ownerUUID, targetUUID);
+        assertTrue(result);
+        assertFalse(island.isBanned(targetUUID));
+    }
+
+    @Test
+    void testUnbanNotBanned() {
+        UUID targetUUID = UUID.randomUUID();
+        boolean result = island.unban(ownerUUID, targetUUID);
+        assertFalse(result);
+    }
+
+    @Test
+    void testGetBanned() {
+        UUID banned1 = UUID.randomUUID();
+        UUID banned2 = UUID.randomUUID();
+        UUID member = UUID.randomUUID();
+        island.ban(ownerUUID, banned1);
+        island.ban(ownerUUID, banned2);
+        island.addMember(member);
+
+        Set<UUID> bannedSet = island.getBanned();
+        assertEquals(2, bannedSet.size());
+        assertTrue(bannedSet.contains(banned1));
+        assertTrue(bannedSet.contains(banned2));
+        assertFalse(bannedSet.contains(member));
+    }
+
+    @Test
+    void testRemoveMember() {
+        UUID memberUUID = UUID.randomUUID();
+        island.addMember(memberUUID);
+        island.removeMember(memberUUID);
+        assertEquals(RanksManager.VISITOR_RANK, island.getRank(memberUUID));
+    }
+
+    @Test
+    void testRemoveMemberNotPresent() {
+        UUID randomUUID = UUID.randomUUID();
+        assertDoesNotThrow(() -> island.removeMember(randomUUID));
+    }
+
+    @Test
+    void testSetOwner() {
+        UUID newOwner = UUID.randomUUID();
+        island.setOwner(newOwner);
+        assertEquals(newOwner, island.getOwner());
+        assertEquals(RanksManager.OWNER_RANK, island.getRank(newOwner));
+        // Previous owner should be demoted to member
+        assertEquals(RanksManager.MEMBER_RANK, island.getRank(ownerUUID));
+    }
+
+    @Test
+    void testSetOwnerNull() {
+        island.setOwner(null);
+        assertNull(island.getOwner());
+    }
+
+    @Test
+    void testGetRankUUID() {
+        assertEquals(RanksManager.OWNER_RANK, island.getRank(ownerUUID));
+        assertEquals(RanksManager.VISITOR_RANK, island.getRank(UUID.randomUUID()));
+    }
+
+    @Test
+    void testGetRankUser() {
+        User user = mock(User.class);
+        when(user.getUniqueId()).thenReturn(ownerUUID);
+        assertEquals(RanksManager.OWNER_RANK, island.getRank(user));
+
+        User stranger = mock(User.class);
+        when(stranger.getUniqueId()).thenReturn(UUID.randomUUID());
+        assertEquals(RanksManager.VISITOR_RANK, island.getRank(stranger));
+    }
+
+    @Test
+    void testSetRankNullUUID() {
+        assertDoesNotThrow(() -> island.setRank((UUID) null, RanksManager.MEMBER_RANK));
+    }
+
+    @Test
+    void testSetRankUpdates() {
+        UUID memberUUID = UUID.randomUUID();
+        island.setRank(memberUUID, RanksManager.TRUSTED_RANK);
+        assertEquals(RanksManager.TRUSTED_RANK, island.getRank(memberUUID));
+        island.setRank(memberUUID, RanksManager.MEMBER_RANK);
+        assertEquals(RanksManager.MEMBER_RANK, island.getRank(memberUUID));
+    }
+
+    @Test
+    void testGetMemberSet() {
+        UUID member = UUID.randomUUID();
+        island.addMember(member);
+        // Owner + member
+        assertTrue(island.getMemberSet().contains(ownerUUID));
+        assertTrue(island.getMemberSet().contains(member));
+    }
+
+    @Test
+    void testGetMemberSetMinimumRank() {
+        UUID coop = UUID.randomUUID();
+        UUID member = UUID.randomUUID();
+        island.setRank(coop, RanksManager.COOP_RANK);
+        island.addMember(member);
+
+        // MEMBER_RANK and above
+        var memberSet = island.getMemberSet(RanksManager.MEMBER_RANK);
+        assertTrue(memberSet.contains(ownerUUID));
+        assertTrue(memberSet.contains(member));
+        assertFalse(memberSet.contains(coop));
+
+        // COOP_RANK and above includes coop
+        var coopSet = island.getMemberSet(RanksManager.COOP_RANK);
+        assertTrue(coopSet.contains(coop));
+    }
+
+    @Test
+    void testGetMemberSetExactRank() {
+        UUID member = UUID.randomUUID();
+        island.addMember(member);
+
+        // Exact MEMBER_RANK only (not including above)
+        var exactMembers = island.getMemberSet(RanksManager.MEMBER_RANK, false);
+        assertTrue(exactMembers.contains(member));
+        assertFalse(exactMembers.contains(ownerUUID)); // owner has OWNER_RANK
+
+        // Including above ranks
+        var inclusive = island.getMemberSet(RanksManager.MEMBER_RANK, true);
+        assertTrue(inclusive.contains(ownerUUID));
+    }
+
+    @Test
+    void testInTeam() {
+        assertTrue(island.inTeam(ownerUUID));
+        assertFalse(island.inTeam(UUID.randomUUID()));
+    }
+
+    @Test
+    void testHasTeam() {
+        // Only owner - no team
+        assertFalse(island.hasTeam());
+        // Add a member
+        island.addMember(UUID.randomUUID());
+        assertTrue(island.hasTeam());
+    }
+
+    @Test
+    void testRemoveRank() {
+        UUID coop1 = UUID.randomUUID();
+        UUID coop2 = UUID.randomUUID();
+        UUID member = UUID.randomUUID();
+        island.setRank(coop1, RanksManager.COOP_RANK);
+        island.setRank(coop2, RanksManager.COOP_RANK);
+        island.addMember(member);
+
+        island.removeRank(RanksManager.COOP_RANK);
+
+        assertEquals(RanksManager.VISITOR_RANK, island.getRank(coop1));
+        assertEquals(RanksManager.VISITOR_RANK, island.getRank(coop2));
+        assertEquals(RanksManager.MEMBER_RANK, island.getRank(member)); // unaffected
+    }
+
+    @Test
+    void testIsBanned() {
+        UUID target = UUID.randomUUID();
+        assertFalse(island.isBanned(target));
+        island.ban(ownerUUID, target);
+        assertTrue(island.isBanned(target));
+    }
+
+    // ======================== Spatial Methods ========================
+
+    @Test
+    void testGetMinMaxXZ() {
+        // center at 0, range 100
+        assertEquals(-100, island.getMinX());
+        assertEquals(100, island.getMaxX());
+        assertEquals(-100, island.getMinZ());
+        assertEquals(100, island.getMaxZ());
+    }
+
+    @Test
+    void testGetMinMaxProtectedXZ() {
+        // center at 0, protection range 50
+        assertEquals(-50, island.getMinProtectedX());
+        assertEquals(50, island.getMaxProtectedX());
+        assertEquals(-50, island.getMinProtectedZ());
+        assertEquals(50, island.getMaxProtectedZ());
+    }
+
+    @Test
+    void testGetMinMaxProtectedClampedToRange() {
+        // Set protection range larger than range - should be clamped
+        island.setProtectionRange(200);
+        // getProtectionRange() caps at getRange() which is 100
+        assertEquals(100, island.getProtectionRange());
+        assertEquals(-100, island.getMinProtectedX());
+        assertEquals(100, island.getMaxProtectedX());
+    }
+
+    @Test
+    void testInIslandSpaceCoords() {
+        // center 0, range 100, so island space is -100 to 99
+        assertTrue(island.inIslandSpace(0, 0));
+        assertTrue(island.inIslandSpace(-100, -100));
+        assertTrue(island.inIslandSpace(99, 99));
+        assertFalse(island.inIslandSpace(100, 100));
+        assertFalse(island.inIslandSpace(-101, 0));
+    }
+
+    @Test
+    void testInIslandSpacePair() {
+        assertTrue(island.inIslandSpace(new Pair<>(0, 0)));
+        assertFalse(island.inIslandSpace(new Pair<>(200, 200)));
+    }
+
+    @Test
+    void testInIslandSpaceLocation() {
+        Location insideLoc = mock(Location.class);
+        when(insideLoc.getWorld()).thenReturn(world);
+        when(insideLoc.getBlockX()).thenReturn(50);
+        when(insideLoc.getBlockZ()).thenReturn(50);
+
+        Location outsideLoc = mock(Location.class);
+        when(outsideLoc.getWorld()).thenReturn(world);
+        when(outsideLoc.getBlockX()).thenReturn(200);
+        when(outsideLoc.getBlockZ()).thenReturn(200);
+
+        assertTrue(island.inIslandSpace(insideLoc));
+        assertFalse(island.inIslandSpace(outsideLoc));
+    }
+
+    @Test
+    void testOnIsland() {
+        Location insideLoc = mock(Location.class);
+        when(insideLoc.getWorld()).thenReturn(world);
+        when(insideLoc.getBlockX()).thenReturn(10);
+        when(insideLoc.getBlockZ()).thenReturn(10);
+        assertTrue(island.onIsland(insideLoc));
+
+        // Outside protection range but inside island range
+        Location outsideProtection = mock(Location.class);
+        when(outsideProtection.getWorld()).thenReturn(world);
+        when(outsideProtection.getBlockX()).thenReturn(80);
+        when(outsideProtection.getBlockZ()).thenReturn(80);
+        assertFalse(island.onIsland(outsideProtection));
+    }
+
+    @Test
+    void testGetBoundingBox() {
+        BoundingBox bb = island.getBoundingBox();
+        assertNotNull(bb);
+        assertEquals(-100, bb.getMinX());
+        assertEquals(100, bb.getMaxX());
+        assertEquals(-100, bb.getMinZ());
+        assertEquals(100, bb.getMaxZ());
+    }
+
+    @Test
+    void testGetProtectionBoundingBox() {
+        BoundingBox bb = island.getProtectionBoundingBox();
+        assertNotNull(bb);
+        assertEquals(-50, bb.getMinX());
+        assertEquals(50, bb.getMaxX());
+        assertEquals(-50, bb.getMinZ());
+        assertEquals(50, bb.getMaxZ());
+    }
+
+    @Test
+    void testGetBoundingBoxDisabledDimension() {
+        // Nether not enabled
+        when(iwm.isNetherGenerate(any())).thenReturn(false);
+        assertNull(island.getBoundingBox(Environment.NETHER));
+    }
+
+    // ======================== Flags ========================
+
+    @Test
+    void testGetFlagDefault() {
+        Flag flag = new Flag.Builder("TEST_FLAG", Material.STONE).build();
+        // Default rank for PROTECTION is MEMBER_RANK (500)
+        assertEquals(RanksManager.MEMBER_RANK, island.getFlag(flag));
+    }
+
+    @Test
+    void testSetFlag() {
+        Flag flag = new Flag.Builder("TEST_FLAG", Material.STONE).build();
+        // Must first put the flag so setFlag sees it exists
+        island.getFlags().put(flag.getID(), RanksManager.MEMBER_RANK);
+        island.setFlag(flag, RanksManager.VISITOR_RANK);
+        assertEquals(RanksManager.VISITOR_RANK, island.getFlag(flag));
+    }
+
+    @Test
+    void testIsAllowedFlag() {
+        Flag flag = new Flag.Builder("TEST_SETTING", Material.STONE)
+                .type(Flag.Type.SETTING).build();
+        // Positive value = allowed
+        island.setSettingsFlag(flag, true);
+        assertTrue(island.isAllowed(flag));
+
+        // Negative value = not allowed
+        island.setSettingsFlag(flag, false);
+        assertFalse(island.isAllowed(flag));
+    }
+
+    @Test
+    void testIsAllowedUserFlag() {
+        Flag flag = new Flag.Builder("TEST_FLAG", Material.STONE).build();
+        // Owner should have sufficient rank
+        User ownerUser = mock(User.class);
+        when(ownerUser.getUniqueId()).thenReturn(ownerUUID);
+        when(ownerUser.isOp()).thenReturn(false);
+        assertTrue(island.isAllowed(ownerUser, flag));
+
+        // Visitor should not
+        User visitor = mock(User.class);
+        when(visitor.getUniqueId()).thenReturn(UUID.randomUUID());
+        when(visitor.isOp()).thenReturn(false);
+        assertFalse(island.isAllowed(visitor, flag));
+    }
+
+    @Test
+    void testIsAllowedOpBypass() {
+        Flag flag = new Flag.Builder("TEST_FLAG", Material.STONE).build();
+        User opUser = mock(User.class);
+        when(opUser.getUniqueId()).thenReturn(UUID.randomUUID());
+        when(opUser.isOp()).thenReturn(true);
+        assertTrue(island.isAllowed(opUser, flag));
+    }
+
+    @Test
+    void testToggleFlag() {
+        Flag flag = new Flag.Builder("TEST_SETTING", Material.STONE)
+                .type(Flag.Type.SETTING).build();
+        island.setSettingsFlag(flag, true);
+        assertTrue(island.isAllowed(flag));
+
+        island.toggleFlag(flag);
+        assertFalse(island.isAllowed(flag));
+
+        island.toggleFlag(flag);
+        assertTrue(island.isAllowed(flag));
+    }
+
+    @Test
+    void testSetSettingsFlag() {
+        Flag flag = new Flag.Builder("SETTING_FLAG", Material.STONE)
+                .type(Flag.Type.SETTING).build();
+        island.setSettingsFlag(flag, true);
+        assertEquals(1, island.getFlag(flag));
+
+        island.setSettingsFlag(flag, false);
+        assertEquals(-1, island.getFlag(flag));
+    }
+
+    @Test
+    void testSetFlagsDefaults() {
+        when(fm.getFlags()).thenReturn(Collections.emptyList());
+        when(plugin.getFlagsManager()).thenReturn(fm);
+        island.setFlagsDefaults();
+        assertNotNull(island.getFlags());
+    }
+
+    // ======================== Homes ========================
+
+    @Test
+    void testGetHomesLazyInit() {
+        Island i = new Island();
+        assertNotNull(i.getHomes());
+        assertTrue(i.getHomes().isEmpty());
+    }
+
+    @Test
+    void testAddAndGetHome() {
+        Location homeLoc = new Location(world, 10, 65, 10);
+        island.addHome("myhome", homeLoc);
+        assertEquals(homeLoc, island.getHome("myhome"));
+    }
+
+    @Test
+    void testGetHomeCaseInsensitive() {
+        Location homeLoc = new Location(world, 10, 65, 10);
+        island.addHome("MyHome", homeLoc);
+        assertEquals(homeLoc, island.getHome("myhome"));
+        assertEquals(homeLoc, island.getHome("MYHOME"));
+    }
+
+    @Test
+    void testGetHomeNotFound() {
+        // Should return protection center + 0.5, 0, 0.5
+        Location home = island.getHome("nonexistent");
+        assertNotNull(home);
+    }
+
+    @Test
+    void testRemoveHome() {
+        island.addHome("removeme", new Location(world, 10, 65, 10));
+        assertTrue(island.removeHome("removeme"));
+        assertFalse(island.removeHome("removeme")); // already removed
+    }
+
+    @Test
+    void testRemoveHomes() {
+        island.addHome("", new Location(world, 0, 65, 0)); // default home
+        island.addHome("extra1", new Location(world, 10, 65, 10));
+        island.addHome("extra2", new Location(world, 20, 65, 20));
+
+        assertTrue(island.removeHomes());
+        // Default home should remain
+        assertTrue(island.getHomes().containsKey(""));
+        assertFalse(island.getHomes().containsKey("extra1"));
+    }
+
+    @Test
+    void testRenameHome() {
+        island.addHome("old", new Location(world, 10, 65, 10));
+        assertTrue(island.renameHome("old", "new"));
+        assertFalse(island.getHomes().containsKey("old"));
+        assertTrue(island.getHomes().containsKey("new"));
+    }
+
+    @Test
+    void testRenameHomeFailsIfNewNameExists() {
+        island.addHome("old", new Location(world, 10, 65, 10));
+        island.addHome("new", new Location(world, 20, 65, 20));
+        assertFalse(island.renameHome("old", "new"));
+    }
+
+    @Test
+    void testRenameHomeFailsIfOldNotFound() {
+        assertFalse(island.renameHome("nonexistent", "new"));
+    }
+
+    @Test
+    void testSetMaxHomes() {
+        island.setMaxHomes(5);
+        assertEquals(5, island.getMaxHomes());
+        island.setMaxHomes(null);
+        assertNull(island.getMaxHomes());
+    }
+
+    // ======================== Bonus Ranges ========================
+
+    @Test
+    void testGetProtectionRangeWithBonus() {
+        island.addBonusRange("addon1", 20, "bonus.message");
+        assertEquals(70, island.getProtectionRange()); // 50 + 20
+    }
+
+    @Test
+    void testGetProtectionRangeCappedByRange() {
+        island.addBonusRange("addon1", 200, "bonus.message");
+        // Capped at range (100)
+        assertEquals(100, island.getProtectionRange());
+    }
+
+    @Test
+    void testGetBonusRange() {
+        island.addBonusRange("addon1", 20, "msg");
+        assertEquals(20, island.getBonusRange("addon1"));
+        assertEquals(0, island.getBonusRange("nonexistent"));
+    }
+
+    @Test
+    void testGetBonusRangeRecord() {
+        island.addBonusRange("addon1", 20, "msg");
+        assertTrue(island.getBonusRangeRecord("addon1").isPresent());
+        assertFalse(island.getBonusRangeRecord("nonexistent").isPresent());
+    }
+
+    @Test
+    void testClearBonusRange() {
+        island.addBonusRange("addon1", 20, "msg");
+        island.addBonusRange("addon2", 10, "msg2");
+        island.clearBonusRange("addon1");
+        assertEquals(0, island.getBonusRange("addon1"));
+        assertEquals(10, island.getBonusRange("addon2"));
+    }
+
+    @Test
+    void testClearAllBonusRanges() {
+        island.addBonusRange("addon1", 20, "msg");
+        island.addBonusRange("addon2", 10, "msg2");
+        island.clearAllBonusRanges();
+        assertTrue(island.getBonusRanges().isEmpty());
+    }
+
+    // ======================== Cooldowns ========================
+
+    @Test
+    void testIsCooldownActive() {
+        Flag flag = mock(Flag.class);
+        when(flag.getID()).thenReturn("TEST_COOLDOWN");
+        when(flag.getCooldown()).thenReturn(60); // 60 seconds
+        island.setCooldown(flag);
+        assertTrue(island.isCooldown(flag));
+    }
+
+    @Test
+    void testIsCooldownExpired() {
+        Flag flag = mock(Flag.class);
+        when(flag.getID()).thenReturn("TEST_COOLDOWN");
+        // Put a cooldown in the past
+        island.getCooldowns().put("TEST_COOLDOWN", System.currentTimeMillis() - 1000);
+        assertFalse(island.isCooldown(flag));
+    }
+
+    @Test
+    void testIsCooldownAbsent() {
+        Flag flag = mock(Flag.class);
+        when(flag.getID()).thenReturn("NO_COOLDOWN");
+        assertFalse(island.isCooldown(flag));
+    }
+
+    // ======================== Command Ranks ========================
+
+    @Test
+    void testSetRankCommand() {
+        island.setRankCommand("/island team", RanksManager.MEMBER_RANK);
+        assertEquals(RanksManager.MEMBER_RANK, island.getCommandRanks().get("/island team"));
+    }
+
+    @Test
+    void testSetRankCommandNoOpIfSame() {
+        island.setRankCommand("/island team", RanksManager.MEMBER_RANK);
+        island.setRankCommand("/island team", RanksManager.MEMBER_RANK); // no-op
+        assertEquals(RanksManager.MEMBER_RANK, island.getCommandRanks().get("/island team"));
+    }
+
+    // ======================== Properties & Change Detection ========================
+
+    @Test
+    void testSetChanged() {
+        island.clearChanged();
+        assertFalse(island.isChanged());
+        island.setChanged();
+        assertTrue(island.isChanged());
+    }
+
+    @Test
+    void testSetName() {
+        island.setName("MyIsland");
+        assertEquals("MyIsland", island.getName());
+    }
+
+    @Test
+    void testSetNameEmpty() {
+        island.setName("");
+        assertNull(island.getName());
+    }
+
+    @Test
+    void testSetNameNull() {
+        island.setName("test");
+        island.setName(null);
+        assertNull(island.getName());
+    }
+
+    @Test
+    void testSetProtectionRange() {
+        island.setProtectionRange(75);
+        assertEquals(75, island.getRawProtectionRange());
+    }
+
+    @Test
+    void testSetRange() {
+        island.setRange(200);
+        assertEquals(200, island.getRange());
+    }
+
+    @Test
+    void testSetCenter() {
+        Location newCenter = new Location(world, 500, 64, 500);
+        island.setCenter(newCenter);
+        assertEquals(500, island.getCenter().getBlockX());
+        assertEquals(500, island.getCenter().getBlockZ());
+    }
+
+    @Test
+    void testSetCreatedDate() {
+        island.setCreatedDate(12345L);
+        assertEquals(12345L, island.getCreatedDate());
+    }
+
+    @Test
+    void testSetUpdatedDate() {
+        island.setUpdatedDate(99999L);
+        assertEquals(99999L, island.getUpdatedDate());
+    }
+
+    @Test
+    void testSetWorld() {
+        World newWorld = mock(World.class);
+        island.setWorld(newWorld);
+        assertEquals(newWorld, island.getWorld());
+    }
+
+    @Test
+    void testSetPurgeProtected() {
+        assertFalse(island.isPurgeProtected());
+        island.setPurgeProtected(true);
+        assertTrue(island.isPurgeProtected());
+    }
+
+    @Test
+    void testSetDoNotLoad() {
+        assertFalse(island.isDoNotLoad());
+        island.setDoNotLoad(true);
+        assertTrue(island.isDoNotLoad());
+    }
+
+    @Test
+    void testSetDeleted() {
+        assertFalse(island.isDeleted());
+        island.setDeleted(true);
+        assertTrue(island.isDeleted());
+    }
+
+    @Test
+    void testSetSpawn() {
+        when(fm.getFlags()).thenReturn(Collections.emptyList());
         when(plugin.getFlagsManager()).thenReturn(fm);
 
-        // Commands manager
-        when(plugin.getCommandsManager()).thenReturn(cm);
-
-        i = new Island(new Island(location, uuid , 100));
-    }
-
-    /**
-     */
-    @After
-    public void tearDown() throws Exception {
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#Island(org.bukkit.Location, java.util.UUID, int)}.
-     */
-    @Test
-    public void testIslandLocationUUIDInt() {
-        assertEquals("Location{world=null,x=0.0,y=0.0,z=0.0,pitch=0.0,yaw=0.0}", i.getCenter().toString());
-        assertEquals(uuid, i.getOwner());
-        assertEquals(DISTANCE, i.getRange());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#Island(world.bentobox.bentobox.database.objects.Island)}.
-     */
-    @Test
-    public void testIslandIsland() {
-        assertEquals("Location{world=null,x=0.0,y=0.0,z=0.0,pitch=0.0,yaw=0.0}", i.getCenter().toString());
-        assertEquals(uuid, i.getOwner());
-        assertEquals(DISTANCE, i.getRange());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#addMember(java.util.UUID)}.
-     */
-    @Test
-    public void testAddMember() {
-        i.addMember(m);
-        assertTrue(i.getMemberSet().contains(m));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#ban(java.util.UUID, java.util.UUID)}.
-     */
-    @Test
-    public void testBan() {
-        i.ban(uuid, m);
-        assertTrue(i.isBanned(m));
-        assertFalse(i.isBanned(uuid));
-        assertFalse(i.isBanned(UUID.randomUUID()));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getBanned()}.
-     */
-    @Test
-    public void testGetBanned() {
-        assertTrue(i.getBanned().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#unban(java.util.UUID, java.util.UUID)}.
-     */
-    @Test
-    public void testUnban() {
-        i.ban(uuid, m);
-        assertTrue(i.isBanned(m));
-        i.unban(uuid, m);
-        assertFalse(i.isBanned(m));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getCenter()}.
-     */
-    @Test
-    public void testGetCenter() {
-        assertEquals("Location{world=null,x=0.0,y=0.0,z=0.0,pitch=0.0,yaw=0.0}", i.getCenter().toString());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getCreatedDate()}.
-     */
-    @Test
-    public void testGetCreatedDate() {
-        assertTrue(i.getCreatedDate() > 0);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getFlag(world.bentobox.bentobox.api.flags.Flag)}.
-     */
-    @Test
-    public void testGetFlag() {
-        assertEquals(500, i.getFlag(Flags.BREAK_BLOCKS));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getFlags()}.
-     */
-    @Test
-    public void testGetFlags() {
-        assertTrue(i.getFlags().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMembers()}.
-     */
-    @Test
-    public void testGetMembers() {
-        assertEquals(1, i.getMembers().size());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMemberSet()}.
-     */
-    @Test
-    public void testGetMemberSet() {
-        assertEquals(1, i.getMembers().size());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMemberSet(int)}.
-     */
-    @Test
-    public void testGetMemberSetInt() {
-        assertFalse(i.getMemberSet(500).isEmpty());
-        assertEquals(1, i.getMemberSet(500).size());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMemberSet(int, boolean)}.
-     */
-    @Test
-    public void testGetMemberSetIntBoolean() {
-        assertFalse(i.getMemberSet(500, true).isEmpty());
-        assertTrue(i.getMemberSet(500, false).isEmpty());
-        assertFalse(i.getMemberSet(1000, true).isEmpty());
-        assertFalse(i.getMemberSet(1000, false).isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMinProtectedX()}.
-     */
-    @Test
-    public void testGetMinProtectedX() {
-        assertEquals(-100, i.getMinProtectedX());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxProtectedX()}.
-     */
-    @Test
-    public void testGetMaxProtectedX() {
-        assertEquals(100, i.getMaxProtectedX());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMinProtectedZ()}.
-     */
-    @Test
-    public void testGetMinProtectedZ() {
-        assertEquals(-100, i.getMinProtectedZ());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxProtectedZ()}.
-     */
-    @Test
-    public void testGetMaxProtectedZ() {
-        assertEquals(100, i.getMaxProtectedZ());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMinX()}.
-     */
-    @Test
-    public void testGetMinX() {
-        assertEquals(-DISTANCE, i.getMinX());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxX()}.
-     */
-    @Test
-    public void testGetMaxX() {
-        assertEquals(DISTANCE, i.getMaxX());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMinZ()}.
-     */
-    @Test
-    public void testGetMinZ() {
-        assertEquals(-DISTANCE, i.getMinZ());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxZ()}.
-     */
-    @Test
-    public void testGetMaxZ() {
-        assertEquals(DISTANCE, i.getMaxZ());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getName()}.
-     */
-    @Test
-    public void testGetName() {
-        assertNull(i.getName());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getOwner()}.
-     */
-    @Test
-    public void testGetOwner() {
-        assertEquals(uuid, i.getOwner());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isOwned()}.
-     */
-    @Test
-    public void testIsOwned() {
-        assertTrue(i.isOwned());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isUnowned()}.
-     */
-    @Test
-    public void testIsUnowned() {
-        assertFalse(i.isUnowned());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getProtectionRange()}.
-     */
-    @Test
-    public void testGetProtectionRange() {
-        assertEquals(100, i.getProtectionRange());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxEverProtectionRange()}.
-     */
-    @Test
-    public void testGetMaxEverProtectionRange() {
-        assertEquals(100, i.getMaxEverProtectionRange());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setMaxEverProtectionRange(int)}.
-     */
-    @Test
-    public void testSetMaxEverProtectionRange() {
-        i.setMaxEverProtectionRange(50);
-        assertEquals(100, i.getMaxEverProtectionRange());
-        i.setMaxEverProtectionRange(150);
-        assertEquals(150, i.getMaxEverProtectionRange());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getPurgeProtected()}.
-     */
-    @Test
-    public void testGetPurgeProtected() {
-        assertFalse(i.getPurgeProtected());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getRange()}.
-     */
-    @Test
-    public void testGetRange() {
-        assertEquals(DISTANCE, i.getRange());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getRank(world.bentobox.bentobox.api.user.User)}.
-     */
-    @Test
-    public void testGetRankUser() {
-        assertEquals(RanksManager.OWNER_RANK, i.getRank(user));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getRank(java.util.UUID)}.
-     */
-    @Test
-    public void testGetRankUUID() {
-        assertEquals(RanksManager.OWNER_RANK, i.getRank(uuid));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getUniqueId()}.
-     */
-    @Test
-    public void testGetUniqueId() {
-        assertFalse(i.getUniqueId().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getUpdatedDate()}.
-     */
-    @Test
-    public void testGetUpdatedDate() {
-        assertTrue(i.getUpdatedDate() > 0);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getWorld()}.
-     */
-    @Test
-    public void testGetWorld() {
-        assertEquals(i.getWorld(), world);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getX()}.
-     */
-    @Test
-    public void testGetX() {
-        assertEquals(0, i.getX());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getY()}.
-     */
-    @Test
-    public void testGetY() {
-        assertEquals(0, i.getY());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getZ()}.
-     */
-    @Test
-    public void testGetZ() {
-        assertEquals(0, i.getZ());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#inIslandSpace(int, int)}.
-     */
-    @Test
-    public void testInIslandSpaceIntInt() {
-        assertTrue(i.inIslandSpace(0,0));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#inIslandSpace(org.bukkit.Location)}.
-     */
-    @Test
-    public void testInIslandSpaceLocation() {
-        i.setWorld(world);
-        when(location.getWorld()).thenReturn(world);
-        assertTrue(i.inIslandSpace(location));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#inIslandSpace(world.bentobox.bentobox.util.Pair)}.
-     */
-    @Test
-    public void testInIslandSpacePairOfIntegerInteger() {
-        assertTrue(i.inIslandSpace(new Pair<>(0, 0)));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getBoundingBox()}.
-     */
-    @Test
-    public void testGetBoundingBox() {
-        i.setWorld(world);
-        when(location.getWorld()).thenReturn(world);
-        assertNotNull(i.getBoundingBox());
-        assertEquals("BoundingBox [minX=-" + DISTANCE + ".0, minY=0.0, minZ=-" + DISTANCE + ".0, maxX=" + DISTANCE + ".0, maxY=0.0, maxZ=" + DISTANCE + ".0]", i.getBoundingBox().toString());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getVisitors()}.
-     */
-    @Test
-    public void testGetVisitors() {
-        assertTrue(i.getVisitors().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#hasVisitors()}.
-     */
-    @Test
-    public void testHasVisitors() {
-        assertFalse(i.hasVisitors());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getPlayersOnIsland()}.
-     */
-    @Test
-    public void testGetPlayersOnIsland() {
-        assertTrue(i.getPlayersOnIsland().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#hasPlayersOnIsland()}.
-     */
-    @Test
-    public void testHasPlayersOnIsland() {
-        assertFalse(i.hasPlayersOnIsland());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isAllowed(world.bentobox.bentobox.api.flags.Flag)}.
-     */
-    @Test
-    public void testIsAllowedFlag() {
-        assertFalse(i.isAllowed(Flags.PVP_OVERWORLD));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isAllowed(world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.flags.Flag)}.
-     */
-    @Test
-    public void testIsAllowedUserFlag() {
-        assertTrue(i.isAllowed(user, Flags.BREAK_BLOCKS));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isBanned(java.util.UUID)}.
-     */
-    @Test
-    public void testIsBanned() {
-        assertFalse(i.isBanned(uuid));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isSpawn()}.
-     */
-    @Test
-    public void testIsSpawn() {
-        assertFalse(i.isSpawn());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#onIsland(org.bukkit.Location)}.
-     */
-    @Test
-    public void testOnIsland() {
-        i.setWorld(world);
-        when(location.getWorld()).thenReturn(world);
-        assertTrue(i.onIsland(location));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getProtectionBoundingBox()}.
-     */
-    @Test
-    public void testGetProtectionBoundingBox() {
-        i.setWorld(world);
-        assertNotNull(i.getProtectionBoundingBox());
-        assertEquals("BoundingBox [minX=-100.0, minY=0.0, minZ=-100.0, maxX=100.0, maxY=0.0, maxZ=100.0]", i.getProtectionBoundingBox().toString());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#removeMember(java.util.UUID)}.
-     */
-    @Test
-    public void testRemoveMember() {
-        i.removeMember(uuid);
-        assertTrue(i.getMemberSet().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setCenter(org.bukkit.Location)}.
-     */
-    @Test
-    public void testSetCenter() {
-        when(location.getWorld()).thenReturn(world);
-        i.setCenter(location);
-        assertEquals(location, i.getCenter());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setCreatedDate(long)}.
-     */
-    @Test
-    public void testSetCreatedDate() {
-        i.setCreatedDate(123456L);
-        assertEquals(123456L, i.getCreatedDate());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setFlag(world.bentobox.bentobox.api.flags.Flag, int)}.
-     */
-    @Test
-    public void testSetFlagFlagInt() {
-        i.setFlag(Flags.BREAK_BLOCKS, 100);
-        assertTrue(i.isChanged());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setFlag(world.bentobox.bentobox.api.flags.Flag, int, boolean)}.
-     */
-    @Test
-    public void testSetFlagFlagIntBoolean() {
-        Flag f = Flags.values().stream().filter(Flag::hasSubflags).findFirst().orElse(null);
-        if (f != null) {
-            i.setFlag(f, 100, true);
-            assertTrue(i.isChanged());
-        }
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setFlags(java.util.Map)}.
-     */
-    @Test
-    public void testSetFlags() {
-        i.setFlags(Collections.emptyMap());
-        assertTrue(i.getFlags().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setFlagsDefaults()}.
-     */
-    @Test
-    public void testSetFlagsDefaults() {
-        i.setFlagsDefaults();
-        assertFalse(i.getFlags().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setMembers(java.util.Map)}.
-     */
-    @Test
-    public void testSetMembers() {
-        i.setMembers(Collections.emptyMap());
-        assertTrue(i.getMembers().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setName(java.lang.String)}.
-     */
-    @Test
-    public void testSetName() {
-        i.setName("hello");
-        assertEquals("hello", i.getName());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setOwner(java.util.UUID)}.
-     */
-    @Test
-    public void testSetOwner() {
-        UUID owner = UUID.randomUUID();
-        i.setOwner(owner);
-        assertEquals(owner, i.getOwner());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setProtectionRange(int)}.
-     */
-    @Test
-    public void testSetProtectionRange() {
-        i.setProtectionRange(0);
-        assertEquals(0, i.getProtectionRange());
-        i.setProtectionRange(50);
-        assertEquals(50, i.getProtectionRange());
-        i.setProtectionRange(100);
-        assertEquals(100, i.getProtectionRange());
-        // Over island range
-        i.setProtectionRange(1000);
-        assertEquals(DISTANCE, i.getProtectionRange());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#updateMaxEverProtectionRange()}.
-     */
-    @Test
-    public void testUpdateMaxEverProtectionRange() {
-        i.setProtectionRange(1000);
-        assertEquals(DISTANCE, i.getMaxEverProtectionRange());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setPurgeProtected(boolean)}.
-     */
-    @Test
-    public void testSetPurgeProtected() {
-        i.setPurgeProtected(true);
-        assertTrue(i.getPurgeProtected());
-        i.setPurgeProtected(false);
-        assertFalse(i.getPurgeProtected());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setRange(int)}.
-     */
-    @Test
-    public void testSetRange() {
-        i.setRange(123);
-        assertEquals(123, i.getRange());
-
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setRank(world.bentobox.bentobox.api.user.User, int)}.
-     */
-    @Test
-    public void testSetRankUserInt() {
-        i.setRank(user, 600);
-        assertEquals(600, i.getRank(user));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setRank(java.util.UUID, int)}.
-     */
-    @Test
-    public void testSetRankUUIDInt() {
-        i.setRank(uuid, 603);
-        assertEquals(603, i.getRank(uuid));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setRanks(java.util.Map)}.
-     */
-    @Test
-    public void testSetRanks() {
-        UUID u = UUID.randomUUID();
-        i.setRanks(Collections.singletonMap(u, 123));
-        assertEquals(123, i.getRank(u));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setSpawn(boolean)}.
-     */
-    @Test
-    public void testSetSpawn() {
-        assertFalse(i.isSpawn());
-        i.setSpawn(true);
-        assertTrue(i.isSpawn());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getSpawnPoint()}.
-     */
-    @Test
-    public void testGetSpawnPoint() {
-        assertTrue(i.getSpawnPoint().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setSpawnPoint(java.util.Map)}.
-     */
-    @Test
-    public void testSetSpawnPointMapOfEnvironmentLocation() {
-        Map<Environment, Location> m = new EnumMap<>(Environment.class);
-        m.put(Environment.THE_END, location);
-        i.setSpawnPoint(m);
-        assertEquals(location, i.getSpawnPoint(Environment.THE_END));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setUniqueId(java.lang.String)}.
-     */
-    @Test
-    public void testSetUniqueId() {
-        String u = UUID.randomUUID().toString();
-        i.setUniqueId(u);
-        assertEquals(u, i.getUniqueId());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setUpdatedDate(long)}.
-     */
-    @Test
-    public void testSetUpdatedDate() {
-        i.setUpdatedDate(566789L);
-        assertEquals(566789L, i.getUpdatedDate());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setWorld(org.bukkit.World)}.
-     */
-    @Test
-    public void testSetWorld() {
-        World w = Mockito.mock(World.class);
-        i.setWorld(w);
-        assertEquals(w, i.getWorld());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#toggleFlag(world.bentobox.bentobox.api.flags.Flag)}.
-     */
-    @Test
-    public void testToggleFlagFlag() {
-        assertFalse(i.isAllowed(Flags.PVP_END));
-        i.toggleFlag(Flags.PVP_END);
-        assertTrue(i.isAllowed(Flags.PVP_END));
-        i.toggleFlag(Flags.PVP_END);
-        assertFalse(i.isAllowed(Flags.PVP_END));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#toggleFlag(world.bentobox.bentobox.api.flags.Flag, boolean)}.
-     */
-    @Test
-    public void testToggleFlagFlagBoolean() {
-        Flag f = Flags.values().stream().filter(Flag::hasSubflags)
-                .filter(fl -> fl.getType().equals(Type.SETTING))
-                .findFirst().orElse(null);
-        if (f != null) {
-            i.toggleFlag(f, true);
-            assertTrue(i.isAllowed(f));
-            i.toggleFlag(f, true);
-            assertFalse(i.isAllowed(f));
-        } else {
-            System.out.println("No settings flag with subflags yet");
-        }
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setSettingsFlag(world.bentobox.bentobox.api.flags.Flag, boolean)}.
-     */
-    @Test
-    public void testSetSettingsFlagFlagBoolean() {
-        i.setSettingsFlag(Flags.PVP_NETHER, true);
-        assertTrue(i.isAllowed(Flags.PVP_NETHER));
-        i.setSettingsFlag(Flags.PVP_NETHER, false);
-        assertFalse(i.isAllowed(Flags.PVP_NETHER));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setSettingsFlag(world.bentobox.bentobox.api.flags.Flag, boolean, boolean)}.
-     */
-    @Test
-    public void testSetSettingsFlagFlagBooleanBoolean() {
-        i.setSettingsFlag(Flags.PVP_NETHER, true, true);
-        assertTrue(i.isAllowed(Flags.PVP_NETHER));
-        i.setSettingsFlag(Flags.PVP_NETHER, false, true);
-        assertFalse(i.isAllowed(Flags.PVP_NETHER));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setSpawnPoint(org.bukkit.World.Environment, org.bukkit.Location)}.
-     */
-    @Test
-    public void testSetSpawnPointEnvironmentLocation() {
-        i.setSpawnPoint(Environment.THE_END, location);
-        assertEquals(location, i.getSpawnPoint(Environment.THE_END));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getSpawnPoint(org.bukkit.World.Environment)}.
-     */
-    @Test
-    public void testGetSpawnPointEnvironment() {
-        i.setSpawnPoint(Environment.THE_END, location);
-        assertEquals(location, i.getSpawnPoint(Environment.THE_END));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#removeRank(java.lang.Integer)}.
-     */
-    @Test
-    public void testRemoveRank() {
-        assertFalse(i.getMembers().isEmpty());
-        i.removeRank(RanksManager.OWNER_RANK);
-        assertTrue(i.getMembers().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getHistory()}.
-     */
-    @Test
-    public void testGetHistory() {
-        assertTrue(i.getHistory().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#log(world.bentobox.bentobox.api.logs.LogEntry)}.
-     */
-    @Test
-    public void testLog() {
-        LogEntry le = Mockito.mock(LogEntry.class);
-        i.log(le);
-        assertEquals(le, i.getHistory().get(0));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setHistory(java.util.List)}.
-     */
-    @Test
-    public void testSetHistory() {
-        LogEntry le = Mockito.mock(LogEntry.class);
-        i.setHistory(List.of(le));
-        assertEquals(le, i.getHistory().get(0));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isDoNotLoad()}.
-     */
-    @Test
-    public void testIsDoNotLoad() {
-        assertFalse(i.isDoNotLoad());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setDoNotLoad(boolean)}.
-     */
-    @Test
-    public void testSetDoNotLoad() {
-        i.setDoNotLoad(true);
-        assertTrue(i.isDoNotLoad());
-        i.setDoNotLoad(false);
-        assertFalse(i.isDoNotLoad());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isDeleted()}.
-     */
-    @Test
-    public void testIsDeleted() {
-        assertFalse(i.isDeleted());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setDeleted(boolean)}.
-     */
-    @Test
-    public void testSetDeleted() {
-        i.setDeleted(true);
-        assertTrue(i.isDeleted());
-        i.setDeleted(false);
-        assertFalse(i.isDeleted());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getGameMode()}.
-     */
-    @Test
-    public void testGetGameMode() {
-        assertNull(i.getGameMode());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setGameMode(java.lang.String)}.
-     */
-    @Test
-    public void testSetGameMode() {
-        i.setGameMode("BSkyBlock");
-        assertEquals("BSkyBlock", i.getGameMode());
+        island.setSpawn(true);
+        assertTrue(island.isSpawn());
+        assertNull(island.getOwner()); // owner cleared
+        assertTrue(island.getMembers().isEmpty()); // members cleared
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#hasNetherIsland()}.
-     */
     @Test
-    public void testHasNetherIsland() {
-        i.setWorld(world);
-        when(iwm.isNetherGenerate(any())).thenReturn(true);
-        when(iwm.isNetherIslands(any())).thenReturn(true);
-        when(iwm.getNetherWorld(world)).thenReturn(world);
-        Block block = Mockito.mock(Block.class);
-        when(block.getType()).thenReturn(Material.BEDROCK);
-        when(world.getBlockAt(any())).thenReturn(block);
-        assertTrue(i.hasNetherIsland());
+    void testSetSpawnFalse() {
+        // Setting spawn to false when already false should be no-op
+        assertFalse(island.isSpawn());
+        island.setSpawn(false); // should not throw
+        assertFalse(island.isSpawn());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#hasEndIsland()}.
-     */
     @Test
-    public void testHasEndIsland() {
-        i.setWorld(world);
-        when(iwm.isEndGenerate(any())).thenReturn(true);
-        when(iwm.isEndIslands(any())).thenReturn(true);
-        when(iwm.getEndWorld(world)).thenReturn(world);
-        Block block = Mockito.mock(Block.class);
-        when(block.getType()).thenReturn(Material.BEDROCK);
-        when(world.getBlockAt(any())).thenReturn(block);
-        assertTrue(i.hasEndIsland());
-
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isCooldown(world.bentobox.bentobox.api.flags.Flag)}.
-     */
-    @Test
-    public void testIsCooldown() {
-        assertFalse(i.isCooldown(Flags.BREAK_BLOCKS));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setCooldown(world.bentobox.bentobox.api.flags.Flag)}.
-     */
-    @Test
-    public void testSetCooldown() {
-        assertTrue(i.getCooldowns().isEmpty());
-        i.setCooldown(Flags.BREAK_BLOCKS);
-        assertFalse(i.getCooldowns().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getCooldowns()}.
-     */
-    @Test
-    public void testGetCooldowns() {
-        assertTrue(i.getCooldowns().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setCooldowns(java.util.Map)}.
-     */
-    @Test
-    public void testSetCooldowns() {
-        i.setCooldowns(Collections.singletonMap(Flags.BREAK_BLOCKS.getID(), 123L));
-        assertFalse(i.getCooldowns().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getCommandRanks()}.
-     */
-    @Test
-    public void testGetCommandRanks() {
-        assertNull(i.getCommandRanks());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setCommandRanks(java.util.Map)}.
-     */
-    @Test
-    public void testSetCommandRanks() {
-        i.setCommandRanks(Collections.singletonMap("hello", 123));
-        assertFalse(i.getCommandRanks().isEmpty());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getRankCommand(java.lang.String)}.
-     */
-    @Test
-    public void testGetRankCommand() {
-        assertEquals(RanksManager.OWNER_RANK, i.getRankCommand("test"));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setRankCommand(java.lang.String, int)}.
-     */
-    @Test
-    public void testSetRankCommand() {
-        i.setRankCommand("test", RanksManager.COOP_RANK);
-        assertEquals(RanksManager.COOP_RANK, i.getRankCommand("test"));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isReserved()}.
-     */
-    @Test
-    public void testIsReserved() {
-        assertFalse(i.isReserved());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setReserved(boolean)}.
-     */
-    @Test
-    public void testSetReserved() {
-        i.setReserved(true);
-        assertTrue(i.isReserved());
-        i.setReserved(false);
-        assertFalse(i.isReserved());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMetaData()}.
-     */
-    @Test
-    public void testGetMetaData() {
-        assertTrue(i.getMetaData().get().isEmpty());
+    void testSetReserved() {
+        assertFalse(island.isReserved());
+        island.setReserved(true);
+        assertTrue(island.isReserved());
+        island.setReserved(false);
+        assertFalse(island.isReserved());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setMetaData(java.util.Map)}.
-     */
     @Test
-    public void testSetMetaData() {
-        MetaDataValue meta = new MetaDataValue("hello");
-        i.setMetaData(Collections.singletonMap("test", meta));
-        assertFalse(i.getMetaData().isEmpty());
+    void testSetGameMode() {
+        island.setGameMode("BSkyBlock");
+        assertEquals("BSkyBlock", island.getGameMode());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isChanged()}.
-     */
     @Test
-    public void testIsChanged() {
-        assertTrue(i.isChanged());
+    void testSetUniqueId() {
+        island.setUniqueId("custom-id");
+        assertEquals("custom-id", island.getUniqueId());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setChanged()}.
-     */
     @Test
-    public void testSetChanged() {
-        Island ii = new Island();
-        ii.setChanged();
-        assertTrue(ii.isChanged());
+    void testSetFlags() {
+        Map<String, Integer> flags = new HashMap<>();
+        flags.put("FLAG1", 500);
+        island.setFlags(flags);
+        assertEquals(flags, island.getFlags());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setChanged(boolean)}.
-     */
     @Test
-    public void testSetChangedBoolean() {
-        i.setChanged(false);
-        assertFalse(i.isChanged());
+    void testSetMembers() {
+        Map<UUID, Integer> members = new HashMap<>();
+        UUID m1 = UUID.randomUUID();
+        members.put(m1, RanksManager.MEMBER_RANK);
+        island.setMembers(members);
+        assertEquals(RanksManager.MEMBER_RANK, island.getRank(m1));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getProtectionCenter()}.
-     */
     @Test
-    public void testGetProtectionCenter() {
-        assertEquals("Location{world=null,x=0.0,y=0.0,z=0.0,pitch=0.0,yaw=0.0}", i.getProtectionCenter().toString());
+    void testSetHistory() {
+        List<org.bukkit.event.entity.EntityExplodeEvent> empty = Collections.emptyList();
+        island.setHistory(Collections.emptyList());
+        assertTrue(island.getHistory().isEmpty());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setProtectionCenter(org.bukkit.Location)}.
-     * @throws IOException if the location is not in island space
-     */
     @Test
-    public void testSetProtectionCenter() throws IOException {
-        i.setWorld(world);
-        when(world.getName()).thenReturn("bskyblock_wworld");
-        when(location.getWorld()).thenReturn(world);
-        i.setProtectionCenter(location);
-        assertEquals(location, i.getProtectionCenter());
-
+    void testLog() {
+        var entry = new LogEntry.Builder(LogEntry.LogType.BAN)
+                .data("player", "test").build();
+        island.log(entry);
+        assertFalse(island.getHistory().isEmpty());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getHomes()}.
-     */
-    @Test
-    public void testGetHomes() {
-        assertTrue(i.getHomes().isEmpty());
-    }
+    // ======================== Protection Center ========================
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getHome(java.lang.String)}.
-     */
     @Test
-    public void testGetHome() {
-        assertNull(i.getHome("default"));
+    void testGetProtectionCenterDefault() {
+        // When location is null, returns center
+        assertEquals(island.getCenter().getBlockX(), island.getProtectionCenter().getBlockX());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setHomes(java.util.Map)}.
-     */
     @Test
-    public void testSetHomes() {
-        i.setHomes(Collections.singletonMap("hello", location));
-        assertFalse(i.getHomes().isEmpty());
+    void testSetProtectionCenter() throws IOException {
+        Location newCenter = mock(Location.class);
+        when(newCenter.getWorld()).thenReturn(world);
+        when(newCenter.getBlockX()).thenReturn(10);
+        when(newCenter.getBlockY()).thenReturn(64);
+        when(newCenter.getBlockZ()).thenReturn(10);
+        when(newCenter.clone()).thenReturn(newCenter);
+        island.setProtectionCenter(newCenter);
+        assertEquals(10, island.getProtectionCenter().getBlockX());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#addHome(java.lang.String, org.bukkit.Location)}.
-     */
     @Test
-    public void testAddHome() {
-        i.addHome("backyard", location);
-        assertEquals(location, i.getHome("backyard"));
+    void testSetProtectionCenterOutsideIslandSpace() {
+        Location outsideLoc = mock(Location.class);
+        when(outsideLoc.getWorld()).thenReturn(world);
+        when(outsideLoc.getBlockX()).thenReturn(500);
+        when(outsideLoc.getBlockY()).thenReturn(64);
+        when(outsideLoc.getBlockZ()).thenReturn(500);
+        when(outsideLoc.clone()).thenReturn(outsideLoc);
+        assertThrows(IOException.class, () -> island.setProtectionCenter(outsideLoc));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#removeHome(java.lang.String)}.
-     */
-    @Test
-    public void testRemoveHome() {
-        testAddHome();
-        i.removeHome("backyard");
-        assertTrue(i.getHomes().isEmpty());
-    }
+    // ======================== Spawn Points ========================
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#renameHome(java.lang.String, java.lang.String)}.
-     */
     @Test
-    public void testRenameHome() {
-        testAddHome();
-        assertTrue(i.renameHome("backyard", "new"));
-        assertFalse(i.renameHome("new", "new"));
-        assertFalse(i.renameHome("nhelloew", "hfhhf"));
+    void testSetSpawnPoint() {
+        Location spawnLoc = new Location(world, 5, 65, 5);
+        island.setSpawnPoint(Environment.NORMAL, spawnLoc);
+        assertNotNull(island.getSpawnPoint(Environment.NORMAL));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxHomes()}.
-     */
     @Test
-    public void testGetMaxHomes() {
-        assertNull(i.getMaxHomes());
+    void testGetSpawnPointNull() {
+        assertNull(island.getSpawnPoint(Environment.NETHER));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setMaxHomes(java.lang.Integer)}.
-     */
-    @Test
-    public void testSetMaxHomes() {
-        i.setMaxHomes(23);
-        assertEquals(23, i.getMaxHomes().intValue());
-    }
+    // ======================== MaxMembers ========================
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxMembers()}.
-     */
     @Test
-    public void testGetMaxMembers() {
+    void testGetMaxMembersLazyInit() {
+        Island i = new Island();
+        assertNotNull(i.getMaxMembers());
         assertTrue(i.getMaxMembers().isEmpty());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setMaxMembers(java.util.Map)}.
-     */
     @Test
-    public void testSetMaxMembersMapOfIntegerInteger() {
-        i.setMaxMembers(Collections.singletonMap(2345, 400));
-        assertFalse(i.getMaxMembers().isEmpty());
+    void testSetMaxMembersByRank() {
+        island.setMaxMembers(RanksManager.MEMBER_RANK, 10);
+        assertEquals(10, island.getMaxMembers(RanksManager.MEMBER_RANK));
+        assertNull(island.getMaxMembers(RanksManager.COOP_RANK));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxMembers(int)}.
-     */
+    // ======================== Max Ever Protection Range ========================
+
     @Test
-    public void testGetMaxMembersInt() {
-        assertNull(i.getMaxMembers(1000));
-        i.setMaxMembers(Collections.singletonMap(1000, 400));
-        assertEquals(400, i.getMaxMembers(1000).intValue());
+    void testGetMaxEverProtectionRange() {
+        // Initially set to protectionRange (50)
+        assertEquals(50, island.getMaxEverProtectionRange());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setMaxMembers(int, java.lang.Integer)}.
-     */
     @Test
-    public void testSetMaxMembersIntInteger() {
-        i.setMaxMembers(1000, 400);
-        assertEquals(400, i.getMaxMembers(1000).intValue());
+    void testSetMaxEverProtectionRange() {
+        island.setMaxEverProtectionRange(75);
+        assertEquals(75, island.getMaxEverProtectionRange());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#toString()}.
-     */
     @Test
-    public void testToString() {
-        assertFalse(i.toString().isBlank());
+    void testSetMaxEverProtectionRangeCappedByRange() {
+        // Range is 100, so max ever should be capped at 100
+        island.setMaxEverProtectionRange(200);
+        assertEquals(100, island.getMaxEverProtectionRange());
     }
 
+    @Test
+    void testSetMaxEverProtectionRangeNoDecrease() {
+        island.setMaxEverProtectionRange(75);
+        island.setMaxEverProtectionRange(50); // should not decrease
+        assertEquals(75, island.getMaxEverProtectionRange());
+    }
+
+    // ======================== Metadata ========================
+
+    @Test
+    void testGetMetaDataLazyInit() {
+        Island i = new Island();
+        assertTrue(i.getMetaData().isPresent());
+        assertTrue(i.getMetaData().get().isEmpty());
+    }
+
+    @Test
+    void testSetMetaData() {
+        Map<String, MetaDataValue> meta = new HashMap<>();
+        meta.put("key", new MetaDataValue("value"));
+        island.setMetaData(meta);
+        assertTrue(island.getMetaData().isPresent());
+        assertEquals("value", island.getMetaData().get().get("key").asString());
+    }
+
+    // ======================== Primaries ========================
+
+    @Test
+    void testSetPrimary() {
+        UUID user = UUID.randomUUID();
+        assertFalse(island.isPrimary(user));
+        island.setPrimary(user);
+        assertTrue(island.isPrimary(user));
+    }
+
+    @Test
+    void testRemovePrimary() {
+        UUID user = UUID.randomUUID();
+        island.setPrimary(user);
+        island.removePrimary(user);
+        assertFalse(island.isPrimary(user));
+    }
+
+    @Test
+    void testSetPrimaries() {
+        UUID u1 = UUID.randomUUID();
+        UUID u2 = UUID.randomUUID();
+        island.setPrimaries(Set.of(u1, u2));
+        assertTrue(island.isPrimary(u1));
+        assertTrue(island.isPrimary(u2));
+    }
+
+    // ======================== Equals / HashCode / ToString ========================
+
+    @Test
+    void testEqualsAndHashCode() {
+        Island other = new Island();
+        other.setUniqueId(island.getUniqueId());
+        assertEquals(island, other);
+        assertEquals(island.hashCode(), other.hashCode());
+    }
+
+    @Test
+    void testNotEquals() {
+        Island other = new Island();
+        // Different unique IDs
+        assertNotEquals(island, other);
+    }
+
+    @Test
+    void testEqualsSameObject() {
+        assertEquals(island, island);
+    }
+
+    @Test
+    void testEqualsNull() {
+        assertNotEquals(null, island);
+    }
+
+    @Test
+    void testEqualsDifferentClass() {
+        assertNotEquals("not an island", island);
+    }
+
+    @Test
+    void testToString() {
+        String str = island.toString();
+        assertNotNull(str);
+        assertTrue(str.contains("Island"));
+        assertTrue(str.contains(island.getUniqueId()));
+    }
+
+    // ======================== Owned / Unowned ========================
+
+    @Test
+    void testIsOwned() {
+        assertTrue(island.isOwned());
+    }
+
+    @Test
+    void testIsUnowned() {
+        island.setOwner(null);
+        assertTrue(island.isUnowned());
+        assertFalse(island.isOwned());
+    }
+
+    // ======================== Deletable ========================
+
+    @Test
+    void testSetDeletable() {
+        assertFalse(island.isDeletable());
+        island.setDeletable(true);
+        assertTrue(island.isDeletable());
+    }
+
+    // ======================== Dimension Methods ========================
+
+    @Test
+    void testGetWorldNormal() {
+        assertEquals(world, island.getWorld(Environment.NORMAL));
+    }
+
+    @Test
+    void testGetWorldNetherDisabled() {
+        when(iwm.isNetherGenerate(any())).thenReturn(false);
+        assertNull(island.getWorld(Environment.NETHER));
+    }
+
+    @Test
+    void testGetWorldNetherEnabled() {
+        World netherWorld = mock(World.class);
+        when(iwm.isNetherGenerate(any())).thenReturn(true);
+        when(iwm.isNetherIslands(any())).thenReturn(true);
+        when(iwm.getNetherWorld(any())).thenReturn(netherWorld);
+        assertEquals(netherWorld, island.getWorld(Environment.NETHER));
+    }
+
+    @Test
+    void testGetWorldEndDisabled() {
+        when(iwm.isEndGenerate(any())).thenReturn(false);
+        assertNull(island.getWorld(Environment.THE_END));
+    }
+
+    @Test
+    void testGetXYZ() {
+        assertEquals(0, island.getX());
+        assertEquals(64, island.getY());
+        assertEquals(0, island.getZ());
+    }
+
+    // ======================== Cooldowns Map ========================
+
+    @Test
+    void testSetCooldowns() {
+        Map<String, Long> cooldowns = new HashMap<>();
+        cooldowns.put("flag1", System.currentTimeMillis() + 60000);
+        island.setCooldowns(cooldowns);
+        assertEquals(cooldowns, island.getCooldowns());
+    }
+
+    // ======================== Command Ranks Map ========================
+
+    @Test
+    void testSetCommandRanks() {
+        Map<String, Integer> ranks = new HashMap<>();
+        ranks.put("/cmd", RanksManager.MEMBER_RANK);
+        island.setCommandRanks(ranks);
+        assertEquals(ranks, island.getCommandRanks());
+    }
+
+    // ======================== Spawn Point Map ========================
+
+    @Test
+    void testSetSpawnPointMap() {
+        Map<Environment, Location> spawnPoints = new java.util.EnumMap<>(Environment.class);
+        Location loc = new Location(world, 5, 65, 5);
+        spawnPoints.put(Environment.NORMAL, loc);
+        island.setSpawnPoint(spawnPoints);
+        assertEquals(loc, island.getSpawnPoint().get(Environment.NORMAL));
+    }
+
+    // ======================== GetCenter clone ========================
+
+    @Test
+    void testGetCenterReturnsClone() {
+        Location c1 = island.getCenter();
+        Location c2 = island.getCenter();
+        assertNotSame(c1, c2);
+        assertEquals(c1.getBlockX(), c2.getBlockX());
+    }
 }

@@ -14,42 +14,29 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.island.IslandEnterEvent;
 import world.bentobox.bentobox.api.events.island.IslandExitEvent;
-import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.managers.LocalesManager;
-import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -57,9 +44,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class })
-public class EnterExitListenerTest {
+class EnterExitListenerTest extends CommonTestSetup {
 
     private static final Integer PROTECTION_RANGE = 200;
     private static final Integer X = 600;
@@ -68,65 +53,36 @@ public class EnterExitListenerTest {
     @Mock
     private User user;
     @Mock
-    private Island island;
-    @Mock
     private Location outside;
     @Mock
     private Location inside;
     @Mock
     private Location anotherWorld;
-    @Mock
-    private LocalesManager lm;
-    @Mock
-    private World world;
-    @Mock
-    private PluginManager pim;
-    @Mock
-    private Notifier notifier;
 
     private EnterExitListener listener;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
-        // Server
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+        super.setUp();
 
         // Settings
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
 
+        // Util
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
+        mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
+
         // Player
-        Player p = mock(Player.class);
+         when(mockPlayer.getWorld()).thenReturn(world);
         // Sometimes use Mockito.withSettings().verboseLogging()
         User.setPlugin(plugin);
         when(user.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
-
-        // No island for player to begin with (set it later in the tests)
-        IslandsManager im = mock(IslandsManager.class);
-        when(plugin.getIslands()).thenReturn(im);
-
-        // Locales
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
-
-        // Placeholders
-        PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
-        when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
-
-        // Notifier
-        when(plugin.getNotifier()).thenReturn(notifier);
 
         // Island initialization
         Location loc = mock(Location.class);
@@ -171,14 +127,16 @@ public class EnterExitListenerTest {
         when(anotherWorld.toVector()).thenReturn(new Vector(X + PROTECTION_RANGE - 1, Y, Z));
 
         Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(eq(inside2))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(eq(outside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(inside)).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(inside2)).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(outside)).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(anotherWorld)).thenReturn(Optional.empty());
 
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
+        when(iwm.getFriendlyName(world)).thenReturn("BskyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Player's manager
@@ -188,9 +146,6 @@ public class EnterExitListenerTest {
 
         // Listener
         listener = new EnterExitListener();
-
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(world);
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
@@ -205,20 +160,21 @@ public class EnterExitListenerTest {
         Flags.ENTER_EXIT_MESSAGES.setSetting(world, true);
 
         // Util translate color codes (used in user translate methods)
-        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        mockedUtil.when(() -> Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        mockedUtil.when(() -> Util.stripColor(any())).thenCallRealMethod();
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
-
+    
     /**
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnMoveInsideIsland() {
+    void testOnMoveInsideIsland() {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, inside);
         listener.onMove(e);
         // Moving in the island should result in no messages to the user
@@ -231,7 +187,7 @@ public class EnterExitListenerTest {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnMoveOutsideIsland() {
+    void testOnMoveOutsideIsland() {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, outside);
         listener.onMove(e);
         // Moving outside the island should result in no messages to the user
@@ -244,7 +200,20 @@ public class EnterExitListenerTest {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnGoingIntoIslandEmptyIslandName() {
+    void testOnMoveOutsideIslandToNull() {
+        PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, null);
+        listener.onMove(e);
+        // Moving outside the island should result in no messages to the user
+        verify(notifier, never()).notify(any(), any());
+        verify(pim, never()).callEvent(any(IslandEnterEvent.class));
+        verify(pim, never()).callEvent(any(IslandExitEvent.class));
+    }
+
+    /**
+     * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     */
+    @Test
+    void testOnGoingIntoIslandEmptyIslandName() {
         when(island.getName()).thenReturn("");
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, inside);
         listener.onMove(e);
@@ -261,7 +230,7 @@ public class EnterExitListenerTest {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnGoingIntoIslandWithIslandName() {
+    void testOnGoingIntoIslandWithIslandName() {
         when(island.getName()).thenReturn("fancy name");
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, inside);
         listener.onMove(e);
@@ -279,7 +248,7 @@ public class EnterExitListenerTest {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testExitingIslandEmptyIslandName() {
+    void testExitingIslandEmptyIslandName() {
         when(island.getName()).thenReturn("");
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, outside);
         listener.onMove(e);
@@ -296,7 +265,24 @@ public class EnterExitListenerTest {
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testExitingIslandWithIslandName() {
+    void testExitingIslandEmptyIslandNameToNull() {
+        when(island.getName()).thenReturn("");
+        PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, null);
+        listener.onMove(e);
+        // Moving into the island should show a message
+        verify(lm).get(any(), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
+        // The island owner needs to be checked
+        verify(island).isOwned();
+        verify(pim).callEvent(any(IslandExitEvent.class));
+        verify(pim, never()).callEvent(any(IslandEnterEvent.class));
+        verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
+    }
+
+    /**
+     * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     */
+    @Test
+    void testExitingIslandWithIslandName() {
         when(island.getName()).thenReturn("fancy name");
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, outside);
         listener.onMove(e);
@@ -315,7 +301,7 @@ public class EnterExitListenerTest {
      * @since 1.4.0
      */
     @Test
-    public void testNoNotificationIfDisabled() {
+    void testNoNotificationIfDisabled() {
         // No notifications should be sent
         Flags.ENTER_EXIT_MESSAGES.setSetting(world, false);
 
@@ -332,7 +318,7 @@ public class EnterExitListenerTest {
      * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testEnterIslandTeleport() {
+    void testEnterIslandTeleport() {
         PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), anotherWorld, inside, TeleportCause.PLUGIN);
         listener.onTeleport(e);
         verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
@@ -344,8 +330,20 @@ public class EnterExitListenerTest {
      * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testExitIslandTeleport() {
+    void testExitIslandTeleport() {
         PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), inside, anotherWorld, TeleportCause.PLUGIN);
+        listener.onTeleport(e);
+        verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
+        verify(pim, never()).callEvent(any(IslandEnterEvent.class));
+        verify(pim).callEvent(any(IslandExitEvent.class));
+    }
+
+    /**
+     * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     */
+    @Test
+    void testExitIslandTeleportToNull() {
+        PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), inside, null, TeleportCause.PLUGIN);
         listener.onTeleport(e);
         verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
         verify(pim, never()).callEvent(any(IslandEnterEvent.class));
@@ -357,7 +355,7 @@ public class EnterExitListenerTest {
      * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testEnterIslandTeleportUnowned() {
+    void testEnterIslandTeleportUnowned() {
         when(island.isOwned()).thenReturn(false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), anotherWorld, inside, TeleportCause.PLUGIN);
         listener.onTeleport(e);
@@ -370,7 +368,7 @@ public class EnterExitListenerTest {
      * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testExitIslandTeleportUnowned() {
+    void testExitIslandTeleportUnowned() {
         when(island.isOwned()).thenReturn(false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), inside, anotherWorld, TeleportCause.PLUGIN);
         listener.onTeleport(e);

@@ -1,9 +1,10 @@
 package world.bentobox.bentobox.managers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,30 +13,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
@@ -46,63 +40,58 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class} )
-public class BlueprintClipboardManagerTest {
+class BlueprintClipboardManagerTest extends CommonTestSetup {
 
     private static final String BLUEPRINT = "blueprint";
 
-    @Mock
-    private BentoBox plugin;
-    @Mock
     private BlueprintClipboard clipboard;
 
     private File blueprintFolder;
 
-    private final String json = "{\n" +
-            "    \"name\": \"blueprint\",\n" +
-            "    \"attached\": {},\n" +
-            "    \"entities\": {},\n" +
-            "    \"blocks\": [\n" +
-            "        [\n" +
-            "            [3.0, -5.0, 8.0], {\n" +
-            "                \"blockData\": \"minecraft:stone\"\n" +
-            "            }\n" +
-            "        ],\n" +
-            "        [\n" +
-            "            [6.0, -13.0, -20.0], {\n" +
-            "                \"blockData\": \"minecraft:diorite\"\n" +
-            "            }\n" +
-            "        ]\n" +
-            "    ],\n" +
-            "    \"xSize\": 10,\n" +
-            "    \"ySize\": 10,\n" +
-            "    \"zSize\": 10,\n" +
-            "    \"bedrock\": [-2.0, -16.0, -1.0]\n" +
-            "}";
+    private final String json = """
+            {
+                "name": "blueprint",
+                "attached": {},
+                "entities": {},
+                "blocks": [
+                    [
+                        [3.0, -5.0, 8.0], {
+                            "blockData": "minecraft:stone"
+                        }
+                    ],
+                    [
+                        [6.0, -13.0, -20.0], {
+                            "blockData": "minecraft:diorite"
+                        }
+                    ]
+                ],
+                "xSize": 10,
+                "ySize": 10,
+                "zSize": 10,
+                "bedrock": [-2.0, -16.0, -1.0]
+            }""";
 
-    private final String jsonNoBedrock = "{\n" +
-            "    \"name\": \"blueprint\",\n" +
-            "    \"attached\": {},\n" +
-            "    \"entities\": {},\n" +
-            "    \"blocks\": [\n" +
-            "        [\n" +
-            "            [3.0, -5.0, 8.0], {\n" +
-            "                \"blockData\": \"minecraft:stone\"\n" +
-            "            }\n" +
-            "        ],\n" +
-            "        [\n" +
-            "            [6.0, -13.0, -20.0], {\n" +
-            "                \"blockData\": \"minecraft:diorite\"\n" +
-            "            }\n" +
-            "        ]\n" +
-            "    ],\n" +
-            "    \"xSize\": 10,\n" +
-            "    \"ySize\": 10,\n" +
-            "    \"zSize\": 10\n" +
-            "}";
-    @Mock
-    private Server server;
+    private final String jsonNoBedrock = """
+            {
+                "name": "blueprint",
+                "attached": {},
+                "entities": {},
+                "blocks": [
+                    [
+                        [3.0, -5.0, 8.0], {
+                            "blockData": "minecraft:stone"
+                        }
+                    ],
+                    [
+                        [6.0, -13.0, -20.0], {
+                            "blockData": "minecraft:diorite"
+                        }
+                    ]
+                ],
+                "xSize": 10,
+                "ySize": 10,
+                "zSize": 10
+            }""";
 
     private void zip(File targetFile) throws IOException {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + BlueprintsManager.BLUEPRINT_SUFFIX))) {
@@ -124,25 +113,14 @@ public class BlueprintClipboardManagerTest {
 
     /**
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
+        super.setUp();
+        clipboard = mock(BlueprintClipboard.class);
+
         blueprintFolder = new File("blueprints");
         // Clear any residual files
-        tearDown();
-        PowerMockito.mockStatic(Bukkit.class);
-        BlockData blockData = mock(BlockData.class);
-        when(Bukkit.createBlockData(any(Material.class))).thenReturn(blockData);
-        when(blockData.getAsString()).thenReturn("test123");
-        when(server.getBukkitVersion()).thenReturn("version");
-        when(Bukkit.getServer()).thenReturn(server);
-
-    }
-
-    /**
-     */
-    @After
-    public void tearDown() throws Exception {
-
         if (blueprintFolder.exists()) {
             // Clean up file system
             Files.walk(blueprintFolder.toPath())
@@ -150,14 +128,36 @@ public class BlueprintClipboardManagerTest {
             .map(Path::toFile)
             .forEach(File::delete);
         }
-        Mockito.framework().clearInlineMocks();
+        // Hooks
+        HooksManager hooksManager = mock(HooksManager.class);
+        when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
+        when(plugin.getHooks()).thenReturn(hooksManager);
+
+        BlockData blockData = mock(BlockData.class);
+        mockedBukkit.when(() -> Bukkit.createBlockData(any(Material.class))).thenReturn(blockData);
+        when(blockData.getAsString()).thenReturn("test123");
+    }
+
+    /**
+     */
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+        if (blueprintFolder.exists()) {
+            // Clean up file system
+            Files.walk(blueprintFolder.toPath())
+            .sorted(Comparator.reverseOrder())
+            .map(Path::toFile)
+            .forEach(File::delete);
+        }
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#BlueprintClipboardManager(world.bentobox.bentobox.BentoBox, java.io.File)}.
      */
     @Test
-    public void testBlueprintClipboardManagerBentoBoxFile() {
+    void testBlueprintClipboardManagerBentoBoxFile() {
         new BlueprintClipboardManager(plugin, blueprintFolder);
         assertTrue(blueprintFolder.exists());
     }
@@ -166,7 +166,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#BlueprintClipboardManager(world.bentobox.bentobox.BentoBox, java.io.File, world.bentobox.bentobox.blueprints.BlueprintClipboard)}.
      */
     @Test
-    public void testBlueprintClipboardManagerBentoBoxFileBlueprintClipboard() {
+    void testBlueprintClipboardManagerBentoBoxFileBlueprintClipboard() {
         new BlueprintClipboardManager(plugin, blueprintFolder, clipboard);
         assertTrue(blueprintFolder.exists());
     }
@@ -175,7 +175,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#getClipboard()}.
      */
     @Test
-    public void testGetClipboard() {
+    void testGetClipboard() {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder, clipboard);
         assertEquals(clipboard, bcm.getClipboard());
     }
@@ -184,7 +184,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
      */
     @Test
-    public void testLoadBlueprintNoSuchFile() {
+    void testLoadBlueprintNoSuchFile() {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         try {
             bcm.loadBlueprint("test");
@@ -199,7 +199,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
      */
     @Test
-    public void testLoadBlueprintNoFileInZip() throws IOException {
+    void testLoadBlueprintNoFileInZip() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         YamlConfiguration config = new YamlConfiguration();
@@ -221,7 +221,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
      */
     @Test
-    public void testLoadBlueprintFileInZipJSONError() throws IOException {
+    void testLoadBlueprintFileInZipJSONError() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         YamlConfiguration config = new YamlConfiguration();
@@ -244,7 +244,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
      */
     @Test
-    public void testLoadBlueprintFileInZipNoBedrock() throws IOException {
+    void testLoadBlueprintFileInZipNoBedrock() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
@@ -264,7 +264,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
      */
     @Test
-    public void testLoadBlueprintFileInZip() throws IOException {
+    void testLoadBlueprintFileInZip() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
@@ -285,7 +285,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#load(java.lang.String)}.
      */
     @Test
-    public void testLoadString() throws IOException {
+    void testLoadString() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
@@ -307,7 +307,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#load(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
-    public void testLoadUserString() throws IOException {
+    void testLoadUserString() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
@@ -324,7 +324,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#load(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
-    public void testLoadUserStringFail() throws IOException {
+    void testLoadUserStringFail() {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         User user = mock(User.class);
         assertFalse(bcm.load(user, BLUEPRINT));
@@ -336,7 +336,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      */
     @Test
-    public void testSave() throws IOException {
+    void testSave() throws IOException {
         // Load a blueprint, then save it
         blueprintFolder.mkdirs();
         // Make a blueprint file
@@ -357,7 +357,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      */
     @Test
-    public void testSaveBadChars() throws IOException {
+    void testSaveBadChars() throws IOException {
         // Load a blueprint, then save it
         blueprintFolder.mkdirs();
         // Make a blueprint file
@@ -378,7 +378,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      */
     @Test
-    public void testSaveForeignChars() throws IOException {
+    void testSaveForeignChars() throws IOException {
         // Load a blueprint, then save it
         blueprintFolder.mkdirs();
         // Make a blueprint file
@@ -399,7 +399,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      */
     @Test
-    public void testSaveForeignBadChars() throws IOException {
+    void testSaveForeignBadChars() throws IOException {
         // Load a blueprint, then save it
         blueprintFolder.mkdirs();
         // Make a blueprint file
@@ -421,7 +421,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#saveBlueprint(world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    public void testSaveBlueprintNoName() {
+    void testSaveBlueprintNoName() {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         Blueprint blueprint = mock(Blueprint.class);
         when(blueprint.getName()).thenReturn("");
@@ -433,7 +433,7 @@ public class BlueprintClipboardManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#saveBlueprint(world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
-    public void testSaveBlueprintSuccess() {
+    void testSaveBlueprintSuccess() {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         Blueprint blueprint = new Blueprint();
         blueprint.setName("test123");

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Animals;
@@ -16,8 +17,6 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import com.google.common.base.Enums;
-
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -28,9 +27,8 @@ import world.bentobox.bentobox.lists.Flags;
  *
  */
 public class BreedingListener extends FlagListener {
-
     /**
-     * A list of items that cause breeding if a player has them in their hand and they click an animal
+     * A list of items that cause breeding if a player has them in their hand, and they click an animal
      * This list may need to be extended with future versions of Minecraft.
      * See this Minecraft Wiki page for reference: <a href="https://minecraft.gamepedia.com/Breeding#Breeding_foods">...</a>.
      */
@@ -41,7 +39,10 @@ public class BreedingListener extends FlagListener {
         bi.put(EntityType.HORSE, Arrays.asList(Material.GOLDEN_APPLE, Material.GOLDEN_CARROT));
         bi.put(EntityType.DONKEY, Arrays.asList(Material.GOLDEN_APPLE, Material.GOLDEN_CARROT));
         bi.put(EntityType.COW, Collections.singletonList(Material.WHEAT));
-        bi.put(EntityType.MUSHROOM_COW, Collections.singletonList(Material.WHEAT));
+        Optional<EntityType> mc = Arrays.stream(EntityType.values()).filter(e -> e.name().equals("MUSHROOM_COW")).findFirst();
+        if (mc.isPresent()) {
+            bi.put(mc.get(), Collections.singletonList(Material.WHEAT));
+        }
         bi.put(EntityType.SHEEP, Collections.singletonList(Material.WHEAT));
         bi.put(EntityType.PIG, Arrays.asList(Material.CARROT, Material.POTATO, Material.BEETROOT));
         bi.put(EntityType.CHICKEN, Arrays.asList(Material.WHEAT_SEEDS, Material.PUMPKIN_SEEDS, Material.MELON_SEEDS, Material.BEETROOT_SEEDS));
@@ -69,14 +70,11 @@ public class BreedingListener extends FlagListener {
         bi.put(EntityType.GOAT, Collections.singletonList(Material.WHEAT));
         // 1.19+
         // TODO: remove one 1.18 is dropped.
-        if (Enums.getIfPresent(EntityType.class, "FROG").isPresent()) {
+        if (Arrays.stream(EntityType.values()).anyMatch(e -> e.name().equals("FROG"))) {
             bi.put(EntityType.FROG, Collections.singletonList(Material.SLIME_BALL));
             bi.put(EntityType.ALLAY, Collections.singletonList(Material.AMETHYST_SHARD));
         }
         // Helper
-        //  if (Enums.getIfPresent(EntityType.class, "<name>").isPresent()) {
-        //      bi.put(EntityType.<type>, Collections.singletonList(Material.<material>));
-        //  }
         BREEDING_ITEMS = Collections.unmodifiableMap(bi);
     }
 

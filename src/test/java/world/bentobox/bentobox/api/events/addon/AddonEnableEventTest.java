@@ -1,45 +1,50 @@
 package world.bentobox.bentobox.api.events.addon;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.powermock.modules.junit4.PowerMockRunner;
 
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.Addon;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-public class AddonEnableEventTest {
+class AddonEnableEventTest extends CommonTestSetup {
 
     private AddonEnableEvent aee;
     @Mock
     private Addon addon;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
+        super.setUp();
         Map<String, Object> map = new HashMap<>();
         aee = new AddonEnableEvent(addon, map);
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent#getHandlers()}.
      */
     @Test
-    public void testGetHandlers() {
+    void testGetHandlers() {
         assertNotNull(aee.getHandlers());
     }
 
@@ -47,7 +52,7 @@ public class AddonEnableEventTest {
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent#getHandlerList()}.
      */
     @Test
-    public void testGetHandlerList() {
+    void testGetHandlerList() {
         assertNotNull(AddonEnableEvent.getHandlerList());
     }
 
@@ -55,7 +60,7 @@ public class AddonEnableEventTest {
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent#AddonEnableEvent(world.bentobox.bentobox.api.addons.Addon, java.util.Map)}.
      */
     @Test
-    public void testAddonEnableEvent() {
+    void testAddonEnableEvent() {
         assertNotNull(aee);
     }
 
@@ -63,7 +68,7 @@ public class AddonEnableEventTest {
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#getKeyValues()}.
      */
     @Test
-    public void testGetKeyValues() {
+    void testGetKeyValues() {
         assertTrue(aee.getKeyValues().isEmpty());
     }
 
@@ -71,15 +76,15 @@ public class AddonEnableEventTest {
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#getAddon()}.
      */
     @Test
-    public void testGetAddon() {
-        assertEquals(addon, aee.getAddon());
+    void testGetAddon() {
+        assertSame(addon, aee.getAddon());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#getNewEvent()}.
      */
     @Test
-    public void testGetNewEvent() {
+    void testGetNewEvent() {
         assertTrue(aee.getNewEvent().isEmpty());
     }
 
@@ -87,18 +92,9 @@ public class AddonEnableEventTest {
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#setNewEvent(world.bentobox.bentobox.api.events.addon.AddonBaseEvent)}.
      */
     @Test
-    public void testSetNewEvent() {
+    void testSetNewEvent() {
         aee.setNewEvent(aee);
-        assertEquals(aee, aee.getNewEvent().get());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.events.BentoBoxEvent#setKeyValues(java.util.Map)}.
-     */
-    @Test
-    @Ignore
-    public void testSetKeyValues() {
-        // No fields to set values for in the class
+        assertSame(aee, aee.getNewEvent().get());
     }
 
 }

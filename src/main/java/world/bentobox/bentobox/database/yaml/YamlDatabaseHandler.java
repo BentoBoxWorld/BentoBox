@@ -26,8 +26,13 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
+import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
@@ -91,7 +96,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         // Load the YAML file at the location.
         YamlConfiguration config = ((YamlDatabaseConnector)databaseConnector).loadYamlFile(path, key);
-        // Use the createObject method to turn a YAML config into an Java object
+        // Use the createObject method to turn a YAML config into a Java object
         return createObject(config);
     }
 
@@ -216,12 +221,23 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 try {
                     // Floats need special handling because the database returns them as doubles
                     Type setType = propertyDescriptor.getWriteMethod().getGenericParameterTypes()[0];
-                    if (setType.getTypeName().equals("float")) {
-                        double d = (double) setTo;
-                        float f = (float)d;
-                        method.invoke(instance, f);
-                    } else {
-                        method.invoke(instance, setTo);
+                    switch (setType.getTypeName()) {
+                        case "float" -> {
+                            double d = (double) setTo;
+                            float f = (float) d;
+                            method.invoke(instance, f);
+                        }
+                        case "org.bukkit.Sound" -> {
+                            Sound s = Registry.SOUNDS
+                                    .get(NamespacedKey.fromString(((String) setTo).toLowerCase(Locale.ENGLISH)));
+                            method.invoke(instance, s);
+                        }
+                        case "org.bukkit.block.Biome" -> {
+                            Biome b = Registry.BIOME
+                                    .get(NamespacedKey.fromString(((String) setTo).toLowerCase(Locale.ENGLISH)));
+                            method.invoke(instance, b);
+                        }
+                        default -> method.invoke(instance, setTo);
                     }
                 } catch (Exception e) {
                     plugin.logError("Could not deserialize. Attempt by " + instance.getClass().getCanonicalName() + " " + method.getName() + " to set to " + setTo);
@@ -241,7 +257,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Note that we have no idea what type of List this is
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be only 1 long
-        Type setType = collectionTypes.get(0);
+        Type setType = collectionTypes.getFirst();
         // Create an empty list
         List<Object> value = new ArrayList<>();
         // Lists are stored as lists in YAML
@@ -258,7 +274,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Note that we have no idea what type this set is
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be only 1 long
-        Type setType = collectionTypes.get(0);
+        Type setType = collectionTypes.getFirst();
         // Create an empty set to fill
         Set<Object> value = new HashSet<>();
         // Sets are stored as a list in YAML
@@ -275,7 +291,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Note that we have no idea what type of map this is, so we need to find out
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be 2 long because there are two parameters in a Map (key, value)
-        Type keyType = collectionTypes.get(0);
+        Type keyType = collectionTypes.getFirst();
         Type valueType = collectionTypes.get(1);
         // Create a map that we'll put the values into
         Map<Object,Object> value = new HashMap<>();
@@ -331,7 +347,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param instance that should be inserted into the database
      * @return CompletableFuture that will be true if object is saved successfully
      */
-    @SuppressWarnings("unchecked")
     @Override
     public CompletableFuture<Boolean> saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
@@ -344,6 +359,27 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return CompletableFuture.completedFuture(false);
         }
+        if (plugin.isShutdown()) {
+            try {
+                processFile(completableFuture, instance);
+            } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+                completableFuture.complete(false);
+                plugin.logStacktrace(e);
+            }
+        } else {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, ()-> {
+                try {
+                    processFile(completableFuture, instance);
+                } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+                    completableFuture.complete(false);
+                    plugin.logStacktrace(e);
+                }
+            });
+        }
+        return completableFuture;
+    }
+
+    private void processFile(CompletableFuture<Boolean> completableFuture, T instance) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
         // This is the Yaml Configuration that will be used and saved at the end
         YamlConfiguration config = new YamlConfiguration();
 
@@ -370,45 +406,15 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Invoke the read method to get the value. We have no idea what type of value it is.
             Object value = method.invoke(instance);
 
-            String storageLocation = field.getName();
-
-            // Check if there is an annotation on the field
-            ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
-
-            // If there is a config path annotation or adapter then deal with them
-            if (configEntry != null && !configEntry.path().isEmpty()) {
-                if (configEntry.hidden()) {
-                    // If the annotation tells us to not print the config entry, then we won't.
-                    continue;
-                }
-
-                // Get the storage location
-                storageLocation = configEntry.path();
-
-                // Get path for comments
-                String parent = "";
-                if (storageLocation.contains(".")) {
-                    parent = storageLocation.substring(0, storageLocation.lastIndexOf('.')) + ".";
-                }
-                handleComments(field, config, yamlComments, parent);
-                handleConfigEntryComments(configEntry, config, yamlComments, parent);
+            // Process ConfigEntry annotation; returns null if the field should be skipped (hidden)
+            String storageLocation = processConfigEntry(field, field.getName(), config, yamlComments);
+            if (storageLocation == null) {
+                continue;
             }
 
             if (!checkAdapter(field, config, storageLocation, value)) {
-                // Set the filename if it has not be set already
-                if (filename.isEmpty() && method.getName().equals("getUniqueId")) {
-                    // Save the name for when the file is saved
-                    filename = getFilename(propertyDescriptor, instance, (String)value);
-                }
-                // Collections need special serialization
-                if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
-                    serializeMap((Map<Object,Object>)value, config, storageLocation);
-                } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
-                    serializeSet((Set<Object>)value, config, storageLocation);
-                } else {
-                    // For all other data that doesn't need special serialization
-                    config.set(storageLocation, serialize(value));
-                }
+                filename = resolveFilename(filename, propertyDescriptor, method, instance, value);
+                serializeFieldValue(propertyDescriptor, value, storageLocation, config);
             }
         }
         // If the filename has not been set by now then we have a problem
@@ -418,7 +424,79 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
         // Save
         save(completableFuture, filename, config.saveToString(), path, yamlComments);
-        return completableFuture;
+    }
+
+    /**
+     * Processes the {@link ConfigEntry} annotation on a field and registers any associated comments.
+     * Returns the storage location to use for this field, or {@code null} if the field is marked
+     * hidden and should be skipped entirely.
+     *
+     * @param field           the field being processed
+     * @param defaultLocation the default storage location (the field name)
+     * @param config          the YAML configuration being built
+     * @param yamlComments    the comment map being built
+     * @return the resolved storage location, or {@code null} if the field should be skipped
+     */
+    @Nullable
+    private String processConfigEntry(Field field, String defaultLocation, YamlConfiguration config, Map<String, String> yamlComments) {
+        ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
+        if (configEntry == null || configEntry.path().isEmpty()) {
+            return defaultLocation;
+        }
+        // If the annotation tells us to not print the config entry, signal skip with null.
+        if (configEntry.hidden()) {
+            return null;
+        }
+        String storageLocation = configEntry.path();
+        // Determine the parent path for comments
+        String parent = storageLocation.contains(".")
+                ? storageLocation.substring(0, storageLocation.lastIndexOf('.')) + "."
+                : "";
+        handleComments(field, config, yamlComments, parent);
+        handleConfigEntryComments(configEntry, config, yamlComments, parent);
+        return storageLocation;
+    }
+
+    /**
+     * Resolves and returns the filename to use when saving the YAML file.
+     * If the filename has already been determined (non-empty), it is returned unchanged.
+     * Otherwise, when the read method is {@code getUniqueId}, the unique id value is used
+     * (generating one if necessary) and stored back on the instance.
+     *
+     * @param currentFilename the filename resolved so far (may be empty)
+     * @param pd              the property descriptor for the current field
+     * @param method          the read method for the current field
+     * @param instance        the object being serialized
+     * @param value           the value returned by the read method
+     * @return the (possibly updated) filename
+     */
+    private String resolveFilename(String currentFilename, PropertyDescriptor pd, Method method, T instance, Object value) throws IllegalAccessException, InvocationTargetException {
+        if (currentFilename.isEmpty() && method.getName().equals("getUniqueId")) {
+            return getFilename(pd, instance, (String) value);
+        }
+        return currentFilename;
+    }
+
+    /**
+     * Serializes a field value into the YAML configuration at the given storage location.
+     * Maps and Sets receive special collection serialization; all other values go through
+     * the standard {@link #serialize(Object)} path.
+     *
+     * @param pd              the property descriptor for the field (used to determine the type)
+     * @param value           the value to serialize
+     * @param storageLocation the YAML key to write to
+     * @param config          the YAML configuration being built
+     */
+    @SuppressWarnings("unchecked")
+    private void serializeFieldValue(PropertyDescriptor pd, Object value, String storageLocation, YamlConfiguration config) {
+        if (Map.class.isAssignableFrom(pd.getPropertyType()) && value != null) {
+            serializeMap((Map<Object, Object>) value, config, storageLocation);
+        } else if (Set.class.isAssignableFrom(pd.getPropertyType()) && value != null) {
+            serializeSet((Set<Object>) value, config, storageLocation);
+        } else {
+            // For all other data that doesn't need special serialization
+            config.set(storageLocation, serialize(value));
+        }
     }
 
     private void save(CompletableFuture<Boolean> completableFuture, String name, String data, String path, Map<String, String> yamlComments) {
@@ -448,9 +526,13 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         Map<Object, Object> result = new HashMap<>();
         for (Entry<Object, Object> object : value.entrySet()) {
             // Serialize all key and values
-            String key = (String)serialize(object.getKey());
-            key = key.replace("\\.", ":dot:");
-            result.put(key, serialize(object.getValue()));
+            if (serialize(object.getKey()) instanceof String key) {
+                key = key.replace("\\.", ":dot:");
+                result.put(key, serialize(object.getValue()));
+            } else {
+                plugin.logWarning("Map key in config file could not be serialized, skipping. Entry is "
+                        + object.getKey() + ": " + object.getValue());
+            }
         }
         // Save the list in the config file
         config.set(storageLocation, result);
@@ -545,7 +627,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Store placeholder
         config.set(parent + random, " ");
         // Create comment
-        yamlComments.put(random, "# " + comment.replace(TextVariables.VERSION, Objects.isNull(getAddon()) ? plugin.getDescription().getVersion() : getAddon().getDescription().getVersion()));
+        yamlComments.put(random, "# " + comment.replace(TextVariables.VERSION, Objects.isNull(getAddon()) ? plugin.getPluginMeta().getVersion() : getAddon().getDescription().getVersion()));
     }
 
     /**
@@ -556,99 +638,121 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @NonNull
     private Object serialize(@Nullable Object object) {
         // Null is a value object and is serialized as the string "null"
-        if (object == null) {
-            return "null";
-        }
-        // UUID has it's own serialization, that is not picked up automatically
-        if (object instanceof UUID) {
-            return object.toString();
-        }
-        // Only the world name is needed for worlds
-        if (object instanceof World w) {
-            return w.getName();
-        }
-        // Location
-        if (object instanceof Location l) {
-            return Util.getStringLocation(l);
-        }
-        // Enums
-        if (object instanceof Enum<?> e) {
-            //Custom enums are a child of the Enum class. Just get the names of each one.
-            return e.name();
-        }
-        return object;
+        return switch (object) {
+            case null -> "null";
+
+            // UUID has its own serialization, that is not picked up automatically
+            case UUID uuid -> object.toString();
+
+            // Only the world name is needed for worlds
+            case World w -> w.getName();
+
+            // Location
+            case Location l -> Util.getStringLocation(l);
+
+            // Keyed interfaces that are replacing enums
+            case Keyed k -> k.getKey().getKey();
+
+            // Enums
+            case Enum<?> e ->
+                //Custom enums are a child of the Enum class. Just get the names of each one.
+                    e.name();
+            default -> object;
+        };
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Nullable
     private Object deserialize(Object value, Class<?> clazz) {
-        // If value is already null, then it can be nothing else
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof String && value.equals("null")) {
-            // If the value is null as a string, return null
+        // If value is already null or the string "null", return null
+        if (value == null || "null".equals(value)) {
             return null;
         }
         // Bukkit may have deserialized the object already
         if (clazz.equals(value.getClass())) {
             return value;
         }
-        // Types that need to be deserialized
+        // Integer to Long promotion
         if (clazz.equals(Long.class) && value.getClass().equals(Integer.class)) {
             return Long.valueOf((Integer) value);
         }
-        if (value.getClass().equals(String.class)) {
-            if (clazz.equals(Integer.class)) {
-                return Integer.valueOf((String) value);
+        // String-based conversions
+        if (value instanceof String stringValue) {
+            Object converted = deserializeString(stringValue, clazz);
+            if (converted != null) {
+                return converted;
             }
-            if (clazz.equals(Long.class)) {
-                return Long.valueOf((String) value);
-            }
-            if (clazz.equals(Double.class)) {
-                return Double.valueOf((String) value);
-            }
-            if (clazz.equals(Float.class)) {
-                return Float.valueOf((String) value);
-            }
-        }
-        if (clazz.equals(UUID.class)) {
-            value = UUID.fromString((String)value);
-        }
-        // Bukkit Types
-        if (clazz.equals(Location.class)) {
-            // Get Location from String - may be null...
-            value = Util.getLocationString(((String)value));
-        }
-        if (clazz.equals(World.class)) {
-            // Get world by name - may be null...
-            value = Bukkit.getWorld((String)value);
         }
         // Enums
         if (Enum.class.isAssignableFrom(clazz)) {
-            //Custom enums are a child of the Enum class.
-            // Find out the value
-            Class<Enum> enumClass = (Class<Enum>)clazz;
-            try {
-                String name = ((String)value).toUpperCase(Locale.ENGLISH);
-                // Backwards compatibility for upgrade to 1.16.1
-                if (name.equals("PIG_ZOMBIE") || name.equals("ZOMBIFIED_PIGLIN")) {
-                    return Enums.getIfPresent(EntityType.class, "ZOMBIFIED_PIGLIN")
-                            .or(Enums.getIfPresent(EntityType.class, "PIG_ZOMBIE").or(EntityType.PIG));
-                }
-                value = Enum.valueOf(enumClass, name);
-            } catch (Exception e) {
-                // This value does not exist - probably admin typed it wrongly
-                // Show what is available and pick one at random
-                plugin.logError("Error in YML file: " + value + " is not a valid value in the enum " + clazz.getCanonicalName() + "!");
-                plugin.logError("Options are : ");
-                for (Field fields : enumClass.getFields()) {
-                    plugin.logError(fields.getName());
-                }
-                value = null;
-            }
+            return deserializeEnum((String) value, (Class<Enum>) clazz);
         }
         return value;
+    }
+
+    /**
+     * Deserialize a string value into the target class type.
+     * Handles numeric types, UUID, Location, and World.
+     * @param value the string value
+     * @param clazz the target class
+     * @return the deserialized object, or null if this method does not handle the target class
+     */
+    @Nullable
+    private Object deserializeString(String value, Class<?> clazz) {
+        if (clazz.equals(Integer.class)) {
+            return Integer.valueOf(value);
+        }
+        if (clazz.equals(Long.class)) {
+            return Long.valueOf(value);
+        }
+        if (clazz.equals(Double.class)) {
+            return Double.valueOf(value);
+        }
+        if (clazz.equals(Float.class)) {
+            return Float.valueOf(value);
+        }
+        if (clazz.equals(UUID.class)) {
+            return UUID.fromString(value);
+        }
+        if (clazz.equals(Location.class)) {
+            return Util.getLocationString(value);
+        }
+        if (clazz.equals(World.class)) {
+            return Bukkit.getWorld(value);
+        }
+        return null;
+    }
+
+    /**
+     * Deserialize a string value into an enum constant, with backwards compatibility handling.
+     * @param value the string value
+     * @param enumClass the target enum class
+     * @return the enum constant, or null if invalid
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Nullable
+    private Object deserializeEnum(String value, Class<Enum> enumClass) {
+        try {
+            String name = value.toUpperCase(Locale.ENGLISH);
+            // Backwards compatibility for upgrade to 1.16.1
+            if (name.equals("PIG_ZOMBIE") || name.equals("ZOMBIFIED_PIGLIN")) {
+                return Enums.getIfPresent(EntityType.class, "ZOMBIFIED_PIGLIN")
+                        .or(Enums.getIfPresent(EntityType.class, "PIG_ZOMBIE").or(EntityType.PIG));
+            }
+            // Backwards compatibility for upgrade to 1.20.4
+            if (name.equals("GRASS") && Enums.getIfPresent(EntityType.class, "SHORT_GRASS").isPresent()) {
+                return Enums.getIfPresent(EntityType.class, "SHORT_GRASS");
+            }
+            return Enum.valueOf(enumClass, name);
+        } catch (Exception e) {
+            // This value does not exist - probably admin typed it wrongly
+            plugin.logError("Error in YML file: " + value + " is not a valid value in the enum " + enumClass.getCanonicalName() + "!");
+            plugin.logError("Options are : ");
+            for (Field fields : enumClass.getFields()) {
+                plugin.logError(fields.getName());
+            }
+            return null;
+        }
     }
 
     @Override

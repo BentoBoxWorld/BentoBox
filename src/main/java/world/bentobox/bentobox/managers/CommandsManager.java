@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.commands.BentoBoxCommand;
 
 public class CommandsManager {
 
@@ -21,6 +22,8 @@ public class CommandsManager {
     private final Map<@NonNull String, @NonNull CompositeCommand> commands = new HashMap<>();
     private SimpleCommandMap commandMap;
 
+    // Reflection is required to access Bukkit's internal command map for dynamic command registration
+    @SuppressWarnings("java:S3011")
     public void registerCommand(@NonNull CompositeCommand command) {
         commands.put(command.getLabel(), command);
         // Use reflection to obtain the commandMap method in Bukkit's server.
@@ -38,7 +41,7 @@ public class CommandsManager {
             }
         }
         catch(Exception exception){
-            Bukkit.getLogger().severe("Bukkit server commandMap method is not there! This means no commands can be registered!");
+            BentoBox.getInstance().logError("Bukkit server commandMap method is not there! This means no commands can be registered!");
         }
     }
 
@@ -57,7 +60,7 @@ public class CommandsManager {
             // Zap everything
             commands.clear();
         } catch(Exception e){
-            Bukkit.getLogger().severe("Known commands reflection was not possible, BentoBox is now unstable, so restart server!");
+            BentoBox.getInstance().logError("Known commands reflection was not possible, BentoBox is now unstable, so restart server!");
         }
     }
 
@@ -72,6 +75,7 @@ public class CommandsManager {
     }
 
     /**
+     * Get a map of every command registered in BentoBox
      * @return the commands
      */
     @NonNull
@@ -86,5 +90,12 @@ public class CommandsManager {
     @NonNull
     public Set<String> listCommands() {
         return commands.keySet();
+    }
+
+    /**
+     * Registers BentoBox's built-in top-level commands.
+     */
+    public void registerDefaultCommands() {
+        new BentoBoxCommand();
     }
 }

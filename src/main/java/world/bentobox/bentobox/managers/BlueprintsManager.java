@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
@@ -36,13 +36,16 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 
+import net.kyori.adventure.text.format.NamedTextColor;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
+import world.bentobox.bentobox.blueprints.DisplayListener;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
@@ -112,6 +115,8 @@ public class BlueprintsManager {
         gson = builder.create();
         // Loaded tracker
         blueprintsLoaded = new HashSet<>();
+        // Register Display listeners
+        Bukkit.getPluginManager().registerEvents(new DisplayListener(), plugin);
     }
 
     /**
@@ -264,14 +269,14 @@ public class BlueprintsManager {
         bb.setIcon(Material.PAPER);
         bb.setUniqueId(DEFAULT_BUNDLE_NAME);
         bb.setDisplayName("Default bundle");
-        bb.setDescription(Collections.singletonList(ChatColor.AQUA + "Default bundle of blueprints"));
+        bb.setDescription(Collections.singletonList(NamedTextColor.AQUA + "Default bundle of blueprints"));
         return bb;
     }
 
     private Blueprint getDefaultBlueprint() {
         Blueprint defaultBp = new Blueprint();
         defaultBp.setName("bedrock");
-        defaultBp.setDescription(Collections.singletonList(ChatColor.AQUA + "A bedrock block"));
+        defaultBp.setDescription(Collections.singletonList(NamedTextColor.AQUA + "A bedrock block"));
         defaultBp.setBedrock(new Vector(0, 0, 0));
         Map<Vector, BlueprintBlock> map = new HashMap<>();
         map.put(new Vector(0, 0, 0), new BlueprintBlock("minecraft:bedrock"));
@@ -280,7 +285,7 @@ public class BlueprintsManager {
     }
 
     /**
-     * This should never be needed and is just a boot strap
+     * This should never be needed and is just a bootstrap
      *
      * @param addon addon
      */
@@ -445,7 +450,7 @@ public class BlueprintsManager {
      * @param name   - bundle name
      */
     public void paste(GameModeAddon addon, Island island, String name) {
-        paste(addon, island, name, null);
+        paste(addon, island, name, null, true);
     }
 
     /**
@@ -455,9 +460,10 @@ public class BlueprintsManager {
      * @param island - the island
      * @param name   - name of bundle to paste
      * @param task   - task to run after pasting is completed
+     * @param useNMS - true to use NMS pasting
      * @return true if okay, false is there is a problem
      */
-    public boolean paste(GameModeAddon addon, Island island, String name, Runnable task) {
+    public boolean paste(GameModeAddon addon, Island island, String name, Runnable task, boolean useNMS) {
         if (validate(addon, name) == null) {
             plugin.logError("Tried to paste '" + name + "' but the bundle is not loaded!");
             return false;
@@ -478,9 +484,16 @@ public class BlueprintsManager {
         }
         // Paste
         if (bp != null) {
-            new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste().thenAccept(b -> pasteNether(addon, bb, island).thenAccept(b2 ->
-            pasteEnd(addon, bb, island).thenAccept(message -> sendMessage(island)).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, task))));
+            new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste(useNMS)
+                    .thenAccept(b -> pasteNether(addon, bb, island).thenAccept(
+                            b2 ->
+            pasteEnd(addon, bb, island).thenAccept(message -> sendMessage(island)).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, () -> {
+                runBlueprintCommands(bb, island);
+                if (task != null) task.run();
+            }))));
         }
+        // Set the bundle name
+        island.putMetaData("bundle", new MetaDataValue(name));
         return true;
 
     }
@@ -521,6 +534,28 @@ public class BlueprintsManager {
         if (island != null && island.getOwner() != null) {
             final Optional<User> owner = Optional.of(island).map(i -> User.getInstance(i.getOwner()));
             owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.done"));
+        }
+    }
+
+    /**
+     * Runs any commands associated with the blueprint bundle for the island owner.
+     * Supports [player] and [owner] placeholders. Commands prefixed with [SUDO]
+     * are run as the player; all others run as console.
+     * @param bb - blueprint bundle
+     * @param island - island whose owner receives the commands
+     * @since 2.6.0
+     */
+    private void runBlueprintCommands(BlueprintBundle bb, Island island) {
+        if (bb.getCommands().isEmpty() || island == null) {
+            return;
+        }
+        UUID islandOwner = island.getOwner();
+        if (islandOwner == null) {
+            return;
+        }
+        User owner = User.getInstance(islandOwner);
+        if (owner != null) {
+            Util.runCommands(owner, bb.getCommands(), "blueprint");
         }
     }
 

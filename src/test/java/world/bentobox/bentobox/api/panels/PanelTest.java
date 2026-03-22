@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.panels;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -18,22 +19,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.internal.verification.VerificationModeFactory;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 
@@ -41,9 +37,7 @@ import world.bentobox.bentobox.util.heads.HeadGetter;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Bukkit.class, HeadGetter.class })
-public class PanelTest {
+class PanelTest extends CommonTestSetup {
 
     private String name;
     private Map<Integer, PanelItem> items;
@@ -55,16 +49,14 @@ public class PanelTest {
     private Player player;
     @Mock
     private Inventory inv;
+    private MockedStatic<HeadGetter> mockedHeadGetter;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Server & Bukkit
-        Server server = mock(Server.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        when(Bukkit.createInventory(any(), anyInt(), anyString())).thenReturn(inv);
+        super.setUp();
+        
+        mockedBukkit.when(() -> Bukkit.createInventory(any(), anyInt(), anyString())).thenReturn(inv);
 
         name = "panel";
         items = Collections.emptyMap();
@@ -72,28 +64,26 @@ public class PanelTest {
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
 
         // Head getter
-        PowerMockito.mockStatic(HeadGetter.class);
+        mockedHeadGetter = Mockito.mockStatic(HeadGetter.class);
 
     }
 
-    /**
-     */
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#Panel(java.lang.String, java.util.Map, int, world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testPanel() {
+    void testPanel() {
         // Panel
         new Panel(name, items, 10, user, listener);
 
         // The next two lines have to be paired together to verify the static call
-        PowerMockito.verifyStatic(Bukkit.class, VerificationModeFactory.times(1));
-        Bukkit.createInventory(eq(null), eq(18), eq(name));
+        mockedBukkit.verify(() ->  Bukkit.createInventory(null, 18, name));
 
         verify(listener).setup();
         verify(player).openInventory(any(Inventory.class));
@@ -103,33 +93,31 @@ public class PanelTest {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#Panel(java.lang.String, java.util.Map, int, world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testPanelZeroSize() {
+    void testPanelZeroSize() {
         // Panel
         new Panel(name, items, 0, user, listener);
 
         // The next two lines have to be paired together to verify the static call
-        PowerMockito.verifyStatic(Bukkit.class, VerificationModeFactory.times(1));
-        Bukkit.createInventory(eq(null), eq(9), eq(name));
+        mockedBukkit.verify(() ->  Bukkit.createInventory(null, 9, name));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#Panel(java.lang.String, java.util.Map, int, world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testPanelTooBig() {
+    void testPanelTooBig() {
         // Panel
         new Panel(name, items, 100, user, listener);
 
         // The next two lines have to be paired together to verify the static call
-        PowerMockito.verifyStatic(Bukkit.class, VerificationModeFactory.times(1));
-        Bukkit.createInventory(eq(null), eq(54), eq(name));
+        mockedBukkit.verify(() ->  Bukkit.createInventory(null, 54, name));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#Panel(java.lang.String, java.util.Map, int, world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testPanelNullUser() {
+    void testPanelNullUser() {
         // Panel
         new Panel(name, items, 10, null, listener);
         verify(player, never()).openInventory(any(Inventory.class));
@@ -139,7 +127,7 @@ public class PanelTest {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#Panel(java.lang.String, java.util.Map, int, world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testPanelWithItems() {
+    void testPanelWithItems() {
         // Items
         ItemStack itemStack = mock(ItemStack.class);
         PanelItem item = mock(PanelItem.class);
@@ -153,8 +141,7 @@ public class PanelTest {
         new Panel(name, items, 0, user, listener);
 
         // The next two lines have to be paired together to verify the static call
-        PowerMockito.verifyStatic(Bukkit.class, VerificationModeFactory.times(1));
-        Bukkit.createInventory(eq(null), eq(54), eq(name));
+        mockedBukkit.verify(() ->  Bukkit.createInventory(null, 54, name));
 
         verify(inv, times(54)).setItem(anyInt(), eq(itemStack));
         verify(player).openInventory(any(Inventory.class));
@@ -165,7 +152,7 @@ public class PanelTest {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#Panel(java.lang.String, java.util.Map, int, world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testPanelWithHeads() {
+    void testPanelWithHeads() {
         // Items
         ItemStack itemStack = mock(ItemStack.class);
         PanelItem item = mock(PanelItem.class);
@@ -179,16 +166,14 @@ public class PanelTest {
         // Panel
         Panel p = new Panel(name, items, 0, user, listener);
 
-        // The next two lines have to be paired together to verify the static call
-        PowerMockito.verifyStatic(HeadGetter.class, VerificationModeFactory.times(54));
-        HeadGetter.getHead(eq(item), eq(p));
+        mockedHeadGetter.verify(() -> HeadGetter.getHead(item, p), times(54));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#getInventory()}.
      */
     @Test
-    public void testGetInventory() {
+    void testGetInventory() {
         Panel p = new Panel(name, items, 10, null, listener);
         assertEquals(inv, p.getInventory());
     }
@@ -197,7 +182,7 @@ public class PanelTest {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#getItems()}.
      */
     @Test
-    public void testGetItems() {
+    void testGetItems() {
         Panel p = new Panel(name, items, 10, null, listener);
         assertEquals(items, p.getItems());
     }
@@ -206,18 +191,18 @@ public class PanelTest {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#getListener()}.
      */
     @Test
-    public void testGetListener() {
+    void testGetListener() {
         Panel p = new Panel(name, items, 10, null, listener);
-        assertEquals(listener, p.getListener().get());
+        assertSame(listener, p.getListener().get());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#getUser()}.
      */
     @Test
-    public void testGetUser() {
+    void testGetUser() {
         Panel p = new Panel(name, items, 10, user, listener);
-        assertEquals(user, p.getUser().get());
+        assertSame(user, p.getUser().get());
 
         p = new Panel(name, items, 10, null, listener);
         assertEquals(Optional.empty(), p.getUser());
@@ -227,7 +212,7 @@ public class PanelTest {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#open(org.bukkit.entity.Player[])}.
      */
     @Test
-    public void testOpenPlayerArray() {
+    void testOpenPlayerArray() {
         Panel p = new Panel(name, items, 10, user, listener);
         p.open(player, player, player);
         verify(player, times(4)).openInventory(inv);
@@ -237,7 +222,7 @@ public class PanelTest {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#open(world.bentobox.bentobox.api.user.User[])}.
      */
     @Test
-    public void testOpenUserArray() {
+    void testOpenUserArray() {
         Panel p = new Panel(name, items, 10, user, listener);
         p.open(user, user, user);
         verify(player, times(4)).openInventory(inv);
@@ -247,7 +232,7 @@ public class PanelTest {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#setInventory(org.bukkit.inventory.Inventory)}.
      */
     @Test
-    public void testSetInventory() {
+    void testSetInventory() {
         Panel p = new Panel(name, items, 10, user, listener);
         Inventory inventory = mock(Inventory.class);
         p.setInventory(inventory);
@@ -258,7 +243,7 @@ public class PanelTest {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#setItems(java.util.Map)}.
      */
     @Test
-    public void testSetItems() {
+    void testSetItems() {
         Panel p = new Panel(name, items, 10, user, listener);
         Map<Integer, PanelItem> newMap = new HashMap<>();
         newMap.put(23, mock(PanelItem.class));
@@ -270,38 +255,29 @@ public class PanelTest {
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#setListener(world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
-    public void testSetListener() {
+    void testSetListener() {
         Panel p = new Panel(name, items, 10, user, null);
         assertEquals(Optional.empty(), p.getListener());
         p.setListener(listener);
-        assertEquals(listener, p.getListener().get());
+        assertSame(listener, p.getListener().get());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#setUser(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testSetUser() {
+    void testSetUser() {
         Panel p = new Panel(name, items, 10, null, listener);
         assertEquals(Optional.empty(), p.getUser());
         p.setUser(user);
-        assertEquals(user, p.getUser().get());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.Panel#setHead(world.bentobox.bentobox.api.panels.PanelItem)}.
-     */
-    @Test
-    @Ignore("New test required for new code")
-    public void testSetHead() {
-
+        assertSame(user, p.getUser().get());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#getName()}.
      */
     @Test
-    public void testGetName() {
+    void testGetName() {
         Panel p = new Panel(name, items, 10, null, listener);
         assertEquals(name, p.getName());
     }

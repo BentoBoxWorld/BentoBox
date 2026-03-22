@@ -17,13 +17,21 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
+import org.bukkit.block.TrialSpawner;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.WallSign;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.spawner.TrialSpawnerConfiguration;
 
+import net.kyori.adventure.text.Component;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -31,6 +39,10 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.hooks.FancyNpcsHook;
+import world.bentobox.bentobox.hooks.ItemsAdderHook;
+import world.bentobox.bentobox.hooks.MythicMobsHook;
+import world.bentobox.bentobox.hooks.ZNPCsPlusHook;
 import world.bentobox.bentobox.nms.PasteHandler;
 
 /**
@@ -109,7 +121,7 @@ public class DefaultPasteUtil {
     }
 
     /**
-     * Handles signs, chests and mob spawner blocks
+     * Handles signs, chests, frames, and mob spawner blocks
      *
      * @param island  - island
      * @param block   - block
@@ -118,27 +130,48 @@ public class DefaultPasteUtil {
     public static void setBlockState(Island island, Block block, BlueprintBlock bpBlock) {
         // Get the block state
         BlockState bs = block.getState();
-        // Signs
-        if (bs instanceof Sign) {
-            writeSign(island, block, bpBlock.getSignLines(), bpBlock.isGlowingText());
-        }
+        // ItemFrames
+        if (bs instanceof ItemFrame frame ) {
+            if (!bpBlock.getInventory().isEmpty()) {
+                frame.setItem(bpBlock.getInventory().get(0));
+                bs.update();
+            }
+        } else
+            // Signs
+            if (bs instanceof Sign) {
+                for (Side side : Side.values()) {
+                    writeSign(island, block, bpBlock, side);
+                }
+            }
         // Chests, in general
-        else if (bs instanceof InventoryHolder holder) {
-            Inventory ih = holder.getInventory();
-            // Double chests are pasted as two blocks so inventory is filled twice.
-            // This code stops over-filling for the first block.
-            bpBlock.getInventory().forEach(ih::setItem);
-        }
+            else if (bs instanceof InventoryHolder holder) {
+                Inventory ih = holder.getInventory();
+                // Double chests are pasted as two blocks so inventory is filled twice.
+                // This code stops over-filling for the first block.
+                bpBlock.getInventory().forEach(ih::setItem);
+            }
         // Mob spawners
-        else if (bs instanceof CreatureSpawner spawner) {
-            setSpawner(spawner, bpBlock.getCreatureSpawner());
-        }
+            else if (bs instanceof CreatureSpawner spawner) {
+                setSpawner(spawner, bpBlock.getCreatureSpawner());
+            }
+            else if (bs instanceof TrialSpawner ts) {
+                TrialSpawnerConfiguration config = ts.getNormalConfiguration();
+                ts.setOminous(bpBlock.getTrialSpawner().configTrialSpawner(config));
+                if (!bs.update(true, false)) {
+                    BentoBox.getInstance().logError("Trial Spawner update failed!");
+                }
+            }
         // Banners
-        else if (bs instanceof Banner banner && bpBlock.getBannerPatterns() != null) {
-            bpBlock.getBannerPatterns().removeIf(Objects::isNull);
-            banner.setPatterns(bpBlock.getBannerPatterns());
-            banner.update(true, false);
-        }
+            else if (bs instanceof Banner banner && bpBlock.getBannerPatterns() != null) {
+                bpBlock.getBannerPatterns().removeIf(Objects::isNull);
+                banner.setPatterns(bpBlock.getBannerPatterns());
+                banner.update(true, false);
+            } else // Check ItemsAdder
+                if (bpBlock.getItemsAdderBlock() != null && !bpBlock.getItemsAdderBlock().isEmpty()) {
+                    BentoBox.getInstance().getHooks().getHook("ItemsAdder")
+                    .ifPresent(h -> ItemsAdderHook.place(bpBlock.getItemsAdderBlock(), block.getLocation()));
+                }
+
     }
 
     /**
@@ -164,33 +197,107 @@ public class DefaultPasteUtil {
      * @param island   - island
      * @param location - location
      * @param list     - blueprint entities
+     * @return future boolean - true if Bukkit entity spawned, false another plugin entity spawned
      */
     public static CompletableFuture<Void> setEntity(Island island, Location location, List<BlueprintEntity> list) {
         World world = location.getWorld();
         assert world != null;
-        return Util.getChunkAtAsync(location).thenRun(() -> list.stream().filter(k -> k.getType() != null).forEach(k -> {
-            LivingEntity e = (LivingEntity) location.getWorld().spawnEntity(location, k.getType());
-            if (k.getCustomName() != null) {
-                String customName = k.getCustomName();
+        return Util.getChunkAtAsync(location)
+                .thenRun(() -> list.forEach(k -> spawnBlueprintEntity(k, location, island)));
+    }
 
-                if (island != null) {
-                    // Parse any placeholders in the entity's name, if the owner's connected (he should)
-                    Optional<Player> owner = Optional.ofNullable(island.getOwner())
-                            .map(User::getInstance)
-                            .map(User::getPlayer);
-                    if (owner.isPresent()) {
-                        // Parse for the player's name first (in case placeholders might need it)
-                        customName = customName.replace(TextVariables.NAME, owner.get().getName());
-                        // Now parse the placeholders
-                        customName = plugin.getPlaceholdersManager().replacePlaceholders(owner.get(), customName);
+    /**
+     * Spawn an entity
+     * @param k the blueprint entity definition
+     * @param location location to paste the entity
+     * @param island island
+     * @return true if Bukkit entity spawned, false another plugin entity spawned
+     */
+    static boolean spawnBlueprintEntity(BlueprintEntity k, Location location, Island island) {
+        // Display Entity (holograms, etc.)
+        k.setDisplay(location);
+        // Try to spawn via plugin hooks (FancyNpcs, ZNPCsPlus, MythicMobs)
+        if (trySpawnPluginEntity(k, location)) {
+            return false;
+        }
+        if (k.getType() == null) {
+            // Nothing
+            return false;
+        }
+        Entity e = location.getWorld().spawnEntity(location, k.getType());
+        applyCustomName(e, k, island);
+        k.configureEntity(e);
+
+        return true;
+    }
+
+    /**
+     * Attempt to spawn a blueprint entity using plugin hooks (FancyNpcs, ZNPCsPlus, MythicMobs).
+     *
+     * @param k        the blueprint entity definition
+     * @param location location to spawn the entity
+     * @return true if any hook successfully spawned the entity, false otherwise
+     */
+    private static boolean trySpawnPluginEntity(BlueprintEntity k, Location location) {
+        // FancyNpcs entity
+        if (k.getNpc() != null
+                && plugin.getHooks().getHook("FancyNpcs").filter(FancyNpcsHook.class::isInstance).map(mmh -> {
+                    try {
+                        return ((FancyNpcsHook) mmh).spawnNpc(k.getNpc(), location);
+                    } catch (InvalidConfigurationException e) {
+                        plugin.logError("FancyNpc loading failed in blueprint.");
+                        return false;
                     }
-                }
+                }).orElse(false)) {
+            return true;
+        }
+        // ZNPCsPlus
+        if (k.getNpc() != null
+                && plugin.getHooks().getHook("ZNPCsPlus").filter(ZNPCsPlusHook.class::isInstance).map(znpch -> {
+                    try {
+                        return ((ZNPCsPlusHook) znpch).spawnNpc(k.getNpc(), location);
+                    } catch (InvalidConfigurationException e) {
+                        plugin.logError("ZNPCsPlus loading failed in blueprint.");
+                        return false;
+                    }
+                }).orElse(false)) {
+            return true;
+        }
+        // MythicMobs entity
+        if (k.getMythicMobsRecord() != null && plugin.getHooks().getHook("MythicMobs")
+                .filter(mmh -> mmh instanceof MythicMobsHook)
+                .map(mmh -> ((MythicMobsHook) mmh).spawnMythicMob(k.getMythicMobsRecord(), location))
+                .orElse(false)) {
+            return true;
+        }
+        return false;
+    }
 
-                // Actually set the custom name
-                e.setCustomName(customName);
+    /**
+     * Apply a custom name to an entity, resolving placeholders against the island owner if present.
+     *
+     * @param e      the entity to name
+     * @param k      the blueprint entity definition (source of the custom name)
+     * @param island the island being pasted (may be null)
+     */
+    private static void applyCustomName(Entity e, BlueprintEntity k, Island island) {
+        if (k.getCustomName() == null) {
+            return;
+        }
+        String customName = k.getCustomName();
+        if (island != null) {
+            // Parse any placeholders in the entity's name, if the owner's connected (he should)
+            Optional<Player> owner = Optional.ofNullable(island.getOwner()).map(User::getInstance)
+                    .map(User::getPlayer);
+            if (owner.isPresent()) {
+                // Parse for the player's name first (in case placeholders might need it)
+                customName = customName.replace(TextVariables.NAME, owner.get().getName());
+                // Now parse the placeholders
+                customName = plugin.getPlaceholdersManager().replacePlaceholders(owner.get(), customName);
             }
-            k.configureEntity(e);
-        }));
+        }
+        // Actually set the custom name
+        e.customName(Component.text(customName));
     }
 
     /**
@@ -198,25 +305,18 @@ public class DefaultPasteUtil {
      *
      * @param island - island
      * @param block  - block
-     * @param lines  - lines
-     * @param glow   - is sign glowing?
+     * @param bpSign - BlueprintBlock that is the sign
+     * @param side   - the side being written
      */
-    public static void writeSign(Island island, final Block block, final List<String> lines, boolean glow) {
-        BlockFace bf;
-        if (block.getType().name().contains("WALL_SIGN")) {
-            WallSign wallSign = (WallSign) block.getBlockData();
-            bf = wallSign.getFacing();
-        } else {
-            org.bukkit.block.data.type.Sign sign = (org.bukkit.block.data.type.Sign) block.getBlockData();
-            bf = sign.getRotation();
-        }
+    @SuppressWarnings("deprecation")
+    public static void writeSign(Island island, final Block block, BlueprintBlock bpSign, Side side) {
+        List<String> lines = bpSign.getSignLines(side);
+        boolean glow = bpSign.isGlowingText(side);
+        BlockData bd = block.getBlockData();
+        BlockFace bf = (bd instanceof WallSign ws) ? ws.getFacing()
+                : ((org.bukkit.block.data.type.Sign) bd).getRotation();
         // Handle spawn sign
-        if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
-            block.setType(Material.AIR);
-            // Orient to face same direction as sign
-            Location spawnPoint = new Location(block.getWorld(), block.getX() + 0.5D, block.getY(),
-                    block.getZ() + 0.5D, Util.blockFaceToFloat(bf.getOppositeFace()), 30F);
-            island.setSpawnPoint(block.getWorld().getEnvironment(), spawnPoint);
+        if (handleSpawnSign(island, block, bf, bd, side, lines)) {
             return;
         }
         // Get the name of the player
@@ -225,26 +325,72 @@ public class DefaultPasteUtil {
             name = plugin.getPlayers().getName(island.getOwner());
         }
         // Handle locale text for starting sign
-        org.bukkit.block.Sign s = (org.bukkit.block.Sign) block.getState();
+        Sign s = (org.bukkit.block.Sign) block.getState();
+        SignSide signSide = s.getSide(side);
+        writeLocalizedSignText(signSide, island, lines, name);
+        signSide.setGlowingText(glow);
+        // Update the sign
+        s.update();
+    }
+
+    /**
+     * Handle a spawn-point sign: replace the sign block with air/water, set the island spawn point,
+     * and return true so the caller can skip normal sign writing.
+     *
+     * @param island the island being pasted (may be null)
+     * @param block  the sign block
+     * @param bf     the block face direction the sign is facing
+     * @param bd     the block data of the sign
+     * @param side   the side of the sign being processed
+     * @param lines  the text lines stored in the blueprint for this side
+     * @return true if this was a spawn sign and no further sign processing is needed
+     */
+    private static boolean handleSpawnSign(Island island, Block block, BlockFace bf, BlockData bd, Side side, List<String> lines) {
+        if (side != Side.FRONT || island == null || lines.isEmpty()
+                || !lines.getFirst().equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
+            return false;
+        }
+        if (bd instanceof Waterlogged wl && wl.isWaterlogged()) {
+            block.setType(Material.WATER);
+        } else {
+            block.setType(Material.AIR);
+        }
+        // Orient to face same direction as sign
+        Location spawnPoint = new Location(block.getWorld(), block.getX() + 0.5D, block.getY(),
+                block.getZ() + 0.5D, Util.blockFaceToFloat(bf.getOppositeFace()), 30F);
+        island.setSpawnPoint(block.getWorld().getEnvironment(), spawnPoint);
+        return true;
+    }
+
+    /**
+     * Write localized or literal text to the given sign side.
+     * <p>
+     * If the first line equals {@link TextVariables#START_TEXT} and an owner user is present,
+     * locale strings are fetched and written; otherwise the blueprint lines are pasted verbatim.
+     *
+     * @param signSide the sign side to write to
+     * @param island   the island being pasted (may be null)
+     * @param lines    the text lines stored in the blueprint
+     * @param name     the island owner's player name (empty string when unknown)
+     */
+    private static void writeLocalizedSignText(SignSide signSide, Island island, List<String> lines, String name) {
         // Sign text must be stored under the addon's name.sign.line0,1,2,3 in the yaml file
-        if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.START_TEXT)) {
+        if (island != null && !lines.isEmpty() && lines.getFirst().equalsIgnoreCase(TextVariables.START_TEXT)) {
             // Get the addon that is operating in this world
-            String addonName = plugin.getIWM().getAddon(island.getWorld()).map(addon -> addon.getDescription().getName().toLowerCase(Locale.ENGLISH)).orElse("");
+            String addonName = plugin.getIWM().getAddon(island.getWorld())
+                    .map(addon -> addon.getDescription().getName().toLowerCase(Locale.ENGLISH)).orElse("");
             Optional<User> user = Optional.ofNullable(island.getOwner()).map(User::getInstance);
             if (user.isPresent()) {
                 for (int i = 0; i < 4; i++) {
-                    s.setLine(i, Util.translateColorCodes(plugin.getLocalesManager().getOrDefault(user.get(),
+                    signSide.setLine(i, Util.translateColorCodes(plugin.getLocalesManager().getOrDefault(user.get(),
                             addonName + ".sign.line" + i, "").replace(TextVariables.NAME, name)));
                 }
             }
         } else {
             // Just paste
             for (int i = 0; i < 4; i++) {
-                s.setLine(i, lines.get(i));
+                signSide.setLine(i, lines.get(i));
             }
         }
-        s.setGlowingText(glow);
-        // Update the sign
-        s.update();
     }
 }

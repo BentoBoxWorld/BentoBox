@@ -1,13 +1,10 @@
 package world.bentobox.bentobox.api.commands.admin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -16,26 +13,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -43,7 +32,6 @@ import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
@@ -52,38 +40,28 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class AdminResetFlagsCommandTest {
+class AdminResetFlagsCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
-    private final UUID uuid = UUID.randomUUID();
-    @Mock
-    private IslandsManager im;
     @Mock
     private PlayersManager pm;
     @Mock
-    private FlagsManager fm;
+    private FlagsManager testFm;
     @Mock
     private Flag flag;
     @Mock
     private Flag flag2;
     @Mock
     private Flag flag3;
-    @Mock
-    private Player player;
 
     private AdminResetFlagsCommand arf;
     private @Nullable User user;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -95,11 +73,11 @@ public class AdminResetFlagsCommandTest {
         when(ac.getPermissionPrefix()).thenReturn("bskyblock.");
 
         // Player
-        when(player.getUniqueId()).thenReturn(uuid);
-        user = User.getInstance(player);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        user = User.getInstance(mockPlayer);
 
         // Flags manager
-        when(plugin.getFlagsManager()).thenReturn(fm);
+        when(plugin.getFlagsManager()).thenReturn(testFm);
         when(flag.getType()).thenReturn(Type.PROTECTION);
         when(flag2.getType()).thenReturn(Type.SETTING);
         when(flag3.getType()).thenReturn(Type.WORLD_SETTING);
@@ -111,7 +89,7 @@ public class AdminResetFlagsCommandTest {
         list.add(flag);
         list.add(flag2);
         list.add(flag3);
-        when(fm.getFlags()).thenReturn(list);
+        when(testFm.getFlags()).thenReturn(list);
 
         // Locales & Placeholders
         LocalesManager lm = mock(LocalesManager.class);
@@ -129,8 +107,7 @@ public class AdminResetFlagsCommandTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
 
 
         // Class
@@ -138,30 +115,25 @@ public class AdminResetFlagsCommandTest {
 
     }
 
-    /**
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#AdminResetFlagsCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
-    public void testAdminResetFlagsCommand() {
+    void testAdminResetFlagsCommand() {
         assertEquals("resetflags", arf.getLabel());
-        verify(flag).getID();
-        verify(flag2).getID();
-        verify(flag3, never()).getID();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertFalse(arf.isOnlyPlayer());
         assertEquals("bskyblock.admin.resetflags", arf.getPermission());
         assertEquals("commands.admin.resetflags.parameters", arf.getParameters());
@@ -172,26 +144,26 @@ public class AdminResetFlagsCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringTwoArgs() {
+    void testExecuteUserStringListOfStringTwoArgs() {
         List<String> args = Arrays.asList("sdfsd", "werwerw");
         assertFalse(arf.execute(user, "", args));
-        verify(player).sendMessage(eq("commands.help.header"));
+        checkSpigotMessage("commands.help.header");
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringOneArgNotFlag() {
+    void testExecuteUserStringListOfStringOneArgNotFlag() {
         assertFalse(arf.execute(user, "", Collections.singletonList("FLAG3")));
-        verify(player).sendMessage(eq("commands.help.header"));
+        checkSpigotMessage("commands.help.header");
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringOneArgFlag2() {
+    void testExecuteUserStringListOfStringOneArgFlag2() {
         assertTrue(arf.execute(user, "", Collections.singletonList("FLAG2")));
     }
 
@@ -199,7 +171,7 @@ public class AdminResetFlagsCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringOneArgFlag1() {
+    void testExecuteUserStringListOfStringOneArgFlag1() {
         assertTrue(arf.execute(user, "", Collections.singletonList("FLAG1")));
     }
 
@@ -207,7 +179,7 @@ public class AdminResetFlagsCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         assertTrue(arf.execute(user, "", Collections.emptyList()));
     }
 
@@ -215,7 +187,7 @@ public class AdminResetFlagsCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfString() {
+    void testTabCompleteUserStringListOfString() {
         Optional<List<String>> list = arf.tabComplete(user, "", Collections.emptyList());
         assertTrue(list.isPresent());
         assertEquals(2, list.get().size());

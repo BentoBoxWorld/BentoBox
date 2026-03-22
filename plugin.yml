@@ -1,0 +1,66 @@
+name: BentoBox
+main: world.bentobox.bentobox.BentoBox
+version: 3.10.2-LOCAL-SNAPSHOT-LOCAL
+api-version: "1.21"
+
+authors: [tastybento, Poslovitch]
+contributors: ["The BentoBoxWorld Community"]
+website: https://bentobox.world
+description: 
+
+load: STARTUP
+
+loadbefore: [Pladdon, Multiverse-Core, My_Worlds, Residence]
+
+softdepend:
+  - Citizens
+  - Vault
+  - PlaceholderAPI
+  - dynmap
+  - BsbMongo
+  - AdvancedChests
+  - LangUtils
+  - WildStacker
+  - LuckPerms
+  - EconomyPlus
+  - MythicMobs
+  - ZNPCsPlus
+  - FancyNpcs
+  - FancyHolograms
+
+libraries:
+  - mysql:mysql-connector-java:8.0.27
+  - org.mariadb.jdbc:mariadb-java-client:3.0.5
+  - org.postgresql:postgresql:42.2.18
+  - org.mongodb:mongodb-driver:3.12.12
+  - com.zaxxer:HikariCP:5.0.1
+
+permissions:
+  bentobox.admin:
+    description: Allows admin command usage
+    default: op
+    children:
+      bentobox.admin.catalog:
+        description: Allows to use /bentobox catalog
+        default: op
+      bentobox.admin.locale:
+        description: Allows to use /bentobox locale
+        default: op
+      bentobox.admin.manage:
+        description: Allows to use /bentobox manage
+        default: op
+      bentobox.admin.migrate:
+        description: Allows to use /bentobox migrate
+        default: op
+      bentobox.admin.reload:
+        description: Allows to use /bentobox reload
+        default: op
+  bentobox.about:
+    description: Allows to use /bentobox about
+    default: true
+  bentobox.version:
+    description: Allows to use /bentobox version
+    default: op
+  bentobox.perms:
+    description: Allow use of '/bentobox perms' command
+    default: op

@@ -30,23 +30,31 @@ public class PanelItemBuilder {
      */
     private int amount = 1;
 
-    /**
-     * Default icon if someone gives invalid material or item stack.
-     */
-    private static final ItemStack DEFAULT_ICON = new ItemStack(Material.PAPER);
-
-
     public PanelItemBuilder icon(@Nullable Material icon) {
-        this.icon = icon == null ? DEFAULT_ICON.clone() : new ItemStack(icon);
+        this.icon = icon == null ? new ItemStack(Material.PAPER) : new ItemStack(icon);
         return this;
     }
 
     public PanelItemBuilder icon(@Nullable ItemStack icon) {
-        this.icon = icon == null ? DEFAULT_ICON.clone() : icon;
+        this.icon = icon == null ? new ItemStack(Material.PAPER) : icon;
         // use icon stack amount.
         this.amount = this.icon.getAmount();
         return this;
     }
+
+
+    /**
+     * Assigns icon and player name to the panel item.
+     * @param playerName the name of player head icon.
+     * @param icon the original player head icon
+     * @return PanelItemBuilder
+     */
+    public PanelItemBuilder icon(String playerName, ItemStack icon) {
+        this.icon = icon;
+        this.playerHeadName = playerName;
+        return this;
+    }
+
 
     /**
      * Set icon to player's head
@@ -54,9 +62,7 @@ public class PanelItemBuilder {
      * @return PanelItemBuilder
      */
     public PanelItemBuilder icon(String playerName) {
-        this.icon = new ItemStack(Material.PLAYER_HEAD, 1);
-        this.playerHeadName = playerName;
-        return this;
+        return this.icon(playerName, new ItemStack(Material.PLAYER_HEAD));
     }
 
     public PanelItemBuilder name(@Nullable String name) {
@@ -104,7 +110,9 @@ public class PanelItemBuilder {
      * @return PanelItemBuilder
      */
     public PanelItemBuilder description(String description) {
-        Collections.addAll(this.description, description.split("\n"));
+        if (description != null) {
+            Collections.addAll(this.description, description.replace("\\n", "\n").split("\n"));
+        }
         return this;
     }
 
@@ -168,7 +176,7 @@ public class PanelItemBuilder {
     public boolean isPlayerHead() {
         return playerHeadName != null && !playerHeadName.isEmpty();
     }
-    
+
     /**
      * @return the playerHead
      * @since 1.9.0

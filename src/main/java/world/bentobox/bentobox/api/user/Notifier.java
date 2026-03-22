@@ -28,7 +28,7 @@ public class Notifier {
             .build(
                     new CacheLoader<>() {
                         @Override
-                        public Notification load(@NonNull User user) {
+                        public @NonNull Notification load(@NonNull User user) {
                             return new Notification(null, 0);
                         }
                     }
@@ -38,7 +38,7 @@ public class Notifier {
      * Sends message to a user only if the message hasn't been sent recently
      * @param user - user
      * @param message - message to send (already translated)
-     * @return true if message sent successfully, false it it has been throttled
+     * @return true if message sent successfully, false it is being throttled
      */
     public synchronized boolean notify(User user, String message) {
         try {

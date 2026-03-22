@@ -21,7 +21,7 @@ public class AdminTeamAddCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission("mod.team");
+        setPermission("mod.team.add");
         setParametersHelp("commands.admin.team.add.parameters");
         setDescription("commands.admin.team.add.description");
     }
@@ -34,9 +34,9 @@ public class AdminTeamAddCommand extends CompositeCommand {
             return false;
         }
         // Get owner and target
-        UUID ownerUUID = Util.getUUID(args.get(0));
+        UUID ownerUUID = Util.getUUID(args.getFirst());
         if (ownerUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         UUID targetUUID = Util.getUUID(args.get(1));
@@ -44,19 +44,17 @@ public class AdminTeamAddCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
             return false;
         }
-        if (!getIslands().hasIsland(getWorld(), ownerUUID)) {
+        Island island = getIslands().getPrimaryIsland(getWorld(), ownerUUID);
+        if (island == null || !getIslands().hasIsland(getWorld(), ownerUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
-        if (getIslands().inTeam(getWorld(), ownerUUID) && !getIslands().getOwner(getWorld(), ownerUUID).equals(ownerUUID)) {
-            user.sendMessage("commands.admin.team.add.name-not-owner", TextVariables.NAME, args.get(0));
-            Island island = getIslands().getIsland(getWorld(), ownerUUID);
-            if (island != null) {
-                new IslandInfo(island).showMembers(user);
-            }
+        if (getIslands().inTeam(getWorld(), ownerUUID) && !ownerUUID.equals(island.getOwner())) {
+            user.sendMessage("commands.admin.team.add.name-not-owner", TextVariables.NAME, args.getFirst());
+            new IslandInfo(island).showMembers(user);
             return false;
         }
-        if (getIslands().inTeam(getWorld(), targetUUID)) {
+        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands() && island.inTeam(targetUUID)) {
             user.sendMessage("commands.island.team.invite.errors.already-on-team");
             return false;
         }
@@ -67,25 +65,19 @@ public class AdminTeamAddCommand extends CompositeCommand {
         // Success
         User target = User.getInstance(targetUUID);
         User owner = User.getInstance(ownerUUID);
-        owner.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, getPlugin().getPlayers().getName(targetUUID));
+        owner.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME,
+                getPlugin().getPlayers().getName(targetUUID));
         target.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
         Island teamIsland = getIslands().getIsland(getWorld(), ownerUUID);
         if (teamIsland != null) {
             getIslands().setJoinTeam(teamIsland, targetUUID);
-            user.sendMessage("commands.admin.team.add.success", TextVariables.NAME, target.getName(), "[owner]", owner.getName());
-            TeamEvent.builder()
-            .island(teamIsland)
-            .reason(TeamEvent.Reason.JOINED)
-            .involvedPlayer(targetUUID)
-            .admin(true)
-            .build();
-            IslandEvent.builder()
-            .island(teamIsland)
-            .involvedPlayer(targetUUID)
-            .admin(true)
-            .reason(IslandEvent.Reason.RANK_CHANGE)
-            .rankChange(teamIsland.getRank(target), RanksManager.MEMBER_RANK)
-            .build();
+            user.sendMessage("commands.admin.team.add.success", TextVariables.NAME, target.getName(), "[owner]",
+                    owner.getName());
+            TeamEvent.builder().island(teamIsland).reason(TeamEvent.Reason.JOINED).involvedPlayer(targetUUID)
+                    .admin(true).build();
+            IslandEvent.builder().island(teamIsland).involvedPlayer(targetUUID).admin(true)
+                    .reason(IslandEvent.Reason.RANK_CHANGE)
+                    .rankChange(teamIsland.getRank(target), RanksManager.MEMBER_RANK).build();
             return true;
         } else {
             user.sendMessage("general.errors.player-has-no-island");

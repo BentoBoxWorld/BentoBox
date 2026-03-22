@@ -1,9 +1,11 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -13,33 +15,33 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
-import org.bukkit.Bukkit;
+import com.google.common.collect.ImmutableSet;
+
+import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
-import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
+import world.bentobox.bentobox.TestWorldSettings;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent.TeamEventBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.TeamInvite;
+import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -48,38 +50,26 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, TeamEvent.class })
-public class IslandTeamInviteAcceptCommandTest {
+class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private IslandTeamCommand itc;
-    private UUID uuid;
     @Mock
     private User user;
-    @Mock
-    private IslandsManager im;
     @Mock
     private PlayersManager pm;
     private UUID notUUID;
     @Mock
     private Settings s;
     @Mock
-    private Island island;
-    @Mock
     private IslandTeamInviteAcceptCommand c;
     @Mock
-    private PluginManager pim;
-    @Mock
-    private Invite invite;
+    private TeamInvite invite;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -89,16 +79,14 @@ public class IslandTeamInviteAcceptCommandTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         User.setPlugin(plugin);
 
@@ -111,27 +99,18 @@ public class IslandTeamInviteAcceptCommandTest {
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
-        when(im.isOwner(any(), any())).thenReturn(true);
-        when(im.getOwner(any(), any())).thenReturn(uuid);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         // Island
         when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(island.getRank(any(UUID.class))).thenReturn(RanksManager.OWNER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
-        when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         // Player Manager
         when(plugin.getPlayers()).thenReturn(pm);
-
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -140,47 +119,49 @@ public class IslandTeamInviteAcceptCommandTest {
         when(user.getTranslation(anyString())).thenReturn("mock translation2");
 
         // IWM friendly name
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-        when(plugin.getIWM()).thenReturn(iwm);
+        TestWorldSettings worldSettings = new TestWorldSettings();
+        when(iwm.getWorldSettings(any())).thenReturn(worldSettings);
 
         // Invite
-        when(invite.getType()).thenReturn(Invite.Type.TEAM);
+        when(invite.getType()).thenReturn(Type.TEAM);
 
         // Team invite accept command
         c = new IslandTeamInviteAcceptCommand(itc);
     }
 
-    /**
-     */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
-        User.clearUsers();
+        super.tearDown();
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#IslandTeamInviteAcceptCommand(world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#IslandTeamInviteAcceptCommand(world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand)}.
      */
     @Test
-    public void testIslandTeamInviteAcceptCommand() {
+    void testIslandTeamInviteAcceptCommand() {
         assertEquals("accept", c.getLabel());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#setup()}.
      */
     @Test
-    public void testSetup() {
-        //TODO: test permission inheritance?
+    void testSetup() {
+        // TODO: test permission inheritance?
         assertTrue(c.isOnlyPlayer());
         assertEquals("commands.island.team.invite.accept.description", c.getDescription());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoInvite() {
+    void testCanExecuteNoInvite() {
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
         verify(user).sendMessage("commands.island.team.invite.errors.none-invited-you");
     }
@@ -189,7 +170,7 @@ public class IslandTeamInviteAcceptCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteInTeam() {
+    void testCanExecuteInTeam() {
         when(itc.isInvited(any())).thenReturn(true);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
         verify(user).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
@@ -199,7 +180,7 @@ public class IslandTeamInviteAcceptCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteInvalidInvite() {
+    void testCanExecuteInvalidInvite() {
         when(itc.isInvited(any())).thenReturn(true);
         when(im.inTeam(any(), any())).thenReturn(false);
         when(island.getRank(any(UUID.class))).thenReturn(RanksManager.VISITOR_RANK);
@@ -212,7 +193,7 @@ public class IslandTeamInviteAcceptCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteSubOwnerRankInvite() {
+    void testCanExecuteSubOwnerRankInvite() {
         when(itc.isInvited(any())).thenReturn(true);
         when(im.inTeam(any(), any())).thenReturn(false);
         when(island.getRank(any(UUID.class))).thenReturn(RanksManager.SUB_OWNER_RANK);
@@ -227,7 +208,7 @@ public class IslandTeamInviteAcceptCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteInvalidInviteNull() {
+    void testCanExecuteInvalidInviteNull() {
         when(itc.getInviter(any())).thenReturn(null);
         when(itc.isInvited(any())).thenReturn(true);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
@@ -239,7 +220,7 @@ public class IslandTeamInviteAcceptCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOkay() {
+    void testCanExecuteOkay() {
         when(itc.isInvited(any())).thenReturn(true);
         when(itc.getInviter(any())).thenReturn(notUUID);
         when(itc.getInvite(any())).thenReturn(invite);
@@ -254,7 +235,7 @@ public class IslandTeamInviteAcceptCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOkayTrust() {
+    void testCanExecuteOkayTrust() {
         when(itc.isInvited(any())).thenReturn(true);
         when(itc.getInviter(any())).thenReturn(notUUID);
         when(itc.getInvite(any())).thenReturn(invite);
@@ -271,11 +252,11 @@ public class IslandTeamInviteAcceptCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOkayCoop() {
+    void testCanExecuteOkayCoop() {
         when(itc.isInvited(any())).thenReturn(true);
         when(itc.getInviter(any())).thenReturn(notUUID);
         when(itc.getInvite(any())).thenReturn(invite);
-        when(invite.getType()).thenReturn(Invite.Type.COOP);
+        when(invite.getType()).thenReturn(Type.COOP);
         when(im.inTeam(any(), any())).thenReturn(false);
         assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
         verify(user, never()).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
@@ -288,14 +269,14 @@ public class IslandTeamInviteAcceptCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteEventBlocked() {
+    void testCanExecuteEventBlocked() {
         when(itc.isInvited(any())).thenReturn(true);
         when(itc.getInviter(any())).thenReturn(notUUID);
         when(itc.getInvite(any())).thenReturn(invite);
         when(im.inTeam(any(), any())).thenReturn(false);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Block event
-        PowerMockito.mockStatic(TeamEvent.class);
+        MockedStatic<TeamEvent> mockedTeamEvent = Mockito.mockStatic(TeamEvent.class);
         TeamEventBuilder teb = mock(TeamEventBuilder.class);
         when(teb.island(any())).thenReturn(teb);
         when(teb.involvedPlayer(any())).thenReturn(teb);
@@ -303,17 +284,18 @@ public class IslandTeamInviteAcceptCommandTest {
         IslandBaseEvent ibe = mock(IslandBaseEvent.class);
         when(ibe.isCancelled()).thenReturn(true);
         when(teb.build()).thenReturn(ibe);
-        when(TeamEvent.builder()).thenReturn(teb);
+        mockedTeamEvent.when(TeamEvent::builder).thenReturn(teb);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
         verify(user, never()).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
         verify(user, never()).sendMessage("commands.island.team.invite.errors.invalid-invite");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         // Team
         assertTrue(c.execute(user, "accept", Collections.emptyList()));
         verify(user).getTranslation("commands.island.team.invite.accept.confirmation");
@@ -323,22 +305,132 @@ public class IslandTeamInviteAcceptCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringCoop() {
+    void testExecuteUserStringListOfStringCoop() {
         // Coop
-        when(invite.getType()).thenReturn(Invite.Type.COOP);
+        when(invite.getType()).thenReturn(Type.COOP);
         assertTrue(c.execute(user, "accept", Collections.emptyList()));
         verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringTrust() {
+    void testExecuteUserStringListOfStringTrust() {
         // Trust
-        when(invite.getType()).thenReturn(Invite.Type.TRUST);
+        when(invite.getType()).thenReturn(Type.TRUST);
         assertTrue(c.execute(user, "accept", Collections.emptyList()));
         verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
+    }
+
+    /**
+     * Test that XP is reset when accepting a team invite and isDisallowTeamMemberIslands is true (default).
+     */
+    @Test
+    void testAcceptTeamInvite_xpResetWhenDisallowTeamMemberIslandsTrue() {
+        // Set up world settings with isDisallowTeamMemberIslands = true (default) and isOnJoinResetXP = true
+        when(itc.getWorld()).thenReturn(world);
+        when(iwm.isOnJoinResetXP(any())).thenReturn(true);
+        when(iwm.getOnJoinCommands(any())).thenReturn(Collections.emptyList());
+
+        // Set up team island
+        String islandId = UUID.randomUUID().toString();
+        when(invite.getIslandID()).thenReturn(islandId);
+        when(invite.getInviter()).thenReturn(notUUID);
+        Island teamIsland = mock(Island.class);
+        when(teamIsland.getOwner()).thenReturn(notUUID);
+        when(teamIsland.getMemberSet(anyInt(), anyBoolean())).thenReturn(ImmutableSet.of());
+        when(im.getIslandById(islandId)).thenReturn(Optional.of(teamIsland));
+        when(im.getMaxMembers(any(), anyInt())).thenReturn(4);
+        when(im.getIslands(any(), any(UUID.class))).thenReturn(Collections.emptyList());
+        when(im.homeTeleportAsync(any(World.class), any(Player.class)))
+                .thenReturn(CompletableFuture.completedFuture(true));
+
+        // Execute
+        c.acceptTeamInvite(user, invite);
+
+        // Verify XP was reset
+        verify(mockPlayer).setLevel(0);
+        verify(mockPlayer).setExp(0F);
+        verify(mockPlayer).setTotalExperience(0);
+    }
+
+    /**
+     * Test that XP is reset when accepting a team invite and isDisallowTeamMemberIslands is false.
+     * This ensures XP resets also work when players are allowed to keep their own islands in a team.
+     */
+    @Test
+    void testAcceptTeamInvite_xpResetWhenDisallowTeamMemberIslandsFalse() {
+        // Override world settings to return isDisallowTeamMemberIslands = false
+        WorldSettings ws = new TestWorldSettings() {
+            @Override
+            public boolean isDisallowTeamMemberIslands() {
+                return false;
+            }
+        };
+        when(itc.getWorld()).thenReturn(world);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        when(iwm.isOnJoinResetXP(any())).thenReturn(true);
+        when(iwm.getOnJoinCommands(any())).thenReturn(Collections.emptyList());
+
+        // Set up team island
+        String islandId = UUID.randomUUID().toString();
+        when(invite.getIslandID()).thenReturn(islandId);
+        when(invite.getInviter()).thenReturn(notUUID);
+        Island teamIsland = mock(Island.class);
+        when(teamIsland.getOwner()).thenReturn(notUUID);
+        when(teamIsland.getMemberSet(anyInt(), anyBoolean())).thenReturn(ImmutableSet.of());
+        when(im.getIslandById(islandId)).thenReturn(Optional.of(teamIsland));
+        when(im.getMaxMembers(any(), anyInt())).thenReturn(4);
+        when(im.homeTeleportAsync(any(World.class), any(Player.class)))
+                .thenReturn(CompletableFuture.completedFuture(true));
+
+        // Execute
+        c.acceptTeamInvite(user, invite);
+
+        // Verify XP was reset even though isDisallowTeamMemberIslands is false
+        verify(mockPlayer).setLevel(0);
+        verify(mockPlayer).setExp(0F);
+        verify(mockPlayer).setTotalExperience(0);
+    }
+
+    /**
+     * Test that XP is NOT reset when isOnJoinResetXP is false and isDisallowTeamMemberIslands is false.
+     */
+    @Test
+    void testAcceptTeamInvite_xpNotResetWhenSettingDisabled() {
+        // Override world settings to return isDisallowTeamMemberIslands = false
+        WorldSettings ws = new TestWorldSettings() {
+            @Override
+            public boolean isDisallowTeamMemberIslands() {
+                return false;
+            }
+        };
+        when(itc.getWorld()).thenReturn(world);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        when(iwm.isOnJoinResetXP(any())).thenReturn(false);
+        when(iwm.getOnJoinCommands(any())).thenReturn(Collections.emptyList());
+
+        // Set up team island
+        String islandId = UUID.randomUUID().toString();
+        when(invite.getIslandID()).thenReturn(islandId);
+        when(invite.getInviter()).thenReturn(notUUID);
+        Island teamIsland = mock(Island.class);
+        when(teamIsland.getOwner()).thenReturn(notUUID);
+        when(teamIsland.getMemberSet(anyInt(), anyBoolean())).thenReturn(ImmutableSet.of());
+        when(im.getIslandById(islandId)).thenReturn(Optional.of(teamIsland));
+        when(im.getMaxMembers(any(), anyInt())).thenReturn(4);
+        when(im.homeTeleportAsync(any(World.class), any(Player.class)))
+                .thenReturn(CompletableFuture.completedFuture(true));
+
+        // Execute
+        c.acceptTeamInvite(user, invite);
+
+        // Verify XP was NOT reset
+        verify(mockPlayer, never()).setLevel(0);
+        verify(mockPlayer, never()).setExp(0F);
+        verify(mockPlayer, never()).setTotalExperience(0);
     }
 
 }

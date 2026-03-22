@@ -35,23 +35,20 @@ public class AdminInfoCommand extends CompositeCommand {
         }
         // If there are no args, then the player wants info on the island at this location
         if (args.isEmpty()) {
-            getIslands().getIslandAt(user.getLocation()).ifPresentOrElse(i -> new IslandInfo(i).showAdminInfo(user), () ->
+            getIslands().getIslandAt(user.getLocation()).ifPresentOrElse(i -> new IslandInfo(i).showAdminInfo(user, getAddon()), () ->
             user.sendMessage("commands.admin.info.no-island"));
             return true;
         }
         // Get target player
-        UUID targetUUID = Util.getUUID(args.get(0));
+        UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Show info for this player
         Island island = getIslands().getIsland(getWorld(), targetUUID);
         if (island != null) {
-            new IslandInfo(island).showAdminInfo(user);
-            if (!getIslands().getQuarantinedIslandByUser(getWorld(), targetUUID).isEmpty()) {
-                user.sendMessage("commands.admin.info.islands-in-trash");
-            }
+            new IslandInfo(island).showAdminInfo(user, getAddon());
             return true;
         } else {
             user.sendMessage("general.errors.player-has-no-island");
@@ -61,7 +58,7 @@ public class AdminInfoCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

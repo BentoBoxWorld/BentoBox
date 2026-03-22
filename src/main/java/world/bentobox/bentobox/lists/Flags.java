@@ -3,12 +3,13 @@ package world.bentobox.bentobox.lists;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import com.google.common.base.Enums;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
@@ -18,11 +19,12 @@ import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListen
 import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
 import world.bentobox.bentobox.listeners.flags.protection.BreedingListener;
 import world.bentobox.bentobox.listeners.flags.protection.BucketListener;
+import world.bentobox.bentobox.listeners.flags.protection.CandleListener;
 import world.bentobox.bentobox.listeners.flags.protection.DyeListener;
 import world.bentobox.bentobox.listeners.flags.protection.EggListener;
 import world.bentobox.bentobox.listeners.flags.protection.ElytraListener;
 import world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener;
-import world.bentobox.bentobox.listeners.flags.protection.ExperiencePickupListener;
+import world.bentobox.bentobox.listeners.flags.protection.ExplosionListener;
 import world.bentobox.bentobox.listeners.flags.protection.FireListener;
 import world.bentobox.bentobox.listeners.flags.protection.HurtingListener;
 import world.bentobox.bentobox.listeners.flags.protection.InventoryListener;
@@ -37,9 +39,9 @@ import world.bentobox.bentobox.listeners.flags.protection.PortalListener;
 import world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener;
 import world.bentobox.bentobox.listeners.flags.protection.SculkShriekerListener;
 import world.bentobox.bentobox.listeners.flags.protection.ShearingListener;
-import world.bentobox.bentobox.listeners.flags.protection.TNTListener;
 import world.bentobox.bentobox.listeners.flags.protection.TeleportationListener;
 import world.bentobox.bentobox.listeners.flags.protection.ThrowingListener;
+import world.bentobox.bentobox.listeners.flags.protection.WindChargeListener;
 import world.bentobox.bentobox.listeners.flags.settings.DecayListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobSpawnListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener;
@@ -63,14 +65,15 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineGrowthListen
 import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineRedstoneListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.PodzolListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnerSpawnEggsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
+import world.bentobox.bentobox.listeners.flags.protection.RaidTriggerListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnProtectionListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorsStartingRaidListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * Contains built-in {@link Flag Flags} that are registered by default into the {@link world.bentobox.bentobox.managers.FlagsManager FlagsManager} at startup.
@@ -123,6 +126,7 @@ public final class Flags {
     public static final Flag FLOWER_POT = new Flag.Builder("FLOWER_POT", Material.FLOWER_POT).mode(Flag.Mode.ADVANCED).build();
     public static final Flag SHULKER_BOX = new Flag.Builder("SHULKER_BOX", Material.SHULKER_BOX).mode(Flag.Mode.ADVANCED).build();
     public static final Flag TRAPPED_CHEST = new Flag.Builder("TRAPPED_CHEST", Material.TRAPPED_CHEST).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag CRAFTER = new Flag.Builder("CRAFTER", Material.CRAFTER).mode(Flag.Mode.ADVANCED).build();
     // END CONTAINER split
     public static final Flag DISPENSER = new Flag.Builder("DISPENSER", Material.DISPENSER).mode(Flag.Mode.ADVANCED).build();
     public static final Flag DROPPER = new Flag.Builder("DROPPER", Material.DROPPER).mode(Flag.Mode.ADVANCED).build();
@@ -142,8 +146,15 @@ public final class Flags {
     public static final Flag ITEM_FRAME = new Flag.Builder("ITEM_FRAME", Material.ITEM_FRAME).mode(Flag.Mode.ADVANCED).build();
     public static final Flag CAKE = new Flag.Builder("CAKE", Material.CAKE).build();
     public static final Flag HIVE = new Flag.Builder("HIVE", Material.HONEY_BOTTLE).type(Type.PROTECTION).build();
-    public static final Flag CONTAINER = new Flag.Builder("CONTAINER", Material.CHEST).mode(Flag.Mode.BASIC)
-            .subflags(BREWING, BARREL, CHEST, COMPOSTER, FLOWER_POT, SHULKER_BOX, TRAPPED_CHEST, FURNACE, JUKEBOX, DISPENSER, DROPPER, HOPPER, ITEM_FRAME, HIVE)
+    public static final Flag CARTOGRAPHY = new Flag.Builder("CARTOGRAPHY", Material.CARTOGRAPHY_TABLE).build();
+    public static final Flag GRINDSTONE = new Flag.Builder("GRINDSTONE", Material.GRINDSTONE).build();
+    public static final Flag SMITHING = new Flag.Builder("SMITHING", Material.SMITHING_TABLE).build();
+    public static final Flag STONECUTTING = new Flag.Builder("STONECUTTING", Material.STONECUTTER).build();
+    public static final Flag LOOM = new Flag.Builder("LOOM", Material.LOOM).build();
+
+    public static final Flag CONTAINER = new Flag.Builder("CONTAINER", Material.BARREL).mode(Flag.Mode.BASIC)
+            .subflags(BREWING, BARREL, CHEST, COMPOSTER, FLOWER_POT, SHULKER_BOX, TRAPPED_CHEST, FURNACE, JUKEBOX, DISPENSER,
+                    DROPPER, HOPPER, ITEM_FRAME, HIVE)
             .build();
 
     /**
@@ -158,11 +169,18 @@ public final class Flags {
      * @since 1.10.0
      * @see LecternListener
      */
-    public static final Flag LECTERN = new Flag.Builder("LECTERN", Material.LECTERN).listener(new LecternListener()).build();
+    public static final Flag LECTERN = new Flag.Builder("LECTERN", Material.LECTERN).mode(Mode.ADVANCED).listener(new LecternListener()).build();
+
+    /**
+     * Prevents players from placing a book in a bookshelf or taking the book from it.
+     * @since 1.24.0
+     * @see BlockInteractionListener
+     */
+    public static final Flag BOOKSHELF = new Flag.Builder("BOOKSHELF", Material.CHISELED_BOOKSHELF).mode(Mode.ADVANCED).build();
 
     // Entity interactions
-    public static final Flag ARMOR_STAND = new Flag.Builder("ARMOR_STAND", Material.ARMOR_STAND).listener(new EntityInteractListener()).mode(Flag.Mode.ADVANCED).build();
-    public static final Flag RIDING = new Flag.Builder("RIDING", Material.GOLDEN_HORSE_ARMOR).build();
+    public static final Flag ARMOR_STAND = new Flag.Builder("ARMOR_STAND", Material.ARMOR_STAND).listener(new EntityInteractListener()).mode(Mode.ADVANCED).build();
+    public static final Flag RIDING = new Flag.Builder("RIDING", Material.GOLDEN_HORSE_ARMOR).mode(Mode.ADVANCED).build();
     /**
      * Prevents players from issuing any kind of interactions with Minecarts (entering, placing and opening if chest).
      * @since 1.3.0
@@ -188,7 +206,7 @@ public final class Flags {
 
     // Buckets. All bucket use is covered by one listener
     public static final Flag BUCKET = new Flag.Builder("BUCKET", Material.BUCKET).listener(new BucketListener()).mode(Flag.Mode.BASIC).build();
-    public static final Flag COLLECT_LAVA = new Flag.Builder("COLLECT_LAVA", Material.LAVA_BUCKET).build();
+    public static final Flag COLLECT_LAVA = new Flag.Builder("COLLECT_LAVA", Material.LAVA_BUCKET).mode(Mode.ADVANCED).build();
     public static final Flag COLLECT_WATER = new Flag.Builder("COLLECT_WATER", Material.WATER_BUCKET).mode(Flag.Mode.ADVANCED).build();
     /**
      * @since 1.21
@@ -215,7 +233,7 @@ public final class Flags {
      * Prevents players from throwing eggs.
      * @see EggListener
      */
-    public static final Flag EGGS = new Flag.Builder("EGGS", Material.EGG).listener(new EggListener()).build();
+    public static final Flag EGGS = new Flag.Builder("EGGS", Material.EGG).mode(Mode.ADVANCED).listener(new EggListener()).build();
     /**
      * Prevents players from throwing potions / experience bottles.
      * @since 1.1
@@ -228,6 +246,20 @@ public final class Flags {
      * @see ThrowingListener
      */
     public static final Flag EXPERIENCE_BOTTLE_THROWING = new Flag.Builder("EXPERIENCE_BOTTLE_THROWING", Material.EXPERIENCE_BOTTLE).build();
+
+    /**
+     * Prevents players from using wind charges.
+     * Wind charges can be used to push entities (including players and mobs) and to
+     * interact with activatable blocks such as buttons, levers, trapdoors, fence gates,
+     * bells and candles in the area of their explosion.
+     * @since 2.6.0
+     * @see WindChargeListener
+     */
+    public static final Flag WIND_CHARGE = new Flag.Builder("WIND_CHARGE",
+            Enums.getIfPresent(Material.class, "WIND_CHARGE").or(Material.BARRIER))
+            .listener(new WindChargeListener())
+            .mode(Flag.Mode.ADVANCED)
+            .build();
 
     /*
      * Fire
@@ -251,15 +283,15 @@ public final class Flags {
      * Prevents players from priming TNT.
      * @since 1.5.0
      *
-     * @see TNTListener
+     * @see ExplosionListener
      */
-    public static final Flag TNT_PRIMING = new Flag.Builder("TNT_PRIMING", Material.TNT).listener(new TNTListener()).build();
+    public static final Flag TNT_PRIMING = new Flag.Builder("TNT_PRIMING", Material.TNT).listener(new ExplosionListener()).build();
 
     /**
      * Prevents players from extinguishing fires.
      * @see FireListener
      */
-    public static final Flag FIRE_EXTINGUISH = new Flag.Builder("FIRE_EXTINGUISH", Material.POTION).build();
+    public static final Flag FIRE_EXTINGUISH = new Flag.Builder("FIRE_EXTINGUISH", Material.POTION).mode(Mode.ADVANCED).build();
 
     // Inventories
     public static final Flag MOUNT_INVENTORY = new Flag.Builder("MOUNT_INVENTORY", Material.IRON_HORSE_ARMOR).listener(new InventoryListener()).mode(Flag.Mode.ADVANCED).build();
@@ -268,6 +300,7 @@ public final class Flags {
     public static final Flag HURT_ANIMALS = new Flag.Builder("HURT_ANIMALS", Material.STONE_SWORD).listener(new HurtingListener()).mode(Flag.Mode.ADVANCED).build();
     public static final Flag HURT_MONSTERS = new Flag.Builder("HURT_MONSTERS", Material.WOODEN_SWORD).mode(Flag.Mode.BASIC).build();
     public static final Flag HURT_VILLAGERS = new Flag.Builder("HURT_VILLAGERS", Material.GOLDEN_SWORD).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag HURT_TAMED_ANIMALS = new Flag.Builder("HURT_TAMED_ANIMALS", Material.DIAMOND_SWORD).mode(Flag.Mode.ADVANCED).build();
 
     // Leashes
     public static final Flag LEASH = new Flag.Builder("LEASH", Material.LEAD).listener(new LeashListener()).build();
@@ -277,12 +310,12 @@ public final class Flags {
      * Prevents players from going through the Nether Portal.
      * @see PortalListener
      */
-    public static final Flag NETHER_PORTAL = new Flag.Builder("NETHER_PORTAL", Material.NETHERRACK).listener(new PortalListener()).build();
+    public static final Flag NETHER_PORTAL = new Flag.Builder("NETHER_PORTAL", Material.NETHERRACK).mode(Mode.ADVANCED).listener(new PortalListener()).build();
     /**
      * Prevents players from going through the End Portal.
      * @see PortalListener
      */
-    public static final Flag END_PORTAL = new Flag.Builder("END_PORTAL", Material.END_PORTAL_FRAME).build();
+    public static final Flag END_PORTAL = new Flag.Builder("END_PORTAL", Material.END_PORTAL_FRAME).mode(Mode.ADVANCED).build();
 
     // Shearing
     public static final Flag SHEARING = new Flag.Builder("SHEARING", Material.SHEARS).listener(new ShearingListener()).mode(Flag.Mode.ADVANCED).build();
@@ -293,10 +326,10 @@ public final class Flags {
 
     // Experience
     public static final Flag EXPERIENCE_PICKUP = new Flag.Builder("EXPERIENCE_PICKUP", Material.EXPERIENCE_BOTTLE)
-            .listener(Util.isPaper() ? new PaperExperiencePickupListener() : new ExperiencePickupListener()).mode(Flag.Mode.ADVANCED).defaultRank(RanksManager.VISITOR_RANK).build();
+            .listener(new PaperExperiencePickupListener()).mode(Flag.Mode.ADVANCED).defaultRank(RanksManager.VISITOR_RANK).build();
 
     // Command ranks
-    public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD)
+    public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD).type(Type.SETTING)
             .clickHandler(new CommandRankClickListener()).usePanel(true).build();
 
     /**
@@ -445,7 +478,7 @@ public final class Flags {
     /**
      * If {@code false}, prevents TNT from breaking blocks and damaging nearby entities.
      * @since 1.5.0
-     * @see TNTListener
+     * @see ExplosionListener
      */
     public static final Flag TNT_DAMAGE = new Flag.Builder("TNT_DAMAGE", Material.TNT).type(Type.SETTING)
             .mode(Flag.Mode.ADVANCED).build();
@@ -453,7 +486,7 @@ public final class Flags {
     /**
      * If {@code false}, prevents Block Explode from breaking blocks and damaging nearby entities.
      * @since 1.19.1
-     * @see TNTListener
+     * @see ExplosionListener
      */
     public static final Flag BLOCK_EXPLODE_DAMAGE = new Flag.Builder("BLOCK_EXPLODE_DAMAGE", Material.TNT_MINECART).type(Type.SETTING)
             .mode(Flag.Mode.ADVANCED).build();
@@ -461,7 +494,7 @@ public final class Flags {
     /**
      * If {@code false}, prevents TNT from breaking blocks and damaging nearby entities outside of island boundaries.
      * @since 1.15.3
-     * @see TNTListener
+     * @see ExplosionListener
      */
     public static final Flag WORLD_TNT_DAMAGE = new Flag.Builder("WORLD_TNT_DAMAGE", Material.TNT)
             .type(Type.WORLD_SETTING)
@@ -470,7 +503,7 @@ public final class Flags {
     /**
      * If {@code false}, prevents Block Explode from breaking blocks and damaging nearby entities outside of island boundaries.
      * @since 1.19.1
-     * @see TNTListener
+     * @see ExplosionListener
      */
     public static final Flag WORLD_BLOCK_EXPLODE_DAMAGE = new Flag.Builder("WORLD_BLOCK_EXPLODE_DAMAGE", Material.TNT_MINECART)
             .type(Type.WORLD_SETTING)
@@ -635,11 +668,15 @@ public final class Flags {
     public static final Flag VISITOR_KEEP_INVENTORY = new Flag.Builder("VISITOR_KEEP_INVENTORY", Material.TOTEM_OF_UNDYING).listener(new VisitorKeepInventoryListener()).type(Type.WORLD_SETTING).defaultSetting(false).build();
 
     /**
-     * Toggles whether island visitors can trigger to start a raid on another player's island.
-     * @since 1.21.0
-     * @see VisitorsStartingRaidListener
+     * Toggles whether visitors at the spawn island are protected from falling into the void.
+     * When enabled, players who fall into the void while at the spawn island will be
+     * teleported back to the spawn point instead of dying.
+     * @since 2.6.0
+     * @see SpawnProtectionListener
      */
-    public static final Flag VISITOR_TRIGGER_RAID = new Flag.Builder("VISITOR_TRIGGER_RAID", Material.RAVAGER_SPAWN_EGG).listener(new VisitorsStartingRaidListener()).type(Type.WORLD_SETTING).defaultSetting(true).build();
+    public static final Flag SPAWN_PROTECTION = new Flag.Builder("SPAWN_PROTECTION", Material.BEACON).listener(new SpawnProtectionListener()).type(Type.WORLD_SETTING).defaultSetting(false).build();
+
+    // VISITOR_TRIGGER_RAID removed in 1.24.1 - replaced by RAID_TRIGGER protection flag
 
     /**
      * Toggles whether entities can teleport between dimensions using portals.
@@ -651,18 +688,64 @@ public final class Flags {
     /**
      * Harvest Setting
      * Controls who gets to harvest any crop related contents. e.g. Wheat, Sugar Cane, melon blocks, not stems, pumpkin blocks, etc.
+     * Listener is {@link BreakBlocksListener}
      * @since 1.23.0
      */
-    public static final Flag HARVEST = new Flag.Builder("HARVEST", Material.PUMPKIN).type(Type.PROTECTION).build();
+    public static final Flag HARVEST = new Flag.Builder("HARVEST", Material.PUMPKIN).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
 
     /**
      * Crop Planting
      * Controls who gets to plant crops on tilled soil.
+     * Listener is {@link world.bentobox.bentobox.listeners.flags.protection.PlaceBlocksListener}
      * @since 1.23.0
      */
-    public static final Flag CROP_PLANTING = new Flag.Builder("CROP_PLANTING", Material.PUMPKIN_SEEDS).type(Type.PROTECTION).build();
+    public static final Flag CROP_PLANTING = new Flag.Builder("CROP_PLANTING", Material.PUMPKIN_SEEDS).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
 
-    
+    /**
+     * Sign edit protection
+     * Listener is {@link BlockInteractionListener}
+     * @since 1.24.0
+     */
+    public static final Flag SIGN_EDITING = new Flag.Builder("SIGN_EDITING", Material.DARK_OAK_SIGN).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
+
+    /**
+     * Bell ringing protection
+     * Listeners are {@link BlockInteractionListener} and {@link PhysicalInteractionListener}
+     * @since 2.4.2
+     */
+    public static final Flag BELL_RINGING = new Flag.Builder("BELL_RINGING", Material.BELL).mode(Flag.Mode.EXPERT)
+            .type(Type.PROTECTION).build();
+
+    /**
+     * Candle protection
+     * Listener is {@link CandleListener}
+     * @since 2.4.2
+     */
+    public static final Flag CANDLES = new Flag.Builder("CANDLES", Material.CANDLE).mode(Flag.Mode.EXPERT)
+            .listener(new CandleListener())
+            .type(Type.PROTECTION).build();
+
+    /**
+     * Controls which island rank is required to trigger a raid.
+     * By default, only members and above can trigger raids; visitors' Bad Omen effect will not start a raid.
+     * Replaces the old VISITOR_TRIGGER_RAID world setting with per-island rank-based control.
+     * @since 1.24.1
+     * @see RaidTriggerListener
+     */
+    public static final Flag RAID_TRIGGER = new Flag.Builder("RAID_TRIGGER", Material.RAVAGER_SPAWN_EGG)
+            .listener(new RaidTriggerListener())
+            .type(Type.PROTECTION)
+            .mode(Flag.Mode.ADVANCED)
+            .defaultRank(RanksManager.MEMBER_RANK)
+            .build();
+
+    /**
+     * Prevents podzol production when large trees grow
+     * @since 3.4.2
+     */
+    public static final Flag PODZOL = new Flag.Builder("PODZOL", Material.PODZOL).type(Type.WORLD_SETTING)
+            .defaultSetting(false).listener(new PodzolListener()).build();
+
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
      * Deprecated Flags are ignored.
@@ -675,7 +758,7 @@ public final class Flags {
                     try {
                         return (Flag)field.get(null);
                     } catch (IllegalArgumentException | IllegalAccessException e) {
-                        Bukkit.getLogger().severe("Could not get Flag values " + e.getMessage());
+                        BentoBox.getInstance().logError("Could not get Flag values " + e.getMessage());
                     }
                     return null;
                 }).toList();

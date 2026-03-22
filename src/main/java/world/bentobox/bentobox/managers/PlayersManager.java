@@ -2,29 +2,27 @@ package world.bentobox.bentobox.managers;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
+import world.bentobox.bentobox.util.ExpiringMap;
 import world.bentobox.bentobox.util.Util;
 
 public class PlayersManager {
@@ -32,11 +30,9 @@ public class PlayersManager {
     private final BentoBox plugin;
     private Database<Players> handler;
     private final Database<Names> names;
-
-    private final Map<UUID, Players> playerCache;
-    private final Set<UUID> inTeleport;
-
-    private boolean isSaveTaskRunning;
+    private final ExpiringMap<UUID, Players> playerCache = new ExpiringMap<>(2, TimeUnit.HOURS);
+    private final @NonNull List<Names> nameCache;
+    private final Set<UUID> inTeleport; // this needs databasing
 
     /**
      * Provides a memory cache of online player information
@@ -51,7 +47,7 @@ public class PlayersManager {
         handler = new Database<>(plugin, Players.class);
         // Set up the names database
         names = new Database<>(plugin, Names.class);
-        playerCache = new HashMap<>();
+        nameCache = names.loadObjects();
         inTeleport = new HashSet<>();
     }
 
@@ -63,68 +59,11 @@ public class PlayersManager {
         this.handler = handler;
     }
 
-    /**
-     * Load all players - not normally used as to load all players into memory will be wasteful
-     */
-    public void load(){
-        playerCache.clear();
-        inTeleport.clear();
-        handler.loadObjects().forEach(p -> playerCache.put(p.getPlayerUUID(), p));
-    }
-
-    public boolean isSaveTaskRunning() {
-        return isSaveTaskRunning;
-    }
-
-    /**
-     * Save all players
-     */
-    public void saveAll() {
-        saveAll(false);
-    }
-
-    /**
-     * Save all players
-     * @param schedule true if we should let the task run over multiple ticks to reduce lag spikes
-     */
-    public void saveAll(boolean schedule){
-        if (!schedule) {
-            for (Players player : playerCache.values()) {
-                try {
-                    handler.saveObjectAsync(player);
-                } catch (Exception e) {
-                    plugin.logError("Could not save player to database when running sync! " + e.getMessage());
-                }
-            }
-            return;
-        }
-
-        isSaveTaskRunning = true;
-        Queue<Players> queue = new LinkedList<>(playerCache.values());
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < plugin.getSettings().getMaxSavedPlayersPerTick(); i++) {
-                    Players player = queue.poll();
-                    if (player == null) {
-                        isSaveTaskRunning = false;
-                        cancel();
-                        return;
-                    }
-                    try {
-                        handler.saveObjectAsync(player);
-                    } catch (Exception e) {
-                        plugin.logError("Could not save player to database when running sync! " + e.getMessage());
-                    }
-                }
-            }
-        }.runTaskTimer(plugin, 0, 1);
-    }
-
     public void shutdown(){
-        saveAll();
-        playerCache.clear();
+        // Save all players in cache
+        playerCache.forEach((uuid, player) -> handler.saveObject(player));
         handler.close();
+        playerCache.shutdown();
     }
 
     /**
@@ -134,10 +73,40 @@ public class PlayersManager {
      */
     @Nullable
     public Players getPlayer(UUID uuid){
-        if (!playerCache.containsKey(uuid)) {
-            addPlayer(uuid);
+        return playerCache.computeIfAbsent(uuid, this::addPlayer);
+    }
+
+    /**
+     * Adds a player to the database. If the UUID does not exist, a new player is created.
+     *
+     * @param playerUUID the player's UUID, must not be null
+     * @return the loaded or newly created player
+     * @throws NullPointerException if playerUUID is null
+     */
+    private Players addPlayer(@NonNull UUID playerUUID) {
+        Objects.requireNonNull(playerUUID, "Player UUID must not be null");
+
+        // If the player exists in the database, load it; otherwise, create and save a new player
+        if (handler.objectExists(playerUUID.toString())) {
+            Players p = loadPlayer(playerUUID);
+            if (p != null) {
+                return p;
+            }
         }
-        return playerCache.get(uuid);
+        Players newPlayer = new Players(plugin, playerUUID);
+        handler.saveObjectAsync(newPlayer);
+        return newPlayer;
+    }
+
+    /**
+     * Force load the player from the database. The player must be known to BenoBox. If it is not
+     * use {@link #addPlayer(UUID)} instead. This is a blocking call, so be careful.
+     * @param uuid UUID of player
+     * @return Players object representing that player
+     * @since 2.4.0
+     */
+    public @Nullable Players loadPlayer(UUID uuid) {
+        return handler.loadObject(uuid.toString());
     }
 
     /**
@@ -147,37 +116,7 @@ public class PlayersManager {
      */
     @NonNull
     public Collection<Players> getPlayers() {
-        return Collections.unmodifiableCollection(playerCache.values());
-    }
-
-    /*
-     * Cache control methods
-     */
-
-    /**
-     * Adds a player to the cache. If the UUID does not exist, a new player is made
-     * @param playerUUID - the player's UUID
-     */
-    public void addPlayer(UUID playerUUID) {
-        if (playerUUID == null) {
-            return;
-        }
-        if (!playerCache.containsKey(playerUUID)) {
-            Players player;
-            // If the player is in the database, load it, otherwise create a new player
-            if (handler.objectExists(playerUUID.toString())) {
-                player = handler.loadObject(playerUUID.toString());
-                if (player == null) {
-                    player = new Players(plugin, playerUUID);
-                    // Corrupted database entry
-                    plugin.logError("Corrupted player database entry for " + playerUUID + " - unrecoverable. Recreated.");
-                    player.setUniqueId(playerUUID.toString());
-                }
-            } else {
-                player = new Players(plugin, playerUUID);
-            }
-            playerCache.put(playerUUID, player);
-        }
+        return Collections.unmodifiableCollection(handler.loadObjects());
     }
 
     /**
@@ -188,109 +127,7 @@ public class PlayersManager {
      * @return true if player is known, otherwise false
      */
     public boolean isKnown(UUID uniqueID) {
-        return uniqueID != null && (playerCache.containsKey(uniqueID) || handler.objectExists(uniqueID.toString()));
-    }
-
-    /**
-     * Sets the home location for the player
-     * @param user - the player
-     * @param location - the location
-     * @param number - a number - 1 is default. Can be any number.
-     * @deprecated Use {@link IslandsManager#setHomeLocation(User, Location, String)}
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public void setHomeLocation(User user, Location location, int number) {
-        setHomeLocation(user.getUniqueId(), location,number);
-    }
-
-    /**
-     * Sets the home location for the player
-     * @param playerUUID - the player's UUID
-     * @param location - the location
-     * @param number - a number - 1 is default. Can be any number.
-     * @deprecated Use {@link IslandsManager#setHomeLocation(UUID, Location, String)}
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public void setHomeLocation(UUID playerUUID, Location location, int number) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).setHomeLocation(location,number);
-    }
-
-    /**
-     * Set the default home location for player
-     * @param playerUUID - the player's UUID
-     * @param location - the location
-     * @deprecated Use {@link IslandsManager#setHomeLocation(UUID, Location)}
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public void setHomeLocation(UUID playerUUID, Location location) {
-        setHomeLocation(playerUUID, location,1);
-    }
-
-    /**
-     * Clears any home locations for player
-     * @param world - world
-     * @param playerUUID - the player's UUID
-     * @deprecated Not used anymore. Home locations are stored on islands.
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public void clearHomeLocations(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).clearHomeLocations(world);
-    }
-
-    /**
-     * Returns the home location, or null if none
-     * @param world - world
-     *
-     * @param user - the player
-     * @param number - a number
-     * @return Home location or null if none
-     * @deprecated Use {@link IslandsManager#getHomeLocation(World, User, String)}
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public Location getHomeLocation(World world, User user, int number) {
-        addPlayer(user.getUniqueId());
-        return playerCache.get(user.getUniqueId()).getHomeLocation(world, number);
-    }
-
-    /**
-     * Returns the home location, or null if none
-     * @param world - world
-     *
-     * @param playerUUID - the player's UUID
-     * @param number - a number
-     * @return Home location or null if none
-     * @deprecated Use {@link IslandsManager#getHomeLocation(World, UUID, String)}
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public Location getHomeLocation(World world, UUID playerUUID, int number) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getHomeLocation(world, number);
-    }
-
-    /**
-     * Gets the default home location for player
-     * @param playerUUID - the player's UUID
-     * @return Home location or null if none
-     * @deprecated Use {@link IslandsManager#getHomeLocation(World, UUID)}
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public Location getHomeLocation(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getHomeLocation(world, 1);
-    }
-
-    /**
-     * Provides all home locations for player
-     * @param playerUUID - the player's UUID
-     * @return Map of home locations
-     * @deprecated Use {@link IslandsManager#getHomeLocations(world.bentobox.bentobox.database.objects.Island)}
-     */
-    @Deprecated(since="1.18.0", forRemoval=true)
-    public Map<Location, Integer> getHomeLocations(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getHomeLocations(world);
+        return uniqueID != null && handler.objectExists(uniqueID.toString());
     }
 
     /**
@@ -309,23 +146,30 @@ public class PlayersManager {
                 // Not used
             }
         }
-        // Look in the name cache, then the data base and then give up
-        return playerCache.values().stream()
-                .filter(p -> p.getPlayerName().equalsIgnoreCase(name)).findFirst()
-                .map(p -> UUID.fromString(p.getUniqueId()))
-                .orElseGet(() -> names.objectExists(name) ? names.loadObject(name).getUuid() : null);
+        return nameCache.stream().filter(n -> n.getUniqueId().equalsIgnoreCase(name)).findFirst()
+                .map(Names::getUuid).orElse(null);
     }
 
     /**
      * Sets the player's name and updates the name to UUID database
      * @param user - the User
+     * @return CompletableFuture true if saved, false if not
      */
-    public void setPlayerName(@NonNull User user) {
-        addPlayer(user.getUniqueId());
-        playerCache.get(user.getUniqueId()).setPlayerName(user.getName());
+    public CompletableFuture<Boolean> setPlayerName(@NonNull User user) {
+        // Ignore any bots
+        if (user.getUniqueId() == null) {
+            return CompletableFuture.completedFuture(false);
+        }
+        Players player = getPlayer(user.getUniqueId());
+        player.setPlayerName(user.getName());
+        handler.saveObject(player);
+        // Update names
         Names newName = new Names(user.getName(), user.getUniqueId());
+        // Add to cache
+        nameCache.removeIf(name -> user.getUniqueId().equals(name.getUuid()));
+        nameCache.add(newName);
         // Add to names database
-        names.saveObjectAsync(newName);
+        return names.saveObjectAsync(newName);
     }
 
     /**
@@ -340,8 +184,8 @@ public class PlayersManager {
         if (playerUUID == null) {
             return "";
         }
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getPlayerName();
+        getPlayer(playerUUID);
+        return Objects.requireNonNullElse(playerCache.get(playerUUID).getPlayerName(), "");
     }
 
     /**
@@ -351,8 +195,7 @@ public class PlayersManager {
      * @return number of resets
      */
     public int getResets(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getResets(world);
+        return getPlayer(playerUUID).getResets(world);
     }
 
     /**
@@ -364,7 +207,7 @@ public class PlayersManager {
      * @see #getResets(World, UUID)
      */
     public int getResetsLeft(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
+        getPlayer(playerUUID);
         if (plugin.getIWM().getResetLimit(world) == -1) {
             return -1;
         } else {
@@ -380,8 +223,9 @@ public class PlayersManager {
      * @param resets number of resets to set
      */
     public void setResets(World world, UUID playerUUID, int resets) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).setResets(world, resets);
+        Players p = getPlayer(playerUUID);
+        p.setResets(world, resets);
+        handler.saveObject(p);
     }
 
     /**
@@ -390,11 +234,7 @@ public class PlayersManager {
      * @return name of the locale this player uses
      */
     public String getLocale(UUID playerUUID) {
-        addPlayer(playerUUID);
-        if (playerUUID == null) {
-            return "";
-        }
-        return playerCache.get(playerUUID).getLocale();
+        return getPlayer(playerUUID).getLocale();
     }
 
     /**
@@ -403,40 +243,42 @@ public class PlayersManager {
      * @param localeName - locale name, e.g., en-US
      */
     public void setLocale(UUID playerUUID, String localeName) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).setLocale(localeName);
+        Players p = getPlayer(playerUUID);
+        p.setLocale(localeName);
+        handler.saveObject(p);
     }
 
     /**
      * Add death to player
-     * @param world - world
+     * @param world - world (this includes any nether or end)
      * @param playerUUID - the player's UUID
      */
     public void addDeath(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).addDeath(world);
+        Players p = getPlayer(playerUUID);
+        p.addDeath(Util.getWorld(world));
+        handler.saveObject(p);
     }
 
     /**
      * Set death number for player
-     * @param world - world
+     * @param world - world (this includes any nether or end)
      * @param playerUUID - the player's UUID
      * @param deaths - number of deaths
      */
     public void setDeaths(World world, UUID playerUUID, int deaths) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).setDeaths(world, deaths);
+        Players p = getPlayer(playerUUID);
+        p.setDeaths(Util.getWorld(world), deaths);
+        handler.saveObject(p);
     }
 
     /**
      * Get number of times player has died since counting began
-     * @param world - world
+     * @param world - world (this includes any nether or end)
      * @param playerUUID - the player's UUID
      * @return number of deaths
      */
     public int getDeaths(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID) == null ? 0 : playerCache.get(playerUUID).getDeaths(world);
+        return getPlayer(playerUUID).getDeaths(Util.getWorld(world));
     }
 
     /**
@@ -464,22 +306,13 @@ public class PlayersManager {
     }
 
     /**
-     * Saves the player to the database
-     * @param playerUUID - the player's UUID
-     */
-    public void save(UUID playerUUID) {
-        if (playerCache.containsKey(playerUUID)) {
-            handler.saveObjectAsync(playerCache.get(playerUUID));
-        }
-    }
-
-    /**
      * Tries to get the user from his name
      * @param name - name
      * @return user - user or null if unknown
      */
     public User getUser(String name) {
-        return getUser(getUUID(name));
+        UUID uuid = getUUID(name);
+        return uuid == null ? null : getUser(uuid);
     }
 
     /**
@@ -497,41 +330,17 @@ public class PlayersManager {
      * @param playerUUID player's UUID
      */
     public void addReset(World world, UUID playerUUID) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).addReset(world);
+        Players p = getPlayer(playerUUID);
+        p.addReset(world);
+        handler.saveObject(p);
     }
 
     /**
-     * Sets the Flags display mode for the Settings Panel for this player.
-     * @param playerUUID player's UUID
-     * @param displayMode the {@link Flag.Mode} to set
-     * @since 1.6.0
-     */
-    public void setFlagsDisplayMode(UUID playerUUID, Flag.Mode displayMode) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).setFlagsDisplayMode(displayMode);
-    }
-
-    /**
-     * Returns the Flags display mode for the Settings Panel for this player.
-     * @param playerUUID player's UUID
-     * @return the {@link Flag.Mode display mode} for the Flags in the Settings Panel.
-     * @since 1.6.0
-     */
-    public Flag.Mode getFlagsDisplayMode(UUID playerUUID) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getFlagsDisplayMode();
-    }
-
-    /**
-     * Remove player from cache. Clears players with the same name or UUID
+     * Remove player from database
      * @param player player to remove
      */
     public void removePlayer(Player player) {
-        // Clear any players with the same name
-        playerCache.values().removeIf(p -> player.getName().equalsIgnoreCase(p.getPlayerName()));
-        // Remove if the player's UUID is the same
-        playerCache.values().removeIf(p -> player.getUniqueId().toString().equals(p.getUniqueId()));
+        handler.deleteID(player.getUniqueId().toString());
     }
 
     /**
@@ -591,10 +400,67 @@ public class PlayersManager {
 
         // Reset the XP
         if (plugin.getIWM().isOnLeaveResetXP(world) && target.isPlayer()) {
+            // Player collected XP (displayed)
+            target.getPlayer().setLevel(0);
+            target.getPlayer().setExp(0);
+            // Player total XP (not displayed)
             target.getPlayer().setTotalExperience(0);
         }
-        // Save player
-        save(target.getUniqueId());
+    }
+
+    /**
+     * Saves the player async to the database. The player has to be known to BentoBox to be saved.
+     * Players are usually detected by BentoBox when they join the server, so this is not an issue.
+     * @param uuid UUID of the player
+     * @return Completable future true when done, or false if not saved for some reason, e.g., invalid UUID
+     * @since 2.4.0
+     */
+    public CompletableFuture<Boolean> savePlayer(UUID uuid) {
+        Players p = this.getPlayer(uuid);
+        if (p != null) {
+            return handler.saveObjectAsync(p);
+        }
+        return CompletableFuture.completedFuture(false);
+    }
+
+    /**
+     * Records when the user last logged in. Called by the joinleave listener
+     * @param user user
+     * @since 2.7.0
+     */
+    public void setLoginTimeStamp(User user) {
+        if (user.isPlayer() && user.isOnline()) {
+            setLoginTimeStamp(user.getUniqueId(), System.currentTimeMillis());
+        }
+    }
+
+    /**
+     * Set the player's last login time to a timestamp
+     * @param playerUUID player UUID
+     * @param timestamp timestamp to set
+     * @since 2.7.0
+     */
+    public void setLoginTimeStamp(UUID playerUUID, long timestamp) {
+        Players p = this.getPlayer(playerUUID);
+        if (p != null) {
+            p.setLastLogin(timestamp);
+            this.savePlayer(playerUUID);
+        }
+    }
+
+    /**
+     * Get the last login time stamp for this player
+     * @param uuid player's UUID
+     * @return timestamp or null if unknown or not recorded yet
+     * @since 2.7.0
+     */
+    @Nullable
+    public Long getLastLoginTimestamp(UUID uuid) {
+        Players p = this.getPlayer(uuid);
+        if (p != null) {
+            return p.getLastLogin();
+        }
+        return null;
     }
 
 }

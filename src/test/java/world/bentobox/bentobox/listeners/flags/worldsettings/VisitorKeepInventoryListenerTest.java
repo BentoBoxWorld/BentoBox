@@ -1,12 +1,11 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -18,90 +17,54 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableSet;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class})
-public class VisitorKeepInventoryListenerTest {
+class VisitorKeepInventoryListenerTest extends CommonTestSetup {
 
     // Class under test
     private VisitorKeepInventoryListener l;
-    @Mock
-    private Player player;
-    /* IslandWorldManager */
-    @Mock
-    private IslandWorldManager iwm;
-    /* World */
-    @Mock
-    private World world;
-
-    /* Islands */
-    @Mock
-    private IslandsManager islandsManager;
-
-    @Mock
-    private Island island;
     private PlayerDeathEvent e;
-    @Mock
-    private Location location;
 
-
-    /**
-     */
-    @Before
+    @SuppressWarnings("deprecation")
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        /* Island World Manager */
-        when(plugin.getIWM()).thenReturn(iwm);
+        super.setUp();
 
         // User
         User.setPlugin(plugin);
-        UUID uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);
-        when(player.getName()).thenReturn("tastybento");
-        when(player.getLocation()).thenReturn(location);
+        
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        when(mockPlayer.getName()).thenReturn("tastybento");
+        when(mockPlayer.getLocation()).thenReturn(location);
         when(location.getWorld()).thenReturn(world);
         when(location.toVector()).thenReturn(new Vector(1,2,3));
         // Turn on why for player
-        when(player.getMetadata(eq("bskyblock_world_why_debug"))).thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, true)));
-        when(player.getMetadata(eq("bskyblock_world_why_debug_issuer"))).thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, uuid.toString())));
-        User.getInstance(player);
+        when(mockPlayer.getMetadata("bskyblock_world_why_debug")).thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, true)));
+        when(mockPlayer.getMetadata("bskyblock_world_why_debug_issuer")).thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, uuid.toString())));
+        User.getInstance(mockPlayer);
 
         // WorldSettings and World Flags
         WorldSettings ws = mock(WorldSettings.class);
@@ -120,38 +83,33 @@ public class VisitorKeepInventoryListenerTest {
         // Default not set
         Flags.VISITOR_KEEP_INVENTORY.setSetting(world, false);
 
-        /* Islands */
-        when(plugin.getIslands()).thenReturn(islandsManager);
         // Visitor
         when(island.getMemberSet(anyInt())).thenReturn(ImmutableSet.of());
         // By default, there should be an island.
-        when(islandsManager.getProtectedIslandAt(any())).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(any())).thenReturn(Optional.of(island));
 
         // Util
-        PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
-        when(Util.getWorld(any())).thenReturn(world);
+        mockedUtil.when(()-> Util.getWorld(any())).thenReturn(world);
 
         // Default death event
         List<ItemStack> drops = new ArrayList<>();
         drops.add(new ItemStack(Material.ACACIA_BOAT));
-        e = new PlayerDeathEvent(player, drops, 100, 0, 0, 0, "Death message");
+        e = getPlayerDeathEvent(mockPlayer, drops, 100, 0, 0, 0, "Death message");
         // Make new
         l = new VisitorKeepInventoryListener();
     }
 
-    /**
-     */
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+        super.tearDown();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnVisitorDeath() {
+    void testOnVisitorDeath() {
         l.onVisitorDeath(e);
     }
 
@@ -159,22 +117,22 @@ public class VisitorKeepInventoryListenerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnVisitorDeathFalseFlag() {
+    void testOnVisitorDeathFalseFlag() {
         l.onVisitorDeath(e);
         assertFalse(e.getKeepInventory());
         assertFalse(e.getKeepLevel());
         assertFalse(e.getDrops().isEmpty());
         assertEquals(100, e.getDroppedExp());
         // Why
-        verify(player).sendMessage("Why: PlayerDeathEvent in world bskyblock_world at 1,2,3");
-        verify(player).sendMessage("Why: tastybento VISITOR_KEEP_INVENTORY - SETTING_NOT_ALLOWED_IN_WORLD");
+        checkSpigotMessage("Why: PlayerDeathEvent in world bskyblock_world at 1,2,3");
+        checkSpigotMessage("Why: tastybento VISITOR_KEEP_INVENTORY - SETTING_NOT_ALLOWED_IN_WORLD");
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnVisitorDeathTrueFlag() {
+    void testOnVisitorDeathTrueFlag() {
         Flags.VISITOR_KEEP_INVENTORY.setSetting(world, true);
         l.onVisitorDeath(e);
         assertTrue(e.getKeepInventory());
@@ -182,16 +140,16 @@ public class VisitorKeepInventoryListenerTest {
         assertTrue(e.getDrops().isEmpty());
         assertEquals(0, e.getDroppedExp());
         // Why
-        verify(player).sendMessage("Why: PlayerDeathEvent in world bskyblock_world at 1,2,3");
-        verify(player).sendMessage("Why: tastybento VISITOR_KEEP_INVENTORY - SETTING_ALLOWED_IN_WORLD");
+        checkSpigotMessage("Why: PlayerDeathEvent in world bskyblock_world at 1,2,3");
+        checkSpigotMessage("Why: tastybento VISITOR_KEEP_INVENTORY - SETTING_ALLOWED_IN_WORLD");
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnVisitorDeathNotInWorld() {
-        when(iwm.inWorld(eq(world))).thenReturn(false);
+    void testOnVisitorDeathNotInWorld() {
+        when(iwm.inWorld(world)).thenReturn(false);
         Flags.VISITOR_KEEP_INVENTORY.setSetting(world, true);
         l.onVisitorDeath(e);
         assertFalse(e.getKeepInventory());
@@ -199,16 +157,16 @@ public class VisitorKeepInventoryListenerTest {
         assertFalse(e.getDrops().isEmpty());
         assertEquals(100, e.getDroppedExp());
         // Why
-        verify(player).sendMessage("Why: PlayerDeathEvent in world bskyblock_world at 1,2,3");
-        verify(player).sendMessage("Why: tastybento VISITOR_KEEP_INVENTORY - SETTING_NOT_ALLOWED_IN_WORLD");
+        checkSpigotMessage("Why: PlayerDeathEvent in world bskyblock_world at 1,2,3");
+        checkSpigotMessage("Why: tastybento VISITOR_KEEP_INVENTORY - SETTING_NOT_ALLOWED_IN_WORLD");
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnVisitorDeathTrueFlagNoIsland() {
-        when(islandsManager.getProtectedIslandAt(any())).thenReturn(Optional.empty());
+    void testOnVisitorDeathTrueFlagNoIsland() {
+        when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
         Flags.VISITOR_KEEP_INVENTORY.setSetting(world, true);
         l.onVisitorDeath(e);
         assertFalse(e.getKeepInventory());
@@ -216,7 +174,7 @@ public class VisitorKeepInventoryListenerTest {
         assertFalse(e.getDrops().isEmpty());
         assertEquals(100, e.getDroppedExp());
         // Why
-        verify(player, never()).sendMessage(anyString());
+        verify(mockPlayer, never()).sendMessage(anyString());
     }
 
 }

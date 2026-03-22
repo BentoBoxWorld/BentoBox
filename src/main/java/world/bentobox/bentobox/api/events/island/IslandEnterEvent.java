@@ -12,7 +12,7 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * Fired when an a player enters an island.
+ * Fired when a player enters an island.
  * Cancellation has no effect.
  */
 public class IslandEnterEvent extends IslandBaseEvent {

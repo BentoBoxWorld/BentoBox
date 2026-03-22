@@ -31,7 +31,7 @@ public class PetTeleportListener extends FlagListener {
             // Get where the pet is going
             e.setCancelled(getIslands().getProtectedIslandAt(e.getTo())
                     // Not home island
-                    .map(i -> !i.getMemberSet().contains(t.getOwner().getUniqueId()))
+                    .map(i -> !i.inTeam(t.getOwner().getUniqueId()))
                     // Not any island
                     .orElse(true));
         }

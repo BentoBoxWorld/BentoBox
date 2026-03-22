@@ -3,7 +3,14 @@ package world.bentobox.bentobox.managers;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
+import org.eclipse.jdt.annotation.NonNull;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.objects.Ranks;
 
 /**
  * Ranks Manager
@@ -34,19 +41,55 @@ public class RanksManager {
     public static final int BANNED_RANK = -1;
 
     // The store of ranks
-    private LinkedHashMap<String, Integer> ranks = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, Integer> ranks = new LinkedHashMap<>();
+    public static final Map<String, Integer> DEFAULT_RANKS = Map.of(ADMIN_RANK_REF, ADMIN_RANK, MOD_RANK_REF, MOD_RANK,
+            OWNER_RANK_REF, OWNER_RANK, SUB_OWNER_RANK_REF, SUB_OWNER_RANK, MEMBER_RANK_REF, MEMBER_RANK,
+            TRUSTED_RANK_REF, TRUSTED_RANK, COOP_RANK_REF, COOP_RANK, VISITOR_RANK_REF, VISITOR_RANK, BANNED_RANK_REF,
+            BANNED_RANK);
 
-    public RanksManager() {
-        // Hard coded ranks
-        ranksPut(ADMIN_RANK_REF, ADMIN_RANK);
-        ranksPut(MOD_RANK_REF, MOD_RANK);
-        ranksPut(OWNER_RANK_REF, OWNER_RANK);
-        ranksPut(SUB_OWNER_RANK_REF, SUB_OWNER_RANK);
-        ranksPut(MEMBER_RANK_REF, MEMBER_RANK);
-        ranksPut(TRUSTED_RANK_REF, TRUSTED_RANK);
-        ranksPut(COOP_RANK_REF, COOP_RANK);
-        ranksPut(VISITOR_RANK_REF, VISITOR_RANK);
-        ranksPut(BANNED_RANK_REF, BANNED_RANK);
+    @NonNull
+    private Database<Ranks> handler;
+    private static RanksManager instance;
+
+    // Private constructor for singleton
+    RanksManager() {
+        handler = new Database<>(BentoBox.getInstance(), Ranks.class);
+        ranks.clear();
+        loadRanksFromDatabase();
+    }
+
+    // Public method to get the singleton instance
+    public static synchronized RanksManager getInstance() {
+        if (instance == null) {
+            instance = new RanksManager();
+        }
+        return instance;
+    }
+
+    public void loadRanksFromDatabase() {
+        if (!handler.objectExists("BentoBox-Ranks")) {
+            // Make the initial object
+            DEFAULT_RANKS.forEach(this::ranksPut);
+            save();
+        } else {
+            // Load the ranks from the database
+            Objects.requireNonNull(handler.loadObject("BentoBox-Ranks")).getRankReference()
+                    .forEach(this::ranksPut);
+        }
+
+    }
+
+    private void save() {
+        handler.saveObject(new Ranks(ranks));
+    }
+
+    /**
+     * Check if a rank exists
+     * @param reference YAML reference to rank, e.g., ranks.trusted
+     * @return true if the rank exists
+     */
+    public boolean rankExists(String reference) {
+        return ranks.containsKey(reference);
     }
 
     /**
@@ -56,29 +99,21 @@ public class RanksManager {
      * @return true if the rank was successfully added
      */
     public boolean addRank(String reference, int value) {
-        if (reference.equalsIgnoreCase(OWNER_RANK_REF)
-                || reference.equalsIgnoreCase(SUB_OWNER_RANK_REF)
-                || reference.equalsIgnoreCase(TRUSTED_RANK_REF)
-                || reference.equalsIgnoreCase(COOP_RANK_REF)
-                || reference.equalsIgnoreCase(MEMBER_RANK_REF)
-                || reference.equalsIgnoreCase(VISITOR_RANK_REF)
-                || reference.equalsIgnoreCase(BANNED_RANK_REF)
-                || reference.equalsIgnoreCase(ADMIN_RANK_REF)
-                || reference.equalsIgnoreCase(MOD_RANK_REF)) {
+        if (rankExists(reference)) {
             return false;
         }
         ranksPut(reference, value);
-
         return true;
     }
 
-    private void ranksPut(String reference, int value) {
+    private void ranksPut(String reference, Integer value) {
         ranks.put(reference, value);
-        // Sort
-        ranks = ranks.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        // Sort in place by value
+        LinkedHashMap<String, Integer> sorted = ranks.entrySet().stream().sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        ranks.clear();
+        ranks.putAll(sorted);
+        save();
     }
 
     /**
@@ -87,16 +122,11 @@ public class RanksManager {
      * @return true if removed
      */
     public boolean removeRank(String reference) {
-        return !reference.equalsIgnoreCase(OWNER_RANK_REF)
-                && !reference.equalsIgnoreCase(SUB_OWNER_RANK_REF)
-                && !reference.equalsIgnoreCase(TRUSTED_RANK_REF)
-                && !reference.equalsIgnoreCase(COOP_RANK_REF)
-                && !reference.equalsIgnoreCase(MEMBER_RANK_REF)
-                && !reference.equalsIgnoreCase(VISITOR_RANK_REF)
-                && !reference.equalsIgnoreCase(BANNED_RANK_REF)
-                && !reference.equalsIgnoreCase(ADMIN_RANK_REF)
-                && !reference.equalsIgnoreCase(MOD_RANK_REF) && (ranks.remove(reference) != null);
-
+        boolean result = ranks.remove(reference) != null;
+        if (result) {
+            save();
+        }
+        return result;
     }
 
     /**
@@ -115,7 +145,6 @@ public class RanksManager {
     public Map<String, Integer> getRanks() {
         return new LinkedHashMap<>(ranks);
     }
-
 
     /**
      * Gets the next rank value above the current rank. Highest is {@link RanksManager#OWNER_RANK}
@@ -148,7 +177,7 @@ public class RanksManager {
     /**
      * Gets the reference to the rank name for value
      * @param rank - value
-     * @return Reference
+     * @return Reference or empty string if nothing
      */
     public String getRank(int rank) {
         for (Entry<String, Integer> en : ranks.entrySet()) {

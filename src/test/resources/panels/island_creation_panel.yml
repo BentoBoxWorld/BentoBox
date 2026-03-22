@@ -1,0 +1,29 @@
+# This is default island creation panel. It is used in all situations when gamemode addon does not have specified their
+# of panel.
+island_creation_panel:
+  title: panels.island_creation.title  # The title of panel or link to the localization location.
+  type: INVENTORY                     # The type of inventory: INVENTORY, DROPPER, HOPPER
+  force-shown: []                     # Allow to specify (1-6, 1-3, 1) which rows must be showed regardless of empty elements.
+  content:                            # Allow to define buttons in your panel.
+    1:
+      1: blueprint_bundle_button      # String values are expected to be `reusables` that are defined at the end of this file.
+      2: blueprint_bundle_button
+      3: blueprint_bundle_button
+      4: blueprint_bundle_button
+      5: blueprint_bundle_button
+      6: blueprint_bundle_button
+      7: blueprint_bundle_button
+      8: blueprint_bundle_button
+      9: blueprint_bundle_button
+  reusable:                                             # List of reoccurring buttons in the panels.
+    blueprint_bundle_button:                            # The ID of the button
+      # icon: GRASS_BLOCK
+      title: panels.island_creation.buttons.bundle.name
+      description: panels.island_creation.buttons.bundle.description
+      data:
+        type: BUNDLE
+        # unique_id: default                            # Specifying unique_id will force to show the requested bundle if it is available.
+      actions:
+        select:
+          click-type: UNKNOWN
+          tooltip: panels.tips.click-to-choose

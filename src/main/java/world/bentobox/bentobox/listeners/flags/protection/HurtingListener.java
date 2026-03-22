@@ -51,7 +51,10 @@ public class HurtingListener extends FlagListener {
     public void onEntityDamage(final EntityDamageByEntityEvent e)
     {
         // Mobs being hurt
-        if (Util.isPassiveEntity(e.getEntity()))
+        if (Util.isTamableEntity(e.getEntity())) {
+            this.respond(e, e.getDamager(), Flags.HURT_TAMED_ANIMALS);
+        }
+        else if (Util.isPassiveEntity(e.getEntity()))
         {
             this.respond(e, e.getDamager(), Flags.HURT_ANIMALS);
         }
@@ -75,9 +78,9 @@ public class HurtingListener extends FlagListener {
     private void respond(EntityDamageByEntityEvent e, Entity damager, Flag flag) {
         // Get the attacker
         if (damager instanceof Player player) {
-            checkIsland(e, player, player.getLocation(), flag);
+            checkIsland(e, player, e.getEntity().getLocation(), flag);
         } else if (damager instanceof Projectile p && // Find out who fired the projectile
-                p.getShooter() instanceof Player player && !checkIsland(e, player, player.getLocation(), flag)) {
+                p.getShooter() instanceof Player player && !checkIsland(e, player, e.getEntity().getLocation(), flag)) {
             e.getEntity().setFireTicks(0);
         }
     }
@@ -92,7 +95,8 @@ public class HurtingListener extends FlagListener {
             return;
         }
 
-        if ((Util.isPassiveEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
+        if ((Util.isTamableEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_TAMED_ANIMALS))
+                || (Util.isPassiveEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
                 || (Util.isHostileEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
                 || (e.getCaught() instanceof AbstractVillager && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
             e.getHook().remove();
@@ -110,10 +114,14 @@ public class HurtingListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerFeedParrots(PlayerInteractEntityEvent e) {
-        if (e.getRightClicked() instanceof Parrot
-                && (e.getHand().equals(EquipmentSlot.HAND) && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
-                || (e.getHand().equals(EquipmentSlot.OFF_HAND) && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE))) {
-            checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
+        if (e.getRightClicked() instanceof Parrot parrot
+                && ((e.getHand().equals(EquipmentSlot.HAND) && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
+                    || (e.getHand().equals(EquipmentSlot.OFF_HAND) && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE)))) {
+            if (parrot.isTamed()) {
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_TAMED_ANIMALS);
+            } else {
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
+            }
         }
     }
 
@@ -132,27 +140,33 @@ public class HurtingListener extends FlagListener {
                 if (attacker.equals(entity)) {
                     continue;
                 }
-                // Monsters being hurt
-                if (Util.isHostileEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
-                    for (PotionEffect effect : e.getPotion().getEffects()) {
-                        entity.removePotionEffect(effect.getType());
-                    }
-                }
-
-                // Mobs being hurt
-                if (Util.isPassiveEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
-                    for (PotionEffect effect : e.getPotion().getEffects()) {
-                        entity.removePotionEffect(effect.getType());
-                    }
-                }
-
-                // Villagers being hurt
-                if (entity instanceof AbstractVillager && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS)) {
-                    for (PotionEffect effect : e.getPotion().getEffects()) {
-                        entity.removePotionEffect(effect.getType());
-                    }
-                }
+                checkSplashDamage(e, attacker, entity);
             }
+        }
+    }
+
+    private void checkSplashDamage(PotionSplashEvent e, Player attacker, LivingEntity entity) {
+        // Monsters being hurt
+        if (Util.isHostileEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
+            removePotionEffects(e, entity);
+        }
+        // Tamed animals being hurt
+        if (Util.isTamableEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_TAMED_ANIMALS)) {
+            removePotionEffects(e, entity);
+        }
+        // Mobs being hurt
+        if (Util.isPassiveEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
+            removePotionEffects(e, entity);
+        }
+        // Villagers being hurt
+        if (entity instanceof AbstractVillager && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS)) {
+            removePotionEffects(e, entity);
+        }
+    }
+
+    private void removePotionEffects(PotionSplashEvent e, LivingEntity entity) {
+        for (PotionEffect effect : e.getPotion().getEffects()) {
+            entity.removePotionEffect(effect.getType());
         }
     }
 
@@ -188,6 +202,10 @@ public class HurtingListener extends FlagListener {
         // Monsters being hurt
         if (Util.isHostileEntity(entity)) {
             checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS);
+        }
+        // Tamed animals being hurt
+        if (Util.isTamableEntity(entity)) {
+            checkIsland(e, attacker, entity.getLocation(), Flags.HURT_TAMED_ANIMALS);
         }
         // Mobs being hurt
         if (Util.isPassiveEntity(entity)) {

@@ -1,9 +1,8 @@
 package world.bentobox.bentobox.managers.island;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,25 +11,16 @@ import java.util.Optional;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandDeletionManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy.Result;
 import world.bentobox.bentobox.util.Util;
 
@@ -38,22 +28,10 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Util.class)
-public class DefaultNewIslandLocationStrategyTest {
+class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
 
     private DefaultNewIslandLocationStrategy dnils;
 
-    @Mock
-    private BentoBox plugin;
-    @Mock
-    private Location location;
-    @Mock
-    private World world;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private IslandsManager im;
     @Mock
     private IslandDeletionManager idm;
     @Mock
@@ -65,9 +43,10 @@ public class DefaultNewIslandLocationStrategyTest {
 
     /**
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         // Location
         when(location.getWorld()).thenReturn(world);
         when(location.getX()).thenReturn(100D);
@@ -84,40 +63,41 @@ public class DefaultNewIslandLocationStrategyTest {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.getIslandDistance(eq(world))).thenReturn(50);
-        when(iwm.getIslandHeight(eq(world))).thenReturn(120);
-        when(iwm.getIslandXOffset(eq(world))).thenReturn(0);
-        when(iwm.getIslandZOffset(eq(world))).thenReturn(0);
-        when(iwm.getIslandStartX(eq(world))).thenReturn(1000);
-        when(iwm.getIslandStartZ(eq(world))).thenReturn(11000);
-        when(iwm.isCheckForBlocks(eq(world))).thenReturn(true);
+        when(iwm.getIslandDistance(world)).thenReturn(50);
+        when(iwm.getIslandHeight(world)).thenReturn(120);
+        when(iwm.getIslandXOffset(world)).thenReturn(0);
+        when(iwm.getIslandZOffset(world)).thenReturn(0);
+        when(iwm.getIslandStartX(world)).thenReturn(1000);
+        when(iwm.getIslandStartZ(world)).thenReturn(11000);
+        when(iwm.isCheckForBlocks(world)).thenReturn(true);
         // Island deletion manager
         when(plugin.getIslandDeletionManager()).thenReturn(idm);
         when(idm.inDeletion(any())).thenReturn(false);
         // Util
-        PowerMockito.mockStatic(Util.class);
         // Return back what the argument was, i.e., no change
-        when(Util.getClosestIsland(any())).thenAnswer((Answer<Location>) invocation -> invocation.getArgument(0, Location.class));
+        mockedUtil.when(() -> Util.getClosestIsland(any())).thenAnswer((Answer<Location>) invocation -> invocation.getArgument(0, Location.class));
         // Default is that chunks have been generated
-        when(Util.isChunkGenerated(any())).thenReturn(true);
+        mockedUtil.when(() -> Util.isChunkGenerated(any())).thenReturn(true);
         // Last island location
-        when(im.getLast(eq(world))).thenReturn(location);
+        when(im.getLast(world)).thenReturn(location);
         // Class under test
         dnils = new DefaultNewIslandLocationStrategy();
     }
 
     /**
+     * @throws Exception
      */
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
      */
     @Test
-    public void testGetNextLocationSuccess() {
+    void testGetNextLocationSuccess() {
         assertEquals(location,dnils.getNextLocation(world));
         verify(im).setLast(location);
     }
@@ -126,7 +106,7 @@ public class DefaultNewIslandLocationStrategyTest {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
      */
     @Test
-    public void testGetNextLocationFailBlocks() {
+    void testGetNextLocationFailBlocks() {
         when(adjBlock.getType()).thenReturn(Material.STONE);
         when(adjBlock.isEmpty()).thenReturn(false);
         assertNull(dnils.getNextLocation(world));
@@ -141,7 +121,7 @@ public class DefaultNewIslandLocationStrategyTest {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetNextLocationSuccessSomeIslands() {
+    void testGetNextLocationSuccessSomeIslands() {
         Optional<Island> opIsland = Optional.of(new Island());
         Optional<Island> emptyIsland = Optional.empty();
         when(im.getIslandAt(any())).thenReturn(opIsland, opIsland, opIsland, opIsland, emptyIsland);
@@ -153,14 +133,12 @@ public class DefaultNewIslandLocationStrategyTest {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
      */
     @Test
-    public void testGetNextLocationSuccessSomeIslands10() {
+    void testGetNextLocationSuccessSomeIslands10() {
         Optional<Island> opIsland = Optional.of(new Island());
         Optional<Island> emptyIsland = Optional.empty();
         count = 0;
-        //long time = System.currentTimeMillis();
         when(im.getIslandAt(any())).thenAnswer(i -> count++ > 10 ? emptyIsland :opIsland);
         assertEquals(location,dnils.getNextLocation(world));
-        //System.out.println(System.currentTimeMillis() - time);
         verify(im).setLast(location);
     }
 
@@ -168,7 +146,7 @@ public class DefaultNewIslandLocationStrategyTest {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandIslandFound() {
+    void testIsIslandIslandFound() {
         Optional<Island> opIsland = Optional.of(new Island());
         when(im.getIslandAt(any())).thenReturn(opIsland);
         assertEquals(Result.ISLAND_FOUND, dnils.isIsland(location));
@@ -178,7 +156,7 @@ public class DefaultNewIslandLocationStrategyTest {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandIslandInDeletion() {
+    void testIsIslandIslandInDeletion() {
         when(idm.inDeletion(any())).thenReturn(true);
         assertEquals(Result.ISLAND_FOUND, dnils.isIsland(location));
     }
@@ -187,8 +165,8 @@ public class DefaultNewIslandLocationStrategyTest {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandChunkNotGenerated() {
-        when(Util.isChunkGenerated(any())).thenReturn(false);
+    void testIsIslandChunkNotGenerated() {
+        mockedUtil.when(() -> Util.isChunkGenerated(any())).thenReturn(false);
         assertEquals(Result.FREE, dnils.isIsland(location));
     }
 
@@ -196,8 +174,8 @@ public class DefaultNewIslandLocationStrategyTest {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandUseOwnGenerator() {
-        when(iwm.isUseOwnGenerator(eq(world))).thenReturn(true);
+    void testIsIslandUseOwnGenerator() {
+        when(iwm.isUseOwnGenerator(world)).thenReturn(true);
         assertEquals(Result.FREE, dnils.isIsland(location));
     }
 
@@ -205,7 +183,7 @@ public class DefaultNewIslandLocationStrategyTest {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandFreeAirBlocks() {
+    void testIsIslandFreeAirBlocks() {
         assertEquals(Result.FREE, dnils.isIsland(location));
     }
 
@@ -213,7 +191,7 @@ public class DefaultNewIslandLocationStrategyTest {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandFreeWaterBlocks() {
+    void testIsIslandFreeWaterBlocks() {
         when(adjBlock.getType()).thenReturn(Material.WATER);
         when(adjBlock.isEmpty()).thenReturn(false);
         assertEquals(Result.FREE, dnils.isIsland(location));
@@ -223,7 +201,7 @@ public class DefaultNewIslandLocationStrategyTest {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandBlocksInArea() {
+    void testIsIslandBlocksInArea() {
         when(adjBlock.getType()).thenReturn(Material.STONE);
         when(adjBlock.isEmpty()).thenReturn(false);
         assertEquals(Result.BLOCKS_IN_AREA, dnils.isIsland(location));
@@ -233,7 +211,7 @@ public class DefaultNewIslandLocationStrategyTest {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandBlocksInAreaNoCheck() {
+    void testIsIslandBlocksInAreaNoCheck() {
         when(iwm.isCheckForBlocks(any())).thenReturn(false);
         when(adjBlock.getType()).thenReturn(Material.STONE);
         when(adjBlock.isEmpty()).thenReturn(false);

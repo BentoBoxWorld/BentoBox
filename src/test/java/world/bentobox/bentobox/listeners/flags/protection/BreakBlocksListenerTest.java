@@ -1,8 +1,9 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -11,11 +12,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.CaveVinesPlant;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
@@ -37,31 +38,28 @@ import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
+import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
-public class BreakBlocksListenerTest extends AbstractCommonSetup {
+class BreakBlocksListenerTest extends CommonTestSetup {
 
     private BreakBlocksListener bbl;
+    @Mock
+    private Block mockBlock;
+    @Mock
+    private ItemStack mockItem;
 
-    /**
-     */
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -72,16 +70,22 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         // Listener
         bbl = new BreakBlocksListener();
     }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnBlockBreakAllowed() {
+    void testOnBlockBreakAllowed() {
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
         when(block.getType()).thenReturn(Material.DIRT);
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         bbl.onBlockBreak(e);
         assertFalse(e.isCancelled());
     }
@@ -90,43 +94,76 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnBlockBreakNotAllowed() {
+    void testOnBlockBreakNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Block block = mock(Block.class);
         when(block.getType()).thenReturn(Material.DIRT);
         when(block.getLocation()).thenReturn(location);
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         bbl.onBlockBreak(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnBlockHarvestNotAllowed() {
-        when(island.isAllowed(any(), eq(Flags.HARVEST))).thenReturn(false);
+    void testOnBlockHarvestNotAllowed() {
+        when(island.isAllowed(any(), 
+                eq(Flags.HARVEST))).thenReturn(false);
         Block block = mock(Block.class);
         when(block.getType()).thenReturn(Material.PUMPKIN);
         when(block.getLocation()).thenReturn(location);
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         bbl.onBlockBreak(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnBlockHarvestAllowed() {
+    void testOnBlockHarvestAllowed() {
         when(island.isAllowed(any(), eq(Flags.BREAK_BLOCKS))).thenReturn(false);
         when(island.isAllowed(any(), eq(Flags.HARVEST))).thenReturn(true);
         Block block = mock(Block.class);
         when(block.getType()).thenReturn(Material.PUMPKIN);
         when(block.getLocation()).thenReturn(location);
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
+        bbl.onBlockBreak(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
+     * Ensures that breaking sugar cane is governed by the HARVEST flag, not BREAK_BLOCKS.
+     */
+    @Test
+    void testOnBlockSugarCaneHarvestNotAllowed() {
+        when(island.isAllowed(any(), eq(Flags.HARVEST))).thenReturn(false);
+        Block block = mock(Block.class);
+        when(block.getType()).thenReturn(Material.SUGAR_CANE);
+        when(block.getLocation()).thenReturn(location);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
+        bbl.onBlockBreak(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
+     * Ensures that breaking sugar cane is allowed when HARVEST is allowed (even if BREAK_BLOCKS is not).
+     */
+    @Test
+    void testOnBlockSugarCaneHarvestAllowed() {
+        when(island.isAllowed(any(), eq(Flags.BREAK_BLOCKS))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.HARVEST))).thenReturn(true);
+        Block block = mock(Block.class);
+        when(block.getType()).thenReturn(Material.SUGAR_CANE);
+        when(block.getLocation()).thenReturn(location);
+        BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         bbl.onBlockBreak(e);
         assertFalse(e.isCancelled());
     }
@@ -135,11 +172,11 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
-    public void testOnBreakHangingAllowed() {
+    void testOnBreakHangingAllowed() {
         Hanging hanging = mock(Hanging.class);
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.ENTITY;
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, player, cause);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, mockPlayer, cause);
         bbl.onBreakHanging(e);
         assertFalse(e.isCancelled());
     }
@@ -148,12 +185,12 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
-    public void testOnBreakHangingNotAllowed() {
+    void testOnBreakHangingNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Hanging hanging = mock(Hanging.class);
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.ENTITY;
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, player, cause);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, mockPlayer, cause);
         bbl.onBreakHanging(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -163,7 +200,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
-    public void testOnBreakHangingNotPlayer() {
+    void testOnBreakHangingNotPlayer() {
         Hanging hanging = mock(Hanging.class);
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.EXPLOSION;
@@ -176,7 +213,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
-    public void testOnBreakHangingNotPlayerProjectile() {
+    void testOnBreakHangingNotPlayerProjectile() {
         Hanging hanging = mock(Hanging.class);
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.PHYSICS;
@@ -191,13 +228,13 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
-    public void testOnBreakHangingPlayerProjectileNotAllowed() {
+    void testOnBreakHangingPlayerProjectileNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Hanging hanging = mock(Hanging.class);
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.PHYSICS;
         Arrow arrow = mock(Arrow.class);
-        when(arrow.getShooter()).thenReturn(player);
+        when(arrow.getShooter()).thenReturn(mockPlayer);
         HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, cause);
         bbl.onBreakHanging(e);
         assertTrue(e.isCancelled());
@@ -208,40 +245,42 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
-    public void testOnBreakHangingPlayerProjectileAllowed() {
+    void testOnBreakHangingPlayerProjectileAllowed() {
         Hanging hanging = mock(Hanging.class);
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.PHYSICS;
         Arrow arrow = mock(Arrow.class);
-        when(arrow.getShooter()).thenReturn(player);
+        when(arrow.getShooter()).thenReturn(mockPlayer);
         HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, cause);
         bbl.onBreakHanging(e);
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
-    }
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
-     */
-    @Test
-    public void testOnPlayerInteractNotHit() {
-        ItemStack item = mock(ItemStack.class);
-        Block block = mock(Block.class);
-        when(block.getLocation()).thenReturn(location);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, item, block, BlockFace.EAST);
-        bbl.onPlayerInteract(e);
-        assertEquals(e.useInteractedBlock(), Result.ALLOW);
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractHitWrongType() {
+    void testOnPlayerInteractNotHit() {
+        ItemStack item = mock(ItemStack.class);
+        Block block = mock(Block.class);
+        when(block.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_AIR, item, block, BlockFace.EAST);
+        bbl.onPlayerInteract(e);
+        assertEquals(Result.ALLOW, e.useInteractedBlock());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     */
+    @Test
+    void testOnPlayerInteractHitWrongType() {
         ItemStack item = mock(ItemStack.class);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
         when(block.getType()).thenReturn(Material.STONE);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block,
+                BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
     }
@@ -251,20 +290,21 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      */
     @SuppressWarnings("deprecation")
     @Test
-    public void testOnPlayerInteractHitCakeSpawnerDragonEggOK() {
+    void testOnPlayerInteractHitCakeSpawnerDragonEggOK() {
         ItemStack item = mock(ItemStack.class);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
         when(block.getType()).thenReturn(Material.CAKE);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block,
+                BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertFalse(e.isCancelled());
         when(block.getType()).thenReturn(Material.SPAWNER);
-        e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertFalse(e.isCancelled());
         when(block.getType()).thenReturn(Material.DRAGON_EGG);
-        e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertFalse(e.isCancelled());
     }
@@ -273,21 +313,22 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractHitCakeSpawnerDragonEggNotOK() {
+    void testOnPlayerInteractHitCakeSpawnerDragonEggNotOK() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         ItemStack item = mock(ItemStack.class);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
         when(block.getType()).thenReturn(Material.CAKE);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block,
+                BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertEquals(Result.DENY, e.useInteractedBlock());
         when(block.getType()).thenReturn(Material.SPAWNER);
-        e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertEquals(Result.DENY, e.useInteractedBlock());
         when(block.getType()).thenReturn(Material.DRAGON_EGG);
-        e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
+        e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertEquals(Result.DENY, e.useInteractedBlock());
         verify(notifier, times(3)).notify(any(), eq("protection.protected"));
@@ -297,11 +338,11 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
      */
     @Test
-    public void testOnVehicleDamageEventAllowed() {
+    void testOnVehicleDamageEventAllowed() {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         when(vehicle.getType()).thenReturn(EntityType.MINECART);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertFalse(e.isCancelled());
     }
@@ -310,12 +351,12 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
      */
     @Test
-    public void testOnVehicleDamageEventNotAllowedMinecart() {
+    void testOnVehicleDamageEventNotAllowedMinecart() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         when(vehicle.getType()).thenReturn(EntityType.MINECART);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -325,12 +366,12 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
      */
     @Test
-    public void testOnVehicleDamageEventNotAllowedBoat() {
+    void testOnVehicleDamageEventNotAllowedBoat() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
-        when(vehicle.getType()).thenReturn(EntityType.BOAT);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
+        when(vehicle.getType()).thenReturn(EntityType.ACACIA_BOAT);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -340,12 +381,12 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
      */
     @Test
-    public void testOnVehicleDamageEventNotAllowedElse() {
+    void testOnVehicleDamageEventNotAllowedElse() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         when(vehicle.getType()).thenReturn(EntityType.TRIDENT);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -355,11 +396,11 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
      */
     @Test
-    public void testOnVehicleDamageEventWrongWorld() {
+    void testOnVehicleDamageEventWrongWorld() {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertFalse(e.isCancelled());
     }
@@ -368,7 +409,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
      */
     @Test
-    public void testOnVehicleDamageEventNotPlayer() {
+    void testOnVehicleDamageEventNotPlayer() {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mock(Creeper.class), 10);
@@ -380,11 +421,11 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageNotCovered() {
+    void testOnEntityDamageNotCovered() {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
-        Entity damagee = player;
-        Entity damager = player;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        Entity damagee = mockPlayer;
+        Entity damager = mockPlayer;
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -393,19 +434,19 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageAllowed() {
+    void testOnEntityDamageAllowed() {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mock(ArmorStand.class);
-        Entity damager = player;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        Entity damager = mockPlayer;
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
         damagee = mock(ItemFrame.class);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
         damagee = mock(EnderCrystal.class);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -414,23 +455,23 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageNotAllowed() {
+    void testOnEntityDamageNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mock(ArmorStand.class);
         when(damagee.getLocation()).thenReturn(location);
-        Entity damager = player;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        Entity damager = mockPlayer;
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
         damagee = mock(ItemFrame.class);
         when(damagee.getLocation()).thenReturn(location);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
         damagee = mock(EnderCrystal.class);
         when(damagee.getLocation()).thenReturn(location);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
         verify(notifier, times(3)).notify(any(), eq("protection.protected"));
@@ -440,20 +481,20 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageAllowedProjectile() {
+    void testOnEntityDamageAllowedProjectile() {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mock(ArmorStand.class);
         Projectile damager = mock(Projectile.class);
-        when(damager.getShooter()).thenReturn(player);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        when(damager.getShooter()).thenReturn(mockPlayer);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
         damagee = mock(ItemFrame.class);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
         damagee = mock(EnderCrystal.class);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -462,54 +503,165 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageAllowedProjectileNotPlayer() {
+    void testOnEntityDamageAllowedProjectileNotPlayer() {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mock(ArmorStand.class);
         Projectile damager = mock(Projectile.class);
         when(damager.getShooter()).thenReturn(mock(Skeleton.class));
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
         damagee = mock(ItemFrame.class);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
         damagee = mock(EnderCrystal.class);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
-
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamageNotAllowedProjectile() {
+    void testOnEntityDamageNotAllowedProjectile() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mock(ArmorStand.class);
         when(damagee.getLocation()).thenReturn(location);
         Projectile damager = mock(Projectile.class);
-        when(damager.getShooter()).thenReturn(player);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        when(damager.getShooter()).thenReturn(mockPlayer);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
         verify(damagee).setFireTicks(0);
 
         damagee = mock(ItemFrame.class);
         when(damagee.getLocation()).thenReturn(location);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
         verify(damagee).setFireTicks(0);
 
         damagee = mock(EnderCrystal.class);
         when(damagee.getLocation()).thenReturn(location);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
+        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
         verify(notifier, times(3)).notify(any(), eq("protection.protected"));
         verify(damagee).setFireTicks(0);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    void testRightClickCaveVinesWithBerries() {
+        when(mockBlock.getType()).thenReturn(Material.CAVE_VINES);
+        when(mockBlock.getLocation()).thenReturn(location);
+        CaveVinesPlant mockCaveVinesPlant = mock(CaveVinesPlant.class);
+        when(mockBlock.getBlockData()).thenReturn(mockCaveVinesPlant);
+        when(mockCaveVinesPlant.isBerries()).thenReturn(true);
+
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+
+        assertSame(Result.ALLOW, e.useInteractedBlock());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    void testRightClickSweetBerryBush() {
+        when(mockBlock.getType()).thenReturn(Material.SWEET_BERRY_BUSH);
+        when(mockBlock.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+
+        assertSame(Result.ALLOW, e.useInteractedBlock());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    void testRightClickRootedDirt() {
+        when(mockBlock.getType()).thenReturn(Material.ROOTED_DIRT);
+        when(mockBlock.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+
+        assertSame(Result.ALLOW, e.useInteractedBlock());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    void testLeftClickCake() {
+        when(mockBlock.getType()).thenReturn(Material.CAKE);
+        when(mockBlock.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+        assertSame(Result.ALLOW, e.useInteractedBlock());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    void testLeftClickSpawner() {
+        when(mockBlock.getType()).thenReturn(Material.SPAWNER);
+        when(mockBlock.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+
+        assertSame(Result.ALLOW, e.useInteractedBlock());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    void testLeftClickDragonEgg() {
+        when(mockBlock.getType()).thenReturn(Material.DRAGON_EGG);
+        when(mockBlock.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+
+        assertSame(Result.ALLOW, e.useInteractedBlock());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    void testLeftClickHopper() {
+        when(mockBlock.getType()).thenReturn(Material.HOPPER);
+        when(mockBlock.getLocation()).thenReturn(location);
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, mockItem, mockBlock,
+                BlockFace.UP);
+        bbl.onPlayerInteract(e);
+
+        assertSame(Result.ALLOW, e.useInteractedBlock());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(PlayerInteractEvent)}
+     */
+    @Test
+    void testNoClick() {
+        PlayerInteractEvent e = mock(PlayerInteractEvent.class);
+        when(e.getClickedBlock()).thenReturn(null);
+        bbl.onPlayerInteract(e);
+        verify(e).getClickedBlock();
     }
 }

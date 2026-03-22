@@ -1,44 +1,36 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
@@ -48,7 +40,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
@@ -58,42 +49,28 @@ import world.bentobox.bentobox.managers.RanksManager;
 /**
  * @author tastybento
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class IslandTeamKickCommandTest {
+class IslandTeamKickCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
-    private UUID uuid;
     @Mock
     private User user;
     @Mock
     private Settings s;
     @Mock
-    private IslandsManager im;
-    @Mock
     private PlayersManager pm;
     private UUID notUUID;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private Player player;
     @Mock
     private Player target;
     @Mock
     private CompositeCommand subCommand;
     @Mock
-    private Island island;
-    @Mock
     private Addon addon;
 
-    /**
-     */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -107,17 +84,16 @@ public class IslandTeamKickCommandTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
-            notUUID = UUID.randomUUID();
-        }
         when(target.getUniqueId()).thenReturn(notUUID);
         when(target.isOnline()).thenReturn(true);
         when(target.getName()).thenReturn("poslovitch");
         when(target.getDisplayName()).thenReturn("&Cposlovich");
+        when(target.spigot()).thenReturn(spigot);
+        when(target.getWorld()).thenReturn(world);
         // Set the target user
         User.getInstance(target);
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(player);
+        when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
         when(user.getDisplayName()).thenReturn("&Ctastybento");
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
@@ -132,12 +108,11 @@ public class IslandTeamKickCommandTest {
         when(ic.getAddon()).thenReturn(addon);
         AddonDescription desc = new AddonDescription.Builder("main", "name", "version").build();
         when(addon.getDescription()).thenReturn(desc);
+        when(ic.getWorld()).thenReturn(world);
 
         // Player has island to begin with
         im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        when(im.isOwner(any(), any())).thenReturn(true);
-        when(im.getOwner(any(), any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -145,12 +120,6 @@ public class IslandTeamKickCommandTest {
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
-
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-        when(Bukkit.getPluginManager()).thenReturn(mock(PluginManager.class));
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -163,198 +132,186 @@ public class IslandTeamKickCommandTest {
         when(placeholdersManager.replacePlaceholders(any(), any())).thenReturn("mock translation");
 
         // IWM friendly name
-        iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-        when(plugin.getIWM()).thenReturn(iwm);
 
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
-
-        // Plugin Manager
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Island
         when(island.getUniqueId()).thenReturn("uniqueid");
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(im.getPrimaryIsland(any(), any())).thenReturn(island);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.VISITOR_RANK);
-
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
 
         // Ranks
         when(island.getRank(uuid)).thenReturn(RanksManager.OWNER_RANK);
         when(island.getRank(user)).thenReturn(RanksManager.OWNER_RANK);
         when(island.getRank(notUUID)).thenReturn(RanksManager.MEMBER_RANK);
     }
-
-    @After
-    public void tearDown() {
-        User.clearUsers();
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoTeam() {
+    void testExecuteNoTeam() {
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.emptyList()));
-        verify(user).sendMessage(eq("general.errors.no-team"));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+        verify(user).sendMessage("general.errors.no-team");
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteLowerTeamRank() {
+    void testExecuteLowerTeamRank() {
         when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRank(notUUID)).thenReturn(RanksManager.SUB_OWNER_RANK);
 
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(pm.getName(notUUID)).thenReturn("poslovitch");
 
-        Set<UUID> members = new HashSet<>();
-        members.add(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(members);
-
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
+        when(island.inTeam(notUUID)).thenReturn(true);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick-rank"), eq(TextVariables.NAME), eq("poslovitch"));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        verify(user).sendMessage("commands.island.team.kick.cannot-kick-rank", TextVariables.NAME, "poslovitch");
     }
 
-
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteEqualTeamRank() {
+    void testExecuteEqualTeamRank() {
         when(island.getRank(user)).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(island.getRank(notUUID)).thenReturn(RanksManager.SUB_OWNER_RANK);
 
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(pm.getName(notUUID)).thenReturn("poslovitch");
 
-        Set<UUID> members = new HashSet<>();
-        members.add(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(members);
-
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
+        when(island.inTeam(notUUID)).thenReturn(true);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick-rank"), eq(TextVariables.NAME), eq("poslovitch"));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        verify(user).sendMessage("commands.island.team.kick.cannot-kick-rank", TextVariables.NAME, "poslovitch");
     }
 
     /**
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteLargerTeamRank() {
+    void testExecuteLargerTeamRank() {
         when(island.getRank(user)).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(island.getRank(notUUID)).thenReturn(RanksManager.MEMBER_RANK);
 
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(pm.getName(notUUID)).thenReturn("poslovitch");
 
-        Set<UUID> members = new HashSet<>();
-        members.add(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(members);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(im).removePlayer(any(), eq(notUUID));
+        verify(im).removePlayer(any(Island.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoCommandRank() {
+    void testExecuteNoCommandRank() {
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.emptyList()));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for
+     * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoTarget() {
+    void testExecuteNoTarget() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.emptyList()));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         // Show help
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for
+     * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteUnknownPlayer() {
+    void testExecuteUnknownPlayer() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(null);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(user).sendMessage("general.errors.unknown-player", "[name]", "poslovitch");
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for
+     * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteSamePlayer() {
+    void testExecuteSamePlayer() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(uuid);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick"));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        verify(user).sendMessage("commands.island.team.kick.cannot-kick");
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for
+     * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteDifferentPlayerNotInTeam() {
+    void testExecuteDifferentPlayerNotInTeam() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("general.errors.not-in-team"));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        verify(user).sendMessage("general.errors.not-in-team");
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     * Test method for
+     * {@link IslandTeamKickCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteDifferentPlayerNoRank() {
+    void testExecuteDifferentPlayerNoRank() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.visitor"));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoConfirmation() {
+    void testExecuteNoConfirmation() {
         when(s.isKickConfirmation()).thenReturn(false);
 
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(pm.getName(notUUID)).thenReturn("poslovitch");
 
-        Set<UUID> members = new HashSet<>();
-        members.add(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(members);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(im).removePlayer(any(), eq(notUUID));
+        verify(im).removePlayer(any(Island.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
     }
 
@@ -362,7 +319,7 @@ public class IslandTeamKickCommandTest {
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoConfirmationKeepInventory() {
+    void testExecuteNoConfirmationKeepInventory() {
         when(iwm.isOnLeaveResetInventory(any())).thenReturn(true);
         when(iwm.isKickedKeepInventory(any())).thenReturn(true);
         when(s.isKickConfirmation()).thenReturn(false);
@@ -370,15 +327,13 @@ public class IslandTeamKickCommandTest {
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(pm.getName(notUUID)).thenReturn("poslovitch");
 
-        Set<UUID> members = new HashSet<>();
-        members.add(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(members);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(im).removePlayer(any(), eq(notUUID));
+        verify(im).removePlayer(any(Island.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
-        verify(target, Mockito.never()).getInventory();
+        verify(target, never()).getInventory();
 
     }
 
@@ -386,7 +341,7 @@ public class IslandTeamKickCommandTest {
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNoConfirmationLoseInventoryOffline() {
+    void testExecuteNoConfirmationLoseInventoryOffline() {
         when(iwm.isOnLeaveResetInventory(any())).thenReturn(true);
         when(iwm.isKickedKeepInventory(any())).thenReturn(false);
         when(s.isKickConfirmation()).thenReturn(false);
@@ -394,17 +349,15 @@ public class IslandTeamKickCommandTest {
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(pm.getName(notUUID)).thenReturn("poslovitch");
         Players targetPlayer = mock(Players.class);
-        when(pm.getPlayer(eq(notUUID))).thenReturn(targetPlayer);
+        when(pm.getPlayer(notUUID)).thenReturn(targetPlayer);
 
         when(target.isOnline()).thenReturn(false);
 
-        Set<UUID> members = new HashSet<>();
-        members.add(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(members);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(im).removePlayer(any(), eq(notUUID));
+        verify(im).removePlayer(any(Island.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
         verify(target, Mockito.never()).getInventory();
         verify(pm).cleanLeavingPlayer(any(), any(User.class), eq(true), eq(island));
@@ -414,26 +367,24 @@ public class IslandTeamKickCommandTest {
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteWithConfirmation() {
+    void testExecuteWithConfirmation() {
         when(s.isKickConfirmation()).thenReturn(true);
 
         when(pm.getUUID(any())).thenReturn(notUUID);
 
-        Set<UUID> members = new HashSet<>();
-        members.add(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(members);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         // Confirmation required
-        verify(user).sendMessage(eq("commands.confirmation.confirm"), eq("[seconds]"), eq("0"));
+        verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
     }
 
     /**
      * Test method for {@link IslandTeamKickCommand#setCooldown(UUID, UUID, int)}
      */
     @Test
-    public void testCooldown() {
+    void testCooldown() {
         // 10 minutes = 600 seconds
         when(s.getInviteCooldown()).thenReturn(10);
         testExecuteNoConfirmation();
@@ -441,7 +392,7 @@ public class IslandTeamKickCommandTest {
     }
 
     @Test
-    public void testTabCompleteNoArgument() {
+    void testTabCompleteNoArgument() {
 
         Builder<UUID> memberSet = new ImmutableSet.Builder<>();
         for (int j = 0; j < 11; j++) {
@@ -450,23 +401,14 @@ public class IslandTeamKickCommandTest {
 
         when(island.getMemberSet()).thenReturn(memberSet.build());
         // Return a set of players
-        PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
-        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
-        when(island.getRank(any(UUID.class))).thenReturn(
-                RanksManager.COOP_RANK,
-                RanksManager.COOP_RANK,
-                RanksManager.COOP_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK
-                );
+        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george",
+                "harry", "ian", "joe");
+        when(island.getRank(any(UUID.class))).thenReturn(RanksManager.COOP_RANK, RanksManager.COOP_RANK,
+                RanksManager.COOP_RANK, RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK);
 
         IslandTeamKickCommand ibc = new IslandTeamKickCommand(ic);
         // Get the tab-complete list with no argument
@@ -474,17 +416,15 @@ public class IslandTeamKickCommandTest {
         assertTrue(result.isPresent());
         List<String> r = result.get().stream().sorted().toList();
         // Compare the expected with the actual - first names in the list
-        String[] expectedNames = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george"};
+        String[] expectedNames = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george" };
         int i = 0;
         for (String name : r) {
-            assertEquals("Rank " + i, expectedNames[i++], name);
+            assertEquals(expectedNames[i++], name, "Rank " + i);
         }
-        // assertTrue(Arrays.equals(expectedNames, r.toArray()));
-
     }
 
     @Test
-    public void testTabCompleteWithArgument() {
+    void testTabCompleteWithArgument() {
 
         Builder<UUID> memberSet = new ImmutableSet.Builder<>();
         for (int j = 0; j < 11; j++) {
@@ -493,23 +433,14 @@ public class IslandTeamKickCommandTest {
 
         when(island.getMemberSet()).thenReturn(memberSet.build());
         // Return a set of players
-        PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
-        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
-        when(island.getRank(any(UUID.class))).thenReturn(
-                RanksManager.COOP_RANK,
-                RanksManager.COOP_RANK,
-                RanksManager.COOP_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK
-                );
+        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george",
+                "harry", "ian", "joe");
+        when(island.getRank(any(UUID.class))).thenReturn(RanksManager.COOP_RANK, RanksManager.COOP_RANK,
+                RanksManager.COOP_RANK, RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK);
 
         IslandTeamKickCommand ibc = new IslandTeamKickCommand(ic);
         // Get the tab-complete list with argument
@@ -518,18 +449,15 @@ public class IslandTeamKickCommandTest {
         List<String> r = result.get().stream().sorted().toList();
         assertFalse(r.isEmpty());
         // Compare the expected with the actual
-        String[] expectedNames = {"george"};
+        String[] expectedNames = { "george" };
         int i = 0;
         for (String name : r) {
-            assertEquals("Rank " + i, expectedNames[i++], name);
+            assertEquals(expectedNames[i++], name, "Rank " + i);
         }
-
-        //assertTrue(Arrays.equals(expectedNames, r.toArray()));
-
     }
 
     @Test
-    public void testTabCompleteWithWrongArgument() {
+    void testTabCompleteWithWrongArgument() {
 
         Builder<UUID> memberSet = new ImmutableSet.Builder<>();
         for (int j = 0; j < 11; j++) {
@@ -538,23 +466,14 @@ public class IslandTeamKickCommandTest {
 
         when(island.getMemberSet()).thenReturn(memberSet.build());
         // Return a set of players
-        PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
-        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
-        when(island.getRank(any(User.class))).thenReturn(
-                RanksManager.COOP_RANK,
-                RanksManager.COOP_RANK,
-                RanksManager.COOP_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK
-                );
+        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george",
+                "harry", "ian", "joe");
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.COOP_RANK, RanksManager.COOP_RANK,
+                RanksManager.COOP_RANK, RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK, RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK);
 
         IslandTeamKickCommand ibc = new IslandTeamKickCommand(ic);
         // Get the tab-complete list with argument

@@ -1,8 +1,10 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
@@ -17,11 +19,13 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.RayTraceResult;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.ExpiringSet;
 
 /**
  * Enables changing of obsidian back into lava
@@ -29,6 +33,32 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  */
 public class ObsidianScoopingListener extends FlagListener {
+
+    /**
+     * Cooldown to prevent lava duplication by rapid obsidian scooping.
+     * Initialized lazily on first use so that the configured duration from settings
+     * can be read after BentoBox has fully loaded its configuration.
+     * Changes to the cooldown duration in config require a server restart to take effect.
+     */
+    @SuppressWarnings("java:S3077") // volatile is correct here for double-checked locking lazy init
+    private volatile ExpiringSet<UUID> cooldowns;
+
+    /**
+     * Returns the cooldown set, initializing it lazily on first use with the
+     * configured duration from {@link world.bentobox.bentobox.Settings#getObsidianScoopingCooldown()}.
+     *
+     * @return the cooldown set
+     */
+    private ExpiringSet<UUID> getCooldowns() {
+        if (cooldowns == null) {
+            synchronized (this) {
+                if (cooldowns == null) {
+                    cooldowns = new ExpiringSet<>(BentoBox.getInstance().getSettings().getObsidianScoopingCooldown(), TimeUnit.MINUTES);
+                }
+            }
+        }
+        return cooldowns;
+    }
 
     /**
      * Enables changing of obsidian back into lava
@@ -57,8 +87,8 @@ public class ObsidianScoopingListener extends FlagListener {
         }
 
         if (Material.BUCKET.equals(e.getPlayer().getInventory().getItemInOffHand().getType()) &&
-            Material.BUCKET.equals(e.getPlayer().getInventory().getItemInMainHand().getType()) &&
-            EquipmentSlot.OFF_HAND.equals(e.getHand()))
+                Material.BUCKET.equals(e.getPlayer().getInventory().getItemInMainHand().getType())
+                && EquipmentSlot.OFF_HAND.equals(e.getHand()))
         {
             // If player is holding bucket in both hands, then allow to interact only with main hand.
             // Prevents lava duplication glitch.
@@ -68,23 +98,39 @@ public class ObsidianScoopingListener extends FlagListener {
         return lookForLava(e);
     }
 
+    /**
+     * @param e PlayerInteractEvent
+     * @return false if obsidian not scooped, true if scooped
+     */
     private boolean lookForLava(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         ItemStack bucket = e.getItem();
 
         // Get block player is looking at
-        Block b = e.getPlayer().rayTraceBlocks(5, FluidCollisionMode.ALWAYS).getHitBlock();
+        RayTraceResult rtBlocks = e.getPlayer().rayTraceBlocks(5, FluidCollisionMode.ALWAYS);
+        if (rtBlocks == null) {
+            return false;
+        }
+        Block b = rtBlocks.getHitBlock();
         if (!b.getType().equals(Material.OBSIDIAN)) {
             // This should not be needed but might catch some attempts
             return false;
         }
         User user = User.getInstance(player);
         if (getIslands().userIsOnIsland(user.getWorld(), user)) {
-            // Look around to see if this is a lone obsidian block
-            if (getBlocksAround(b).stream().anyMatch(block -> block.getType().equals(Material.OBSIDIAN))) {
-                user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.obsidian-nearby");
+            // Check cooldown to prevent lava duplication exploit
+            if (getCooldowns().contains(player.getUniqueId())) {
+                user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.cooldown");
                 return false;
             }
+            int radius = BentoBox.getInstance().getSettings().getObsidianScoopingRadius();
+            // Look around to see if this is a lone obsidian block
+            if (radius > 0 && getBlocksAround(b, radius).stream().anyMatch(block -> block.getType().equals(Material.OBSIDIAN))) {
+                user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.obsidian-nearby", "[radius]", String.valueOf(radius));
+                return false;
+            }
+            // Add player to cooldown set to prevent rapid scooping
+            getCooldowns().add(player.getUniqueId());
             user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.scooping");
             player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
             e.setCancelled(true);
@@ -94,27 +140,23 @@ public class ObsidianScoopingListener extends FlagListener {
         return false;
 
     }
+
     private void givePlayerLava(Player player, Block b, ItemStack bucket) {
-        if (bucket.getAmount() == 1) {
-            // Needs some special handling when there is only 1 bucket in the stack
-            bucket.setType(Material.LAVA_BUCKET);
-        } else {
-            // Remove one empty bucket and add a lava bucket to the player's inventory
-            bucket.setAmount(bucket.getAmount() - 1);
-            HashMap<Integer, ItemStack> map = player.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
-            if (!map.isEmpty()) {
-                map.values().forEach(i -> player.getWorld().dropItem(player.getLocation(), i));
-            }
+        // Remove one empty bucket and add a lava bucket to the player's inventory
+        bucket.setAmount(bucket.getAmount() - 1);
+        Map<Integer, ItemStack> map = player.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
+        if (!map.isEmpty()) {
+            map.values().forEach(i -> player.getWorld().dropItem(player.getLocation(), i));
         }
         // Set block to air only after giving bucket
         b.setType(Material.AIR);
     }
 
-    private List<Block> getBlocksAround(Block b) {
+    private List<Block> getBlocksAround(Block b, int radius) {
         List<Block> blocksAround = new ArrayList<>();
-        for (int x = -2; x <= 2; x++) {
-            for (int y = -2; y <= 2; y++) {
-                for (int z = -2; z <= 2; z++) {
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
                     blocksAround.add(b.getWorld().getBlockAt(b.getX() + x, b.getY() + y, b.getZ() + z));
                 }
             }

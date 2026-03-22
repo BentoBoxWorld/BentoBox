@@ -1,15 +1,23 @@
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.BlueprintClipboardManager;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminBlueprintLoadCommand extends CompositeCommand {
+
+    private static final FilenameFilter BLUEPRINT_FILTER = (File dir, String name) -> name
+            .endsWith(BlueprintsManager.BLUEPRINT_SUFFIX);
 
     public AdminBlueprintLoadCommand(AdminBlueprintCommand parent) {
         super(parent, "load");
@@ -17,7 +25,7 @@ public class AdminBlueprintLoadCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        inheritPermission();
+        setPermission("admin.blueprint.load");
         setParametersHelp("commands.admin.blueprint.load.parameters");
         setDescription("commands.admin.blueprint.load.description");
     }
@@ -32,7 +40,7 @@ public class AdminBlueprintLoadCommand extends CompositeCommand {
         AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
 
         BlueprintClipboardManager bp = new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder());
-        if (bp.load(user, Util.sanitizeInput(args.get(0)))) {
+        if (bp.load(user, Util.sanitizeInput(args.getFirst()))) {
             parent.getClipboards().put(user.getUniqueId(), bp.getClipboard());
             return true;
         }
@@ -43,10 +51,13 @@ public class AdminBlueprintLoadCommand extends CompositeCommand {
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         List<String> options = new ArrayList<>();
-        options.add("island");
-        options.add("nether-island");
-        options.add("end-island");
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
+        File folder = parent.getBlueprintsFolder();
+        if (folder.exists()) {
+            options = Arrays.stream(Objects.requireNonNull(folder.list(BLUEPRINT_FILTER))).map(n -> n.substring(0, n.length() - 4)) // remove .blu from filename
+                    .toList();
+        }
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
 
         return Optional.of(Util.tabLimit(options, lastArg));
     }

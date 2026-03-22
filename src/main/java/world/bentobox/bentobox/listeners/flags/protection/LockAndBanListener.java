@@ -13,11 +13,11 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 
-import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Listener for the lock flag
@@ -43,13 +43,24 @@ public class LockAndBanListener extends FlagListener {
         /**
          * Island is open for teleporting
          */
-        OPEN
+        OPEN,
+        /**
+         * Island is locked but player has bypass permission
+         */
+        BYPASS_LOCK;
+
+        /**
+         * @return true if the player is allowed to enter the island
+         */
+        boolean isAllowed() {
+            return this != BANNED && this != LOCKED;
+        }
     }
 
     // Teleport check
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        e.setCancelled(!checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN));
+        e.setCancelled(!checkAndNotify(e.getPlayer(), e.getTo()).isAllowed());
     }
 
     // Movement check
@@ -59,14 +70,14 @@ public class LockAndBanListener extends FlagListener {
         if (e.getFrom().getBlockX() - e.getTo().getBlockX() == 0 && e.getFrom().getBlockZ() - e.getTo().getBlockZ() == 0) {
             return;
         }
-        if (!checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN)) {
+        if (!checkAndNotify(e.getPlayer(), e.getTo()).isAllowed()) {
             e.setCancelled(true);
             e.getPlayer().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
             e.getPlayer().setVelocity(new Vector(0,0,0));
             e.getPlayer().setGliding(false);
         }
         // Check from - just in case the player is inside the island
-        if (!check(e.getPlayer(), e.getFrom()).equals(CheckResult.OPEN)) {
+        if (!check(e.getPlayer(), e.getFrom()).isAllowed()) {
             // Has to be done 1 tick later otherwise it doesn't happen for some reason...
             Bukkit.getScheduler().runTask(BentoBox.getInstance(), () -> eject(e.getPlayer()));
         }
@@ -81,7 +92,7 @@ public class LockAndBanListener extends FlagListener {
         }
         // For each Player in the vehicle
         e.getVehicle().getPassengers().stream().filter(Player.class::isInstance).map(Player.class::cast).forEach(p -> {
-            if (!checkAndNotify(p, e.getTo()).equals(CheckResult.OPEN)) {
+            if (!checkAndNotify(p, e.getTo()).isAllowed()) {
                 p.leaveVehicle();
                 p.teleport(e.getFrom());
                 e.getVehicle().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
@@ -93,7 +104,7 @@ public class LockAndBanListener extends FlagListener {
     // Login check
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerLogin(PlayerJoinEvent e) {
-        if (!checkAndNotify(e.getPlayer(), e.getPlayer().getLocation()).equals(CheckResult.OPEN)) {
+        if (!checkAndNotify(e.getPlayer(), e.getPlayer().getLocation()).isAllowed()) {
             eject(e.getPlayer());
         }
     }
@@ -124,7 +135,7 @@ public class LockAndBanListener extends FlagListener {
                     if (!is.isAllowed(User.getInstance(player), Flags.LOCK))
                     {
                         return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypasslock") ?
-                                CheckResult.OPEN : CheckResult.LOCKED;
+                                CheckResult.BYPASS_LOCK : CheckResult.LOCKED;
                     }
                     return CheckResult.OPEN;
                 }).
@@ -144,6 +155,8 @@ public class LockAndBanListener extends FlagListener {
             User.getInstance(player).notify("commands.island.ban.you-are-banned");
         } else if (result == CheckResult.LOCKED) {
             User.getInstance(player).notify("protection.locked");
+        } else if (result == CheckResult.BYPASS_LOCK) {
+            User.getInstance(player).notify("protection.locked-island-bypass");
         }
         return result;
     }
@@ -162,7 +175,8 @@ public class LockAndBanListener extends FlagListener {
         } else {
             // There's nothing much we can do.
             // We'll try to teleport him to the spawn...
-            PaperLib.teleportAsync(player, player.getWorld().getSpawnLocation());
+            Location l = player.getWorld().getSpawnLocation();
+            Util.teleportAsync(player, l);
 
             // Switch him back to the default gamemode. He may die, sorry :(
             player.setGameMode(getIWM().getDefaultGameMode(player.getWorld()));

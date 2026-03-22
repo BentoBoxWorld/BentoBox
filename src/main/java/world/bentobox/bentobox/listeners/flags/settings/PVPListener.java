@@ -53,26 +53,21 @@ public class PVPListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
-            // Allow self damage or NPC attack because Citizens handles its own PVP
-            if (e.getEntity().equals(e.getDamager()) || e.getEntity().hasMetadata("NPC")) {
+            // Allow self damage or NPC attack or attack by NPC because Citizens handles its own PVP
+            if (e.getEntity().equals(e.getDamager()) || e.getEntity().hasMetadata("NPC")
+                    || e.getDamager().hasMetadata("NPC")) {
                 return;
             }
             // Is PVP allowed here?
-            if (this.PVPAllowed(e.getEntity().getLocation())) {
+            if (this.isPvpAllowed(e.getEntity().getLocation())) {
                 return;
             }
             // Protect visitors
-            if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && protectedVisitor(player)) {
-                if (e.getDamager() instanceof Player p && p != null) {
-                    User.getInstance(p).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
-                } else if (e.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Player sh && sh != null) {
-                    User.getInstance(sh).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
-                }
-                e.setCancelled(true);
-            } else {
-                // PVP check
-                respond(e, e.getDamager(), e.getEntity(), getFlag(e.getEntity().getWorld()));
+            if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && handleVisitorProtection(e, player)) {
+                return;
             }
+            // PVP check
+            respond(e, e.getDamager(), e.getEntity(), getFlag(e.getEntity().getWorld()));
         }
     }
 
@@ -90,7 +85,7 @@ public class PVPListener extends FlagListener {
                 user.notify(getFlag(player.getWorld()).getHintReference());
                 e.setCancelled(true);
             }
-        } else if (damager instanceof Projectile && ((Projectile)damager).getShooter() instanceof Player shooter) {
+        } else if (damager instanceof Projectile projectile && projectile.getShooter() instanceof Player shooter) {
             // Find out who fired the arrow
             processDamage(e, damager, shooter, hurtEntity, flag);
         } else if (damager instanceof Firework && firedFireworks.containsKey(damager)) {
@@ -122,7 +117,7 @@ public class PVPListener extends FlagListener {
                 return;
             }
             // Is PVP allowed here?
-            if (this.PVPAllowed(c.getLocation())) {
+            if (this.isPvpAllowed(c.getLocation())) {
                 return;
             }
             // Protect visitors
@@ -146,7 +141,7 @@ public class PVPListener extends FlagListener {
         if (e.getEntity().getShooter() instanceof Player p && p != null && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
             User user = User.getInstance(p);
             // Is PVP allowed here?
-            if (this.PVPAllowed(e.getEntity().getLocation())) {
+            if (this.isPvpAllowed(e.getEntity().getLocation())) {
                 return;
             }
             // Run through affected entities and cancel the splash for protected players
@@ -184,6 +179,27 @@ public class PVPListener extends FlagListener {
             }
         }
         return false;
+    }
+
+    /**
+     * Handles visitor protection for direct entity attacks. Notifies the damager and cancels
+     * the event if the target is a protected visitor.
+     *
+     * @param e      - event
+     * @param player - the player being attacked
+     * @return true if the event was cancelled because the player is a protected visitor
+     */
+    private boolean handleVisitorProtection(EntityDamageByEntityEvent e, Player player) {
+        if (!protectedVisitor(player)) {
+            return false;
+        }
+        if (e.getDamager() instanceof Player p) {
+            User.getInstance(p).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
+        } else if (e.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Player sh) {
+            User.getInstance(sh).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
+        }
+        e.setCancelled(true);
+        return true;
     }
 
     private boolean protectedVisitor(LivingEntity entity) {
@@ -224,9 +240,7 @@ public class PVPListener extends FlagListener {
         // Only care about PVP Flags
         if (Flags.PVP_OVERWORLD.equals(flag) || Flags.PVP_NETHER.equals(flag) || Flags.PVP_END.equals(flag)) {
             String message = "protection.flags." + flag.getID() + "." + (e.isSetTo() ? "enabled" : "disabled");
-            // Send the message to visitors
-            e.getIsland().getVisitors().forEach(visitor -> User.getInstance(visitor).sendMessage(message));
-            // Send the message to players on the island
+            // Send the message to all players on the island
             e.getIsland().getPlayersOnIsland().forEach(player -> User.getInstance(player).sendMessage(message));
         }
     }
@@ -237,10 +251,6 @@ public class PVPListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        if (e.getTo() == null) {
-            return;
-        }
-
         // Get previous island to skip reporting if island is not changed.
         Island previousIsland = this.getIslands().getIslandAt(e.getFrom()).orElse(null);
 
@@ -268,7 +278,7 @@ public class PVPListener extends FlagListener {
 
     private void alertUser(@NonNull Player player, Flag flag) {
         String message = "protection.flags." + flag.getID() + ".enabled";
-        User.getInstance(player).sendMessage(message);
+        User.getInstance(player).notify(message);
         player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER,2F, 1F);
     }
 }

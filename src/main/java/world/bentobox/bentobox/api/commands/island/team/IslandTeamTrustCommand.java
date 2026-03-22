@@ -8,10 +8,12 @@ import java.util.UUID;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.logs.LogEntry;
+import world.bentobox.bentobox.api.logs.LogEntry.LogType;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.TeamInvite.Type;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -55,13 +57,14 @@ public class IslandTeamTrustCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user);
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
         // Get target player
-        targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Check cooldown
@@ -89,13 +92,14 @@ public class IslandTeamTrustCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        assert targetUUID != null;
         User target = User.getInstance(targetUUID);
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             if (getPlugin().getSettings().isInviteConfirmation()) {
                 // Put the invited player (key) onto the list with inviter (value)
                 // If someone else has invited a player, then this invite will overwrite the previous invite!
-                itc.addInvite(Type.TRUST, user.getUniqueId(), target.getUniqueId());
+                itc.addInvite(Type.TRUST, user.getUniqueId(), target.getUniqueId(), island);
                 user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
                 // Send message to online player
                 target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
@@ -109,6 +113,10 @@ public class IslandTeamTrustCommand extends CompositeCommand {
                 island.setRank(target, RanksManager.TRUSTED_RANK);
                 user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
                 target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
+                // Add history record
+                island.log(new LogEntry.Builder(LogType.TRUSTED).data(targetUUID.toString(), "trusted")
+                        .data(user.getUniqueId().toString(), "trusted by").build());
+
             }
             return true;
         } else {
@@ -120,7 +128,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
         if (lastArg.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
