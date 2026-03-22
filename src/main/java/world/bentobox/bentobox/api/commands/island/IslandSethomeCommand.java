@@ -93,7 +93,10 @@ public class IslandSethomeCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.sethome.too-many-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
             user.sendMessage("commands.island.sethome.homes-are");
             getIslands().getIslands(getWorld(), user).forEach(is ->
-            is.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s)));
+            is.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendRawMessage(
+                    user.getTranslation("commands.island.sethome.home-list-syntax", TextVariables.NAME, s)
+                            + "[run_command: /" + getTopLabel() + " go " + s + "]"
+                            + "[hover: " + user.getTranslation("commands.island.sethome.click-to-teleport") + "]")));
             return false;
         }
         return true;
@@ -162,7 +165,10 @@ public class IslandSethomeCommand extends ConfirmableCommand {
             island
             .getHomes()
             .keySet()
-            .stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
+            .stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendRawMessage(
+                    user.getTranslation("commands.island.sethome.home-list-syntax", TextVariables.NAME, s)
+                            + "[run_command: /" + getTopLabel() + " go " + s + "]"
+                            + "[hover: " + user.getTranslation("commands.island.sethome.click-to-teleport") + "]"));
         }
     }
 }
