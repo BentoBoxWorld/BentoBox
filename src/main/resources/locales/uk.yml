@@ -631,6 +631,7 @@ commands:
       home-set: '&6 Дім на вашому [prefix_island] встановлено на поточну локацію.'
       homes-are: '&6 Домівки [prefix_Island]:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Натисніть для телепортації!'
       nether:
         not-allowed: '&c Не можна встановлювати дім у Нижньому світі.'
         confirmation: '&c Ви впевнені, що хочете встановити дім у Нижньому світі?'

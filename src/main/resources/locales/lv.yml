@@ -705,6 +705,7 @@ commands:
       home-set: '&6Tavas salas mājas punkts uzstādīts šajā punktā.'
       homes-are: '&6 [prefix_Island] mājas ir:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Noklikšķiniet, lai teleportētos!'
       nether:
         not-allowed: '&cTev nav atļaujas uzstādīt mājas punktu Ellē.'
         confirmation: '&cVai tiešām vēlies uzstādīt mājas punktu Ellē?'

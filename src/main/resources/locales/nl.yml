@@ -744,6 +744,7 @@ commands:
       home-set: '&6 Uw eilandhuis is ingesteld op uw huidige locatie.'
       homes-are: '&6 eilandwoningen zijn:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Klik om te teleporteren!'
       nether:
         not-allowed: '&c Het is niet toegestaan om uw huis in Nederland te plaatsen.'
         confirmation: '&c Weet u zeker dat u uw huis in de Nether wilt plaatsen?'

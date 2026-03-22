@@ -629,6 +629,7 @@ commands:
       home-set: あなたの島の家はあなたの現在の場所に設定されています。
       homes-are: '&6島の家は次のとおりです:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&aクリックしてテレポート！'
       nether:
         not-allowed: '&cあなたはネザーにあなたの家を設定することはできません。'
         confirmation: '&cネザーにあなたの家を設定しますか？'

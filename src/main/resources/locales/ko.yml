@@ -645,6 +645,7 @@ commands:
       home-set: '&6 현재 서있는 위치를 집으로 설정했습니다'
       homes-are: '&6 [prefix_Island] 집은:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a 클릭하여 텔레포트!'
       nether:
         not-allowed: '&c 지옥에서는 집으로 설정할수 없습니다. (허용되어 있지 않습니다.)'
         confirmation: '&c 정말 집을 지옥에 설정하시겠어요?'

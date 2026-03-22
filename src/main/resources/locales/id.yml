@@ -719,6 +719,7 @@ commands:
       home-set: '&6 Rumah pulau Anda telah disetel ke lokasi Anda saat ini.'
       homes-are: '&6 Rumah pulau adalah:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Klik untuk berteleportasi!'
       nether:
         not-allowed: '&c Anda tidak diperbolehkan mengatur rumah Anda di Nether.'
         confirmation: '&c Apakah Anda yakin ingin menempatkan rumah Anda di Nether?'

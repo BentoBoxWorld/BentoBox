@@ -738,6 +738,7 @@ commands:
         corrente.
       homes-are: '&6 [prefix_Island] le case sono:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Clicca per teletrasportarti!'
       nether:
         not-allowed: '&cNon hai il permesso di impostare la tua home nel Nether.'
         confirmation: '&cSei sicuro di voler impostare la tua home nel Nether?'
