@@ -76,6 +76,7 @@ class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
         when(ic.getUsage()).thenReturn("");
         when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
         when(ic.getAddon()).thenReturn(addon);
+        when(ic.getTopLabel()).thenReturn("island");
         when(ic.getWorld()).thenReturn(world);
         // Player
         when(user.isOp()).thenReturn(false);
@@ -85,6 +86,7 @@ class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
         when(user.getName()).thenReturn("tastybento");
         when(user.getWorld()).thenReturn(world);
         when(user.getTranslation(anyString())).thenAnswer(i -> i.getArgument(0, String.class));
+        when(user.getTranslation(anyString(), anyString(), anyString())).thenAnswer(i -> i.getArgument(0, String.class));
         // Island
         when(island.getOwner()).thenReturn(uuid);
         when(island.onIsland(any())).thenReturn(true);
@@ -180,7 +182,9 @@ class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
         assertFalse(idh.execute(user, "label", List.of("something")));
         verify(user).sendMessage("commands.island.go.unknown-home");
         verify(user).sendMessage("commands.island.sethome.homes-are");
-        verify(user).sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, "home");
+        verify(user).sendRawMessage("commands.island.sethome.home-list-syntax"
+                + "[run_command: /island go home]"
+                + "[hover: commands.island.sethome.click-to-teleport]");
 
     }
 
