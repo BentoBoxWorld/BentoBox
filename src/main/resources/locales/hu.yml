@@ -743,6 +743,7 @@ commands:
       home-set: '&6 Az Ön szigeti otthona a jelenlegi helyére lett állítva.'
       homes-are: 'A 6 szigeti ház a következő:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Kattints a teleportáláshoz!'
       nether:
         not-allowed: '&c Nem állíthatja be otthonát a Hollandiában.'
         confirmation: '&c Biztos, hogy Hollandiába szeretné helyezni otthonát?'

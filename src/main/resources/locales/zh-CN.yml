@@ -645,6 +645,7 @@ commands:
       home-set: '&6你的岛屿传送点已被设置在了当前位置.'
       homes-are: '&6你的岛屿传送点如下: '
       home-list-syntax: '&6[name]'
+      click-to-teleport: '&a点击传送！'
       nether:
         not-allowed: '&c不允许在下界设置岛屿传送点.'
         confirmation: '&c你确定要在下界设置岛屿传送点吗?'

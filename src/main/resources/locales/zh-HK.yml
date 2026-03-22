@@ -643,6 +643,7 @@ commands:
       home-set: '&6您的島嶼傳送點已經被設置到您的當前位置。'
       homes-are: '&6您的島嶼傳送點有'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a點擊傳送！'
       nether:
         not-allowed: '&c您無法在地獄設置您的家。'
         confirmation: '&c您確定要在地獄設置您的家嗎?'

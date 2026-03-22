@@ -691,6 +691,7 @@ commands:
       home-set: '&9Oldugun lokasyon ev olarak kaydedildi!'
       homes-are: '&6 Adadaki evler:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Işınlanmak için tıklayın!'
       nether:
         not-allowed: '&4Netherde ev kaydetmek icin yetkin yok!.'
         confirmation: '&4Nethera ev kaydetmek istedigine emin misin?'

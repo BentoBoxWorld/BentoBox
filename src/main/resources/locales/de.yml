@@ -741,6 +741,7 @@ commands:
       home-set: '&6 Dein Insel-Home wurde auf deine aktuelle Position gesetzt.'
       homes-are: '&6 Inselhomes sind:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Klicke zum Teleportieren!'
       nether:
         not-allowed: '&c Du darfst dein Home nicht im Nether setzen.'
         confirmation: '&c Bist du sicher, dass du dein Home im Nether setzen möchtest?'

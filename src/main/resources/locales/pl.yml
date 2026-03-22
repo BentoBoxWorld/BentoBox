@@ -714,6 +714,7 @@ commands:
       home-set: Twój dom na wyspie został ustawiony w bieżącej lokalizacji.
       homes-are: '&6 [prefix_Island] domy to:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Kliknij, aby się teleportować!'
       nether:
         not-allowed: '&c Nie możesz ustawić swojego domu w Netherze.'
         confirmation: '&c Czy na pewno chcesz ustawić swój dom w Netherze?'

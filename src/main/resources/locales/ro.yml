@@ -725,6 +725,7 @@ commands:
       home-set: '&6 Casa insulei dvs. a fost setată la locația dvs. curentă.'
       homes-are: 'Casele din &6 Island sunt:'
       home-list-syntax: '&6 [nume]'
+      click-to-teleport: '&a Faceți clic pentru a vă teleporta!'
       nether:
         not-allowed: '&c Nu aveți voie să vă stabiliți casa în Olanda.'
         confirmation: '&c Sunteți sigur că doriți să vă stabiliți casa în Olanda?'

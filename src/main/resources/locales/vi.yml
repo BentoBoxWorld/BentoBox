@@ -696,6 +696,7 @@ commands:
       home-set: '&6 Điểm nhà của bạn đã được chọn ở vị trí hiện tại của bạn.'
       homes-are: '&6 Nhà trong đảo:'
       home-list-syntax: '&6 [tên]'
+      click-to-teleport: '&a Nhấn để dịch chuyển!'
       nether:
         not-allowed: '&c Bạn không được phép chọn điểm nhà ở Địa Ngục.'
         confirmation: '&c Bạn có chắc muốn chọn điểm nhà ở Địa Ngục?'

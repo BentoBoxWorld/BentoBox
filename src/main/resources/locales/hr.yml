@@ -700,6 +700,7 @@ commands:
       home-set: '&6 Vaš dom na otoku postavljen je na vašu trenutnu lokaciju.'
       homes-are: '&6 Kuće na otoku su:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Kliknite za teleportaciju!'
       nether:
         not-allowed: '&c Nije vam dopušteno postaviti svoj dom u Nether.'
         confirmation: '&c Jeste li sigurni da želite postaviti svoj dom u Nether?'

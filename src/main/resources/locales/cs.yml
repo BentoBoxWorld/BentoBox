@@ -690,6 +690,7 @@ commands:
       home-set: '&6 Domov tvého ostrova byl nastaven na tvou nynější pozici.'
       homes-are: 'Ostrovní domy &6 jsou:'
       home-list-syntax: '&6 [jméno]'
+      click-to-teleport: '&a Klikněte pro teleportaci!'
       nether:
         not-allowed: '&c Nejsi oprávněn nastavit svůj domov v Netheru.'
         confirmation: '&c Jsi si jistý, že chceš nastavit svůj domov v Netheru?'

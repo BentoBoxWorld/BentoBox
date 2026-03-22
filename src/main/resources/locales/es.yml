@@ -724,6 +724,7 @@ commands:
       home-set: '&6Su hogar en la isla se ha establecido en su ubicación actual.'
       homes-are: '&6 [prefix_Island] hogares son:'
       home-list-syntax: '&6 [nombre]'
+      click-to-teleport: '&a ¡Haz clic para teletransportarte!'
       nether:
         not-allowed: '&cNo se le permite establecer su hogar en el Nether.'
         confirmation: '&cEstás seguro de que quieres establecer tu hogar en el Nether?'
