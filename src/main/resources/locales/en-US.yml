@@ -704,6 +704,7 @@ commands:
       home-set: '&6 Your [prefix_island] home has been set to your current location.'
       homes-are: '&6 [prefix_Island] homes are:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Click to teleport!'
       nether:
         not-allowed: '&c You are not allowed to set your home in the Nether.'
         confirmation: '&c Are you sure you want to set your home in the Nether?'
