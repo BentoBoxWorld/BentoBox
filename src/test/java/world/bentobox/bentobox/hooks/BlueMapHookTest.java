@@ -37,6 +37,7 @@ import de.bluecolored.bluemap.api.markers.ShapeMarker;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
 import world.bentobox.bentobox.api.events.island.IslandNameEvent;
 import world.bentobox.bentobox.api.events.island.IslandNewIslandEvent;
@@ -121,6 +122,15 @@ class BlueMapHookTest extends CommonTestSetup {
         hook = new BlueMapHook();
     }
 
+    /**
+     * Calls hook() then fires BentoBoxReadyEvent to trigger island marker population,
+     * mirroring the real startup sequence.
+     */
+    private void hookAndReady() {
+        hook.hook();
+        hook.onBentoBoxReady(mock(BentoBoxReadyEvent.class));
+    }
+
     @AfterEach
     @Override
     public void tearDown() throws Exception {
@@ -148,8 +158,8 @@ class BlueMapHookTest extends CommonTestSetup {
     }
 
     @Test
-    void testHookCallsRegisterGameMode() {
-        hook.hook();
+    void testBentoBoxReadyCallsRegisterGameMode() {
+        hookAndReady();
         verify(im).getIslands(overWorld);
     }
 
@@ -169,7 +179,7 @@ class BlueMapHookTest extends CommonTestSetup {
 
     @Test
     void testRegisterGameModeNoIslands() {
-        hook.hook();
+        hookAndReady();
         // marker set should be attached to the map
         assertTrue(mapMarkerSets.containsKey("BSkyBlock"));
     }
@@ -177,7 +187,7 @@ class BlueMapHookTest extends CommonTestSetup {
     @Test
     void testRegisterGameModeWithIsland() {
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
-        hook.hook();
+        hookAndReady();
         MarkerSet ms = mapMarkerSets.get("BSkyBlock");
         assertNotNull(ms);
         assertNotNull(ms.get(uuid.toString()));
@@ -191,7 +201,7 @@ class BlueMapHookTest extends CommonTestSetup {
         Island unowned = mock(Island.class);
         when(unowned.getOwner()).thenReturn(null);
         when(im.getIslands(overWorld)).thenReturn(List.of(unowned));
-        hook.hook();
+        hookAndReady();
         MarkerSet ms = mapMarkerSets.get("BSkyBlock");
         assertNotNull(ms);
         assertTrue(ms.getMarkers().isEmpty());
@@ -210,7 +220,7 @@ class BlueMapHookTest extends CommonTestSetup {
         when(netherMap.getName()).thenReturn("Nether");
         when(netherMap.getMarkerSets()).thenReturn(netherMapSets);
 
-        hook.hook();
+        hookAndReady();
         assertTrue(netherMapSets.containsKey("BSkyBlock"));
     }
 
@@ -227,7 +237,7 @@ class BlueMapHookTest extends CommonTestSetup {
         when(endMap.getName()).thenReturn("End");
         when(endMap.getMarkerSets()).thenReturn(endMapSets);
 
-        hook.hook();
+        hookAndReady();
         assertTrue(endMapSets.containsKey("BSkyBlock"));
     }
 
@@ -237,7 +247,7 @@ class BlueMapHookTest extends CommonTestSetup {
         when(worldSettings.isNetherIslands()).thenReturn(true);
         when(addon.getNetherWorld()).thenReturn(null);
         // should not throw
-        hook.hook();
+        hookAndReady();
         // nether map should not have been touched
         verify(blueMapAPI, never()).getWorld(netherWorld);
     }
@@ -245,7 +255,7 @@ class BlueMapHookTest extends CommonTestSetup {
     @Test
     void testRegisterGameModeBlueMapDoesNotKnowWorld() {
         when(blueMapAPI.getWorld(overWorld)).thenReturn(Optional.empty());
-        hook.hook();
+        hookAndReady();
         // No marker sets added since BlueMap doesn't know the world
         assertFalse(mapMarkerSets.containsKey("BSkyBlock"));
     }
@@ -256,7 +266,7 @@ class BlueMapHookTest extends CommonTestSetup {
     void testIslandLabelUsesCustomName() {
         when(island.getName()).thenReturn("My Island");
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
-        hook.hook();
+        hookAndReady();
         MarkerSet ms = mapMarkerSets.get("BSkyBlock");
         assertNotNull(ms.get(uuid.toString()));
         assertEquals("My Island", ms.get(uuid.toString()).getLabel());
@@ -266,7 +276,7 @@ class BlueMapHookTest extends CommonTestSetup {
     void testIslandLabelUsesOwnerName() {
         when(island.getName()).thenReturn(null);
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
-        hook.hook();
+        hookAndReady();
         MarkerSet ms = mapMarkerSets.get("BSkyBlock");
         // player name from CommonTestSetup is "tastybento"
         assertEquals("tastybento", ms.get(uuid.toString()).getLabel());
@@ -275,7 +285,7 @@ class BlueMapHookTest extends CommonTestSetup {
     @Test
     void testIslandLabelFallsBackToUUID() {
         // The registerGameMode filter skips null-owner islands; test UUID fallback via the event path
-        hook.hook();
+        hookAndReady();
         Island noOwnerIsland = mock(Island.class);
         UUID noOwnerUuid = UUID.randomUUID();
         when(noOwnerIsland.getName()).thenReturn(null);
@@ -301,7 +311,7 @@ class BlueMapHookTest extends CommonTestSetup {
 
     @Test
     void testOnNewIsland() {
-        hook.hook();
+        hookAndReady();
         // Clear existing markers so we can detect the add
         mapMarkerSets.get("BSkyBlock").remove(uuid.toString());
 
@@ -314,7 +324,7 @@ class BlueMapHookTest extends CommonTestSetup {
 
     @Test
     void testOnNewIslandNoAddon() {
-        hook.hook();
+        hookAndReady();
         when(iwm.getAddon(overWorld)).thenReturn(Optional.empty());
         IslandNewIslandEvent event = mock(IslandNewIslandEvent.class);
         when(event.getIsland()).thenReturn(island);
@@ -327,7 +337,7 @@ class BlueMapHookTest extends CommonTestSetup {
     @Test
     void testOnIslandDelete() {
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
-        hook.hook();
+        hookAndReady();
         // island should be in the marker set after hook()
         IslandDeleteEvent event = mock(IslandDeleteEvent.class);
         when(event.getIsland()).thenReturn(island);
@@ -342,7 +352,7 @@ class BlueMapHookTest extends CommonTestSetup {
     void testOnIslandName() {
         when(island.getName()).thenReturn("Old Name");
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
-        hook.hook();
+        hookAndReady();
 
         // Now rename
         when(island.getName()).thenReturn("New Name");
@@ -358,7 +368,7 @@ class BlueMapHookTest extends CommonTestSetup {
     @Test
     void testOnIslandReset() {
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
-        hook.hook();
+        hookAndReady();
 
         Island newIsland = mock(Island.class);
         UUID newUuid = UUID.randomUUID();
@@ -395,13 +405,13 @@ class BlueMapHookTest extends CommonTestSetup {
 
     @Test
     void testGetMarkerSet() {
-        hook.hook();
+        hookAndReady();
         assertEquals(mapMarkerSets.get("BSkyBlock"), hook.getMarkerSet(addon));
     }
 
     @Test
     void testGetMarkerSetNotRegistered() {
-        hook.hook();
+        hookAndReady();
         GameModeAddon unknownAddon = mock(GameModeAddon.class);
         WorldSettings unknownSettings = mock(WorldSettings.class);
         when(unknownAddon.getWorldSettings()).thenReturn(unknownSettings);

@@ -103,8 +103,17 @@ class MapManagerTest extends CommonTestSetup {
         when(hooksManager.getHooks()).thenReturn(List.of(mapHook1, mapHook2));
         Location loc = mock(Location.class);
         mapManager.addPointMarker("set", "id", "label", loc);
-        verify(mapHook1).addPointMarker("set", "id", "label", loc);
-        verify(mapHook2).addPointMarker("set", "id", "label", loc);
+        verify(mapHook1).addPointMarker("set", "id", "label", loc, "default");
+        verify(mapHook2).addPointMarker("set", "id", "label", loc, "default");
+    }
+
+    @Test
+    void testAddPointMarkerWithIconFansOut() {
+        when(hooksManager.getHooks()).thenReturn(List.of(mapHook1, mapHook2));
+        Location loc = mock(Location.class);
+        mapManager.addPointMarker("set", "id", "label", loc, "sign");
+        verify(mapHook1).addPointMarker("set", "id", "label", loc, "sign");
+        verify(mapHook2).addPointMarker("set", "id", "label", loc, "sign");
     }
 
     @Test

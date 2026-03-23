@@ -20,6 +20,7 @@ import de.bluecolored.bluemap.api.markers.ShapeMarker;
 import de.bluecolored.bluemap.api.math.Shape;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
 import world.bentobox.bentobox.api.events.island.IslandNameEvent;
 import world.bentobox.bentobox.api.events.island.IslandNewIslandEvent;
@@ -54,9 +55,9 @@ public class BlueMapHook extends MapHook implements Listener {
         } else {
             return false;
         }
-        // Register markers for all game mode addons known at hook time
-        plugin.getAddonsManager().getGameModeAddons().forEach(this::registerGameMode);
-        // Listen for future island events
+        // Listen for island events and BentoBoxReadyEvent to populate island markers
+        // after islands are loaded (map hooks register before addons enable, so islands
+        // are not yet loaded at hook time)
         Bukkit.getPluginManager().registerEvents(this, plugin);
         return true;
     }
@@ -201,9 +202,10 @@ public class BlueMapHook extends MapHook implements Listener {
 
     @Override
     public void addPointMarker(@NonNull String markerSetId, @NonNull String markerId, @NonNull String label,
-            @NonNull Location location) {
+            @NonNull Location location, @NonNull String iconName) {
         MarkerSet markerSet = markerSets.get(markerSetId);
         if (markerSet != null) {
+            // BlueMap uses URL-based icons; named icons are not supported yet, so use default
             POIMarker marker = POIMarker.builder().label(label).listed(true).defaultIcon()
                     .position(location.getX(), location.getY(), location.getZ()).build();
             markerSet.put(markerId, marker);
@@ -264,6 +266,12 @@ public class BlueMapHook extends MapHook implements Listener {
     }
 
     // --- Event handlers ---
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onBentoBoxReady(BentoBoxReadyEvent e) {
+        // Now that islands are loaded, populate markers for all game modes
+        plugin.getAddonsManager().getGameModeAddons().forEach(this::registerGameMode);
+    }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onNewIsland(IslandNewIslandEvent e) {

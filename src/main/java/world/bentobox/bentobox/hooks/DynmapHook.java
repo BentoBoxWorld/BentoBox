@@ -16,11 +16,13 @@ import org.dynmap.DynmapAPI;
 import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerAPI;
+import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
 import world.bentobox.bentobox.api.events.island.IslandNameEvent;
 import world.bentobox.bentobox.api.events.island.IslandNewIslandEvent;
@@ -63,9 +65,9 @@ public class DynmapHook extends MapHook implements Listener {
         } catch (Exception e) {
             return false;
         }
-        // Register markers for all game mode addons known at hook time
-        plugin.getAddonsManager().getGameModeAddons().forEach(this::registerGameMode);
-        // Listen for future island events
+        // Listen for island events and BentoBoxReadyEvent to populate island markers
+        // after islands are loaded (map hooks register before addons enable, so islands
+        // are not yet loaded at hook time)
         Bukkit.getPluginManager().registerEvents(this, plugin);
         return true;
     }
@@ -226,7 +228,7 @@ public class DynmapHook extends MapHook implements Listener {
 
     @Override
     public void addPointMarker(@NonNull String markerSetId, @NonNull String markerId, @NonNull String label,
-            @NonNull Location location) {
+            @NonNull Location location, @NonNull String iconName) {
         MarkerSet markerSet = markerSets.get(markerSetId);
         if (markerSet == null || location.getWorld() == null) {
             return;
@@ -235,8 +237,12 @@ public class DynmapHook extends MapHook implements Listener {
         if (existing != null) {
             existing.deleteMarker();
         }
+        MarkerIcon icon = markerAPI.getMarkerIcon(iconName);
+        if (icon == null) {
+            icon = markerAPI.getMarkerIcon("default");
+        }
         markerSet.createMarker(markerId, label, location.getWorld().getName(), location.getX(), location.getY(),
-                location.getZ(), markerAPI.getMarkerIcon("default"), true);
+                location.getZ(), icon, true);
     }
 
     @Override
@@ -292,6 +298,12 @@ public class DynmapHook extends MapHook implements Listener {
     }
 
     // --- Event handlers ---
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onBentoBoxReady(BentoBoxReadyEvent e) {
+        // Now that islands are loaded, populate markers for all game modes
+        plugin.getAddonsManager().getGameModeAddons().forEach(this::registerGameMode);
+    }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onNewIsland(IslandNewIslandEvent e) {

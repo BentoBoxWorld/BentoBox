@@ -91,7 +91,7 @@ public class MapManager {
     }
 
     /**
-     * Adds or updates a point marker on all active map plugins.
+     * Adds or updates a point marker on all active map plugins using the default icon.
      *
      * @param markerSetId the marker set ID
      * @param markerId    unique ID for this marker
@@ -100,9 +100,23 @@ public class MapManager {
      */
     public void addPointMarker(@NonNull String markerSetId, @NonNull String markerId, @NonNull String label,
             @NonNull Location location) {
+        addPointMarker(markerSetId, markerId, label, location, "default");
+    }
+
+    /**
+     * Adds or updates a point marker on all active map plugins with a specific icon.
+     *
+     * @param markerSetId the marker set ID
+     * @param markerId    unique ID for this marker
+     * @param label       display label
+     * @param location    the location in the world
+     * @param iconName    icon identifier (interpretation is map-plugin-specific)
+     */
+    public void addPointMarker(@NonNull String markerSetId, @NonNull String markerId, @NonNull String label,
+            @NonNull Location location, @NonNull String iconName) {
         for (MapHook hook : getMapHooks()) {
             try {
-                hook.addPointMarker(markerSetId, markerId, label, location);
+                hook.addPointMarker(markerSetId, markerId, label, location, iconName);
             } catch (Exception e) {
                 plugin.logError("Map hook " + hook.getPluginName() + " failed addPointMarker: " + e.getMessage());
             }

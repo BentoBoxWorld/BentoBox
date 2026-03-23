@@ -190,6 +190,10 @@ public class BentoBox extends JavaPlugin implements Listener {
         // Setup the Placeholders manager
         placeholdersManager = new PlaceholdersManager(this);
 
+        // Initialize MapManager and register map hooks before addons so they can use it in onEnable()
+        mapManager = new MapManager(this);
+        hookRegistrar.registerMapHooks();
+
         // Enable addons
         addonsManager.enableAddons();
 
@@ -221,7 +225,6 @@ public class BentoBox extends JavaPlugin implements Listener {
         islandWorldManager.registerWorldsToMultiverse(true);
 
         hookRegistrar.registerLateHooks();
-        mapManager = new MapManager(this);
 
         // TODO: re-enable after implementation
         // TODO: re-enable after rework

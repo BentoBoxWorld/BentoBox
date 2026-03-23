@@ -40,6 +40,7 @@ import org.mockito.Mock;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
 import world.bentobox.bentobox.api.events.island.IslandNameEvent;
 import world.bentobox.bentobox.api.events.island.IslandNewIslandEvent;
@@ -132,6 +133,15 @@ class DynmapHookTest extends CommonTestSetup {
         hook = new DynmapHook();
     }
 
+    /**
+     * Calls hook() then fires BentoBoxReadyEvent to trigger island marker population,
+     * mirroring the real startup sequence.
+     */
+    private void hookAndReady() {
+        hook.hook();
+        hook.onBentoBoxReady(mock(BentoBoxReadyEvent.class));
+    }
+
     @AfterEach
     @Override
     public void tearDown() throws Exception {
@@ -164,8 +174,8 @@ class DynmapHookTest extends CommonTestSetup {
     }
 
     @Test
-    void testHookCallsRegisterGameMode() {
-        hook.hook();
+    void testBentoBoxReadyCallsRegisterGameMode() {
+        hookAndReady();
         verify(im).getIslands(overWorld);
     }
 
@@ -185,14 +195,14 @@ class DynmapHookTest extends CommonTestSetup {
 
     @Test
     void testRegisterGameModeNoIslands() {
-        hook.hook();
+        hookAndReady();
         verify(markerAPI).createMarkerSet("bskyblock.markers", "BSkyBlock", null, true);
     }
 
     @Test
     void testRegisterGameModeWithIsland() {
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
-        hook.hook();
+        hookAndReady();
         verify(markerSet).createMarker(eq(uuid.toString()), eq("tastybento"),
                 eq("bskyblock_world"), eq(0.0), eq(64.0), eq(0.0), eq(defaultIcon), eq(true));
     }
@@ -202,7 +212,7 @@ class DynmapHookTest extends CommonTestSetup {
         Island unowned = mock(Island.class);
         when(unowned.getOwner()).thenReturn(null);
         when(im.getIslands(overWorld)).thenReturn(List.of(unowned));
-        hook.hook();
+        hookAndReady();
         verify(markerSet, never()).createMarker(anyString(), anyString(), anyString(),
                 anyDouble(), anyDouble(), anyDouble(), any(MarkerIcon.class), anyBoolean());
     }
@@ -213,7 +223,7 @@ class DynmapHookTest extends CommonTestSetup {
         when(existingSet.getMarkers()).thenReturn(Set.of());
         when(existingSet.getAreaMarkers()).thenReturn(Set.of());
         when(markerAPI.getMarkerSet("bskyblock.markers")).thenReturn(existingSet);
-        hook.hook();
+        hookAndReady();
         // Should not create a new one
         verify(markerAPI, never()).createMarkerSet(anyString(), anyString(), isNull(), eq(true));
         // Should update the label
@@ -226,7 +236,7 @@ class DynmapHookTest extends CommonTestSetup {
     void testIslandLabelUsesCustomName() {
         when(island.getName()).thenReturn("My Island");
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
-        hook.hook();
+        hookAndReady();
         verify(markerSet).createMarker(eq(uuid.toString()), eq("My Island"),
                 anyString(), anyDouble(), anyDouble(), anyDouble(), any(MarkerIcon.class), anyBoolean());
     }
@@ -235,7 +245,7 @@ class DynmapHookTest extends CommonTestSetup {
     void testIslandLabelUsesOwnerName() {
         when(island.getName()).thenReturn(null);
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
-        hook.hook();
+        hookAndReady();
         // player name from CommonTestSetup is "tastybento"
         verify(markerSet).createMarker(eq(uuid.toString()), eq("tastybento"),
                 anyString(), anyDouble(), anyDouble(), anyDouble(), any(MarkerIcon.class), anyBoolean());
@@ -244,7 +254,7 @@ class DynmapHookTest extends CommonTestSetup {
     @Test
     void testIslandLabelFallsBackToUUID() {
         // Test UUID fallback via the event path with no-owner island
-        hook.hook();
+        hookAndReady();
         Island noOwnerIsland = mock(Island.class);
         UUID noOwnerUuid = UUID.randomUUID();
         when(noOwnerIsland.getName()).thenReturn(null);
@@ -270,19 +280,18 @@ class DynmapHookTest extends CommonTestSetup {
 
     @Test
     void testOnNewIsland() {
-        hook.hook();
+        hookAndReady();
         IslandNewIslandEvent event = mock(IslandNewIslandEvent.class);
         when(event.getIsland()).thenReturn(island);
         hook.onNewIsland(event);
 
-        // Should have created a marker (once during hook, once from event)
         verify(markerSet).createMarker(eq(uuid.toString()), eq("tastybento"),
                 eq("bskyblock_world"), eq(0.0), eq(64.0), eq(0.0), eq(defaultIcon), eq(true));
     }
 
     @Test
     void testOnNewIslandNoAddon() {
-        hook.hook();
+        hookAndReady();
         when(iwm.getAddon(overWorld)).thenReturn(Optional.empty());
         IslandNewIslandEvent event = mock(IslandNewIslandEvent.class);
         when(event.getIsland()).thenReturn(island);
@@ -292,7 +301,7 @@ class DynmapHookTest extends CommonTestSetup {
 
     @Test
     void testOnIslandDelete() {
-        hook.hook();
+        hookAndReady();
         Marker existingMarker = mock(Marker.class);
         AreaMarker existingArea = mock(AreaMarker.class);
         when(markerSet.findMarker(uuid.toString())).thenReturn(existingMarker);
@@ -308,7 +317,7 @@ class DynmapHookTest extends CommonTestSetup {
 
     @Test
     void testOnIslandDeleteMarkerNotFound() {
-        hook.hook();
+        hookAndReady();
         when(markerSet.findMarker(uuid.toString())).thenReturn(null);
 
         IslandDeleteEvent event = mock(IslandDeleteEvent.class);
@@ -321,7 +330,7 @@ class DynmapHookTest extends CommonTestSetup {
     void testOnIslandName() {
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
         when(island.getName()).thenReturn("Old Name");
-        hook.hook();
+        hookAndReady();
 
         // Now rename
         when(island.getName()).thenReturn("New Name");
@@ -342,7 +351,7 @@ class DynmapHookTest extends CommonTestSetup {
     @Test
     void testOnIslandReset() {
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
-        hook.hook();
+        hookAndReady();
 
         Island newIsland = mock(Island.class);
         UUID newUuid = UUID.randomUUID();
@@ -382,13 +391,13 @@ class DynmapHookTest extends CommonTestSetup {
 
     @Test
     void testGetNativeMarkerSet() {
-        hook.hook();
+        hookAndReady();
         assertEquals(markerSet, hook.getNativeMarkerSet(addon));
     }
 
     @Test
     void testGetNativeMarkerSetNotRegistered() {
-        hook.hook();
+        hookAndReady();
         GameModeAddon unknownAddon = mock(GameModeAddon.class);
         WorldSettings unknownSettings = mock(WorldSettings.class);
         when(unknownAddon.getWorldSettings()).thenReturn(unknownSettings);
@@ -416,5 +425,40 @@ class DynmapHookTest extends CommonTestSetup {
         hook.createMarkerSet("warps.markers", "Warps");
         // Should not create a new one
         verify(markerAPI, never()).createMarkerSet(eq("warps.markers"), eq("Warps"), isNull(), eq(true));
+    }
+
+    // ---- addPointMarker with icon ----
+
+    @Test
+    void testAddPointMarkerUsesCustomIcon() {
+        hook.hook();
+        hook.createMarkerSet("warps", "Warps");
+        MarkerIcon signIcon = mock(MarkerIcon.class);
+        when(markerAPI.getMarkerIcon("sign")).thenReturn(signIcon);
+        Location loc = mock(Location.class);
+        when(loc.getWorld()).thenReturn(overWorld);
+        when(loc.getX()).thenReturn(10.0);
+        when(loc.getY()).thenReturn(64.0);
+        when(loc.getZ()).thenReturn(20.0);
+
+        hook.addPointMarker("warps", "marker1", "My Warp", loc, "sign");
+        verify(markerSet).createMarker("marker1", "My Warp", "bskyblock_world",
+                10.0, 64.0, 20.0, signIcon, true);
+    }
+
+    @Test
+    void testAddPointMarkerFallsBackToDefaultIcon() {
+        hook.hook();
+        hook.createMarkerSet("warps", "Warps");
+        when(markerAPI.getMarkerIcon("nonexistent")).thenReturn(null);
+        Location loc = mock(Location.class);
+        when(loc.getWorld()).thenReturn(overWorld);
+        when(loc.getX()).thenReturn(10.0);
+        when(loc.getY()).thenReturn(64.0);
+        when(loc.getZ()).thenReturn(20.0);
+
+        hook.addPointMarker("warps", "marker1", "My Warp", loc, "nonexistent");
+        verify(markerSet).createMarker("marker1", "My Warp", "bskyblock_world",
+                10.0, 64.0, 20.0, defaultIcon, true);
     }
 }

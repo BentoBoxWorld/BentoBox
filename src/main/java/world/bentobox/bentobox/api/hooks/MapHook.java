@@ -52,15 +52,38 @@ public abstract class MapHook extends Hook {
     // --- Point Marker operations ---
 
     /**
-     * Adds or updates a point marker (icon + label) at a location.
+     * Adds or updates a point marker (icon + label) at a location using the default icon.
      *
      * @param markerSetId the marker set ID
      * @param markerId    unique ID for this marker within the set
      * @param label       display label
      * @param location    the location in the world
      */
+    public void addPointMarker(@NonNull String markerSetId, @NonNull String markerId,
+            @NonNull String label, @NonNull Location location) {
+        addPointMarker(markerSetId, markerId, label, location, "default");
+    }
+
+    /**
+     * Adds or updates a point marker at a location with a specific icon.
+     * <p>
+     * The {@code iconName} is interpreted by each map plugin:
+     * <ul>
+     *   <li><b>Dynmap</b> — maps to a registered Dynmap marker icon name
+     *       (e.g. {@code "sign"}, {@code "diamond"}, {@code "house"}).
+     *       Falls back to {@code "default"} if the name is not found.</li>
+     *   <li><b>BlueMap</b> — currently uses the default POI icon regardless
+     *       of the name (BlueMap uses URL-based icons, not named icons).</li>
+     * </ul>
+     *
+     * @param markerSetId the marker set ID
+     * @param markerId    unique ID for this marker within the set
+     * @param label       display label
+     * @param location    the location in the world
+     * @param iconName    icon identifier (interpretation is map-plugin-specific)
+     */
     public abstract void addPointMarker(@NonNull String markerSetId, @NonNull String markerId,
-            @NonNull String label, @NonNull Location location);
+            @NonNull String label, @NonNull Location location, @NonNull String iconName);
 
     /**
      * Removes a point marker.

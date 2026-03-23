@@ -50,18 +50,26 @@ public class BentoBoxHookRegistrar {
     }
 
     /**
-     * Registers hooks for plugins that load after BentoBox (Slimefun, ItemsAdder, Oraxen, BlueMap).
+     * Registers map hooks (BlueMap, Dynmap) so they are available before addons enable.
+     * Must be called after {@link world.bentobox.bentobox.managers.MapManager} is created.
+     * Island marker population is deferred to {@link world.bentobox.bentobox.api.events.BentoBoxReadyEvent}.
      */
-    public void registerLateHooks() {
-        hooksManager.registerHook(new SlimefunHook());
-        hooksManager.registerHook(new ItemsAdderHook(plugin));
-        hooksManager.registerHook(new OraxenHook(plugin));
+    public void registerMapHooks() {
         if (hasClass(BLUEMAP_CLASS)) {
             hooksManager.registerHook(new BlueMapHook());
         }
         if (hasClass(DYNMAP_CLASS)) {
             hooksManager.registerHook(new DynmapHook());
         }
+    }
+
+    /**
+     * Registers hooks for plugins that load after BentoBox (Slimefun, ItemsAdder, Oraxen).
+     */
+    public void registerLateHooks() {
+        hooksManager.registerHook(new SlimefunHook());
+        hooksManager.registerHook(new ItemsAdderHook(plugin));
+        hooksManager.registerHook(new OraxenHook(plugin));
     }
 
     private boolean hasClass(String className) {
