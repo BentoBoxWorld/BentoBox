@@ -105,6 +105,33 @@ public class MapManager {
 
     /**
      * Adds or updates a point marker on all active map plugins with a specific icon.
+     * <p>
+     * For <b>Dynmap</b>, the {@code iconName} maps to a built-in marker icon.
+     * If the name is not recognized, {@code "default"} is used as a fallback.
+     * Built-in Dynmap icon names:
+     * {@code anchor}, {@code bank}, {@code basket}, {@code bed}, {@code beer},
+     * {@code bighouse}, {@code blueflag}, {@code bomb}, {@code bookshelf},
+     * {@code bricks}, {@code bronzemedal}, {@code bronzestar}, {@code building},
+     * {@code cake}, {@code camera}, {@code cart}, {@code caution}, {@code chest},
+     * {@code church}, {@code coins}, {@code comment}, {@code compass},
+     * {@code construction}, {@code cross}, {@code cup}, {@code cutlery},
+     * {@code default}, {@code diamond}, {@code dog}, {@code door}, {@code down},
+     * {@code drink}, {@code exclamation}, {@code factory}, {@code fire},
+     * {@code flower}, {@code gear}, {@code goldmedal}, {@code goldstar},
+     * {@code greenflag}, {@code hammer}, {@code heart}, {@code house},
+     * {@code key}, {@code king}, {@code left}, {@code lightbulb},
+     * {@code lighthouse}, {@code lock}, {@code minecart}, {@code offlineuser},
+     * {@code orangeflag}, {@code pin}, {@code pinkflag}, {@code pirateflag},
+     * {@code pointdown}, {@code pointleft}, {@code pointright}, {@code pointup},
+     * {@code portal}, {@code purpleflag}, {@code queen}, {@code redflag},
+     * {@code right}, {@code ruby}, {@code scales}, {@code shield}, {@code sign},
+     * {@code silvermedal}, {@code silverstar}, {@code skull}, {@code star},
+     * {@code sun}, {@code temple}, {@code theater}, {@code tornado},
+     * {@code tower}, {@code tree}, {@code truck}, {@code up}, {@code walk},
+     * {@code warning}, {@code world}, {@code wrench}, {@code yellowflag}.
+     * <p>
+     * For <b>BlueMap</b>, the icon name is currently ignored (the default POI
+     * icon is always used).
      *
      * @param markerSetId the marker set ID
      * @param markerId    unique ID for this marker
