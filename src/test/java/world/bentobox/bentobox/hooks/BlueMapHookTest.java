@@ -2,7 +2,9 @@ package world.bentobox.bentobox.hooks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -31,6 +33,7 @@ import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapMap;
 import de.bluecolored.bluemap.api.BlueMapWorld;
 import de.bluecolored.bluemap.api.markers.MarkerSet;
+import de.bluecolored.bluemap.api.markers.ShapeMarker;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -178,6 +181,9 @@ class BlueMapHookTest extends CommonTestSetup {
         MarkerSet ms = mapMarkerSets.get("BSkyBlock");
         assertNotNull(ms);
         assertNotNull(ms.get(uuid.toString()));
+        // Area marker should also be created
+        assertNotNull(ms.get(uuid.toString() + "_area"));
+        assertInstanceOf(ShapeMarker.class, ms.get(uuid.toString() + "_area"));
     }
 
     @Test
@@ -320,13 +326,16 @@ class BlueMapHookTest extends CommonTestSetup {
 
     @Test
     void testOnIslandDelete() {
+        when(im.getIslands(overWorld)).thenReturn(List.of(island));
         hook.hook();
         // island should be in the marker set after hook()
         IslandDeleteEvent event = mock(IslandDeleteEvent.class);
         when(event.getIsland()).thenReturn(island);
         hook.onIslandDelete(event);
-        // marker should be removed
-        assertFalse(mapMarkerSets.get("BSkyBlock").getMarkers().containsKey(uuid.toString()));
+        // both markers should be removed
+        MarkerSet ms = mapMarkerSets.get("BSkyBlock");
+        assertFalse(ms.getMarkers().containsKey(uuid.toString()));
+        assertFalse(ms.getMarkers().containsKey(uuid.toString() + "_area"));
     }
 
     @Test
@@ -373,5 +382,41 @@ class BlueMapHookTest extends CommonTestSetup {
         assertFalse(ms.getMarkers().containsKey(uuid.toString()));
         // New island marker added
         assertNotNull(ms.get(newUuid.toString()));
+        assertNotNull(ms.get(newUuid.toString() + "_area"));
+    }
+
+    // ---- Public addon API ----
+
+    @Test
+    void testGetBlueMapAPI() {
+        hook.hook();
+        assertEquals(blueMapAPI, hook.getBlueMapAPI());
+    }
+
+    @Test
+    void testGetMarkerSet() {
+        hook.hook();
+        assertEquals(mapMarkerSets.get("BSkyBlock"), hook.getMarkerSet(addon));
+    }
+
+    @Test
+    void testGetMarkerSetNotRegistered() {
+        hook.hook();
+        GameModeAddon unknownAddon = mock(GameModeAddon.class);
+        WorldSettings unknownSettings = mock(WorldSettings.class);
+        when(unknownAddon.getWorldSettings()).thenReturn(unknownSettings);
+        when(unknownSettings.getFriendlyName()).thenReturn("UnknownGame");
+        assertNull(hook.getMarkerSet(unknownAddon));
+    }
+
+    @Test
+    void testCreateMarkerSet() {
+        when(blueMapAPI.getMaps()).thenReturn(List.of(blueMapMap));
+        hook.hook();
+        MarkerSet result = hook.createMarkerSet("warps.markers", "Warps");
+        assertNotNull(result);
+        assertEquals("Warps", result.getLabel());
+        // Should be attached to the BlueMap map
+        assertTrue(mapMarkerSets.containsKey("warps.markers"));
     }
 }
