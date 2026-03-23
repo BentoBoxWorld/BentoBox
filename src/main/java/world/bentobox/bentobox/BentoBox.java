@@ -35,6 +35,7 @@ import world.bentobox.bentobox.managers.IslandDeletionManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.managers.MapManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -67,6 +68,7 @@ public class BentoBox extends JavaPlugin implements Listener {
     private BlueprintsManager blueprintsManager;
     private HooksManager hooksManager;
     private PlaceholdersManager placeholdersManager;
+    private MapManager mapManager;
     private IslandDeletionManager islandDeletionManager;
     private WebManager webManager;
 
@@ -219,6 +221,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         islandWorldManager.registerWorldsToMultiverse(true);
 
         hookRegistrar.registerLateHooks();
+        mapManager = new MapManager(this);
 
         // TODO: re-enable after implementation
         // TODO: re-enable after rework
@@ -527,6 +530,16 @@ public class BentoBox extends JavaPlugin implements Listener {
      */
     public PlaceholdersManager getPlaceholdersManager() {
         return placeholdersManager;
+    }
+
+    /**
+     * Returns the MapManager facade for web-map integrations.
+     * Calls silently no-op when no map plugin is installed.
+     * @return the MapManager
+     * @since 3.12.0
+     */
+    public MapManager getMapManager() {
+        return mapManager;
     }
 
     /**

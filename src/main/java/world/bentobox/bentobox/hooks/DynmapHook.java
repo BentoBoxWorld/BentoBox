@@ -1,10 +1,12 @@
 package world.bentobox.bentobox.hooks;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -23,7 +25,7 @@ import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
 import world.bentobox.bentobox.api.events.island.IslandNameEvent;
 import world.bentobox.bentobox.api.events.island.IslandNewIslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandResettedEvent;
-import world.bentobox.bentobox.api.hooks.Hook;
+import world.bentobox.bentobox.api.hooks.MapHook;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
@@ -32,7 +34,7 @@ import world.bentobox.bentobox.database.objects.Island;
  * @author tastybento
  * @since 3.12.0
  */
-public class DynmapHook extends Hook implements Listener {
+public class DynmapHook extends MapHook implements Listener {
 
     private final BentoBox plugin;
     private MarkerAPI markerAPI;
@@ -171,10 +173,10 @@ public class DynmapHook extends Hook implements Listener {
         }
     }
 
-    // --- Public addon API ---
+    // --- Native API for direct Dynmap access ---
 
     /**
-     * Returns the Dynmap MarkerAPI for addons to create custom markers.
+     * Returns the Dynmap MarkerAPI for addons to create custom markers directly.
      * @return the MarkerAPI instance
      */
     @NonNull
@@ -183,28 +185,110 @@ public class DynmapHook extends Hook implements Listener {
     }
 
     /**
-     * Gets the marker set for the given game mode addon, if one has been registered.
+     * Gets the native Dynmap marker set for the given game mode addon.
      * @param addon the game mode addon
      * @return the MarkerSet, or null if not registered
      */
-    public MarkerSet getMarkerSet(@NonNull GameModeAddon addon) {
+    public MarkerSet getNativeMarkerSet(@NonNull GameModeAddon addon) {
         return markerSets.get(addon.getWorldSettings().getFriendlyName());
     }
 
-    /**
-     * Creates or retrieves a custom marker set. Useful for addons like Warps
-     * that want to display their own markers on Dynmap.
-     * @param id unique identifier for the marker set
-     * @param label display label for the marker set
-     * @return the MarkerSet
-     */
-    @NonNull
-    public MarkerSet createMarkerSet(@NonNull String id, @NonNull String label) {
-        MarkerSet existing = markerAPI.getMarkerSet(id);
-        if (existing != null) {
-            return existing;
+    // --- MapHook abstract method implementations ---
+
+    @Override
+    public void createMarkerSet(@NonNull String id, @NonNull String label) {
+        markerSets.computeIfAbsent(id, k -> {
+            MarkerSet existing = markerAPI.getMarkerSet(id);
+            if (existing != null) {
+                existing.setMarkerSetLabel(label);
+                return existing;
+            }
+            return markerAPI.createMarkerSet(id, label, null, true);
+        });
+    }
+
+    @Override
+    public void removeMarkerSet(@NonNull String id) {
+        MarkerSet markerSet = markerSets.remove(id);
+        if (markerSet != null) {
+            markerSet.deleteMarkerSet();
         }
-        return markerAPI.createMarkerSet(id, label, null, true);
+    }
+
+    @Override
+    public void clearMarkerSet(@NonNull String id) {
+        MarkerSet markerSet = markerSets.get(id);
+        if (markerSet != null) {
+            markerSet.getMarkers().forEach(Marker::deleteMarker);
+            markerSet.getAreaMarkers().forEach(AreaMarker::deleteMarker);
+        }
+    }
+
+    @Override
+    public void addPointMarker(@NonNull String markerSetId, @NonNull String markerId, @NonNull String label,
+            @NonNull Location location) {
+        MarkerSet markerSet = markerSets.get(markerSetId);
+        if (markerSet == null || location.getWorld() == null) {
+            return;
+        }
+        Marker existing = markerSet.findMarker(markerId);
+        if (existing != null) {
+            existing.deleteMarker();
+        }
+        markerSet.createMarker(markerId, label, location.getWorld().getName(), location.getX(), location.getY(),
+                location.getZ(), markerAPI.getMarkerIcon("default"), true);
+    }
+
+    @Override
+    public void removePointMarker(@NonNull String markerSetId, @NonNull String markerId) {
+        MarkerSet markerSet = markerSets.get(markerSetId);
+        if (markerSet != null) {
+            Marker marker = markerSet.findMarker(markerId);
+            if (marker != null) {
+                marker.deleteMarker();
+            }
+        }
+    }
+
+    @Override
+    public void addAreaMarker(@NonNull String markerSetId, @NonNull String markerId, @NonNull String label,
+            @NonNull World world, double minX, double minZ, double maxX, double maxZ, @NonNull Color lineColor,
+            @NonNull Color fillColor, int lineWidth) {
+        double[] xCorners = { minX, maxX, maxX, minX };
+        double[] zCorners = { minZ, minZ, maxZ, maxZ };
+        addPolygonMarker(markerSetId, markerId, label, world, xCorners, zCorners, lineColor, fillColor, lineWidth);
+    }
+
+    @Override
+    public void addPolygonMarker(@NonNull String markerSetId, @NonNull String markerId, @NonNull String label,
+            @NonNull World world, @NonNull double[] xPoints, @NonNull double[] zPoints, @NonNull Color lineColor,
+            @NonNull Color fillColor, int lineWidth) {
+        MarkerSet markerSet = markerSets.get(markerSetId);
+        if (markerSet == null) {
+            return;
+        }
+        AreaMarker existing = markerSet.findAreaMarker(markerId);
+        if (existing != null) {
+            existing.deleteMarker();
+        }
+        AreaMarker area = markerSet.createAreaMarker(markerId, label, false, world.getName(), xPoints, zPoints, true);
+        if (area != null) {
+            int lineRgb = (lineColor.getRed() << 16) | (lineColor.getGreen() << 8) | lineColor.getBlue();
+            int fillRgb = (fillColor.getRed() << 16) | (fillColor.getGreen() << 8) | fillColor.getBlue();
+            area.setLineStyle(lineWidth, lineColor.getAlpha() / 255.0, lineRgb);
+            area.setFillStyle(fillColor.getAlpha() / 255.0, fillRgb);
+        }
+    }
+
+    @Override
+    public void removeAreaMarker(@NonNull String markerSetId, @NonNull String markerId) {
+        MarkerSet markerSet = markerSets.get(markerSetId);
+        if (markerSet != null) {
+            AreaMarker area = markerSet.findAreaMarker(markerId);
+            if (area != null) {
+                area.deleteMarker();
+            }
+        }
     }
 
     // --- Event handlers ---

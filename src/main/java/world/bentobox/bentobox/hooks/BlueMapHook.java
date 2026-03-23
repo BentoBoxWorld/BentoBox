@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -16,7 +17,6 @@ import de.bluecolored.bluemap.api.BlueMapMap;
 import de.bluecolored.bluemap.api.markers.MarkerSet;
 import de.bluecolored.bluemap.api.markers.POIMarker;
 import de.bluecolored.bluemap.api.markers.ShapeMarker;
-import de.bluecolored.bluemap.api.math.Color;
 import de.bluecolored.bluemap.api.math.Shape;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -24,7 +24,7 @@ import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
 import world.bentobox.bentobox.api.events.island.IslandNameEvent;
 import world.bentobox.bentobox.api.events.island.IslandNewIslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandResettedEvent;
-import world.bentobox.bentobox.api.hooks.Hook;
+import world.bentobox.bentobox.api.hooks.MapHook;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
@@ -33,7 +33,7 @@ import world.bentobox.bentobox.database.objects.Island;
  * @author tastybento
  * @since 2.1.0
  */
-public class BlueMapHook extends Hook implements Listener {
+public class BlueMapHook extends MapHook implements Listener {
 
     private final BentoBox plugin;
     private BlueMapAPI api;
@@ -118,8 +118,8 @@ public class BlueMapHook extends Hook implements Listener {
                 .shape(Shape.createRect(island.getMinProtectedX(), island.getMinProtectedZ(),
                         island.getMaxProtectedX(), island.getMaxProtectedZ()),
                         (float) island.getCenter().getY())
-                .lineColor(new Color(51, 136, 255))
-                .fillColor(new Color(51, 136, 255, 0.15f))
+                .lineColor(new de.bluecolored.bluemap.api.math.Color(51, 136, 255))
+                .fillColor(new de.bluecolored.bluemap.api.math.Color(51, 136, 255, 0.15f))
                 .lineWidth(2)
                 .build();
         markerSet.put(id + "_area", area);
@@ -156,10 +156,10 @@ public class BlueMapHook extends Hook implements Listener {
         }
     }
 
-    // --- Public addon API ---
+    // --- Native API for direct BlueMap access ---
 
     /**
-     * Returns the BlueMapAPI instance for addons to create custom markers.
+     * Returns the BlueMapAPI instance for addons to create custom markers directly.
      * @return the BlueMapAPI instance
      */
     @NonNull
@@ -168,7 +168,7 @@ public class BlueMapHook extends Hook implements Listener {
     }
 
     /**
-     * Gets the marker set for the given game mode addon, if one has been registered.
+     * Gets the native BlueMap marker set for the given game mode addon.
      * @param addon the game mode addon
      * @return the MarkerSet, or null if not registered
      */
@@ -176,19 +176,91 @@ public class BlueMapHook extends Hook implements Listener {
         return markerSets.get(addon.getWorldSettings().getFriendlyName());
     }
 
-    /**
-     * Creates or retrieves a custom marker set and attaches it to all BlueMap maps.
-     * Useful for addons like Warps that want to display their own markers.
-     * @param id unique identifier for the marker set
-     * @param label display label for the marker set
-     * @return the MarkerSet
-     */
-    @NonNull
-    public MarkerSet createMarkerSet(@NonNull String id, @NonNull String label) {
-        MarkerSet markerSet = MarkerSet.builder().label(label).toggleable(true).defaultHidden(false).build();
-        // Attach to all known BlueMap maps
+    // --- MapHook abstract method implementations ---
+
+    @Override
+    public void createMarkerSet(@NonNull String id, @NonNull String label) {
+        MarkerSet markerSet = markerSets.computeIfAbsent(id,
+                k -> MarkerSet.builder().label(label).toggleable(true).defaultHidden(false).build());
         api.getMaps().forEach(map -> map.getMarkerSets().put(id, markerSet));
-        return markerSet;
+    }
+
+    @Override
+    public void removeMarkerSet(@NonNull String id) {
+        markerSets.remove(id);
+        api.getMaps().forEach(map -> map.getMarkerSets().remove(id));
+    }
+
+    @Override
+    public void clearMarkerSet(@NonNull String id) {
+        MarkerSet markerSet = markerSets.get(id);
+        if (markerSet != null) {
+            markerSet.getMarkers().clear();
+        }
+    }
+
+    @Override
+    public void addPointMarker(@NonNull String markerSetId, @NonNull String markerId, @NonNull String label,
+            @NonNull Location location) {
+        MarkerSet markerSet = markerSets.get(markerSetId);
+        if (markerSet != null) {
+            POIMarker marker = POIMarker.builder().label(label).listed(true).defaultIcon()
+                    .position(location.getX(), location.getY(), location.getZ()).build();
+            markerSet.put(markerId, marker);
+        }
+    }
+
+    @Override
+    public void removePointMarker(@NonNull String markerSetId, @NonNull String markerId) {
+        MarkerSet markerSet = markerSets.get(markerSetId);
+        if (markerSet != null) {
+            markerSet.remove(markerId);
+        }
+    }
+
+    @Override
+    public void addAreaMarker(@NonNull String markerSetId, @NonNull String markerId, @NonNull String label,
+            @NonNull World world, double minX, double minZ, double maxX, double maxZ,
+            java.awt.Color lineColor, java.awt.Color fillColor, int lineWidth) {
+        MarkerSet markerSet = markerSets.get(markerSetId);
+        if (markerSet != null) {
+            ShapeMarker area = ShapeMarker.builder().label(label)
+                    .shape(Shape.createRect(minX, minZ, maxX, maxZ), 64)
+                    .lineColor(toBlueMapColor(lineColor)).fillColor(toBlueMapColor(fillColor)).lineWidth(lineWidth)
+                    .build();
+            markerSet.put(markerId, area);
+        }
+    }
+
+    @Override
+    public void addPolygonMarker(@NonNull String markerSetId, @NonNull String markerId, @NonNull String label,
+            @NonNull World world, @NonNull double[] xPoints, @NonNull double[] zPoints,
+            java.awt.Color lineColor, java.awt.Color fillColor, int lineWidth) {
+        MarkerSet markerSet = markerSets.get(markerSetId);
+        if (markerSet != null && xPoints.length == zPoints.length && xPoints.length >= 3) {
+            com.flowpowered.math.vector.Vector2d[] points = new com.flowpowered.math.vector.Vector2d[xPoints.length];
+            for (int i = 0; i < xPoints.length; i++) {
+                points[i] = new com.flowpowered.math.vector.Vector2d(xPoints[i], zPoints[i]);
+            }
+            Shape shape = new Shape(points);
+            ShapeMarker area = ShapeMarker.builder().label(label).shape(shape, 64)
+                    .lineColor(toBlueMapColor(lineColor)).fillColor(toBlueMapColor(fillColor)).lineWidth(lineWidth)
+                    .build();
+            markerSet.put(markerId, area);
+        }
+    }
+
+    @Override
+    public void removeAreaMarker(@NonNull String markerSetId, @NonNull String markerId) {
+        MarkerSet markerSet = markerSets.get(markerSetId);
+        if (markerSet != null) {
+            markerSet.remove(markerId);
+        }
+    }
+
+    private static de.bluecolored.bluemap.api.math.Color toBlueMapColor(java.awt.Color c) {
+        return new de.bluecolored.bluemap.api.math.Color(c.getRed(), c.getGreen(), c.getBlue(),
+                c.getAlpha() / 255.0f);
     }
 
     // --- Event handlers ---

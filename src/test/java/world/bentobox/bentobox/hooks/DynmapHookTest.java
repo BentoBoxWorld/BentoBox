@@ -381,19 +381,19 @@ class DynmapHookTest extends CommonTestSetup {
     }
 
     @Test
-    void testGetMarkerSet() {
+    void testGetNativeMarkerSet() {
         hook.hook();
-        assertEquals(markerSet, hook.getMarkerSet(addon));
+        assertEquals(markerSet, hook.getNativeMarkerSet(addon));
     }
 
     @Test
-    void testGetMarkerSetNotRegistered() {
+    void testGetNativeMarkerSetNotRegistered() {
         hook.hook();
         GameModeAddon unknownAddon = mock(GameModeAddon.class);
         WorldSettings unknownSettings = mock(WorldSettings.class);
         when(unknownAddon.getWorldSettings()).thenReturn(unknownSettings);
         when(unknownSettings.getFriendlyName()).thenReturn("UnknownGame");
-        assertNull(hook.getMarkerSet(unknownAddon));
+        assertNull(hook.getNativeMarkerSet(unknownAddon));
     }
 
     @Test
@@ -403,8 +403,8 @@ class DynmapHookTest extends CommonTestSetup {
         when(markerAPI.getMarkerSet("warps.markers")).thenReturn(null);
         when(markerAPI.createMarkerSet("warps.markers", "Warps", null, true)).thenReturn(customSet);
 
-        MarkerSet result = hook.createMarkerSet("warps.markers", "Warps");
-        assertEquals(customSet, result);
+        hook.createMarkerSet("warps.markers", "Warps");
+        verify(markerAPI).createMarkerSet("warps.markers", "Warps", null, true);
     }
 
     @Test
@@ -413,8 +413,7 @@ class DynmapHookTest extends CommonTestSetup {
         MarkerSet existingSet = mock(MarkerSet.class);
         when(markerAPI.getMarkerSet("warps.markers")).thenReturn(existingSet);
 
-        MarkerSet result = hook.createMarkerSet("warps.markers", "Warps");
-        assertEquals(existingSet, result);
+        hook.createMarkerSet("warps.markers", "Warps");
         // Should not create a new one
         verify(markerAPI, never()).createMarkerSet(eq("warps.markers"), eq("Warps"), isNull(), eq(true));
     }

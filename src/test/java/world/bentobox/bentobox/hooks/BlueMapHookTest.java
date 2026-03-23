@@ -413,10 +413,9 @@ class BlueMapHookTest extends CommonTestSetup {
     void testCreateMarkerSet() {
         when(blueMapAPI.getMaps()).thenReturn(List.of(blueMapMap));
         hook.hook();
-        MarkerSet result = hook.createMarkerSet("warps.markers", "Warps");
-        assertNotNull(result);
-        assertEquals("Warps", result.getLabel());
+        hook.createMarkerSet("warps.markers", "Warps");
         // Should be attached to the BlueMap map
         assertTrue(mapMarkerSets.containsKey("warps.markers"));
+        assertEquals("Warps", mapMarkerSets.get("warps.markers").getLabel());
     }
 }
