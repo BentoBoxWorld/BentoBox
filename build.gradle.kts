@@ -109,6 +109,7 @@ val jdtAnnotationVersion = "2.2.600"
 val multilibVersion = "1.1.13"
 val oraxenVersion = "1.193.1"
 val blueMapApiVersion = "v2.6.2"
+val dynmapApiVersion = "3.4"
 
 // Store versions in extra properties for resource filtering (used in plugin.yml, config.yml)
 extra["java.version"] = javaVersion
@@ -187,6 +188,7 @@ repositories {
     maven("https://repo.fancyplugins.de/releases") { name = "FancyPlugins-Releases" }
     maven("https://repo.pyr.lol/snapshots") { name = "Pyr-Snapshots" }
     maven("https://maven.devs.beer/") { name = "MatteoDev" }
+    maven("https://repo.mikeprimm.com/") { name = "Dynmap" }
     maven("https://repo.oraxen.com/releases") { name = "Oraxen" } // Custom items plugin
     maven("https://repo.codemc.org/repository/bentoboxworld/") { name = "BentoBoxWorld-Repo" }
     maven("https://repo.extendedclip.com/releases/") { name = "Placeholder-API-Releases" }
@@ -238,6 +240,14 @@ dependencies {
     compileOnly("commons-lang:commons-lang:$commonsLangVersion")
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:$blueMapApiVersion")
     testImplementation("com.github.BlueMap-Minecraft:BlueMapAPI:$blueMapApiVersion")
+    compileOnly("us.dynmap:DynmapCoreAPI:$dynmapApiVersion")
+    compileOnly("us.dynmap:dynmap-api:$dynmapApiVersion") {
+        exclude(group = "org.bukkit", module = "bukkit")
+    }
+    testImplementation("us.dynmap:DynmapCoreAPI:$dynmapApiVersion")
+    testImplementation("us.dynmap:dynmap-api:$dynmapApiVersion") {
+        exclude(group = "org.bukkit", module = "bukkit")
+    }
     compileOnly("io.th0rgal:oraxen:$oraxenVersion") {
         exclude(group = "me.gabytm.util", module = "actions-spigot")
         exclude(group = "org.jetbrains", module = "annotations")
