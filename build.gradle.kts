@@ -60,7 +60,7 @@ var finalRevision = "$buildVersion$snapshotSuffix$finalBuildNumber"
 val envBuildNumber = System.getenv("BUILD_NUMBER")
 if (!envBuildNumber.isNullOrBlank()) {
     finalBuildNumber = "-b$envBuildNumber"
-    finalRevision = "$buildVersion$finalBuildNumber$snapshotSuffix"
+    finalRevision = "$buildVersion$snapshotSuffix"
 }
 
 // 'master' profile logic: Activated when building from origin/master branch
