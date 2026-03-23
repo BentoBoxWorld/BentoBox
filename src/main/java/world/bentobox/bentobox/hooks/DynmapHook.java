@@ -241,8 +241,8 @@ public class DynmapHook extends MapHook implements Listener {
         if (icon == null) {
             icon = markerAPI.getMarkerIcon("default");
         }
-        markerSet.createMarker(markerId, label, location.getWorld().getName(), location.getX(), location.getY(),
-                location.getZ(), icon, true);
+        markerSet.createMarker(markerId, label, true, location.getWorld().getName(), location.getX(),
+                location.getY(), location.getZ(), icon, true);
     }
 
     @Override

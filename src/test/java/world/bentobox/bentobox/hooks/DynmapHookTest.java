@@ -442,7 +442,7 @@ class DynmapHookTest extends CommonTestSetup {
         when(loc.getZ()).thenReturn(20.0);
 
         hook.addPointMarker("warps", "marker1", "My Warp", loc, "sign");
-        verify(markerSet).createMarker("marker1", "My Warp", "bskyblock_world",
+        verify(markerSet).createMarker("marker1", "My Warp", true, "bskyblock_world",
                 10.0, 64.0, 20.0, signIcon, true);
     }
 
@@ -458,7 +458,7 @@ class DynmapHookTest extends CommonTestSetup {
         when(loc.getZ()).thenReturn(20.0);
 
         hook.addPointMarker("warps", "marker1", "My Warp", loc, "nonexistent");
-        verify(markerSet).createMarker("marker1", "My Warp", "bskyblock_world",
+        verify(markerSet).createMarker("marker1", "My Warp", true, "bskyblock_world",
                 10.0, 64.0, 20.0, defaultIcon, true);
     }
 }
