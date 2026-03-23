@@ -15,6 +15,9 @@ import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapMap;
 import de.bluecolored.bluemap.api.markers.MarkerSet;
 import de.bluecolored.bluemap.api.markers.POIMarker;
+import de.bluecolored.bluemap.api.markers.ShapeMarker;
+import de.bluecolored.bluemap.api.math.Color;
+import de.bluecolored.bluemap.api.math.Shape;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
@@ -102,11 +105,24 @@ public class BlueMapHook extends Hook implements Listener {
 
     private void setMarker(MarkerSet markerSet, Island island) {
         String label = getIslandLabel(island);
-        plugin.logDebug("Adding a marker called '" + label + "' for island " + island.getUniqueId());
+        String id = island.getUniqueId();
+        plugin.logDebug("Adding a marker called '" + label + "' for island " + id);
+        // Point marker at island center for the label/icon
         POIMarker marker = POIMarker.builder().label(label).listed(true).defaultIcon()
                 .position(island.getCenter().getX(), island.getCenter().getY(), island.getCenter().getZ())
                 .build();
-        markerSet.put(island.getUniqueId(), marker);
+        markerSet.put(id, marker);
+        // Shape marker showing the protected island border
+        ShapeMarker area = ShapeMarker.builder()
+                .label(label)
+                .shape(Shape.createRect(island.getMinProtectedX(), island.getMinProtectedZ(),
+                        island.getMaxProtectedX(), island.getMaxProtectedZ()),
+                        (float) island.getCenter().getY())
+                .lineColor(new Color(51, 136, 255))
+                .fillColor(new Color(51, 136, 255, 0.15f))
+                .lineWidth(2)
+                .build();
+        markerSet.put(id + "_area", area);
     }
 
     private String getIslandLabel(Island island) {
@@ -136,10 +152,46 @@ public class BlueMapHook extends Hook implements Listener {
         MarkerSet markerSet = markerSets.get(addon.getWorldSettings().getFriendlyName());
         if (markerSet != null) {
             markerSet.remove(islandUniqueId);
+            markerSet.remove(islandUniqueId + "_area");
         }
     }
 
-    // Listeners
+    // --- Public addon API ---
+
+    /**
+     * Returns the BlueMapAPI instance for addons to create custom markers.
+     * @return the BlueMapAPI instance
+     */
+    @NonNull
+    public BlueMapAPI getBlueMapAPI() {
+        return api;
+    }
+
+    /**
+     * Gets the marker set for the given game mode addon, if one has been registered.
+     * @param addon the game mode addon
+     * @return the MarkerSet, or null if not registered
+     */
+    public MarkerSet getMarkerSet(@NonNull GameModeAddon addon) {
+        return markerSets.get(addon.getWorldSettings().getFriendlyName());
+    }
+
+    /**
+     * Creates or retrieves a custom marker set and attaches it to all BlueMap maps.
+     * Useful for addons like Warps that want to display their own markers.
+     * @param id unique identifier for the marker set
+     * @param label display label for the marker set
+     * @return the MarkerSet
+     */
+    @NonNull
+    public MarkerSet createMarkerSet(@NonNull String id, @NonNull String label) {
+        MarkerSet markerSet = MarkerSet.builder().label(label).toggleable(true).defaultHidden(false).build();
+        // Attach to all known BlueMap maps
+        api.getMaps().forEach(map -> map.getMarkerSets().put(id, markerSet));
+        return markerSet;
+    }
+
+    // --- Event handlers ---
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onNewIsland(IslandNewIslandEvent e) {
