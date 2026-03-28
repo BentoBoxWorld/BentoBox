@@ -1885,17 +1885,36 @@ public class IslandsManager {
         Location loc = island.getHome("");
         user.sendMessage("commands.island.go.teleport");
         goingHome.add(user.getUniqueId());
-        readyPlayer(user.getPlayer());
-        return Util.teleportAsync(Objects.requireNonNull(user.getPlayer()), loc).thenAccept(b -> {
-            // Only run the commands if the player is successfully teleported
-            if (b != null && b) {
-                teleported(island.getWorld(), user, "", newIsland, island);
-                this.setPrimaryIsland(user.getUniqueId(), island);
+        Player player = Objects.requireNonNull(user.getPlayer());
+        readyPlayer(player);
+        CompletableFuture<Void> result = new CompletableFuture<>();
+        isSafeLocationAsync(loc).thenAccept(safe -> {
+            if (Boolean.TRUE.equals(safe)) {
+                Util.teleportAsync(player, loc).thenAccept(b -> {
+                    if (b != null && b) {
+                        teleported(island.getWorld(), user, "", newIsland, island);
+                        this.setPrimaryIsland(user.getUniqueId(), island);
+                    } else {
+                        goingHome.remove(user.getUniqueId());
+                    }
+                    result.complete(null);
+                });
             } else {
-                // Remove from mid-teleport set
-                goingHome.remove(user.getUniqueId());
+                // Location is not safe, use SafeSpotTeleport to find a safe spot
+                new SafeSpotTeleport.Builder(plugin).entity(player).island(island)
+                        .thenRun(() -> {
+                            teleported(island.getWorld(), user, "", newIsland, island);
+                            this.setPrimaryIsland(user.getUniqueId(), island);
+                        })
+                        .ifFail(() -> {
+                            plugin.logError(user.getName()
+                                    + " could not be teleported to home on island "
+                                    + island.getCenter());
+                            goingHome.remove(user.getUniqueId());
+                        }).buildFuture().thenAccept(b -> result.complete(null));
             }
         });
+        return result;
     }
 
 }
