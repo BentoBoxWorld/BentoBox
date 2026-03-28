@@ -1,6 +1,6 @@
 # BentoBox Changelog
 
-## [3.12.0] — 2026-03
+## [3.12.0] — 2026-03-28
 
 ### New Release Highlights
 
@@ -46,6 +46,11 @@
 BentoBox now ships with hooks for [BlueMap](https://bluemap.bluecolored.de/) and [Dynmap](https://www.spigotmc.org/resources/dynmap.274/). When either plugin is installed, island markers and (for BlueMap) coloured area overlays are added to the live web map automatically, without any configuration required.
 
 A new generic **Map API** (`world.bentobox.bentobox.api.map`) lets addon authors register their own web-map implementations, so any mapping plugin can be supported in the future.
+
+Additional Map API polish after initial merge:
+- Map hooks now register before addons enable, so addons can create markers during `onEnable()`. Island population is deferred to `BentoBoxReadyEvent` when islands are fully loaded.
+- `addPointMarker()` now accepts an `iconName` parameter; Dynmap maps this to its icon registry (with fallback to `"default"`) and all 85 built-in Dynmap icon names are documented in `MapManager` Javadoc.
+- Dynmap point marker labels support HTML markup (e.g. coloured owner names) via `isMarkupLabel=true`.
 
 ### ⚙️ 🔡 SPAWN_PROTECTION World Setting Flag
 [[PR #2865](https://github.com/BentoBoxWorld/BentoBox/pull/2865)]
@@ -146,6 +151,11 @@ Fixed an inconsistent comparator in the island settings panel that could throw a
 
 Fixed color/formatting codes being stripped from the second and subsequent lines of multi-line locale strings.
 
+### Players Falling into the Void on New Island Creation
+[[PR #2890](https://github.com/BentoBoxWorld/BentoBox/pull/2890)]
+
+Fixed a bug where players could fall into the void immediately after a new island was created if the teleport destination hadn't solidified yet. `homeTeleportAsync` now performs a safe-spot check before teleporting and retries with exception handling if the location lookup fails, preventing void deaths on fresh islands.
+
 ---
 
 ## Configuration Changes
@@ -209,6 +219,7 @@ Three new settings in `config.yml`:
 * ⚙️ Add Dynmap hook for island border display by @tastybento in https://github.com/BentoBoxWorld/BentoBox/pull/2883
 * Add area markers and public API to BlueMapHook by @tastybento in https://github.com/BentoBoxWorld/BentoBox/pull/2884
 * ⚙️ Add generic Map API for web-map addon integration by @tastybento in https://github.com/BentoBoxWorld/BentoBox/pull/2885
+* Fix players falling into void on new island creation by @Copilot in https://github.com/BentoBoxWorld/BentoBox/pull/2890
 * Release 3.12.0 by @tastybento
 
 **Full Changelog**: https://github.com/BentoBoxWorld/BentoBox/compare/3.11.2...3.12.0
