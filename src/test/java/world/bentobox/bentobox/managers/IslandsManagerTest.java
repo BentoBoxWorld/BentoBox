@@ -1505,6 +1505,29 @@ class IslandsManagerTest extends CommonTestSetup {
     }
 
     /**
+     * Helper to set up a mock home location with safe blocks for homeTeleportAsync tests.
+     * Returns the mocked home Location with block/chunk/world configured.
+     */
+    private Location setupSafeHomeLoc() {
+        Location homeLoc = mock(Location.class);
+        when(homeLoc.getWorld()).thenReturn(world);
+        Block homeBlock = mock(Block.class);
+        Block homeGround = mock(Block.class);
+        Block homeSpace2 = mock(Block.class);
+        when(homeLoc.getBlock()).thenReturn(homeBlock);
+        when(homeBlock.getRelative(BlockFace.DOWN)).thenReturn(homeGround);
+        when(homeBlock.getRelative(BlockFace.UP)).thenReturn(homeSpace2);
+        // Safe location: solid ground, air above
+        when(homeGround.getType()).thenReturn(Material.STONE);
+        when(homeBlock.getType()).thenReturn(Material.AIR);
+        when(homeSpace2.getType()).thenReturn(Material.AIR);
+        // Mock chunk loading
+        Chunk homeChunk = mock(Chunk.class);
+        mockedUtil.when(() -> Util.getChunkAtAsync(homeLoc)).thenReturn(CompletableFuture.completedFuture(homeChunk));
+        return homeLoc;
+    }
+
+    /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleportAsync(Island, User)}.
      */
@@ -1512,7 +1535,7 @@ class IslandsManagerTest extends CommonTestSetup {
     void testHomeTeleportAsyncIslandUser() throws Exception {
         // Setup
         Island island = mock(Island.class);
-        Location homeLoc = mock(Location.class);
+        Location homeLoc = setupSafeHomeLoc();
         when(island.getHome("")).thenReturn(homeLoc);
         when(island.getWorld()).thenReturn(world);
         when(user.getPlayer()).thenReturn(player);
@@ -1547,7 +1570,7 @@ class IslandsManagerTest extends CommonTestSetup {
     void testHomeTeleportAsyncIslandUserBooleanWithDefaultHome() throws Exception {
         // Setup
         Island island = mock(Island.class);
-        Location homeLoc = mock(Location.class);
+        Location homeLoc = setupSafeHomeLoc();
         when(island.getHome("")).thenReturn(homeLoc);
         when(island.getWorld()).thenReturn(world);
         when(user.getPlayer()).thenReturn(player);
@@ -1584,7 +1607,7 @@ class IslandsManagerTest extends CommonTestSetup {
     void testHomeTeleportAsyncIslandUserBooleanNewIsland() throws Exception {
         // Setup
         Island island = mock(Island.class);
-        Location homeLoc = mock(Location.class);
+        Location homeLoc = setupSafeHomeLoc();
         when(island.getHome("")).thenReturn(homeLoc);
         when(island.getWorld()).thenReturn(world);
         when(user.getPlayer()).thenReturn(player);
@@ -1621,7 +1644,7 @@ class IslandsManagerTest extends CommonTestSetup {
     void testHomeTeleportAsyncIslandUserBooleanFailedTeleport() throws Exception {
         // Setup
         Island island = mock(Island.class);
-        Location homeLoc = mock(Location.class);
+        Location homeLoc = setupSafeHomeLoc();
         when(island.getHome("")).thenReturn(homeLoc);
         when(island.getWorld()).thenReturn(world);
         when(user.getPlayer()).thenReturn(player);
@@ -1645,5 +1668,50 @@ class IslandsManagerTest extends CommonTestSetup {
         assertFalse(localIM.isGoingHome(user));
         verify(user).sendMessage("commands.island.go.teleport");
         verify(island).getHome("");
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleportAsync(Island, User, boolean)}.
+     * Test with unsafe home location - should use SafeSpotTeleport fallback instead of direct teleport.
+     */
+    @Test
+    void testHomeTeleportAsyncIslandUserBooleanUnsafeLocation() throws Exception {
+        // Setup
+        Island island = mock(Island.class);
+        Location homeLoc = mock(Location.class);
+        when(homeLoc.getWorld()).thenReturn(world);
+        Block homeBlock = mock(Block.class);
+        Block homeGround = mock(Block.class);
+        Block homeSpace2 = mock(Block.class);
+        when(homeLoc.getBlock()).thenReturn(homeBlock);
+        when(homeBlock.getRelative(BlockFace.DOWN)).thenReturn(homeGround);
+        when(homeBlock.getRelative(BlockFace.UP)).thenReturn(homeSpace2);
+        // Unsafe location: no solid ground (all AIR)
+        when(homeGround.getType()).thenReturn(Material.AIR);
+        when(homeBlock.getType()).thenReturn(Material.AIR);
+        when(homeSpace2.getType()).thenReturn(Material.AIR);
+        // Mock chunk loading
+        Chunk homeChunk = mock(Chunk.class);
+        mockedUtil.when(() -> Util.getChunkAtAsync(homeLoc)).thenReturn(CompletableFuture.completedFuture(homeChunk));
+
+        when(island.getHome("")).thenReturn(homeLoc);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getProtectionCenter()).thenReturn(location);
+        when(user.getPlayer()).thenReturn(player);
+        when(user.getUniqueId()).thenReturn(uuid);
+
+        // Mock player methods called by readyPlayer
+        when(player.isInsideVehicle()).thenReturn(false);
+
+        // Test
+        IslandsManager localIM = new IslandsManager(plugin);
+        // homeTeleportAsync should NOT call Util.teleportAsync directly for unsafe locations
+        // It should fall back to SafeSpotTeleport
+        localIM.homeTeleportAsync(island, user, true);
+
+        // Verify that direct teleportAsync was NOT called (SafeSpotTeleport handles it instead)
+        mockedUtil.verify(() -> Util.teleportAsync(eq(player), eq(homeLoc)), never());
+        verify(user).sendMessage("commands.island.go.teleport");
     }
 }
