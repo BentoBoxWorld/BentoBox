@@ -1913,6 +1913,11 @@ public class IslandsManager {
                             goingHome.remove(user.getUniqueId());
                         }).buildFuture().thenAccept(b -> result.complete(null));
             }
+        }).exceptionally(e -> {
+            plugin.logError("Error checking safe location for " + user.getName() + ": " + e.getMessage());
+            goingHome.remove(user.getUniqueId());
+            result.complete(null);
+            return null;
         });
         return result;
     }
