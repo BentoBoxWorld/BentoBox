@@ -3,6 +3,8 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
@@ -23,6 +25,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.ExpiringSet;
 
 /**
  * Enables changing of obsidian back into lava
@@ -30,6 +33,32 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  */
 public class ObsidianScoopingListener extends FlagListener {
+
+    /**
+     * Cooldown to prevent lava duplication by rapid obsidian scooping.
+     * Initialized lazily on first use so that the configured duration from settings
+     * can be read after BentoBox has fully loaded its configuration.
+     * Changes to the cooldown duration in config require a server restart to take effect.
+     */
+    @SuppressWarnings("java:S3077") // volatile is correct here for double-checked locking lazy init
+    private volatile ExpiringSet<UUID> cooldowns;
+
+    /**
+     * Returns the cooldown set, initializing it lazily on first use with the
+     * configured duration from {@link world.bentobox.bentobox.Settings#getObsidianScoopingCooldown()}.
+     *
+     * @return the cooldown set
+     */
+    private ExpiringSet<UUID> getCooldowns() {
+        if (cooldowns == null) {
+            synchronized (this) {
+                if (cooldowns == null) {
+                    cooldowns = new ExpiringSet<>(BentoBox.getInstance().getSettings().getObsidianScoopingCooldown(), TimeUnit.MINUTES);
+                }
+            }
+        }
+        return cooldowns;
+    }
 
     /**
      * Enables changing of obsidian back into lava
@@ -89,11 +118,19 @@ public class ObsidianScoopingListener extends FlagListener {
         }
         User user = User.getInstance(player);
         if (getIslands().userIsOnIsland(user.getWorld(), user)) {
-            // Look around to see if this is a lone obsidian block
-            if (getBlocksAround(b).stream().anyMatch(block -> block.getType().equals(Material.OBSIDIAN))) {
-                user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.obsidian-nearby");
+            // Check cooldown to prevent lava duplication exploit
+            if (getCooldowns().contains(player.getUniqueId())) {
+                user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.cooldown");
                 return false;
             }
+            int radius = BentoBox.getInstance().getSettings().getObsidianScoopingRadius();
+            // Look around to see if this is a lone obsidian block
+            if (radius > 0 && getBlocksAround(b, radius).stream().anyMatch(block -> block.getType().equals(Material.OBSIDIAN))) {
+                user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.obsidian-nearby", "[radius]", String.valueOf(radius));
+                return false;
+            }
+            // Add player to cooldown set to prevent rapid scooping
+            getCooldowns().add(player.getUniqueId());
             user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.scooping");
             player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
             e.setCancelled(true);
@@ -115,11 +152,11 @@ public class ObsidianScoopingListener extends FlagListener {
         b.setType(Material.AIR);
     }
 
-    private List<Block> getBlocksAround(Block b) {
+    private List<Block> getBlocksAround(Block b, int radius) {
         List<Block> blocksAround = new ArrayList<>();
-        for (int x = -2; x <= 2; x++) {
-            for (int y = -2; y <= 2; y++) {
-                for (int z = -2; z <= 2; z++) {
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
                     blocksAround.add(b.getWorld().getBlockAt(b.getX() + x, b.getY() + y, b.getZ() + z));
                 }
             }

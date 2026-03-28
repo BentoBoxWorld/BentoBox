@@ -175,6 +175,9 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             getIslands().removePlayer(getWorld(), user.getUniqueId());
             // Remove money inventory etc. for leaving
             cleanPlayer(user);
+        } else {
+            // Apply on-join resets since the player is joining a team island
+            cleanJoiningPlayer(user);
         }
         // Add the player as a team member of the new island
         getIslands().setJoinTeam(teamIsland, user.getUniqueId());
@@ -213,14 +216,31 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
     }
 
     private void cleanPlayer(User user) {
-        if (getIWM().isOnLeaveResetEnderChest(getWorld()) || getIWM().isOnJoinResetEnderChest(getWorld())) {
+        // Only apply on-leave resets that are NOT already covered by on-join resets (handled in cleanJoiningPlayer)
+        if (getIWM().isOnLeaveResetEnderChest(getWorld()) && !getIWM().isOnJoinResetEnderChest(getWorld())) {
             user.getPlayer().getEnderChest().clear();
         }
-        if (getIWM().isOnLeaveResetInventory(getWorld()) || getIWM().isOnJoinResetInventory(getWorld())) {
+        if (getIWM().isOnLeaveResetInventory(getWorld()) && !getIWM().isOnJoinResetInventory(getWorld())) {
             user.getPlayer().getInventory().clear();
         }
-        if (getSettings().isUseEconomy()
-                && (getIWM().isOnLeaveResetMoney(getWorld()) || getIWM().isOnJoinResetMoney(getWorld()))) {
+        if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())
+                && !getIWM().isOnJoinResetMoney(getWorld())) {
+            getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
+        }
+        cleanJoiningPlayer(user);
+    }
+
+    private void cleanJoiningPlayer(User user) {
+        // Reset ender chest if configured for joining
+        if (getIWM().isOnJoinResetEnderChest(getWorld())) {
+            user.getPlayer().getEnderChest().clear();
+        }
+        // Reset inventory if configured for joining
+        if (getIWM().isOnJoinResetInventory(getWorld())) {
+            user.getPlayer().getInventory().clear();
+        }
+        // Reset money if configured for joining
+        if (getSettings().isUseEconomy() && getIWM().isOnJoinResetMoney(getWorld())) {
             getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
         }
 

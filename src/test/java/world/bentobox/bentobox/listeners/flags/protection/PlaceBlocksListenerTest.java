@@ -29,7 +29,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -39,8 +38,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-@Disabled("Issues with NotAMock")
-public class PlaceBlocksListenerTest extends CommonTestSetup {
+class PlaceBlocksListenerTest extends CommonTestSetup {
 
     private PlaceBlocksListener pbl;
 
@@ -65,7 +63,7 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockPlaceFire() {
+    void testOnBlockPlaceFire() {
         Block placedBlock = mock(Block.class);
         when(placedBlock.getType()).thenReturn(Material.FIRE);
         BlockState replacedBlockState = mock(BlockState.class);
@@ -81,7 +79,7 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockPlace() {
+    void testOnBlockPlace() {
         Block placedBlock = mock(Block.class);
         when(placedBlock.getType()).thenReturn(Material.STONE);
         when(placedBlock.getLocation()).thenReturn(location);
@@ -100,7 +98,7 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onHangingPlace(org.bukkit.event.hanging.HangingPlaceEvent)}.
      */
     @Test
-    public void testOnHangingPlaceAllowed() {
+    void testOnHangingPlaceAllowed() {
         Hanging hanging = mock(Hanging.class);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
@@ -114,7 +112,7 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onHangingPlace(org.bukkit.event.hanging.HangingPlaceEvent)}.
      */
     @Test
-    public void testOnHangingPlaceNotAllowed() {
+    void testOnHangingPlaceNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Hanging hanging = mock(Hanging.class);
         Block block = mock(Block.class);
@@ -129,7 +127,7 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockPlaceNullItemInHand() {
+    void testOnBlockPlaceNullItemInHand() {
         Block placedBlock = mock(Block.class);
         when(placedBlock.getType()).thenReturn(Material.STONE);
         when(placedBlock.getLocation()).thenReturn(location);
@@ -145,7 +143,7 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockPlaceNotAllowed() {
+    void testOnBlockPlaceNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Block placedBlock = mock(Block.class);
         when(placedBlock.getType()).thenReturn(Material.STONE);
@@ -166,7 +164,7 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockCropsAllowed() {
+    void testOnBlockCropsAllowed() {
         when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
         when(island.isAllowed(any(), eq(Flags.CROP_PLANTING))).thenReturn(true);
         Block placedBlock = mock(Block.class);
@@ -186,9 +184,8 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
     /**
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
-    @Disabled("Issues with NotAMock")
     @Test
-    public void testOnBlockCropsAllowedNotCrop() {
+    void testOnBlockCropsAllowedNotCrop() {
         when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
         when(island.isAllowed(any(), eq(Flags.CROP_PLANTING))).thenReturn(true);
         Block placedBlock = mock(Block.class);
@@ -210,7 +207,7 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockCropsNotAllowed() {
+    void testOnBlockCropsNotAllowed() {
         when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
         when(island.isAllowed(any(), eq(Flags.CROP_PLANTING))).thenReturn(false);
         Block placedBlock = mock(Block.class);
@@ -230,10 +227,145 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
 
     /**
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Ensures that placing sugar cane is governed by the CROP_PLANTING flag, not PLACE_BLOCKS.
+     */
+    @Test
+    void testOnBlockSugarCanePlantingAllowed() {
+        when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.CROP_PLANTING))).thenReturn(true);
+        Block placedBlock = mock(Block.class);
+        when(placedBlock.getType()).thenReturn(Material.SUGAR_CANE);
+        when(placedBlock.getLocation()).thenReturn(location);
+        BlockState replacedBlockState = mock(BlockState.class);
+        Block placedAgainst = mock(Block.class);
+        when(placedAgainst.getType()).thenReturn(Material.GRASS_BLOCK);
+        ItemStack itemInHand = mock(ItemStack.class);
+        when(itemInHand.getType()).thenReturn(Material.SUGAR_CANE);
+        EquipmentSlot hand = EquipmentSlot.HAND;
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
+        pbl.onBlockPlace(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Ensures that placing sugar cane is blocked when CROP_PLANTING is not allowed.
+     */
+    @Test
+    void testOnBlockSugarCanePlantingNotAllowed() {
+        when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.CROP_PLANTING))).thenReturn(false);
+        Block placedBlock = mock(Block.class);
+        when(placedBlock.getType()).thenReturn(Material.SUGAR_CANE);
+        when(placedBlock.getLocation()).thenReturn(location);
+        BlockState replacedBlockState = mock(BlockState.class);
+        Block placedAgainst = mock(Block.class);
+        when(placedAgainst.getType()).thenReturn(Material.GRASS_BLOCK);
+        ItemStack itemInHand = mock(ItemStack.class);
+        when(itemInHand.getType()).thenReturn(Material.SUGAR_CANE);
+        EquipmentSlot hand = EquipmentSlot.HAND;
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
+        pbl.onBlockPlace(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Ensures that placing cocoa beans is governed by the CROP_PLANTING flag, not PLACE_BLOCKS.
+     */
+    @Test
+    void testOnBlockCocoaBeansPlantingAllowed() {
+        when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.CROP_PLANTING))).thenReturn(true);
+        Block placedBlock = mock(Block.class);
+        when(placedBlock.getType()).thenReturn(Material.COCOA);
+        when(placedBlock.getLocation()).thenReturn(location);
+        BlockState replacedBlockState = mock(BlockState.class);
+        Block placedAgainst = mock(Block.class);
+        when(placedAgainst.getType()).thenReturn(Material.JUNGLE_LOG);
+        ItemStack itemInHand = mock(ItemStack.class);
+        when(itemInHand.getType()).thenReturn(Material.COCOA_BEANS);
+        EquipmentSlot hand = EquipmentSlot.HAND;
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
+        pbl.onBlockPlace(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Ensures that placing cocoa beans is blocked when CROP_PLANTING is not allowed.
+     */
+    @Test
+    void testOnBlockCocoaBeansPlantingNotAllowed() {
+        when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.CROP_PLANTING))).thenReturn(false);
+        Block placedBlock = mock(Block.class);
+        when(placedBlock.getType()).thenReturn(Material.COCOA);
+        when(placedBlock.getLocation()).thenReturn(location);
+        BlockState replacedBlockState = mock(BlockState.class);
+        Block placedAgainst = mock(Block.class);
+        when(placedAgainst.getType()).thenReturn(Material.JUNGLE_LOG);
+        ItemStack itemInHand = mock(ItemStack.class);
+        when(itemInHand.getType()).thenReturn(Material.COCOA_BEANS);
+        EquipmentSlot hand = EquipmentSlot.HAND;
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
+        pbl.onBlockPlace(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Ensures that placing nether wart is governed by the CROP_PLANTING flag, not PLACE_BLOCKS.
+     */
+    @Test
+    void testOnBlockNetherWartPlantingAllowed() {
+        when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.CROP_PLANTING))).thenReturn(true);
+        Block placedBlock = mock(Block.class);
+        when(placedBlock.getType()).thenReturn(Material.NETHER_WART);
+        when(placedBlock.getLocation()).thenReturn(location);
+        BlockState replacedBlockState = mock(BlockState.class);
+        Block placedAgainst = mock(Block.class);
+        when(placedAgainst.getType()).thenReturn(Material.SOUL_SAND);
+        ItemStack itemInHand = mock(ItemStack.class);
+        when(itemInHand.getType()).thenReturn(Material.NETHER_WART);
+        EquipmentSlot hand = EquipmentSlot.HAND;
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
+        pbl.onBlockPlace(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Ensures that placing nether wart is blocked when CROP_PLANTING is not allowed.
+     */
+    @Test
+    void testOnBlockNetherWartPlantingNotAllowed() {
+        when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.CROP_PLANTING))).thenReturn(false);
+        Block placedBlock = mock(Block.class);
+        when(placedBlock.getType()).thenReturn(Material.NETHER_WART);
+        when(placedBlock.getLocation()).thenReturn(location);
+        BlockState replacedBlockState = mock(BlockState.class);
+        Block placedAgainst = mock(Block.class);
+        when(placedAgainst.getType()).thenReturn(Material.SOUL_SAND);
+        ItemStack itemInHand = mock(ItemStack.class);
+        when(itemInHand.getType()).thenReturn(Material.NETHER_WART);
+        EquipmentSlot hand = EquipmentSlot.HAND;
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, mockPlayer, true, hand);
+        pbl.onBlockPlace(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      * Ensures that books are not protected by this listener.
      */
     @Test
-    public void testOnBlockPlaceBook() {
+    void testOnBlockPlaceBook() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Block placedBlock = mock(Block.class);
         when(placedBlock.getType()).thenReturn(Material.LECTERN);
@@ -259,7 +391,7 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onPlayerHitItemFrame(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerHitItemFrameNotItemFrame() {
+    void testOnPlayerHitItemFrameNotItemFrame() {
         Creeper creeper = mock(Creeper.class);
         when(creeper.getLocation()).thenReturn(location);
         when(creeper.getType()).thenReturn(EntityType.CREEPER);
@@ -272,7 +404,7 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onPlayerHitItemFrame(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerHitItemFrame() {
+    void testOnPlayerHitItemFrame() {
         ItemFrame itemFrame = mock(ItemFrame.class);
         when(itemFrame.getType()).thenReturn(EntityType.ITEM_FRAME);
         when(itemFrame.getLocation()).thenReturn(location);
@@ -285,7 +417,7 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onPlayerHitItemFrame(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerHitItemFrameNotAllowed() {
+    void testOnPlayerHitItemFrameNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         ItemFrame itemFrame = mock(ItemFrame.class);
         when(itemFrame.getType()).thenReturn(EntityType.ITEM_FRAME);
@@ -300,8 +432,7 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
      * Test method for {@link PlaceBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    @Disabled("Issues with NotAMock")
-    public void testOnPlayerInteract() {
+    void testOnPlayerInteract() {
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.ARMOR_STAND, Material.FIREWORK_ROCKET, Material.ITEM_FRAME, Material.END_CRYSTAL, Material.CHEST, Material.TRAPPED_CHEST, Material.JUNGLE_BOAT);
         Block clickedBlock = mock(Block.class);
@@ -317,9 +448,8 @@ public class PlaceBlocksListenerTest extends CommonTestSetup {
     /**
      * Test method for {@link PlaceBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
-    @Disabled("Issues with NotAMock")
     @Test
-    public void testOnPlayerInteractNotAllowed() {
+    void testOnPlayerInteractNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.ARMOR_STAND, Material.FIREWORK_ROCKET, Material.ITEM_FRAME, Material.END_CRYSTAL, Material.CHEST, Material.TRAPPED_CHEST, Material.DARK_OAK_BOAT);

@@ -195,6 +195,11 @@ commands:
         extra-islands: >-
           &c Figyelmeztetés: ez a játékos most [number] szigettel rendelkezik.
           Ez több, mint amit a beállítások vagy jogosultságok engednek: [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: Admin [prefix_island] tartományának parancsa
       invalid-value:
@@ -280,6 +285,9 @@ commands:
       team-members-title: 'Csapattagok:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Maximális csapatméret: [number]'
+      max-coop-size: 'Maximális coop méret: [number]'
+      max-trusted-size: 'Maximális megbízott méret: [number]'
       island-protection-center: 'Védelmi terület középpontja: [xyz]'
       island-center: '[prefix_Island] központja: [xyz]'
       island-coords: '[prefix_Island] koordináták: [xz1] - [xz2]'
@@ -522,6 +530,8 @@ commands:
           &a Shift +/-100
         no-cost: Ingyenes
         cost-amount: 'Költség: [cost]'
+        next-page: '&f Következő oldal'
+        previous-page: '&f Előző oldal'
     resetflags:
       parameters: '[zászló]'
       description: >-
@@ -733,6 +743,7 @@ commands:
       home-set: '&6 Az Ön szigeti otthona a jelenlegi helyére lett állítva.'
       homes-are: 'A 6 szigeti ház a következő:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Kattints a teleportáláshoz!'
       nether:
         not-allowed: '&c Nem állíthatja be otthonát a Hollandiában.'
         confirmation: '&c Biztos, hogy Hollandiába szeretné helyezni otthonát?'
@@ -996,6 +1007,11 @@ commands:
       not-on-island: '&c Az a játékos nincs a szigeteden!'
       player-expelled-you: '&b [name]&c kiutasított a szigetről!'
       success: '&a Kiutasítottad &b [name] &a-t a szigetről.'
+    lock:
+      description: zárd le vagy nyisd fel a [prefix_island]-ed
+      locked: '&a A [prefix_island]-ed most zárolva van.'
+      unlocked: '&a A [prefix_island]-ed zárolása feloldva.'
+      you-are-locked-out: '&c Ez a [prefix_island] most zárolva van. Kiutasítottak.'
 ranks:
   owner: Tulajdonos
   sub-owner: Altulajdonos
@@ -1532,9 +1548,10 @@ protection:
         &a ha vannak más obszidián blokkok
         &a 2 blokk sugarú körben.
       scooping: '&a Az obszidián visszaváltása lávává. Legyen óvatos legközelebb!'
+      cooldown: '&c Várnia kell, mielőtt újabb obszidián blokkot meríthet.'
       obsidian-nearby: >-
         &c Obszidián blokkok vannak a közelben, ezt a tömböt nem lehet lávába
-        szedni.
+        szedni. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Letiltott állapotban növények
@@ -1727,6 +1744,13 @@ protection:
         &a
         &a [prefix_Island] tagjai továbbra is elveszítik tárgyaikat
         &a ha a saját szigetükön halnak meg!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Rajtaütés indítása
       description: Beállítja a rajtaütés indításához szükséges minimális szigetrangot
@@ -1737,6 +1761,13 @@ protection:
         &a Bekapcsolja, ha az entitások (nem játékos) képesek rá
         &a portálok használatával teleportálhat közöttük
         &a méretek
+    WIND_CHARGE:
+      name: Széltöltet
+      description: |-
+        &a A széltöltet használatát be-/kikapcsolja.
+        &a Ha le van tiltva, a látogatók nem
+        &a használhatnak széltölteteket ezen a szigeten.
+      hint: Széltöltet használata letiltva
     WITHER_DAMAGE:
       name: Kapcsolja be a fonáskárosodást
       description: |-
@@ -1755,6 +1786,7 @@ protection:
         &a entitások a [prefix_island] határain kívül.
       name: Világ TNT kár
   locked: '&c Ez a [prefix_island] le van zárva!'
+  locked-island-bypass: '&6 Ez a [prefix_island] le van zárva, de van engedélyed a belépésre.'
   protected: '&c [prefix_Island] védett: [description].'
   world-protected: '&c Világvédett: [description].'
   spawn-protected: '&c Spawn védett: [description].'

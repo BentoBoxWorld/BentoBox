@@ -93,7 +93,7 @@ public abstract class AbstractPanel {
      */
     protected int pageIndex;
 
-    public AbstractPanel(CompositeCommand command, User user) {
+    protected AbstractPanel(CompositeCommand command, User user) {
         plugin = command.getPlugin();
         this.command = command;
         this.user = user;

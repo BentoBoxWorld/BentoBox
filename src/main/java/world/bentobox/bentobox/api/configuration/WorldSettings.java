@@ -176,6 +176,16 @@ public interface WorldSettings extends ConfigObject {
     int getNetherSpawnRadius();
 
     /**
+     * Get the radius of the spawn protection area for the standard (vanilla) End world.
+     * This is only used when the end world is not an island end world.
+     * @return the end spawn protection radius, defaults to 0 (no protection)
+     * @since 2.4.3
+     */
+    default int getEndSpawnRadius() {
+        return 0;
+    }
+
+    /**
      * @return the permission prefix
      */
     String getPermissionPrefix();

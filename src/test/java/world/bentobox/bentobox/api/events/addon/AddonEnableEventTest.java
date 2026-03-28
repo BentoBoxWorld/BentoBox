@@ -20,7 +20,7 @@ import world.bentobox.bentobox.api.addons.Addon;
  * @author tastybento
  *
  */
-public class AddonEnableEventTest extends CommonTestSetup {
+class AddonEnableEventTest extends CommonTestSetup {
 
     private AddonEnableEvent aee;
     @Mock
@@ -44,7 +44,7 @@ public class AddonEnableEventTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent#getHandlers()}.
      */
     @Test
-    public void testGetHandlers() {
+    void testGetHandlers() {
         assertNotNull(aee.getHandlers());
     }
 
@@ -52,7 +52,7 @@ public class AddonEnableEventTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent#getHandlerList()}.
      */
     @Test
-    public void testGetHandlerList() {
+    void testGetHandlerList() {
         assertNotNull(AddonEnableEvent.getHandlerList());
     }
 
@@ -60,7 +60,7 @@ public class AddonEnableEventTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent#AddonEnableEvent(world.bentobox.bentobox.api.addons.Addon, java.util.Map)}.
      */
     @Test
-    public void testAddonEnableEvent() {
+    void testAddonEnableEvent() {
         assertNotNull(aee);
     }
 
@@ -68,7 +68,7 @@ public class AddonEnableEventTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#getKeyValues()}.
      */
     @Test
-    public void testGetKeyValues() {
+    void testGetKeyValues() {
         assertTrue(aee.getKeyValues().isEmpty());
     }
 
@@ -76,7 +76,7 @@ public class AddonEnableEventTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#getAddon()}.
      */
     @Test
-    public void testGetAddon() {
+    void testGetAddon() {
         assertSame(addon, aee.getAddon());
     }
 
@@ -84,7 +84,7 @@ public class AddonEnableEventTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#getNewEvent()}.
      */
     @Test
-    public void testGetNewEvent() {
+    void testGetNewEvent() {
         assertTrue(aee.getNewEvent().isEmpty());
     }
 
@@ -92,7 +92,7 @@ public class AddonEnableEventTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#setNewEvent(world.bentobox.bentobox.api.events.addon.AddonBaseEvent)}.
      */
     @Test
-    public void testSetNewEvent() {
+    void testSetNewEvent() {
         aee.setNewEvent(aee);
         assertSame(aee, aee.getNewEvent().get());
     }

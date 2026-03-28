@@ -183,6 +183,11 @@ commands:
         extra-islands: >-
           &c Advertencia: este jugador ahora posee [number] islas. Esto es más
           de lo permitido por la configuración o permisos: [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: Comando de rango de la isla de administración
       invalid-value:
@@ -262,6 +267,9 @@ commands:
       team-members-title: 'Miembros de equipo:'
       team-owner-format: '&a[name] [rank]'
       team-member-format: '&b[name] [rank]'
+      max-team-size: 'Tamaño máximo del equipo: [number]'
+      max-coop-size: 'Tamaño máximo de cooperación: [number]'
+      max-trusted-size: 'Tamaño máximo de confianza: [number]'
       island-protection-center: 'Centro del área de protección: [xyz]'
       island-center: '[prefix_Island] centro: [xyz]'
       island-coords: 'Coordenadas de la isla: [xz1] to [xz2]'
@@ -501,6 +509,8 @@ commands:
           &a Shift para +/-100
         no-cost: Gratis
         cost-amount: 'Costo: [cost]'
+        next-page: '&f Página siguiente'
+        previous-page: '&f Página anterior'
     resetflags:
       parameters: '[bandera]'
       description: >-
@@ -714,6 +724,7 @@ commands:
       home-set: '&6Su hogar en la isla se ha establecido en su ubicación actual.'
       homes-are: '&6 [prefix_Island] hogares son:'
       home-list-syntax: '&6 [nombre]'
+      click-to-teleport: '&a ¡Haz clic para teletransportarte!'
       nether:
         not-allowed: '&cNo se le permite establecer su hogar en el Nether.'
         confirmation: '&cEstás seguro de que quieres establecer tu hogar en el Nether?'
@@ -978,6 +989,11 @@ commands:
       not-on-island: '&cEse jugador no está en tu isla!'
       player-expelled-you: '&b[name]&c te expulsó de la isla!'
       success: '&aExpulsastes a &b[name] de la isla.'
+    lock:
+      description: bloquear o desbloquear tu [prefix_island]
+      locked: '&a Tu [prefix_island] ahora está bloqueada.'
+      unlocked: '&a Tu [prefix_island] ahora está desbloqueada.'
+      you-are-locked-out: '&c Esta [prefix_island] ahora está bloqueada. Has sido expulsado/a.'
 ranks:
   owner: Propietario
   sub-owner: Co-Propietario
@@ -1482,9 +1498,10 @@ protection:
         &a si hay otros bloques de obsidiana
         &a dentro de un radio de 2 bloques.
       scooping: '&aobsidiana cambio de vuelta a lava. ¡Ten mas cuidado la próxima vez!'
+      cooldown: '&c Debes esperar antes de recoger otro bloque de obsidiana.'
       obsidian-nearby: >-
         &c Hay bloques de obsidiana cerca, no puedes recoger este bloque en
-        lava.
+        lava. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &aCuando se deshabilita, las plantas
@@ -1670,6 +1687,13 @@ protection:
         &a
         &a Los miembros de [prefix_Island] aún pierden sus objetos
         &a si mueren en su propio [prefix_island]!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Activador de asalto
       description: Establece el rango mínimo de isla requerido para activar un asalto
@@ -1680,6 +1704,13 @@ protection:
         &a Activa o desactiva si las entidades (no jugadores) pueden  
         &a utilizar portales para teletransportarse entre  
         &a dimensiones
+    WIND_CHARGE:
+      name: Carga de viento
+      description: |-
+        &a Alterna el uso de cargas de viento.
+        &a Si está desactivado, los visitantes no
+        &a pueden usar cargas de viento en esta isla.
+      hint: Uso de carga de viento desactivado
     WITHER_DAMAGE:
       name: Alternar el daño de marchitar
       description: |-
@@ -1698,6 +1729,7 @@ protection:
         &a entidades fuera de los límites de la isla.
       name: Daño mundial de TNT
   locked: '&cEsta isla esta cerrada!'
+  locked-island-bypass: '&6Esta [prefix_island] está cerrada, pero tienes permiso para acceder.'
   protected: '&cIsla protegida: [description]'
   world-protected: '&cMundo protegido: [description]'
   spawn-protected: '&cSpawn protegido: [description]'

@@ -194,6 +194,11 @@ commands:
           &c Avertissement : ce joueur possède maintenant [number] îles. C'est
           plus que ce qui est autorisé par les paramètres ou les permissions :
           [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: rayon de la zone de protection de l'île
       invalid-value:
@@ -284,6 +289,9 @@ commands:
       team-members-title: 'Membres de l''équipe :'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Taille maximale de l''équipe : [number]'
+      max-coop-size: 'Taille maximale de coopération : [number]'
+      max-trusted-size: 'Taille maximale de confiance : [number]'
       island-protection-center: "Centre de la zone de protection\_: [xyz]"
       island-center: "Centre de l'île\_: [xyz]"
       island-coords: 'Coordonnées de l''île : [xz1] to [xz2]'
@@ -526,6 +534,8 @@ commands:
           &a Shift pour +/-100
         no-cost: Gratuit
         cost-amount: 'Coût : [cost]'
+        next-page: '&f Page suivante'
+        previous-page: '&f Page précédente'
     resetflags:
       parameters: '[flag]'
       description: >-
@@ -739,6 +749,7 @@ commands:
       home-set: '&6 Votre home a été placé à votre position actuelle.'
       homes-are: "Les maisons &6 de l'île sont\_:"
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Cliquez pour vous téléporter !'
       nether:
         not-allowed: '&c Vous n''êtes pas autorisé sur placer votre home dans le Nether.'
         confirmation: '&c Êtes-vous sûr de vouloir placer votre home dans le Nether ?'
@@ -999,6 +1010,11 @@ commands:
       not-on-island: '&c Ce joueur n''est pas sur votre île!'
       player-expelled-you: '&b [name] &c vous a expulsé de l''île!'
       success: '&a Vous avez expulsé &b [name] &a de l''île.'
+    lock:
+      description: verrouiller ou déverrouiller votre [prefix_island]
+      locked: '&a Votre [prefix_island] est maintenant verrouillée.'
+      unlocked: '&a Votre [prefix_island] est maintenant déverrouillée.'
+      you-are-locked-out: '&c Ce [prefix_island] est maintenant verrouillée. Vous avez été expulsé.e.'
 ranks:
   owner: Propriétaire
   sub-owner: Sous-propriétaire
@@ -1510,9 +1526,10 @@ protection:
       scooping: >-
         &a Retour de l'obsidienne en lave. Soyez plus prudent la prochaine fois
         !
+      cooldown: '&c Vous devez attendre avant de ramasser un autre bloc d''obsidienne.'
       obsidian-nearby: >-
         &c Il y a d'autres blocs d'obsidienne à proximité, vous ne pouvez pas
-        transformer ce bloc en lave.
+        transformer ce bloc en lave. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Lorsque désactivé, les plantes
@@ -1698,6 +1715,13 @@ protection:
     VISITOR_KEEP_INVENTORY:
       name: Les visiteurs gardent l'inventaire au décès
       description: "&a Empêcher les joueurs de perdre leur\n&a objets et expérience s'ils meurent\n&a une île dans laquelle ils sont un visiteur.\n&un\nLes membres de &a Island perdent toujours leurs objets\n&a s'ils meurent sur leur propre île\_!"
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Déclencheur de raid
       description: Définit le rang minimum d'île requis pour déclencher un raid
@@ -1708,6 +1732,13 @@ protection:
         &a Bascule si les entités (non-joueurs) peuvent
         &a utiliser des portails pour se téléporter entre
         &a dimensions
+    WIND_CHARGE:
+      name: Charge de vent
+      description: |-
+        &a Active/désactive l'utilisation des charges de vent.
+        &a Si désactivé, les visiteurs ne peuvent
+        &a pas utiliser de charges de vent sur cette île.
+      hint: Utilisation des charges de vent désactivée
     WITHER_DAMAGE:
       name: Activer/désactiver les dégâts de wither
       description: |-
@@ -1726,6 +1757,7 @@ protection:
         &a entités en dehors des limites de l’île.
       name: Dommages mondiaux au TNT
   locked: '&c Cette île est verrouillée!'
+  locked-island-bypass: '&6 Cette [prefix_island] est verrouillée, mais vous avez la permission de la traverser.'
   protected: '&c Île protégée: [description]'
   world-protected: '&c Monde protégé: [description]'
   spawn-protected: '&c Spawn protégé: [description]'

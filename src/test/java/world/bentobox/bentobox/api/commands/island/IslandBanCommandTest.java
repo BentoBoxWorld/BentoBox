@@ -50,7 +50,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandBanCommandTest extends RanksManagerTestSetup {
+class IslandBanCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -162,12 +162,12 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
     // Ban online user
 
     @Test
-    public void testNoArgs() {
+    void testNoArgs() {
         assertFalse(ibc.canExecute(user, ibc.getLabel(), new ArrayList<>()));
     }
 
     @Test
-    public void testNoIsland() {
+    void testNoIsland() {
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
@@ -175,7 +175,7 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testTooLowRank() {
+    void testTooLowRank() {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
@@ -183,21 +183,21 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testUnknownUser() {
+    void testUnknownUser() {
         when(pm.getUUID(Mockito.anyString())).thenReturn(null);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("general.errors.unknown-player", "[name]", "bill");
     }
 
     @Test
-    public void testBanSelf() {
+    void testBanSelf() {
         when(pm.getUUID(anyString())).thenReturn(uuid);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("commands.island.ban.cannot-ban-yourself");
     }
 
     @Test
-    public void testBanTeamMate() {
+    void testBanTeamMate() {
         UUID teamMate = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(teamMate);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid, teamMate));
@@ -207,7 +207,7 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testBanAlreadyBanned() {
+    void testBanAlreadyBanned() {
         UUID bannedUser = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(bannedUser);
         when(island.isBanned(bannedUser)).thenReturn(true);
@@ -216,14 +216,14 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testBanOp() {
+    void testBanOp() {
         when(mockPlayer.isOp()).thenReturn(true);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("commands.island.ban.cannot-ban");
     }
 
     @Test
-    public void testBanOnlineNoBanPermission() {
+    void testBanOnlineNoBanPermission() {
         when(mockPlayer.hasPermission(anyString())).thenReturn(true);
         User.getInstance(mockPlayer);
 
@@ -232,7 +232,7 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testBanOfflineUserSuccess() {
+    void testBanOfflineUserSuccess() {
         when(mockPlayer.isOnline()).thenReturn(false);
         assertTrue(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
 
@@ -245,7 +245,7 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testBanOnlineUserSuccess() {
+    void testBanOnlineUserSuccess() {
         assertTrue(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
 
         // Allow adding to ban list
@@ -258,7 +258,7 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testCancelledBan() {
+    void testCancelledBan() {
         assertTrue(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
 
         // Disallow adding to ban list - event cancelled
@@ -271,33 +271,33 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testTabCompleteNoIsland() {
+    void testTabCompleteNoIsland() {
         // No island
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         // Set up the user
-        User user = mock(User.class);
-        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        User targetUser = mock(User.class);
+        when(targetUser.getUniqueId()).thenReturn(UUID.randomUUID());
         // Get the tab-complete list with one argument
         LinkedList<String> args = new LinkedList<>();
         args.add("");
-        Optional<List<String>> result = ibc.tabComplete(user, "", args);
+        Optional<List<String>> result = ibc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("d");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("fr");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
     }
 
     @Test
-    public void testTabComplete() {
+    void testTabComplete() {
 
         String[] names = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe" };
         Map<UUID, String> online = new HashMap<>();
@@ -327,30 +327,30 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
         mockedBukkit.when(Bukkit::getOnlinePlayers).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         // Set up the user
-        User user = mock(User.class);
-        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        User targetUser = mock(User.class);
+        when(targetUser.getUniqueId()).thenReturn(UUID.randomUUID());
         Player player = mock(Player.class);
         // Player can see every other player except Ian
         when(player.canSee(any(Player.class))).thenAnswer((Answer<Boolean>) invocation -> {
             Player p = invocation.getArgument(0, Player.class);
             return !p.getName().equals("ian");
         });
-        when(user.getPlayer()).thenReturn(player);
+        when(targetUser.getPlayer()).thenReturn(player);
 
         // Get the tab-complete list with no argument
-        Optional<List<String>> result = ibc.tabComplete(user, "", new LinkedList<>());
+        Optional<List<String>> result = ibc.tabComplete(targetUser, "", new LinkedList<>());
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one argument
         LinkedList<String> args = new LinkedList<>();
         args.add("");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("d");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(targetUser, "", args);
         assertTrue(result.isPresent());
         List<String> r = result.get().stream().sorted().toList();
         // Compare the expected with the actual
@@ -360,7 +360,7 @@ public class IslandBanCommandTest extends RanksManagerTestSetup {
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("fr");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(targetUser, "", args);
         assertTrue(result.isPresent());
         r = result.get().stream().sorted().toList();
         // Compare the expected with the actual

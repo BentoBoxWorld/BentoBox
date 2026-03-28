@@ -46,7 +46,7 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         for (T object : listFrom) {
             toHandler.saveObject(object).thenAccept(b -> {
                 // Only delete if save was successful
-                if (b) {
+                if (Boolean.TRUE.equals(b)) {
                     try {
                         fromHandler.deleteObject(object);
                     } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {

@@ -38,7 +38,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
+class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -76,6 +76,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
         when(ic.getUsage()).thenReturn("");
         when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
         when(ic.getAddon()).thenReturn(addon);
+        when(ic.getTopLabel()).thenReturn("island");
         when(ic.getWorld()).thenReturn(world);
         // Player
         when(user.isOp()).thenReturn(false);
@@ -85,6 +86,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
         when(user.getName()).thenReturn("tastybento");
         when(user.getWorld()).thenReturn(world);
         when(user.getTranslation(anyString())).thenAnswer(i -> i.getArgument(0, String.class));
+        when(user.getTranslation(anyString(), anyString(), anyString())).thenAnswer(i -> i.getArgument(0, String.class));
         // Island
         when(island.getOwner()).thenReturn(uuid);
         when(island.onIsland(any())).thenReturn(true);
@@ -121,7 +123,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#IslandDeletehomeCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
-    public void testIslandDeletehomeCommand() {
+    void testIslandDeletehomeCommand() {
         assertEquals("deletehome", idh.getLabel());
 
     }
@@ -130,7 +132,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertTrue(idh.isOnlyPlayer());
         assertEquals("commands.island.deletehome.parameters", idh.getParameters());
         assertEquals("commands.island.deletehome.description", idh.getDescription());
@@ -142,7 +144,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteHelp() {
+    void testCanExecuteHelp() {
         idh.canExecute(user, "label", List.of());
         verify(user).sendMessage("commands.help.header","[label]","BSkyBlock");
     }
@@ -151,7 +153,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoIsland() {
+    void testCanExecuteNoIsland() {
         when(im.getIsland(any(), eq(user))).thenReturn(null);
         assertFalse(idh.canExecute(user, "label", List.of("something")));
         verify(user).sendMessage("general.errors.no-island");
@@ -161,7 +163,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteLowRank() {
+    void testCanExecuteLowRank() {
         when(island.getRank(user)).thenReturn(RanksManager.COOP_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(idh.canExecute(user, "label", List.of("something")));
@@ -172,7 +174,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUnknownHome() {
+    void testExecuteUnknownHome() {
         when(island.getHomes()).thenReturn(Map.of("home", location));
 
         when(im.isHomeLocation(eq(island), anyString())).thenReturn(false);
@@ -180,7 +182,9 @@ public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
         assertFalse(idh.execute(user, "label", List.of("something")));
         verify(user).sendMessage("commands.island.go.unknown-home");
         verify(user).sendMessage("commands.island.sethome.homes-are");
-        verify(user).sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, "home");
+        verify(user).sendRawMessage("commands.island.sethome.home-list-syntax"
+                + "[run_command: /island go home]"
+                + "[hover: commands.island.sethome.click-to-teleport]");
 
     }
 
@@ -188,7 +192,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         when(island.getHomes()).thenReturn(Map.of("home", location));
         when(im.isHomeLocation(eq(island), anyString())).thenReturn(true);
         assertTrue(idh.execute(user, "label", List.of("home")));
@@ -199,7 +203,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfString() {
+    void testTabCompleteUserStringListOfString() {
         when(island.getHomes()).thenReturn(Map.of("home", location));
         Optional<List<String>> list = idh.tabComplete(user, "label", List.of("hom"));
         assertTrue(list.isPresent());
@@ -210,7 +214,7 @@ public class IslandDeletehomeCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfStringNothing() {
+    void testTabCompleteUserStringListOfStringNothing() {
         when(island.getHomes()).thenReturn(Map.of("home", location));
         Optional<List<String>> list = idh.tabComplete(user, "label", List.of("f"));
         assertTrue(list.isPresent());

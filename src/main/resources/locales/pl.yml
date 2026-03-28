@@ -189,6 +189,11 @@ commands:
         extra-islands: >-
           &c Uwaga: ten gracz posiada teraz [number] wysp. To więcej niż
           dozwolone według ustawień lub uprawnień: [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: administracyjna komenda obszaru ochrony wysp
       invalid-value:
@@ -263,6 +268,9 @@ commands:
       team-members-title: 'Członkowie drużyny:'
       team-owner-format: '&a[name] [rank]'
       team-member-format: '&b[name] [rank]'
+      max-team-size: 'Maksymalna wielkość drużyny: [number]'
+      max-coop-size: 'Maksymalna wielkość coop: [number]'
+      max-trusted-size: 'Maksymalna wielkość zaufanych: [number]'
       island-protection-center: 'Obszar ochrony środek: [xyz]'
       island-center: '[prefix_Island] środek: [xyz]'
       island-coords: 'Współrzędne wyspy: [xz1] to [xz2]'
@@ -497,6 +505,8 @@ commands:
           &a Shift dla +/-100
         no-cost: Bezpłatne
         cost-amount: 'Koszt: [cost]'
+        next-page: '&f Następna strona'
+        previous-page: '&f Poprzednia strona'
     resetflags:
       parameters: '[flaga]'
       description: Zresetuj wszystkie wyspy do domyślnych ustawień flag w config.yml
@@ -704,6 +714,7 @@ commands:
       home-set: Twój dom na wyspie został ustawiony w bieżącej lokalizacji.
       homes-are: '&6 [prefix_Island] domy to:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Kliknij, aby się teleportować!'
       nether:
         not-allowed: '&c Nie możesz ustawić swojego domu w Netherze.'
         confirmation: '&c Czy na pewno chcesz ustawić swój dom w Netherze?'
@@ -961,6 +972,11 @@ commands:
       not-on-island: '&c Tego gracza nie ma na twojej wyspie!'
       player-expelled-you: '&b [name]&c wyprosił cię ze swojej wyspy.'
       success: '&a Wyprosiłeś gracza &b [name] &a ze swojej wyspy.'
+    lock:
+      description: zablokuj lub odblokuj swój [prefix_island]
+      locked: '&a Twój [prefix_island] jest teraz zablokowany.'
+      unlocked: '&a Twój [prefix_island] jest teraz odblokowany.'
+      you-are-locked-out: '&c Ten [prefix_island] jest teraz zablokowany. Zostałeś/aś wypędzony/a.'
 ranks:
   owner: Lider
   sub-owner: Współlider
@@ -1461,9 +1477,10 @@ protection:
         &a Pozwala na przemianę Obsydianu
         &a pustym wiaderkiem z powrotem na lawę.
       scooping: '&a Zmieniam obsydian z powrotem w lawę. Następnym razem uważaj!'
+      cooldown: '&c Musisz poczekać, zanim będziesz mógł zebrać kolejny blok obsydianu.'
       obsidian-nearby: >-
         &c W pobliżu znajdują się obsydianowe bloki, nie można zebrać tego bloku
-        w lawę.
+        w lawę. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Kiedy wyłączone, rośliny
@@ -1651,6 +1668,13 @@ protection:
         &a Członkowie [prefix_Island] nadal tracą swoje przedmioty
 
         &a jeśli umrą na swoim własnym [prefix_island]!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Wyzwalanie najazdu
       description: Ustawia minimalny rang wyspy wymagany do wyzwolenia najazdu
@@ -1661,6 +1685,13 @@ protection:
         &a Przełącza, czy byty (nie-gracze) mogą
         &a używać portali do teleportacji między
         &a wymiarami
+    WIND_CHARGE:
+      name: Ładunek wiatru
+      description: |-
+        &a Przełącza użycie ładunków wiatru.
+        &a Jeśli wyłączone, odwiedzający nie mogą
+        &a używać ładunków wiatru na tej wyspie.
+      hint: Użycie ładunku wiatru wyłączone
     WITHER_DAMAGE:
       name: Przełącz obrażenia od Withera
       description: |-
@@ -1678,6 +1709,7 @@ protection:
         &a jednostkom poza granicami [prefix_island].
       name: Świat uszkodzenia TNT
   locked: '&cTa wyspa jest zamknięta!'
+  locked-island-bypass: '&6 Ta [prefix_island] jest zamknięta, ale masz uprawnienia, by ją ominąć.'
   protected: '&cWyspa chroniona: [description]'
   world-protected: '&c Świat chroniony: [description]'
   spawn-protected: '&c Spawn chroniony: [description]'

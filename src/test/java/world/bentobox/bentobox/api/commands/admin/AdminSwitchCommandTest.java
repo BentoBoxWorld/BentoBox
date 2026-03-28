@@ -30,7 +30,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminSwitchCommandTest extends CommonTestSetup {
+class AdminSwitchCommandTest extends CommonTestSetup {
 
     private AdminSwitchCommand asc;
     @Mock
@@ -83,7 +83,7 @@ public class AdminSwitchCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("mod.switch", asc.getPermission());
         assertTrue(asc.isOnlyPlayer());
         assertEquals("commands.admin.switch.parameters", asc.getParameters());
@@ -94,7 +94,7 @@ public class AdminSwitchCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecute() {
+    void testCanExecute() {
         assertFalse(asc.canExecute(user, "", Collections.singletonList("hello")));
         verify(user).sendMessage("commands.help.header", TextVariables.LABEL, null);
         assertTrue(asc.canExecute(user, "", Collections.emptyList()));
@@ -104,7 +104,7 @@ public class AdminSwitchCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoMetaData() {
+    void testExecuteUserStringListOfStringNoMetaData() {
         when(user.getMetaData("AdminCommandSwitch")).thenReturn(Optional.empty());
         asc.execute(user, "", Collections.emptyList());
         verify(user).getMetaData("AdminCommandSwitch");
@@ -116,7 +116,7 @@ public class AdminSwitchCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringMetaFalse() {
+    void testExecuteUserStringListOfStringMetaFalse() {
         MetaDataValue md = new MetaDataValue(false);
         when(user.getMetaData("AdminCommandSwitch")).thenReturn(Optional.of(md));
         asc.execute(user, "", Collections.emptyList());
@@ -129,7 +129,7 @@ public class AdminSwitchCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringMetaTrue() {
+    void testExecuteUserStringListOfStringMetaTrue() {
         MetaDataValue md = new MetaDataValue(true);
         when(user.getMetaData("AdminCommandSwitch")).thenReturn(Optional.of(md));
         asc.execute(user, "", Collections.emptyList());

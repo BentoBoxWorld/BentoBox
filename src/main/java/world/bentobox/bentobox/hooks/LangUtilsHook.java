@@ -351,7 +351,7 @@ public class LangUtilsHook extends Hook {
         if (hooked) {
             return LanguageHelper.getTippedArrowName(potionType, getUserLocale(user));
         }
-        return generalPotionName(potionType).replaceAll("Potion", "Arrow");
+        return generalPotionName(potionType).replace("Potion", "Arrow");
     }
 
     /**

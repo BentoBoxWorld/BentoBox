@@ -35,6 +35,7 @@ public class AdminTeamCommand extends CompositeCommand
 
         new AdminTeamKickCommand(this);
         new AdminTeamSetownerCommand(this);
+        new AdminTeamSetMaxSizeCommand(this);
     }
 
 

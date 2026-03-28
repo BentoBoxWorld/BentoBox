@@ -143,6 +143,15 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.fakeplayers", experimental = true)
     private Set<String> fakePlayers = new HashSet<>();
 
+    @ConfigComment("Flingback power. How far hostile mobs will be flung back when a player teleports into them.")
+    @ConfigComment("2.5 will push back a number of blocks, 5 will throw them far, 1 will not do much.")
+    @ConfigEntry(path = "general.flingback")
+    private double flingback = 2.5D;
+
+    @ConfigComment("Kill mobs on teleport. If the world flag in Admin Settings is set, then they will be killed/removed instead of flung.")
+    @ConfigEntry(path = "general.teleport-remove-mobs")
+    private boolean teleportRemoveMobs = false;
+
     /* PANELS */
     @ConfigComment("Panel click cooldown. Value is in milliseconds. Prevents players spamming button presses in GUIs.")
     @ConfigEntry(path = "panel.click-cooldown-ms")
@@ -343,6 +352,29 @@ public class Settings implements ConfigObject {
     @ConfigComment("This value is also used for valid nether portal linking between dimension.")
     @ConfigEntry(path = "island.safe-spot-search-range", since = "1.21.0")
     private int safeSpotSearchRange = 16;
+
+    @ConfigComment("The command to run as the expelled player if they have no island and no spawn is set.")
+    @ConfigComment("This is typically provided by other plugins like EssentialsX.")
+    @ConfigComment("Leave blank to do nothing in this situation.")
+    @ConfigEntry(path = "island.expel.command", since = "3.11.3")
+    private String expelCommand = "spawn";
+
+    @ConfigComment("The radius (in blocks) around an obsidian block to check for other obsidian blocks")
+    @ConfigComment("when a player tries to scoop it up with an empty bucket (OBSIDIAN_SCOOPING flag).")
+    @ConfigComment("If any obsidian is found within this radius, the scooping is denied.")
+    @ConfigComment("Set to 0 to disable the check and allow any lone obsidian block to be scooped.")
+    @ConfigComment("Range: 0 to 15. Default is 2.")
+    @ConfigEntry(path = "island.obsidian-scooping-radius", since = "3.11.3")
+    private int obsidianScoopingRadius = 2;
+
+    @ConfigComment("The duration of the cooldown (in minutes) applied after a player scoops an obsidian block")
+    @ConfigComment("into a lava bucket using the OBSIDIAN_SCOOPING flag. During this cooldown, the player")
+    @ConfigComment("cannot scoop another obsidian block. This prevents lava bucket duplication exploits")
+    @ConfigComment("caused by rapidly scooping obsidian near water.")
+    @ConfigComment("Minimum value is 1 minute. Default is 1 minute.")
+    @ConfigComment("Note: Changes to this value require a server restart to take effect.")
+    @ConfigEntry(path = "island.obsidian-scooping-cooldown", since = "3.11.4")
+    private int obsidianScoopingCooldown = 1;
 
     /* WEB */
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
@@ -1018,6 +1050,34 @@ public class Settings implements ConfigObject {
     }
 
     /**
+     * @return the flingback
+     */
+    public double getFlingback() {
+        return flingback;
+    }
+
+    /**
+     * @param flingback the flingback to set
+     */
+    public void setFlingback(double flingback) {
+        this.flingback = flingback;
+    }
+
+    /**
+     * @return the teleportRemoveMobs
+     */
+    public boolean isTeleportRemoveMobs() {
+        return teleportRemoveMobs;
+    }
+
+    /**
+     * @param teleportRemoveMobs the teleportRemoveMobs to set
+     */
+    public void setTeleportRemoveMobs(boolean teleportRemoveMobs) {
+        this.teleportRemoveMobs = teleportRemoveMobs;
+    }
+
+    /**
      * @return an immutable list of readyCommands
      */
     public List<String> getReadyCommands() {
@@ -1029,6 +1089,68 @@ public class Settings implements ConfigObject {
      */
     public void setReadyCommands(List<String> readyCommands) {
         this.readyCommands = readyCommands;
+    }
+
+    /**
+     * Gets the command to run as the expelled player when they have no island and no spawn is set.
+     *
+     * @return the expel command
+     */
+    public String getExpelCommand() {
+        return expelCommand;
+    }
+
+    /**
+     * Sets the command to run as the expelled player when they have no island and no spawn is set.
+     *
+     * @param expelCommand the expel command to set
+     */
+    public void setExpelCommand(String expelCommand) {
+        this.expelCommand = expelCommand;
+    }
+
+    /**
+     * Gets the radius used by the OBSIDIAN_SCOOPING flag to check for nearby obsidian blocks.
+     *
+     * @return the obsidian scooping radius (0-15)
+     * @since 3.11.3
+     */
+    public int getObsidianScoopingRadius() {
+        return obsidianScoopingRadius;
+    }
+
+    /**
+     * Sets the radius used by the OBSIDIAN_SCOOPING flag to check for nearby obsidian blocks.
+     *
+     * @param obsidianScoopingRadius the radius to set (0-15)
+     * @since 3.11.3
+     */
+    public void setObsidianScoopingRadius(int obsidianScoopingRadius) {
+        this.obsidianScoopingRadius = Math.clamp(obsidianScoopingRadius, 0, 15);
+    }
+
+    /**
+     * Gets the cooldown duration (in minutes) for the OBSIDIAN_SCOOPING flag.
+     * After a player scoops obsidian into a lava bucket, they must wait this long
+     * before they can scoop again. This prevents lava bucket duplication exploits.
+     *
+     * @return the obsidian scooping cooldown in minutes (minimum 1)
+     * @since 3.11.4
+     */
+    public int getObsidianScoopingCooldown() {
+        return obsidianScoopingCooldown;
+    }
+
+    /**
+     * Sets the cooldown duration (in minutes) for the OBSIDIAN_SCOOPING flag.
+     * After a player scoops obsidian into a lava bucket, they must wait this long
+     * before they can scoop again. This prevents lava bucket duplication exploits.
+     *
+     * @param obsidianScoopingCooldown the cooldown duration in minutes (minimum 1)
+     * @since 3.11.4
+     */
+    public void setObsidianScoopingCooldown(int obsidianScoopingCooldown) {
+        this.obsidianScoopingCooldown = Math.max(1, obsidianScoopingCooldown);
     }
 
     /**

@@ -27,6 +27,7 @@ softdepend:
   - ZNPCsPlus
   - FancyNpcs
   - FancyHolograms
+  - BlueMap
 
 libraries:
   - mysql:mysql-connector-java:${mysql.version}

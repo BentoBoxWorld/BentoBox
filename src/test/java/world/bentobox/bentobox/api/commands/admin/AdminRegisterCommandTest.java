@@ -44,7 +44,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminRegisterCommandTest extends CommonTestSetup {
+class AdminRegisterCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -139,7 +139,7 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
      * {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testCanExecuteNoTarget() {
+    void testCanExecuteNoTarget() {
         assertFalse(itl.canExecute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
@@ -149,7 +149,7 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
      * {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testCanExecuteWrongWorld() {
+    void testCanExecuteWrongWorld() {
         when(user.getWorld()).thenReturn(mock(World.class));
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
         verify(user).sendMessage("general.errors.wrong-world");
@@ -160,7 +160,7 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
      * {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testCanExecuteUnknownPlayer() {
+    void testCanExecuteUnknownPlayer() {
         when(pm.getUUID(any())).thenReturn(null);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento2")));
         verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tastybento2");
@@ -171,7 +171,7 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
      * {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testCanExecuteNoIsland() {
+    void testCanExecuteNoIsland() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
         verify(user).getTranslation("commands.admin.register.no-island-here");
@@ -182,7 +182,7 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
      * Test method for {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testCanExecuteAlreadyOwnedIsland() {
+    void testCanExecuteAlreadyOwnedIsland() {
         when(im.inTeam(any(), any())).thenReturn(false);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(pm.getUUID(any())).thenReturn(notUUID);
@@ -204,7 +204,7 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
      * Test method for {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testCanExecuteInDeletionIsland() {
+    void testCanExecuteInDeletionIsland() {
         when(idm.inDeletion(any())).thenReturn(true);
         when(im.inTeam(any(), any())).thenReturn(false);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
@@ -225,7 +225,7 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
      * Test method for {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
-    public void testCanExecuteSuccess() {
+    void testCanExecuteSuccess() {
         when(location.toVector()).thenReturn(new Vector(123,123,432));
         when(island.getCenter()).thenReturn(location);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
@@ -241,7 +241,7 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
      * Test method for {@link AdminRegisterCommand#register(User, String)}.
      */
     @Test
-    public void testRegister() {
+    void testRegister() {
         testCanExecuteSuccess();
         when(island.isSpawn()).thenReturn(true);
         itl.register(user, "tastybento");
@@ -256,7 +256,7 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
      * Test method for {@link AdminRegisterCommand#reserve(User, String)}.
      */
     @Test
-    public void testReserveCannotMakeIsland() {
+    void testReserveCannotMakeIsland() {
         when(im.createIsland(any(), eq(uuid))).thenReturn(null);
         testCanExecuteNoIsland();
         itl.reserve(user, "tastybento");
@@ -268,7 +268,7 @@ public class AdminRegisterCommandTest extends CommonTestSetup {
      * Test method for {@link AdminRegisterCommand#reserve(User, String)}.
      */
     @Test
-    public void testReserveCanMakeIsland() {
+    void testReserveCanMakeIsland() {
         testCanExecuteNoIsland();
         itl.reserve(user, "tastybento");
         verify(im).createIsland(any(), eq(uuid));

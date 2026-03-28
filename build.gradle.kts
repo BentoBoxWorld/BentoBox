@@ -46,7 +46,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 group = "world.bentobox" // From <groupId>
 
 // Base properties from <properties>
-val buildVersion = "3.11.2"
+val buildVersion = "3.12.0"
 val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
@@ -60,7 +60,7 @@ var finalRevision = "$buildVersion$snapshotSuffix$finalBuildNumber"
 val envBuildNumber = System.getenv("BUILD_NUMBER")
 if (!envBuildNumber.isNullOrBlank()) {
     finalBuildNumber = "-b$envBuildNumber"
-    finalRevision = "$buildVersion$finalBuildNumber$snapshotSuffix"
+    finalRevision = "$buildVersion$snapshotSuffix"
 }
 
 // 'master' profile logic: Activated when building from origin/master branch
@@ -108,6 +108,8 @@ val gsonRecordTypeAdapterFactoryVersion = "0.3.0"
 val jdtAnnotationVersion = "2.2.600"
 val multilibVersion = "1.1.13"
 val oraxenVersion = "1.193.1"
+val blueMapApiVersion = "v2.6.2"
+val dynmapApiVersion = "3.4"
 
 // Store versions in extra properties for resource filtering (used in plugin.yml, config.yml)
 extra["java.version"] = javaVersion
@@ -186,6 +188,7 @@ repositories {
     maven("https://repo.fancyplugins.de/releases") { name = "FancyPlugins-Releases" }
     maven("https://repo.pyr.lol/snapshots") { name = "Pyr-Snapshots" }
     maven("https://maven.devs.beer/") { name = "MatteoDev" }
+    maven("https://repo.mikeprimm.com/") { name = "Dynmap" }
     maven("https://repo.oraxen.com/releases") { name = "Oraxen" } // Custom items plugin
     maven("https://repo.codemc.org/repository/bentoboxworld/") { name = "BentoBoxWorld-Repo" }
     maven("https://repo.extendedclip.com/releases/") { name = "Placeholder-API-Releases" }
@@ -216,6 +219,7 @@ dependencies {
     // --- Compile Only Dependencies: Provided by the server at runtime ---
     compileOnly("org.mongodb:mongodb-driver:$mongodbVersion")
     compileOnly("com.zaxxer:HikariCP:$hikaricpVersion")
+    testImplementation("com.zaxxer:HikariCP:$hikaricpVersion")
     compileOnly("com.github.MilkBowl:VaultAPI:$vaultVersion")
     compileOnly("me.clip:placeholderapi:$placeholderapiVersion")
     compileOnly("com.bergerkiller.bukkit:MyWorlds:$myworldsVersion") {
@@ -234,6 +238,16 @@ dependencies {
     compileOnly("de.oliver:FancyHolograms:$fancyHologramsVersion")
     compileOnly("world.bentobox:level:$levelVersion-SNAPSHOT")
     compileOnly("commons-lang:commons-lang:$commonsLangVersion")
+    compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:$blueMapApiVersion")
+    testImplementation("com.github.BlueMap-Minecraft:BlueMapAPI:$blueMapApiVersion")
+    compileOnly("us.dynmap:DynmapCoreAPI:$dynmapApiVersion")
+    compileOnly("us.dynmap:dynmap-api:$dynmapApiVersion") {
+        exclude(group = "org.bukkit", module = "bukkit")
+    }
+    testImplementation("us.dynmap:DynmapCoreAPI:$dynmapApiVersion")
+    testImplementation("us.dynmap:dynmap-api:$dynmapApiVersion") {
+        exclude(group = "org.bukkit", module = "bukkit")
+    }
     compileOnly("io.th0rgal:oraxen:$oraxenVersion") {
         exclude(group = "me.gabytm.util", module = "actions-spigot")
         exclude(group = "org.jetbrains", module = "annotations")
@@ -461,20 +475,22 @@ publishing {
         }
     }
     
-    // Configure publication target repository
+    // Configure publication target repository (CodeMC Nexus)
     repositories {
-        val mavenUrl: String? by project
-        val mavenSnapshotUrl: String? by project
+        val isSnapshot = version.toString().endsWith("SNAPSHOT")
+        val repoUrl = if (isSnapshot) {
+            "https://repo.codemc.io/repository/bentoboxworld/"
+        } else {
+            "https://repo.codemc.io/repository/bentoboxworld/"
+        }
 
-        (if(version.toString().endsWith("SNAPSHOT")) mavenSnapshotUrl else mavenUrl)?.let { url ->
-            maven(url) {
-                val mavenUsername: String? by project
-                val mavenPassword: String? by project
-                if(mavenUsername != null && mavenPassword != null) {
-                    credentials {
-                        username = mavenUsername
-                        password = mavenPassword
-                    }
+        maven(repoUrl) {
+            val mavenUsername: String? by project
+            val mavenPassword: String? by project
+            if (mavenUsername != null && mavenPassword != null) {
+                credentials {
+                    username = mavenUsername
+                    password = mavenPassword
                 }
             }
         }

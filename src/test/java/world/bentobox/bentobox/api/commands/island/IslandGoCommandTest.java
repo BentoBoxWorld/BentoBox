@@ -57,7 +57,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class IslandGoCommandTest extends CommonTestSetup {
+class IslandGoCommandTest extends CommonTestSetup {
     @Mock
     private CompositeCommand ic;
     private User user;
@@ -164,7 +164,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteMidTeleport() {
+    void testExecuteMidTeleport() {
         when(im.isGoingHome(user)).thenReturn(true);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
         checkSpigotMessage("commands.island.go.in-progress");
@@ -174,7 +174,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsNoIsland() {
+    void testExecuteNoArgsNoIsland() {
         when(im.getIslands(world, uuid)).thenReturn(List.of());
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
         checkSpigotMessage("general.errors.no-island");
@@ -184,7 +184,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgs() {
+    void testExecuteNoArgs() {
         assertTrue(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
     }
 
@@ -192,7 +192,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsReservedIsland() {
+    void testExecuteNoArgsReservedIsland() {
         when(ic.call(any(), any(), any())).thenReturn(true);
         when(island.isReserved()).thenReturn(true);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
@@ -203,7 +203,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsReservedIslandNoCreateCommand() {
+    void testExecuteNoArgsReservedIslandNoCreateCommand() {
         when(ic.getSubCommand("create")).thenReturn(Optional.empty());
 
         when(ic.call(any(), any(), any())).thenReturn(true);
@@ -216,7 +216,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsNoTeleportWhenFalling() {
+    void testExecuteNoArgsNoTeleportWhenFalling() {
         Flags.PREVENT_TELEPORT_WHEN_FALLING.setSetting(world, true);
         when(mockPlayer.getFallDistance()).thenReturn(10F);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
@@ -227,7 +227,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsNoTeleportWhenFallingNotFalling() {
+    void testExecuteNoArgsNoTeleportWhenFallingNotFalling() {
         Flags.PREVENT_TELEPORT_WHEN_FALLING.setSetting(world, true);
         when(mockPlayer.getFallDistance()).thenReturn(0F);
         assertTrue(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
@@ -237,7 +237,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#execute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsMultipleHomes() {
+    void testExecuteNoArgsMultipleHomes() {
 
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
     }
@@ -246,7 +246,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#execute(User, String, List)}
      */
     @Test
-    public void testExecuteArgs1MultipleHomes() {
+    void testExecuteArgs1MultipleHomes() {
         assertFalse(igc.execute(user, igc.getLabel(), Collections.singletonList("1")));
         checkSpigotMessage("commands.island.go.unknown-home");
         checkSpigotMessage("commands.island.sethome.homes-are");
@@ -257,7 +257,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#execute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsDelay() {
+    void testExecuteNoArgsDelay() {
         when(s.getDelayTime()).thenReturn(10);
 
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
@@ -268,7 +268,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#execute(User, String, List)}
      */
     @Test
-    public void testExecuteNoArgsDelayTwice() {
+    void testExecuteNoArgsDelayTwice() {
         when(s.getDelayTime()).thenReturn(10);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
@@ -283,7 +283,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#onPlayerMove(PlayerMoveEvent)}
      */
     @Test
-    public void testOnPlayerMoveHeadMoveNothing() {
+    void testOnPlayerMoveHeadMoveNothing() {
         Location l = mock(Location.class);
         Vector vector = mock(Vector.class);
         when(l.toVector()).thenReturn(vector);
@@ -297,7 +297,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#onPlayerMove(PlayerMoveEvent)}
      */
     @Test
-    public void testOnPlayerMoveHeadMoveTeleportPending() {
+    void testOnPlayerMoveHeadMoveTeleportPending() {
         Location l = mock(Location.class);
         Vector vector = mock(Vector.class);
         when(l.toVector()).thenReturn(vector);
@@ -312,7 +312,7 @@ public class IslandGoCommandTest extends CommonTestSetup {
      * Test method for {@link IslandGoCommand#onPlayerMove(PlayerMoveEvent)}
      */
     @Test
-    public void testOnPlayerMovePlayerMoveTeleportPending() {
+    void testOnPlayerMovePlayerMoveTeleportPending() {
         Location l = mock(Location.class);
         Vector vector = mock(Vector.class);
         when(l.toVector()).thenReturn(vector);

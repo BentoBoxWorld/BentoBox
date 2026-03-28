@@ -112,7 +112,10 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                 // Failed home name check
                 user.sendMessage("commands.island.go.unknown-home");
                 user.sendMessage("commands.island.sethome.homes-are");
-                names.keySet().forEach(n -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, n));
+                names.keySet().forEach(n -> user.sendRawMessage(
+                        user.getTranslation("commands.island.sethome.home-list-syntax", TextVariables.NAME, n)
+                                + "[run_command: /" + getTopLabel() + " go " + n + "]"
+                                + "[hover: " + user.getTranslation("commands.island.sethome.click-to-teleport") + "]"));
                 return false;
             } else {
                 // We know where this location is. Now work out if it's an island name or a home name
@@ -122,7 +125,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                     // This is a home name, not an island name
                     this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), name) // Teleport to the named home for this player
                             .thenAccept(r -> {
-                                if (r) {
+                                if (Boolean.TRUE.equals(r)) {
                                     // Success
                                     getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
                                 } else {

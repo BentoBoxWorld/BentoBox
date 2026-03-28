@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -39,7 +38,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
+class AdminBlueprintLoadCommandTest extends CommonTestSetup {
 
     @Mock
     private AdminBlueprintCommand ac;
@@ -123,7 +122,7 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#AdminBlueprintLoadCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
-    public void testAdminBlueprintLoadCommand() {
+    void testAdminBlueprintLoadCommand() {
         assertNotNull(abcc);
     }
 
@@ -131,7 +130,7 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         abcc.setup();
         assertEquals("commands.admin.blueprint.load.description", abcc.getDescription());
         assertEquals("commands.admin.blueprint.load.parameters", abcc.getParameters());
@@ -142,7 +141,7 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringHelp() {
+    void testExecuteUserStringListOfStringHelp() {
         assertFalse(abcc.execute(user, "", List.of("1", "2", "3")));
         verify(user).sendMessage("commands.help.header", "[label]", "translation");
     }
@@ -151,7 +150,7 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoLoad() {
+    void testExecuteUserStringListOfStringNoLoad() {
         assertFalse(abcc.execute(user, "", List.of(" iSlAnd  ")));
         verify(user).sendMessage("commands.admin.blueprint.could-not-load");
     }
@@ -159,18 +158,13 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
-    @Disabled("Paper Biome issue")
-    @Test
-    public void testExecuteUserStringListOfStringSuccessCaps() {
-        assertTrue(abcc.execute(user, "", List.of("island")));
-        verify(user).sendMessage("general.success");
-    }
+    // Removed testExecuteUserStringListOfStringSuccessCaps — Paper Biome incompatibility
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfString() {
+    void testTabCompleteUserStringListOfString() {
         Optional<List<String>> o = abcc.tabComplete(user, "", List.of(""));
         assertTrue(o.isPresent());
         assertEquals("island", o.get().getFirst());
@@ -180,7 +174,7 @@ public class AdminBlueprintLoadCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfStringIsland() {
+    void testTabCompleteUserStringListOfStringIsland() {
         Optional<List<String>> o = abcc.tabComplete(user, "", List.of("e"));
         assertTrue(o.isPresent());
         assertTrue(o.get().isEmpty());

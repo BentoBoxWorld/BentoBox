@@ -31,7 +31,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-public class AdminSetspawnCommandTest extends CommonTestSetup {
+class AdminSetspawnCommandTest extends CommonTestSetup {
 
     private CompositeCommand ac;
     private User user;
@@ -88,7 +88,7 @@ public class AdminSetspawnCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#AdminSetspawnCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
-    public void testAdminSetspawnCommand() {
+    void testAdminSetspawnCommand() {
         AdminSetspawnCommand c = new AdminSetspawnCommand(ac);
         assertEquals("setspawn", c.getLabel());
     }
@@ -98,7 +98,7 @@ public class AdminSetspawnCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         AdminSetspawnCommand c = new AdminSetspawnCommand(ac);
         assertEquals("bskyblock.admin.setspawn", c.getPermission());
         assertTrue(c.isOnlyPlayer());
@@ -110,7 +110,7 @@ public class AdminSetspawnCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         Island island = mock(Island.class);
         Optional<Island> oi = Optional.of(island);
         when(im.getIslandAt(any(Location.class))).thenReturn(oi);
@@ -123,7 +123,7 @@ public class AdminSetspawnCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoIsland() {
+    void testExecuteUserStringListOfStringNoIsland() {
         when(im.getIslandAt(any(Location.class))).thenReturn(Optional.empty());
         AdminSetspawnCommand c = new AdminSetspawnCommand(ac);
         assertFalse(c.execute(user, "setspawn", Collections.emptyList()));
@@ -135,7 +135,7 @@ public class AdminSetspawnCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.AdminSetspawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringAlreadySpawn() {
+    void testExecuteUserStringListOfStringAlreadySpawn() {
         Island island = mock(Island.class);
         when(island.isSpawn()).thenReturn(true);
         Optional<Island> oi = Optional.of(island);

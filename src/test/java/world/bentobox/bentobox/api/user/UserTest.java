@@ -62,7 +62,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  * @author tastybento
  *
  */
-public class UserTest extends CommonTestSetup {
+class UserTest extends CommonTestSetup {
 
     private static final String TEST_TRANSLATION = "mock &a translation &b [test]";
     private static final String TEST_TRANSLATION_WITH_COLOR = "mock §atranslation §b[test]";
@@ -122,27 +122,27 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGetInstanceCommandSender() {
-        User user = User.getInstance(sender);
-        assertNotNull(user);
-        assertEquals(sender,user.getSender());
+    void testGetInstanceCommandSender() {
+        User localUser = User.getInstance(sender);
+        assertNotNull(localUser);
+        assertEquals(sender,localUser.getSender());
     }
 
     @Test
-    public void testGetInstancePlayer() {
+    void testGetInstancePlayer() {
         assertSame(mockPlayer, user.getPlayer());
     }
 
     @Test
-    public void testGetInstanceUUID() {
+    void testGetInstanceUUID() {
         UUID uuid = UUID.randomUUID();
-        User user = User.getInstance(uuid);
-        assertNotNull(user);
-        assertEquals(uuid,user.getUniqueId());
+        User localUser = User.getInstance(uuid);
+        assertNotNull(localUser);
+        assertEquals(uuid,localUser.getUniqueId());
     }
 
     @Test
-    public void testRemovePlayer() {
+    void testRemovePlayer() {
         assertNotNull(User.getInstance(uuid));
         assertSame(user, User.getInstance(uuid));
         User.removePlayer(mockPlayer);
@@ -152,7 +152,7 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testSetPlugin() {
+    void testSetPlugin() {
         BentoBox plugin = mock(BentoBox.class);
         User.setPlugin(plugin);
         user.addPerm("testing123");
@@ -160,66 +160,66 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGetEffectivePermissions() {
+    void testGetEffectivePermissions() {
         Set<PermissionAttachmentInfo> value = new HashSet<>();
         PermissionAttachmentInfo perm = new PermissionAttachmentInfo(sender, "perm", null, false);
         value.add(perm);
         when(sender.getEffectivePermissions()).thenReturn(value );
-        User user = User.getInstance(sender);
-        assertEquals(value, user.getEffectivePermissions());
+        User localUser = User.getInstance(sender);
+        assertEquals(value, localUser.getEffectivePermissions());
     }
 
     @Test
-    public void testGetInventory() {
+    void testGetInventory() {
         PlayerInventory value = mock(PlayerInventory.class);
         when(mockPlayer.getInventory()).thenReturn(value);
         assertEquals(value, mockPlayer.getInventory());
-        User user = User.getInstance(mockPlayer);
-        assertNotNull(user.getInventory());
-        assertEquals(value, user.getInventory());
+        User localUser = User.getInstance(mockPlayer);
+        assertNotNull(localUser.getInventory());
+        assertEquals(value, localUser.getInventory());
     }
 
     @Test
-    public void testGetLocation() {
+    void testGetLocation() {
         Location loc = mock(Location.class);
         when(mockPlayer.getLocation()).thenReturn(loc);
-        User user = User.getInstance(mockPlayer);
-        assertNotNull(user.getLocation());
-        assertEquals(loc, user.getLocation());
+        User localUser = User.getInstance(mockPlayer);
+        assertNotNull(localUser.getLocation());
+        assertEquals(loc, localUser.getLocation());
     }
 
     @Test
-    public void testGetName() {
+    void testGetName() {
         String name = "tastybento";
         when(mockPlayer.getName()).thenReturn(name);
-        User user = User.getInstance(mockPlayer);
-        assertNotNull(user.getName());
-        assertEquals(name, user.getName());
+        User localUser = User.getInstance(mockPlayer);
+        assertNotNull(localUser.getName());
+        assertEquals(name, localUser.getName());
 
     }
 
     @Test
-    public void testGetPlayer() {
-        User user = User.getInstance(mockPlayer);
-        assertSame(mockPlayer, user.getPlayer());
+    void testGetPlayer() {
+        User localUser = User.getInstance(mockPlayer);
+        assertSame(mockPlayer, localUser.getPlayer());
     }
 
     @Test
-    public void testIsPlayer() {
-        User user = User.getInstance(sender);
-        assertFalse(user.isPlayer());
-        user = User.getInstance(mockPlayer);
-        assertTrue(user.isPlayer());
+    void testIsPlayer() {
+        User localUser = User.getInstance(sender);
+        assertFalse(localUser.isPlayer());
+        localUser = User.getInstance(mockPlayer);
+        assertTrue(localUser.isPlayer());
     }
 
     @Test
-    public void testGetSender() {
-        User user = User.getInstance(sender);
-        assertEquals(sender, user.getSender());
+    void testGetSender() {
+        User localUser = User.getInstance(sender);
+        assertEquals(sender, localUser.getSender());
     }
 
     @Test
-    public void testGetUniqueId() {
+    void testGetUniqueId() {
         UUID uuid = UUID.randomUUID();
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         user = User.getInstance(mockPlayer);
@@ -227,7 +227,7 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testHasPermission() {
+    void testHasPermission() {
         // default behaviors
         assertTrue(user.hasPermission(""));
         assertTrue(user.hasPermission(null));
@@ -242,25 +242,25 @@ public class UserTest extends CommonTestSetup {
      * @since 1.3.0
      */
     @Test
-    public void testHasNotPermissionButIsOp() {
+    void testHasNotPermissionButIsOp() {
         when(user.isOp()).thenReturn(true);
         assertTrue(user.hasPermission(""));
     }
 
     @Test
-    public void testIsOnline() {
+    void testIsOnline() {
         when(mockPlayer.isOnline()).thenReturn(true);
         assertTrue(user.isOnline());
     }
 
     @Test
-    public void testIsOp() {
+    void testIsOp() {
         when(mockPlayer.isOp()).thenReturn(true);
         assertTrue(user.isOp());
     }
 
     @Test
-    public void testGetTranslation() {
+    void testGetTranslation() {
         assertEquals(TEST_TRANSLATION_WITH_COLOR, user.getTranslation("a.reference"));
     }
 
@@ -268,17 +268,17 @@ public class UserTest extends CommonTestSetup {
      * Test for {@link User#getTranslationNoColor(String, String...)}
      */
     @Test
-    public void testGetTranslationNoColor() {
+    void testGetTranslationNoColor() {
         assertEquals(TEST_TRANSLATION, user.getTranslationNoColor("a.reference"));
     }
 
     @Test
-    public void testGetTranslationWithVariable() {
+    void testGetTranslationWithVariable() {
         assertEquals("mock §atranslation §bvariable", user.getTranslation("a.reference", "[test]", "variable"));
     }
 
     @Test
-    public void testGetTranslationNoTranslationFound() {
+    void testGetTranslationNoTranslationFound() {
         // Test no translation found
         when(testLm.get(any(), any())).thenReturn(null);
         assertEquals("a.reference", user.getTranslation("a.reference"));
@@ -286,24 +286,24 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGetTranslationOrNothing() {
+    void testGetTranslationOrNothing() {
         // Return the original string to pretend that a translation could not be found
         when(testLm.get(any(), any())).thenReturn("fake.reference");
         when(testLm.get(any())).thenReturn("fake.reference");
 
-        User user = User.getInstance(mockPlayer);
-        assertEquals("", user.getTranslationOrNothing("fake.reference"));
-        assertEquals("", user.getTranslationOrNothing("fake.reference", "[test]", "variable"));
+        User localUser = User.getInstance(mockPlayer);
+        assertEquals("", localUser.getTranslationOrNothing("fake.reference"));
+        assertEquals("", localUser.getTranslationOrNothing("fake.reference", "[test]", "variable"));
     }
 
     @Test
-    public void testSendMessage() {
+    void testSendMessage() {
         user.sendMessage("a.reference");
         checkSpigotMessage(TEST_TRANSLATION_WITH_COLOR);
     }
 
     @Test
-    public void testSendMessageOverrideWithAddon() {
+    void testSendMessageOverrideWithAddon() {
         GameModeAddon addon = mock(GameModeAddon.class);
         AddonDescription desc = new AddonDescription.Builder("mock", "name", "1.0").build();
         when(addon.getDescription()).thenReturn(desc);
@@ -318,7 +318,7 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testSendMessageBlankTranslation() {
+    void testSendMessageBlankTranslation() {
         // Nothing - blank translation
         when(testLm.get(any(), any())).thenReturn("");
         user.sendMessage("a.reference");
@@ -327,7 +327,7 @@ public class UserTest extends CommonTestSetup {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testSendMessageOnlyColors() {
+    void testSendMessageOnlyColors() {
         // Nothing - just color codes
         StringBuilder allColors = new StringBuilder();
         for (@SuppressWarnings("deprecation") ChatColor cc : ChatColor.values()) {
@@ -340,14 +340,14 @@ public class UserTest extends CommonTestSetup {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testSendMessageColorsAndSpaces() {
+    void testSendMessageColorsAndSpaces() {
         when(testLm.get(any(), any())).thenReturn(ChatColor.COLOR_CHAR + "6 Hello there");
         user.sendMessage("a.reference");
         checkSpigotMessage(ChatColor.COLOR_CHAR + "6Hello there");
     }
 
     @Test
-    public void testSendRawMessage() {
+    void testSendRawMessage() {
         @SuppressWarnings("deprecation")
         String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
         user.sendRawMessage(raw);
@@ -355,7 +355,7 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testSendRawMessageNullUser() {
+    void testSendRawMessageNullUser() {
         @SuppressWarnings("deprecation")
         String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
         user = User.getInstance((CommandSender)null);
@@ -364,7 +364,7 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testNotifyStringStringArrayNotifyOK() {
+    void testNotifyStringStringArrayNotifyOK() {
         Notifier notifier = mock(Notifier.class);
 
         when(plugin.getNotifier()).thenReturn(notifier);
@@ -381,7 +381,7 @@ public class UserTest extends CommonTestSetup {
 
 
     @Test
-    public void testSetGameMode() {
+    void testSetGameMode() {
         for (GameMode gm: GameMode.values()) {
             user.setGameMode(gm);
         }
@@ -389,7 +389,7 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testTeleport() {
+    void testTeleport() {
         when(mockPlayer.teleport(any(Location.class))).thenReturn(true);
         Location loc = mock(Location.class);
         user.teleport(loc);
@@ -397,34 +397,34 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGetWorld() {
+    void testGetWorld() {
         World world = mock(World.class);
         when(mockPlayer.getWorld()).thenReturn(world);
-        User user = User.getInstance(mockPlayer);
-        assertSame(world, user.getWorld());
+        User localUser = User.getInstance(mockPlayer);
+        assertSame(world, localUser.getWorld());
     }
 
     @Test
-    public void testCloseInventory() {
+    void testCloseInventory() {
         user.closeInventory();
         verify(mockPlayer).closeInventory();
     }
 
     @Test
-    public void testGetLocalePlayer() {
-        PlayersManager pm = mock(PlayersManager.class);
-        when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getLocale(any())).thenReturn("en-US");
+    void testGetLocalePlayer() {
+        PlayersManager localPm = mock(PlayersManager.class);
+        when(plugin.getPlayers()).thenReturn(localPm);
+        when(localPm.getLocale(any())).thenReturn("en-US");
 
         // Confirm that Locale object is correctly obtained
         assertEquals(Locale.US, user.getLocale());
     }
 
     @Test
-    public void testGetLocaleConsole() {
-        PlayersManager pm = mock(PlayersManager.class);
-        when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getLocale(any())).thenReturn("en-US");
+    void testGetLocaleConsole() {
+        PlayersManager localPm = mock(PlayersManager.class);
+        when(plugin.getPlayers()).thenReturn(localPm);
+        when(localPm.getLocale(any())).thenReturn("en-US");
 
         // Confirm that Locale object is correctly obtained
         Locale locale = Locale.US;
@@ -437,19 +437,19 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testUpdateInventory() {
+    void testUpdateInventory() {
         user.updateInventory();
         verify(mockPlayer).updateInventory();
     }
 
     @Test
-    public void testPerformCommand() {
+    void testPerformCommand() {
         user.performCommand("test");
         verify(mockPlayer).performCommand("test");
     }
 
     @Test
-    public void testEqualsObject() {
+    void testEqualsObject() {
         User user1 = User.getInstance(UUID.randomUUID());
         User user2 = User.getInstance(UUID.randomUUID());
         assertEquals(user1, user1);
@@ -464,19 +464,19 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         UUID uuid = UUID.randomUUID();
         User user1 = User.getInstance(uuid);
         User user2 = User.getInstance(uuid);
         assertEquals(user1, user2);
-        assertTrue(user1.hashCode() == user2.hashCode());
+        assertEquals(user1.hashCode(), user2.hashCode());
     }
 
     /**
      * Test for {@link User#getPermissionValue(String, int)}
      */
     @Test
-    public void testGetPermissionValue() {
+    void testGetPermissionValue() {
         User.clearUsers();
         Set<PermissionAttachmentInfo> permSet = new HashSet<>();
         PermissionAttachmentInfo pai = mock(PermissionAttachmentInfo.class);
@@ -500,7 +500,7 @@ public class UserTest extends CommonTestSetup {
      * Test for {@link User#getPermissionValue(String, int)}
      */
     @Test
-    public void testGetPermissionValueNegativePerm() {
+    void testGetPermissionValueNegativePerm() {
         User.clearUsers();
         Set<PermissionAttachmentInfo> permSet = new HashSet<>();
         PermissionAttachmentInfo pai = mock(PermissionAttachmentInfo.class);
@@ -524,7 +524,7 @@ public class UserTest extends CommonTestSetup {
      * Test for {@link User#getPermissionValue(String, int)}
      */
     @Test
-    public void testGetPermissionValueConsole() {
+    void testGetPermissionValueConsole() {
         User.clearUsers();
         CommandSender console = mock(CommandSender.class);
         User u = User.getInstance(console);
@@ -535,7 +535,7 @@ public class UserTest extends CommonTestSetup {
      * Test for {@link User#getPermissionValue(String, int)}
      */
     @Test
-    public void testGetPermissionValueNegative() {
+    void testGetPermissionValueNegative() {
         User.clearUsers();
         Set<PermissionAttachmentInfo> permSet = new HashSet<>();
         PermissionAttachmentInfo pai = mock(PermissionAttachmentInfo.class);
@@ -559,7 +559,7 @@ public class UserTest extends CommonTestSetup {
      * Test for {@link User#getPermissionValue(String, int)}
      */
     @Test
-    public void testGetPermissionValueStar() {
+    void testGetPermissionValueStar() {
         User.clearUsers();
         Set<PermissionAttachmentInfo> permSet = new HashSet<>();
         PermissionAttachmentInfo pai = mock(PermissionAttachmentInfo.class);
@@ -580,7 +580,7 @@ public class UserTest extends CommonTestSetup {
      * Test for {@link User#getPermissionValue(String, int)}
      */
     @Test
-    public void testGetPermissionValueSmall() {
+    void testGetPermissionValueSmall() {
         User.clearUsers();
         PermissionAttachmentInfo pai = mock(PermissionAttachmentInfo.class);
         when(pai.getPermission()).thenReturn("bskyblock.max.3");
@@ -591,7 +591,7 @@ public class UserTest extends CommonTestSetup {
     }
 
     @Test
-    public void testMetaData() {
+    void testMetaData() {
         User u = User.getInstance(mockPlayer);
         assertTrue(u.getMetaData().get().isEmpty());
         // Store a string in a new key
@@ -619,7 +619,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#getInstance(org.bukkit.OfflinePlayer)}.
      */
     @Test
-    public void testGetInstanceOfflinePlayer() {
+    void testGetInstanceOfflinePlayer() {
         OfflinePlayer op = mock(OfflinePlayer.class);
         when(op.getUniqueId()).thenReturn(uuid);
         @NonNull
@@ -633,7 +633,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#getOfflinePlayer()}.
      */
     @Test
-    public void testGetOfflinePlayer() {
+    void testGetOfflinePlayer() {
         User.clearUsers();
         OfflinePlayer op = mock(OfflinePlayer.class);
         when(op.getUniqueId()).thenReturn(uuid);
@@ -646,7 +646,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#isOfflinePlayer()}.
      */
     @Test
-    public void testIsOfflinePlayer() {
+    void testIsOfflinePlayer() {
         User.clearUsers();
         OfflinePlayer op = mock(OfflinePlayer.class);
         when(op.getUniqueId()).thenReturn(uuid);
@@ -665,7 +665,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#addPerm(java.lang.String)}.
      */
     @Test
-    public void testAddPerm() {
+    void testAddPerm() {
         User.clearUsers();
         User p = User.getInstance(mockPlayer);
         p.addPerm("test.perm");
@@ -676,7 +676,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#removePerm(java.lang.String)}.
      */
     @Test
-    public void testRemovePerm() {
+    void testRemovePerm() {
         User.clearUsers();
         // No perms to start
         when(mockPlayer.getEffectivePermissions()).thenReturn(Collections.emptySet());
@@ -700,7 +700,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#getTranslation(org.bukkit.World, java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testGetTranslationWorldStringStringArray() {
+    void testGetTranslationWorldStringStringArray() {
         User.clearUsers();
         User p = User.getInstance(mockPlayer);
         // No addon
@@ -712,7 +712,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#getTranslation(org.bukkit.World, java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testGetTranslationWorldStringStringArrayWwithAddon() {
+    void testGetTranslationWorldStringStringArrayWwithAddon() {
         User.clearUsers();
         User p = User.getInstance(mockPlayer);
         World world = mock(World.class);
@@ -728,7 +728,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#getTranslation(java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testGetTranslationStringStringArray() {
+    void testGetTranslationStringStringArray() {
         User.clearUsers();
         User p = User.getInstance(mockPlayer);
         assertEquals("mock §atranslation §btastybento", p.getTranslation("test.ref", "[test]", "tastybento"));
@@ -738,7 +738,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#notify(java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testNotifyStringStringArray() {
+    void testNotifyStringStringArray() {
         Notifier notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
         User.clearUsers();
@@ -752,7 +752,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#notify(org.bukkit.World, java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testNotifyWorldStringStringArray() {
+    void testNotifyWorldStringStringArray() {
         Notifier notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
         User.clearUsers();
@@ -772,7 +772,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#getLocale()}.
      */
     @Test
-    public void testGetLocaleDefaultLanguage() {
+    void testGetLocaleDefaultLanguage() {
         Settings settings = mock(Settings.class);
         when(settings.getDefaultLanguage()).thenReturn("en-US");
         when(plugin.getSettings()).thenReturn(settings);
@@ -785,7 +785,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#getLocale()}.
      */
     @Test
-    public void testGetLocale() {
+    void testGetLocale() {
         Settings settings = mock(Settings.class);
         when(settings.getDefaultLanguage()).thenReturn("en-US");
         when(plugin.getSettings()).thenReturn(settings);
@@ -799,7 +799,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#inWorld()}.
      */
     @Test
-    public void testInWorld() {
+    void testInWorld() {
         User.clearUsers();
         User p = User.getInstance(mockPlayer);
         when(mockPlayer.getLocation()).thenReturn(mock(Location.class));
@@ -813,7 +813,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, java.lang.Object, double, double, double)}.
      */
     @Test
-    public void testSpawnParticleParticleObjectDoubleDoubleDoubleError() {
+    void testSpawnParticleParticleObjectDoubleDoubleDoubleError() {
         User.clearUsers();
         User p = User.getInstance(mockPlayer);
         try {
@@ -828,7 +828,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, java.lang.Object, double, double, double)}.
      */
     @Test
-    public void testSpawnParticleParticleObjectDoubleDoubleDouble() {
+    void testSpawnParticleParticleObjectDoubleDoubleDouble() {
         User.clearUsers();
         Location loc = mock(Location.class);
         when(mockPlayer.getLocation()).thenReturn(loc);
@@ -844,7 +844,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, java.lang.Object, double, double, double)}.
      */
     @Test
-    public void testSpawnParticleParticleObjectDoubleDoubleDoubleRedstone() {
+    void testSpawnParticleParticleObjectDoubleDoubleDoubleRedstone() {
         User.clearUsers();
         Location loc = mock(Location.class);
         when(mockPlayer.getLocation()).thenReturn(loc);
@@ -861,7 +861,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, org.bukkit.Particle.DustOptions, double, double, double)}.
      */
     @Test
-    public void testSpawnParticleParticleDustOptionsDoubleDoubleDouble() {
+    void testSpawnParticleParticleDustOptionsDoubleDoubleDouble() {
         User.clearUsers();
         Location loc = mock(Location.class);
         when(mockPlayer.getLocation()).thenReturn(loc);
@@ -878,7 +878,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, org.bukkit.Particle.DustOptions, int, int, int)}.
      */
     @Test
-    public void testSpawnParticleParticleDustOptionsIntIntInt() {
+    void testSpawnParticleParticleDustOptionsIntIntInt() {
         User.clearUsers();
         Location loc = mock(Location.class);
         when(mockPlayer.getLocation()).thenReturn(loc);
@@ -895,7 +895,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#setAddon(world.bentobox.bentobox.api.addons.Addon)}.
      */
     @Test
-    public void testSetAddon() {
+    void testSetAddon() {
         User.clearUsers();
         User p = User.getInstance(mockPlayer);
         Addon addon = mock(Addon.class);
@@ -909,7 +909,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#getMetaData()}.
      */
     @Test
-    public void testGetMetaData() {
+    void testGetMetaData() {
         User.clearUsers();
         User p = User.getInstance(mockPlayer);
         when(pm.getPlayer(uuid)).thenReturn(players);
@@ -920,7 +920,7 @@ public class UserTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.user.User#setMetaData(java.util.Map)}.
      */
     @Test
-    public void testSetMetaData() {
+    void testSetMetaData() {
         User.clearUsers();
         User p = User.getInstance(mockPlayer);
         when(pm.getPlayer(uuid)).thenReturn(players);

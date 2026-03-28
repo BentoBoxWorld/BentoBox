@@ -26,7 +26,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
  * @author tastybento
  *
  */
-public class IslandEventTest extends CommonTestSetup {
+class IslandEventTest extends CommonTestSetup {
 
     @Mock
     private @NonNull BlueprintBundle blueprintBundle;
@@ -57,7 +57,7 @@ public class IslandEventTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.events.island.IslandEvent#IslandEvent(world.bentobox.bentobox.database.objects.Island, java.util.UUID, boolean, org.bukkit.Location, world.bentobox.bentobox.api.events.island.IslandEvent.Reason)}.
      */
     @Test
-    public void testIslandEvent() {
+    void testIslandEvent() {
         for (Reason reason: Reason.values()) {
             IslandEvent e = new IslandEvent(testIsland, uuid, false, location, reason);
             assertEquals(reason, e.getReason());
@@ -71,7 +71,7 @@ public class IslandEventTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.events.island.IslandEvent#builder()}.
      */
     @Test
-    public void testBuilder() {
+    void testBuilder() {
         for (Reason reason: Reason.values()) {
             IslandBaseEvent e = IslandEvent.builder()
                     .admin(true)
@@ -107,6 +107,7 @@ public class IslandEventTest extends CommonTestSetup {
                 case UNLOCK -> assertTrue(e instanceof IslandUnlockEvent);
                 case UNREGISTERED -> assertTrue(e instanceof IslandUnregisteredEvent);
                 default -> {
+                    // Remaining Reason values do not have a dedicated event subtype; no assertion needed
                 }
             }
         }

@@ -30,7 +30,6 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
@@ -50,7 +49,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class FlagTest extends RanksManagerTestSetup {
+class FlagTest extends RanksManagerTestSetup {
 
     private Flag f;
     @Mock
@@ -101,19 +100,19 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#hashCode()}.
      */
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         Flag flag1 = new Flag.Builder("id", Material.ACACIA_BOAT).build();
         Flag flag2 = new Flag.Builder("id", Material.ACACIA_BOAT).build();
         Flag flag3 = new Flag.Builder("id2", Material.ACACIA_BUTTON).build();
-        assertTrue(flag1.hashCode() == flag2.hashCode());
-        assertFalse(flag1.hashCode() == flag3.hashCode());
+        assertEquals(flag1.hashCode(), flag2.hashCode());
+        assertNotEquals(flag1.hashCode(), flag3.hashCode());
     }
 
     /**
      * Test method for .
      */
     @Test
-    public void testFlag() {
+    void testFlag() {
         assertNotNull(f);
     }
 
@@ -121,7 +120,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getID()}.
      */
     @Test
-    public void testGetID() {
+    void testGetID() {
         assertEquals("flagID", f.getID());
     }
 
@@ -129,7 +128,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getIcon()}.
      */
     @Test
-    public void testGetIcon() {
+    void testGetIcon() {
         assertEquals(Material.ACACIA_PLANKS, f.getIcon());
     }
 
@@ -137,7 +136,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getListener()}.
      */
     @Test
-    public void testGetListener() {
+    void testGetListener() {
         assertEquals(listener, f.getListener().get());
     }
 
@@ -145,7 +144,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getListener()}.
      */
     @Test
-    public void testGetListenerNone() {
+    void testGetListenerNone() {
         f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).build();
         assertEquals(Optional.empty(), f.getListener());
     }
@@ -154,7 +153,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#isSetForWorld(org.bukkit.World)}.
      */
     @Test
-    public void testIsSetForWorld() {
+    void testIsSetForWorld() {
         assertFalse(f.isSetForWorld(world));
     }
 
@@ -162,7 +161,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#isSetForWorld(org.bukkit.World)}.
      */
     @Test
-    public void testIsSetForWorldWorldSetting() {
+    void testIsSetForWorldWorldSetting() {
         f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).type(Flag.Type.WORLD_SETTING).build();
         // Nothing in world flags
         assertFalse(f.isSetForWorld(world));
@@ -174,7 +173,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setSetting(org.bukkit.World, boolean)}.
      */
     @Test
-    public void testSetSetting() {
+    void testSetSetting() {
         f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).type(Flag.Type.WORLD_SETTING).build();
         assertTrue(worldFlags.isEmpty());
         f.setSetting(world, true);
@@ -185,7 +184,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setDefaultSetting(boolean)}.
      */
     @Test
-    public void testSetDefaultSettingBoolean() {
+    void testSetDefaultSettingBoolean() {
         f.setDefaultSetting(true);
         // Checking will set it to the default
         assertTrue(f.isSetForWorld(world));
@@ -198,7 +197,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setDefaultSetting(org.bukkit.World, boolean)}.
      */
     @Test
-    public void testSetDefaultSettingWorldBoolean() {
+    void testSetDefaultSettingWorldBoolean() {
 
         f.setDefaultSetting(world, true);
         assertTrue(f.isSetForWorld(world));
@@ -210,7 +209,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setDefaultSetting(org.bukkit.World, boolean)}.
      */
     @Test
-    public void testSetDefaultSettingWorldBooleanNullWorldSettings() {
+    void testSetDefaultSettingWorldBooleanNullWorldSettings() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         f.setDefaultSetting(world, true);
         verify(plugin).logError("Attempt to set default world setting for unregistered world. Register flags in onEnable.");
@@ -220,7 +219,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getType()}.
      */
     @Test
-    public void testGetType() {
+    void testGetType() {
         assertEquals(Flag.Type.PROTECTION, f.getType());
     }
 
@@ -228,7 +227,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getDefaultRank()}.
      */
     @Test
-    public void testGetDefaultRank() {
+    void testGetDefaultRank() {
         assertEquals(RanksManager.MEMBER_RANK, f.getDefaultRank());
     }
 
@@ -236,7 +235,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#hasSubPanel()}.
      */
     @Test
-    public void testHasSubPanel() {
+    void testHasSubPanel() {
         assertFalse(f.hasSubPanel());
         f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).type(Flag.Type.WORLD_SETTING).usePanel(true).build();
         assertTrue(f.hasSubPanel());
@@ -246,7 +245,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#equals(java.lang.Object)}.
      */
     @Test
-    public void testEqualsObject() {
+    void testEqualsObject() {
         Flag flag1 = null;
 
         assertNotEquals(null, f);
@@ -264,7 +263,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getNameReference()}.
      */
     @Test
-    public void testGetNameReference() {
+    void testGetNameReference() {
         assertEquals("protection.flags.flagID.name", f.getNameReference());
     }
 
@@ -272,7 +271,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getDescriptionReference()}.
      */
     @Test
-    public void testGetDescriptionReference() {
+    void testGetDescriptionReference() {
         assertEquals("protection.flags.flagID.description", f.getDescriptionReference());
     }
 
@@ -280,7 +279,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getHintReference()}.
      */
     @Test
-    public void testGetHintReference() {
+    void testGetHintReference() {
         assertEquals("protection.flags.flagID.hint", f.getHintReference());
     }
 
@@ -288,7 +287,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getGameModes()}.
      */
     @Test
-    public void testGetGameModes() {
+    void testGetGameModes() {
         assertTrue(f.getGameModes().isEmpty());
     }
 
@@ -296,7 +295,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setGameModes(java.util.Set)}.
      */
     @Test
-    public void testSetGameModes() {
+    void testSetGameModes() {
         Set<GameModeAddon> set = new HashSet<>();
         set.add(mock(GameModeAddon.class));
         assertTrue(f.getGameModes().isEmpty());
@@ -308,7 +307,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#addGameModeAddon(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
-    public void testAddGameModeAddon() {
+    void testAddGameModeAddon() {
         GameModeAddon gameModeAddon = mock(GameModeAddon.class);
         f.addGameModeAddon(gameModeAddon);
         assertTrue(f.getGameModes().contains(gameModeAddon));
@@ -318,7 +317,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#removeGameModeAddon(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
-    public void testRemoveGameModeAddon() {
+    void testRemoveGameModeAddon() {
         GameModeAddon gameModeAddon = mock(GameModeAddon.class);
         f.addGameModeAddon(gameModeAddon);
         assertTrue(f.getGameModes().contains(gameModeAddon));
@@ -329,9 +328,8 @@ public class FlagTest extends RanksManagerTestSetup {
     /**
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#toPanelItem(BentoBox, User, Island, boolean)}.
      */
-    @Disabled("Panel issue with Paper")
     @Test
-    public void testToPanelItem() {
+    void testToPanelItem() {
         when(island.getFlag(any())).thenReturn(RanksManager.VISITOR_RANK);
 
         User user = mock(User.class);
@@ -367,7 +365,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setTranslatedName(java.util.Locale, String)}.
      */
     @Test
-    public void testSetTranslatedName() {
+    void testSetTranslatedName() {
         assertFalse(f.setTranslatedName(Locale.CANADA, "Good eh?"));
         assertTrue(f.setTranslatedName(Locale.US, "Yihaa"));
     }
@@ -376,7 +374,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setTranslatedDescription(java.util.Locale, String)}.
      */
     @Test
-    public void testSetTranslatedDescription() {
+    void testSetTranslatedDescription() {
         assertFalse(f.setTranslatedDescription(Locale.CANADA, "Good eh?"));
         assertTrue(f.setTranslatedDescription(Locale.US, "Yihaa"));
     }
@@ -385,7 +383,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#toString()}.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("Flag [id=flagID]", f.toString());
     }
 
@@ -393,7 +391,7 @@ public class FlagTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#compareTo(world.bentobox.bentobox.api.flags.Flag)}.
      */
     @Test
-    public void testCompareTo() {
+    void testCompareTo() {
         Flag aaa = new Flag.Builder("AAA", Material.ACACIA_DOOR).type(Flag.Type.PROTECTION).build();
         Flag bbb = new Flag.Builder("BBB", Material.ACACIA_DOOR).type(Flag.Type.PROTECTION).build();
         assertTrue(aaa.compareTo(bbb) < bbb.compareTo(aaa));

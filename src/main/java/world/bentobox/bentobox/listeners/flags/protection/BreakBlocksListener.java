@@ -52,6 +52,7 @@ public class BreakBlocksListener extends FlagListener {
                     || m == Material.BAMBOO
                     || m == Material.NETHER_WART
                     || m == Material.CACTUS
+                    || m == Material.SUGAR_CANE
                     ) {
                 this.checkIsland(e,  p,  l, Flags.HARVEST);
             } else {

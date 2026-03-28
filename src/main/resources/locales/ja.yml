@@ -159,6 +159,11 @@ commands:
         confirmation: '&a [prefix_island]の所有者に[xyz]の所有者になるように[name]を設定したいですか？'
         success: '&b [name]&aがこの島の所有者になりました。'
         extra-islands: '&c 警告：このプレーヤーは現在、[number]島を所有しています。これは、設定またはパーマで許可されている以上のものです：[max]。'
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: 管理島の範囲コマンド
       invalid-value:
@@ -224,6 +229,9 @@ commands:
       team-members-title: チームメンバー
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'チーム最大人数: [number]'
+      max-coop-size: '協力最大人数: [number]'
+      max-trusted-size: '信頼最大人数: [number]'
       island-protection-center: 保護地域センター：[xyz]
       island-center: 島の中心：[xyz]
       island-coords: ' 島座標: [xz1] - [xz2]'
@@ -436,6 +444,8 @@ commands:
           &a Shiftで +/-100
         no-cost: 無料
         cost-amount: 'コスト: [cost]'
+        next-page: '&f 次のページ'
+        previous-page: '&f 前のページ'
     resetflags:
       parameters: '[flag]'
       description: すべての島をconfig.ymlのデフォルトのフラグ設定にリセットします
@@ -619,6 +629,7 @@ commands:
       home-set: あなたの島の家はあなたの現在の場所に設定されています。
       homes-are: '&6島の家は次のとおりです:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&aクリックしてテレポート！'
       nether:
         not-allowed: '&cあなたはネザーにあなたの家を設定することはできません。'
         confirmation: '&cネザーにあなたの家を設定しますか？'
@@ -862,6 +873,11 @@ commands:
       not-on-island: '&cそのプレイヤーはあなたの島にいません！'
       player-expelled-you: '&b [name]&cはあなたを島から追放しました！'
       success: '&a島から&b [name]&aを追放した。'
+    lock:
+      description: '[prefix_island]をロックまたはアンロックする'
+      locked: '&aあなたの[prefix_island]はロックされました。'
+      unlocked: '&aあなたの[prefix_island]のロックが解除されました。'
+      you-are-locked-out: '&cこの[prefix_island]はロックされました。あなたは追放されました。'
 ranks:
   owner: 所有者
   sub-owner: サブ所有者
@@ -1356,7 +1372,8 @@ protection:
         初心者を保護します。
         リセットを減らします。
       scooping: '&a黒曜石を溶岩に戻す。次回は気をつけて！'
-      obsidian-nearby: '&c近くに黒曜石のブロックがあり、このブロックを溶岩にすくい上げることはできません。'
+      cooldown: '&c次の黒曜石ブロックをすくうには、しばらく待つ必要があります。'
+      obsidian-nearby: '&c近くに黒曜石のブロックがあり、このブロックを溶岩にすくい上げることはできません。 ([radius])'
     OFFLINE_GROWTH:
       description: |-
         &a無効にすると、すべてのメンバーが
@@ -1541,6 +1558,13 @@ protection:
         &a
         &a アイランドのメンバーはまだアイテムを失っています
         そして、彼らが自分の島で死んだ場合！
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: 襲撃のトリガー
       description: 襲撃を引き起こすために必要な島の最低ランクを設定します
@@ -1551,6 +1575,13 @@ protection:
         &a エンティティ (非プレイヤー) ができるかどうかを切り替えます。
         &a ポータルを使用して間をテレポートします
         寸法(&A)
+    WIND_CHARGE:
+      name: ウィンドチャージ
+      description: |-
+        &a ウィンドチャージの使用を切り替えます。
+        &a 無効の場合、訪問者はこの島で
+        &a ウィンドチャージを使用できません。
+      hint: ウィンドチャージの使用が無効
     WITHER_DAMAGE:
       name: 許可/禁止
       description: |-
@@ -1569,6 +1600,7 @@ protection:
         &a島の制限外のエンティティ。
       name: 世界のTNTダメージ
   locked: 島はロックされている!
+  locked-island-bypass: '&6この[prefix_island]はロックされていますが、あなたはバイパスする権限を持っています。'
   protected: '島保護: [description]'
   world-protected: '&c世界保護: [description]'
   spawn-protected: '&c保護されたスポーン: [description]'

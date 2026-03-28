@@ -37,7 +37,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
+class StandardSpawnProtectionListenerTest extends CommonTestSetup {
 
     @Mock
     private PlayersManager pm;
@@ -74,6 +74,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
         when(iwm.isEndIslands(any())).thenReturn(false);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.getNetherSpawnRadius(any())).thenReturn(25);
+        when(iwm.getEndSpawnRadius(any())).thenReturn(25);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         // Util
@@ -108,7 +109,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockPlaceDisallowed() {
+    void testOnBlockPlaceDisallowed() {
         BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
         assertTrue(e.isCancelled());
@@ -119,7 +120,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockPlaceDisallowedNoProtection() {
+    void testOnBlockPlaceDisallowedNoProtection() {
         when(iwm.isNetherIslands(any())).thenReturn(true);
         BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
@@ -131,7 +132,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockPlaceAllowed() {
+    void testOnBlockPlaceAllowed() {
         when(mockPlayer.isOp()).thenReturn(true);
         BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
@@ -143,7 +144,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockPlaceAllowedOutsideSpawn() {
+    void testOnBlockPlaceAllowedOutsideSpawn() {
         when(iwm.getNetherSpawnRadius(any())).thenReturn(1);
         BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
@@ -155,7 +156,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockPlaceAllowedWrongWorld() {
+    void testOnBlockPlaceAllowedWrongWorld() {
         when(location.getWorld()).thenReturn(world);
         when(mockPlayer.getWorld()).thenReturn(world);
         BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
@@ -168,7 +169,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockPlaceAllowedNetherIslandWorlds() {
+    void testOnBlockPlaceAllowedNetherIslandWorlds() {
         when(iwm.isNetherIslands(any())).thenReturn(true);
         BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
         ssp.onBlockPlace(e);
@@ -180,7 +181,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
-    public void testOnBlockPlaceAllowedEndIslandWorlds() {
+    void testOnBlockPlaceAllowedEndIslandWorlds() {
         when(location.getWorld()).thenReturn(end);
         when(mockPlayer.getWorld()).thenReturn(end);
         when(spawnLocation.getWorld()).thenReturn(end);
@@ -192,10 +193,57 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Verifies that end spawn is protected when player is in standard end world.
+     */
+    @Test
+    void testOnBlockPlaceDisallowedInStandardEnd() {
+        when(location.getWorld()).thenReturn(end);
+        when(mockPlayer.getWorld()).thenReturn(end);
+        when(spawnLocation.getWorld()).thenReturn(end);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
+        ssp.onBlockPlace(e);
+        assertTrue(e.isCancelled());
+        checkSpigotMessage("protection.spawn-protected");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Verifies that end spawn is NOT protected when endSpawnRadius is 0.
+     */
+    @Test
+    void testOnBlockPlaceAllowedInStandardEndZeroRadius() {
+        when(location.getWorld()).thenReturn(end);
+        when(mockPlayer.getWorld()).thenReturn(end);
+        when(spawnLocation.getWorld()).thenReturn(end);
+        when(iwm.getEndSpawnRadius(any())).thenReturn(0);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
+        ssp.onBlockPlace(e);
+        assertFalse(e.isCancelled());
+        checkSpigotMessage("protection.spawn-protected", 0);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Verifies that end spawn is NOT protected when end portals are active.
+     */
+    @Test
+    void testOnBlockPlaceAllowedInStandardEndWithEndPortals() {
+        when(location.getWorld()).thenReturn(end);
+        when(mockPlayer.getWorld()).thenReturn(end);
+        when(spawnLocation.getWorld()).thenReturn(end);
+        when(ws.isMakeEndPortals()).thenReturn(true);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
+        ssp.onBlockPlace(e);
+        assertFalse(e.isCancelled());
+        checkSpigotMessage("protection.spawn-protected", 0);
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnBlockBreakDisallowed() {
+    void testOnBlockBreakDisallowed() {
         BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         ssp.onBlockBreak(e);
         assertTrue(e.isCancelled());
@@ -206,7 +254,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnBlockBreakDisallowedNoProtection() {
+    void testOnBlockBreakDisallowedNoProtection() {
         when(ws.isMakeNetherPortals()).thenReturn(true);
         BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         ssp.onBlockBreak(e);
@@ -218,7 +266,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnBlockBreakAllowed() {
+    void testOnBlockBreakAllowed() {
         when(mockPlayer.isOp()).thenReturn(true);
         BlockBreakEvent e = new BlockBreakEvent(block, mockPlayer);
         ssp.onBlockBreak(e);
@@ -230,7 +278,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosion() {
+    void testOnExplosion() {
         List<Block> blockList = new ArrayList<>();
         blockList.add(block);
         blockList.add(block);
@@ -254,7 +302,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionNoProtection() {
+    void testOnExplosionNoProtection() {
         when(ws.isMakeNetherPortals()).thenReturn(true);
         List<Block> blockList = new ArrayList<>();
         blockList.add(block);
@@ -276,10 +324,43 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
 
 
     /**
+     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     * Verifies no NullPointerException occurs when blocks are in a standard end world whose
+     * world object is not directly registered in the island world manager (GitHub issue).
+     */
+    @Test
+    void testOnExplosionInStandardEndWorldNoNPE() {
+        // Blocks are in the end world (standard end, not island end)
+        when(location.getWorld()).thenReturn(end);
+        // Util.getWorld maps end world -> overworld
+        mockedUtil.when(() -> Util.getWorld(end)).thenReturn(world);
+        // Simulate the end world not being registered in IWM by throwing NPE
+        when(iwm.getWorldSettings(end)).thenThrow(NullPointerException.class);
+
+        List<Block> blockList = new ArrayList<>();
+        blockList.add(block);
+        blockList.add(block);
+        blockList.add(block);
+        blockList.add(block);
+        blockList.add(block);
+        // Make some inside and outside spawn
+        when(location.toVector()).thenReturn(new Vector(0, 0, 0),
+                new Vector(0, 0, 0),
+                new Vector(0, 0, 0),
+                new Vector(0, 0, 0),
+                new Vector(10000, 0, 0));
+        EntityExplodeEvent e = getExplodeEvent(mockPlayer, location, blockList);
+        // Should not throw NullPointerException
+        ssp.onExplosion(e);
+        // 4 blocks inside the spawn should be removed, leaving one
+        assertEquals(1, blockList.size());
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
      */
     @Test
-    public void testOnBucketEmptyDisallowed() {
+    void testOnBucketEmptyDisallowed() {
         PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(mockPlayer, block, block, BlockFace.DOWN, null, null,
                 null);
         ssp.onBucketEmpty(e);
@@ -291,7 +372,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
      */
     @Test
-    public void testOnBucketEmptyDisallowedNoProtection() {
+    void testOnBucketEmptyDisallowedNoProtection() {
         when(ws.isMakeNetherPortals()).thenReturn(true);
         PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(mockPlayer, block, block, BlockFace.DOWN, null, null,
                 null);
@@ -304,7 +385,7 @@ public class StandardSpawnProtectionListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
      */
     @Test
-    public void testOnBucketEmptyAllowed() {
+    void testOnBucketEmptyAllowed() {
         when(mockPlayer.isOp()).thenReturn(true);
         PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(mockPlayer, block, block, BlockFace.DOWN, null, null,
                 null);

@@ -47,7 +47,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-public class TNTListenerTest extends CommonTestSetup {
+class TNTListenerTest extends CommonTestSetup {
 
     @Mock
     private Block block;
@@ -105,7 +105,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnTNTPriming() {
+    void testOnTNTPriming() {
         BlockFace clickedFace = BlockFace.DOWN;
         Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.TNT);
@@ -120,7 +120,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnExplosion() {
+    void testOnExplosion() {
         List<Block> list = new ArrayList<>();
         list.add(block);
         EntityExplodeEvent e = getExplodeEvent(entity, location, list);
@@ -129,7 +129,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnExplosionOutsideIsland() {
+    void testOnExplosionOutsideIsland() {
         Flags.WORLD_TNT_DAMAGE.setDefaultSetting(false);
         assertFalse(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
@@ -141,7 +141,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnExplosionOutsideIslandAllowed() {
+    void testOnExplosionOutsideIslandAllowed() {
         Flags.WORLD_TNT_DAMAGE.setDefaultSetting(true);
         assertTrue(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
@@ -154,7 +154,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnExplosionWrongWorld() {
+    void testOnExplosionWrongWorld() {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         List<Block> list = new ArrayList<>();
         list.add(block);
@@ -165,7 +165,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnTNTDamageInWorldTNTNotProjectile() {
+    void testOnTNTDamageInWorldTNTNotProjectile() {
         // Block on fire
         when(block.getType()).thenReturn(Material.TNT);
         // Entity is not a projectile
@@ -175,7 +175,7 @@ public class TNTListenerTest extends CommonTestSetup {
 
     }
     @Test
-    public void testOnTNTDamageTNTWrongWorld() {
+    void testOnTNTDamageTNTWrongWorld() {
         // Block on fire
         when(block.getType()).thenReturn(Material.TNT);
         // Out of world
@@ -185,7 +185,7 @@ public class TNTListenerTest extends CommonTestSetup {
         assertFalse(e.isCancelled());
     }
     @Test
-    public void testOnTNTDamageObsidianWrongWorld() {
+    void testOnTNTDamageObsidianWrongWorld() {
         // Block on fire
         when(block.getType()).thenReturn(Material.OBSIDIAN);
         // Out of world
@@ -196,7 +196,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnTNTDamageInWorldTNTProjectileWitherSkelly() {
+    void testOnTNTDamageInWorldTNTProjectileWitherSkelly() {
         // Block on fire
         when(block.getType()).thenReturn(Material.TNT);
         // Entity is a projectile
@@ -215,7 +215,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnTNTDamageInWorldTNTProjectilePlayerNotFireArrow() {
+    void testOnTNTDamageInWorldTNTProjectilePlayerNotFireArrow() {
         // Block on fire
         when(block.getType()).thenReturn(Material.TNT);
         // Entity is a projectile
@@ -234,7 +234,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnTNTDamageInWorldTNTProjectilePlayerFireArrow() {
+    void testOnTNTDamageInWorldTNTProjectilePlayerFireArrow() {
         // Block on fire
         when(block.getType()).thenReturn(Material.TNT);
         // Entity is a projectile
@@ -253,7 +253,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnTNTDamageInWorldTNTProjectilePlayerFireArrowAllowed() {
+    void testOnTNTDamageInWorldTNTProjectilePlayerFireArrowAllowed() {
         // Block on fire
         when(block.getType()).thenReturn(Material.TNT);
         // Entity is a projectile
@@ -274,7 +274,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnTNTDamageInWorldTNTProjectilePlayerFireArrowNotIsland() {
+    void testOnTNTDamageInWorldTNTProjectilePlayerFireArrowNotIsland() {
         Flags.TNT_PRIMING.setSetting(world, false);
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
         // Block on fire
@@ -295,7 +295,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnTNTDamageInWorldTNTProjectilePlayerFireArrowNotIslandNotAllowed() {
+    void testOnTNTDamageInWorldTNTProjectilePlayerFireArrowNotIslandNotAllowed() {
         Flags.TNT_PRIMING.setSetting(world, true);
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
         // Block on fire
@@ -316,28 +316,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnEntityExplosion() {
-        /*
-         * org.bukkit.event.entity.EntityDamageByEntityEvent.EntityDamageByEntityEvent(
-         * @NotNull @NotNull Entity damager, 
-         * @NotNull @NotNull Entity damagee, 
-         * @NotNull @NotNull DamageCause cause, 
-         * @NotNull @NotNull DamageSource damageSource, 
-         * @NotNull @NotNull Map<DamageModifier, Double> modifiers, 
-         * @NotNull @NotNull Map<DamageModifier, ?> modifierFunctions, 
-         * boolean critical)
-        
-         Attempt to use newer event. This works but then other errors appear. Go figure.
-        
-        @NotNull
-        Map<DamageModifier, Double> modifiers = new HashMap<>();
-        modifiers.put(DamageModifier.BASE, 0.0D);
-        @NotNull
-        Map<DamageModifier, ? extends Function<? super Double, Double>> modifier = new HashMap<>();
-        modifier.put(DamageModifier.BASE, null);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION,
-                DamageSource.builder(DamageType.EXPLOSION).build(), modifiers, modifier, false);
-                */
+    void testOnEntityExplosion() {
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION,
                 null, 20D);
         listener.onExplosion(e);
@@ -345,7 +324,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnEntityExplosionOutsideIsland() {
+    void testOnEntityExplosionOutsideIsland() {
         Flags.WORLD_TNT_DAMAGE.setDefaultSetting(false);
         assertFalse(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
@@ -356,7 +335,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnEntityExplosionOutsideIslandAllowed() {
+    void testOnEntityExplosionOutsideIslandAllowed() {
         Flags.WORLD_TNT_DAMAGE.setDefaultSetting(true);
         assertTrue(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
@@ -367,7 +346,7 @@ public class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnEntityExplosionWrongWorld() {
+    void testOnEntityExplosionWrongWorld() {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION, null,
                 20D);

@@ -186,6 +186,11 @@ commands:
         extra-islands: >-
           &c Cảnh báo: người chơi này hiện đang sở hữu [number] hòn đảo. Đây là
           nhiều hơn mức cho phép theo cài đặt hoặc quyền: [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: lệnh độ dài cho quản trị viên
       invalid-value:
@@ -260,6 +265,9 @@ commands:
       team-members-title: 'Thành viên đảo:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Kích thước đảo tối đa: [number]'
+      max-coop-size: 'Kích thước hợp tác tối đa: [number]'
+      max-trusted-size: 'Kích thước tin cậy tối đa: [number]'
       island-protection-center: 'Điểm giữa khu vực bảo vệ: [xyz]'
       island-center: 'Điểm trung tâm đảo: [xyz]'
       island-coords: 'Tọa độ đảo: [xz1] đến [xz2]'
@@ -488,6 +496,8 @@ commands:
           &a Shift để +/-100
         no-cost: Miễn phí
         cost-amount: 'Chi phí: [cost]'
+        next-page: '&f Trang tiếp theo'
+        previous-page: '&f Trang trước'
     resetflags:
       parameters: '[flag]'
       description: Đặt lại tất cả các đảo về cài đặt cờ mặc định trong config.yml
@@ -686,6 +696,7 @@ commands:
       home-set: '&6 Điểm nhà của bạn đã được chọn ở vị trí hiện tại của bạn.'
       homes-are: '&6 Nhà trong đảo:'
       home-list-syntax: '&6 [tên]'
+      click-to-teleport: '&a Nhấn để dịch chuyển!'
       nether:
         not-allowed: '&c Bạn không được phép chọn điểm nhà ở Địa Ngục.'
         confirmation: '&c Bạn có chắc muốn chọn điểm nhà ở Địa Ngục?'
@@ -943,6 +954,11 @@ commands:
       not-on-island: '&c Người chơi đó không có ở đảo bạn!'
       player-expelled-you: '&b [name]&c  đã trục xuất bạn khỏi đảo của họ!'
       success: '&a Bạn đã trục xuất &b [name] &a khỏi đảo bạn.'
+    lock:
+      description: khóa hoặc mở khóa [prefix_island] bạn
+      locked: '&a [prefix_island] bạn hiện đã bị khóa.'
+      unlocked: '&a [prefix_island] bạn hiện đã được mở khóa.'
+      you-are-locked-out: '&c [prefix_island] này hiện đã bị khóa. Bạn đã bị trục xuất.'
 ranks:
   owner: Chủ Đảo
   sub-owner: Đồng Chủ Đảo
@@ -1458,7 +1474,8 @@ protection:
         &a nếu xung quanh có khối hắc diệm thạch
         &a trong bán kính 2 khối.
       scooping: '&a Đang chuyển hắc diệm thạch thành nham thạch. Lần sau hãy cẩn thận!'
-      obsidian-nearby: '&c Có hắc diệm thạch xung quanh. Bạn không thể xúc thành nham thạch.'
+      cooldown: '&c Bạn phải đợi trước khi có thể xúc thêm hắc diệm thạch.'
+      obsidian-nearby: '&c Có hắc diệm thạch xung quanh. Bạn không thể xúc thành nham thạch. ([radius])'
     OFFLINE_GROWTH:
       description: |-
         &a Khi tắt, cây trồng
@@ -1644,6 +1661,13 @@ protection:
         &a
         &a Thành viên đảo vẫn mất đồ
         &a nếu họ chết ở đảo của họ!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Kích hoạt cuộc đột kích
       description: Đặt cấp độ đảo tối thiểu cần thiết để kích hoạt cuộc đột kích
@@ -1654,6 +1678,13 @@ protection:
         &a Chuyển đổi xem các thực thể (không phải người chơi) có thể
         &a sử dụng cổng để dịch chuyển giữa
         &a các chiều không gian hay không
+    WIND_CHARGE:
+      name: Đạn gió
+      description: |-
+        &a Chuyển đổi việc sử dụng đạn gió.
+        &a Nếu bị tắt, khách thăm không thể
+        &a sử dụng đạn gió trên đảo này.
+      hint: Sử dụng đạn gió bị tắt
     WITHER_DAMAGE:
       name: Bật/Tắt sát thương khô héo
       description: |-
@@ -1672,6 +1703,7 @@ protection:
         &a ở ngoài đảo.
       name: Sát thường từ TNT ngoài đảo
   locked: '&c Đảo đã khóa!'
+  locked-island-bypass: '&6 [prefix_Island] này đã bị khóa, nhưng bạn có quyền đi qua.'
   protected: '&c Đảo đã bảo vệ: [description].'
   world-protected: '&c Thế giới đã bảo vệ: [description].'
   spawn-protected: '&c Điểm triệu hồi đã bảo vệ: [description].'

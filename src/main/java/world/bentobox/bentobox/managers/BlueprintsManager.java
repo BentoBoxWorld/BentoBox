@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
@@ -486,7 +487,10 @@ public class BlueprintsManager {
             new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste(useNMS)
                     .thenAccept(b -> pasteNether(addon, bb, island).thenAccept(
                             b2 ->
-            pasteEnd(addon, bb, island).thenAccept(message -> sendMessage(island)).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, task))));
+            pasteEnd(addon, bb, island).thenAccept(message -> sendMessage(island)).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, () -> {
+                runBlueprintCommands(bb, island);
+                if (task != null) task.run();
+            }))));
         }
         // Set the bundle name
         island.putMetaData("bundle", new MetaDataValue(name));
@@ -530,6 +534,28 @@ public class BlueprintsManager {
         if (island != null && island.getOwner() != null) {
             final Optional<User> owner = Optional.of(island).map(i -> User.getInstance(i.getOwner()));
             owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.done"));
+        }
+    }
+
+    /**
+     * Runs any commands associated with the blueprint bundle for the island owner.
+     * Supports [player] and [owner] placeholders. Commands prefixed with [SUDO]
+     * are run as the player; all others run as console.
+     * @param bb - blueprint bundle
+     * @param island - island whose owner receives the commands
+     * @since 2.6.0
+     */
+    private void runBlueprintCommands(BlueprintBundle bb, Island island) {
+        if (bb.getCommands().isEmpty() || island == null) {
+            return;
+        }
+        UUID islandOwner = island.getOwner();
+        if (islandOwner == null) {
+            return;
+        }
+        User owner = User.getInstance(islandOwner);
+        if (owner != null) {
+            Util.runCommands(owner, bb.getCommands(), "blueprint");
         }
     }
 

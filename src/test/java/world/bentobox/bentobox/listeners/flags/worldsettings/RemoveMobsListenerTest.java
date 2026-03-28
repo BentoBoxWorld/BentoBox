@@ -33,7 +33,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class RemoveMobsListenerTest extends CommonTestSetup {
+class RemoveMobsListenerTest extends CommonTestSetup {
 
     @Mock
     private Location inside;
@@ -95,7 +95,7 @@ public class RemoveMobsListenerTest extends CommonTestSetup {
      * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testOnUserTeleport() {
+    void testOnUserTeleport() {
         PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
         verify(sch).runTask(any(), any(Runnable.class));
@@ -105,7 +105,7 @@ public class RemoveMobsListenerTest extends CommonTestSetup {
      * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testOnUserTeleportDifferentWorld() {
+    void testOnUserTeleportDifferentWorld() {
         when(mockPlayer.getWorld()).thenReturn(mock(World.class));
         PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
@@ -116,7 +116,7 @@ public class RemoveMobsListenerTest extends CommonTestSetup {
      * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testOnUserTeleportChorusEtc() {
+    void testOnUserTeleportChorusEtc() {
         PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, inside, inside, PlayerTeleportEvent.TeleportCause.CONSUMABLE_EFFECT);
         new RemoveMobsListener().onUserTeleport(e);
         e = new PlayerTeleportEvent(mockPlayer, inside, inside, PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
@@ -130,7 +130,7 @@ public class RemoveMobsListenerTest extends CommonTestSetup {
      * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testOnUserTeleportTooClose() {
+    void testOnUserTeleportTooClose() {
         // Teleports are too close
         when(inside.distanceSquared(any())).thenReturn(10D);
         PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
@@ -142,7 +142,7 @@ public class RemoveMobsListenerTest extends CommonTestSetup {
      * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testOnUserTeleportDoNotRemove() {
+    void testOnUserTeleportDoNotRemove() {
         Flags.REMOVE_MOBS.setSetting(world, false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
@@ -153,7 +153,7 @@ public class RemoveMobsListenerTest extends CommonTestSetup {
      * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testOnUserTeleportToNotIsland() {
+    void testOnUserTeleportToNotIsland() {
         // Not on island
         when(im.locationIsOnIsland(any(), any())).thenReturn(false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
@@ -165,7 +165,7 @@ public class RemoveMobsListenerTest extends CommonTestSetup {
      * Test method for {@link RemoveMobsListener#onUserRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
-    public void testOnUserRespawn() {
+    void testOnUserRespawn() {
         PlayerRespawnEvent e = new PlayerRespawnEvent(mockPlayer, inside, false, false, false, RespawnReason.DEATH);
         new RemoveMobsListener().onUserRespawn(e);
         verify(sch).runTask(any(), any(Runnable.class));
@@ -175,7 +175,7 @@ public class RemoveMobsListenerTest extends CommonTestSetup {
      * Test method for {@link RemoveMobsListener#onUserRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
-    public void testOnUserRespawnDoNotRemove() {
+    void testOnUserRespawnDoNotRemove() {
         Flags.REMOVE_MOBS.setSetting(world, false);
 
         PlayerRespawnEvent e = new PlayerRespawnEvent(mockPlayer, inside, false, false, false, RespawnReason.DEATH);
@@ -187,7 +187,7 @@ public class RemoveMobsListenerTest extends CommonTestSetup {
      * Test method for {@link RemoveMobsListener#onUserRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
-    public void testOnUserRespawnNotIsland() {
+    void testOnUserRespawnNotIsland() {
         // Not on island
         when(im.locationIsOnIsland(any(), any())).thenReturn(false);
         PlayerRespawnEvent e = new PlayerRespawnEvent(mockPlayer, inside, false, false, false, RespawnReason.DEATH);

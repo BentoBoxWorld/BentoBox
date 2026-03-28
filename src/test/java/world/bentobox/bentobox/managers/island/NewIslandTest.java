@@ -22,7 +22,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -50,7 +49,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class NewIslandTest extends CommonTestSetup {
+class NewIslandTest extends CommonTestSetup {
 
     private static final String NAME = "name";
     @Mock
@@ -170,7 +169,7 @@ public class NewIslandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
      */
     @Test
-    public void testBuilderNoUser() {
+    void testBuilderNoUser() {
         try {
             NewIsland.builder().build();
         } catch (Exception e) {
@@ -183,7 +182,7 @@ public class NewIslandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
      */
     @Test
-    public void testBuilder() throws Exception {
+    void testBuilder() throws Exception {
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland)
                 .build();
         // Verifications
@@ -202,7 +201,7 @@ public class NewIslandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
      */
     @Test
-    public void testBuilderReset() throws Exception {
+    void testBuilderReset() throws Exception {
         when(builder.build()).thenReturn(ire);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.RESET).oldIsland(oldIsland).build();
         // Verifications
@@ -222,7 +221,7 @@ public class NewIslandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
      */
     @Test
-    public void testBuilderNoOldIsland() throws Exception {
+    void testBuilderNoOldIsland() throws Exception {
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).build();
         // Verifications
         mockedIslandsManager.verify(() -> IslandsManager.updateIsland(island));
@@ -240,7 +239,7 @@ public class NewIslandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
      */
     @Test
-    public void testBuilderNoOldIslandPasteNoNMS() throws Exception {
+    void testBuilderNoOldIslandPasteNoNMS() throws Exception {
         when(location.distance(any())).thenReturn(30D);
         NewIsland.builder().addon(addon).name(NAME).player(user).reason(Reason.CREATE).build();
         // Verifications
@@ -259,7 +258,7 @@ public class NewIslandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
      */
     @Test
-    public void testBuilderNoOldIslandPasteWithNMS() throws Exception {
+    void testBuilderNoOldIslandPasteWithNMS() throws Exception {
         NewIsland.builder().addon(addon).name(NAME).player(user).reason(Reason.CREATE).build();
         // Verifications
         mockedIslandsManager.verify(() -> IslandsManager.updateIsland(island));
@@ -276,7 +275,7 @@ public class NewIslandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
      */
     @Test
-    public void testBuilderHasIsland() throws Exception {
+    void testBuilderHasIsland() throws Exception {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
         // Verifications
@@ -296,7 +295,7 @@ public class NewIslandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
      */
     @Test
-    public void testBuilderHasIslandFail() throws Exception {
+    void testBuilderHasIslandFail() throws Exception {
         when(im.getIsland(any(), any(User.class))).thenReturn(null);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
@@ -312,26 +311,6 @@ public class NewIslandTest extends CommonTestSetup {
         verify(island).setProtectionRange(20);
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     */
-    @Test
-    @Disabled("Not done")
-    public void testBuilderHasIslandFailnoReserve() throws Exception {
-        when(island.isReserved()).thenReturn(false);
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
-        // Verifications
-        mockedIslandsManager.verify(() -> IslandsManager.updateIsland(island));
-        verify(island).setFlagsDefaults();
-        verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
-        verify(builder, times(2)).build();
-        verify(bpb).getUniqueId();
-        verify(ice).getBlueprintBundle();
-        verify(pm).setDeaths(world, uuid, 0);
-        verify(im, never()).setHomeLocation(eq(user), any());
-        verify(island).setProtectionRange(20);
-        verify(plugin).logError("New island for user tastybento was not reserved!");
-    }
+    // Removed testBuilderHasIslandFailnoReserve — test was unfinished and expected nonexistent logError call
 
 }

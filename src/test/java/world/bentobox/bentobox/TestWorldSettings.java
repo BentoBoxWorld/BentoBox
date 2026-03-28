@@ -21,6 +21,7 @@ import world.bentobox.bentobox.api.flags.Flag;
 public class TestWorldSettings implements WorldSettings {
 
     private long epoch;
+    private final Map<String, Boolean> worldFlags = new java.util.HashMap<>();
 
     @Override
     public GameMode getDefaultGameMode() {
@@ -162,8 +163,7 @@ public class TestWorldSettings implements WorldSettings {
 
     @Override
     public Map<String, Boolean> getWorldFlags() {
-
-        return Collections.emptyMap();
+        return worldFlags;
     }
 
     @Override

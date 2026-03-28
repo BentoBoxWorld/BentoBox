@@ -33,7 +33,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class WitherListenerTest extends CommonTestSetup {
+class WitherListenerTest extends CommonTestSetup {
 
     private WitherListener wl;
     @Mock
@@ -90,7 +90,7 @@ public class WitherListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionWither() {
+    void testOnExplosionWither() {
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
@@ -106,7 +106,7 @@ public class WitherListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionWitherWrongWorld() {
+    void testOnExplosionWitherWrongWorld() {
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location2);
         when(entity.getWorld()).thenReturn(world2);
@@ -120,7 +120,7 @@ public class WitherListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionWitherAllowed() {
+    void testOnExplosionWitherAllowed() {
         Flags.WITHER_DAMAGE.setSetting(world, true);
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);
@@ -136,7 +136,7 @@ public class WitherListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionWitherSkull() {
+    void testOnExplosionWitherSkull() {
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
@@ -151,7 +151,7 @@ public class WitherListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionNotWither() {
+    void testOnExplosionNotWither() {
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
@@ -165,7 +165,7 @@ public class WitherListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
-    public void testWitherChangeBlocks() {
+    void testWitherChangeBlocks() {
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getWorld()).thenReturn(world);
@@ -183,7 +183,7 @@ public class WitherListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
-    public void testWitherChangeBlocksWrongWorld() {
+    void testWitherChangeBlocksWrongWorld() {
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location2);
         when(entity.getWorld()).thenReturn(world2);
@@ -201,7 +201,7 @@ public class WitherListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
-    public void testWitherChangeBlocksAllowed() {
+    void testWitherChangeBlocksAllowed() {
         Flags.WITHER_DAMAGE.setSetting(world, true);
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);

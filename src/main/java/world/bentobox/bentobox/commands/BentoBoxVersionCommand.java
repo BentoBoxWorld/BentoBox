@@ -50,33 +50,7 @@ public class BentoBoxVersionCommand extends CompositeCommand {
 
         getIWM().getOverWorldNames().entrySet().stream().sorted(Map.Entry.comparingByKey())
         .forEach(e -> {
-            String worlds = user.getTranslation("general.worlds.overworld");
-
-            // It should be present, but let's stay safe.
-            Optional<GameModeAddon> addonOptional = getIWM().getAddon(Bukkit.getWorld(e.getKey()));
-            if (addonOptional.isPresent()) {
-                GameModeAddon addon = addonOptional.get();
-                /*
-                 * If the dimension is generated, it is displayed.
-                 * If the dimension is not made up of islands, a '*' is appended to its name.
-                 */
-                // Append the nether
-                if (addon.getNetherWorld() != null && getIWM().isNetherGenerate(addon.getOverWorld())) {
-                    worlds += ", " + user.getTranslation("general.worlds.nether");
-                    if (!getIWM().isNetherIslands(addon.getOverWorld())) {
-                        worlds += "*";
-                    }
-                }
-
-                // Append the End
-                if (addon.getEndWorld() != null && getIWM().isEndGenerate(addon.getOverWorld())) {
-                    worlds += ", " + user.getTranslation("general.worlds.the-end");
-                    if (!getIWM().isEndIslands(addon.getOverWorld())) {
-                        worlds += "*";
-                    }
-                }
-            }
-
+            String worlds = buildWorldsList(user, e.getKey());
             user.sendMessage(user.getTranslation("commands.bentobox.version.game-world", TextVariables.NAME, e.getKey(), "[addon]", e.getValue(),
                     "[worlds]", worlds));
         });
@@ -87,5 +61,29 @@ public class BentoBoxVersionCommand extends CompositeCommand {
                 TextVariables.VERSION, a.getDescription().getVersion(), "[state]", a.getState().toString()));
 
         return true;
+    }
+
+    private String buildWorldsList(User user, String worldName) {
+        String worlds = user.getTranslation("general.worlds.overworld");
+        Optional<GameModeAddon> addonOptional = getIWM().getAddon(Bukkit.getWorld(worldName));
+        if (addonOptional.isEmpty()) {
+            return worlds;
+        }
+        GameModeAddon addon = addonOptional.get();
+        worlds += dimensionSuffix(user, "general.worlds.nether",
+                addon.getNetherWorld() != null && getIWM().isNetherGenerate(addon.getOverWorld()),
+                getIWM().isNetherIslands(addon.getOverWorld()));
+        worlds += dimensionSuffix(user, "general.worlds.the-end",
+                addon.getEndWorld() != null && getIWM().isEndGenerate(addon.getOverWorld()),
+                getIWM().isEndIslands(addon.getOverWorld()));
+        return worlds;
+    }
+
+    private String dimensionSuffix(User user, String translationKey,
+            boolean isGenerated, boolean isIslands) {
+        if (!isGenerated) {
+            return "";
+        }
+        return ", " + user.getTranslation(translationKey) + (isIslands ? "" : "*");
     }
 }

@@ -39,7 +39,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  * @author tastybento
  *
  */
-public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
+class AdminBlueprintSaveCommandTest extends CommonTestSetup {
 
     private AdminBlueprintSaveCommand absc;
     @Mock
@@ -111,7 +111,7 @@ public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#AdminBlueprintSaveCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
-    public void testAdminBlueprintSaveCommand() {
+    void testAdminBlueprintSaveCommand() {
         assertNotNull(absc);
     }
 
@@ -119,7 +119,7 @@ public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         absc.setup();
         assertEquals("commands.admin.blueprint.save.description", absc.getDescription());
         assertEquals("commands.admin.blueprint.save.parameters", absc.getParameters());
@@ -129,7 +129,7 @@ public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteShowHelp() {
+    void testCanExecuteShowHelp() {
         assertFalse(absc.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.help.header", "[label]", "translation");
     }
@@ -138,7 +138,7 @@ public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoClipboard() {
+    void testCanExecuteNoClipboard() {
         when(ac.getClipboards()).thenReturn(new HashMap<>());
         assertFalse(absc.canExecute(user, "", List.of("")));
         verify(user).sendMessage("commands.admin.blueprint.copy-first");
@@ -148,9 +148,9 @@ public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoBedrock() {
-        Blueprint bp = new Blueprint();
-        clip.setBlueprint(bp);
+    void testCanExecuteNoBedrock() {
+        Blueprint localBp = new Blueprint();
+        clip.setBlueprint(localBp);
         assertFalse(absc.canExecute(user, "", List.of("")));
         verify(user).sendMessage("commands.admin.blueprint.bedrock-required");
     }
@@ -159,7 +159,7 @@ public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecute() {
+    void testCanExecute() {
 
         bp.setBedrock(new Vector(1,2,3));
         clip.setBlueprint(bp);
@@ -172,7 +172,7 @@ public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         testCanExecute();
         assertTrue(absc.execute(user, "", List.of("island")));
         verify(ac).hideClipboard(user);
@@ -183,7 +183,7 @@ public class AdminBlueprintSaveCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringFileExists() {
+    void testExecuteUserStringListOfStringFileExists() {
         testCanExecute();
         assertTrue(absc.execute(user, "", List.of("island")));
         assertFalse(absc.execute(user, "", List.of("island")));

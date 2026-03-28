@@ -9,12 +9,14 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
@@ -45,9 +47,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
-import com.google.common.base.Enums;
-import com.google.common.base.Optional;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -391,7 +390,7 @@ public class Util {
     }
 
     public static boolean isTamableEntity(Entity entity) {
-        return entity instanceof Tameable && ((Tameable) entity).isTamed();
+        return entity instanceof Tameable tameable && tameable.isTamed();
     }
 
     /*
@@ -582,11 +581,22 @@ public class Util {
     /**
      * This method translates color codes in given string and strips whitespace after them.
      * This code parses both: hex and old color codes.
+     * Multi-line strings are processed line by line to ensure each line retains its own
+     * color codes, since Adventure's LegacyComponentSerializer may omit repeated color
+     * codes for consecutive segments of the same color.
      * @param textToColor Text which color codes must be parsed.
      * @return String text with parsed colors and stripped whitespaces after them.
      */
     @NonNull
     public static String translateColorCodes(@NonNull String textToColor) {
+        // Process each line independently so color codes are not lost at line boundaries.
+        // Adventure's LegacyComponentSerializer omits repeated §X codes when consecutive
+        // components share the same color, causing lines 2+ to lose their color when split.
+        if (textToColor.contains("\n")) {
+            return Arrays.stream(textToColor.split("\n", -1))
+                    .map(Util::translateColorCodes)
+                    .collect(Collectors.joining("\n"));
+        }
         // Use matcher to find hex patterns in given text.
         Matcher matcher = HEX_PATTERN.matcher(textToColor);
         // Increase buffer size by 32 like it is in bungee cord api. Use buffer because it is sync.
@@ -849,7 +859,7 @@ public class Util {
             return null;
         }
         for (String value : values) {
-            Optional<T> enumConstant = Enums.getIfPresent(enumClass, value.toUpperCase());
+            Optional<T> enumConstant = Arrays.stream(enumClass.getEnumConstants()).filter(e -> e.name().equals(value.toUpperCase())).findFirst();
             if (enumConstant.isPresent()) {
                 return enumConstant.get();
             }

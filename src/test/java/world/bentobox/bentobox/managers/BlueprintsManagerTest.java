@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -567,5 +568,38 @@ class BlueprintsManagerTest extends CommonTestSetup {
         Map<String, Blueprint> blueprints = manager.getBlueprints(addon);
         assertFalse(blueprints.containsKey("island"));
         assertTrue(blueprints.containsKey("newisland"));
+    }
+
+    // -----------------------------------------------------------------------
+    // BlueprintBundle commands
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testBlueprintBundleCommandsDefaultEmpty() {
+        BlueprintBundle bb = new BlueprintBundle();
+        assertNotNull(bb.getCommands());
+        assertTrue(bb.getCommands().isEmpty());
+    }
+
+    @Test
+    void testBlueprintBundleSetCommands() {
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setCommands(List.of("say hello", "give [player] diamond 1"));
+        assertEquals(2, bb.getCommands().size());
+        assertEquals("say hello", bb.getCommands().get(0));
+        assertEquals("give [player] diamond 1", bb.getCommands().get(1));
+    }
+
+    @Test
+    void testBlueprintBundleCommandsSerializedInJson() throws IOException {
+        blueprintsFolder.mkdirs();
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId(BUNDLE_NAME);
+        bb.setCommands(List.of("say hello [player]"));
+        manager.saveBlueprintBundle(addon, bb);
+
+        File savedFile = new File(blueprintsFolder, BUNDLE_NAME + ".json");
+        String content = Files.readString(savedFile.toPath());
+        assertTrue(content.contains("say hello [player]"), "Commands should be serialised into JSON");
     }
 }

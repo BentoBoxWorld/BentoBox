@@ -41,6 +41,7 @@ import world.bentobox.bentobox.listeners.flags.protection.SculkShriekerListener;
 import world.bentobox.bentobox.listeners.flags.protection.ShearingListener;
 import world.bentobox.bentobox.listeners.flags.protection.TeleportationListener;
 import world.bentobox.bentobox.listeners.flags.protection.ThrowingListener;
+import world.bentobox.bentobox.listeners.flags.protection.WindChargeListener;
 import world.bentobox.bentobox.listeners.flags.settings.DecayListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobSpawnListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener;
@@ -69,6 +70,7 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnerSpawnEggsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
 import world.bentobox.bentobox.listeners.flags.protection.RaidTriggerListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnProtectionListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -244,6 +246,20 @@ public final class Flags {
      * @see ThrowingListener
      */
     public static final Flag EXPERIENCE_BOTTLE_THROWING = new Flag.Builder("EXPERIENCE_BOTTLE_THROWING", Material.EXPERIENCE_BOTTLE).build();
+
+    /**
+     * Prevents players from using wind charges.
+     * Wind charges can be used to push entities (including players and mobs) and to
+     * interact with activatable blocks such as buttons, levers, trapdoors, fence gates,
+     * bells and candles in the area of their explosion.
+     * @since 2.6.0
+     * @see WindChargeListener
+     */
+    public static final Flag WIND_CHARGE = new Flag.Builder("WIND_CHARGE",
+            Enums.getIfPresent(Material.class, "WIND_CHARGE").or(Material.BARRIER))
+            .listener(new WindChargeListener())
+            .mode(Flag.Mode.ADVANCED)
+            .build();
 
     /*
      * Fire
@@ -650,6 +666,15 @@ public final class Flags {
      * @see VisitorKeepInventoryListener
      */
     public static final Flag VISITOR_KEEP_INVENTORY = new Flag.Builder("VISITOR_KEEP_INVENTORY", Material.TOTEM_OF_UNDYING).listener(new VisitorKeepInventoryListener()).type(Type.WORLD_SETTING).defaultSetting(false).build();
+
+    /**
+     * Toggles whether visitors at the spawn island are protected from falling into the void.
+     * When enabled, players who fall into the void while at the spawn island will be
+     * teleported back to the spawn point instead of dying.
+     * @since 2.6.0
+     * @see SpawnProtectionListener
+     */
+    public static final Flag SPAWN_PROTECTION = new Flag.Builder("SPAWN_PROTECTION", Material.BEACON).listener(new SpawnProtectionListener()).type(Type.WORLD_SETTING).defaultSetting(false).build();
 
     // VISITOR_TRIGGER_RAID removed in 1.24.1 - replaced by RAID_TRIGGER protection flag
 

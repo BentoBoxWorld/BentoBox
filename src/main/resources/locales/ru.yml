@@ -184,6 +184,11 @@ commands:
         extra-islands: >-
           &c Внимание: у этого игрока теперь есть [number] островов. Это больше,
           чем разрешено настройками или правами: [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: команда администратора по управлению областью острова
       invalid-value:
@@ -262,6 +267,9 @@ commands:
       team-members-title: 'Состав команды:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Максимальный размер команды: [number]'
+      max-coop-size: 'Максимальный размер кооперации: [number]'
+      max-trusted-size: 'Максимальный размер доверенных: [number]'
       island-protection-center: 'Центр острова: [xyz]'
       island-center: 'Центр острова: [xyz]'
       island-coords: 'Координаты острова: от [xz1] до [xz2]'
@@ -498,6 +506,8 @@ commands:
           &a Shift для +/-100
         no-cost: Бесплатно
         cost-amount: 'Стоимость: [cost]'
+        next-page: '&f Следующая страница'
+        previous-page: '&f Предыдущая страница'
     resetflags:
       parameters: '[флаг]'
       description: >-
@@ -706,6 +716,7 @@ commands:
       home-set: '&6Ваше местоположение на острове установлено как точка дома.'
       homes-are: '&6Точки дома на острове:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Нажмите для телепортации!'
       nether:
         not-allowed: '&cЗапрещено устанавливать точки дома в Незере.'
         confirmation: '&cВы уверены, что хотите установить точку дома в Незере?'
@@ -966,6 +977,11 @@ commands:
       not-on-island: '&cЭтот игрок не на вашем острове!'
       player-expelled-you: '&b [name]&c был выгнан с вашего острова!'
       success: '&a Вы были выгнаны &b[name] &aс его острова.'
+    lock:
+      description: заблокировать или разблокировать ваш [prefix_island]
+      locked: '&a Ваш [prefix_island] теперь заблокирован.'
+      unlocked: '&a Ваш [prefix_island] теперь разблокирован.'
+      you-are-locked-out: '&c Этот [prefix_island] теперь заблокирован. Вы были выгнаны.'
 ranks:
   owner: Владелец
   sub-owner: Семи-владелец
@@ -1463,9 +1479,10 @@ protection:
         &a если рядом находится другой обсидиан
         &a в радиусе 2 блоков.
       scooping: '&aОбсидиан превращен в лаву. Будьте осторожны в следующий раз!'
+      cooldown: '&cВы должны подождать, прежде чем зачерпнуть ещё один блок обсидиана.'
       obsidian-nearby: >-
         &c В радиусе 2 блоков есть еще обсидиан, вы не можете собрать этот блок
-        в лаву
+        в лаву ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Когда отключено, растения
@@ -1646,6 +1663,13 @@ protection:
         &a
         &a Участники острова все еще будут терять вещи,
         &a если будут умирать на своем острове!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Запуск рейда
       description: Устанавливает минимальный ранг острова для запуска рейда
@@ -1655,6 +1679,13 @@ protection:
       description: |-
         &a Активация позволит сущностям
         &a использовать портал между измерениями
+    WIND_CHARGE:
+      name: Заряд ветра
+      description: |-
+        &a Переключает использование зарядов ветра.
+        &a Если отключено, посетители не могут
+        &a использовать заряды ветра на этом острове.
+      hint: Использование зарядов ветра отключено
     WITHER_DAMAGE:
       name: Урон от Визера
       description: |-
@@ -1673,6 +1704,7 @@ protection:
         &a за пределами острова.
       name: Разрушение блоков через TNT
   locked: '&cЭтот остров заблокирован!'
+  locked-island-bypass: '&6 Этот [prefix_island] заблокирован, но у вас есть разрешение на вход.'
   protected: '&cОстров защищен: [description].'
   world-protected: '&cМир защищен: [description].'
   spawn-protected: '&cСпавн защищен: [description].'

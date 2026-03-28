@@ -43,7 +43,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
+class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -116,7 +116,7 @@ public class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUntrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteNoisland() {
+    void testExecuteNoisland() {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
@@ -128,7 +128,7 @@ public class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUntrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteLowRank() {
+    void testExecuteLowRank() {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(any())).thenReturn(RanksManager.OWNER_RANK);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
@@ -141,7 +141,7 @@ public class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUntrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteNoTarget() {
+    void testExecuteNoTarget() {
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
@@ -152,7 +152,7 @@ public class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUntrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUnknownPlayer() {
+    void testExecuteUnknownPlayer() {
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
         when(pm.getUUID(any())).thenReturn(null);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
@@ -164,7 +164,7 @@ public class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUntrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteSamePlayer() {
+    void testExecuteSamePlayer() {
         MockedStatic<User> mockUser = Mockito.mockStatic(User.class);
         mockUser.when(() -> User.getInstance(any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
@@ -179,7 +179,7 @@ public class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUntrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecutePlayerHasRank() {
+    void testExecutePlayerHasRank() {
         MockedStatic<User> mockUser = Mockito.mockStatic(User.class);
         mockUser.when(() -> User.getInstance(any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
@@ -196,7 +196,7 @@ public class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamUntrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteCoolDownActive() {
+    void testExecuteCoolDownActive() {
         // 10 minutes = 600 seconds
         when(s.getInviteCooldown()).thenReturn(10);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
@@ -205,34 +205,34 @@ public class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testTabCompleteNoIsland() {
+    void testTabCompleteNoIsland() {
         // No island
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         IslandTeamUntrustCommand ibc = new IslandTeamUntrustCommand(ic);
         // Set up the user
-        User user = mock(User.class);
-        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        User localUser = mock(User.class);
+        when(localUser.getUniqueId()).thenReturn(UUID.randomUUID());
         // Get the tab-complete list with one argument
         LinkedList<String> args = new LinkedList<>();
         args.add("");
-        Optional<List<String>> result = ibc.tabComplete(user, "", args);
+        Optional<List<String>> result = ibc.tabComplete(localUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("d");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(localUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("fr");
-        result = ibc.tabComplete(user, "", args);
+        result = ibc.tabComplete(localUser, "", args);
         assertFalse(result.isPresent());
     }
 
     @Test
-    public void testTabCompleteNoArgument() {
+    void testTabCompleteNoArgument() {
 
         Map<UUID, Integer> map = new HashMap<>();
         map.put(UUID.randomUUID(), RanksManager.TRUSTED_RANK);
@@ -266,7 +266,7 @@ public class IslandTeamUntrustCommandTest extends RanksManagerTestSetup {
     }
 
     @Test
-    public void testTabCompleteWithArgument() {
+    void testTabCompleteWithArgument() {
 
         Map<UUID, Integer> map = new HashMap<>();
         map.put(UUID.randomUUID(), RanksManager.TRUSTED_RANK);

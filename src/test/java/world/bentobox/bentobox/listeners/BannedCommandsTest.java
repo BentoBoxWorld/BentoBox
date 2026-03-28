@@ -30,7 +30,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
-public class BannedCommandsTest extends CommonTestSetup {
+class BannedCommandsTest extends CommonTestSetup {
 
     @Override
     @BeforeEach
@@ -82,7 +82,7 @@ public class BannedCommandsTest extends CommonTestSetup {
      * Verifies that the command is not cancelled when the player is not in a game world.
      */
     @Test
-    public void testInstantReturnNotInWorld() {
+    void testInstantReturnNotInWorld() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(mockPlayer, "/blah");
         BannedCommands bvc = new BannedCommands(plugin);
         when(iwm.inWorld(any(World.class))).thenReturn(false);
@@ -96,7 +96,7 @@ public class BannedCommandsTest extends CommonTestSetup {
      * Verifies that the command is not cancelled when the player is an operator.
      */
     @Test
-    public void testInstantReturnOp() {
+    void testInstantReturnOp() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(mockPlayer, "/blah");
         BannedCommands bvc = new BannedCommands(plugin);
         when(mockPlayer.isOp()).thenReturn(true);
@@ -109,7 +109,7 @@ public class BannedCommandsTest extends CommonTestSetup {
      * Verifies that the command is not cancelled when the player has bypass permission.
      */
     @Test
-    public void testInstantReturnBypassPerm() {
+    void testInstantReturnBypassPerm() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(mockPlayer, "/blah");
         BannedCommands bvc = new BannedCommands(plugin);
         when(mockPlayer.hasPermission(Mockito.anyString())).thenReturn(true);
@@ -122,7 +122,7 @@ public class BannedCommandsTest extends CommonTestSetup {
      * Verifies that the command is not cancelled when the player is on their own island.
      */
     @Test
-    public void testInstantReturnOnOwnIsland() {
+    void testInstantReturnOnOwnIsland() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(mockPlayer, "/blah");
         BannedCommands bvc = new BannedCommands(plugin);
         when(im.locationIsOnIsland(any(), any())).thenReturn(true);
@@ -134,7 +134,7 @@ public class BannedCommandsTest extends CommonTestSetup {
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
     @Test
-    public void testEmptyBannedCommands() {
+    void testEmptyBannedCommands() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(mockPlayer, "/blah");
         BannedCommands bvc = new BannedCommands(plugin);
         bvc.onVisitorCommand(e);
@@ -147,7 +147,7 @@ public class BannedCommandsTest extends CommonTestSetup {
      */
     @ParameterizedTest
     @MethodSource("provideCancelledVisitorCommands")
-    public void testVisitorBannedCommandCancelled(String command, List<String> bannedList) {
+    void testVisitorBannedCommandCancelled(String command, List<String> bannedList) {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(mockPlayer, command);
         BannedCommands bvc = new BannedCommands(plugin);
         when(iwm.getVisitorBannedCommands(any())).thenReturn(bannedList);
@@ -177,7 +177,7 @@ public class BannedCommandsTest extends CommonTestSetup {
      */
     @ParameterizedTest
     @MethodSource("provideNonCancelledVisitorCommands")
-    public void testVisitorBannedCommandNotCancelled(String command, List<String> bannedList) {
+    void testVisitorBannedCommandNotCancelled(String command, List<String> bannedList) {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(mockPlayer, command);
         BannedCommands bvc = new BannedCommands(plugin);
         when(iwm.getVisitorBannedCommands(any())).thenReturn(bannedList);
@@ -210,7 +210,7 @@ public class BannedCommandsTest extends CommonTestSetup {
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
     @Test
-    public void testBannedCommandsWithNothing() {
+    void testBannedCommandsWithNothing() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(mockPlayer, "");
         BannedCommands bvc = new BannedCommands(plugin);
         bvc.onVisitorCommand(e);
@@ -222,7 +222,7 @@ public class BannedCommandsTest extends CommonTestSetup {
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
     @Test
-    public void testBannedCommandsWithBannedFallingCommand() {
+    void testBannedCommandsWithBannedFallingCommand() {
         when(mockPlayer.getFallDistance()).thenReturn(10F);
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(mockPlayer, "/banned_command");
         BannedCommands bvc = new BannedCommands(plugin);
@@ -239,7 +239,7 @@ public class BannedCommandsTest extends CommonTestSetup {
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
     @Test
-    public void testBannedCommandsWithBannedFallingCommandNotFalling() {
+    void testBannedCommandsWithBannedFallingCommandNotFalling() {
         when(mockPlayer.getFallDistance()).thenReturn(0F);
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(mockPlayer, "/banned_command");
         BannedCommands bvc = new BannedCommands(plugin);
@@ -256,7 +256,7 @@ public class BannedCommandsTest extends CommonTestSetup {
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
     @Test
-    public void testBannedCommandsWithBannedFallingCommandNoFlag() {
+    void testBannedCommandsWithBannedFallingCommandNoFlag() {
         Flags.PREVENT_TELEPORT_WHEN_FALLING.setSetting(world, false);
         when(mockPlayer.getFallDistance()).thenReturn(0F);
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(mockPlayer, "/banned_command");

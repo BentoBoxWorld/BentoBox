@@ -7,21 +7,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import world.bentobox.bentobox.CommonTestSetup;
 
-@Disabled("Issues with NotAMock")
-public class CandleListenerTest extends CommonTestSetup {
+class CandleListenerTest extends CommonTestSetup {
 
     private CandleListener l;
     @Mock
@@ -38,9 +35,6 @@ public class CandleListenerTest extends CommonTestSetup {
 
         when(block.getLocation()).thenReturn(location);
 
-        // Tags
-        when(Tag.CANDLES.isTagged(any(Material.class))).thenReturn(true);
-        when(Tag.CANDLE_CAKES.isTagged(any(Material.class))).thenReturn(true);
 
         // Listener
         l = new CandleListener();
@@ -50,7 +44,7 @@ public class CandleListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.CandleListener#onCandleInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnCandleInteract() {
+    void testOnCandleInteract() {
         // Block
         when(block.getType()).thenReturn(Material.CANDLE);
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, null, block, BlockFace.UP);
@@ -62,7 +56,7 @@ public class CandleListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.CandleListener#onCandleInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnCandleCakeInteract() {
+    void testOnCandleCakeInteract() {
         // Block
         when(block.getType()).thenReturn(Material.CANDLE_CAKE);
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_BLOCK, null, block, BlockFace.UP);
@@ -74,7 +68,7 @@ public class CandleListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.CandleListener#onCandleInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnCandleInteractFail() {
+    void testOnCandleInteractFail() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         // Block
         when(block.getType()).thenReturn(Material.CANDLE);
@@ -88,7 +82,7 @@ public class CandleListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.CandleListener#onCandleInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnCandleCakeInteractFail() {
+    void testOnCandleCakeInteractFail() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         // Block
         when(block.getType()).thenReturn(Material.CANDLE_CAKE);

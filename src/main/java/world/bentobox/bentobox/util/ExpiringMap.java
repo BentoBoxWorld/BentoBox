@@ -1,7 +1,5 @@
 package world.bentobox.bentobox.util;
 
-import org.eclipse.jdt.annotation.NonNull;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A {@code ExpiringMap} is a map implementation that automatically removes entries after a

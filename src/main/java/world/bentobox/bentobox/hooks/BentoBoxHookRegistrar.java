@@ -12,6 +12,8 @@ public class BentoBoxHookRegistrar {
 
     private static final String MV5_CLASS = "org.mvplugins.multiverse.core.MultiverseCore";
     private static final String MV4_CLASS = "com.onarandombox.MultiverseCore.MultiverseCore";
+    private static final String BLUEMAP_CLASS = "de.bluecolored.bluemap.api.BlueMapAPI";
+    private static final String DYNMAP_CLASS = "org.dynmap.DynmapAPI";
 
     private final BentoBox plugin;
     private final HooksManager hooksManager;
@@ -45,6 +47,20 @@ public class BentoBoxHookRegistrar {
             hooksManager.registerHook(new MultiverseCore4Hook());
         }
         hooksManager.registerHook(new MyWorldsHook());
+    }
+
+    /**
+     * Registers map hooks (BlueMap, Dynmap) so they are available before addons enable.
+     * Must be called after {@link world.bentobox.bentobox.managers.MapManager} is created.
+     * Island marker population is deferred to {@link world.bentobox.bentobox.api.events.BentoBoxReadyEvent}.
+     */
+    public void registerMapHooks() {
+        if (hasClass(BLUEMAP_CLASS)) {
+            hooksManager.registerHook(new BlueMapHook());
+        }
+        if (hasClass(DYNMAP_CLASS)) {
+            hooksManager.registerHook(new DynmapHook());
+        }
     }
 
     /**

@@ -35,6 +35,7 @@ import world.bentobox.bentobox.managers.IslandDeletionManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.managers.MapManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -67,6 +68,7 @@ public class BentoBox extends JavaPlugin implements Listener {
     private BlueprintsManager blueprintsManager;
     private HooksManager hooksManager;
     private PlaceholdersManager placeholdersManager;
+    private MapManager mapManager;
     private IslandDeletionManager islandDeletionManager;
     private WebManager webManager;
 
@@ -187,6 +189,10 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // Setup the Placeholders manager
         placeholdersManager = new PlaceholdersManager(this);
+
+        // Initialize MapManager and register map hooks before addons so they can use it in onEnable()
+        mapManager = new MapManager(this);
+        hookRegistrar.registerMapHooks();
 
         // Enable addons
         addonsManager.enableAddons();
@@ -411,7 +417,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         if (settings == null) {
             // Settings did not load correctly. Disable plugin.
             logError("Settings did not load correctly - disabling plugin - please check config.yml");
-            getPluginLoader().disablePlugin(this);
+            this.setEnabled(false);
             return false;
         }
         log("Saving default panels...");
@@ -527,6 +533,16 @@ public class BentoBox extends JavaPlugin implements Listener {
      */
     public PlaceholdersManager getPlaceholdersManager() {
         return placeholdersManager;
+    }
+
+    /**
+     * Returns the MapManager facade for web-map integrations.
+     * Calls silently no-op when no map plugin is installed.
+     * @return the MapManager
+     * @since 3.12.0
+     */
+    public MapManager getMapManager() {
+        return mapManager;
     }
 
     /**

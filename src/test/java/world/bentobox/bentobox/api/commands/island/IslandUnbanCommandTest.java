@@ -40,7 +40,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class IslandUnbanCommandTest extends RanksManagerTestSetup {
+class IslandUnbanCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ic;
@@ -115,7 +115,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
     // Unban user
 
     @Test
-    public void testNoArgs() {
+    void testNoArgs() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         assertFalse(iubc.canExecute(user, iubc.getLabel(), new ArrayList<>()));
     }
@@ -124,7 +124,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testNoIsland() {
+    void testNoIsland() {
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
@@ -135,7 +135,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testTooLowRank() {
+    void testTooLowRank() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
@@ -148,7 +148,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testUnknownUser() {
+    void testUnknownUser() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
 
@@ -161,7 +161,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testBanSelf() {
+    void testBanSelf() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
 
@@ -174,7 +174,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testBanNotBanned() {
+    void testBanNotBanned() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
 
@@ -189,7 +189,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#execute(User, String, List)}
      */
     @Test
-    public void testUnbanUser() {
+    void testUnbanUser() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
 
@@ -220,7 +220,7 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#tabComplete(User, String, List)}
      */
     @Test
-    public void testTabComplete() {
+    void testTabComplete() {
         Set<UUID> banned = new HashSet<>();
         // Add ten people to the banned list
         for (int i = 0; i < 10; i++) {
@@ -229,9 +229,9 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
         when(island.getBanned()).thenReturn(banned);
         when(pm.getName(any())).thenReturn("a", "b", "c", "d", "e", "f", "g", "h", "i", "j");
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        User user = mock(User.class);
-        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
-        Optional<List<String>> result = iubc.tabComplete(user, "", new LinkedList<>());
+        User targetUser = mock(User.class);
+        when(targetUser.getUniqueId()).thenReturn(UUID.randomUUID());
+        Optional<List<String>> result = iubc.tabComplete(targetUser, "", new LinkedList<>());
         assertTrue(result.isPresent());
         String[] names = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" };
         assertTrue(Arrays.equals(names, result.get().toArray()));
@@ -241,29 +241,29 @@ public class IslandUnbanCommandTest extends RanksManagerTestSetup {
      * Test method for {@link IslandUnbanCommand#tabComplete(User, String, List)}
      */
     @Test
-    public void testTabCompleteNoIsland() {
+    void testTabCompleteNoIsland() {
         // No island
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         // Set up the user
-        User user = mock(User.class);
-        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        User targetUser = mock(User.class);
+        when(targetUser.getUniqueId()).thenReturn(UUID.randomUUID());
         // Get the tab-complete list with one argument
         LinkedList<String> args = new LinkedList<>();
         args.add("");
-        Optional<List<String>> result = iubc.tabComplete(user, "", args);
+        Optional<List<String>> result = iubc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("d");
-        result = iubc.tabComplete(user, "", args);
+        result = iubc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("fr");
-        result = iubc.tabComplete(user, "", args);
+        result = iubc.tabComplete(targetUser, "", args);
         assertFalse(result.isPresent());
     }
 }

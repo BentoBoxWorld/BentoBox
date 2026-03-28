@@ -51,7 +51,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.util.Util;
 
-public class InvincibleVisitorsListenerTest extends CommonTestSetup {
+class InvincibleVisitorsListenerTest extends CommonTestSetup {
 
     private InvincibleVisitorsListener listener;
     @Mock
@@ -136,13 +136,6 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
         ivSettings.add(EntityDamageEvent.DamageCause.VOID.name());
         when(iwm.getIvSettings(any())).thenReturn(ivSettings);
 
-        /*
-        ItemFactory itemF = mock(ItemFactory.class);
-        ItemMeta imeta = mock(ItemMeta.class);
-        when(itemF.getItemMeta(any())).thenReturn(imeta);
-        when(Bukkit.getItemFactory()).thenReturn(itemF);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
-         */
         Inventory top = mock(Inventory.class);
         when(top.getSize()).thenReturn(9);
         when(panel.getInventory()).thenReturn(top);
@@ -157,21 +150,21 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnClickWrongWorld() {
+    void testOnClickWrongWorld() {
         when(user.inWorld()).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         verify(user).sendMessage("general.errors.wrong-world");
     }
 
     @Test
-    public void testOnClickNoPermission() {
+    void testOnClickNoPermission() {
         when(user.hasPermission(anyString())).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         verify(user).sendMessage("general.errors.no-permission", "[permission]", "bskyblock.admin.settings.INVINCIBLE_VISITORS");
     }
 
     @Test
-    public void testOnClickNotIVPanel() {
+    void testOnClickNotIVPanel() {
         ClickType clickType = ClickType.LEFT;
         int slot = 5;
         when(panel.getName()).thenReturn("not_panel");
@@ -182,7 +175,7 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnClickIVPanel() {
+    void testOnClickIVPanel() {
         ClickType clickType = ClickType.LEFT;
         ivSettings.clear();
         when(panel.getName()).thenReturn("panel");
@@ -213,7 +206,7 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnVisitorGetDamageNotPlayer() {
+    void testOnVisitorGetDamageNotPlayer() {
         LivingEntity le = mock(LivingEntity.class);
         EntityDamageEvent e = new EntityDamageEvent(le, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
         listener.onVisitorGetDamage(e);
@@ -221,7 +214,7 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnVisitorGetDamageNotInWorld() {
+    void testOnVisitorGetDamageNotInWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
@@ -230,7 +223,7 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnVisitorGetDamageNotInIvSettings() {
+    void testOnVisitorGetDamageNotInIvSettings() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.BLOCK_EXPLOSION, null, 0D);
@@ -239,7 +232,7 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnVisitorGetDamageNotVisitor() {
+    void testOnVisitorGetDamageNotVisitor() {
         EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
         when(im.userIsOnIsland(any(), any())).thenReturn(true);
         listener.onVisitorGetDamage(e);
@@ -247,7 +240,7 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnVisitorGetDamageNotVoid() {
+    void testOnVisitorGetDamageNotVoid() {
         EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
@@ -256,7 +249,7 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnVisitorGetDamageNPC() {
+    void testOnVisitorGetDamageNPC() {
         when(mockPlayer.hasMetadata("NPC")).thenReturn(true);
         EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
         listener.onVisitorGetDamage(e);
@@ -265,7 +258,7 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
 
 
     @Test
-    public void testOnVisitorGetDamageVoidIslandHere() {
+    void testOnVisitorGetDamageVoidIslandHere() {
         when(im.getIslandAt(any())).thenReturn(optionalIsland);
         EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.VOID, null, 0D);
         // Player should be teleported to this island
@@ -275,7 +268,7 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnVisitorGetDamageVoidNoIslandHerePlayerHasNoIsland() {
+    void testOnVisitorGetDamageVoidNoIslandHerePlayerHasNoIsland() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.VOID, null, 0D);
@@ -286,7 +279,7 @@ public class InvincibleVisitorsListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnVisitorGetDamageVoidPlayerHasIsland() {
+    void testOnVisitorGetDamageVoidPlayerHasIsland() {
         // No island at this location
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         // Player has an island

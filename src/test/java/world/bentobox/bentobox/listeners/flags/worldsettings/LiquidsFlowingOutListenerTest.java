@@ -29,7 +29,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author Poslovitch, tastybento
  * @since 1.3.0
  */
-public class LiquidsFlowingOutListenerTest extends CommonTestSetup {
+class LiquidsFlowingOutListenerTest extends CommonTestSetup {
 
     /* Blocks */
     private Block from;
@@ -91,7 +91,7 @@ public class LiquidsFlowingOutListenerTest extends CommonTestSetup {
      * Asserts that the event is never cancelled when the 'from' block is not in the world.
      */
     @Test
-    public void testFromIsNotInWorld() {
+    void testFromIsNotInWorld() {
         // Not in world
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
@@ -105,7 +105,7 @@ public class LiquidsFlowingOutListenerTest extends CommonTestSetup {
      * Asserts that the event is never cancelled when {@link Flags#LIQUIDS_FLOWING_OUT} is allowed.
      */
     @Test
-    public void testFlagIsAllowed() {
+    void testFlagIsAllowed() {
         // Allowed
         Flags.LIQUIDS_FLOWING_OUT.setSetting(world, true);
 
@@ -118,7 +118,7 @@ public class LiquidsFlowingOutListenerTest extends CommonTestSetup {
      * Asserts that the event is never cancelled when the liquid flows vertically.
      */
     @Test
-    public void testLiquidFlowsVertically() {
+    void testLiquidFlowsVertically() {
         // "To" is at (1,0,0)
         // Set "from" at (1,1,0) so that the vector's y coordinate != 0, which means the liquid flows vertically.
         when(from.getLocation()).thenReturn(new Location(world, 1, 1, 0));
@@ -132,7 +132,7 @@ public class LiquidsFlowingOutListenerTest extends CommonTestSetup {
      * Asserts that the event is never cancelled when the liquid flows to a location in an island's protection range.
      */
     @Test
-    public void testLiquidFlowsToLocationInIslandProtectionRange() {
+    void testLiquidFlowsToLocationInIslandProtectionRange() {
         // There's a protected island at the "to"
         when(im.getProtectedIslandAt(to.getLocation())).thenReturn(Optional.of(island));
 
@@ -147,7 +147,7 @@ public class LiquidsFlowingOutListenerTest extends CommonTestSetup {
      * Test for {@link LiquidsFlowingOutListener#onLiquidFlow(BlockFromToEvent)}
      */
     @Test
-    public void testLiquidFlowsToAdjacentIsland() {
+    void testLiquidFlowsToAdjacentIsland() {
         // There's a protected island at the "to"
         when(im.getProtectedIslandAt(to.getLocation())).thenReturn(Optional.of(island));
         // There is another island at the "from"
@@ -162,7 +162,7 @@ public class LiquidsFlowingOutListenerTest extends CommonTestSetup {
      * Asserts that the event is cancelled with the default configuration provided in {@link LiquidsFlowingOutListenerTest#setUp()}.
      */
     @Test
-    public void testLiquidFlowIsBlocked() {
+    void testLiquidFlowIsBlocked() {
         // Run
         new LiquidsFlowingOutListener().onLiquidFlow(event);
         assertTrue(event.isCancelled());

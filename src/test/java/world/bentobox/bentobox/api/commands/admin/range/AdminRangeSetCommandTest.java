@@ -39,7 +39,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminRangeSetCommandTest extends CommonTestSetup {
+class AdminRangeSetCommandTest extends CommonTestSetup {
 
     @Mock
     private CommandsManager cm;
@@ -112,7 +112,7 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteConsoleNoArgs() {
+    void testExecuteConsoleNoArgs() {
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         CommandSender sender = mock(CommandSender.class);
         when(sender.spigot()).thenReturn(spigot);
@@ -127,7 +127,7 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecutePlayerNoArgs() {
+    void testExecutePlayerNoArgs() {
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         assertFalse(arc.canExecute(user, "", List.of()));
         // Show help
@@ -139,7 +139,7 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUnknownPlayer() {
+    void testExecuteUnknownPlayer() {
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         String[] args = { "tastybento", "100" };
         assertFalse(arc.canExecute(user, "", Arrays.asList(args)));
@@ -150,7 +150,7 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteKnownPlayerNotOwnerNoTeam() {
+    void testExecuteKnownPlayerNotOwnerNoTeam() {
         when(pm.getUUID(anyString())).thenReturn(uuid);
         when(im.getOwnedIslands(any(), any(UUID.class))).thenReturn(Set.of());
         when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
@@ -166,7 +166,7 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#canExecute(User, String, List)}
      */
     @Test
-    public void testExecuteKnownPlayerNotOwnerButInTeam() {
+    void testExecuteKnownPlayerNotOwnerButInTeam() {
         when(pm.getUUID(anyString())).thenReturn(uuid);
         when(im.getOwnedIslands(any(), any(UUID.class))).thenReturn(Set.of());
         when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
@@ -182,7 +182,7 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteTooHigh() {
+    void testExecuteTooHigh() {
         when(pm.getUUID(anyString())).thenReturn(uuid);
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         List<String> args = new ArrayList<>();
@@ -197,7 +197,7 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteNotANumber() {
+    void testExecuteNotANumber() {
         when(pm.getUUID(anyString())).thenReturn(uuid);
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         List<String> args = new ArrayList<>();
@@ -211,7 +211,7 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test()
-    public void testExecuteDoubleNumber() {
+    void testExecuteDoubleNumber() {
         when(pm.getUUID(anyString())).thenReturn(uuid);
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         List<String> args = new ArrayList<>();
@@ -225,7 +225,7 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteZero() {
+    void testExecuteZero() {
         when(pm.getUUID(anyString())).thenReturn(uuid);
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         List<String> args = new ArrayList<>();
@@ -240,7 +240,7 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteNegNumber() {
+    void testExecuteNegNumber() {
         when(pm.getUUID(anyString())).thenReturn(uuid);
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         List<String> args = new ArrayList<>();
@@ -254,7 +254,7 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteSame() {
+    void testExecuteSame() {
         when(pm.getUUID(anyString())).thenReturn(uuid);
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         List<String> args = new ArrayList<>();
@@ -269,7 +269,7 @@ public class AdminRangeSetCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecute() {
+    void testExecute() {
         when(pm.getUUID(anyString())).thenReturn(uuid);
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         List<String> args = new ArrayList<>();

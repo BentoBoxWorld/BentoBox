@@ -165,6 +165,11 @@ commands:
         confirmation: '&a你确定要把[name]设置为[xyz]的岛主吗?'
         success: '&b[name]&a已被设置为当前岛屿的岛主.'
         extra-islands: '&c警告: 该玩家当前拥有[number]个岛屿, 最多仅可以拥有[max]个岛屿.'
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: 岛屿保护范围管理员命令
       invalid-value:
@@ -232,6 +237,9 @@ commands:
       team-members-title: '团队身份:'
       team-owner-format: '&a[name] [rank]'
       team-member-format: '&b[name] [rank]'
+      max-team-size: '最大队伍大小: [number]'
+      max-coop-size: '最大合作大小: [number]'
+      max-trusted-size: '最大信任大小: [number]'
       island-protection-center: '岛屿保护中心点: [xyz]'
       island-center: '岛屿中心: [xyz]'
       island-coords: '岛屿界线: [xz1] 至 [xz2]'
@@ -453,6 +461,8 @@ commands:
           &a Shift +/-100
         no-cost: 免费
         cost-amount: '费用: [cost]'
+        next-page: '&f 下一页'
+        previous-page: '&f 上一页'
     resetflags:
       parameters: '&7[flag]'
       description: 将所有岛屿的保护标志设置为config.yml中默认值
@@ -635,6 +645,7 @@ commands:
       home-set: '&6你的岛屿传送点已被设置在了当前位置.'
       homes-are: '&6你的岛屿传送点如下: '
       home-list-syntax: '&6[name]'
+      click-to-teleport: '&a点击传送！'
       nether:
         not-allowed: '&c不允许在下界设置岛屿传送点.'
         confirmation: '&c你确定要在下界设置岛屿传送点吗?'
@@ -885,6 +896,11 @@ commands:
       not-on-island: '&c该玩家不在你的岛屿上!'
       player-expelled-you: '&c你被&b[name]&c从TA的岛屿上驱逐了!'
       success: '&a成功将&b[name]&a驱逐出你的岛屿.'
+    lock:
+      description: 锁定或解锁你的[prefix_island]
+      locked: '&a你的[prefix_island]现已锁定.'
+      unlocked: '&a你的[prefix_island]现已解锁.'
+      you-are-locked-out: '&c此[prefix_island]已被锁定，你被驱逐了.'
 ranks:
   owner: 岛主
   sub-owner: 副岛主
@@ -1344,7 +1360,8 @@ protection:
         &4注意: 如果黑曜石附近2格范围内有其它黑曜石
         &4则不能把黑曜石变回熔岩
       scooping: '&a已将黑曜石变回熔岩.'
-      obsidian-nearby: '&c附近有其它黑曜石, 这个黑曜石不能变回熔岩.'
+      cooldown: '&c你必须等待一段时间才能再次收集黑曜石。'
+      obsidian-nearby: '&c附近有其它黑曜石, 这个黑曜石不能变回熔岩. ([radius])'
     OFFLINE_GROWTH:
       description: |-
         &a允许&#FAFAD2或&c禁止&#FAFAD2所有成员离线岛屿上的植物继续生长
@@ -1516,6 +1533,13 @@ protection:
         &a允许&#FAFAD2时: 玩家在他人岛屿死亡不掉落
         &c禁止&#FAFAD2时: 玩家在他人岛屿死亡掉落
         &4岛屿成员在自己的岛屿上死亡时仍然会掉落物品和经验
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: 触发袭击
       description: 设置触发袭击所需的岛屿最低等级
@@ -1523,6 +1547,13 @@ protection:
     ENTITY_PORTAL_TELEPORT:
       name: '&b&l实体通过传送门'
       description: '&a允许&#FAFAD2或&c禁止&#FAFAD2实体(不包括玩家)通过传送门跨越维度'
+    WIND_CHARGE:
+      name: 风弹
+      description: |-
+        &a 切换风弹的使用。
+        &a 如果禁用，访客将无法
+        &a 在该岛屿上使用风弹。
+      hint: 风弹使用已禁用
     WITHER_DAMAGE:
       name: '&b&l凋灵破坏'
       description: |-
@@ -1540,6 +1571,7 @@ protection:
         &#FAFAD2对岛屿保护范围之外的方块和实体造成破坏和伤害
       name: '&b&l边界TNT保护'
   locked: '&c这个岛屿已被锁定!'
+  locked-island-bypass: '&6 这个[prefix_island]已被锁定，但你有权限绕过。'
   protected: '&c岛屿保护: [description].'
   world-protected: '&c世界保护: [description].'
   spawn-protected: '&c出生点保护: [description].'

@@ -36,7 +36,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  *
  * @since 3.2.0
  */
-public class PlaceholderListPanelTest extends CommonTestSetup {
+class PlaceholderListPanelTest extends CommonTestSetup {
 
     /** Created manually so we can set a custom default Answer for getTranslation. */
     private User user;
@@ -117,20 +117,20 @@ public class PlaceholderListPanelTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOpenPanelCoreNoPlaceholders() {
+    void testOpenPanelCoreNoPlaceholders() {
         assertDoesNotThrow(() -> PlaceholderListPanel.openPanel(command, user, null));
         verify(phm).getRegisteredBentoBoxPlaceholders();
     }
 
     @Test
-    public void testOpenPanelCoreWithPlaceholders() {
+    void testOpenPanelCoreWithPlaceholders() {
         when(phm.getRegisteredBentoBoxPlaceholders())
                 .thenReturn(Set.of("version", "online_players", "max_players"));
-        when(phm.getPlaceholderDescription(eq("version")))
+        when(phm.getPlaceholderDescription("version"))
                 .thenReturn(Optional.of("Current BentoBox version"));
-        when(phm.getPlaceholderDescription(eq("online_players")))
+        when(phm.getPlaceholderDescription("online_players"))
                 .thenReturn(Optional.of("Number of online players"));
-        when(phm.getPlaceholderDescription(eq("max_players")))
+        when(phm.getPlaceholderDescription("max_players"))
                 .thenReturn(Optional.empty());
 
         assertDoesNotThrow(() -> PlaceholderListPanel.openPanel(command, user, null));
@@ -138,27 +138,27 @@ public class PlaceholderListPanelTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOpenPanelAddonNoPlaceholders() {
+    void testOpenPanelAddonNoPlaceholders() {
         assertDoesNotThrow(() -> PlaceholderListPanel.openPanel(command, user, addon));
         verify(phm).getRegisteredPlaceholders(addon);
     }
 
     @Test
-    public void testOpenPanelAddonWithPlaceholders() {
+    void testOpenPanelAddonWithPlaceholders() {
         when(phm.getRegisteredPlaceholders(addon))
                 .thenReturn(Set.of("island_level", "island_rank"));
-        when(phm.getPlaceholderDescription(eq(addon), eq("island_level")))
+        when(phm.getPlaceholderDescription(addon, "island_level"))
                 .thenReturn(Optional.of("The island's level"));
-        when(phm.getPlaceholderDescription(eq(addon), eq("island_rank")))
+        when(phm.getPlaceholderDescription(addon, "island_rank"))
                 .thenReturn(Optional.empty());
 
         assertDoesNotThrow(() -> PlaceholderListPanel.openPanel(command, user, addon));
         verify(phm).getRegisteredPlaceholders(addon);
-        verify(phm, never()).getPlaceholderDescription(eq("island_level"));
+        verify(phm, never()).getPlaceholderDescription("island_level");
     }
 
     @Test
-    public void testOpenPanelWithNumericSeries() {
+    void testOpenPanelWithNumericSeries() {
         when(phm.getRegisteredBentoBoxPlaceholders())
                 .thenReturn(Set.of(
                         "island_member_name_1", "island_member_name_2",
@@ -171,7 +171,7 @@ public class PlaceholderListPanelTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOpenPanelMixedPlaceholders() {
+    void testOpenPanelMixedPlaceholders() {
         when(phm.getRegisteredBentoBoxPlaceholders())
                 .thenReturn(Set.of(
                         "version",
@@ -182,7 +182,7 @@ public class PlaceholderListPanelTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOpenPanelDisabledCorePlaceholder() {
+    void testOpenPanelDisabledCorePlaceholder() {
         when(phm.getRegisteredBentoBoxPlaceholders()).thenReturn(Set.of("version"));
         when(phm.isPlaceholderEnabled("version")).thenReturn(false);
 
@@ -191,7 +191,7 @@ public class PlaceholderListPanelTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOpenPanelDisabledAddonPlaceholder() {
+    void testOpenPanelDisabledAddonPlaceholder() {
         when(phm.getRegisteredPlaceholders(addon)).thenReturn(Set.of("island_level"));
         when(phm.isPlaceholderEnabled(addon, "island_level")).thenReturn(false);
 
@@ -200,7 +200,7 @@ public class PlaceholderListPanelTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOpenPanelLongDescription() {
+    void testOpenPanelLongDescription() {
         String longDesc = "This is a very long description that should definitely exceed the "
                 + "thirty-eight character line width limit and therefore be wrapped across "
                 + "multiple lines when rendered in the panel lore.";
@@ -211,7 +211,7 @@ public class PlaceholderListPanelTest extends CommonTestSetup {
     }
 
     @Test
-    public void testAddonExpansionId() {
+    void testAddonExpansionId() {
         when(phm.getRegisteredPlaceholders(addon)).thenReturn(Set.of("island_level"));
 
         assertDoesNotThrow(() -> PlaceholderListPanel.openPanel(command, user, addon));
@@ -220,7 +220,7 @@ public class PlaceholderListPanelTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOpenPanelManyPlaceholders() {
+    void testOpenPanelManyPlaceholders() {
         Set<String> keys = new java.util.LinkedHashSet<>();
         for (int i = 1; i <= 35; i++) {
             keys.add("placeholder_key_x" + i);
@@ -231,7 +231,7 @@ public class PlaceholderListPanelTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOpenPanelSingleNumericSuffix() {
+    void testOpenPanelSingleNumericSuffix() {
         when(phm.getRegisteredBentoBoxPlaceholders()).thenReturn(Set.of("island_level_1"));
 
         assertDoesNotThrow(() -> PlaceholderListPanel.openPanel(command, user, null));

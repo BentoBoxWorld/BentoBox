@@ -166,6 +166,11 @@ commands:
         confirmation: 您確定要設置[name]在[xyz]上成為[prefix_island]的所有者嗎？
         success: '&a已將&b[name]&a提升為島主。'
         extra-islands: 警告：該玩家現在擁有[number]島。這是設置或perms所允許的要多：[max]。
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: 島嶼範圍管理命令
       invalid-value:
@@ -233,6 +238,9 @@ commands:
       team-members-title: 隊伍成員：
       team-owner-format: '&a[name] [rank]'
       team-member-format: '&b[name] [rank]'
+      max-team-size: '最大隊伍大小：[number]'
+      max-coop-size: '最大合作大小：[number]'
+      max-trusted-size: '最大信任大小：[number]'
       island-protection-center: '保護範圍中心: [xyz]'
       island-center: '島嶼中心: [xyz]'
       island-coords: 島嶼邊界：[xz1] 至 [xz2]
@@ -451,6 +459,8 @@ commands:
           &a Shift +/-100
         no-cost: 免費
         cost-amount: '費用: [cost]'
+        next-page: '&f 下一頁'
+        previous-page: '&f 上一頁'
     resetflags:
       parameters: '[旗幟]'
       description: 將所有島嶼的保護標志設置為 config.yml 中默認的狀態
@@ -633,6 +643,7 @@ commands:
       home-set: '&6您的島嶼傳送點已經被設置到您的當前位置。'
       homes-are: '&6您的島嶼傳送點有'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a點擊傳送！'
       nether:
         not-allowed: '&c您無法在地獄設置您的家。'
         confirmation: '&c您確定要在地獄設置您的家嗎?'
@@ -880,6 +891,11 @@ commands:
       not-on-island: '&c該玩家不在您的島上！'
       player-expelled-you: '&c您被 &b[name] &c驅逐出他的島嶼！'
       success: '&a已把 &b[name] &a從您的島上驅逐出去。'
+    lock:
+      description: 鎖定或解鎖您的[prefix_island]
+      locked: '&a您的[prefix_island]現已鎖定。'
+      unlocked: '&a您的[prefix_island]現已解鎖。'
+      you-are-locked-out: '&c此[prefix_island]現已鎖定。您被驅逐了。'
 ranks:
   owner: 島主
   sub-owner: 副島主
@@ -1352,7 +1368,8 @@ protection:
         &c注意： 如果黑曜石附近2格範圍內還有
         &c其它黑曜石，則不能把黑曜石變回熔岩
       scooping: '&a已將黑曜石變回熔岩。 下次請小心！'
-      obsidian-nearby: '&c附近有其它黑曜石， 這個黑曜石不能變回熔岩。'
+      cooldown: '&c你必須等待一段時間才能再次收集黑曜石。'
+      obsidian-nearby: '&c附近有其它黑曜石， 這個黑曜石不能變回熔岩。 ([radius])'
     OFFLINE_GROWTH:
       description: |-
         &7允許/禁止 所有成員都已離線
@@ -1515,6 +1532,13 @@ protection:
         &a 防止玩家失去他們的物品和
         &a 經驗，只適用於他們死在了
         &a 他們是游客的島嶼。
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: 觸發突襲
       description: 設置觸發突襲所需的島嶼最低等級
@@ -1524,6 +1548,13 @@ protection:
       description: |-
         &a 允许/禁止 非玩家實體
         &a 使用傳送門，前往其他世界
+    WIND_CHARGE:
+      name: 風彈
+      description: |-
+        &a 切換風彈的使用。
+        &a 如果禁用，訪客將無法
+        &a 在該島嶼上使用風彈。
+      hint: 風彈使用已禁用
     WITHER_DAMAGE:
       name: '&a&l凋零傷害'
       description: |-
@@ -1541,6 +1572,7 @@ protection:
         &7和TNT礦車破壞方塊和實體
       name: '&a&l世界TNT傷害'
   locked: '&c本島嶼已被鎖定!'
+  locked-island-bypass: '&6 本[prefix_island]已被鎖定，但您有權限繞過。'
   protected: '&c島嶼保護：[description]'
   world-protected: '&c世界保護: [description].'
   spawn-protected: '&c生成保護：[description]'

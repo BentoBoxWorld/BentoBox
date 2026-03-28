@@ -35,7 +35,7 @@ import world.bentobox.bentobox.CommonTestSetup;
  * @author tastybento
  *
  */
-public class BreedingListenerTest extends CommonTestSetup {
+class BreedingListenerTest extends CommonTestSetup {
 
     private ItemStack itemInMainHand;
     private ItemStack itemInOffHand;
@@ -82,7 +82,7 @@ public class BreedingListenerTest extends CommonTestSetup {
      * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractNotAnimal() {
+    void testOnPlayerInteractNotAnimal() {
         Entity clickedEntity = mock(Entity.class);
         Vector position = new Vector(0,0,0);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position);
@@ -94,7 +94,7 @@ public class BreedingListenerTest extends CommonTestSetup {
      * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractAnimalNothingInMainHand() {
+    void testOnPlayerInteractAnimalNothingInMainHand() {
         Animals clickedEntity = mock(Animals.class);
         Vector position = new Vector(0,0,0);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position);
@@ -106,7 +106,7 @@ public class BreedingListenerTest extends CommonTestSetup {
      * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractAnimalNothingInOffHand() {
+    void testOnPlayerInteractAnimalNothingInOffHand() {
         Animals clickedEntity = mock(Animals.class);
         Vector position = new Vector(0,0,0);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(mockPlayer, clickedEntity, position, EquipmentSlot.OFF_HAND);
@@ -119,7 +119,7 @@ public class BreedingListenerTest extends CommonTestSetup {
      * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractAnimalBreedingFoodInMainHandNotRightWorld() {
+    void testOnPlayerInteractAnimalBreedingFoodInMainHandNotRightWorld() {
         Animals clickedEntity = mock(Animals.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(ENTITY_TYPE);
@@ -143,7 +143,7 @@ public class BreedingListenerTest extends CommonTestSetup {
      * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractAnimalBreedingFoodInMainHand() {
+    void testOnPlayerInteractAnimalBreedingFoodInMainHand() {
         Animals clickedEntity = mock(Animals.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.COW);
@@ -165,7 +165,7 @@ public class BreedingListenerTest extends CommonTestSetup {
      * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractAnimalBreedingFoodInOffHandNotRightWorld() {
+    void testOnPlayerInteractAnimalBreedingFoodInOffHandNotRightWorld() {
         Animals clickedEntity = mock(Animals.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(iwm.inWorld(any(World.class))).thenReturn(false);
@@ -188,7 +188,7 @@ public class BreedingListenerTest extends CommonTestSetup {
      * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractAnimalBreedingFoodInOffHand() {
+    void testOnPlayerInteractAnimalBreedingFoodInOffHand() {
         Animals clickedEntity = mock(Animals.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(ENTITY_TYPE);
@@ -206,7 +206,7 @@ public class BreedingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerIntereactAnimalBreedingWrongFood() {
+    void testOnPlayerIntereactAnimalBreedingWrongFood() {
         Animals clickedEntity = mock(Animals.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.COW);

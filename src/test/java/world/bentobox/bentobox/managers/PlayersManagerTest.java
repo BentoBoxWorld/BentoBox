@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Assertions;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -57,7 +59,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class PlayersManagerTest extends CommonTestSetup {
+class PlayersManagerTest extends CommonTestSetup {
 
     private AbstractDatabaseHandler<Players> playerHandler;
     private AbstractDatabaseHandler<Names> namesHandler;
@@ -251,7 +253,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#addDeath(org.bukkit.World, java.util.UUID)}.
      */
     @Test
-    public void testAddDeath() {
+    void testAddDeath() {
         int deaths = pm.getDeaths(world, uuid);
         pm.addDeath(world, uuid);
         assertEquals(deaths + 1, pm.getDeaths(world, uuid));
@@ -262,7 +264,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#addReset(org.bukkit.World, java.util.UUID)}.
      */
     @Test
-    public void testAddReset() {
+    void testAddReset() {
         int resets = pm.getResets(world, uuid);
         pm.addReset(world, uuid);
         assertEquals(resets + 1, pm.getResets(world, uuid));
@@ -273,7 +275,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#cleanLeavingPlayer(World, User, boolean)}.
      */
     @Test
-    public void testCleanLeavingPlayerKicked() {
+    void testCleanLeavingPlayerKicked() {
         // Player is kicked
         pm.cleanLeavingPlayer(world, user, true, island);
         // Tamed animals
@@ -296,7 +298,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#cleanLeavingPlayer(World, User, boolean)}.
      */
     @Test
-    public void testCleanLeavingPlayerKickedOffline() {
+    void testCleanLeavingPlayerKickedOffline() {
         when(user.isOnline()).thenReturn(false);
         // Player is kicked
         pm.cleanLeavingPlayer(world, user, true, island);
@@ -321,7 +323,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#cleanLeavingPlayer(World, User, boolean)}.
      */
     @Test
-    public void testCleanLeavingPlayerLeave() {
+    void testCleanLeavingPlayerLeave() {
         pm.cleanLeavingPlayer(world, user, false, island);
         // Tamed animals
         verify(tamed).setOwner(null);
@@ -344,7 +346,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getDeaths(org.bukkit.World, java.util.UUID)}.
      */
     @Test
-    public void testGetDeaths() {
+    void testGetDeaths() {
         assertEquals(0, pm.getDeaths(world, uuid));
     }
 
@@ -353,7 +355,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getLocale(java.util.UUID)}.
      */
     @Test
-    public void testGetLocale() {
+    void testGetLocale() {
         assertTrue(pm.getLocale(uuid).isEmpty());
     }
 
@@ -362,7 +364,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
      */
     @Test
-    public void testGetNameNull()  {
+    void testGetNameNull()  {
         // Null UUID
         assertTrue(pm.getName(null).isEmpty());
     }
@@ -372,7 +374,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
      */
     @Test
-    public void testGetNameKnown()  {
+    void testGetNameKnown()  {
         pm.setPlayerName(user);
         // Known UUID
         assertEquals("tastybento", pm.getName(uuid));
@@ -383,7 +385,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
      */
     @Test
-    public void testGetNameUnknown()  {
+    void testGetNameUnknown()  {
         assertEquals("", pm.getName(notThere));
     }
 
@@ -392,7 +394,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getPlayers()}.
      */
     @Test
-    public void testGetPlayers() {
+    void testGetPlayers() {
         assertTrue(pm.getPlayers().isEmpty());
     }
 
@@ -401,7 +403,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getResets(org.bukkit.World, java.util.UUID)}.
      */
     @Test
-    public void testGetResets() {
+    void testGetResets() {
         assertEquals(0, pm.getResets(world, uuid));
     }
 
@@ -410,7 +412,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getResetsLeft(org.bukkit.World, java.util.UUID)}.
      */
     @Test
-    public void testGetResetsLeft() {
+    void testGetResetsLeft() {
         assertEquals(0, pm.getResetsLeft(world, uuid));
     }
 
@@ -419,7 +421,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#setResets(World, UUID, int)}.
      */
     @Test
-    public void testGetSetResetsLeft()  {
+    void testGetSetResetsLeft()  {
         // Add a player
         pm.getPlayer(uuid);
         assertEquals(0, pm.getResets(world, uuid));
@@ -432,12 +434,12 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getUser(java.lang.String)}.
      */
     @Test
-    public void testGetUserString()  {
-        User user = pm.getUser("random");
-        assertNull(user);
+    void testGetUserString()  {
+        User localUser = pm.getUser("random");
+        assertNull(localUser);
         pm.getPlayer(uuid);
-        user = pm.getUser("tastybento");
-        assertEquals("tastybento", user.getName());
+        localUser = pm.getUser("tastybento");
+        assertEquals("tastybento", localUser.getName());
     }
 
     /**
@@ -445,9 +447,9 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getUser(java.util.UUID)}.
      */
     @Test
-    public void testGetUserUUID() {
-        UUID uuid = pm.getUUID("unknown");
-        assertNull(uuid);
+    void testGetUserUUID() {
+        UUID localUuid = pm.getUUID("unknown");
+        assertNull(localUuid);
     }
 
     /**
@@ -455,7 +457,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
      */
     @Test
-    public void testGetUUID() {
+    void testGetUUID() {
         pm.getPlayer(uuid);
         assertEquals(uuid, pm.getUUID("tastybento"));
         assertNull(pm.getUUID("unknown"));
@@ -466,7 +468,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
      */
     @Test
-    public void testGetUUIDOfflinePlayer() {
+    void testGetUUIDOfflinePlayer() {
         pm.setHandler(db);
         // Add a player to the cache
         pm.getPlayer(uuid);
@@ -479,7 +481,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
      */
     @Test
-    public void testGetUUIDUnknownPlayer() {
+    void testGetUUIDUnknownPlayer() {
         pm.setHandler(db);
         // Add a player to the cache
         pm.getPlayer(uuid);
@@ -492,7 +494,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
      */
     @Test
-    public void testGetUUIDwithUUID() {
+    void testGetUUIDwithUUID() {
         assertEquals(uuid, pm.getUUID(uuid.toString()));
     }
 
@@ -501,7 +503,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#isInTeleport(java.util.UUID)}.
      */
     @Test
-    public void testIsInTeleport() {
+    void testIsInTeleport() {
         assertFalse(pm.isInTeleport(uuid));
     }
 
@@ -510,7 +512,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#isKnown(java.util.UUID)}.
      */
     @Test
-    public void testIsKnown() {
+    void testIsKnown() {
 
         pm.getPlayer(uuid);
         pm.getPlayer(notUUID);
@@ -525,7 +527,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#setHandler(Database)}
      */
     @Test
-    public void testSetHandler() {
+    void testSetHandler() {
         pm.setHandler(db);
     }
 
@@ -534,7 +536,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#PlayersManager(world.bentobox.bentobox.BentoBox)}.
      */
     @Test
-    public void testPlayersManager() {
+    void testPlayersManager() {
         assertNotNull(pm);
     }
 
@@ -543,7 +545,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#removeInTeleport(java.util.UUID)}.
      */
     @Test
-    public void testRemoveInTeleport() {
+    void testRemoveInTeleport() {
         pm.setInTeleport(uuid);
         assertTrue(pm.isInTeleport(uuid));
         pm.removeInTeleport(uuid);
@@ -555,7 +557,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#removePlayer(org.bukkit.entity.Player)}.
      */
     @Test
-    public void testRemovePlayer() {
+    void testRemovePlayer() {
         this.testGetUUID();
         pm.removePlayer(p);
         assertNull(pm.getUUID("tastybeto"));
@@ -566,7 +568,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#setPlayerName(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testSetandGetPlayerName() {
+    void testSetandGetPlayerName() {
         pm.setHandler(db);
         // Add a player
         pm.getPlayer(uuid);
@@ -580,7 +582,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#setDeaths(org.bukkit.World, java.util.UUID, int)}.
      */
     @Test
-    public void testSetDeaths() {
+    void testSetDeaths() {
         pm.setDeaths(world, uuid, 50);
         assertEquals(50, pm.getDeaths(world, uuid));
 
@@ -591,7 +593,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#setInTeleport(java.util.UUID)}.
      */
     @Test
-    public void testSetInTeleport() {
+    void testSetInTeleport() {
         assertFalse(pm.isInTeleport(uuid));
         pm.setInTeleport(uuid);
         assertTrue(pm.isInTeleport(uuid));
@@ -602,7 +604,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#setLocale(java.util.UUID, java.lang.String)}.
      */
     @Test
-    public void testSetLocale() {
+    void testSetLocale() {
         pm.setLocale(uuid, "en-UK");
         assertEquals("en-UK", pm.getLocale(uuid));
     }
@@ -610,13 +612,10 @@ public class PlayersManagerTest extends CommonTestSetup {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#setPlayerName(world.bentobox.bentobox.api.user.User)}.
-     * @throws IntrospectionException 
-     * @throws InvocationTargetException 
-     * @throws IllegalAccessException 
      */
     @Test
-    public void testSetPlayerName() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-        pm.setPlayerName(user).thenAccept(result -> assertTrue(result));
+    void testSetPlayerName() {
+        pm.setPlayerName(user).thenAccept(Assertions::assertTrue);
     }
 
     /**
@@ -624,7 +623,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.managers.PlayersManager#setResets(org.bukkit.World, java.util.UUID, int)}.
      */
     @Test
-    public void testSetResets() {
+    void testSetResets() {
         pm.setResets(world, uuid, 33);
         assertEquals(33, pm.getResets(world, uuid));
     }
@@ -633,16 +632,16 @@ public class PlayersManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getPlayer(java.util.UUID)}.
      */
     @Test
-    public void testGetPlayer() {
-        Players p = pm.getPlayer(uuid);
-        assertNotNull(p);
+    void testGetPlayer() {
+        Players localPlayer = pm.getPlayer(uuid);
+        assertNotNull(localPlayer);
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#loadPlayer(java.util.UUID)}.
      */
     @Test
-    public void testLoadPlayer() {
+    void testLoadPlayer() {
         assertNotNull(pm.loadPlayer(uuid));
     }
 
@@ -650,7 +649,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
      */
     @Test
-    public void testGetName() {
+    void testGetName() {
         assertEquals("tastybento", pm.getName(uuid));
     }
 
@@ -658,7 +657,7 @@ public class PlayersManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#cleanLeavingPlayer(org.bukkit.World, world.bentobox.bentobox.api.user.User, boolean, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testCleanLeavingPlayer() {
+    void testCleanLeavingPlayer() {
         when(user.isOnline()).thenReturn(true);
         when(iwm.isOnLeaveResetEnderChest(world)).thenReturn(true);
         when(iwm.isOnLeaveResetInventory(world)).thenReturn(true);
@@ -679,13 +678,10 @@ public class PlayersManagerTest extends CommonTestSetup {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#savePlayer(java.util.UUID)}.
-     * @throws IntrospectionException 
-     * @throws InvocationTargetException 
-     * @throws IllegalAccessException 
      */
     @Test
-    public void testSavePlayer() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-        pm.savePlayer(uuid).thenAccept(result -> assertTrue(result));
+    void testSavePlayer() {
+        pm.savePlayer(uuid).thenAccept(Assertions::assertTrue);
     }
 
 }

@@ -189,6 +189,11 @@ commands:
         extra-islands: >-
           &c Avertisment: acest jucător deține acum [număr] insule. Acest lucru
           este mai mult decât permis de setări sau perms: [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: comanda de administrare a insulei
       invalid-value:
@@ -270,6 +275,9 @@ commands:
       team-members-title: 'Membrii echipei:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Dimensiune maximă echipă: [number]'
+      max-coop-size: 'Dimensiune maximă coop: [number]'
+      max-trusted-size: 'Dimensiune maximă de încredere: [number]'
       island-protection-center: 'Centrul zonei de protecție: [xyz]'
       island-center: 'Centrul insulei: [xyz]'
       island-coords: 'Coordonatele insulei: [xz1] la [xz2]'
@@ -504,6 +512,8 @@ commands:
           &a Shift pentru +/-100
         no-cost: Gratuit
         cost-amount: 'Cost: [cost]'
+        next-page: '&f Pagina următoare'
+        previous-page: '&f Pagina anterioară'
     resetflags:
       parameters: '[pavilion]'
       description: >-
@@ -715,6 +725,7 @@ commands:
       home-set: '&6 Casa insulei dvs. a fost setată la locația dvs. curentă.'
       homes-are: 'Casele din &6 Island sunt:'
       home-list-syntax: '&6 [nume]'
+      click-to-teleport: '&a Faceți clic pentru a vă teleporta!'
       nether:
         not-allowed: '&c Nu aveți voie să vă stabiliți casa în Olanda.'
         confirmation: '&c Sunteți sigur că doriți să vă stabiliți casa în Olanda?'
@@ -984,6 +995,11 @@ commands:
       not-on-island: '&c Acest jucător nu se află pe insula ta!'
       player-expelled-you: '&b [name] &c v-a expulzat de pe insulă!'
       success: '&a Ați expulzat &b [name] &a din insulă.'
+    lock:
+      description: blochează sau deblochează [prefix_island] ta
+      locked: '&a [prefix_island] ta este acum blocată.'
+      unlocked: '&a [prefix_island] ta este acum deblocată.'
+      you-are-locked-out: '&c Această [prefix_island] este acum blocată. Ați fost expulzat/ă.'
 ranks:
   owner: Proprietar
   sub-owner: Sub-proprietar
@@ -1511,9 +1527,10 @@ protection:
         &a dacă există alte blocuri de obsidian
         &a pe o rază de 2 blocuri.
       scooping: '&a Obsidian în schimbare în lavă. Fii atent data viitoare!'
+      cooldown: '&c Trebuie să așteptați înainte de a colecta un alt bloc de obsidian.'
       obsidian-nearby: >-
         &c Există blocuri de obsidian în apropiere, nu puteți scoate acest bloc
-        în lavă.
+        în lavă. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Când este dezactivat, plantele
@@ -1706,6 +1723,13 @@ protection:
         &o
         Membrii &a Island încă își pierd obiectele
         &a dacă mor pe propria lor insulă!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Declanșare raid
       description: Setează rangul minim al insulei necesar pentru a declanșa un raid
@@ -1716,6 +1740,13 @@ protection:
         &a Comută dacă entitățile (non-jucător) pot
         &a utilizați portaluri pentru a vă teleporta
         &a dimensiuni
+    WIND_CHARGE:
+      name: Încărcătură de vânt
+      description: |-
+        &a Comută utilizarea încărcăturilor de vânt.
+        &a Dacă este dezactivat, vizitatorii nu pot
+        &a folosi încărcături de vânt pe această insulă.
+      hint: Utilizarea încărcăturii de vânt dezactivată
     WITHER_DAMAGE:
       name: Comutați daunele ofilite
       description: |-
@@ -1734,6 +1765,7 @@ protection:
         &o entități în afara limitelor insulei.
       name: Daune TNT mondiale
   locked: '&c Această insulă este blocată!'
+  locked-island-bypass: '&6 Această [prefix_island] este blocată, dar ai permisiunea de a o ocoli.'
   protected: '&c Insula protejată: [description].'
   world-protected: '&c Protecție mondială: [description].'
   spawn-protected: '&c Spawn protejat: [description].'

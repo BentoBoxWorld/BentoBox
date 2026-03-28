@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -71,6 +73,7 @@ public class IslandsManager {
     private static final String SETSPAWN = "bentobox-setspawn";
 
     private final BentoBox plugin;
+    private final Random rand = new Random();
 
     private final Map<World, Island> spawns = new ConcurrentHashMap<>();
 
@@ -149,7 +152,7 @@ public class IslandsManager {
      * 
      * @param h - handler
      */
-    public void setHandler(@NonNull Database<Island> h) {
+    public static void setHandler(@NonNull Database<Island> h) {
         handler = h;
     }
 
@@ -469,7 +472,11 @@ public class IslandsManager {
         Player player = Bukkit.getPlayer(uuid);
         if (player != null && player.isOnline()) {
             // This island must be in this world and the player must be on the team
-            Optional<Island> currentIsland = getIslandAt(player.getLocation())
+            Location playerLocation = player.getLocation();
+            if (playerLocation == null) {
+                return islandCache.getIsland(world, uuid);
+            }
+            Optional<Island> currentIsland = getIslandAt(playerLocation)
                     .filter(is -> world.equals(is.getWorld()) && is.inTeam(uuid));
 
             if (currentIsland.isPresent()) {
@@ -1516,24 +1523,35 @@ public class IslandsManager {
 
     /**
      * Save the all the cached islands to the database
-     * 
+     *
      * @param schedule true if we should let the task run over multiple ticks to
      *                 reduce lag spikes
      */
     public void saveAll(boolean schedule) {
         if (!schedule) {
-            for (Island island : islandCache.getCachedIslands()) {
-                if (island.isChanged()) {
-                    try {
-                        saveIsland(island);
-                    } catch (Exception e) {
-                        plugin.logError("Could not save island to database when running sync! " + e.getMessage());
-                    }
-                }
-            }
-            return;
+            saveAllSync();
+        } else {
+            saveAllScheduled();
         }
+    }
 
+    private void trySaveIsland(Island island) {
+        if (island.isChanged()) {
+            try {
+                saveIsland(island);
+            } catch (Exception e) {
+                plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+            }
+        }
+    }
+
+    private void saveAllSync() {
+        for (Island island : islandCache.getCachedIslands()) {
+            trySaveIsland(island);
+        }
+    }
+
+    private void saveAllScheduled() {
         isSaveTaskRunning = true;
         Queue<Island> queue = new LinkedList<>(islandCache.getCachedIslands());
         new BukkitRunnable() {
@@ -1546,13 +1564,7 @@ public class IslandsManager {
                         cancel();
                         return;
                     }
-                    if (island.isChanged()) {
-                        try {
-                            saveIsland(island);
-                        } catch (Exception e) {
-                            plugin.logError("Could not save island to database when running sync! " + e.getMessage());
-                        }
-                    }
+                    trySaveIsland(island);
                 }
             }
         }.runTaskTimer(plugin, 0, 1);
@@ -1693,7 +1705,30 @@ public class IslandsManager {
                 .filter(en -> Util.isHostileEntity(en)
                         && !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType())
                         && !(en instanceof PufferFish) && ((LivingEntity) en).getRemoveWhenFarAway())
-                .filter(en -> en.customName() == null).forEach(Entity::remove);
+                .filter(en -> en.customName() == null)
+                .forEach(e -> flingOrKill(e, loc));
+    }
+
+    private void flingOrKill(Entity e, Location loc) {
+        if (plugin.getSettings().isTeleportRemoveMobs()) {
+            e.remove();
+            return;
+        }
+        Vector entVec = e.getLocation().toVector();
+        double dist = plugin.getSettings().getFlingback() - entVec.distance(loc.toVector());
+        if (dist < 1) {
+            dist = 1;
+        }
+        Vector direction = entVec.subtract(loc.toVector());
+        if (direction.lengthSquared() < 3) {
+            // On top of us
+            direction.add(new Vector(rand.nextDouble(), 0, rand.nextDouble()));
+        }
+        // Add a bit of lift
+        direction.add(new Vector(0, rand.nextDouble(), 0));
+        direction.multiply(dist);
+        loc.getWorld().playSound(e, Sound.ENTITY_ILLUSIONER_HURT, 1F, 5F);
+        e.setVelocity(direction);
     }
 
     /**
@@ -1850,17 +1885,41 @@ public class IslandsManager {
         Location loc = island.getHome("");
         user.sendMessage("commands.island.go.teleport");
         goingHome.add(user.getUniqueId());
-        readyPlayer(user.getPlayer());
-        return Util.teleportAsync(Objects.requireNonNull(user.getPlayer()), loc).thenAccept(b -> {
-            // Only run the commands if the player is successfully teleported
-            if (b != null && b) {
-                teleported(island.getWorld(), user, "", newIsland, island);
-                this.setPrimaryIsland(user.getUniqueId(), island);
+        Player player = Objects.requireNonNull(user.getPlayer());
+        readyPlayer(player);
+        CompletableFuture<Void> result = new CompletableFuture<>();
+        isSafeLocationAsync(loc).thenAccept(safe -> {
+            if (Boolean.TRUE.equals(safe)) {
+                Util.teleportAsync(player, loc).thenAccept(b -> {
+                    if (b != null && b) {
+                        teleported(island.getWorld(), user, "", newIsland, island);
+                        this.setPrimaryIsland(user.getUniqueId(), island);
+                    } else {
+                        goingHome.remove(user.getUniqueId());
+                    }
+                    result.complete(null);
+                });
             } else {
-                // Remove from mid-teleport set
-                goingHome.remove(user.getUniqueId());
+                // Location is not safe, use SafeSpotTeleport to find a safe spot
+                new SafeSpotTeleport.Builder(plugin).entity(player).island(island)
+                        .thenRun(() -> {
+                            teleported(island.getWorld(), user, "", newIsland, island);
+                            this.setPrimaryIsland(user.getUniqueId(), island);
+                        })
+                        .ifFail(() -> {
+                            plugin.logError(user.getName()
+                                    + " could not be teleported to home on island "
+                                    + island.getCenter());
+                            goingHome.remove(user.getUniqueId());
+                        }).buildFuture().thenAccept(b -> result.complete(null));
             }
+        }).exceptionally(e -> {
+            plugin.logError("Error checking safe location for " + user.getName() + ": " + e.getMessage());
+            goingHome.remove(user.getUniqueId());
+            result.complete(null);
+            return null;
         });
+        return result;
     }
 
 }

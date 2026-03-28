@@ -37,7 +37,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  * @author tastybento
  *
  */
-public class DelayedTeleportCommandTest extends CommonTestSetup {
+class DelayedTeleportCommandTest extends CommonTestSetup {
 
     private static final String HELLO = "hello";
 
@@ -142,7 +142,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerMoveNoCooldown() {
+    void testOnPlayerMoveNoCooldown() {
         PlayerMoveEvent e = new PlayerMoveEvent(player, from, to);
         dtc.onPlayerMove(e);
         verify(notifier, never()).notify(any(), anyString());
@@ -152,7 +152,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerMoveCommandCancelled() {
+    void testOnPlayerMoveCommandCancelled() {
         testDelayCommandUserStringRunnableStandStill();
         PlayerMoveEvent e = new PlayerMoveEvent(player, from, to);
         dtc.onPlayerMove(e);
@@ -163,7 +163,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerMoveHeadMove() {
+    void testOnPlayerMoveHeadMove() {
         testDelayCommandUserStringRunnableStandStill();
         PlayerMoveEvent e = new PlayerMoveEvent(player, from, from);
         dtc.onPlayerMove(e);
@@ -174,7 +174,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerTeleport() {
+    void testOnPlayerTeleport() {
         testDelayCommandUserStringRunnableStandStill();
         PlayerTeleportEvent e = new PlayerTeleportEvent(player, from, to);
         dtc.onPlayerTeleport(e);
@@ -185,7 +185,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#DelayedTeleportCommand(world.bentobox.bentobox.api.addons.Addon, java.lang.String, java.lang.String[])}.
      */
     @Test
-    public void testDelayedTeleportCommandAddonStringStringArray() {
+    void testDelayedTeleportCommandAddonStringStringArray() {
         verify(pim).registerEvents(dtc, plugin);
     }
 
@@ -193,7 +193,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnableZeroDelay() {
+    void testDelayCommandUserStringRunnableZeroDelay() {
         when(settings.getDelayTime()).thenReturn(0);
         dtc.delayCommand(user, HELLO, command);
         verify(sch).runTask(plugin, command);
@@ -203,7 +203,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnableOp() {
+    void testDelayCommandUserStringRunnableOp() {
         when(user.isOp()).thenReturn(true);
         dtc.delayCommand(user, HELLO, command);
         verify(sch).runTask(plugin, command);
@@ -213,7 +213,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnablePermBypassCooldowns() {
+    void testDelayCommandUserStringRunnablePermBypassCooldowns() {
         when(user.hasPermission("nullmod.bypasscooldowns")).thenReturn(true);
         dtc.delayCommand(user, HELLO, command);
         verify(sch).runTask(plugin, command);
@@ -223,7 +223,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnablePermBypassDelay() {
+    void testDelayCommandUserStringRunnablePermBypassDelay() {
         when(user.hasPermission("nullmod.bypassdelays")).thenReturn(true);
         dtc.delayCommand(user, HELLO, command);
         verify(sch).runTask(plugin, command);
@@ -233,7 +233,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnableStandStill() {
+    void testDelayCommandUserStringRunnableStandStill() {
         dtc.delayCommand(user, HELLO, command);
         verify(sch, never()).runTask(plugin, command);
         verify(user).sendRawMessage(HELLO);
@@ -246,7 +246,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnableStandStillDuplicate() {
+    void testDelayCommandUserStringRunnableStandStillDuplicate() {
         dtc.delayCommand(user, HELLO, command);
         dtc.delayCommand(user, HELLO, command);
         verify(user).sendMessage("commands.delay.previous-command-cancelled");
@@ -257,7 +257,7 @@ public class DelayedTeleportCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserRunnable() {
+    void testDelayCommandUserRunnable() {
         dtc.delayCommand(user, command);
         verify(sch, never()).runTask(plugin, command);
         verify(user, never()).sendRawMessage(anyString());

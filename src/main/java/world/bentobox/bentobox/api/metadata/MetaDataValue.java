@@ -46,6 +46,7 @@ public class MetaDataValue {
             case Boolean bo -> booleanValue = bo;
             case String st -> stringValue = st;
             default -> {
+                // Unsupported value type; all fields remain at their default (null/zero) values
             }
         }
     }

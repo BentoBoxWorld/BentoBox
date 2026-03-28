@@ -3,10 +3,12 @@ package world.bentobox.bentobox.listeners.flags.clicklisteners;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -39,6 +41,27 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
             .sorted(Comparator.comparing(EntityType::name))
             .toList();
 
+    /**
+     * A list of projectile entity types (for geo-limiting projectiles)
+     */
+    private static final List<EntityType> PROJECTILE_ENTITY_TYPES = Arrays.stream(EntityType.values())
+            .filter(t -> !t.isAlive())
+            .filter(t -> {
+                Class<?> cls = t.getEntityClass();
+                return cls != null && Projectile.class.isAssignableFrom(cls);
+            })
+            .sorted(Comparator.comparing(EntityType::name))
+            .toList();
+
+    /**
+     * A combined list of living and projectile entity types for the GEO_LIMIT tab
+     */
+    private static final List<EntityType> GEO_LIMIT_ENTITY_TYPES = Stream.concat(
+            LIVING_ENTITY_TYPES.stream(),
+            PROJECTILE_ENTITY_TYPES.stream())
+            .sorted(Comparator.comparing(EntityType::name))
+            .toList();
+
     public enum EntityLimitTabType {
         GEO_LIMIT,
         MOB_LIMIT
@@ -68,7 +91,7 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
         TabbedPanel tp = (TabbedPanel)panel;
         // Convert the slot and active page to an index
         int index = tp.getActivePage() * 36 + slot - 9;
-        EntityType c = LIVING_ENTITY_TYPES.get(index);
+        EntityType c = getEntityTypes().get(index);
         if (type == EntityLimitTabType.MOB_LIMIT) {
             if (plugin.getIWM().getMobLimitSettings(world).contains(c.name())) {
                 plugin.getIWM().getMobLimitSettings(world).remove(c.name());
@@ -108,7 +131,7 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
     @Override
     public List<@Nullable PanelItem> getPanelItems() {
         // Make panel items
-        return LIVING_ENTITY_TYPES.stream().map(c -> getPanelItem(c, user)).toList();
+        return getEntityTypes().stream().map(c -> getPanelItem(c, user)).toList();
     }
 
     @Override
@@ -138,6 +161,16 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
             }
         }
         return pib.build();
+    }
+
+    /**
+     * Returns the list of entity types shown in this tab.
+     * The GEO_LIMIT tab includes both living entities and projectiles;
+     * the MOB_LIMIT tab includes only living entities.
+     * @return list of entity types for this tab
+     */
+    private List<EntityType> getEntityTypes() {
+        return type == EntityLimitTabType.GEO_LIMIT ? GEO_LIMIT_ENTITY_TYPES : LIVING_ENTITY_TYPES;
     }
 
     @Override

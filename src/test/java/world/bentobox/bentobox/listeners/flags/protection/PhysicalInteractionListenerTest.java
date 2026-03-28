@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Cow;
@@ -33,7 +34,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -42,8 +42,7 @@ import world.bentobox.bentobox.CommonTestSetup;
  * @author tastybento
  *
  */
-@Disabled("Issues with NotAMock")
-public class PhysicalInteractionListenerTest extends CommonTestSetup {
+class PhysicalInteractionListenerTest extends CommonTestSetup {
 
     private ItemStack item;
     private Block clickedBlock;
@@ -76,7 +75,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractNotPhysical() {
+    void testOnPlayerInteractNotPhysical() {
         when(clickedBlock.getType()).thenReturn(Material.STONE);
         PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_AIR, item, clickedBlock, BlockFace.UP);
         new PhysicalInteractionListener().onPlayerInteract(e);
@@ -87,7 +86,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractWrongMaterial() {
+    void testOnPlayerInteractWrongMaterial() {
         when(clickedBlock.getType()).thenReturn(Material.STONE);
         PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         new PhysicalInteractionListener().onPlayerInteract(e);
@@ -98,7 +97,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractFarmland() {
+    void testOnPlayerInteractFarmland() {
         when(clickedBlock.getType()).thenReturn(Material.FARMLAND);
         PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
@@ -112,7 +111,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractFarmlandOp() {
+    void testOnPlayerInteractFarmlandOp() {
         when(mockPlayer.isOp()).thenReturn(true);
         when(clickedBlock.getType()).thenReturn(Material.FARMLAND);
         PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
@@ -125,7 +124,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractFarmlandPermission() {
+    void testOnPlayerInteractFarmlandPermission() {
         when(mockPlayer.hasPermission(anyString())).thenReturn(true);
         when(clickedBlock.getType()).thenReturn(Material.FARMLAND);
         PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
@@ -138,7 +137,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractTurtleEgg() {
+    void testOnPlayerInteractTurtleEgg() {
         when(clickedBlock.getType()).thenReturn(Material.TURTLE_EGG);
         PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
@@ -152,7 +151,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnPlayerInteractPressurePlate() {
+    void testOnPlayerInteractPressurePlate() {
         Arrays.stream(Material.values()).filter(m -> m.name().contains("PRESSURE_PLATE")).forEach(p -> {
             when(clickedBlock.getType()).thenReturn(p);
             PlayerInteractEvent e  = new PlayerInteractEvent(mockPlayer, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
@@ -167,7 +166,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
-    public void testOnProjectileHitNotProjectile() {
+    void testOnProjectileHitNotProjectile() {
         Entity entity = mock(Entity.class);
         Block block = mock(Block.class);
         EntityInteractEvent e = new EntityInteractEvent(entity, block);
@@ -180,7 +179,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
-    public void testOnProjectileHitProjectileBlockNull() {
+    void testOnProjectileHitProjectileBlockNull() {
         Projectile entity = mock(Projectile.class);
         ProjectileSource source = mock(Creeper.class);
         when(entity.getShooter()).thenReturn(source);
@@ -195,7 +194,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
-    public void testOnProjectileHitProjectile() {
+    void testOnProjectileHitProjectile() {
         Projectile entity = mock(Projectile.class);
         ProjectileSource source = mock(Creeper.class);
         when(entity.getShooter()).thenReturn(source);
@@ -210,15 +209,16 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
-    public void testOnProjectileHitProjectilePlayer() {
+    void testOnProjectileHitProjectilePlayer() {
         Projectile entity = mock(Projectile.class);
         ProjectileSource source = mockPlayer ;
         when(entity.getShooter()).thenReturn(source);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
+        // The listener checks Tag.WOODEN_BUTTONS and Tag.PRESSURE_PLATES (not all buttons)
         Arrays.stream(Material.values())
         .filter(m -> !m.name().contains("LEGACY"))
-        .filter(m -> m.name().contains("PRESSURE_PLATE") || m.name().contains("BUTTON")).forEach(p -> {
+        .filter(m -> Tag.WOODEN_BUTTONS.isTagged(m) || Tag.PRESSURE_PLATES.isTagged(m)).forEach(p -> {
             when(block.getType()).thenReturn(p);
             EntityInteractEvent e = new EntityInteractEvent(entity, block);
             PhysicalInteractionListener i = new PhysicalInteractionListener();
@@ -231,7 +231,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onProjectileExplode(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnProjectileExplodeNotProjectile() {
+    void testOnProjectileExplodeNotProjectile() {
         Entity entity = mock(Entity.class);
         List<Block> blocks = new ArrayList<>();
         EntityExplodeEvent e = getExplodeEvent(entity, location, blocks);
@@ -244,7 +244,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onProjectileExplode(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnProjectileExplodeProjectileNoPlayer() {
+    void testOnProjectileExplodeProjectileNoPlayer() {
         Projectile entity = mock(Projectile.class);
         ProjectileSource source = mock(Creeper.class);
         when(entity.getShooter()).thenReturn(source);
@@ -259,7 +259,7 @@ public class PhysicalInteractionListenerTest extends CommonTestSetup {
      * Test method for {@link PhysicalInteractionListener#onProjectileExplode(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnProjectileExplodeProjectilePlayer() {
+    void testOnProjectileExplodeProjectilePlayer() {
         Projectile entity = mock(Projectile.class);
         when(entity.getShooter()).thenReturn(mockPlayer);
         List<Block> blocks = new ArrayList<>();

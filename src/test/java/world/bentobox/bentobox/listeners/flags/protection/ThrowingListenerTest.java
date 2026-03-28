@@ -21,7 +21,7 @@ import world.bentobox.bentobox.CommonTestSetup;
  * @author tastybento
  *
  */
-public class ThrowingListenerTest extends CommonTestSetup {
+class ThrowingListenerTest extends CommonTestSetup {
 
     private ThrowingListener tl;
 
@@ -45,7 +45,7 @@ public class ThrowingListenerTest extends CommonTestSetup {
      * Test method for {@link ThrowingListener#onPlayerThrowPotion(org.bukkit.event.entity.ProjectileLaunchEvent)}.
      */
     @Test
-    public void testOnPlayerThrowPotion() {
+    void testOnPlayerThrowPotion() {
         ThrownPotion entity = mock(ThrownPotion.class);
         when(entity.getLocation()).thenReturn(location);
         when(entity.getShooter()).thenReturn(mockPlayer);
@@ -59,7 +59,7 @@ public class ThrowingListenerTest extends CommonTestSetup {
      * Test method for {@link ThrowingListener#onPlayerThrowPotion(org.bukkit.event.entity.ProjectileLaunchEvent)}.
      */
     @Test
-    public void testOnPlayerThrowPotionNotAllowed() {
+    void testOnPlayerThrowPotionNotAllowed() {
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
         ThrownPotion entity = mock(ThrownPotion.class);
         when(entity.getLocation()).thenReturn(location);
@@ -74,7 +74,7 @@ public class ThrowingListenerTest extends CommonTestSetup {
      * Test method for {@link ThrowingListener#onPlayerThrowPotion(org.bukkit.event.entity.ProjectileLaunchEvent)}.
      */
     @Test
-    public void testOnPlayerThrowPotionNonHuman() {
+    void testOnPlayerThrowPotionNonHuman() {
         ThrownPotion entity = mock(ThrownPotion.class);
         when(entity.getLocation()).thenReturn(location);
         Witch witch = mock(Witch.class);
@@ -93,7 +93,7 @@ public class ThrowingListenerTest extends CommonTestSetup {
      * Test method for {@link ThrowingListener#onPlayerThrowPotion(org.bukkit.event.entity.ProjectileLaunchEvent)}.
      */
     @Test
-    public void testOnPlayerThrowPotionNotAllowedNonHuman() {
+    void testOnPlayerThrowPotionNotAllowedNonHuman() {
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
         ThrownPotion entity = mock(ThrownPotion.class);
         when(entity.getLocation()).thenReturn(location);

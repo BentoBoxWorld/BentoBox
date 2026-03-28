@@ -184,6 +184,11 @@ commands:
         extra-islands: >-
           &c Brīdinājums: šim spēlētājam tagad pieder [number] salas. Tas ir
           vairāk nekā atļautais limits pēc iestatījumiem vai atļaujām: [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: Admina salas distances komanda
       invalid-value:
@@ -267,6 +272,9 @@ commands:
       team-members-title: 'Komandas biedri:'
       team-owner-format: '&a[name] [rank]'
       team-member-format: '&b[name] [rank]'
+      max-team-size: 'Maksimālais komandas izmērs: [number]'
+      max-coop-size: 'Maksimālais kopā izmērs: [number]'
+      max-trusted-size: 'Maksimālais uzticamo izmērs: [number]'
       island-protection-center: 'Aizsardzības zonas centrs: [xyz]'
       island-center: '[prefix_Island] centrs: [xyz]'
       island-coords: 'Salas kooridinātes: no [xz1] līdz [xz2]'
@@ -499,6 +507,8 @@ commands:
           &a Shift priekš +/-100
         no-cost: Bezmaksas
         cost-amount: 'Izmaksas: [cost]'
+        next-page: '&f Nākamā lapa'
+        previous-page: '&f Iepriekšējā lapa'
     resetflags:
       parameters: '[karogs]'
       description: Atiestatī visu salu noklusējuma karodziņu iestatījumus no config.yml
@@ -695,6 +705,7 @@ commands:
       home-set: '&6Tavas salas mājas punkts uzstādīts šajā punktā.'
       homes-are: '&6 [prefix_Island] mājas ir:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Noklikšķiniet, lai teleportētos!'
       nether:
         not-allowed: '&cTev nav atļaujas uzstādīt mājas punktu Ellē.'
         confirmation: '&cVai tiešām vēlies uzstādīt mājas punktu Ellē?'
@@ -958,6 +969,11 @@ commands:
       not-on-island: '&cŠis spēlētājs nav uz tavas salas!'
       player-expelled-you: '&b[name]&c izraidīja tevi no salas!'
       success: '&aTu izmeti spēlētāju &b[name] &ano savas salas.'
+    lock:
+      description: bloķēt vai atbloķēt savu [prefix_island]
+      locked: '&aTavs [prefix_island] tagad ir bloķēts.'
+      unlocked: '&aTavs [prefix_island] tagad ir atbloķēts.'
+      you-are-locked-out: '&cŠis [prefix_island] tagad ir bloķēts. Tu tiki izraidīts/a.'
 ranks:
   owner: Īpašnieks
   sub-owner: Apakšīpašnieks
@@ -1471,7 +1487,8 @@ protection:
         &aAizsargā iesācējus.
         &aSamazina sākšanas no jauna.
       scooping: '&a Pārvēršot obsidianu atpakaļ lavā. Nākamreiz esi uzmanīgs!'
-      obsidian-nearby: '&c Netālu ir obsidiāna bloki, tu nevar uzsūkt šo bloku lavā.'
+      cooldown: '&c Jums jāgaida, pirms varat uzsūkt vēl vienu obsidiāna bloku.'
+      obsidian-nearby: '&c Netālu ir obsidiāna bloki, tu nevar uzsūkt šo bloku lavā. ([radius])'
     OFFLINE_GROWTH:
       description: |-
         &aKad ir izslēgts, augi neaugs uz
@@ -1692,6 +1709,13 @@ protection:
         &a
         &a [prefix_Island] dalībnieki joprojām zaudē savus priekšmetus
         &a, ja viņi mirst savā [prefix_island]!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Iebrukuma aktivizēšana
       description: Iestata minimālo salas rangu, kas nepieciešams iebrukuma aktivizēšanai
@@ -1702,6 +1726,13 @@ protection:
         &a Pārslēdz, vai entitātes (ne-spēlētāji) var 
         &a izmantot portalus, lai teleportētos starp 
         &a dimencijām
+    WIND_CHARGE:
+      name: Vēja lādiņš
+      description: |-
+        &a Pārslēdz vēja lādiņu izmantošanu.
+        &a Ja atspējots, apmeklētāji nevar
+        &a izmantot vēja lādiņus šajā salā.
+      hint: Vēja lādiņu izmantošana atspējota
     WITHER_DAMAGE:
       name: Pārslēgt
       description: |-
@@ -1720,6 +1751,7 @@ protection:
         &a ievainojumus ārpus [prefix_island] robežām.
       name: Pasaule TNT kaitējums
   locked: '&cŠī sala ir slēgta!'
+  locked-island-bypass: '&6Šī [prefix_island] ir slēgta, bet jums ir atļauja to apiet.'
   protected: '&cSala ir aizsargāta: [description]'
   world-protected: '&cPasaule aizsargāta: [description]'
   spawn-protected: '&cSākuma sala ir aizsargāta: [description]'

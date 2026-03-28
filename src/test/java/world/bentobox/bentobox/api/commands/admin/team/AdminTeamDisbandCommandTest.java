@@ -43,7 +43,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminTeamDisbandCommandTest extends CommonTestSetup {
+class AdminTeamDisbandCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -139,7 +139,7 @@ public class AdminTeamDisbandCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamDisbandCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testExecuteNoTarget() {
+    void testExecuteNoTarget() {
         assertFalse(itl.canExecute(user, itl.getLabel(), new ArrayList<>()));
     }
 
@@ -147,7 +147,7 @@ public class AdminTeamDisbandCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamDisbandCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testExecuteUnknownPlayer() {
+    void testExecuteUnknownPlayer() {
         String[] name = { "tastybento" };
         when(pm.getUUID(any())).thenReturn(null);
         assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
@@ -158,7 +158,7 @@ public class AdminTeamDisbandCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamDisbandCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testExecutePlayerNotInTeam() {
+    void testExecutePlayerNotInTeam() {
         when(Util.getUUID("tastybento")).thenReturn(notUUID);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
         verify(user).sendMessage("general.errors.player-has-no-island");
@@ -168,7 +168,7 @@ public class AdminTeamDisbandCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamDisbandCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testExecuteDisbandNoIsland() {
+    void testExecuteDisbandNoIsland() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(Util.getUUID("tastybento")).thenReturn(uuid);
         when(im.getOwnedIslands(any(), eq(uuid))).thenReturn(Set.of());
@@ -180,7 +180,7 @@ public class AdminTeamDisbandCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamDisbandCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testCanExecuteSuccess() {
+    void testCanExecuteSuccess() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(Util.getUUID("tastybento")).thenReturn(uuid);
         when(pm.getName(uuid)).thenReturn("tastybento");
@@ -195,7 +195,7 @@ public class AdminTeamDisbandCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamDisbandCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteSuccess() {
+    void testExecuteSuccess() {
         this.testCanExecuteSuccess();
         assertTrue(itl.execute(user, itl.getLabel(), List.of("tastybento")));
         verify(im, never()).removePlayer(island, uuid);
@@ -210,9 +210,9 @@ public class AdminTeamDisbandCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamDisbandCommand#tabComplete(User, String, List)}
      */
     @Test
-    public void testTabCompleteNoArgs() {
-        AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        Optional<List<String>> list = itl.tabComplete(user, "", List.of(""));
+    void testTabCompleteNoArgs() {
+        AdminTeamDisbandCommand localItl = new AdminTeamDisbandCommand(ac);
+        Optional<List<String>> list = localItl.tabComplete(user, "", List.of(""));
         assertTrue(list.isEmpty());
     }
 
@@ -220,12 +220,12 @@ public class AdminTeamDisbandCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamDisbandCommand#tabComplete(User, String, List)}
      */
     @Test
-    public void testTabCompleteOneArg() {
+    void testTabCompleteOneArg() {
         when(Util.getUUID("tastybento")).thenReturn(uuid);
         when(pm.getName(uuid)).thenReturn("tastybento");
 
-        AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        Optional<List<String>> list = itl.tabComplete(user, "", List.of("tasty"));
+        AdminTeamDisbandCommand localItl = new AdminTeamDisbandCommand(ac);
+        Optional<List<String>> list = localItl.tabComplete(user, "", List.of("tasty"));
         assertTrue(list.isEmpty());
     }
 
@@ -233,12 +233,12 @@ public class AdminTeamDisbandCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamDisbandCommand#tabComplete(User, String, List)}
      */
     @Test
-    public void testTabCompleteTwoArgs() {
+    void testTabCompleteTwoArgs() {
         when(Util.getUUID("tastybento")).thenReturn(uuid);
         when(pm.getName(uuid)).thenReturn("tastybento");
 
-        AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        Optional<List<String>> list = itl.tabComplete(user, "", List.of("tastybento", "1"));
+        AdminTeamDisbandCommand localItl = new AdminTeamDisbandCommand(ac);
+        Optional<List<String>> list = localItl.tabComplete(user, "", List.of("tastybento", "1"));
         assertTrue(list.isEmpty());
     }
 
@@ -246,12 +246,12 @@ public class AdminTeamDisbandCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamDisbandCommand#tabComplete(User, String, List)}
      */
     @Test
-    public void testTabCompleteThreeArgs() {
+    void testTabCompleteThreeArgs() {
         when(Util.getUUID("tastybento")).thenReturn(uuid);
         when(pm.getName(uuid)).thenReturn("tastybento");
 
-        AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        Optional<List<String>> list = itl.tabComplete(user, "", List.of("tastybento", "1,2,3", "ddd"));
+        AdminTeamDisbandCommand localItl = new AdminTeamDisbandCommand(ac);
+        Optional<List<String>> list = localItl.tabComplete(user, "", List.of("tastybento", "1,2,3", "ddd"));
         assertFalse(list.isEmpty());
     }
 

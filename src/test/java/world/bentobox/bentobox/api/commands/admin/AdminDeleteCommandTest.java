@@ -38,7 +38,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminDeleteCommandTest extends CommonTestSetup {
+class AdminDeleteCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -122,7 +122,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
      * {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
-    public void testExecuteNoTarget() {
+    void testExecuteNoTarget() {
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         // Show help
@@ -133,7 +133,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
      * {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
-    public void testExecuteUnknownPlayer() {
+    void testExecuteUnknownPlayer() {
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
         String[] name = { "tastybento" };
         when(pm.getUUID(any())).thenReturn(null);
@@ -146,7 +146,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
      * {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
-    public void testExecutePlayerNoIsland() {
+    void testExecutePlayerNoIsland() {
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(im.hasIsland(world, notUUID)).thenReturn(false);
@@ -159,7 +159,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
      * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
-    public void testExecuteOwner() {
+    void testExecuteOwner() {
         when(im.hasIsland(world, notUUID)).thenReturn(true);
         when(im.inTeam(world, notUUID)).thenReturn(true);
         when(island.getOwner()).thenReturn(notUUID);
@@ -174,7 +174,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
      * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
-    public void testcanExecuteSuccessUUID() {
+    void testcanExecuteSuccessUUID() {
         when(im.hasIsland(world, uuid)).thenReturn(true);
         when(island.hasTeam()).thenReturn(false);
         when(im.inTeam(any(), any())).thenReturn(false);
@@ -195,7 +195,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
      * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
-    public void testExecuteFailUUID() {
+    void testExecuteFailUUID() {
         when(im.inTeam(any(), any())).thenReturn(false);
         Island is = mock(Island.class);
         Location loc = mock(Location.class);
@@ -214,7 +214,7 @@ public class AdminDeleteCommandTest extends CommonTestSetup {
      * Test method for {@link AdminDeleteCommand#execute(User, String, java.util.List)
      */
     @Test
-    public void testCanExecuteSuccess() {
+    void testCanExecuteSuccess() {
         when(island.hasTeam()).thenReturn(false);
         when(im.inTeam(any(), any())).thenReturn(false);
         Island is = mock(Island.class);

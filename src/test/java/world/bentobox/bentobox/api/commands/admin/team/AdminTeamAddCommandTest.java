@@ -38,7 +38,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminTeamAddCommandTest extends CommonTestSetup {
+class AdminTeamAddCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -110,7 +110,7 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteWrongArgs() {
+    void testExecuteWrongArgs() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         List<String> args = new ArrayList<>();
         assertFalse(itl.execute(user, itl.getLabel(), args));
@@ -128,7 +128,7 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteUnknownPlayer() {
+    void testExecuteUnknownPlayer() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 
@@ -149,7 +149,7 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteTargetTargetInTeam() {
+    void testExecuteTargetTargetInTeam() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 
@@ -166,7 +166,7 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteAddNoIsland() {
+    void testExecuteAddNoIsland() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 
@@ -185,7 +185,7 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteAddNotOwner() {
+    void testExecuteAddNotOwner() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 
@@ -208,7 +208,7 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteAddTargetHasIsland() {
+    void testExecuteAddTargetHasIsland() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 
@@ -231,7 +231,7 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteAddTargetHasIslandNoTeam() {
+    void testExecuteAddTargetHasIslandNoTeam() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 
@@ -255,7 +255,7 @@ public class AdminTeamAddCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteSuccess() {
+    void testExecuteSuccess() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = { "tastybento", "poslovich" };
 

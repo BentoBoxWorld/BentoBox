@@ -29,7 +29,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
  * @author tastybento
  *
  */
-public class DefaultPlayerCommandTest extends RanksManagerTestSetup {
+class DefaultPlayerCommandTest extends RanksManagerTestSetup {
 
     @Mock
     GameModeAddon addon;
@@ -88,7 +88,7 @@ public class DefaultPlayerCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#DefaultPlayerCommand(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
-    public void testDefaultPlayerCommand() {
+    void testDefaultPlayerCommand() {
         assertNotNull(dpc);
     }
 
@@ -97,12 +97,12 @@ public class DefaultPlayerCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("commands.island.help.description", dpc.getDescription());
         assertTrue(dpc.isOnlyPlayer());
         assertEquals("island", dpc.getPermission());
-        // 20 = 19 subcommands + help command
-        assertEquals(20, dpc.getSubCommands().size()); // Update when commands are added or removed
+        // 21 = 20 subcommands + help command
+        assertEquals(21, dpc.getSubCommands().size()); // Update when commands are added or removed
     }
 
     /**
@@ -110,7 +110,7 @@ public class DefaultPlayerCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringUnknownCommand() {
+    void testExecuteUserStringListOfStringUnknownCommand() {
         assertFalse(dpc.execute(user, "label", List.of("unknown")));
         verify(user).sendMessage("general.errors.unknown-command", TextVariables.LABEL, "island");
     }
@@ -120,7 +120,7 @@ public class DefaultPlayerCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNullUser() {
+    void testExecuteUserStringListOfStringNullUser() {
         assertFalse(dpc.execute(null, "label", List.of()));
     }
 
@@ -129,7 +129,7 @@ public class DefaultPlayerCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringEmptyArgsHasIsland() {
+    void testExecuteUserStringListOfStringEmptyArgsHasIsland() {
         assertFalse(dpc.execute(user, "label", List.of()));
         verify(user).sendMessage("general.errors.use-in-game");
     }
@@ -138,7 +138,7 @@ public class DefaultPlayerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringEmptyArgsHasNoIsland() {
+    void testExecuteUserStringListOfStringEmptyArgsHasNoIsland() {
         when(im.getIsland(any(World.class), any(UUID.class))).thenReturn(null);
         assertFalse(dpc.execute(user, "label", List.of()));
         verify(user).sendMessage("general.errors.use-in-game");
@@ -148,7 +148,7 @@ public class DefaultPlayerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringEmptyArgsHasIslandUnknownCommand() {
+    void testExecuteUserStringListOfStringEmptyArgsHasIslandUnknownCommand() {
         when(ws.getDefaultPlayerAction()).thenReturn("goxxx");
 
         assertFalse(dpc.execute(user, "label", List.of()));
@@ -159,7 +159,7 @@ public class DefaultPlayerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringEmptyArgsHasNoIslandUnknownCommand() {
+    void testExecuteUserStringListOfStringEmptyArgsHasNoIslandUnknownCommand() {
 
         when(ws.getDefaultNewPlayerAction()).thenReturn("createxxx");
 
@@ -172,7 +172,7 @@ public class DefaultPlayerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringEmptyArgsHasIslandUnknownCommandSlash() {
+    void testExecuteUserStringListOfStringEmptyArgsHasIslandUnknownCommandSlash() {
         when(ws.getDefaultPlayerAction()).thenReturn("/goxxx");
 
         assertFalse(dpc.execute(user, "label", List.of()));
@@ -183,7 +183,7 @@ public class DefaultPlayerCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.DefaultPlayerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringEmptyArgsHasNoIslandUnknownCommandSlash() {
+    void testExecuteUserStringListOfStringEmptyArgsHasNoIslandUnknownCommandSlash() {
 
         when(ws.getDefaultNewPlayerAction()).thenReturn("/createxxx");
 

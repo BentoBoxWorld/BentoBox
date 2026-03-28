@@ -54,8 +54,12 @@ public class PlaceBlocksListener extends FlagListener
             return;
         }
         // Crops
-        if (against.equals(Material.FARMLAND) && (SEEDS.contains(e.getItemInHand().getType())
-                || Tag.ITEMS_VILLAGER_PLANTABLE_SEEDS.isTagged(e.getItemInHand().getType()))) {
+        Material item = e.getItemInHand().getType();
+        if ((against.equals(Material.FARMLAND) && (SEEDS.contains(item)
+                || Tag.ITEMS_VILLAGER_PLANTABLE_SEEDS.isTagged(item)))
+                || item == Material.SUGAR_CANE
+                || item == Material.COCOA_BEANS
+                || item == Material.NETHER_WART) {
             this.checkIsland(e, e.getPlayer(), e.getBlock().getLocation(), Flags.CROP_PLANTING);
         } else {
             this.checkIsland(e, e.getPlayer(), e.getBlock().getLocation(), Flags.PLACE_BLOCKS);

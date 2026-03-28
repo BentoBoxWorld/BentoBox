@@ -42,7 +42,7 @@ import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionExce
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.database.objects.DataObject;
 
-public class AddonsManagerTest extends CommonTestSetup {
+class AddonsManagerTest extends CommonTestSetup {
 
     private AddonsManager am;
     @Mock
@@ -82,7 +82,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#AddonsManager(world.bentobox.bentobox.BentoBox)}.
      */
     @Test
-    public void testAddonsManager() {
+    void testAddonsManager() {
         AddonsManager addonsManager = new AddonsManager(plugin);
 
         assertNotNull(addonsManager.getAddons());
@@ -92,7 +92,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#loadAddons()}.
      */
     @Test
-    public void testLoadAddonsNoAddons() {
+    void testLoadAddonsNoAddons() {
         am.loadAddons();
         verify(plugin, never()).logError("Cannot create addons folder!");
         verify(plugin).log("Loaded 0 addons.");
@@ -102,7 +102,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#enableAddons()}.
      */
     @Test
-    public void testEnableAddonsNoAddon() {
+    void testEnableAddonsNoAddon() {
         am.enableAddons();
         verify(plugin, never()).log("Enabling addons...");
     }
@@ -111,7 +111,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#reloadAddons()}.
      */
     @Test
-    public void testReloadAddonsNoAddons() {
+    void testReloadAddonsNoAddons() {
         am.reloadAddons();
         verify(plugin, never()).log("Disabling addons...");
     }
@@ -120,7 +120,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getAddonByName(java.lang.String)}.
      */
     @Test
-    public void testGetAddonByNameNoAddons() {
+    void testGetAddonByNameNoAddons() {
         assertFalse(am.getAddonByName("name").isPresent());
     }
 
@@ -128,7 +128,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#disableAddons()}.
      */
     @Test
-    public void testDisableAddonsNoAddons() {
+    void testDisableAddonsNoAddons() {
         am.disableAddons();
         verify(plugin, never()).log("Disabling addons...");
     }
@@ -137,7 +137,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getAddons()}.
      */
     @Test
-    public void testGetAddonsNoAddons() {
+    void testGetAddonsNoAddons() {
         assertTrue(am.getAddons().isEmpty());
     }
 
@@ -145,7 +145,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getGameModeAddons()}.
      */
     @Test
-    public void testGetGameModeAddonsNoAddons() {
+    void testGetGameModeAddonsNoAddons() {
         assertTrue(am.getGameModeAddons().isEmpty());
     }
 
@@ -153,7 +153,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getLoadedAddons()}.
      */
     @Test
-    public void testGetLoadedAddonsnoAddons() {
+    void testGetLoadedAddonsnoAddons() {
         assertTrue(am.getLoadedAddons().isEmpty());
     }
 
@@ -161,7 +161,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getEnabledAddons()}.
      */
     @Test
-    public void testGetEnabledAddonsNoAddons() {
+    void testGetEnabledAddonsNoAddons() {
         assertTrue(am.getEnabledAddons().isEmpty());
     }
 
@@ -169,7 +169,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getLoader(world.bentobox.bentobox.api.addons.Addon)}.
      */
     @Test
-    public void testGetLoaderNoSuchAddon() {
+    void testGetLoaderNoSuchAddon() {
         Addon addon = mock(Addon.class);
         assertNull(am.getLoader(addon));
     }
@@ -178,7 +178,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getClassByName(java.lang.String)}.
      */
     @Test
-    public void testGetClassByNameNull() {
+    void testGetClassByNameNull() {
         assertNull(am.getClassByName("name"));
     }
 
@@ -186,7 +186,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setClass(java.lang.String, java.lang.Class)}.
      */
     @Test
-    public void testSetClass() {
+    void testSetClass() {
         am.setClass("name", Class.class);
         assertNotNull(am.getClassByName("name"));
         assertEquals(Class.class, am.getClassByName("name"));
@@ -196,7 +196,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getDefaultWorldGenerator(java.lang.String, java.lang.String)}.
      */
     @Test
-    public void testGetDefaultWorldGeneratorNoWorlds() {
+    void testGetDefaultWorldGeneratorNoWorlds() {
         assertNull(am.getDefaultWorldGenerator("BSkyBlock", ""));
     }
 
@@ -204,7 +204,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#registerListener(world.bentobox.bentobox.api.addons.Addon, org.bukkit.event.Listener)}.
      */
     @Test
-    public void testRegisterListener() {
+    void testRegisterListener() {
         @NonNull
         Addon addon = mock(Addon.class);
 
@@ -218,7 +218,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getDataObjects()}.
      */
     @Test
-    public void testGetDataObjectsNone() {
+    void testGetDataObjectsNone() {
         assertTrue(am.getDataObjects().isEmpty());
     }
 
@@ -226,7 +226,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getDataObjects()}.
      */
     @Test
-    public void testGetDataObjects() {
+    void testGetDataObjects() {
         am.setClass("dataobj", DataObject.class);
         assertFalse(am.getDataObjects().isEmpty());
         assertEquals(1, am.getDataObjects().size());
@@ -236,7 +236,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
-    public void testIsAddonCompatibleWithBentoBoxSnapshotNoAPIVersion() {
+    void testIsAddonCompatibleWithBentoBoxSnapshotNoAPIVersion() {
         Addon addon = mock(Addon.class);
         AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
@@ -247,7 +247,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
-    public void testIsAddonCompatibleWithBentoBoxReleaseAPIVersion() {
+    void testIsAddonCompatibleWithBentoBoxReleaseAPIVersion() {
         Addon addon = mock(Addon.class);
         AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").apiVersion("1.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
@@ -258,7 +258,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
-    public void testIsAddonCompatibleWithBentoBoxSnapshotAPIVersion() {
+    void testIsAddonCompatibleWithBentoBoxSnapshotAPIVersion() {
         Addon addon = mock(Addon.class);
         AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").apiVersion("1.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
@@ -269,7 +269,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
-    public void testIsAddonCompatibleWithBentoBoxReleaseNoAPIVersion() {
+    void testIsAddonCompatibleWithBentoBoxReleaseNoAPIVersion() {
         Addon addon = mock(Addon.class);
         AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
@@ -280,7 +280,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
-    public void testIsAddonCompatibleWithBentoBoxSnapshotAPIVersionVariableDigits() {
+    void testIsAddonCompatibleWithBentoBoxSnapshotAPIVersionVariableDigits() {
         Addon addon = mock(Addon.class);
         AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").apiVersion("1.2.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
@@ -291,7 +291,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
-    public void testIsAddonCompatibleWithBentoBoxOldSnapshot() {
+    void testIsAddonCompatibleWithBentoBoxOldSnapshot() {
         Addon addon = mock(Addon.class);
         AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
@@ -302,7 +302,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
-    public void testIsAddonCompatibleWithBentoBoxOldRelease() {
+    void testIsAddonCompatibleWithBentoBoxOldRelease() {
         Addon addon = mock(Addon.class);
         AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
@@ -313,7 +313,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
-    public void testIsAddonCompatibleWithBentoBoxOldReleaseLong() {
+    void testIsAddonCompatibleWithBentoBoxOldReleaseLong() {
         Addon addon = mock(Addon.class);
         AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
@@ -324,7 +324,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
-    public void testIsAddonCompatibleWithBentoBoxOldReleaseLongAPI() {
+    void testIsAddonCompatibleWithBentoBoxOldReleaseLongAPI() {
         Addon addon = mock(Addon.class);
         AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1.0.0.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
@@ -336,7 +336,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Prevents regression on <a href="https://github.com/BentoBoxWorld/BentoBox/issues/1346">issue 1346</a>.
      */
     @Test
-    public void testIsAddonCompatibleWithBentoBoxNewRelease() {
+    void testIsAddonCompatibleWithBentoBoxNewRelease() {
         Addon addon = mock(Addon.class);
         AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.13.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
@@ -347,7 +347,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
      */
     @Test
-    public void testSetPermsNoPerms() {
+    void testSetPermsNoPerms() {
         Addon addon = mock(Addon.class);
         AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1.0.0.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
@@ -358,7 +358,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
      */
     @Test
-    public void testSetPermsHasPerms() throws InvalidConfigurationException {
+    void testSetPermsHasPerms() throws InvalidConfigurationException {
         String perms = """
                   '[gamemode].intopten':
                     description: Player is in the top ten.
@@ -381,7 +381,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
      */
     @Test
-    public void testSetPermsHasPermsError() throws InvalidConfigurationException {
+    void testSetPermsHasPermsError() throws InvalidConfigurationException {
         String perms = """
                   '[gamemode].intopten':
                     description: Player is in the top ten.
@@ -407,7 +407,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#registerPermission(org.bukkit.configuration.ConfigurationSection, String)}
      */
     @Test
-    public void testRegisterPermissionStandardPerm() throws InvalidAddonDescriptionException, InvalidConfigurationException {
+    void testRegisterPermissionStandardPerm() throws InvalidAddonDescriptionException, InvalidConfigurationException {
         String perms = """
                   'bskyblock.intopten':
                     description: Player is in the top ten.
@@ -423,7 +423,7 @@ public class AddonsManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#registerPermission(org.bukkit.configuration.ConfigurationSection, String)}
      */
     @Test
-    public void testRegisterPermissionGameModePerm() throws InvalidAddonDescriptionException, InvalidConfigurationException {
+    void testRegisterPermissionGameModePerm() throws InvalidAddonDescriptionException, InvalidConfigurationException {
         String perms = """
                   '[gamemode].intopten':
                     description: Player is in the top ten.

@@ -32,7 +32,7 @@ import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
 
-public class ObsidianScoopingListenerTest extends CommonTestSetup {
+class ObsidianScoopingListenerTest extends CommonTestSetup {
 
     private ObsidianScoopingListener listener;
     @Mock
@@ -110,7 +110,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteract() {
+    void testOnPlayerInteract() {
         // Test incorrect items
         inHand = Material.ACACIA_DOOR;
         block = Material.BROWN_MUSHROOM;
@@ -119,7 +119,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractBucketInHand() {
+    void testOnPlayerInteractBucketInHand() {
         // Test incorrect items
         inHand = Material.BUCKET;
         block = Material.BROWN_MUSHROOM;
@@ -128,7 +128,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractObsidianAnvilInHand() {
+    void testOnPlayerInteractObsidianAnvilInHand() {
         // Test with obsidian in hand
         inHand = Material.ANVIL;
         block = Material.OBSIDIAN;
@@ -137,7 +137,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractObsidianBucketInHand() {
+    void testOnPlayerInteractObsidianBucketInHand() {
         // Positive test with 1 bucket in the stack
         inHand = Material.BUCKET;
         block = Material.OBSIDIAN;
@@ -146,7 +146,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractObsidianManyBucketsInHand() {
+    void testOnPlayerInteractObsidianManyBucketsInHand() {
         // Positive test with 1 bucket in the stack
         inHand = Material.BUCKET;
         block = Material.OBSIDIAN;
@@ -158,7 +158,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractNotInWorld() {
+    void testOnPlayerInteractNotInWorld() {
         PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
                 BlockFace.EAST);
         // Test not in world
@@ -168,14 +168,14 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractInWorld() {
+    void testOnPlayerInteractInWorld() {
         // Put player in world
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
     }
 
     @Test
-    public void testOnPlayerInteractGameModes() {
+    void testOnPlayerInteractGameModes() {
         PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
                 BlockFace.EAST);
 
@@ -189,7 +189,7 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerInteractSurvivalNotOnIsland() {
+    void testOnPlayerInteractSurvivalNotOnIsland() {
         PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
                 BlockFace.EAST);
 
@@ -207,6 +207,28 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
         assertFalse(listener.onPlayerInteract(event));
     }
 
+    @Test
+    void testOnPlayerInteractCooldown() {
+        // Set up for a successful scoop
+        inHand = Material.BUCKET;
+        block = Material.OBSIDIAN;
+        when(item.getType()).thenReturn(inHand);
+        when(clickedBlock.getType()).thenReturn(block);
+
+        Block airBlock = mock(Block.class);
+        when(airBlock.getType()).thenReturn(Material.AIR);
+        when(world.getBlockAt(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(airBlock);
+
+        PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
+                BlockFace.EAST);
+
+        // First scoop should succeed
+        assertTrue(listener.onPlayerInteract(event));
+
+        // Second scoop should fail due to cooldown
+        assertFalse(listener.onPlayerInteract(event));
+    }
+
     private void testEvent() {
         when(item.getType()).thenReturn(inHand);
         when(clickedBlock.getType()).thenReturn(block);
@@ -215,25 +237,25 @@ public class ObsidianScoopingListenerTest extends CommonTestSetup {
         Block airBlock = mock(Block.class);
         when(airBlock.getType()).thenReturn(Material.AIR);
 
-        ObsidianScoopingListener listener = new ObsidianScoopingListener();
+        ObsidianScoopingListener localListener = new ObsidianScoopingListener();
         PlayerInteractEvent event = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
                 BlockFace.EAST);
         if (!item.getType().equals(Material.BUCKET)
                 || !clickedBlock.getType().equals(Material.OBSIDIAN)) {
-            assertFalse(listener.onPlayerInteract(event));
+            assertFalse(localListener.onPlayerInteract(event));
         } else {
             // Test with obby close by in any of the possible locations
             for (int x = -2; x <= 2; x++) {
                 for (int y = -2; y <= 2; y++) {
                     for (int z = -2; z <= 2; z++) {
                         when(world.getBlockAt(x, y, z)).thenReturn(obsidianBlock);
-                        assertFalse(listener.onPlayerInteract(event));
+                        assertFalse(localListener.onPlayerInteract(event));
                     }
                 }
             }
             // Test where the area is free of obby
             when(world.getBlockAt(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(airBlock);
-            assertTrue(listener.onPlayerInteract(event));
+            assertTrue(localListener.onPlayerInteract(event));
         }
     }
 }

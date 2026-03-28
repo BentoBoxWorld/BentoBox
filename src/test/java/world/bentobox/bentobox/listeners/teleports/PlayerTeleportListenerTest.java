@@ -32,7 +32,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +45,7 @@ import world.bentobox.bentobox.util.Util;
 /**
  * @author tastybento
  */
-public class PlayerTeleportListenerTest extends CommonTestSetup {
+class PlayerTeleportListenerTest extends CommonTestSetup {
 
     private PlayerTeleportListener ptl;
     @Mock
@@ -104,7 +103,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#PlayerTeleportListener(world.bentobox.bentobox.BentoBox)}.
      */
     @Test
-    public void testPlayerTeleportListener() {
+    void testPlayerTeleportListener() {
         assertNotNull(ptl);
     }
 
@@ -112,7 +111,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerPortalEvent(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
-    public void testOnPlayerPortalEventNether() {
+    void testOnPlayerPortalEventNether() {
         PlayerPortalEvent e = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.NETHER_PORTAL, 0,
                 false, 0);
         ptl.onPlayerPortalEvent(e);
@@ -123,7 +122,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerPortalEvent(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
-    public void testOnPlayerPortalEventEnd() {
+    void testOnPlayerPortalEventEnd() {
         PlayerPortalEvent e = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.END_PORTAL, 0, false,
                 0);
         ptl.onPlayerPortalEvent(e);
@@ -134,7 +133,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerPortalEvent(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
-    public void testOnPlayerPortalEventUnknown() {
+    void testOnPlayerPortalEventUnknown() {
         PlayerPortalEvent e = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.UNKNOWN, 0, false, 0);
         ptl.onPlayerPortalEvent(e);
         assertFalse(e.isCancelled());
@@ -144,7 +143,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#portalProcess(org.bukkit.event.player.PlayerPortalEvent, org.bukkit.World.Environment)}.
      */
     @Test
-    public void testPortalProcessNotBentoboxWorld() {
+    void testPortalProcessNotBentoboxWorld() {
         when(Util.getWorld(location.getWorld())).thenReturn(null);
         PlayerPortalEvent e = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.NETHER_PORTAL, 0,
                 false, 0);
@@ -158,7 +157,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#portalProcess(org.bukkit.event.player.PlayerPortalEvent, org.bukkit.World.Environment)}.
      */
     @Test
-    public void testPortalProcessWorldDisabledInConfig() {
+    void testPortalProcessWorldDisabledInConfig() {
         when(Util.getWorld(location.getWorld())).thenReturn(world);
         when(plugin.getIWM().inWorld(world)).thenReturn(true);
         when(ptl.isAllowedInConfig(world, World.Environment.NETHER)).thenReturn(false);
@@ -173,7 +172,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#portalProcess(org.bukkit.event.player.PlayerPortalEvent, org.bukkit.World.Environment)}.
      */
     @Test
-    public void testPortalProcessWorldDisabledOnServer() {
+    void testPortalProcessWorldDisabledOnServer() {
         when(Util.getWorld(location.getWorld())).thenReturn(world);
         when(plugin.getIWM().inWorld(world)).thenReturn(true);
         when(ptl.isAllowedInConfig(world, World.Environment.NETHER)).thenReturn(true);
@@ -189,7 +188,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#portalProcess(org.bukkit.event.player.PlayerPortalEvent, org.bukkit.World.Environment)}.
      */
     @Test
-    public void testPortalProcessAlreadyInTeleport() {
+    void testPortalProcessAlreadyInTeleport() {
         ptl.getInTeleport().add(uuid);
         PlayerPortalEvent e = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.NETHER_PORTAL, 0,
                 false, 0);
@@ -199,7 +198,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPortalProcessStandardNetherOrEnd() {
+    void testPortalProcessStandardNetherOrEnd() {
         // Mocking required dependencies
         when(Util.getWorld(location.getWorld())).thenReturn(world);
         when(plugin.getIWM().inWorld(world)).thenReturn(true);
@@ -224,7 +223,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#portalProcess(org.bukkit.event.player.PlayerPortalEvent, org.bukkit.World.Environment)}.
      */
     @Test
-    public void testPortalProcessIslandTeleport() {
+    void testPortalProcessIslandTeleport() {
         when(Util.getWorld(location.getWorld())).thenReturn(world);
         when(plugin.getIWM().inWorld(world)).thenReturn(true);
         when(ptl.isAllowedInConfig(world, World.Environment.NETHER)).thenReturn(true);
@@ -242,7 +241,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#portalProcess(org.bukkit.event.player.PlayerPortalEvent, org.bukkit.World.Environment)}.
      */
     @Test
-    public void testPortalProcessEndVelocityReset() {
+    void testPortalProcessEndVelocityReset() {
         when(Util.getWorld(location.getWorld())).thenReturn(world);
         when(plugin.getIWM().inWorld(world)).thenReturn(true);
         PlayerPortalEvent e = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.END_PORTAL, 0, false,
@@ -257,7 +256,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerPortal(org.bukkit.event.entity.EntityPortalEnterEvent)}.
      */
     @Test
-    public void testOnPlayerPortalNonPlayerEntity() {
+    void testOnPlayerPortalNonPlayerEntity() {
         // Mock a non-player entity
         Entity mockEntity = mock(Entity.class);
         when(mockEntity.getType()).thenReturn(EntityType.ZOMBIE);
@@ -273,7 +272,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerPortal(org.bukkit.event.entity.EntityPortalEnterEvent)}.
      */
     @Test
-    public void testOnPlayerPortalAlreadyInPortal() {
+    void testOnPlayerPortalAlreadyInPortal() {
         // Simulate player already in portal
         UUID playerId = mockPlayer.getUniqueId();
         ptl.getInPortal().add(playerId);
@@ -289,7 +288,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerPortal(org.bukkit.event.entity.EntityPortalEnterEvent)}.
      */
     @Test
-    public void testOnPlayerPortalNetherPortalDisabled() {
+    void testOnPlayerPortalNetherPortalDisabled() {
         // Mock configuration for Nether disabled
         when(Bukkit.getAllowNether()).thenReturn(false);
         when(Util.getWorld(location.getWorld())).thenReturn(world);
@@ -309,7 +308,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * portalProcess() directly.
      */
     @Test
-    public void testOnPlayerPortalNetherPortalDisabledCallsEvent() {
+    void testOnPlayerPortalNetherPortalDisabledCallsEvent() {
         when(Bukkit.getAllowNether()).thenReturn(false);
         when(Util.getWorld(location.getWorld())).thenReturn(world);
         when(plugin.getIWM().inWorld(world)).thenReturn(true);
@@ -331,7 +330,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerPortalEndPortalDisabled() {
+    void testOnPlayerPortalEndPortalDisabled() {
         // Mock configuration for End disabled
         when(Bukkit.getAllowEnd()).thenReturn(false);
         when(Util.getWorld(location.getWorld())).thenReturn(world);
@@ -358,7 +357,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerPortalEndGatewayDisabled() {
+    void testOnPlayerPortalEndGatewayDisabled() {
         // Mock configuration for End disabled
         when(Bukkit.getAllowEnd()).thenReturn(false);
         when(Util.getWorld(location.getWorld())).thenReturn(world);
@@ -385,7 +384,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerPortalValidBentoBoxWorld() {
+    void testOnPlayerPortalValidBentoBoxWorld() {
         // Mock configuration for a valid BentoBox world
         when(Bukkit.getAllowNether()).thenReturn(true);
         when(Bukkit.getAllowEnd()).thenReturn(true);
@@ -411,7 +410,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onExitPortal(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnExitPortalPlayerNotInPortal() {
+    void testOnExitPortalPlayerNotInPortal() {
         // Mock a player who is not in the inPortal list
         UUID playerId = mockPlayer.getUniqueId();
 
@@ -428,7 +427,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnExitPortalPlayerStillInPortal() {
+    void testOnExitPortalPlayerStillInPortal() {
         // Mock a player in the inPortal list
         UUID playerId = mockPlayer.getUniqueId();
         ptl.getInPortal().add(playerId);
@@ -451,7 +450,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnExitPortalPlayerExitsPortal() {
+    void testOnExitPortalPlayerExitsPortal() {
         // Mock a player in the inPortal list
         UUID playerId = mockPlayer.getUniqueId();
         ptl.getInPortal().add(playerId);
@@ -479,7 +478,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerExitPortal(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
-    public void testOnPlayerExitPortalPlayerAlreadyProcessed() {
+    void testOnPlayerExitPortalPlayerAlreadyProcessed() {
         // Create the event
         @SuppressWarnings("deprecation")
         PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false);
@@ -492,7 +491,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerExitPortalNotBentoBoxWorld() {
+    void testOnPlayerExitPortalNotBentoBoxWorld() {
         // Mock teleportOrigin with a world not in BentoBox
         UUID playerId = mockPlayer.getUniqueId();
         ptl.getTeleportOrigin().put(playerId, world);
@@ -511,7 +510,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerExitPortalIslandExistsRespawnInsideProtection() {
+    void testOnPlayerExitPortalIslandExistsRespawnInsideProtection() {
         // Set up teleportOrigin with a valid world
         UUID playerId = mockPlayer.getUniqueId();
         ptl.getTeleportOrigin().put(playerId, world);
@@ -527,7 +526,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerExitPortalIslandExistsRespawnOutsideProtection() {
+    void testOnPlayerExitPortalIslandExistsRespawnOutsideProtection() {
         // Set up teleportOrigin with a valid world
         UUID playerId = mockPlayer.getUniqueId();
         ptl.getTeleportOrigin().put(playerId, world);
@@ -543,7 +542,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerExitPortalIslandExistsNoSpawnPoint() {
+    void testOnPlayerExitPortalIslandExistsNoSpawnPoint() {
         // Set up teleportOrigin with a valid world
         UUID playerId = mockPlayer.getUniqueId();
         ptl.getTeleportOrigin().put(playerId, world);
@@ -560,7 +559,7 @@ public class PlayerTeleportListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnPlayerExitPortalNoIsland() {
+    void testOnPlayerExitPortalNoIsland() {
         // Set up teleportOrigin with a valid world
         UUID playerId = mockPlayer.getUniqueId();
         ptl.getTeleportOrigin().put(playerId, world);

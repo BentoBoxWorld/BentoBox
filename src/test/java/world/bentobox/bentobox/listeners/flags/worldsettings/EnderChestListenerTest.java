@@ -28,7 +28,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -41,7 +40,7 @@ import world.bentobox.bentobox.listeners.flags.protection.TestWorldSettings;
 import world.bentobox.bentobox.lists.Flags;
 
 
-public class EnderChestListenerTest extends CommonTestSetup {
+class EnderChestListenerTest extends CommonTestSetup {
 
     @Mock
     private ItemStack item;
@@ -76,7 +75,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnEnderChestOpenNotRightClick() {
+    void testOnEnderChestOpenNotRightClick() {
         action = Action.LEFT_CLICK_AIR;
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
@@ -85,8 +84,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    @Disabled("Issues with NotAMock")
-    public void testOnEnderChestOpenEnderChestNotInWorld() {
+    void testOnEnderChestOpenEnderChestNotInWorld() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Not in world
@@ -97,8 +95,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    @Disabled("Issues with NotAMock")
-    public void testOnEnderChestOpenEnderChestOpPlayer() {
+    void testOnEnderChestOpenEnderChestOpPlayer() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Op player
@@ -108,8 +105,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    @Disabled("Issues with NotAMock")
-    public void testOnEnderChestOpenEnderChestHasBypassPerm() {
+    void testOnEnderChestOpenEnderChestHasBypassPerm() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Has bypass perm
@@ -119,8 +115,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    @Disabled("Issues with NotAMock")
-    public void testOnEnderChestOpenEnderChestOkay() {
+    void testOnEnderChestOpenEnderChestOkay() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Enderchest use is okay
@@ -132,8 +127,7 @@ public class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    @Disabled("Issues with NotAMock")
-    public void testOnEnderChestOpenEnderChestBlocked() {
+    void testOnEnderChestOpenEnderChestBlocked() {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, action, item, clickedBlock, clickedBlockFace);
         // Enderchest use is blocked
@@ -144,11 +138,11 @@ public class EnderChestListenerTest extends CommonTestSetup {
     }
 
     @Test
-    public void testOnCraftNotEnderChest() {
+    void testOnCraftNotEnderChest() {
         Recipe recipe = mock(Recipe.class);
-        ItemStack item = mock(ItemStack.class);
-        when(item.getType()).thenReturn(Material.STONE);
-        when(recipe.getResult()).thenReturn(item);
+        ItemStack localItem = mock(ItemStack.class);
+        when(localItem.getType()).thenReturn(Material.STONE);
+        when(recipe.getResult()).thenReturn(localItem);
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory top = mock(Inventory.class);
@@ -156,18 +150,18 @@ public class EnderChestListenerTest extends CommonTestSetup {
         when(view.getTopInventory()).thenReturn(top);
         SlotType type = SlotType.RESULT;
         ClickType click = ClickType.LEFT;
-        InventoryAction action = InventoryAction.PICKUP_ONE;
-        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, action);
+        InventoryAction localAction = InventoryAction.PICKUP_ONE;
+        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, localAction);
         new EnderChestListener().onCraft(e);
         assertFalse(e.isCancelled());
     }
 
     @Test
-    public void testOnCraftEnderChest() {
+    void testOnCraftEnderChest() {
         Recipe recipe = mock(Recipe.class);
-        ItemStack item = mock(ItemStack.class);
-        when(item.getType()).thenReturn(Material.ENDER_CHEST);
-        when(recipe.getResult()).thenReturn(item);
+        ItemStack localItem = mock(ItemStack.class);
+        when(localItem.getType()).thenReturn(Material.ENDER_CHEST);
+        when(recipe.getResult()).thenReturn(localItem);
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(mockPlayer);
         Inventory top = mock(Inventory.class);
@@ -175,8 +169,8 @@ public class EnderChestListenerTest extends CommonTestSetup {
         when(view.getTopInventory()).thenReturn(top);
         SlotType type = SlotType.RESULT;
         ClickType click = ClickType.LEFT;
-        InventoryAction action = InventoryAction.PICKUP_ONE;
-        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, action);
+        InventoryAction localAction = InventoryAction.PICKUP_ONE;
+        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, localAction);
         new EnderChestListener().onCraft(e);
         assertTrue(e.isCancelled());
     }

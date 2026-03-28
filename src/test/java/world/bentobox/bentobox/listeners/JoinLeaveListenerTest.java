@@ -56,7 +56,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class JoinLeaveListenerTest extends RanksManagerTestSetup {
+class JoinLeaveListenerTest extends RanksManagerTestSetup {
 
     private static final String[] NAMES = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry",
             "ian", "joe" };
@@ -191,7 +191,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
      */
     @Test
-    public void testOnPlayerJoinNotKnownNoAutoCreate() {
+    void testOnPlayerJoinNotKnownNoAutoCreate() {
         PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         jll.onPlayerJoin(event);
         // Verify
@@ -210,7 +210,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
      */
     @Test
-    public void testOnPlayerJoinNullWorld() {
+    void testOnPlayerJoinNullWorld() {
         when(mockPlayer.getWorld()).thenReturn(null); // Null
         when(Util.getWorld(any())).thenReturn(null); // Make null
         PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
@@ -230,7 +230,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
      */
     @ParameterizedTest
     @MethodSource("provideRangeChangePermissions")
-    public void testOnPlayerJoinRangeChangePerm(int permRange, int expectedRange) {
+    void testOnPlayerJoinRangeChangePerm(int permRange, int expectedRange) {
         PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
         when(pa.getPermission()).thenReturn("acidisland.island.range." + permRange);
         when(pa.getValue()).thenReturn(true);
@@ -261,7 +261,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
      */
     @Test
-    public void testOnPlayerJoinRangeChangeSamePerm() {
+    void testOnPlayerJoinRangeChangeSamePerm() {
         PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
         when(pa.getPermission()).thenReturn("acidisland.island.range.50");
         when(pa.getValue()).thenReturn(true);
@@ -281,7 +281,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
      */
     @Test
-    public void testOnPlayerJoinNotKnownAutoCreate() {
+    void testOnPlayerJoinNotKnownAutoCreate() {
         when(iwm.isCreateIslandOnFirstLoginEnabled(world)).thenReturn(true);
         PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         jll.onPlayerJoin(event);
@@ -295,7 +295,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerSwitchWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
      */
     @Test
-    public void testOnPlayerSwitchWorld() {
+    void testOnPlayerSwitchWorld() {
         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(mockPlayer, world);
         jll.onPlayerSwitchWorld(event);
         // Check inventory cleared
@@ -308,7 +308,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerSwitchWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
      */
     @Test
-    public void testOnPlayerSwitchWorldNullWorld() {
+    void testOnPlayerSwitchWorldNullWorld() {
         when(Util.getWorld(any())).thenReturn(null);
         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(mockPlayer, world);
         jll.onPlayerSwitchWorld(event);
@@ -323,7 +323,7 @@ public class JoinLeaveListenerTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent)}.
      */
     @Test
-    public void testOnPlayerQuit() {
+    void testOnPlayerQuit() {
         PlayerQuitEvent event = new PlayerQuitEvent(mockPlayer, component, QuitReason.DISCONNECTED);
         jll.onPlayerQuit(event);
         checkSpigotMessage("commands.island.team.uncoop.all-members-logged-off");

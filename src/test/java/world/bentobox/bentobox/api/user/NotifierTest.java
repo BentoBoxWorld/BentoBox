@@ -13,17 +13,17 @@ import org.mockito.Mockito;
  * @author tastybento
  *
  */
-public class NotifierTest {
+class NotifierTest {
 
     private Notifier n;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         n = new Notifier();
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         Mockito.framework().clearInlineMocks();
     }
 
@@ -31,7 +31,7 @@ public class NotifierTest {
      * Test method for {@link world.bentobox.bentobox.api.user.Notifier#notify(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
-    public void testNotifyUserString() {
+    void testNotifyUserString() {
         User user = mock(User.class);
         String message = "a message";
         assertTrue(n.notify(user, message));
@@ -42,7 +42,7 @@ public class NotifierTest {
      * Test method for {@link world.bentobox.bentobox.api.user.Notifier#notify(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
-    public void testNotifyUserStringMultisend() {
+    void testNotifyUserStringMultisend() {
         User user = mock(User.class);
         String message = "a message";
         assertTrue(n.notify(user, message));
@@ -57,7 +57,7 @@ public class NotifierTest {
      * Test method for {@link world.bentobox.bentobox.api.user.Notifier#notify(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
-    public void testNotifyUserStringMultisendWaitSend() throws InterruptedException {
+    void testNotifyUserStringMultisendWaitSend() throws InterruptedException {
         User user = mock(User.class);
         String message = "a message";
         assertTrue(n.notify(user, message));

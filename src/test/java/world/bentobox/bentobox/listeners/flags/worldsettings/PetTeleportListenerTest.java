@@ -30,7 +30,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class PetTeleportListenerTest extends CommonTestSetup {
+class PetTeleportListenerTest extends CommonTestSetup {
 
     private PetTeleportListener ptl;
     @Mock
@@ -68,7 +68,7 @@ public class PetTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnPetTeleportNotTameable() {
+    void testOnPetTeleportNotTameable() {
         EntityTeleportEvent e = new EntityTeleportEvent(mockPlayer, location, location);
         ptl.onPetTeleport(e);
         assertFalse(e.isCancelled());
@@ -78,7 +78,7 @@ public class PetTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnPetTeleportNullTo() {
+    void testOnPetTeleportNullTo() {
         EntityTeleportEvent e = new EntityTeleportEvent(mockPlayer, location, null);
         ptl.onPetTeleport(e);
         assertFalse(e.isCancelled());
@@ -88,7 +88,7 @@ public class PetTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnPetTeleportWrongWorld() {
+    void testOnPetTeleportWrongWorld() {
         when(iwm.inWorld(location)).thenReturn(false);
         EntityTeleportEvent e = new EntityTeleportEvent(tamed, location, location);
         ptl.onPetTeleport(e);
@@ -99,7 +99,7 @@ public class PetTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnPetTeleportFlagNotSet() {
+    void testOnPetTeleportFlagNotSet() {
         Flags.PETS_STAY_AT_HOME.setSetting(world, false);
         EntityTeleportEvent e = new EntityTeleportEvent(tamed, location, location);
         ptl.onPetTeleport(e);
@@ -110,7 +110,7 @@ public class PetTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnPetTeleportFlagSetGoingHome() {
+    void testOnPetTeleportFlagSetGoingHome() {
         EntityTeleportEvent e = new EntityTeleportEvent(tamed, location, location);
         ptl.onPetTeleport(e);
         assertFalse(e.isCancelled());
@@ -120,7 +120,7 @@ public class PetTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnPetTeleportFlagSetNoIsland() {
+    void testOnPetTeleportFlagSetNoIsland() {
         Location l = mock(Location.class);
         when(im.getProtectedIslandAt(l)).thenReturn(Optional.empty());
         EntityTeleportEvent e = new EntityTeleportEvent(tamed, location, l);
@@ -132,7 +132,7 @@ public class PetTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnPetTeleportFlagSetNotHome() {
+    void testOnPetTeleportFlagSetNotHome() {
         Location l = mock(Location.class);
         Island otherIsland = mock(Island.class);
         when(otherIsland.getMemberSet()).thenReturn(ImmutableSet.of());
@@ -146,7 +146,7 @@ public class PetTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnPetTeleportFlagSetTamedButNoOwner() {
+    void testOnPetTeleportFlagSetTamedButNoOwner() {
         when(tamed.getOwner()).thenReturn(null);
         EntityTeleportEvent e = new EntityTeleportEvent(tamed, location, location);
         ptl.onPetTeleport(e);
@@ -157,7 +157,7 @@ public class PetTeleportListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
-    public void testOnPetTeleportFlagSetNotTamed() {
+    void testOnPetTeleportFlagSetNotTamed() {
         when(tamed.isTamed()).thenReturn(false);
         EntityTeleportEvent e = new EntityTeleportEvent(tamed, location, location);
         ptl.onPetTeleport(e);

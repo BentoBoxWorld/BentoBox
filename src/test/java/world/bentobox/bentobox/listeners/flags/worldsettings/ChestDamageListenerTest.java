@@ -27,7 +27,6 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -47,7 +46,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class ChestDamageListenerTest extends CommonTestSetup
+class ChestDamageListenerTest extends CommonTestSetup
 {
     @Override
     @BeforeEach
@@ -119,9 +118,8 @@ public class ChestDamageListenerTest extends CommonTestSetup
     /**
      * Test method for {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
-    @Disabled("Issues with NotAMock")
     @Test
-    public void testOnExplosionChestDamageNotAllowed() {
+    void testOnExplosionChestDamageNotAllowed() {
         // Srt the flag to not allow chest damage
         Flags.CHEST_DAMAGE.setSetting(world, false);
         // Set the entity that is causing the damage (TNT)
@@ -163,7 +161,7 @@ public class ChestDamageListenerTest extends CommonTestSetup
      * Test method for {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionChestDamageAllowed() {
+    void testOnExplosionChestDamageAllowed() {
         Flags.CHEST_DAMAGE.setSetting(world, true);
         Entity entity = mock(Entity.class);
         when(entity.getType()).thenReturn(EntityType.TNT);

@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.panels.builders;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -22,7 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -30,7 +28,7 @@ import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
 
-public class PanelItemBuilderTest extends CommonTestSetup {
+class PanelItemBuilderTest extends CommonTestSetup {
 
     @Override
     @BeforeEach
@@ -53,19 +51,16 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
     
     @Test
-    @Disabled("Hitting item check issue")
-    public void testIconMaterial() {
+    void testIconMaterial() {
         PanelItemBuilder builder = new PanelItemBuilder();
-        Material m = mock(Material.class);
-        when(m.isItem()).thenReturn(true);
-        builder.icon(m);
+        builder.icon(Material.STONE);
         PanelItem item = builder.build();
         assertNotNull(item.getItem().getType());
-        assertEquals(m, item.getItem().getType());
+        assertEquals(Material.STONE, item.getItem().getType());
     }
 
     @Test
-    public void testIconItemStack() {
+    void testIconItemStack() {
         PanelItemBuilder builder = new PanelItemBuilder();
         ItemStack ironOre = mock(ItemStack.class);
         when(ironOre.getType()).thenReturn(Material.IRON_ORE);
@@ -75,20 +70,10 @@ public class PanelItemBuilderTest extends CommonTestSetup {
         assertEquals(Material.IRON_ORE, item.getItem().getType());
     }
 
-    @Test
-    @Disabled("Incompatibility with Player Head not being an item")
-    public void testIconString() {
-        PanelItemBuilder builder = new PanelItemBuilder();
-        builder.icon("tastybento");
-        PanelItem item = builder.build();
-        assertNotNull(item.getItem().getType());
-        SkullMeta skullMeta = (SkullMeta) item.getItem().getItemMeta();
-        assertNull(skullMeta.getOwningPlayer());
-        assertEquals(Material.PLAYER_HEAD, item.getItem().getType());
-    }
+    // Removed testIconString — PLAYER_HEAD not classified as item in Paper
 
     @Test
-    public void testName() {
+    void testName() {
         PanelItemBuilder builder = new PanelItemBuilder();
         builder.name("test");
         PanelItem item = builder.build();
@@ -96,7 +81,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testDescriptionListOfString() {
+    void testDescriptionListOfString() {
         PanelItemBuilder builder = new PanelItemBuilder();
         List<String> test = Arrays.asList("test line 1", "test line 2");
         builder.description(test);
@@ -105,7 +90,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testDescriptionStringArray() {
+    void testDescriptionStringArray() {
         PanelItemBuilder builder = new PanelItemBuilder();
         List<String> test = Arrays.asList("test line 3", "test line 4");
         builder.description("test line 3", "test line 4");
@@ -114,7 +99,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testDescriptionString() {
+    void testDescriptionString() {
         PanelItemBuilder builder = new PanelItemBuilder();
         List<String> test = Collections.singletonList("test line 5");
         builder.description("test line 5");
@@ -123,7 +108,27 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testClickHandler() {
+    void testDescriptionStringWithActualNewline() {
+        // Actual newline character (from double-quoted YAML e.g. "line1\nline2")
+        PanelItemBuilder builder = new PanelItemBuilder();
+        List<String> test = Arrays.asList("line 1", "line 2");
+        builder.description("line 1\nline 2");
+        PanelItem item = builder.build();
+        assertEquals(test, item.getDescription());
+    }
+
+    @Test
+    void testDescriptionStringWithLiteralBackslashN() {
+        // Literal \n characters (from unquoted/single-quoted YAML e.g. description: line1\nline2)
+        PanelItemBuilder builder = new PanelItemBuilder();
+        List<String> test = Arrays.asList("line 1", "line 2");
+        builder.description("line 1\\nline 2");
+        PanelItem item = builder.build();
+        assertEquals(test, item.getDescription());
+    }
+
+    @Test
+    void testClickHandler() {
         PanelItemBuilder builder = new PanelItemBuilder();
         // Test without click handler
         PanelItem item = builder.clickHandler(null).build();
@@ -135,7 +140,7 @@ public class PanelItemBuilderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGlow() {
+    void testGlow() {
         PanelItemBuilder builder = new PanelItemBuilder();
         // Test without glowing
         PanelItem item = builder.glow(false).build();

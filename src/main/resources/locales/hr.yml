@@ -185,6 +185,11 @@ commands:
         extra-islands: >-
           &c Upozorenje: ovaj igrač sada posjeduje [number] otoka. To je više od
           dopuštenog prema postavkama ili dozvolama: [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: admin island range command
       invalid-value:
@@ -260,6 +265,9 @@ commands:
       team-members-title: 'Članovi tima:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Maksimalna veličina tima: [number]'
+      max-coop-size: 'Maksimalna veličina suradnje: [number]'
+      max-trusted-size: 'Maksimalna veličina povjerenja: [number]'
       island-protection-center: 'Centar zaštićenog područja: [xyz]'
       island-center: 'Središte otoka: [xyz]'
       island-coords: 'Koordinate otoka: [xz1] do [xz2]'
@@ -492,6 +500,8 @@ commands:
           &a Shift za +/-100
         no-cost: Besplatno
         cost-amount: 'Cijena: [cost]'
+        next-page: '&f Sljedeća stranica'
+        previous-page: '&f Prethodna stranica'
     resetflags:
       parameters: '[zastava]'
       description: Vratite sve otoke na zadane postavke zastavice u config.yml
@@ -690,6 +700,7 @@ commands:
       home-set: '&6 Vaš dom na otoku postavljen je na vašu trenutnu lokaciju.'
       homes-are: '&6 Kuće na otoku su:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Kliknite za teleportaciju!'
       nether:
         not-allowed: '&c Nije vam dopušteno postaviti svoj dom u Nether.'
         confirmation: '&c Jeste li sigurni da želite postaviti svoj dom u Nether?'
@@ -951,6 +962,11 @@ commands:
       not-on-island: '&c Taj igrač nije na vašem otoku!'
       player-expelled-you: '&b [name]&c te protjerao s otoka!'
       success: '&a Protjerali ste &b [name] &a s otoka.'
+    lock:
+      description: zaključajte ili otključajte svoj [prefix_island]
+      locked: '&a Vaš [prefix_island] je sada zaključan.'
+      unlocked: '&a Vaš [prefix_island] je sada otključan.'
+      you-are-locked-out: '&c Ovaj [prefix_island] je sada zaključan. Protjerani ste.'
 ranks:
   owner: Vlasnik
   sub-owner: Podvlasnik
@@ -1475,9 +1491,10 @@ protection:
         &a ako postoje drugi blokovi opsidijana
         &a unutar radijusa od 2 bloka.
       scooping: '&a Pretvaranje opsidijana natrag u lavu. Budite oprezni sljedeći put!'
+      cooldown: '&c Morate pričekati prije nego što možete pokupiti još jedan blok opsidijana.'
       obsidian-nearby: >-
         &c U blizini su blokovi od opsidijana, ne možete zagrabiti ovaj blok u
-        lavu.
+        lavu. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Kada je onemogućeno, biljke
@@ -1668,6 +1685,13 @@ protection:
         &a
         Članovi &a Islanda i dalje gube svoje predmete
         &a ako umru na vlastitom otoku!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Pokretanje racije
       description: Postavlja minimalni rang otoka potreban za pokretanje racije
@@ -1678,6 +1702,13 @@ protection:
         &a Prebacuje ako entiteti (koji nisu igrači) mogu
         &a koristiti portale za teleportiranje između
         &a dimenzije
+    WIND_CHARGE:
+      name: Vjetreni naboj
+      description: |-
+        &a Prebacuje upotrebu vjetrenih naboja.
+        &a Ako je onemogućeno, posjetitelji ne mogu
+        &a koristiti vjetrene naboje na ovom otoku.
+      hint: Upotreba vjetrenih naboja onemogućena
     WITHER_DAMAGE:
       name: Prebaci oštećenje venuća
       description: |-
@@ -1696,6 +1727,7 @@ protection:
         &a entiteta izvan granica otoka.
       name: Svjetska TNT šteta
   locked: '&c Ovaj otok je zaključan!'
+  locked-island-bypass: '&6 Ovaj [prefix_island] je zaključan, ali imate dozvolu za pristup.'
   protected: '&c Otok zaštićen: [opis].'
   world-protected: '&c Svijet zaštićen: [opis].'
   spawn-protected: '&c Spawn zaštićeno: [opis].'

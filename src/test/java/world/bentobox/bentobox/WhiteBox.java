@@ -1,6 +1,6 @@
 package world.bentobox.bentobox;
 
-public class WhiteBox {
+class WhiteBox {
     /**
      * Sets the value of a private static field using Java Reflection.
      * @param targetClass The class containing the static field.

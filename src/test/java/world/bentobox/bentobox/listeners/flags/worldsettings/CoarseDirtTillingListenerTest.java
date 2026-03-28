@@ -32,7 +32,6 @@ import org.mockito.stubbing.Answer;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.flags.protection.TestWorldSettings;
 import world.bentobox.bentobox.lists.Flags;
@@ -43,7 +42,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  * @author tastybento
  *
  */
-public class CoarseDirtTillingListenerTest extends CommonTestSetup {
+class CoarseDirtTillingListenerTest extends CommonTestSetup {
 
     private static final List<Material> HOES = Collections.unmodifiableList(Arrays.stream(Material.values())
             .filter(m -> !m.isLegacy()).filter(m -> m.name().endsWith("_HOE")).toList());
@@ -103,7 +102,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnTillingCoarseDirtNotAllowed() {
+    void testOnTillingCoarseDirtNotAllowed() {
         ItemStack itemStack = mock(ItemStack.class);
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
 
@@ -119,7 +118,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnTillingCoarseDirtAllowed() {
+    void testOnTillingCoarseDirtAllowed() {
         // Flag
         Flags.COARSE_DIRT_TILLING.setDefaultSetting(world, true);
         ItemStack itemStack = mock(ItemStack.class);
@@ -136,7 +135,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnTillingCoarseDirtNotHoe() {
+    void testOnTillingCoarseDirtNotHoe() {
         ItemStack itemStack = mock(ItemStack.class);
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
         NOT_HOES.forEach(m -> {
@@ -151,7 +150,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnTillingCoarseDirtWrongAction() {
+    void testOnTillingCoarseDirtWrongAction() {
         ItemStack itemStack = mock(ItemStack.class);
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.LEFT_CLICK_AIR, itemStack, clickedBlock, BlockFace.UP);
         ctl.onTillingCoarseDirt(e);
@@ -163,7 +162,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnTillingCoarseDirtNullItem() {
+    void testOnTillingCoarseDirtNullItem() {
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, null, clickedBlock, BlockFace.UP);
         ctl.onTillingCoarseDirt(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
@@ -174,7 +173,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnTillingCoarseDirtNotCoarseDirt() {
+    void testOnTillingCoarseDirtNotCoarseDirt() {
         when(clickedBlock.getType()).thenReturn(Material.DIRT);
         ItemStack itemStack = mock(ItemStack.class);
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
@@ -187,7 +186,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.mockPlayer.PlayerInteractEvent)}.
      */
     @Test
-    public void testOnTillingCoarseDirtWrongWorld() {
+    void testOnTillingCoarseDirtWrongWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         ItemStack itemStack = mock(ItemStack.class);
         PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
@@ -204,7 +203,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onBreakingPodzol(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnBreakingPodzolNotPodzol() {
+    void testOnBreakingPodzolNotPodzol() {
         BlockBreakEvent e = new BlockBreakEvent(clickedBlock, mockPlayer);
         ctl.onBreakingPodzol(e);
         verify(clickedBlock, never()).setType(any());
@@ -214,7 +213,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onBreakingPodzol(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnBreakingPodzol() {
+    void testOnBreakingPodzol() {
         when(clickedBlock.getType()).thenReturn(Material.PODZOL);
         BlockBreakEvent e = new BlockBreakEvent(clickedBlock, mockPlayer);
         ctl.onBreakingPodzol(e);
@@ -227,7 +226,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onBreakingPodzol(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnBreakingPodzolWrongWorld() {
+    void testOnBreakingPodzolWrongWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(clickedBlock.getType()).thenReturn(Material.PODZOL);
         BlockBreakEvent e = new BlockBreakEvent(clickedBlock, mockPlayer);
@@ -239,7 +238,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onBreakingPodzol(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnBreakingPodzolCreative() {
+    void testOnBreakingPodzolCreative() {
         when(mockPlayer.getGameMode()).thenReturn(GameMode.CREATIVE);
         when(clickedBlock.getType()).thenReturn(Material.PODZOL);
         BlockBreakEvent e = new BlockBreakEvent(clickedBlock, mockPlayer);
@@ -251,7 +250,7 @@ public class CoarseDirtTillingListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onBreakingPodzol(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
-    public void testOnBreakingPodzolFlagAllowed() {
+    void testOnBreakingPodzolFlagAllowed() {
         // Flag
         Flags.COARSE_DIRT_TILLING.setDefaultSetting(world, true);
         when(clickedBlock.getType()).thenReturn(Material.PODZOL);

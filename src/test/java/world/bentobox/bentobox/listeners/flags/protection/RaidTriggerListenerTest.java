@@ -19,7 +19,7 @@ import world.bentobox.bentobox.lists.Flags;
 /**
  * Tests for {@link RaidTriggerListener}.
  */
-public class RaidTriggerListenerTest extends CommonTestSetup {
+class RaidTriggerListenerTest extends CommonTestSetup {
 
     private RaidTriggerListener listener;
     private RaidTriggerEvent event;
@@ -50,7 +50,7 @@ public class RaidTriggerListenerTest extends CommonTestSetup {
      * Test that a player without the required rank cannot trigger a raid.
      */
     @Test
-    public void testOnRaidTriggerNotAllowed() {
+    void testOnRaidTriggerNotAllowed() {
         when(island.isAllowed(any(User.class), eq(Flags.RAID_TRIGGER))).thenReturn(false);
         listener.onRaidTrigger(event);
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -61,7 +61,7 @@ public class RaidTriggerListenerTest extends CommonTestSetup {
      * Test that a player with the required rank can trigger a raid.
      */
     @Test
-    public void testOnRaidTriggerAllowed() {
+    void testOnRaidTriggerAllowed() {
         when(island.isAllowed(any(User.class), eq(Flags.RAID_TRIGGER))).thenReturn(true);
         listener.onRaidTrigger(event);
         verify(notifier, never()).notify(any(), eq("protection.protected"));

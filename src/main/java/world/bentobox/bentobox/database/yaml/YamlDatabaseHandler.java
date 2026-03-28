@@ -379,7 +379,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return completableFuture;
     }
 
-    @SuppressWarnings("unchecked")
     private void processFile(CompletableFuture<Boolean> completableFuture, T instance) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
         // This is the Yaml Configuration that will be used and saved at the end
         YamlConfiguration config = new YamlConfiguration();
@@ -406,45 +405,16 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             Method method = propertyDescriptor.getReadMethod();
             // Invoke the read method to get the value. We have no idea what type of value it is.
             Object value = method.invoke(instance);
-            String storageLocation = field.getName();
 
-            // Check if there is an annotation on the field
-            ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
-
-            // If there is a config path annotation or adapter then deal with them
-            if (configEntry != null && !configEntry.path().isEmpty()) {
-                if (configEntry.hidden()) {
-                    // If the annotation tells us to not print the config entry, then we won't.
-                    continue;
-                }
-
-                // Get the storage location
-                storageLocation = configEntry.path();
-
-                // Get path for comments
-                String parent = "";
-                if (storageLocation.contains(".")) {
-                    parent = storageLocation.substring(0, storageLocation.lastIndexOf('.')) + ".";
-                }
-                handleComments(field, config, yamlComments, parent);
-                handleConfigEntryComments(configEntry, config, yamlComments, parent);
+            // Process ConfigEntry annotation; returns null if the field should be skipped (hidden)
+            String storageLocation = processConfigEntry(field, field.getName(), config, yamlComments);
+            if (storageLocation == null) {
+                continue;
             }
 
             if (!checkAdapter(field, config, storageLocation, value)) {
-                // Set the filename if it has not be set already
-                if (filename.isEmpty() && method.getName().equals("getUniqueId")) {
-                    // Save the name for when the file is saved
-                    filename = getFilename(propertyDescriptor, instance, (String)value);
-                }
-                // Collections need special serialization
-                if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
-                    serializeMap((Map<Object,Object>)value, config, storageLocation);
-                } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
-                    serializeSet((Set<Object>)value, config, storageLocation);
-                } else {
-                    // For all other data that doesn't need special serialization
-                    config.set(storageLocation, serialize(value));
-                }
+                filename = resolveFilename(filename, propertyDescriptor, method, instance, value);
+                serializeFieldValue(propertyDescriptor, value, storageLocation, config);
             }
         }
         // If the filename has not been set by now then we have a problem
@@ -454,6 +424,79 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
         // Save
         save(completableFuture, filename, config.saveToString(), path, yamlComments);
+    }
+
+    /**
+     * Processes the {@link ConfigEntry} annotation on a field and registers any associated comments.
+     * Returns the storage location to use for this field, or {@code null} if the field is marked
+     * hidden and should be skipped entirely.
+     *
+     * @param field           the field being processed
+     * @param defaultLocation the default storage location (the field name)
+     * @param config          the YAML configuration being built
+     * @param yamlComments    the comment map being built
+     * @return the resolved storage location, or {@code null} if the field should be skipped
+     */
+    @Nullable
+    private String processConfigEntry(Field field, String defaultLocation, YamlConfiguration config, Map<String, String> yamlComments) {
+        ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
+        if (configEntry == null || configEntry.path().isEmpty()) {
+            return defaultLocation;
+        }
+        // If the annotation tells us to not print the config entry, signal skip with null.
+        if (configEntry.hidden()) {
+            return null;
+        }
+        String storageLocation = configEntry.path();
+        // Determine the parent path for comments
+        String parent = storageLocation.contains(".")
+                ? storageLocation.substring(0, storageLocation.lastIndexOf('.')) + "."
+                : "";
+        handleComments(field, config, yamlComments, parent);
+        handleConfigEntryComments(configEntry, config, yamlComments, parent);
+        return storageLocation;
+    }
+
+    /**
+     * Resolves and returns the filename to use when saving the YAML file.
+     * If the filename has already been determined (non-empty), it is returned unchanged.
+     * Otherwise, when the read method is {@code getUniqueId}, the unique id value is used
+     * (generating one if necessary) and stored back on the instance.
+     *
+     * @param currentFilename the filename resolved so far (may be empty)
+     * @param pd              the property descriptor for the current field
+     * @param method          the read method for the current field
+     * @param instance        the object being serialized
+     * @param value           the value returned by the read method
+     * @return the (possibly updated) filename
+     */
+    private String resolveFilename(String currentFilename, PropertyDescriptor pd, Method method, T instance, Object value) throws IllegalAccessException, InvocationTargetException {
+        if (currentFilename.isEmpty() && method.getName().equals("getUniqueId")) {
+            return getFilename(pd, instance, (String) value);
+        }
+        return currentFilename;
+    }
+
+    /**
+     * Serializes a field value into the YAML configuration at the given storage location.
+     * Maps and Sets receive special collection serialization; all other values go through
+     * the standard {@link #serialize(Object)} path.
+     *
+     * @param pd              the property descriptor for the field (used to determine the type)
+     * @param value           the value to serialize
+     * @param storageLocation the YAML key to write to
+     * @param config          the YAML configuration being built
+     */
+    @SuppressWarnings("unchecked")
+    private void serializeFieldValue(PropertyDescriptor pd, Object value, String storageLocation, YamlConfiguration config) {
+        if (Map.class.isAssignableFrom(pd.getPropertyType()) && value != null) {
+            serializeMap((Map<Object, Object>) value, config, storageLocation);
+        } else if (Set.class.isAssignableFrom(pd.getPropertyType()) && value != null) {
+            serializeSet((Set<Object>) value, config, storageLocation);
+        } else {
+            // For all other data that doesn't need special serialization
+            config.set(storageLocation, serialize(value));
+        }
     }
 
     private void save(CompletableFuture<Boolean> completableFuture, String name, String data, String path, Map<String, String> yamlComments) {
@@ -621,77 +664,95 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Nullable
     private Object deserialize(Object value, Class<?> clazz) {
-        // If value is already null, then it can be nothing else
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof String && value.equals("null")) {
-            // If the value is null as a string, return null
+        // If value is already null or the string "null", return null
+        if (value == null || "null".equals(value)) {
             return null;
         }
         // Bukkit may have deserialized the object already
         if (clazz.equals(value.getClass())) {
             return value;
         }
-        // Types that need to be deserialized
+        // Integer to Long promotion
         if (clazz.equals(Long.class) && value.getClass().equals(Integer.class)) {
             return Long.valueOf((Integer) value);
         }
-        if (value.getClass().equals(String.class)) {
-            if (clazz.equals(Integer.class)) {
-                return Integer.valueOf((String) value);
+        // String-based conversions
+        if (value instanceof String stringValue) {
+            Object converted = deserializeString(stringValue, clazz);
+            if (converted != null) {
+                return converted;
             }
-            if (clazz.equals(Long.class)) {
-                return Long.valueOf((String) value);
-            }
-            if (clazz.equals(Double.class)) {
-                return Double.valueOf((String) value);
-            }
-            if (clazz.equals(Float.class)) {
-                return Float.valueOf((String) value);
-            }
-        }
-        if (clazz.equals(UUID.class)) {
-            value = UUID.fromString((String)value);
-        }
-        // Bukkit Types
-        if (clazz.equals(Location.class)) {
-            // Get Location from String - may be null...
-            value = Util.getLocationString(((String)value));
-        }
-        if (clazz.equals(World.class)) {
-            // Get world by name - may be null...
-            value = Bukkit.getWorld((String)value);
         }
         // Enums
         if (Enum.class.isAssignableFrom(clazz)) {
-            //Custom enums are a child of the Enum class.
-            // Find out the value
-            Class<Enum> enumClass = (Class<Enum>)clazz;
-            try {
-                String name = ((String)value).toUpperCase(Locale.ENGLISH);
-                // Backwards compatibility for upgrade to 1.16.1
-                if (name.equals("PIG_ZOMBIE") || name.equals("ZOMBIFIED_PIGLIN")) {
-                    return Enums.getIfPresent(EntityType.class, "ZOMBIFIED_PIGLIN")
-                            .or(Enums.getIfPresent(EntityType.class, "PIG_ZOMBIE").or(EntityType.PIG));
-                }
-                // Backwards compatibility for upgrade to 1.20.4
-                if (name.equals("GRASS") && Enums.getIfPresent(EntityType.class, "SHORT_GRASS").isPresent()) {
-                    return Enums.getIfPresent(EntityType.class, "SHORT_GRASS");
-                }
-                value = Enum.valueOf(enumClass, name);
-            } catch (Exception e) {
-                // This value does not exist - probably admin typed it wrongly
-                // Show what is available and pick one at random
-                plugin.logError("Error in YML file: " + value + " is not a valid value in the enum " + clazz.getCanonicalName() + "!");
-                plugin.logError("Options are : ");
-                for (Field fields : enumClass.getFields()) {
-                    plugin.logError(fields.getName());
-                }
-                value = null;
-            }
+            return deserializeEnum((String) value, (Class<Enum>) clazz);
         }
         return value;
+    }
+
+    /**
+     * Deserialize a string value into the target class type.
+     * Handles numeric types, UUID, Location, and World.
+     * @param value the string value
+     * @param clazz the target class
+     * @return the deserialized object, or null if this method does not handle the target class
+     */
+    @Nullable
+    private Object deserializeString(String value, Class<?> clazz) {
+        if (clazz.equals(Integer.class)) {
+            return Integer.valueOf(value);
+        }
+        if (clazz.equals(Long.class)) {
+            return Long.valueOf(value);
+        }
+        if (clazz.equals(Double.class)) {
+            return Double.valueOf(value);
+        }
+        if (clazz.equals(Float.class)) {
+            return Float.valueOf(value);
+        }
+        if (clazz.equals(UUID.class)) {
+            return UUID.fromString(value);
+        }
+        if (clazz.equals(Location.class)) {
+            return Util.getLocationString(value);
+        }
+        if (clazz.equals(World.class)) {
+            return Bukkit.getWorld(value);
+        }
+        return null;
+    }
+
+    /**
+     * Deserialize a string value into an enum constant, with backwards compatibility handling.
+     * @param value the string value
+     * @param enumClass the target enum class
+     * @return the enum constant, or null if invalid
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Nullable
+    private Object deserializeEnum(String value, Class<Enum> enumClass) {
+        try {
+            String name = value.toUpperCase(Locale.ENGLISH);
+            // Backwards compatibility for upgrade to 1.16.1
+            if (name.equals("PIG_ZOMBIE") || name.equals("ZOMBIFIED_PIGLIN")) {
+                return Enums.getIfPresent(EntityType.class, "ZOMBIFIED_PIGLIN")
+                        .or(Enums.getIfPresent(EntityType.class, "PIG_ZOMBIE").or(EntityType.PIG));
+            }
+            // Backwards compatibility for upgrade to 1.20.4
+            if (name.equals("GRASS") && Enums.getIfPresent(EntityType.class, "SHORT_GRASS").isPresent()) {
+                return Enums.getIfPresent(EntityType.class, "SHORT_GRASS");
+            }
+            return Enum.valueOf(enumClass, name);
+        } catch (Exception e) {
+            // This value does not exist - probably admin typed it wrongly
+            plugin.logError("Error in YML file: " + value + " is not a valid value in the enum " + enumClass.getCanonicalName() + "!");
+            plugin.logError("Options are : ");
+            for (Field fields : enumClass.getFields()) {
+                plugin.logError(fields.getName());
+            }
+            return null;
+        }
     }
 
     @Override

@@ -27,7 +27,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.listeners.flags.protection.TestWorldSettings;
 import world.bentobox.bentobox.lists.Flags;
 
-public class CreeperListenerTest extends CommonTestSetup {
+class CreeperListenerTest extends CommonTestSetup {
 
     private CreeperListener cl;
 
@@ -54,7 +54,7 @@ public class CreeperListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionNotCreeper() {
+    void testOnExplosionNotCreeper() {
         List<Block> list = new ArrayList<>();
         Entity entity = mock(Entity.class);
         when(entity.getType()).thenReturn(EntityType.TNT);
@@ -68,7 +68,7 @@ public class CreeperListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionNotInWorld() {
+    void testOnExplosionNotInWorld() {
         List<Block> list = new ArrayList<>();
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(location);
@@ -83,7 +83,7 @@ public class CreeperListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionCreeperInWorldDamageOK() {
+    void testOnExplosionCreeperInWorldDamageOK() {
         List<Block> list = new ArrayList<>();
         list.add(mock(Block.class));
         list.add(mock(Block.class));
@@ -102,7 +102,7 @@ public class CreeperListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
-    public void testOnExplosionCreeperInWorldDamageNOK() {
+    void testOnExplosionCreeperInWorldDamageNOK() {
         Flags.CREEPER_DAMAGE.setSetting(world, false);
         List<Block> list = new ArrayList<>();
         list.add(mock(Block.class));
@@ -123,7 +123,7 @@ public class CreeperListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityCancelled() {
+    void testOnPlayerInteractEntityCancelled() {
         Flags.CREEPER_GRIEFING.setSetting(world, false);
         Creeper creeper = mock(Creeper.class);
         when(location.getWorld()).thenReturn(world);
@@ -142,7 +142,7 @@ public class CreeperListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityAllowed() {
+    void testOnPlayerInteractEntityAllowed() {
         Flags.CREEPER_GRIEFING.setSetting(world, true);
         Creeper creeper = mock(Creeper.class);
         when(location.getWorld()).thenReturn(world);
@@ -161,7 +161,7 @@ public class CreeperListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityNotCreeper() {
+    void testOnPlayerInteractEntityNotCreeper() {
         Flags.CREEPER_GRIEFING.setSetting(world, false);
         when(mockPlayer.getInventory()).thenReturn(inv);
         ItemStack item = mock(ItemStack.class);
@@ -177,7 +177,7 @@ public class CreeperListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityOnIsland() {
+    void testOnPlayerInteractEntityOnIsland() {
         Flags.CREEPER_GRIEFING.setSetting(world, false);
         Creeper creeper = mock(Creeper.class);
         when(location.getWorld()).thenReturn(world);
@@ -198,7 +198,7 @@ public class CreeperListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityWrongWorld() {
+    void testOnPlayerInteractEntityWrongWorld() {
         Flags.CREEPER_GRIEFING.setSetting(world, false);
         Creeper creeper = mock(Creeper.class);
         when(location.getWorld()).thenReturn(world);
@@ -217,7 +217,7 @@ public class CreeperListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
-    public void testOnPlayerInteractEntityNothingInHand() {
+    void testOnPlayerInteractEntityNothingInHand() {
         Flags.CREEPER_GRIEFING.setSetting(world, false);
         Creeper creeper = mock(Creeper.class);
         when(location.getWorld()).thenReturn(world);

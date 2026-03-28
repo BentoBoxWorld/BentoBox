@@ -31,16 +31,16 @@ public class GitHubWebAPI {
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     private synchronized String fetchRaw(String endpoint) throws IOException, URISyntaxException {
-        long currentTime = System.currentTimeMillis();
-        long timeSinceLastRequest = currentTime - lastRequestTime;
+        long timeSinceLastRequest = System.currentTimeMillis() - lastRequestTime;
 
-        if (timeSinceLastRequest < RATE_LIMIT_INTERVAL_MS) {
+        while (timeSinceLastRequest < RATE_LIMIT_INTERVAL_MS) {
             try {
-                Thread.sleep(RATE_LIMIT_INTERVAL_MS - timeSinceLastRequest);
+                wait(RATE_LIMIT_INTERVAL_MS - timeSinceLastRequest);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new IOException("Thread interrupted while waiting for rate limit", e);
             }
+            timeSinceLastRequest = System.currentTimeMillis() - lastRequestTime;
         }
 
         lastRequestTime = System.currentTimeMillis();

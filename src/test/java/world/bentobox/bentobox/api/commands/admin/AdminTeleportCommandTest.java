@@ -40,7 +40,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
-public class AdminTeleportCommandTest extends CommonTestSetup {
+class AdminTeleportCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -164,7 +164,7 @@ public class AdminTeleportCommandTest extends CommonTestSetup {
      * Test all the various commands
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         AdminTeleportCommand c = new AdminTeleportCommand(ac, "tp");
         assertEquals("tp", c.getLabel());
         c = new AdminTeleportCommand(ac, "tpnether");
@@ -177,21 +177,21 @@ public class AdminTeleportCommandTest extends CommonTestSetup {
      * Test no args
      */
     @Test
-    public void testExecuteUserStringListOfStringEmptyArgs() {
+    void testExecuteUserStringListOfStringEmptyArgs() {
         AdminTeleportCommand atc = new AdminTeleportCommand(ac, "tp");
         assertFalse(atc.canExecute(user, "tp", new ArrayList<>()));
         verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
     }
 
     @Test
-    public void testExecuteUserStringListOfStringUnknownTarget() {
+    void testExecuteUserStringListOfStringUnknownTarget() {
         AdminTeleportCommand atc = new AdminTeleportCommand(ac, "tp");
         assertFalse(atc.canExecute(user, "tp", List.of("tastybento")));
         verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tastybento");
     }
 
     @Test
-    public void testExecuteUserStringListOfStringKnownTargetNoIsland() {
+    void testExecuteUserStringListOfStringKnownTargetNoIsland() {
         when(pm.getUUID("tastybento")).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tp");
@@ -203,7 +203,7 @@ public class AdminTeleportCommandTest extends CommonTestSetup {
      * Test for {@link AdminTeleportCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteUserStringListOfStringKnownTargetHasIsland() {
+    void testExecuteUserStringListOfStringKnownTargetHasIsland() {
         when(pm.getUUID("tastybento")).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tp");
@@ -216,7 +216,7 @@ public class AdminTeleportCommandTest extends CommonTestSetup {
      * Test for {@link AdminTeleportCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteUserStringListOfStringKnownTargetHasIslandSpawnPoint() {
+    void testExecuteUserStringListOfStringKnownTargetHasIslandSpawnPoint() {
         when(island.getSpawnPoint(any())).thenReturn(spawnPoint);
         when(pm.getUUID("tastybento")).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
@@ -227,7 +227,7 @@ public class AdminTeleportCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testExecuteUserStringListOfStringKnownTargetIsTeamMember() {
+    void testExecuteUserStringListOfStringKnownTargetIsTeamMember() {
         when(pm.getUUID("tastybento")).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
@@ -240,7 +240,7 @@ public class AdminTeleportCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testExecuteUserStringListOfStringKnownTargetHasIslandNether() {
+    void testExecuteUserStringListOfStringKnownTargetHasIslandNether() {
         when(pm.getUUID("tastybento")).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpnether");
@@ -252,7 +252,7 @@ public class AdminTeleportCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testExecuteUserStringListOfStringKnownTargetHasIslandEnd() {
+    void testExecuteUserStringListOfStringKnownTargetHasIslandEnd() {
         when(pm.getUUID("tastybento")).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpend");
@@ -264,7 +264,7 @@ public class AdminTeleportCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPermissionsNoRootPermission() {
+    void testPermissionsNoRootPermission() {
         when(mockPlayer.hasPermission("admin.tp")).thenReturn(true);
         when(mockPlayer.hasPermission("admin")).thenReturn(false);
         when(pm.getUUID("tastybento")).thenReturn(notUUID);
@@ -279,7 +279,7 @@ public class AdminTeleportCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testPermissionsHasRootPermission() {
+    void testPermissionsHasRootPermission() {
         when(mockPlayer.hasPermission("admin.tp")).thenReturn(true);
         when(mockPlayer.hasPermission("admin")).thenReturn(true);
         when(pm.getUUID("tastybento")).thenReturn(notUUID);

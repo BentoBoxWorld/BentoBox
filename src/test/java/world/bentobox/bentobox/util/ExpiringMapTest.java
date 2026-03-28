@@ -110,7 +110,7 @@ class ExpiringMapTest {
 
     @Test
     void testNotEqualsNonMap() {
-        assertFalse(map.equals("not a map"));
+        assertNotEquals("not a map", map);
     }
 
     @Test

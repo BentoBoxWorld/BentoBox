@@ -106,7 +106,10 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
         if (!map.containsKey(name)) {
             user.sendMessage("commands.island.go.unknown-home");
             user.sendMessage("commands.island.sethome.homes-are");
-            map.keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
+            map.keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendRawMessage(
+                    user.getTranslation("commands.island.sethome.home-list-syntax", TextVariables.NAME, s)
+                            + "[run_command: /" + getTopLabel() + " go " + s + "]"
+                            + "[hover: " + user.getTranslation("commands.island.sethome.click-to-teleport") + "]"));
             return false;
         }
         this.askConfirmation(user, () -> delete(map.get(name), user, name));

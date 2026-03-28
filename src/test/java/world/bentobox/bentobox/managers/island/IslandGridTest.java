@@ -21,7 +21,7 @@ import world.bentobox.bentobox.managers.island.IslandGrid.IslandData;
 /**
  * Grid test
  */
-public class IslandGridTest extends CommonTestSetup {
+class IslandGridTest extends CommonTestSetup {
 
     private IslandGrid ig;
     @Mock

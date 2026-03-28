@@ -36,7 +36,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class GeoMobLimitTabTest extends CommonTestSetup {
+class GeoMobLimitTabTest extends CommonTestSetup {
 
     @Mock
     private User user;
@@ -80,7 +80,7 @@ public class GeoMobLimitTabTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
      */
     @Test
-    public void testOnClick() {
+    void testOnClick() {
         GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
         // ARMADILLO, AXOLOTL, BAT, and COW in list
         assertEquals(4, list.size());
@@ -110,7 +110,7 @@ public class GeoMobLimitTabTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getIcon()}.
      */
     @Test
-    public void testGetIcon() {
+    void testGetIcon() {
         GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT, world);
         PanelItem icon = tab.getIcon();
         assertEquals("protection.flags.LIMIT_MOBS.name", icon.getName());
@@ -121,7 +121,7 @@ public class GeoMobLimitTabTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getIcon()}.
      */
     @Test
-    public void testGetIconGeoLimit() {
+    void testGetIconGeoLimit() {
         GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
         PanelItem icon = tab.getIcon();
         assertEquals("protection.flags.GEO_LIMIT_MOBS.name", icon.getName());
@@ -132,7 +132,7 @@ public class GeoMobLimitTabTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getName()}.
      */
     @Test
-    public void testGetName() {
+    void testGetName() {
         GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT, world);
         assertEquals("protection.flags.LIMIT_MOBS.name", tab.getName());
         tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
@@ -143,7 +143,7 @@ public class GeoMobLimitTabTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getPanelItems()}.
      */
     @Test
-    public void testGetPanelItemsMobLimit() {
+    void testGetPanelItemsMobLimit() {
         GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT, world);
         List<@Nullable PanelItem> items = tab.getPanelItems();
         assertFalse(items.isEmpty());
@@ -161,7 +161,7 @@ public class GeoMobLimitTabTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getPanelItems()}.
      */
     @Test
-    public void testGetPanelItemsGeoLimit() {
+    void testGetPanelItemsGeoLimit() {
         GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
         List<@Nullable PanelItem> items = tab.getPanelItems();
         assertFalse(items.isEmpty());
@@ -179,7 +179,7 @@ public class GeoMobLimitTabTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getPermission()}.
      */
     @Test
-    public void testGetPermission() {
+    void testGetPermission() {
         GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
         assertTrue(tab.getPermission().isEmpty());
     }

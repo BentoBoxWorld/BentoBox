@@ -195,6 +195,11 @@ commands:
           &c Warnung: Dieser Spieler besitzt jetzt [number] Inseln. Das sind
           mehr als durch die Einstellungen oder Berechtigungen erlaubt ist:
           [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: Admin Insel Bereichsbefehl
       invalid-value:
@@ -274,6 +279,9 @@ commands:
       team-members-title: 'Teammitglieder:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Maximale Teamgröße: [number]'
+      max-coop-size: 'Maximale Coop-Größe: [number]'
+      max-trusted-size: 'Maximale Vertrauensgröße: [number]'
       island-protection-center: 'Mittelpunkt des Schutzbereiches: [xyz]'
       island-center: 'Inselmitte: [xyz]'
       island-coords: 'Koordinaten der Insel: [xz1] bis [xz2]'
@@ -512,6 +520,8 @@ commands:
           &a Shift für +/-100
         no-cost: Kostenlos
         cost-amount: 'Kosten: [cost]'
+        next-page: '&f Nächste Seite'
+        previous-page: '&f Vorherige Seite'
     resetflags:
       parameters: '[flag]'
       description: >-
@@ -731,6 +741,7 @@ commands:
       home-set: '&6 Dein Insel-Home wurde auf deine aktuelle Position gesetzt.'
       homes-are: '&6 Inselhomes sind:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Klicke zum Teleportieren!'
       nether:
         not-allowed: '&c Du darfst dein Home nicht im Nether setzen.'
         confirmation: '&c Bist du sicher, dass du dein Home im Nether setzen möchtest?'
@@ -1004,6 +1015,11 @@ commands:
       not-on-island: '&c Dieser Spieler ist nicht auf deiner Insel!'
       player-expelled-you: '&b [name]&c hat dich von der Insel vertrieben!'
       success: '&a Du hast&b [name]&a von der Insel vertrieben.'
+    lock:
+      description: Dein [prefix_island] sperren oder entsperren
+      locked: '&a Dein [prefix_island] ist jetzt gesperrt.'
+      unlocked: '&a Dein [prefix_island] ist jetzt entsperrt.'
+      you-are-locked-out: '&c Dieses [prefix_island] ist jetzt gesperrt. Du wurdest vertrieben.'
 ranks:
   owner: Besitzer
   sub-owner: Mitbesitzer
@@ -1510,9 +1526,10 @@ protection:
 
         &a Hilft Neulingen und reduziert Resets.
       scooping: '&a Obsidian wieder in Lava verwandelt. Sei nächstes Mal vorsichtig!'
+      cooldown: '&c Du musst warten, bevor du einen weiteren Obsidianblock schöpfen kannst.'
       obsidian-nearby: >-
         &c Es gibt Obsidianblöcke in der Nähe, du kannst diesen Block nicht in
-        Lava umwandeln.
+        Lava umwandeln. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Wenn deaktiviert, wachsen Pflanzen 
@@ -1710,6 +1727,13 @@ protection:
         &a gezähmte Haustiere nur auf die
         &a Heimatinsel des Besitzers gehen
         &a und sie nicht verlassen.
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Raid auslösen
       description: Legt den minimalen Inselrang fest, der zum Auslösen eines Raids benötigt wird
@@ -1720,6 +1744,13 @@ protection:
         &a Schaltet um, ob Entitäten (Nicht-Spieler) 
         &a Portale nutzen können, um zwischen
         &a Dimensionen zu teleportieren
+    WIND_CHARGE:
+      name: Windladung
+      description: |-
+        &a Verwendung von Windladungen umschalten.
+        &a Wenn deaktiviert, können Besucher
+        &a auf dieser Insel keine Windladungen verwenden.
+      hint: Verwendung von Windladungen deaktiviert
     WITHER_DAMAGE:
       name: Umschalten von Wither-Schäden
       description: |-
@@ -1738,6 +1769,7 @@ protection:
         &a verletzen.
       name: Welt-TNT-Schaden
   locked: '&c Diese Insel ist gesperrt!'
+  locked-island-bypass: '&6 Diese [prefix_island] ist gesperrt, aber du hast die Erlaubnis, sie zu betreten.'
   protected: '&c Insel geschützt: [description]'
   world-protected: '&c Welt geschützt: [description]'
   spawn-protected: '&c Spawn geschützt: [description]'

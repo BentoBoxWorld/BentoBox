@@ -10,7 +10,6 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
@@ -24,7 +23,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
  * @author Poslovitch
  *
  */
-public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
+class AdminPurgeUnownedCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -78,7 +77,7 @@ public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
      * Makes sure no spawn islands are purged whatsoever
      */
     @Test
-    public void testNoPurgeIfIslandIsSpawn() {
+    void testNoPurgeIfIslandIsSpawn() {
         when(island.isSpawn()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));
@@ -86,24 +85,24 @@ public class AdminPurgeUnownedCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testNoPurgeIfIslandIsOwned() {
+    void testNoPurgeIfIslandIsOwned() {
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.admin.purge.unowned.unowned-islands", "[number]", "0");
     }
 
-    @Disabled("unable to mock CompositeCommand#askConfirmation()")
     @Test
-    public void testPurgeIfIslandIsUnowned() {
+    void testPurgeIfIslandIsUnowned() {
         when(island.isOwned()).thenReturn(false);
         when(island.isUnowned()).thenReturn(true);
+        when(island.getWorld()).thenReturn(world);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.admin.purge.unowned.unowned-islands", "[number]", "1");
     }
 
     @Test
-    public void testNoPurgeIfIslandIsPurgeProtected() {
+    void testNoPurgeIfIslandIsPurgeProtected() {
         when(island.isPurgeProtected()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
         assertTrue(apuc.execute(user, "", Collections.emptyList()));

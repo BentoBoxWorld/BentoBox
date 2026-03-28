@@ -49,7 +49,7 @@ import world.bentobox.bentobox.api.user.User;
  * @author tastybento
  *
  */
-public class PanelListenerManagerTest extends CommonTestSetup {
+class PanelListenerManagerTest extends CommonTestSetup {
 
     private static final String PANEL_NAME = "name";
     private InventoryView view;
@@ -165,8 +165,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
         }
 
         @Override
-        public String getOriginalTitle() {
-            
+        public String getOriginalTitle() {            
             return "";
         }
 
@@ -248,9 +247,9 @@ public class PanelListenerManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickOutsideUnknownPanel() {
-        SlotType type = SlotType.OUTSIDE;
-        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
+    void testOnInventoryClickOutsideUnknownPanel() {
+        SlotType localType = SlotType.OUTSIDE;
+        InventoryClickEvent e = new InventoryClickEvent(view, localType, 0, click, inv);
         plm.onInventoryClick(e);
         verify(mockPlayer, never()).closeInventory();
     }
@@ -259,11 +258,11 @@ public class PanelListenerManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickOutsideKnownPanel() {
+    void testOnInventoryClickOutsideKnownPanel() {
         // Put a panel in the list
         PanelListenerManager.getOpenPanels().put(uuid, panel);
-        SlotType type = SlotType.OUTSIDE;
-        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
+        SlotType localType = SlotType.OUTSIDE;
+        InventoryClickEvent e = new InventoryClickEvent(view, localType, 0, click, inv);
         plm.onInventoryClick(e);
         verify(mockPlayer).closeInventory();
     }
@@ -272,7 +271,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickNoOpenPanels() {
+    void testOnInventoryClickNoOpenPanels() {
         InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
         plm.onInventoryClick(e);
         // Nothing should happen
@@ -283,7 +282,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickOpenPanelsWrongPanel() {
+    void testOnInventoryClickOpenPanelsWrongPanel() {
         PanelListenerManager.getOpenPanels().put(uuid, panel);
         // Use another name for this panel
         InventoryView otherView = new MyView("another", panel.getInventory());
@@ -298,7 +297,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickOpenPanelsDifferentColorPanel() {
+    void testOnInventoryClickOpenPanelsDifferentColorPanel() {
         PanelListenerManager.getOpenPanels().put(uuid, panel);
         // Use another name for this panel
         InventoryView otherView = new MyView(ChatColor.BLACK + PANEL_NAME, panel.getInventory());
@@ -314,7 +313,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickOpenPanelsRightPanelWrongSlot() {
+    void testOnInventoryClickOpenPanelsRightPanelWrongSlot() {
         PanelListenerManager.getOpenPanels().put(uuid, panel);
         // Click on 1 instead of 0
         InventoryClickEvent e = new InventoryClickEvent(view, type, 1, click, inv);
@@ -327,7 +326,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickOpenPanelsRightPanelRightSlot() {
+    void testOnInventoryClickOpenPanelsRightPanelRightSlot() {
         PanelListenerManager.getOpenPanels().put(uuid, panel);
         // Click on 0
         InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
@@ -341,7 +340,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClose(org.bukkit.event.inventory.InventoryCloseEvent)}.
      */
     @Test
-    public void testOnInventoryCloseNoPanels() {
+    void testOnInventoryCloseNoPanels() {
         // Add a panel for another player
         PanelListenerManager.getOpenPanels().put(UUID.randomUUID(), panel);
         // No panels for this player
@@ -354,7 +353,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClose(org.bukkit.event.inventory.InventoryCloseEvent)}.
      */
     @Test
-    public void testOnInventoryClosePanels() {
+    void testOnInventoryClosePanels() {
         // Add a panel for player
         PanelListenerManager.getOpenPanels().put(uuid, panel);
         InventoryCloseEvent event = new InventoryCloseEvent(view);
@@ -368,7 +367,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onLogOut(org.bukkit.event.player.PlayerQuitEvent)}.
      */
     @Test
-    public void testOnLogOut() {
+    void testOnLogOut() {
         // Add a panel for player
         PanelListenerManager.getOpenPanels().put(uuid, panel);
         // Unknown player logs out
@@ -389,7 +388,7 @@ public class PanelListenerManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#getOpenPanels()}.
      */
     @Test
-    public void testGetOpenPanels() {
+    void testGetOpenPanels() {
         PanelListenerManager.getOpenPanels().put(uuid, panel);
         assertSame(panel, PanelListenerManager.getOpenPanels().get(uuid));
     }

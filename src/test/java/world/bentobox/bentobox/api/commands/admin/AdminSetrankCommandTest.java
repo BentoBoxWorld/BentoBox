@@ -33,7 +33,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminSetrankCommandTest extends RanksManagerTestSetup {
+class AdminSetrankCommandTest extends RanksManagerTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -79,7 +79,7 @@ public class AdminSetrankCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#AdminSetrankCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
-    public void testAdminSetrankCommand() {
+    void testAdminSetrankCommand() {
         assertEquals("setrank", c.getLabel());
     }
 
@@ -88,7 +88,7 @@ public class AdminSetrankCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("admin.setrank", c.getPermission());
         assertFalse(c.isOnlyPlayer());
         assertEquals("commands.admin.setrank.parameters", c.getParameters());
@@ -101,7 +101,7 @@ public class AdminSetrankCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoArgs() {
+    void testCanExecuteNoArgs() {
         assertFalse(c.canExecute(user, "", Collections.emptyList()));
         verify(user).getTranslation("commands.help.console");
     }
@@ -111,7 +111,7 @@ public class AdminSetrankCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOneArg() {
+    void testCanExecuteOneArg() {
         assertFalse(c.canExecute(user, "", Collections.singletonList("test")));
         verify(user).getTranslation("commands.help.console");
     }
@@ -121,7 +121,7 @@ public class AdminSetrankCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUnknownPlayer() {
+    void testCanExecuteUnknownPlayer() {
         assertFalse(c.canExecute(user, "", Arrays.asList("tastybento", "member")));
         verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
     }
@@ -130,7 +130,7 @@ public class AdminSetrankCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteKnownPlayerNoIsland() {
+    void testCanExecuteKnownPlayerNoIsland() {
         when(pm.getUUID(any())).thenReturn(targetUUID);
         assertFalse(c.canExecute(user, "", Arrays.asList("tastybento", "ranks.member")));
         verify(user).sendMessage("general.errors.player-has-no-island");
@@ -140,7 +140,7 @@ public class AdminSetrankCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteKnownPlayerHasIslandUnknownRank() {
+    void testCanExecuteKnownPlayerHasIslandUnknownRank() {
         when(pm.getUUID(any())).thenReturn(targetUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         assertFalse(c.canExecute(user, "", Arrays.asList("tastybento", "xxx")));
@@ -151,7 +151,7 @@ public class AdminSetrankCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteKnownPlayerHasIslandTooLowRank() {
+    void testCanExecuteKnownPlayerHasIslandTooLowRank() {
         when(pm.getUUID(any())).thenReturn(targetUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         assertFalse(c.canExecute(user, "", Arrays.asList("tastybento", "ranks.visitor")));
@@ -162,7 +162,7 @@ public class AdminSetrankCommandTest extends RanksManagerTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteKnownPlayerHasIslandSuccess() {
+    void testCanExecuteKnownPlayerHasIslandSuccess() {
         when(pm.getUUID(any())).thenReturn(targetUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         assertTrue(c.canExecute(user, "", Arrays.asList("tastybento", "ranks.member")));
@@ -173,7 +173,7 @@ public class AdminSetrankCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
+    void testExecuteUserStringListOfString() {
         // Set the target
         testCanExecuteKnownPlayerHasIslandSuccess();
         Island island = mock(Island.class);
@@ -189,7 +189,7 @@ public class AdminSetrankCommandTest extends RanksManagerTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfString() {
+    void testTabCompleteUserStringListOfString() {
         Optional<List<String>> result = c.tabComplete(user, "", Arrays.asList("setrank", ""));
         assertTrue(result.isPresent());
         result.ifPresent(list -> {

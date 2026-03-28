@@ -192,6 +192,11 @@ commands:
         extra-islands: >-
           &c Waarschuwing: deze speler bezit nu [number] eilanden. Dit is meer
           dan toegestaan volgens de instellingen of permissies: [max].
+      maxsize:
+        parameters: <player> <size>
+        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
+        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
+        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
     range:
       description: admin eilandbereik commando
       invalid-value:
@@ -273,6 +278,9 @@ commands:
       team-members-title: 'Leden van het team:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
+      max-team-size: 'Maximale teamgrootte: [number]'
+      max-coop-size: 'Maximale coop-grootte: [number]'
+      max-trusted-size: 'Maximale vertrouwde grootte: [number]'
       island-protection-center: 'Beschermingsgebied centrum: [xyz]'
       island-center: 'Eilandcentrum: [xyz]'
       island-coords: 'Eilandcoördinaten: [xz1] tot [xz2]'
@@ -523,6 +531,8 @@ commands:
           &a Shift voor +/-100
         no-cost: Gratis
         cost-amount: 'Kosten: [cost]'
+        next-page: '&f Volgende pagina'
+        previous-page: '&f Vorige pagina'
     resetflags:
       parameters: '[vlag]'
       description: Reset alle eilanden naar de standaard vlaginstellingen in config.yml
@@ -734,6 +744,7 @@ commands:
       home-set: '&6 Uw eilandhuis is ingesteld op uw huidige locatie.'
       homes-are: '&6 eilandwoningen zijn:'
       home-list-syntax: '&6 [name]'
+      click-to-teleport: '&a Klik om te teleporteren!'
       nether:
         not-allowed: '&c Het is niet toegestaan om uw huis in Nederland te plaatsen.'
         confirmation: '&c Weet u zeker dat u uw huis in de Nether wilt plaatsen?'
@@ -1000,6 +1011,11 @@ commands:
       not-on-island: '&c Die speler is niet op jouw eiland!'
       player-expelled-you: '&b [name] &c hebben je van het eiland verdreven!'
       success: '&a Je hebt &b [name] &a van het eiland verdreven.'
+    lock:
+      description: sluit je [prefix_island] af of open het
+      locked: '&a Je [prefix_island] is nu afgesloten.'
+      unlocked: '&a Je [prefix_island] is nu open.'
+      you-are-locked-out: '&c Dit [prefix_island] is nu afgesloten. Je bent verwijderd.'
 ranks:
   owner: Eigenaar
   sub-owner: Ondereigenaar
@@ -1523,9 +1539,10 @@ protection:
       scooping: >-
         &a veranderende obsidiaan terug in lava. Wees voorzichtig de volgende
         keer!
+      cooldown: '&c Je moet wachten voordat je nog een obsidiaanblok kunt scheppen.'
       obsidian-nearby: >-
         &c Er zijn obsidiaanblokken in de buurt, je kunt dit blok niet in lava
-        scheppen.
+        scheppen. ([radius])
     OFFLINE_GROWTH:
       description: |-
         &a Wanneer uitgeschakeld, planten
@@ -1716,6 +1733,13 @@ protection:
         &a
         &a [prefix_Island] leden verliezen nog steeds hun items
         &a als ze sterven op hun eigen [prefix_island]!
+    SPAWN_PROTECTION:
+      name: Spawn island void protection
+      description: |-
+        &a When enabled, players who fall
+        &a into the void at the spawn island
+        &a will be teleported back to the
+        &a spawn point instead of dying.
     RAID_TRIGGER:
       name: Aanval activeren
       description: Stelt de minimale eilandrang in die nodig is om een aanval te activeren
@@ -1726,6 +1750,13 @@ protection:
         &a Schakelt in of entiteiten (geen spelers) 
         &a portals kunnen gebruiken om te teleporteren 
         &a tussen dimensies
+    WIND_CHARGE:
+      name: Windlading
+      description: |-
+        &a Schakelt het gebruik van windladingen.
+        &a Als uitgeschakeld, kunnen bezoekers
+        &a geen windladingen gebruiken op dit eiland.
+      hint: Gebruik van windladingen uitgeschakeld
     WITHER_DAMAGE:
       name: Schakel schoftschade in
       description: |-
@@ -1744,6 +1775,7 @@ protection:
         &a entiteit buiten de eilandgrenzen.
       name: Wereld TNT-schade
   locked: '&c Dit eiland is op slot!'
+  locked-island-bypass: '&6 Dit [prefix_island] is op slot, maar je hebt toestemming om dit te negeren.'
   protected: '&c Eiland beschermd: [omschrijving].'
   world-protected: '&c Wereld beschermd: [omschrijving].'
   spawn-protected: '&c Spawn beschermd: [omschrijving].'

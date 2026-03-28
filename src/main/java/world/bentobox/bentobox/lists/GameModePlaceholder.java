@@ -174,10 +174,13 @@ public enum GameModePlaceholder {
      */
     ISLAND_MAX_HOMES("island_max_homes",
             "Maximum number of homes allowed on the player's island",
-            (addon, user, island) -> island == null ? ""
-                    : String.valueOf(
-                            island.getMaxHomes() == null ? addon.getPlugin().getIWM().getMaxHomes(island.getWorld())
-                                    : island.getMaxHomes())),
+            (addon, user, island) -> {
+                if (island == null) return "";
+                int maxHomes = island.getMaxHomes() == null
+                        ? addon.getPlugin().getIWM().getMaxHomes(island.getWorld())
+                        : island.getMaxHomes();
+                return String.valueOf(maxHomes);
+            }),
     /**
      * Returns the amount of players that are at least MEMBER on this island.
      * @since 1.5.0
@@ -201,6 +204,22 @@ public enum GameModePlaceholder {
     ISLAND_MEMBERS_MAX("island_members_max",
             "Maximum number of members allowed on the player's island",
             (addon, user, island) -> island == null ? "" : String.valueOf(addon.getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK))),
+
+    /**
+     * Returns the maximum number of coops the island can have.
+     * @since 2.6.0
+     */
+    ISLAND_COOP_MAX("island_coop_max",
+            "Maximum number of coops allowed on the player's island",
+            (addon, user, island) -> island == null ? "" : String.valueOf(addon.getIslands().getMaxMembers(island, RanksManager.COOP_RANK))),
+
+    /**
+     * Returns the maximum number of trusted players the island can have.
+     * @since 2.6.0
+     */
+    ISLAND_TRUST_MAX("island_trust_max",
+            "Maximum number of trusted players allowed on the player's island",
+            (addon, user, island) -> island == null ? "" : String.valueOf(addon.getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK))),
 
     /**
      * Returns the island name.
@@ -445,6 +464,24 @@ public enum GameModePlaceholder {
             "Maximum number of members allowed on the island the player is standing on",
             (addon, user, island) ->
     getVisitedIsland(addon, user).map(value -> String.valueOf(addon.getIslands().getMaxMembers(value, RanksManager.MEMBER_RANK)))
+    .orElse("")),
+    /**
+     * Returns the maximum number of coops the island the player is standing on can have.
+     * @since 2.6.0
+     */
+    VISITED_ISLAND_COOP_MAX("visited_island_coop_max",
+            "Maximum number of coops allowed on the island the player is standing on",
+            (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(addon.getIslands().getMaxMembers(value, RanksManager.COOP_RANK)))
+    .orElse("")),
+    /**
+     * Returns the maximum number of trusted players the island the player is standing on can have.
+     * @since 2.6.0
+     */
+    VISITED_ISLAND_TRUST_MAX("visited_island_trust_max",
+            "Maximum number of trusted players allowed on the island the player is standing on",
+            (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(addon.getIslands().getMaxMembers(value, RanksManager.TRUSTED_RANK)))
     .orElse("")),
     /**
      * Returns the name of the island the player is standing on.

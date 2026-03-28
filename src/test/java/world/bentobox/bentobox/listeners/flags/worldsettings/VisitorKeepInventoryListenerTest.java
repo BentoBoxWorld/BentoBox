@@ -41,7 +41,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class VisitorKeepInventoryListenerTest extends CommonTestSetup {
+class VisitorKeepInventoryListenerTest extends CommonTestSetup {
 
     // Class under test
     private VisitorKeepInventoryListener l;
@@ -109,7 +109,7 @@ public class VisitorKeepInventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnVisitorDeath() {
+    void testOnVisitorDeath() {
         l.onVisitorDeath(e);
     }
 
@@ -117,7 +117,7 @@ public class VisitorKeepInventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnVisitorDeathFalseFlag() {
+    void testOnVisitorDeathFalseFlag() {
         l.onVisitorDeath(e);
         assertFalse(e.getKeepInventory());
         assertFalse(e.getKeepLevel());
@@ -132,7 +132,7 @@ public class VisitorKeepInventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnVisitorDeathTrueFlag() {
+    void testOnVisitorDeathTrueFlag() {
         Flags.VISITOR_KEEP_INVENTORY.setSetting(world, true);
         l.onVisitorDeath(e);
         assertTrue(e.getKeepInventory());
@@ -148,7 +148,7 @@ public class VisitorKeepInventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnVisitorDeathNotInWorld() {
+    void testOnVisitorDeathNotInWorld() {
         when(iwm.inWorld(world)).thenReturn(false);
         Flags.VISITOR_KEEP_INVENTORY.setSetting(world, true);
         l.onVisitorDeath(e);
@@ -165,7 +165,7 @@ public class VisitorKeepInventoryListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
-    public void testOnVisitorDeathTrueFlagNoIsland() {
+    void testOnVisitorDeathTrueFlagNoIsland() {
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
         Flags.VISITOR_KEEP_INVENTORY.setSetting(world, true);
         l.onVisitorDeath(e);

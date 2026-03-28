@@ -28,7 +28,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
+class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
 
     private DefaultNewIslandLocationStrategy dnils;
 
@@ -97,7 +97,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
      */
     @Test
-    public void testGetNextLocationSuccess() {
+    void testGetNextLocationSuccess() {
         assertEquals(location,dnils.getNextLocation(world));
         verify(im).setLast(location);
     }
@@ -106,7 +106,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
      */
     @Test
-    public void testGetNextLocationFailBlocks() {
+    void testGetNextLocationFailBlocks() {
         when(adjBlock.getType()).thenReturn(Material.STONE);
         when(adjBlock.isEmpty()).thenReturn(false);
         assertNull(dnils.getNextLocation(world));
@@ -121,7 +121,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetNextLocationSuccessSomeIslands() {
+    void testGetNextLocationSuccessSomeIslands() {
         Optional<Island> opIsland = Optional.of(new Island());
         Optional<Island> emptyIsland = Optional.empty();
         when(im.getIslandAt(any())).thenReturn(opIsland, opIsland, opIsland, opIsland, emptyIsland);
@@ -133,7 +133,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
      */
     @Test
-    public void testGetNextLocationSuccessSomeIslands10() {
+    void testGetNextLocationSuccessSomeIslands10() {
         Optional<Island> opIsland = Optional.of(new Island());
         Optional<Island> emptyIsland = Optional.empty();
         count = 0;
@@ -146,7 +146,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandIslandFound() {
+    void testIsIslandIslandFound() {
         Optional<Island> opIsland = Optional.of(new Island());
         when(im.getIslandAt(any())).thenReturn(opIsland);
         assertEquals(Result.ISLAND_FOUND, dnils.isIsland(location));
@@ -156,7 +156,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandIslandInDeletion() {
+    void testIsIslandIslandInDeletion() {
         when(idm.inDeletion(any())).thenReturn(true);
         assertEquals(Result.ISLAND_FOUND, dnils.isIsland(location));
     }
@@ -165,7 +165,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandChunkNotGenerated() {
+    void testIsIslandChunkNotGenerated() {
         mockedUtil.when(() -> Util.isChunkGenerated(any())).thenReturn(false);
         assertEquals(Result.FREE, dnils.isIsland(location));
     }
@@ -174,7 +174,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandUseOwnGenerator() {
+    void testIsIslandUseOwnGenerator() {
         when(iwm.isUseOwnGenerator(world)).thenReturn(true);
         assertEquals(Result.FREE, dnils.isIsland(location));
     }
@@ -183,7 +183,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandFreeAirBlocks() {
+    void testIsIslandFreeAirBlocks() {
         assertEquals(Result.FREE, dnils.isIsland(location));
     }
 
@@ -191,7 +191,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandFreeWaterBlocks() {
+    void testIsIslandFreeWaterBlocks() {
         when(adjBlock.getType()).thenReturn(Material.WATER);
         when(adjBlock.isEmpty()).thenReturn(false);
         assertEquals(Result.FREE, dnils.isIsland(location));
@@ -201,7 +201,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandBlocksInArea() {
+    void testIsIslandBlocksInArea() {
         when(adjBlock.getType()).thenReturn(Material.STONE);
         when(adjBlock.isEmpty()).thenReturn(false);
         assertEquals(Result.BLOCKS_IN_AREA, dnils.isIsland(location));
@@ -211,7 +211,7 @@ public class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
-    public void testIsIslandBlocksInAreaNoCheck() {
+    void testIsIslandBlocksInAreaNoCheck() {
         when(iwm.isCheckForBlocks(any())).thenReturn(false);
         when(adjBlock.getType()).thenReturn(Material.STONE);
         when(adjBlock.isEmpty()).thenReturn(false);

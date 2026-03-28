@@ -35,7 +35,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class AdminRangeResetCommandTest extends CommonTestSetup {
+class AdminRangeResetCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -107,7 +107,7 @@ public class AdminRangeResetCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeResetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteConsoleNoArgs() {
+    void testExecuteConsoleNoArgs() {
         AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
         CommandSender sender = mock(CommandSender.class);
         when(sender.spigot()).thenReturn(spigot);
@@ -122,7 +122,7 @@ public class AdminRangeResetCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeResetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecutePlayerNoArgs() {
+    void testExecutePlayerNoArgs() {
         AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
         arc.execute(user, "", new ArrayList<>());
         // Show help
@@ -134,7 +134,7 @@ public class AdminRangeResetCommandTest extends CommonTestSetup {
      * {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeResetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUnknownPlayer() {
+    void testExecuteUnknownPlayer() {
         AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
         String[] name = { "tastybento" };
         arc.execute(user, "", Arrays.asList(name));
@@ -145,7 +145,7 @@ public class AdminRangeResetCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeResetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteKnownPlayerNotOwnerNoTeam() {
+    void testExecuteKnownPlayerNotOwnerNoTeam() {
         when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
@@ -157,7 +157,7 @@ public class AdminRangeResetCommandTest extends CommonTestSetup {
     }
 
     @Test
-    public void testExecuteKnownPlayerNotOwnerButInTeam() {
+    void testExecuteKnownPlayerNotOwnerButInTeam() {
         when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
@@ -172,7 +172,7 @@ public class AdminRangeResetCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeResetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteKnownPlayer() {
+    void testExecuteKnownPlayer() {
         when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
         AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
         List<String> args = new ArrayList<>();
