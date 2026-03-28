@@ -68,16 +68,16 @@ public class BlueMapHook extends MapHook implements Listener {
      */
     public void registerGameMode(@NonNull GameModeAddon addon) {
         String friendlyName = addon.getWorldSettings().getFriendlyName();
-        plugin.logDebug("Setting markers for Game Mode '" + friendlyName + "'");
+
         MarkerSet markerSet = markerSets.computeIfAbsent(friendlyName, k -> {
-            plugin.logDebug("Making a new marker set for '" + k + "'");
+
             return MarkerSet.builder().toggleable(true).defaultHidden(false).label(k).build();
         });
         // Create a marker for each owned island in this addon's overworld
         plugin.getIslands().getIslands(addon.getOverWorld()).stream()
                 .filter(is -> is.getOwner() != null)
                 .forEach(island -> {
-                    plugin.logDebug("Creating marker for " + island.getCenter());
+
                     setMarker(markerSet, island);
                 });
         // Overworld
@@ -96,9 +96,9 @@ public class BlueMapHook extends MapHook implements Listener {
 
     private void addMarkerSetToWorld(World world, String markerSetId, MarkerSet markerSet) {
         api.getWorld(world).ifPresent(bmWorld -> {
-            plugin.logDebug("BlueMap knows about " + bmWorld.getId());
+
             for (BlueMapMap map : bmWorld.getMaps()) {
-                plugin.logDebug("Adding markerSet to " + map.getName() + " map");
+
                 map.getMarkerSets().put(markerSetId, markerSet);
             }
         });
@@ -107,7 +107,7 @@ public class BlueMapHook extends MapHook implements Listener {
     private void setMarker(MarkerSet markerSet, Island island) {
         String label = getIslandLabel(island);
         String id = island.getUniqueId();
-        plugin.logDebug("Adding a marker called '" + label + "' for island " + id);
+
         // Point marker at island center for the label/icon
         POIMarker marker = POIMarker.builder().label(label).listed(true).defaultIcon()
                 .position(island.getCenter().getX(), island.getCenter().getY(), island.getCenter().getZ())
@@ -275,20 +275,20 @@ public class BlueMapHook extends MapHook implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onNewIsland(IslandNewIslandEvent e) {
-        plugin.logDebug(e.getEventName());
+
         plugin.getIWM().getAddon(e.getIsland().getWorld()).ifPresent(addon -> add(e.getIsland(), addon));
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onIslandDelete(IslandDeleteEvent e) {
-        plugin.logDebug(e.getEventName());
+
         plugin.getIWM().getAddon(e.getIsland().getWorld())
                 .ifPresent(addon -> remove(e.getIsland().getUniqueId(), addon));
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onIslandName(IslandNameEvent e) {
-        plugin.logDebug(e.getEventName());
+
         plugin.getIWM().getAddon(e.getIsland().getWorld()).ifPresent(addon -> {
             remove(e.getIsland().getUniqueId(), addon);
             add(e.getIsland(), addon);
@@ -297,7 +297,7 @@ public class BlueMapHook extends MapHook implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onIslandReset(IslandResettedEvent e) {
-        plugin.logDebug(e.getEventName());
+
         plugin.getIWM().getAddon(e.getIsland().getWorld()).ifPresent(addon -> {
             remove(e.getOldIsland().getUniqueId(), addon);
             add(e.getIsland(), addon);

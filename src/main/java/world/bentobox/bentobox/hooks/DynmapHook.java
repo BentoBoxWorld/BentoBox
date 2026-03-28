@@ -79,9 +79,9 @@ public class DynmapHook extends MapHook implements Listener {
     public void registerGameMode(@NonNull GameModeAddon addon) {
         String friendlyName = addon.getWorldSettings().getFriendlyName();
         String markerSetId = friendlyName.toLowerCase(Locale.ENGLISH) + ".markers";
-        plugin.logDebug("Setting markers for Game Mode '" + friendlyName + "'");
+
         MarkerSet markerSet = markerSets.computeIfAbsent(friendlyName, k -> {
-            plugin.logDebug("Making a new marker set for '" + k + "'");
+
             // Dynmap persists marker sets — check for existing one first
             MarkerSet existing = markerAPI.getMarkerSet(markerSetId);
             if (existing != null) {
@@ -97,7 +97,7 @@ public class DynmapHook extends MapHook implements Listener {
         plugin.getIslands().getIslands(addon.getOverWorld()).stream()
                 .filter(is -> is.getOwner() != null)
                 .forEach(island -> {
-                    plugin.logDebug("Creating marker for " + island.getCenter());
+
                     setMarker(markerSet, island);
                 });
     }
@@ -110,7 +110,7 @@ public class DynmapHook extends MapHook implements Listener {
             return;
         }
         String worldName = w.getName();
-        plugin.logDebug("Adding a marker called '" + label + "' for island " + id);
+
         // Remove existing markers if present
         Marker existingMarker = markerSet.findMarker(id);
         if (existingMarker != null) {
@@ -307,20 +307,20 @@ public class DynmapHook extends MapHook implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onNewIsland(IslandNewIslandEvent e) {
-        plugin.logDebug(e.getEventName());
+
         plugin.getIWM().getAddon(e.getIsland().getWorld()).ifPresent(addon -> add(e.getIsland(), addon));
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onIslandDelete(IslandDeleteEvent e) {
-        plugin.logDebug(e.getEventName());
+
         plugin.getIWM().getAddon(e.getIsland().getWorld())
                 .ifPresent(addon -> remove(e.getIsland().getUniqueId(), addon));
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onIslandName(IslandNameEvent e) {
-        plugin.logDebug(e.getEventName());
+
         plugin.getIWM().getAddon(e.getIsland().getWorld()).ifPresent(addon -> {
             remove(e.getIsland().getUniqueId(), addon);
             add(e.getIsland(), addon);
@@ -329,7 +329,7 @@ public class DynmapHook extends MapHook implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onIslandReset(IslandResettedEvent e) {
-        plugin.logDebug(e.getEventName());
+
         plugin.getIWM().getAddon(e.getIsland().getWorld()).ifPresent(addon -> {
             remove(e.getOldIsland().getUniqueId(), addon);
             add(e.getIsland(), addon);
