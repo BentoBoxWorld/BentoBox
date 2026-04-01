@@ -1634,9 +1634,9 @@ protection:
         <yellow>右鍵點擊 </yellow><gray>向上循環選擇</gray>
 
         <gray>允許給：</gray>
-      allowed-rank: '<dark_aqua>- </dark_aqua><green></green>'
-      blocked-rank: '<dark_aqua>- </dark_aqua><red></red>'
-      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green></dark_green>'
+      allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
+      blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
+      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
         <gray>[description]</gray>
 

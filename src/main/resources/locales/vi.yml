@@ -1807,9 +1807,9 @@ protection:
         <yellow>Chuột phải </yellow><gray>để cuộn lên.</gray>
 
         <gray>Cho phép cho:</gray>
-      allowed-rank: '<dark_aqua>- </dark_aqua><green></green>'
-      blocked-rank: '<dark_aqua>- </dark_aqua><red></red>'
-      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green></dark_green>'
+      allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
+      blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
+      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
         <green>[description]</green>
 

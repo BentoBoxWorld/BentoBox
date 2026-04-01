@@ -216,17 +216,17 @@ public class IslandTeamGUI {
         RanksManager.getInstance().getRanks().forEach((reference, score) -> {
             if (rankView == RanksManager.OWNER_RANK && score > RanksManager.VISITOR_RANK
                     && score <= RanksManager.OWNER_RANK) {
-                builder.description(user.getTranslation("protection.panel.flag-item.allowed-rank")
-                        + user.getTranslation(reference));
+                builder.description(user.getTranslation("protection.panel.flag-item.allowed-rank",
+                        TextVariables.RANK, user.getTranslation(reference)));
             } else if (score > RanksManager.VISITOR_RANK && score < rankView) {
-                builder.description(user.getTranslation("protection.panel.flag-item.blocked-rank")
-                        + user.getTranslation(reference));
+                builder.description(user.getTranslation("protection.panel.flag-item.blocked-rank",
+                        TextVariables.RANK, user.getTranslation(reference)));
             } else if (score <= RanksManager.OWNER_RANK && score > rankView) {
-                builder.description(user.getTranslation("protection.panel.flag-item.blocked-rank")
-                        + user.getTranslation(reference));
+                builder.description(user.getTranslation("protection.panel.flag-item.blocked-rank",
+                        TextVariables.RANK, user.getTranslation(reference)));
             } else if (score == rankView) {
-                builder.description(user.getTranslation("protection.panel.flag-item.allowed-rank")
-                        + user.getTranslation(reference));
+                builder.description(user.getTranslation("protection.panel.flag-item.allowed-rank",
+                        TextVariables.RANK, user.getTranslation(reference)));
             }
         });
         builder.description(user.getTranslation("commands.island.team.gui.buttons.rank-filter.description"));

@@ -1859,9 +1859,9 @@ protection:
         <yellow>Klik Kanan </yellow><gray>untuk beralih ke atas.</gray>
 
         <gray>Diizinkan untuk:</gray>
-      allowed-rank: '<dark_aqua>- </dark_aqua><green></green>'
-      blocked-rank: '<dark_aqua>- </dark_aqua><red></red>'
-      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green></dark_green>'
+      allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
+      blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
+      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
         <green>[description]</green>
 

@@ -38,8 +38,12 @@ public class PanelListenerManager implements Listener {
             // uncancel it. If gui was from our environment, then cancel event anyway.
             event.setCancelled(true);
 
-            // Check the name of the panel - strip colors. Note that black is removed from titles automatically by the server.
-            if (Util.stripColor(view.getTitle()).equals(Util.stripColor(openPanels.get(user.getUniqueId()).getName()))) {
+            // Check the name of the panel using plain text comparison.
+            // Panel names may contain MiniMessage tags or legacy § codes; view.getTitle() returns rendered text.
+            String viewTitle = Util.stripColor(view.getTitle());
+            String panelName = Util.componentToPlainText(Util.parseMiniMessageOrLegacy(
+                    openPanels.get(user.getUniqueId()).getName()));
+            if (viewTitle.equals(panelName)) {
                 // Close inventory if clicked outside and if setting is true
                 if (BentoBox.getInstance().getSettings().isClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
                     event.getWhoClicked().closeInventory();

@@ -1858,9 +1858,9 @@ protection:
         <green>[description]</green>
 
         <gray>Autorisé pour :</gray>
-      allowed-rank: '<dark_aqua>- </dark_aqua><green></green>'
-      blocked-rank: '<dark_aqua>- </dark_aqua><red></red>'
-      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green></dark_green>'
+      allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
+      blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
+      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: '<green>[description]</green>'
       setting-cooldown: '<red>Le paramètre est en cours de recharge</red>'
       setting-layout: |-

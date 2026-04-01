@@ -1892,9 +1892,9 @@ protection:
         <yellow>Kattintson a jobb gombbal a </yellow><gray>gombra a felfelé lépéshez.</gray>
 
         <gray>Engedélyezett:</gray>
-      allowed-rank: '<dark_aqua>- </dark_aqua><green></green>'
+      allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- stb</dark_aqua>'
-      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green></dark_green>'
+      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
         <green>[description]</green>
 

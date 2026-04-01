@@ -1720,9 +1720,9 @@ protection:
         <green>[description]</green>
 
         <gray>Allowed for:</gray>
-      allowed-rank: '<dark_aqua>- </dark_aqua><green></green>'
+      allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><dark_red></dark_red>'
-      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green></dark_green>'
+      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: '<green>[description]</green>'
       setting-cooldown: '<red>Ayar bekleme süresinde!</red>'
       setting-layout: |

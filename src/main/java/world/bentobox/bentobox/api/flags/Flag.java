@@ -487,11 +487,11 @@ public class Flag implements Comparable<Flag> {
             RanksManager.getInstance().getRanks().forEach((reference, score) -> {
 
                 if (score > RanksManager.BANNED_RANK && score < y) {
-                    pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
+                    pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank", TextVariables.RANK, user.getTranslation(reference)));
                 } else if (score <= RanksManager.OWNER_RANK && score > y) {
-                    pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank") + user.getTranslation(reference));
+                    pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank", TextVariables.RANK, user.getTranslation(reference)));
                 } else if (score == y) {
-                    pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
+                    pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank", TextVariables.RANK, user.getTranslation(reference)));
                 }
             });
         }

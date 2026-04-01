@@ -1835,9 +1835,9 @@ protection:
           <green>Seleziona il rango che può</green>
           <green>usare il comando border</green>
       description-layout: '<green>[description]  </green><gray>Permesso per:</gray>'
-      allowed-rank: '<dark_aqua>- </dark_aqua><green></green>'
-      blocked-rank: '<dark_aqua>- </dark_aqua><red></red>'
-      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green></dark_green>'
+      allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
+      blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
+      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: '<green>[description]</green>'
       setting-cooldown: '<red>Impostazioni in cooldown</red>'
       setting-layout: '<green>[description]  </green><gray>Impostazione corrente: [setting]</gray>'

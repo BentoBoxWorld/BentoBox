@@ -129,11 +129,11 @@ public class CommandRankClickListener implements ClickHandler {
         pib.description(d);
         RanksManager.getInstance().getRanks().forEach((reference, score) -> {
             if (score >= RanksManager.MEMBER_RANK && score < island.getRankCommand(c)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
+                pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank", TextVariables.RANK, user.getTranslation(reference)));
             } else if (score <= RanksManager.OWNER_RANK && score > island.getRankCommand(c)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank") + user.getTranslation(reference));
+                pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank", TextVariables.RANK, user.getTranslation(reference)));
             } else if (score == island.getRankCommand(c)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
+                pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank", TextVariables.RANK, user.getTranslation(reference)));
             }
         });
         pib.invisible(plugin.getIWM().getHiddenFlags(world).contains(CommandCycleClick.COMMAND_RANK_PREFIX + c));
