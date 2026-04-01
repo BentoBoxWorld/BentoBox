@@ -723,7 +723,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         assertTrue(e2.isCancelled());
 
         // Verify notification was sent only once
-        verify(notifier).notify(any(), anyString());
+        verify(notifier, org.mockito.Mockito.times(1)).notify(any(), anyString());
     }
 
     @Test
@@ -749,7 +749,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         assertTrue(e2.isCancelled());
 
         // Verify notification was sent only once
-        verify(notifier).notify(any(), anyString());
+        verify(notifier, org.mockito.Mockito.times(1)).notify(any(), anyString());
     }
 
     @Test
