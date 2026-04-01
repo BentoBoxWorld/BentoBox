@@ -128,16 +128,25 @@ public class CommandRankClickListener implements ClickHandler {
                 commandDescription);
         pib.description(d);
         RanksManager.getInstance().getRanks().forEach((reference, score) -> {
+            String rankName = user.getTranslation(reference);
             if (score >= RanksManager.MEMBER_RANK && score < island.getRankCommand(c)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank", TextVariables.RANK, user.getTranslation(reference)));
+                pib.description(getRankTranslation(user, "protection.panel.flag-item.blocked-rank", rankName));
             } else if (score <= RanksManager.OWNER_RANK && score > island.getRankCommand(c)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank", TextVariables.RANK, user.getTranslation(reference)));
+                pib.description(getRankTranslation(user, "protection.panel.flag-item.allowed-rank", rankName));
             } else if (score == island.getRankCommand(c)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank", TextVariables.RANK, user.getTranslation(reference)));
+                pib.description(getRankTranslation(user, "protection.panel.flag-item.minimal-rank", rankName));
             }
         });
         pib.invisible(plugin.getIWM().getHiddenFlags(world).contains(CommandCycleClick.COMMAND_RANK_PREFIX + c));
         return pib.build();
+    }
+
+    private String getRankTranslation(User user, String key, String rankName) {
+        String translation = user.getTranslation(key, TextVariables.RANK, rankName);
+        if (!translation.contains(rankName)) {
+            translation = user.getTranslation(key) + rankName;
+        }
+        return translation;
     }
 
     private List<String> getCommands(World world, User user) {

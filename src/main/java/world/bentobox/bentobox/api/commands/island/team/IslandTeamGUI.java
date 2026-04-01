@@ -214,23 +214,32 @@ public class IslandTeamGUI {
      */
     private void createDescription(PanelItemBuilder builder) {
         RanksManager.getInstance().getRanks().forEach((reference, score) -> {
+            String rankName = user.getTranslation(reference);
             if (rankView == RanksManager.OWNER_RANK && score > RanksManager.VISITOR_RANK
                     && score <= RanksManager.OWNER_RANK) {
-                builder.description(user.getTranslation("protection.panel.flag-item.allowed-rank",
-                        TextVariables.RANK, user.getTranslation(reference)));
+                builder.description(getRankTranslation("protection.panel.flag-item.allowed-rank", rankName));
             } else if (score > RanksManager.VISITOR_RANK && score < rankView) {
-                builder.description(user.getTranslation("protection.panel.flag-item.blocked-rank",
-                        TextVariables.RANK, user.getTranslation(reference)));
+                builder.description(getRankTranslation("protection.panel.flag-item.blocked-rank", rankName));
             } else if (score <= RanksManager.OWNER_RANK && score > rankView) {
-                builder.description(user.getTranslation("protection.panel.flag-item.blocked-rank",
-                        TextVariables.RANK, user.getTranslation(reference)));
+                builder.description(getRankTranslation("protection.panel.flag-item.blocked-rank", rankName));
             } else if (score == rankView) {
-                builder.description(user.getTranslation("protection.panel.flag-item.allowed-rank",
-                        TextVariables.RANK, user.getTranslation(reference)));
+                builder.description(getRankTranslation("protection.panel.flag-item.allowed-rank", rankName));
             }
         });
         builder.description(user.getTranslation("commands.island.team.gui.buttons.rank-filter.description"));
 
+    }
+
+    /**
+     * Gets a rank translation, supporting both MiniMessage format (with [rank] placeholder)
+     * and legacy format (without placeholder, rank name concatenated at end).
+     */
+    private String getRankTranslation(String key, String rankName) {
+        String translation = user.getTranslation(key, TextVariables.RANK, rankName);
+        if (!translation.contains(rankName)) {
+            translation = user.getTranslation(key) + rankName;
+        }
+        return translation;
     }
 
     /**
