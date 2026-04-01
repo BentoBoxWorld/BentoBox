@@ -4,6 +4,16 @@ name: Publish to Modrinth
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to publish (e.g. 3.12.1)'
+        required: true
+        type: string
+      changelog:
+        description: 'Changelog / release notes (markdown)'
+        required: false
+        type: string
 
 jobs:
   publish:
@@ -57,11 +67,11 @@ jobs:
           token: ${{ secrets.MODRINTH_TOKEN }}
           project: ${{ secrets.MODRINTH_PROJECT_ID }}
 
-          # Use the GitHub release tag as the version number (e.g. "3.12.0")
-          version: ${{ github.event.release.tag_name }}
+          # Use the release tag, or the manually supplied tag when triggered via workflow_dispatch
+          version: ${{ github.event.release.tag_name || inputs.tag }}
 
-          # Use the GitHub release body as the changelog
-          changelog: ${{ github.event.release.body }}
+          # Use the GitHub release body, or the manually supplied changelog for workflow_dispatch
+          changelog: ${{ github.event.release.body || inputs.changelog }}
 
           # Release channel — auto-detected from version string:
           #   *-alpha → alpha, *-beta → beta, anything else → release
@@ -69,14 +79,14 @@ jobs:
           # channel: release
 
           # BentoBox is a Paper plugin
-          loaders: |
+          loaders: |-
             paper
             purpur
 
           # Minecraft versions this release supports.
           # Update this list when you start supporting newer or older MC versions.
           # You can use exact versions (1.21.1) or patterns (1.21.x not supported by this action).
-          game-versions: |
+          game-versions: |-
             1.21.5
             1.21.6
             1.21.7
@@ -87,4 +97,4 @@ jobs:
 
           # Path to the built JAR — the Shadow plugin produces BentoBox-<version>.jar
           # Note: glob patterns are not supported; use the release tag directly.
-          files: build/libs/BentoBox-${{ github.event.release.tag_name }}.jar
+          files: build/libs/BentoBox-${{ github.event.release.tag_name || inputs.tag }}.jar
