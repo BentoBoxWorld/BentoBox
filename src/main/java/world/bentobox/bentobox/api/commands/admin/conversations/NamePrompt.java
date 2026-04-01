@@ -34,7 +34,8 @@ public class NamePrompt extends StringPrompt {
     @Override
     @NonNull
     public String getPromptText(@NonNull ConversationContext context) {
-        return user.getTranslation("commands.island.renamehome.enter-new-name");
+        user.sendRawMessage(user.getTranslation("commands.island.renamehome.enter-new-name"));
+        return "";
     }
 
     @Override

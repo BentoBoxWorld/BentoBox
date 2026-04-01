@@ -45,7 +45,8 @@ public class NamePrompt extends StringPrompt
     public @NonNull String getPromptText(ConversationContext context)
     {
         User user = User.getInstance((Player) context.getForWhom());
-        return user.getTranslation("commands.admin.blueprint.management.name.prompt");
+        user.sendRawMessage(user.getTranslation("commands.admin.blueprint.management.name.prompt"));
+        return "";
     }
 
 
