@@ -86,4 +86,5 @@ jobs:
             1.21.11
 
           # Path to the built JAR — the Shadow plugin produces BentoBox-<version>.jar
-          files: build/libs/BentoBox-*.jar
+          # Note: glob patterns are not supported; use the release tag directly.
+          files: build/libs/BentoBox-${{ github.event.release.tag_name }}.jar
