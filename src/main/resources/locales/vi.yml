@@ -4,49 +4,49 @@ meta:
     - tastybento
   banner: 'RED_BANNER:1:CREEPER:YELLOW:RHOMBUS_MIDDLE:YELLOW:TRIANGLES_BOTTOM:RED:SQUARE_BOTTOM_LEFT:RED:SQUARE_BOTTOM_RIGHT:RED'
 prefixes:
-  bentobox: '&6 BentoBox &7 &l > &r'
+  bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: hòn đảo
   Island: Đảo
   an-island: một hòn đảo
   islands: đảo
 general:
-  success: '&a Thành công!'
+  success: '<green>Thành công!</green>'
   invalid: Không hợp lệ
-  beta: '&d&l Lệnh này là trong phiên bản beta. Hãy chắc chắn rằng bạn có bản sao lưu!'
+  beta: '<light_purple><bold>Lệnh này là trong phiên bản beta. Hãy chắc chắn rằng bạn có bản sao lưu!</bold></light_purple>'
   errors:
-    command-cancelled: '&c Lệnh đã bị hủy.'
-    no-permission: '&c Bạn không có quyền dùng lệnh này'
-    insufficient-rank: '&c Rank của bạn chưa đủ cao! (&7 [rank]&c )'
-    use-in-game: '&c Lệnh này chỉ dùng được trong game.'
-    use-in-console: '&c Lệnh này chỉ có sẵn trong bảng điều khiển.'
-    no-team: '&c Bạn không có đội!'
-    no-island: '&c Bạn không có đảo!'
-    player-has-island: '&c Người chơi đã có đảo!'
-    player-has-no-island: '&c Người chơi không có đảo!'
-    already-have-island: '&c Bạn đã có đảo!'
-    no-safe-location-found: '&c Không tìm thẩy điểm an toàn để dịch chuyển.'
-    not-owner: '&c Bạn không phải chủ đảo!'
-    player-is-not-owner: '&b [name] &c không phải chủ đảo!'
-    not-in-team: '&c Người chơi đó không có ở đội của bạn!'
-    offline-player: '&c Người chơi ngoại tuyến hoặc không tồn tại.'
-    unknown-player: '&c [name] là người chơi không xác định!'
-    general: '&c Lệnh chưa sẵn sàng. Hãy thông báo với quản trị viên'
-    unknown-command: '&c Lệnh không xác định. Dùng &b /[label] help &c để xem hướng dẫn.'
-    wrong-world: '&c Bạn không ở đúng thế giới để dùng lệnh đó!'
-    you-must-wait: '&c Bạn phải chờ [number] giây trước khi dùng lại lệnh đó.'
-    must-be-positive-number: '&c [number] không phải là số dương hợp lệ.'
-    not-on-island: '&c Bạn không ở trên [prefix_island]!'
-    slow-down: '&c Chậm lại. Nhấp chậm hơn.'
+    command-cancelled: '<red>Lệnh đã bị hủy.</red>'
+    no-permission: '<red>Bạn không có quyền dùng lệnh này</red>'
+    insufficient-rank: '<red>Rank của bạn chưa đủ cao! (</red><gray>[rank]</gray><red>)</red>'
+    use-in-game: '<red>Lệnh này chỉ dùng được trong game.</red>'
+    use-in-console: '<red>Lệnh này chỉ có sẵn trong bảng điều khiển.</red>'
+    no-team: '<red>Bạn không có đội!</red>'
+    no-island: '<red>Bạn không có đảo!</red>'
+    player-has-island: '<red>Người chơi đã có đảo!</red>'
+    player-has-no-island: '<red>Người chơi không có đảo!</red>'
+    already-have-island: '<red>Bạn đã có đảo!</red>'
+    no-safe-location-found: '<red>Không tìm thẩy điểm an toàn để dịch chuyển.</red>'
+    not-owner: '<red>Bạn không phải chủ đảo!</red>'
+    player-is-not-owner: '<aqua>[name] </aqua><red>không phải chủ đảo!</red>'
+    not-in-team: '<red>Người chơi đó không có ở đội của bạn!</red>'
+    offline-player: '<red>Người chơi ngoại tuyến hoặc không tồn tại.</red>'
+    unknown-player: '<red>[name] là người chơi không xác định!</red>'
+    general: '<red>Lệnh chưa sẵn sàng. Hãy thông báo với quản trị viên</red>'
+    unknown-command: '<red>Lệnh không xác định. Dùng </red><aqua>/[label] help </aqua><red>để xem hướng dẫn.</red>'
+    wrong-world: '<red>Bạn không ở đúng thế giới để dùng lệnh đó!</red>'
+    you-must-wait: '<red>Bạn phải chờ [number] giây trước khi dùng lại lệnh đó.</red>'
+    must-be-positive-number: '<red>[number] không phải là số dương hợp lệ.</red>'
+    not-on-island: '<red>Bạn không ở trên [prefix_island]!</red>'
+    slow-down: '<red>Chậm lại. Nhấp chậm hơn.</red>'
   worlds:
     overworld: Thế Giới Thường
     nether: Địa Ngục
     the-end: Thế Giới Kết Thúc
 commands:
   help:
-    header: '&7 =========== &c [label] trợ giúp &7 ==========='
-    syntax: '&b [usage] &a [parameters]&7 : &e [description]'
-    syntax-no-parameters: '&b [usage]&7 : &e [description]'
-    end: '&7 ================================='
+    header: '<gray>=========== </gray><red>[label] trợ giúp </red><gray>===========</gray>'
+    syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
+    syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
+    end: '<gray>=================================</gray>'
     parameters: '[command]'
     description: xem hướng dẫn
     console: Bảng điều khiển
@@ -58,202 +58,202 @@ commands:
         thay đổi số lượng nhà cho phép trên [prefix_island] hoặc [prefix_island]
         của người chơi
       parameters: <number / player> <number> [[prefix_island] tên]
-      max-homes-set: '&a [name] - Đặt số nhà tối đa của [prefix_island] thành [number]'
+      max-homes-set: '<green>[name] - Đặt số nhà tối đa của [prefix_island] thành [number]</green>'
       errors:
         unknown-island: Không xác định [prefix_island]! [name]
     resethome:
       description: Đặt lại nhà của người chơi về mặc định
       parameters: <player> [[prefix_island] tên]
-      cleared: '&b Đặt lại nhà. [name]'
+      cleared: '<aqua>Đặt lại nhà. [name]</aqua>'
     resets:
       description: chỉnh số lần làm lại đảo cho người chơi
       set:
         description: chỉnh số lần làm lại đảo của người chơi
         parameters: <người chơi> <số lần>
-        success: '&a Đã chỉnh số lần làm lại đảo của &b [name]&a thành &b [number]&a .'
+        success: '<green>Đã chỉnh số lần làm lại đảo của </green><aqua>[name]</aqua><green>thành </green><aqua>[number]</aqua><green>.</green>'
       reset:
         description: chỉnh số lần làm lại đảo của người chơi về 0
         parameters: <người chơi>
-        success-everyone: '&a Đã chỉnh số lần làm lại đảo của &b mọi người&a ''s về &b 0&a .'
-        success: '&a Đã chỉnh số lần làm lại đảo của &b [name]&a ''s về &b 0&a .'
+        success-everyone: '<green>Đã chỉnh số lần làm lại đảo của </green><aqua>mọi người</aqua><green>''s về </green><aqua>0</aqua><green>.</green>'
+        success: '<green>Đã chỉnh số lần làm lại đảo của </green><aqua>[name]</aqua><green>''s về </green><aqua>0</aqua><green>.</green>'
       add:
         description: tăng số lần làm lại đảo cho người chơi
         parameters: <người chơi> <số lần>
         success: >-
-          &a Đã thêm &b [number] &a lần làm lại đảo cho &b [name], tăng tổng số
-          lên &b [total]&a lần làm lại đảo.
+          <green>Đã thêm </green><aqua>[number] </aqua><green>lần làm lại đảo cho </green><aqua>[name], tăng tổng số</aqua>
+          lên <aqua>[total]</aqua><green>lần làm lại đảo.</green>
       remove:
         description: tăng số lần làm lại đảo cho người chơi
         parameters: <người chơi> <số lần>
         success: >-
-          &a Đã trừ &b [number] &a lần làm lại đảo cho &b [name], giảm tổng số
-          xuống &b [total]&a lần làm lại đảo.
+          <green>Đã trừ </green><aqua>[number] </aqua><green>lần làm lại đảo cho </green><aqua>[name], giảm tổng số</aqua>
+          xuống <aqua>[total]</aqua><green>lần làm lại đảo.</green>
     purge:
       parameters: '[ngày]'
       description: xóa đảo đã bị bỏ hoang quá [ngày]
       days-one-or-more: Phải ít nhất 1 ngày hoặc hơn
-      purgable-islands: '&a Đã tìm thấy &b [number] &a đảo có thể xóa.'
+      purgable-islands: '<green>Đã tìm thấy </green><aqua>[number] </aqua><green>đảo có thể xóa.</green>'
       too-many: >-
-        &b Đây là rất nhiều và có thể mất một thời gian rất dài để xóa.  
+        <aqua>Đây là rất nhiều và có thể mất một thời gian rất dài để xóa.</aqua>
 
-        &b Hãy xem xét việc sử dụng plugin Regionerator để xóa các khối thế
+        <aqua>Hãy xem xét việc sử dụng plugin Regionerator để xóa các khối thế</aqua>
         giới  
 
-        &b và cài đặt keep-previous-island-on-reset: true trong config.yml của
+        <aqua>và cài đặt keep-previous-island-on-reset: true trong config.yml của</aqua>
         BentoBox.  
 
-        &b Sau đó, chạy một lệnh xóa.
+        <aqua>Sau đó, chạy một lệnh xóa.</aqua>
       purge-in-progress: >-
-        &c Quá trình xóa đang được thực thi. Dùng &b /[label] purge stop &c để
+        <red>Quá trình xóa đang được thực thi. Dùng </red><aqua>/[label] purge stop </aqua><red>để</red>
         hủy.
       scanning: >-
-        &a Đang quét đảo trong cơ sở dữ liệu. Điều này có thể mất một thời gian
+        <green>Đang quét đảo trong cơ sở dữ liệu. Điều này có thể mất một thời gian</green>
         tùy thuộc vào số lượng bạn có...
-      scanning-in-progress: '&c Đang quét, vui lòng chờ chút'
-      none-found: '&c Không tìm thấy đảo nào để xoá.'
+      scanning-in-progress: '<red>Đang quét, vui lòng chờ chút</red>'
+      none-found: '<red>Không tìm thấy đảo nào để xoá.</red>'
       total-islands: >-
-        &a Bạn có [number] hòn đảo trong cơ sở dữ liệu của bạn ở tất cả các thế
+        <green>Bạn có [number] hòn đảo trong cơ sở dữ liệu của bạn ở tất cả các thế</green>
         giới.
-      number-error: '&c Tham số phải là số ngày'
-      confirm: '&d Nhập &b /[label] purge confirm &d để bắt đầu xóa'
-      completed: '&a Quá trình xóa đã ngừng.'
+      number-error: '<red>Tham số phải là số ngày</red>'
+      confirm: '<light_purple>Nhập </light_purple><aqua>/[label] purge confirm </aqua><light_purple>để bắt đầu xóa</light_purple>'
+      completed: '<green>Quá trình xóa đã ngừng.</green>'
       see-console-for-status: >-
-        &a Quá trình xóa đã bắt đầu. Xem bảng điều khiển cho trạng thái hoặc
-        dùng &b /[label] purge status&a.
-      no-purge-in-progress: '&c Không có quá trình xóa đang thực thi.'
+        <green>Quá trình xóa đã bắt đầu. Xem bảng điều khiển cho trạng thái hoặc</green>
+        dùng <aqua>/[label] purge status</aqua><green>.</green>
+      no-purge-in-progress: '<red>Không có quá trình xóa đang thực thi.</red>'
       regions:
         parameters: '[days]'
         description: purge Quần đảo bằng cách xóa các tập tin khu vực cũ
-        confirm: '&d Loại &b /[label] purge regions confirm &d để bắt đầu thanh trừng'
+        confirm: '<light_purple>Loại </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>để bắt đầu thanh trừng</light_purple>'
       protect:
         description: bật bảo vệ đảo khỏi bị xóa
-        move-to-island: '&c Di chuyển về đảo trước!'
-        protecting: '&a Đang bảo vệ đảo khỏi bị xóa.'
-        unprotecting: '&a Đang tắt bảo vệ.'
+        move-to-island: '<red>Di chuyển về đảo trước!</red>'
+        protecting: '<green>Đang bảo vệ đảo khỏi bị xóa.</green>'
+        unprotecting: '<green>Đang tắt bảo vệ.</green>'
       stop:
         description: dừng một quá trình xóa đang thực thi
         stopping: Đang dừng quá trình xóa
       unowned:
         description: xóa đảo không chủ
-        unowned-islands: '&a Đã tìm thấy &b [number] &a đảo không chủ.'
+        unowned-islands: '<green>Đã tìm thấy </green><aqua>[number] </aqua><green>đảo không chủ.</green>'
       status:
         description: xem trạng thái của quá trình xóa
         status: >-
-          &b [purged] &a đảo đã xóa trong &b [purgeable]
-          &7(&b[percentage]%&7)&a.
+          <aqua>[purged] </aqua><green>đảo đã xóa trong </green><aqua>[purgeable]</aqua>
+          <gray>(</gray><aqua>[percentage]%</aqua><gray>)</gray><green>.</green>
     team:
       description: quản lý đội
       add:
         parameters: <chủ> <người chơi>
         description: thêm người chơi vào đội của chủ
-        name-not-owner: '&c [name] không phải chủ.'
-        name-has-island: '&c [name] có đảo. Xóa hoặc hủy đăng kí trước!'
-        success: '&b [name]&a  đã được thêm vào đảo của &b [owner]&a .'
+        name-not-owner: '<red>[name] không phải chủ.</red>'
+        name-has-island: '<red>[name] có đảo. Xóa hoặc hủy đăng kí trước!</red>'
+        success: '<aqua>[name]</aqua><green> đã được thêm vào đảo của </green><aqua>[owner]</aqua><green>.</green>'
       disband:
         parameters: <chủ>
         description: giải tán đội của chủ
-        use-disband-owner: '&c Không phải chủ! Dùng disband [owner].'
-        disbanded: '&c Quản trị viên đã giải tán đội của bạn!'
-        success: '&a Đội của&b [name]&a đã bị giải tán.'
+        use-disband-owner: '<red>Không phải chủ! Dùng disband [owner].</red>'
+        disbanded: '<red>Quản trị viên đã giải tán đội của bạn!</red>'
+        success: '<green>Đội của</green><aqua>[name]</aqua><green>đã bị giải tán.</green>'
       fix:
         description: Quét và sửa thành viên chéo đảo trong cơ sở dữ liệu
         scanning: Đang quét cơ sở dữ liệu...
-        duplicate-owner: '&c Người chơi có nhiều hơn một đảo trong cơ sở dữ liệu: [name]'
-        player-has: '&c Người chơi [name] có [number] đảo'
+        duplicate-owner: '<red>Người chơi có nhiều hơn một đảo trong cơ sở dữ liệu: [name]</red>'
+        player-has: '<red>Người chơi [name] có [number] đảo</red>'
         duplicate-member: >-
-          &c Người chơi [name] là thành viên của nhiều hơn một đảo trong cơ sở
+          <red>Người chơi [name] là thành viên của nhiều hơn một đảo trong cơ sở</red>
           dữ liệu
-        rank-on-island: '&c [rank] trên đảo tại [xyz]'
-        fixed: '&a Đã sửa'
-        done: '&a Quét'
+        rank-on-island: '<red>[rank] trên đảo tại [xyz]</red>'
+        fixed: '<green>Đã sửa</green>'
+        done: '<green>Quét</green>'
       kick:
         parameters: <người chơi>
         description: đuổi người chơi khỏi đội
-        cannot-kick-owner: '&c Bạn không thể đuổi chủ. Hãy đuổi thành viên trước.'
-        not-in-team: '&c Người chơi này không có trong đội.'
-        admin-kicked: '&c Quản trị viên đã đuổi bạn khỏi đội.'
-        success: '&b [name] &a đã bị đuổi khỏi đội của &b [owner]&a .'
-        success-all: '&b Người chơi đã được loại bỏ khỏi tất cả các đội trong thế giới này'
+        cannot-kick-owner: '<red>Bạn không thể đuổi chủ. Hãy đuổi thành viên trước.</red>'
+        not-in-team: '<red>Người chơi này không có trong đội.</red>'
+        admin-kicked: '<red>Quản trị viên đã đuổi bạn khỏi đội.</red>'
+        success: '<aqua>[name] </aqua><green>đã bị đuổi khỏi đội của </green><aqua>[owner]</aqua><green>.</green>'
+        success-all: '<aqua>Người chơi đã được loại bỏ khỏi tất cả các đội trong thế giới này</aqua>'
       setowner:
         parameters: <người chơi>
         description: Chuyển quyền chủ đảo cho người chơi
-        already-owner: '&c [name] đã là chủ đảo này!'
-        must-be-on-island: '&c Bạn phải ở [prefix_island] để thiết lập chủ sở hữu'
+        already-owner: '<red>[name] đã là chủ đảo này!</red>'
+        must-be-on-island: '<red>Bạn phải ở [prefix_island] để thiết lập chủ sở hữu</red>'
         confirmation: >-
-          &a Bạn có chắc chắn muốn đặt [name] làm chủ sở hữu của [prefix_island]
+          <green>Bạn có chắc chắn muốn đặt [name] làm chủ sở hữu của [prefix_island]</green>
           tại [xyz]?
-        success: '&b [name]&a  thành chủ đảo này.'
+        success: '<aqua>[name]</aqua><green> thành chủ đảo này.</green>'
         extra-islands: >-
-          &c Cảnh báo: người chơi này hiện đang sở hữu [number] hòn đảo. Đây là
+          <red>Cảnh báo: người chơi này hiện đang sở hữu [number] hòn đảo. Đây là</red>
           nhiều hơn mức cho phép theo cài đặt hoặc quyền: [max].
       maxsize:
         parameters: <player> <size>
         description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
-        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
+        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: lệnh độ dài cho quản trị viên
       invalid-value:
-        too-low: '&c Khu vực bảo vệ phải lớn hơn &b 1&c !'
-        too-high: '&c Khu vực bảo vệ phải bằng hoặc nhỏ hơn &b [number]&c !'
-        same-as-before: '&c Khu vực bảo vệ đã được chỉnh là &b [number]&c !'
+        too-low: '<red>Khu vực bảo vệ phải lớn hơn </red><aqua>1</aqua><red>!</red>'
+        too-high: '<red>Khu vực bảo vệ phải bằng hoặc nhỏ hơn </red><aqua>[number]</aqua><red>!</red>'
+        same-as-before: '<red>Khu vực bảo vệ đã được chỉnh là </red><aqua>[number]</aqua><red>!</red>'
       display:
-        already-off: '&c Các dấu đã tắt'
-        already-on: '&c Các dấu đã bật'
+        already-off: '<red>Các dấu đã tắt</red>'
+        already-on: '<red>Các dấu đã bật</red>'
         description: Xem/ẩn các dấu chỉ dẫn khu vực đảo
-        hiding: '&2 Đang ẩn chỉ dẫn khu vực'
+        hiding: '<dark_green>Đang ẩn chỉ dẫn khu vực</dark_green>'
         hint: >-
-          &c Barrier &f cho thấy khu vực giới hạn bảo vệ đảo.
+          <red>Barrier </red><white>cho thấy khu vực giới hạn bảo vệ đảo.</white>
 
-          &7 Hạt Xám &f cho thấy giới hạn tối đa của đảo.
+          <gray>Hạt Xám </gray><white>cho thấy giới hạn tối đa của đảo.</white>
 
-          &a Hạt Xanh &f cho thấy khu vực bảo vệ mặc định nếu khu vực của đảo
+          <green>Hạt Xanh </green><white>cho thấy khu vực bảo vệ mặc định nếu khu vực của đảo</white>
           khác so với mặc định.
-        showing: '&2 Đang hiện các chỉ dẫn khu vực'
+        showing: '<dark_green>Đang hiện các chỉ dẫn khu vực</dark_green>'
       set:
         parameters: <người chơi> <độ dài>
         description: chỉnh độ dài bảo vệ đảo
-        success: '&a Đã chỉnh độ dài bảo vệ đảo thành &b [number]&a .'
+        success: '<green>Đã chỉnh độ dài bảo vệ đảo thành </green><aqua>[number]</aqua><green>.</green>'
       reset:
         parameters: <người chơi>
         description: chỉnh độ dài bảo vệ đảo về mặc định
-        success: '&a Đã chỉnh độ dài bảo vệ đảo thành &b [number]&a .'
+        success: '<green>Đã chỉnh độ dài bảo vệ đảo thành </green><aqua>[number]</aqua><green>.</green>'
       add:
         description: tăng độ dài bảo vệ đảo
         parameters: <người chơi> <độ dài>
         success: >-
-          &a Đã tăng khu vực bảo vệ đảo của &b [name]&a lên &b [total] &7 (&b
-          +[number]&7 )&a .
+          <green>Đã tăng khu vực bảo vệ đảo của </green><aqua>[name]</aqua><green>lên </green><aqua>[total] </aqua><gray>(</gray><aqua></aqua>
+          +[number]<gray>)</gray><green>.</green>
       remove:
         description: giảm độ dài bảo vệ đảo
         parameters: <người chơi> <độ dài>
         success: >-
-          &a Đã giảm khu vực bảo vệ đảo của &b [name]&a xuống &b [total] &7 (&b
-          -[number]&7 )&a .
+          <green>Đã giảm khu vực bảo vệ đảo của </green><aqua>[name]</aqua><green>xuống </green><aqua>[total] </aqua><gray>(</gray><aqua></aqua>
+          -'[number]<gray>)</gray><green>.</green>'
     register:
       parameters: <người chơi>
       description: đăng kí người chơi vào đảo không chủ này
-      registered-island: '&a Đã đăng kí [name] vào đảo tại [xyz].'
-      reserved-island: '&a Để dành đảo ở [xyz] cho [name].'
-      already-owned: '&c Đảo đã có chủ!'
-      no-island-here: '&c Không có đảo ở đây. Xác nhận để tạo.'
-      in-deletion: '&c Không gian đảo này đang được xóa. Thử lại.'
-      cannot-make-island: '&c Đảo không thể đặt ở đây. Xem bảng điều khiển để xem lỗi tiềm ẩn.'
-      island-is-spawn: '&6 Đảo là điểm triệu hồi. Bạn chắc chứ? Nhập lần nữa để xác nhận.'
+      registered-island: '<green>Đã đăng kí [name] vào đảo tại [xyz].</green>'
+      reserved-island: '<green>Để dành đảo ở [xyz] cho [name].</green>'
+      already-owned: '<red>Đảo đã có chủ!</red>'
+      no-island-here: '<red>Không có đảo ở đây. Xác nhận để tạo.</red>'
+      in-deletion: '<red>Không gian đảo này đang được xóa. Thử lại.</red>'
+      cannot-make-island: '<red>Đảo không thể đặt ở đây. Xem bảng điều khiển để xem lỗi tiềm ẩn.</red>'
+      island-is-spawn: '<gold>Đảo là điểm triệu hồi. Bạn chắc chứ? Nhập lần nữa để xác nhận.</gold>'
     unregister:
       parameters: <chủ> [x,y,z]
       description: hủy đăng kí chủ đảo khỏi đảo này. nhưng giữ lại tài nguyên đảo
-      unregistered-island: '&a Đã hủy đăng kí [name] khỏi đảo tại [xyz].'
+      unregistered-island: '<green>Đã hủy đăng kí [name] khỏi đảo tại [xyz].</green>'
       errors:
-        unknown-island-location: '&c Vị trí [prefix_island] không rõ'
-        specify-island-location: '&c Vui lòng chỉ định vị trí [prefix_island] theo định dạng x,y,z'
+        unknown-island-location: '<red>Vị trí [prefix_island] không rõ</red>'
+        specify-island-location: '<red>Vui lòng chỉ định vị trí [prefix_island] theo định dạng x,y,z</red>'
         player-has-more-than-one-island: >-
-          &c Người chơi có nhiều hơn một [prefix_island]. Vui lòng chỉ rõ cái
+          <red>Người chơi có nhiều hơn một [prefix_island]. Vui lòng chỉ rõ cái</red>
           nào.
     info:
       parameters: <người chơi>
       description: xem thông tin đảo bạn đang đứng
-      no-island: '&c Bạn không có ở đảo nào...'
+      no-island: '<red>Bạn không có ở đảo nào...</red>'
       title: '========== Thông Tin Đảo ============'
       island-uuid: 'UUID: [uuid]'
       owner: 'Chủ: [owner] ([uuid])'
@@ -263,71 +263,71 @@ commands:
       resets-left: 'Lần làm lại: [number] (Tối đa: [total])'
       max-homes: 'Max homes: [number]'
       team-members-title: 'Thành viên đảo:'
-      team-owner-format: '&a [name] [rank]'
-      team-member-format: '&b [name] [rank]'
+      team-owner-format: '<green>[name] [rank]</green>'
+      team-member-format: '<aqua>[name] [rank]</aqua>'
       max-team-size: 'Kích thước đảo tối đa: [number]'
       max-coop-size: 'Kích thước hợp tác tối đa: [number]'
       max-trusted-size: 'Kích thước tin cậy tối đa: [number]'
       island-protection-center: 'Điểm giữa khu vực bảo vệ: [xyz]'
       island-center: 'Điểm trung tâm đảo: [xyz]'
       island-coords: 'Tọa độ đảo: [xz1] đến [xz2]'
-      islands-in-trash: '&d Người chơi có đảo rác.'
+      islands-in-trash: '<light_purple>Người chơi có đảo rác.</light_purple>'
       protection-range: 'Độ dài bảo vệ: [range]'
-      protection-range-bonus-title: '&b Bao gồm những phần thưởng này:'
+      protection-range-bonus-title: '<aqua>Bao gồm những phần thưởng này:</aqua>'
       protection-range-bonus: 'Thưởng: [number]'
       purge-protected: Đảo đang được bảo vệ khỏi bị xóa
       max-protection-range: 'Độ dài bảo vệ lớn nhất: [range]'
       protection-coords: 'Tọa độ bảo vệ: [xz1] to [xz2]'
       is-spawn: Đảo là điểm triệu hồi
       banned-players: 'Người chơi bị cấm:'
-      banned-format: '&c [name]'
-      unowned: '&c Không có chủ'
-      bundle: '&a Gói bản vẽ được sử dụng để tạo hòn đảo: &b [name]'
+      banned-format: '<red>[name]</red>'
+      unowned: '<red>Không có chủ</red>'
+      bundle: '<green>Gói bản vẽ được sử dụng để tạo hòn đảo: </green><aqua>[name]</aqua>'
     switch:
       description: bật/tắt bỏ qua bảo vệ
-      op: '&c Các Ops luôn có thể vượt qua sự bảo vệ. Deop để sử dụng lệnh.'
+      op: '<red>Các Ops luôn có thể vượt qua sự bảo vệ. Deop để sử dụng lệnh.</red>'
       removing: Removing protection bypass...
       adding: Adding protection bypass...
     switchto:
       parameters: <player> <number>
       description: switch player's island to the numbered one in trash
       out-of-range: >-
-        &c Number must be between 1 and [number]. Use &l [label] trash [player]
-        &r &c to see island numbers
-      cannot-switch: '&c Chuyển đổi không thành công. Xem nhật ký điều khiển để biết lỗi.'
-      success: '&a Successfully switched the player''s island to the specified one.'
+        <red>Number must be between 1 and [number]. Use <bold>[label] trash [player]</bold></red>
+        <red>to see island numbers</red>
+      cannot-switch: '<red>Chuyển đổi không thành công. Xem nhật ký điều khiển để biết lỗi.</red>'
+      success: '<green>Successfully switched the player''s island to the specified one.</green>'
     trash:
-      no-unowned-in-trash: '&c Không có hòn đảo không có chủ trong thùng rác'
-      no-islands-in-trash: '&c Người chơi không có đảo nào trong thùng rác.'
+      no-unowned-in-trash: '<red>Không có hòn đảo không có chủ trong thùng rác</red>'
+      no-islands-in-trash: '<red>Người chơi không có đảo nào trong thùng rác.</red>'
       parameters: '[Người chơi]'
       description: hiển thị các đảo không sở hữu hoặc đảo của người chơi trong thùng rác
-      title: '&d =========== Các Đảo Trong Rác ==========='
-      count: '&l &d Island [number]:'
+      title: '<light_purple>=========== Các Đảo Trong Rác ===========</light_purple>'
+      count: '<bold><light_purple>Island [number]:</light_purple></bold>'
       use-switch: >-
-        &a Use &l [label] switchto <player> <number>&r &a  to switch player to
+        <green>Use <bold>[label] switchto <player> <number></bold></green><green> to switch player to</green>
         island in trash
       use-emptytrash: >-
-        &a Sử dụng &l [label] emptytrash [player]&r &a để xóa vĩnh viễn các vật
+        <green>Sử dụng <bold>[label] emptytrash [player]</bold></green><green>để xóa vĩnh viễn các vật</green>
         phẩm rác
     emptytrash:
       parameters: '[Người chơi]'
       description: >-
         Xóa rác cho người chơi, hoặc tất cả các hòn đảo không thuộc sở hữu trong
         rác.
-      success: '&a Thùng rác đã được làm trống thành công.'
+      success: '<green>Thùng rác đã được làm trống thành công.</green>'
     version:
       description: hiển thị phiên bản BentoBox và các addon
     setrange:
       parameters: <Người chơi> <Range>
       description: set the range of player's island
-      range-updated: '&a Island range updated to &b [number]&a .'
+      range-updated: '<green>Island range updated to </green><aqua>[number]</aqua><green>.</green>'
     reload:
-      description: '&cTải lại'
+      description: '<red>Tải lại</red>'
     tp:
       parameters: <player> [player to teleport]
       description: teleport to a player's island
       manual: >-
-        &c Không tìm thấy warp an toàn! Tự tay tp gần &b [location] &c và kiểm
+        <red>Không tìm thấy warp an toàn! Tự tay tp gần </red><aqua>[location] </aqua><red>và kiểm</red>
         tra nó.
     tpuser:
       parameters: >-
@@ -337,89 +337,89 @@ commands:
     getrank:
       parameters: <player> [island owner]
       description: get a player's rank on their island or the island of the owner
-      rank-is: '&a Rank is &b [rank] &a on &b [name]&a ''s island.'
+      rank-is: '<green>Rank is </green><aqua>[rank] </aqua><green>on </green><aqua>[name]</aqua><green>''s island.</green>'
     setrank:
       parameters: <player> <rank> [island owner]
       description: set a player's rank on their island or the island of the owner
-      unknown-rank: '&c Hạng không xác định!'
-      not-possible: '&c Hạng phải cao hơn khách tham quan.'
-      rank-set: '&a Rank set from &b [from] &a to &b [to] &a on &b [name]&a ''s island.'
+      unknown-rank: '<red>Hạng không xác định!</red>'
+      not-possible: '<red>Hạng phải cao hơn khách tham quan.</red>'
+      rank-set: '<green>Rank set from </green><aqua>[from] </aqua><green>to </green><aqua>[to] </aqua><green>on </green><aqua>[name]</aqua><green>''s island.</green>'
     setprotectionlocation:
       parameters: '[toạ độ x y z]'
       description: đặt vị trí hiện tại hoặc [x y z] là điểm giữa khu vực bảo vệ
-      island: '&c Nó sẽ ảnh hưởng đến đảo [xyz] đứng tên của ''[name]''.'
-      confirmation: '&c Bạn có chắc là đặt [xyz] thành điểm giữa khu vực bảo vệ?'
-      success: '&a Đặt thành công [xyz] thành điểm giữa bảo vệ.'
-      fail: '&a Đặt thất bại [xyz] thành điểm giữa bảo vệ.'
-      island-location-changed: '&a [user] đổi điểm giữa bảo vệ thành [xyz].'
-      xyz-error: '&c Xác định 3 toạ độ: ví dụ 100 120 100'
+      island: '<red>Nó sẽ ảnh hưởng đến đảo [xyz] đứng tên của ''[name]''.</red>'
+      confirmation: '<red>Bạn có chắc là đặt [xyz] thành điểm giữa khu vực bảo vệ?</red>'
+      success: '<green>Đặt thành công [xyz] thành điểm giữa bảo vệ.</green>'
+      fail: '<green>Đặt thất bại [xyz] thành điểm giữa bảo vệ.</green>'
+      island-location-changed: '<green>[user] đổi điểm giữa bảo vệ thành [xyz].</green>'
+      xyz-error: '<red>Xác định 3 toạ độ: ví dụ 100 120 100</red>'
     setspawn:
       description: set an island as spawn for this gamemode
-      already-spawn: '&c This island is already a spawn!'
-      no-island-here: '&c There is no island here.'
-      confirmation: '&c Are you sure you want to set this island as the spawn for this world?'
-      success: '&a Successfully set this island as the spawn for this world.'
+      already-spawn: '<red>This island is already a spawn!</red>'
+      no-island-here: '<red>There is no island here.</red>'
+      confirmation: '<red>Are you sure you want to set this island as the spawn for this world?</red>'
+      success: '<green>Successfully set this island as the spawn for this world.</green>'
     setspawnpoint:
       description: set current location as spawn point for this island
-      no-island-here: '&c There is no island here.'
+      no-island-here: '<red>There is no island here.</red>'
       confirmation: >-
-        &c Bạn có chắc chắn muốn đặt vị trí này làm điểm spawn cho hòn đảo này
+        <red>Bạn có chắc chắn muốn đặt vị trí này làm điểm spawn cho hòn đảo này</red>
         không?
-      success: '&a Successfully set this location as the spawn point for this island.'
-      island-spawnpoint-changed: '&a [user] changed this island spawn point.'
+      success: '<green>Successfully set this location as the spawn point for this island.</green>'
+      island-spawnpoint-changed: '<green>[user] changed this island spawn point.</green>'
     settings:
       parameters: '[player]'
       description: open system settings or island settings for player
-      unknown-setting: '&c Tuỳ chỉnh không tồn tại'
+      unknown-setting: '<red>Tuỳ chỉnh không tồn tại</red>'
     blueprint:
       parameters: <load/copy/paste/pos1/pos2/save>
       description: thao tác với bản thiết kế
-      bedrock-required: '&c Ít nhất một khối đá nền phải có trong bản thiết kế!'
-      copy-first: '&c Sao chép trước!'
-      file-exists: '&c Tệp đã tồn tại, có ghi đè không?'
-      no-such-file: '&c Không có tập tin như vậy!'
-      could-not-load: '&c Không thể tải tệp đó!'
-      could-not-save: '&c Hmm, đã xảy ra vấn đề khi lưu tệp đó: [message]'
-      set-pos1: '&a Vị trí 1 được đặt tại [vector]'
-      set-pos2: '&a Vị trí 2 đã được đặt tại [vector]'
-      set-different-pos: '&c Đặt một vị trí khác - vị trí này đã được thiết lập!'
-      need-pos1-pos2: '&c Đặt pos1 và pos2 trước tiên!'
-      copying: '&b Đang sao chép khối...'
-      copied-blocks: '&b Đã sao chép [number] khối vào clipboard'
-      look-at-a-block: '&c Nhìn vào khối trong phạm vi 20 khối để đặt'
-      mid-copy: '&c Bạn đang sao chép. Vui lòng đợi cho đến khi việc sao chép hoàn tất.'
-      copied-percent: '&6 Đã sao chép [number]%'
+      bedrock-required: '<red>Ít nhất một khối đá nền phải có trong bản thiết kế!</red>'
+      copy-first: '<red>Sao chép trước!</red>'
+      file-exists: '<red>Tệp đã tồn tại, có ghi đè không?</red>'
+      no-such-file: '<red>Không có tập tin như vậy!</red>'
+      could-not-load: '<red>Không thể tải tệp đó!</red>'
+      could-not-save: '<red>Hmm, đã xảy ra vấn đề khi lưu tệp đó: [message]</red>'
+      set-pos1: '<green>Vị trí 1 được đặt tại [vector]</green>'
+      set-pos2: '<green>Vị trí 2 đã được đặt tại [vector]</green>'
+      set-different-pos: '<red>Đặt một vị trí khác - vị trí này đã được thiết lập!</red>'
+      need-pos1-pos2: '<red>Đặt pos1 và pos2 trước tiên!</red>'
+      copying: '<aqua>Đang sao chép khối...</aqua>'
+      copied-blocks: '<aqua>Đã sao chép [number] khối vào clipboard</aqua>'
+      look-at-a-block: '<red>Nhìn vào khối trong phạm vi 20 khối để đặt</red>'
+      mid-copy: '<red>Bạn đang sao chép. Vui lòng đợi cho đến khi việc sao chép hoàn tất.</red>'
+      copied-percent: '<gold>Đã sao chép [number]%</gold>'
       copy:
         parameters: '[air]'
         description: copy the clipboard set by pos1 and pos2 and optionally the air blocks
       sink:
         description: đặt bản thiết kế này để chìm xuống đáy đại dương khi được dán vào
-        status: '&a Bản vẽ sẽ [status] &a khi được dán'
-        sink: '&c bồn rửa'
-        not-sink: '&b không chìm'
+        status: '<green>Bản vẽ sẽ [status] </green><green>khi được dán</green>'
+        sink: '<red>bồn rửa</red>'
+        not-sink: '<aqua>không chìm</aqua>'
         no-clipboard: >-
-          &c Không có bản thiết kế nào trong bảng diễn. Tải lên hoặc sao chép
+          <red>Không có bản thiết kế nào trong bảng diễn. Tải lên hoặc sao chép</red>
           thứ gì đó.
       delete:
         parameters: <Tên>
         description: xóa bản thiết kế
-        no-blueprint: '&b [name] &c không tồn tại.'
+        no-blueprint: '<aqua>[name] </aqua><red>không tồn tại.</red>'
         confirmation: |-
-          &c Bạn có chắc chắn muốn xóa bản thiết kế này không?  
-          &c Một khi đã xóa, sẽ không có cách nào để phục hồi nó.
-        success: '&a Xóa sơ đồ thành công &b [name]&a .'
+          <red>Bạn có chắc chắn muốn xóa bản thiết kế này không?</red>
+          <red>Một khi đã xóa, sẽ không có cách nào để phục hồi nó.</red>
+        success: '<green>Xóa sơ đồ thành công </green><aqua>[name]</aqua><green>.</green>'
       load:
         parameters: <Tên>
         description: Tải bản thiết kế vào khay nhớ tạm
       list:
         description: liệt kê các bản thiết kế có sẵn
-        no-blueprints: '&c Không có bản vẽ trong thư mục bản vẽ!'
-        available-blueprints: '&a Các bản vẽ này có sẵn để tải:'
+        no-blueprints: '<red>Không có bản vẽ trong thư mục bản vẽ!</red>'
+        available-blueprints: '<green>Các bản vẽ này có sẵn để tải:</green>'
       origin:
         description: đặt gốc của bản thiết kế tới vị trí của bạn
       paste:
         description: Dán bảng tạm vào vị trí của bạn
-        pasting: '&a Đang dán...'
+        pasting: '<green>Đang dán...</green>'
       pos1:
         description: đặt góc 1 của clipboard hình khối
       pos2:
@@ -430,8 +430,8 @@ commands:
       rename:
         parameters: <blueprint name> <tên mới>
         description: đặt tên lại một bản thiết kế
-        success: '&a Blueprint &b [old] &a has been successfully renamed to &b [name]&a.'
-        pick-different-name: '&c Vui lòng chỉ định một tên khác với tên hiện tại của bản thiết kế.'
+        success: '<green>Blueprint </green><aqua>[old] </aqua><green>has been successfully renamed to </green><aqua>[name]</aqua><green>.</green>'
+        pick-different-name: '<red>Vui lòng chỉ định một tên khác với tên hiện tại của bản thiết kế.</red>'
       management:
         back: Trở lại
         instruction: Nhấn vào blueprint sau đó nhấn vào đây.
@@ -452,7 +452,7 @@ commands:
         perm-required: Yêu cầu
         no-perm-required: Không thể thiết lập quyền cho gói mặc định
         perm-not-required: Sure! Please provide the text you'd like me to translate.
-        perm-format: '&e '
+        perm-format: '<yellow></yellow>'
         remove: Nhấn chuột phải để xóa
         blueprint-instruction: |-
           Nhấp để chọn,  
@@ -464,11 +464,11 @@ commands:
         name:
           quit: quit
           prompt: Nhập một tên, hoặc 'quit' để thoát
-          too-long: '&c Too long'
+          too-long: '<red>Too long</red>'
           pick-a-unique-name: Xin hãy chọn một cái tên độc đáo hơn.
           stripped-char-in-unique-name: >-
-            &c Một số ký tự đã bị xóa vì chúng không được phép. &a ID mới sẽ là
-            &b [name]&a.
+            <red>Một số ký tự đã bị xóa vì chúng không được phép. </red><green>ID mới sẽ là</green>
+            <aqua>[name]</aqua><green>.</green>
           success: Thành công!
           conversation-prefix: '>'
         description:
@@ -479,46 +479,46 @@ commands:
           default-color: ''
           success: Thành công!
           cancelling: Hủy bỏ
-        slot: '&f Vị trí Ưa Thích [number]'
+        slot: '<white>Vị trí Ưa Thích [number]</white>'
         slot-instructions: |-
-          &a Nhấn chuột trái để tăng
-          &a Nhấn chuột phải để giảm
+          <green>Nhấn chuột trái để tăng</green>
+          <green>Nhấn chuột phải để giảm</green>
         times: |-
-          &a Số lần sử dụng đồng thời tối đa bởi người chơi  
-          &a Nhấp chuột trái để tăng  
-          &a Nhấp chuột phải để giảm
+          <green>Số lần sử dụng đồng thời tối đa bởi người chơi</green>
+          <green>Nhấp chuột trái để tăng</green>
+          <green>Nhấp chuột phải để giảm</green>
         unlimited-times: Vô hạn
         maximum-times: Tối đa [number] lần
         cost: |
-          &a Chi phí [prefix_Island]
-          &a Nhấp chuột trái +1
-          &a Nhấp chuột phải -1
-          &a Shift để +/-100
+          <green>Chi phí [prefix_Island]</green>
+          <green>Nhấp chuột trái +1</green>
+          <green>Nhấp chuột phải -1</green>
+          <green>Shift để +/-100</green>
         no-cost: Miễn phí
         cost-amount: 'Chi phí: [cost]'
-        next-page: '&f Trang tiếp theo'
-        previous-page: '&f Trang trước'
+        next-page: '<white>Trang tiếp theo</white>'
+        previous-page: '<white>Trang trước</white>'
     resetflags:
       parameters: '[flag]'
       description: Đặt lại tất cả các đảo về cài đặt cờ mặc định trong config.yml
-      confirm: '&4 Điều này sẽ đặt lại cờ về mặc định cho tất cả các hòn đảo!'
+      confirm: '<dark_red>Điều này sẽ đặt lại cờ về mặc định cho tất cả các hòn đảo!</dark_red>'
       success: >-
-        &a Đã thành công trong việc đặt lại tất cả cờ của các đảo về cài đặt mặc
+        <green>Đã thành công trong việc đặt lại tất cả cờ của các đảo về cài đặt mặc</green>
         định.
-      success-one: '&a Cờ [name] đã được đặt về mặc định cho tất cả các hòn đảo.'
+      success-one: '<green>Cờ [name] đã được đặt về mặc định cho tất cả các hòn đảo.</green>'
     world:
       description: Quản lý cài đặt thế giới
     delete:
       parameters: <player>
       description: deletes a player's island
       cannot-delete-owner: >-
-        &c All island members have to be kicked from the island before deleting
+        <red>All island members have to be kicked from the island before deleting</red>
         it.
-      deleted-island: '&a Island at &e [xyz] &a has been successfully deleted.'
+      deleted-island: '<green>Island at </green><yellow>[xyz] </yellow><green>has been successfully deleted.</green>'
     deletehomes:
       parameters: <người chơi>
       description: xoá toàn bộ nhà trong đảo
-      warning: '&c Tất cả nhà sẽ bị xoá khỏi đảo!'
+      warning: '<red>Tất cả nhà sẽ bị xoá khỏi đảo!</red>'
     why:
       parameters: <player>
       description: bật báo cáo gỡ lỗi bảo vệ bảng điều khiển
@@ -530,29 +530,29 @@ commands:
         description: đặt lại số lần chết của người chơi
         parameters: <player>
         success: >-
-          &a Đã thành công trong việc đặt lại số chết của &b [name]&a thành &b
-          0&a .
+          <green>Đã thành công trong việc đặt lại số chết của </green><aqua>[name]</aqua><green>thành </green><aqua></aqua>
+          0<green>.</green>
       set:
         description: đặt số lần chết của người chơi
         parameters: <người_chơi> <số_cái_chết>
         success: >-
-          &a Đã thành công thiết lập số lần chết của &b [name]&a thành &b
-          [number]&a .
+          <green>Đã thành công thiết lập số lần chết của </green><aqua>[name]</aqua><green>thành </green><aqua></aqua>
+          [number]<green>.</green>
       add:
         description: thêm số lần chết cho người chơi
         parameters: <player> đã chết <deaths> lần
         success: >-
-          &a Đã thêm thành công &b [number] &a cái chết vào &b [name], nâng tổng
-          số lên &b [total]&a cái chết.
+          <green>Đã thêm thành công </green><aqua>[number] </aqua><green>cái chết vào </green><aqua>[name], nâng tổng</aqua>
+          số lên <aqua>[total]</aqua><green>cái chết.</green>
       remove:
         description: xóa số lần chết của người chơi
         parameters: <player> <deaths>
         success: >-
-          &a Đã xóa thành công &b [number] &a cái chết của &b [name], giảm tổng
-          số xuống &b [total]&a cái chết.
+          <green>Đã xóa thành công </green><aqua>[number] </aqua><green>cái chết của </green><aqua>[name], giảm tổng</aqua>
+          số xuống <aqua>[total]</aqua><green>cái chết.</green>
     resetname:
       description: đặt lại tên người chơi [prefix_island]
-      success: '&a Đã đặt lại tên [prefix_island] của [name] thành công.'
+      success: '<green>Đã đặt lại tên [prefix_island] của [name] thành công.</green>'
   bentobox:
     description: Lệnh cho BentoBox
     perms:
@@ -561,26 +561,26 @@ commands:
       description: xem thông tin về giấy phép và bản quyền
     reload:
       description: Nạp lại BentoBox và tất cả tiện ích, tùy chỉnh và ngôn ngữ
-      locales-reloaded: '[prefix_bentobox]&2 Đã nạp lại ngôn ngữ.'
-      addons-reloaded: '[prefix_bentobox]&2 Đã nạp lại tiện ích.'
-      settings-reloaded: '[prefix_bentobox]&2 Đã nạp lại tùy chỉnh.'
-      addon: '[prefix_bentobox]&6 Đang nạp lại &b [name]&2 .'
-      addon-reloaded: '[prefix_bentobox]&2 Đã nạp lại &b [name].'
+      locales-reloaded: '[prefix_bentobox]<dark_green>Đã nạp lại ngôn ngữ.</dark_green>'
+      addons-reloaded: '[prefix_bentobox]<dark_green>Đã nạp lại tiện ích.</dark_green>'
+      settings-reloaded: '[prefix_bentobox]<dark_green>Đã nạp lại tùy chỉnh.</dark_green>'
+      addon: '[prefix_bentobox]<gold>Đang nạp lại </gold><aqua>[name]</aqua><dark_green>.</dark_green>'
+      addon-reloaded: '[prefix_bentobox]<dark_green>Đã nạp lại </dark_green><aqua>[name].</aqua>'
       warning: >-
-        [prefix_bentobox]&c Cảnh báo: Quá trình nạp lại có thể gây mất ổn định,
+        [prefix_bentobox]<red>Cảnh báo: Quá trình nạp lại có thể gây mất ổn định,</red>
         nếu có lỗi sau quá trình này, vui lòng khởi động lại máy chủ.
-      unknown-addon: '[prefix_bentobox]&c Tiện ích không tồn tại!'
+      unknown-addon: '[prefix_bentobox]<red>Tiện ích không tồn tại!</red>'
       locales:
         description: nạp lại ngôn ngữ
     version:
-      plugin-version: '&2 Phiên bản BentoBox: &3 [version]'
+      plugin-version: '<dark_green>Phiên bản BentoBox: </dark_green><dark_aqua>[version]</dark_aqua>'
       description: Xem phiên bản BentoBox và các tiện ích
       loaded-addons: 'Tiện ích:'
       loaded-game-worlds: 'Thế giới chơi:'
-      addon-syntax: '&2 [name] &3 [version] &7 (&3 [state]&7 )'
-      game-world: '&2 [name] &7 (&3 [addon]&7 ): &3 [worlds]'
-      server: '&2 Đang chạy &3 [name] [version]&2 .'
-      database: '&2 Cơ sở dữ liệu: &3 [database]'
+      addon-syntax: '<dark_green>[name] </dark_green><dark_aqua>[version] </dark_aqua><gray>(</gray><dark_aqua>[state]</dark_aqua><gray>)</gray>'
+      game-world: '<dark_green>[name] </dark_green><gray>(</gray><dark_aqua>[addon]</dark_aqua><gray>): </gray><dark_aqua>[worlds]</dark_aqua>'
+      server: '<dark_green>Đang chạy </dark_green><dark_aqua>[name] [version]</dark_aqua><dark_green>.</dark_green>'
+      database: '<dark_green>Cơ sở dữ liệu: </dark_green><dark_aqua>[database]</dark_aqua>'
     manage:
       description: Xem bảng quản lí
     catalog:
@@ -588,76 +588,76 @@ commands:
     locale:
       description: Thực hiện phân tích tệp ngôn ngữ
       see-console: >-
-        [prefix_bentobox]&a Xem thông báo bảng điều khiển.
+        [prefix_bentobox]<green>Xem thông báo bảng điều khiển.</green>
 
-        [prefix_bentobox]&a Thông báo từ lệnh này quá dài nên không thể xem ở
+        [prefix_bentobox]<green>Thông báo từ lệnh này quá dài nên không thể xem ở</green>
         chat...
     migrate:
       description: Chuyển dữ liệu từ cơ sở dữ liệu này sang cái khác
-      players: '[prefix_bentobox]&6 Đang chuyển người chơi'
-      names: '[prefix_bentobox]&6 Đang chuyển tên'
-      addons: '[prefix_bentobox]&6 Đang chuyển tiện ích'
-      class: '[prefix_bentobox]&6 Đang chuyển [description]'
-      migrated: '[prefix_bentobox]&a Đã chuyển'
-      completed: '[prefix_bentobox]&a Đã hoàn thành'
+      players: '[prefix_bentobox]<gold>Đang chuyển người chơi</gold>'
+      names: '[prefix_bentobox]<gold>Đang chuyển tên</gold>'
+      addons: '[prefix_bentobox]<gold>Đang chuyển tiện ích</gold>'
+      class: '[prefix_bentobox]<gold>Đang chuyển [description]</gold>'
+      migrated: '[prefix_bentobox]<green>Đã chuyển</green>'
+      completed: '[prefix_bentobox]<green>Đã hoàn thành</green>'
     rank:
       description: danh sách, thêm hoặc xóa các bậc
-      parameters: '&a [list | add | remove] [rank reference] [rank value]'
+      parameters: '<green>[list | add | remove] [rank reference] [rank value]</green>'
       add:
-        success: '&a Đã thêm [rank] với giá trị [number]'
-        failure: '&c Không thể thêm [rank] với giá trị [number]. Có thể là một bản sao?'
+        success: '<green>Đã thêm [rank] với giá trị [number]</green>'
+        failure: '<red>Không thể thêm [rank] với giá trị [number]. Có thể là một bản sao?</red>'
       remove:
-        success: '&a Đã xóa [rank]'
-        failure: '&c Không thể xóa [rank]. Hạng không xác định.'
-      list: '&a Các cấp bậc đã đăng ký như sau:'
+        success: '<green>Đã xóa [rank]</green>'
+        failure: '<red>Không thể xóa [rank]. Hạng không xác định.</red>'
+      list: '<green>Các cấp bậc đã đăng ký như sau:</green>'
   confirmation:
-    confirm: '&c Nhập lệnh đó lại trong &b [seconds] giây&c  để xác nhận.'
-    previous-request-cancelled: '&6 Lần xác nhận trước đã bị hủy.'
-    request-cancelled: '&c Hết thời gian xác nhận - &b yêu cầu đã bị hủy.'
+    confirm: '<red>Nhập lệnh đó lại trong </red><aqua>[seconds] giây</aqua><red> để xác nhận.</red>'
+    previous-request-cancelled: '<gold>Lần xác nhận trước đã bị hủy.</gold>'
+    request-cancelled: '<red>Hết thời gian xác nhận - </red><aqua>yêu cầu đã bị hủy.</aqua>'
   delay:
-    previous-command-cancelled: '&c Lệnh trước đã bị hủy'
-    stand-still: '&6 Đừng di chuyển! Dịch chuyển trong [seconds] giây'
-    moved-so-command-cancelled: '&c Bạn đã di chuyển. Đã hủy dịch chuyển!'
+    previous-command-cancelled: '<red>Lệnh trước đã bị hủy</red>'
+    stand-still: '<gold>Đừng di chuyển! Dịch chuyển trong [seconds] giây</gold>'
+    moved-so-command-cancelled: '<red>Bạn đã di chuyển. Đã hủy dịch chuyển!</red>'
   island:
     about:
       description: xem các thông tin
     go:
       parameters: '[số nhà]'
       description: dịch chuyển về đảo
-      teleport: '&a Đang dịch chuyển về đảo.'
-      in-progress: '&a Đang teleport, vui lòng chờ...'
-      teleported: '&a Đang dịch chuyển về nhà &e #[number].'
-      failure: '&c Di chuyển không thành công vì một số lý do. Vui lòng thử lại sau.'
-      unknown-home: '&c Tên nhà không tồn tại!'
+      teleport: '<green>Đang dịch chuyển về đảo.</green>'
+      in-progress: '<green>Đang teleport, vui lòng chờ...</green>'
+      teleported: '<green>Đang dịch chuyển về nhà </green><yellow>#[number].</yellow>'
+      failure: '<red>Di chuyển không thành công vì một số lý do. Vui lòng thử lại sau.</red>'
+      unknown-home: '<red>Tên nhà không tồn tại!</red>'
     help:
       description: lệnh chính cho đảo
     spawn:
       description: dịch chuyển về điểm hồi sinh
-      teleporting: '&a Đang dịch chuyển về điểm hồi sinh.'
-      no-spawn: '&c Không có điểm hồi sinh ở chế độ này.'
+      teleporting: '<green>Đang dịch chuyển về điểm hồi sinh.</green>'
+      no-spawn: '<red>Không có điểm hồi sinh ở chế độ này.</red>'
     create:
       description: tạo đảo bằng bản vẽ (cần quyền)
       parameters: <bản vẽ>
-      too-many-islands: '&c Quá nhiều đảo trong thế giới này. Không có đủ chỗ cho bạn.'
-      cannot-create-island: '&c Chưa tìm thấy vị trí. Thử lại...'
-      unable-create-island: '&c Không thể tạo đảo của bạn. Hãy báo cáo với quản trị viên.'
-      creating-island: '&a Đang tìm vị trí cho đảo của bạn...'
-      you-cannot-make: '&c Bạn không thể tạo thêm đảo nào nữa!'
-      max-uses: '&c Bạn không thể tạo thêm loại [prefix_island] nào nữa!'
+      too-many-islands: '<red>Quá nhiều đảo trong thế giới này. Không có đủ chỗ cho bạn.</red>'
+      cannot-create-island: '<red>Chưa tìm thấy vị trí. Thử lại...</red>'
+      unable-create-island: '<red>Không thể tạo đảo của bạn. Hãy báo cáo với quản trị viên.</red>'
+      creating-island: '<green>Đang tìm vị trí cho đảo của bạn...</green>'
+      you-cannot-make: '<red>Bạn không thể tạo thêm đảo nào nữa!</red>'
+      max-uses: '<red>Bạn không thể tạo thêm loại [prefix_island] nào nữa!</red>'
       you-cannot-make-team: >-
-        &c Các thành viên trong đội không thể tạo đảo trong cùng một thế giới
+        <red>Các thành viên trong đội không thể tạo đảo trong cùng một thế giới</red>
         với đội của họ [prefix_island].
       pasting:
-        estimated-time: '&a Thời gian dự kiến: &b [number] &a giây.'
-        blocks: '&a Đang xây dựng: &b [number] &a khối toàn bộ...'
-        entities: '&a Đang thêm thực thể: &b [number] &a thực thể toàn bộ...'
-        dimension-done: '&a [prefix_Island] trong [world] đã được xây dựng.'
-        done: '&a Xong! Đảo của bạn đã sẵn sàng!'
-      pick: '&2 Chọn một đảo'
-      cannot-afford: '&c Bạn không đủ tiền! Chi phí: [cost]'
-      unknown-blueprint: '&c Bản vẽ chưa được nạp.'
-      on-first-login: '&a Xin chào! Chúng tôi sẽ tạo đảo của bạn trong vài giây nữa.'
-      you-can-teleport-to-your-island: '&a Bạn có thể dịch chuyển về đảo nếu bạn muốn.'
+        estimated-time: '<green>Thời gian dự kiến: </green><aqua>[number] </aqua><green>giây.</green>'
+        blocks: '<green>Đang xây dựng: </green><aqua>[number] </aqua><green>khối toàn bộ...</green>'
+        entities: '<green>Đang thêm thực thể: </green><aqua>[number] </aqua><green>thực thể toàn bộ...</green>'
+        dimension-done: '<green>[prefix_Island] trong [world] đã được xây dựng.</green>'
+        done: '<green>Xong! Đảo của bạn đã sẵn sàng!</green>'
+      pick: '<dark_green>Chọn một đảo</dark_green>'
+      cannot-afford: '<red>Bạn không đủ tiền! Chi phí: [cost]</red>'
+      unknown-blueprint: '<red>Bản vẽ chưa được nạp.</red>'
+      on-first-login: '<green>Xin chào! Chúng tôi sẽ tạo đảo của bạn trong vài giây nữa.</green>'
+      you-can-teleport-to-your-island: '<green>Bạn có thể dịch chuyển về đảo nếu bạn muốn.</green>'
     deletehome:
       description: xoá điểm nhà
       parameters: '[tên nhà]'
@@ -669,56 +669,56 @@ commands:
     near:
       description: liệt kê các đảo gần bạn
       parameters: ''
-      the-following-islands: '&a Các đảo gần bạn:'
-      syntax: '&6 [hướng]: &a [tên]'
+      the-following-islands: '<green>Các đảo gần bạn:</green>'
+      syntax: '<gold>[hướng]: </gold><green>[tên]</green>'
       north: Bắc
       south: Nam
       east: Đông
       west: Tây
-      no-neighbors: '&c Không có đảo gần bạn!'
+      no-neighbors: '<red>Không có đảo gần bạn!</red>'
     reset:
       description: tạo lại đảo và xóa cái cũ
       parameters: <bản vẽ>
-      none-left: '&c Bạn đã hết lần tạo lại!'
-      resets-left: '&c Bạn còn &b [number] &c lần tạo lại'
+      none-left: '<red>Bạn đã hết lần tạo lại!</red>'
+      resets-left: '<red>Bạn còn </red><aqua>[number] </aqua><red>lần tạo lại</red>'
       confirmation: >-
-        &c Bạn chắc là bạn muốn chứ?
+        <red>Bạn chắc là bạn muốn chứ?</red>
 
-        &c Các thành viên trong đảo sẽ bị đuổi. Bạn phải mời bọn họ lại
+        <red>Các thành viên trong đảo sẽ bị đuổi. Bạn phải mời bọn họ lại</red>
 
-        &c Sẽ không có đường lui. Nếu bạn đã tạo lại đảo, sẽ &l không có &r &c
+        <red>Sẽ không có đường lui. Nếu bạn đã tạo lại đảo, sẽ <bold>không có </bold></red><red></red>
         cách để lấy lại.
-      kicked-from-island: '&c Bạn đã bị đuổi khỏi đảo trong [gamemode] vì chủ đảo đang tạo lại đảo.'
+      kicked-from-island: '<red>Bạn đã bị đuổi khỏi đảo trong [gamemode] vì chủ đảo đang tạo lại đảo.</red>'
     sethome:
       description: chọn điểm nhà của bạn
-      must-be-on-your-island: '&c Bạn phải ở đảo của bạn để chọn điểm nhà!'
-      too-many-homes: '&c Không thể đặt - Đảo của bạn đã đạt tối đa [number] nhà.'
-      home-set: '&6 Điểm nhà của bạn đã được chọn ở vị trí hiện tại của bạn.'
-      homes-are: '&6 Nhà trong đảo:'
-      home-list-syntax: '&6 [tên]'
-      click-to-teleport: '&a Nhấn để dịch chuyển!'
+      must-be-on-your-island: '<red>Bạn phải ở đảo của bạn để chọn điểm nhà!</red>'
+      too-many-homes: '<red>Không thể đặt - Đảo của bạn đã đạt tối đa [number] nhà.</red>'
+      home-set: '<gold>Điểm nhà của bạn đã được chọn ở vị trí hiện tại của bạn.</gold>'
+      homes-are: '<gold>Nhà trong đảo:</gold>'
+      home-list-syntax: '<gold>[tên]</gold>'
+      click-to-teleport: '<green>Nhấn để dịch chuyển!</green>'
       nether:
-        not-allowed: '&c Bạn không được phép chọn điểm nhà ở Địa Ngục.'
-        confirmation: '&c Bạn có chắc muốn chọn điểm nhà ở Địa Ngục?'
+        not-allowed: '<red>Bạn không được phép chọn điểm nhà ở Địa Ngục.</red>'
+        confirmation: '<red>Bạn có chắc muốn chọn điểm nhà ở Địa Ngục?</red>'
       the-end:
-        not-allowed: '&c Bạn không được phép chọn điểm nhà ở Thế Giới Địa Ngục.'
-        confirmation: '&c Bạn có chắc muốn chọn điểm nhà ở Thế Giới Địa Ngục?'
+        not-allowed: '<red>Bạn không được phép chọn điểm nhà ở Thế Giới Địa Ngục.</red>'
+        confirmation: '<red>Bạn có chắc muốn chọn điểm nhà ở Thế Giới Địa Ngục?</red>'
       parameters: '[số nhà]'
     setname:
       description: đặt tên cho đảo bạn
-      name-too-short: '&c Quá ngắn. Tối thiểu là [number] kí tự.'
-      name-too-long: '&c Quá dài. Tối đa là [number] kí tự.'
-      name-already-exists: '&c Đã có đảo với tên này ở chế độ này.'
+      name-too-short: '<red>Quá ngắn. Tối thiểu là [number] kí tự.</red>'
+      name-too-long: '<red>Quá dài. Tối đa là [number] kí tự.</red>'
+      name-already-exists: '<red>Đã có đảo với tên này ở chế độ này.</red>'
       parameters: <tên>
-      success: '&a Đã đặt tên đảo thành &b [name]&a .'
+      success: '<green>Đã đặt tên đảo thành </green><aqua>[name]</aqua><green>.</green>'
     renamehome:
       description: đổi tên điểm nhà
       parameters: '[tên nhà]'
-      enter-new-name: '&6 Nhập tên mới'
-      already-exists: '&c Tên đã tồn tại, thử tên khác.'
+      enter-new-name: '<gold>Nhập tên mới</gold>'
+      already-exists: '<red>Tên đã tồn tại, thử tên khác.</red>'
     resetname:
       description: đặt lại tên đảo
-      success: '&a Đã đặt lại tên đảo.'
+      success: '<green>Đã đặt lại tên đảo.</green>'
     team:
       description: quản lí đội
       gui:
@@ -730,235 +730,235 @@ commands:
             description: Trạng thái của đội
           rank-filter:
             name: Bộ lọc RANK
-            description: '&a Nhấn để xoay vòng thứ hạng'
+            description: '<green>Nhấn để xoay vòng thứ hạng</green>'
           invitation: Thư mời
           invite:
             name: Mời người chơi [player]
             description: |-
-              &a Người chơi phải ở trong cùng
-              &a thế giới với bạn để được
-              &a hiển thị trong danh sách.
+              <green>Người chơi phải ở trong cùng</green>
+              <green>thế giới với bạn để được</green>
+              <green>hiển thị trong danh sách.</green>
         tips:
           LEFT:
-            name: '&b Nhấp Chuột Trái'
-            invite: '&a để mời một người chơi'
+            name: '<aqua>Nhấp Chuột Trái</aqua>'
+            invite: '<green>để mời một người chơi</green>'
           RIGHT:
-            name: '&b Nhấp chuột phải'
+            name: '<aqua>Nhấp chuột phải</aqua>'
           SHIFT_RIGHT:
-            name: '&b Nhấn Shift và Chuột Phải'
-            reject: '&a để từ chối'
-            kick: '&a để đuổi người chơi'
-            leave: '&a để rời nhóm'
+            name: '<aqua>Nhấn Shift và Chuột Phải</aqua>'
+            reject: '<green>để từ chối</green>'
+            kick: '<green>để đuổi người chơi</green>'
+            leave: '<green>để rời nhóm</green>'
           SHIFT_LEFT:
-            name: '&b Nhấn Shift + Click Trái'
-            accept: '&a để chấp nhận'
+            name: '<aqua>Nhấn Shift + Click Trái</aqua>'
+            accept: '<green>để chấp nhận</green>'
             setowner: |-
-              &a để đặt chủ sở hữu  
-              &a cho người chơi này
+              <green>để đặt chủ sở hữu</green>
+              <green>cho người chơi này</green>
       info:
         description: xem thông tin đội của bạn
         member-layout:
-          online: '&a &l  o &r &f [name]'
-          offline: '&c &l  o &r &f [name] &7 ([last_seen])'
-          offline-not-last-seen: '&c &l  o &r &f [name]'
+          online: '<green><bold> o </bold></green><white>[name]</white>'
+          offline: '<red><bold> o </bold></red><white>[name] </white><gray>([last_seen])</gray>'
+          offline-not-last-seen: '<red><bold> o </bold></red><white>[name]</white>'
         last-seen:
-          layout: '&b [number] &7 [unit] trước'
+          layout: '<aqua>[number] </aqua><gray>[unit] trước</gray>'
           days: ngày
           hours: giờ
           minutes: phút
         header: |
-          &f --- &a Thông tin đội &f ---
-          &a Thành viên: &b [total]&7 /&b [max]
-          &a Trực tuyến: &b [online]
+          <white>--- </white><green>Thông tin đội </green><white>---</white>
+          <green>Thành viên: </green><aqua>[total]</aqua><gray>/</gray><aqua>[max]</aqua>
+          <green>Trực tuyến: </green><aqua>[online]</aqua>
         rank-layout:
-          owner: '&6 [rank]:'
-          generic: '&6 [rank] &7 (&b [number]&7 )&6 :'
+          owner: '<gold>[rank]:</gold>'
+          generic: '<gold>[rank] </gold><gray>(</gray><aqua>[number]</aqua><gray>)</gray><gold>:</gold>'
       coop:
         description: cho người chơi rank chơi cùng với đảo bạn
         parameters: <người chơi>
-        cannot-coop-yourself: '&c Bạn không thể chơi cùng với chính bạn!'
-        already-has-rank: '&c Người chơi đã có rank!'
-        you-are-a-coop-member: '&2 Bạn được chơi cùng bởi &b[name]&a.'
-        success: '&a Bạn đã chơi cùng với &b [name]&a.'
-        name-has-invited-you: '&a [name] đã mời bạn chơi cùng với đảo họ.'
+        cannot-coop-yourself: '<red>Bạn không thể chơi cùng với chính bạn!</red>'
+        already-has-rank: '<red>Người chơi đã có rank!</red>'
+        you-are-a-coop-member: '<dark_green>Bạn được chơi cùng bởi </dark_green><aqua>[name]</aqua><green>.</green>'
+        success: '<green>Bạn đã chơi cùng với </green><aqua>[name]</aqua><green>.</green>'
+        name-has-invited-you: '<green>[name] đã mời bạn chơi cùng với đảo họ.</green>'
       uncoop:
         description: xóa người chơi cùng
         parameters: <người chơi>
-        cannot-uncoop-yourself: '&c Bạn không thể xóa chính bạn!'
-        cannot-uncoop-member: '&c Bạn không thể xóa thành viên đội!'
-        player-not-cooped: '&c Người chơi đó không chơi cùng!'
-        you-are-no-longer-a-coop-member: '&c Bạn không còn chơi cùng với đảo của [name].'
+        cannot-uncoop-yourself: '<red>Bạn không thể xóa chính bạn!</red>'
+        cannot-uncoop-member: '<red>Bạn không thể xóa thành viên đội!</red>'
+        player-not-cooped: '<red>Người chơi đó không chơi cùng!</red>'
+        you-are-no-longer-a-coop-member: '<red>Bạn không còn chơi cùng với đảo của [name].</red>'
         all-members-logged-off: >-
-          &c Người chơi trên đảo đã thoát hết nên bạn không còn chơi cùng trên
+          <red>Người chơi trên đảo đã thoát hết nên bạn không còn chơi cùng trên</red>
           đảo của [name].
-        success: '&b [name] &a không còn chơi cùng với đảo của bạn.'
-        is-full: '&c Bạn không thể chơi cùng ai nữa.'
+        success: '<aqua>[name] </aqua><green>không còn chơi cùng với đảo của bạn.</green>'
+        is-full: '<red>Bạn không thể chơi cùng ai nữa.</red>'
       trust:
         description: cho người chơi rank tin tưởng với đảo bạn
         parameters: <người chơi>
-        trust-in-yourself: '&c Tin tưởng vào bản thân bạn!'
-        name-has-invited-you: '&a [name] mời bạn làm người được tin tưởng cho đảo của họ.'
-        player-already-trusted: '&c Người chơi đã được tin tưởng!'
-        you-are-trusted: '&2 Bạn được tin tưởng bởi &b [name]&a !'
-        success: '&a Bạn tin tưởng &b [name]&a .'
-        is-full: '&c Bạn không thể tin tưởng ai nữa.'
+        trust-in-yourself: '<red>Tin tưởng vào bản thân bạn!</red>'
+        name-has-invited-you: '<green>[name] mời bạn làm người được tin tưởng cho đảo của họ.</green>'
+        player-already-trusted: '<red>Người chơi đã được tin tưởng!</red>'
+        you-are-trusted: '<dark_green>Bạn được tin tưởng bởi </dark_green><aqua>[name]</aqua><green>!</green>'
+        success: '<green>Bạn tin tưởng </green><aqua>[name]</aqua><green>.</green>'
+        is-full: '<red>Bạn không thể tin tưởng ai nữa.</red>'
       untrust:
         description: xóa rank tin tưởng từ người chơi
         parameters: <người chơi>
-        cannot-untrust-yourself: '&c Bạn không thể xóa tin tưởng chính bạn!'
-        cannot-untrust-member: '&c Bạn không thể xóa tin tưởng thành viên đội!'
-        player-not-trusted: '&c Người chơi đang không được tin tưởng!'
-        you-are-no-longer-trusted: '&c Bạn đã mất tin tưởng từ &b [name]&a !'
-        success: '&b [name] &a không còn được tin tưởng với đảo bạn.'
+        cannot-untrust-yourself: '<red>Bạn không thể xóa tin tưởng chính bạn!</red>'
+        cannot-untrust-member: '<red>Bạn không thể xóa tin tưởng thành viên đội!</red>'
+        player-not-trusted: '<red>Người chơi đang không được tin tưởng!</red>'
+        you-are-no-longer-trusted: '<red>Bạn đã mất tin tưởng từ </red><aqua>[name]</aqua><green>!</green>'
+        success: '<aqua>[name] </aqua><green>không còn được tin tưởng với đảo bạn.</green>'
       invite:
         description: mời người chơi vào đảo của bạn
-        invitation-sent: '&a Lời mời đã gửi tới &b[name]&a.'
-        removing-invite: '&c Đang xóa lời mồi.'
-        name-has-invited-you: '&a [name] đã mời bạn vào đảo họ.'
+        invitation-sent: '<green>Lời mời đã gửi tới </green><aqua>[name]</aqua><green>.</green>'
+        removing-invite: '<red>Đang xóa lời mồi.</red>'
+        name-has-invited-you: '<green>[name] đã mời bạn vào đảo họ.</green>'
         to-accept-or-reject: >-
-          &a Dùng /[label] team accept để chấp nhận, hoặc /[label] team reject
+          <green>Dùng /[label] team accept để chấp nhận, hoặc /[label] team reject</green>
           để từ chối
-        you-will-lose-your-island: '&c CHÚ Ý! Bạn sẽ mất đảo của bạn nếu chấp nhận lời mời!'
+        you-will-lose-your-island: '<red>CHÚ Ý! Bạn sẽ mất đảo của bạn nếu chấp nhận lời mời!</red>'
         gui:
           titles:
             team-invite-panel: Mời Người Chơi
           button:
-            already-invited: '&c Đã được mời rồi'
-            search: '&a Tìm kiếm một người chơi'
+            already-invited: '<red>Đã được mời rồi</red>'
+            search: '<green>Tìm kiếm một người chơi</green>'
             searching: |-
-              &b Đang tìm kiếm 
-              &c [name]
-          enter-name: '&a Nhập tên:'
+              <aqua>Đang tìm kiếm</aqua>
+              <red>[name]</red>
+          enter-name: '<green>Nhập tên:</green>'
           tips:
             LEFT:
-              name: '&b Nhấn Chuột Trái'
-              search: '&a Nhập tên của người chơi'
-              back: '&a Quay lại'
+              name: '<aqua>Nhấn Chuột Trái</aqua>'
+              search: '<green>Nhập tên của người chơi</green>'
+              back: '<green>Quay lại</green>'
               invite: |-
-                &a để mời một người chơi  
-                &a để tham gia đội của bạn
+                <green>để mời một người chơi</green>
+                <green>để tham gia đội của bạn</green>
             RIGHT:
-              name: '&b Nhấp chuột phải'
-              coop: '&a để kết bạn chơi chung'
+              name: '<aqua>Nhấp chuột phải</aqua>'
+              coop: '<green>để kết bạn chơi chung</green>'
             SHIFT_LEFT:
-              name: '&b Nhấn Shift + Click Trái'
-              trust: '&a để tin tưởng một người chơi'
+              name: '<aqua>Nhấn Shift + Click Trái</aqua>'
+              trust: '<green>để tin tưởng một người chơi</green>'
         errors:
-          cannot-invite-self: '&c Bạn không thể mời chính bạn!'
-          cooldown: '&c Bạn không thể mời người đó trong [number] giây.'
-          island-is-full: '&c Đảo đã đầy. Bạn không thể mời thêm người.'
-          none-invited-you: '&c Không ai mời bạn :c.'
-          you-already-are-in-team: '&c Bạn đã có một đội!'
-          already-on-team: '&c Người chơi đã có đội!'
-          invalid-invite: '&c Lời mời không còn hiệu lực, xin lỗi.'
-          you-have-already-invited: '&c Bạn đã mời người đó rồi!'
+          cannot-invite-self: '<red>Bạn không thể mời chính bạn!</red>'
+          cooldown: '<red>Bạn không thể mời người đó trong [number] giây.</red>'
+          island-is-full: '<red>Đảo đã đầy. Bạn không thể mời thêm người.</red>'
+          none-invited-you: '<red>Không ai mời bạn :c.</red>'
+          you-already-are-in-team: '<red>Bạn đã có một đội!</red>'
+          already-on-team: '<red>Người chơi đã có đội!</red>'
+          invalid-invite: '<red>Lời mời không còn hiệu lực, xin lỗi.</red>'
+          you-have-already-invited: '<red>Bạn đã mời người đó rồi!</red>'
         parameters: <người chơi>
-        you-can-invite: '&a Bạn có thể mời [number] người nữa.'
+        you-can-invite: '<green>Bạn có thể mời [number] người nữa.</green>'
         accept:
           description: đồng ý lời mời
           you-joined-island: >-
-            &a Bạn đã tham gia đảo! Dùng &b/[label] team &a để xem thành viên
+            <green>Bạn đã tham gia đảo! Dùng </green><aqua>/[label] team </aqua><green>để xem thành viên</green>
             khác.
-          name-joined-your-island: '&a [name] đã tham gia đảo ạn!'
+          name-joined-your-island: '<green>[name] đã tham gia đảo ạn!</green>'
           confirmation: |-
-            &c Bạn có chắc đồng ý lời mời này chứ?
-            &c&l Bạn sẽ &n MẤT &r&c&l đảo hiện tại của bạn!
+            <red>Bạn có chắc đồng ý lời mời này chứ?</red>
+            <red><bold>Bạn sẽ <underlined>MẤT </underlined></bold></red><red><bold>đảo hiện tại của bạn!</bold></red>
         reject:
           description: từ chối lời mời
-          you-rejected-invite: '&a Bạn đã từ chối lời mời vào đảo.'
-          name-rejected-your-invite: '&c [name] đã từ chối lời mời vào đảo của bạn!'
+          you-rejected-invite: '<green>Bạn đã từ chối lời mời vào đảo.</green>'
+          name-rejected-your-invite: '<red>[name] đã từ chối lời mời vào đảo của bạn!</red>'
         cancel:
           description: hủy lời mời đang chờ của bạn
       leave:
         cannot-leave: >-
-          &c Chủ không thể rời. Trở thành thành viên hoặc đuổi tất cả thành
+          <red>Chủ không thể rời. Trở thành thành viên hoặc đuổi tất cả thành</red>
           viên.
         description: rời đảo
-        left-your-island: '&c [name] &c đã rời đảo của bạn'
-        success: '&a Bạn đã rời đảo này.'
+        left-your-island: '<red>[name] </red><red>đã rời đảo của bạn</red>'
+        success: '<green>Bạn đã rời đảo này.</green>'
       kick:
         description: xóa thành viên từ đảo của bạn
         parameters: <người chơi>
         player-kicked: >-
-          &c Người chơi [name] đã đẩy bạn ra khỏi [prefix_island] trong
+          <red>Người chơi [name] đã đẩy bạn ra khỏi [prefix_island] trong</red>
           [gamemode]!
-        cannot-kick: '&c Bạn không thể đuổi chính bạn!'
-        cannot-kick-rank: '&c Xếp hạng của bạn không cho phép bạn đá [name]!'
-        success: '&b [name] &a đã bị đuổi khỏi đảo bạn.'
+        cannot-kick: '<red>Bạn không thể đuổi chính bạn!</red>'
+        cannot-kick-rank: '<red>Xếp hạng của bạn không cho phép bạn đá [name]!</red>'
+        success: '<aqua>[name] </aqua><green>đã bị đuổi khỏi đảo bạn.</green>'
       demote:
         description: giáng cấp người chơi xuống một rank
         parameters: <người chơi>
         errors:
-          cant-demote-yourself: '&c Bạn không thể giáng cấp chính bạn!'
-          cant-demote: '&c Bạn không thể hạ bậc các cấp cao hơn!'
-          must-be-member: '&c Người chơi phải là thành viên của [prefix_an-island]!'
-        failure: '&c Người chơi không thể bị giáng cấp nữa!'
-        success: '&a Đã giáng cấp [name] thành [rank]'
+          cant-demote-yourself: '<red>Bạn không thể giáng cấp chính bạn!</red>'
+          cant-demote: '<red>Bạn không thể hạ bậc các cấp cao hơn!</red>'
+          must-be-member: '<red>Người chơi phải là thành viên của [prefix_an-island]!</red>'
+        failure: '<red>Người chơi không thể bị giáng cấp nữa!</red>'
+        success: '<green>Đã giáng cấp [name] thành [rank]</green>'
       promote:
         description: thăng cấp người chơi lên một rank
         parameters: <người chơi>
         errors:
-          cant-promote-yourself: '&c Bạn không thể thăng chức cho chính mình!'
-          cant-promote: '&c Bạn không thể thăng cấp cao hơn hạng của mình!'
-          must-be-member: '&c Người chơi phải là thành viên của [prefix_an-island]!'
-        failure: '&c Người chơi không thể thăng cấp nữa!'
-        success: '&a Đã thăng cấp [name] thành [rank]'
+          cant-promote-yourself: '<red>Bạn không thể thăng chức cho chính mình!</red>'
+          cant-promote: '<red>Bạn không thể thăng cấp cao hơn hạng của mình!</red>'
+          must-be-member: '<red>Người chơi phải là thành viên của [prefix_an-island]!</red>'
+        failure: '<red>Người chơi không thể thăng cấp nữa!</red>'
+        success: '<green>Đã thăng cấp [name] thành [rank]</green>'
       setowner:
         description: chuyển quyền chủ đảo sang thành viên khác
         errors:
           cant-transfer-to-yourself: >-
-            &c Bạn không thể chuyển cho chính bạn! &7 (&o Thật ra bạn có thể...
-            Nhưng chúng tôi không muốn bạn làm thế, vì nó vô dụng.&r &7 )
-          target-is-not-member: '&c Người chơi đó không phải là thành viên của đảo bạn!'
-          at-max: '&c Người chơi đó đã sở hữu số lượng đảo tối đa mà họ được phép!'
-        name-is-the-owner: '&a [name] giờ là chủ đảo!'
+            <red>Bạn không thể chuyển cho chính bạn! </red><gray>(<italic>Thật ra bạn có thể...</italic></gray>
+            Nhưng chúng tôi không muốn bạn làm thế, vì nó vô dụng.<gray>)</gray>
+          target-is-not-member: '<red>Người chơi đó không phải là thành viên của đảo bạn!</red>'
+          at-max: '<red>Người chơi đó đã sở hữu số lượng đảo tối đa mà họ được phép!</red>'
+        name-is-the-owner: '<green>[name] giờ là chủ đảo!</green>'
         parameters: <người chơi>
-        you-are-the-owner: '&a Bạn giờ là chủ đảo!'
+        you-are-the-owner: '<green>Bạn giờ là chủ đảo!</green>'
     ban:
       description: Cấm người chơi từ đảo bạn
       parameters: <người chơi>
-      cannot-ban-yourself: '&c Bạn không thể cấm chính bạn!'
-      cannot-ban: '&c Người chơi đó không thể bị cấm.'
-      cannot-ban-member: '&c Đuổi nó trước, rồi cấm.'
-      cannot-ban-more-players: '&c Bạn đã đạt lượt cấm tối đa, bạn không thể cấm ai nữa.'
-      player-already-banned: '&c Người chơi đã bị cấm.'
-      player-banned: '&b [name]&c  giờ bị cấm ở đảo bạn.'
-      owner-banned-you: '&b [name]&c  cấm bạn ở đảo họ!'
-      you-are-banned: '&b Bạn bị cấm ở đảo này!'
+      cannot-ban-yourself: '<red>Bạn không thể cấm chính bạn!</red>'
+      cannot-ban: '<red>Người chơi đó không thể bị cấm.</red>'
+      cannot-ban-member: '<red>Đuổi nó trước, rồi cấm.</red>'
+      cannot-ban-more-players: '<red>Bạn đã đạt lượt cấm tối đa, bạn không thể cấm ai nữa.</red>'
+      player-already-banned: '<red>Người chơi đã bị cấm.</red>'
+      player-banned: '<aqua>[name]</aqua><red> giờ bị cấm ở đảo bạn.</red>'
+      owner-banned-you: '<aqua>[name]</aqua><red> cấm bạn ở đảo họ!</red>'
+      you-are-banned: '<aqua>Bạn bị cấm ở đảo này!</aqua>'
     unban:
       description: Gỡ cấm người chơi từ đảo bạn
       parameters: <người chơi>
-      cannot-unban-yourself: '&c Bạn không thể gỡ cấm chính bạn!'
-      player-not-banned: '&c Người chơi không bị cấm.'
-      player-unbanned: '&b [name]&a  đã được gỡ cấm ở đảo bạn.'
-      you-are-unbanned: '&b [name]&a  đã gỡ cấm bạn ở đảo họ!'
+      cannot-unban-yourself: '<red>Bạn không thể gỡ cấm chính bạn!</red>'
+      player-not-banned: '<red>Người chơi không bị cấm.</red>'
+      player-unbanned: '<aqua>[name]</aqua><green> đã được gỡ cấm ở đảo bạn.</green>'
+      you-are-unbanned: '<aqua>[name]</aqua><green> đã gỡ cấm bạn ở đảo họ!</green>'
     banlist:
       description: liệt kê người chơi bị cấm
-      noone: '&a Không ai bị cấm ở đảo này.'
-      the-following: '&b Người chơi bị cấm:'
-      names: '&c [dòng]'
-      you-can-ban: '&b Bạn có thể cấm &e [number] &b người nữa.'
+      noone: '<green>Không ai bị cấm ở đảo này.</green>'
+      the-following: '<aqua>Người chơi bị cấm:</aqua>'
+      names: '<red>[dòng]</red>'
+      you-can-ban: '<aqua>Bạn có thể cấm </aqua><yellow>[number] </yellow><aqua>người nữa.</aqua>'
     settings:
       description: mở tùy chọn đảo
     language:
       description: chọn ngôn ngữ
       parameters: '[ngôn ngữ]'
-      not-available: '&c Ngôn ngữ này không tồn tại.'
-      already-selected: '&c Bạn đang dùng ngôn ngữ này.'
+      not-available: '<red>Ngôn ngữ này không tồn tại.</red>'
+      already-selected: '<red>Bạn đang dùng ngôn ngữ này.</red>'
     expel:
       description: trục xuất người chơi khỏi đảo bạn
       parameters: <người chơi>
-      cannot-expel-yourself: '&c Bạn không thể trục xuất chính bạn!'
-      cannot-expel: '&c Người chơi đó không thể bị trục xuất.'
-      cannot-expel-member: '&c Bạn không thể trục xuất thành viên đội!'
-      not-on-island: '&c Người chơi đó không có ở đảo bạn!'
-      player-expelled-you: '&b [name]&c  đã trục xuất bạn khỏi đảo của họ!'
-      success: '&a Bạn đã trục xuất &b [name] &a khỏi đảo bạn.'
+      cannot-expel-yourself: '<red>Bạn không thể trục xuất chính bạn!</red>'
+      cannot-expel: '<red>Người chơi đó không thể bị trục xuất.</red>'
+      cannot-expel-member: '<red>Bạn không thể trục xuất thành viên đội!</red>'
+      not-on-island: '<red>Người chơi đó không có ở đảo bạn!</red>'
+      player-expelled-you: '<aqua>[name]</aqua><red> đã trục xuất bạn khỏi đảo của họ!</red>'
+      success: '<green>Bạn đã trục xuất </green><aqua>[name] </aqua><green>khỏi đảo bạn.</green>'
     lock:
       description: khóa hoặc mở khóa [prefix_island] bạn
-      locked: '&a [prefix_island] bạn hiện đã bị khóa.'
-      unlocked: '&a [prefix_island] bạn hiện đã được mở khóa.'
-      you-are-locked-out: '&c [prefix_island] này hiện đã bị khóa. Bạn đã bị trục xuất.'
+      locked: '<green>[prefix_island] bạn hiện đã bị khóa.</green>'
+      unlocked: '<green>[prefix_island] bạn hiện đã được mở khóa.</green>'
+      you-are-locked-out: '<red>[prefix_island] này hiện đã bị khóa. Bạn đã bị trục xuất.</red>'
 ranks:
   owner: Chủ Đảo
   sub-owner: Đồng Chủ Đảo
@@ -1009,14 +1009,14 @@ protection:
     BOAT:
       name: Thuyền
       description: |-
-        &a Bật/Tắt đặt, đập
-        &a và vào thuyền.
+        <green>Bật/Tắt đặt, đập</green>
+        <green>và vào thuyền.</green>
       hint: Không cho phép tương tác với thuyền
     BOOKSHELF:
       name: Kệ sách
       description: |-
-        &a Cho phép đặt sách  
-        &a hoặc lấy sách.
+        <green>Cho phép đặt sách</green>
+        <green>hoặc lấy sách.</green>
       hint: không thể đặt một cuốn sách hoặc lấy một cuốn sách.
     BREAK_BLOCKS:
       description: Bật/Tắt đập khối
@@ -1024,14 +1024,14 @@ protection:
       hint: Đã tắt đập khối
     BREAK_SPAWNERS:
       description: |-
-        &a Bật/Tắt đập lồng sinh quái.
-        &7 Gia đè lên cờ Đập Khối.
+        <green>Bật/Tắt đập lồng sinh quái.</green>
+        <gray>Gia đè lên cờ Đập Khối.</gray>
       name: Đập lồng sinh quái
       hint: Đã tắt đập lồng sinh quái
     BREAK_HOPPERS:
       description: |-
-        &a Bật/Tắt đập phễu.
-        &7 Gia đè lên cờ Đập Khối.
+        <green>Bật/Tắt đập phễu.</green>
+        <gray>Gia đè lên cờ Đập Khối.</gray>
       name: Đập phễu
       hint: Đã tắt đập phễu
     BREEDING:
@@ -1065,19 +1065,19 @@ protection:
     CONTAINER:
       name: Kho chứa
       description: |-
-        &a Bật/Tắt tương tác với rương,
-        &a hộp shulker và binh hoa,
-        &a thùng ủ phân và thùng.
+        <green>Bật/Tắt tương tác với rương,</green>
+        <green>hộp shulker và binh hoa,</green>
+        <green>thùng ủ phân và thùng.</green>
 
-        &7 Các kho chứa khác được quản lí
-        &7 bởi các cờ tương đương.
+        <gray>Các kho chứa khác được quản lí</gray>
+        <gray>bởi các cờ tương đương.</gray>
       hint: Đã tắt tương tác với kho chứa
     CHEST:
       name: Rương và xe rương
       description: |-
-        &a Bật/Tắt tương tác với rương
-        &a và xe rương.
-        &a (không tính rương bẫy)
+        <green>Bật/Tắt tương tác với rương</green>
+        <green>và xe rương.</green>
+        <green>(không tính rương bẫy)</green>
       hint: Tương tác rương đã tắt
     BARREL:
       name: Thùng
@@ -1089,9 +1089,9 @@ protection:
       hint: Khối sản xuất bị vô hiệu hóa
     BLOCK_EXPLODE_DAMAGE:
       description: |-
-        &a Cho phép Giường & Điểm Hồi Sinh
-        &a nổ khối và gây sát thương
-        &a cho các thực thể.
+        <green>Cho phép Giường & Điểm Hồi Sinh</green>
+        <green>nổ khối và gây sát thương</green>
+        <green>cho các thực thể.</green>
       name: Nổ từ Khối
     COMPOSTER:
       name: Thùng ủ phân
@@ -1115,13 +1115,13 @@ protection:
       hint: Tương tác với hộp shulker đã tắt
     SHULKER_TELEPORT:
       description: |-
-        &a Shulker có thể dịch chuyển
-        &a nếu đang hoạt động.
+        <green>Shulker có thể dịch chuyển</green>
+        <green>nếu đang hoạt động.</green>
       name: Dịch chuyển Shulker
     SMITHING:
       name: Đập
       description: Bật sử dụng
-      hint: '&cTruy cập rèn bị vô hiệu hóa'
+      hint: '<red>Truy cập rèn bị vô hiệu hóa</red>'
     STONECUTTING:
       name: Cắt đá
       description: Chuyển đổi sử dụng
@@ -1141,7 +1141,7 @@ protection:
     ELYTRA:
       name: Cánh cứng
       description: Bật/Tắt sử dụng cánh cứng
-      hint: '&c CẢNH BÁO: Không thể sử dụng cánh cứng ở đây!'
+      hint: '<red>CẢNH BÁO: Không thể sử dụng cánh cứng ở đây!</red>'
     HOPPER:
       name: Cái phễu
       description: Bật/Tắt tương tác với cái phễu
@@ -1155,56 +1155,56 @@ protection:
       hint: Đã tắt dịch chuyển bằng quả Chorus
     CLEAN_SUPER_FLAT:
       description: |-
-        &a Bật để dọn bất kì
-        &a vùng siêu phẳng
-        &a trong thế giới đảo
+        <green>Bật để dọn bất kì</green>
+        <green>vùng siêu phẳng</green>
+        <green>trong thế giới đảo</green>
       name: Dọn vùng siêu phẳng
     COARSE_DIRT_TILLING:
       description: |-
-        &a Bật/Tắt xới đất thô
-        &a và đập đất podzol
-        &a để lấy đất
+        <green>Bật/Tắt xới đất thô</green>
+        <green>và đập đất podzol</green>
+        <green>để lấy đất</green>
       name: Xới đất thô
       hint: Không xới đất thô
     COLLECT_LAVA:
       description: |-
-        &a Bật/Tắt thu thập nham thạch
-        &a (ghi đè lên cờ Cái xô)
+        <green>Bật/Tắt thu thập nham thạch</green>
+        <green>(ghi đè lên cờ Cái xô)</green>
       name: Thu thập nham thạch
       hint: Không thu thập nham thạch
     COLLECT_WATER:
       description: |-
-        &a Bật/Tắt thu thập nước
-        &a (ghi đè lên cờ Cái xô)
+        <green>Bật/Tắt thu thập nước</green>
+        <green>(ghi đè lên cờ Cái xô)</green>
       name: Thu thập nước
       hint: Đã tắt dùng xô nước
     COLLECT_POWDERED_SNOW:
       description: |-
-        &a Bật thu thập tuyết bột  
-        &a (ghi đè Xô)
+        <green>Bật thu thập tuyết bột</green>
+        <green>(ghi đè Xô)</green>
       name: Thu thập tuyết bột
       hint: Vòng chứa tuyết bột đã bị vô hiệu hóa
     COMMAND_RANKS:
-      name: '&e Cấp độ lệnh'
-      description: '&a Chỉnh cấp độ lệnh'
+      name: '<yellow>Cấp độ lệnh</yellow>'
+      description: '<green>Chỉnh cấp độ lệnh</green>'
     CRAFTING:
       description: Bật/Tắt sử dụng
       name: Bàn chế tạo
       hint: Đã tắt tương tác với bàn chế tạo
     CREEPER_DAMAGE:
       description: |
-        &a Bật/Tắt bảo vệ khỏi
-        &a sát thương từ Creeper
+        <green>Bật/Tắt bảo vệ khỏi</green>
+        <green>sát thương từ Creeper</green>
       name: Bảo vệ khỏi sát thương từ Creeper
     CREEPER_GRIEFING:
       description: |
-        &a Bật/Tắt bảo vệ khỏi việc
-        &a các khối bị phá bởi Creeper
-        &a khi bị đốt bởi Người tham quan.
+        <green>Bật/Tắt bảo vệ khỏi việc</green>
+        <green>các khối bị phá bởi Creeper</green>
+        <green>khi bị đốt bởi Người tham quan.</green>
       name: Bảo vệ khối từ Creeper
       hint: Đã chặn khối bị phá bởi Creeper
     CROP_PLANTING:
-      description: '&a Đặt ai có thể trồng hạt giống.'
+      description: '<green>Đặt ai có thể trồng hạt giống.</green>'
       name: Trồng cây trồng
       hint: Trồng cây đã bị vô hiệu hóa
     CROP_TRAMPLE:
@@ -1218,10 +1218,10 @@ protection:
     DRAGON_EGG:
       name: Trứng rồng
       description: |-
-        &a Chặn tương tác với trứng rồng.
+        <green>Chặn tương tác với trứng rồng.</green>
 
-        &c Đây không thể bảo vệ nó khỏi việc
-        &c được đặt hay bị phá.
+        <red>Đây không thể bảo vệ nó khỏi việc</red>
+        <red>được đặt hay bị phá.</red>
       hint: Đã tắt tương tác với trứng rồng
     DYE:
       description: Chặn sử dụng bột nhộm
@@ -1241,19 +1241,19 @@ protection:
       hint: Đã tắt rương Ender khỏi thế giới này
     ENDERMAN_DEATH_DROP:
       description: |-
-        &a Người Ender sẽ rớt
-        &a khối bất kì mà nó
-        &a mang theo khi chết.
+        <green>Người Ender sẽ rớt</green>
+        <green>khối bất kì mà nó</green>
+        <green>mang theo khi chết.</green>
       name: Rớt khối bởi Người Ender
     ENDERMAN_GRIEFING:
       description: |-
-        &a Người Ender có thể cướp
-        &a khối bất kì từ đảo
+        <green>Người Ender có thể cướp</green>
+        <green>khối bất kì từ đảo</green>
       name: Trộm bởi Người Ender
     ENDERMAN_TELEPORT:
       description: |-
-        &a Endermen có thể dịch chuyển
-        &a nếu đang hoạt động.
+        <green>Endermen có thể dịch chuyển</green>
+        <green>nếu đang hoạt động.</green>
       name: Enderman dịch chuyển
     ENDER_PEARL:
       description: Bật/Tắt sử dụng
@@ -1263,10 +1263,10 @@ protection:
       description: Xem thông báo vào/ra
       island: đảo của [name]
       name: Thông báo Vào/Ra
-      now-entering: '&a Đang vào &b [name]&a .'
-      now-entering-your-island: '&a Đang vào đảo của bạn: &b [name]'
-      now-leaving: '&a Đang rời &b [name]&a .'
-      now-leaving-your-island: '&a Đang rời đảo của bạn: &b [name]'
+      now-entering: '<green>Đang vào </green><aqua>[name]</aqua><green>.</green>'
+      now-entering-your-island: '<green>Đang vào đảo của bạn: </green><aqua>[name]</aqua>'
+      now-leaving: '<green>Đang rời </green><aqua>[name]</aqua><green>.</green>'
+      now-leaving-your-island: '<green>Đang rời đảo của bạn: </green><aqua>[name]</aqua>'
     EXPERIENCE_BOTTLE_THROWING:
       name: Quăng bình kinh nghiệm
       description: Bật/Tắt quăng bình kinh nghiệm.
@@ -1274,8 +1274,8 @@ protection:
     FIRE_BURNING:
       name: Cháy lửa
       description: |-
-        &a Bật/Tắt việc lửa có thể
-        &a cháy trên khối.
+        <green>Bật/Tắt việc lửa có thể</green>
+        <green>cháy trên khối.</green>
     FIRE_EXTINGUISH:
       description: Bật/Tắt dập lửa
       name: Dập lửa
@@ -1283,13 +1283,13 @@ protection:
     FIRE_IGNITE:
       name: Đốt lửa
       description: |-
-        &a Bật/Tắt việc lửa có thể
-        &a cháy bởi vật thể không phải người chơi.
+        <green>Bật/Tắt việc lửa có thể</green>
+        <green>cháy bởi vật thể không phải người chơi.</green>
     FIRE_SPREAD:
       name: Lửa lan tỏa
       description: |-
-        &a Bật/Tắt việc lửa có thể
-        &a lan ra các khối bên cạnh.
+        <green>Bật/Tắt việc lửa có thể</green>
+        <green>lan ra các khối bên cạnh.</green>
     FISH_SCOOPING:
       name: Bắt cá
       description: Cho phép bắt cá bằng xô
@@ -1297,9 +1297,9 @@ protection:
     FLINT_AND_STEEL:
       name: Dụng cụ đánh lửa
       description: |-
-        &a Cho phép người chơi đốt lửa hoặc
-        &a lửa trại bằng dụng cụ đánh cửa
-        &a hoặc cầu lửa.
+        <green>Cho phép người chơi đốt lửa hoặc</green>
+        <green>lửa trại bằng dụng cụ đánh cửa</green>
+        <green>hoặc cầu lửa.</green>
       hint: Đã tắt dụng cụ đánh lửa và cầu lửa
     FURNACE:
       description: Bật/Tắt sử dụng
@@ -1311,17 +1311,17 @@ protection:
       hint: Đã tắt sử dụng cổng rào
     GEO_LIMIT_MOBS:
       description: |-
-        &a Xóa các quái đã rời khỏi
-        &a khu vực bảo vệ trong đảo
-      name: '&e Giới hạn quái trong đảo'
+        <green>Xóa các quái đã rời khỏi</green>
+        <green>khu vực bảo vệ trong đảo</green>
+      name: '<yellow>Giới hạn quái trong đảo</yellow>'
     HARVEST:
       description: |-
-        &a Đặt ai có thể thu hoạch cây trồng.  
-        &a Đừng quên cho phép nhặt vật phẩm nữa nhé!
+        <green>Đặt ai có thể thu hoạch cây trồng.</green>
+        <green>Đừng quên cho phép nhặt vật phẩm nữa nhé!</green>
       name: Thu hoạch cây trồng
       hint: Cắt gặt cây trồng đã bị vô hiệu hóa
     HIVE:
-      description: '&a Bật/Tắt thu hoạch tổ ong.'
+      description: '<green>Bật/Tắt thu hoạch tổ ong.</green>'
       name: Thu hoạch tủ ong
       hint: Đã tắt thu hoạch tổ ong
     HURT_TAMED_ANIMALS:
@@ -1345,24 +1345,24 @@ protection:
     ITEM_FRAME:
       name: Khung vật phẩm
       description: |-
-        &a Bật/Tắt tương tác.
-        &a Ghi đè lên cờ Đặt và Đập Khối
+        <green>Bật/Tắt tương tác.</green>
+        <green>Ghi đè lên cờ Đặt và Đập Khối</green>
       hint: Đã tắt sử dụng khung vật phẩm
     ITEM_FRAME_DAMAGE:
       description: |-
-        &a Quái có thể gây sát thương
-        &a lên khung vật phẩm
+        <green>Quái có thể gây sát thương</green>
+        <green>lên khung vật phẩm</green>
       name: Sát thương lên khung vật phẩm
     INVINCIBLE_VISITORS:
       description: |-
-        &a Chỉnh các tùy chỉnh
-        &a bất tử cho Người Tham Quan.
-      name: '&e Người Tham Quan Bất Tử'
-      hint: '&c Đã bảo vệ Người Tham Quan'
+        <green>Chỉnh các tùy chỉnh</green>
+        <green>bất tử cho Người Tham Quan.</green>
+      name: '<yellow>Người Tham Quan Bất Tử</yellow>'
+      hint: '<red>Đã bảo vệ Người Tham Quan</red>'
     ISLAND_RESPAWN:
       description: |-
-        &a Người chơi hồi sinh
-        &a tại đảo
+        <green>Người chơi hồi sinh</green>
+        <green>tại đảo</green>
       name: Hồi sinh tại đảo
     ITEM_DROP:
       description: Bật/Tắt rớt đồ
@@ -1386,11 +1386,11 @@ protection:
     LECTERN:
       name: Bục để sách
       description: |-
-        &a Cho phép đặt sách lên bục
-        &a hoặc lấy sách từ nó.
+        <green>Cho phép đặt sách lên bục</green>
+        <green>hoặc lấy sách từ nó.</green>
 
-        &c Nó không chặn người chơi khỏi
-        &c việc đọc sách.
+        <red>Nó không chặn người chơi khỏi</red>
+        <red>việc đọc sách.</red>
       hint: Không thể đặt sách lên bục hay lấy sách từ bục.
     LEVER:
       description: Bật/Tắt sử dụng
@@ -1398,30 +1398,30 @@ protection:
       hint: Đã tắt sử dụng cần gạt
     LIMIT_MOBS:
       description: |-
-        &a Giới hạn thực thể khỏi
-        &a việc sinh ra ở chế độ này
-      name: '&e Giới hạn loại thực thể sinh ra'
-      can: '&a Có thể sinh ra'
-      cannot: '&c Không thể sinh ra'
+        <green>Giới hạn thực thể khỏi</green>
+        <green>việc sinh ra ở chế độ này</green>
+      name: '<yellow>Giới hạn loại thực thể sinh ra</yellow>'
+      can: '<green>Có thể sinh ra</green>'
+      cannot: '<red>Không thể sinh ra</red>'
     LIQUIDS_FLOWING_OUT:
       name: Chất lỏng tràn ra khỏi đảo
       description: |-
-        &a Bật/Tắt việc chất lỏng có thể
-        &a tràn ra khỏi khu vực bảo vệ của đảo.
-        &a Tắt nó sẽ giúp chặn việc nước và nham thạch
-        &a tạo đá cuội ở không gian giữa hai đảo.
+        <green>Bật/Tắt việc chất lỏng có thể</green>
+        <green>tràn ra khỏi khu vực bảo vệ của đảo.</green>
+        <green>Tắt nó sẽ giúp chặn việc nước và nham thạch</green>
+        <green>tạo đá cuội ở không gian giữa hai đảo.</green>
 
-        &c Lưu ý là chất lỏng vẫn tràn xuống dưới.
-        &c Nó cũng sẽ không tràn ra nếu được đặt
-        &c ở ngoài khu vực bảo vệ của một đảo.
+        <red>Lưu ý là chất lỏng vẫn tràn xuống dưới.</red>
+        <red>Nó cũng sẽ không tràn ra nếu được đặt</red>
+        <red>ở ngoài khu vực bảo vệ của một đảo.</red>
     LOCK:
       description: Bật/Tắt khóa
       name: Khóa đảo
     CHANGE_SETTINGS:
       name: Thay đổi Cài đặt
       description: |-
-        &a Cho phép chuyển đổi thành viên nào
-        &a vai trò có thể thay đổi cài đặt [prefix_island].
+        <green>Cho phép chuyển đổi thành viên nào</green>
+        <green>vai trò có thể thay đổi cài đặt [prefix_island].</green>
     MILKING:
       description: Bật/Tắt vắt sữa bò
       name: Vắt sữa
@@ -1440,8 +1440,8 @@ protection:
       name: Lồng triệu hồi quái
     MOUNT_INVENTORY:
       description: |-
-        &a Bật/Tắt cho phép
-        &a kết nối kho đồ
+        <green>Bật/Tắt cho phép</green>
+        <green>kết nối kho đồ</green>
       name: Kết nối kho đồ
       hint: Đã tắt kết nối kho đồ
     NAME_TAG:
@@ -1451,12 +1451,12 @@ protection:
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Sinh quái tự nhiên ngoài đảo
       description: |-
-        &a Bật/Tắt cho phép con vật (động vật và
-        &a quái vật) có thể sinh tự nhiên ngoài
-        &a khu vực bảo vệ của đảo.
+        <green>Bật/Tắt cho phép con vật (động vật và</green>
+        <green>quái vật) có thể sinh tự nhiên ngoài</green>
+        <green>khu vực bảo vệ của đảo.</green>
 
-        &c Lưu ý là nó không chặn việc sinh quái
-        &c bằng lồng triệu hồi hoặc trứng.
+        <red>Lưu ý là nó không chặn việc sinh quái</red>
+        <red>bằng lồng triệu hồi hoặc trứng.</red>
     NOTE_BLOCK:
       description: Bật/Tắt sử dụng
       name: Khối nốt nhạc
@@ -1464,44 +1464,44 @@ protection:
     OBSIDIAN_SCOOPING:
       name: Xúc hắc diệm thạch
       description: |-
-        &a Cho phép người chơi xúc hắc diệm thạch
-        &a với một cái xô để thành nham thạch.
+        <green>Cho phép người chơi xúc hắc diệm thạch</green>
+        <green>với một cái xô để thành nham thạch.</green>
 
-        &a Nó giúp những người chơi mới mà thất bại
-        &a trong việc xây máy sinh đá.
+        <green>Nó giúp những người chơi mới mà thất bại</green>
+        <green>trong việc xây máy sinh đá.</green>
 
-        &a Lưu ý: hắc diệm thạch không thể bị xúc
-        &a nếu xung quanh có khối hắc diệm thạch
-        &a trong bán kính 2 khối.
-      scooping: '&a Đang chuyển hắc diệm thạch thành nham thạch. Lần sau hãy cẩn thận!'
-      cooldown: '&c Bạn phải đợi trước khi có thể xúc thêm hắc diệm thạch.'
-      obsidian-nearby: '&c Có hắc diệm thạch xung quanh. Bạn không thể xúc thành nham thạch. ([radius])'
+        <green>Lưu ý: hắc diệm thạch không thể bị xúc</green>
+        <green>nếu xung quanh có khối hắc diệm thạch</green>
+        <green>trong bán kính 2 khối.</green>
+      scooping: '<green>Đang chuyển hắc diệm thạch thành nham thạch. Lần sau hãy cẩn thận!</green>'
+      cooldown: '<red>Bạn phải đợi trước khi có thể xúc thêm hắc diệm thạch.</red>'
+      obsidian-nearby: '<red>Có hắc diệm thạch xung quanh. Bạn không thể xúc thành nham thạch. ([radius])</red>'
     OFFLINE_GROWTH:
       description: |-
-        &a Khi tắt, cây trồng
-        &a sẽ không mọc lớn trong đảo
-        &a nếu tất cả thành viên đều ngoại tuyến.
-        &a Có thể giúp giảm lag.
+        <green>Khi tắt, cây trồng</green>
+        <green>sẽ không mọc lớn trong đảo</green>
+        <green>nếu tất cả thành viên đều ngoại tuyến.</green>
+        <green>Có thể giúp giảm lag.</green>
       name: Mọc cây khi ngoại tuyến
     OFFLINE_REDSTONE:
       description: |-
-        &a Khi tắt, đá đỏ
-        &a sẽ không hoạt động trong đảo
-        &a nếu tất cả thành viên đều ngoại tuyến.
-        &a Có thể giúp giảm lag.
-        &a Không ảnh hưởng đảo triệu hồi.
+        <green>Khi tắt, đá đỏ</green>
+        <green>sẽ không hoạt động trong đảo</green>
+        <green>nếu tất cả thành viên đều ngoại tuyến.</green>
+        <green>Có thể giúp giảm lag.</green>
+        <green>Không ảnh hưởng đảo triệu hồi.</green>
       name: Đá đỏ khi ngoại tuyến
     PETS_STAY_AT_HOME:
       description: |-
-        &a Khi bật, thú đã thuần hoá
-        &a chỉ có thể vào và
-        &a không thể rời đảo của chủ.
+        <green>Khi bật, thú đã thuần hoá</green>
+        <green>chỉ có thể vào và</green>
+        <green>không thể rời đảo của chủ.</green>
       name: Thú Ở Nhà
     PISTON_PUSH:
       description: |-
-        &a Bật để bảo vệ khối
-        &a khỏi bị đẩy ra ngoài đảo
-        &a bởi pít tông
+        <green>Bật để bảo vệ khối</green>
+        <green>khỏi bị đẩy ra ngoài đảo</green>
+        <green>bởi pít tông</green>
       name: Bảo vệ khỏi bị đẩy bởi pít tông
     PLACE_BLOCKS:
       description: Bật/Tắt đặt khối
@@ -1510,14 +1510,14 @@ protection:
     PODZOL:
       name: Sản xuất Podzol cây
       description: |-
-        &a Nếu bị vô hiệu hóa, sẽ ngăn
-        &a sản xuất podzol cây khi
-        &a cây lớn phát triển
+        <green>Nếu bị vô hiệu hóa, sẽ ngăn</green>
+        <green>sản xuất podzol cây khi</green>
+        <green>cây lớn phát triển</green>
     POTION_THROWING:
       name: Quăng bình thuốc
       description: |-
-        &a Bật/Tắt quăng bình thuốc.
-        &a Bao gồm thuốc ném được và thuốc kéo dài.
+        <green>Bật/Tắt quăng bình thuốc.</green>
+        <green>Bao gồm thuốc ném được và thuốc kéo dài.</green>
       hint: Đã tắt quăng bình thuốc
     NETHER_PORTAL:
       description: Bật/Tắt sử dụng
@@ -1533,41 +1533,41 @@ protection:
       hint: Đã tắt sử dụng đĩa cảm biến ám lực
     PVP_END:
       description: |-
-        &c Bật/Tắt PVP
-        &c ở Thế giới kết thúc.
+        <red>Bật/Tắt PVP</red>
+        <red>ở Thế giới kết thúc.</red>
       name: PVP ở Thế giới kết thúc
       hint: PVP đã tắt ở Thế giới kết thúc
-      enabled: '&c Đã bật PVP ở Thế giới kết thúc.'
-      disabled: '&a Đã tắt PVP ở Thế giới kết thúc.'
+      enabled: '<red>Đã bật PVP ở Thế giới kết thúc.</red>'
+      disabled: '<green>Đã tắt PVP ở Thế giới kết thúc.</green>'
     PVP_NETHER:
       description: |-
-        &c Bật/Tắt PVP
-        &c ở Địa ngục.
+        <red>Bật/Tắt PVP</red>
+        <red>ở Địa ngục.</red>
       name: PVP ở Địa ngục
       hint: PVP đã tắt ở Địa ngục
-      enabled: '&c Đã bật PVP ở Địa ngục.'
-      disabled: '&a Đã tắt PVP ở Địa ngục.'
+      enabled: '<red>Đã bật PVP ở Địa ngục.</red>'
+      disabled: '<green>Đã tắt PVP ở Địa ngục.</green>'
     PVP_OVERWORLD:
       description: |-
-        &c Bật/Tắt PVP
-        &c ở Thế giới thường.
+        <red>Bật/Tắt PVP</red>
+        <red>ở Thế giới thường.</red>
       name: PVP ở Thế giới thường
       hint: PVP đã tắt ở Thế giới thường
-      enabled: '&c Đã bật PVP ở Thế giới thường.'
-      disabled: '&a Đã tắt PVP ở Thế giới thường.'
+      enabled: '<red>Đã bật PVP ở Thế giới thường.</red>'
+      disabled: '<green>Đã tắt PVP ở Thế giới thường.</green>'
     REDSTONE:
       description: Bật/Tắt sử dụng
       name: Vật phẩm đá đỏ
       hint: Đã tắt sử dụng vật phẩm đá đỏ
     REMOVE_END_EXIT_ISLAND:
       description: |-
-        &a Chặn việc đảo rời thế giới kết thúc
-        &a được tạo ở vị trí 0,0
+        <green>Chặn việc đảo rời thế giới kết thúc</green>
+        <green>được tạo ở vị trí 0,0</green>
       name: Xóa đảo rời thế giới kết thúc
     REMOVE_MOBS:
       description: |-
-        &a Xóa quái khi dịch chuyển
-        &a vào đảo
+        <green>Xóa quái khi dịch chuyển</green>
+        <green>vào đảo</green>
       name: Xóa quái
     RIDING:
       description: Bật/Tắt cưỡi thú
@@ -1583,38 +1583,38 @@ protection:
       hint: Đã tắt trứng triệu hồi
     SPAWNER_SPAWN_EGGS:
       description: |-
-        &a Cho phép thay thế loại quái ở lồng triệu hồi
-        &a sử dụng trứng triệu hồi.
+        <green>Cho phép thay thế loại quái ở lồng triệu hồi</green>
+        <green>sử dụng trứng triệu hồi.</green>
       name: Trứng ở lồng triệu hồi
       hint: >-
         Không cho phép thay thế loại quái ở lồng triệu hồi sử dụng trứng triệu
         hồi.
     SCULK_SENSOR:
       description: |-
-        &a Chuyển đổi cảm biến sculk  
-        &a kích hoạt.
+        <green>Chuyển đổi cảm biến sculk</green>
+        <green>kích hoạt.</green>
       name: Cảm biến Sculk
       hint: Kích hoạt cảm biến sculk đã bị vô hiệu hóa.
     SCULK_SHRIEKER:
-      description: '&a Bật tắt việc kích hoạt sculk shrieker.'
+      description: '<green>Bật tắt việc kích hoạt sculk shrieker.</green>'
       name: Sculk Shrieker
       hint: Kích hoạt sculk shrieker đã bị vô hiệu hóa
     SIGN_EDITING:
       description: |-
-        &a Cho phép chỉnh sửa văn bản
-        &a của biển hiệu
+        <green>Cho phép chỉnh sửa văn bản</green>
+        <green>của biển hiệu</green>
       name: Chỉnh sửa Biển hiệu
       hint: Chỉnh sửa dấu hiệu bị vô hiệu hóa
     TNT_DAMAGE:
       description: |-
-        &a Cho phép TNT và xe mỏ có TNT
-        &a phá khối gây sát thương lên thực thể.
+        <green>Cho phép TNT và xe mỏ có TNT</green>
+        <green>phá khối gây sát thương lên thực thể.</green>
       name: Sát thương từ TNT
     TNT_PRIMING:
       description: |-
-        &a Chặn ngòi nổ TNT.
-        &a Nó không ghi đè lên cờ
-        &a Dụng cụ đánh lửa.
+        <green>Chặn ngòi nổ TNT.</green>
+        <green>Nó không ghi đè lên cờ</green>
+        <green>Dụng cụ đánh lửa.</green>
       name: Ngòi nổ TNT
       hint: Đã tắt ngòi nổ TNT
     TRADING:
@@ -1628,12 +1628,12 @@ protection:
     TREES_GROWING_OUTSIDE_RANGE:
       name: Cây mọc ngoài đảo
       description: |-
-        &a Bật/Tắt việc cây có thể mọc ngoài
-        &a khu vực bảo vệ trong đảo.
-        &a Nó không chỉ chặn việc mọc chồi cây
-        &a ngoài khu vực bảo vệ, mà nó cũng chặn
-        &a việc tạo khối lá và gỗ ở ngoài khu vực,
-        &a dẫn đến việc cái cây bị mất một phần.
+        <green>Bật/Tắt việc cây có thể mọc ngoài</green>
+        <green>khu vực bảo vệ trong đảo.</green>
+        <green>Nó không chỉ chặn việc mọc chồi cây</green>
+        <green>ngoài khu vực bảo vệ, mà nó cũng chặn</green>
+        <green>việc tạo khối lá và gỗ ở ngoài khu vực,</green>
+        <green>dẫn đến việc cái cây bị mất một phần.</green>
     TURTLE_EGGS:
       description: Bật/Tắt làm vỡ
       name: Trứng rùa
@@ -1649,25 +1649,25 @@ protection:
     PREVENT_TELEPORT_WHEN_FALLING:
       name: Chặn dịch chuyển khi đang rời
       description: |-
-        &a Chặn người chơi khỏi việc dịch chuyển
-        &a về đảo của họ bằng lệnh khi đang rơi.
-      hint: '&c Bạn không thể làm điều đó khi đang rơi.'
+        <green>Chặn người chơi khỏi việc dịch chuyển</green>
+        <green>về đảo của họ bằng lệnh khi đang rơi.</green>
+      hint: '<red>Bạn không thể làm điều đó khi đang rơi.</red>'
     VISITOR_KEEP_INVENTORY:
       name: Khách giữ đồ khi chết
       description: |-
-        &a Bảo vệ người chơi khỏi bị
-        &a mất đồ và kinh nghiệm khi
-        &a chết ở đảo khách
-        &a
-        &a Thành viên đảo vẫn mất đồ
-        &a nếu họ chết ở đảo của họ!
+        <green>Bảo vệ người chơi khỏi bị</green>
+        <green>mất đồ và kinh nghiệm khi</green>
+        <green>chết ở đảo khách</green>
+        <green></green>
+        <green>Thành viên đảo vẫn mất đồ</green>
+        <green>nếu họ chết ở đảo của họ!</green>
     SPAWN_PROTECTION:
       name: Spawn island void protection
       description: |-
-        &a When enabled, players who fall
-        &a into the void at the spawn island
-        &a will be teleported back to the
-        &a spawn point instead of dying.
+        <green>When enabled, players who fall</green>
+        <green>into the void at the spawn island</green>
+        <green>will be teleported back to the</green>
+        <green>spawn point instead of dying.</green>
     RAID_TRIGGER:
       name: Kích hoạt cuộc đột kích
       description: Đặt cấp độ đảo tối thiểu cần thiết để kích hoạt cuộc đột kích
@@ -1675,225 +1675,225 @@ protection:
     ENTITY_PORTAL_TELEPORT:
       name: Sử dụng cổng thực thể
       description: |-
-        &a Chuyển đổi xem các thực thể (không phải người chơi) có thể
-        &a sử dụng cổng để dịch chuyển giữa
-        &a các chiều không gian hay không
+        <green>Chuyển đổi xem các thực thể (không phải người chơi) có thể</green>
+        <green>sử dụng cổng để dịch chuyển giữa</green>
+        <green>các chiều không gian hay không</green>
     WIND_CHARGE:
       name: Đạn gió
       description: |-
-        &a Chuyển đổi việc sử dụng đạn gió.
-        &a Nếu bị tắt, khách thăm không thể
-        &a sử dụng đạn gió trên đảo này.
+        <green>Chuyển đổi việc sử dụng đạn gió.</green>
+        <green>Nếu bị tắt, khách thăm không thể</green>
+        <green>sử dụng đạn gió trên đảo này.</green>
       hint: Sử dụng đạn gió bị tắt
     WITHER_DAMAGE:
       name: Bật/Tắt sát thương khô héo
       description: |-
-        &a Khi bật, Khô Héo có thể
-        &a gây sát thương lên khối và người chơi
+        <green>Khi bật, Khô Héo có thể</green>
+        <green>gây sát thương lên khối và người chơi</green>
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
-        &a Cho phép Giường & Điểm Hồi Sinh
-        &a nổ khối và gây sát thương cho
-        &a thực thể ngoài giới hạn đảo.
+        <green>Cho phép Giường & Điểm Hồi Sinh</green>
+        <green>nổ khối và gây sát thương cho</green>
+        <green>thực thể ngoài giới hạn đảo.</green>
       name: Nổ bởi Khối ở Thế giới
     WORLD_TNT_DAMAGE:
       description: |-
-        &a Cho phép TNT và xe mỏ có TNT
-        &a phá khối gây sát thương lên khối và thực thể
-        &a ở ngoài đảo.
+        <green>Cho phép TNT và xe mỏ có TNT</green>
+        <green>phá khối gây sát thương lên khối và thực thể</green>
+        <green>ở ngoài đảo.</green>
       name: Sát thường từ TNT ngoài đảo
-  locked: '&c Đảo đã khóa!'
-  locked-island-bypass: '&6 [prefix_Island] này đã bị khóa, nhưng bạn có quyền đi qua.'
-  protected: '&c Đảo đã bảo vệ: [description].'
-  world-protected: '&c Thế giới đã bảo vệ: [description].'
-  spawn-protected: '&c Điểm triệu hồi đã bảo vệ: [description].'
+  locked: '<red>Đảo đã khóa!</red>'
+  locked-island-bypass: '<gold>[prefix_Island] này đã bị khóa, nhưng bạn có quyền đi qua.</gold>'
+  protected: '<red>Đảo đã bảo vệ: [description].</red>'
+  world-protected: '<red>Thế giới đã bảo vệ: [description].</red>'
+  spawn-protected: '<red>Điểm triệu hồi đã bảo vệ: [description].</red>'
   panel:
-    next: '&f Trang kế'
-    previous: '&f Trang trước'
+    next: '<white>Trang kế</white>'
+    previous: '<white>Trang trước</white>'
     mode:
       advanced:
-        name: '&6 Tùy chỉnh nâng cao'
-        description: '&a Xem khá nhiều tùy chỉnh.'
+        name: '<gold>Tùy chỉnh nâng cao</gold>'
+        description: '<green>Xem khá nhiều tùy chỉnh.</green>'
       basic:
-        name: '&a Tùy chỉnh cơ bản'
-        description: '&a Xem các tùy chỉnh có ích nhất.'
+        name: '<green>Tùy chỉnh cơ bản</green>'
+        description: '<green>Xem các tùy chỉnh có ích nhất.</green>'
       expert:
-        name: '&c Tùy chỉnh chuyên môn'
-        description: '&a Xem tất cả tùy chỉnh.'
-      click-to-switch: '&e Nhấp &7 để chuyển sang &r [next]&r &7 .'
+        name: '<red>Tùy chỉnh chuyên môn</red>'
+        description: '<green>Xem tất cả tùy chỉnh.</green>'
+      click-to-switch: '<yellow>Nhấp </yellow><gray>để chuyển sang </gray>[next]<gray>.</gray>'
     reset-to-default:
-      name: '&c Trở về mặc định'
+      name: '<red>Trở về mặc định</red>'
       description: |
-        &a Chỉnh &c &l TOÀN BỘ &r &a tùy chỉnh về
-        &a giá trị mặc định.
+        <green>Chỉnh </green><red><bold>TOÀN BỘ </bold></red><green>tùy chỉnh về</green>
+        <green>giá trị mặc định.</green>
       confirm: xác nhận
-      instructions: '&a Bạn có chắc không? Nhập &c "xác nhận" &a để đặt lại mọi thứ.'
+      instructions: '<green>Bạn có chắc không? Nhập </green><red>"xác nhận" </red><green>để đặt lại mọi thứ.</green>'
     PROTECTION:
-      title: '&6 Bảo vệ'
+      title: '<gold>Bảo vệ</gold>'
       description: |-
-        &a Tùy chỉnh bảo vệ
-        &a cho đảo này
+        <green>Tùy chỉnh bảo vệ</green>
+        <green>cho đảo này</green>
     SETTING:
-      title: '&6 Tùy chỉnh'
+      title: '<gold>Tùy chỉnh</gold>'
       description: |-
-        &a Tùy chỉnh cơ bản
-        &a cho đảo này
+        <green>Tùy chỉnh cơ bản</green>
+        <green>cho đảo này</green>
     WORLD_SETTING:
-      title: '&6 Tùy chỉnh &b [world_name]'
-      description: '&a Tùy chỉnh cho thế giới này'
+      title: '<gold>Tùy chỉnh </gold><aqua>[world_name]</aqua>'
+      description: '<green>Tùy chỉnh cho thế giới này</green>'
     WORLD_DEFAULTS:
-      title: '&6 Bảo vệ &b [world_name]'
+      title: '<gold>Bảo vệ </gold><aqua>[world_name]</aqua>'
       description: |
-        &a Tùy chỉnh bảo vệ khi
-        &a người chơi ở ngoài đảo
+        <green>Tùy chỉnh bảo vệ khi</green>
+        <green>người chơi ở ngoài đảo</green>
     flag-item:
-      name-layout: '&a [name]'
+      name-layout: '<green>[name]</green>'
       command-instructions:
         setname: |-
-          &a Chọn cấp bậc có thể  
-          &a thiết lập tên
+          <green>Chọn cấp bậc có thể</green>
+          <green>thiết lập tên</green>
         ban: |-
-          &a Chọn cấp bậc có thể
+          <green>Chọn cấp bậc có thể</green>
           cấm người chơi
         unban: |-
-          &a Chọn hạng mà có thể 
-          &a gỡ lệnh cấm người chơi
+          <green>Chọn hạng mà có thể</green>
+          <green>gỡ lệnh cấm người chơi</green>
         expel: |-
-          &a Chọn cấp bậc có thể 
-          &a đuổi khách
+          <green>Chọn cấp bậc có thể</green>
+          <green>đuổi khách</green>
         team-invite: |-
-          &a Chọn hạng mà có thể 
-          &a mời
+          <green>Chọn hạng mà có thể</green>
+          <green>mời</green>
         team-kick: |-
-          &a Chọn hạng có thể
-          &a đá ra
+          <green>Chọn hạng có thể</green>
+          <green>đá ra</green>
         team-coop: |-
-          &a Chọn hạng mà có thể 
-          &a hợp tác
+          <green>Chọn hạng mà có thể</green>
+          <green>hợp tác</green>
         team-trust: |-
-          &a Chọn cấp bậc mà có thể 
-          &a tin tưởng
+          <green>Chọn cấp bậc mà có thể</green>
+          <green>tin tưởng</green>
         team-uncoop: |-
-          &a Chọn hạng mà có thể 
-          &a hủy kết hợp
+          <green>Chọn hạng mà có thể</green>
+          <green>hủy kết hợp</green>
         team-untrust: |-
-          &a Chọn hạng mà có thể 
-          &a bỏ tin cậy
+          <green>Chọn hạng mà có thể</green>
+          <green>bỏ tin cậy</green>
         team-promote: |-
-          &a Chọn thứ hạng có thể
-          &a thăng cấp thứ hạng của người chơi
+          <green>Chọn thứ hạng có thể</green>
+          <green>thăng cấp thứ hạng của người chơi</green>
         team-demote: |-
-          &a Chọn hạng mà có thể
-          &a hạ cấp hạng của người chơi
+          <green>Chọn hạng mà có thể</green>
+          <green>hạ cấp hạng của người chơi</green>
         sethome: |-
-          &a Chọn hạng mà có thể  
-          &a đặt nhà
+          <green>Chọn hạng mà có thể</green>
+          <green>đặt nhà</green>
         deletehome: |-
-          &a Chọn hạng mà có thể
-          &a xóa nhà
+          <green>Chọn hạng mà có thể</green>
+          <green>xóa nhà</green>
         renamehome: |-
-          &a Chọn hạng mà có thể  
-          &a đổi tên nhà
+          <green>Chọn hạng mà có thể</green>
+          <green>đổi tên nhà</green>
         setcount: |-
-          &a Chọn cấp bậc có thể
-          &a thay đổi giai đoạn
+          <green>Chọn cấp bậc có thể</green>
+          <green>thay đổi giai đoạn</green>
         border: |-
-          &a Chọn cấp bậc có thể
-          &a sử dụng lệnh biên giới
+          <green>Chọn cấp bậc có thể</green>
+          <green>sử dụng lệnh biên giới</green>
       description-layout: |
-        &a [description]
+        <green>[description]</green>
 
-        &e Chuột trái &7 để cuộn xuống.
-        &e Chuột phải &7 để cuộn lên.
+        <yellow>Chuột trái </yellow><gray>để cuộn xuống.</gray>
+        <yellow>Chuột phải </yellow><gray>để cuộn lên.</gray>
 
-        &7 Cho phép cho:
-      allowed-rank: '&3 - &a'
-      blocked-rank: '&3 - &c'
-      minimal-rank: '&3 - &2'
+        <gray>Cho phép cho:</gray>
+      allowed-rank: '<dark_aqua>- </dark_aqua><green></green>'
+      blocked-rank: '<dark_aqua>- </dark_aqua><red></red>'
+      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green></dark_green>'
       menu-layout: |
-        &a [description]
+        <green>[description]</green>
 
-        &e Nhấp &7 để mở.
-      setting-cooldown: '&c Tùy chỉnh đang trong thời gian chờ'
+        <yellow>Nhấp </yellow><gray>để mở.</gray>
+      setting-cooldown: '<red>Tùy chỉnh đang trong thời gian chờ</red>'
       setting-layout: |
-        &a [description]
+        <green>[description]</green>
 
-        &e Nhấp &7 để chỉnh.
+        <yellow>Nhấp </yellow><gray>để chỉnh.</gray>
 
-        &7 Tùy chỉnh hiện tại: [setting]
-      setting-active: '&a Đã kích hoạt'
-      setting-disabled: '&c Đã tắt'
+        <gray>Tùy chỉnh hiện tại: [setting]</gray>
+      setting-active: '<green>Đã kích hoạt</green>'
+      setting-disabled: '<red>Đã tắt</red>'
 management:
   panel:
     title: Quản lí BentoBox
     views:
       gamemodes:
-        name: '&6 Chế độ'
-        description: '&e Nhấp &a để xem các chế độ đã được nạp'
+        name: '<gold>Chế độ</gold>'
+        description: '<yellow>Nhấp </yellow><green>để xem các chế độ đã được nạp</green>'
         blueprints:
-          name: '&6 Bản vẽ'
-          description: '&a Mở menu bản vẽ.'
+          name: '<gold>Bản vẽ</gold>'
+          description: '<green>Mở menu bản vẽ.</green>'
         gamemode:
-          name: '&f [name]'
+          name: '<white>[name]</white>'
           description: |
-            &a Số đảo: &b [islands]
+            <green>Số đảo: </green><aqua>[islands]</aqua>
       addons:
-        name: '&6 Tiện ích'
-        description: '&e Nhấp &a để xem các tiện ích đã được nạp'
+        name: '<gold>Tiện ích</gold>'
+        description: '<yellow>Nhấp </yellow><green>để xem các tiện ích đã được nạp</green>'
       hooks:
-        name: '&6 Kết nối'
-        description: '&e Nhấp &a để xem các kết nối đã được nạp'
+        name: '<gold>Kết nối</gold>'
+        description: '<yellow>Nhấp </yellow><green>để xem các kết nối đã được nạp</green>'
     actions:
       reload:
-        name: '&c Nạp lại'
-        description: '&e Nhấp &c &l hai lần &r &a để nạp lại BentoBox'
+        name: '<red>Nạp lại</red>'
+        description: '<yellow>Nhấp </yellow><red><bold>hai lần </bold></red><green>để nạp lại BentoBox</green>'
     buttons:
       catalog:
-        name: '&6 Mục lục tiện ích'
-        description: '&a Mở mục lục tiện ích'
+        name: '<gold>Mục lục tiện ích</gold>'
+        description: '<green>Mở mục lục tiện ích</green>'
       credits:
-        name: '&6 Đống góp'
-        description: '&a Mở menu đóng góp cho BentoBox'
+        name: '<gold>Đống góp</gold>'
+        description: '<green>Mở menu đóng góp cho BentoBox</green>'
       empty-here:
-        name: '&b Hơi trống ở đây...'
-        description: '&a Bạn có muốn xem danh mục của chúng tôi không?'
+        name: '<aqua>Hơi trống ở đây...</aqua>'
+        description: '<green>Bạn có muốn xem danh mục của chúng tôi không?</green>'
     information:
       state:
-        name: '&6 Tương thích'
+        name: '<gold>Tương thích</gold>'
         description:
           COMPATIBLE: |
-            &a Đang chạy &e [name] [version]&a .
+            <green>Đang chạy </green><yellow>[name] [version]</yellow><green>.</green>
 
-            &a BentoBox đang chạy trên một máy chủ có
-            &a phần mềm và phiên bản &l TƯƠNG THÍCH &r.
+            <green>BentoBox đang chạy trên một máy chủ có</green>
+            <green>phần mềm và phiên bản <bold>TƯƠNG THÍCH </bold></green>.
 
-            &a Tất cả tính năng được tạo
-            &a đệ chạy trên môi trường này.
+            <green>Tất cả tính năng được tạo</green>
+            <green>đệ chạy trên môi trường này.</green>
           SUPPORTED: |
-            &a Đang chạy &e [name] [version]&a .
+            <green>Đang chạy </green><yellow>[name] [version]</yellow><green>.</green>
 
-            &a BentoBox đang chạy trên một máy chủ có
-            &a phần mềm và phiên bản &l HỖ TRỢ &r.
+            <green>BentoBox đang chạy trên một máy chủ có</green>
+            <green>phần mềm và phiên bản <bold>HỖ TRỢ </bold></green>.
 
-            &a Phần lớn tính năng vẫn chạy mượt
-            &a trên môi trường này.
+            <green>Phần lớn tính năng vẫn chạy mượt</green>
+            <green>trên môi trường này.</green>
           NOT_SUPPORTED: |
-            &a Đang chạy &e [name] [version]&a .
+            <green>Đang chạy </green><yellow>[name] [version]</yellow><green>.</green>
 
-            &a BentoBox đang chạy trên một máy chủ có
-            &a phần mềm và phiên bản &6 &l KHÔNG HỖ TRỢ &r.
+            <green>BentoBox đang chạy trên một máy chủ có</green>
+            <green>phần mềm và phiên bản </green><gold><bold>KHÔNG HỖ TRỢ </bold></gold>.
 
-            &a Phần lớn tính năng vẫn sẽ chạy
-            &a bình thường, nhưng &6 lỗi nền tảng
-            &6 có thể xảy ra&a .
+            <green>Phần lớn tính năng vẫn sẽ chạy</green>
+            <green>bình thường, nhưng </green><gold>lỗi nền tảng</gold>
+            <gold>có thể xảy ra</gold><green>.</green>
           INCOMPATIBLE: |
-            &a Đang chạy &e [name] [version]&a .
+            <green>Đang chạy </green><yellow>[name] [version]</yellow><green>.</green>
 
-            &a BentoBox đang chạy trên một máy chủ có
-            &a phần mềm và phiên bản &c &l KHÔNG TƯƠNG THÍCH &r.
+            <green>BentoBox đang chạy trên một máy chủ có</green>
+            <green>phần mềm và phiên bản </green><red><bold>KHÔNG TƯƠNG THÍCH </bold></red>.
 
-            &c Hành vi kỳ lạ và lỗi có thể xảy ra
-            &c và phần lớn tính năng sẽ không ổn định.
+            <red>Hành vi kỳ lạ và lỗi có thể xảy ra</red>
+            <red>và phần lớn tính năng sẽ không ổn định.</red>
 catalog:
   panel:
     GAMEMODES:
@@ -1902,33 +1902,33 @@ catalog:
       title: Mục lục tiện ích
     views:
       gamemodes:
-        name: '&6 Chế độ'
+        name: '<gold>Chế độ</gold>'
         description: |
-          &e Nhấp &a để xem các
-          &a chế độ có sẵn.
+          <yellow>Nhấp </yellow><green>để xem các</green>
+          <green>chế độ có sẵn.</green>
       addons:
-        name: '&6 Tiện ích'
+        name: '<gold>Tiện ích</gold>'
         description: |
-          &e Nhấp &a để xem các
-          &a tiện ích có sẵn.
+          <yellow>Nhấp </yellow><green>để xem các</green>
+          <green>tiện ích có sẵn.</green>
     icon:
       description-template: |
-        &8 [topic]
-        &a [install]
+        <dark_gray>[topic]</dark_gray>
+        <green>[install]</green>
 
-        &7 &o [description]
+        <gray><italic>[description]</italic></gray>
 
-        &e Nhấp &a để lấy đường dẫn
-        &a đến phiên bản mới nhất.
+        <yellow>Nhấp </yellow><green>để lấy đường dẫn</green>
+        <green>đến phiên bản mới nhất.</green>
       already-installed: Đã cài đặt!
       install-now: Cài đặt ngay!
     empty-here:
-      name: '&c Hơi trống ở đây...'
+      name: '<red>Hơi trống ở đây...</red>'
       description: |
-        &c Bentobox không thể kết nối Github.
+        <red>Bentobox không thể kết nối Github.</red>
 
-        &a Cho phép BentoBox kết nối GitHub trong
-        &a tệp tùy chỉnh và thử lại sau.
+        <green>Cho phép BentoBox kết nối GitHub trong</green>
+        <green>tệp tùy chỉnh và thử lại sau.</green>
 enums:
   DamageCause:
     CONTACT: Tiếp Xúc
@@ -1965,61 +1965,61 @@ enums:
     WORLD_BORDER: Biên Giới Thế Giới
 panel:
   credits:
-    title: '&8 [name] &2 Đống góp'
+    title: '<dark_gray>[name] </dark_gray><dark_green>Đống góp</dark_green>'
     contributor:
-      name: '&a [name]'
-      description: '&a Cam kết: &b [commits]'
+      name: '<green>[name]</green>'
+      description: '<green>Cam kết: </green><aqua>[commits]</aqua>'
     empty-here:
-      name: '&c Hơi trống ở đây...'
+      name: '<red>Hơi trống ở đây...</red>'
       description: |
-        &c BentoBox không thể lấy người đống góp
-        &c cho tiện ích này.
+        <red>BentoBox không thể lấy người đống góp</red>
+        <red>cho tiện ích này.</red>
 
-        &a Cho phép BentoBox kết nối GitHub trong
-        &a tệp tùy chỉnh và thử lại sau.
+        <green>Cho phép BentoBox kết nối GitHub trong</green>
+        <green>tệp tùy chỉnh và thử lại sau.</green>
 panels:
   island_homes:
-    title: '&2&l Nhà [prefix_island] của bạn'
+    title: '<dark_green><bold>Nhà [prefix_island] của bạn</bold></dark_green>'
     buttons:
-      name: '&l [name]'
+      name: '<bold>[name]</bold>'
   island_creation:
-    title: '&2&l Chọn [prefix_an-island]'
+    title: '<dark_green><bold>Chọn [prefix_an-island]</bold></dark_green>'
     buttons:
       bundle:
-        name: '&l [name]'
+        name: '<bold>[name]</bold>'
         description: '[description]'
-        uses: '&a Đã sử dụng [number]/[max]'
-        unlimited: '&a Sử dụng không giới hạn được phép'
-        cost: '&e Chi phí: [cost]'
+        uses: '<green>Đã sử dụng [number]/[max]</green>'
+        unlimited: '<green>Sử dụng không giới hạn được phép</green>'
+        cost: '<yellow>Chi phí: [cost]</yellow>'
   language:
-    title: '&2&l Chọn ngôn ngữ của bạn'
-    edited: '&c Đã chuyển sang [lang]'
+    title: '<dark_green><bold>Chọn ngôn ngữ của bạn</bold></dark_green>'
+    edited: '<red>Đã chuyển sang [lang]</red>'
     buttons:
       language:
-        name: '&f&l [name]'
+        name: '<white><bold>[name]</bold></white>'
         description: |-
           [authors]  
           |[selected]
-        authors: '&7 Tác giả:'
-        author: '&7 - &b [name]'
-        selected: '&a Đang được chọn.'
+        authors: '<gray>Tác giả:</gray>'
+        author: '<gray>- </gray><aqua>[name]</aqua>'
+        selected: '<green>Đang được chọn.</green>'
   buttons:
     previous:
-      name: '&f&l Trang Trước'
-      description: '&7 Chuyển sang trang [number]'
+      name: '<white><bold>Trang Trước</bold></white>'
+      description: '<gray>Chuyển sang trang [number]</gray>'
     next:
-      name: '&f&l Trang tiếp theo'
-      description: '&7 Chuyển sang trang [number]'
+      name: '<white><bold>Trang tiếp theo</bold></white>'
+      description: '<gray>Chuyển sang trang [number]</gray>'
   tips:
-    click-to-next: '&e Nhấn &7 để tiếp theo.'
-    click-to-previous: '&e Nhấp &7 để trở về trước.'
-    click-to-choose: '&e Nhấn &7 để chọn.'
-    click-to-toggle: '&e Nhấp &7 để chuyển đổi.'
-    left-click-to-cycle-down: '&e Nhấn chuột trái &7 để chuyển xuống.'
-    right-click-to-cycle-up: '&e Nhấp chuột phải &7 để xoay lên trên.'
+    click-to-next: '<yellow>Nhấn </yellow><gray>để tiếp theo.</gray>'
+    click-to-previous: '<yellow>Nhấp </yellow><gray>để trở về trước.</gray>'
+    click-to-choose: '<yellow>Nhấn </yellow><gray>để chọn.</gray>'
+    click-to-toggle: '<yellow>Nhấp </yellow><gray>để chuyển đổi.</gray>'
+    left-click-to-cycle-down: '<yellow>Nhấn chuột trái </yellow><gray>để chuyển xuống.</gray>'
+    right-click-to-cycle-up: '<yellow>Nhấp chuột phải </yellow><gray>để xoay lên trên.</gray>'
 successfully-loaded: >
-  &6   ____             _        ____ &6  |  _ \           | |      |  _
-  \             &7 by &a tastybento &7 and &a Poslovitch &6  | |_) | ___ _ __ |
-  |_ ___ | |_) | _____  __  &7 2017 - 2022 &6  |  _ < / _ \ '_ \| __/ _ \|  _ <
-  / _ \ \/ / &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
-  &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8 Loaded in &e [time]&8 ms.
+  <gold>  ____             _        ____ </gold><gold> |  _ \           | |      |  _</gold>
+  \             <gray>by </gray><green>tastybento </green><gray>and </gray><green>Poslovitch </green><gold> | |_) | ___ _ __ |</gold>
+  |_ ___ | |_) | _____  __  <gray>2017 - 2022 </gray><gold> |  _ < / _ \ '_ \| __/ _ \|  _ <</gold>
+  / _ \ \/ / <gold> | |_) |  __/ | | | || (_) | |_) | (_) >  <   </gold><aqua>v</aqua><yellow>[version]</yellow>
+  <gold> |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  </gold><dark_gray>Loaded in </dark_gray><yellow>[time]</yellow><dark_gray>ms.</dark_gray>

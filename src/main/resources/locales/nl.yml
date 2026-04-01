@@ -4,55 +4,55 @@ meta:
     - null
   banner: WHITE_BANNER:1:STRIPE_TOP:RED:STRIPE_BOTTOM:BLUE
 prefixes:
-  bentobox: '&6 BentoBox &7 &l> &r'
+  bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: eiland
   Island: Eiland
   an-island: een eiland
   islands: eilanden
 general:
-  success: '&a Succes!'
+  success: '<green>Succes!</green>'
   invalid: Ongeldig
-  beta: '&d&l Deze opdracht is in bèta. Zorg ervoor dat je back -ups hebt!'
+  beta: '<light_purple><bold>Deze opdracht is in bèta. Zorg ervoor dat je back -ups hebt!</bold></light_purple>'
   errors:
-    command-cancelled: '&c Commando geannuleerd.'
+    command-cancelled: '<red>Commando geannuleerd.</red>'
     no-permission: >-
-      &c U heeft geen toestemming om deze opdracht uit te voeren (&7
-      [permission] &c).
-    insufficient-rank: '&c Je rang is niet hoog genoeg om dat te doen! (&7 [rank] &c)'
-    use-in-game: '&c Dit commando is alleen beschikbaar in de game.'
-    use-in-console: '&c Dit commando is alleen beschikbaar in de console.'
-    no-team: '&c Je hebt geen team!'
-    no-island: '&c Je hebt geen eiland!'
-    player-has-island: '&c Speler heeft al een eiland!'
-    player-has-no-island: '&c Die speler heeft geen eiland!'
-    already-have-island: '&c Je hebt al een eiland!'
+      <red>U heeft geen toestemming om deze opdracht uit te voeren (</red><gray></gray>
+      [permission] <red>).</red>
+    insufficient-rank: '<red>Je rang is niet hoog genoeg om dat te doen! (</red><gray>[rank] </gray><red>)</red>'
+    use-in-game: '<red>Dit commando is alleen beschikbaar in de game.</red>'
+    use-in-console: '<red>Dit commando is alleen beschikbaar in de console.</red>'
+    no-team: '<red>Je hebt geen team!</red>'
+    no-island: '<red>Je hebt geen eiland!</red>'
+    player-has-island: '<red>Speler heeft al een eiland!</red>'
+    player-has-no-island: '<red>Die speler heeft geen eiland!</red>'
+    already-have-island: '<red>Je hebt al een eiland!</red>'
     no-safe-location-found: >-
-      &c Kon geen veilige plek vinden om je naar toe te teleporteren op het
+      <red>Kon geen veilige plek vinden om je naar toe te teleporteren op het</red>
       eiland.
-    not-owner: '&c Je bent niet de eigenaar van het eiland!'
-    player-is-not-owner: '&b [name] &c is niet de eigenaar van een eiland!'
-    not-in-team: '&c Die speler zit niet in je team!'
-    offline-player: '&c Die speler is offline of bestaat niet.'
-    unknown-player: '&c [name] is een onbekende speler!'
-    general: '&c Dat commando is nog niet klaar - neem contact op met de beheerder'
-    unknown-command: '&c Onbekend commando. Doe &b /[label] help &c voor hulp.'
-    wrong-world: '&c Je bent niet in de juiste wereld om dat te doen!'
+    not-owner: '<red>Je bent niet de eigenaar van het eiland!</red>'
+    player-is-not-owner: '<aqua>[name] </aqua><red>is niet de eigenaar van een eiland!</red>'
+    not-in-team: '<red>Die speler zit niet in je team!</red>'
+    offline-player: '<red>Die speler is offline of bestaat niet.</red>'
+    unknown-player: '<red>[name] is een onbekende speler!</red>'
+    general: '<red>Dat commando is nog niet klaar - neem contact op met de beheerder</red>'
+    unknown-command: '<red>Onbekend commando. Doe </red><aqua>/[label] help </aqua><red>voor hulp.</red>'
+    wrong-world: '<red>Je bent niet in de juiste wereld om dat te doen!</red>'
     you-must-wait: >-
-      &c Je moet [number]seconden wachten voordat je dat commando opnieuw kunt
+      <red>Je moet [number]seconden wachten voordat je dat commando opnieuw kunt</red>
       doen.
-    must-be-positive-number: '&c [number] is geen geldig positief getal.'
-    not-on-island: '&c Je bevindt je niet op [prefix_island]!'
-    slow-down: '&c Langzamer. Klik langzamer.'
+    must-be-positive-number: '<red>[number] is geen geldig positief getal.</red>'
+    not-on-island: '<red>Je bevindt je niet op [prefix_island]!</red>'
+    slow-down: '<red>Langzamer. Klik langzamer.</red>'
   worlds:
     overworld: Bovenwereld
     nether: Nether
     the-end: Het einde
 commands:
   help:
-    header: '&7 =========== &c [label] hulp &7 ==========='
-    syntax: '&b [usage] &a [parameters] &7: &e [description]'
-    syntax-no-parameters: '&b [usage] &7: &e [description]'
-    end: '&7 ==================================='
+    header: '<gray>=========== </gray><red>[label] hulp </red><gray>===========</gray>'
+    syntax: '<aqua>[usage] </aqua><green>[parameters] </green><gray>: </gray><yellow>[description]</yellow>'
+    syntax-no-parameters: '<aqua>[usage] </aqua><gray>: </gray><yellow>[description]</yellow>'
+    end: '<gray>===================================</gray>'
     parameters: '[command]'
     description: help commando
     console: Troosten
@@ -64,209 +64,209 @@ commands:
         wijzig het aantal toegestane huizen op deze [prefix_island] of het huis
         van de speler [prefix_island]
       parameters: <number / player> <number> [[prefix_eiland] naam]
-      max-homes-set: '&a [name] - Zet [prefix_island] maximaal aantal huizen op [number]'
+      max-homes-set: '<green>[name] - Zet [prefix_island] maximaal aantal huizen op [number]</green>'
       errors:
         unknown-island: Onbekend [prefix_island]! [name]
     resethome:
       description: Reset het thuis van de speler naar standaard
       parameters: <player> [[prefix_eiland] naam]
-      cleared: '&b Thuis reset. [name]'
+      cleared: '<aqua>Thuis reset. [name]</aqua>'
     resets:
       description: bewerk resets van de spelers
       set:
         description: bepaalt hoeveel keer deze speler zijn eiland reset
         parameters: <speler> <resets>
-        success: '&a Met succes ingesteld &b [name] &a ''s resetten naar &b [number] &a.'
+        success: '<green>Met succes ingesteld </green><aqua>[name] </aqua><green>''s resetten naar </green><aqua>[number] </aqua><green>.</green>'
       reset:
         description: reset hoe vaak deze speler zijn eiland terugzet op 0
         parameters: <speler>
-        success-everyone: '&a Succesvol gereset &b iedereen &a ''s resetten naar &b 0 &a.'
-        success: '&a Succesvol gereset &b [name] &a ''s resetten naar &b 0 &a.'
+        success-everyone: '<green>Succesvol gereset </green><aqua>iedereen </aqua><green>''s resetten naar </green><aqua>0 </aqua><green>.</green>'
+        success: '<green>Succesvol gereset </green><aqua>[name] </aqua><green>''s resetten naar </green><aqua>0 </aqua><green>.</green>'
       add:
         description: telt op bij het aantal keren dat deze speler zijn eiland reset
         parameters: <speler> <resets>
         success: >-
-          &a Met succes toegevoegd &b [number] &a wordt gereset naar & b [name],
-          waardoor het totaal wordt verhoogd naar &b [total] &a wordt gereset.
+          <green>Met succes toegevoegd </green><aqua>[number] </aqua><green>wordt gereset naar & b [name],</green>
+          waardoor het totaal wordt verhoogd naar <aqua>[total] </aqua><green>wordt gereset.</green>
       remove:
         description: verwijdert uit hoe vaak deze speler zijn eiland reset
         parameters: <speler> <resets>
         success: >-
-          &a Succesvol verwijderd &b [number] &a wordt gereset naar &b [name],
-          waardoor het totaal wordt verlaagd naar &b [total] &a wordt gereset.
+          <green>Succesvol verwijderd </green><aqua>[number] </aqua><green>wordt gereset naar </green><aqua>[name],</aqua>
+          waardoor het totaal wordt verlaagd naar <aqua>[total] </aqua><green>wordt gereset.</green>
     purge:
       parameters: '[dagen]'
       description: eilanden zuiveren die al meer dan [days] zijn verlaten
       days-one-or-more: Moet minimaal 1 dag of langer duren
-      purgable-islands: '&a Gevonden &b [number]&a zuiverbare eilanden.'
+      purgable-islands: '<green>Gevonden </green><aqua>[number]</aqua><green>zuiverbare eilanden.</green>'
       too-many: >-
-        &b Dit is veel en kan een zeer lange tijd duren om te verwijderen.  
+        <aqua>Dit is veel en kan een zeer lange tijd duren om te verwijderen.</aqua>
 
-        &b Overweeg om de Regionerator plugin te gebruiken voor het verwijderen
+        <aqua>Overweeg om de Regionerator plugin te gebruiken voor het verwijderen</aqua>
         van wereldchunks  
 
-        &b en zet keep-previous-island-on-reset: true in BentoBox's
+        <aqua>en zet keep-previous-island-on-reset: true in BentoBox's</aqua>
         config.yml.  
 
-        &b Voer daarna een purge uit.
-      purge-in-progress: '&c Bezig met spoelen. Gebruik &b /[label] purge stop &c om te annuleren.'
+        <aqua>Voer daarna een purge uit.</aqua>
+      purge-in-progress: '<red>Bezig met spoelen. Gebruik </red><aqua>/[label] purge stop </aqua><red>om te annuleren.</red>'
       scanning: >-
-        &a Eilanden aan het scannen in de database. Dit kan even duren,
+        <green>Eilanden aan het scannen in de database. Dit kan even duren,</green>
         afhankelijk van hoeveel je er hebt...
-      scanning-in-progress: '&c Scannen in uitvoering, gelieve te wachten'
-      none-found: '&c Geen eilanden gevonden om te verwijderen.'
-      total-islands: '&a Je hebt [number] eilanden in je database in alle werelden.'
-      number-error: '&c Argument moet een aantal dagen zijn'
-      confirm: '&d Typ &b /[label] purge confirm &d om te beginnen met purgeren'
-      completed: '&a zuivering gestopt.'
+      scanning-in-progress: '<red>Scannen in uitvoering, gelieve te wachten</red>'
+      none-found: '<red>Geen eilanden gevonden om te verwijderen.</red>'
+      total-islands: '<green>Je hebt [number] eilanden in je database in alle werelden.</green>'
+      number-error: '<red>Argument moet een aantal dagen zijn</red>'
+      confirm: '<light_purple>Typ </light_purple><aqua>/[label] purge confirm </aqua><light_purple>om te beginnen met purgeren</light_purple>'
+      completed: '<green>zuivering gestopt.</green>'
       see-console-for-status: >-
-        &a zuivering begon. Zie console voor status of gebruik &b /[label]
-        zuiveringsstatus &a.
-      no-purge-in-progress: '&c Er is momenteel geen zuivering bezig.'
+        <green>zuivering begon. Zie console voor status of gebruik </green><aqua>/[label]</aqua>
+        zuiveringsstatus <green>.</green>
+      no-purge-in-progress: '<red>Er is momenteel geen zuivering bezig.</red>'
       regions:
         parameters: '[days]'
         description: purge -eilanden door oude regiobestanden te verwijderen
         confirm: >-
-          &d Type &b /[label] purge regions confirm &d om te beginnen met
+          <light_purple>Type </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>om te beginnen met</light_purple>
           spoelen
       protect:
         description: schakel de bescherming tegen het doorspoelen van het eiland in
-        move-to-island: '&c Ga eerst naar een eiland!'
+        move-to-island: '<red>Ga eerst naar een eiland!</red>'
         protecting: en een eiland dat tegen zuivering beschermt.
-        unprotecting: '&a Verwijderen van spoelbescherming.'
+        unprotecting: '<green>Verwijderen van spoelbescherming.</green>'
       stop:
         description: een lopende zuivering stoppen
         stopping: De zuivering stoppen
       unowned:
         description: zuiveren van eilanden die geen eigendom zijn
-        unowned-islands: '&a Found &b [number]&a eilanden zonder eigendom.'
+        unowned-islands: '<green>Found </green><aqua>[number]</aqua><green>eilanden zonder eigendom.</green>'
       status:
         description: geeft de status van de zuivering weer
         status: >-
-          &b [purged] &a eilanden gezuiverd uit &b [purgeable] &7 (& b
-          [percentage]% &7) &a.
+          <aqua>[purged] </aqua><green>eilanden gezuiverd uit </green><aqua>[purgeable] </aqua><gray>(& b</gray>
+          [percentage]% <gray>) </gray><green>.</green>
     team:
       description: team beheren
       add:
         parameters: <eigenaar> <speler>
         description: speler toevoegen aan het team van de eigenaar
-        name-not-owner: '&c [name] is niet de eigenaar.'
+        name-not-owner: '<red>[name] is niet de eigenaar.</red>'
         name-has-island: >-
-          &c [name] heeft een eiland. Maak de registratie af of verwijder ze
+          <red>[name] heeft een eiland. Maak de registratie af of verwijder ze</red>
           eerst!
-        success: '&b [name] &a is toegevoegd aan &b [owner]&a ''s eiland.'
+        success: '<aqua>[name] </aqua><green>is toegevoegd aan </green><aqua>[owner]</aqua><green>''s eiland.</green>'
       disband:
         parameters: <eigenaar>
         description: het team van de eigenaar ontbinden
-        use-disband-owner: '&c Geen eigenaar! Gebruik ontbinden [owner].'
-        disbanded: '&c Admin heeft je team ontbonden!'
-        success: '&b [name] &a ''s team is opgeheven.'
+        use-disband-owner: '<red>Geen eigenaar! Gebruik ontbinden [owner].</red>'
+        disbanded: '<red>Admin heeft je team ontbonden!</red>'
+        success: '<aqua>[name] </aqua><green>''s team is opgeheven.</green>'
       fix:
         description: >-
           scant en repareert het lidmaatschap van meerdere eilanden in de
           database
         scanning: Database scannen ...
-        duplicate-owner: '&c Speler bezit meer dan één eiland in de database: [name]'
-        player-has: '&c Speler [name] heeft [number]eilanden'
-        duplicate-member: '&c Speler [name] is lid van meer dan één eiland in de database'
-        rank-on-island: '&c [rank] op het eiland op [xyz]'
-        fixed: '&a vaste'
-        done: '&a scan'
+        duplicate-owner: '<red>Speler bezit meer dan één eiland in de database: [name]</red>'
+        player-has: '<red>Speler [name] heeft [number]eilanden</red>'
+        duplicate-member: '<red>Speler [name] is lid van meer dan één eiland in de database</red>'
+        rank-on-island: '<red>[rank] op het eiland op [xyz]</red>'
+        fixed: '<green>vaste</green>'
+        done: '<green>scan</green>'
       kick:
         parameters: <teamspeler>
         description: schop een speler uit een team
-        cannot-kick-owner: '&c Je kunt de eigenaar niet schoppen. Schop leden eerst.'
-        not-in-team: '&c Deze speler maakt geen deel uit van een team.'
-        admin-kicked: '&c De admin heeft je uit het team geschopt.'
-        success: '&b [name] &a is geschopt van &b [owner] &a ''s eiland.'
-        success-all: '&b Speler is van alle teams in deze wereld verwijderd'
+        cannot-kick-owner: '<red>Je kunt de eigenaar niet schoppen. Schop leden eerst.</red>'
+        not-in-team: '<red>Deze speler maakt geen deel uit van een team.</red>'
+        admin-kicked: '<red>De admin heeft je uit het team geschopt.</red>'
+        success: '<aqua>[name] </aqua><green>is geschopt van </green><aqua>[owner] </aqua><green>''s eiland.</green>'
+        success-all: '<aqua>Speler is van alle teams in deze wereld verwijderd</aqua>'
       setowner:
         parameters: <speler>
         description: draagt het eilandbezit over aan de speler
-        already-owner: '&c [name] is al de eigenaar van dit eiland!'
-        must-be-on-island: '&c Je moet op de [prefix_island] zijn om de eigenaar in te stellen'
+        already-owner: '<red>[name] is al de eigenaar van dit eiland!</red>'
+        must-be-on-island: '<red>Je moet op de [prefix_island] zijn om de eigenaar in te stellen</red>'
         confirmation: >-
-          &a Weet je zeker dat je [name] als eigenaar van de [prefix_island] bij
+          <green>Weet je zeker dat je [name] als eigenaar van de [prefix_island] bij</green>
           [xyz] wilt instellen?
-        success: '&b [name] &a is nu de eigenaar van dit eiland.'
+        success: '<aqua>[name] </aqua><green>is nu de eigenaar van dit eiland.</green>'
         extra-islands: >-
-          &c Waarschuwing: deze speler bezit nu [number] eilanden. Dit is meer
+          <red>Waarschuwing: deze speler bezit nu [number] eilanden. Dit is meer</red>
           dan toegestaan volgens de instellingen of permissies: [max].
       maxsize:
         parameters: <player> <size>
         description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
-        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
+        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: admin eilandbereik commando
       invalid-value:
-        too-low: '&c Het beschermingsbereik moet groter zijn dan &b 1 &c!'
+        too-low: '<red>Het beschermingsbereik moet groter zijn dan </red><aqua>1 </aqua><red>!</red>'
         too-high: >-
-          &c Het beschermingsbereik moet gelijk zijn aan of kleiner zijn dan &b
-          [number] &c!
-        same-as-before: '&c Het beschermingsbereik is al ingesteld op &b [number] &c!'
+          <red>Het beschermingsbereik moet gelijk zijn aan of kleiner zijn dan </red><aqua></aqua>
+          [number] <red>!</red>
+        same-as-before: '<red>Het beschermingsbereik is al ingesteld op </red><aqua>[number] </aqua><red>!</red>'
       display:
-        already-off: '&c Indicatoren zijn al uit'
-        already-on: '&c Indicatoren zijn al aan'
+        already-off: '<red>Indicatoren zijn al uit</red>'
+        already-on: '<red>Indicatoren zijn al aan</red>'
         description: toon / verberg eilandbereikindicatoren
-        hiding: '&2 Verberg bereikindicatoren'
+        hiding: '<dark_green>Verberg bereikindicatoren</dark_green>'
         hint: >-
-          &c Rode barrièrepictogrammen &f tonen de huidige limiet van het
+          <red>Rode barrièrepictogrammen </red><white>tonen de huidige limiet van het</white>
           beschermde bereik van het eiland.
 
-          &7 grijze deeltjes &f tonen de maximale eilandlimiet.
+          <gray>grijze deeltjes </gray><white>tonen de maximale eilandlimiet.</white>
 
-          &a Groene deeltjes &f tonen het standaard beschermde bereik als het
+          <green>Groene deeltjes </green><white>tonen het standaard beschermde bereik als het</white>
           eilandbeschermingsbereik daarvan afwijkt.
-        showing: '&2 Weergeven van bereikindicatoren'
+        showing: '<dark_green>Weergeven van bereikindicatoren</dark_green>'
       set:
         parameters: <speler> <bereik>
         description: stelt het beschermde eilandbereik in
-        success: '&a Stel het bereik van de eilandbescherming in op &b [number] &a.'
+        success: '<green>Stel het bereik van de eilandbescherming in op </green><aqua>[number] </aqua><green>.</green>'
       reset:
         parameters: <speler>
         description: zet het beschermde eilandbereik terug naar de wereldstandaard
-        success: '&a Reset eilandbeschermingsbereik naar &b [number] &a.'
+        success: '<green>Reset eilandbeschermingsbereik naar </green><aqua>[number] </aqua><green>.</green>'
       add:
         description: vergroot het beschermde bereik van het eiland
         parameters: <speler> <bereik>
         success: >-
-          &a Met succes het beschermde bereik van &b [name] &a 's op het eiland
-          vergroot tot &b [total] &7 (&b + [number]&7) &a.
+          <green>Met succes het beschermde bereik van </green><aqua>[name] </aqua><green>'s op het eiland</green>
+          vergroot tot <aqua>[total] </aqua><gray>(</gray><aqua>+ [number]</aqua><gray>) </gray><green>.</green>
       remove:
         description: verkleint het beschermde bereik van het eiland
         parameters: <speler> <bereik>
         success: >-
-          &a Succesvol verkleind &b [name] &a 's beschermde eilandbereik naar &b
-          [total] &7 (&b - [number]&7) &a.
+          <green>Succesvol verkleind </green><aqua>[name] </aqua><green>'s beschermde eilandbereik naar </green><aqua></aqua>
+          [total] <gray>(</gray><aqua>- [number]</aqua><gray>) </gray><green>.</green>
     register:
       parameters: <speler>
       description: registreer speler op het eiland waar je je bevindt
-      registered-island: '&a geregistreerde [name] op het eiland op [xyz].'
-      reserved-island: '&a gereserveerd eiland op [xyz] voor [name].'
-      already-owned: '&c Island is al eigendom van een andere speler!'
-      no-island-here: '&c Er is hier geen eiland. Bevestig om er een te maken.'
-      in-deletion: '&c Deze eilandruimte wordt momenteel verwijderd. Probeer later.'
+      registered-island: '<green>geregistreerde [name] op het eiland op [xyz].</green>'
+      reserved-island: '<green>gereserveerd eiland op [xyz] voor [name].</green>'
+      already-owned: '<red>Island is al eigendom van een andere speler!</red>'
+      no-island-here: '<red>Er is hier geen eiland. Bevestig om er een te maken.</red>'
+      in-deletion: '<red>Deze eilandruimte wordt momenteel verwijderd. Probeer later.</red>'
       cannot-make-island: >-
-        &c Hier kan geen eiland worden geplaatst, sorry. Zie console voor
+        <red>Hier kan geen eiland worden geplaatst, sorry. Zie console voor</red>
         mogelijke fouten.
       island-is-spawn: >-
-        &6 Eiland wordt uitgezet. Weet je het zeker? Voer de opdracht nogmaals
+        <gold>Eiland wordt uitgezet. Weet je het zeker? Voer de opdracht nogmaals</gold>
         in om te bevestigen.
     unregister:
       parameters: <eigenaar> [x,y,z]
       description: >-
         de registratie van de eigenaar van het eiland ongedaan maken, maar
         eilandblokken behouden
-      unregistered-island: '&a niet-geregistreerde [name] van het eiland op [xyz].'
+      unregistered-island: '<green>niet-geregistreerde [name] van het eiland op [xyz].</green>'
       errors:
-        unknown-island-location: '&c Onbekende [prefix_island] locatie'
-        specify-island-location: '&c Geef de locatie van [prefix_island] op in x,y,z formaat'
-        player-has-more-than-one-island: '&c Speler heeft meer dan één [prefix_island]. Geef aan welke.'
+        unknown-island-location: '<red>Onbekende [prefix_island] locatie</red>'
+        specify-island-location: '<red>Geef de locatie van [prefix_island] op in x,y,z formaat</red>'
+        player-has-more-than-one-island: '<red>Speler heeft meer dan één [prefix_island]. Geef aan welke.</red>'
     info:
       parameters: <speler>
       description: informatie krijgen over waar je bent of over het eiland van de speler
-      no-island: '&c Je bent nu niet op een eiland ...'
+      no-island: '<red>Je bent nu niet op een eiland ...</red>'
       title: '========== Eilandinformatie ============'
       island-uuid: 'UUID: [uuid]'
       owner: 'Eigenaar: [owner] ([uuid])'
@@ -276,30 +276,30 @@ commands:
       resets-left: 'Resets: [number](Max: [total])'
       max-homes: 'Max huizen: [number]'
       team-members-title: 'Leden van het team:'
-      team-owner-format: '&a [name] [rank]'
-      team-member-format: '&b [name] [rank]'
+      team-owner-format: '<green>[name] [rank]</green>'
+      team-member-format: '<aqua>[name] [rank]</aqua>'
       max-team-size: 'Maximale teamgrootte: [number]'
       max-coop-size: 'Maximale coop-grootte: [number]'
       max-trusted-size: 'Maximale vertrouwde grootte: [number]'
       island-protection-center: 'Beschermingsgebied centrum: [xyz]'
       island-center: 'Eilandcentrum: [xyz]'
       island-coords: 'Eilandcoördinaten: [xz1] tot [xz2]'
-      islands-in-trash: '&d Player heeft eilanden in de prullenbak.'
+      islands-in-trash: '<light_purple>Player heeft eilanden in de prullenbak.</light_purple>'
       protection-range: 'Beschermingsbereik: [range]'
-      protection-range-bonus-title: '&b Inclusief deze bonussen:'
+      protection-range-bonus-title: '<aqua>Inclusief deze bonussen:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: Het eiland is beschermd tegen zuivering
       max-protection-range: 'Grootste historische beschermingsbereik: [range]'
       protection-coords: 'Beschermingscoördinaten: [xz1] tot [xz2]'
       is-spawn: Eiland is een spawn-eiland
       banned-players: 'Verbannen spelers:'
-      banned-format: '&c [name]'
-      unowned: '&c Onbeheerd'
-      bundle: '&a Blueprint Bundle gebruikt om eiland te creëren: &b [name]'
+      banned-format: '<red>[name]</red>'
+      unowned: '<red>Onbeheerd</red>'
+      bundle: '<green>Blueprint Bundle gebruikt om eiland te creëren: </green><aqua>[name]</aqua>'
     switch:
       description: bescherming bypass in- / uitschakelen
       op: >-
-        &c Ops kunnen de bescherming altijd omzeilen. Deop om het commando te
+        <red>Ops kunnen de bescherming altijd omzeilen. Deop om het commando te</red>
         gebruiken.
       removing: Bypass verwijderen ...
       adding: Beveiligingsbypass toevoegen ...
@@ -307,47 +307,47 @@ commands:
       parameters: <speler> <nummer>
       description: verander het eiland van de speler naar het nummer in de prullenbak
       out-of-range: >-
-        &c Getal moet tussen 1 en [number] liggen. Gebruik &l [label] prullenbak
-        [player] &r &c om de eilandnummers te zien
-      cannot-switch: '&c Schakelaar mislukt. Zie consolelogboek voor fouten.'
+        <red>Getal moet tussen 1 en [number] liggen. Gebruik <bold>[label] prullenbak</bold></red>
+        [player] <red>om de eilandnummers te zien</red>
+      cannot-switch: '<red>Schakelaar mislukt. Zie consolelogboek voor fouten.</red>'
       success: >-
-        &a Veranderde met succes het eiland van de speler naar het
+        <green>Veranderde met succes het eiland van de speler naar het</green>
         gespecificeerde eiland.
     trash:
-      no-unowned-in-trash: '&c Geen eilanden die geen eigendom zijn in de prullenbak'
-      no-islands-in-trash: '&c Speler heeft geen eilanden in de prullenbak'
+      no-unowned-in-trash: '<red>Geen eilanden die geen eigendom zijn in de prullenbak</red>'
+      no-islands-in-trash: '<red>Speler heeft geen eilanden in de prullenbak</red>'
       parameters: '[speler]'
       description: >-
         Toon eilanden die niet in bezit zijn of eilanden van spelers in de
         prullenbak
-      title: '&d =========== Eilanden in prullenbak ==========='
-      count: '&l &d Island [number]:'
+      title: '<light_purple>=========== Eilanden in prullenbak ===========</light_purple>'
+      count: '<bold><light_purple>Island [number]:</light_purple></bold>'
       use-switch: >-
-        &a Gebruik &l [label] switcht naar <player> <nummer> &r &a om speler
+        <green>Gebruik <bold>[label] switcht naar <player> <nummer> </bold></green><green>om speler</green>
         naar eiland in prullenbak te schakelen
       use-emptytrash: >-
-        &a Gebruik &l [label] lege prullenbak [player] &r &a om prullenbakitems
+        <green>Gebruik <bold>[label] lege prullenbak [player] </bold></green><green>om prullenbakitems</green>
         permanent te verwijderen
     emptytrash:
       parameters: '[speler]'
       description: >-
         Wis de prullenbak voor de speler of verwijder alle eilanden die niet in
         bezit zijn in de prullenbak
-      success: '&a prullenbak met succes geleegd.'
+      success: '<green>prullenbak met succes geleegd.</green>'
     version:
       description: versies van BentoBox en add-ons weergeven
     setrange:
       parameters: <speler> <bereik>
       description: stel het bereik van het spelerseiland in
-      range-updated: '&a Island-reeks geüpdatet naar &b [number] &a.'
+      range-updated: '<green>Island-reeks geüpdatet naar </green><aqua>[number] </aqua><green>.</green>'
     reload:
       description: herladen
     tp:
       parameters: <player> [speler om te teleporteren]
       description: teleporteer naar het eiland van een speler
       manual: >-
-        &c Geen veilige warp gevonden! Handmatig tp in de buurt van &b [locatie]
-        &c en bekijk het
+        <red>Geen veilige warp gevonden! Handmatig tp in de buurt van </red><aqua>[locatie]</aqua>
+        <red>en bekijk het</red>
     tpuser:
       parameters: <teleporting player> <[prefix_island]'s player> [player's island]
       description: teleporteer een speler naar het [prefix_island] van een andere speler
@@ -356,16 +356,16 @@ commands:
       description: >-
         verkrijg de rang van een speler op hun eiland of op het eiland van de
         eigenaar
-      rank-is: '&a rang is &b [rank] &a op &b [name] &a ''s eiland.'
+      rank-is: '<green>rang is </green><aqua>[rank] </aqua><green>op </green><aqua>[name] </aqua><green>''s eiland.</green>'
     setrank:
       parameters: <speler> <rank> [eilandeigenaar]
       description: >-
         bepaal de rang van een speler op zijn of haar eiland of op het eiland
         van de eigenaar
-      unknown-rank: '&c Onbekende rang!'
-      not-possible: '&c Rang moet hoger zijn dan bezoeker.'
+      unknown-rank: '<red>Onbekende rang!</red>'
+      not-possible: '<red>Rang moet hoger zijn dan bezoeker.</red>'
       rank-set: >-
-        &a Rang ingesteld van &b [from] &a naar &b [to] &a op &b [name] &a 's
+        <green>Rang ingesteld van </green><aqua>[from] </aqua><green>naar </green><aqua>[to] </aqua><green>op </green><aqua>[name] </aqua><green>'s</green>
         eiland.
     setprotectionlocation:
       parameters: '[x y z coördinaten]'
@@ -373,55 +373,55 @@ commands:
         stel de huidige locatie in of [x y z] als centrum van het beschermde
         gebied van het eiland
       island: >-
-        &c Dit heeft gevolgen voor het eiland op [xyz] dat eigendom is van
+        <red>Dit heeft gevolgen voor het eiland op [xyz] dat eigendom is van</red>
         '[name]'.
-      confirmation: '&c Weet u zeker dat u [xyz] wilt instellen als het beschermingscentrum?'
-      success: '&a [xyz] met succes ingesteld als het beschermingscentrum.'
-      fail: '&a Kan [xyz] niet instellen als het beschermingscentrum.'
+      confirmation: '<red>Weet u zeker dat u [xyz] wilt instellen als het beschermingscentrum?</red>'
+      success: '<green>[xyz] met succes ingesteld als het beschermingscentrum.</green>'
+      fail: '<green>Kan [xyz] niet instellen als het beschermingscentrum.</green>'
       island-location-changed: >-
-        &a [user] heeft het beschermingscentrum van het eiland gewijzigd in
+        <green>[user] heeft het beschermingscentrum van het eiland gewijzigd in</green>
         [xyz].
-      xyz-error: '&c Specificeer drie integer-coördinaten: bijvoorbeeld 100120100'
+      xyz-error: '<red>Specificeer drie integer-coördinaten: bijvoorbeeld 100120100</red>'
     setspawn:
       description: stel een eiland in als spawn voor deze spelmodus
-      already-spawn: '&c Dit eiland is al een spawn!'
-      no-island-here: '&c Er is hier geen eiland.'
+      already-spawn: '<red>Dit eiland is al een spawn!</red>'
+      no-island-here: '<red>Er is hier geen eiland.</red>'
       confirmation: >-
-        &c Weet je zeker dat je dit eiland wilt instellen als spawn voor deze
+        <red>Weet je zeker dat je dit eiland wilt instellen als spawn voor deze</red>
         wereld?
-      success: '&a Stel dit eiland met succes in als de spawn voor deze wereld.'
+      success: '<green>Stel dit eiland met succes in als de spawn voor deze wereld.</green>'
     setspawnpoint:
       description: stel de huidige locatie in als spawn-punt voor dit eiland
-      no-island-here: '&c Er is hier geen eiland.'
+      no-island-here: '<red>Er is hier geen eiland.</red>'
       confirmation: >-
-        &c Weet u zeker dat u deze locatie wilt instellen als het spawn-punt
+        <red>Weet u zeker dat u deze locatie wilt instellen als het spawn-punt</red>
         voor dit eiland?
-      success: '&a Stel deze locatie met succes in als het spawn-punt voor dit eiland.'
-      island-spawnpoint-changed: '&a [user] heeft dit spawnpunt op het eiland gewijzigd.'
+      success: '<green>Stel deze locatie met succes in als het spawn-punt voor dit eiland.</green>'
+      island-spawnpoint-changed: '<green>[user] heeft dit spawnpunt op het eiland gewijzigd.</green>'
     settings:
       parameters: >-
         [speler] / [wereldvlag] / spawn-island [vlag / active / disable] [rang /
         active / disable]
       description: open instellingen GUI of stel instellingen in
-      unknown-setting: '&c Onbekende instelling'
+      unknown-setting: '<red>Onbekende instelling</red>'
     blueprint:
       parameters: <laad/kopieer/plak/positie1/positie2/opslag>
       description: blauwdrukken manipuleren
-      bedrock-required: '&c Minstens één gesteenteblok moet in een blauwdruk staan!'
-      copy-first: '&c Kopieer eerst!'
-      file-exists: '&c Bestand bestaat al, overschrijven?'
-      no-such-file: '&c Zo''n bestand bestaat niet!'
-      could-not-load: '&c Kon dat bestand niet laden!'
-      could-not-save: '&c Hmm, er is iets misgegaan bij het opslaan van dat bestand: [bericht]'
-      set-pos1: '&a positie 1 ingesteld op [vector]'
-      set-pos2: '&a positie 2 ingesteld op [vector]'
-      set-different-pos: '&c Stel een andere locatie in - deze positie is al ingesteld!'
-      need-pos1-pos2: '&c Stel eerst pos1 en pos2 in!'
-      copying: '&b Blokken kopiëren ...'
-      copied-blocks: '&b Gekopieerd [number]blokken naar klembord'
-      look-at-a-block: '&c Bekijk blok binnen 20 blokken om in te stellen'
-      mid-copy: '&c U bent mid-copy. Wacht tot het kopiëren klaar is.'
-      copied-percent: '&6 gekopieerd [number]%'
+      bedrock-required: '<red>Minstens één gesteenteblok moet in een blauwdruk staan!</red>'
+      copy-first: '<red>Kopieer eerst!</red>'
+      file-exists: '<red>Bestand bestaat al, overschrijven?</red>'
+      no-such-file: '<red>Zo''n bestand bestaat niet!</red>'
+      could-not-load: '<red>Kon dat bestand niet laden!</red>'
+      could-not-save: '<red>Hmm, er is iets misgegaan bij het opslaan van dat bestand: [bericht]</red>'
+      set-pos1: '<green>positie 1 ingesteld op [vector]</green>'
+      set-pos2: '<green>positie 2 ingesteld op [vector]</green>'
+      set-different-pos: '<red>Stel een andere locatie in - deze positie is al ingesteld!</red>'
+      need-pos1-pos2: '<red>Stel eerst pos1 en pos2 in!</red>'
+      copying: '<aqua>Blokken kopiëren ...</aqua>'
+      copied-blocks: '<aqua>Gekopieerd [number]blokken naar klembord</aqua>'
+      look-at-a-block: '<red>Bekijk blok binnen 20 blokken om in te stellen</red>'
+      mid-copy: '<red>U bent mid-copy. Wacht tot het kopiëren klaar is.</red>'
+      copied-percent: '<gold>gekopieerd [number]%</gold>'
       copy:
         parameters: '[air]'
         description: >-
@@ -429,30 +429,30 @@ commands:
           luchtblokken
       sink:
         description: zet deze blauwdruk om naar de oceaanbodem wanneer geplakt
-        status: '&a Blueprint zal [status] &a zijn wanneer geplakt'
-        sink: '&c zinken'
-        not-sink: '&b niet zinken'
-        no-clipboard: '&c Er is geen blauwdruk in het klembord. Laad of kopieer iets.'
+        status: '<green>Blueprint zal [status] </green><green>zijn wanneer geplakt</green>'
+        sink: '<red>zinken</red>'
+        not-sink: '<aqua>niet zinken</aqua>'
+        no-clipboard: '<red>Er is geen blauwdruk in het klembord. Laad of kopieer iets.</red>'
       delete:
         parameters: <naam>
         description: verwijder de blauwdruk
-        no-blueprint: '&b [name] &c bestaat niet.'
+        no-blueprint: '<aqua>[name] </aqua><red>bestaat niet.</red>'
         confirmation: |
-          &c Weet u zeker dat u deze blauwdruk wilt verwijderen?
-          &c Eenmaal verwijderd, is er geen manier om het te herstellen.
-        success: '&a Blauwdruk succesvol verwijderd &b [name] &a.'
+          <red>Weet u zeker dat u deze blauwdruk wilt verwijderen?</red>
+          <red>Eenmaal verwijderd, is er geen manier om het te herstellen.</red>
+        success: '<green>Blauwdruk succesvol verwijderd </green><aqua>[name] </aqua><green>.</green>'
       load:
         parameters: <naam>
         description: laad blauwdruk in het klembord
       list:
         description: lijst met beschikbare blauwdrukken
-        no-blueprints: '&c Geen blauwdrukken in de map met blauwdrukken!'
-        available-blueprints: '&a Deze blauwdrukken kunnen worden geladen:'
+        no-blueprints: '<red>Geen blauwdrukken in de map met blauwdrukken!</red>'
+        available-blueprints: '<green>Deze blauwdrukken kunnen worden geladen:</green>'
       origin:
         description: stel de oorsprong van de blauwdruk in op uw positie
       paste:
         description: plak het klembord op uw locatie
-        pasting: '&a Plakken ...'
+        pasting: '<green>Plakken ...</green>'
       pos1:
         description: set 1e hoek van kubusvormig klembord
       pos2:
@@ -463,9 +463,9 @@ commands:
       rename:
         parameters: <blauwdruknaam> <nieuwe naam>
         description: hernoem een blauwdruk
-        success: '&a Blauwdruk &b [old] &a is met succes hernoemd naar &b [name] &a.'
+        success: '<green>Blauwdruk </green><aqua>[old] </aqua><green>is met succes hernoemd naar </green><aqua>[name] </aqua><green>.</green>'
         pick-different-name: >-
-          &c Geef een naam op die verschilt van de huidige naam van de
+          <red>Geef een naam op die verschilt van de huidige naam van de</red>
           blueprint.
       management:
         back: Terug
@@ -487,7 +487,7 @@ commands:
         perm-required: Verplicht
         no-perm-required: Kan geen permissie instellen voor standaardbundel
         perm-not-required: Niet verplicht
-        perm-format: '&e'
+        perm-format: '<yellow></yellow>'
         remove: Klik met de rechtermuisknop om te verwijderen
         blueprint-instruction: |
           Klik om te selecteren,
@@ -499,11 +499,11 @@ commands:
         name:
           quit: stoppen
           prompt: Voer een naam in of 'quit' om te stoppen
-          too-long: '&c Te lang'
+          too-long: '<red>Te lang</red>'
           pick-a-unique-name: Kies een meer unieke naam
           stripped-char-in-unique-name: >-
-            &c Sommige tekens zijn verwijderd omdat ze niet zijn toegestaan. &a
-            Nieuwe ID zal zijn &b [name]&a.
+            <red>Sommige tekens zijn verwijderd omdat ze niet zijn toegestaan. </red><green></green>
+            Nieuwe ID zal zijn <aqua>[name]</aqua><green>.</green>
           success: Succes!
           conversation-prefix: '>'
         description:
@@ -514,46 +514,46 @@ commands:
           default-color: ''
           success: Succes!
           cancelling: Annuleren
-        slot: '&f Voorkeursslot [number]'
+        slot: '<white>Voorkeursslot [number]</white>'
         slot-instructions: |
-          &a linkermuisknop om te verhogen
-          &a Klik met de rechtermuisknop om te verlagen
+          <green>linkermuisknop om te verhogen</green>
+          <green>Klik met de rechtermuisknop om te verlagen</green>
         times: |-
-          &a Max gelijktijdige gebruiken per speler  
-          &a Linker muisklik om te verhogen  
-          &a Rechter muisklik om te verlagen
+          <green>Max gelijktijdige gebruiken per speler</green>
+          <green>Linker muisklik om te verhogen</green>
+          <green>Rechter muisklik om te verlagen</green>
         unlimited-times: Onbeperkt
         maximum-times: Max [number] keer
         cost: |
-          &a [prefix_Island] kosten
-          &a Linker muisklik +1
-          &a Rechter muisklik -1
-          &a Shift voor +/-100
+          <green>[prefix_Island] kosten</green>
+          <green>Linker muisklik +1</green>
+          <green>Rechter muisklik -1</green>
+          <green>Shift voor +/-100</green>
         no-cost: Gratis
         cost-amount: 'Kosten: [cost]'
-        next-page: '&f Volgende pagina'
-        previous-page: '&f Vorige pagina'
+        next-page: '<white>Volgende pagina</white>'
+        previous-page: '<white>Vorige pagina</white>'
     resetflags:
       parameters: '[vlag]'
       description: Reset alle eilanden naar de standaard vlaginstellingen in config.yml
-      confirm: '&4 Hierdoor worden de standaard vlag (en) voor alle eilanden gereset!'
+      confirm: '<dark_red>Hierdoor worden de standaard vlag (en) voor alle eilanden gereset!</dark_red>'
       success: >-
-        &a Reset de vlaggen van alle eilanden met succes naar de
+        <green>Reset de vlaggen van alle eilanden met succes naar de</green>
         standaardinstellingen.
-      success-one: '&a [name] vlag ingesteld op standaard voor alle eilanden.'
+      success-one: '<green>[name] vlag ingesteld op standaard voor alle eilanden.</green>'
     world:
       description: Beheer wereldinstellingen
     delete:
       parameters: <speler>
       description: verwijdert het eiland van een speler
       cannot-delete-owner: >-
-        &c Alle eilandleden moeten van het eiland worden verwijderd voordat ze
+        <red>Alle eilandleden moeten van het eiland worden verwijderd voordat ze</red>
         het kunnen verwijderen.
-      deleted-island: '&a Island at &e [xyz] &a is succesvol verwijderd.'
+      deleted-island: '<green>Island at </green><yellow>[xyz] </yellow><green>is succesvol verwijderd.</green>'
     deletehomes:
       parameters: <speler>
       description: verwijdert alle benoemde huizen van [prefix_an-island]
-      warning: '&c Alle genaamde huizen zullen worden verwijderd van de [prefix_island]!'
+      warning: '<red>Alle genaamde huizen zullen worden verwijderd van de [prefix_island]!</red>'
     why:
       parameters: <speler>
       description: schakel foutopsporingsrapportage voor consolebeveiliging in
@@ -564,28 +564,28 @@ commands:
       reset:
         description: reset de dood van de speler
         parameters: <speler>
-        success: '&a Met succes &b [name] &a ''s sterfgevallen gereset naar &b 0 &a.'
+        success: '<green>Met succes </green><aqua>[name] </aqua><green>''s sterfgevallen gereset naar </green><aqua>0 </aqua><green>.</green>'
       set:
         description: stelt de dood van de speler in
         parameters: <speler> <doden>
         success: >-
-          &a De sterfgevallen van &b [name] &a zijn succesvol ingesteld op &b
-          [number] &a.
+          <green>De sterfgevallen van </green><aqua>[name] </aqua><green>zijn succesvol ingesteld op </green><aqua></aqua>
+          [number] <green>.</green>
       add:
         description: voegt sterfgevallen toe aan de speler
         parameters: <speler> <doden>
         success: >-
-          &a Met succes &b [number]&a sterfgevallen toegevoegd aan &b [name],
-          waardoor het totaal is verhoogd naar &b [total] &a sterfgevallen.
+          <green>Met succes </green><aqua>[number]</aqua><green>sterfgevallen toegevoegd aan </green><aqua>[name],</aqua>
+          waardoor het totaal is verhoogd naar <aqua>[total] </aqua><green>sterfgevallen.</green>
       remove:
         description: verwijdert sterfgevallen voor de speler
         parameters: <speler> <doden>
         success: >-
-          &a Met succes verwijderd &b [number]&a sterfgevallen aan &b [name],
-          waardoor het totaal afneemt tot &b [total] &a sterfgevallen.
+          <green>Met succes verwijderd </green><aqua>[number]</aqua><green>sterfgevallen aan </green><aqua>[name],</aqua>
+          waardoor het totaal afneemt tot <aqua>[total] </aqua><green>sterfgevallen.</green>
     resetname:
       description: reset speler [prefix_island] naam
-      success: '&a Succesvol de naam van [name]''s [prefix_island] gereset.'
+      success: '<green>Succesvol de naam van [name]''s [prefix_island] gereset.</green>'
   bentobox:
     description: BentoBox admin-opdracht
     perms:
@@ -594,26 +594,26 @@ commands:
       description: geeft copyright- en licentie-informatie weer
     reload:
       description: herlaadt BentoBox en alle add-ons, instellingen en landinstellingen
-      locales-reloaded: '[prefix_bentobox] &2 talen opnieuw geladen.'
-      addons-reloaded: '[prefix_bentobox] &2 add-ons opnieuw geladen.'
-      settings-reloaded: '[prefix_bentobox] &2 instellingen opnieuw geladen.'
-      addon: '[prefix_bentobox] &6 Herladen &b [name] &2.'
-      addon-reloaded: '[prefix_bentobox] &b [name] &2 herladen.'
+      locales-reloaded: '[prefix_bentobox] <dark_green>talen opnieuw geladen.</dark_green>'
+      addons-reloaded: '[prefix_bentobox] <dark_green>add-ons opnieuw geladen.</dark_green>'
+      settings-reloaded: '[prefix_bentobox] <dark_green>instellingen opnieuw geladen.</dark_green>'
+      addon: '[prefix_bentobox] <gold>Herladen </gold><aqua>[name] </aqua><dark_green>.</dark_green>'
+      addon-reloaded: '[prefix_bentobox] <aqua>[name] </aqua><dark_green>herladen.</dark_green>'
       warning: >-
-        [prefix_bentobox] &c Waarschuwing: herladen kan instabiliteit
+        [prefix_bentobox] <red>Waarschuwing: herladen kan instabiliteit</red>
         veroorzaken, dus als u daarna fouten ziet, start u de server opnieuw op.
-      unknown-addon: '[prefix_bentobox] &c Onbekende add-on!'
+      unknown-addon: '[prefix_bentobox] <red>Onbekende add-on!</red>'
       locales:
         description: herlaadt landinstellingen
     version:
-      plugin-version: '&2 BentoBox-versie: &3 [version]'
+      plugin-version: '<dark_green>BentoBox-versie: </dark_green><dark_aqua>[version]</dark_aqua>'
       description: geeft BentoBox- en add-onsversies weer
       loaded-addons: 'Geladen add-ons:'
       loaded-game-worlds: 'Geladen spelwerelden:'
-      addon-syntax: '&2 [name] &3 [version] &7 (&3 [state] &7)'
-      game-world: '&2 [name] &7 (&3 [addon] &7): &3 [worlds]'
-      server: '&2 Running &3 [name] [version] &2.'
-      database: '&2 Database: &3 [database]'
+      addon-syntax: '<dark_green>[name] </dark_green><dark_aqua>[version] </dark_aqua><gray>(</gray><dark_aqua>[state] </dark_aqua><gray>)</gray>'
+      game-world: '<dark_green>[name] </dark_green><gray>(</gray><dark_aqua>[addon] </dark_aqua><gray>): </gray><dark_aqua>[worlds]</dark_aqua>'
+      server: '<dark_green>Running </dark_green><dark_aqua>[name] [version] </dark_aqua><dark_green>.</dark_green>'
+      database: '<dark_green>Database: </dark_green><dark_aqua>[database]</dark_aqua>'
     manage:
       description: geeft het beheerpaneel weer
     catalog:
@@ -621,88 +621,88 @@ commands:
     locale:
       description: voert analyse van lokalisatiebestanden uit
       see-console: >-
-        [prefix_bentobox] &a Controleer de console om de feedback te zien.
+        [prefix_bentobox] <green>Controleer de console om de feedback te zien.</green>
 
-        [prefix_bentobox] &a Dit commando bevat zo veel spam dat de feedback
+        [prefix_bentobox] <green>Dit commando bevat zo veel spam dat de feedback</green>
         niet kan worden gelezen in de chat ...
     migrate:
       description: migreert gegevens van de ene database naar de andere
-      players: '[prefix_bentobox] &6 Migrerende spelers'
-      names: '[prefix_bentobox] &6 Migreren van namen'
-      addons: '[prefix_bentobox] &6 Add-ons migreren'
-      class: '[prefix_bentobox] &6 Migreren [description]'
-      migrated: '[prefix_bentobox] &a Gemigreerd'
-      completed: '[prefix_bentobox]&a Voltooid'
+      players: '[prefix_bentobox] <gold>Migrerende spelers</gold>'
+      names: '[prefix_bentobox] <gold>Migreren van namen</gold>'
+      addons: '[prefix_bentobox] <gold>Add-ons migreren</gold>'
+      class: '[prefix_bentobox] <gold>Migreren [description]</gold>'
+      migrated: '[prefix_bentobox] <green>Gemigreerd</green>'
+      completed: '[prefix_bentobox]<green>Voltooid</green>'
     rank:
       description: lijst, voeg toe of verwijder rangen
-      parameters: '&a [list | add | remove] [rank reference] [rank value]'
+      parameters: '<green>[list | add | remove] [rank reference] [rank value]</green>'
       add:
-        success: '&a Toegevoegd [rank] met waarde [number]'
+        success: '<green>Toegevoegd [rank] met waarde [number]</green>'
         failure: >-
-          &c Kon niet [rank] toevoegen met waarde [number]. Misschien een
+          <red>Kon niet [rank] toevoegen met waarde [number]. Misschien een</red>
           duplicaat?
       remove:
-        success: '&a Verwijderd [rank]'
-        failure: '&c Kon [rank] niet verwijderen. Onbekende rang.'
-      list: '&a Geregistreerde rangen zijn als volgt:'
+        success: '<green>Verwijderd [rank]</green>'
+        failure: '<red>Kon [rank] niet verwijderen. Onbekende rang.</red>'
+      list: '<green>Geregistreerde rangen zijn als volgt:</green>'
   confirmation:
-    confirm: '&c Typ het commando opnieuw binnen &b [seconds]s &c om te bevestigen.'
-    previous-request-cancelled: '&6 Eerder bevestigingsverzoek geannuleerd.'
-    request-cancelled: '&c Time-out voor bevestiging - &b-verzoek geannuleerd.'
+    confirm: '<red>Typ het commando opnieuw binnen </red><aqua>[seconds]s </aqua><red>om te bevestigen.</red>'
+    previous-request-cancelled: '<gold>Eerder bevestigingsverzoek geannuleerd.</gold>'
+    request-cancelled: '<red>Time-out voor bevestiging - </red><aqua>-verzoek geannuleerd.</aqua>'
   delay:
-    previous-command-cancelled: '&c Vorige opdracht geannuleerd'
-    stand-still: '&6 Beweeg niet! Teleporteren in [seconds]seconden'
-    moved-so-command-cancelled: '&c Je bent verhuisd. Teleport geannuleerd!'
+    previous-command-cancelled: '<red>Vorige opdracht geannuleerd</red>'
+    stand-still: '<gold>Beweeg niet! Teleporteren in [seconds]seconden</gold>'
+    moved-so-command-cancelled: '<red>Je bent verhuisd. Teleport geannuleerd!</red>'
   island:
     about:
       description: licentiegegevens weergeven
     go:
       parameters: '[naam huis]'
       description: teleporteer je naar je eiland
-      teleport: '&a Teleporteert u naar uw eiland.'
-      in-progress: '&a Teleporteren in uitvoering, een moment geduld...'
-      teleported: '&a heeft je naar huis geteleporteerd &e [number].'
+      teleport: '<green>Teleporteert u naar uw eiland.</green>'
+      in-progress: '<green>Teleporteren in uitvoering, een moment geduld...</green>'
+      teleported: '<green>heeft je naar huis geteleporteerd </green><yellow>[number].</yellow>'
       failure: >-
-        &c Teleporteren is om een of andere reden mislukt. Probeer het later
+        <red>Teleporteren is om een of andere reden mislukt. Probeer het later</red>
         opnieuw.
-      unknown-home: '&c Onbekende thuisnaam!'
+      unknown-home: '<red>Onbekende thuisnaam!</red>'
     help:
       description: het commando van het hoofdeiland
     spawn:
       description: teleporteer je naar de spawn
-      teleporting: '&a Teleporteren je naar de spawn.'
-      no-spawn: '&c Er is geen spawn in deze spelmodus.'
+      teleporting: '<green>Teleporteren je naar de spawn.</green>'
+      no-spawn: '<red>Er is geen spawn in deze spelmodus.</red>'
     create:
       description: >-
         maak een eiland met behulp van een optionele blauwdruk (toestemming
         vereist)
       parameters: <blauwafdruk>
       too-many-islands: >-
-        &c Er zijn te veel eilanden in deze wereld: er is niet genoeg ruimte om
+        <red>Er zijn te veel eilanden in deze wereld: er is niet genoeg ruimte om</red>
         de jouwe te creëren.
-      cannot-create-island: '&c Er kon niet op tijd een plek worden gevonden, probeer het opnieuw ...'
+      cannot-create-island: '<red>Er kon niet op tijd een plek worden gevonden, probeer het opnieuw ...</red>'
       unable-create-island: >-
-        &c Uw eiland kon niet worden gegenereerd, neem contact op met een
+        <red>Uw eiland kon niet worden gegenereerd, neem contact op met een</red>
         beheerder.
-      creating-island: '&a Een plek vinden voor uw eiland ...'
-      you-cannot-make: '&c Je kunt geen eilanden meer maken!'
-      max-uses: '&c Je kunt geen meer van dat type [prefix_island] maken!'
+      creating-island: '<green>Een plek vinden voor uw eiland ...</green>'
+      you-cannot-make: '<red>Je kunt geen eilanden meer maken!</red>'
+      max-uses: '<red>Je kunt geen meer van dat type [prefix_island] maken!</red>'
       you-cannot-make-team: >-
-        &c Teamleden kunnen geen eilanden maken in dezelfde wereld als hun team
+        <red>Teamleden kunnen geen eilanden maken in dezelfde wereld als hun team</red>
         [prefix_island].
       pasting:
-        estimated-time: '&a Geschatte tijd: &b [number]&a seconden.'
-        blocks: '&a Building it blok voor blok: &b [number] &a blokken in totaal ...'
-        entities: '&a Het vullen met entiteiten: &b [number]&a entiteiten in totaal ...'
-        dimension-done: '&a [prefix_Island] in [wereld] is gebouwd.'
-        done: '&a Klaar! Je eiland staat klaar en wacht op je!'
-      pick: '&2 Kies een eiland'
-      cannot-afford: '&c Je kunt dit niet betalen! Kosten: [cost]'
-      unknown-blueprint: '&c Die blauwdruk is nog niet geladen.'
+        estimated-time: '<green>Geschatte tijd: </green><aqua>[number]</aqua><green>seconden.</green>'
+        blocks: '<green>Building it blok voor blok: </green><aqua>[number] </aqua><green>blokken in totaal ...</green>'
+        entities: '<green>Het vullen met entiteiten: </green><aqua>[number]</aqua><green>entiteiten in totaal ...</green>'
+        dimension-done: '<green>[prefix_Island] in [wereld] is gebouwd.</green>'
+        done: '<green>Klaar! Je eiland staat klaar en wacht op je!</green>'
+      pick: '<dark_green>Kies een eiland</dark_green>'
+      cannot-afford: '<red>Je kunt dit niet betalen! Kosten: [cost]</red>'
+      unknown-blueprint: '<red>Die blauwdruk is nog niet geladen.</red>'
       on-first-login: >-
-        &a welkom! We zullen binnen een paar seconden beginnen met het
+        <green>welkom! We zullen binnen een paar seconden beginnen met het</green>
         voorbereiden van uw eiland.
-      you-can-teleport-to-your-island: '&a Je kunt naar je eiland teleporteren wanneer je maar wilt.'
+      you-can-teleport-to-your-island: '<green>Je kunt naar je eiland teleporteren wanneer je maar wilt.</green>'
     deletehome:
       description: een thuislocatie verwijderen
       parameters: '[naam huis]'
@@ -714,59 +714,59 @@ commands:
     near:
       description: toon de naam van naburige eilanden om je heen
       parameters: ''
-      the-following-islands: '&a De volgende eilanden zijn in de buurt:'
-      syntax: '&6 [direction]: &a [name]'
+      the-following-islands: '<green>De volgende eilanden zijn in de buurt:</green>'
+      syntax: '<gold>[direction]: </gold><green>[name]</green>'
       north: Noorden
       south: Zuiden
       east: Oosten
       west: West
-      no-neighbors: '&c Je hebt geen directe naburige eilanden!'
+      no-neighbors: '<red>Je hebt geen directe naburige eilanden!</red>'
     reset:
       description: herstart je eiland en verwijder de oude
       parameters: <blauwafdruk>
-      none-left: '&c Je hebt geen resets meer!'
-      resets-left: '&c Je hebt &b [number]&c resets over'
+      none-left: '<red>Je hebt geen resets meer!</red>'
+      resets-left: '<red>Je hebt </red><aqua>[number]</aqua><red>resets over</red>'
       confirmation: >-
-        &c Weet u zeker dat u dit wilt doen?
+        <red>Weet u zeker dat u dit wilt doen?</red>
 
-        &c Alle eilandleden worden van het eiland getrapt, je zult ze daarna
+        <red>Alle eilandleden worden van het eiland getrapt, je zult ze daarna</red>
         opnieuw moeten uitnodigen.
 
-        &c Er is geen weg meer terug: als je huidige eiland eenmaal is
-        verwijderd, is er &l geen &r &c manier om het later terug te halen.
+        <red>Er is geen weg meer terug: als je huidige eiland eenmaal is</red>
+        verwijderd, is er <bold>geen </bold><red>manier om het later terug te halen.</red>
       kicked-from-island: >-
-        &c Je wordt van je eiland getrapt in [gamemode] omdat de eigenaar het
+        <red>Je wordt van je eiland getrapt in [gamemode] omdat de eigenaar het</red>
         aan het resetten is.
     sethome:
       description: stel uw thuisteleporteerpunt in
-      must-be-on-your-island: '&c Je moet op je eiland zijn om naar huis te gaan!'
-      too-many-homes: '&c Kan niet instellen - je eiland heeft maximaal [number] huizen.'
-      home-set: '&6 Uw eilandhuis is ingesteld op uw huidige locatie.'
-      homes-are: '&6 eilandwoningen zijn:'
-      home-list-syntax: '&6 [name]'
-      click-to-teleport: '&a Klik om te teleporteren!'
+      must-be-on-your-island: '<red>Je moet op je eiland zijn om naar huis te gaan!</red>'
+      too-many-homes: '<red>Kan niet instellen - je eiland heeft maximaal [number] huizen.</red>'
+      home-set: '<gold>Uw eilandhuis is ingesteld op uw huidige locatie.</gold>'
+      homes-are: '<gold>eilandwoningen zijn:</gold>'
+      home-list-syntax: '<gold>[name]</gold>'
+      click-to-teleport: '<green>Klik om te teleporteren!</green>'
       nether:
-        not-allowed: '&c Het is niet toegestaan om uw huis in Nederland te plaatsen.'
-        confirmation: '&c Weet u zeker dat u uw huis in de Nether wilt plaatsen?'
+        not-allowed: '<red>Het is niet toegestaan om uw huis in Nederland te plaatsen.</red>'
+        confirmation: '<red>Weet u zeker dat u uw huis in de Nether wilt plaatsen?</red>'
       the-end:
-        not-allowed: '&c Je mag je huis niet op het einde zetten.'
-        confirmation: '&c Weet u zeker dat u uw huis op het einde wilt zetten?'
+        not-allowed: '<red>Je mag je huis niet op het einde zetten.</red>'
+        confirmation: '<red>Weet u zeker dat u uw huis op het einde wilt zetten?</red>'
       parameters: '[naam huis]'
     setname:
       description: stel een naam voor je eiland in
-      name-too-short: '&c Te kort. Minimale grootte is [number]tekens.'
-      name-too-long: '&c Te lang. De maximale grootte is [number]tekens.'
-      name-already-exists: '&c Er is al een eiland met die naam in deze spelmodus.'
+      name-too-short: '<red>Te kort. Minimale grootte is [number]tekens.</red>'
+      name-too-long: '<red>Te lang. De maximale grootte is [number]tekens.</red>'
+      name-already-exists: '<red>Er is al een eiland met die naam in deze spelmodus.</red>'
       parameters: <naam>
-      success: '&a Stel de naam van je eiland succesvol in op &b [name] &a.'
+      success: '<green>Stel de naam van je eiland succesvol in op </green><aqua>[name] </aqua><green>.</green>'
     renamehome:
       description: de naam van een thuislocatie wijzigen
       parameters: '[naam huis]'
-      enter-new-name: '&6 Voer de nieuwe naam in'
-      already-exists: '&c Die naam bestaat al, probeer een andere naam.'
+      enter-new-name: '<gold>Voer de nieuwe naam in</gold>'
+      already-exists: '<red>Die naam bestaat al, probeer een andere naam.</red>'
     resetname:
       description: reset je eilandnaam
-      success: '&a Reset je eilandnaam succesvol.'
+      success: '<green>Reset je eilandnaam succesvol.</green>'
     team:
       description: beheer je team
       gui:
@@ -778,244 +778,244 @@ commands:
             description: De status van het team
           rank-filter:
             name: Rangfilter
-            description: '&a Klik om rangen te draaien'
+            description: '<green>Klik om rangen te draaien</green>'
           invitation: Uitnodiging
           invite:
             name: Nodig speler uit
             description: |-
-              &a Spelers moeten zich in de
-              &a dezelfde wereld als jij bevinden
-              &a om in de lijst te worden weergegeven.
+              <green>Spelers moeten zich in de</green>
+              <green>dezelfde wereld als jij bevinden</green>
+              <green>om in de lijst te worden weergegeven.</green>
         tips:
           LEFT:
-            name: '&b Linker Klik'
-            invite: '&a om een speler uit te nodigen'
+            name: '<aqua>Linker Klik</aqua>'
+            invite: '<green>om een speler uit te nodigen</green>'
           RIGHT:
-            name: '&b Rechts Klikken'
+            name: '<aqua>Rechts Klikken</aqua>'
           SHIFT_RIGHT:
-            name: '&b Shift Rechts Klik'
-            reject: '&a om te weigeren'
-            kick: '&a om speler te schoppen'
-            leave: '&a om team te verlaten'
+            name: '<aqua>Shift Rechts Klik</aqua>'
+            reject: '<green>om te weigeren</green>'
+            kick: '<green>om speler te schoppen</green>'
+            leave: '<green>om team te verlaten</green>'
           SHIFT_LEFT:
-            name: '&b Shift Linker Klik'
-            accept: '&a om te accepteren'
+            name: '<aqua>Shift Linker Klik</aqua>'
+            accept: '<green>om te accepteren</green>'
             setowner: |-
-              &a om eigenaar in te stellen  
-              &a naar deze speler
+              <green>om eigenaar in te stellen</green>
+              <green>naar deze speler</green>
       info:
         description: gedetailleerde informatie over uw team weergeven
         member-layout:
-          online: '&a &l o &r &f [name]'
-          offline: '&c &l o &r &f [name] &7 ([last_seen])'
-          offline-not-last-seen: '&c &l o &r &f [name]'
+          online: '<green><bold>o </bold></green><white>[name]</white>'
+          offline: '<red><bold>o </bold></red><white>[name] </white><gray>([last_seen])</gray>'
+          offline-not-last-seen: '<red><bold>o </bold></red><white>[name]</white>'
         last-seen:
-          layout: '&b [number] &7 [unit] geleden'
+          layout: '<aqua>[number] </aqua><gray>[unit] geleden</gray>'
           days: dagen
           hours: uren
           minutes: minuten
         header: |
-          &f --- &a teamdetails &f ---
-          &a Leden: &b [total] &7 / &b [max]
-          &a Online leden: &b [online]
+          <white>--- </white><green>teamdetails </green><white>---</white>
+          <green>Leden: </green><aqua>[total] </aqua><gray>/ </gray><aqua>[max]</aqua>
+          <green>Online leden: </green><aqua>[online]</aqua>
         rank-layout:
-          owner: '&6 [rank]:'
-          generic: '&6 [rank] &7 (&b [number] &7) &6:'
+          owner: '<gold>[rank]:</gold>'
+          generic: '<gold>[rank] </gold><gray>(</gray><aqua>[number] </aqua><gray>) </gray><gold>:</gold>'
       coop:
         description: maak een speler-coop rang op je eiland
         parameters: <speler>
-        cannot-coop-yourself: '&c Je kunt jezelf niet opsluiten!'
-        already-has-rank: '&c Speler heeft al een rang!'
-        you-are-a-coop-member: '&2 Je werd opgesloten door &b [name] &a.'
-        success: '&a Je hebt opgesloten &b [name] &a.'
+        cannot-coop-yourself: '<red>Je kunt jezelf niet opsluiten!</red>'
+        already-has-rank: '<red>Speler heeft al een rang!</red>'
+        you-are-a-coop-member: '<dark_green>Je werd opgesloten door </dark_green><aqua>[name] </aqua><green>.</green>'
+        success: '<green>Je hebt opgesloten </green><aqua>[name] </aqua><green>.</green>'
         name-has-invited-you: >-
-          &a [name] heeft je uitgenodigd om lid te worden van een coop-lid van
+          <green>[name] heeft je uitgenodigd om lid te worden van een coop-lid van</green>
           hun eiland.
       uncoop:
         description: een coop-rang van de speler verwijderen
         parameters: <speler>
-        cannot-uncoop-yourself: '&c Je kunt jezelf niet losmaken!'
-        cannot-uncoop-member: '&c U kunt een teamlid niet verwijderen!'
-        player-not-cooped: '&c Speler zit niet opgesloten!'
-        you-are-no-longer-a-coop-member: '&c U bent niet langer lid van de coöperatie van het eiland van [name].'
+        cannot-uncoop-yourself: '<red>Je kunt jezelf niet losmaken!</red>'
+        cannot-uncoop-member: '<red>U kunt een teamlid niet verwijderen!</red>'
+        player-not-cooped: '<red>Speler zit niet opgesloten!</red>'
+        you-are-no-longer-a-coop-member: '<red>U bent niet langer lid van de coöperatie van het eiland van [name].</red>'
         all-members-logged-off: >-
-          &c Alle leden van het eiland hebben zich afgemeld, zodat u niet langer
+          <red>Alle leden van het eiland hebben zich afgemeld, zodat u niet langer</red>
           een coöperatief lid bent van het eiland van [name].
-        success: '&b [name] &a is niet langer lid van de kippenhok van uw eiland.'
-        is-full: '&c Je kunt niemand anders opsluiten.'
+        success: '<aqua>[name] </aqua><green>is niet langer lid van de kippenhok van uw eiland.</green>'
+        is-full: '<red>Je kunt niemand anders opsluiten.</red>'
       trust:
         description: geef een speler een vertrouwde rang op je eiland
         parameters: <speler>
-        trust-in-yourself: '&c Vertrouw op jezelf!'
+        trust-in-yourself: '<red>Vertrouw op jezelf!</red>'
         name-has-invited-you: >-
-          &a [name] heeft je uitgenodigd om lid te worden van een vertrouwd lid
+          <green>[name] heeft je uitgenodigd om lid te worden van een vertrouwd lid</green>
           van hun eiland.
-        player-already-trusted: '&c Player is al vertrouwd!'
-        you-are-trusted: '&2 U wordt vertrouwd door &b [name] &a!'
-        success: '&a U vertrouwde &b [name] &a.'
-        is-full: '&c Je kunt niemand anders vertrouwen.'
+        player-already-trusted: '<red>Player is al vertrouwd!</red>'
+        you-are-trusted: '<dark_green>U wordt vertrouwd door </dark_green><aqua>[name] </aqua><green>!</green>'
+        success: '<green>U vertrouwde </green><aqua>[name] </aqua><green>.</green>'
+        is-full: '<red>Je kunt niemand anders vertrouwen.</red>'
       untrust:
         description: verwijder vertrouwde speler rang van speler
         parameters: <speler>
-        cannot-untrust-yourself: '&c Je kunt jezelf niet onwrikbaar maken!'
-        cannot-untrust-member: '&c Je kunt een teamlid niet onbetrouwbaar maken!'
-        player-not-trusted: '&c Speler wordt niet vertrouwd!'
-        you-are-no-longer-trusted: '&c U wordt niet langer vertrouwd door &b [name] &a!'
-        success: '&b [name] &a wordt niet langer vertrouwd op uw eiland.'
+        cannot-untrust-yourself: '<red>Je kunt jezelf niet onwrikbaar maken!</red>'
+        cannot-untrust-member: '<red>Je kunt een teamlid niet onbetrouwbaar maken!</red>'
+        player-not-trusted: '<red>Speler wordt niet vertrouwd!</red>'
+        you-are-no-longer-trusted: '<red>U wordt niet langer vertrouwd door </red><aqua>[name] </aqua><green>!</green>'
+        success: '<aqua>[name] </aqua><green>wordt niet langer vertrouwd op uw eiland.</green>'
       invite:
         description: nodig een speler uit om zich bij je eiland aan te sluiten
-        invitation-sent: '&a uitnodiging verzonden naar &b [name] &a.'
-        removing-invite: '&c Uitnodiging verwijderen.'
-        name-has-invited-you: '&a [name] heeft je uitgenodigd om lid te worden van hun eiland.'
+        invitation-sent: '<green>uitnodiging verzonden naar </green><aqua>[name] </aqua><green>.</green>'
+        removing-invite: '<red>Uitnodiging verwijderen.</red>'
+        name-has-invited-you: '<green>[name] heeft je uitgenodigd om lid te worden van hun eiland.</green>'
         to-accept-or-reject: >-
-          &a Do /[label] team accepteren om te accepteren, of /[label] team
+          <green>Do /[label] team accepteren om te accepteren, of /[label] team</green>
           weigeren om te weigeren
-        you-will-lose-your-island: '&c WAARSCHUWING! Je verliest je eiland als je accepteert!'
+        you-will-lose-your-island: '<red>WAARSCHUWING! Je verliest je eiland als je accepteert!</red>'
         gui:
           titles:
             team-invite-panel: Nodig Spelers Uit
           button:
-            already-invited: '&c Al uitgenodigd'
-            search: '&a Zoek naar een speler'
+            already-invited: '<red>Al uitgenodigd</red>'
+            search: '<green>Zoek naar een speler</green>'
             searching: |-
-              &b Zoeken naar  
-              &c [name]
-          enter-name: '&a Voer naam in:'
+              <aqua>Zoeken naar</aqua>
+              <red>[name]</red>
+          enter-name: '<green>Voer naam in:</green>'
           tips:
             LEFT:
-              name: '&b Linker Muisklik'
-              search: '&a Voer de naam van de speler in'
-              back: '&a Terug'
+              name: '<aqua>Linker Muisklik</aqua>'
+              search: '<green>Voer de naam van de speler in</green>'
+              back: '<green>Terug</green>'
               invite: |-
-                &a om een speler uit te nodigen  
-                &a om je team te verwijen
+                <green>om een speler uit te nodigen</green>
+                <green>om je team te verwijen</green>
             RIGHT:
-              name: '&b Rechts Klikken'
-              coop: '&a om speler te coöpereren'
+              name: '<aqua>Rechts Klikken</aqua>'
+              coop: '<green>om speler te coöpereren</green>'
             SHIFT_LEFT:
-              name: '&b Shift Links Klikken'
-              trust: '&a om een speler te vertrouwen'
+              name: '<aqua>Shift Links Klikken</aqua>'
+              trust: '<green>om een speler te vertrouwen</green>'
         errors:
-          cannot-invite-self: '&c Je kunt jezelf niet uitnodigen!'
+          cannot-invite-self: '<red>Je kunt jezelf niet uitnodigen!</red>'
           cooldown: >-
-            &c Je kunt die persoon niet voor nog een [number]seconden
+            <red>Je kunt die persoon niet voor nog een [number]seconden</red>
             uitnodigen.
-          island-is-full: '&c Je eiland is vol, je kunt niemand anders uitnodigen.'
-          none-invited-you: '&c Niemand heeft je uitgenodigd: c.'
-          you-already-are-in-team: '&c Je zit al in een team!'
-          already-on-team: '&c Die speler zit al in een team!'
-          invalid-invite: '&c Die uitnodiging is niet langer geldig, sorry.'
-          you-have-already-invited: '&c Je hebt die speler al uitgenodigd!'
+          island-is-full: '<red>Je eiland is vol, je kunt niemand anders uitnodigen.</red>'
+          none-invited-you: '<red>Niemand heeft je uitgenodigd: c.</red>'
+          you-already-are-in-team: '<red>Je zit al in een team!</red>'
+          already-on-team: '<red>Die speler zit al in een team!</red>'
+          invalid-invite: '<red>Die uitnodiging is niet langer geldig, sorry.</red>'
+          you-have-already-invited: '<red>Je hebt die speler al uitgenodigd!</red>'
         parameters: <speler>
-        you-can-invite: '&a Je kunt nog [number]spelers uitnodigen.'
+        you-can-invite: '<green>Je kunt nog [number]spelers uitnodigen.</green>'
         accept:
           description: accepteer een uitnodiging
           you-joined-island: >-
-            &a Je bent lid geworden van een eiland! Gebruik &b /[label] team &a
+            <green>Je bent lid geworden van een eiland! Gebruik </green><aqua>/[label] team </aqua><green></green>
             om de andere leden te zien.
-          name-joined-your-island: '&a [name] kwam bij je eiland!'
+          name-joined-your-island: '<green>[name] kwam bij je eiland!</green>'
           confirmation: |-
-            &c Weet u zeker dat u deze uitnodiging wilt accepteren?
-            &c &l Je zult &n VERLIEZEN &r &c &l je huidige eiland!
+            <red>Weet u zeker dat u deze uitnodiging wilt accepteren?</red>
+            <red><bold>Je zult <underlined>VERLIEZEN </underlined></bold></red><red><bold>je huidige eiland!</bold></red>
         reject:
           description: een uitnodiging afwijzen
-          you-rejected-invite: '&a Je hebt de uitnodiging om lid te worden van een eiland afgewezen.'
-          name-rejected-your-invite: '&c [name] heeft je eilanduitnodiging afgewezen!'
+          you-rejected-invite: '<green>Je hebt de uitnodiging om lid te worden van een eiland afgewezen.</green>'
+          name-rejected-your-invite: '<red>[name] heeft je eilanduitnodiging afgewezen!</red>'
         cancel:
           description: annuleer de lopende uitnodiging om lid te worden van je eiland
       leave:
         cannot-leave: >-
-          &c Eigenaren kunnen niet vertrekken! Word eerst lid, of schop alle
+          <red>Eigenaren kunnen niet vertrekken! Word eerst lid, of schop alle</red>
           leden.
         description: verlaat je eiland
-        left-your-island: '&c [name] &c uw eiland verlaten'
-        success: '&a Je hebt dit eiland verlaten.'
+        left-your-island: '<red>[name] </red><red>uw eiland verlaten</red>'
+        success: '<green>Je hebt dit eiland verlaten.</green>'
       kick:
         description: verwijder een lid van je eiland
         parameters: <speler>
-        player-kicked: '&c De [name] heeft je van de [prefix_island] in [gamemode] gekicked!'
-        cannot-kick: '&c Je kunt jezelf niet schoppen!'
-        cannot-kick-rank: '&c Je rang staat niet toe om [name] te kicken!'
-        success: '&b [name] &a is van je eiland getrapt.'
+        player-kicked: '<red>De [name] heeft je van de [prefix_island] in [gamemode] gekicked!</red>'
+        cannot-kick: '<red>Je kunt jezelf niet schoppen!</red>'
+        cannot-kick-rank: '<red>Je rang staat niet toe om [name] te kicken!</red>'
+        success: '<aqua>[name] </aqua><green>is van je eiland getrapt.</green>'
       demote:
         description: een speler op uw eiland een rang verlagen
         parameters: <speler>
         errors:
-          cant-demote-yourself: '&c Je kunt jezelf niet degraderen!'
-          cant-demote: '&c Je kunt hogere rangen niet degraderen!'
-          must-be-member: '&c Speler moet [prefix_an-island] lid zijn!'
-        failure: '&c Speler kan niet verder worden gedegradeerd!'
-        success: '&a gedegradeerd [name] naar [rank]'
+          cant-demote-yourself: '<red>Je kunt jezelf niet degraderen!</red>'
+          cant-demote: '<red>Je kunt hogere rangen niet degraderen!</red>'
+          must-be-member: '<red>Speler moet [prefix_an-island] lid zijn!</red>'
+        failure: '<red>Speler kan niet verder worden gedegradeerd!</red>'
+        success: '<green>gedegradeerd [name] naar [rank]</green>'
       promote:
         description: promoot een speler op je eiland in rang
         parameters: <speler>
         errors:
-          cant-promote-yourself: '&c Je kunt jezelf niet promoten!'
-          cant-promote: '&c Je kunt niet hoger promoveren dan je rang!'
-          must-be-member: '&c Speler moet lid zijn van [prefix_an-island]!'
-        failure: '&c Speler kan niet verder worden gepromoveerd!'
-        success: '&a heeft [name] gepromoveerd tot [rank]'
+          cant-promote-yourself: '<red>Je kunt jezelf niet promoten!</red>'
+          cant-promote: '<red>Je kunt niet hoger promoveren dan je rang!</red>'
+          must-be-member: '<red>Speler moet lid zijn van [prefix_an-island]!</red>'
+        failure: '<red>Speler kan niet verder worden gepromoveerd!</red>'
+        success: '<green>heeft [name] gepromoveerd tot [rank]</green>'
       setowner:
         description: draag uw eilandbezit over aan een lid
         errors:
           cant-transfer-to-yourself: >-
-            &c U kunt het eigendom niet aan uzelf overdragen! &7 (&o Nou, in
+            <red>U kunt het eigendom niet aan uzelf overdragen! </red><gray>(<italic>Nou, in</italic></gray>
             feite zou je kunnen ... Maar we willen niet dat je dat doet. Omdat
-            het nutteloos is. &R &7)
-          target-is-not-member: '&c Die speler maakt geen deel uit van je eilandteam!'
+            het nutteloos is. <gray>)</gray>
+          target-is-not-member: '<red>Die speler maakt geen deel uit van je eilandteam!</red>'
           at-max: >-
-            &c Die speler heeft al het maximum aantal eilanden dat ze mogen
+            <red>Die speler heeft al het maximum aantal eilanden dat ze mogen</red>
             hebben!
-        name-is-the-owner: '&a [name] is nu de eilandeigenaar!'
+        name-is-the-owner: '<green>[name] is nu de eilandeigenaar!</green>'
         parameters: <speler>
-        you-are-the-owner: '&a Je bent nu de eilandeigenaar!'
+        you-are-the-owner: '<green>Je bent nu de eilandeigenaar!</green>'
     ban:
       description: ban een speler van je eiland
       parameters: <speler>
-      cannot-ban-yourself: '&c Je kunt jezelf niet verbannen!'
-      cannot-ban: '&c Die speler kan niet worden uitgesloten.'
-      cannot-ban-member: '&c Schop eerst het teamlid en vervolgens ban.'
+      cannot-ban-yourself: '<red>Je kunt jezelf niet verbannen!</red>'
+      cannot-ban: '<red>Die speler kan niet worden uitgesloten.</red>'
+      cannot-ban-member: '<red>Schop eerst het teamlid en vervolgens ban.</red>'
       cannot-ban-more-players: >-
-        &c Je hebt de banlimiet bereikt, je kunt geen spelers meer van je eiland
+        <red>Je hebt de banlimiet bereikt, je kunt geen spelers meer van je eiland</red>
         verbannen.
-      player-already-banned: '&c Speler is al verbannen.'
-      player-banned: '&b [name] &c is nu verbannen van je eiland.'
-      owner-banned-you: '&b [name] &c hebben je van hun eiland verbannen!'
-      you-are-banned: '&b Je bent verbannen van dit eiland!'
+      player-already-banned: '<red>Speler is al verbannen.</red>'
+      player-banned: '<aqua>[name] </aqua><red>is nu verbannen van je eiland.</red>'
+      owner-banned-you: '<aqua>[name] </aqua><red>hebben je van hun eiland verbannen!</red>'
+      you-are-banned: '<aqua>Je bent verbannen van dit eiland!</aqua>'
     unban:
       description: ontkoppel een speler van je eiland
       parameters: <speler>
-      cannot-unban-yourself: '&c Je kunt jezelf niet ongedaan maken!'
-      player-not-banned: '&c Speler is niet verbannen.'
-      player-unbanned: '&b [name] &a is nu uitgesloten van uw eiland.'
-      you-are-unbanned: '&b [name] &a verbannen u van hun eiland!'
+      cannot-unban-yourself: '<red>Je kunt jezelf niet ongedaan maken!</red>'
+      player-not-banned: '<red>Speler is niet verbannen.</red>'
+      player-unbanned: '<aqua>[name] </aqua><green>is nu uitgesloten van uw eiland.</green>'
+      you-are-unbanned: '<aqua>[name] </aqua><green>verbannen u van hun eiland!</green>'
     banlist:
       description: lijst verbannen spelers
-      noone: '&a Niemand is verboden op dit eiland.'
-      the-following: '&b De volgende spelers zijn uitgesloten:'
-      names: '&c [line]'
-      you-can-ban: '&b Je kunt tot &e [number]&b meer spelers bannen.'
+      noone: '<green>Niemand is verboden op dit eiland.</green>'
+      the-following: '<aqua>De volgende spelers zijn uitgesloten:</aqua>'
+      names: '<red>[line]</red>'
+      you-can-ban: '<aqua>Je kunt tot </aqua><yellow>[number]</yellow><aqua>meer spelers bannen.</aqua>'
     settings:
       description: eilandinstellingen weergeven
     language:
       description: selecteer taal
       parameters: '[taal]'
-      not-available: '&c Deze taal is niet beschikbaar.'
-      already-selected: '&c U gebruikt deze taal al.'
+      not-available: '<red>Deze taal is niet beschikbaar.</red>'
+      already-selected: '<red>U gebruikt deze taal al.</red>'
     expel:
       description: verdrijf een speler van je eiland
       parameters: <speler>
-      cannot-expel-yourself: '&c Je kunt jezelf niet uitzetten!'
-      cannot-expel: '&c Die speler kan niet worden uitgesloten.'
-      cannot-expel-member: '&c Je kunt een teamlid niet verwijderen!'
-      not-on-island: '&c Die speler is niet op jouw eiland!'
-      player-expelled-you: '&b [name] &c hebben je van het eiland verdreven!'
-      success: '&a Je hebt &b [name] &a van het eiland verdreven.'
+      cannot-expel-yourself: '<red>Je kunt jezelf niet uitzetten!</red>'
+      cannot-expel: '<red>Die speler kan niet worden uitgesloten.</red>'
+      cannot-expel-member: '<red>Je kunt een teamlid niet verwijderen!</red>'
+      not-on-island: '<red>Die speler is niet op jouw eiland!</red>'
+      player-expelled-you: '<aqua>[name] </aqua><red>hebben je van het eiland verdreven!</red>'
+      success: '<green>Je hebt </green><aqua>[name] </aqua><green>van het eiland verdreven.</green>'
     lock:
       description: sluit je [prefix_island] af of open het
-      locked: '&a Je [prefix_island] is nu afgesloten.'
-      unlocked: '&a Je [prefix_island] is nu open.'
-      you-are-locked-out: '&c Dit [prefix_island] is nu afgesloten. Je bent verwijderd.'
+      locked: '<green>Je [prefix_island] is nu afgesloten.</green>'
+      unlocked: '<green>Je [prefix_island] is nu open.</green>'
+      you-are-locked-out: '<red>Dit [prefix_island] is nu afgesloten. Je bent verwijderd.</red>'
 ranks:
   owner: Eigenaar
   sub-owner: Ondereigenaar
@@ -1072,8 +1072,8 @@ protection:
     BOOKSHELF:
       name: Boekenkasten
       description: |-
-        &a Sta toe om boeken te plaatsen  
-        &a of om boeken te nemen.
+        <green>Sta toe om boeken te plaatsen</green>
+        <green>of om boeken te nemen.</green>
       hint: kan geen boek plaatsen of een boek nemen.
     BREAK_BLOCKS:
       description: Schakel breken
@@ -1122,19 +1122,19 @@ protection:
     CONTAINER:
       name: Containers
       description: |-
-        &a Toggle interactie met kisten,
-        &a shulker-dozen en bloempotten,
-        &a composteerders en vaten.
+        <green>Toggle interactie met kisten,</green>
+        <green>shulker-dozen en bloempotten,</green>
+        <green>composteerders en vaten.</green>
 
-        &7 Andere containers worden behandeld
-        &7 door speciale vlaggen.
+        <gray>Andere containers worden behandeld</gray>
+        <gray>door speciale vlaggen.</gray>
       hint: Containertoegang uitgeschakeld
     CHEST:
       name: Kisten en mijncartkisten
       description: |-
-        &a Toggle interactie met kisten  
-        &a en kisten-mijnwagentjes.  
-        &a (sluit gevallen kisten niet in)
+        <green>Toggle interactie met kisten</green>
+        <green>en kisten-mijnwagentjes.</green>
+        <green>(sluit gevallen kisten niet in)</green>
       hint: Kisttoegang uitgeschakeld
     BARREL:
       name: Vaten
@@ -1146,9 +1146,9 @@ protection:
       hint: Knutsel uitgeschakeld
     BLOCK_EXPLODE_DAMAGE:
       description: |-
-        &a Sta Bed & Respawn Ankers toe  
-        &a om blokken te breken en schade  
-        &a toe te brengen aan entiteiten.
+        <green>Sta Bed & Respawn Ankers toe</green>
+        <green>om blokken te breken en schade</green>
+        <green>toe te brengen aan entiteiten.</green>
       name: Block exploderen schade
     COMPOSTER:
       name: Composters
@@ -1172,8 +1172,8 @@ protection:
       hint: Shulker box toegang uitgeschakeld
     SHULKER_TELEPORT:
       description: |-
-        &a Shulker kan teleporteren  
-        &a als deze actief is.
+        <green>Shulker kan teleporteren</green>
+        <green>als deze actief is.</green>
       name: Shulker teleporteren
     SMITHING:
       name: Smidwerk
@@ -1198,7 +1198,7 @@ protection:
     ELYTRA:
       name: Elytra
       description: Toggle elytra toegestaan of niet
-      hint: '&c WAARSCHUWING: Elytra kan hier niet worden gebruikt!'
+      hint: '<red>WAARSCHUWING: Elytra kan hier niet worden gebruikt!</red>'
     HOPPER:
       name: Hoppers
       description: Schakel tussen trechterinteractie
@@ -1212,56 +1212,56 @@ protection:
       hint: Koorfruit teleporteren uitgeschakeld
     CLEAN_SUPER_FLAT:
       description: |-
-        &a Schakel in om alles op te schonen
-        &a superplatte brokjes erin
-        &a eilandwerelden
+        <green>Schakel in om alles op te schonen</green>
+        <green>superplatte brokjes erin</green>
+        <green>eilandwerelden</green>
       name: Schoon Super Flat
     COARSE_DIRT_TILLING:
       description: |-
-        &a Toggle grondbewerking grof
-        &a vuil en breken podzol
-        &a om vuil te verkrijgen
+        <green>Toggle grondbewerking grof</green>
+        <green>vuil en breken podzol</green>
+        <green>om vuil te verkrijgen</green>
       name: Grof vuil bewerken
       hint: Geen grove vervuiling
     COLLECT_LAVA:
       description: |-
-        &a Toggle die lava verzamelt
-        &a (emmers overschrijven)
+        <green>Toggle die lava verzamelt</green>
+        <green>(emmers overschrijven)</green>
       name: Verzamel lava
       hint: Geen lavacollectie
     COLLECT_WATER:
       description: |-
-        &a Toggle die water verzamelt
-        &a (emmers overschrijven)
+        <green>Toggle die water verzamelt</green>
+        <green>(emmers overschrijven)</green>
       name: Verzamel water
       hint: Wateremmers uitgeschakeld
     COLLECT_POWDERED_SNOW:
       description: |-
-        &a Verzamelen van poedersneeuw aan/uit  
-        &a (overschrijf Emmers)
+        <green>Verzamelen van poedersneeuw aan/uit</green>
+        <green>(overschrijf Emmers)</green>
       name: Verzamel poedersneeuw
       hint: Gepoederde sneeuw emmers uitgeschakeld
     COMMAND_RANKS:
-      name: '&e Commandorangen'
-      description: '&a Configureer-opdrachtrangschikking'
+      name: '<yellow>Commandorangen</yellow>'
+      description: '<green>Configureer-opdrachtrangschikking</green>'
     CRAFTING:
       description: Toggle gebruik
       name: Werkbanken
       hint: Toegang tot werkbank uitgeschakeld
     CREEPER_DAMAGE:
       description: |
-        &a Toggle klimplant
-        &a bescherming tegen schade
+        <green>Toggle klimplant</green>
+        <green>bescherming tegen schade</green>
       name: Bescherming tegen schade door kruipers
     CREEPER_GRIEFING:
       description: |
-        &a Toggle klimplant verdriet
-        &a bescherming bij ontsteking
-        &a door eilandbezoeker.
+        <green>Toggle klimplant verdriet</green>
+        <green>bescherming bij ontsteking</green>
+        <green>door eilandbezoeker.</green>
       name: Creeper rouwende bescherming
       hint: Creeper verdriet uitgeschakeld
     CROP_PLANTING:
-      description: '&a Stel in wie zaden kan planten.'
+      description: '<green>Stel in wie zaden kan planten.</green>'
       name: Gewasplanting
       hint: Teelt van gewassen is uitgeschakeld
     CROP_TRAMPLE:
@@ -1275,10 +1275,10 @@ protection:
     DRAGON_EGG:
       name: Draken Ei
       description: |-
-        &a Voorkomt interactie met drakeneieren.
+        <green>Voorkomt interactie met drakeneieren.</green>
 
-        &c Dit beschermt het niet tegen bestaan
-        &c geplaatst of kapot.
+        <red>Dit beschermt het niet tegen bestaan</red>
+        <red>geplaatst of kapot.</red>
       hint: Drakenei-interactie uitgeschakeld
     DYE:
       description: Voorkom het gebruik van kleurstoffen
@@ -1298,20 +1298,20 @@ protection:
       hint: Ender-kisten zijn uitgeschakeld in deze wereld
     ENDERMAN_DEATH_DROP:
       description: |-
-        &a Enderman zal vallen
-        &a willekeurig blok dat ze zijn
-        &a bedrijf als het wordt gedood.
+        <green>Enderman zal vallen</green>
+        <green>willekeurig blok dat ze zijn</green>
+        <green>bedrijf als het wordt gedood.</green>
       name: Enderman Dooddruppel
     ENDERMAN_GRIEFING:
       description: |-
-        &a Enderman kan verwijderen
-        &a blokken van eilanden
+        <green>Enderman kan verwijderen</green>
+        <green>blokken van eilanden</green>
       name: Enderman verdrietig
     ENDERMAN_TELEPORT:
       description: |-
-        &a Eindermanen kunnen teleporteren  
-        &a als ze actief zijn.
-      name: '&5Einderman teleporteren'
+        <green>Eindermanen kunnen teleporteren</green>
+        <green>als ze actief zijn.</green>
+      name: '<dark_purple>Einderman teleporteren</dark_purple>'
     ENDER_PEARL:
       description: Toggle gebruik
       name: EnderParels
@@ -1320,10 +1320,10 @@ protection:
       description: Geef in- en uitstapberichten weer
       island: Het eiland van [name]
       name: Berichten invoeren / verlaten
-      now-entering: '&a Voer nu &b [name] in &a.'
-      now-entering-your-island: '&a Nu betreedt u uw eiland: &b [name]'
-      now-leaving: '&a Nu weggaan &b [name] &a.'
-      now-leaving-your-island: '&a Verlaat nu je eiland: &b [name]'
+      now-entering: '<green>Voer nu </green><aqua>[name] in </aqua><green>.</green>'
+      now-entering-your-island: '<green>Nu betreedt u uw eiland: </green><aqua>[name]</aqua>'
+      now-leaving: '<green>Nu weggaan </green><aqua>[name] </aqua><green>.</green>'
+      now-leaving-your-island: '<green>Verlaat nu je eiland: </green><aqua>[name]</aqua>'
     EXPERIENCE_BOTTLE_THROWING:
       name: Ervaar het gooien van flessen
       description: Wissel met het werpen van ervaringsflessen.
@@ -1331,8 +1331,8 @@ protection:
     FIRE_BURNING:
       name: Brandend vuur
       description: |-
-        &a Omschakelen of vuur kan branden
-        &a blokken of niet.
+        <green>Omschakelen of vuur kan branden</green>
+        <green>blokken of niet.</green>
     FIRE_EXTINGUISH:
       description: Schakel blussen uit
       name: Brand blussen
@@ -1340,13 +1340,13 @@ protection:
     FIRE_IGNITE:
       name: Brandontsteking
       description: |-
-        &a Toggle of vuur kan worden ontstoken
-        &a door middel van niet-spelers of niet.
+        <green>Toggle of vuur kan worden ontstoken</green>
+        <green>door middel van niet-spelers of niet.</green>
     FIRE_SPREAD:
       name: Vuur verspreiding
       description: |-
-        &a Omschakelen of vuur zich kan verspreiden
-        &a naar nabijgelegen blokken of niet.
+        <green>Omschakelen of vuur zich kan verspreiden</green>
+        <green>naar nabijgelegen blokken of niet.</green>
     FISH_SCOOPING:
       name: Vis scheppen
       description: Sta het scheppen van vissen toe met een emmer
@@ -1354,9 +1354,9 @@ protection:
     FLINT_AND_STEEL:
       name: vuursteen en ijzer
       description: |-
-        &a Sta spelers toe om vuur te ontsteken of
-        &a kampvuur met vuursteen en staal
-        &a of vuurlasten.
+        <green>Sta spelers toe om vuur te ontsteken of</green>
+        <green>kampvuur met vuursteen en staal</green>
+        <green>of vuurlasten.</green>
       hint: Vuursteen en staal en vuurlasten uitgeschakeld
     FURNACE:
       description: Toggle gebruik
@@ -1368,19 +1368,19 @@ protection:
       hint: Gate gebruik uitgeschakeld
     GEO_LIMIT_MOBS:
       description: |-
-        &a Verwijder mobs die gaan
-        &a buitenkant beschermd
-        &a eilandruimte
-      name: '&e Beperk mobs tot het eiland'
+        <green>Verwijder mobs die gaan</green>
+        <green>buitenkant beschermd</green>
+        <green>eilandruimte</green>
+      name: '<yellow>Beperk mobs tot het eiland</yellow>'
     HARVEST:
       description: |-
-        &a Stel in wie gewassen mag oogsten.  
-        &a Vergeet niet om het oppakken van items  
-        &a ook toe te staan!
+        <green>Stel in wie gewassen mag oogsten.</green>
+        <green>Vergeet niet om het oppakken van items</green>
+        <green>ook toe te staan!</green>
       name: Oogsten van gewassen
       hint: Oogsten van gewassen uitgeschakeld
     HIVE:
-      description: '&a Toggle bijenkorf oogsten.'
+      description: '<green>Toggle bijenkorf oogsten.</green>'
       name: Bijenkorf oogsten
       hint: Oogsten uitgeschakeld
     HURT_TAMED_ANIMALS:
@@ -1404,24 +1404,24 @@ protection:
     ITEM_FRAME:
       name: Voorwerp kader
       description: |-
-        &a Toggle-interactie.
-        &a Overrides plaatsen of breken blokken
+        <green>Toggle-interactie.</green>
+        <green>Overrides plaatsen of breken blokken</green>
       hint: Item Frame gebruik uitgeschakeld
     ITEM_FRAME_DAMAGE:
       description: |-
-        &a Mobs kunnen schade toebrengen
-        &a itemframes
+        <green>Mobs kunnen schade toebrengen</green>
+        <green>itemframes</green>
       name: Schade aan het frame van het item
     INVINCIBLE_VISITORS:
       description: |-
-        &a onoverwinnelijke bezoeker configureren
-        &a instellingen.
-      name: '&e onoverwinnelijke bezoekers'
-      hint: '&c Bezoekers beschermd'
+        <green>onoverwinnelijke bezoeker configureren</green>
+        <green>instellingen.</green>
+      name: '<yellow>onoverwinnelijke bezoekers</yellow>'
+      hint: '<red>Bezoekers beschermd</red>'
     ISLAND_RESPAWN:
       description: |-
-        &a Spelers respawn
-        &a op het eiland
+        <green>Spelers respawn</green>
+        <green>op het eiland</green>
       name: Eiland respawn
     ITEM_DROP:
       description: Toggle laten vallen
@@ -1445,11 +1445,11 @@ protection:
     LECTERN:
       name: Lessenaars
       description: |-
-        &a Sta boeken op een lessenaar toe
-        &a of om er boeken uit te halen.
+        <green>Sta boeken op een lessenaar toe</green>
+        <green>of om er boeken uit te halen.</green>
 
-        &c Het weerhoudt spelers er niet van
-        &c het lezen van de boeken.
+        <red>Het weerhoudt spelers er niet van</red>
+        <red>het lezen van de boeken.</red>
       hint: kan geen boek op een lessenaar leggen of er een boek uit pakken.
     LEVER:
       description: Toggle gebruik
@@ -1457,33 +1457,33 @@ protection:
       hint: Gebruik van hendel uitgeschakeld
     LIMIT_MOBS:
       description: |-
-        &a Entiteiten beperken tot
-        &a spawning in dit spel
-        &a modus.
-      name: '&e Beperk het spawnen van het entiteitstype'
-      can: '&a blikje spawnen'
-      cannot: '&c Kan niet spawnen'
+        <green>Entiteiten beperken tot</green>
+        <green>spawning in dit spel</green>
+        <green>modus.</green>
+      name: '<yellow>Beperk het spawnen van het entiteitstype</yellow>'
+      can: '<green>blikje spawnen</green>'
+      cannot: '<red>Kan niet spawnen</red>'
     LIQUIDS_FLOWING_OUT:
       name: Vloeistoffen die buiten de eilanden stromen
       description: |-
-        &a Omschakelen of vloeistoffen naar buiten kunnen stromen
-        &a van het beschermingsgebied van het eiland.
-        &a Door het uit te schakelen, worden lava en water vermeden
-        &a genererende kasseien in het gebied tussen
-        &a twee eilanden.
+        <green>Omschakelen of vloeistoffen naar buiten kunnen stromen</green>
+        <green>van het beschermingsgebied van het eiland.</green>
+        <green>Door het uit te schakelen, worden lava en water vermeden</green>
+        <green>genererende kasseien in het gebied tussen</green>
+        <green>twee eilanden.</green>
 
-        &c Houd er rekening mee dat vloeistoffen nog steeds verticaal stromen.
-        &c Ze zullen zich ook niet horizontaal verspreiden als
-        &c ze zijn buiten de eilanden geplaatst
-        &c beschermingsbereik.
+        <red>Houd er rekening mee dat vloeistoffen nog steeds verticaal stromen.</red>
+        <red>Ze zullen zich ook niet horizontaal verspreiden als</red>
+        <red>ze zijn buiten de eilanden geplaatst</red>
+        <red>beschermingsbereik.</red>
     LOCK:
       description: Vergrendeling in- of uitschakelen
       name: Vergrendel het eiland
     CHANGE_SETTINGS:
       name: Verander Instellingen
       description: |-
-        &a Sta toe om te schakelen welke lid
-        &a rol de instellingen van [prefix_island] kan wijzigen.
+        <green>Sta toe om te schakelen welke lid</green>
+        <green>rol de instellingen van [prefix_island] kan wijzigen.</green>
     MILKING:
       description: Schakelen tussen het melken van koeien
       name: Melken
@@ -1502,8 +1502,8 @@ protection:
       name: Monster spawner[s]
     MOUNT_INVENTORY:
       description: |-
-        &a Toggle-toegang
-        &a om inventaris op te zetten
+        <green>Toggle-toegang</green>
+        <green>om inventaris op te zetten</green>
       name: Monteer inventaris
       hint: Het opbouwen van voorraden is uitgeschakeld
     NAME_TAG:
@@ -1513,13 +1513,13 @@ protection:
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Natuurlijk wezen paait buiten bereik
       description: |-
-        &a Omschakelen of wezens (dieren en
-        &a monsters) kunnen van nature buiten spawnen
-        &a beschermingsbereik van een eiland.
+        <green>Omschakelen of wezens (dieren en</green>
+        <green>monsters) kunnen van nature buiten spawnen</green>
+        <green>beschermingsbereik van een eiland.</green>
 
-        &c Merk op dat het wezens niet verhindert
-        &c om te spawnen via een mob-spawner of een spawn
-        &c ei.
+        <red>Merk op dat het wezens niet verhindert</red>
+        <red>om te spawnen via een mob-spawner of een spawn</red>
+        <red>ei.</red>
     NOTE_BLOCK:
       description: Toggle gebruik
       name: Kladblok
@@ -1527,49 +1527,49 @@ protection:
     OBSIDIAN_SCOOPING:
       name: Obsidiaan scheppen
       description: |-
-        &a Laat spelers obsidiaan scheppen
-        &a met een lege emmer terug in lava.
+        <green>Laat spelers obsidiaan scheppen</green>
+        <green>met een lege emmer terug in lava.</green>
 
-        &a Dit helpt de nieuwelingen die dat niet hebben gedaan
-        &a bouwen hun geplaveide generator.
+        <green>Dit helpt de nieuwelingen die dat niet hebben gedaan</green>
+        <green>bouwen hun geplaveide generator.</green>
 
-        &a opmerking: obsidiaan kan niet worden opgeschept
-        &a als er andere obsidiaanblokken zijn
-        &a binnen een straal van 2 blokken.
+        <green>opmerking: obsidiaan kan niet worden opgeschept</green>
+        <green>als er andere obsidiaanblokken zijn</green>
+        <green>binnen een straal van 2 blokken.</green>
       scooping: >-
-        &a veranderende obsidiaan terug in lava. Wees voorzichtig de volgende
+        <green>veranderende obsidiaan terug in lava. Wees voorzichtig de volgende</green>
         keer!
-      cooldown: '&c Je moet wachten voordat je nog een obsidiaanblok kunt scheppen.'
+      cooldown: '<red>Je moet wachten voordat je nog een obsidiaanblok kunt scheppen.</red>'
       obsidian-nearby: >-
-        &c Er zijn obsidiaanblokken in de buurt, je kunt dit blok niet in lava
+        <red>Er zijn obsidiaanblokken in de buurt, je kunt dit blok niet in lava</red>
         scheppen. ([radius])
     OFFLINE_GROWTH:
       description: |-
-        &a Wanneer uitgeschakeld, planten
-        &a zal niet groeien op eilanden
-        &a waar alle leden offline zijn.
-        &a Kan vertraging helpen verminderen.
+        <green>Wanneer uitgeschakeld, planten</green>
+        <green>zal niet groeien op eilanden</green>
+        <green>waar alle leden offline zijn.</green>
+        <green>Kan vertraging helpen verminderen.</green>
       name: Offline groei
     OFFLINE_REDSTONE:
       description: |-
-        &a Indien uitgeschakeld, redstone
-        &a zal niet op eilanden opereren
-        &a waar alle leden offline zijn.
-        &a Kan vertraging helpen verminderen.
-        &a Heeft geen invloed op het spawn-eiland.
+        <green>Indien uitgeschakeld, redstone</green>
+        <green>zal niet op eilanden opereren</green>
+        <green>waar alle leden offline zijn.</green>
+        <green>Kan vertraging helpen verminderen.</green>
+        <green>Heeft geen invloed op het spawn-eiland.</green>
       name: Offline Redstone
     PETS_STAY_AT_HOME:
       description: |-
-        &a Bij actieve, getemde huisdieren
-        &a kan alleen naar en gaan
-        &a kan de eigenaar niet verlaten
-        &a thuiseiland.
+        <green>Bij actieve, getemde huisdieren</green>
+        <green>kan alleen naar en gaan</green>
+        <green>kan de eigenaar niet verlaten</green>
+        <green>thuiseiland.</green>
       name: Huisdieren blijven thuis
     PISTON_PUSH:
       description: |-
-        &a Schakel dit in om te voorkomen
-        &a zuigers van het duwen
-        &a blokken buiten het eiland
+        <green>Schakel dit in om te voorkomen</green>
+        <green>zuigers van het duwen</green>
+        <green>blokken buiten het eiland</green>
       name: Bescherming van de zuiger
     PLACE_BLOCKS:
       description: Schakelen tussen plaatsen
@@ -1578,14 +1578,14 @@ protection:
     PODZOL:
       name: Boom-Podzolproductie
       description: |-
-        &a Als uitgeschakeld, wordt de
-        &a productie van boom-podzol
-        &a bij grote bomen gestopt
+        <green>Als uitgeschakeld, wordt de</green>
+        <green>productie van boom-podzol</green>
+        <green>bij grote bomen gestopt</green>
     POTION_THROWING:
       name: Drankje gooien
       description: |-
-        &a Toggle-toverdrankjes.
-        &a Dit omvat onder meer spetterende en aanhoudende drankjes.
+        <green>Toggle-toverdrankjes.</green>
+        <green>Dit omvat onder meer spetterende en aanhoudende drankjes.</green>
       hint: Drankjes gooien is uitgeschakeld
     NETHER_PORTAL:
       description: Toggle gebruik
@@ -1601,42 +1601,42 @@ protection:
       hint: Gebruik van drukplaat uitgeschakeld
     PVP_END:
       description: |-
-        &c PVP in- / uitschakelen
-        &c uiteindelijk.
+        <red>PVP in- / uitschakelen</red>
+        <red>uiteindelijk.</red>
       name: Beëindig PVP
       hint: PVP uiteindelijk uitgeschakeld
-      enabled: '&c De PVP in the End is ingeschakeld.'
-      disabled: '&a De PVP op het einde is uitgeschakeld.'
+      enabled: '<red>De PVP in the End is ingeschakeld.</red>'
+      disabled: '<green>De PVP op het einde is uitgeschakeld.</green>'
     PVP_NETHER:
       description: |-
-        &c PVP in- / uitschakelen
-        &c in de Nether.
+        <red>PVP in- / uitschakelen</red>
+        <red>in de Nether.</red>
       name: Nether PVP
       hint: PVP uitgeschakeld in Nederland
-      enabled: '&c De PVP in Nederland is ingeschakeld.'
-      disabled: '&a De PVP in Nederland is uitgeschakeld.'
+      enabled: '<red>De PVP in Nederland is ingeschakeld.</red>'
+      disabled: '<green>De PVP in Nederland is uitgeschakeld.</green>'
     PVP_OVERWORLD:
       description: |-
-        &c PVP in- / uitschakelen
-        &c op het eiland.
+        <red>PVP in- / uitschakelen</red>
+        <red>op het eiland.</red>
       name: Overworld PVP
-      hint: '&c PVP uitgeschakeld in de bovenwereld'
-      enabled: '&c De PVP in de Overworld is ingeschakeld.'
-      disabled: '&a De PVP in the Overworld is uitgeschakeld.'
+      hint: '<red>PVP uitgeschakeld in de bovenwereld</red>'
+      enabled: '<red>De PVP in de Overworld is ingeschakeld.</red>'
+      disabled: '<green>De PVP in the Overworld is uitgeschakeld.</green>'
     REDSTONE:
       description: Toggle gebruik
       name: Redstone-artikelen
       hint: Redstone-interactie uitgeschakeld
     REMOVE_END_EXIT_ISLAND:
       description: |-
-        &a Voorkomt de einduitgang
-        &a eiland van opwekking
-        &a op coördinaten 0,0
+        <green>Voorkomt de einduitgang</green>
+        <green>eiland van opwekking</green>
+        <green>op coördinaten 0,0</green>
       name: Verwijder het einduitgangseiland
     REMOVE_MOBS:
       description: |-
-        &a Verwijder monsters wanneer
-        &a teleportatie naar het eiland
+        <green>Verwijder monsters wanneer</green>
+        <green>teleportatie naar het eiland</green>
       name: Verwijder monsters
     RIDING:
       description: Schakel rijden
@@ -1652,39 +1652,39 @@ protection:
       hint: Broedeieren uitgeschakeld
     SPAWNER_SPAWN_EGGS:
       description: |-
-        &a Maakt het mogelijk om het entiteitstype van een spawner te wijzigen
-        &a het gebruik van spawn-eieren.
+        <green>Maakt het mogelijk om het entiteitstype van een spawner te wijzigen</green>
+        <green>het gebruik van spawn-eieren.</green>
       name: Paaien eieren op spawners
       hint: >-
         het wijzigen van het entiteitstype van een spawner met spawn-eieren is
         niet toegestaan
     SCULK_SENSOR:
-      description: '&a Schakelt sculk sensor &a activatie.'
+      description: '<green>Schakelt sculk sensor </green><green>activatie.</green>'
       name: Sculk Sensor
       hint: sculk sensor activatie is uitgeschakeld
     SCULK_SHRIEKER:
       description: |-
-        &a Schakelt de sculk shrieker  
-        &a activatie in.
+        <green>Schakelt de sculk shrieker</green>
+        <green>activatie in.</green>
       name: Sculk Shrieker
       hint: sculk schreeuweractivatie is uitgeschakeld
     SIGN_EDITING:
       description: |-
-        &a Staat tekstbewerking toe
-        &a van borden
+        <green>Staat tekstbewerking toe</green>
+        <green>van borden</green>
       name: Bord Bewerken
       hint: sign bewerking is uitgeschakeld
     TNT_DAMAGE:
       description: |-
-        &a Allow TNT en TNT mijnkarren
-        &a om blokken te breken en te beschadigen
-        &a entiteiten.
+        <green>Allow TNT en TNT mijnkarren</green>
+        <green>om blokken te breken en te beschadigen</green>
+        <green>entiteiten.</green>
       name: TNT-schade
     TNT_PRIMING:
       description: |-
-        &a Voorkomt priming TNT.
-        &a Het heeft geen voorrang op de
-        &a vuursteen en stalen bescherming.
+        <green>Voorkomt priming TNT.</green>
+        <green>Het heeft geen voorrang op de</green>
+        <green>vuursteen en stalen bescherming.</green>
       name: TNT activeren
       hint: TNT priming uitgeschakeld
     TRADING:
@@ -1698,13 +1698,13 @@ protection:
     TREES_GROWING_OUTSIDE_RANGE:
       name: Bomen groeien buiten bereik
       description: |-
-        &a Omschakelen of bomen kunnen groeien buiten een
-        &a het beschermingsbereik van een eiland of niet.
-        &a Het voorkomt niet alleen het plaatsen van jonge boompjes
-        &a buiten de beschermingsreeks van een eiland van
-        &a groeiend, maar het zal ook de generatie blokkeren
-        &a van bladeren / boomstammen buiten het eiland, dus
-        &a het omhakken van de boom.
+        <green>Omschakelen of bomen kunnen groeien buiten een</green>
+        <green>het beschermingsbereik van een eiland of niet.</green>
+        <green>Het voorkomt niet alleen het plaatsen van jonge boompjes</green>
+        <green>buiten de beschermingsreeks van een eiland van</green>
+        <green>groeiend, maar het zal ook de generatie blokkeren</green>
+        <green>van bladeren / boomstammen buiten het eiland, dus</green>
+        <green>het omhakken van de boom.</green>
     TURTLE_EGGS:
       description: Schakel verpletteren
       name: Schildpad eieren
@@ -1720,26 +1720,26 @@ protection:
     PREVENT_TELEPORT_WHEN_FALLING:
       name: Voorkom teleporteren bij vallen
       description: |-
-        &a Voorkom dat spelers teleporteren
-        &a terug naar hun eiland met behulp van commando's
-        &a als ze vallen.
-      hint: '&c Dat kun je niet doen terwijl je valt.'
+        <green>Voorkom dat spelers teleporteren</green>
+        <green>terug naar hun eiland met behulp van commando's</green>
+        <green>als ze vallen.</green>
+      hint: '<red>Dat kun je niet doen terwijl je valt.</red>'
     VISITOR_KEEP_INVENTORY:
       name: Bezoekers houden inventaris bij de dood
       description: |-
-        &a Voorkom dat spelers hun
-        &a items en ervaring verliezen als ze sterven op
-        &a [prefix_an-island] waar ze een bezoeker zijn.
-        &a
-        &a [prefix_Island] leden verliezen nog steeds hun items
-        &a als ze sterven op hun eigen [prefix_island]!
+        <green>Voorkom dat spelers hun</green>
+        <green>items en ervaring verliezen als ze sterven op</green>
+        <green>[prefix_an-island] waar ze een bezoeker zijn.</green>
+        <green></green>
+        <green>[prefix_Island] leden verliezen nog steeds hun items</green>
+        <green>als ze sterven op hun eigen [prefix_island]!</green>
     SPAWN_PROTECTION:
       name: Spawn island void protection
       description: |-
-        &a When enabled, players who fall
-        &a into the void at the spawn island
-        &a will be teleported back to the
-        &a spawn point instead of dying.
+        <green>When enabled, players who fall</green>
+        <green>into the void at the spawn island</green>
+        <green>will be teleported back to the</green>
+        <green>spawn point instead of dying.</green>
     RAID_TRIGGER:
       name: Aanval activeren
       description: Stelt de minimale eilandrang in die nodig is om een aanval te activeren
@@ -1747,229 +1747,229 @@ protection:
     ENTITY_PORTAL_TELEPORT:
       name: Entiteit portaal gebruik
       description: |-
-        &a Schakelt in of entiteiten (geen spelers) 
-        &a portals kunnen gebruiken om te teleporteren 
-        &a tussen dimensies
+        <green>Schakelt in of entiteiten (geen spelers)</green>
+        <green>portals kunnen gebruiken om te teleporteren</green>
+        <green>tussen dimensies</green>
     WIND_CHARGE:
       name: Windlading
       description: |-
-        &a Schakelt het gebruik van windladingen.
-        &a Als uitgeschakeld, kunnen bezoekers
-        &a geen windladingen gebruiken op dit eiland.
+        <green>Schakelt het gebruik van windladingen.</green>
+        <green>Als uitgeschakeld, kunnen bezoekers</green>
+        <green>geen windladingen gebruiken op dit eiland.</green>
       hint: Gebruik van windladingen uitgeschakeld
     WITHER_DAMAGE:
       name: Schakel schoftschade in
       description: |-
-        &a Indien actief, kan de schoft
-        &a schadeblokken en spelers
+        <green>Indien actief, kan de schoft</green>
+        <green>schadeblokken en spelers</green>
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
-        &a Sta Bed & Respawn Ankers toe  
-        &a om blokken te breken en schade  
-        &a toe te brengen aan entiteiten buiten de [prefix_island] grenzen.
+        <green>Sta Bed & Respawn Ankers toe</green>
+        <green>om blokken te breken en schade</green>
+        <green>toe te brengen aan entiteiten buiten de [prefix_island] grenzen.</green>
       name: Wereld blok explosie schade
     WORLD_TNT_DAMAGE:
       description: |-
-        &a Allow TNT en TNT mijnkarren
-        &a om blokken te breken en te beschadigen
-        &a entiteit buiten de eilandgrenzen.
+        <green>Allow TNT en TNT mijnkarren</green>
+        <green>om blokken te breken en te beschadigen</green>
+        <green>entiteit buiten de eilandgrenzen.</green>
       name: Wereld TNT-schade
-  locked: '&c Dit eiland is op slot!'
-  locked-island-bypass: '&6 Dit [prefix_island] is op slot, maar je hebt toestemming om dit te negeren.'
-  protected: '&c Eiland beschermd: [omschrijving].'
-  world-protected: '&c Wereld beschermd: [omschrijving].'
-  spawn-protected: '&c Spawn beschermd: [omschrijving].'
+  locked: '<red>Dit eiland is op slot!</red>'
+  locked-island-bypass: '<gold>Dit [prefix_island] is op slot, maar je hebt toestemming om dit te negeren.</gold>'
+  protected: '<red>Eiland beschermd: [omschrijving].</red>'
+  world-protected: '<red>Wereld beschermd: [omschrijving].</red>'
+  spawn-protected: '<red>Spawn beschermd: [omschrijving].</red>'
   panel:
-    next: '&f Volgende pagina'
-    previous: '&f Vorige pagina'
+    next: '<white>Volgende pagina</white>'
+    previous: '<white>Vorige pagina</white>'
     mode:
       advanced:
-        name: '&6 Geavanceerde instellingen'
-        description: '&a Geeft een redelijk aantal instellingen weer.'
+        name: '<gold>Geavanceerde instellingen</gold>'
+        description: '<green>Geeft een redelijk aantal instellingen weer.</green>'
       basic:
-        name: '&a Basisinstellingen'
-        description: '&a Geeft de handigste instellingen weer.'
+        name: '<green>Basisinstellingen</green>'
+        description: '<green>Geeft de handigste instellingen weer.</green>'
       expert:
-        name: '&c Expertinstellingen'
-        description: '&a Geeft alle beschikbare instellingen weer.'
-      click-to-switch: '&e Klik op &7 om over te schakelen naar de &r [volgende] &r &7.'
+        name: '<red>Expertinstellingen</red>'
+        description: '<green>Geeft alle beschikbare instellingen weer.</green>'
+      click-to-switch: '<yellow>Klik op </yellow><gray>om over te schakelen naar de </gray>[volgende] <gray>.</gray>'
     reset-to-default:
-      name: '&c Reset naar standaard'
+      name: '<red>Reset naar standaard</red>'
       description: |
-        &a Reset &c &l ALL &r &a de instellingen naar hun
-        &a standaardwaarde.
+        <green>Reset </green><red><bold>ALL </bold></red><green>de instellingen naar hun</green>
+        <green>standaardwaarde.</green>
       confirm: bevestigen
-      instructions: '&a Ben je zeker? Typ &c "bevestigen" &a om alles opnieuw in te stellen.'
+      instructions: '<green>Ben je zeker? Typ </green><red>"bevestigen" </red><green>om alles opnieuw in te stellen.</green>'
     PROTECTION:
-      title: '&6 Bescherming'
+      title: '<gold>Bescherming</gold>'
       description: |-
-        &a Beveiligingsinstellingen
-        &a voor dit eiland
+        <green>Beveiligingsinstellingen</green>
+        <green>voor dit eiland</green>
     SETTING:
-      title: '&6 Instellingen'
+      title: '<gold>Instellingen</gold>'
       description: |-
-        &a Algemene instellingen
-        &a voor dit eiland
+        <green>Algemene instellingen</green>
+        <green>voor dit eiland</green>
     WORLD_SETTING:
-      title: '&b [world_name] &6 instellingen'
-      description: '&a Instellingen voor deze gamewereld'
+      title: '<aqua>[world_name] </aqua><gold>instellingen</gold>'
+      description: '<green>Instellingen voor deze gamewereld</green>'
     WORLD_DEFAULTS:
-      title: '&b [world_name] &6 Wereldbeschermingen'
+      title: '<aqua>[world_name] </aqua><gold>Wereldbeschermingen</gold>'
       description: |
-        &a Beveiligingsinstellingen wanneer
-        &a speler is buiten zijn eiland
+        <green>Beveiligingsinstellingen wanneer</green>
+        <green>speler is buiten zijn eiland</green>
     flag-item:
-      name-layout: '&a naam]'
+      name-layout: '<green>naam]</green>'
       command-instructions:
         setname: |-
-          &a Selecteer de rang die de
-          &a naam kan instellen
+          <green>Selecteer de rang die de</green>
+          <green>naam kan instellen</green>
         ban: |-
-          &a Selecteer de rang die spelers kan
+          <green>Selecteer de rang die spelers kan</green>
           verbannen
         unban: |-
-          &a Selecteer de rang die 
-          &a spelers kan debanne
+          <green>Selecteer de rang die</green>
+          <green>spelers kan debanne</green>
         expel: |-
-          &a Selecteer de rang die bezoekers kan 
-          &a verwijderen
+          <green>Selecteer de rang die bezoekers kan</green>
+          <green>verwijderen</green>
         team-invite: |-
-          &a Selecteer de rang die kan 
-          &a uitnodigen
+          <green>Selecteer de rang die kan</green>
+          <green>uitnodigen</green>
         team-kick: |-
-          &a Selecteer de rang die kan
-          &a schoppen
+          <green>Selecteer de rang die kan</green>
+          <green>schoppen</green>
         team-coop: |-
-          &a Selecteer de rang die kan 
-          &a coop
+          <green>Selecteer de rang die kan</green>
+          <green>coop</green>
         team-trust: |-
-          &a Selecteer de rang die kan 
-          &a vertrouwen
+          <green>Selecteer de rang die kan</green>
+          <green>vertrouwen</green>
         team-uncoop: |-
-          &a Selecteer de rang die kan 
-          &a uncoop
+          <green>Selecteer de rang die kan</green>
+          <green>uncoop</green>
         team-untrust: |-
-          &a Kies de rang die kan 
-          &a untrusten
+          <green>Kies de rang die kan</green>
+          <green>untrusten</green>
         team-promote: |-
-          &a Selecteer de rang die spelersrang kan
-          &a promoveren
+          <green>Selecteer de rang die spelersrang kan</green>
+          <green>promoveren</green>
         team-demote: |-
-          &a Selecteer de rang die kan  
-          &a de rang van de speler degraderen
+          <green>Selecteer de rang die kan</green>
+          <green>de rang van de speler degraderen</green>
         sethome: |-
-          &a Selecteer de rang die kan  
-          &a homes instellen
+          <green>Selecteer de rang die kan</green>
+          <green>homes instellen</green>
         deletehome: |-
-          &a Selecteer de rang die huizen kan
-          &a verwijderen
+          <green>Selecteer de rang die huizen kan</green>
+          <green>verwijderen</green>
         renamehome: |-
-          &a Kies de rang die
-          &a huizen kan hernoemen
+          <green>Kies de rang die</green>
+          <green>huizen kan hernoemen</green>
         setcount: |-
-          &a Selecteer de rang die de
-          &a fase kan veranderen
+          <green>Selecteer de rang die de</green>
+          <green>fase kan veranderen</green>
         border: |-
-          &a Selecteer de rang die 
-          &a het bordercommando kan gebruiken
+          <green>Selecteer de rang die</green>
+          <green>het bordercommando kan gebruiken</green>
       description-layout: |
-        &a [description]
+        <green>[description]</green>
 
-        &e Links klikken &7 om naar beneden te bladeren.
-        &e Klik met de rechtermuisknop &7 om omhoog te bladeren.
+        <yellow>Links klikken </yellow><gray>om naar beneden te bladeren.</gray>
+        <yellow>Klik met de rechtermuisknop </yellow><gray>om omhoog te bladeren.</gray>
 
-        &7 Toegestaan voor:
-      allowed-rank: '&3 - &a'
-      blocked-rank: '&3 - &c'
-      minimal-rank: '&3 - &2'
+        <gray>Toegestaan voor:</gray>
+      allowed-rank: '<dark_aqua>- </dark_aqua><green></green>'
+      blocked-rank: '<dark_aqua>- </dark_aqua><red></red>'
+      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green></dark_green>'
       menu-layout: |
-        &a [description]
+        <green>[description]</green>
 
-        &e Klik op &7 om te openen.
-      setting-cooldown: '&c Instelling staat op afkoeling'
+        <yellow>Klik op </yellow><gray>om te openen.</gray>
+      setting-cooldown: '<red>Instelling staat op afkoeling</red>'
       setting-layout: |
-        &a [description]
+        <green>[description]</green>
 
-        &e Klik op &7 om te schakelen.
+        <yellow>Klik op </yellow><gray>om te schakelen.</gray>
 
-        &7 Huidige instelling: [setting]
-      setting-active: '&a Actief'
-      setting-disabled: '&c Uitgeschakeld'
+        <gray>Huidige instelling: [setting]</gray>
+      setting-active: '<green>Actief</green>'
+      setting-disabled: '<red>Uitgeschakeld</red>'
 management:
   panel:
     title: BentoBox-beheer
     views:
       gamemodes:
-        name: '&6 spelmodi'
-        description: '&e Klik op &a om de momenteel geladen spelmodi weer te geven'
+        name: '<gold>spelmodi</gold>'
+        description: '<yellow>Klik op </yellow><green>om de momenteel geladen spelmodi weer te geven</green>'
         blueprints:
-          name: '&6 blauwdrukken'
-          description: '&a Opent het menu Beheerdersblauwdruk.'
+          name: '<gold>blauwdrukken</gold>'
+          description: '<green>Opent het menu Beheerdersblauwdruk.</green>'
         gamemode:
-          name: '&f [name]'
+          name: '<white>[name]</white>'
           description: |
-            &a-eilanden: &b [islands]
+            <green>-eilanden: </green><aqua>[islands]</aqua>
       addons:
-        name: '&6 add-ons'
-        description: '&e Klik op &a om de momenteel geladen add-ons weer te geven'
+        name: '<gold>add-ons</gold>'
+        description: '<yellow>Klik op </yellow><green>om de momenteel geladen add-ons weer te geven</green>'
       hooks:
-        name: '&6 haken'
-        description: '&e Klik op &a om de momenteel geladen Hooks weer te geven'
+        name: '<gold>haken</gold>'
+        description: '<yellow>Klik op </yellow><green>om de momenteel geladen Hooks weer te geven</green>'
     actions:
       reload:
-        name: '&c Herladen'
-        description: '&e Klik &c &l tweemaal &r &a om BentoBox opnieuw te laden'
+        name: '<red>Herladen</red>'
+        description: '<yellow>Klik </yellow><red><bold>tweemaal </bold></red><green>om BentoBox opnieuw te laden</green>'
     buttons:
       catalog:
-        name: '&6 Addons-catalogus'
-        description: '&a Opent de Addons-catalogus'
+        name: '<gold>Addons-catalogus</gold>'
+        description: '<green>Opent de Addons-catalogus</green>'
       credits:
-        name: '&6 credits'
-        description: '&a Opent de credits voor BentoBox'
+        name: '<gold>credits</gold>'
+        description: '<green>Opent de credits voor BentoBox</green>'
       empty-here:
-        name: '&b Dit ziet er hier leeg uit ...'
-        description: '&a Wat als u onze catalogus bekijkt?'
+        name: '<aqua>Dit ziet er hier leeg uit ...</aqua>'
+        description: '<green>Wat als u onze catalogus bekijkt?</green>'
     information:
       state:
-        name: '&6 Compatibiliteit'
+        name: '<gold>Compatibiliteit</gold>'
         description:
           COMPATIBLE: |
-            &a Running &e [name] [version] &a.
+            <green>Running </green><yellow>[name] [version] </yellow><green>.</green>
 
-            &a BentoBox draait momenteel op een
-            &a &l COMPATIBELE &r &a serversoftware en
-            &a versie.
+            <green>BentoBox draait momenteel op een</green>
+            <green><bold>COMPATIBELE </bold></green><green>serversoftware en</green>
+            <green>versie.</green>
 
-            &a De functies zijn volledig ontworpen om
-            &a run in deze omgeving.
+            <green>De functies zijn volledig ontworpen om</green>
+            <green>run in deze omgeving.</green>
           SUPPORTED: |
-            &a Running &e [name] [version] &a.
+            <green>Running </green><yellow>[name] [version] </yellow><green>.</green>
 
-            &a BentoBox draait momenteel op een
-            &a &l ONDERSTEUNDE &r &a serversoftware en
-            &a versie.
+            <green>BentoBox draait momenteel op een</green>
+            <green><bold>ONDERSTEUNDE </bold></green><green>serversoftware en</green>
+            <green>versie.</green>
 
-            &a De meeste functies werken probleemloos
-            &a in deze omgeving.
+            <green>De meeste functies werken probleemloos</green>
+            <green>in deze omgeving.</green>
           NOT_SUPPORTED: |
-            &a Running &e [name] [version] &a.
+            <green>Running </green><yellow>[name] [version] </yellow><green>.</green>
 
-            &a BentoBox draait momenteel op een
-            &6 &l NIET ONDERSTEUND &r &a serversoftware of
-            &a versie.
+            <green>BentoBox draait momenteel op een</green>
+            <gold><bold>NIET ONDERSTEUND </bold></gold><green>serversoftware of</green>
+            <green>versie.</green>
 
-            &a Terwijl de meeste functies werken
-            &a correct, &6 platformspecifieke bugs of
-            &6 problemen zijn te verwachten &a.
+            <green>Terwijl de meeste functies werken</green>
+            <green>correct, </green><gold>platformspecifieke bugs of</gold>
+            <gold>problemen zijn te verwachten </gold><green>.</green>
           INCOMPATIBLE: |
-            &a Running &e [name] [version] &a.
+            <green>Running </green><yellow>[name] [version] </yellow><green>.</green>
 
-            &a BentoBox draait momenteel op een
-            &c &l INCOMPATIBLE &r &a serversoftware of
-            &a versie.
+            <green>BentoBox draait momenteel op een</green>
+            <red><bold>INCOMPATIBLE </bold></red><green>serversoftware of</green>
+            <green>versie.</green>
 
-            &c Er kunnen raar gedrag en bugs optreden
-            &c en de meeste functies zijn mogelijk instabiel.
+            <red>Er kunnen raar gedrag en bugs optreden</red>
+            <red>en de meeste functies zijn mogelijk instabiel.</red>
 catalog:
   panel:
     GAMEMODES:
@@ -1978,33 +1978,33 @@ catalog:
       title: Addons Catalogus
     views:
       gamemodes:
-        name: '&6 spelmodi'
+        name: '<gold>spelmodi</gold>'
         description: |
-          &e Klik op &a om door het
-          &a beschikbare officiële gamemodes.
+          <yellow>Klik op </yellow><green>om door het</green>
+          <green>beschikbare officiële gamemodes.</green>
       addons:
-        name: '&6 add-ons'
+        name: '<gold>add-ons</gold>'
         description: |
-          &e Klik op &a om door het
-          &a beschikbare officiële add-ons.
+          <yellow>Klik op </yellow><green>om door het</green>
+          <green>beschikbare officiële add-ons.</green>
     icon:
       description-template: |
-        &8 [onderwerp]
-        &a [installeren]
+        <dark_gray>[onderwerp]</dark_gray>
+        <green>[installeren]</green>
 
-        &7 &o [description]
+        <gray><italic>[description]</italic></gray>
 
-        &e Klik op &a om de link naar het
-        &a laatste release.
+        <yellow>Klik op </yellow><green>om de link naar het</green>
+        <green>laatste release.</green>
       already-installed: Al geïnstalleerd!
       install-now: Installeer nu!
     empty-here:
-      name: '&b Dit ziet er hier leeg uit ...'
+      name: '<aqua>Dit ziet er hier leeg uit ...</aqua>'
       description: |
-        &c BentoBox kon geen verbinding maken met GitHub.
+        <red>BentoBox kon geen verbinding maken met GitHub.</red>
 
-        &a Sta BentoBox toe om verbinding te maken met GitHub in
-        &a de configuratie of probeer het later opnieuw.
+        <green>Sta BentoBox toe om verbinding te maken met GitHub in</green>
+        <green>de configuratie of probeer het later opnieuw.</green>
 enums:
   DamageCause:
     CONTACT: Contact
@@ -2041,69 +2041,69 @@ enums:
     WORLD_BORDER: Wereldgrens
 panel:
   credits:
-    title: '&8 [name] &2 credits'
+    title: '<dark_gray>[name] </dark_gray><dark_green>credits</dark_green>'
     contributor:
-      name: '&a naam]'
-      description: '&a Verbindingen: &b [commits]'
+      name: '<green>naam]</green>'
+      description: '<green>Verbindingen: </green><aqua>[commits]</aqua>'
     empty-here:
-      name: '&c Dit ziet er hier leeg uit ...'
+      name: '<red>Dit ziet er hier leeg uit ...</red>'
       description: |
-        &c BentoBox kon de bijdragers niet verzamelen
-        &c voor deze add-on.
+        <red>BentoBox kon de bijdragers niet verzamelen</red>
+        <red>voor deze add-on.</red>
 
-        &a Sta BentoBox toe om verbinding te maken met GitHub in
-        &a de configuratie of probeer het later opnieuw.
+        <green>Sta BentoBox toe om verbinding te maken met GitHub in</green>
+        <green>de configuratie of probeer het later opnieuw.</green>
 panels:
   island_homes:
-    title: '&2&l Jouw [prefix_island] huizen'
+    title: '<dark_green><bold>Jouw [prefix_island] huizen</bold></dark_green>'
     buttons:
-      name: '&l [name]'
+      name: '<bold>[name]</bold>'
   island_creation:
-    title: '&2&l Kies [prefix_an-island]'
+    title: '<dark_green><bold>Kies [prefix_an-island]</bold></dark_green>'
     buttons:
       bundle:
-        name: '&l [name]'
+        name: '<bold>[name]</bold>'
         description: '[beschrijving]'
-        uses: '&a Gebruikt [number]/[max]'
-        unlimited: '&a Onbeperkt aantal gebruiken toegestaan'
-        cost: '&e Kosten: [cost]'
+        uses: '<green>Gebruikt [number]/[max]</green>'
+        unlimited: '<green>Onbeperkt aantal gebruiken toegestaan</green>'
+        cost: '<yellow>Kosten: [cost]</yellow>'
   language:
-    title: '&2&l Selecteer je taal'
-    edited: '&c Gewijzigd naar [lang]'
+    title: '<dark_green><bold>Selecteer je taal</bold></dark_green>'
+    edited: '<red>Gewijzigd naar [lang]</red>'
     buttons:
       language:
-        name: '&f&l [name]'
+        name: '<white><bold>[name]</bold></white>'
         description: |-
           [authors]  
           |[selected]
-        authors: '&7 Auteurs:'
-        author: '&7 - &b [name]'
-        selected: '&a Huidig geselecteerd.'
+        authors: '<gray>Auteurs:</gray>'
+        author: '<gray>- </gray><aqua>[name]</aqua>'
+        selected: '<green>Huidig geselecteerd.</green>'
   buttons:
     previous:
-      name: '&f&l Vorige Pagina'
-      description: '&7 Schakel over naar [number] pagina'
+      name: '<white><bold>Vorige Pagina</bold></white>'
+      description: '<gray>Schakel over naar [number] pagina</gray>'
     next:
-      name: '&f&l Volgende Pagina'
-      description: '&7 Schakel over naar pagina [number]'
+      name: '<white><bold>Volgende Pagina</bold></white>'
+      description: '<gray>Schakel over naar pagina [number]</gray>'
   tips:
-    click-to-next: '&e Klik &7 voor volgende.'
-    click-to-previous: '&e Klik &7 voor vorige.'
-    click-to-choose: '&e Klik &7 om te selecteren.'
-    click-to-toggle: '&e Klik &7 om te schakelen.'
-    left-click-to-cycle-down: '&e Linker Klik &7 om naar beneden te cycelen.'
-    right-click-to-cycle-up: '&e Rechtsklik &7 om omhoog te cykelen.'
+    click-to-next: '<yellow>Klik </yellow><gray>voor volgende.</gray>'
+    click-to-previous: '<yellow>Klik </yellow><gray>voor vorige.</gray>'
+    click-to-choose: '<yellow>Klik </yellow><gray>om te selecteren.</gray>'
+    click-to-toggle: '<yellow>Klik </yellow><gray>om te schakelen.</gray>'
+    left-click-to-cycle-down: '<yellow>Linker Klik </yellow><gray>om naar beneden te cycelen.</gray>'
+    right-click-to-cycle-up: '<yellow>Rechtsklik </yellow><gray>om omhoog te cykelen.</gray>'
 successfully-loaded: >
 
-  &6 ____ _ ____
+  <gold>____ _ ____</gold>
 
-  &6 | _ \ | | | _ \ &7 door &a tastybento &7 en &a Poslovitch
+  <gold>| _ \ | | | _ \ </gold><gray>door </gray><green>tastybento </green><gray>en </gray><green>Poslovitch</green>
 
-  &6 | | _) | ___ _ __ | | _ ___ | | _) | _____ __ &7 2017-2022
+  <gold>| | _) | ___ _ __ | | _ ___ | | _) | _____ __ </gold><gray>2017-2022</gray>
 
-  &6 | _ </ _ \ '_ \ | __ / _ \ | _ </ _ \ \ / /
+  <gold>| _ </ _ \ '_ \ | __ / _ \ | _ </ _ \ \ / /</gold>
 
-  &6 | | _) | __ / | | | || (_) | | _) | (_)> <&b v &e [version]
+  <gold>| | _) | __ / | | | || (_) | | _) | (_)> <</gold><aqua>v </aqua><yellow>[version]</yellow>
 
-  &6 | ____ / \ ___ | _ | | _ | \ __ \ ___ / | ____ / \ ___ / _ / \ _ \ &8
-  Geladen in &e [time] &8 ms.
+  <gold>| ____ / \ ___ | _ | | _ | \ __ \ ___ / | ____ / \ ___ / _ / \ _ \ </gold><dark_gray></dark_gray>
+  Geladen in <yellow>[time] </yellow><dark_gray>ms.</dark_gray>

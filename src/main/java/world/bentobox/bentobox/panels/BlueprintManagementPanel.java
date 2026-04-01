@@ -349,7 +349,7 @@ public class BlueprintManagementPanel {
     protected PanelItem getBundleIcon(BlueprintBundle bb) {
         return new PanelItemBuilder()
                 .name(t("edit-description"))
-                .description(bb.getDescription().stream().map(Util::translateColorCodes).toList())
+                .description(bb.getDescription())
                 .icon(bb.getIcon())
                 .clickHandler((panel, u, clickType, slot) -> {
                     u.closeInventory();
@@ -447,7 +447,7 @@ public class BlueprintManagementPanel {
     protected PanelItem getBlueprintItem(GameModeAddon addon, int pos, BlueprintBundle bb, Blueprint blueprint) {
         // Create description
         List<String> desc = blueprint.getDescription() == null ? new ArrayList<>() : blueprint.getDescription();
-        desc = desc.stream().map(Util::translateColorCodes).collect(Collectors.toList()); // Must be mutable
+        desc = new ArrayList<>(desc); // Must be mutable
         if ((!blueprint.equals(endBlueprint) && !blueprint.equals(normalBlueprint) && !blueprint.equals(netherBlueprint))) {
             if ((pos > MIN_WORLD_SLOT && pos < MAX_WORLD_SLOT)) {
                 desc.add(t("remove"));

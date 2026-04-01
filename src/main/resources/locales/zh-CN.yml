@@ -8,49 +8,49 @@ meta:
     - dawnTak
   banner: 'RED_BANNER:1:SQUARE_TOP_RIGHT:YELLOW:CROSS:RED:CURLY_BORDER:RED:MOJANG:YELLOW:HALF_HORIZONTAL_MIRROR:RED:HALF_VERTICAL:RED'
 prefixes:
-  bentobox: '&6BentoBox &7&l> &r '
+  bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: 岛屿
   Island: 岛屿
   an-island: 岛屿
   islands: 岛屿
 general:
-  success: '&a成功!'
+  success: '<green>成功!</green>'
   invalid: 无效
-  beta: '&d&l 此命令在Beta中。确保您有备份！'
+  beta: '<light_purple><bold>此命令在Beta中。确保您有备份！</bold></light_purple>'
   errors:
-    command-cancelled: '&c命令已取消.'
-    no-permission: '&c你无权执行此命令. (&7[permission]&c)'
-    insufficient-rank: '&c你的身份等级不够高! (&7[rank]&c)'
-    use-in-game: '&c此命令只能在游戏内使用.'
-    use-in-console: '&c此命令只能在控制台使用.'
-    no-team: '&c你没有加入团队!'
-    no-island: '&c你现在没有岛屿!'
-    player-has-island: '&c该玩家已有岛屿!'
-    player-has-no-island: '&c该玩家没有岛屿!'
-    already-have-island: '&c你已经有岛屿了!'
-    no-safe-location-found: '&c试图将你传送到岛屿上时找不到安全的落脚点.'
-    not-owner: '&c你不是这座岛屿的岛主!'
-    player-is-not-owner: '&b[name]&c不是这座岛屿的岛主!'
-    not-in-team: '&c该玩家在你的团队中!'
-    offline-player: '&c该玩家已离线或不存在.'
-    unknown-player: '&c未知玩家: [name]!'
-    general: '&c该命令尚未就绪 - 请联系管理员'
-    unknown-command: '&c未知命令. 使用&b/[label] help&c查看帮助.'
-    wrong-world: '&c当前世界不能这么做!'
-    you-must-wait: '&c你必须等待[number]秒后才能执行该命令.'
-    must-be-positive-number: '&c[number]不是一个正数.'
-    not-on-island: '&c你不在岛上!'
-    slow-down: '&c 慢点。点击慢一些。'
+    command-cancelled: '<red>命令已取消.</red>'
+    no-permission: '<red>你无权执行此命令. (</red><gray>[permission]</gray><red>)</red>'
+    insufficient-rank: '<red>你的身份等级不够高! (</red><gray>[rank]</gray><red>)</red>'
+    use-in-game: '<red>此命令只能在游戏内使用.</red>'
+    use-in-console: '<red>此命令只能在控制台使用.</red>'
+    no-team: '<red>你没有加入团队!</red>'
+    no-island: '<red>你现在没有岛屿!</red>'
+    player-has-island: '<red>该玩家已有岛屿!</red>'
+    player-has-no-island: '<red>该玩家没有岛屿!</red>'
+    already-have-island: '<red>你已经有岛屿了!</red>'
+    no-safe-location-found: '<red>试图将你传送到岛屿上时找不到安全的落脚点.</red>'
+    not-owner: '<red>你不是这座岛屿的岛主!</red>'
+    player-is-not-owner: '<aqua>[name]</aqua><red>不是这座岛屿的岛主!</red>'
+    not-in-team: '<red>该玩家在你的团队中!</red>'
+    offline-player: '<red>该玩家已离线或不存在.</red>'
+    unknown-player: '<red>未知玩家: [name]!</red>'
+    general: '<red>该命令尚未就绪 - 请联系管理员</red>'
+    unknown-command: '<red>未知命令. 使用</red><aqua>/[label] help</aqua><red>查看帮助.</red>'
+    wrong-world: '<red>当前世界不能这么做!</red>'
+    you-must-wait: '<red>你必须等待[number]秒后才能执行该命令.</red>'
+    must-be-positive-number: '<red>[number]不是一个正数.</red>'
+    not-on-island: '<red>你不在岛上!</red>'
+    slow-down: '<red>慢点。点击慢一些。</red>'
   worlds:
     overworld: 主世界
     nether: 下界
     the-end: 末地
 commands:
   help:
-    header: '&7=========== &c[label]帮助 &7==========='
-    syntax: '&b [usage] &a [parameters]&7 : &e [description]'
-    syntax-no-parameters: '&b [usage]&7 : &e [description]'
-    end: '&7 ================================='
+    header: '<gray>=========== </gray><red>[label]帮助 </red><gray>===========</gray>'
+    syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
+    syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
+    end: '<gray>=================================</gray>'
     parameters: '[command]'
     description: 命令帮助
     console: 控制台
@@ -60,172 +60,172 @@ commands:
     maxhomes:
       description: 改变此 [prefix_island] 或玩家的 [prefix_island] 允许的家园数量。
       parameters: <number / player> <number> [[prefix_island] name]
-      max-homes-set: '&a [name] - 将 [prefix_island] 的最大家园设置为 [number]'
+      max-homes-set: '<green>[name] - 将 [prefix_island] 的最大家园设置为 [number]</green>'
       errors:
-        unknown-island: 未知 &7[prefix_island]&7! &7[name]
+        unknown-island: '未知 <gray>[prefix_island]</gray><gray>! </gray><gray>[name]</gray>'
     resethome:
-      description: '&7重置玩家的家为默认设置'
-      parameters: <player> &7[[prefix_island] 名称]
-      cleared: '&b 家庭重置。 [name]'
+      description: '<gray>重置玩家的家为默认设置</gray>'
+      parameters: <player> <gray>[[prefix_island] 名称]</gray>
+      cleared: '<aqua>家庭重置。 [name]</aqua>'
     resets:
       description: 修改玩家的岛屿已重置次数
       set:
         description: 设置玩家的岛屿已重置次数
         parameters: <player> <resets>
-        success: '&a已将玩家&b[name]&a的岛屿已重置次数设置为: &b[number]&a.'
+        success: '<green>已将玩家</green><aqua>[name]</aqua><green>的岛屿已重置次数设置为: </green><aqua>[number]</aqua><green>.</green>'
       reset:
         description: '将玩家的岛屿已重置次数重置为: 0'
         parameters: <player>
-        success-everyone: '&a已将&b所有玩家&a的岛屿已重置次数重置为: &b0&a.'
-        success: '&a已将玩家&b[name]&a的岛屿已重置次数重置为: &b0&a.'
+        success-everyone: '<green>已将</green><aqua>所有玩家</aqua><green>的岛屿已重置次数重置为: </green><aqua>0</aqua><green>.</green>'
+        success: '<green>已将玩家</green><aqua>[name]</aqua><green>的岛屿已重置次数重置为: </green><aqua>0</aqua><green>.</green>'
       add:
         description: 增加玩家的岛屿已重置次数
         parameters: <player> <resets>
-        success: '&a已将玩家&b[name]&a的岛屿已重置次数增加了&b[number]&a次, 当前已重置次数: &b[total]&a.'
+        success: '<green>已将玩家</green><aqua>[name]</aqua><green>的岛屿已重置次数增加了</green><aqua>[number]</aqua><green>次, 当前已重置次数: </green><aqua>[total]</aqua><green>.</green>'
       remove:
         description: 减少玩家的岛屿已重置次数
         parameters: <player> <resets>
-        success: '&a已将玩家&b[name]&a的岛屿已重置次数减少了&b[number]&a次, 当前已重置次数: &b[total]&a.'
+        success: '<green>已将玩家</green><aqua>[name]</aqua><green>的岛屿已重置次数减少了</green><aqua>[number]</aqua><green>次, 当前已重置次数: </green><aqua>[total]</aqua><green>.</green>'
     purge:
       parameters: '[days]'
       description: 清理超过[days]天不活跃的岛屿
       days-one-or-more: 天数必需为至少1天或大于1天
-      purgable-islands: '&a发现&b[number]&a个不活跃的岛屿可以被清理.'
+      purgable-islands: '<green>发现</green><aqua>[number]</aqua><green>个不活跃的岛屿可以被清理.</green>'
       too-many: |-
-        &b 这是一份很大的数据，删除可能需要很长时间。  
-        &b 考虑使用 Regionerator 插件来删除世界区块  
-        &b 并在 BentoBox 的 config.yml 中设置 keep-previous-island-on-reset: true。  
-        &b 然后运行一次清理。
-      purge-in-progress: '&c清理正在进行中. 使用&b/[label] purge stop&c取消清理.'
-      scanning: '&a 正在扫描数据库中的岛屿。这可能需要一些时间，具体取决于您有多少个...'
-      scanning-in-progress: '&c 扫描中，请稍候'
-      none-found: '&c 没有找到要清除的岛屿。'
-      total-islands: '&a 您在所有世界中拥有 [number] 个岛屿在您的数据库中。'
-      number-error: '&c天数必需是整数!'
-      confirm: '&d输入&b/[label] purge confirm&d开始清理'
-      completed: '&a清理工作已完成.'
+        <aqua>这是一份很大的数据，删除可能需要很长时间。</aqua>
+        <aqua>考虑使用 Regionerator 插件来删除世界区块</aqua>
+        <aqua>并在 BentoBox 的 config.yml 中设置 keep-previous-island-on-reset: true。</aqua>
+        <aqua>然后运行一次清理。</aqua>
+      purge-in-progress: '<red>清理正在进行中. 使用</red><aqua>/[label] purge stop</aqua><red>取消清理.</red>'
+      scanning: '<green>正在扫描数据库中的岛屿。这可能需要一些时间，具体取决于您有多少个...</green>'
+      scanning-in-progress: '<red>扫描中，请稍候</red>'
+      none-found: '<red>没有找到要清除的岛屿。</red>'
+      total-islands: '<green>您在所有世界中拥有 [number] 个岛屿在您的数据库中。</green>'
+      number-error: '<red>天数必需是整数!</red>'
+      confirm: '<light_purple>输入</light_purple><aqua>/[label] purge confirm</aqua><light_purple>开始清理</light_purple>'
+      completed: '<green>清理工作已完成.</green>'
       see-console-for-status: |-
-        &a清理已开始.
-        &a请参阅控制台或使用&b/[label] purge status&a查看清理状态&a.
-      no-purge-in-progress: '&c没有正在进行的清理工作.'
+        <green>清理已开始.</green>
+        <green>请参阅控制台或使用</green><aqua>/[label] purge status</aqua><green>查看清理状态</green><green>.</green>
+      no-purge-in-progress: '<red>没有正在进行的清理工作.</red>'
       regions:
         parameters: '[days]'
         description: 通过删除旧区域文件清除岛
-        confirm: '&d 输入&b “/[label] purge region confirmed”&d 开始清除'
+        confirm: '<light_purple>输入</light_purple><aqua>“/[label] purge region confirmed”</aqua><light_purple>开始清除</light_purple>'
       protect:
         description: 开/关 岛屿清理保护, 开启清理保护的岛屿不会被清理.
-        move-to-island: '&c你身处的位置并没有岛屿, 请到要操作的岛上再试!'
-        protecting: '&a已为该岛屿开启清理保护.'
-        unprotecting: '&a已关闭该岛屿的清理保护.'
+        move-to-island: '<red>你身处的位置并没有岛屿, 请到要操作的岛上再试!</red>'
+        protecting: '<green>已为该岛屿开启清理保护.</green>'
+        unprotecting: '<green>已关闭该岛屿的清理保护.</green>'
       stop:
         description: 停止正在进行的清理工作
         stopping: 正在停止清理
       unowned:
         description: 清理被遗弃(无主)的岛屿
-        unowned-islands: '&a发现&b[number]&a个被遗弃(无主)的岛屿.'
+        unowned-islands: '<green>发现</green><aqua>[number]</aqua><green>个被遗弃(无主)的岛屿.</green>'
       status:
         description: 显示清理状态
-        status: '&a共有&b[purgeable]&a个岛屿可清理, 已清理&b[purged]&a个&7(&b[percentage] %&7)&a.'
+        status: '<green>共有</green><aqua>[purgeable]</aqua><green>个岛屿可清理, 已清理</green><aqua>[purged]</aqua><green>个</green><gray>(</gray><aqua>[percentage] %</aqua><gray>)</gray><green>.</green>'
     team:
       description: 团队管理
       add:
-        parameters: <owner> &7<player>
+        parameters: <owner> <gray><player></gray>
         description: 将玩家添加到某个岛屿
-        name-not-owner: '&c[name]不是岛主.'
-        name-has-island: '&c[name]已经有岛屿了!'
-        success: '&a已将&b[name]&a加入到&b[owner]&a的岛屿.'
+        name-not-owner: '<red>[name]不是岛主.</red>'
+        name-has-island: '<red>[name]已经有岛屿了!</red>'
+        success: '<green>已将</green><aqua>[name]</aqua><green>加入到</green><aqua>[owner]</aqua><green>的岛屿.</green>'
       disband:
         parameters: <所有者>
         description: 解散团队
-        use-disband-owner: '&cTA不是岛主! 请使用disband [owner].'
-        disbanded: '&c管理员解散了你的团队!'
-        success: '&b[name]&a的团队已被解散.'
+        use-disband-owner: '<red>TA不是岛主! 请使用disband [owner].</red>'
+        disbanded: '<red>管理员解散了你的团队!</red>'
+        success: '<aqua>[name]</aqua><green>的团队已被解散.</green>'
       fix:
         description: 扫描数据库，并修复跨岛屿成员(某些玩家错误地拥有或归属于多个岛屿, 使用该功能会删除玩家主岛以外的岛屿)
         scanning: 正在扫描数据库...
-        duplicate-owner: '&c数据库中检测到不止1个岛屿的玩家: [name].'
-        player-has: '&c玩家&b[name]&c拥有&b[number]个岛屿.'
-        duplicate-member: '&c玩家 &b[name] &c是多个岛屿的成员.'
-        rank-on-island: '&c在[xyz]的身份等级为: [rank]'
-        fixed: '&a已修复'
-        done: '&a扫描完毕'
+        duplicate-owner: '<red>数据库中检测到不止1个岛屿的玩家: [name].</red>'
+        player-has: '<red>玩家</red><aqua>[name]</aqua><red>拥有</red><aqua>[number]个岛屿.</aqua>'
+        duplicate-member: '<red>玩家 </red><aqua>[name] </aqua><red>是多个岛屿的成员.</red>'
+        rank-on-island: '<red>在[xyz]的身份等级为: [rank]</red>'
+        fixed: '<green>已修复</green>'
+        done: '<green>扫描完毕</green>'
       kick:
         parameters: <团队 玩家>
         description: 将玩家踢出团队
-        cannot-kick-owner: '&c你不能踢出岛主, 请先踢出团队成员.'
-        not-in-team: '&c该玩家没有团队.'
-        admin-kicked: '&c管理员将你踢出了团队.'
-        success: '&a已将&b[name]&a从&b[owner]&a的岛屿里踢出.'
-        success-all: '&b 玩家已从这个世界的所有团队中移除'
+        cannot-kick-owner: '<red>你不能踢出岛主, 请先踢出团队成员.</red>'
+        not-in-team: '<red>该玩家没有团队.</red>'
+        admin-kicked: '<red>管理员将你踢出了团队.</red>'
+        success: '<green>已将</green><aqua>[name]</aqua><green>从</green><aqua>[owner]</aqua><green>的岛屿里踢出.</green>'
+        success-all: '<aqua>玩家已从这个世界的所有团队中移除</aqua>'
       setowner:
         parameters: <玩家>
         description: 将当前岛屿的岛主设置为指定玩家
-        already-owner: '&c[name]已经是当前岛屿的岛主了!'
-        must-be-on-island: '&c你必须在岛屿上才能设置所有者'
-        confirmation: '&a你确定要把[name]设置为[xyz]的岛主吗?'
-        success: '&b[name]&a已被设置为当前岛屿的岛主.'
-        extra-islands: '&c警告: 该玩家当前拥有[number]个岛屿, 最多仅可以拥有[max]个岛屿.'
+        already-owner: '<red>[name]已经是当前岛屿的岛主了!</red>'
+        must-be-on-island: '<red>你必须在岛屿上才能设置所有者</red>'
+        confirmation: '<green>你确定要把[name]设置为[xyz]的岛主吗?</green>'
+        success: '<aqua>[name]</aqua><green>已被设置为当前岛屿的岛主.</green>'
+        extra-islands: '<red>警告: 该玩家当前拥有[number]个岛屿, 最多仅可以拥有[max]个岛屿.</red>'
       maxsize:
         parameters: <player> <size>
         description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
-        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
+        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: 岛屿保护范围管理员命令
       invalid-value:
-        too-low: '&c保护范围必须大于&b1&c!'
-        too-high: '&c保护范围必须等于或小于&b[number]&c!'
-        same-as-before: '&c保护范围早已被设置为&b[number]&c, 本次操作无改动!'
+        too-low: '<red>保护范围必须大于</red><aqua>1</aqua><red>!</red>'
+        too-high: '<red>保护范围必须等于或小于</red><aqua>[number]</aqua><red>!</red>'
+        same-as-before: '<red>保护范围早已被设置为</red><aqua>[number]</aqua><red>, 本次操作无改动!</red>'
       display:
-        already-off: '&c范围指示器已经关闭了'
-        already-on: '&c范围指示器已经开启了'
+        already-off: '<red>范围指示器已经关闭了</red>'
+        already-on: '<red>范围指示器已经开启了</red>'
         description: 开启/关闭岛屿范围指示器
-        hiding: '&4岛屿范围指示器已禁用'
+        hiding: '<dark_red>岛屿范围指示器已禁用</dark_red>'
         hint: |-
-          &c红色屏障 &f显示当前岛屿的当前保护范围.
-          &7灰色粒子 &f显示当前岛屿的最大保护范围.
-          &a绿色粒子 &f显示当前岛屿的默认保护范围(当前岛屿保护范围与默认保护范围不一致时显示).
-        showing: '&2岛屿范围指示器已启用'
+          <red>红色屏障 </red><white>显示当前岛屿的当前保护范围.</white>
+          <gray>灰色粒子 </gray><white>显示当前岛屿的最大保护范围.</white>
+          <green>绿色粒子 </green><white>显示当前岛屿的默认保护范围(当前岛屿保护范围与默认保护范围不一致时显示).</white>
+        showing: '<dark_green>岛屿范围指示器已启用</dark_green>'
       set:
         parameters: <player> <range> [island location]
         description: 设置岛屿保护范围
-        success: '&a岛屿保护范围已被设置为: &b[number]&a.'
+        success: '<green>岛屿保护范围已被设置为: </green><aqua>[number]</aqua><green>.</green>'
       reset:
-        parameters: '&7<player>'
+        parameters: '<gray><player></gray>'
         description: 将岛屿保护范围重置为默认值
-        success: '&a岛屿保护范围已被重置为: &b[number]&a.'
+        success: '<green>岛屿保护范围已被重置为: </green><aqua>[number]</aqua><green>.</green>'
       add:
         description: 增加岛屿保护范围
         parameters: <player> <range> [island location]
-        success: '&a玩家&b[name]&a的岛屿保护范围已增加至&b[total]&7(&b+[number]&7)&a.'
+        success: '<green>玩家</green><aqua>[name]</aqua><green>的岛屿保护范围已增加至</green><aqua>[total]</aqua><gray>(</gray><aqua>+[number]</aqua><gray>)</gray><green>.</green>'
       remove:
         description: 减少岛屿保护范围
         parameters: <player> <range> [island location]
-        success: '&a玩家&b[name]&a的岛屿保护范围已减少至&b[total]&7(&b-[number]&7)&a.'
+        success: '<green>玩家</green><aqua>[name]</aqua><green>的岛屿保护范围已减少至</green><aqua>[total]</aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>'
     register:
       parameters: <玩家>
       description: 将玩家认领到当前的无主岛屿
-      registered-island: '&a已将当前岛屿[xyz]认领给玩家[name].'
-      reserved-island: '&a已为玩家&b[name]&a预留了位于&b[xyz]&a的岛屿.'
-      already-owned: '&c当前岛屿已有所属!'
-      no-island-here: '&c当前位置没有岛屿, 是否要创建一个?'
-      in-deletion: '&c当前位置对应的岛屿正在删除中, 请稍后再试.'
-      cannot-make-island: '&c当前位置无法创建岛屿, 请查看控制台查看可能的错误.'
+      registered-island: '<green>已将当前岛屿[xyz]认领给玩家[name].</green>'
+      reserved-island: '<green>已为玩家</green><aqua>[name]</aqua><green>预留了位于</green><aqua>[xyz]</aqua><green>的岛屿.</green>'
+      already-owned: '<red>当前岛屿已有所属!</red>'
+      no-island-here: '<red>当前位置没有岛屿, 是否要创建一个?</red>'
+      in-deletion: '<red>当前位置对应的岛屿正在删除中, 请稍后再试.</red>'
+      cannot-make-island: '<red>当前位置无法创建岛屿, 请查看控制台查看可能的错误.</red>'
       island-is-spawn: |-
-        &c当前岛屿是出生点岛屿, 确定要让玩家认领这个岛屿吗?
-        &6请再次输入命令以确认.
+        <red>当前岛屿是出生点岛屿, 确定要让玩家认领这个岛屿吗?</red>
+        <gold>请再次输入命令以确认.</gold>
     unregister:
       parameters: <拥有者> [x,y,z]
       description: 设置为无主岛屿并保留岛屿建筑
-      unregistered-island: '&a已将[name]位于[xyz]的岛屿设置为无主岛屿.'
+      unregistered-island: '<green>已将[name]位于[xyz]的岛屿设置为无主岛屿.</green>'
       errors:
-        unknown-island-location: '&c未知岛屿位置'
-        specify-island-location: '&c以x,y,z格式选定岛屿位置'
-        player-has-more-than-one-island: '&c玩家拥有多个岛屿, 请指定一个岛屿.'
+        unknown-island-location: '<red>未知岛屿位置</red>'
+        specify-island-location: '<red>以x,y,z格式选定岛屿位置</red>'
+        player-has-more-than-one-island: '<red>玩家拥有多个岛屿, 请指定一个岛屿.</red>'
     info:
       parameters: <玩家>
       description: 获取当前岛屿或指定玩家的都信息
-      no-island: '&c你当前没有岛屿...'
+      no-island: '<red>你当前没有岛屿...</red>'
       title: '========== 岛屿信息 ============'
       island-uuid: 'UUID: [uuid]'
       owner: '岛主: [owner] ([uuid])'
@@ -233,155 +233,155 @@ commands:
       last-login-date-time-format: yyyy-MM-dd HH:mm:ss zzz
       deaths: '死亡次数: [number]'
       resets-left: '重置次数: [number] (至多: [total])'
-      max-homes: '最大家园数量: &a[number]'
+      max-homes: '最大家园数量: <green>[number]</green>'
       team-members-title: '团队身份:'
-      team-owner-format: '&a[name] [rank]'
-      team-member-format: '&b[name] [rank]'
+      team-owner-format: '<green>[name] [rank]</green>'
+      team-member-format: '<aqua>[name] [rank]</aqua>'
       max-team-size: '最大队伍大小: [number]'
       max-coop-size: '最大合作大小: [number]'
       max-trusted-size: '最大信任大小: [number]'
       island-protection-center: '岛屿保护中心点: [xyz]'
       island-center: '岛屿中心: [xyz]'
       island-coords: '岛屿界线: [xz1] 至 [xz2]'
-      islands-in-trash: '&d岛屿在垃圾桶中.'
+      islands-in-trash: '<light_purple>岛屿在垃圾桶中.</light_purple>'
       protection-range: '岛屿保护范围: [range]'
-      protection-range-bonus-title: '&b包含以下奖励:'
+      protection-range-bonus-title: '<aqua>包含以下奖励:</aqua>'
       protection-range-bonus: '奖金: [number]'
-      purge-protected: '&a岛屿处于清理保护状态'
+      purge-protected: '<green>岛屿处于清理保护状态</green>'
       max-protection-range: '历史最大保护范围: [range]'
       protection-coords: '岛屿保护界线: [xz1] 至 [xz2]'
-      is-spawn: '&a为出生点岛屿'
+      is-spawn: '<green>为出生点岛屿</green>'
       banned-players: '封禁玩家:'
-      banned-format: '&c[name]'
-      unowned: '&c无主岛屿'
-      bundle: '&a用于创建岛屿的蓝图方案: &b[name]'
+      banned-format: '<red>[name]</red>'
+      unowned: '<red>无主岛屿</red>'
+      bundle: '<green>用于创建岛屿的蓝图方案: </green><aqua>[name]</aqua>'
     switch:
       description: 开启/关闭 保护规避机制
-      op: '&cOP始终可以规避岛屿保护.'
-      removing: '&a正在删除保护规避...'
-      adding: '&a正在添加保护规避...'
+      op: '<red>OP始终可以规避岛屿保护.</red>'
+      removing: '<green>正在删除保护规避...</green>'
+      adding: '<green>正在添加保护规避...</green>'
     switchto:
       parameters: <玩家> <数字>
       description: 将玩家岛屿扔进回收站的指定位置
       out-of-range: |-
-        &c数字必须在&b1&c和&b[number]&c之间.
-        &c使用&l[label] trash [player]&r&c来查看岛屿在回收站中的位置.
-      cannot-switch: '&c切换失败.请查看控制台以获取详细信息.'
-      success: '&a成功将玩家的岛屿切换到回收站指定的位置.'
+        <red>数字必须在</red><aqua>1</aqua><red>和</red><aqua>[number]</aqua><red>之间.</red>
+        <red>使用<bold>[label] trash [player]</bold></red><red>来查看岛屿在回收站中的位置.</red>
+      cannot-switch: '<red>切换失败.请查看控制台以获取详细信息.</red>'
+      success: '<green>成功将玩家的岛屿切换到回收站指定的位置.</green>'
     trash:
-      no-unowned-in-trash: '&c回收站中没有无主岛屿'
-      no-islands-in-trash: '&c该玩家在回收站中没有岛屿'
+      no-unowned-in-trash: '<red>回收站中没有无主岛屿</red>'
+      no-islands-in-trash: '<red>该玩家在回收站中没有岛屿</red>'
       parameters: '[玩家]'
       description: 显示回收站中无主岛屿或玩家岛屿
-      title: '&d =========== 岛屿回收站 ==========='
-      count: '&d&l岛屿: [number]'
-      use-switch: '&a使用&l[label] switchto <player> <number>&r&a将玩家岛屿扔到回收站中的指定位置'
-      use-emptytrash: '&a使用&l[label] emptytrash [player]&r&a来永久清除指定玩家的回收站'
+      title: '<light_purple>=========== 岛屿回收站 ===========</light_purple>'
+      count: '<light_purple><bold>岛屿: [number]</bold></light_purple>'
+      use-switch: '<green>使用<bold>[label] switchto <player> <number></bold></green><green>将玩家岛屿扔到回收站中的指定位置</green>'
+      use-emptytrash: '<green>使用<bold>[label] emptytrash [player]</bold></green><green>来永久清除指定玩家的回收站</green>'
     emptytrash:
-      parameters: '&7[player]'
+      parameters: '<gray>[player]</gray>'
       description: 清理回收站中玩家岛屿或全部的无主岛屿
-      success: '&a回收站已清空.'
+      success: '<green>回收站已清空.</green>'
     version:
       description: 显示BentoBox和组件(addon)版本
     setrange:
-      parameters: <player> &7<range>
+      parameters: <player> <gray><range></gray>
       description: 设置玩家岛屿范围
-      range-updated: '&a岛屿范围已设置为: &b[number]&a.'
+      range-updated: '<green>岛屿范围已设置为: </green><aqua>[number]</aqua><green>.</green>'
     reload:
       description: 重载
     tp:
       parameters: <player> [player to teleport]
       description: 传送到指定玩家的岛屿上
-      manual: '&c没有找到安全的落脚点! 请手动传送至&b[location]&c附近检查原因.'
+      manual: '<red>没有找到安全的落脚点! 请手动传送至</red><aqua>[location]</aqua><red>附近检查原因.</red>'
     tpuser:
       parameters: <传送玩家> <[prefix_island]的玩家> [玩家的岛]
       description: 将玩家传送到另一个玩家的 [&prefix_island]
     getrank:
       parameters: <player> [island owner]
       description: 获取指定玩家的身份等级
-      rank-is: '&a玩家&b[name]&a在岛屿上的身份等级为: &b[rank]&a.'
+      rank-is: '<green>玩家</green><aqua>[name]</aqua><green>在岛屿上的身份等级为: </green><aqua>[rank]</aqua><green>.</green>'
     setrank:
       parameters: <player> <rank> [island owner]
       description: 设置指定玩家的身份等级
-      unknown-rank: '&c未知的身份等级!'
-      not-possible: '&c身份等级必须比&b访客&c高.'
-      rank-set: '&a已将玩家&b[name]&a的身份等级从&b[from]&a设置为&b[to]&a.'
+      unknown-rank: '<red>未知的身份等级!</red>'
+      not-possible: '<red>身份等级必须比</red><aqua>访客</aqua><red>高.</red>'
+      rank-set: '<green>已将玩家</green><aqua>[name]</aqua><green>的身份等级从</green><aqua>[from]</aqua><green>设置为</green><aqua>[to]</aqua><green>.</green>'
     setprotectionlocation:
-      parameters: '&7[x y z coords]'
+      parameters: '<gray>[x y z coords]</gray>'
       description: 将当前位置或指定坐标作为岛屿保护的中心点
-      island: '&c这将影响玩家&b[name]&c位于&b[xyz]&c的岛屿.'
-      confirmation: '&你确定要将&b[xyz]&c设置为当前岛屿保护的中心点吗?'
-      success: '&a成功将&b[xyz]&a设置为当前岛屿保护的中心点.'
+      island: '<red>这将影响玩家</red><aqua>[name]</aqua><red>位于</red><aqua>[xyz]</aqua><red>的岛屿.</red>'
+      confirmation: '&你确定要将<aqua>[xyz]</aqua><red>设置为当前岛屿保护的中心点吗?</red>'
+      success: '<green>成功将</green><aqua>[xyz]</aqua><green>设置为当前岛屿保护的中心点.</green>'
       fail: |-
-        &c未能将&b[xyz]&c设置为当前岛屿保护的中心点!
-        &c请查看控制台以获取详细信息.
-      island-location-changed: '&a[user]将岛屿保护的中心点设置为: [xyz].'
-      xyz-error: '&c坐标应该为三个整数, 例如: &b100 120 100&c.'
+        <red>未能将</red><aqua>[xyz]</aqua><red>设置为当前岛屿保护的中心点!</red>
+        <red>请查看控制台以获取详细信息.</red>
+      island-location-changed: '<green>[user]将岛屿保护的中心点设置为: [xyz].</green>'
+      xyz-error: '<red>坐标应该为三个整数, 例如: </red><aqua>100 120 100</aqua><red>.</red>'
     setspawn:
       description: 将当前岛屿设置为该游戏模式的出生岛屿
-      already-spawn: '&c该岛屿本来就是出生岛屿!'
-      no-island-here: '&c这里没有岛屿.'
-      confirmation: '&c你确定要把当前岛屿设置为这个世界的出生岛屿吗?'
-      success: '&a成功将该岛屿设置为当前世界出生岛屿.'
+      already-spawn: '<red>该岛屿本来就是出生岛屿!</red>'
+      no-island-here: '<red>这里没有岛屿.</red>'
+      confirmation: '<red>你确定要把当前岛屿设置为这个世界的出生岛屿吗?</red>'
+      success: '<green>成功将该岛屿设置为当前世界出生岛屿.</green>'
     setspawnpoint:
       description: 将当前位置设置为岛屿出生点
-      no-island-here: '&c这里没有岛屿.'
-      confirmation: '&c你确定要把当前位置设置为这个岛屿的出生点吗?'
-      success: '&a成功将当前位置设置为该岛屿出生点.'
-      island-spawnpoint-changed: '&a[user]更改了岛屿出生点.'
+      no-island-here: '<red>这里没有岛屿.</red>'
+      confirmation: '<red>你确定要把当前位置设置为这个岛屿的出生点吗?</red>'
+      success: '<green>成功将当前位置设置为该岛屿出生点.</green>'
+      island-spawnpoint-changed: '<green>[user]更改了岛屿出生点.</green>'
     settings:
       parameters: >-
         [player]/[world flag]/spawn-island [flag/active/disable]
         [rank/active/disable]
       description: 打开设置面板或使用命令调整岛屿设置
-      unknown-setting: '&c未知设置'
+      unknown-setting: '<red>未知设置</red>'
     blueprint:
       parameters: <load/copy/paste/pos1/pos2/save>
       description: 操作蓝图
-      bedrock-required: '&c蓝图中必须有至少一块基岩!!'
-      copy-first: '&c请先使用&bcopy&c命令将所选区域复制到剪贴板!'
-      file-exists: '&c文件已存在, 是否要将其覆盖?'
-      no-such-file: '&c文件不存在!'
-      could-not-load: '&c无法加载该文件!'
-      could-not-save: '&c保存文件时出现错误: [message]'
-      set-pos1: '&a第一选取点已设置为: &f[vector]'
-      set-pos2: '&a第二选取点已设置为: &f[vector]'
-      set-different-pos: '&c这个位置已设置选取点, 请选择其它位置!'
-      need-pos1-pos2: '&c请先设置两个选取点!'
-      copying: '&b正在复制方块...'
-      copied-blocks: '&b复制了&f[number]&b个方块到剪贴板中.'
-      look-at-a-block: '&c要设置的位置必须位于视线所指方向20格以内!'
-      mid-copy: '&c已有复制操作正在进行, 请稍等.'
-      copied-percent: '&6复制进度: &b[number]%&6.'
+      bedrock-required: '<red>蓝图中必须有至少一块基岩!!</red>'
+      copy-first: '<red>请先使用</red><aqua>copy</aqua><red>命令将所选区域复制到剪贴板!</red>'
+      file-exists: '<red>文件已存在, 是否要将其覆盖?</red>'
+      no-such-file: '<red>文件不存在!</red>'
+      could-not-load: '<red>无法加载该文件!</red>'
+      could-not-save: '<red>保存文件时出现错误: [message]</red>'
+      set-pos1: '<green>第一选取点已设置为: </green><white>[vector]</white>'
+      set-pos2: '<green>第二选取点已设置为: </green><white>[vector]</white>'
+      set-different-pos: '<red>这个位置已设置选取点, 请选择其它位置!</red>'
+      need-pos1-pos2: '<red>请先设置两个选取点!</red>'
+      copying: '<aqua>正在复制方块...</aqua>'
+      copied-blocks: '<aqua>复制了</aqua><white>[number]</white><aqua>个方块到剪贴板中.</aqua>'
+      look-at-a-block: '<red>要设置的位置必须位于视线所指方向20格以内!</red>'
+      mid-copy: '<red>已有复制操作正在进行, 请稍等.</red>'
+      copied-percent: '<gold>复制进度: </gold><aqua>[number]%</aqua><gold>.</gold>'
       copy:
         parameters: '[air]'
         description: 复制两个选取点所示区域内的所有非空气方块(如果有[air]参数则包含空气方块)
       sink:
         description: 将此蓝图设置为粘贴时沉入海底。
-        status: '&a 蓝图会在粘贴时 [status] &a'
-        sink: '&c 沉没'
-        not-sink: '&b 不下沉'
-        no-clipboard: '&c 剪贴板中没有蓝图。加载或复制一些东西。'
+        status: '<green>蓝图会在粘贴时 [status] </green><green></green>'
+        sink: '<red>沉没</red>'
+        not-sink: '<aqua>不下沉</aqua>'
+        no-clipboard: '<red>剪贴板中没有蓝图。加载或复制一些东西。</red>'
       delete:
         parameters: <名称>
         description: 删除蓝图
-        no-blueprint: '&c蓝图: &b[name]&c不存在.'
+        no-blueprint: '<red>蓝图: </red><aqua>[name]</aqua><red>不存在.</red>'
         confirmation: |-
-          &c你确定要删除这个蓝图吗?
-          &c一旦删除成功, 将无法恢复.
-        success: '&a成功删除蓝图: &b[name]&a.'
+          <red>你确定要删除这个蓝图吗?</red>
+          <red>一旦删除成功, 将无法恢复.</red>
+        success: '<green>成功删除蓝图: </green><aqua>[name]</aqua><green>.</green>'
       load:
         parameters: <名称>
         description: 加载蓝图到剪贴板
       list:
         description: 列出可用蓝图
-        no-blueprints: '&c蓝图文件夹中没有蓝图文件!'
-        available-blueprints: '&a这些蓝图可以加载: '
+        no-blueprints: '<red>蓝图文件夹中没有蓝图文件!</red>'
+        available-blueprints: '<green>这些蓝图可以加载: </green>'
       origin:
         description: 将蓝图的原点设置为你所处的位置
       paste:
         description: 将剪贴板中的方块粘贴到你的位置
-        pasting: '&a粘贴中...'
+        pasting: '<green>粘贴中...</green>'
       pos1:
         description: 设置剪贴板的第1个选取点
       pos2:
@@ -392,124 +392,124 @@ commands:
       rename:
         parameters: <蓝图名称> <新名称>
         description: 重命名蓝图文件
-        success: '&a蓝图文件: &b[old]&a已被重命名为: &b[name]&a.'
-        pick-different-name: '&c该蓝图名称已存在, 请指定一个不同的名称.'
+        success: '<green>蓝图文件: </green><aqua>[old]</aqua><green>已被重命名为: </green><aqua>[name]</aqua><green>.</green>'
+        pick-different-name: '<red>该蓝图名称已存在, 请指定一个不同的名称.</red>'
       management:
-        back: '&f返回'
-        instruction: '&7点击蓝图, 然后点击此处'
-        title: '&9&l蓝图方案管理'
-        edit: '&7左键点击 - 编辑蓝图方案'
-        rename: '&7右键点击 - 重命名蓝图方案'
-        edit-description: '&f点击此处编辑描述'
-        world-name-syntax: '&f世界: &b[name]'
+        back: '<white>返回</white>'
+        instruction: '<gray>点击蓝图, 然后点击此处</gray>'
+        title: '<blue><bold>蓝图方案管理</bold></blue>'
+        edit: '<gray>左键点击 - 编辑蓝图方案</gray>'
+        rename: '<gray>右键点击 - 重命名蓝图方案</gray>'
+        edit-description: '<white>点击此处编辑描述</white>'
+        world-name-syntax: '<white>世界: </white><aqua>[name]</aqua>'
         world-instructions: |-
-          &7请从以下列表中选择一个
-          &7蓝图并放置在右边一格里
-          &7以将蓝图应用到这个世界
-        trash: '&f回收站'
-        no-trash: '&f无法回收'
-        trash-instructions: '&7右键点击删除此蓝图方案'
-        no-trash-instructions: '&c不能删除默认蓝图方案'
-        permission: '&f权限'
-        no-permission: '&f无需权限'
-        perm-required: '&f需要: '
-        no-perm-required: '&c不能为默认蓝图方案设置权限'
-        perm-not-required: '&7不需要权限'
-        perm-format: '&e'
-        remove: '&7右键点击删除'
+          <gray>请从以下列表中选择一个</gray>
+          <gray>蓝图并放置在右边一格里</gray>
+          <gray>以将蓝图应用到这个世界</gray>
+        trash: '<white>回收站</white>'
+        no-trash: '<white>无法回收</white>'
+        trash-instructions: '<gray>右键点击删除此蓝图方案</gray>'
+        no-trash-instructions: '<red>不能删除默认蓝图方案</red>'
+        permission: '<white>权限</white>'
+        no-permission: '<white>无需权限</white>'
+        perm-required: '<white>需要: </white>'
+        no-perm-required: '<red>不能为默认蓝图方案设置权限</red>'
+        perm-not-required: '<gray>不需要权限</gray>'
+        perm-format: '<yellow></yellow>'
+        remove: '<gray>右键点击删除</gray>'
         blueprint-instruction: |-
-          &7左键点击 - 选择蓝图
-          &7右键点击 - 重命名蓝图
-        select-first: '&c请先选择蓝图'
-        new-bundle: '&f&l新建蓝图方案'
+          <gray>左键点击 - 选择蓝图</gray>
+          <gray>右键点击 - 重命名蓝图</gray>
+        select-first: '<red>请先选择蓝图</red>'
+        new-bundle: '<white><bold>新建蓝图方案</bold></white>'
         new-bundle-instructions: |-
-          &7点击创建一个新的蓝图方案
-          &7蓝图方案包含: 主世界 下界 末地
-          &7三个世界的岛屿蓝图选择
-          &7它将出现在玩家创建岛屿界面中
+          <gray>点击创建一个新的蓝图方案</gray>
+          <gray>蓝图方案包含: 主世界 下界 末地</gray>
+          <gray>三个世界的岛屿蓝图选择</gray>
+          <gray>它将出现在玩家创建岛屿界面中</gray>
         name:
           quit: 退出
-          prompt: 请输入蓝图方案名称, 或输入&退出&r取消创建蓝图方案
-          too-long: '&c蓝图方案名称过长, 请确保在32个字符以内.'
-          pick-a-unique-name: '&c该蓝图方案名称已存在, 请换一个名称.'
-          stripped-char-in-unique-name: '&c其中的非法字符已被删除, 岛屿方案名称为: &b[name]&a.'
-          success: '&a蓝图方案创建成功!'
-          conversation-prefix: '&f>&r'
+          prompt: 请输入蓝图方案名称, 或输入&退出取消创建蓝图方案
+          too-long: '<red>蓝图方案名称过长, 请确保在32个字符以内.</red>'
+          pick-a-unique-name: '<red>该蓝图方案名称已存在, 请换一个名称.</red>'
+          stripped-char-in-unique-name: '<red>其中的非法字符已被删除, 岛屿方案名称为: </red><aqua>[name]</aqua><green>.</green>'
+          success: '<green>蓝图方案创建成功!</green>'
+          conversation-prefix: '<white>></white>'
         description:
           quit: 退出
           instructions: |-
-            &7请为&b[name]&7蓝图方案输入描述
-            &7每输入一次为一行
-            &7最后输入&退出&7退出编辑
+            <gray>请为</gray><aqua>[name]</aqua><gray>蓝图方案输入描述</gray>
+            <gray>每输入一次为一行</gray>
+            <gray>最后输入&退出</gray><gray>退出编辑</gray>
           default-color: ''
-          success: '&a蓝图方案描述添加成功!'
-          cancelling: '&c取消编辑蓝图方案描述!'
-        slot: '&f显示槽位: [number]'
+          success: '<green>蓝图方案描述添加成功!</green>'
+          cancelling: '<red>取消编辑蓝图方案描述!</red>'
+        slot: '<white>显示槽位: [number]</white>'
         slot-instructions: |-
-          &7左键点击 &7- &a增加 &7(向后移)
-          &7右键点击 &7- &c减少 &7(向前移)
+          <gray>左键点击 </gray><gray>- </gray><green>增加 </green><gray>(向后移)</gray>
+          <gray>右键点击 </gray><gray>- </gray><red>减少 </red><gray>(向前移)</gray>
         times: |-
-          &a每个玩家最多可使用该蓝图方案次数
-          &7左键点击 &7- &a增加
-          &7右键点击 &7- &c减少
-        unlimited-times: '&e无限'
-        maximum-times: '&f每个玩家最多可用次数: [number]'
+          <green>每个玩家最多可使用该蓝图方案次数</green>
+          <gray>左键点击 </gray><gray>- </gray><green>增加</green>
+          <gray>右键点击 </gray><gray>- </gray><red>减少</red>
+        unlimited-times: '<yellow>无限</yellow>'
+        maximum-times: '<white>每个玩家最多可用次数: [number]</white>'
         cost: |
-          &a [prefix_Island]费用
-          &a 左键点击 +1
-          &a 右键点击 -1
-          &a Shift +/-100
+          <green>[prefix_Island]费用</green>
+          <green>左键点击 +1</green>
+          <green>右键点击 -1</green>
+          <green>Shift +/-100</green>
         no-cost: 免费
         cost-amount: '费用: [cost]'
-        next-page: '&f 下一页'
-        previous-page: '&f 上一页'
+        next-page: '<white>下一页</white>'
+        previous-page: '<white>上一页</white>'
     resetflags:
-      parameters: '&7[flag]'
+      parameters: '<gray>[flag]</gray>'
       description: 将所有岛屿的保护标志设置为config.yml中默认值
-      confirm: '&4这将把所有岛屿的保护标志重置为默认值!'
-      success: '&a成功将所有岛屿的保护标志重置为默认设置.'
-      success-one: '&a所有岛屿的&b[name]&a保护标志已重置为默认值.'
+      confirm: '<dark_red>这将把所有岛屿的保护标志重置为默认值!</dark_red>'
+      success: '<green>成功将所有岛屿的保护标志重置为默认设置.</green>'
+      success-one: '<green>所有岛屿的</green><aqua>[name]</aqua><green>保护标志已重置为默认值.</green>'
     world:
       description: 管理世界设置
     delete:
       parameters: <玩家>
       description: 删除玩家的岛屿
-      cannot-delete-owner: '&c删除岛屿之前, 必须将所有团队成员踢出队伍.'
-      deleted-island: '&a位于&e[xyz]&a的岛屿已成功删除.'
+      cannot-delete-owner: '<red>删除岛屿之前, 必须将所有团队成员踢出队伍.</red>'
+      deleted-island: '<green>位于</green><yellow>[xyz]</yellow><green>的岛屿已成功删除.</green>'
     deletehomes:
       parameters: <玩家>
       description: 从岛上删除所有命名过的家
-      warning: '&c岛上所有命名过的家将被删除!'
+      warning: '<red>岛上所有命名过的家将被删除!</red>'
     why:
       parameters: <玩家>
       description: 为玩家开启/关闭控制台调试报告
-      turning-on: '&a已为&b[name]&a打开控制台调试报告.'
-      turning-off: '&e已为&b[name]&e关闭控制台调试报告.'
+      turning-on: '<green>已为</green><aqua>[name]</aqua><green>打开控制台调试报告.</green>'
+      turning-off: '<yellow>已为</yellow><aqua>[name]</aqua><yellow>关闭控制台调试报告.</yellow>'
     deaths:
       description: 编辑玩家的死亡次数
       reset:
         description: 重置玩家的死亡次数
         parameters: <玩家>
-        success: '&a成功将玩家&b[name]&a的死亡次数重置为: &b0&a.'
+        success: '<green>成功将玩家</green><aqua>[name]</aqua><green>的死亡次数重置为: </green><aqua>0</aqua><green>.</green>'
       set:
         description: 设置玩家的死亡次数
-        parameters: '<player> &8死亡: &f<deaths>'
-        success: '&a成功将玩家&b[name]&a的死亡次数设置为: &b[number]&a.'
+        parameters: '<player> <dark_gray>死亡: </dark_gray><white><deaths></white>'
+        success: '<green>成功将玩家</green><aqua>[name]</aqua><green>的死亡次数设置为: </green><aqua>[number]</aqua><green>.</green>'
       add:
         description: 增加玩家的死亡次数
-        parameters: <玩家> &c<死亡数>
+        parameters: <玩家> <red><死亡数></red>
         success: |-
-          &a成功将玩家&b[name]&a的死亡次数增加&b[number]&a次
-          &a现在的死亡次数为: &b[total]&a
+          <green>成功将玩家</green><aqua>[name]</aqua><green>的死亡次数增加</green><aqua>[number]</aqua><green>次</green>
+          <green>现在的死亡次数为: </green><aqua>[total]</aqua><green></green>
       remove:
         description: 减少玩家的死亡次数
         parameters: <玩家> <死亡>
         success: |-
-          &a成功将玩家&b[name]&a的死亡次数减少&b[number]&a次
-          &a现在的死亡次数为: &b[total]&a
+          <green>成功将玩家</green><aqua>[name]</aqua><green>的死亡次数减少</green><aqua>[number]</aqua><green>次</green>
+          <green>现在的死亡次数为: </green><aqua>[total]</aqua><green></green>
     resetname:
       description: 重置玩家岛屿名称
-      success: '&a成功重置&b[name]&a的岛屿名称.'
+      success: '<green>成功重置</green><aqua>[name]</aqua><green>的岛屿名称.</green>'
   bentobox:
     description: BentoBox管理员命令
     perms:
@@ -518,24 +518,24 @@ commands:
       description: 显示版权和许可信息
     reload:
       description: 重载BentoBox和所有组件(Addons)、设置、语言
-      locales-reloaded: '[prefix_bentobox]&2语言文件已重载.'
-      addons-reloaded: '[prefix_bentobox]&2组件(Addons)已重载.'
-      settings-reloaded: '[prefix_bentobox]&2设置已重载.'
-      addon: '[prefix_bentobox]&6正在重载&b[name]&2.'
-      addon-reloaded: '[prefix_bentobox]&b[name]&2已重载.'
-      warning: '[prefix_bentobox]&c警告: 重载可能导致不稳定, 如果发生错误, 请重启服务器.'
-      unknown-addon: '[prefix_bentobox]&c未知组件(Addon)!'
+      locales-reloaded: '[prefix_bentobox]<dark_green>语言文件已重载.</dark_green>'
+      addons-reloaded: '[prefix_bentobox]<dark_green>组件(Addons)已重载.</dark_green>'
+      settings-reloaded: '[prefix_bentobox]<dark_green>设置已重载.</dark_green>'
+      addon: '[prefix_bentobox]<gold>正在重载</gold><aqua>[name]</aqua><dark_green>.</dark_green>'
+      addon-reloaded: '[prefix_bentobox]<aqua>[name]</aqua><dark_green>已重载.</dark_green>'
+      warning: '[prefix_bentobox]<red>警告: 重载可能导致不稳定, 如果发生错误, 请重启服务器.</red>'
+      unknown-addon: '[prefix_bentobox]<red>未知组件(Addon)!</red>'
       locales:
         description: 重载语言文件
     version:
-      plugin-version: '&2BentoBox版本: &3[version]'
+      plugin-version: '<dark_green>BentoBox版本: </dark_green><dark_aqua>[version]</dark_aqua>'
       description: 显示BentoBox和附加组件(Addons)版本
-      loaded-addons: '&f已加载的附加组件(Addons):'
-      loaded-game-worlds: '&f已加载的世界:'
-      addon-syntax: '&2[name] &3[version] &7(&3[state]&7)'
-      game-world: '&2[name] &7(&3[addon]&7): &3[worlds]'
-      server: '&2运行在: &3[name] [version]&2.'
-      database: '&2数据库类型: &3[database]'
+      loaded-addons: '<white>已加载的附加组件(Addons):</white>'
+      loaded-game-worlds: '<white>已加载的世界:</white>'
+      addon-syntax: '<dark_green>[name] </dark_green><dark_aqua>[version] </dark_aqua><gray>(</gray><dark_aqua>[state]</dark_aqua><gray>)</gray>'
+      game-world: '<dark_green>[name] </dark_green><gray>(</gray><dark_aqua>[addon]</dark_aqua><gray>): </gray><dark_aqua>[worlds]</dark_aqua>'
+      server: '<dark_green>运行在: </dark_green><dark_aqua>[name] [version]</dark_aqua><dark_green>.</dark_green>'
+      database: '<dark_green>数据库类型: </dark_green><dark_aqua>[database]</dark_aqua>'
     manage:
       description: 显示管理面板
     catalog:
@@ -543,76 +543,76 @@ commands:
     locale:
       description: 执行语言文件分析
       see-console: |-
-        [prefix_bentobox] &a请从控制台读取反馈信息
-        [prefix_bentobox] &a此命令非常垃圾, 无法从聊天中读取反馈...
-        [prefix_bentobox] &a确实垃圾, 就算从控制台里读取反馈也非常吃力啊!
+        [prefix_bentobox] <green>请从控制台读取反馈信息</green>
+        [prefix_bentobox] <green>此命令非常垃圾, 无法从聊天中读取反馈...</green>
+        [prefix_bentobox] <green>确实垃圾, 就算从控制台里读取反馈也非常吃力啊!</green>
     migrate:
       description: 将数据从一个数据库迁移至另一个数据库
-      players: '[prefix_bentobox]&6迁移玩家数据库'
-      names: '[prefix_bentobox]&6迁移玩家名称数据库'
-      addons: '[prefix_bentobox]&6迁移附加组件(Addons)'
-      class: '[prefix_bentobox]&6迁移[description]'
-      migrated: '[prefix_bentobox]&a迁移完成'
-      completed: '[prefix_bentobox]&a 完成'
+      players: '[prefix_bentobox]<gold>迁移玩家数据库</gold>'
+      names: '[prefix_bentobox]<gold>迁移玩家名称数据库</gold>'
+      addons: '[prefix_bentobox]<gold>迁移附加组件(Addons)</gold>'
+      class: '[prefix_bentobox]<gold>迁移[description]</gold>'
+      migrated: '[prefix_bentobox]<green>迁移完成</green>'
+      completed: '[prefix_bentobox]<green>完成</green>'
     rank:
       description: 列出, 添加或删除身份等级
-      parameters: '&a[list | add | remove] [rank reference] [rank value]'
+      parameters: '<green>[list | add | remove] [rank reference] [rank value]</green>'
       add:
-        success: '&a身份等级: &b[rank] &a值: &b[number]&a添加成功!'
-        failure: '&c身份等级: &b[rank] &a值: &b[number]&a添加失败!'
+        success: '<green>身份等级: </green><aqua>[rank] </aqua><green>值: </green><aqua>[number]</aqua><green>添加成功!</green>'
+        failure: '<red>身份等级: </red><aqua>[rank] </aqua><green>值: </green><aqua>[number]</aqua><green>添加失败!</green>'
       remove:
-        success: '&a成功删除身份等级: &b[rank]'
-        failure: '&c删除身份等级: &b[rank]&c失败. 未知身份等级.'
-      list: '&a已注册的身份等级如下:'
+        success: '<green>成功删除身份等级: </green><aqua>[rank]</aqua>'
+        failure: '<red>删除身份等级: </red><aqua>[rank]</aqua><red>失败. 未知身份等级.</red>'
+      list: '<green>已注册的身份等级如下:</green>'
   confirmation:
-    confirm: '&c请在&b[seconds]&c秒内再次输入命令以确认.'
-    previous-request-cancelled: '&6先前的确认请求已取消.'
-    request-cancelled: '&c确认超时 &7- &b请求已取消.'
+    confirm: '<red>请在</red><aqua>[seconds]</aqua><red>秒内再次输入命令以确认.</red>'
+    previous-request-cancelled: '<gold>先前的确认请求已取消.</gold>'
+    request-cancelled: '<red>确认超时 </red><gray>- </gray><aqua>请求已取消.</aqua>'
   delay:
-    previous-command-cancelled: '&c上一个命令已取消.'
-    stand-still: '&6请勿移动! 传送将在&b[seconds]&6秒后开始.'
-    moved-so-command-cancelled: '&c你移动了! 传送已取消.'
+    previous-command-cancelled: '<red>上一个命令已取消.</red>'
+    stand-still: '<gold>请勿移动! 传送将在</gold><aqua>[seconds]</aqua><gold>秒后开始.</gold>'
+    moved-so-command-cancelled: '<red>你移动了! 传送已取消.</red>'
   island:
     about:
       description: 显示许可信息
     go:
-      parameters: '&f[家名]'
+      parameters: '<white>[家名]</white>'
       description: 传送到你的岛屿上
-      teleport: '&a正在将你传送到你的岛屿上.'
-      in-progress: '&a 正在传送，请稍候...'
-      teleported: '&a正在将你传送到你的岛屿传送点: &e[number]&a.'
-      failure: '&c 传送失败，出于某种原因。请稍后再试。'
-      unknown-home: '&c未知岛屿传送点名称!'
+      teleport: '<green>正在将你传送到你的岛屿上.</green>'
+      in-progress: '<green>正在传送，请稍候...</green>'
+      teleported: '<green>正在将你传送到你的岛屿传送点: </green><yellow>[number]</yellow><green>.</green>'
+      failure: '<red>传送失败，出于某种原因。请稍后再试。</red>'
+      unknown-home: '<red>未知岛屿传送点名称!</red>'
     help:
       description: 岛屿主要命令
     spawn:
       description: 传送到出生点
-      teleporting: '&a正在将你传送到出生点.'
-      no-spawn: '&c当前游戏模式没有出生点.'
+      teleporting: '<green>正在将你传送到出生点.</green>'
+      no-spawn: '<red>当前游戏模式没有出生点.</red>'
     create:
       description: 使用可选的蓝图方案创建岛屿(一些蓝图可能需要权限)
       parameters: <蓝图>
-      too-many-islands: '&c这个世界太拥挤了, 没有足够的空间来创建你的岛屿.'
-      cannot-create-island: '&c找不到合适的地点为您创建岛屿, 请稍后重试...'
-      unable-create-island: '&c无法为你生成岛屿, 请联系管理员.'
-      creating-island: '&a正在为你的岛屿寻找合适的地点...'
-      you-cannot-make: '&c你不能再建造任何岛屿了!'
-      max-uses: '&c你已达到该类型岛屿的最大创建次数, 无法再创建更多该类型的岛屿!'
-      you-cannot-make-team: '&c团队成员无法创建岛屿.'
+      too-many-islands: '<red>这个世界太拥挤了, 没有足够的空间来创建你的岛屿.</red>'
+      cannot-create-island: '<red>找不到合适的地点为您创建岛屿, 请稍后重试...</red>'
+      unable-create-island: '<red>无法为你生成岛屿, 请联系管理员.</red>'
+      creating-island: '<green>正在为你的岛屿寻找合适的地点...</green>'
+      you-cannot-make: '<red>你不能再建造任何岛屿了!</red>'
+      max-uses: '<red>你已达到该类型岛屿的最大创建次数, 无法再创建更多该类型的岛屿!</red>'
+      you-cannot-make-team: '<red>团队成员无法创建岛屿.</red>'
       pasting:
-        estimated-time: '&a预计用时: &b[number]&a秒.'
-        blocks: '&a正在构建... 共需构建: &b[number]&a个方块.'
-        entities: '&a填充实体... 共需填充: &b[number]&a个实体.'
-        dimension-done: '&b[world]&a中的一座岛屿构建成功.'
-        done: '&a岛屿部署完毕! 你的岛屿已准备就绪.'
-      pick: '&2选择你的岛屿'
-      cannot-afford: '&c 你买不起！费用: [cost]'
-      unknown-blueprint: '&c该蓝图方案尚未加载.'
-      on-first-login: '&a欢迎! 我们将在几秒钟内开始创建你的岛屿.'
-      you-can-teleport-to-your-island: '&a你可以随时传送到你的岛屿上.'
+        estimated-time: '<green>预计用时: </green><aqua>[number]</aqua><green>秒.</green>'
+        blocks: '<green>正在构建... 共需构建: </green><aqua>[number]</aqua><green>个方块.</green>'
+        entities: '<green>填充实体... 共需填充: </green><aqua>[number]</aqua><green>个实体.</green>'
+        dimension-done: '<aqua>[world]</aqua><green>中的一座岛屿构建成功.</green>'
+        done: '<green>岛屿部署完毕! 你的岛屿已准备就绪.</green>'
+      pick: '<dark_green>选择你的岛屿</dark_green>'
+      cannot-afford: '<red>你买不起！费用: [cost]</red>'
+      unknown-blueprint: '<red>该蓝图方案尚未加载.</red>'
+      on-first-login: '<green>欢迎! 我们将在几秒钟内开始创建你的岛屿.</green>'
+      you-can-teleport-to-your-island: '<green>你可以随时传送到你的岛屿上.</green>'
     deletehome:
       description: 删除岛屿传送点
-      parameters: '&6[家名]'
+      parameters: '<gold>[家名]</gold>'
     homes:
       description: 显示你设置的全部岛屿传送点
     info:
@@ -621,286 +621,286 @@ commands:
     near:
       description: 显示周边岛屿名称
       parameters: ''
-      the-following-islands: '&a这些岛屿在你附近: '
-      syntax: '&6[direction]: &a[name]'
+      the-following-islands: '<green>这些岛屿在你附近: </green>'
+      syntax: '<gold>[direction]: </gold><green>[name]</green>'
       north: 北方
       south: 南方
       east: 东方
       west: 西方
-      no-neighbors: '&c你的周边没有岛屿!'
+      no-neighbors: '<red>你的周边没有岛屿!</red>'
     reset:
       description: 重新开始你的岛屿生涯
       parameters: <蓝图>
-      none-left: '&c你没有重置机会了!'
-      resets-left: '&c你还有&b[number]&c次重置机会.'
+      none-left: '<red>你没有重置机会了!</red>'
+      resets-left: '<red>你还有</red><aqua>[number]</aqua><red>次重置机会.</red>'
       confirmation: |-
-        &c你确定要重置岛屿吗?
-        &c所有岛屿团队成员将被踢出队伍, 需重新邀请岛屿团队成员.
-        &c该操作不可逆: 一旦岛屿被删除了, &l没有恢复的可能&r&c.
-      kicked-from-island: '&c你已被踢出&b[gamemode]&c的岛屿, 岛主正在重置岛屿.'
+        <red>你确定要重置岛屿吗?</red>
+        <red>所有岛屿团队成员将被踢出队伍, 需重新邀请岛屿团队成员.</red>
+        <red>该操作不可逆: 一旦岛屿被删除了, <bold>没有恢复的可能</bold></red><red>.</red>
+      kicked-from-island: '<red>你已被踢出</red><aqua>[gamemode]</aqua><red>的岛屿, 岛主正在重置岛屿.</red>'
     sethome:
       description: 设置你的岛屿传送点
-      must-be-on-your-island: '&c你必须在自己的岛上才能设置传送点!'
-      too-many-homes: '&c无法设置 - 你的岛屿最多只能有&b[number]&c个传送点.'
-      home-set: '&6你的岛屿传送点已被设置在了当前位置.'
-      homes-are: '&6你的岛屿传送点如下: '
-      home-list-syntax: '&6[name]'
-      click-to-teleport: '&a点击传送！'
+      must-be-on-your-island: '<red>你必须在自己的岛上才能设置传送点!</red>'
+      too-many-homes: '<red>无法设置 - 你的岛屿最多只能有</red><aqua>[number]</aqua><red>个传送点.</red>'
+      home-set: '<gold>你的岛屿传送点已被设置在了当前位置.</gold>'
+      homes-are: '<gold>你的岛屿传送点如下: </gold>'
+      home-list-syntax: '<gold>[name]</gold>'
+      click-to-teleport: '<green>点击传送！</green>'
       nether:
-        not-allowed: '&c不允许在下界设置岛屿传送点.'
-        confirmation: '&c你确定要在下界设置岛屿传送点吗?'
+        not-allowed: '<red>不允许在下界设置岛屿传送点.</red>'
+        confirmation: '<red>你确定要在下界设置岛屿传送点吗?</red>'
       the-end:
-        not-allowed: '&c不允许在末地设置岛屿传送点.'
-        confirmation: '&c你确定要在末地设置岛屿传送点吗?'
-      parameters: '&6[家名]'
+        not-allowed: '<red>不允许在末地设置岛屿传送点.</red>'
+        confirmation: '<red>你确定要在末地设置岛屿传送点吗?</red>'
+      parameters: '<gold>[家名]</gold>'
     setname:
       description: 为你的岛屿命名
-      name-too-short: '&c岛屿名过短. 请至少有: &b[number]&c个字符.'
-      name-too-long: '&c岛屿名过长. 请至多有: &b[number]&c个字符.'
-      name-already-exists: '&c已经有一个该名称的岛屿了.'
+      name-too-short: '<red>岛屿名过短. 请至少有: </red><aqua>[number]</aqua><red>个字符.</red>'
+      name-too-long: '<red>岛屿名过长. 请至多有: </red><aqua>[number]</aqua><red>个字符.</red>'
+      name-already-exists: '<red>已经有一个该名称的岛屿了.</red>'
       parameters: <名称>
-      success: '&a成功将你的岛屿命名为: &b[name]&a.'
+      success: '<green>成功将你的岛屿命名为: </green><aqua>[name]</aqua><green>.</green>'
     renamehome:
       description: 重命名岛屿传送点
-      parameters: '&b[家名字]'
-      enter-new-name: '&6请输入新的传送点名称: '
-      already-exists: '&c该名称已存在, 请输入一个不同的名称.'
+      parameters: '<aqua>[家名字]</aqua>'
+      enter-new-name: '<gold>请输入新的传送点名称: </gold>'
+      already-exists: '<red>该名称已存在, 请输入一个不同的名称.</red>'
     resetname:
       description: 重置你的岛屿名称
-      success: '&a你的岛屿名称已重置.'
+      success: '<green>你的岛屿名称已重置.</green>'
     team:
       description: 管理你的岛屿团队
       gui:
         titles:
-          team-panel: '&#EE82EE&l岛屿团队管理'
+          team-panel: '<color:#EE82EE><bold>岛屿团队管理</bold></color:#EE82EE>'
         buttons:
           status:
-            name: '&e&l状态'
+            name: '<yellow><bold>状态</bold></yellow>'
             description: 团队状态
           rank-filter:
-            name: '&e&l身份等级筛选'
-            description: '&a点击切换查询的身份等级'
-          invitation: '&e&l收到邀请'
+            name: '<yellow><bold>身份等级筛选</bold></yellow>'
+            description: '<green>点击切换查询的身份等级</green>'
+          invitation: '<yellow><bold>收到邀请</bold></yellow>'
           invite:
-            name: '&e&l邀请玩家'
+            name: '<yellow><bold>邀请玩家</bold></yellow>'
             description: |
-              &a玩家必须和你在一个世界(维度)
-              &a才会显示在列表中
+              <green>玩家必须和你在一个世界(维度)</green>
+              <green>才会显示在列表中</green>
         tips:
           LEFT:
-            name: '&b左键'
-            invite: '&a邀请一位玩家加入团队'
+            name: '<aqua>左键</aqua>'
+            invite: '<green>邀请一位玩家加入团队</green>'
           RIGHT:
-            name: '&b右键'
+            name: '<aqua>右键</aqua>'
           SHIFT_RIGHT:
-            name: '&bShift + 右键'
-            reject: '&c拒绝邀请'
-            kick: '&a将该玩家踢出团队'
-            leave: '&a离开团队'
+            name: '<aqua>Shift + 右键</aqua>'
+            reject: '<red>拒绝邀请</red>'
+            kick: '<green>将该玩家踢出团队</green>'
+            leave: '<green>离开团队</green>'
           SHIFT_LEFT:
-            name: '&bShift + 左键'
-            accept: '&a接受邀请'
-            setowner: '&a将该玩家升为岛主(你会成为副岛主)'
+            name: '<aqua>Shift + 左键</aqua>'
+            accept: '<green>接受邀请</green>'
+            setowner: '<green>将该玩家升为岛主(你会成为副岛主)</green>'
       info:
         description: 显示您的岛屿团队详细信息
         member-layout:
-          online: '&a&l o &r&f[name]'
-          offline: '&c&l o &r&f[name] &7([last_seen])'
-          offline-not-last-seen: '&c&l o &r&f[name]'
+          online: '<green><bold>o </bold></green><white>[name]</white>'
+          offline: '<red><bold>o </bold></red><white>[name] </white><gray>([last_seen])</gray>'
+          offline-not-last-seen: '<red><bold>o </bold></red><white>[name]</white>'
         last-seen:
-          layout: '&b[number]&7[unit]前在线'
+          layout: '<aqua>[number]</aqua><gray>[unit]前在线</gray>'
           days: 天
           hours: 小时
           minutes: 分钟
         header: |
-          &f--- &a团队信息 &f---
-          &a成员: &b[total]&7/&b[max]
-          &a在线: &b[online]
+          <white>--- </white><green>团队信息 </green><white>---</white>
+          <green>成员: </green><aqua>[total]</aqua><gray>/</gray><aqua>[max]</aqua>
+          <green>在线: </green><aqua>[online]</aqua>
         rank-layout:
-          owner: '&6[rank]: '
-          generic: '&6[rank]&7(&b[number]&7)&6: '
+          owner: '<gold>[rank]: </gold>'
+          generic: '<gold>[rank]</gold><gray>(</gray><aqua>[number]</aqua><gray>)</gray><gold>: </gold>'
       coop:
         description: 将一位玩家以协作者身份加入团队
-        parameters: '&7<player>'
-        cannot-coop-yourself: '&c你不能与自己协作!'
-        already-has-rank: '&c该玩家在你的团队中已经有身份等级了!'
-        you-are-a-coop-member: '&2你成为了&b[name]&2的协作者.'
-        success: '&b[name]&a成为了你的协作者.'
-        name-has-invited-you: '&b[name]&a邀请你以&b协作者&a的身份加入团队.'
+        parameters: '<gray><player></gray>'
+        cannot-coop-yourself: '<red>你不能与自己协作!</red>'
+        already-has-rank: '<red>该玩家在你的团队中已经有身份等级了!</red>'
+        you-are-a-coop-member: '<dark_green>你成为了</dark_green><aqua>[name]</aqua><dark_green>的协作者.</dark_green>'
+        success: '<aqua>[name]</aqua><green>成为了你的协作者.</green>'
+        name-has-invited-you: '<aqua>[name]</aqua><green>邀请你以</green><aqua>协作者</aqua><green>的身份加入团队.</green>'
       uncoop:
         description: 与一位玩家解除协作
         parameters: <玩家>
-        cannot-uncoop-yourself: '&c你不能与自己解除协作!'
-        cannot-uncoop-member: '&c你不能与一名团队成员解除协作!'
-        player-not-cooped: '&c该玩家不是你的协作者!'
-        you-are-no-longer-a-coop-member: '&c你不再是&b[name]&c团队的协作者了.'
+        cannot-uncoop-yourself: '<red>你不能与自己解除协作!</red>'
+        cannot-uncoop-member: '<red>你不能与一名团队成员解除协作!</red>'
+        player-not-cooped: '<red>该玩家不是你的协作者!</red>'
+        you-are-no-longer-a-coop-member: '<red>你不再是</red><aqua>[name]</aqua><red>团队的协作者了.</red>'
         all-members-logged-off: |-
-          &c玩家&b[name]&c的所有岛屿成员已离线,
-          &c因此你们自动解除了协作关系.
-        success: '&b[name]&a不再是你的协作者了.'
-        is-full: '&c你的协作者数量已达上限.'
+          <red>玩家</red><aqua>[name]</aqua><red>的所有岛屿成员已离线,</red>
+          <red>因此你们自动解除了协作关系.</red>
+        success: '<aqua>[name]</aqua><green>不再是你的协作者了.</green>'
+        is-full: '<red>你的协作者数量已达上限.</red>'
       trust:
         description: 将一位玩家以可信玩家身份加入团队
         parameters: <玩家>
-        trust-in-yourself: '&c你一直都信任着自己!'
-        name-has-invited-you: '&b[name]&a邀请你以&b可信玩家&a的身份加入团队.'
-        player-already-trusted: '&c该玩家已经是可信玩家了!'
-        you-are-trusted: '&2你成为了&b[name]&2的可信玩家.'
-        success: '&b[name]&a成为了你的可信玩家.'
-        is-full: '&c你的可信玩家数量已达上限.'
+        trust-in-yourself: '<red>你一直都信任着自己!</red>'
+        name-has-invited-you: '<aqua>[name]</aqua><green>邀请你以</green><aqua>可信玩家</aqua><green>的身份加入团队.</green>'
+        player-already-trusted: '<red>该玩家已经是可信玩家了!</red>'
+        you-are-trusted: '<dark_green>你成为了</dark_green><aqua>[name]</aqua><dark_green>的可信玩家.</dark_green>'
+        success: '<aqua>[name]</aqua><green>成为了你的可信玩家.</green>'
+        is-full: '<red>你的可信玩家数量已达上限.</red>'
       untrust:
         description: 将指定玩家取消可信玩家身份
         parameters: <玩家>
-        cannot-untrust-yourself: '&c你不能不信任自己!'
-        cannot-untrust-member: '&c你不能将团队成员取消可信玩家身份!'
-        player-not-trusted: '&c该玩家不是你的可信玩家!'
-        you-are-no-longer-trusted: '&c你不再是&b[name]&c团队的可信玩家了'
-        success: '&b[name]&a不再是你的可信玩家了.'
+        cannot-untrust-yourself: '<red>你不能不信任自己!</red>'
+        cannot-untrust-member: '<red>你不能将团队成员取消可信玩家身份!</red>'
+        player-not-trusted: '<red>该玩家不是你的可信玩家!</red>'
+        you-are-no-longer-trusted: '<red>你不再是</red><aqua>[name]</aqua><red>团队的可信玩家了</red>'
+        success: '<aqua>[name]</aqua><green>不再是你的可信玩家了.</green>'
       invite:
         description: 邀请一位玩家以成员身份加入团队(对方会失去自己领取的岛屿)
-        invitation-sent: '&a邀请已发送给&b[name]&a.'
-        removing-invite: '&c邀请已取消.'
-        name-has-invited-you: '&b[name]&a邀请你以成员身份加入TA的岛屿.'
+        invitation-sent: '<green>邀请已发送给</green><aqua>[name]</aqua><green>.</green>'
+        removing-invite: '<red>邀请已取消.</red>'
+        name-has-invited-you: '<aqua>[name]</aqua><green>邀请你以成员身份加入TA的岛屿.</green>'
         to-accept-or-reject: |-
-          &a输入&b/[label] team accept&a接受邀请
-          &a输入&b/[label] team reject&a拒绝邀请
-        you-will-lose-your-island: '&c警告! 如果你接受邀请, 你将会失去你的全部岛屿!'
+          <green>输入</green><aqua>/[label] team accept</aqua><green>接受邀请</green>
+          <green>输入</green><aqua>/[label] team reject</aqua><green>拒绝邀请</green>
+        you-will-lose-your-island: '<red>警告! 如果你接受邀请, 你将会失去你的全部岛屿!</red>'
         gui:
           titles:
             team-invite-panel: 邀请玩家
           button:
-            already-invited: '&c已邀请'
-            search: '&a查找玩家'
+            already-invited: '<red>已邀请</red>'
+            search: '<green>查找玩家</green>'
             searching: |-
-              &b查找: 
-              &c[name]
-          enter-name: '&a请输入玩家ID: '
+              <aqua>查找:</aqua>
+              <red>[name]</red>
+          enter-name: '<green>请输入玩家ID: </green>'
           tips:
             LEFT:
-              name: '&b左键'
-              search: '&a输入玩家ID'
-              back: '&a返回'
+              name: '<aqua>左键</aqua>'
+              search: '<green>输入玩家ID</green>'
+              back: '<green>返回</green>'
               invite: |-
-                &a邀请TA以&b成员&a身份加入团队
-                &c对方会失去自己领取的岛屿
+                <green>邀请TA以</green><aqua>成员</aqua><green>身份加入团队</green>
+                <red>对方会失去自己领取的岛屿</red>
             RIGHT:
-              name: '&b右键'
+              name: '<aqua>右键</aqua>'
               coop: |-
-                &a将TA以&b协作者&a身份拉入团队
-                &c当团队成员均不在线时, TA会失去权限
+                <green>将TA以</green><aqua>协作者</aqua><green>身份拉入团队</green>
+                <red>当团队成员均不在线时, TA会失去权限</red>
             SHIFT_LEFT:
-              name: '&bShift + 左键'
+              name: '<aqua>Shift + 左键</aqua>'
               trust: |-
-                &a将TA以&b可信玩家&a身份拉入团队
-                &c可信玩家拥有永久权限
+                <green>将TA以</green><aqua>可信玩家</aqua><green>身份拉入团队</green>
+                <red>可信玩家拥有永久权限</red>
         errors:
-          cannot-invite-self: '&c你不能邀请自己!'
-          cooldown: '&c邀请冷却中, &b[number]&c秒后才能再次发出邀请.'
-          island-is-full: '&c你的岛屿已满, 不能邀请更多人了.'
-          none-invited-you: '&c没有人邀请你.'
-          you-already-are-in-team: '&c你已经有团队了!'
-          already-on-team: '&c该玩家已经有团队了!'
-          invalid-invite: '&c该邀请已失效.'
-          you-have-already-invited: '&c你已经邀请过该玩家了!'
+          cannot-invite-self: '<red>你不能邀请自己!</red>'
+          cooldown: '<red>邀请冷却中, </red><aqua>[number]</aqua><red>秒后才能再次发出邀请.</red>'
+          island-is-full: '<red>你的岛屿已满, 不能邀请更多人了.</red>'
+          none-invited-you: '<red>没有人邀请你.</red>'
+          you-already-are-in-team: '<red>你已经有团队了!</red>'
+          already-on-team: '<red>该玩家已经有团队了!</red>'
+          invalid-invite: '<red>该邀请已失效.</red>'
+          you-have-already-invited: '<red>你已经邀请过该玩家了!</red>'
         parameters: <玩家>
-        you-can-invite: '&a你还能再邀请&b[number]&a个玩家.'
+        you-can-invite: '<green>你还能再邀请</green><aqua>[number]</aqua><green>个玩家.</green>'
         accept:
           description: 接受邀请
-          you-joined-island: '&a你加入了一个岛屿! 使用&b/[label] team&a查看其他岛屿成员.'
-          name-joined-your-island: '&b[name]&a加入了你的岛屿!'
+          you-joined-island: '<green>你加入了一个岛屿! 使用</green><aqua>/[label] team</aqua><green>查看其他岛屿成员.</green>'
+          name-joined-your-island: '<aqua>[name]</aqua><green>加入了你的岛屿!</green>'
           confirmation: |
-            &c你确定要接受邀请吗?
-            &c如果你有岛屿, 你将失去自己的岛屿!
+            <red>你确定要接受邀请吗?</red>
+            <red>如果你有岛屿, 你将失去自己的岛屿!</red>
         reject:
           description: 拒绝邀请
-          you-rejected-invite: '&a你拒绝了对方的邀请.'
-          name-rejected-your-invite: '&b[name]&c拒绝了你的邀请!'
+          you-rejected-invite: '<green>你拒绝了对方的邀请.</green>'
+          name-rejected-your-invite: '<aqua>[name]</aqua><red>拒绝了你的邀请!</red>'
         cancel:
           description: 取消尚未得到回应的邀请
       leave:
-        cannot-leave: '&c岛主无法退出, 除非转让岛屿, 或踢出全部成员.'
+        cannot-leave: '<red>岛主无法退出, 除非转让岛屿, 或踢出全部成员.</red>'
         description: 退出岛屿
-        left-your-island: '&b[name]&c退出了你的岛屿'
-        success: '&a你离开了这个岛屿.'
+        left-your-island: '<aqua>[name]</aqua><red>退出了你的岛屿</red>'
+        success: '<green>你离开了这个岛屿.</green>'
       kick:
         description: 将指定成员踢出你岛屿
         parameters: <玩家>
-        player-kicked: '&b[name]&c将你在&b[gamemode]&c上踢了出去!'
-        cannot-kick: '&c你不能踢出你自己!'
-        cannot-kick-rank: '&c你的身份等级过低, 无法踢出&b[name]&c!'
-        success: '&b[name]&a已经被踢出了你的岛屿.'
+        player-kicked: '<aqua>[name]</aqua><red>将你在</red><aqua>[gamemode]</aqua><red>上踢了出去!</red>'
+        cannot-kick: '<red>你不能踢出你自己!</red>'
+        cannot-kick-rank: '<red>你的身份等级过低, 无法踢出</red><aqua>[name]</aqua><red>!</red>'
+        success: '<aqua>[name]</aqua><green>已经被踢出了你的岛屿.</green>'
       demote:
         description: 降低你团队成员的身份等级
         parameters: <玩家>
         errors:
-          cant-demote-yourself: '&c你不能降低自己的身份等级!'
-          cant-demote: '&c降低的身份等级不能更高!'
-          must-be-member: '&c你只能操作你的团队成员!'
-        failure: '&c该玩家已经不能再降低身份等级了!'
-        success: '&a已将&b[name]&a的身份等级降为&b[rank]&a.'
+          cant-demote-yourself: '<red>你不能降低自己的身份等级!</red>'
+          cant-demote: '<red>降低的身份等级不能更高!</red>'
+          must-be-member: '<red>你只能操作你的团队成员!</red>'
+        failure: '<red>该玩家已经不能再降低身份等级了!</red>'
+        success: '<green>已将</green><aqua>[name]</aqua><green>的身份等级降为</green><aqua>[rank]</aqua><green>.</green>'
       promote:
         description: 提升你团队成员的身份等级
-        parameters: '&7<player>'
+        parameters: '<gray><player></gray>'
         errors:
-          cant-promote-yourself: '&c你不能提升自己的身份等级!'
-          cant-promote: '&c提升的身份等级不能超过自身!'
-          must-be-member: '&c你只能操作你的团队成员!'
-        failure: '&c该玩家已经不能再提升身份等级了!'
-        success: '&a已将&b[name]&a的身份等级升为&b[rank]&a.'
+          cant-promote-yourself: '<red>你不能提升自己的身份等级!</red>'
+          cant-promote: '<red>提升的身份等级不能超过自身!</red>'
+          must-be-member: '<red>你只能操作你的团队成员!</red>'
+        failure: '<red>该玩家已经不能再提升身份等级了!</red>'
+        success: '<green>已将</green><aqua>[name]</aqua><green>的身份等级升为</green><aqua>[rank]</aqua><green>.</green>'
       setowner:
         description: 将岛主身份转让给团队成员
         errors:
-          cant-transfer-to-yourself: '&c将岛主身份转让给自己是没有必要的!'
-          target-is-not-member: '&c该玩家不在你的团队中!'
-          at-max: '&c该玩家拥有的岛屿数量已达上限!'
-        name-is-the-owner: '&b[name]&a现在是岛主了!'
+          cant-transfer-to-yourself: '<red>将岛主身份转让给自己是没有必要的!</red>'
+          target-is-not-member: '<red>该玩家不在你的团队中!</red>'
+          at-max: '<red>该玩家拥有的岛屿数量已达上限!</red>'
+        name-is-the-owner: '<aqua>[name]</aqua><green>现在是岛主了!</green>'
         parameters: <玩家>
-        you-are-the-owner: '&a你现在是岛主了!'
+        you-are-the-owner: '<green>你现在是岛主了!</green>'
     ban:
       description: 将一位玩家列入黑名单
-      parameters: '&7<玩家>'
-      cannot-ban-yourself: '&c你不能把自己列入黑名单!'
-      cannot-ban: '&c该玩家不能被列入黑名单.'
-      cannot-ban-member: '&c如果要将团队成员列入黑名单, 请先踢出该玩家, 然后再把TA列入黑名单.'
-      cannot-ban-more-players: '&c你的黑名单列表已满, 无法将更多人列入黑名单.'
-      player-already-banned: '&c该玩家已在黑名单中.'
-      player-banned: '&b[name]&c已被列入黑名单, TA不再能进入你的岛屿.'
-      owner-banned-you: '&b[name]&c将你列入了黑名单, 你不再能进入TA的岛屿!'
-      you-are-banned: '&b你被该岛屿列入黑名单, 无法进入!'
+      parameters: '<gray><玩家></gray>'
+      cannot-ban-yourself: '<red>你不能把自己列入黑名单!</red>'
+      cannot-ban: '<red>该玩家不能被列入黑名单.</red>'
+      cannot-ban-member: '<red>如果要将团队成员列入黑名单, 请先踢出该玩家, 然后再把TA列入黑名单.</red>'
+      cannot-ban-more-players: '<red>你的黑名单列表已满, 无法将更多人列入黑名单.</red>'
+      player-already-banned: '<red>该玩家已在黑名单中.</red>'
+      player-banned: '<aqua>[name]</aqua><red>已被列入黑名单, TA不再能进入你的岛屿.</red>'
+      owner-banned-you: '<aqua>[name]</aqua><red>将你列入了黑名单, 你不再能进入TA的岛屿!</red>'
+      you-are-banned: '<aqua>你被该岛屿列入黑名单, 无法进入!</aqua>'
     unban:
       description: 将一位玩家从黑名单中移除
-      parameters: '&f<player>'
-      cannot-unban-yourself: '&c你不能从黑名单中移除自己!'
-      player-not-banned: '&c该玩家没有被列入黑名单.'
-      player-unbanned: '&b[name]&a已被你从黑名单中移除, TA现在可以进入你的岛屿'
-      you-are-unbanned: '&b[name]&a已将你从黑名单中移除, 你现在可以进入TA的岛屿了.'
+      parameters: '<white><player></white>'
+      cannot-unban-yourself: '<red>你不能从黑名单中移除自己!</red>'
+      player-not-banned: '<red>该玩家没有被列入黑名单.</red>'
+      player-unbanned: '<aqua>[name]</aqua><green>已被你从黑名单中移除, TA现在可以进入你的岛屿</green>'
+      you-are-unbanned: '<aqua>[name]</aqua><green>已将你从黑名单中移除, 你现在可以进入TA的岛屿了.</green>'
     banlist:
       description: 列出黑名单中的玩家
-      noone: '&a当前岛屿没有任何人在黑名单中.'
-      the-following: '&b下列玩家在黑名单中: '
-      names: '&c- [line]'
-      you-can-ban: '&b你的黑名单最多可容纳&e[number]&b个玩家.'
+      noone: '<green>当前岛屿没有任何人在黑名单中.</green>'
+      the-following: '<aqua>下列玩家在黑名单中: </aqua>'
+      names: '<red>- [line]</red>'
+      you-can-ban: '<aqua>你的黑名单最多可容纳</aqua><yellow>[number]</yellow><aqua>个玩家.</aqua>'
     settings:
       description: 显示岛屿设置
     language:
       description: 选择语言
-      parameters: '&6[语言]'
-      not-available: '&c该语言不可用.'
-      already-selected: '&c你当前已经在使用该语言了.'
+      parameters: '<gold>[语言]</gold>'
+      not-available: '<red>该语言不可用.</red>'
+      already-selected: '<red>你当前已经在使用该语言了.</red>'
     expel:
       description: 将一位玩家从你的岛屿上驱逐
       parameters: <玩家>
-      cannot-expel-yourself: '&c你不能驱逐自己!'
-      cannot-expel: '&c该玩家不能被驱逐.'
-      cannot-expel-member: '&c你不能驱逐团队成员!'
-      not-on-island: '&c该玩家不在你的岛屿上!'
-      player-expelled-you: '&c你被&b[name]&c从TA的岛屿上驱逐了!'
-      success: '&a成功将&b[name]&a驱逐出你的岛屿.'
+      cannot-expel-yourself: '<red>你不能驱逐自己!</red>'
+      cannot-expel: '<red>该玩家不能被驱逐.</red>'
+      cannot-expel-member: '<red>你不能驱逐团队成员!</red>'
+      not-on-island: '<red>该玩家不在你的岛屿上!</red>'
+      player-expelled-you: '<red>你被</red><aqua>[name]</aqua><red>从TA的岛屿上驱逐了!</red>'
+      success: '<green>成功将</green><aqua>[name]</aqua><green>驱逐出你的岛屿.</green>'
     lock:
       description: 锁定或解锁你的[prefix_island]
-      locked: '&a你的[prefix_island]现已锁定.'
-      unlocked: '&a你的[prefix_island]现已解锁.'
-      you-are-locked-out: '&c此[prefix_island]已被锁定，你被驱逐了.'
+      locked: '<green>你的[prefix_island]现已锁定.</green>'
+      unlocked: '<green>你的[prefix_island]现已解锁.</green>'
+      you-are-locked-out: '<red>此[prefix_island]已被锁定，你被驱逐了.</red>'
 ranks:
   owner: 岛主
   sub-owner: 副岛主
@@ -915,933 +915,933 @@ protection:
   command-is-banned: 访客已被禁止使用命令
   flags:
     ALLAY:
-      name: '&b&l悦灵与铜傀儡'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2对悦灵和铜傀儡使用物品或取回物品'
+      name: '<aqua><bold>悦灵与铜傀儡</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>对悦灵和铜傀儡使用物品或取回物品</color:#FAFAD2>'
       hint: 禁止与悦灵和铜傀儡交互
     ANIMAL_NATURAL_SPAWN:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2动物自然生成'
-      name: '&b&l动物自然生成'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>动物自然生成</color:#FAFAD2>'
+      name: '<aqua><bold>动物自然生成</bold></aqua>'
     ANIMAL_SPAWNERS_SPAWN:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2刷怪笼生成动物'
-      name: '&b&l刷怪笼生成动物'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>刷怪笼生成动物</color:#FAFAD2>'
+      name: '<aqua><bold>刷怪笼生成动物</bold></aqua>'
     ANVIL:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用铁砧'
-      name: '&b&l铁砧'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用铁砧</color:#FAFAD2>'
+      name: '<aqua><bold>铁砧</bold></aqua>'
       hint: 禁止使用铁砧
     ARMOR_STAND:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用盔甲架'
-      name: '&b&l盔甲架'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用盔甲架</color:#FAFAD2>'
+      name: '<aqua><bold>盔甲架</bold></aqua>'
       hint: 禁止使用盔甲架
     AXOLOTL_SCOOPING:
-      name: '&b&l美西螈'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2用桶捕捞美西螈'
+      name: '<aqua><bold>美西螈</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>用桶捕捞美西螈</color:#FAFAD2>'
       hint: 禁止用桶捕捞美西螈
     BEACON:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用信标'
-      name: '&b&l信标'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用信标</color:#FAFAD2>'
+      name: '<aqua><bold>信标</bold></aqua>'
       hint: 禁止使用信标
     BELL_RINGING:
-      description: '&7切换交互'
-      name: '&2允许铃声响起'
-      hint: '&c铃声已禁用'
+      description: '<gray>切换交互</gray>'
+      name: '<dark_green>允许铃声响起</dark_green>'
+      hint: '<red>铃声已禁用</red>'
     BED:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用床'
-      name: '&b&l床'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用床</color:#FAFAD2>'
+      name: '<aqua><bold>床</bold></aqua>'
       hint: 禁止使用床
     BOAT:
-      name: '&b&l船'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2放置、破坏或进入船'
+      name: '<aqua><bold>船</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>放置、破坏或进入船</color:#FAFAD2>'
       hint: 禁止放置、破坏或进入船
     BOOKSHELF:
-      name: '&b&l雕纹书架'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2从雕纹书架放置或拿取书'
+      name: '<aqua><bold>雕纹书架</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>从雕纹书架放置或拿取书</color:#FAFAD2>'
       hint: 禁止从雕纹书架放置或拿取书
     BREAK_BLOCKS:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2破坏方块'
-      name: '&b&l破坏方块'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>破坏方块</color:#FAFAD2>'
+      name: '<aqua><bold>破坏方块</bold></aqua>'
       hint: 禁止破坏方块
     BREAK_SPAWNERS:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2破坏刷怪笼
-        &4独立于"破坏方块"权限
-      name: '&b&l破坏刷怪笼'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>破坏刷怪笼</color:#FAFAD2>
+        <dark_red>独立于"破坏方块"权限</dark_red>
+      name: '<aqua><bold>破坏刷怪笼</bold></aqua>'
       hint: 禁止破坏刷怪笼
     BREAK_HOPPERS:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2破坏漏斗
-        &4独立于"破坏方块"权限
-      name: '&b&l破坏漏斗'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>破坏漏斗</color:#FAFAD2>
+        <dark_red>独立于"破坏方块"权限</dark_red>
+      name: '<aqua><bold>破坏漏斗</bold></aqua>'
       hint: 禁止破坏漏斗
     BREEDING:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2喂养动物'
-      name: '&b&l喂养动物'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>喂养动物</color:#FAFAD2>'
+      name: '<aqua><bold>喂养动物</bold></aqua>'
       hint: 禁止喂养动物
     BREWING:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用酿造台'
-      name: '&b&l酿造台'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用酿造台</color:#FAFAD2>'
+      name: '<aqua><bold>酿造台</bold></aqua>'
       hint: 禁止使用酿造台
     BUCKET:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用桶'
-      name: '&b&l桶'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用桶</color:#FAFAD2>'
+      name: '<aqua><bold>桶</bold></aqua>'
       hint: 禁止使用桶
     BUTTON:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用按钮'
-      name: '&b&l按钮'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用按钮</color:#FAFAD2>'
+      name: '<aqua><bold>按钮</bold></aqua>'
       hint: 禁止使用按钮
     CANDLES:
-      description: '&7切换蜡烛互动'
-      name: '&b蜡烛'
-      hint: '&c蜡烛互动已禁用'
+      description: '<gray>切换蜡烛互动</gray>'
+      name: '<aqua>蜡烛</aqua>'
+      hint: '<red>蜡烛互动已禁用</red>'
     CAKE:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2吃蛋糕'
-      name: '&b&l蛋糕'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>吃蛋糕</color:#FAFAD2>'
+      name: '<aqua><bold>蛋糕</bold></aqua>'
       hint: 禁止吃蛋糕
     CARTOGRAPHY:
-      name: '&b&l制图台'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用制图台'
+      name: '<aqua><bold>制图台</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用制图台</color:#FAFAD2>'
       hint: 禁止使用制图台
     CONTAINER:
-      name: '&b&l容器'
+      name: '<aqua><bold>容器</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2与容器交互
-        &4会同步影响以下容器权限:
-        &#7FFFAA木桶, 蜂箱, 酿造台, 箱子
-        &#7FFFAA堆肥桶, 发射器, 投掷器, 花盆
-        &#7FFFAA熔炉, 漏斗, 物品展示框, 唱片机
-        &#7FFFAA运输矿车, 潜影盒, 陷阱箱
-        &4以上容器权限可单独设置
-        &4单独设置的权限比该权限高
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>与容器交互</color:#FAFAD2>
+        <dark_red>会同步影响以下容器权限:</dark_red>
+        <color:#7FFFAA>木桶, 蜂箱, 酿造台, 箱子</color:#7FFFAA>
+        <color:#7FFFAA>堆肥桶, 发射器, 投掷器, 花盆</color:#7FFFAA>
+        <color:#7FFFAA>熔炉, 漏斗, 物品展示框, 唱片机</color:#7FFFAA>
+        <color:#7FFFAA>运输矿车, 潜影盒, 陷阱箱</color:#7FFFAA>
+        <dark_red>以上容器权限可单独设置</dark_red>
+        <dark_red>单独设置的权限比该权限高</dark_red>
       hint: 禁止与容器交互
     CHEST:
-      name: '&b&l箱子'
+      name: '<aqua><bold>箱子</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2打开箱子、运输矿车和运输船
-        &4(不包含陷阱箱)
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>打开箱子、运输矿车和运输船</color:#FAFAD2>
+        <dark_red>(不包含陷阱箱)</dark_red>
       hint: 禁止打开箱子、运输矿车和运输船
     BARREL:
-      name: '&b&l木桶'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2打开木桶'
+      name: '<aqua><bold>木桶</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>打开木桶</color:#FAFAD2>'
       hint: 禁止打开木桶
     CRAFTER:
       name: 手工艺者
       description: 切换使用
       hint: Crafter访问禁用
     BLOCK_EXPLODE_DAMAGE:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2床与重生锚破坏方块和对实体造成伤害'
-      name: '&b&l爆炸伤害与破坏'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>床与重生锚破坏方块和对实体造成伤害</color:#FAFAD2>'
+      name: '<aqua><bold>爆炸伤害与破坏</bold></aqua>'
     COMPOSTER:
-      name: '&b&l堆肥桶'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用堆肥桶'
+      name: '<aqua><bold>堆肥桶</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用堆肥桶</color:#FAFAD2>'
       hint: 禁止使用堆肥桶
     LOOM:
-      name: '&b&l织布机'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用织布机'
+      name: '<aqua><bold>织布机</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用织布机</color:#FAFAD2>'
       hint: 禁止使用织布机
     FLOWER_POT:
-      name: '&b&l花盆'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用花盆'
+      name: '<aqua><bold>花盆</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用花盆</color:#FAFAD2>'
       hint: 禁止使用花盆
     GRINDSTONE:
-      name: '&b&l砂轮'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用砂轮'
+      name: '<aqua><bold>砂轮</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用砂轮</color:#FAFAD2>'
       hint: 禁止使用砂轮
     SHULKER_BOX:
-      name: '&b&l潜影盒'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2打开潜影盒'
+      name: '<aqua><bold>潜影盒</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>打开潜影盒</color:#FAFAD2>'
       hint: 禁止打开潜影盒
     SHULKER_TELEPORT:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2潜影贝传送'
-      name: '&b&l潜影贝传送'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>潜影贝传送</color:#FAFAD2>'
+      name: '<aqua><bold>潜影贝传送</bold></aqua>'
     SMITHING:
-      name: '&b&l锻造台'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用锻造台'
+      name: '<aqua><bold>锻造台</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用锻造台</color:#FAFAD2>'
       hint: 禁止使用锻造台
     STONECUTTING:
-      name: '&b&l切石机'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用切石机'
+      name: '<aqua><bold>切石机</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用切石机</color:#FAFAD2>'
       hint: 禁止使用切石机
     TRAPPED_CHEST:
-      name: '&b&l陷阱箱'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2打开陷阱箱'
+      name: '<aqua><bold>陷阱箱</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>打开陷阱箱</color:#FAFAD2>'
       hint: 禁止打开陷阱箱
     DISPENSER:
-      name: '&b&l发射器'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2打开发射器'
+      name: '<aqua><bold>发射器</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>打开发射器</color:#FAFAD2>'
       hint: 禁止打开发射器
     DROPPER:
-      name: '&b&l投掷器'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2打开投掷器'
+      name: '<aqua><bold>投掷器</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>打开投掷器</color:#FAFAD2>'
       hint: 禁止打开投掷器
     ELYTRA:
-      name: '&b&l鞘翅'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用鞘翅'
-      hint: '&c警告: 这里不能使用鞘翅'
+      name: '<aqua><bold>鞘翅</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用鞘翅</color:#FAFAD2>'
+      hint: '<red>警告: 这里不能使用鞘翅</red>'
     HOPPER:
-      name: '&b&l漏斗'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2打开漏斗'
+      name: '<aqua><bold>漏斗</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>打开漏斗</color:#FAFAD2>'
       hint: 禁止打开漏斗
     CHEST_DAMAGE:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2爆炸破坏箱子'
-      name: '&b&l爆炸破坏箱子'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>爆炸破坏箱子</color:#FAFAD2>'
+      name: '<aqua><bold>爆炸破坏箱子</bold></aqua>'
     CHORUS_FRUIT:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用紫颂果传送'
-      name: '&b&l紫颂果'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用紫颂果传送</color:#FAFAD2>'
+      name: '<aqua><bold>紫颂果</bold></aqua>'
       hint: 禁止使用紫颂果传送
     CLEAN_SUPER_FLAT:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2清理岛屿世界的超平坦地形
-        &#FAFAD2超平坦地形一般是由于世界生成器发生错误导致的
-      name: '&b&l清理超平坦地形'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>清理岛屿世界的超平坦地形</color:#FAFAD2>
+        <color:#FAFAD2>超平坦地形一般是由于世界生成器发生错误导致的</color:#FAFAD2>
+      name: '<aqua><bold>清理超平坦地形</bold></aqua>'
     COARSE_DIRT_TILLING:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2用锄头耕耘砂土与挖掘灰化土获取泥土'
-      name: '&b&l耕耘砂土与挖掘灰化土获取泥土'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>用锄头耕耘砂土与挖掘灰化土获取泥土</color:#FAFAD2>'
+      name: '<aqua><bold>耕耘砂土与挖掘灰化土获取泥土</bold></aqua>'
       hint: 禁止耕耘砂土
     COLLECT_LAVA:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2收集熔岩
-        &4高于"使用桶"权限
-      name: '&b&l收集熔岩'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>收集熔岩</color:#FAFAD2>
+        <dark_red>高于"使用桶"权限</dark_red>
+      name: '<aqua><bold>收集熔岩</bold></aqua>'
       hint: 禁止收集熔岩
     COLLECT_WATER:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2收集水
-        &4高于"使用桶"权限
-      name: '&b&l收集水'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>收集水</color:#FAFAD2>
+        <dark_red>高于"使用桶"权限</dark_red>
+      name: '<aqua><bold>收集水</bold></aqua>'
       hint: 禁止收集水
     COLLECT_POWDERED_SNOW:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2收集细雪
-        &4高于"使用桶"权限
-      name: '&b&l收集细雪'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>收集细雪</color:#FAFAD2>
+        <dark_red>高于"使用桶"权限</dark_red>
+      name: '<aqua><bold>收集细雪</bold></aqua>'
       hint: 禁止收集细雪
     COMMAND_RANKS:
-      name: '&e&l管理成员可用命令'
-      description: '&#FAFAD2管理不同成员身份等级可以使用的命令'
+      name: '<yellow><bold>管理成员可用命令</bold></yellow>'
+      description: '<color:#FAFAD2>管理不同成员身份等级可以使用的命令</color:#FAFAD2>'
     CRAFTING:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用工作台'
-      name: '&b&l工作台'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用工作台</color:#FAFAD2>'
+      name: '<aqua><bold>工作台</bold></aqua>'
       hint: 禁止使用工作台
     CREEPER_DAMAGE:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2苦力怕爆炸造成的伤害与破坏'
-      name: '&b&l苦力怕爆炸'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>苦力怕爆炸造成的伤害与破坏</color:#FAFAD2>'
+      name: '<aqua><bold>苦力怕爆炸</bold></aqua>'
     CREEPER_GRIEFING:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2苦力怕访客保护
-        &#FAFAD2当访客点燃苦力怕时
-        &a允许&#FAFAD2或&c禁止&#FAFAD2爆炸效果生效(炸毁方块、伤害实体)
-      name: '&b&l苦力怕访客保护'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>苦力怕访客保护</color:#FAFAD2>
+        <color:#FAFAD2>当访客点燃苦力怕时</color:#FAFAD2>
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>爆炸效果生效(炸毁方块、伤害实体)</color:#FAFAD2>
+      name: '<aqua><bold>苦力怕访客保护</bold></aqua>'
       hint: 苦力怕保护已禁用
     CROP_PLANTING:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2种植农作物'
-      name: '&b&l种植农作物'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>种植农作物</color:#FAFAD2>'
+      name: '<aqua><bold>种植农作物</bold></aqua>'
       hint: 禁止种植农作物
     CROP_TRAMPLE:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2践踏农作物'
-      name: '&b&l践踏农作物'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>践踏农作物</color:#FAFAD2>'
+      name: '<aqua><bold>践踏农作物</bold></aqua>'
       hint: 禁止践踏农作物
     DOOR:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用门'
-      name: '&b&l使用门'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用门</color:#FAFAD2>'
+      name: '<aqua><bold>使用门</bold></aqua>'
       hint: 禁止使用门
     DRAGON_EGG:
-      name: '&b&l龙蛋'
+      name: '<aqua><bold>龙蛋</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2与龙蛋交互
-        &4这不能防止龙蛋被放置或破坏
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>与龙蛋交互</color:#FAFAD2>
+        <dark_red>这不能防止龙蛋被放置或破坏</dark_red>
       hint: 禁止与龙蛋交互
     DYE:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用染料染色'
-      name: '&b&l使用染料'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用染料染色</color:#FAFAD2>'
+      name: '<aqua><bold>使用染料</bold></aqua>'
       hint: 禁止使用染料染色
     EGGS:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2投掷鸡蛋'
-      name: '&b&l投掷鸡蛋'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>投掷鸡蛋</color:#FAFAD2>'
+      name: '<aqua><bold>投掷鸡蛋</bold></aqua>'
       hint: 禁止投掷鸡蛋
     ENCHANTING:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用附魔台'
-      name: '&b&l附魔台'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用附魔台</color:#FAFAD2>'
+      name: '<aqua><bold>附魔台</bold></aqua>'
       hint: 禁止使用附魔台
     ENDER_CHEST:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用或制作末影箱'
-      name: '&b&l末影箱'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用或制作末影箱</color:#FAFAD2>'
+      name: '<aqua><bold>末影箱</bold></aqua>'
       hint: 禁止使用或制作末影箱
     ENDERMAN_DEATH_DROP:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2末影人死亡后掉落手中的任何方块'
-      name: '&b&l末影人死亡掉落'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>末影人死亡后掉落手中的任何方块</color:#FAFAD2>'
+      name: '<aqua><bold>末影人死亡掉落</bold></aqua>'
     ENDERMAN_GRIEFING:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2末影人搬起方块'
-      name: '&b&l末影人搬起方块'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>末影人搬起方块</color:#FAFAD2>'
+      name: '<aqua><bold>末影人搬起方块</bold></aqua>'
     ENDERMAN_TELEPORT:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2末影人传送'
-      name: '&b&l末影人传送'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>末影人传送</color:#FAFAD2>'
+      name: '<aqua><bold>末影人传送</bold></aqua>'
     ENDER_PEARL:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用末影珍珠'
-      name: '&b&l末影珍珠'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用末影珍珠</color:#FAFAD2>'
+      name: '<aqua><bold>末影珍珠</bold></aqua>'
       hint: 禁止使用末影珍珠
     ENTER_EXIT_MESSAGES:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2显示进出岛屿的提示信息'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>显示进出岛屿的提示信息</color:#FAFAD2>'
       island: '[name]的岛屿'
-      name: '&b&l进出岛屿提示'
-      now-entering: '&a你已进入: &b[name]'
-      now-entering-your-island: '&a你已进入自己的岛屿: &b[name]'
-      now-leaving: '&a你已离开: &b[name]'
-      now-leaving-your-island: '&a你已离开自己的岛屿: &b[name]'
+      name: '<aqua><bold>进出岛屿提示</bold></aqua>'
+      now-entering: '<green>你已进入: </green><aqua>[name]</aqua>'
+      now-entering-your-island: '<green>你已进入自己的岛屿: </green><aqua>[name]</aqua>'
+      now-leaving: '<green>你已离开: </green><aqua>[name]</aqua>'
+      now-leaving-your-island: '<green>你已离开自己的岛屿: </green><aqua>[name]</aqua>'
     EXPERIENCE_BOTTLE_THROWING:
-      name: '&b&l投掷附魔之瓶'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2投掷附魔之瓶'
+      name: '<aqua><bold>投掷附魔之瓶</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>投掷附魔之瓶</color:#FAFAD2>'
       hint: 禁止投掷附魔之瓶
     FIRE_BURNING:
-      name: '&b&l烧毁方块'
+      name: '<aqua><bold>烧毁方块</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2烧毁方块
-        &4这不能阻止火势蔓延
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>烧毁方块</color:#FAFAD2>
+        <dark_red>这不能阻止火势蔓延</dark_red>
     FIRE_EXTINGUISH:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2熄灭火焰'
-      name: '&b&l熄灭火焰'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>熄灭火焰</color:#FAFAD2>'
+      name: '<aqua><bold>熄灭火焰</bold></aqua>'
       hint: 禁止熄灭火焰
     FIRE_IGNITE:
-      name: '&b&l点火'
+      name: '<aqua><bold>点火</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2点火
-        &#FAFAD2例如: 打火石、雷击
-        &4禁止该权限岛屿上甚至不会打雷
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>点火</color:#FAFAD2>
+        <color:#FAFAD2>例如: 打火石、雷击</color:#FAFAD2>
+        <dark_red>禁止该权限岛屿上甚至不会打雷</dark_red>
     FIRE_SPREAD:
-      name: '&b&l火势蔓延'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2火势蔓延到附近的方块'
+      name: '<aqua><bold>火势蔓延</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>火势蔓延到附近的方块</color:#FAFAD2>'
     FISH_SCOOPING:
-      name: '&b&l捕捞鱼'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2用水桶捕捞鱼'
+      name: '<aqua><bold>捕捞鱼</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>用水桶捕捞鱼</color:#FAFAD2>'
       hint: 禁止捕捞鱼
     FLINT_AND_STEEL:
-      name: '&b&l打火石'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用打火石或火焰弹点燃方块或篝火'
+      name: '<aqua><bold>打火石</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用打火石或火焰弹点燃方块或篝火</color:#FAFAD2>'
       hint: 禁止使用打火石或火焰弹
     FURNACE:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用熔炉、高炉、烟熏炉或营火'
-      name: '&b&l熔炉'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用熔炉、高炉、烟熏炉或营火</color:#FAFAD2>'
+      name: '<aqua><bold>熔炉</bold></aqua>'
       hint: 禁止使用熔炉、高炉、烟熏炉或营火
     GATE:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用栅栏门'
-      name: '&b&l栅栏门'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用栅栏门</color:#FAFAD2>'
+      name: '<aqua><bold>栅栏门</bold></aqua>'
       hint: 禁止使用栅栏门
     GEO_LIMIT_MOBS:
       description: |-
-        &#FAFAD2移除离开岛屿保护范围外的生物
-        &#FAFAD2以及将生物生成限制在岛屿范围内
-      name: '&e&l限制生物范围'
+        <color:#FAFAD2>移除离开岛屿保护范围外的生物</color:#FAFAD2>
+        <color:#FAFAD2>以及将生物生成限制在岛屿范围内</color:#FAFAD2>
+      name: '<yellow><bold>限制生物范围</bold></yellow>'
     HARVEST:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2收获农作物
-        &#FAFAD2别忘记设置物品拾取权限
-      name: '&b&l收获农作物'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>收获农作物</color:#FAFAD2>
+        <color:#FAFAD2>别忘记设置物品拾取权限</color:#FAFAD2>
+      name: '<aqua><bold>收获农作物</bold></aqua>'
       hint: 禁止收获农作物
     HIVE:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2从蜂巢收集蜂蜜'
-      name: '&b&l收集蜂蜜'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>从蜂巢收集蜂蜜</color:#FAFAD2>'
+      name: '<aqua><bold>收集蜂蜜</bold></aqua>'
       hint: 禁止从蜂巢收集蜂蜜
     HURT_TAMED_ANIMALS:
-      description: 切换伤害。&a启用意味着驯养的动物可以受到伤害。&c禁用意味着它们是无敌的。
-      name: '&c伤害驯服的动物'
-      hint: '&6驯服的动物伤害已禁用'
+      description: '切换伤害。<green>启用意味着驯养的动物可以受到伤害。</green><red>禁用意味着它们是无敌的。</red>'
+      name: '<red>伤害驯服的动物</red>'
+      hint: '<gold>驯服的动物伤害已禁用</gold>'
     HURT_ANIMALS:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2伤害动物'
-      name: '&b&l伤害动物'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>伤害动物</color:#FAFAD2>'
+      name: '<aqua><bold>伤害动物</bold></aqua>'
       hint: 禁止伤害动物
     HURT_MONSTERS:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2伤害怪物'
-      name: '&b&l伤害怪物'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>伤害怪物</color:#FAFAD2>'
+      name: '<aqua><bold>伤害怪物</bold></aqua>'
       hint: 禁止伤害怪物
     HURT_VILLAGERS:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2伤害村民'
-      name: '&b&l伤害村民'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>伤害村民</color:#FAFAD2>'
+      name: '<aqua><bold>伤害村民</bold></aqua>'
       hint: 禁止伤害村民
     ITEM_FRAME:
-      name: '&b&l物品展示框'
+      name: '<aqua><bold>物品展示框</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2使用物品展示框
-        &4独立于"放置方块"与"破坏方块"权限
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用物品展示框</color:#FAFAD2>
+        <dark_red>独立于"放置方块"与"破坏方块"权限</dark_red>
       hint: 禁止使用物品展示框
     ITEM_FRAME_DAMAGE:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2生物破坏物品展示框(比如苦力怕)'
-      name: '&b&l破坏物品展示框'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>生物破坏物品展示框(比如苦力怕)</color:#FAFAD2>'
+      name: '<aqua><bold>破坏物品展示框</bold></aqua>'
     INVINCIBLE_VISITORS:
       description: |-
-        &#FAFAD2配置访客可以免疫的伤害类型
-        &a允许&#FAFAD2的是访客免疫的伤害类型
-        &c禁止&#FAFAD2的是访客无法免疫的伤害类型
-      name: '&e&l访客免疫伤害类型'
-      hint: '&c禁止伤害访客.'
+        <color:#FAFAD2>配置访客可以免疫的伤害类型</color:#FAFAD2>
+        <green>允许</green><color:#FAFAD2>的是访客免疫的伤害类型</color:#FAFAD2>
+        <red>禁止</red><color:#FAFAD2>的是访客无法免疫的伤害类型</color:#FAFAD2>
+      name: '<yellow><bold>访客免疫伤害类型</bold></yellow>'
+      hint: '<red>禁止伤害访客.</red>'
     ISLAND_RESPAWN:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2玩家死亡后在自己的岛屿上重生'
-      name: '&b&l岛屿上重生'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>玩家死亡后在自己的岛屿上重生</color:#FAFAD2>'
+      name: '<aqua><bold>岛屿上重生</bold></aqua>'
     ITEM_DROP:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2丢弃物品'
-      name: '&b&l丢弃物品'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>丢弃物品</color:#FAFAD2>'
+      name: '<aqua><bold>丢弃物品</bold></aqua>'
       hint: 禁止丢弃物品
     ITEM_PICKUP:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2拾取物品'
-      name: '&b&l拾取物品'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>拾取物品</color:#FAFAD2>'
+      name: '<aqua><bold>拾取物品</bold></aqua>'
       hint: 禁止拾取物品
     JUKEBOX:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用唱片机'
-      name: '&b&l唱片机'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用唱片机</color:#FAFAD2>'
+      name: '<aqua><bold>唱片机</bold></aqua>'
       hint: 禁止使用唱片机
     LEAF_DECAY:
-      name: '&b&l树叶枯萎'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2树叶自然枯萎'
+      name: '<aqua><bold>树叶枯萎</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>树叶自然枯萎</color:#FAFAD2>'
     LEASH:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用拴绳'
-      name: '&b&l拴绳'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用拴绳</color:#FAFAD2>'
+      name: '<aqua><bold>拴绳</bold></aqua>'
       hint: 禁止使用拴绳
     LECTERN:
-      name: '&b&l讲台'
+      name: '<aqua><bold>讲台</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2从讲台上放置或取出书
-        &4这不能阻止玩家查看讲台上书的内容
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>从讲台上放置或取出书</color:#FAFAD2>
+        <dark_red>这不能阻止玩家查看讲台上书的内容</dark_red>
       hint: 禁止从讲台上放置或取出书
     LEVER:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用拉杆'
-      name: '&b&l拉杆'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用拉杆</color:#FAFAD2>'
+      name: '<aqua><bold>拉杆</bold></aqua>'
       hint: 禁止使用拉杆
     LIMIT_MOBS:
-      description: '&#FAFAD2配置可在当前游戏模式中生成的实体'
-      name: '&e&l实体生成限制'
-      can: '&a允许生成'
-      cannot: '&c禁止生成'
+      description: '<color:#FAFAD2>配置可在当前游戏模式中生成的实体</color:#FAFAD2>'
+      name: '<yellow><bold>实体生成限制</bold></yellow>'
+      can: '<green>允许生成</green>'
+      cannot: '<red>禁止生成</red>'
     LIQUIDS_FLOWING_OUT:
-      name: '&b&l液体流出'
+      name: '<aqua><bold>液体流出</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2液体流出岛屿保护范围
-        &#FAFAD2禁止该权限可以避免熔岩和水在两个岛屿之间生成圆石
-        &4液体仍然可以垂直流动
-        &4但在岛屿保护范围之外的液体不会水平流动
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>液体流出岛屿保护范围</color:#FAFAD2>
+        <color:#FAFAD2>禁止该权限可以避免熔岩和水在两个岛屿之间生成圆石</color:#FAFAD2>
+        <dark_red>液体仍然可以垂直流动</dark_red>
+        <dark_red>但在岛屿保护范围之外的液体不会水平流动</dark_red>
     LOCK:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2特定身份等级的玩家访问'
-      name: '&#7FFF00&l岛屿锁定'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>特定身份等级的玩家访问</color:#FAFAD2>'
+      name: '<color:#7FFF00><bold>岛屿锁定</bold></color:#7FFF00>'
     CHANGE_SETTINGS:
-      name: '&#7FFF00&l更改权限'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2特定身份等级的玩家更改权限'
+      name: '<color:#7FFF00><bold>更改权限</bold></color:#7FFF00>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>特定身份等级的玩家更改权限</color:#FAFAD2>'
     MILKING:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2挤牛奶'
-      name: '&b&l挤牛奶'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>挤牛奶</color:#FAFAD2>'
+      name: '<aqua><bold>挤牛奶</bold></aqua>'
       hint: 禁止挤牛奶
     MINECART:
-      name: '&b&l矿车'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2放置、破坏或进入矿车'
+      name: '<aqua><bold>矿车</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>放置、破坏或进入矿车</color:#FAFAD2>'
       hint: 禁止放置、破坏或进入矿车
     MONSTER_NATURAL_SPAWN:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2怪物自然生成'
-      name: '&b&l怪物自然生成'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>怪物自然生成</color:#FAFAD2>'
+      name: '<aqua><bold>怪物自然生成</bold></aqua>'
     MONSTER_SPAWNERS_SPAWN:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2刷怪笼生成怪物'
-      name: '&b&l刷怪笼生成怪物'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>刷怪笼生成怪物</color:#FAFAD2>'
+      name: '<aqua><bold>刷怪笼生成怪物</bold></aqua>'
     MOUNT_INVENTORY:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用坐骑物品栏(比如驴)'
-      name: '&b&l坐骑物品栏'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用坐骑物品栏(比如驴)</color:#FAFAD2>'
+      name: '<aqua><bold>坐骑物品栏</bold></aqua>'
       hint: 禁止使用坐骑物品栏
     NAME_TAG:
-      name: '&b&l命名牌'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用命名牌'
+      name: '<aqua><bold>命名牌</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用命名牌</color:#FAFAD2>'
       hint: 禁止使用命名牌
     NATURAL_SPAWNING_OUTSIDE_RANGE:
-      name: '&b&l岛外自然生成生物'
+      name: '<aqua><bold>岛外自然生成生物</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2生物(动物和怪物)在岛屿保护范围之外自然生成
-        &4注意这不会阻止用刷怪笼或刷怪蛋生成生物
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>生物(动物和怪物)在岛屿保护范围之外自然生成</color:#FAFAD2>
+        <dark_red>注意这不会阻止用刷怪笼或刷怪蛋生成生物</dark_red>
     NOTE_BLOCK:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用音符盒'
-      name: '&b&l音符盒'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用音符盒</color:#FAFAD2>'
+      name: '<aqua><bold>音符盒</bold></aqua>'
       hint: 禁止使用音符盒
     OBSIDIAN_SCOOPING:
-      name: '&b&l黑曜石变熔岩'
+      name: '<aqua><bold>黑曜石变熔岩</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2玩家用桶把黑曜石变回熔岩
-        &#FAFAD2这将对建造刷石机失误的新手有很大帮助
-        &4注意: 如果黑曜石附近2格范围内有其它黑曜石
-        &4则不能把黑曜石变回熔岩
-      scooping: '&a已将黑曜石变回熔岩.'
-      cooldown: '&c你必须等待一段时间才能再次收集黑曜石。'
-      obsidian-nearby: '&c附近有其它黑曜石, 这个黑曜石不能变回熔岩. ([radius])'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>玩家用桶把黑曜石变回熔岩</color:#FAFAD2>
+        <color:#FAFAD2>这将对建造刷石机失误的新手有很大帮助</color:#FAFAD2>
+        <dark_red>注意: 如果黑曜石附近2格范围内有其它黑曜石</dark_red>
+        <dark_red>则不能把黑曜石变回熔岩</dark_red>
+      scooping: '<green>已将黑曜石变回熔岩.</green>'
+      cooldown: '<red>你必须等待一段时间才能再次收集黑曜石。</red>'
+      obsidian-nearby: '<red>附近有其它黑曜石, 这个黑曜石不能变回熔岩. ([radius])</red>'
     OFFLINE_GROWTH:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2所有成员离线岛屿上的植物继续生长
-        &c禁止&#FAFAD2它可以减少性能开销
-      name: '&b&l离线生长'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>所有成员离线岛屿上的植物继续生长</color:#FAFAD2>
+        <red>禁止</red><color:#FAFAD2>它可以减少性能开销</color:#FAFAD2>
+      name: '<aqua><bold>离线生长</bold></aqua>'
     OFFLINE_REDSTONE:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2所有成员离线岛屿上的红石设备继续运行
-        &c禁止&#FAFAD2它可以减少性能开销
-        &#FAFAD2不会影响出生岛屿
-      name: '&b&l离线红石'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>所有成员离线岛屿上的红石设备继续运行</color:#FAFAD2>
+        <red>禁止</red><color:#FAFAD2>它可以减少性能开销</color:#FAFAD2>
+        <color:#FAFAD2>不会影响出生岛屿</color:#FAFAD2>
+      name: '<aqua><bold>离线红石</bold></aqua>'
     PETS_STAY_AT_HOME:
       description: |-
-        &a允许&#FAFAD2时: 驯服的宠物会始终待在自己的岛上
-        &c禁止&#FAFAD2时: 驯服的宠物会跟随主人去任何岛上
-      name: '&b&l宠物不离开岛屿'
+        <green>允许</green><color:#FAFAD2>时: 驯服的宠物会始终待在自己的岛上</color:#FAFAD2>
+        <red>禁止</red><color:#FAFAD2>时: 驯服的宠物会跟随主人去任何岛上</color:#FAFAD2>
+      name: '<aqua><bold>宠物不离开岛屿</bold></aqua>'
     PISTON_PUSH:
       description: |-
-        &a允许&#FAFAD2时: 活塞可以把方块推出岛屿范围
-        &c禁止&#FAFAD2时: 活塞不能把方块推出岛屿范围
-      name: '&b&l活塞推动保护'
+        <green>允许</green><color:#FAFAD2>时: 活塞可以把方块推出岛屿范围</color:#FAFAD2>
+        <red>禁止</red><color:#FAFAD2>时: 活塞不能把方块推出岛屿范围</color:#FAFAD2>
+      name: '<aqua><bold>活塞推动保护</bold></aqua>'
     PLACE_BLOCKS:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2放置方块'
-      name: '&b&l放置方块'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>放置方块</color:#FAFAD2>'
+      name: '<aqua><bold>放置方块</bold></aqua>'
       hint: 禁止放置方块
     PODZOL:
       name: 灰化土转化
       description: |-
-        &a 如果禁用，将防止在大树
-        &a 生长时转化灰化土
+        <green>如果禁用，将防止在大树</green>
+        <green>生长时转化灰化土</green>
     POTION_THROWING:
-      name: '&b&l投掷药水'
+      name: '<aqua><bold>投掷药水</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2投掷药水
-        &#FAFAD2包含喷溅型药水和滞留型药水
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>投掷药水</color:#FAFAD2>
+        <color:#FAFAD2>包含喷溅型药水和滞留型药水</color:#FAFAD2>
       hint: 禁止投掷药水
     NETHER_PORTAL:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用下界传送门'
-      name: '&b&l下界传送门'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用下界传送门</color:#FAFAD2>'
+      name: '<aqua><bold>下界传送门</bold></aqua>'
       hint: 禁止使用下界传送门
     END_PORTAL:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用末地传送门'
-      name: '&b&l末地传送门'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用末地传送门</color:#FAFAD2>'
+      name: '<aqua><bold>末地传送门</bold></aqua>'
       hint: 禁止使用末地传送门
     PRESSURE_PLATE:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2踩在压力板上激活压力板
-        &4仍然可以通过丢弃物品或射箭等非玩家实体
-        &4激活木质压力板或测重压力板
-      name: '&b&l压力板'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>踩在压力板上激活压力板</color:#FAFAD2>
+        <dark_red>仍然可以通过丢弃物品或射箭等非玩家实体</dark_red>
+        <dark_red>激活木质压力板或测重压力板</dark_red>
+      name: '<aqua><bold>压力板</bold></aqua>'
       hint: 禁止激活压力板
     PVP_END:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2在末地PVP'
-      name: '&b&l末地PVP'
-      hint: '&c禁止在末地PVP.'
-      enabled: '&c末地PVP已开启.'
-      disabled: '&a末地PVP已关闭.'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>在末地PVP</color:#FAFAD2>'
+      name: '<aqua><bold>末地PVP</bold></aqua>'
+      hint: '<red>禁止在末地PVP.</red>'
+      enabled: '<red>末地PVP已开启.</red>'
+      disabled: '<green>末地PVP已关闭.</green>'
     PVP_NETHER:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2在下界PVP'
-      name: '&b&l下界PVP'
-      hint: '&c禁止在下界PVP.'
-      enabled: '&c下界PVP已开启.'
-      disabled: '&a下界PVP已关闭.'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>在下界PVP</color:#FAFAD2>'
+      name: '<aqua><bold>下界PVP</bold></aqua>'
+      hint: '<red>禁止在下界PVP.</red>'
+      enabled: '<red>下界PVP已开启.</red>'
+      disabled: '<green>下界PVP已关闭.</green>'
     PVP_OVERWORLD:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2在主世界PVP'
-      name: '&b&l主世界PVP'
-      hint: '&c禁止在主世界PVP.'
-      enabled: '&c主世界PVP已开启.'
-      disabled: '&a主世界PVP已关闭.'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>在主世界PVP</color:#FAFAD2>'
+      name: '<aqua><bold>主世界PVP</bold></aqua>'
+      hint: '<red>禁止在主世界PVP.</red>'
+      enabled: '<red>主世界PVP已开启.</red>'
+      disabled: '<green>主世界PVP已关闭.</green>'
     REDSTONE:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2调整红石元件
-        &#FAFAD2包括红石粉、红石中继器、
-        &#FAFAD2红石比较器、阳光探测器等
-      name: '&b&l红石元件'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>调整红石元件</color:#FAFAD2>
+        <color:#FAFAD2>包括红石粉、红石中继器、</color:#FAFAD2>
+        <color:#FAFAD2>红石比较器、阳光探测器等</color:#FAFAD2>
+      name: '<aqua><bold>红石元件</bold></aqua>'
       hint: 禁止调整红石元件
     REMOVE_END_EXIT_ISLAND:
       description: |-
-        &#FAFAD2防止末地返回主世界的传送门生成在坐标0, 0
-        &a允许&#FAFAD2会阻止传送门生成
-        &c禁止&#FAFAD2会允许传送门生成
-      name: '&b&l移除末地返回门'
+        <color:#FAFAD2>防止末地返回主世界的传送门生成在坐标0, 0</color:#FAFAD2>
+        <green>允许</green><color:#FAFAD2>会阻止传送门生成</color:#FAFAD2>
+        <red>禁止</red><color:#FAFAD2>会允许传送门生成</color:#FAFAD2>
+      name: '<aqua><bold>移除末地返回门</bold></aqua>'
     REMOVE_MOBS:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2玩家回到岛屿时, 移除怪物
-        &a允许&#FAFAD2该权限会使玩家回到岛屿时, 移除怪物
-        &c禁止&#FAFAD2该权限会使玩家回到岛屿时, 保留怪物
-        &#FAFAD2(允许该权限可能对生电玩家不是很友好)
-      name: '&b&l移除怪物'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>玩家回到岛屿时, 移除怪物</color:#FAFAD2>
+        <green>允许</green><color:#FAFAD2>该权限会使玩家回到岛屿时, 移除怪物</color:#FAFAD2>
+        <red>禁止</red><color:#FAFAD2>该权限会使玩家回到岛屿时, 保留怪物</color:#FAFAD2>
+        <color:#FAFAD2>(允许该权限可能对生电玩家不是很友好)</color:#FAFAD2>
+      name: '<aqua><bold>移除怪物</bold></aqua>'
     RIDING:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2骑乘动物'
-      name: '&b&l骑乘动物'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>骑乘动物</color:#FAFAD2>'
+      name: '<aqua><bold>骑乘动物</bold></aqua>'
       hint: 禁止骑乘动物
     SHEARING:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用剪刀修剪'
-      name: '&b&l修剪'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用剪刀修剪</color:#FAFAD2>'
+      name: '<aqua><bold>修剪</bold></aqua>'
       hint: 禁止使用剪刀修剪
     SPAWN_EGGS:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用刷怪蛋'
-      name: '&b&l刷怪蛋'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用刷怪蛋</color:#FAFAD2>'
+      name: '<aqua><bold>刷怪蛋</bold></aqua>'
       hint: 禁止使用刷怪蛋
     SPAWNER_SPAWN_EGGS:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用刷怪蛋改变刷怪笼生成生物的类型'
-      name: '&b&l更改刷怪笼类型'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用刷怪蛋改变刷怪笼生成生物的类型</color:#FAFAD2>'
+      name: '<aqua><bold>更改刷怪笼类型</bold></aqua>'
       hint: 禁止使用刷怪蛋改变刷怪笼生成生物的类型
     SCULK_SENSOR:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2激活幽匿感测体'
-      name: '&b&l幽匿感测体'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>激活幽匿感测体</color:#FAFAD2>'
+      name: '<aqua><bold>幽匿感测体</bold></aqua>'
       hint: 禁止激活幽匿感测体
     SCULK_SHRIEKER:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2激活幽匿尖啸体'
-      name: '&b&l幽匿尖啸体'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>激活幽匿尖啸体</color:#FAFAD2>'
+      name: '<aqua><bold>幽匿尖啸体</bold></aqua>'
       hint: 禁止激活幽匿尖啸体
     SIGN_EDITING:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2编辑告示牌'
-      name: '&b&l编辑告示牌'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>编辑告示牌</color:#FAFAD2>'
+      name: '<aqua><bold>编辑告示牌</bold></aqua>'
       hint: 禁止编辑告示牌
     TNT_DAMAGE:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2TNT和TNT矿车破坏方块和对实体造成伤害'
-      name: '&b&lTNT伤害'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>TNT和TNT矿车破坏方块和对实体造成伤害</color:#FAFAD2>'
+      name: '<aqua><bold>TNT伤害</bold></aqua>'
     TNT_PRIMING:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2使用打火石或火焰弹点燃TNT
-        &4"打火石"权限更高
-        &4同时拥有"打火石"和"点燃TNT"权限的玩家才能点燃TNT
-        &4但是它不能保护红石信号激活的TNT
-      name: '&b&l点燃TNT'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用打火石或火焰弹点燃TNT</color:#FAFAD2>
+        <dark_red>"打火石"权限更高</dark_red>
+        <dark_red>同时拥有"打火石"和"点燃TNT"权限的玩家才能点燃TNT</dark_red>
+        <dark_red>但是它不能保护红石信号激活的TNT</dark_red>
+      name: '<aqua><bold>点燃TNT</bold></aqua>'
       hint: 禁止点燃TNT
     TRADING:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2与村民交易'
-      name: '&b&l村民交易'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>与村民交易</color:#FAFAD2>'
+      name: '<aqua><bold>村民交易</bold></aqua>'
       hint: 禁止与村民交易
     TRAPDOOR:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使用活板门'
-      name: '&b&l活板门'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用活板门</color:#FAFAD2>'
+      name: '<aqua><bold>活板门</bold></aqua>'
       hint: 禁止使用活板门
     TREES_GROWING_OUTSIDE_RANGE:
-      name: '&b&l岛屿外树木生长'
+      name: '<aqua><bold>岛屿外树木生长</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2树木在岛屿保护范围之外生长
-        &#FAFAD2它不仅可以防止岛屿外的树苗生长
-        &#FAFAD2还可以阻止岛屿内的树苗长到岛屿保护范围之外
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>树木在岛屿保护范围之外生长</color:#FAFAD2>
+        <color:#FAFAD2>它不仅可以防止岛屿外的树苗生长</color:#FAFAD2>
+        <color:#FAFAD2>还可以阻止岛屿内的树苗长到岛屿保护范围之外</color:#FAFAD2>
     TURTLE_EGGS:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2踩碎海龟蛋'
-      name: '&b&l海龟蛋'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>踩碎海龟蛋</color:#FAFAD2>'
+      name: '<aqua><bold>海龟蛋</bold></aqua>'
       hint: 禁止踩碎海龟蛋
     FROST_WALKER:
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2使冰霜行者附魔生效'
-      name: '&b&l冰霜行者'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使冰霜行者附魔生效</color:#FAFAD2>'
+      name: '<aqua><bold>冰霜行者</bold></aqua>'
       hint: 禁止使用冰霜行者
     EXPERIENCE_PICKUP:
-      name: '&b&l拾取经验'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2拾取经验球'
+      name: '<aqua><bold>拾取经验</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>拾取经验球</color:#FAFAD2>'
       hint: 禁止拾取经验
     PREVENT_TELEPORT_WHEN_FALLING:
-      name: '&b&l阻止坠落时传送'
+      name: '<aqua><bold>阻止坠落时传送</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2阻止玩家在坠落时
-        &#FAFAD2使用指令传送回自己的岛屿(例如: /is go)
-        &a允许&#FAFAD2时: 玩家在坠落时不能传送
-        &c禁止&#FAFAD2时: 玩家在坠落时可以传送
-        &#FAFAD2禁用指令在BentoBox\addons\BSkyBlock\config.yml
-        &#FAFAD2文件中的"falling-banned-commands"里设置
-      hint: '&c你不能在坠落时传送.'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>阻止玩家在坠落时</color:#FAFAD2>
+        <color:#FAFAD2>使用指令传送回自己的岛屿(例如: /is go)</color:#FAFAD2>
+        <green>允许</green><color:#FAFAD2>时: 玩家在坠落时不能传送</color:#FAFAD2>
+        <red>禁止</red><color:#FAFAD2>时: 玩家在坠落时可以传送</color:#FAFAD2>
+        <color:#FAFAD2>禁用指令在BentoBox\addons\BSkyBlock\config.yml</color:#FAFAD2>
+        <color:#FAFAD2>文件中的"falling-banned-commands"里设置</color:#FAFAD2>
+      hint: '<red>你不能在坠落时传送.</red>'
     VISITOR_KEEP_INVENTORY:
-      name: '&b&l访客死亡不掉落'
+      name: '<aqua><bold>访客死亡不掉落</bold></aqua>'
       description: |-
-        &#FAFAD2防止玩家以访客身份访问他人岛屿时死亡而丢失物品和经验
-        &a允许&#FAFAD2时: 玩家在他人岛屿死亡不掉落
-        &c禁止&#FAFAD2时: 玩家在他人岛屿死亡掉落
-        &4岛屿成员在自己的岛屿上死亡时仍然会掉落物品和经验
+        <color:#FAFAD2>防止玩家以访客身份访问他人岛屿时死亡而丢失物品和经验</color:#FAFAD2>
+        <green>允许</green><color:#FAFAD2>时: 玩家在他人岛屿死亡不掉落</color:#FAFAD2>
+        <red>禁止</red><color:#FAFAD2>时: 玩家在他人岛屿死亡掉落</color:#FAFAD2>
+        <dark_red>岛屿成员在自己的岛屿上死亡时仍然会掉落物品和经验</dark_red>
     SPAWN_PROTECTION:
       name: Spawn island void protection
       description: |-
-        &a When enabled, players who fall
-        &a into the void at the spawn island
-        &a will be teleported back to the
-        &a spawn point instead of dying.
+        <green>When enabled, players who fall</green>
+        <green>into the void at the spawn island</green>
+        <green>will be teleported back to the</green>
+        <green>spawn point instead of dying.</green>
     RAID_TRIGGER:
       name: 触发袭击
       description: 设置触发袭击所需的岛屿最低等级
       hint: 不允许触发袭击
     ENTITY_PORTAL_TELEPORT:
-      name: '&b&l实体通过传送门'
-      description: '&a允许&#FAFAD2或&c禁止&#FAFAD2实体(不包括玩家)通过传送门跨越维度'
+      name: '<aqua><bold>实体通过传送门</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>实体(不包括玩家)通过传送门跨越维度</color:#FAFAD2>'
     WIND_CHARGE:
       name: 风弹
       description: |-
-        &a 切换风弹的使用。
-        &a 如果禁用，访客将无法
-        &a 在该岛屿上使用风弹。
+        <green>切换风弹的使用。</green>
+        <green>如果禁用，访客将无法</green>
+        <green>在该岛屿上使用风弹。</green>
       hint: 风弹使用已禁用
     WITHER_DAMAGE:
-      name: '&b&l凋灵破坏'
+      name: '<aqua><bold>凋灵破坏</bold></aqua>'
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2凋灵破坏方块和伤害玩家
-        &a允许&#FAFAD2时: 凋灵可以破坏方块和伤害玩家
-        &c禁止&#FAFAD2时: 凋灵不能破坏方块和伤害玩家
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>凋灵破坏方块和伤害玩家</color:#FAFAD2>
+        <green>允许</green><color:#FAFAD2>时: 凋灵可以破坏方块和伤害玩家</color:#FAFAD2>
+        <red>禁止</red><color:#FAFAD2>时: 凋灵不能破坏方块和伤害玩家</color:#FAFAD2>
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2床和重生锚爆炸时
-        &#FAFAD2对岛屿保护范围之外的方块和实体造成破坏和伤害
-      name: '&b&l边界爆炸保护'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>床和重生锚爆炸时</color:#FAFAD2>
+        <color:#FAFAD2>对岛屿保护范围之外的方块和实体造成破坏和伤害</color:#FAFAD2>
+      name: '<aqua><bold>边界爆炸保护</bold></aqua>'
     WORLD_TNT_DAMAGE:
       description: |-
-        &a允许&#FAFAD2或&c禁止&#FAFAD2TNT和TNT矿车爆炸时
-        &#FAFAD2对岛屿保护范围之外的方块和实体造成破坏和伤害
-      name: '&b&l边界TNT保护'
-  locked: '&c这个岛屿已被锁定!'
-  locked-island-bypass: '&6 这个[prefix_island]已被锁定，但你有权限绕过。'
-  protected: '&c岛屿保护: [description].'
-  world-protected: '&c世界保护: [description].'
-  spawn-protected: '&c出生点保护: [description].'
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>TNT和TNT矿车爆炸时</color:#FAFAD2>
+        <color:#FAFAD2>对岛屿保护范围之外的方块和实体造成破坏和伤害</color:#FAFAD2>
+      name: '<aqua><bold>边界TNT保护</bold></aqua>'
+  locked: '<red>这个岛屿已被锁定!</red>'
+  locked-island-bypass: '<gold>这个[prefix_island]已被锁定，但你有权限绕过。</gold>'
+  protected: '<red>岛屿保护: [description].</red>'
+  world-protected: '<red>世界保护: [description].</red>'
+  spawn-protected: '<red>出生点保护: [description].</red>'
   panel:
-    next: '&f下一页'
-    previous: '&f上一页'
+    next: '<white>下一页</white>'
+    previous: '<white>上一页</white>'
     mode:
       advanced:
-        name: '&6&l高级设置'
-        description: '&#FAFAD2显示更多设置项.'
+        name: '<gold><bold>高级设置</bold></gold>'
+        description: '<color:#FAFAD2>显示更多设置项.</color:#FAFAD2>'
       basic:
-        name: '&a&l基础设置'
-        description: '&#FAFAD2显示基础设置项.'
+        name: '<green><bold>基础设置</bold></green>'
+        description: '<color:#FAFAD2>显示基础设置项.</color:#FAFAD2>'
       expert:
-        name: '&c&l专家设置'
-        description: '&#FAFAD2显示全部设置项.'
-      click-to-switch: '&e点击&7切换至&r[next]&r&7.'
+        name: '<red><bold>专家设置</bold></red>'
+        description: '<color:#FAFAD2>显示全部设置项.</color:#FAFAD2>'
+      click-to-switch: '<yellow>点击</yellow><gray>切换至</gray>[next]<gray>.</gray>'
     reset-to-default:
-      name: '&c&l重置为默认值'
-      description: '&#FAFAD2将&b全部&#FAFAD2设置项恢复为默认值'
+      name: '<red><bold>重置为默认值</bold></red>'
+      description: '<color:#FAFAD2>将</color:#FAFAD2><aqua>全部</aqua><color:#FAFAD2>设置项恢复为默认值</color:#FAFAD2>'
       confirm: 确认
-      instructions: '&a 你确定吗？键入&c “确认”&a 以重置所有内容。'
+      instructions: '<green>你确定吗？键入</green><red>“确认”</red><green>以重置所有内容。</green>'
     PROTECTION:
-      title: '&6&l保护'
-      description: '&#FAFAD2适用于该岛屿的保护权限'
+      title: '<gold><bold>保护</bold></gold>'
+      description: '<color:#FAFAD2>适用于该岛屿的保护权限</color:#FAFAD2>'
     SETTING:
-      title: '&6&l设置'
-      description: '&#FAFAD2适用于该岛屿的一般权限'
+      title: '<gold><bold>设置</bold></gold>'
+      description: '<color:#FAFAD2>适用于该岛屿的一般权限</color:#FAFAD2>'
     WORLD_SETTING:
-      title: '&b&l[world_name] &6&l设置'
-      description: '&#FAFAD2为当前游戏世界设置'
+      title: '<aqua><bold>[world_name] </aqua><gold><bold>设置</bold></gold></bold>'
+      description: '<color:#FAFAD2>为当前游戏世界设置</color:#FAFAD2>'
     WORLD_DEFAULTS:
-      title: '&b&l[world_name] &6&l世界保护'
-      description: '&#FAFAD2世界默认权限设置'
+      title: '<aqua><bold>[world_name] </aqua><gold><bold>世界保护</bold></gold></bold>'
+      description: '<color:#FAFAD2>世界默认权限设置</color:#FAFAD2>'
     flag-item:
-      name-layout: '&a[name]'
+      name-layout: '<green>[name]</green>'
       command-instructions:
-        setname: '&a 选择可以设置名称的等级'
-        ban: '&a 选择可以禁赛玩家的等级'
-        unban: '&a 选择可以解除玩家禁言的等级'
+        setname: '<green>选择可以设置名称的等级</green>'
+        ban: '<green>选择可以禁赛玩家的等级</green>'
+        unban: '<green>选择可以解除玩家禁言的等级</green>'
         expel: |-
-          &a 选择可以 
-          &a 驱逐访客的权限等级
+          <green>选择可以</green>
+          <green>驱逐访客的权限等级</green>
         team-invite: |-
-          &a 选择可以 
-          &a 邀请的等级
+          <green>选择可以</green>
+          <green>邀请的等级</green>
         team-kick: |-
-          &a 选择可以
-          &a 踢出的等级
+          <green>选择可以</green>
+          <green>踢出的等级</green>
         team-coop: |-
-          &a 选择可以 
-          &a 合作的等级
-        team-trust: '&a 选择可以信任的等级'
+          <green>选择可以</green>
+          <green>合作的等级</green>
+        team-trust: '<green>选择可以信任的等级</green>'
         team-uncoop: |-
-          &a 选择可以 
-          &a 解除合作的等级
+          <green>选择可以</green>
+          <green>解除合作的等级</green>
         team-untrust: |-
-          &a 选择可以 
-          &a 撤销信任的排名
-        team-promote: '&a 选择可以提升玩家等级的等级'
+          <green>选择可以</green>
+          <green>撤销信任的排名</green>
+        team-promote: '<green>选择可以提升玩家等级的等级</green>'
         team-demote: |-
-          &a 选择可以
-          &a 降级玩家等级的等级
+          <green>选择可以</green>
+          <green>降级玩家等级的等级</green>
         sethome: |-
-          &a 选择可以
-          &a 设置家园的等级
+          <green>选择可以</green>
+          <green>设置家园的等级</green>
         deletehome: |-
-          &a 选择可以
-          &a 删除家园的权限
-        renamehome: '&a 选择可以重命名家的等级'
+          <green>选择可以</green>
+          <green>删除家园的权限</green>
+        renamehome: '<green>选择可以重命名家的等级</green>'
         setcount: |-
-          &a 选择可以
-          &a 更改阶段的等级
-        border: '&a 选择可以使用边界命令的等级'
+          <green>选择可以</green>
+          <green>更改阶段的等级</green>
+        border: '<green>选择可以使用边界命令的等级</green>'
       description-layout: |-
-        &a[description]
+        <green>[description]</green>
 
-        &e左键 &7向下循环选择
-        &e右键 &7向上循环选择
+        <yellow>左键 </yellow><gray>向下循环选择</gray>
+        <yellow>右键 </yellow><gray>向上循环选择</gray>
 
-        &7授权给:
-      allowed-rank: '&3 - &a'
-      blocked-rank: '&3 - &c'
-      minimal-rank: '&3 - &2'
+        <gray>授权给:</gray>
+      allowed-rank: '<dark_aqua>- </dark_aqua><green></green>'
+      blocked-rank: '<dark_aqua>- </dark_aqua><red></red>'
+      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green></dark_green>'
       menu-layout: |
-        &a [description]
+        <green>[description]</green>
 
-        &e点击 &7打开配置界面
-      setting-cooldown: '&c设置正在冷却中'
+        <yellow>点击 </yellow><gray>打开配置界面</gray>
+      setting-cooldown: '<red>设置正在冷却中</red>'
       setting-layout: |
-        &a [description]
+        <green>[description]</green>
 
-        &e点击 &7切换状态
+        <yellow>点击 </yellow><gray>切换状态</gray>
 
-        &7当前状态: [setting]
-      setting-active: '&a允许'
-      setting-disabled: '&c禁止'
+        <gray>当前状态: [setting]</gray>
+      setting-active: '<green>允许</green>'
+      setting-disabled: '<red>禁止</red>'
 management:
   panel:
-    title: '&6&lBentoBox管理'
+    title: '<gold><bold>BentoBox管理</bold></gold>'
     views:
       gamemodes:
-        name: '&6&l游戏模式'
-        description: '&e点击 &a显示当前已加载游戏模式'
+        name: '<gold><bold>游戏模式</bold></gold>'
+        description: '<yellow>点击 </yellow><green>显示当前已加载游戏模式</green>'
         blueprints:
-          name: '&9&l蓝图方案'
-          description: '&a打开蓝图方案管理'
+          name: '<blue><bold>蓝图方案</bold></blue>'
+          description: '<green>打开蓝图方案管理</green>'
         gamemode:
-          name: '&f[name]'
+          name: '<white>[name]</white>'
           description: |
-            &a岛屿数量: &b[islands]
+            <green>岛屿数量: </green><aqua>[islands]</aqua>
       addons:
-        name: '&6&l附加组件(Addons)'
-        description: '&e点击 &a显示当前已加载附加组件(Addons)'
+        name: '<gold><bold>附加组件(Addons)</bold></gold>'
+        description: '<yellow>点击 </yellow><green>显示当前已加载附加组件(Addons)</green>'
       hooks:
-        name: '&6&l钩子(Hooks)'
-        description: '&e点击 &a显示当前已挂钩的插件'
+        name: '<gold><bold>钩子(Hooks)</bold></gold>'
+        description: '<yellow>点击 </yellow><green>显示当前已挂钩的插件</green>'
     actions:
       reload:
-        name: '&c&l重载'
-        description: '&e点击 &c&l两次&r&a可重载BentoBox'
+        name: '<red><bold>重载</bold></red>'
+        description: '<yellow>点击 </yellow><red><bold>两次</bold></red><green>可重载BentoBox</green>'
     buttons:
       catalog:
-        name: '&6&l目录'
-        description: '&a打开目录'
+        name: '<gold><bold>目录</bold></gold>'
+        description: '<green>打开目录</green>'
       credits:
-        name: '&6&l贡献者名录'
-        description: '&a打开Bentobox贡献者名录'
+        name: '<gold><bold>贡献者名录</bold></gold>'
+        description: '<green>打开Bentobox贡献者名录</green>'
       empty-here:
-        name: '&b&l这里空空如也...'
-        description: '&a来目录看看?'
+        name: '<aqua><bold>这里空空如也...</bold></aqua>'
+        description: '<green>来目录看看?</green>'
     information:
       state:
-        name: '&6&l兼容性'
+        name: '<gold><bold>兼容性</bold></gold>'
         description:
           COMPATIBLE: |
-            &a运行在: &e[name] [version]
-            &aBentoBox当前运行在&a&l&n完全兼容&r&a的服务端和版本上
-            &a插件完全按照当前运行环境设计
-            &a所有功能均可以稳定运行
+            <green>运行在: </green><yellow>[name] [version]</yellow>
+            <green>BentoBox当前运行在</green><green><bold><underlined>完全兼容</underlined></bold></green><green>的服务端和版本上</green>
+            <green>插件完全按照当前运行环境设计</green>
+            <green>所有功能均可以稳定运行</green>
           SUPPORTED: |
-            &a运行在: &e[name] [version]
-            &aBentoBox当前运行在&a&l&n受支持&r&a的服务端和版本上
-            &a插件大部分功能可以在当前环境流畅运行
+            <green>运行在: </green><yellow>[name] [version]</yellow>
+            <green>BentoBox当前运行在</green><green><bold><underlined>受支持</underlined></bold></green><green>的服务端和版本上</green>
+            <green>插件大部分功能可以在当前环境流畅运行</green>
           NOT_SUPPORTED: |
-            &a运行在: &e[name] [version]
-            &aBentoBox当前运行在&6&l&n不受支持&r&a的服务端或版本上
-            &a虽然部分功能仍然可以正常运行
-            &a但可能发生&6平台相关的BUG或问题
+            <green>运行在: </green><yellow>[name] [version]</yellow>
+            <green>BentoBox当前运行在</green><gold><bold><underlined>不受支持</underlined></bold></gold><green>的服务端或版本上</green>
+            <green>虽然部分功能仍然可以正常运行</green>
+            <green>但可能发生</green><gold>平台相关的BUG或问题</gold>
           INCOMPATIBLE: |
-            &a运行在: &e[name] [version]
-            &aBentoBox当前运行在&c&l&n不兼容&r&a的服务端或版本上
-            &c可能会发生奇怪的行为和错误
-            &c大部分功能可能不稳定
+            <green>运行在: </green><yellow>[name] [version]</yellow>
+            <green>BentoBox当前运行在</green><red><bold><underlined>不兼容</underlined></bold></red><green>的服务端或版本上</green>
+            <red>可能会发生奇怪的行为和错误</red>
+            <red>大部分功能可能不稳定</red>
 catalog:
   panel:
     GAMEMODES:
-      title: '&6&l游戏模式目录'
+      title: '<gold><bold>游戏模式目录</bold></gold>'
     ADDONS:
-      title: '&6&l附加组件(Addons)目录'
+      title: '<gold><bold>附加组件(Addons)目录</bold></gold>'
     views:
       gamemodes:
-        name: '&6&l游戏模式'
-        description: '&e点击 &a浏览可用的官方游戏模式'
+        name: '<gold><bold>游戏模式</bold></gold>'
+        description: '<yellow>点击 </yellow><green>浏览可用的官方游戏模式</green>'
       addons:
-        name: '&6&l附加组件(Addons)'
-        description: '&e点击 &a浏览可用的官方附加组件(Addons)'
+        name: '<gold><bold>附加组件(Addons)</bold></gold>'
+        description: '<yellow>点击 </yellow><green>浏览可用的官方附加组件(Addons)</green>'
     icon:
       description-template: |
-        &8[topic]
-        &a[install]
+        <dark_gray>[topic]</dark_gray>
+        <green>[install]</green>
 
-        &7&o[description]
+        <gray><italic>[description]</italic></gray>
 
-        &e点击 &a获取最新版本链接
+        <yellow>点击 </yellow><green>获取最新版本链接</green>
       already-installed: 已安装!
       install-now: 现在安装!
     empty-here:
-      name: '&b&l这里空空如也...'
+      name: '<aqua><bold>这里空空如也...</bold></aqua>'
       description: |
-        &cBentoBox无法连接到GitHub
-        &a请修改配置文件允许BentoBox连接到GitHub或稍后重试
+        <red>BentoBox无法连接到GitHub</red>
+        <green>请修改配置文件允许BentoBox连接到GitHub或稍后重试</green>
 enums:
   DamageCause:
-    CONTACT: '&e接触(如仙人掌或甜浆果丛)'
-    ENTITY_ATTACK: '&e实体攻击'
-    ENTITY_SWEEP_ATTACK: '&e实体范围攻击'
-    PROJECTILE: '&e弹射物'
-    SUFFOCATION: '&e窒息'
-    FALL: '&e摔落'
-    FIRE: '&e接触火'
-    FIRE_TICK: '&e着火'
-    MELTING: '&e融化'
-    LAVA: '&e熔岩'
-    DROWNING: '&e溺水'
-    BLOCK_EXPLOSION: '&e方块爆炸'
-    ENTITY_EXPLOSION: '&e实体爆炸'
-    VOID: '&e虚空'
-    LIGHTNING: '&e雷击'
-    SUICIDE: '&e自杀'
-    STARVATION: '&e饥饿'
-    POISON: '&e中毒'
-    MAGIC: '&e魔法'
-    WITHER: '&e凋零'
-    FALLING_BLOCK: '&e坠落方块'
-    THORNS: '&e荆棘'
-    DRAGON_BREATH: '&e龙息'
-    CUSTOM: '&e自定义'
-    FLY_INTO_WALL: '&e撞击(鞘翅滑翔时高速撞击方块侧面)'
-    HOT_FLOOR: '&e岩浆块'
-    CRAMMING: '&e挤压'
-    DRYOUT: '&e脱水(如鱼暴露空气中)'
-    FREEZE: '&e冰冻'
-    KILL: '&e/kill'
-    SONIC_BOOM: '&e监守者音波尖啸'
-    WORLD_BORDER: '&e世界边界'
+    CONTACT: '<yellow>接触(如仙人掌或甜浆果丛)</yellow>'
+    ENTITY_ATTACK: '<yellow>实体攻击</yellow>'
+    ENTITY_SWEEP_ATTACK: '<yellow>实体范围攻击</yellow>'
+    PROJECTILE: '<yellow>弹射物</yellow>'
+    SUFFOCATION: '<yellow>窒息</yellow>'
+    FALL: '<yellow>摔落</yellow>'
+    FIRE: '<yellow>接触火</yellow>'
+    FIRE_TICK: '<yellow>着火</yellow>'
+    MELTING: '<yellow>融化</yellow>'
+    LAVA: '<yellow>熔岩</yellow>'
+    DROWNING: '<yellow>溺水</yellow>'
+    BLOCK_EXPLOSION: '<yellow>方块爆炸</yellow>'
+    ENTITY_EXPLOSION: '<yellow>实体爆炸</yellow>'
+    VOID: '<yellow>虚空</yellow>'
+    LIGHTNING: '<yellow>雷击</yellow>'
+    SUICIDE: '<yellow>自杀</yellow>'
+    STARVATION: '<yellow>饥饿</yellow>'
+    POISON: '<yellow>中毒</yellow>'
+    MAGIC: '<yellow>魔法</yellow>'
+    WITHER: '<yellow>凋零</yellow>'
+    FALLING_BLOCK: '<yellow>坠落方块</yellow>'
+    THORNS: '<yellow>荆棘</yellow>'
+    DRAGON_BREATH: '<yellow>龙息</yellow>'
+    CUSTOM: '<yellow>自定义</yellow>'
+    FLY_INTO_WALL: '<yellow>撞击(鞘翅滑翔时高速撞击方块侧面)</yellow>'
+    HOT_FLOOR: '<yellow>岩浆块</yellow>'
+    CRAMMING: '<yellow>挤压</yellow>'
+    DRYOUT: '<yellow>脱水(如鱼暴露空气中)</yellow>'
+    FREEZE: '<yellow>冰冻</yellow>'
+    KILL: '<yellow>/kill</yellow>'
+    SONIC_BOOM: '<yellow>监守者音波尖啸</yellow>'
+    WORLD_BORDER: '<yellow>世界边界</yellow>'
 panel:
   credits:
-    title: '&8&l[name]&6&l贡献者名录'
+    title: '<dark_gray><bold>[name]</dark_gray><gold><bold>贡献者名录</bold></gold></bold>'
     contributor:
-      name: '&a[name]'
-      description: '&a提交次数: &b[commits]'
+      name: '<green>[name]</green>'
+      description: '<green>提交次数: </green><aqua>[commits]</aqua>'
     empty-here:
-      name: '&c&l这里空空如也...'
+      name: '<red><bold>这里空空如也...</bold></red>'
       description: |
-        &cBentoBox无法获取此附加组件(Addon)的贡献者
-        &a请修改配置文件允许BentoBox连接到GitHub或稍后重试
+        <red>BentoBox无法获取此附加组件(Addon)的贡献者</red>
+        <green>请修改配置文件允许BentoBox连接到GitHub或稍后重试</green>
 panels:
   island_homes:
-    title: '&2&l 您的 [prefix_island] 家园'
+    title: '<dark_green><bold>您的 [prefix_island] 家园</bold></dark_green>'
     buttons:
-      name: '&l [name]'
+      name: '<bold>[name]</bold>'
   island_creation:
-    title: '&#FF00FF&l选择你的岛屿'
+    title: '<color:#FF00FF><bold>选择你的岛屿</bold></color:#FF00FF>'
     buttons:
       bundle:
-        name: '&l[name]'
+        name: '<bold>[name]</bold>'
         description: '[description]'
-        uses: '&a可创建次数: &#FFE4B5[number]&f/&#FFE4B5[max]'
-        unlimited: '&a可创建次数: &#1E90FF无限'
-        cost: '&e 费用: [cost]'
+        uses: '<green>可创建次数: </green><color:#FFE4B5>[number]</color:#FFE4B5><white>/</white><color:#FFE4B5>[max]</color:#FFE4B5>'
+        unlimited: '<green>可创建次数: </green><color:#1E90FF>无限</color:#1E90FF>'
+        cost: '<yellow>费用: [cost]</yellow>'
   language:
-    title: '&2&l选择你的语言'
-    edited: '&c 已更改为 [lang]'
+    title: '<dark_green><bold>选择你的语言</bold></dark_green>'
+    edited: '<red>已更改为 [lang]</red>'
     buttons:
       language:
-        name: '&f&l[name]'
+        name: '<white><bold>[name]</bold></white>'
         description: |-
           [authors]
           |[selected]
-        authors: '&7作者: '
-        author: '&7 - &b[name]'
-        selected: '&a当前已选择该语言'
+        authors: '<gray>作者: </gray>'
+        author: '<gray>- </gray><aqua>[name]</aqua>'
+        selected: '<green>当前已选择该语言</green>'
   buttons:
     previous:
-      name: '&f&l上一页'
-      description: '&7切换至第[number]页'
+      name: '<white><bold>上一页</bold></white>'
+      description: '<gray>切换至第[number]页</gray>'
     next:
-      name: '&f&l下一页'
-      description: '&7切换至第[number]页'
+      name: '<white><bold>下一页</bold></white>'
+      description: '<gray>切换至第[number]页</gray>'
   tips:
-    click-to-next: '&e点击 &7往下翻'
-    click-to-previous: '&e点击 &7往上翻'
-    click-to-choose: '&e点击 &7选择'
-    click-to-toggle: '&e点击 &7切换'
-    left-click-to-cycle-down: '&e左键 &7向下循环选择'
-    right-click-to-cycle-up: '&e右键 &7向上循环选择'
+    click-to-next: '<yellow>点击 </yellow><gray>往下翻</gray>'
+    click-to-previous: '<yellow>点击 </yellow><gray>往上翻</gray>'
+    click-to-choose: '<yellow>点击 </yellow><gray>选择</gray>'
+    click-to-toggle: '<yellow>点击 </yellow><gray>切换</gray>'
+    left-click-to-cycle-down: '<yellow>左键 </yellow><gray>向下循环选择</gray>'
+    right-click-to-cycle-up: '<yellow>右键 </yellow><gray>向上循环选择</gray>'
 successfully-loaded: >-
-  &6   ____             _        ____ &6  |  _ \           | |      |  _
-  \             &7由&atastybento&7和&aPoslovitch&7构建 &6  | |_) | ___ _ __ | |_ ___
-  | |_) | _____  __  &72017 - 2024 &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/
-  / &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &bv&e[version] &6  |____/
-  \___|_| |_|\__\___/|____/ \___/_/\_\  &8加载用时 &e[time]&8毫秒.
+  <gold>  ____             _        ____ </gold><gold> |  _ \           | |      |  _</gold>
+  \             <gray>由</gray><green>tastybento</green><gray>和</gray><green>Poslovitch</green><gray>构建 </gray><gold> | |_) | ___ _ __ | |_ ___</gold>
+  | |_) | _____  __  <gray>2017 - 2024 </gray><gold> |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/</gold>
+  / <gold> | |_) |  __/ | | | || (_) | |_) | (_) >  <   </gold><aqua>v</aqua><yellow>[version] </yellow><gold> |____/</gold>
+  \___|_| |_|\__\___/|____/ \___/_/\_\  <dark_gray>加载用时 </dark_gray><yellow>[time]</yellow><dark_gray>毫秒.</dark_gray>
