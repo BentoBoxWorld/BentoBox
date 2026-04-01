@@ -65,7 +65,6 @@ public class PanelItemBuilder {
         return this.icon(playerName, new ItemStack(Material.PLAYER_HEAD));
     }
 
-    @SuppressWarnings("deprecation")
     public PanelItemBuilder name(@Nullable String name) {
         if (name == null) {
             this.name = null;
@@ -76,14 +75,14 @@ public class PanelItemBuilder {
         // and add the remaining lines as description entries.
         if (name.contains("\n")) {
             String[] lines = name.split("\n");
-            this.name = Util.translateColorCodes(lines[0]);
+            this.name = lines[0];
             for (int i = 1; i < lines.length; i++) {
                 if (!lines[i].isBlank()) {
                     description(lines[i]);
                 }
             }
         } else {
-            this.name = Util.translateColorCodes(name);
+            this.name = name;
         }
         return this;
     }
