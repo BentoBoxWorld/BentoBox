@@ -464,11 +464,16 @@ public class User implements MetaDataAble {
      *         has been found
      * @since 1.3.0
      */
+    @SuppressWarnings("deprecation")
     public String getTranslation(World world, String reference, String... variables) {
         // Get translation.
         String addonPrefix = plugin.getIWM().getAddon(world)
                 .map(a -> a.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".").orElse("");
-        return Util.translateColorCodes(translate(addonPrefix, reference, variables));
+        String raw = translate(addonPrefix, reference, variables);
+        if (Util.isLegacyFormat(raw)) {
+            return Util.translateColorCodes(raw);
+        }
+        return Util.componentToLegacy(Util.parseMiniMessage(raw));
     }
 
     /**
@@ -482,10 +487,17 @@ public class User implements MetaDataAble {
      * @return Translated string with colors converted, or the reference if nothing
      *         has been found
      */
+    @SuppressWarnings("deprecation")
     public String getTranslation(String reference, String... variables) {
         // Get addonPrefix
         String addonPrefix = addon == null ? "" : addon.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".";
-        return Util.translateColorCodes(translate(addonPrefix, reference, variables));
+        String raw = translate(addonPrefix, reference, variables);
+        // Handle both MiniMessage and legacy formats, returning legacy §-coded string
+        if (Util.isLegacyFormat(raw)) {
+            return Util.translateColorCodes(raw);
+        }
+        // MiniMessage format: parse to Component and serialize to legacy
+        return Util.componentToLegacy(Util.parseMiniMessage(raw));
     }
 
     /**
