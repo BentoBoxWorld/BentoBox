@@ -465,21 +465,12 @@ public class User implements MetaDataAble {
      *         has been found
      * @since 1.3.0
      */
-    @SuppressWarnings("deprecation")
     public String getTranslation(World world, String reference, String... variables) {
         // Get translation.
         String addonPrefix = plugin.getIWM().getAddon(world)
                 .map(a -> a.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".").orElse("");
         String raw = translate(addonPrefix, reference, variables);
-        if (Util.isLegacyFormat(raw)) {
-            return Util.translateColorCodes(raw);
-        }
-        if (raw.contains("\n")) {
-            return Arrays.stream(raw.split("\n", -1))
-                    .map(line -> Util.componentToLegacy(Util.parseMiniMessage(line)))
-                    .collect(Collectors.joining("\n"));
-        }
-        return Util.componentToLegacy(Util.parseMiniMessage(raw));
+        return convertToLegacy(raw);
     }
 
     /**
@@ -493,23 +484,48 @@ public class User implements MetaDataAble {
      * @return Translated string with colors converted, or the reference if nothing
      *         has been found
      */
-    @SuppressWarnings("deprecation")
     public String getTranslation(String reference, String... variables) {
         // Get addonPrefix
         String addonPrefix = addon == null ? "" : addon.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".";
         String raw = translate(addonPrefix, reference, variables);
-        // Handle both MiniMessage and legacy formats, returning legacy §-coded string
-        if (Util.isLegacyFormat(raw)) {
-            return Util.translateColorCodes(raw);
-        }
-        // MiniMessage format: parse each line independently to preserve newlines,
-        // since LegacyComponentSerializer does not preserve \n through round-trip.
+        return convertToLegacy(raw);
+    }
+
+    /**
+     * Converts a raw translation string (which may contain MiniMessage tags, legacy &amp;/§ codes,
+     * or a mix of both) into a legacy §-coded string for backwards compatibility.
+     * <p>
+     * Mixed content occurs when MiniMessage locale strings have variables substituted with
+     * legacy-coded values from addons (e.g., {@code <bold>&ePlayer Name</bold>}).
+     *
+     * @param raw the raw translated string
+     * @return legacy §-coded string
+     */
+    private String convertToLegacy(String raw) {
+        // Process each line independently to preserve newlines
         if (raw.contains("\n")) {
             return Arrays.stream(raw.split("\n", -1))
-                    .map(line -> Util.componentToLegacy(Util.parseMiniMessage(line)))
+                    .map(this::convertLineToLegacy)
                     .collect(Collectors.joining("\n"));
         }
-        return Util.componentToLegacy(Util.parseMiniMessage(raw));
+        return convertLineToLegacy(raw);
+    }
+
+    private String convertLineToLegacy(String line) {
+        boolean hasLegacy = Util.isLegacyFormat(line);
+        boolean hasMiniMessage = line.contains("<") && line.contains(">");
+        if (hasLegacy && !hasMiniMessage) {
+            // Pure legacy — use the old path
+            @SuppressWarnings("deprecation")
+            String result = Util.translateColorCodes(line);
+            return result;
+        }
+        if (hasLegacy) {
+            // Mixed: convert legacy codes to MiniMessage first, then parse all as MiniMessage
+            line = Util.legacyToMiniMessage(line);
+        }
+        // Parse as MiniMessage and serialize to legacy
+        return Util.componentToLegacy(Util.parseMiniMessage(line));
     }
 
     /**
