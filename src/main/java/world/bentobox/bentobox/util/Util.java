@@ -606,17 +606,14 @@ public class Util {
             String group = matcher.group(1);
 
             if (group.length() == 6) {
-                // Parses #ffffff to a color text.
-                matcher.appendReplacement(buffer, COLOR_CHAR + "x"
-                        + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
-                        + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
-                        + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5));
+                // 6-digit hex: keep as &#RRGGBB for LEGACY_SERIALIZER to handle natively.
+                matcher.appendReplacement(buffer, "&#" + group);
             } else {
-                // Parses #fff to a color text.
-                matcher.appendReplacement(buffer, COLOR_CHAR + "x"
-                        + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(0)
-                        + COLOR_CHAR + group.charAt(1) + COLOR_CHAR + group.charAt(1)
-                        + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(2));
+                // 3-digit hex: expand to 6-digit &#RRGGBB format (e.g., &#fff -> &#ffffff).
+                matcher.appendReplacement(buffer, "&#"
+                        + group.charAt(0) + group.charAt(0)
+                        + group.charAt(1) + group.charAt(1)
+                        + group.charAt(2) + group.charAt(2));
             }
         }
 
@@ -918,6 +915,7 @@ public class Util {
     private static final LegacyComponentSerializer SECTION_SERIALIZER = LegacyComponentSerializer.builder()
             .character('\u00A7')
             .hexColors()
+            .useUnusualXRepeatedCharacterHexFormat()
             .build();
     
     /**
