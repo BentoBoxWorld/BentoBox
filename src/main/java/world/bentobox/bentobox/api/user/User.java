@@ -521,8 +521,12 @@ public class User implements MetaDataAble {
             return result;
         }
         if (hasLegacy) {
-            // Mixed: convert legacy codes to MiniMessage first, then parse all as MiniMessage
-            line = Util.legacyToMiniMessage(line);
+            // Mixed content: MiniMessage tags + legacy & codes.
+            // Replace legacy codes with MiniMessage opening tags inline (no closing tags).
+            // MiniMessage handles unclosed tags correctly — they apply until overridden.
+            // Using legacyToMiniMessage() would produce wrong nesting (e.g.,
+            // <bold><yellow>text</bold></yellow> where </yellow> leaks as literal text).
+            line = Util.replaceLegacyCodesInline(line);
         }
         // Parse as MiniMessage and serialize to legacy
         return Util.componentToLegacy(Util.parseMiniMessage(line));

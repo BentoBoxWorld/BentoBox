@@ -1138,6 +1138,58 @@ public class Util {
      * @return parsed Component
      * @since 3.2.0
      */
+    /**
+     * Replaces legacy {@code &X} and {@code §X} color/format codes with MiniMessage opening tags inline,
+     * without adding closing tags. This is safe for strings that already contain MiniMessage tags
+     * (mixed content), because MiniMessage handles unclosed tags correctly — they apply until
+     * overridden by another tag or the end of the string.
+     * <p>
+     * Unlike {@link #legacyToMiniMessage(String)}, this method does not track or emit closing tags,
+     * avoiding nesting issues when existing MiniMessage closing tags are present.
+     *
+     * @param text the string with mixed legacy codes and MiniMessage tags
+     * @return string with legacy codes replaced by MiniMessage opening tags
+     * @since 3.2.0
+     */
+    @NonNull
+    public static String replaceLegacyCodesInline(@NonNull String text) {
+        // Normalize § to &
+        text = text.replace('\u00A7', '&');
+        // Replace hex codes &#RRGGBB → <color:#RRGGBB>
+        Matcher hexMatcher = HEX_PATTERN.matcher(text);
+        StringBuilder sb = new StringBuilder();
+        while (hexMatcher.find()) {
+            String hex = hexMatcher.group(1);
+            if (hex.length() == 3) {
+                hex = "" + hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
+            }
+            hexMatcher.appendReplacement(sb, "<color:#" + hex + ">");
+        }
+        hexMatcher.appendTail(sb);
+        text = sb.toString();
+        // Replace &X codes with MiniMessage tags (opening only, no closing)
+        sb = new StringBuilder();
+        int i = 0;
+        while (i < text.length()) {
+            if (i + 1 < text.length() && text.charAt(i) == '&') {
+                char code = Character.toLowerCase(text.charAt(i + 1));
+                String mmTag = LEGACY_TO_MM_MAP.get(code);
+                if (mmTag != null) {
+                    sb.append("<").append(mmTag).append(">");
+                    i += 2;
+                    // Strip space after color code (locale hack)
+                    if (i < text.length() && text.charAt(i) == ' ') {
+                        i++;
+                    }
+                    continue;
+                }
+            }
+            sb.append(text.charAt(i));
+            i++;
+        }
+        return sb.toString();
+    }
+
     @NonNull
     public static Component parseMiniMessage(@NonNull String miniMessageString) {
         return MINI_MESSAGE.deserialize(miniMessageString);
@@ -1167,6 +1219,11 @@ public class Util {
     @NonNull
     public static Component parseMiniMessageOrLegacy(@NonNull String text) {
         if (isLegacyFormat(text)) {
+            boolean hasMiniMessage = text.contains("<") && text.contains(">");
+            if (hasMiniMessage) {
+                // Mixed content: use inline replacement to avoid nesting issues
+                return MINI_MESSAGE.deserialize(replaceLegacyCodesInline(text));
+            }
             return MINI_MESSAGE.deserialize(legacyToMiniMessage(text));
         }
         return MINI_MESSAGE.deserialize(text);
