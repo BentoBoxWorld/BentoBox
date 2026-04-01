@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.user;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -473,6 +474,11 @@ public class User implements MetaDataAble {
         if (Util.isLegacyFormat(raw)) {
             return Util.translateColorCodes(raw);
         }
+        if (raw.contains("\n")) {
+            return Arrays.stream(raw.split("\n", -1))
+                    .map(line -> Util.componentToLegacy(Util.parseMiniMessage(line)))
+                    .collect(Collectors.joining("\n"));
+        }
         return Util.componentToLegacy(Util.parseMiniMessage(raw));
     }
 
@@ -496,7 +502,13 @@ public class User implements MetaDataAble {
         if (Util.isLegacyFormat(raw)) {
             return Util.translateColorCodes(raw);
         }
-        // MiniMessage format: parse to Component and serialize to legacy
+        // MiniMessage format: parse each line independently to preserve newlines,
+        // since LegacyComponentSerializer does not preserve \n through round-trip.
+        if (raw.contains("\n")) {
+            return Arrays.stream(raw.split("\n", -1))
+                    .map(line -> Util.componentToLegacy(Util.parseMiniMessage(line)))
+                    .collect(Collectors.joining("\n"));
+        }
         return Util.componentToLegacy(Util.parseMiniMessage(raw));
     }
 
