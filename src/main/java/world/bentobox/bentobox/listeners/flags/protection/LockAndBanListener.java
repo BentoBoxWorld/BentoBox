@@ -1,5 +1,9 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -26,6 +30,12 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  */
 public class LockAndBanListener extends FlagListener {
+
+    /**
+     * Tracks players who have already been notified about a locked or banned island,
+     * to avoid spamming the same message on every move event.
+     */
+    private final Set<UUID> notifiedPlayers = new HashSet<>();
 
     /**
      * Result of checking the island for locked state or player bans
@@ -143,7 +153,10 @@ public class LockAndBanListener extends FlagListener {
     }
 
     /**
-     * Checks if a player is banned from this location and notifies them if so
+     * Checks if a player is banned from this location and notifies them if so.
+     * Notifications are only sent once per entry; subsequent checks for the same
+     * player will not repeat the message until the player moves to an open area
+     * and re-enters.
      * @param player - player
      * @param loc - location to check
      * @return CheckResult
@@ -151,12 +164,18 @@ public class LockAndBanListener extends FlagListener {
     private CheckResult checkAndNotify(@NonNull Player player, Location loc)
     {
         CheckResult result = this.check(player, loc);
-        if (result == CheckResult.BANNED) {
-            User.getInstance(player).notify("commands.island.ban.you-are-banned");
-        } else if (result == CheckResult.LOCKED) {
-            User.getInstance(player).notify("protection.locked");
-        } else if (result == CheckResult.BYPASS_LOCK) {
-            User.getInstance(player).notify("protection.locked-island-bypass");
+        if (result == CheckResult.OPEN) {
+            // Player is in an open area, clear notification state
+            notifiedPlayers.remove(player.getUniqueId());
+        } else if (notifiedPlayers.add(player.getUniqueId())) {
+            // Player was not previously notified — send the notification
+            if (result == CheckResult.BANNED) {
+                User.getInstance(player).notify("commands.island.ban.you-are-banned");
+            } else if (result == CheckResult.LOCKED) {
+                User.getInstance(player).notify("protection.locked");
+            } else if (result == CheckResult.BYPASS_LOCK) {
+                User.getInstance(player).notify("protection.locked-island-bypass");
+            }
         }
         return result;
     }
