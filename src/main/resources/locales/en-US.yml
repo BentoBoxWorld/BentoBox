@@ -501,11 +501,11 @@ commands:
           quit: quit
           clear: clear
           instructions: |
-            Enter commands to run when blueprint [name] is pasted.
-            Supports [player] and [owner] placeholders.
-            Prefix with [SUDO] to run as the player.
-            Type 'clear' to remove all commands in this session.
-            Type 'quit' on a line by itself to finish.
+            <white>Enter commands to run when blueprint [name] <white>is pasted.</white>
+            <white>Supports <green>[player]</green> and <green>[owner]</green> placeholders.</white>
+            <white>Prefix with <green>[SUDO]</green> to run as the player.</white>
+            <white>Type 'clear' to remove all commands in this session.</white>
+            <white>Type 'quit' on a line by itself to finish.</white>
           default-color: ''
           success: Success!
           cancelling: Cancelling
