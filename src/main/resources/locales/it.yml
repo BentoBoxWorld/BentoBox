@@ -7,6 +7,7 @@ prefixes:
   bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: isola
   Island: Isola
+  Islands: Isole
   an-island: un'isola
   islands: isole
 general:
@@ -49,6 +50,7 @@ commands:
     syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
     syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
     end: '<gray>=================================</gray>'
+    page: '<gray>Pagina </gray><yellow>[page]</yellow><gray> di </gray><yellow>[total]</yellow>'
     parameters: '[command]'
     description: commando di aiuto
     console: Console
@@ -334,6 +336,12 @@ commands:
       parameters: <giocatore> <raggio>
       description: imposta il raggio dell'isola del player
       range-updated: Raggio dell'isola impostato a [number]
+    placeholders:
+      description: aprire il browser dei segnaposto
+    dump-placeholders:
+      description: esportare tutti i segnaposto registrati in un file markdown
+      dumped: '<green>Lista dei segnaposto scritta in [file]</green>'
+      error: '<red>Impossibile scrivere la lista dei segnaposto: [message]</red>'
     reload:
       description: ricarica
     tp:
@@ -529,6 +537,20 @@ commands:
         cost-amount: 'Costo: [cost]'
         next-page: '<white>Pagina successiva</white>'
         previous-page: '<white>Pagina precedente</white>'
+        edit-commands: Clicca per modificare i comandi
+        no-commands: Nessun comando impostato
+        commands:
+          quit: esci
+          clear: cancella
+          instructions: |
+            <white>Inserisci i comandi da eseguire quando il progetto [name] viene incollato.</white>
+            <white>Supporta i segnaposto <green>[player]</green> e <green>[owner]</green>.</white>
+            <white>Prefissa con <green>[SUDO]</green> per eseguire come giocatore.</white>
+            <white>Digita 'cancella' per rimuovere tutti i comandi in questa sessione.</white>
+            <white>Digita 'esci' su una riga a sé per terminare.</white>
+          default-color: ''
+          success: Successo!
+          cancelling: Annullamento
     resetflags:
       parameters: '[flag]'
       description: Reimposta le impostazioni di tutte le isole a quelle in config.yml
@@ -584,6 +606,12 @@ commands:
       description: mostra i perm efficaci per BentoBox e Addons in un formato YAML
     about:
       description: mostra le info riguardo copyright e licenza
+    placeholders:
+      description: aprire il browser dei segnaposto
+    dump-placeholders:
+      description: esportare tutti i segnaposto registrati in un file markdown
+      dumped: '<green>Lista dei segnaposto scritta in [file]</green>'
+      error: '<red>Impossibile scrivere la lista dei segnaposto: [message]</red>'
     reload:
       description: ricarica gli addons, le impostazioni, i locali
       locales-reloaded: '<dark_green>Linguaggi ricaricati.</dark_green>'
@@ -2028,6 +2056,44 @@ panels:
         authors: '<gray>Autori:</gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>Attualmente selezionato.</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] segnaposto</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] segnaposto</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(disattivato)</italic></red>'
+        hint: '<yellow>Clicca </yellow><gray>per attivare/disattivare.</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] segnaposto</gray>'
+        hint: '<yellow>Clicca </yellow><gray>per esplorare.</gray>'
+      leaf-folder:
+        hint: '<yellow>Clic sinistro </yellow><gray>per attivare/disattivare. · </gray><yellow>Clic destro </yellow><gray>per esplorare.</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] elementi</dark_gray>'
+        disabled: '<red><italic>(alcuni disattivati)</italic></red>'
+        hint: '<yellow>Clicca </yellow><gray>per attivare/disattivare tutti.</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(vuoto)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>Clic sinistro </yellow><gray>per attivare/disattivare. · </gray><yellow>Clic destro </yellow><gray>per attivare/disattivare tutti.</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(vuoto)</dark_gray>'
+      back:
+        name: '<white><bold>Indietro</bold></white>'
+        description: '<gray>Torna alla lista degli addon</gray>'
   buttons:
     previous:
       name: '<white><bold>Pagina Precedente</bold></white>'

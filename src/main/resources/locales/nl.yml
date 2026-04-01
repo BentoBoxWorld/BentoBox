@@ -7,6 +7,7 @@ prefixes:
   bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: eiland
   Island: Eiland
+  Islands: Eilanden
   an-island: een eiland
   islands: eilanden
 general:
@@ -53,6 +54,7 @@ commands:
     syntax: '<aqua>[usage] </aqua><green>[parameters] </green><gray>: </gray><yellow>[description]</yellow>'
     syntax-no-parameters: '<aqua>[usage] </aqua><gray>: </gray><yellow>[description]</yellow>'
     end: '<gray>===================================</gray>'
+    page: '<gray>Pagina </gray><yellow>[page]</yellow><gray> van </gray><yellow>[total]</yellow>'
     parameters: '[command]'
     description: help commando
     console: Troosten
@@ -340,6 +342,12 @@ commands:
       parameters: <speler> <bereik>
       description: stel het bereik van het spelerseiland in
       range-updated: '<green>Island-reeks geüpdatet naar </green><aqua>[number] </aqua><green>.</green>'
+    placeholders:
+      description: de placeholder-browser openen
+    dump-placeholders:
+      description: alle geregistreerde placeholders exporteren naar een markdown-bestand
+      dumped: '<green>Placeholderlijst geschreven naar [file]</green>'
+      error: '<red>Kan placeholderlijst niet schrijven: [message]</red>'
     reload:
       description: herladen
     tp:
@@ -533,6 +541,20 @@ commands:
         cost-amount: 'Kosten: [cost]'
         next-page: '<white>Volgende pagina</white>'
         previous-page: '<white>Vorige pagina</white>'
+        edit-commands: Klik om commando's te bewerken
+        no-commands: Geen commando's ingesteld
+        commands:
+          quit: stoppen
+          clear: wissen
+          instructions: |
+            <white>Voer commando's in om uit te voeren wanneer blueprint [name] wordt geplakt.</white>
+            <white>Ondersteunt <green>[player]</green> en <green>[owner]</green> plaatshouders.</white>
+            <white>Gebruik <green>[SUDO]</green> als voorvoegsel om als speler uit te voeren.</white>
+            <white>Typ 'wissen' om alle commando's in deze sessie te verwijderen.</white>
+            <white>Typ 'stoppen' op een aparte regel om te voltooien.</white>
+          default-color: ''
+          success: Succes!
+          cancelling: Annuleren
     resetflags:
       parameters: '[vlag]'
       description: Reset alle eilanden naar de standaard vlaginstellingen in config.yml
@@ -592,6 +614,12 @@ commands:
       description: toont de effectieve rechten voor BentoBox en Addons in een YAML-indeling
     about:
       description: geeft copyright- en licentie-informatie weer
+    placeholders:
+      description: de placeholder-browser openen
+    dump-placeholders:
+      description: alle geregistreerde placeholders exporteren naar een markdown-bestand
+      dumped: '<green>Placeholderlijst geschreven naar [file]</green>'
+      error: '<red>Kan placeholderlijst niet schrijven: [message]</red>'
     reload:
       description: herlaadt BentoBox en alle add-ons, instellingen en landinstellingen
       locales-reloaded: '[prefix_bentobox] <dark_green>talen opnieuw geladen.</dark_green>'
@@ -2079,6 +2107,44 @@ panels:
         authors: '<gray>Auteurs:</gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>Huidig geselecteerd.</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] placeholders</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] placeholders</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(uitgeschakeld)</italic></red>'
+        hint: '<yellow>Klik </yellow><gray>om te schakelen.</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] placeholders</gray>'
+        hint: '<yellow>Klik </yellow><gray>om te verkennen.</gray>'
+      leaf-folder:
+        hint: '<yellow>Linksklik </yellow><gray>om te schakelen. · </gray><yellow>Rechtsklik </yellow><gray>om te verkennen.</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] items</dark_gray>'
+        disabled: '<red><italic>(sommige uitgeschakeld)</italic></red>'
+        hint: '<yellow>Klik </yellow><gray>om alles te schakelen.</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(leeg)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>Linksklik </yellow><gray>om te schakelen. · </gray><yellow>Rechtsklik </yellow><gray>om alles te schakelen.</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(leeg)</dark_gray>'
+      back:
+        name: '<white><bold>Terug</bold></white>'
+        description: '<gray>Terug naar de addonlijst</gray>'
   buttons:
     previous:
       name: '<white><bold>Vorige Pagina</bold></white>'

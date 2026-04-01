@@ -7,6 +7,7 @@ prefixes:
   bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: hòn đảo
   Island: Đảo
+  Islands: Đảo
   an-island: một hòn đảo
   islands: đảo
 general:
@@ -47,6 +48,7 @@ commands:
     syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
     syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
     end: '<gray>=================================</gray>'
+    page: '<gray>Trang </gray><yellow>[page]</yellow><gray> / </gray><yellow>[total]</yellow>'
     parameters: '[command]'
     description: xem hướng dẫn
     console: Bảng điều khiển
@@ -321,6 +323,12 @@ commands:
       parameters: <Người chơi> <Range>
       description: set the range of player's island
       range-updated: '<green>Island range updated to </green><aqua>[number]</aqua><green>.</green>'
+    placeholders:
+      description: mở trình duyệt trình giữ chỗ
+    dump-placeholders:
+      description: xuất tất cả trình giữ chỗ đã đăng ký ra file markdown
+      dumped: '<green>Danh sách trình giữ chỗ đã ghi vào [file]</green>'
+      error: '<red>Không thể ghi danh sách trình giữ chỗ: [message]</red>'
     reload:
       description: '<red>Tải lại</red>'
     tp:
@@ -498,6 +506,20 @@ commands:
         cost-amount: 'Chi phí: [cost]'
         next-page: '<white>Trang tiếp theo</white>'
         previous-page: '<white>Trang trước</white>'
+        edit-commands: Nhấp để chỉnh sửa lệnh
+        no-commands: Không có lệnh nào được thiết lập
+        commands:
+          quit: thoát
+          clear: xóa
+          instructions: |
+            <white>Nhập các lệnh để chạy khi dán bản vẽ [name].</white>
+            <white>Hỗ trợ trình giữ chỗ <green>[player]</green> và <green>[owner]</green>.</white>
+            <white>Thêm tiền tố <green>[SUDO]</green> để chạy với tư cách người chơi.</white>
+            <white>Gõ 'xóa' để xóa tất cả lệnh trong phiên này.</white>
+            <white>Gõ 'thoát' trên một dòng riêng để hoàn thành.</white>
+          default-color: ''
+          success: Thành công!
+          cancelling: Đang hủy
     resetflags:
       parameters: '[flag]'
       description: Đặt lại tất cả các đảo về cài đặt cờ mặc định trong config.yml
@@ -559,6 +581,12 @@ commands:
       description: hiển thị các quyền hiệu quả cho BentoBox và Addons dưới định dạng YAML
     about:
       description: xem thông tin về giấy phép và bản quyền
+    placeholders:
+      description: mở trình duyệt trình giữ chỗ
+    dump-placeholders:
+      description: xuất tất cả trình giữ chỗ đã đăng ký ra file markdown
+      dumped: '<green>Danh sách trình giữ chỗ đã ghi vào [file]</green>'
+      error: '<red>Không thể ghi danh sách trình giữ chỗ: [message]</red>'
     reload:
       description: Nạp lại BentoBox và tất cả tiện ích, tùy chỉnh và ngôn ngữ
       locales-reloaded: '[prefix_bentobox]<dark_green>Đã nạp lại ngôn ngữ.</dark_green>'
@@ -2003,6 +2031,44 @@ panels:
         authors: '<gray>Tác giả:</gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>Đang được chọn.</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] trình giữ chỗ</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] trình giữ chỗ</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(đã tắt)</italic></red>'
+        hint: '<yellow>Nhấp </yellow><gray>để chuyển đổi.</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] trình giữ chỗ</gray>'
+        hint: '<yellow>Nhấp </yellow><gray>để khám phá.</gray>'
+      leaf-folder:
+        hint: '<yellow>Nhấp trái </yellow><gray>để chuyển đổi. · </gray><yellow>Nhấp phải </yellow><gray>để khám phá.</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] mục</dark_gray>'
+        disabled: '<red><italic>(một số đã tắt)</italic></red>'
+        hint: '<yellow>Nhấp </yellow><gray>để chuyển đổi tất cả.</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(trống)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>Nhấp trái </yellow><gray>để chuyển đổi. · </gray><yellow>Nhấp phải </yellow><gray>để chuyển đổi tất cả.</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(trống)</dark_gray>'
+      back:
+        name: '<white><bold>Quay lại</bold></white>'
+        description: '<gray>Quay lại danh sách addon</gray>'
   buttons:
     previous:
       name: '<white><bold>Trang Trước</bold></white>'

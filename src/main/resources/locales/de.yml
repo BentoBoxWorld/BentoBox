@@ -8,6 +8,7 @@ prefixes:
   bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: Insel
   Island: Insel
+  Islands: Inseln
   an-island: eine Insel
   islands: Inseln
 general:
@@ -54,6 +55,7 @@ commands:
     syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
     syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
     end: '<gray>=================================</gray>'
+    page: '<gray>Seite </gray><yellow>[page]</yellow><gray> von </gray><yellow>[total]</yellow>'
     parameters: '[command]'
     description: Hilfe Befehl
     console: Konsole
@@ -335,6 +337,12 @@ commands:
       parameters: <spieler> <Reiche>
       description: Die Reichweite der Spielerinsel festlegen
       range-updated: '<green>Inselbereich aktualisiert auf </green><aqua>[number]</aqua><green>.</green>'
+    placeholders:
+      description: den Platzhalter-Browser öffnen
+    dump-placeholders:
+      description: alle registrierten Platzhalter in eine Markdown-Datei exportieren
+      dumped: '<green>Platzhalterliste geschrieben nach [file]</green>'
+      error: '<red>Platzhalterliste konnte nicht geschrieben werden: [message]</red>'
     reload:
       description: Neu laden
     tp:
@@ -522,6 +530,20 @@ commands:
         cost-amount: 'Kosten: [cost]'
         next-page: '<white>Nächste Seite</white>'
         previous-page: '<white>Vorherige Seite</white>'
+        edit-commands: Klicke um Befehle zu bearbeiten
+        no-commands: Keine Befehle gesetzt
+        commands:
+          quit: beenden
+          clear: leeren
+          instructions: |
+            <white>Gib Befehle ein, die beim Einfügen des Blueprints [name] ausgeführt werden.</white>
+            <white>Unterstützt <green>[player]</green> und <green>[owner]</green> Platzhalter.</white>
+            <white>Stelle <green>[SUDO]</green> voran, um als Spieler auszuführen.</white>
+            <white>Tippe 'leeren' um alle Befehle dieser Sitzung zu entfernen.</white>
+            <white>Tippe 'beenden' in einer eigenen Zeile zum Abschließen.</white>
+          default-color: ''
+          success: Erfolg!
+          cancelling: Abbrechen
     resetflags:
       parameters: '[flag]'
       description: >-
@@ -585,6 +607,12 @@ commands:
         YAML-Format an
     about:
       description: Zeigt Copyright- und Lizenzinformationen an
+    placeholders:
+      description: den Platzhalter-Browser öffnen
+    dump-placeholders:
+      description: alle registrierten Platzhalter in eine Markdown-Datei exportieren
+      dumped: '<green>Platzhalterliste geschrieben nach [file]</green>'
+      error: '<red>Platzhalterliste konnte nicht geschrieben werden: [message]</red>'
     reload:
       description: Lädt BentoBox, alle Addons, Einstellungen und Locales neu
       locales-reloaded: '<dark_green>Sprachen neu geladen.</dark_green>'
@@ -2071,6 +2099,44 @@ panels:
         authors: '<gray>Autoren:</gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>Aktuell ausgewählt.</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] Platzhalter</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] Platzhalter</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(deaktiviert)</italic></red>'
+        hint: '<yellow>Klicke </yellow><gray>zum Umschalten.</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] Platzhalter</gray>'
+        hint: '<yellow>Klicke </yellow><gray>zum Erkunden.</gray>'
+      leaf-folder:
+        hint: '<yellow>Linksklick </yellow><gray>zum Umschalten. · </gray><yellow>Rechtsklick </yellow><gray>zum Erkunden.</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] Einträge</dark_gray>'
+        disabled: '<red><italic>(einige deaktiviert)</italic></red>'
+        hint: '<yellow>Klicke </yellow><gray>um alle umzuschalten.</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(leer)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>Linksklick </yellow><gray>zum Umschalten. · </gray><yellow>Rechtsklick </yellow><gray>um alle umzuschalten.</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(leer)</dark_gray>'
+      back:
+        name: '<white><bold>Zurück</bold></white>'
+        description: '<gray>Zurück zur Addon-Liste</gray>'
   buttons:
     previous:
       name: '<white><bold>Vorherige Seite</bold></white>'

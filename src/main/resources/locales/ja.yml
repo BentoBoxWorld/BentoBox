@@ -7,6 +7,7 @@ prefixes:
   bentobox: '<gold>ベントボックス </gold><gray><bold>> </bold></gray>'
   island: 島
   Island: 島
+  Islands: 島々
   an-island: 島
   islands: 島
 general:
@@ -47,6 +48,7 @@ commands:
     syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
     syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
     end: '<gray>=================================</gray>'
+    page: '<gray>ページ </gray><yellow>[page]</yellow><gray> / </gray><yellow>[total]</yellow>'
     parameters: '[command]'
     description: ヘルプコマンド
     console: コンソール
@@ -279,6 +281,12 @@ commands:
       parameters: <プレーヤー><範囲>
       description: プレイヤーの島の範囲を設定する
       range-updated: '<dark_green>島の範囲は、[number]に更新</dark_green>'
+    placeholders:
+      description: プレースホルダーブラウザを開く
+    dump-placeholders:
+      description: 登録されたすべてのプレースホルダーをmarkdownファイルにエクスポート
+      dumped: '<green>プレースホルダーリストを [file] に書き込みました</green>'
+      error: '<red>プレースホルダーリストを書き込めませんでした: [message]</red>'
     reload:
       description: リロードする
     tp:
@@ -446,6 +454,20 @@ commands:
         cost-amount: 'コスト: [cost]'
         next-page: '<white>次のページ</white>'
         previous-page: '<white>前のページ</white>'
+        edit-commands: クリックしてコマンドを編集
+        no-commands: コマンドが設定されていません
+        commands:
+          quit: 終了
+          clear: クリア
+          instructions: |
+            <white>ブループリント [name] の貼り付け時に実行するコマンドを入力してください。</white>
+            <white><green>[player]</green> と <green>[owner]</green> のプレースホルダーをサポートしています。</white>
+            <white>プレイヤーとして実行するには <green>[SUDO]</green> を先頭に付けてください。</white>
+            <white>'クリア' と入力してこのセッションのすべてのコマンドを削除します。</white>
+            <white>'終了' と単独の行に入力して完了します。</white>
+          default-color: ''
+          success: 成功！
+          cancelling: キャンセル中
     resetflags:
       parameters: '[flag]'
       description: すべての島をconfig.ymlのデフォルトのフラグ設定にリセットします
@@ -497,6 +519,12 @@ commands:
       description: BentoBox とアドオンの有効な権限を YAML 形式で表示します
     about:
       description: 著作権とライセンス情報を表示する
+    placeholders:
+      description: プレースホルダーブラウザを開く
+    dump-placeholders:
+      description: 登録されたすべてのプレースホルダーをmarkdownファイルにエクスポート
+      dumped: '<green>プレースホルダーリストを [file] に書き込みました</green>'
+      error: '<red>プレースホルダーリストを書き込めませんでした: [message]</red>'
     reload:
       description: すべてのロケールファイルを再読み込み
       locales-reloaded: '<dark_green>言語がリロードされた</dark_green>'
@@ -1892,6 +1920,44 @@ panels:
         authors: '<gray>著者：</gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>現在選択されています。</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] プレースホルダー</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] プレースホルダー</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(無効)</italic></red>'
+        hint: '<yellow>クリック </yellow><gray>で切り替え。</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] プレースホルダー</gray>'
+        hint: '<yellow>クリック </yellow><gray>で探索。</gray>'
+      leaf-folder:
+        hint: '<yellow>左クリック </yellow><gray>で切り替え。 · </gray><yellow>右クリック </yellow><gray>で探索。</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] 項目</dark_gray>'
+        disabled: '<red><italic>(一部無効)</italic></red>'
+        hint: '<yellow>クリック </yellow><gray>ですべて切り替え。</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(空)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>左クリック </yellow><gray>で切り替え。 · </gray><yellow>右クリック </yellow><gray>ですべて切り替え。</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(空)</dark_gray>'
+      back:
+        name: '<white><bold>戻る</bold></white>'
+        description: '<gray>アドオンリストに戻る</gray>'
   buttons:
     previous:
       name: '<white><bold>前のページ</bold></white>'

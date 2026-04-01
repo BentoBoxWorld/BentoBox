@@ -57,6 +57,7 @@ commands:
     syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
     syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
     end: '<gray>=================================</gray>'
+    page: '<gray>Сторінка </gray><yellow>[page]</yellow><gray> з </gray><yellow>[total]</yellow>'
     parameters: '[command]'
     description: команда довідки
     console: Консоль
@@ -287,6 +288,12 @@ commands:
       parameters: <player> <range>
       description: встановити діапазон [prefix_island] гравця
       range-updated: '<green>Діапазон [prefix_Island] оновлено до </green><aqua>[number]</aqua><green>.</green>'
+    placeholders:
+      description: відкрити браузер замінників
+    dump-placeholders:
+      description: експортувати всі зареєстровані замінники в markdown файл
+      dumped: '<green>Список замінників записано в [file]</green>'
+      error: '<red>Не вдалося записати список замінників: [message]</red>'
     reload:
       description: перезавантажити
     tp:
@@ -454,6 +461,20 @@ commands:
         cost-amount: 'Вартість: [cost]'
         next-page: '<white>Наступна сторінка</white>'
         previous-page: '<white>Попередня сторінка</white>'
+        edit-commands: Натисніть для редагування команд
+        no-commands: Команди не встановлені
+        commands:
+          quit: вихід
+          clear: очистити
+          instructions: |
+            <white>Введіть команди для виконання при вставці креслення [name].</white>
+            <white>Підтримує замінники <green>[player]</green> та <green>[owner]</green>.</white>
+            <white>Додайте <green>[SUDO]</green> для виконання від імені гравця.</white>
+            <white>Введіть 'очистити' для видалення всіх команд у цій сесії.</white>
+            <white>Введіть 'вихід' в окремому рядку для завершення.</white>
+          default-color: ''
+          success: Успіх!
+          cancelling: Скасування
     resetflags:
       parameters: '[flag]'
       description: Скинути всі [prefix_Islands] до типових прапорів у config.yml
@@ -503,6 +524,12 @@ commands:
       description: показує ефективні перміси для BentoBox і аддонів у форматі YAML
     about:
       description: показує інформацію про авторські права та ліцензії
+    placeholders:
+      description: відкрити браузер замінників
+    dump-placeholders:
+      description: експортувати всі зареєстровані замінники в markdown файл
+      dumped: '<green>Список замінників записано в [file]</green>'
+      error: '<red>Не вдалося записати список замінників: [message]</red>'
     reload:
       description: перезавантажує BentoBox і всі аддони, налаштування та локалі
       locales-reloaded: '[prefix_bentobox]<dark_green>Мови перезавантажено.</dark_green>'
@@ -1944,7 +1971,83 @@ panels:
         authors: '<gray>Автори: </gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>Наразі обрано.</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] замінників</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] замінників</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(вимкнено)</italic></red>'
+        hint: '<yellow>Натисніть </yellow><gray>для перемикання.</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] замінників</gray>'
+        hint: '<yellow>Натисніть </yellow><gray>для перегляду.</gray>'
+      leaf-folder:
+        hint: '<yellow>ЛКМ </yellow><gray>для перемикання. · </gray><yellow>ПКМ </yellow><gray>для перегляду.</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] елементів</dark_gray>'
+        disabled: '<red><italic>(деякі вимкнено)</italic></red>'
+        hint: '<yellow>Натисніть </yellow><gray>для перемикання всіх.</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(порожньо)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>ЛКМ </yellow><gray>для перемикання. · </gray><yellow>ПКМ </yellow><gray>для перемикання всіх.</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(порожньо)</dark_gray>'
+      back:
+        name: '<white><bold>Назад</bold></white>'
+        description: '<gray>Повернутися до списку аддонів</gray>'
   # The set of common buttons used in multiple panels.
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] замінників</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] замінників</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(вимкнено)</italic></red>'
+        hint: '<yellow>Натисніть </yellow><gray>для перемикання.</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] замінників</gray>'
+        hint: '<yellow>Натисніть </yellow><gray>для перегляду.</gray>'
+      leaf-folder:
+        hint: '<yellow>ЛКМ </yellow><gray>для перемикання. · </gray><yellow>ПКМ </yellow><gray>для перегляду.</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] елементів</dark_gray>'
+        disabled: '<red><italic>(деякі вимкнено)</italic></red>'
+        hint: '<yellow>Натисніть </yellow><gray>для перемикання всіх.</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(порожньо)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>ЛКМ </yellow><gray>для перемикання. · </gray><yellow>ПКМ </yellow><gray>для перемикання всіх.</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(порожньо)</dark_gray>'
+      back:
+        name: '<white><bold>Назад</bold></white>'
+        description: '<gray>Повернутися до списку аддонів</gray>'
   buttons:
     # Button that is used in multi-page GUIs which allows to return to previous page.
     previous:

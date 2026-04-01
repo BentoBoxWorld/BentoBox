@@ -7,6 +7,7 @@ prefixes:
   bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: otok
   Island: Otok
+  Islands: Otoci
   an-island: otok
   islands: ostrva
 general:
@@ -51,6 +52,7 @@ commands:
     syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
     syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
     end: '<gray>=================================</gray>'
+    page: '<gray>Stranica </gray><yellow>[page]</yellow><gray> od </gray><yellow>[total]</yellow>'
     parameters: '[naredba]'
     description: naredba pomoći
     console: Konzola
@@ -319,6 +321,12 @@ commands:
       parameters: <igrač> <raspon>
       description: postavite domet otoka igrača
       range-updated: '<green>Raspon otoka ažuriran na </green><aqua>[number]</aqua><green>.</green>'
+    placeholders:
+      description: otvoriti preglednik zamjenskih oznaka
+    dump-placeholders:
+      description: izvesti sve registrirane zamjenske oznake u markdown datoteku
+      dumped: '<green>Popis zamjenskih oznaka zapisan u [file]</green>'
+      error: '<red>Nije moguće zapisati popis zamjenskih oznaka: [message]</red>'
     reload:
       description: ponovno učitati
     tp:
@@ -502,6 +510,20 @@ commands:
         cost-amount: 'Cijena: [cost]'
         next-page: '<white>Sljedeća stranica</white>'
         previous-page: '<white>Prethodna stranica</white>'
+        edit-commands: Kliknite za uređivanje naredbi
+        no-commands: Nema postavljenih naredbi
+        commands:
+          quit: izlaz
+          clear: očisti
+          instructions: |
+            <white>Unesite naredbe za pokretanje pri lijepljenju nacrta [name].</white>
+            <white>Podržava <green>[player]</green> i <green>[owner]</green> zamjenske oznake.</white>
+            <white>Dodajte prefiks <green>[SUDO]</green> za pokretanje kao igrač.</white>
+            <white>Upišite 'očisti' za uklanjanje svih naredbi u ovoj sesiji.</white>
+            <white>Upišite 'izlaz' u zasebnom retku za završetak.</white>
+          default-color: ''
+          success: Uspjeh!
+          cancelling: Otkazivanje
     resetflags:
       parameters: '[zastava]'
       description: Vratite sve otoke na zadane postavke zastavice u config.yml
@@ -555,6 +577,12 @@ commands:
       description: prikazuje efektivne trajne za BentoBox i Addons u YAML formatu
     about:
       description: prikazuje informacije o autorskim pravima i licenci
+    placeholders:
+      description: otvoriti preglednik zamjenskih oznaka
+    dump-placeholders:
+      description: izvesti sve registrirane zamjenske oznake u markdown datoteku
+      dumped: '<green>Popis zamjenskih oznaka zapisan u [file]</green>'
+      error: '<red>Nije moguće zapisati popis zamjenskih oznaka: [message]</red>'
     reload:
       description: ponovno učitava BentoBox i sve dodatke, postavke i lokalizacije
       locales-reloaded: '[prefix_bentobox]<dark_green>jezika ponovno učitano.</dark_green>'
@@ -2032,6 +2060,44 @@ panels:
         authors: '<gray>Autori:</gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>Trenutno odabrano.</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] zamjenskih oznaka</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] zamjenskih oznaka</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(deaktivirano)</italic></red>'
+        hint: '<yellow>Kliknite </yellow><gray>za prebacivanje.</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] zamjenskih oznaka</gray>'
+        hint: '<yellow>Kliknite </yellow><gray>za istraživanje.</gray>'
+      leaf-folder:
+        hint: '<yellow>Lijevi klik </yellow><gray>za prebacivanje. · </gray><yellow>Desni klik </yellow><gray>za istraživanje.</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] stavki</dark_gray>'
+        disabled: '<red><italic>(neki deaktivirani)</italic></red>'
+        hint: '<yellow>Kliknite </yellow><gray>za prebacivanje svih.</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(prazno)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>Lijevi klik </yellow><gray>za prebacivanje. · </gray><yellow>Desni klik </yellow><gray>za prebacivanje svih.</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(prazno)</dark_gray>'
+      back:
+        name: '<white><bold>Natrag</bold></white>'
+        description: '<gray>Povratak na popis dodataka</gray>'
   buttons:
     previous:
       name: '<white><bold>Prethodna Stranica</bold></white>'

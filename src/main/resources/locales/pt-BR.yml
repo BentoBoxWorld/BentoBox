@@ -6,6 +6,7 @@ prefixes:
   bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: ilha
   Island: Ilha
+  Islands: Ilhas
   an-island: uma ilha
   islands: ilhas
 general:
@@ -46,6 +47,7 @@ commands:
     syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
     syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
     end: '<gray>=================================</gray>'
+    page: '<gray>Página </gray><yellow>[page]</yellow><gray> de </gray><yellow>[total]</yellow>'
     parameters: '[command]'
     description: comando ajuda
     console: Console
@@ -318,6 +320,12 @@ commands:
       parameters: <jogador> <raio>
       description: alterar o raio da ilha de um jogador
       range-updated: '<green>Raio da ilha alterado para </green><aqua>[number]</aqua><green>.</green>'
+    placeholders:
+      description: abrir o navegador de marcadores
+    dump-placeholders:
+      description: exportar todos os marcadores registrados para um arquivo markdown
+      dumped: '<green>Lista de marcadores escrita em [file]</green>'
+      error: '<red>Não foi possível escrever a lista de marcadores: [message]</red>'
     reload:
       description: recarregar
     tp:
@@ -507,6 +515,20 @@ commands:
         cost-amount: 'Custo: [cost]'
         next-page: '<white>Próxima página</white>'
         previous-page: '<white>Página anterior</white>'
+        edit-commands: Clique para editar comandos
+        no-commands: Nenhum comando definido
+        commands:
+          quit: sair
+          clear: limpar
+          instructions: |
+            <white>Digite comandos para executar quando o blueprint [name] for colado.</white>
+            <white>Suporta marcadores <green>[player]</green> e <green>[owner]</green>.</white>
+            <white>Prefixe com <green>[SUDO]</green> para executar como jogador.</white>
+            <white>Digite 'limpar' para remover todos os comandos desta sessão.</white>
+            <white>Digite 'sair' em uma linha separada para finalizar.</white>
+          default-color: ''
+          success: Sucesso!
+          cancelling: Cancelando
     resetflags:
       parameters: '[opção]'
       description: Reiniciar todas as ilhas para configurações padrão da config.yml
@@ -562,6 +584,12 @@ commands:
       description: mostra as permissões efetivas para BentoBox e Addons em formato YAML
     about:
       description: exibir informação de copyright e licenças
+    placeholders:
+      description: abrir o navegador de marcadores
+    dump-placeholders:
+      description: exportar todos os marcadores registrados para um arquivo markdown
+      dumped: '<green>Lista de marcadores escrita em [file]</green>'
+      error: '<red>Não foi possível escrever a lista de marcadores: [message]</red>'
     reload:
       description: recarregar BentoBox e todos os addons, configurações e traduções
       locales-reloaded: '[prefix_bentobox]<dark_green>Idiomas recarregados.</dark_green>'
@@ -2022,6 +2050,44 @@ panels:
         authors: '<gray>Autores:</gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>Atualmente selecionado.</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] marcadores</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] marcadores</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(desativado)</italic></red>'
+        hint: '<yellow>Clique </yellow><gray>para alternar.</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] marcadores</gray>'
+        hint: '<yellow>Clique </yellow><gray>para explorar.</gray>'
+      leaf-folder:
+        hint: '<yellow>Clique esquerdo </yellow><gray>para alternar. · </gray><yellow>Clique direito </yellow><gray>para explorar.</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] itens</dark_gray>'
+        disabled: '<red><italic>(alguns desativados)</italic></red>'
+        hint: '<yellow>Clique </yellow><gray>para alternar todos.</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(vazio)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>Clique esquerdo </yellow><gray>para alternar. · </gray><yellow>Clique direito </yellow><gray>para alternar todos.</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(vazio)</dark_gray>'
+      back:
+        name: '<white><bold>Voltar</bold></white>'
+        description: '<gray>Voltar à lista de addons</gray>'
   buttons:
     previous:
       name: '<white><bold>Página Anterior</bold></white>'

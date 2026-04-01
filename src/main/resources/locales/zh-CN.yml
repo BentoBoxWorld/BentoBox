@@ -11,6 +11,7 @@ prefixes:
   bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: 岛屿
   Island: 岛屿
+  Islands: 岛屿
   an-island: 岛屿
   islands: 岛屿
 general:
@@ -51,6 +52,7 @@ commands:
     syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
     syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
     end: '<gray>=================================</gray>'
+    page: '<gray>第 </gray><yellow>[page]</yellow><gray> 页，共 </gray><yellow>[total]</yellow><gray> 页</gray>'
     parameters: '[command]'
     description: 命令帮助
     console: 控制台
@@ -287,6 +289,12 @@ commands:
       parameters: <player> <gray><range></gray>
       description: 设置玩家岛屿范围
       range-updated: '<green>岛屿范围已设置为: </green><aqua>[number]</aqua><green>.</green>'
+    placeholders:
+      description: 打开占位符浏览器
+    dump-placeholders:
+      description: 将所有注册的占位符导出到markdown文件
+      dumped: '<green>占位符列表已写入 [file]</green>'
+      error: '<red>无法写入占位符列表：[message]</red>'
     reload:
       description: 重载
     tp:
@@ -463,6 +471,20 @@ commands:
         cost-amount: '费用: [cost]'
         next-page: '<white>下一页</white>'
         previous-page: '<white>上一页</white>'
+        edit-commands: 点击编辑命令
+        no-commands: 未设置命令
+        commands:
+          quit: 退出
+          clear: 清除
+          instructions: |
+            <white>输入在粘贴蓝图 [name] 时要运行的命令。</white>
+            <white>支持 <green>[player]</green> 和 <green>[owner]</green> 占位符。</white>
+            <white>添加 <green>[SUDO]</green> 前缀以玩家身份运行。</white>
+            <white>输入'清除'以删除此会话中的所有命令。</white>
+            <white>在单独一行输入'退出'以完成。</white>
+          default-color: ''
+          success: 成功！
+          cancelling: 正在取消
     resetflags:
       parameters: '<gray>[flag]</gray>'
       description: 将所有岛屿的保护标志设置为config.yml中默认值
@@ -516,6 +538,12 @@ commands:
       description: 以YAML格式显示BentoBox和Addons的有效权限
     about:
       description: 显示版权和许可信息
+    placeholders:
+      description: 打开占位符浏览器
+    dump-placeholders:
+      description: 将所有注册的占位符导出到markdown文件
+      dumped: '<green>占位符列表已写入 [file]</green>'
+      error: '<red>无法写入占位符列表：[message]</red>'
     reload:
       description: 重载BentoBox和所有组件(Addons)、设置、语言
       locales-reloaded: '[prefix_bentobox]<dark_green>语言文件已重载.</dark_green>'
@@ -1825,6 +1853,44 @@ panels:
         authors: '<gray>作者: </gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>当前已选择该语言</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] 占位符</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] 占位符</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(已禁用)</italic></red>'
+        hint: '<yellow>点击 </yellow><gray>以切换。</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] 占位符</gray>'
+        hint: '<yellow>点击 </yellow><gray>以浏览。</gray>'
+      leaf-folder:
+        hint: '<yellow>左键点击 </yellow><gray>以切换。 · </gray><yellow>右键点击 </yellow><gray>以浏览。</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] 项</dark_gray>'
+        disabled: '<red><italic>(部分已禁用)</italic></red>'
+        hint: '<yellow>点击 </yellow><gray>以切换全部。</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(空)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>左键点击 </yellow><gray>以切换。 · </gray><yellow>右键点击 </yellow><gray>以切换全部。</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(空)</dark_gray>'
+      back:
+        name: '<white><bold>返回</bold></white>'
+        description: '<gray>返回插件列表</gray>'
   buttons:
     previous:
       name: '<white><bold>上一页</bold></white>'

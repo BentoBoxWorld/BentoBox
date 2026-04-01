@@ -10,6 +10,7 @@ prefixes:
   bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: 島
   Island: 島
+  Islands: 島嶼
   an-island: 一個島
   islands: 島嶼
 general:
@@ -50,6 +51,7 @@ commands:
     syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
     syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
     end: '<gray>=================================</gray>'
+    page: '<gray>第 </gray><yellow>[page]</yellow><gray> 頁，共 </gray><yellow>[total]</yellow><gray> 頁</gray>'
     parameters: '[command]'
     description: 幫助命令
     console: 控制台
@@ -288,6 +290,12 @@ commands:
       parameters: <player> <range>
       description: 設置玩家島嶼的範圍
       range-updated: 島嶼範圍已被更新至 [number]
+    placeholders:
+      description: 開啟佔位符瀏覽器
+    dump-placeholders:
+      description: 將所有註冊的佔位符匯出到markdown檔案
+      dumped: '<green>佔位符清單已寫入 [file]</green>'
+      error: '<red>無法寫入佔位符清單：[message]</red>'
     reload:
       description: 重載本插件(不建議使用 請重啟伺服器以免發生錯誤)
     tp:
@@ -461,6 +469,20 @@ commands:
         cost-amount: '費用: [cost]'
         next-page: '<white>下一頁</white>'
         previous-page: '<white>上一頁</white>'
+        edit-commands: 點擊編輯命令
+        no-commands: 未設定命令
+        commands:
+          quit: 退出
+          clear: 清除
+          instructions: |
+            <white>輸入在貼上藍圖 [name] 時要執行的命令。</white>
+            <white>支援 <green>[player]</green> 和 <green>[owner]</green> 佔位符。</white>
+            <white>添加 <green>[SUDO]</green> 前綴以玩家身份執行。</white>
+            <white>輸入'清除'以移除此工作階段中的所有命令。</white>
+            <white>在單獨一行輸入'退出'以完成。</white>
+          default-color: ''
+          success: 成功！
+          cancelling: 正在取消
     resetflags:
       parameters: '[旗幟]'
       description: 將所有島嶼的保護標志設置為 config.yml 中默認的狀態
@@ -514,6 +536,12 @@ commands:
       description: 以yaml格式顯示彎曲曲托和插件的有效perm
     about:
       description: 顯示版權和協議信息
+    placeholders:
+      description: 開啟佔位符瀏覽器
+    dump-placeholders:
+      description: 將所有註冊的佔位符匯出到markdown檔案
+      dumped: '<green>佔位符清單已寫入 [file]</green>'
+      error: '<red>無法寫入佔位符清單：[message]</red>'
     reload:
       description: 重載 BentoBox 和所有附加組件、設置和語言
       locales-reloaded: '<dark_green>語言文件已經重新載入</dark_green>'
@@ -1825,6 +1853,44 @@ panels:
         authors: '<gray>Authors: </gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>當前選擇。</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] 佔位符</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] 佔位符</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(已停用)</italic></red>'
+        hint: '<yellow>點擊 </yellow><gray>以切換。</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] 佔位符</gray>'
+        hint: '<yellow>點擊 </yellow><gray>以瀏覽。</gray>'
+      leaf-folder:
+        hint: '<yellow>左鍵點擊 </yellow><gray>以切換。 · </gray><yellow>右鍵點擊 </yellow><gray>以瀏覽。</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] 項</dark_gray>'
+        disabled: '<red><italic>(部分已停用)</italic></red>'
+        hint: '<yellow>點擊 </yellow><gray>以切換全部。</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(空)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>左鍵點擊 </yellow><gray>以切換。 · </gray><yellow>右鍵點擊 </yellow><gray>以切換全部。</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(空)</dark_gray>'
+      back:
+        name: '<white><bold>返回</bold></white>'
+        description: '<gray>返回附加元件清單</gray>'
   buttons:
     previous:
       name: '<white><bold>上一頁</bold></white>'

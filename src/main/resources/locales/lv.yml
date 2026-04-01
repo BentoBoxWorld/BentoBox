@@ -7,6 +7,7 @@ prefixes:
   bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: salā
   Island: Sala
+  Islands: Salas
   an-island: salā
   islands: saliņas
 general:
@@ -49,6 +50,7 @@ commands:
     syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
     syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
     end: '<gray>=================================</gray>'
+    page: '<gray>Lapa </gray><yellow>[page]</yellow><gray> no </gray><yellow>[total]</yellow>'
     parameters: '[command]'
     description: Palīdzības komanda
     console: Konsole
@@ -324,6 +326,12 @@ commands:
       parameters: <spēlētājs> <distance>
       description: uzstāda aizsardzības distanci spēlētāja salai
       range-updated: Aizsardzības distance uzstādīta uz [number]
+    placeholders:
+      description: atvērt vietturžu pārlūku
+    dump-placeholders:
+      description: eksportēt visus reģistrētos vietturžus markdown failā
+      dumped: '<green>Vietturžu saraksts ierakstīts [file]</green>'
+      error: '<red>Nevarēja ierakstīt vietturžu sarakstu: [message]</red>'
     reload:
       description: pārlādēt
     tp:
@@ -509,6 +517,20 @@ commands:
         cost-amount: 'Izmaksas: [cost]'
         next-page: '<white>Nākamā lapa</white>'
         previous-page: '<white>Iepriekšējā lapa</white>'
+        edit-commands: Noklikšķiniet, lai rediģētu komandas
+        no-commands: Nav iestatītu komandu
+        commands:
+          quit: iziet
+          clear: notīrīt
+          instructions: |
+            <white>Ievadiet komandas, kas jāizpilda, ielīmējot rasējumu [name].</white>
+            <white>Atbalsta <green>[player]</green> un <green>[owner]</green> vietturžus.</white>
+            <white>Pievienojiet <green>[SUDO]</green> priekšā, lai izpildītu kā spēlētājs.</white>
+            <white>Ierakstiet 'notīrīt', lai noņemtu visas komandas šajā sesijā.</white>
+            <white>Ierakstiet 'iziet' atsevišķā rindā, lai pabeigtu.</white>
+          default-color: ''
+          success: Veiksmīgi!
+          cancelling: Atcelšana
     resetflags:
       parameters: '[karogs]'
       description: Atiestatī visu salu noklusējuma karodziņu iestatījumus no config.yml
@@ -564,6 +586,12 @@ commands:
       description: rāda efektīvās atļaujas BentoBox un papildinājumiem YAML formātā
     about:
       description: parādīt autortiesības un licenses informāciju
+    placeholders:
+      description: atvērt vietturžu pārlūku
+    dump-placeholders:
+      description: eksportēt visus reģistrētos vietturžus markdown failā
+      dumped: '<green>Vietturžu saraksts ierakstīts [file]</green>'
+      error: '<red>Nevarēja ierakstīt vietturžu sarakstu: [message]</red>'
     reload:
       description: parlādēt iestatījumus, papildinājumus (ja atbalstīts) un valodas
       locales-reloaded: '<dark_green>Valodas faili pārlādēti.</dark_green>'
@@ -2058,6 +2086,44 @@ panels:
         authors: '<gray>Autori:</gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>Pašlaik izvēlēts.</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] vietturžu</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] vietturžu</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(atspējots)</italic></red>'
+        hint: '<yellow>Noklikšķiniet </yellow><gray>lai pārslēgtu.</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] vietturžu</gray>'
+        hint: '<yellow>Noklikšķiniet </yellow><gray>lai izpētītu.</gray>'
+      leaf-folder:
+        hint: '<yellow>Kreisais klikšķis </yellow><gray>lai pārslēgtu. · </gray><yellow>Labais klikšķis </yellow><gray>lai izpētītu.</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] vienumi</dark_gray>'
+        disabled: '<red><italic>(daži atspējoti)</italic></red>'
+        hint: '<yellow>Noklikšķiniet </yellow><gray>lai pārslēgtu visus.</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(tukšs)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>Kreisais klikšķis </yellow><gray>lai pārslēgtu. · </gray><yellow>Labais klikšķis </yellow><gray>lai pārslēgtu visus.</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(tukšs)</dark_gray>'
+      back:
+        name: '<white><bold>Atpakaļ</bold></white>'
+        description: '<gray>Atgriezties pie papildinājumu saraksta</gray>'
   buttons:
     previous:
       name: '<white><bold>Iepriekšējā Lapa</bold></white>'
