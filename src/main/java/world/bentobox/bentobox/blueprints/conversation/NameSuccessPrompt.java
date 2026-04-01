@@ -77,7 +77,9 @@ public class NameSuccessPrompt extends MessagePrompt
             // Set the name
         }
 
-        return user.getTranslation("commands.admin.blueprint.management.description.success");
+        String msg = user.getTranslation("commands.admin.blueprint.management.description.success");
+        user.sendRawMessage(msg);
+        return "";
     }
 
 

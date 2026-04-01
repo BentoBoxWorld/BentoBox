@@ -22,7 +22,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.localization.BentoBoxLocale;
@@ -362,26 +364,26 @@ public class LocalesManager {
 
         User user = User.getInstance(Bukkit.getConsoleSender());
 
-        user.sendRawMessage(NamedTextColor.AQUA + SPACER);
-        plugin.log(NamedTextColor.AQUA + "Analyzing BentoBox locale files");
-        user.sendRawMessage(NamedTextColor.AQUA + SPACER);
+        user.sendMessage(Component.text(SPACER, NamedTextColor.AQUA));
+        plugin.log("Analyzing BentoBox locale files");
+        user.sendMessage(Component.text(SPACER, NamedTextColor.AQUA));
         loadLocalesFromFile(BENTOBOX);
         if (languages.containsKey(Locale.US)) {
             analyze(user);
         } else {
-            user.sendRawMessage(NamedTextColor.RED + "No US English in BentoBox to use for analysis!");
+            user.sendMessage(Component.text("No US English in BentoBox to use for analysis!", NamedTextColor.RED));
         }
-        user.sendRawMessage(NamedTextColor.AQUA + "Analyzing Addon locale files");
+        user.sendMessage(Component.text("Analyzing Addon locale files", NamedTextColor.AQUA));
         plugin.getAddonsManager().getAddons().forEach(addon -> {
-            user.sendRawMessage(NamedTextColor.AQUA + SPACER);
-            user.sendRawMessage(NamedTextColor.AQUA + "Analyzing addon " + addon.getDescription().getName());
-            user.sendRawMessage(NamedTextColor.AQUA + SPACER);
+            user.sendMessage(Component.text(SPACER, NamedTextColor.AQUA));
+            user.sendMessage(Component.text("Analyzing addon " + addon.getDescription().getName(), NamedTextColor.AQUA));
+            user.sendMessage(Component.text(SPACER, NamedTextColor.AQUA));
             languages.clear();
             loadLocalesFromFile(addon.getDescription().getName());
             if (languages.containsKey(Locale.US)) {
                 analyze(user);
             } else {
-                user.sendRawMessage(NamedTextColor.RED + "No US English to use for analysis!");
+                user.sendMessage(Component.text("No US English to use for analysis!", NamedTextColor.RED));
             }
         });
         reloadLanguages();
@@ -393,28 +395,30 @@ public class LocalesManager {
      * @since 1.5.0
      */
     private void analyze(User user) {
-        user.sendRawMessage(NamedTextColor.GREEN + "The following locales are supported:");
-        languages.forEach((k, v) -> user.sendRawMessage(
-                NamedTextColor.GOLD + k.toLanguageTag() + " " + k.getDisplayLanguage() + " " + k.getDisplayCountry()));
+        user.sendMessage(Component.text("The following locales are supported:", NamedTextColor.GREEN));
+        languages.forEach((k, v) -> user.sendMessage(
+                Component.text(k.toLanguageTag() + " " + k.getDisplayLanguage() + " " + k.getDisplayCountry(), NamedTextColor.GOLD)));
         // Start with US English
         YamlConfiguration usConfig = languages.get(Locale.US).getConfig();
         // Fix config
         YamlConfiguration fixConfig = new YamlConfiguration();
         languages.values().stream().filter(l -> !l.toLanguageTag().equals(Locale.US.toLanguageTag())).forEach(l -> {
-            user.sendRawMessage(NamedTextColor.GREEN + SPACER);
-            user.sendRawMessage(NamedTextColor.GREEN + "Analyzing locale file " + l.toLanguageTag() + ":");
+            user.sendMessage(Component.text(SPACER, NamedTextColor.GREEN));
+            user.sendMessage(Component.text("Analyzing locale file " + l.toLanguageTag() + ":", NamedTextColor.GREEN));
             YamlConfiguration c = l.getConfig();
             boolean complete = true;
             for (String path : usConfig.getKeys(true)) {
                 if (!c.contains(path, true)) {
                     complete = false;
-                    fixConfig.set(path, user.getTranslationOrNothing(path).replace('§', '&'));
+                    String translated = user.getTranslationOrNothing(path);
+                    // Strip legacy § codes back to & for the fix output
+                    fixConfig.set(path, translated.replace('§', '&'));
                 }
             }
             if (complete) {
-                user.sendRawMessage(NamedTextColor.GREEN + "Language file covers all strings.");
+                user.sendMessage(Component.text("Language file covers all strings.", NamedTextColor.GREEN));
             } else {
-                user.sendRawMessage(NamedTextColor.RED + "The following YAML is missing. Please translate it:");
+                user.sendMessage(Component.text("The following YAML is missing. Please translate it:", NamedTextColor.RED));
                 plugin.log("\n" + fixConfig.saveToString());
             }
 

@@ -38,15 +38,18 @@ public class CommandsSuccessPrompt extends MessagePrompt {
         User user = User.getInstance((Player) context.getForWhom());
         @SuppressWarnings("unchecked")
         List<String> commands = (List<String>) context.getSessionData("commands");
+        String msg;
         if (commands != null) {
             bb.setCommands(commands);
             BentoBox.getInstance().getBlueprintsManager().addBlueprintBundle(addon, bb);
             BentoBox.getInstance().getBlueprintsManager().saveBlueprintBundle(addon, bb);
             new BlueprintManagementPanel(BentoBox.getInstance(), user, addon).openBB(bb);
-            return user.getTranslation("commands.admin.blueprint.management.commands.success");
+            msg = user.getTranslation("commands.admin.blueprint.management.commands.success");
         } else {
-            return user.getTranslation("commands.admin.blueprint.management.commands.cancelling");
+            msg = user.getTranslation("commands.admin.blueprint.management.commands.cancelling");
         }
+        user.sendRawMessage(msg);
+        return "";
     }
 
     @Override

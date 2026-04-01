@@ -49,7 +49,10 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.nms.AbstractMetaData;
@@ -76,6 +79,59 @@ public class Util {
      * Use standard color code definition: {@code &<hex>}.
      */
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
+
+    /**
+     * Pattern to detect legacy color codes (ampersand or section sign followed by a color/format character).
+     */
+    private static final Pattern LEGACY_CODE_PATTERN = Pattern.compile("[&\u00A7][0-9a-fk-orA-FK-OR]");
+
+    /**
+     * Pattern to detect legacy hex color codes like {@code &#RRGGBB} or {@code §x§R§R...}.
+     */
+    private static final Pattern LEGACY_HEX_CODE_PATTERN = Pattern.compile("&#[0-9a-fA-F]{3,6}|\u00A7x(\u00A7[0-9a-fA-F]){6}");
+
+    /**
+     * MiniMessage instance for parsing MiniMessage-formatted strings.
+     */
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+
+    /**
+     * Serializer for converting Components to plain text (no formatting).
+     */
+    private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.plainText();
+
+    /**
+     * Map of legacy color code characters to their MiniMessage tag equivalents.
+     */
+    private static final java.util.Map<Character, String> LEGACY_TO_MM_MAP = java.util.Map.ofEntries(
+            java.util.Map.entry('0', "black"),
+            java.util.Map.entry('1', "dark_blue"),
+            java.util.Map.entry('2', "dark_green"),
+            java.util.Map.entry('3', "dark_aqua"),
+            java.util.Map.entry('4', "dark_red"),
+            java.util.Map.entry('5', "dark_purple"),
+            java.util.Map.entry('6', "gold"),
+            java.util.Map.entry('7', "gray"),
+            java.util.Map.entry('8', "dark_gray"),
+            java.util.Map.entry('9', "blue"),
+            java.util.Map.entry('a', "green"),
+            java.util.Map.entry('b', "aqua"),
+            java.util.Map.entry('c', "red"),
+            java.util.Map.entry('d', "light_purple"),
+            java.util.Map.entry('e', "yellow"),
+            java.util.Map.entry('f', "white"),
+            java.util.Map.entry('k', "obfuscated"),
+            java.util.Map.entry('l', "bold"),
+            java.util.Map.entry('m', "strikethrough"),
+            java.util.Map.entry('n', "underlined"),
+            java.util.Map.entry('o', "italic"),
+            java.util.Map.entry('r', "reset")
+    );
+
+    /**
+     * Pattern to match inline command bracket syntax used in sendRawMessage.
+     */
+    private static final Pattern INLINE_CMD_PATTERN = Pattern.compile("\\[(run_command|suggest_command|copy_to_clipboard|open_url|hover): ([^\\]]+)]", Pattern.CASE_INSENSITIVE);
 
     private static final String NETHER = "_nether";
     private static final String THE_END = "_the_end";
@@ -586,7 +642,10 @@ public class Util {
      * codes for consecutive segments of the same color.
      * @param textToColor Text which color codes must be parsed.
      * @return String text with parsed colors and stripped whitespaces after them.
+     * @deprecated Use {@link #parseMiniMessageOrLegacy(String)} for Component output,
+     *             or {@link #componentToLegacy(Component)} if a legacy string is needed.
      */
+    @Deprecated(since = "3.2.0")
     @NonNull
     public static String translateColorCodes(@NonNull String textToColor) {
         // Process each line independently so color codes are not lost at line boundaries.
@@ -633,7 +692,10 @@ public class Util {
      * @param textToStrip - text to strip
      * @return text with spaces after color codes removed
      * @since 1.9.0
+     * @deprecated No longer needed with MiniMessage format. Legacy locale files had spaces
+     *             after color codes as a translation tool hack; MiniMessage tags don't need this.
      */
+    @Deprecated(since = "3.2.0")
     @NonNull
     public static String stripSpaceAfterColorCodes(String textToStrip) {
         if (textToStrip == null) return "";
@@ -931,5 +993,341 @@ public class Util {
             return Component.empty();
         }
         return LEGACY_SERIALIZER.deserialize(legacyString);
+    }
+
+    // ---- MiniMessage support methods ----
+
+    /**
+     * Checks whether the given string contains legacy color codes ({@code &X} or {@code §X}).
+     *
+     * @param text the text to check
+     * @return true if legacy color codes are detected
+     * @since 3.2.0
+     */
+    public static boolean isLegacyFormat(@Nullable String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+        return LEGACY_CODE_PATTERN.matcher(text).find() || LEGACY_HEX_CODE_PATTERN.matcher(text).find();
+    }
+
+    /**
+     * Converts a string containing legacy {@code &}/{@code §} color codes into MiniMessage format.
+     * Strips spaces immediately after color codes (the legacy locale hack).
+     * <p>
+     * Examples:
+     * <ul>
+     *   <li>{@code &c This is red} → {@code <red>This is red}</li>
+     *   <li>{@code &l bold &r normal} → {@code <bold>bold </bold>normal}</li>
+     *   <li>{@code &#FF0000 hex} → {@code <color:#FF0000>hex}</li>
+     * </ul>
+     *
+     * @param legacy the legacy-formatted string
+     * @return MiniMessage-formatted string
+     * @since 3.2.0
+     */
+    @NonNull
+    public static String legacyToMiniMessage(@NonNull String legacy) {
+        if (legacy.isEmpty()) {
+            return legacy;
+        }
+        // First, normalize § to & for uniform processing
+        String text = legacy.replace('\u00A7', '&');
+
+        // Convert hex codes &#RRGGBB → <color:#RRGGBB>
+        Matcher hexMatcher = HEX_PATTERN.matcher(text);
+        StringBuilder sb = new StringBuilder();
+        while (hexMatcher.find()) {
+            String hex = hexMatcher.group(1);
+            if (hex.length() == 3) {
+                // Expand 3-digit to 6-digit
+                hex = "" + hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
+            }
+            hexMatcher.appendReplacement(sb, "<color:#" + hex + ">");
+        }
+        hexMatcher.appendTail(sb);
+        text = sb.toString();
+
+        // Convert &X codes to MiniMessage tags
+        // We need to track open tags to properly close them
+        StringBuilder result = new StringBuilder();
+        List<String> openTags = new ArrayList<>();
+        int i = 0;
+        while (i < text.length()) {
+            if (i + 1 < text.length() && text.charAt(i) == '&') {
+                char code = Character.toLowerCase(text.charAt(i + 1));
+                String mmTag = LEGACY_TO_MM_MAP.get(code);
+                if (mmTag != null) {
+                    i += 2;
+                    // Strip space after color code (the locale hack)
+                    if (i < text.length() && text.charAt(i) == ' ') {
+                        i++;
+                    }
+                    if ("reset".equals(mmTag)) {
+                        // Close all open tags
+                        for (int j = openTags.size() - 1; j >= 0; j--) {
+                            result.append("</").append(openTags.get(j)).append(">");
+                        }
+                        openTags.clear();
+                    } else {
+                        // Color codes reset previous colors but not decorations
+                        // Decorations (bold, italic, etc.) are additive until reset
+                        boolean isDecoration = mmTag.equals("bold") || mmTag.equals("italic")
+                                || mmTag.equals("underlined") || mmTag.equals("strikethrough")
+                                || mmTag.equals("obfuscated");
+                        if (!isDecoration) {
+                            // Close previous color tags (not decorations)
+                            for (int j = openTags.size() - 1; j >= 0; j--) {
+                                String tag = openTags.get(j);
+                                if (!tag.equals("bold") && !tag.equals("italic") && !tag.equals("underlined")
+                                        && !tag.equals("strikethrough") && !tag.equals("obfuscated")
+                                        && !tag.startsWith("color:")) {
+                                    result.append("</").append(tag).append(">");
+                                    openTags.remove(j);
+                                } else if (tag.startsWith("color:")) {
+                                    result.append("</").append(tag).append(">");
+                                    openTags.remove(j);
+                                }
+                            }
+                        }
+                        result.append("<").append(mmTag).append(">");
+                        openTags.add(mmTag);
+                    }
+                    continue;
+                }
+            }
+            // Handle <color:#RRGGBB> that we already inserted
+            if (text.charAt(i) == '<' && text.substring(i).startsWith("<color:#")) {
+                int end = text.indexOf('>', i);
+                if (end != -1) {
+                    String colorTag = text.substring(i + 1, end);
+                    // Close previous color tags
+                    for (int j = openTags.size() - 1; j >= 0; j--) {
+                        String tag = openTags.get(j);
+                        if (!tag.equals("bold") && !tag.equals("italic") && !tag.equals("underlined")
+                                && !tag.equals("strikethrough") && !tag.equals("obfuscated")) {
+                            result.append("</").append(tag).append(">");
+                            openTags.remove(j);
+                        }
+                    }
+                    result.append("<").append(colorTag).append(">");
+                    openTags.add(colorTag);
+                    i = end + 1;
+                    // Strip space after hex color code
+                    if (i < text.length() && text.charAt(i) == ' ') {
+                        i++;
+                    }
+                    continue;
+                }
+            }
+            result.append(text.charAt(i));
+            i++;
+        }
+        // Close any remaining open tags
+        for (int j = openTags.size() - 1; j >= 0; j--) {
+            result.append("</").append(openTags.get(j)).append(">");
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Parses a MiniMessage-formatted string into an Adventure Component.
+     *
+     * @param miniMessageString the MiniMessage string
+     * @return parsed Component
+     * @since 3.2.0
+     */
+    /**
+     * Replaces legacy {@code &X} and {@code §X} color/format codes with MiniMessage opening tags inline,
+     * without adding closing tags. This is safe for strings that already contain MiniMessage tags
+     * (mixed content), because MiniMessage handles unclosed tags correctly — they apply until
+     * overridden by another tag or the end of the string.
+     * <p>
+     * Unlike {@link #legacyToMiniMessage(String)}, this method does not track or emit closing tags,
+     * avoiding nesting issues when existing MiniMessage closing tags are present.
+     *
+     * @param text the string with mixed legacy codes and MiniMessage tags
+     * @return string with legacy codes replaced by MiniMessage opening tags
+     * @since 3.2.0
+     */
+    @NonNull
+    public static String replaceLegacyCodesInline(@NonNull String text) {
+        // Normalize § to &
+        text = text.replace('\u00A7', '&');
+        // Replace hex codes &#RRGGBB → <color:#RRGGBB>
+        Matcher hexMatcher = HEX_PATTERN.matcher(text);
+        StringBuilder sb = new StringBuilder();
+        while (hexMatcher.find()) {
+            String hex = hexMatcher.group(1);
+            if (hex.length() == 3) {
+                hex = "" + hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
+            }
+            hexMatcher.appendReplacement(sb, "<color:#" + hex + ">");
+        }
+        hexMatcher.appendTail(sb);
+        text = sb.toString();
+        // Replace &X codes with MiniMessage tags (opening only, no closing)
+        sb = new StringBuilder();
+        int i = 0;
+        while (i < text.length()) {
+            if (i + 1 < text.length() && text.charAt(i) == '&') {
+                char code = Character.toLowerCase(text.charAt(i + 1));
+                String mmTag = LEGACY_TO_MM_MAP.get(code);
+                if (mmTag != null) {
+                    sb.append("<").append(mmTag).append(">");
+                    i += 2;
+                    // Strip space after color code (locale hack)
+                    if (i < text.length() && text.charAt(i) == ' ') {
+                        i++;
+                    }
+                    continue;
+                }
+            }
+            sb.append(text.charAt(i));
+            i++;
+        }
+        return sb.toString();
+    }
+
+    @NonNull
+    public static Component parseMiniMessage(@NonNull String miniMessageString) {
+        return MINI_MESSAGE.deserialize(miniMessageString);
+    }
+
+    /**
+     * Parses a MiniMessage-formatted string with tag resolvers into an Adventure Component.
+     *
+     * @param miniMessageString the MiniMessage string
+     * @param resolvers tag resolvers for placeholder substitution
+     * @return parsed Component
+     * @since 3.2.0
+     */
+    @NonNull
+    public static Component parseMiniMessage(@NonNull String miniMessageString, @NonNull TagResolver... resolvers) {
+        return MINI_MESSAGE.deserialize(miniMessageString, resolvers);
+    }
+
+    /**
+     * Auto-detects whether the string uses legacy color codes or MiniMessage format,
+     * and parses it into an Adventure Component accordingly.
+     *
+     * @param text the text (either legacy or MiniMessage format)
+     * @return parsed Component
+     * @since 3.2.0
+     */
+    @NonNull
+    public static Component parseMiniMessageOrLegacy(@NonNull String text) {
+        if (isLegacyFormat(text)) {
+            boolean hasMiniMessage = text.contains("<") && text.contains(">");
+            if (hasMiniMessage) {
+                // Mixed content: use inline replacement to avoid nesting issues
+                return MINI_MESSAGE.deserialize(replaceLegacyCodesInline(text));
+            }
+            return MINI_MESSAGE.deserialize(legacyToMiniMessage(text));
+        }
+        return MINI_MESSAGE.deserialize(text);
+    }
+
+    /**
+     * Converts inline command bracket syntax to MiniMessage click/hover tags.
+     * <p>
+     * Converts:
+     * <ul>
+     *   <li>{@code [run_command: /cmd]} → {@code <click:run_command:/cmd>}</li>
+     *   <li>{@code [suggest_command: /cmd]} → {@code <click:suggest_command:/cmd>}</li>
+     *   <li>{@code [copy_to_clipboard: text]} → {@code <click:copy_to_clipboard:text>}</li>
+     *   <li>{@code [open_url: url]} → {@code <click:open_url:url>}</li>
+     *   <li>{@code [hover: text]} → {@code <hover:show_text:'text'>}</li>
+     * </ul>
+     * The click and hover tags wrap the entire remaining message content.
+     *
+     * @param message the message with bracket-syntax inline commands
+     * @return message with MiniMessage click/hover tags
+     * @since 3.2.0
+     */
+    @NonNull
+    public static String convertInlineCommandsToMiniMessage(@NonNull String message) {
+        // Handle escaped double brackets first: [[text]] → text (literal)
+        message = message.replace("[[", "\u0000LBRACKET\u0000").replace("]]", "\u0000RBRACKET\u0000");
+
+        // Extract all inline commands
+        Matcher matcher = INLINE_CMD_PATTERN.matcher(message);
+        String clickTag = null;
+        String hoverTag = null;
+
+        // Collect commands and strip them from the text
+        StringBuilder cleanText = new StringBuilder();
+        int lastEnd = 0;
+        while (matcher.find()) {
+            cleanText.append(message, lastEnd, matcher.start());
+            String action = matcher.group(1).toLowerCase(java.util.Locale.ENGLISH);
+            String value = matcher.group(2);
+            switch (action) {
+                case "hover" -> {
+                    if (hoverTag == null) {
+                        // Escape single quotes in hover text
+                        hoverTag = "<hover:show_text:'" + value.replace("'", "\\'") + "'>";
+                    }
+                }
+                case "run_command", "suggest_command", "copy_to_clipboard", "open_url" -> {
+                    if (clickTag == null) {
+                        clickTag = "<click:" + action + ":" + value + ">";
+                    }
+                }
+                default -> cleanText.append(matcher.group()); // unknown, keep as-is
+            }
+            lastEnd = matcher.end();
+        }
+        cleanText.append(message.substring(lastEnd));
+        String result = cleanText.toString();
+
+        // Restore escaped brackets
+        result = result.replace("\u0000LBRACKET\u0000", "[").replace("\u0000RBRACKET\u0000", "]");
+
+        // Wrap the text with click and hover tags
+        if (clickTag != null || hoverTag != null) {
+            String prefix = (hoverTag != null ? hoverTag : "") + (clickTag != null ? clickTag : "");
+            String suffix = (clickTag != null ? "</click>" : "") + (hoverTag != null ? "</hover>" : "");
+            result = prefix + result + suffix;
+        }
+
+        return result;
+    }
+
+    /**
+     * Serializes an Adventure Component back to a legacy §-coded string.
+     * Useful for backwards compatibility with APIs that still expect legacy strings.
+     *
+     * @param component the Adventure Component
+     * @return legacy-formatted string with § color codes
+     * @since 3.2.0
+     */
+    @NonNull
+    public static String componentToLegacy(@NonNull Component component) {
+        return SECTION_SERIALIZER.serialize(component);
+    }
+
+    /**
+     * Serializes an Adventure Component to plain text with no formatting.
+     *
+     * @param component the Adventure Component
+     * @return plain text string
+     * @since 3.2.0
+     */
+    @NonNull
+    public static String componentToPlainText(@NonNull Component component) {
+        return PLAIN_SERIALIZER.serialize(component);
+    }
+
+    /**
+     * Returns the shared MiniMessage instance.
+     *
+     * @return MiniMessage instance
+     * @since 3.2.0
+     */
+    @NonNull
+    public static MiniMessage getMiniMessage() {
+        return MINI_MESSAGE;
     }
 }

@@ -51,7 +51,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
 import com.google.common.collect.ImmutableSet;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
@@ -298,17 +299,17 @@ public abstract class CommonTestSetup {
     public void checkSpigotMessage(String expectedMessage) {
         checkSpigotMessage(expectedMessage, 1);
     }
-    @SuppressWarnings("deprecation")
     public void checkSpigotMessage(String expectedMessage, int expectedOccurrences) {
-        // Capture the argument passed to spigot().sendMessage(...) if messages are sent
-        ArgumentCaptor<TextComponent> captor = ArgumentCaptor.forClass(TextComponent.class);
+        // Capture the argument passed to player.sendMessage(Component)
+        ArgumentCaptor<Component> captor = ArgumentCaptor.forClass(Component.class);
         // Verify that sendMessage() was called at least 0 times (capture any sent messages)
-        verify(spigot, atLeast(0)).sendMessage(captor.capture());
-        // Get all captured TextComponents
-        List<TextComponent> capturedMessages = captor.getAllValues();
+        verify(mockPlayer, atLeast(0)).sendMessage(captor.capture());
+        // Get all captured Components
+        List<Component> capturedMessages = captor.getAllValues();
         // Count the number of occurrences of the expectedMessage in the captured messages
+        LegacyComponentSerializer legacy = LegacyComponentSerializer.builder().character('\u00A7').hexColors().build();
         long actualOccurrences = capturedMessages.stream()
-                .map(tc -> tc.toLegacyText())
+                .map(legacy::serialize)
                 .filter(messageText -> messageText.contains(expectedMessage))
                 .count();
         // Assert that the number of occurrences matches the expectedOccurrences

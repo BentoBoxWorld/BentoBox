@@ -4,53 +4,55 @@ meta:
     - Poslovitch
   banner: WHITE_BANNER:1:STRIPE_TOP:RED:STRIPE_BOTTOM:BLUE
 prefixes:
-  bentobox: '&6 BentoBox &7 &l > &r'
+  bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: otok
   Island: Otok
+  Islands: Otoci
   an-island: otok
   islands: ostrva
 general:
   success: '&uspjeh!'
   invalid: Neispravno
-  beta: '&d&l Ova je naredba u beta verziji. Obavezno imate sigurnosne kopije!'
+  beta: '<light_purple><bold>Ova je naredba u beta verziji. Obavezno imate sigurnosne kopije!</bold></light_purple>'
   errors:
-    command-cancelled: '&c Naredba otkazana.'
-    no-permission: '&c Nemate dopuštenje za izvršenje ove naredbe (&7 [permission]&c).'
-    insufficient-rank: '&c Vaš rang nije dovoljno visok za to! (&7 [rank]&c )'
-    use-in-game: '&c Ova je naredba dostupna samo u igri.'
-    use-in-console: '&c Ova naredba je dostupna samo u konzoli.'
-    no-team: '&c Nemate tim!'
-    no-island: '&c Vi nemate otok!'
-    player-has-island: '&c Igrač već ima otok!'
-    player-has-no-island: '&c Taj igrač nema otok!'
-    already-have-island: '&c Već imate otok!'
+    command-cancelled: '<red>Naredba otkazana.</red>'
+    no-permission: '<red>Nemate dopuštenje za izvršenje ove naredbe (</red><gray>[permission]</gray><red>).</red>'
+    insufficient-rank: '<red>Vaš rang nije dovoljno visok za to! (</red><gray>[rank]</gray><red>)</red>'
+    use-in-game: '<red>Ova je naredba dostupna samo u igri.</red>'
+    use-in-console: '<red>Ova naredba je dostupna samo u konzoli.</red>'
+    no-team: '<red>Nemate tim!</red>'
+    no-island: '<red>Vi nemate otok!</red>'
+    player-has-island: '<red>Igrač već ima otok!</red>'
+    player-has-no-island: '<red>Taj igrač nema otok!</red>'
+    already-have-island: '<red>Već imate otok!</red>'
     no-safe-location-found: >-
-      &c Nisam mogao pronaći sigurno mjesto na koje bih te teleportirao na
+      <red>Nisam mogao pronaći sigurno mjesto na koje bih te teleportirao na</red>
       otoku.
-    not-owner: '&c Vi niste vlasnik otoka!'
-    player-is-not-owner: '&b [name] &c nije vlasnik otoka!'
-    not-in-team: '&c Taj igrač nije u vašem timu!'
-    offline-player: '&c Taj igrač je offline ili ne postoji.'
-    unknown-player: '&c [name] je nepoznat igrač!'
-    general: '&c Ta naredba još nije spremna - obratite se administratoru'
-    unknown-command: '&c Nepoznata naredba. Do &b /[label] help &c za pomoć.'
-    wrong-world: '&c Niste u pravom svijetu da to učinite!'
+    not-owner: '<red>Vi niste vlasnik otoka!</red>'
+    player-is-not-owner: '<aqua>[name] </aqua><red>nije vlasnik otoka!</red>'
+    not-in-team: '<red>Taj igrač nije u vašem timu!</red>'
+    offline-player: '<red>Taj igrač je offline ili ne postoji.</red>'
+    unknown-player: '<red>[name] je nepoznat igrač!</red>'
+    general: '<red>Ta naredba još nije spremna - obratite se administratoru</red>'
+    unknown-command: '<red>Nepoznata naredba. Do </red><aqua>/[label] help </aqua><red>za pomoć.</red>'
+    wrong-world: '<red>Niste u pravom svijetu da to učinite!</red>'
     you-must-wait: >-
-      &c Morate pričekati [number]s prije nego što možete ponovno izvesti tu
+      <red>Morate pričekati [number]s prije nego što možete ponovno izvesti tu</red>
       naredbu.
-    must-be-positive-number: '&c [number] nije važeći pozitivan broj.'
-    not-on-island: '&c Niste na otoku!'
-    slow-down: '&c Uspori. Klikaj sporije.'
+    must-be-positive-number: '<red>[number] nije važeći pozitivan broj.</red>'
+    not-on-island: '<red>Niste na otoku!</red>'
+    slow-down: '<red>Uspori. Klikaj sporije.</red>'
   worlds:
     overworld: Nadzemlje
     nether: Podzemni
     the-end: Kraj
 commands:
   help:
-    header: '&7 =========== &c [label] pomoć &7 ==========='
-    syntax: '&b [usage] &a [parameters]&7 : &e [description]'
-    syntax-no-parameters: '&b [usage]&7 : &e [description]'
-    end: '&7 ================================='
+    header: '<gray>=========== </gray><red>[label] pomoć </red><gray>===========</gray>'
+    syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
+    syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
+    end: '<gray>=================================</gray>'
+    page: '<gray>Stranica </gray><yellow>[page]</yellow><gray> od </gray><yellow>[total]</yellow>'
     parameters: '[naredba]'
     description: naredba pomoći
     console: Konzola
@@ -62,198 +64,198 @@ commands:
         promijenite broj dopuštenih kuća na ovom [prefix_island] ili igračevoj
         [prefix_island]
       parameters: <number / player> <number> [[prefix_island] ime]
-      max-homes-set: '&a [name] - Postavi [prefix_island] maksimalan broj kuća na [number]'
+      max-homes-set: '<green>[name] - Postavi [prefix_island] maksimalan broj kuća na [number]</green>'
       errors:
         unknown-island: Nepoznati [prefix_island]! [name]
     resethome:
       description: Resetirajte igračev dom na zadane postavke
       parameters: <player> [[prefix_island] ime]
-      cleared: '&b Povratak na domaću lokaciju. [name]'
+      cleared: '<aqua>Povratak na domaću lokaciju. [name]</aqua>'
     resets:
       description: uredite vrijednosti resetiranja igrača
       set:
         description: postavlja koliko je puta ovaj igrač resetirao svoj otok
         parameters: <igrač> <poništava>
-        success: Broj resetiranja otoka &b [name]&a sada je &b [number]&a .
+        success: 'Broj resetiranja otoka <aqua>[name]</aqua><green>sada je </green><aqua>[number]</aqua><green>.</green>'
       reset:
         description: postavlja igračev broj resetiranja otoka na 0
         parameters: <igrač>
-        success-everyone: '&a Uspješno resetirati &b svačije&a resetirano brojanje na &b 0&a .'
-        success: '&a Uspješno poništi &b [name]&a ponovno postavljeni brojač na &b 0&a.'
+        success-everyone: '<green>Uspješno resetirati </green><aqua>svačije</aqua><green>resetirano brojanje na </green><aqua>0</aqua><green>.</green>'
+        success: '<green>Uspješno poništi </green><aqua>[name]</aqua><green>ponovno postavljeni brojač na </green><aqua>0</aqua><green>.</green>'
       add:
         description: dodaje broj resetiranja otoka ovog igrača
         parameters: <igrač> <poništava>
         success: >-
-          &a Uspješno dodan &b [number] &a resetira na &b [name], povećavajući
-          ukupni broj na &b [total]&a resetira.
+          <green>Uspješno dodan </green><aqua>[number] </aqua><green>resetira na </green><aqua>[name], povećavajući</aqua>
+          ukupni broj na <aqua>[total]</aqua><green>resetira.</green>
       remove:
         description: smanjuje igračev broj resetiranja otoka
         parameters: <igrač> <poništava>
         success: >-
-          &a Uspješno uklonjen &b [number] &a reseta s otoka &b [name]&a,
-          smanjujući ukupan broj na &b[total]&a reseta.
+          <green>Uspješno uklonjen </green><aqua>[number] </aqua><green>reseta s otoka </green><aqua>[name]</aqua><green>,</green>
+          smanjujući ukupan broj na <aqua>[total]</aqua><green>reseta.</green>
     purge:
       parameters: '[dani]'
       description: otoci za čišćenje napušteni više od [days]
       days-one-or-more: Mora biti najmanje 1 dan ili više
-      purgable-islands: '&a Pronađeni &b [number] &a otoci koji se mogu očistiti.'
+      purgable-islands: '<green>Pronađeni </green><aqua>[number] </aqua><green>otoci koji se mogu očistiti.</green>'
       too-many: >-
-        &b Ovo je puno i moglo bi potrajati jako dugo da se obriše.  
+        <aqua>Ovo je puno i moglo bi potrajati jako dugo da se obriše.</aqua>
 
-        &b Razmislite o korištenju Regionerator dodatka za brisanje svijetova  
+        <aqua>Razmislite o korištenju Regionerator dodatka za brisanje svijetova</aqua>
 
-        &b i postavljanju keep-previous-island-on-reset: true u BentoBoxovom
+        <aqua>i postavljanju keep-previous-island-on-reset: true u BentoBoxovom</aqua>
         config.yml.  
 
-        &b Zatim pokrenite brisanje.
+        <aqua>Zatim pokrenite brisanje.</aqua>
       purge-in-progress: >-
-        &c Čišćenje u tijeku. Koristite &b /[label] zaustavljanje čišćenja &c za
+        <red>Čišćenje u tijeku. Koristite </red><aqua>/[label] zaustavljanje čišćenja </aqua><red>za</red>
         poništavanje.
       scanning: >-
-        &a Skandiramo otoke u bazi podataka. Ovo može potrajati, ovisno o tome
+        <green>Skandiramo otoke u bazi podataka. Ovo može potrajati, ovisno o tome</green>
         koliko ih imaš...
-      scanning-in-progress: '&c Skeniranje u tijeku, molimo pričekajte'
-      none-found: '&c Nema otoka za čišćenje.'
-      total-islands: '&a Imaš [number] otoka u svojoj bazi podataka u svim svjetovima.'
-      number-error: '&c Argument mora biti broj dana'
-      confirm: '&d Upišite &b /[label] purge confirm &d za početak čišćenja'
-      completed: '&a Čišćenje zaustavljeno.'
+      scanning-in-progress: '<red>Skeniranje u tijeku, molimo pričekajte</red>'
+      none-found: '<red>Nema otoka za čišćenje.</red>'
+      total-islands: '<green>Imaš [number] otoka u svojoj bazi podataka u svim svjetovima.</green>'
+      number-error: '<red>Argument mora biti broj dana</red>'
+      confirm: '<light_purple>Upišite </light_purple><aqua>/[label] purge confirm </aqua><light_purple>za početak čišćenja</light_purple>'
+      completed: '<green>Čišćenje zaustavljeno.</green>'
       see-console-for-status: >-
-        &a Čišćenje je počelo. Pogledajte konzolu za status ili koristite &b
-        /[label] status čišćenja&a.
-      no-purge-in-progress: '&c Trenutno nije u tijeku čišćenje.'
+        <green>Čišćenje je počelo. Pogledajte konzolu za status ili koristite </green><aqua></aqua>
+        /[label] status čišćenja<green>.</green>
+      no-purge-in-progress: '<red>Trenutno nije u tijeku čišćenje.</red>'
       regions:
         parameters: '[days]'
         description: očistite otoke brisanjem datoteka stare regije
-        confirm: '&d Tip &b /[label] purge regions confirm &d da se pokrenu čišćenje'
+        confirm: '<light_purple>Tip </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>da se pokrenu čišćenje</light_purple>'
       protect:
         description: isključiti island purge protection
-        move-to-island: '&c Prvo se preseli na otok!'
-        protecting: '&a Štiti otok od čišćenja.'
-        unprotecting: '&a Uklanjanje zaštite od pročišćavanja.'
+        move-to-island: '<red>Prvo se preseli na otok!</red>'
+        protecting: '<green>Štiti otok od čišćenja.</green>'
+        unprotecting: '<green>Uklanjanje zaštite od pročišćavanja.</green>'
       stop:
         description: zaustaviti čišćenje koje je u tijeku
         stopping: Zaustavljanje čistke
       unowned:
         description: očistiti neposjedovane otoke
-        unowned-islands: '&a Pronađeni &b [number] &a otoci bez posjeda.'
+        unowned-islands: '<green>Pronađeni </green><aqua>[number] </aqua><green>otoci bez posjeda.</green>'
       status:
         description: prikazuje status čišćenja
         status: >-
-          &b [purge] &a otoci očišćeni od &b [purgeable]
-          &7(&b[percentage]%&7)&a.
+          <aqua>[purge] </aqua><green>otoci očišćeni od </green><aqua>[purgeable]</aqua>
+          <gray>(</gray><aqua>[percentage]%</aqua><gray>)</gray><green>.</green>
     team:
       description: upravljati timovima
       add:
         parameters: <vlasnik> <igrač>
         description: dodati igrača u vlasnikov tim
-        name-not-owner: '&c [name] nije vlasnik.'
-        name-has-island: '&c [name] ima otok. Prvo ih odjavite ili izbrišite!'
-        success: '&b [name]&a je dodan otoku &b [owner]&a.'
+        name-not-owner: '<red>[name] nije vlasnik.</red>'
+        name-has-island: '<red>[name] ima otok. Prvo ih odjavite ili izbrišite!</red>'
+        success: '<aqua>[name]</aqua><green>je dodan otoku </green><aqua>[owner]</aqua><green>.</green>'
       disband:
         parameters: <vlasnik>
         description: raspustiti vlasnikov tim
-        use-disband-owner: '&c Nije vlasnik! Upotrijebi disband [owner].'
-        disbanded: '&c Admin je raspustio vaš tim!'
-        success: '&b [name]&a tim je raspušten.'
+        use-disband-owner: '<red>Nije vlasnik! Upotrijebi disband [owner].</red>'
+        disbanded: '<red>Admin je raspustio vaš tim!</red>'
+        success: '<aqua>[name]</aqua><green>tim je raspušten.</green>'
       fix:
         description: skenira i popravlja međuotočno članstvo u bazi podataka
         scanning: Skeniranje baze podataka...
-        duplicate-owner: '&c Igrač posjeduje više od jednog otoka u bazi podataka: [name]'
-        player-has: '&c Igrač [name] ima [number] otoka'
-        duplicate-member: '&c Igrač [name] je član više od jednog otoka u bazi podataka'
-        rank-on-island: '&c [rank] na otoku na [xyz]'
-        fixed: '&a Popravljeno'
-        done: '&a Skeniraj'
+        duplicate-owner: '<red>Igrač posjeduje više od jednog otoka u bazi podataka: [name]</red>'
+        player-has: '<red>Igrač [name] ima [number] otoka</red>'
+        duplicate-member: '<red>Igrač [name] je član više od jednog otoka u bazi podataka</red>'
+        rank-on-island: '<red>[rank] na otoku na [xyz]</red>'
+        fixed: '<green>Popravljeno</green>'
+        done: '<green>Skeniraj</green>'
       kick:
         parameters: <timski igrač>
         description: šutnuti igrača iz momčadi
-        cannot-kick-owner: '&c Ne možete šutnuti vlasnika. Prvo udarite članove.'
-        not-in-team: '&c Ovaj igrač nije u timu.'
-        admin-kicked: '&c Admin vas je izbacio iz tima.'
-        success: '&b [name] &a je izbačen s otoka &b [owner]&a.'
-        success-all: '&b Igrač uklonjen iz svih timova u ovom svijetu'
+        cannot-kick-owner: '<red>Ne možete šutnuti vlasnika. Prvo udarite članove.</red>'
+        not-in-team: '<red>Ovaj igrač nije u timu.</red>'
+        admin-kicked: '<red>Admin vas je izbacio iz tima.</red>'
+        success: '<aqua>[name] </aqua><green>je izbačen s otoka </green><aqua>[owner]</aqua><green>.</green>'
+        success-all: '<aqua>Igrač uklonjen iz svih timova u ovom svijetu</aqua>'
       setowner:
         parameters: <igrač>
         description: prenosi vlasništvo nad otokom na igrača
-        already-owner: '&c [name] je već vlasnik ovog otoka!'
-        must-be-on-island: '&c Morate biti na [prefix_island] da biste postavili vlasnika'
+        already-owner: '<red>[name] je već vlasnik ovog otoka!</red>'
+        must-be-on-island: '<red>Morate biti na [prefix_island] da biste postavili vlasnika</red>'
         confirmation: >-
-          &a Jeste li sigurni da želite postaviti [name] kao vlasnika
+          <green>Jeste li sigurni da želite postaviti [name] kao vlasnika</green>
           [prefix_island] na [xyz]?
-        success: '&b [name]&a je sada vlasnik ovog otoka.'
+        success: '<aqua>[name]</aqua><green>je sada vlasnik ovog otoka.</green>'
         extra-islands: >-
-          &c Upozorenje: ovaj igrač sada posjeduje [number] otoka. To je više od
+          <red>Upozorenje: ovaj igrač sada posjeduje [number] otoka. To je više od</red>
           dopuštenog prema postavkama ili dozvolama: [max].
       maxsize:
         parameters: <player> <size>
         description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
-        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
+        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: admin island range command
       invalid-value:
-        too-low: '&c Raspon zaštite mora biti veći od &b 1&c !'
-        too-high: '&c Raspon zaštite trebao bi biti jednak ili manji od &b [number]&c!'
-        same-as-before: '&c Raspon zaštite već je postavljen na &b [number]&c !'
+        too-low: '<red>Raspon zaštite mora biti veći od </red><aqua>1</aqua><red>!</red>'
+        too-high: '<red>Raspon zaštite trebao bi biti jednak ili manji od </red><aqua>[number]</aqua><red>!</red>'
+        same-as-before: '<red>Raspon zaštite već je postavljen na </red><aqua>[number]</aqua><red>!</red>'
       display:
-        already-off: '&c Indikatori su već isključeni'
-        already-on: '&c Indikatori su već uključeni'
+        already-off: '<red>Indikatori su već isključeni</red>'
+        already-on: '<red>Indikatori su već uključeni</red>'
         description: prikaži/sakrij indikatore raspona otoka
-        hiding: '&2 Skrivanje indikatora raspona'
+        hiding: '<dark_green>Skrivanje indikatora raspona</dark_green>'
         hint: >-
-          &c Ikone crvene barijere &f pokazuju trenutno ograničenje dometa
+          <red>Ikone crvene barijere </red><white>pokazuju trenutno ograničenje dometa</white>
           zaštićenog otoka.
 
-          &7 Sive čestice &f pokazuju maksimalno ograničenje otoka.
+          <gray>Sive čestice </gray><white>pokazuju maksimalno ograničenje otoka.</white>
 
-          &a Zelene čestice &f pokazuju zadani zaštićeni domet ako se domet
+          <green>Zelene čestice </green><white>pokazuju zadani zaštićeni domet ako se domet</white>
           zaštite otoka razlikuje od njega.
-        showing: '&2 Prikaz indikatora raspona'
+        showing: '<dark_green>Prikaz indikatora raspona</dark_green>'
       set:
         parameters: <igrač> <raspon>
         description: postavlja zaštićeni raspon otoka
-        success: '&a Postavite raspon zaštite otoka na &b [number]&a .'
+        success: '<green>Postavite raspon zaštite otoka na </green><aqua>[number]</aqua><green>.</green>'
       reset:
         parameters: <igrač>
         description: vraća zaštićeni raspon otoka na svjetsku zadanu vrijednost
-        success: '&a Resetiraj raspon zaštite otoka na &b [number]&a .'
+        success: '<green>Resetiraj raspon zaštite otoka na </green><aqua>[number]</aqua><green>.</green>'
       add:
         description: povećava zaštićeni domet otoka
         parameters: <igrač> <raspon>
         success: >-
-          &a Uspješno je povećao zaštićeni domet &b [name]&a na &b [total] &7
-          (&b +[number]&7 )&a .
+          <green>Uspješno je povećao zaštićeni domet </green><aqua>[name]</aqua><green>na </green><aqua>[total] </aqua><gray></gray>
+          (<aqua>+[number]</aqua><gray>)</gray><green>.</green>
       remove:
         description: smanjuje zaštićeni domet otoka
         parameters: <igrač> <raspon>
         success: >-
-          &a Uspješno je smanjio &b [name]&a zaštićeni domet otoka na &b [total]
-          &7 (&b -[number]&7 )&a .
+          <green>Uspješno je smanjio </green><aqua>[name]</aqua><green>zaštićeni domet otoka na </green><aqua>[total]</aqua>
+          <gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>
     register:
       parameters: <igrač>
       description: registrirajte igrača na nevlasnički otok na kojem se nalazite
-      registered-island: '&a Registriran [name] na otok na [xyz].'
-      reserved-island: '&a Rezervirani otok na [xyz] za [name].'
-      already-owned: '&c Island je već u vlasništvu drugog igrača!'
-      no-island-here: '&c Ovdje nema otoka. Potvrdite da napravite jedan.'
-      in-deletion: '&c Ovaj otočni prostor trenutno se briše. Pokušaj kasnije.'
+      registered-island: '<green>Registriran [name] na otok na [xyz].</green>'
+      reserved-island: '<green>Rezervirani otok na [xyz] za [name].</green>'
+      already-owned: '<red>Island je već u vlasništvu drugog igrača!</red>'
+      no-island-here: '<red>Ovdje nema otoka. Potvrdite da napravite jedan.</red>'
+      in-deletion: '<red>Ovaj otočni prostor trenutno se briše. Pokušaj kasnije.</red>'
       cannot-make-island: >-
-        &c Ovdje se ne može smjestiti otok, nažalost. Pogledajte konzolu za
+        <red>Ovdje se ne može smjestiti otok, nažalost. Pogledajte konzolu za</red>
         moguće pogreške.
-      island-is-spawn: '&6 Otok je mrijest. Jesi li siguran? Ponovno unesite naredbu za potvrdu.'
+      island-is-spawn: '<gold>Otok je mrijest. Jesi li siguran? Ponovno unesite naredbu za potvrdu.</gold>'
     unregister:
       parameters: <vlasnik> [x,y,z]
       description: odjaviti vlasnika s otoka, ali zadržati otočne blokove
-      unregistered-island: '&a Neregistrirano [name] otoka na [xyz].'
+      unregistered-island: '<green>Neregistrirano [name] otoka na [xyz].</green>'
       errors:
-        unknown-island-location: '&c Nepoznata [prefix_island] lokacija'
-        specify-island-location: '&c Specificirajte [prefix_island] lokaciju u x,y,z formatu'
-        player-has-more-than-one-island: '&c Igrač ima više od jednog [prefix_island]. Odredite koji.'
+        unknown-island-location: '<red>Nepoznata [prefix_island] lokacija</red>'
+        specify-island-location: '<red>Specificirajte [prefix_island] lokaciju u x,y,z formatu</red>'
+        player-has-more-than-one-island: '<red>Igrač ima više od jednog [prefix_island]. Odredite koji.</red>'
     info:
       parameters: <igrač>
       description: dobiti informacije o tome gdje se nalazite ili igračev otok
-      no-island: '&c Trenutno nisi na otoku...'
+      no-island: '<red>Trenutno nisi na otoku...</red>'
       title: '========== Informacije o otoku ============'
       island-uuid: 'UUID: [uuid]'
       owner: 'Vlasnik: [owner] ([uuid])'
@@ -263,69 +265,75 @@ commands:
       resets-left: 'Poništavanje: [number] (Maksimalno: [total])'
       max-homes: 'Maksimalni domovi: [number]'
       team-members-title: 'Članovi tima:'
-      team-owner-format: '&a [name] [rank]'
-      team-member-format: '&b [name] [rank]'
+      team-owner-format: '<green>[name] [rank]</green>'
+      team-member-format: '<aqua>[name] [rank]</aqua>'
       max-team-size: 'Maksimalna veličina tima: [number]'
       max-coop-size: 'Maksimalna veličina suradnje: [number]'
       max-trusted-size: 'Maksimalna veličina povjerenja: [number]'
       island-protection-center: 'Centar zaštićenog područja: [xyz]'
       island-center: 'Središte otoka: [xyz]'
       island-coords: 'Koordinate otoka: [xz1] do [xz2]'
-      islands-in-trash: '&d Igrač ima otoke u smeću.'
+      islands-in-trash: '<light_purple>Igrač ima otoke u smeću.</light_purple>'
       protection-range: 'Raspon zaštite: [range]'
-      protection-range-bonus-title: '&b Uključuje ove bonuse:'
+      protection-range-bonus-title: '<aqua>Uključuje ove bonuse:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: Otok je zaštićen od čišćenja
       max-protection-range: 'Najveći povijesni raspon zaštite: [range]'
       protection-coords: 'Koordinate zaštite: [xz1] do [xz2]'
       is-spawn: Otok je otok za mrijest
       banned-players: 'Zabranjeni igrači:'
-      banned-format: '&c [name]'
-      unowned: '&c Neposjedovan'
-      bundle: '&a Paket planova korišten za stvaranje otoka: &b [name]'
+      banned-format: '<red>[name]</red>'
+      unowned: '<red>Neposjedovan</red>'
+      bundle: '<green>Paket planova korišten za stvaranje otoka: </green><aqua>[name]</aqua>'
     switch:
       description: uključivanje/isključivanje zaštitne premosnice
-      op: '&c Ops uvijek može zaobići zaštitu. Deop za korištenje naredbe.'
-      removing: '&a Uklanjanje zaštitne premosnice...'
-      adding: '&a Dodavanje zaštitne premosnice...'
+      op: '<red>Ops uvijek može zaobići zaštitu. Deop za korištenje naredbe.</red>'
+      removing: '<green>Uklanjanje zaštitne premosnice...</green>'
+      adding: '<green>Dodavanje zaštitne premosnice...</green>'
     switchto:
       parameters: <igrač> <broj>
       description: prebaciti igračev otok na broj jedan u smeću
       out-of-range: >-
-        &c Broj mora biti između 1 i [number]. Koristite &l [label] smeće
-        [player] &r &c da vidite brojeve otoka
-      cannot-switch: '&c Prebacivanje nije uspjelo. Za pogrešku pogledajte zapisnik konzole.'
-      success: '&a Uspješno je prebacio igračev otok na navedeni.'
+        <red>Broj mora biti između 1 i [number]. Koristite <bold>[label] smeće</bold></red>
+        [player] <red>da vidite brojeve otoka</red>
+      cannot-switch: '<red>Prebacivanje nije uspjelo. Za pogrešku pogledajte zapisnik konzole.</red>'
+      success: '<green>Uspješno je prebacio igračev otok na navedeni.</green>'
     trash:
-      no-unowned-in-trash: '&c Nema otoka bez vlasnika u smeću'
-      no-islands-in-trash: '&c Igrač nema otoka u smeću'
+      no-unowned-in-trash: '<red>Nema otoka bez vlasnika u smeću</red>'
+      no-islands-in-trash: '<red>Igrač nema otoka u smeću</red>'
       parameters: '[player]'
       description: prikaži otoke koji nisu u vlasništvu ili igračeve otoke u smeću
-      title: '&d =========== Otoci u smeću ==========='
-      count: '&l &d otok [number]:'
+      title: '<light_purple>=========== Otoci u smeću ===========</light_purple>'
+      count: '<bold><light_purple>otok [number]:</light_purple></bold>'
       use-switch: >-
-        &a Koristite &l [label] switchto <igrač> <broj>&r &a za prebacivanje
+        <green>Koristite <bold>[label] switchto <igrač> <broj></bold></green><green>za prebacivanje</green>
         igrača na otok u smeću
       use-emptytrash: >-
-        &a Koristite &l [label] emptytrash [player]&r &a za trajno uklanjanje
+        <green>Koristite <bold>[label] emptytrash [player]</bold></green><green>za trajno uklanjanje</green>
         stavki iz smeća
     emptytrash:
       parameters: '[player]'
       description: Očisti smeće za igrača ili sve otoke koji nisu u vlasništvu u smeće
-      success: '&a Otpad je uspješno ispražnjen.'
+      success: '<green>Otpad je uspješno ispražnjen.</green>'
     version:
       description: prikazati BentoBox i verzije dodataka
     setrange:
       parameters: <igrač> <raspon>
       description: postavite domet otoka igrača
-      range-updated: '&a Raspon otoka ažuriran na &b [number]&a .'
+      range-updated: '<green>Raspon otoka ažuriran na </green><aqua>[number]</aqua><green>.</green>'
+    placeholders:
+      description: otvoriti preglednik zamjenskih oznaka
+    dump-placeholders:
+      description: izvesti sve registrirane zamjenske oznake u markdown datoteku
+      dumped: '<green>Popis zamjenskih oznaka zapisan u [file]</green>'
+      error: '<red>Nije moguće zapisati popis zamjenskih oznaka: [message]</red>'
     reload:
       description: ponovno učitati
     tp:
       parameters: <igrač> [igrač za teleportaciju]
       description: teleportirati se na igračev otok
       manual: >-
-        &c Nije pronađen siguran warp! Ručno tp blizu &b [location] &c i
+        <red>Nije pronađen siguran warp! Ručno tp blizu </red><aqua>[location] </aqua><red>i</red>
         provjerite
     tpuser:
       parameters: <teleporting player> <[prefix_island]'ov igrač> [igračevo otok]
@@ -333,64 +341,64 @@ commands:
     getrank:
       parameters: <igrač> [vlasnik otoka]
       description: dobiti rang igrača na svom otoku ili otoku vlasnika
-      rank-is: '&a Rang je &b [rank] &a na &b [name]&a otoku.'
+      rank-is: '<green>Rang je </green><aqua>[rank] </aqua><green>na </green><aqua>[name]</aqua><green>otoku.</green>'
     setrank:
       parameters: <igrač> <rang> [vlasnik otoka]
       description: postaviti rang igrača na njegovom otoku ili otoku vlasnika
-      unknown-rank: '&c Nepoznat rang!'
-      not-possible: '&c Rang mora biti viši od posjetitelja.'
-      rank-set: '&a Rang postavljen od &b [from] &a do &b [to] &a na &b [name]&a otoku.'
+      unknown-rank: '<red>Nepoznat rang!</red>'
+      not-possible: '<red>Rang mora biti viši od posjetitelja.</red>'
+      rank-set: '<green>Rang postavljen od </green><aqua>[from] </aqua><green>do </green><aqua>[to] </aqua><green>na </green><aqua>[name]</aqua><green>otoku.</green>'
     setprotectionlocation:
       parameters: '[x y z koordinate]'
       description: >-
         postavite trenutnu lokaciju ili [x y z] kao središte zaštićenog područja
         otoka
-      island: '&c Ovo će utjecati na otok na [xyz] u vlasništvu ''[name]''.'
-      confirmation: '&c Jeste li sigurni da želite postaviti [xyz] kao zaštitni centar?'
-      success: '&a Uspješno postavljen [xyz] kao zaštitni centar.'
-      fail: '&c Neuspješno postavljanje [xyz] kao zaštitnog centra.'
-      island-location-changed: '&a [user] je promijenio zaštitni centar otoka u [xyz].'
-      xyz-error: '&c Navedite tri cjelobrojne koordinate: npr. 100 120 100'
+      island: '<red>Ovo će utjecati na otok na [xyz] u vlasništvu ''[name]''.</red>'
+      confirmation: '<red>Jeste li sigurni da želite postaviti [xyz] kao zaštitni centar?</red>'
+      success: '<green>Uspješno postavljen [xyz] kao zaštitni centar.</green>'
+      fail: '<red>Neuspješno postavljanje [xyz] kao zaštitnog centra.</red>'
+      island-location-changed: '<green>[user] je promijenio zaštitni centar otoka u [xyz].</green>'
+      xyz-error: '<red>Navedite tri cjelobrojne koordinate: npr. 100 120 100</red>'
     setspawn:
       description: postavite otok kao spawn za ovaj gamemode
-      already-spawn: '&c Ovaj otok je već mrijest!'
-      no-island-here: '&c Ovdje nema otoka.'
+      already-spawn: '<red>Ovaj otok je već mrijest!</red>'
+      no-island-here: '<red>Ovdje nema otoka.</red>'
       confirmation: >-
-        &c Jeste li sigurni da želite postaviti ovaj otok kao mjesto nastanka
+        <red>Jeste li sigurni da želite postaviti ovaj otok kao mjesto nastanka</red>
         ovog svijeta?
-      success: '&a Uspješno postavite ovaj otok kao mrijest za ovaj svijet.'
+      success: '<green>Uspješno postavite ovaj otok kao mrijest za ovaj svijet.</green>'
     setspawnpoint:
       description: postavite trenutnu lokaciju kao točku mrijesta za ovaj otok
-      no-island-here: '&c Ovdje nema otoka.'
+      no-island-here: '<red>Ovdje nema otoka.</red>'
       confirmation: >-
-        &c Jeste li sigurni da želite postaviti ovu lokaciju kao točku
+        <red>Jeste li sigurni da želite postaviti ovu lokaciju kao točku</red>
         mriještenja za ovaj otok?
-      success: '&a Uspješno postavite ovu lokaciju kao točku mrijesta za ovaj otok.'
-      island-spawnpoint-changed: '&a [user] je promijenio točku pojavljivanja otoka.'
+      success: '<green>Uspješno postavite ovu lokaciju kao točku mrijesta za ovaj otok.</green>'
+      island-spawnpoint-changed: '<green>[user] je promijenio točku pojavljivanja otoka.</green>'
     settings:
       parameters: >-
         [player]/[svjetska zastava]/spawn-island [flag/active/disable]
         [rank/active/disable]
       description: otvorite GUI postavki ili postavite postavke
-      unknown-setting: '&c Nepoznata postavka'
+      unknown-setting: '<red>Nepoznata postavka</red>'
     blueprint:
       parameters: <load/copy/paste/pos1/pos2/save>
       description: manipulirati nacrtima
-      bedrock-required: '&c Barem jedan kameni blok mora biti u nacrtu!'
-      copy-first: '&c Prvo kopirajte!'
-      file-exists: '&c Datoteka već postoji, prepisati?'
-      no-such-file: '&c Nema takve datoteke!'
-      could-not-load: '&c Nije moguće učitati tu datoteku!'
-      could-not-save: '&c Hmm, nešto nije u redu prilikom spremanja te datoteke: [poruka]'
-      set-pos1: '&a Pozicija 1 postavljena na [vector]'
-      set-pos2: '&a Položaj 2 postavljen na [vector]'
-      set-different-pos: '&c Postavite drugu lokaciju - ova pozicija je već postavljena!'
-      need-pos1-pos2: '&c Prvo postavite pos1 i pos2!'
-      copying: '&b Kopiranje blokova...'
-      copied-blocks: '&b Kopirano [number] blokova u međuspremnik'
-      look-at-a-block: '&c Pogledajte blok unutar 20 blokova za postavljanje'
-      mid-copy: '&c Vi ste u sredini kopije. Pričekajte dok se kopija ne završi.'
-      copied-percent: '&6 Kopirano [number]%'
+      bedrock-required: '<red>Barem jedan kameni blok mora biti u nacrtu!</red>'
+      copy-first: '<red>Prvo kopirajte!</red>'
+      file-exists: '<red>Datoteka već postoji, prepisati?</red>'
+      no-such-file: '<red>Nema takve datoteke!</red>'
+      could-not-load: '<red>Nije moguće učitati tu datoteku!</red>'
+      could-not-save: '<red>Hmm, nešto nije u redu prilikom spremanja te datoteke: [poruka]</red>'
+      set-pos1: '<green>Pozicija 1 postavljena na [vector]</green>'
+      set-pos2: '<green>Položaj 2 postavljen na [vector]</green>'
+      set-different-pos: '<red>Postavite drugu lokaciju - ova pozicija je već postavljena!</red>'
+      need-pos1-pos2: '<red>Prvo postavite pos1 i pos2!</red>'
+      copying: '<aqua>Kopiranje blokova...</aqua>'
+      copied-blocks: '<aqua>Kopirano [number] blokova u međuspremnik</aqua>'
+      look-at-a-block: '<red>Pogledajte blok unutar 20 blokova za postavljanje</red>'
+      mid-copy: '<red>Vi ste u sredini kopije. Pričekajte dok se kopija ne završi.</red>'
+      copied-percent: '<gold>Kopirano [number]%</gold>'
       copy:
         parameters: '[zrak]'
         description: >-
@@ -398,30 +406,30 @@ commands:
           zračne blokove
       sink:
         description: postavi ovaj plan da potone na morsko dno kada se zalijepi
-        status: '&a Nacrt će [status] kada se '
-        sink: '&c potonuti'
-        not-sink: '&b neće potonuti'
-        no-clipboard: '&c Na clipboardu nema plavnog. Učitaj ili kopiraj nešto.'
+        status: '<green>Nacrt će [status] kada se </green>'
+        sink: '<red>potonuti</red>'
+        not-sink: '<aqua>neće potonuti</aqua>'
+        no-clipboard: '<red>Na clipboardu nema plavnog. Učitaj ili kopiraj nešto.</red>'
       delete:
         parameters: <ime>
         description: izbrisati nacrt
-        no-blueprint: '&b [name] &c ne postoji.'
+        no-blueprint: '<aqua>[name] </aqua><red>ne postoji.</red>'
         confirmation: |
-          &c Jeste li sigurni da želite izbrisati ovaj nacrt?
-          &c Jednom izbrisan, ne postoji način da se oporavi.
-        success: '&a Uspješno izbrisan nacrt &b [name]&a .'
+          <red>Jeste li sigurni da želite izbrisati ovaj nacrt?</red>
+          <red>Jednom izbrisan, ne postoji način da se oporavi.</red>
+        success: '<green>Uspješno izbrisan nacrt </green><aqua>[name]</aqua><green>.</green>'
       load:
         parameters: <ime>
         description: učitati nacrt u međuspremnik
       list:
         description: popis dostupnih nacrta
-        no-blueprints: '&c Nema nacrta u mapi s nacrtima!'
-        available-blueprints: '&a Ovi nacrti su dostupni za učitavanje:'
+        no-blueprints: '<red>Nema nacrta u mapi s nacrtima!</red>'
+        available-blueprints: '<green>Ovi nacrti su dostupni za učitavanje:</green>'
       origin:
         description: postavite ishodište nacrta na svoj položaj
       paste:
         description: zalijepite međuspremnik na svoje mjesto
-        pasting: '&a Lijepljenje...'
+        pasting: '<green>Lijepljenje...</green>'
       pos1:
         description: postavite 1. kut kockastog međuspremnika
       pos2:
@@ -433,9 +441,9 @@ commands:
         parameters: <naziv nacrta> <novi naziv>
         description: preimenovati nacrt
         success: >-
-          &a Nacrt &b [old] &a je uspješno preimenovan u &b [prikaz]&a. Naziv
-          datoteke sada je &b [name]&a.
-        pick-different-name: '&c Navedite naziv koji se razlikuje od trenutnog naziva nacrta.'
+          <green>Nacrt </green><aqua>[old] </aqua><green>je uspješno preimenovan u </green><aqua>[prikaz]</aqua><green>. Naziv</green>
+          datoteke sada je <aqua>[name]</aqua><green>.</green>
+        pick-different-name: '<red>Navedite naziv koji se razlikuje od trenutnog naziva nacrta.</red>'
       management:
         back: leđa
         instruction: Kliknite na nacrt, a zatim kliknite ovdje
@@ -456,7 +464,7 @@ commands:
         perm-required: Potreban
         no-perm-required: Nije moguće postaviti trajnu za zadani paket
         perm-not-required: Nije obavezno
-        perm-format: '&e'
+        perm-format: '<yellow></yellow>'
         remove: Desni klik za uklanjanje
         blueprint-instruction: |
           Kliknite za odabir,
@@ -468,11 +476,11 @@ commands:
         name:
           quit: prestati
           prompt: Unesite ime ili 'quit' za izlaz
-          too-long: '&c Predugo ime. Dopuštena su samo 32 znaka.'
+          too-long: '<red>Predugo ime. Dopuštena su samo 32 znaka.</red>'
           pick-a-unique-name: Odaberite jedinstvenije ime
           stripped-char-in-unique-name: >-
-            &c Neki su znakovi uklonjeni jer nisu dopušteni. &a Novi ID će biti
-            &b [name]&a.
+            <red>Neki su znakovi uklonjeni jer nisu dopušteni. </red><green>Novi ID će biti</green>
+            <aqua>[name]</aqua><green>.</green>
           success: Uspjeh!
           conversation-prefix: Sure, please provide the text you would like translated to Croatian.
         description:
@@ -483,101 +491,121 @@ commands:
           default-color: ''
           success: Uspjeh!
           cancelling: Otkazivanje
-        slot: '&f Preferirani utor [number]'
+        slot: '<white>Preferirani utor [number]</white>'
         slot-instructions: |
-          &a Lijevi klik za povećanje
-          &a Desni klik za smanjenje
+          <green>Lijevi klik za povećanje</green>
+          <green>Desni klik za smanjenje</green>
         times: |-
-          &a Maksimalni istovremeni korištenja po igraču  
-          &a Lijevi klik za povećanje  
-          &a Desni klik za smanjenje
+          <green>Maksimalni istovremeni korištenja po igraču</green>
+          <green>Lijevi klik za povećanje</green>
+          <green>Desni klik za smanjenje</green>
         unlimited-times: Neograničeno
         maximum-times: Maksimalno [number] puta
         cost: |
-          &a Cijena [prefix_Island]
-          &a Lijevi klik +1
-          &a Desni klik -1
-          &a Shift za +/-100
+          <green>Cijena [prefix_Island]</green>
+          <green>Lijevi klik +1</green>
+          <green>Desni klik -1</green>
+          <green>Shift za +/-100</green>
         no-cost: Besplatno
         cost-amount: 'Cijena: [cost]'
-        next-page: '&f Sljedeća stranica'
-        previous-page: '&f Prethodna stranica'
+        next-page: '<white>Sljedeća stranica</white>'
+        previous-page: '<white>Prethodna stranica</white>'
+        edit-commands: Kliknite za uređivanje naredbi
+        no-commands: Nema postavljenih naredbi
+        commands:
+          quit: izlaz
+          clear: očisti
+          instructions: |
+            <white>Unesite naredbe za pokretanje pri lijepljenju nacrta [name].</white>
+            <white>Podržava <green>[player]</green> i <green>[owner]</green> zamjenske oznake.</white>
+            <white>Dodajte prefiks <green>[SUDO]</green> za pokretanje kao igrač.</white>
+            <white>Upišite 'očisti' za uklanjanje svih naredbi u ovoj sesiji.</white>
+            <white>Upišite 'izlaz' u zasebnom retku za završetak.</white>
+          default-color: ''
+          success: Uspjeh!
+          cancelling: Otkazivanje
     resetflags:
       parameters: '[zastava]'
       description: Vratite sve otoke na zadane postavke zastavice u config.yml
-      confirm: '&4 Ovo će vratiti zastavu(e) na zadane za sve otoke!'
-      success: '&a Uspješno resetiranje zastava svih otoka na zadane postavke.'
-      success-one: '&a [name] zastava postavljena kao zadana za sve otoke.'
+      confirm: '<dark_red>Ovo će vratiti zastavu(e) na zadane za sve otoke!</dark_red>'
+      success: '<green>Uspješno resetiranje zastava svih otoka na zadane postavke.</green>'
+      success-one: '<green>[name] zastava postavljena kao zadana za sve otoke.</green>'
     world:
       description: Upravljanje svjetskim postavkama
     delete:
       parameters: <igrač>
       description: briše igračev otok
-      cannot-delete-owner: '&c Svi članovi otoka moraju biti izbačeni s otoka prije brisanja.'
-      deleted-island: '&a Otok na &e [xyz] &a je uspješno izbrisan.'
+      cannot-delete-owner: '<red>Svi članovi otoka moraju biti izbačeni s otoka prije brisanja.</red>'
+      deleted-island: '<green>Otok na </green><yellow>[xyz] </yellow><green>je uspješno izbrisan.</green>'
     deletehomes:
       parameters: <igrač>
       description: briše sve imenovane domove s otoka
-      warning: '&c Sve imenovane kuće bit će izbrisane s otoka!'
+      warning: '<red>Sve imenovane kuće bit će izbrisane s otoka!</red>'
     why:
       parameters: <igrač>
       description: uključivanje izvješća o otklanjanju pogrešaka zaštite konzole
-      turning-on: '&a Uključivanje otklanjanja pogrešaka konzole za &b [name].'
-      turning-off: '&a Isključivanje otklanjanja pogrešaka konzole za &b [name].'
+      turning-on: '<green>Uključivanje otklanjanja pogrešaka konzole za </green><aqua>[name].</aqua>'
+      turning-off: '<green>Isključivanje otklanjanja pogrešaka konzole za </green><aqua>[name].</aqua>'
     deaths:
       description: uredi smrti igrača
       reset:
         description: resetira smrt igrača
         parameters: <igrač>
-        success: '&a Uspješno resetirati &b [name]&a smrti na &b 0&a.'
+        success: '<green>Uspješno resetirati </green><aqua>[name]</aqua><green>smrti na </green><aqua>0</aqua><green>.</green>'
       set:
         description: postavlja smrt igrača
         parameters: <igrač> <smrti>
-        success: '&a Uspješno postavite &b [name]&a smrti na &b [number]&a.'
+        success: '<green>Uspješno postavite </green><aqua>[name]</aqua><green>smrti na </green><aqua>[number]</aqua><green>.</green>'
       add:
         description: dodaje smrti igraču
         parameters: <igrač> <smrti>
         success: >-
-          &a Uspješno dodan &b [number] &a smrtnih slučajeva u &b [name],
-          povećavajući ukupan broj na &b [total]&a smrtnih slučajeva.
+          <green>Uspješno dodan </green><aqua>[number] </aqua><green>smrtnih slučajeva u </green><aqua>[name],</aqua>
+          povećavajući ukupan broj na <aqua>[total]</aqua><green>smrtnih slučajeva.</green>
       remove:
         description: uklanja smrt igrača
         parameters: <igrač> <smrti>
         success: >-
-          &a Uspješno uklonjen &b [number] &a smrtnih slučajeva za &b [name],
-          smanjujući ukupan broj na &b [total]&a smrtnih slučajeva.
+          <green>Uspješno uklonjen </green><aqua>[number] </aqua><green>smrtnih slučajeva za </green><aqua>[name],</aqua>
+          smanjujući ukupan broj na <aqua>[total]</aqua><green>smrtnih slučajeva.</green>
     resetname:
       description: resetirati ime otoka igrača
-      success: '&a Uspješno resetirano ime otoka [name].'
+      success: '<green>Uspješno resetirano ime otoka [name].</green>'
   bentobox:
     description: BentoBox administratorska naredba
     perms:
       description: prikazuje efektivne trajne za BentoBox i Addons u YAML formatu
     about:
       description: prikazuje informacije o autorskim pravima i licenci
+    placeholders:
+      description: otvoriti preglednik zamjenskih oznaka
+    dump-placeholders:
+      description: izvesti sve registrirane zamjenske oznake u markdown datoteku
+      dumped: '<green>Popis zamjenskih oznaka zapisan u [file]</green>'
+      error: '<red>Nije moguće zapisati popis zamjenskih oznaka: [message]</red>'
     reload:
       description: ponovno učitava BentoBox i sve dodatke, postavke i lokalizacije
-      locales-reloaded: '[prefix_bentobox]&2 jezika ponovno učitano.'
-      addons-reloaded: '[prefix_bentobox]&2 dodatka ponovno učitana.'
-      settings-reloaded: '[prefix_bentobox]&2 Postavke ponovno učitane.'
-      addon: '[prefix_bentobox]&6 Ponovno učitavanje &b [name]&2 .'
-      addon-reloaded: '[prefix_bentobox]&b [name] &2 ponovno učitano.'
+      locales-reloaded: '[prefix_bentobox]<dark_green>jezika ponovno učitano.</dark_green>'
+      addons-reloaded: '[prefix_bentobox]<dark_green>dodatka ponovno učitana.</dark_green>'
+      settings-reloaded: '[prefix_bentobox]<dark_green>Postavke ponovno učitane.</dark_green>'
+      addon: '[prefix_bentobox]<gold>Ponovno učitavanje </gold><aqua>[name]</aqua><dark_green>.</dark_green>'
+      addon-reloaded: '[prefix_bentobox]<aqua>[name] </aqua><dark_green>ponovno učitano.</dark_green>'
       warning: >-
-        [prefix_bentobox]&c Upozorenje: Ponovno učitavanje može uzrokovati
+        [prefix_bentobox]<red>Upozorenje: Ponovno učitavanje može uzrokovati</red>
         nestabilnost, pa ako nakon toga vidite pogreške, ponovno pokrenite
         poslužitelj.
-      unknown-addon: '[prefix_bentobox]&c Nepoznati dodatak!'
+      unknown-addon: '[prefix_bentobox]<red>Nepoznati dodatak!</red>'
       locales:
         description: ponovno učitava lokalizacije
     version:
-      plugin-version: '&2 BentoBox verzija: &3 [version]'
+      plugin-version: '<dark_green>BentoBox verzija: </dark_green><dark_aqua>[version]</dark_aqua>'
       description: prikazuje BentoBox i verzije dodataka
       loaded-addons: 'Učitani dodaci:'
       loaded-game-worlds: 'Učitani svjetovi igre:'
-      addon-syntax: '&2 [name] &3 [version] &7 (&3 [state]&7 )'
-      game-world: '&2 [name] &7 (&3 [addon]&7 ): &3 [worlds]'
-      server: '&2 Pokretanje &3 [name] [version]&2 .'
-      database: '&2 Baza podataka: &3 [database]'
+      addon-syntax: '<dark_green>[name] </dark_green><dark_aqua>[version] </dark_aqua><gray>(</gray><dark_aqua>[state]</dark_aqua><gray>)</gray>'
+      game-world: '<dark_green>[name] </dark_green><gray>(</gray><dark_aqua>[addon]</dark_aqua><gray>): </gray><dark_aqua>[worlds]</dark_aqua>'
+      server: '<dark_green>Pokretanje </dark_green><dark_aqua>[name] [version]</dark_aqua><dark_green>.</dark_green>'
+      database: '<dark_green>Baza podataka: </dark_green><dark_aqua>[database]</dark_aqua>'
     manage:
       description: prikazuje upravljačku ploču
     catalog:
@@ -585,82 +613,82 @@ commands:
     locale:
       description: provodi analizu lokalizacijskih datoteka
       see-console: >-
-        [prefix_bentobox]&a Provjerite konzolu da vidite povratne informacije.
+        [prefix_bentobox]<green>Provjerite konzolu da vidite povratne informacije.</green>
 
-        [prefix_bentobox]&a Ova je naredba toliko neželjena da se povratne
+        [prefix_bentobox]<green>Ova je naredba toliko neželjena da se povratne</green>
         informacije ne mogu pročitati iz chata...
     migrate:
       description: migrira podatke iz jedne baze podataka u drugu
-      players: '[prefix_bentobox]&6 Migracija igrača'
-      names: '[prefix_bentobox]&6 Premještanje imena'
-      addons: '[prefix_bentobox]&6 Migrirajući dodaci'
-      class: '[prefix_bentobox]&6 Migracija [opis]'
-      migrated: '[prefix_bentobox]&a Migrirano'
-      completed: '[prefix_bentobox]&a Završeno'
+      players: '[prefix_bentobox]<gold>Migracija igrača</gold>'
+      names: '[prefix_bentobox]<gold>Premještanje imena</gold>'
+      addons: '[prefix_bentobox]<gold>Migrirajući dodaci</gold>'
+      class: '[prefix_bentobox]<gold>Migracija [opis]</gold>'
+      migrated: '[prefix_bentobox]<green>Migrirano</green>'
+      completed: '[prefix_bentobox]<green>Završeno</green>'
     rank:
       description: popis, dodaj ili ukloni rangove
-      parameters: '&a [list | add | remove] [rank reference] [rank value]'
+      parameters: '<green>[list | add | remove] [rank reference] [rank value]</green>'
       add:
-        success: '&a Dodano [rank] s vrijednošću [number]'
+        success: '<green>Dodano [rank] s vrijednošću [number]</green>'
         failure: >-
-          &c Neuspješno dodavanje [rank] s vrijednošću [number]. Možda je
+          <red>Neuspješno dodavanje [rank] s vrijednošću [number]. Možda je</red>
           duplicirano?
       remove:
-        success: '&a Uklonio [rank]'
-        failure: '&c Neuspješno uklanjanje [rank]. Nepoznata titula.'
-      list: '&a Registrirane rangove su sljedeće:'
+        success: '<green>Uklonio [rank]</green>'
+        failure: '<red>Neuspješno uklanjanje [rank]. Nepoznata titula.</red>'
+      list: '<green>Registrirane rangove su sljedeće:</green>'
   confirmation:
-    confirm: '&c Ponovno upišite naredbu unutar &b [sekundi]s&c za potvrdu.'
-    previous-request-cancelled: '&6 Prethodni zahtjev za potvrdu otkazan.'
-    request-cancelled: '&c Istek potvrde - &b zahtjev otkazan.'
+    confirm: '<red>Ponovno upišite naredbu unutar </red><aqua>[sekundi]s</aqua><red>za potvrdu.</red>'
+    previous-request-cancelled: '<gold>Prethodni zahtjev za potvrdu otkazan.</gold>'
+    request-cancelled: '<red>Istek potvrde - </red><aqua>zahtjev otkazan.</aqua>'
   delay:
-    previous-command-cancelled: '&c Prethodna naredba poništena'
-    stand-still: '&6 Ne miči se! Teleportiranje za [seconds] sekundi'
-    moved-so-command-cancelled: '&c Preselili ste se. Teleport otkazan!'
+    previous-command-cancelled: '<red>Prethodna naredba poništena</red>'
+    stand-still: '<gold>Ne miči se! Teleportiranje za [seconds] sekundi</gold>'
+    moved-so-command-cancelled: '<red>Preselili ste se. Teleport otkazan!</red>'
   island:
     about:
       description: prikaz pojedinosti o licenci
     go:
       parameters: '[kućno ime]'
       description: teleportirati vas na vaš otok
-      teleport: '&a Teleportira vas na vaš otok.'
-      in-progress: '&a Teleportiranje je u tijeku, molimo pričekajte...'
-      teleported: '&a Vas je teleportirao kući &e [number].'
+      teleport: '<green>Teleportira vas na vaš otok.</green>'
+      in-progress: '<green>Teleportiranje je u tijeku, molimo pričekajte...</green>'
+      teleported: '<green>Vas je teleportirao kući </green><yellow>[number].</yellow>'
       failure: >-
-        &c Teleportacija je neuspjela iz nekog razloga. Molimo pokušajte ponovno
+        <red>Teleportacija je neuspjela iz nekog razloga. Molimo pokušajte ponovno</red>
         kasnije.
-      unknown-home: '&c Nepoznato kućno ime!'
+      unknown-home: '<red>Nepoznato kućno ime!</red>'
     help:
       description: glavna otočka komanda
     spawn:
       description: teleportirati vas u mrijest
-      teleporting: '&a Teleportira vas u mrijest.'
-      no-spawn: '&c U ovom modu igre nema spawn-a.'
+      teleporting: '<green>Teleportira vas u mrijest.</green>'
+      no-spawn: '<red>U ovom modu igre nema spawn-a.</red>'
     create:
       description: stvorite otok, koristeći izborni nacrt (zahtijeva dopuštenje)
       parameters: <nacrt>
       too-many-islands: >-
-        &c Previše je otoka na ovom svijetu: nema dovoljno mjesta da se vaš
+        <red>Previše je otoka na ovom svijetu: nema dovoljno mjesta da se vaš</red>
         stvori.
-      cannot-create-island: '&c Mjesto nije bilo moguće pronaći na vrijeme, pokušajte ponovno...'
-      unable-create-island: '&c Vaš otok nije mogao biti generiran, obratite se administratoru.'
-      creating-island: '&a Traženje mjesta za vaš otok...'
-      you-cannot-make: '&c Ne možete napraviti više otoka!'
-      max-uses: '&c Ne možete napraviti više tog tipa [prefix_island]!'
+      cannot-create-island: '<red>Mjesto nije bilo moguće pronaći na vrijeme, pokušajte ponovno...</red>'
+      unable-create-island: '<red>Vaš otok nije mogao biti generiran, obratite se administratoru.</red>'
+      creating-island: '<green>Traženje mjesta za vaš otok...</green>'
+      you-cannot-make: '<red>Ne možete napraviti više otoka!</red>'
+      max-uses: '<red>Ne možete napraviti više tog tipa [prefix_island]!</red>'
       you-cannot-make-team: >-
-        &c Članovi tima ne mogu praviti otoke u istom svijetu kao njihov tim
+        <red>Članovi tima ne mogu praviti otoke u istom svijetu kao njihov tim</red>
         [prefix_island].
       pasting:
-        estimated-time: '&a Procijenjeno vrijeme: &b [number] &a sekundi.'
-        blocks: '&a Izgradnja blok po blok: &b [number] &a blokova u svim...'
-        entities: '&a Popunjavanje entitetima: &b [number] &a entiteta u svim...'
-        dimension-done: '&a otok u [svijetu] je izgrađen.'
-        done: '&a Gotovo! Vaš otok je spreman i čeka vas!'
-      pick: '&2 Odaberite otok'
-      cannot-afford: '&c Ne možete si to priuštiti! Cijena: [cost]'
-      unknown-blueprint: '&c Taj nacrt još nije učitan.'
-      on-first-login: '&a Dobro došli! Počet ćemo pripremati vaš otok za nekoliko sekundi.'
-      you-can-teleport-to-your-island: '&a Možete se teleportirati na svoj otok kad god želite.'
+        estimated-time: '<green>Procijenjeno vrijeme: </green><aqua>[number] </aqua><green>sekundi.</green>'
+        blocks: '<green>Izgradnja blok po blok: </green><aqua>[number] </aqua><green>blokova u svim...</green>'
+        entities: '<green>Popunjavanje entitetima: </green><aqua>[number] </aqua><green>entiteta u svim...</green>'
+        dimension-done: '<green>otok u [svijetu] je izgrađen.</green>'
+        done: '<green>Gotovo! Vaš otok je spreman i čeka vas!</green>'
+      pick: '<dark_green>Odaberite otok</dark_green>'
+      cannot-afford: '<red>Ne možete si to priuštiti! Cijena: [cost]</red>'
+      unknown-blueprint: '<red>Taj nacrt još nije učitan.</red>'
+      on-first-login: '<green>Dobro došli! Počet ćemo pripremati vaš otok za nekoliko sekundi.</green>'
+      you-can-teleport-to-your-island: '<green>Možete se teleportirati na svoj otok kad god želite.</green>'
     deletehome:
       description: izbrisati početnu lokaciju
       parameters: '[kućno ime]'
@@ -672,57 +700,57 @@ commands:
     near:
       description: pokažite ime susjednih otoka oko vas
       parameters: ''
-      the-following-islands: '&a U blizini su sljedeći otoci:'
-      syntax: '&6 [direction]: &a [name]'
+      the-following-islands: '<green>U blizini su sljedeći otoci:</green>'
+      syntax: '<gold>[direction]: </gold><green>[name]</green>'
       north: Sjeverno
       south: Jug
       east: Istočno
       west: Zapad
-      no-neighbors: '&c Nemate neposredno susjedne otoke!'
+      no-neighbors: '<red>Nemate neposredno susjedne otoke!</red>'
     reset:
       description: ponovno pokrenite svoj otok i uklonite stari
       parameters: <nacrt>
-      none-left: '&c Nemate više resetiranja!'
-      resets-left: '&c Ostalo vam je &b [number] &c resetiranja'
+      none-left: '<red>Nemate više resetiranja!</red>'
+      resets-left: '<red>Ostalo vam je </red><aqua>[number] </aqua><red>resetiranja</red>'
       confirmation: >-
-        &c Jeste li sigurni da to želite učiniti?
+        <red>Jeste li sigurni da to želite učiniti?</red>
 
-        &c Svi članovi otoka bit će izbačeni s otoka, nakon toga ćete ih morati
+        <red>Svi članovi otoka bit će izbačeni s otoka, nakon toga ćete ih morati</red>
         ponovno pozvati.
 
-        &c Nema povratka: nakon što se vaš trenutni otok izbriše, neće biti &l
-        &r &c načina da ga kasnije vratite.
-      kicked-from-island: '&c Izbačeni ste sa svog otoka u [gamemode] jer ga vlasnik resetira.'
+        <red>Nema povratka: nakon što se vaš trenutni otok izbriše, neće biti <bold></bold></red>
+        <red>načina da ga kasnije vratite.</red>
+      kicked-from-island: '<red>Izbačeni ste sa svog otoka u [gamemode] jer ga vlasnik resetira.</red>'
     sethome:
       description: postavite svoju kućnu točku teleporta
-      must-be-on-your-island: '&c Morate biti na svom otoku da biste se vratili kući!'
-      too-many-homes: '&c Nije moguće postaviti - vaš otok ima najveći broj domova (broj).'
-      home-set: '&6 Vaš dom na otoku postavljen je na vašu trenutnu lokaciju.'
-      homes-are: '&6 Kuće na otoku su:'
-      home-list-syntax: '&6 [name]'
-      click-to-teleport: '&a Kliknite za teleportaciju!'
+      must-be-on-your-island: '<red>Morate biti na svom otoku da biste se vratili kući!</red>'
+      too-many-homes: '<red>Nije moguće postaviti - vaš otok ima najveći broj domova (broj).</red>'
+      home-set: '<gold>Vaš dom na otoku postavljen je na vašu trenutnu lokaciju.</gold>'
+      homes-are: '<gold>Kuće na otoku su:</gold>'
+      home-list-syntax: '<gold>[name]</gold>'
+      click-to-teleport: '<green>Kliknite za teleportaciju!</green>'
       nether:
-        not-allowed: '&c Nije vam dopušteno postaviti svoj dom u Nether.'
-        confirmation: '&c Jeste li sigurni da želite postaviti svoj dom u Nether?'
+        not-allowed: '<red>Nije vam dopušteno postaviti svoj dom u Nether.</red>'
+        confirmation: '<red>Jeste li sigurni da želite postaviti svoj dom u Nether?</red>'
       the-end:
-        not-allowed: '&c Nije vam dopušteno postaviti svoj dom u Endu.'
-        confirmation: '&c Jeste li sigurni da želite postaviti svoj dom u End?'
+        not-allowed: '<red>Nije vam dopušteno postaviti svoj dom u Endu.</red>'
+        confirmation: '<red>Jeste li sigurni da želite postaviti svoj dom u End?</red>'
       parameters: '[kućno ime]'
     setname:
       description: odredi ime za svoj otok
-      name-too-short: '&c Prekratko. Minimalna veličina je [number] znakova.'
-      name-too-long: '&c Predugo. Maksimalna veličina je [number] znakova.'
-      name-already-exists: '&c Već postoji otok s tim imenom u ovom načinu igre.'
+      name-too-short: '<red>Prekratko. Minimalna veličina je [number] znakova.</red>'
+      name-too-long: '<red>Predugo. Maksimalna veličina je [number] znakova.</red>'
+      name-already-exists: '<red>Već postoji otok s tim imenom u ovom načinu igre.</red>'
       parameters: <ime>
-      success: '&a Uspješno postavite ime svog otoka na &b [name]&a .'
+      success: '<green>Uspješno postavite ime svog otoka na </green><aqua>[name]</aqua><green>.</green>'
     renamehome:
       description: preimenovati početnu lokaciju
       parameters: '[kućno ime]'
-      enter-new-name: '&6 Unesite novi naziv'
-      already-exists: '&c Taj naziv već postoji, pokušajte s drugim imenom.'
+      enter-new-name: '<gold>Unesite novi naziv</gold>'
+      already-exists: '<red>Taj naziv već postoji, pokušajte s drugim imenom.</red>'
     resetname:
       description: resetirajte ime vašeg otoka
-      success: '&a Uspješno poništite ime svog otoka.'
+      success: '<green>Uspješno poništite ime svog otoka.</green>'
     team:
       description: upravljati svojim timom
       gui:
@@ -734,239 +762,239 @@ commands:
             description: Status tima
           rank-filter:
             name: Filtrar Rangova
-            description: '&a Kliknite za promjenu rangova'
+            description: '<green>Kliknite za promjenu rangova</green>'
           invitation: Pozivnica
           invite:
             name: Pozovi igrača
             description: |-
-              &a Igrači moraju biti u
-              &a istom svetu kao i vi da bi
-              &a se prikazivali na listi.
+              <green>Igrači moraju biti u</green>
+              <green>istom svetu kao i vi da bi</green>
+              <green>se prikazivali na listi.</green>
         tips:
           LEFT:
-            name: '&b Lijevi Klip'
-            invite: '&a za pozivanje igrača'
+            name: '<aqua>Lijevi Klip</aqua>'
+            invite: '<green>za pozivanje igrača</green>'
           RIGHT:
-            name: '&b Desni Klik'
+            name: '<aqua>Desni Klik</aqua>'
           SHIFT_RIGHT:
-            name: '&b Shift desni klik'
-            reject: '&a za odbacivanje'
-            kick: '&a za izbacivanje igrača'
-            leave: '&a napustiti tim'
+            name: '<aqua>Shift desni klik</aqua>'
+            reject: '<green>za odbacivanje</green>'
+            kick: '<green>za izbacivanje igrača</green>'
+            leave: '<green>napustiti tim</green>'
           SHIFT_LEFT:
-            name: '&b Pomaknite se lijevo i kliknite'
-            accept: '&a za prihvaćanje'
+            name: '<aqua>Pomaknite se lijevo i kliknite</aqua>'
+            accept: '<green>za prihvaćanje</green>'
             setowner: |-
-              &a za postavljanje vlasnika  
-              &a za ovog igrača
+              <green>za postavljanje vlasnika</green>
+              <green>za ovog igrača</green>
       info:
         description: prikazati detaljne informacije o vašem timu
         member-layout:
-          online: '&a &l o &r &f [name]'
-          offline: '&c &l o &r &f [name] &7 ([posljednje_viđeno])'
-          offline-not-last-seen: '&c &l o &r &f [name]'
+          online: '<green><bold>o </bold></green><white>[name]</white>'
+          offline: '<red><bold>o </bold></red><white>[name] </white><gray>([posljednje_viđeno])</gray>'
+          offline-not-last-seen: '<red><bold>o </bold></red><white>[name]</white>'
         last-seen:
-          layout: '&b [number] &7 [unit] prije'
+          layout: '<aqua>[number] </aqua><gray>[unit] prije</gray>'
           days: dana
           hours: sati
           minutes: minuta
         header: |
-          &f --- &a Podaci o timu &f ---
-          &a Članovi: &b [total]&7 /&b [max]
-          &a Online članovi: &b [online]
+          <white>--- </white><green>Podaci o timu </green><white>---</white>
+          <green>Članovi: </green><aqua>[total]</aqua><gray>/</gray><aqua>[max]</aqua>
+          <green>Online članovi: </green><aqua>[online]</aqua>
         rank-layout:
-          owner: '&6 [rank]:'
-          generic: '&6 [rank] &7 (&b [number]&7 )&6 :'
+          owner: '<gold>[rank]:</gold>'
+          generic: '<gold>[rank] </gold><gray>(</gray><aqua>[number]</aqua><gray>)</gray><gold>:</gold>'
       coop:
         description: rangirajte kokošinjac za igrače na svom otoku
         parameters: <igrač>
-        cannot-coop-yourself: '&c Ne možete se sami boriti!'
-        already-has-rank: '&c Igrač već ima rang!'
-        you-are-a-coop-member: '&2 Sarađivali ste s &b[name]&a.'
-        success: '&a Surađivao si s &b [name]&a.'
+        cannot-coop-yourself: '<red>Ne možete se sami boriti!</red>'
+        already-has-rank: '<red>Igrač već ima rang!</red>'
+        you-are-a-coop-member: '<dark_green>Sarađivali ste s </dark_green><aqua>[name]</aqua><green>.</green>'
+        success: '<green>Surađivao si s </green><aqua>[name]</aqua><green>.</green>'
         name-has-invited-you: >-
-          &a [name] vas je pozvao da se pridružite kao član zadruge na njihovom
+          <green>[name] vas je pozvao da se pridružite kao član zadruge na njihovom</green>
           otoku.
       uncoop:
         description: ukloniti coop čin s igrača
         parameters: <igrač>
-        cannot-uncoop-yourself: '&c Ne možete se osloboditi!'
-        cannot-uncoop-member: '&c Ne možete odvojiti člana tima!'
-        player-not-cooped: '&c Igrač nije povezan!'
-        you-are-no-longer-a-coop-member: '&c Više nisi član zadruge [name]''s island.'
+        cannot-uncoop-yourself: '<red>Ne možete se osloboditi!</red>'
+        cannot-uncoop-member: '<red>Ne možete odvojiti člana tima!</red>'
+        player-not-cooped: '<red>Igrač nije povezan!</red>'
+        you-are-no-longer-a-coop-member: '<red>Više nisi član zadruge [name]''s island.</red>'
         all-members-logged-off: >-
-          &c Svi članovi otoka su se odjavili tako da više niste član coop-a
+          <red>Svi članovi otoka su se odjavili tako da više niste član coop-a</red>
           otoka [name].
-        success: '&b [name] &a više nije član zadruge na vašem otoku.'
-        is-full: '&c Ne možete surađivati ​​ni s kim drugim.'
+        success: '<aqua>[name] </aqua><green>više nije član zadruge na vašem otoku.</green>'
+        is-full: '<red>Ne možete surađivati ​​ni s kim drugim.</red>'
       trust:
         description: dajte pouzdanom igraču rang na vašem otoku
         parameters: <igrač>
-        trust-in-yourself: '&c Vjerujte u sebe!'
+        trust-in-yourself: '<red>Vjerujte u sebe!</red>'
         name-has-invited-you: >-
-          &a [name] vas je pozvao da se pridružite kao pouzdani član njihovog
+          <green>[name] vas je pozvao da se pridružite kao pouzdani član njihovog</green>
           otoka.
-        player-already-trusted: '&c Player već ima povjerenja!'
-        you-are-trusted: '&2 &b [name]&a vam vjeruje!'
-        success: '&a Vjerovali ste &b [name]&a .'
-        is-full: '&c Ne možete vjerovati nikome drugome. Čuvaj leđa!'
+        player-already-trusted: '<red>Player već ima povjerenja!</red>'
+        you-are-trusted: '<dark_green></dark_green><aqua>[name]</aqua><green>vam vjeruje!</green>'
+        success: '<green>Vjerovali ste </green><aqua>[name]</aqua><green>.</green>'
+        is-full: '<red>Ne možete vjerovati nikome drugome. Čuvaj leđa!</red>'
       untrust:
         description: ukloniti rang pouzdanog igrača s igrača
         parameters: <igrač>
-        cannot-untrust-yourself: '&c Ne možete ne vjerovati sebi!'
-        cannot-untrust-member: '&c Ne možete ne vjerovati članu tima!'
-        player-not-trusted: '&c Igraču se ne vjeruje!'
-        you-are-no-longer-trusted: '&c &b [name]&a vam više ne vjeruje!'
-        success: '&b [name] &a više nije pouzdan na vašem otoku.'
+        cannot-untrust-yourself: '<red>Ne možete ne vjerovati sebi!</red>'
+        cannot-untrust-member: '<red>Ne možete ne vjerovati članu tima!</red>'
+        player-not-trusted: '<red>Igraču se ne vjeruje!</red>'
+        you-are-no-longer-trusted: '<red></red><aqua>[name]</aqua><green>vam više ne vjeruje!</green>'
+        success: '<aqua>[name] </aqua><green>više nije pouzdan na vašem otoku.</green>'
       invite:
         description: pozovite igrača da se pridruži vašem otoku
-        invitation-sent: '&a Pozivnica poslana na &b[name]&a.'
-        removing-invite: '&c Uklanjanje pozivnice.'
-        name-has-invited-you: '&a [name] vas je pozvao da se pridružite njihovom otoku.'
+        invitation-sent: '<green>Pozivnica poslana na </green><aqua>[name]</aqua><green>.</green>'
+        removing-invite: '<red>Uklanjanje pozivnice.</red>'
+        name-has-invited-you: '<green>[name] vas je pozvao da se pridružite njihovom otoku.</green>'
         to-accept-or-reject: >-
-          &a Da li /[label] team accept prihvatiti ili /[label] team reject
+          <green>Da li /[label] team accept prihvatiti ili /[label] team reject</green>
           odbiti
-        you-will-lose-your-island: '&c UPOZORENJE! Izgubit ćeš svoj otok ako prihvatiš!'
+        you-will-lose-your-island: '<red>UPOZORENJE! Izgubit ćeš svoj otok ako prihvatiš!</red>'
         gui:
           titles:
             team-invite-panel: Pozovite Igrače
           button:
-            already-invited: '&c Već pozvan'
-            search: '&a Potraži igrača'
+            already-invited: '<red>Već pozvan</red>'
+            search: '<green>Potraži igrača</green>'
             searching: |-
-              &b Traženje za  
-              &c [name]
-          enter-name: '&a Unesi ime:'
+              <aqua>Traženje za</aqua>
+              <red>[name]</red>
+          enter-name: '<green>Unesi ime:</green>'
           tips:
             LEFT:
-              name: '&b Lijevi Klik'
-              search: '&a Unesite ime igrača'
-              back: '&a Natrag'
+              name: '<aqua>Lijevi Klik</aqua>'
+              search: '<green>Unesite ime igrača</green>'
+              back: '<green>Natrag</green>'
               invite: |-
-                &a za pozivanje igrača  
-                &a za pridruživanje vašem timu
+                <green>za pozivanje igrača</green>
+                <green>za pridruživanje vašem timu</green>
             RIGHT:
-              name: '&b Desni Klik'
-              coop: '&a za udruživanje igrača'
+              name: '<aqua>Desni Klik</aqua>'
+              coop: '<green>za udruživanje igrača</green>'
             SHIFT_LEFT:
-              name: '&b Pomakni lijevu tipku miša'
-              trust: '&a za povjerenje igraču'
+              name: '<aqua>Pomakni lijevu tipku miša</aqua>'
+              trust: '<green>za povjerenje igraču</green>'
         errors:
-          cannot-invite-self: '&c Ne možete pozvati sami sebe!'
-          cooldown: '&c Ne možete pozvati tu osobu još [number] sekundi.'
-          island-is-full: '&c Pun ti je otok, ne možeš više nikoga pozvati.'
-          none-invited-you: '&c Nitko te nije pozvao :c.'
-          you-already-are-in-team: '&c Već ste u timu!'
-          already-on-team: '&c Taj je igrač već u momčadi!'
-          invalid-invite: '&c Ta pozivnica više ne vrijedi, nažalost.'
-          you-have-already-invited: '&c Već ste pozvali tog igrača!'
+          cannot-invite-self: '<red>Ne možete pozvati sami sebe!</red>'
+          cooldown: '<red>Ne možete pozvati tu osobu još [number] sekundi.</red>'
+          island-is-full: '<red>Pun ti je otok, ne možeš više nikoga pozvati.</red>'
+          none-invited-you: '<red>Nitko te nije pozvao :c.</red>'
+          you-already-are-in-team: '<red>Već ste u timu!</red>'
+          already-on-team: '<red>Taj je igrač već u momčadi!</red>'
+          invalid-invite: '<red>Ta pozivnica više ne vrijedi, nažalost.</red>'
+          you-have-already-invited: '<red>Već ste pozvali tog igrača!</red>'
         parameters: <igrač>
-        you-can-invite: '&a Možete pozvati još [number] igrača.'
+        you-can-invite: '<green>Možete pozvati još [number] igrača.</green>'
         accept:
           description: prihvatiti poziv
           you-joined-island: >-
-            &a Pridružili ste se otoku! Koristite &b/[label] team &a da vidite
+            <green>Pridružili ste se otoku! Koristite </green><aqua>/[label] team </aqua><green>da vidite</green>
             ostale članove.
-          name-joined-your-island: '&a [name] se pridružio vašem otoku!'
+          name-joined-your-island: '<green>[name] se pridružio vašem otoku!</green>'
           confirmation: |-
-            &c Jeste li sigurni da želite prihvatiti ovaj poziv?
-            &c&l IzGUBIT ćete &r&c&l svoj trenutni otok!
+            <red>Jeste li sigurni da želite prihvatiti ovaj poziv?</red>
+            <red><bold>IzGUBIT ćete </bold></red><red><bold>svoj trenutni otok!</bold></red>
         reject:
           description: odbiti pozivnicu
-          you-rejected-invite: '&a Odbili ste poziv da se pridružite otoku.'
-          name-rejected-your-invite: '&c [name] je odbio tvoj poziv za otok!'
+          you-rejected-invite: '<green>Odbili ste poziv da se pridružite otoku.</green>'
+          name-rejected-your-invite: '<red>[name] je odbio tvoj poziv za otok!</red>'
         cancel:
           description: poništite poziv na čekanju da se pridružite vašem otoku
       leave:
         cannot-leave: >-
-          &c Vlasnici ne mogu otići! Prvo postanite član ili izbacite sve
+          <red>Vlasnici ne mogu otići! Prvo postanite član ili izbacite sve</red>
           članove.
         description: napusti svoj otok
-        left-your-island: '&c [name] &c je napustio vaš otok'
-        success: '&a Napustili ste ovaj otok.'
+        left-your-island: '<red>[name] </red><red>je napustio vaš otok</red>'
+        success: '<green>Napustili ste ovaj otok.</green>'
       kick:
         description: uklonite člana sa svog otoka
         parameters: <igrač>
-        player-kicked: '&c [name] te izbacio s otoka u [gamemode]!'
-        cannot-kick: '&c Ne možete se šutnuti!'
-        cannot-kick-rank: '&c Vaš rang ne dopušta šutnuti [name]!'
-        success: '&b [name] &a je izbačen s vašeg otoka.'
+        player-kicked: '<red>[name] te izbacio s otoka u [gamemode]!</red>'
+        cannot-kick: '<red>Ne možete se šutnuti!</red>'
+        cannot-kick-rank: '<red>Vaš rang ne dopušta šutnuti [name]!</red>'
+        success: '<aqua>[name] </aqua><green>je izbačen s vašeg otoka.</green>'
       demote:
         description: degradirajte igrača na svom otoku za jedan rang niže
         parameters: <igrač>
         errors:
-          cant-demote-yourself: '&c Ne možete se degradirati!'
-          cant-demote: '&c Ne možete degradirati više činove!'
-          must-be-member: '&c Igrač mora biti [prefix_an-island] član!'
-        failure: '&c Igrač više ne može biti degradiran!'
-        success: '&a degradiran [name] na [rank]'
+          cant-demote-yourself: '<red>Ne možete se degradirati!</red>'
+          cant-demote: '<red>Ne možete degradirati više činove!</red>'
+          must-be-member: '<red>Igrač mora biti [prefix_an-island] član!</red>'
+        failure: '<red>Igrač više ne može biti degradiran!</red>'
+        success: '<green>degradiran [name] na [rank]</green>'
       promote:
         description: unaprijedite igrača na svom otoku na viši rang
         parameters: <igrač>
         errors:
-          cant-promote-yourself: '&c Ne možete se promovirati!'
-          cant-promote: '&c Ne možete napredovati iznad svog ranga!'
-          must-be-member: '&c Igrač mora biti [prefix_an-island] član!'
-        failure: '&c Igrač više ne može biti unaprijeđen!'
-        success: '&a Promaknut [name] u [rank]'
+          cant-promote-yourself: '<red>Ne možete se promovirati!</red>'
+          cant-promote: '<red>Ne možete napredovati iznad svog ranga!</red>'
+          must-be-member: '<red>Igrač mora biti [prefix_an-island] član!</red>'
+        failure: '<red>Igrač više ne može biti unaprijeđen!</red>'
+        success: '<green>Promaknut [name] u [rank]</green>'
       setowner:
         description: prenesite vlasništvo nad otokom na člana
         errors:
           cant-transfer-to-yourself: >-
-            &c Ne možete prenijeti vlasništvo na sebe! &7 (&o Pa, zapravo, mogli
-            biste... Ali mi ne želimo da to učinite. Jer je beskorisno.&r &7 )
-          target-is-not-member: '&c Taj igrač nije dio vašeg otočkog tima!'
-          at-max: '&c Taj igrač već ima najveći dopušteni broj otoka!'
-        name-is-the-owner: '&a [name] je sada vlasnik otoka!'
+            <red>Ne možete prenijeti vlasništvo na sebe! </red><gray>(<italic>Pa, zapravo, mogli</italic></gray>
+            biste... Ali mi ne želimo da to učinite. Jer je beskorisno.<gray>)</gray>
+          target-is-not-member: '<red>Taj igrač nije dio vašeg otočkog tima!</red>'
+          at-max: '<red>Taj igrač već ima najveći dopušteni broj otoka!</red>'
+        name-is-the-owner: '<green>[name] je sada vlasnik otoka!</green>'
         parameters: <igrač>
-        you-are-the-owner: '&a Sada ste vlasnik otoka!'
+        you-are-the-owner: '<green>Sada ste vlasnik otoka!</green>'
     ban:
       description: zabraniti igraču pristup vašem otoku
       parameters: <igrač>
-      cannot-ban-yourself: '&c Ne možete se zabraniti!'
-      cannot-ban: '&c Taj igrač ne može biti zabranjen.'
-      cannot-ban-member: '&c Prvo šutnite člana tima, a zatim zabranite.'
+      cannot-ban-yourself: '<red>Ne možete se zabraniti!</red>'
+      cannot-ban: '<red>Taj igrač ne može biti zabranjen.</red>'
+      cannot-ban-member: '<red>Prvo šutnite člana tima, a zatim zabranite.</red>'
       cannot-ban-more-players: >-
-        &c Dosegli ste ograničenje zabrane, ne možete više zabraniti nijednog
+        <red>Dosegli ste ograničenje zabrane, ne možete više zabraniti nijednog</red>
         igrača sa svog otoka.
-      player-already-banned: '&c Igrač je već zabranjen.'
-      player-banned: '&b [name]&c sada je zabranjen pristup vašem otoku.'
-      owner-banned-you: '&b [name]&c vam je zabranio pristup njihovom otoku!'
-      you-are-banned: '&b Zabranjen vam je pristup ovom otoku!'
+      player-already-banned: '<red>Igrač je već zabranjen.</red>'
+      player-banned: '<aqua>[name]</aqua><red>sada je zabranjen pristup vašem otoku.</red>'
+      owner-banned-you: '<aqua>[name]</aqua><red>vam je zabranio pristup njihovom otoku!</red>'
+      you-are-banned: '<aqua>Zabranjen vam je pristup ovom otoku!</aqua>'
     unban:
       description: poništite ban igraču s vašeg otoka
       parameters: <igrač>
-      cannot-unban-yourself: '&c Ne možete sami sebi poništiti zabranu!'
-      player-not-banned: '&c Igrač nije zabranjen.'
-      player-unbanned: '&b [name]&a sada nije zabranjen pristup vašem otoku.'
-      you-are-unbanned: '&b [name]&a poništio vam je zabranu pristupa njihovom otoku!'
+      cannot-unban-yourself: '<red>Ne možete sami sebi poništiti zabranu!</red>'
+      player-not-banned: '<red>Igrač nije zabranjen.</red>'
+      player-unbanned: '<aqua>[name]</aqua><green>sada nije zabranjen pristup vašem otoku.</green>'
+      you-are-unbanned: '<aqua>[name]</aqua><green>poništio vam je zabranu pristupa njihovom otoku!</green>'
     banlist:
       description: popis zabranjenih igrača
-      noone: '&a Nitko nije zabranjen na ovom otoku.'
-      the-following: '&b Sljedeći igrači su zabranjeni:'
-      names: '&c [redak]'
-      you-can-ban: '&b Možete zabraniti do &e [number] &b više igrača.'
+      noone: '<green>Nitko nije zabranjen na ovom otoku.</green>'
+      the-following: '<aqua>Sljedeći igrači su zabranjeni:</aqua>'
+      names: '<red>[redak]</red>'
+      you-can-ban: '<aqua>Možete zabraniti do </aqua><yellow>[number] </yellow><aqua>više igrača.</aqua>'
     settings:
       description: prikaz postavki otoka
     language:
       description: Izaberi jezik
       parameters: '[Jezik]'
-      not-available: '&c Ovaj jezik nije dostupan.'
-      already-selected: '&c Već koristite ovaj jezik.'
+      not-available: '<red>Ovaj jezik nije dostupan.</red>'
+      already-selected: '<red>Već koristite ovaj jezik.</red>'
     expel:
       description: protjerati igrača sa svog otoka
       parameters: <igrač>
-      cannot-expel-yourself: '&c Ne možete se izbaciti!'
-      cannot-expel: '&c Taj igrač ne može biti izbačen.'
-      cannot-expel-member: '&c Ne možete izbaciti člana tima!'
-      not-on-island: '&c Taj igrač nije na vašem otoku!'
-      player-expelled-you: '&b [name]&c te protjerao s otoka!'
-      success: '&a Protjerali ste &b [name] &a s otoka.'
+      cannot-expel-yourself: '<red>Ne možete se izbaciti!</red>'
+      cannot-expel: '<red>Taj igrač ne može biti izbačen.</red>'
+      cannot-expel-member: '<red>Ne možete izbaciti člana tima!</red>'
+      not-on-island: '<red>Taj igrač nije na vašem otoku!</red>'
+      player-expelled-you: '<aqua>[name]</aqua><red>te protjerao s otoka!</red>'
+      success: '<green>Protjerali ste </green><aqua>[name] </aqua><green>s otoka.</green>'
     lock:
       description: zaključajte ili otključajte svoj [prefix_island]
-      locked: '&a Vaš [prefix_island] je sada zaključan.'
-      unlocked: '&a Vaš [prefix_island] je sada otključan.'
-      you-are-locked-out: '&c Ovaj [prefix_island] je sada zaključan. Protjerani ste.'
+      locked: '<green>Vaš [prefix_island] je sada zaključan.</green>'
+      unlocked: '<green>Vaš [prefix_island] je sada otključan.</green>'
+      you-are-locked-out: '<red>Ovaj [prefix_island] je sada zaključan. Protjerani ste.</red>'
 ranks:
   owner: Vlasnik
   sub-owner: Podvlasnik
@@ -1023,8 +1051,8 @@ protection:
     BOOKSHELF:
       name: Police za knjige
       description: |-
-        &a Dopusti postavljanje knjiga
-        &a ili uzeti knjige.
+        <green>Dopusti postavljanje knjiga</green>
+        <green>ili uzeti knjige.</green>
       hint: ne može staviti knjigu ili uzeti knjigu.
     BREAK_BLOCKS:
       description: Prekid prekidanja
@@ -1073,22 +1101,22 @@ protection:
     CONTAINER:
       name: Svi spremnici
       description: |-
-        &a Prebaci interakciju sa svim spremnicima.
-        &a Uključuje: bačvu, pčelinju košnicu, stalak za kuhanje,
+        <green>Prebaci interakciju sa svim spremnicima.</green>
+        <green>Uključuje: bačvu, pčelinju košnicu, stalak za kuhanje,</green>
         & škrinja, komposter, dozator, kapaljka,
         & teglica za cvijeće, peć, spremnik, okvir predmeta,
         & jukebox, škrinja s kolicima, kutija za šulkere,
         &zarobljena škrinja.
 
-        &7 Promjena pojedinačnih postavki nadjačava
-        &7 ovu zastavu.
+        <gray>Promjena pojedinačnih postavki nadjačava</gray>
+        <gray>ovu zastavu.</gray>
       hint: Pristup spremniku onemogućen
     CHEST:
       name: Škrinje i škrinje s kolicima
       description: |-
-        &a Prebaci interakciju sa škrinjama
-        &a i prsa minska kolica.
-        &a (ne uključuje zarobljene škrinje)
+        <green>Prebaci interakciju sa škrinjama</green>
+        <green>i prsa minska kolica.</green>
+        <green>(ne uključuje zarobljene škrinje)</green>
       hint: Pristup prsima onemogućen
     BARREL:
       name: Bačve
@@ -1100,9 +1128,9 @@ protection:
       hint: Crafter pristup onemogućen
     BLOCK_EXPLODE_DAMAGE:
       description: |-
-        &a Dopusti krevet i sidra za ponovno stvaranje
-        &a razbiti blokove i oštetiti
-        &a entiteta.
+        <green>Dopusti krevet i sidra za ponovno stvaranje</green>
+        <green>razbiti blokove i oštetiti</green>
+        <green>entiteta.</green>
       name: Oštećenje od eksplozije bloka
     COMPOSTER:
       name: Komposteri
@@ -1126,8 +1154,8 @@ protection:
       hint: Pristup kutiji Shulker onemogućen
     SHULKER_TELEPORT:
       description: |-
-        &a Shulker se može teleportirati
-        &a ako je aktivan.
+        <green>Shulker se može teleportirati</green>
+        <green>ako je aktivan.</green>
       name: Shulker teleportacija
     SMITHING:
       name: Kovačka
@@ -1152,7 +1180,7 @@ protection:
     ELYTRA:
       name: Elytra
       description: Prebacivanje elitre dopušteno ili ne
-      hint: '&c UPOZORENJE: Elytra se ne može koristiti ovdje!'
+      hint: '<red>UPOZORENJE: Elytra se ne može koristiti ovdje!</red>'
     HOPPER:
       name: Lijevci
       description: Uključi/isključi interakciju lijevka
@@ -1166,56 +1194,56 @@ protection:
       hint: Teleportiranje Chorus voća onemogućeno
     CLEAN_SUPER_FLAT:
       description: |-
-        &a Omogućite čišćenje bilo kojeg
-        &a super-flat chunks in
-        &a otočni svjetovi
+        <green>Omogućite čišćenje bilo kojeg</green>
+        <green>super-flat chunks in</green>
+        <green>otočni svjetovi</green>
       name: Čist super stan
     COARSE_DIRT_TILLING:
       description: |-
-        &a Prebaci grubo oranje
-        &a prljavština i lomljenje podzola
-        &a za dobivanje prljavštine
+        <green>Prebaci grubo oranje</green>
+        <green>prljavština i lomljenje podzola</green>
+        <green>za dobivanje prljavštine</green>
       name: Obrada grube zemlje
       hint: Bez obrade grube zemlje
     COLLECT_LAVA:
       description: |-
-        &a Uključivanje skupljanja lave
-        &a (nadjačavanje spremnika)
+        <green>Uključivanje skupljanja lave</green>
+        <green>(nadjačavanje spremnika)</green>
       name: Skupljajte lavu
       hint: Nema skupljanja lave
     COLLECT_WATER:
       description: |-
-        &a Uključivanje skupljanja vode
-        &a (nadjačavanje spremnika)
+        <green>Uključivanje skupljanja vode</green>
+        <green>(nadjačavanje spremnika)</green>
       name: Prikupiti vodu
       hint: Kante za vodu onesposobljene
     COLLECT_POWDERED_SNOW:
       description: |-
-        &a Uključi/isključi sakupljanje snijega u prahu
-        &a (nadjačavanje spremnika)
+        <green>Uključi/isključi sakupljanje snijega u prahu</green>
+        <green>(nadjačavanje spremnika)</green>
       name: Skupljajte snijeg u prahu
       hint: Onesposobljene kante za snijeg u prahu
     COMMAND_RANKS:
-      name: '&e Zapovjedni činovi'
-      description: '&a Konfigurirajte rangove naredbi'
+      name: '<yellow>Zapovjedni činovi</yellow>'
+      description: '<green>Konfigurirajte rangove naredbi</green>'
     CRAFTING:
       description: Uključi/isključi upotrebu
       name: Radni stolovi
       hint: Pristup radnom stolu onemogućen
     CREEPER_DAMAGE:
       description: |
-        &a Preklopni puzavac
+        <green>Preklopni puzavac</green>
         & zaštita od oštećenja
       name: Zaštita od oštećenja puzavice
     CREEPER_GRIEFING:
       description: |
-        &a Uključi/isključi žalovanje puzavice
+        <green>Uključi/isključi žalovanje puzavice</green>
         zaštita pri paljenju
-        &a od posjetitelja otoka.
+        <green>od posjetitelja otoka.</green>
       name: Creeper griefing zaštita
       hint: Creeper žalovanje onemogućeno
     CROP_PLANTING:
-      description: '&a Postavite tko može saditi sjeme.'
+      description: '<green>Postavite tko može saditi sjeme.</green>'
       name: Sadnja usjeva
       hint: Sadnja usjeva onemogućena
     CROP_TRAMPLE:
@@ -1229,10 +1257,10 @@ protection:
     DRAGON_EGG:
       name: Zmajevo jaje
       description: |-
-        &a Sprječava interakciju sa zmajevim jajima.
+        <green>Sprječava interakciju sa zmajevim jajima.</green>
 
-        &c Ovo ga ne štiti od postojanja
-        &c postavljeni ili slomljeni.
+        <red>Ovo ga ne štiti od postojanja</red>
+        <red>postavljeni ili slomljeni.</red>
       hint: Interakcija sa zmajevim jajima onemogućena
     DYE:
       description: Spriječite upotrebu boje
@@ -1252,19 +1280,19 @@ protection:
       hint: Ender škrinje su onesposobljene u ovom svijetu
     ENDERMAN_DEATH_DROP:
       description: |-
-        &a Endermen će pasti
-        &a bilo koji blok su
-        &a holding ako je ubijen.
+        <green>Endermen će pasti</green>
+        <green>bilo koji blok su</green>
+        <green>holding ako je ubijen.</green>
       name: Krajmanov pad smrti
     ENDERMAN_GRIEFING:
       description: |-
-        &a Endermen može ukloniti
-        &a blokova od otoka
+        <green>Endermen može ukloniti</green>
+        <green>blokova od otoka</green>
       name: Enderman tuguje
     ENDERMAN_TELEPORT:
       description: |-
-        &a Endermen se može teleportirati
-        &a ako je aktivan.
+        <green>Endermen se može teleportirati</green>
+        <green>ako je aktivan.</green>
       name: Endermanov teleport
     ENDER_PEARL:
       description: Uključi/isključi upotrebu
@@ -1274,10 +1302,10 @@ protection:
       description: Prikaz ulaznih i izlaznih poruka
       island: '[name] otok'
       name: Ulaz/Izlaz iz poruka
-      now-entering: '&a Sada ulazimo u &b [name]&a .'
-      now-entering-your-island: '&a Sada ulazite na svoj otok: &b [name]'
-      now-leaving: '&a Sada napuštam &b [name]&a .'
-      now-leaving-your-island: '&a Sada napuštam vaš otok: &b [name]'
+      now-entering: '<green>Sada ulazimo u </green><aqua>[name]</aqua><green>.</green>'
+      now-entering-your-island: '<green>Sada ulazite na svoj otok: </green><aqua>[name]</aqua>'
+      now-leaving: '<green>Sada napuštam </green><aqua>[name]</aqua><green>.</green>'
+      now-leaving-your-island: '<green>Sada napuštam vaš otok: </green><aqua>[name]</aqua>'
     EXPERIENCE_BOTTLE_THROWING:
       name: Doživite bacanje boce
       description: Uključi/isključi bacanje boca iskustva.
@@ -1285,8 +1313,8 @@ protection:
     FIRE_BURNING:
       name: Vatra gori
       description: |-
-        &a Uključivanje/isključivanje može li vatra gorjeti
-        &a blokira ili ne.
+        <green>Uključivanje/isključivanje može li vatra gorjeti</green>
+        <green>blokira ili ne.</green>
     FIRE_EXTINGUISH:
       description: Uključite/isključite gašenje požara
       name: Ugasiti požar
@@ -1294,13 +1322,13 @@ protection:
     FIRE_IGNITE:
       name: Paljenje vatre
       description: |-
-        &a Uključivanje/isključivanje može li se zapaliti vatra
-        &a neigračkim sredstvima ili ne.
+        <green>Uključivanje/isključivanje može li se zapaliti vatra</green>
+        <green>neigračkim sredstvima ili ne.</green>
     FIRE_SPREAD:
       name: Širenje vatre
       description: |-
-        &a Uključivanje/isključivanje može li se vatra proširiti
-        &a u obližnje blokove ili ne.
+        <green>Uključivanje/isključivanje može li se vatra proširiti</green>
+        <green>u obližnje blokove ili ne.</green>
     FISH_SCOOPING:
       name: Grabljenje ribe
       description: Omogućuje vađenje ribe pomoću kante
@@ -1308,9 +1336,9 @@ protection:
     FLINT_AND_STEEL:
       name: Kremen i čelik
       description: |-
-        &a Dopustiti igračima da zapale vatru ili
-        &a logorske vatre pomoću kremena i čelika
-        &a ili požarni naboji.
+        <green>Dopustiti igračima da zapale vatru ili</green>
+        <green>logorske vatre pomoću kremena i čelika</green>
+        <green>ili požarni naboji.</green>
       hint: Kremen i čelik i vatreni naboji onemogućeni
     FURNACE:
       description: Uključi/isključi upotrebu
@@ -1322,19 +1350,19 @@ protection:
       hint: Korištenje vrata je onemogućeno
     GEO_LIMIT_MOBS:
       description: |-
-        &a Ukloni rulje koje odlaze
-        &a izvana zaštićeno
-        &otočni prostor
-      name: '&e Ograničite rulje na otok'
+        <green>Ukloni rulje koje odlaze</green>
+        <green>izvana zaštićeno</green>
+        <italic>točni prostor</italic>
+      name: '<yellow>Ograničite rulje na otok</yellow>'
     HARVEST:
       description: |-
-        &a Postavite tko može žeti usjeve.
-        &a Ne zaboravite dopustiti stavku
+        <green>Postavite tko može žeti usjeve.</green>
+        <green>Ne zaboravite dopustiti stavku</green>
         i preuzimanje također!
       name: Berba usjeva
       hint: Žetva usjeva onemogućena
     HIVE:
-      description: '&a Uključi/isključi sakupljanje košnice.'
+      description: '<green>Uključi/isključi sakupljanje košnice.</green>'
       name: Berba košnica
       hint: Žetva onemogućena
     HURT_TAMED_ANIMALS:
@@ -1358,24 +1386,24 @@ protection:
     ITEM_FRAME:
       name: Okvir predmeta
       description: |-
-        &a Prebaci interakciju.
-        &a Zaobilazi postavljanje ili razbijanje blokova
+        <green>Prebaci interakciju.</green>
+        <green>Zaobilazi postavljanje ili razbijanje blokova</green>
       hint: Upotreba okvira stavke onemogućena
     ITEM_FRAME_DAMAGE:
       description: |-
-        &a Rulje mogu oštetiti
-        &a predmet okviri
+        <green>Rulje mogu oštetiti</green>
+        <green>predmet okviri</green>
       name: Oštećenje okvira predmeta
     INVINCIBLE_VISITORS:
       description: |-
-        &a Konfigurirajte nepobjedivog posjetitelja
-        &a postavke.
-      name: '&e Nepobjedivi posjetitelji'
-      hint: '&c Posjetitelji zaštićeni'
+        <green>Konfigurirajte nepobjedivog posjetitelja</green>
+        <green>postavke.</green>
+      name: '<yellow>Nepobjedivi posjetitelji</yellow>'
+      hint: '<red>Posjetitelji zaštićeni</red>'
     ISLAND_RESPAWN:
       description: |-
-        &a Igrači se ponovno pojavljuju
-        &a na otoku
+        <green>Igrači se ponovno pojavljuju</green>
+        <green>na otoku</green>
       name: Respawn otoka
     ITEM_DROP:
       description: Prebaci spuštanje
@@ -1399,11 +1427,11 @@ protection:
     LECTERN:
       name: Lekterne
       description: |-
-        &a Omogućuje postavljanje knjiga na govornicu
-        &a ili da iz njega uzima knjige.
+        <green>Omogućuje postavljanje knjiga na govornicu</green>
+        <green>ili da iz njega uzima knjige.</green>
 
-        &c Ne sprječava igrače da
-        &c čitajući knjige.
+        <red>Ne sprječava igrače da</red>
+        <red>čitajući knjige.</red>
       hint: ne može staviti knjigu na govornicu ili uzeti knjigu s nje.
     LEVER:
       description: Uključi/isključi upotrebu
@@ -1411,32 +1439,32 @@ protection:
       hint: Upotreba poluge onemogućena
     LIMIT_MOBS:
       description: |-
-        &a Ograniči entitete od
-        &a spawning u ovoj igri
+        <green>Ograniči entitete od</green>
+        <green>spawning u ovoj igri</green>
         & način rada.
-      name: '&e Ograničite stvaranje tipa entiteta'
-      can: '&a Može se mrijestiti'
-      cannot: '&c Ne može se pojaviti'
+      name: '<yellow>Ograničite stvaranje tipa entiteta</yellow>'
+      can: '<green>Može se mrijestiti</green>'
+      cannot: '<red>Ne može se pojaviti</red>'
     LIQUIDS_FLOWING_OUT:
       name: Tekućine koje teku izvan otoka
       description: |-
-        &a Uključivanje/isključivanje može li tekućina teći van
-        &a zaštitnog raspona otoka.
-        &a Onemogućivanjem pomaže u izbjegavanju lave i vode
-        &a stvaranje kaldrme u području između
-        &a dva otoka.
+        <green>Uključivanje/isključivanje može li tekućina teći van</green>
+        <green>zaštitnog raspona otoka.</green>
+        <green>Onemogućivanjem pomaže u izbjegavanju lave i vode</green>
+        <green>stvaranje kaldrme u području između</green>
+        <green>dva otoka.</green>
 
-        &c Imajte na umu da će tekućine i dalje teći okomito.
-        &c Također se neće širiti vodoravno ako
-        &c postavljeni su izvan otoka
-        &c raspon zaštite.
+        <red>Imajte na umu da će tekućine i dalje teći okomito.</red>
+        <red>Također se neće širiti vodoravno ako</red>
+        <red>postavljeni su izvan otoka</red>
+        <red>raspon zaštite.</red>
     LOCK:
       description: Prebaci zaključavanje
       name: Otok brave
     CHANGE_SETTINGS:
       name: Promijeniti postavke
       description: |-
-        &a Dopusti promjenu člana
+        <green>Dopusti promjenu člana</green>
         &uloga može promijeniti postavke otoka.
     MILKING:
       description: Uključi/isključi mužnju krava
@@ -1456,8 +1484,8 @@ protection:
       name: Mrijesti čudovišta
     MOUNT_INVENTORY:
       description: |-
-        &a Uključi/isključi pristup
-        &a za postavljanje inventara
+        <green>Uključi/isključi pristup</green>
+        <green>za postavljanje inventara</green>
       name: Montirajte inventar
       hint: Montaža inventara onemogućena
     NAME_TAG:
@@ -1467,13 +1495,13 @@ protection:
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Prirodno stvorenje koje se mrijesti izvan dometa
       description: |-
-        &a Uključivanje/isključivanje bića (životinje i
-        &a čudovišta) mogu se prirodno rađati vani
-        &a područje zaštite otoka.
+        <green>Uključivanje/isključivanje bića (životinje i</green>
+        <green>čudovišta) mogu se prirodno rađati vani</green>
+        <green>područje zaštite otoka.</green>
 
-        &c Imajte na umu da to ne sprječava stvorenja
-        &c za stvaranje putem mob spawnera ili spawn-a
-        &c jaje.
+        <red>Imajte na umu da to ne sprječava stvorenja</red>
+        <red>za stvaranje putem mob spawnera ili spawn-a</red>
+        <red>jaje.</red>
     NOTE_BLOCK:
       description: Uključi/isključi upotrebu
       name: Blok bilješke
@@ -1481,47 +1509,47 @@ protection:
     OBSIDIAN_SCOOPING:
       name: Grabljenje opsidijana
       description: |-
-        &a Dopustite igračima da skupljaju opsidijan
-        &a s praznom kantom natrag u lavu.
+        <green>Dopustite igračima da skupljaju opsidijan</green>
+        <green>s praznom kantom natrag u lavu.</green>
 
-        &a Ovo pomaže početnicima koji nisu uspjeli
-        &a izgraditi svoj generator kaldrme.
+        <green>Ovo pomaže početnicima koji nisu uspjeli</green>
+        <green>izgraditi svoj generator kaldrme.</green>
 
-        &a Napomena: opsidijan se ne može pokupiti
-        &a ako postoje drugi blokovi opsidijana
-        &a unutar radijusa od 2 bloka.
-      scooping: '&a Pretvaranje opsidijana natrag u lavu. Budite oprezni sljedeći put!'
-      cooldown: '&c Morate pričekati prije nego što možete pokupiti još jedan blok opsidijana.'
+        <green>Napomena: opsidijan se ne može pokupiti</green>
+        <green>ako postoje drugi blokovi opsidijana</green>
+        <green>unutar radijusa od 2 bloka.</green>
+      scooping: '<green>Pretvaranje opsidijana natrag u lavu. Budite oprezni sljedeći put!</green>'
+      cooldown: '<red>Morate pričekati prije nego što možete pokupiti još jedan blok opsidijana.</red>'
       obsidian-nearby: >-
-        &c U blizini su blokovi od opsidijana, ne možete zagrabiti ovaj blok u
+        <red>U blizini su blokovi od opsidijana, ne možete zagrabiti ovaj blok u</red>
         lavu. ([radius])
     OFFLINE_GROWTH:
       description: |-
-        &a Kada je onemogućeno, biljke
-        &a neće rasti na otocima
-        &a gdje su svi članovi izvan mreže.
-        &a Može pomoći u smanjenju kašnjenja.
+        <green>Kada je onemogućeno, biljke</green>
+        <green>neće rasti na otocima</green>
+        <green>gdje su svi članovi izvan mreže.</green>
+        <green>Može pomoći u smanjenju kašnjenja.</green>
       name: Izvanmrežni rast
     OFFLINE_REDSTONE:
       description: |-
-        &a Kad je onemogućeno, crveni kamen
-        &a neće poslovati na otocima
-        &a gdje su svi članovi izvan mreže.
-        &a Može pomoći u smanjenju kašnjenja.
-        &a Ne utječe na otok mrijesta.
+        <green>Kad je onemogućeno, crveni kamen</green>
+        <green>neće poslovati na otocima</green>
+        <green>gdje su svi članovi izvan mreže.</green>
+        <green>Može pomoći u smanjenju kašnjenja.</green>
+        <green>Ne utječe na otok mrijesta.</green>
       name: Offline Crvena kamenčina
     PETS_STAY_AT_HOME:
       description: |-
-        &a Kada je aktivan, pripitomljeni ljubimci
-        &a može ići samo u i
-        &a ne može napustiti vlasnika
-        &rodni otok.
+        <green>Kada je aktivan, pripitomljeni ljubimci</green>
+        <green>može ići samo u i</green>
+        <green>ne može napustiti vlasnika</green>
+        odni otok.
       name: Kućni ljubimci ostaju kod kuće
     PISTON_PUSH:
       description: |-
-        &a Omogućite ovo kako biste spriječili
-        &a klipovi od guranja
-        &a blokovi izvan otoka
+        <green>Omogućite ovo kako biste spriječili</green>
+        <green>klipovi od guranja</green>
+        <green>blokovi izvan otoka</green>
       name: Zaštita od guranja klipa
     PLACE_BLOCKS:
       description: Uključi/isključi postavljanje
@@ -1530,14 +1558,14 @@ protection:
     PODZOL:
       name: Proizvodnja podzola na drvetu
       description: |-
-        &a Ako je onemogućeno, spriječit će
-        &a proizvodnju podzola na drvetu
-        &a kada rastu velika stabla
+        <green>Ako je onemogućeno, spriječit će</green>
+        <green>proizvodnju podzola na drvetu</green>
+        <green>kada rastu velika stabla</green>
     POTION_THROWING:
       name: Bacanje napitaka
       description: |-
-        &a Uključi/isključi bacanje napitaka.
-        &a Ovo uključuje prskanje i dugotrajne napitke.
+        <green>Uključi/isključi bacanje napitaka.</green>
+        <green>Ovo uključuje prskanje i dugotrajne napitke.</green>
       hint: Bacanje napitaka onemogućeno
     NETHER_PORTAL:
       description: Uključi/isključi upotrebu
@@ -1553,42 +1581,42 @@ protection:
       hint: Upotreba potisne ploče onemogućena
     PVP_END:
       description: |-
-        &c Omogući/onemogući PVP
-        &c na kraju.
+        <red>Omogući/onemogući PVP</red>
+        <red>na kraju.</red>
       name: Završi PVP
       hint: PVP onemogućen na kraju
-      enabled: '&c PVP na kraju je omogućen.'
-      disabled: '&a PVP na kraju je onemogućen.'
+      enabled: '<red>PVP na kraju je omogućen.</red>'
+      disabled: '<green>PVP na kraju je onemogućen.</green>'
     PVP_NETHER:
       description: |-
-        &c Omogući/onemogući PVP
-        &c u Netheru.
+        <red>Omogući/onemogući PVP</red>
+        <red>u Netheru.</red>
       name: Nizinski PVP
       hint: PVP onemogućen u Netheru
-      enabled: '&c PVP u Netheru je omogućen.'
-      disabled: '&a PVP u Netheru je onemogućen.'
+      enabled: '<red>PVP u Netheru je omogućen.</red>'
+      disabled: '<green>PVP u Netheru je onemogućen.</green>'
     PVP_OVERWORLD:
       description: |-
-        &c Omogući/onemogući PVP
-        &c na otoku.
+        <red>Omogući/onemogući PVP</red>
+        <red>na otoku.</red>
       name: Overworld PVP
-      hint: '&c PVP onemogućen u Overworldu'
-      enabled: '&c PVP u Overworldu je omogućen.'
-      disabled: '&a PVP u Overworldu je onemogućen.'
+      hint: '<red>PVP onemogućen u Overworldu</red>'
+      enabled: '<red>PVP u Overworldu je omogućen.</red>'
+      disabled: '<green>PVP u Overworldu je onemogućen.</green>'
     REDSTONE:
       description: Uključi/isključi upotrebu
       name: Redstone predmeti
       hint: Redstone interakcija onemogućena
     REMOVE_END_EXIT_ISLAND:
       description: |-
-        &a Sprječava krajnji izlaz
-        &a otok od generiranja
-        &a na koordinatama 0,0
+        <green>Sprječava krajnji izlaz</green>
+        <green>otok od generiranja</green>
+        <green>na koordinatama 0,0</green>
       name: Uklonite krajnji izlazni otok
     REMOVE_MOBS:
       description: |-
-        &a Uklonite čudovišta kada
-        &a teleportiranje na otok
+        <green>Uklonite čudovišta kada</green>
+        <green>teleportiranje na otok</green>
       name: Ukloni čudovišta
     RIDING:
       description: Uključite vožnju
@@ -1604,39 +1632,39 @@ protection:
       hint: Mrijest jaja onemogućena
     SPAWNER_SPAWN_EGGS:
       description: |-
-        &a Omogućuje promjenu vrste entiteta spawnera
-        &a pomoću jajašca mrijesta.
+        <green>Omogućuje promjenu vrste entiteta spawnera</green>
+        <green>pomoću jajašca mrijesta.</green>
       name: Mrijest jaja na mrijestionicama
       hint: promjena tipa entiteta spawnera korištenjem spawn jaja nije dopuštena
     SCULK_SENSOR:
       description: |-
-        &a Uključuje/isključuje sculk senzor
-        &a aktivacija.
+        <green>Uključuje/isključuje sculk senzor</green>
+        <green>aktivacija.</green>
       name: Sculk senzor
       hint: aktivacija sculk senzora je onemogućena
     SCULK_SHRIEKER:
       description: |-
-        &a Prebacuje sculk shrieker
-        &a aktivacija.
+        <green>Prebacuje sculk shrieker</green>
+        <green>aktivacija.</green>
       name: Sculk Škripac
       hint: aktivacija sculk shriekera je onemogućena
     SIGN_EDITING:
       description: |-
-        &a Omogućuje uređivanje teksta
-        &a od znakova
+        <green>Omogućuje uređivanje teksta</green>
+        <green>od znakova</green>
       name: Uređivanje znakova
       hint: uređivanje znakova je onemogućeno
     TNT_DAMAGE:
       description: |-
-        &a Dopusti TNT i TNT minska kolica
-        &a razbiti blokove i oštetiti
-        &a entiteta.
+        <green>Dopusti TNT i TNT minska kolica</green>
+        <green>razbiti blokove i oštetiti</green>
+        <green>entiteta.</green>
       name: TNT šteta
     TNT_PRIMING:
       description: |-
-        &a Sprječava punjenje TNT.
-        &a Ne poništava
-        &a Zaštita od kremena i čelika.
+        <green>Sprječava punjenje TNT.</green>
+        <green>Ne poništava</green>
+        <green>Zaštita od kremena i čelika.</green>
       name: TNT punjenje
       hint: TNT punjenje onemogućeno
     TRADING:
@@ -1650,13 +1678,13 @@ protection:
     TREES_GROWING_OUTSIDE_RANGE:
       name: Drveće raste izvan dometa
       description: |-
-        &a Uključivanje/isključivanje može li drveće rasti izvan
+        <green>Uključivanje/isključivanje može li drveće rasti izvan</green>
         Domet zaštite otoka ili ne.
-        &a Ne samo da će spriječiti postavljanje sadnica
-        &a izvan dometa zaštite otoka od
-        &a raste, ali će također blokirati generaciju
-        &a lišća/cjepanica izvan otoka, dakle
-        &a rezanje stabla.
+        <green>Ne samo da će spriječiti postavljanje sadnica</green>
+        <green>izvan dometa zaštite otoka od</green>
+        <green>raste, ali će također blokirati generaciju</green>
+        <green>lišća/cjepanica izvan otoka, dakle</green>
+        <green>rezanje stabla.</green>
     TURTLE_EGGS:
       description: Uključite drobljenje
       name: Jaja kornjače
@@ -1672,26 +1700,26 @@ protection:
     PREVENT_TELEPORT_WHEN_FALLING:
       name: Spriječiti teleportiranje pri padu
       description: |-
-        &a Spriječiti igrače da se teleportiraju
-        &a natrag na svoj otok pomoću naredbi
-        &a ako padaju.
-      hint: '&c Ne možete to učiniti dok padate.'
+        <green>Spriječiti igrače da se teleportiraju</green>
+        <green>natrag na svoj otok pomoću naredbi</green>
+        <green>ako padaju.</green>
+      hint: '<red>Ne možete to učiniti dok padate.</red>'
     VISITOR_KEEP_INVENTORY:
       name: Posjetitelji čuvaju inventar na smrt
       description: |-
-        &a Spriječiti igrače da izgube svoje
-        &a predmeti i iskustvo ako umru na
-        &a otok na kojem su oni posjetitelji.
-        &a
-        Članovi &a Islanda i dalje gube svoje predmete
-        &a ako umru na vlastitom otoku!
+        <green>Spriječiti igrače da izgube svoje</green>
+        <green>predmeti i iskustvo ako umru na</green>
+        <green>otok na kojem su oni posjetitelji.</green>
+        <green></green>
+        Članovi <green>Islanda i dalje gube svoje predmete</green>
+        <green>ako umru na vlastitom otoku!</green>
     SPAWN_PROTECTION:
       name: Spawn island void protection
       description: |-
-        &a When enabled, players who fall
-        &a into the void at the spawn island
-        &a will be teleported back to the
-        &a spawn point instead of dying.
+        <green>When enabled, players who fall</green>
+        <green>into the void at the spawn island</green>
+        <green>will be teleported back to the</green>
+        <green>spawn point instead of dying.</green>
     RAID_TRIGGER:
       name: Pokretanje racije
       description: Postavlja minimalni rang otoka potreban za pokretanje racije
@@ -1699,229 +1727,229 @@ protection:
     ENTITY_PORTAL_TELEPORT:
       name: Korištenje portala entiteta
       description: |-
-        &a Prebacuje ako entiteti (koji nisu igrači) mogu
-        &a koristiti portale za teleportiranje između
-        &a dimenzije
+        <green>Prebacuje ako entiteti (koji nisu igrači) mogu</green>
+        <green>koristiti portale za teleportiranje između</green>
+        <green>dimenzije</green>
     WIND_CHARGE:
       name: Vjetreni naboj
       description: |-
-        &a Prebacuje upotrebu vjetrenih naboja.
-        &a Ako je onemogućeno, posjetitelji ne mogu
-        &a koristiti vjetrene naboje na ovom otoku.
+        <green>Prebacuje upotrebu vjetrenih naboja.</green>
+        <green>Ako je onemogućeno, posjetitelji ne mogu</green>
+        <green>koristiti vjetrene naboje na ovom otoku.</green>
       hint: Upotreba vjetrenih naboja onemogućena
     WITHER_DAMAGE:
       name: Prebaci oštećenje venuća
       description: |-
-        &a Ako je aktivan, greben može
-        &a oštetiti blokove i igrače
+        <green>Ako je aktivan, greben može</green>
+        <green>oštetiti blokove i igrače</green>
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
-        &a Dopusti krevet i sidra za ponovno stvaranje
-        &a razbiti blokove i oštetiti
-        &a entiteta izvan granica otoka.
+        <green>Dopusti krevet i sidra za ponovno stvaranje</green>
+        <green>razbiti blokove i oštetiti</green>
+        <green>entiteta izvan granica otoka.</green>
       name: Oštećenje od eksplozije svjetskog bloka
     WORLD_TNT_DAMAGE:
       description: |-
-        &a Dopusti TNT i TNT minska kolica
-        &a razbiti blokove i oštetiti
-        &a entiteta izvan granica otoka.
+        <green>Dopusti TNT i TNT minska kolica</green>
+        <green>razbiti blokove i oštetiti</green>
+        <green>entiteta izvan granica otoka.</green>
       name: Svjetska TNT šteta
-  locked: '&c Ovaj otok je zaključan!'
-  locked-island-bypass: '&6 Ovaj [prefix_island] je zaključan, ali imate dozvolu za pristup.'
-  protected: '&c Otok zaštićen: [opis].'
-  world-protected: '&c Svijet zaštićen: [opis].'
-  spawn-protected: '&c Spawn zaštićeno: [opis].'
+  locked: '<red>Ovaj otok je zaključan!</red>'
+  locked-island-bypass: '<gold>Ovaj [prefix_island] je zaključan, ali imate dozvolu za pristup.</gold>'
+  protected: '<red>Otok zaštićen: [opis].</red>'
+  world-protected: '<red>Svijet zaštićen: [opis].</red>'
+  spawn-protected: '<red>Spawn zaštićeno: [opis].</red>'
   panel:
-    next: '&f Sljedeća stranica'
-    previous: '&f Prethodna stranica'
+    next: '<white>Sljedeća stranica</white>'
+    previous: '<white>Prethodna stranica</white>'
     mode:
       advanced:
-        name: '&6 Napredne postavke'
-        description: '&a Prikazuje razumnu količinu postavki.'
+        name: '<gold>Napredne postavke</gold>'
+        description: '<green>Prikazuje razumnu količinu postavki.</green>'
       basic:
-        name: '&a Osnovne postavke'
-        description: '&a Prikazuje najkorisnije postavke.'
+        name: '<green>Osnovne postavke</green>'
+        description: '<green>Prikazuje najkorisnije postavke.</green>'
       expert:
-        name: '&c Stručne postavke'
-        description: '&a Prikazuje sve dostupne postavke.'
-      click-to-switch: '&e Kliknite &7 za prebacivanje na &r [sljedeće]&r &7 .'
+        name: '<red>Stručne postavke</red>'
+        description: '<green>Prikazuje sve dostupne postavke.</green>'
+      click-to-switch: '<yellow>Kliknite </yellow><gray>za prebacivanje na </gray>[sljedeće]<gray>.</gray>'
     reset-to-default:
-      name: '&c Vrati na zadano'
+      name: '<red>Vrati na zadano</red>'
       description: |
-        &a Resetira &c &l SVE &r &a postavke na njihove
+        <green>Resetira </green><red><bold>SVE </bold></red><green>postavke na njihove</green>
         &zadana vrijednost.
       confirm: potvrdi
-      instructions: '&a Jeste li sigurni? Upisite &c "potvrdi" &a da biste resetirali sve.'
+      instructions: '<green>Jeste li sigurni? Upisite </green><red>"potvrdi" </red><green>da biste resetirali sve.</green>'
     PROTECTION:
-      title: '&6 Zaštita'
+      title: '<gold>Zaštita</gold>'
       description: |-
-        &a Postavke zaštite
-        &a za ovaj otok
+        <green>Postavke zaštite</green>
+        <green>za ovaj otok</green>
     SETTING:
-      title: '&6 Postavke'
+      title: '<gold>Postavke</gold>'
       description: |-
-        &a Opće postavke
-        &a za ovaj otok
+        <green>Opće postavke</green>
+        <green>za ovaj otok</green>
     WORLD_SETTING:
-      title: '&b [ime_svijeta] &6 Postavke'
-      description: '&a Postavke za ovaj svijet igre'
+      title: '<aqua>[ime_svijeta] </aqua><gold>Postavke</gold>'
+      description: '<green>Postavke za ovaj svijet igre</green>'
     WORLD_DEFAULTS:
-      title: '&b [world_name] &6 Svjetske zaštite'
+      title: '<aqua>[world_name] </aqua><gold>Svjetske zaštite</gold>'
       description: |
-        &a Postavke zaštite kada
+        <green>Postavke zaštite kada</green>
         & igrač je izvan svog otoka
     flag-item:
       name-layout: '&ime]'
       command-instructions:
         setname: |-
-          &a Odaberite rang koji može  
-          &a postaviti ime
+          <green>Odaberite rang koji može</green>
+          <green>postaviti ime</green>
         ban: |-
-          &a Odaberite rang koji može
+          <green>Odaberite rang koji može</green>
           banirati igrače
         unban: |-
-          &a Odaberite rang koji može 
-          &a deblokirati igrače
+          <green>Odaberite rang koji može</green>
+          <green>deblokirati igrače</green>
         expel: |-
-          &a Odaberi rang koji može 
-          &a izbaciti posjetitelje
+          <green>Odaberi rang koji može</green>
+          <green>izbaciti posjetitelje</green>
         team-invite: |-
-          &a Odaberite rang koji može 
-          &a pozvati
+          <green>Odaberite rang koji može</green>
+          <green>pozvati</green>
         team-kick: |-
-          &a Odaberi rang koji može
-          &a izbaciti
+          <green>Odaberi rang koji može</green>
+          <green>izbaciti</green>
         team-coop: |-
-          &a Odaberi rang koji može 
-          &a surađivati
+          <green>Odaberi rang koji može</green>
+          <green>surađivati</green>
         team-trust: |-
-          &a Odaberi rang koji može 
-          &a vjerovati
+          <green>Odaberi rang koji može</green>
+          <green>vjerovati</green>
         team-uncoop: |-
-          &a Odaberi rang koji može 
-          &a ukinuti suradnju
+          <green>Odaberi rang koji može</green>
+          <green>ukinuti suradnju</green>
         team-untrust: |-
-          &a Odaberite rang koji može  
-          &a ukloniti povjerenje
+          <green>Odaberite rang koji može</green>
+          <green>ukloniti povjerenje</green>
         team-promote: |-
-          &a Odaberite rang koji može
-          &a unaprijediti rang igrača
+          <green>Odaberite rang koji može</green>
+          <green>unaprijediti rang igrača</green>
         team-demote: |-
-          &a Odaberite rang koji može  
-          &a smanjiti rang igrača
+          <green>Odaberite rang koji može</green>
+          <green>smanjiti rang igrača</green>
         sethome: |-
-          &a Odaberi rang koji može
-          &a postaviti kuće
+          <green>Odaberi rang koji može</green>
+          <green>postaviti kuće</green>
         deletehome: |-
-          &a Odaberite rang koji može  
-          &a brisati kuće
+          <green>Odaberite rang koji može</green>
+          <green>brisati kuće</green>
         renamehome: |-
-          &a Odaberite rang koji može  
-          &a preimenovati kuće
+          <green>Odaberite rang koji može</green>
+          <green>preimenovati kuće</green>
         setcount: |-
-          &a Odaberite rang koji može  
-          &a promijeniti fazu
+          <green>Odaberite rang koji može</green>
+          <green>promijeniti fazu</green>
         border: |-
-          &a Odaberite rang koji može  
-          &a koristiti naredbu za granicu
+          <green>Odaberite rang koji može</green>
+          <green>koristiti naredbu za granicu</green>
       description-layout: |
-        &opis]
+        <italic>pis]</italic>
 
-        &e Lijevi klik &7 za kretanje prema dolje.
-        &e Desni klik &7 za kretanje prema gore.
+        <yellow>Lijevi klik </yellow><gray>za kretanje prema dolje.</gray>
+        <yellow>Desni klik </yellow><gray>za kretanje prema gore.</gray>
 
-        &7 Dopušteno za:
-      allowed-rank: '&3 - &a'
-      blocked-rank: '&3 - &c'
-      minimal-rank: '&3 - &2'
+        <gray>Dopušteno za:</gray>
+      allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
+      blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
+      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        &opis]
+        <italic>pis]</italic>
 
-        &e Kliknite &7 za otvaranje.
-      setting-cooldown: '&c Postavka je na hlađenju'
+        <yellow>Kliknite </yellow><gray>za otvaranje.</gray>
+      setting-cooldown: '<red>Postavka je na hlađenju</red>'
       setting-layout: |
-        &opis]
+        <italic>pis]</italic>
 
-        &e Kliknite &7 za prebacivanje.
+        <yellow>Kliknite </yellow><gray>za prebacivanje.</gray>
 
-        &7 Trenutna postavka: [postavka]
-      setting-active: '&a Aktivan'
-      setting-disabled: '&c Onemogućeno'
+        <gray>Trenutna postavka: [postavka]</gray>
+      setting-active: '<green>Aktivan</green>'
+      setting-disabled: '<red>Onemogućeno</red>'
 management:
   panel:
     title: Upravljanje BentoBoxom
     views:
       gamemodes:
-        name: '&6 načina igre'
-        description: '&e Kliknite &a za prikaz trenutno učitanih načina igre'
+        name: '<gold>načina igre</gold>'
+        description: '<yellow>Kliknite </yellow><green>za prikaz trenutno učitanih načina igre</green>'
         blueprints:
-          name: '&6 Nacrti'
-          description: '&a Otvara izbornik Admin Blueprint.'
+          name: '<gold>Nacrti</gold>'
+          description: '<green>Otvara izbornik Admin Blueprint.</green>'
         gamemode:
-          name: '&f [name]'
+          name: '<white>[name]</white>'
           description: |
-            &a Otoci: &b [otoci]
+            <green>Otoci: </green><aqua>[otoci]</aqua>
       addons:
-        name: '&6 Dodaci'
-        description: '&e Kliknite &a za prikaz trenutno učitanih dodataka'
+        name: '<gold>Dodaci</gold>'
+        description: '<yellow>Kliknite </yellow><green>za prikaz trenutno učitanih dodataka</green>'
       hooks:
-        name: '&6 Kuke'
-        description: '&e Kliknite &a za prikaz trenutno učitanih udica'
+        name: '<gold>Kuke</gold>'
+        description: '<yellow>Kliknite </yellow><green>za prikaz trenutno učitanih udica</green>'
     actions:
       reload:
-        name: '&c Ponovno učitaj'
-        description: '&e Kliknite &c &l dvaput &r &a za ponovno učitavanje BentoBoxa'
+        name: '<red>Ponovno učitaj</red>'
+        description: '<yellow>Kliknite </yellow><red><bold>dvaput </bold></red><green>za ponovno učitavanje BentoBoxa</green>'
     buttons:
       catalog:
-        name: '&6 Katalog dodataka'
-        description: '&a Otvara katalog dodataka'
+        name: '<gold>Katalog dodataka</gold>'
+        description: '<green>Otvara katalog dodataka</green>'
       credits:
-        name: '&6 kredita'
-        description: '&a Otvara kredite za BentoBox'
+        name: '<gold>kredita</gold>'
+        description: '<green>Otvara kredite za BentoBox</green>'
       empty-here:
-        name: '&b Ovo ovdje izgleda prazno...'
-        description: '&a Što ako pogledate naš katalog?'
+        name: '<aqua>Ovo ovdje izgleda prazno...</aqua>'
+        description: '<green>Što ako pogledate naš katalog?</green>'
     information:
       state:
-        name: '&6 Kompatibilnost'
+        name: '<gold>Kompatibilnost</gold>'
         description:
           COMPATIBLE: |
-            &a Pokretanje &e [name] [version]&a .
+            <green>Pokretanje </green><yellow>[name] [version]</yellow><green>.</green>
 
-            &a BentoBox trenutno radi na a
-            &a &l KOMPATIBILAN &r &a poslužiteljski softver i
-            &a verzija.
+            <green>BentoBox trenutno radi na a</green>
+            <green><bold>KOMPATIBILAN </bold></green><green>poslužiteljski softver i</green>
+            <green>verzija.</green>
 
-            &a Njegove su značajke u potpunosti dizajnirane za
-            &a trčanje u ovom okruženju.
+            <green>Njegove su značajke u potpunosti dizajnirane za</green>
+            <green>trčanje u ovom okruženju.</green>
           SUPPORTED: |
-            &a Pokretanje &e [name] [version]&a .
+            <green>Pokretanje </green><yellow>[name] [version]</yellow><green>.</green>
 
-            &a BentoBox trenutno radi na a
-            &a &l PODRŽAN &r &a poslužiteljski softver i
-            &a verzija.
+            <green>BentoBox trenutno radi na a</green>
+            <green><bold>PODRŽAN </bold></green><green>poslužiteljski softver i</green>
+            <green>verzija.</green>
 
-            &a Većina njegovih značajki radit će glatko
-            &a u ovom okruženju.
+            <green>Većina njegovih značajki radit će glatko</green>
+            <green>u ovom okruženju.</green>
           NOT_SUPPORTED: |
-            &a Pokretanje &e [name] [version]&a .
+            <green>Pokretanje </green><yellow>[name] [version]</yellow><green>.</green>
 
-            &a BentoBox trenutno radi na a
-            &6 &l NIJE PODRŽAN &r &a poslužiteljski softver ili
-            &a verzija.
+            <green>BentoBox trenutno radi na a</green>
+            <gold><bold>NIJE PODRŽAN </bold></gold><green>poslužiteljski softver ili</green>
+            <green>verzija.</green>
 
-            &a Dok će većina njegovih značajki raditi
-            &a ispravno, &6 grešaka specifičnih za platformu ili
-            Za očekivati ​​je &6 pitanja&a .
+            <green>Dok će većina njegovih značajki raditi</green>
+            <green>ispravno, </green><gold>grešaka specifičnih za platformu ili</gold>
+            Za očekivati ​​je <gold>pitanja</gold><green>.</green>
           INCOMPATIBLE: |
-            &a Pokretanje &e [name] [version]&a .
+            <green>Pokretanje </green><yellow>[name] [version]</yellow><green>.</green>
 
-            &a BentoBox trenutno radi na
-            &c &l NEKOMPATIBILNO &r &a poslužiteljski softver ili
-            &a verzija.
+            <green>BentoBox trenutno radi na</green>
+            <red><bold>NEKOMPATIBILNO </bold></red><green>poslužiteljski softver ili</green>
+            <green>verzija.</green>
 
-            &c Može doći do čudnog ponašanja i grešaka
-            &c i većina značajki može biti nestabilna.
+            <red>Može doći do čudnog ponašanja i grešaka</red>
+            <red>i većina značajki može biti nestabilna.</red>
 catalog:
   panel:
     GAMEMODES:
@@ -1930,33 +1958,33 @@ catalog:
       title: Katalog dodataka
     views:
       gamemodes:
-        name: '&6 načina igre'
+        name: '<gold>načina igre</gold>'
         description: |
-          &e Kliknite &a za pregledavanje
-          &a dostupni službeni Gamemodes.
+          <yellow>Kliknite </yellow><green>za pregledavanje</green>
+          <green>dostupni službeni Gamemodes.</green>
       addons:
-        name: '&6 Dodaci'
+        name: '<gold>Dodaci</gold>'
         description: |
-          &e Kliknite &a za pregledavanje
+          <yellow>Kliknite </yellow><green>za pregledavanje</green>
           & dostupni službeni dodaci.
     icon:
       description-template: |
-        &8 [tema]
-        &a [instaliraj]
+        <dark_gray>[tema]</dark_gray>
+        <green>[instaliraj]</green>
 
-        &7 &o [opis]
+        <gray><italic>[opis]</italic></gray>
 
-        &e Kliknite &a da biste dobili vezu na
+        <yellow>Kliknite </yellow><green>da biste dobili vezu na</green>
         & najnovije izdanje.
       already-installed: Već instalirano!
       install-now: Sada instalirati!
     empty-here:
-      name: '&b Ovo ovdje izgleda prazno...'
+      name: '<aqua>Ovo ovdje izgleda prazno...</aqua>'
       description: |
-        &c BentoBox se nije mogao spojiti na GitHub.
+        <red>BentoBox se nije mogao spojiti na GitHub.</red>
 
-        &a Dopusti BentoBoxu da se poveže s GitHubom u
-        &a konfiguraciju ili pokušajte ponovno kasnije.
+        <green>Dopusti BentoBoxu da se poveže s GitHubom u</green>
+        <green>konfiguraciju ili pokušajte ponovno kasnije.</green>
 enums:
   DamageCause:
     CONTACT: Kontakt
@@ -1993,62 +2021,100 @@ enums:
     WORLD_BORDER: Svjetska granica
 panel:
   credits:
-    title: '&8 [name] &2 kredita'
+    title: '<dark_gray>[name] </dark_gray><dark_green>kredita</dark_green>'
     contributor:
-      name: '&a [name]'
+      name: '<green>[name]</green>'
       description: |
-        &a Predaje: &b [commits]
+        <green>Predaje: </green><aqua>[commits]</aqua>
     empty-here:
-      name: '&c Ovo ovdje izgleda prazno...'
+      name: '<red>Ovo ovdje izgleda prazno...</red>'
       description: |
-        &c BentoBox nije mogao okupiti suradnike
-        &c za ovaj dodatak.
+        <red>BentoBox nije mogao okupiti suradnike</red>
+        <red>za ovaj dodatak.</red>
 
-        &a Dopusti BentoBoxu da se poveže s GitHubom u
-        &a konfiguraciju ili pokušajte ponovno kasnije.
+        <green>Dopusti BentoBoxu da se poveže s GitHubom u</green>
+        <green>konfiguraciju ili pokušajte ponovno kasnije.</green>
 panels:
   island_homes:
-    title: '&2&l Vaši [prefix_island] domovi'
+    title: '<dark_green><bold>Vaši [prefix_island] domovi</bold></dark_green>'
     buttons:
-      name: '&l [name]'
+      name: '<bold>[name]</bold>'
   island_creation:
-    title: '&2&l Odaberi [prefix_an-island]'
+    title: '<dark_green><bold>Odaberi [prefix_an-island]</bold></dark_green>'
     buttons:
       bundle:
-        name: '&l [name]'
+        name: '<bold>[name]</bold>'
         description: '[description]'
-        uses: '&a Koristio si [number]/[max]'
-        unlimited: '&a Neograničena upotreba dozvoljena'
-        cost: '&e Cijena: [cost]'
+        uses: '<green>Koristio si [number]/[max]</green>'
+        unlimited: '<green>Neograničena upotreba dozvoljena</green>'
+        cost: '<yellow>Cijena: [cost]</yellow>'
   language:
-    title: '&2&l Odaberite svoj jezik'
-    edited: '&c Promijenjeno na [lang]'
+    title: '<dark_green><bold>Odaberite svoj jezik</bold></dark_green>'
+    edited: '<red>Promijenjeno na [lang]</red>'
     buttons:
       language:
-        name: '&f&l [name]'
+        name: '<white><bold>[name]</bold></white>'
         description: |-
           [authors]
           |[selected]
-        authors: '&7 Autori:'
-        author: '&7 - &b [name]'
-        selected: '&a Trenutno odabrano.'
+        authors: '<gray>Autori:</gray>'
+        author: '<gray>- </gray><aqua>[name]</aqua>'
+        selected: '<green>Trenutno odabrano.</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] zamjenskih oznaka</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] zamjenskih oznaka</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(deaktivirano)</italic></red>'
+        hint: '<yellow>Kliknite </yellow><gray>za prebacivanje.</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] zamjenskih oznaka</gray>'
+        hint: '<yellow>Kliknite </yellow><gray>za istraživanje.</gray>'
+      leaf-folder:
+        hint: '<yellow>Lijevi klik </yellow><gray>za prebacivanje. · </gray><yellow>Desni klik </yellow><gray>za istraživanje.</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] stavki</dark_gray>'
+        disabled: '<red><italic>(neki deaktivirani)</italic></red>'
+        hint: '<yellow>Kliknite </yellow><gray>za prebacivanje svih.</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(prazno)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>Lijevi klik </yellow><gray>za prebacivanje. · </gray><yellow>Desni klik </yellow><gray>za prebacivanje svih.</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(prazno)</dark_gray>'
+      back:
+        name: '<white><bold>Natrag</bold></white>'
+        description: '<gray>Povratak na popis dodataka</gray>'
   buttons:
     previous:
-      name: '&f&l Prethodna Stranica'
-      description: '&7 Prebaci se na [number] stranicu'
+      name: '<white><bold>Prethodna Stranica</bold></white>'
+      description: '<gray>Prebaci se na [number] stranicu</gray>'
     next:
-      name: '&f&l Sljedeća Stranica'
-      description: '&7 Prebaci se na [number] stranicu'
+      name: '<white><bold>Sljedeća Stranica</bold></white>'
+      description: '<gray>Prebaci se na [number] stranicu</gray>'
   tips:
-    click-to-next: '&e Kliknite &7 za sljedeće.'
-    click-to-previous: '&e Klikni &7 za prethodno.'
-    click-to-choose: '&e Klikni &7 za odabir.'
-    click-to-toggle: '&e Kliknite &7 za prebacivanje.'
-    left-click-to-cycle-down: '&e Lijevi klik &7 za cikliranje prema dolje.'
-    right-click-to-cycle-up: '&e Desni klik &7 za ciklus prema gore.'
+    click-to-next: '<yellow>Kliknite </yellow><gray>za sljedeće.</gray>'
+    click-to-previous: '<yellow>Klikni </yellow><gray>za prethodno.</gray>'
+    click-to-choose: '<yellow>Klikni </yellow><gray>za odabir.</gray>'
+    click-to-toggle: '<yellow>Kliknite </yellow><gray>za prebacivanje.</gray>'
+    left-click-to-cycle-down: '<yellow>Lijevi klik </yellow><gray>za cikliranje prema dolje.</gray>'
+    right-click-to-cycle-up: '<yellow>Desni klik </yellow><gray>za ciklus prema gore.</gray>'
 successfully-loaded: >
-  &6 ____ _ ____ &6 | _ \ | | | _ \ &7 od &a tastybento &7 i &a Poslovitch &6 |
-  |_) | ___ _ __ | |_ ___ | |_) | _____ __ &7 2017. - 2023 &6 | _ < / _ \ '_ \|
-  __/ _ \| _ < / _ \ \/ / &6 | |_) | __/ | | | || (_) | |_) | (_) > < &b v&e
-  [version] &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\ &8 Učitano za &e
-  [vrijeme]&8 ms.
+  <gold>____ _ ____ </gold><gold>| _ \ | | | _ \ </gold><gray>od </gray><green>tastybento </green><gray>i </gray><green>Poslovitch </green><gold>|</gold>
+  |_) | ___ _ __ | |_ ___ | |_) | _____ __ <gray>2017. - 2023 </gray><gold>| _ < / _ \ '_ \|</gold>
+  __/ _ \| _ < / _ \ \/ / <gold>| |_) | __/ | | | || (_) | |_) | (_) > < </gold><aqua>v</aqua><yellow></yellow>
+  [version] <gold>|____/ \___|_| |_|\__\___/|____/ \___/_/\_\ </gold><dark_gray>Učitano za </dark_gray><yellow></yellow>
+  [vrijeme]<dark_gray>ms.</dark_gray>

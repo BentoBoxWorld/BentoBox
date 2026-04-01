@@ -429,7 +429,8 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
         IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
         ConversationContext ctx = mock(ConversationContext.class);
 
-        assertEquals("commands.island.team.invite.gui.enter-name", prompt.getPromptText(ctx));
+        // getPromptText sends via User.sendRawMessage and returns empty string
+        assertEquals("", prompt.getPromptText(ctx));
     }
 
     @Test
