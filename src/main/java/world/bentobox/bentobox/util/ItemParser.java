@@ -40,6 +40,8 @@ import world.bentobox.bentobox.BentoBox;
 @SuppressWarnings("removal")
 public class ItemParser {
 
+    private static final int MAX_AMOUNT = 99;
+
     private ItemParser() {} // private constructor to hide the implicit public one.
     /**
      * Parse given string to ItemStack.
@@ -184,7 +186,7 @@ public class ItemParser {
      * @return ItemStack with material from first array element and amount based on second array element.
      */
     private static ItemStack parseItemQuantity(String[] part) {
-        int reqAmount = Integer.parseInt(part[1]);
+        int reqAmount = clampAmount(Integer.parseInt(part[1]), part[0]);
         Material reqItem = Material.getMaterial(part[0].toUpperCase(java.util.Locale.ENGLISH));
 
         if (reqItem == null) {
@@ -265,7 +267,7 @@ public class ItemParser {
         // TODO: Set extended and upgraded settings.
         potionMeta.setBasePotionType(type);
         result.setItemMeta(potionMeta);
-        result.setAmount(Integer.parseInt(part[5]));
+        result.setAmount(clampAmount(Integer.parseInt(part[5]), part[0]));
         return result;
     }
 
@@ -312,7 +314,7 @@ public class ItemParser {
             material = Material.POTION;
         }
 
-        ItemStack result = new ItemStack(material, Integer.parseInt(part[2]));
+        ItemStack result = new ItemStack(material, clampAmount(Integer.parseInt(part[2]), part[0]));
 
         if (result.getItemMeta() instanceof PotionMeta meta) {
             PotionType potionType = Enums.getIfPresent(PotionType.class, part[1].toUpperCase(Locale.ENGLISH)).
@@ -337,7 +339,7 @@ public class ItemParser {
                 BentoBox.getInstance().logError("Could not parse banner item " + part[0] + " so using a white banner.");
                 bannerMat = Material.WHITE_BANNER;
             }
-            ItemStack result = new ItemStack(bannerMat, Integer.parseInt(part[1]));
+            ItemStack result = new ItemStack(bannerMat, clampAmount(Integer.parseInt(part[1]), part[0]));
 
             BannerMeta meta = (BannerMeta) result.getItemMeta();
             if (meta != null) {
@@ -450,6 +452,30 @@ public class ItemParser {
 
     /**
      * Check if given sting is an integer.
+    /**
+     * Clamp item stack amount to valid serialization range [1, 99].
+     * Logs a warning if clamping occurs.
+     * @param amount the requested amount
+     * @param context description for the warning message (e.g., the material name)
+     * @return clamped amount
+     */
+    private static int clampAmount(int amount, String context) {
+        if (amount > MAX_AMOUNT) {
+            BentoBox.getInstance().logWarning(
+                    "Item " + context + " has quantity " + amount + " which exceeds max " + MAX_AMOUNT
+                            + ". Clamping to " + MAX_AMOUNT + ".");
+            return MAX_AMOUNT;
+        }
+        if (amount < 1) {
+            BentoBox.getInstance().logWarning(
+                    "Item " + context + " has quantity " + amount + " which is less than 1. Clamping to 1.");
+            return 1;
+        }
+        return amount;
+    }
+
+    /**
+     * Check if given string is an integer.
      * @param string Value that must be checked.
      * @return {@code true} if value is integer, {@code false} otherwise.
      */
