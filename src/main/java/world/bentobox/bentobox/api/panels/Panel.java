@@ -11,10 +11,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.eclipse.jdt.annotation.NonNull;
 
+import net.kyori.adventure.text.Component;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
+import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.util.heads.HeadRequester;
 
@@ -82,18 +84,18 @@ public class Panel implements HeadRequester, InventoryHolder {
     /**
      * @since 1.7.0
      */
-    @SuppressWarnings("deprecation")
     protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener,
             Type type) {
         this.name = name;
         this.items = items;
 
-        // Create panel
+        // Create panel with Component-based title
+        Component title = name != null ? Util.parseMiniMessageOrLegacy(name) : Component.empty();
         switch (type) {
-        case INVENTORY -> inventory = Bukkit.createInventory(null, fixSize(size), name);
-        case HOPPER -> inventory = Bukkit.createInventory(null, InventoryType.HOPPER, name);
-        case DROPPER -> inventory = Bukkit.createInventory(null, InventoryType.DROPPER, name);
-        case ANVIL -> inventory = Bukkit.createInventory(null, InventoryType.ANVIL, name);
+        case INVENTORY -> inventory = Bukkit.createInventory(null, fixSize(size), title);
+        case HOPPER -> inventory = Bukkit.createInventory(null, InventoryType.HOPPER, title);
+        case DROPPER -> inventory = Bukkit.createInventory(null, InventoryType.DROPPER, title);
+        case ANVIL -> inventory = Bukkit.createInventory(null, InventoryType.ANVIL, title);
         }
 
         // Fill the inventory and return

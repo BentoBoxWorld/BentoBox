@@ -4,55 +4,57 @@ meta:
     - Poslovitch
   banner: YELLOW_BANNER:1:STRIPE_TOP:BLUE:STRIPE_BOTTOM:RED
 prefixes:
-  bentobox: '&6 BentoBox &7 &l > &r'
+  bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
   island: insulă
   Island: Insulă
+  Islands: Insule
   an-island: o insulă
   islands: insule
 general:
-  success: '&a Succes!'
+  success: '<green>Succes!</green>'
   invalid: Invalid
   beta: >-
-    &d&l Această comandă este în versiune beta. Asigurați -vă că aveți copii de
+    <light_purple><bold>Această comandă este în versiune beta. Asigurați -vă că aveți copii de</bold></light_purple>
     rezervă!
   errors:
-    command-cancelled: '&c Comanda anulată.'
-    no-permission: '&c Nu aveți permisiunea de a executa această comandă (&7 [permission] &c).'
+    command-cancelled: '<red>Comanda anulată.</red>'
+    no-permission: '<red>Nu aveți permisiunea de a executa această comandă (</red><gray>[permission] </gray><red>).</red>'
     insufficient-rank: >-
-      &c Rangul dvs. nu este suficient de ridicat pentru a face acest lucru! (&7
-      [rank] &c)
-    use-in-game: '&c Această comandă este disponibilă numai în joc.'
-    use-in-console: '&c Această comandă este disponibilă numai în consolă.'
-    no-team: '&c Nu aveți o echipă!'
-    no-island: '&c Nu aveți o insulă!'
-    player-has-island: '&c Player are deja o insulă!'
-    player-has-no-island: '&c Acel jucător nu are insulă!'
-    already-have-island: '&c Ai deja o insulă!'
-    no-safe-location-found: '&c Nu am putut găsi un loc sigur pentru a vă teleporta pe insulă.'
-    not-owner: '&c Nu sunteți proprietarul insulei!'
-    player-is-not-owner: '&b [name] &c nu este proprietarul unei insule!'
-    not-in-team: '&c Jucătorul respectiv nu se află în echipa ta!'
-    offline-player: '&c Playerul respectiv este offline sau nu există.'
-    unknown-player: '&c [name] este un jucător necunoscut'
-    general: '&c Această comandă nu este încă pregătită - contactați administratorul'
-    unknown-command: '&c Comandă necunoscută. Faceți &b /[label] ajutor &c pentru ajutor.'
-    wrong-world: '&c Nu ești în lumea potrivită pentru a face asta!'
+      <red>Rangul dvs. nu este suficient de ridicat pentru a face acest lucru! (</red><gray></gray>
+      [rank] <red>)</red>
+    use-in-game: '<red>Această comandă este disponibilă numai în joc.</red>'
+    use-in-console: '<red>Această comandă este disponibilă numai în consolă.</red>'
+    no-team: '<red>Nu aveți o echipă!</red>'
+    no-island: '<red>Nu aveți o insulă!</red>'
+    player-has-island: '<red>Player are deja o insulă!</red>'
+    player-has-no-island: '<red>Acel jucător nu are insulă!</red>'
+    already-have-island: '<red>Ai deja o insulă!</red>'
+    no-safe-location-found: '<red>Nu am putut găsi un loc sigur pentru a vă teleporta pe insulă.</red>'
+    not-owner: '<red>Nu sunteți proprietarul insulei!</red>'
+    player-is-not-owner: '<aqua>[name] </aqua><red>nu este proprietarul unei insule!</red>'
+    not-in-team: '<red>Jucătorul respectiv nu se află în echipa ta!</red>'
+    offline-player: '<red>Playerul respectiv este offline sau nu există.</red>'
+    unknown-player: '<red>[name] este un jucător necunoscut</red>'
+    general: '<red>Această comandă nu este încă pregătită - contactați administratorul</red>'
+    unknown-command: '<red>Comandă necunoscută. Faceți </red><aqua>/[label] ajutor </aqua><red>pentru ajutor.</red>'
+    wrong-world: '<red>Nu ești în lumea potrivită pentru a face asta!</red>'
     you-must-wait: >-
-      &c Trebuie să așteptați [number] s înainte de a putea efectua comanda din
+      <red>Trebuie să așteptați [number] s înainte de a putea efectua comanda din</red>
       nou.
-    must-be-positive-number: '&c [number] nu este un număr pozitiv valid.'
-    not-on-island: '&c Nu ești pe insulă!'
-    slow-down: '&c Încetinește. Apasă mai încet.'
+    must-be-positive-number: '<red>[number] nu este un număr pozitiv valid.</red>'
+    not-on-island: '<red>Nu ești pe insulă!</red>'
+    slow-down: '<red>Încetinește. Apasă mai încet.</red>'
   worlds:
     overworld: Lumea de Sus
     nether: Nether
     the-end: Sfârșitul
 commands:
   help:
-    header: '&7 =========== &c [label] ajutor &7 ==========='
-    syntax: '&b [usage] &a [parameters]&7 : &e [description]'
-    syntax-no-parameters: '&b [usage]&7 : &e [description]'
-    end: '&7 ================================='
+    header: '<gray>=========== </gray><red>[label] ajutor </red><gray>===========</gray>'
+    syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
+    syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
+    end: '<gray>=================================</gray>'
+    page: '<gray>Pagina </gray><yellow>[page]</yellow><gray> din </gray><yellow>[total]</yellow>'
     parameters: '[command]'
     description: comanda de ajutor
     console: Consolă
@@ -64,206 +66,206 @@ commands:
         modificați numărul de case permise pe această insulă sau pe insula
         jucătorului
       parameters: <număr / jucător> <număr> [numele insulei]
-      max-homes-set: '&a [nume] - Setați casele maxime ale insulei la [număr]'
+      max-homes-set: '<green>[nume] - Setați casele maxime ale insulei la [număr]</green>'
       errors:
         unknown-island: Insulă necunoscută! [nume]
     resethome:
       description: Resetați casa jucătorului la valoarea implicită
       parameters: <player> [numele insulei]
-      cleared: '&b Resetare acasă. [nume]'
+      cleared: '<aqua>Resetare acasă. [nume]</aqua>'
     resets:
       description: editează resetările jucătorilor
       set:
         description: setează de câte ori acest jucător își resetează insula
         parameters: <player> <resets>
-        success: '&a Setați cu succes resetările lui &b[name]&a la &b[number]&a. '
+        success: '<green>Setați cu succes resetările lui </green><aqua>[name]</aqua><green>la </green><aqua>[number]</aqua><green>. </green>'
       reset:
         description: resetează de câte ori acest jucător își resetează insula la 0
         parameters: <player>
-        success-everyone: '&a Resetați cu succes &b resetați toți &a la &b 0  &a.'
-        success: '&a Resetați cu succes &b [number] &a se resetează la &b 0 &a.'
+        success-everyone: '<green>Resetați cu succes </green><aqua>resetați toți </aqua><green>la </green><aqua>0  </aqua><green>.</green>'
+        success: '<green>Resetați cu succes </green><aqua>[number] </aqua><green>se resetează la </green><aqua>0 </aqua><green>.</green>'
       add:
         description: adaugă de câte ori acest jucător își resetează insula
         parameters: <player> <resets>
         success: >-
-          &a Adăugat cu succes &b [number] &a se resetează la &b [name],
-          crescând totalul la &b [total] &a se resetează.
+          <green>Adăugat cu succes </green><aqua>[number] </aqua><green>se resetează la </green><aqua>[name],</aqua>
+          crescând totalul la <aqua>[total] </aqua><green>se resetează.</green>
       remove:
         description: elimină de câte ori acest jucător își resetează insula
         parameters: <player> <resetează>
         success: >-
-          &a Eliminat cu succes &b [number] &a se resetează la &b [name],
-          scăzând totalul la &b [total] &a se resetează.
+          <green>Eliminat cu succes </green><aqua>[number] </aqua><green>se resetează la </green><aqua>[name],</aqua>
+          scăzând totalul la <aqua>[total] </aqua><green>se resetează.</green>
     purge:
       parameters: '[zile]'
       description: insulele de epurare abandonate mai mult de [days]
       days-one-or-more: Trebuie să aibă cel puțin o zi sau mai mult
-      purgable-islands: '&a S-au găsit [number] insule purificabile.'
+      purgable-islands: '<green>S-au găsit [number] insule purificabile.</green>'
       too-many: >
-        &b Acest lucru este mult și ar putea dura foarte mult timp pentru a
+        <aqua>Acest lucru este mult și ar putea dura foarte mult timp pentru a</aqua>
         șterge.
 
-        &b Luați în considerare utilizarea pluginului Regionerator pentru a
+        <aqua>Luați în considerare utilizarea pluginului Regionerator pentru a</aqua>
         șterge bucăți din lume
 
-        &b și setarea keep-previous-island-on-reset: true în config.yml din
+        <aqua>și setarea keep-previous-island-on-reset: true în config.yml din</aqua>
         BentoBox.
 
-        &b Apoi executați o purjare.
+        <aqua>Apoi executați o purjare.</aqua>
       purge-in-progress: >-
-        &c Purjare în curs. Utilizați &b /[label] oprire de purjare &c pentru a
+        <red>Purjare în curs. Utilizați </red><aqua>/[label] oprire de purjare </aqua><red>pentru a</red>
         anula.
       scanning: >-
-        &a Scanarea insulelor din baza de date. Acest lucru poate dura ceva
+        <green>Scanarea insulelor din baza de date. Acest lucru poate dura ceva</green>
         timp, în funcție de câți ai...
-      scanning-in-progress: '&c Scanare în curs, așteptați'
-      none-found: '&c Nu s-au găsit insule de epurat.'
-      total-islands: '&a Aveți [număr] insule în baza de date în toate lumi.'
-      number-error: '&c Argumentul trebuie să fie un număr de zile'
-      confirm: '&d Tastați &b /[label] purge confirm &d pentru a începe purjarea'
-      completed: '&o Purjarea sa oprit.'
+      scanning-in-progress: '<red>Scanare în curs, așteptați</red>'
+      none-found: '<red>Nu s-au găsit insule de epurat.</red>'
+      total-islands: '<green>Aveți [număr] insule în baza de date în toate lumi.</green>'
+      number-error: '<red>Argumentul trebuie să fie un număr de zile</red>'
+      confirm: '<light_purple>Tastați </light_purple><aqua>/[label] purge confirm </aqua><light_purple>pentru a începe purjarea</light_purple>'
+      completed: '<italic>Purjarea sa oprit.</italic>'
       see-console-for-status: >-
-        &a început o purjare. Consultați consola pentru stare sau utilizați &b
-        /[label] starea de purjare &a.
-      no-purge-in-progress: '&c În prezent nu există nicio purjare în curs.'
+        <green>început o purjare. Consultați consola pentru stare sau utilizați </green><aqua></aqua>
+        /[label] starea de purjare <green>.</green>
+      no-purge-in-progress: '<red>În prezent nu există nicio purjare în curs.</red>'
       regions:
         parameters: '[days]'
         description: insulele de purjare prin ștergerea fișierelor din regiunea veche
-        confirm: '&d Tip &b /[label] purge regions confirm &d să înceapă purjarea'
+        confirm: '<light_purple>Tip </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>să înceapă purjarea</light_purple>'
       protect:
         description: comutați protecția de purjare a insulei
-        move-to-island: '&c Mutați-vă mai întâi pe o insulă!'
-        protecting: '&o Insulă de protecție împotriva purjării.'
-        unprotecting: '&a Îndepărtarea protecției de purjare.'
+        move-to-island: '<red>Mutați-vă mai întâi pe o insulă!</red>'
+        protecting: '<italic>Insulă de protecție împotriva purjării.</italic>'
+        unprotecting: '<green>Îndepărtarea protecției de purjare.</green>'
       stop:
         description: opriți o purjare în curs
         stopping: Oprirea purjării
       unowned:
         description: curățați insulele neproprietate
-        unowned-islands: '&a S-au găsit [number] insule neproprietate. '
+        unowned-islands: '<green>S-au găsit [number] insule neproprietate. </green>'
       status:
         description: afișează starea purjării
         status: >-
-          &b [purged] &a insule purjate din &b [purgeable] &7 (&b [percentage]%
-          &7) &a.
+          <aqua>[purged] </aqua><green>insule purjate din </green><aqua>[purgeable] </aqua><gray>(</gray><aqua>[percentage]%</aqua>
+          <gray>) </gray><green>.</green>
     team:
       description: gestionează echipe
       add:
         parameters: <proprietar> <jucător>
         description: adaugă jucător în echipa proprietarului
-        name-not-owner: '&c [name] nu este proprietarul.'
+        name-not-owner: '<red>[name] nu este proprietarul.</red>'
         name-has-island: >-
-          &c [name] are o insulă. Anulați înregistrarea sau ștergeți-le mai
+          <red>[name] are o insulă. Anulați înregistrarea sau ștergeți-le mai</red>
           întâi!
-        success: '&b [name] &a a fost adăugat pe insula lui &b [owner] &a.'
+        success: '<aqua>[name] </aqua><green>a fost adăugat pe insula lui </green><aqua>[owner] </aqua><green>.</green>'
       disband:
         parameters: <proprietar>
         description: desființa echipa proprietarului
-        use-disband-owner: '&c Nu este proprietar! Folosiți disband [owner].'
-        disbanded: '&c Administratorul v-a desființat echipa!'
-        success: Echipa &b [name] &a a fost desființată.
+        use-disband-owner: '<red>Nu este proprietar! Folosiți disband [owner].</red>'
+        disbanded: '<red>Administratorul v-a desființat echipa!</red>'
+        success: 'Echipa <aqua>[name] </aqua><green>a fost desființată.</green>'
       fix:
         description: scanează și remediază apartenența la insulă în baza de date
         scanning: Se scanează baza de date ...
-        duplicate-owner: '&c Player deține mai multe insule în baza de date: [name]'
-        player-has: '&c Jucătorul [name] are [number] de insule'
-        duplicate-member: '&c Player [name] este membru al mai multor insule din baza de date'
-        rank-on-island: '&c [rank] pe insulă la [xyz]'
-        fixed: '&a Reparat'
-        done: '&o scanare'
+        duplicate-owner: '<red>Player deține mai multe insule în baza de date: [name]</red>'
+        player-has: '<red>Jucătorul [name] are [number] de insule</red>'
+        duplicate-member: '<red>Player [name] este membru al mai multor insule din baza de date</red>'
+        rank-on-island: '<red>[rank] pe insulă la [xyz]</red>'
+        fixed: '<green>Reparat</green>'
+        done: '<italic>scanare</italic>'
       kick:
         parameters: <jucător de echipă>
         description: lovi cu piciorul un jucător dintr-o echipă
-        cannot-kick-owner: '&c Nu poți da lovitura cu proprietarul. Lovi mai întâi membrii.'
-        not-in-team: '&c Acest jucător nu face parte dintr-o echipă.'
-        admin-kicked: '&c Administratorul te-a dat afară din echipă.'
-        success: '&b [name] &a a fost dat afară de pe insula lui &b [owner] &a.'
-        success-all: '&b Jucător eliminat din toate echipele din această lume'
+        cannot-kick-owner: '<red>Nu poți da lovitura cu proprietarul. Lovi mai întâi membrii.</red>'
+        not-in-team: '<red>Acest jucător nu face parte dintr-o echipă.</red>'
+        admin-kicked: '<red>Administratorul te-a dat afară din echipă.</red>'
+        success: '<aqua>[name] </aqua><green>a fost dat afară de pe insula lui </green><aqua>[owner] </aqua><green>.</green>'
+        success-all: '<aqua>Jucător eliminat din toate echipele din această lume</aqua>'
       setowner:
         parameters: <player>
         description: transferă proprietatea insulei către jucător
-        already-owner: '&c [name] este deja proprietarul acestei insule!'
-        must-be-on-island: '&c Trebuie să fii pe insulă pentru a stabili proprietarul'
-        confirmation: '&a Sigur doriți să setați [name] să fie proprietarul insulei la [xyz]?'
-        success: '&b [name] &a este acum proprietarul acestei insule.'
+        already-owner: '<red>[name] este deja proprietarul acestei insule!</red>'
+        must-be-on-island: '<red>Trebuie să fii pe insulă pentru a stabili proprietarul</red>'
+        confirmation: '<green>Sigur doriți să setați [name] să fie proprietarul insulei la [xyz]?</green>'
+        success: '<aqua>[name] </aqua><green>este acum proprietarul acestei insule.</green>'
         extra-islands: >-
-          &c Avertisment: acest jucător deține acum [număr] insule. Acest lucru
+          <red>Avertisment: acest jucător deține acum [număr] insule. Acest lucru</red>
           este mai mult decât permis de setări sau perms: [max].
       maxsize:
         parameters: <player> <size>
         description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '&a Set &b [name]&a ''s [prefix_island] max team size to &b [number]&a .'
-        reset: '&a Reset &b [name]&a ''s [prefix_island] max team size to the world default (&b [number]&a ).'
+        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: comanda de administrare a insulei
       invalid-value:
-        too-low: '&c Gama de protecție trebuie să fie mai mare decât &b 1 &c!'
+        too-low: '<red>Gama de protecție trebuie să fie mai mare decât </red><aqua>1 </aqua><red>!</red>'
         too-high: >-
-          &c Gama de protecție trebuie să fie egală sau mai mică decât &b
-          [number] &c!
-        same-as-before: '&c Gama de protecție este deja setată la &b [number] &c!'
+          <red>Gama de protecție trebuie să fie egală sau mai mică decât </red><aqua></aqua>
+          [number] <red>!</red>
+        same-as-before: '<red>Gama de protecție este deja setată la </red><aqua>[number] </aqua><red>!</red>'
       display:
-        already-off: '&c Indicatorii sunt deja opriți'
-        already-on: '&c Indicatorii sunt deja aprinși'
+        already-off: '<red>Indicatorii sunt deja opriți</red>'
+        already-on: '<red>Indicatorii sunt deja aprinși</red>'
         description: afișează / ascunde indicatorii de rază de insulă
-        hiding: '&2 Indicatori de ascundere'
+        hiding: '<dark_green>Indicatori de ascundere</dark_green>'
         hint: >-
-          &c Pictogramele Red Barrier &f arată limita curentă a zonei protejate
+          <red>Pictogramele Red Barrier </red><white>arată limita curentă a zonei protejate</white>
           de insulă.
 
-          &7 particule gri și f arată limita maximă a insulei.
+          <gray>particule gri și f arată limita maximă a insulei.</gray>
 
-          &a Particule verzi &f arată intervalul protejat implicit dacă
+          <green>Particule verzi </green><white>arată intervalul protejat implicit dacă</white>
           intervalul de protecție al insulei diferă de acesta
-        showing: '&2 Afișarea indicatorilor de gamă'
+        showing: '<dark_green>Afișarea indicatorilor de gamă</dark_green>'
       set:
         parameters: <player> <range> [locația insulei]
         description: setează zona protejată a insulei
-        success: '&a Setați gama de protecție a insulei la &b [number] &a.'
+        success: '<green>Setați gama de protecție a insulei la </green><aqua>[number] </aqua><green>.</green>'
       reset:
         parameters: <player>
         description: resetează intervalul protejat de insulă la valorile implicite din lume
-        success: '&a Resetați gama de protecție a insulei la &b [number] &a.'
+        success: '<green>Resetați gama de protecție a insulei la </green><aqua>[number] </aqua><green>.</green>'
       add:
         description: mărește aria protejată a insulei
         parameters: <player> <range> [locația insulei]
         success: >-
-          &a S-a mărit cu succes intervalul protejat de &b [name] &a la &b
-          [total] &7 (&b + [number] &7) &a.
+          <green>S-a mărit cu succes intervalul protejat de </green><aqua>[name] </aqua><green>la </green><aqua></aqua>
+          [total] <gray>(</gray><aqua>+ [number] </aqua><gray>) </gray><green>.</green>
       remove:
         description: scade aria protejată a insulei
         parameters: <player> <range> [locația insulei]
         success: >-
-          &a Scăderea cu succes a zonei protejate de &b [name] &a la & b [total]
-          &7 (&b - [number] &7) &a.
+          <green>Scăderea cu succes a zonei protejate de </green><aqua>[name] </aqua><green>la & b [total]</green>
+          <gray>(</gray><aqua>- [number] </aqua><gray>) </gray><green>.</green>
     register:
       parameters: <player>
       description: înregistrează jucătorul pe insula neproprietată pe care te afli
-      registered-island: '&a [name] înregistrat pe insulă la [xyz].'
-      reserved-island: '&o insulă rezervată la [xyz] pentru [name].'
-      already-owned: '&c Island este deja deținut de un alt jucător!'
-      no-island-here: '&c Nu există insulă aici. Confirmați să faceți una.'
-      in-deletion: '&c Acest spațiu insular este în prezent șters. Încercați mai târziu.'
+      registered-island: '<green>[name] înregistrat pe insulă la [xyz].</green>'
+      reserved-island: '<italic>insulă rezervată la [xyz] pentru [name].</italic>'
+      already-owned: '<red>Island este deja deținut de un alt jucător!</red>'
+      no-island-here: '<red>Nu există insulă aici. Confirmați să faceți una.</red>'
+      in-deletion: '<red>Acest spațiu insular este în prezent șters. Încercați mai târziu.</red>'
       cannot-make-island: >-
-        &c O insulă nu poate fi plasată aici, îmi pare rău. Consultați consola
+        <red>O insulă nu poate fi plasată aici, îmi pare rău. Consultați consola</red>
         pentru eventuale erori.
       island-is-spawn: >-
-        &6 Insula este reprodusă. Esti sigur? Introduceți din nou comanda pentru
+        <gold>Insula este reprodusă. Esti sigur? Introduceți din nou comanda pentru</gold>
         a confirma.
     unregister:
       parameters: <proprietar> [x,y,z]
       description: >-
         anulați înregistrarea proprietarului de pe insulă, dar păstrați
         blocurile de insule
-      unregistered-island: '&a [name] neînregistrat de pe insulă la [xyz].'
+      unregistered-island: '<green>[name] neînregistrat de pe insulă la [xyz].</green>'
       errors:
-        unknown-island-location: '&c Locație necunoscută a insulei'
-        specify-island-location: '&c Specificați locația insulei în format x,y,z'
-        player-has-more-than-one-island: '&c Player are mai multe insule. Specificați care dintre ele.'
+        unknown-island-location: '<red>Locație necunoscută a insulei</red>'
+        specify-island-location: '<red>Specificați locația insulei în format x,y,z</red>'
+        player-has-more-than-one-island: '<red>Player are mai multe insule. Specificați care dintre ele.</red>'
     info:
       parameters: <player>
       description: obțineți informații despre locul dvs. sau insula jucătorului
-      no-island: '&c Nu vă aflați într-o insulă acum ...'
+      no-island: '<red>Nu vă aflați într-o insulă acum ...</red>'
       title: '========== Informații despre insulă ============'
       island-uuid: 'UUID: [uuid]'
       owner: 'Proprietar: [proprietar] ([uuid])'
@@ -273,30 +275,30 @@ commands:
       resets-left: 'Resetări: [number] (Max: [total])'
       max-homes: 'Max case: [număr]'
       team-members-title: 'Membrii echipei:'
-      team-owner-format: '&a [name] [rank]'
-      team-member-format: '&b [name] [rank]'
+      team-owner-format: '<green>[name] [rank]</green>'
+      team-member-format: '<aqua>[name] [rank]</aqua>'
       max-team-size: 'Dimensiune maximă echipă: [number]'
       max-coop-size: 'Dimensiune maximă coop: [number]'
       max-trusted-size: 'Dimensiune maximă de încredere: [number]'
       island-protection-center: 'Centrul zonei de protecție: [xyz]'
       island-center: 'Centrul insulei: [xyz]'
       island-coords: 'Coordonatele insulei: [xz1] la [xz2]'
-      islands-in-trash: '&d Player are insule în coșul de gunoi.'
+      islands-in-trash: '<light_purple>Player are insule în coșul de gunoi.</light_purple>'
       protection-range: 'Domeniu de protecție: [interval]'
-      protection-range-bonus-title: '&b Include aceste bonusuri:'
+      protection-range-bonus-title: '<aqua>Include aceste bonusuri:</aqua>'
       protection-range-bonus: 'Bonus: [număr]'
       purge-protected: Insula este protejată de purjare
       max-protection-range: 'Cea mai mare gamă de protecție istorică: [gama]'
       protection-coords: 'Coordonate de protecție: de la [xz1] la [xz2]'
       is-spawn: Insula este o insulă de reproducere
       banned-players: 'Jucători excluși:'
-      banned-format: '&c [name]'
-      unowned: '&c Fără proprietate'
-      bundle: '&a Blueprint Bundle folosit pentru a crea insula: &b [nume]'
+      banned-format: '<red>[name]</red>'
+      unowned: '<red>Fără proprietate</red>'
+      bundle: '<green>Blueprint Bundle folosit pentru a crea insula: </green><aqua>[nume]</aqua>'
     switch:
       description: activați / dezactivați ocolirea protecției
       op: >-
-        &c Ops poate ignora întotdeauna protecția. Deop pentru a utiliza
+        <red>Ops poate ignora întotdeauna protecția. Deop pentru a utiliza</red>
         comanda.
       removing: Eliminarea bypass-ului de protecție ...
       adding: Adăugarea bypass-ului de protecție ...
@@ -304,42 +306,48 @@ commands:
       parameters: <player> <număr>
       description: comutați insula jucătorului la numărul numerotat din coșul de gunoi
       out-of-range: >-
-        &c Numărul trebuie să fie între 1 și [number]. Folosiți &l [label] coș
-        de gunoi [player] &r &c pentru a vedea numerele insulei
-      cannot-switch: '&c Comutatorul a eșuat. Consultați jurnalul consolei pentru erori.'
-      success: '&a A schimbat cu succes insula jucătorului pe cea specificată.'
+        <red>Numărul trebuie să fie între 1 și [number]. Folosiți <bold>[label] coș</bold></red>
+        de gunoi [player] <red>pentru a vedea numerele insulei</red>
+      cannot-switch: '<red>Comutatorul a eșuat. Consultați jurnalul consolei pentru erori.</red>'
+      success: '<green>A schimbat cu succes insula jucătorului pe cea specificată.</green>'
     trash:
-      no-unowned-in-trash: '&c Nu există insule ne deținute în coșul de gunoi'
-      no-islands-in-trash: '&c Player nu are insule în coșul de gunoi'
+      no-unowned-in-trash: '<red>Nu există insule ne deținute în coșul de gunoi</red>'
+      no-islands-in-trash: '<red>Player nu are insule în coșul de gunoi</red>'
       parameters: '[jucător]'
       description: arătați în coșul de gunoi insulele deținute sau insulele jucătorului
-      title: '&d =========== Insulele în coșul de gunoi ==========='
-      count: '&l &d Island [number]:'
+      title: '<light_purple>=========== Insulele în coșul de gunoi ===========</light_purple>'
+      count: '<bold><light_purple>Island [number]:</light_purple></bold>'
       use-switch: >-
-        &a Utilizați &l [label] comutați la <jucător> <număr> &r &a pentru a
+        <green>Utilizați <bold>[label] comutați la <jucător> <număr> </bold></green><green>pentru a</green>
         comuta playerul pe insulă în coșul de gunoi
       use-emptytrash: >-
-        &a Utilizați &l [label] emptytrash [player] &r &a pentru a elimina
+        <green>Utilizați <bold>[label] emptytrash [player] </bold></green><green>pentru a elimina</green>
         definitiv elementele de gunoi
     emptytrash:
       parameters: '[jucător]'
       description: >-
         Ștergeți coșul de gunoi pentru jucător sau toate insulele necuprinse în
         coșul de gunoi
-      success: '&a coș de gunoi golit cu succes.'
+      success: '<green>coș de gunoi golit cu succes.</green>'
     version:
       description: afișează versiunile BentoBox și addons
     setrange:
       parameters: <player> <interval>
       description: setați raza de acțiune a insulei jucătorului
-      range-updated: '&a Gama de insule actualizată la &b [number] &a.'
+      range-updated: '<green>Gama de insule actualizată la </green><aqua>[number] </aqua><green>.</green>'
+    placeholders:
+      description: deschide browser-ul de substituenți
+    dump-placeholders:
+      description: exportă toți substituenții înregistrați într-un fișier markdown
+      dumped: '<green>Lista de substituenți scrisă în [file]</green>'
+      error: '<red>Nu s-a putut scrie lista de substituenți: [message]</red>'
     reload:
       description: reîncărcați
     tp:
       parameters: <jucător> [insula jucătorului]
       description: teleportați-vă pe insula unui jucător
       manual: >-
-        &c Nu s-a găsit o urzeală sigură! Tp manual lângă &b [location] &c și
+        <red>Nu s-a găsit o urzeală sigură! Tp manual lângă </red><aqua>[location] </aqua><red>și</red>
         verificați-l
     tpuser:
       parameters: <jucător de teleportare> <jucător al insulei> [insula jucătorului]
@@ -347,62 +355,62 @@ commands:
     getrank:
       parameters: <player> [proprietarul insulei]
       description: obține rangul unui jucător pe insula lor sau pe insula proprietarului
-      rank-is: '&a Rank este &b [rank] &a pe insula &b [name] &a.'
+      rank-is: '<green>Rank este </green><aqua>[rank] </aqua><green>pe insula </green><aqua>[name] </aqua><green>.</green>'
     setrank:
       parameters: <player> <rank> [proprietarul insulei]
       description: stabiliți rangul unui jucător pe insula lor sau pe insula proprietarului
-      unknown-rank: '&c Rang necunoscut!'
-      not-possible: '&c Rank trebuie să fie mai mare decât vizitatorul.'
-      rank-set: '&a Rang setat de la &b [from] &a la &b [to] &a pe insula &b [name] &a.'
+      unknown-rank: '<red>Rang necunoscut!</red>'
+      not-possible: '<red>Rank trebuie să fie mai mare decât vizitatorul.</red>'
+      rank-set: '<green>Rang setat de la </green><aqua>[from] </aqua><green>la </green><aqua>[to] </aqua><green>pe insula </green><aqua>[name] </aqua><green>.</green>'
     setprotectionlocation:
       parameters: '[ coordonatele x y z ]'
       description: >-
         setați locația curentă sau [x y z] ca centru al zonei de protecție a
         insulei
-      island: '&c Acest lucru va afecta insula din [xyz] deținută de „[name]”.'
-      confirmation: '&c Sigur doriți să setați [xyz] ca centru de protecție?'
-      success: '&a S-a setat [xyz] cu succes ca centru de protecție.'
-      fail: '&a S-a setat [xyz] cu succes ca centru de protecție.'
-      island-location-changed: '&a [user] a schimbat centrul de protecție al insulei în [xyz].'
-      xyz-error: '&c Specificați trei coordonate întregi: de exemplu, 100 120 100'
+      island: '<red>Acest lucru va afecta insula din [xyz] deținută de „[name]”.</red>'
+      confirmation: '<red>Sigur doriți să setați [xyz] ca centru de protecție?</red>'
+      success: '<green>S-a setat [xyz] cu succes ca centru de protecție.</green>'
+      fail: '<green>S-a setat [xyz] cu succes ca centru de protecție.</green>'
+      island-location-changed: '<green>[user] a schimbat centrul de protecție al insulei în [xyz].</green>'
+      xyz-error: '<red>Specificați trei coordonate întregi: de exemplu, 100 120 100</red>'
     setspawn:
       description: setați o insulă ca spawn pentru acest mod de joc
-      already-spawn: '&c Această insulă este deja un spawn!'
-      no-island-here: '&c Nu există insulă aici.'
-      confirmation: '&c Sigur doriți să setați această insulă ca spawn pentru această lume?'
-      success: '&a Setați cu succes această insulă ca spawn pentru această lume.'
+      already-spawn: '<red>Această insulă este deja un spawn!</red>'
+      no-island-here: '<red>Nu există insulă aici.</red>'
+      confirmation: '<red>Sigur doriți să setați această insulă ca spawn pentru această lume?</red>'
+      success: '<green>Setați cu succes această insulă ca spawn pentru această lume.</green>'
     setspawnpoint:
       description: setați locația curentă ca punct de reproducere pentru această insulă
-      no-island-here: '&c Nu există insulă aici.'
+      no-island-here: '<red>Nu există insulă aici.</red>'
       confirmation: >-
-        &c Sigur doriți să setați această locație ca punct de reproducere pentru
+        <red>Sigur doriți să setați această locație ca punct de reproducere pentru</red>
         această insulă?
       success: >-
-        &a Setați cu succes această locație ca punct de reproducere pentru
+        <green>Setați cu succes această locație ca punct de reproducere pentru</green>
         această insulă.
-      island-spawnpoint-changed: '&a [user] a schimbat acest punct de reproducere al insulei.'
+      island-spawnpoint-changed: '<green>[user] a schimbat acest punct de reproducere al insulei.</green>'
     settings:
       parameters: '[jucător]'
       description: deschideți setările de sistem sau setările de insulă pentru player
-      unknown-setting: '&c Setare necunoscută'
+      unknown-setting: '<red>Setare necunoscută</red>'
     blueprint:
       parameters: <încărcare / copiere / lipire / pos1 / pos2 / salvare>
       description: manipulați planurile
-      bedrock-required: '&c Cel puțin un bloc de bază trebuie să fie într-un plan!'
-      copy-first: '&c Copiați mai întâi!'
-      file-exists: '&c Fișierul există deja, suprascrieți?'
-      no-such-file: '&c Nu există un astfel de fișier!'
-      could-not-load: '&c Nu s-a putut încărca acel fișier!'
-      could-not-save: '&c Hmm, ceva nu a funcționat bine salvând acel fișier: [mesaj]'
-      set-pos1: '&o poziție 1 setată la [vector]'
-      set-pos2: '&o poziție 2 setată la [vector]'
-      set-different-pos: '&c Setați o altă locație - această poziție este deja setată!'
-      need-pos1-pos2: '&c Setați mai întâi pos1 și pos2!'
-      copying: '&b Copierea blocurilor ...'
-      copied-blocks: '&b Copiate blocuri [number] în clipboard'
-      look-at-a-block: '&c Uită-te la bloc în 20 de blocuri pentru a seta'
-      mid-copy: '&c Ești la mijlocul copiei. Așteptați până când copia este terminată.'
-      copied-percent: '&6 copiat [number]%'
+      bedrock-required: '<red>Cel puțin un bloc de bază trebuie să fie într-un plan!</red>'
+      copy-first: '<red>Copiați mai întâi!</red>'
+      file-exists: '<red>Fișierul există deja, suprascrieți?</red>'
+      no-such-file: '<red>Nu există un astfel de fișier!</red>'
+      could-not-load: '<red>Nu s-a putut încărca acel fișier!</red>'
+      could-not-save: '<red>Hmm, ceva nu a funcționat bine salvând acel fișier: [mesaj]</red>'
+      set-pos1: '<italic>poziție 1 setată la [vector]</italic>'
+      set-pos2: '<italic>poziție 2 setată la [vector]</italic>'
+      set-different-pos: '<red>Setați o altă locație - această poziție este deja setată!</red>'
+      need-pos1-pos2: '<red>Setați mai întâi pos1 și pos2!</red>'
+      copying: '<aqua>Copierea blocurilor ...</aqua>'
+      copied-blocks: '<aqua>Copiate blocuri [number] în clipboard</aqua>'
+      look-at-a-block: '<red>Uită-te la bloc în 20 de blocuri pentru a seta</red>'
+      mid-copy: '<red>Ești la mijlocul copiei. Așteptați până când copia este terminată.</red>'
+      copied-percent: '<gold>copiat [number]%</gold>'
       copy:
         parameters: '[aer]'
         description: >-
@@ -410,30 +418,30 @@ commands:
           aer
       sink:
         description: setează acest plan să coboare pe fundul oceanului când este lipit
-        status: '&a Un plan va [status] &a când este lipit'
-        sink: '&c chiuvetă'
-        not-sink: '&b nu se scufundă'
-        no-clipboard: '&c Nu există un plan în clipboard. Încarcă sau copiază ceva.'
+        status: '<green>Un plan va [status] </green><green>când este lipit</green>'
+        sink: '<red>chiuvetă</red>'
+        not-sink: '<aqua>nu se scufundă</aqua>'
+        no-clipboard: '<red>Nu există un plan în clipboard. Încarcă sau copiază ceva.</red>'
       delete:
         parameters: <nume>
         description: ștergeți planul
-        no-blueprint: '&b [name] &c nu există.'
+        no-blueprint: '<aqua>[name] </aqua><red>nu există.</red>'
         confirmation: |
-          &c Sigur doriți să ștergeți acest plan?
-          &c Odată șters, nu există nicio modalitate de recuperare.
-        success: '&a Plan șters cu succes &b [name] &a.'
+          <red>Sigur doriți să ștergeți acest plan?</red>
+          <red>Odată șters, nu există nicio modalitate de recuperare.</red>
+        success: '<green>Plan șters cu succes </green><aqua>[name] </aqua><green>.</green>'
       load:
         parameters: <nume>
         description: încărcați planul în clipboard
       list:
         description: enumeră planurile disponibile
-        no-blueprints: '&c Nu există planuri în dosarul planurilor!'
-        available-blueprints: '&a Aceste planuri sunt disponibile pentru încărcare:'
+        no-blueprints: '<red>Nu există planuri în dosarul planurilor!</red>'
+        available-blueprints: '<green>Aceste planuri sunt disponibile pentru încărcare:</green>'
       origin:
         description: setați originea planului la poziția dvs.
       paste:
         description: lipiți clipboardul în locația dvs.
-        pasting: '&o lipire ...'
+        pasting: '<italic>lipire ...</italic>'
       pos1:
         description: setați primul colț al clipboardului cuboid
       pos2:
@@ -444,9 +452,9 @@ commands:
       rename:
         parameters: <nume plan> <nume nou>
         description: redenumiți un plan
-        success: '&a Blueprint &b [old] &a a fost redenumit cu succes în &b [name] &a.'
+        success: '<green>Blueprint </green><aqua>[old] </aqua><green>a fost redenumit cu succes în </green><aqua>[name] </aqua><green>.</green>'
         pick-different-name: >-
-          &c Vă rugăm să specificați un nume diferit de numele actual al
+          <red>Vă rugăm să specificați un nume diferit de numele actual al</red>
           planului.
       management:
         back: Înapoi
@@ -468,7 +476,7 @@ commands:
         perm-required: Necesar
         no-perm-required: Nu se poate seta permisiunea pentru pachetul implicit
         perm-not-required: Nu este necesar
-        perm-format: '&e'
+        perm-format: '<yellow></yellow>'
         remove: Faceți clic dreapta pentru a elimina
         blueprint-instruction: |
           Faceți clic pentru a selecta,
@@ -480,11 +488,11 @@ commands:
         name:
           quit: părăsi
           prompt: Introduceți un nume sau „renunțați” pentru a renunța
-          too-long: '&c Prea mult'
+          too-long: '<red>Prea mult</red>'
           pick-a-unique-name: Vă rugăm să alegeți un nume mai unic
           stripped-char-in-unique-name: >-
-            &c Unele caractere au fost eliminate deoarece nu sunt permise. &a ID
-            nou va fi &b [nume]&a.
+            <red>Unele caractere au fost eliminate deoarece nu sunt permise. </red><green>ID</green>
+            nou va fi <aqua>[nume]</aqua><green>.</green>
           success: Succes!
           conversation-prefix: '>'
         description:
@@ -495,50 +503,64 @@ commands:
           default-color: ''
           success: Succes!
           cancelling: Se anulează
-        slot: '&f Slot preferat [number]'
+        slot: '<white>Slot preferat [number]</white>'
         slot-instructions: |
-          &a clic stânga pentru a crește
-          &a Faceți clic dreapta pentru a diminua
+          <green>clic stânga pentru a crește</green>
+          <green>Faceți clic dreapta pentru a diminua</green>
         times: |
-          &a Utilizări concomitente maxime de către jucător
-          &a Faceți clic stânga pentru a crește
-          &a Faceți clic dreapta pentru a reduce
+          <green>Utilizări concomitente maxime de către jucător</green>
+          <green>Faceți clic stânga pentru a crește</green>
+          <green>Faceți clic dreapta pentru a reduce</green>
         unlimited-times: Nelimitat
         maximum-times: Max [număr] ori
         cost: |
-          &a Costul [prefix_Island]
-          &a Clic stânga +1
-          &a Clic dreapta -1
-          &a Shift pentru +/-100
+          <green>Costul [prefix_Island]</green>
+          <green>Clic stânga +1</green>
+          <green>Clic dreapta -1</green>
+          <green>Shift pentru +/-100</green>
         no-cost: Gratuit
         cost-amount: 'Cost: [cost]'
-        next-page: '&f Pagina următoare'
-        previous-page: '&f Pagina anterioară'
+        next-page: '<white>Pagina următoare</white>'
+        previous-page: '<white>Pagina anterioară</white>'
+        edit-commands: Click pentru a edita comenzile
+        no-commands: Nu sunt comenzi setate
+        commands:
+          quit: ieșire
+          clear: șterge
+          instructions: |
+            <white>Introduceți comenzi de executat la lipirea planului [name].</white>
+            <white>Suportă substituenții <green>[player]</green> și <green>[owner]</green>.</white>
+            <white>Prefixați cu <green>[SUDO]</green> pentru a executa ca jucător.</white>
+            <white>Tastați 'șterge' pentru a elimina toate comenzile din această sesiune.</white>
+            <white>Tastați 'ieșire' pe o linie separată pentru a termina.</white>
+          default-color: ''
+          success: Succes!
+          cancelling: Anulare
     resetflags:
       parameters: '[pavilion]'
       description: >-
         Resetați toate insulele la setările implicite de semnalizare din
         config.yml
       confirm: >-
-        &4 Acest lucru va reseta steagurile la valorile implicite pentru toate
+        <dark_red>Acest lucru va reseta steagurile la valorile implicite pentru toate</dark_red>
         insulele!
       success: >-
-        &a Resetați cu succes steagurile tuturor insulelor la setările
+        <green>Resetați cu succes steagurile tuturor insulelor la setările</green>
         implicite.
-      success-one: '&a steag [name] setat implicit pentru toate insulele.'
+      success-one: '<green>steag [name] setat implicit pentru toate insulele.</green>'
     world:
       description: Gestionați setările lumii
     delete:
       parameters: <player>
       description: șterge insula unui jucător
       cannot-delete-owner: >-
-        &c Toți membrii insulei trebuie expulzați din insulă înainte de ao
+        <red>Toți membrii insulei trebuie expulzați din insulă înainte de ao</red>
         șterge.
-      deleted-island: '&a Island at &e [xyz] &a a fost șters cu succes.'
+      deleted-island: '<green>Island at </green><yellow>[xyz] </yellow><green>a fost șters cu succes.</green>'
     deletehomes:
       parameters: <jucător>
       description: șterge toate casele numite de pe o insulă
-      warning: '&c Toate casele numite vor fi șterse de pe insulă!'
+      warning: '<red>Toate casele numite vor fi șterse de pe insulă!</red>'
     why:
       parameters: <player>
       description: comutați raportarea depanării protecției consolei
@@ -549,26 +571,26 @@ commands:
       reset:
         description: resetează moartea jucătorului
         parameters: <player>
-        success: '&a Resetați cu succes &b [name] și decesele lui a &b 0 &a.'
+        success: '<green>Resetați cu succes </green><aqua>[name] și decesele lui a </aqua><aqua>0 </aqua><green>.</green>'
       set:
         description: stabilește moartea jucătorului
         parameters: <jucător> <moarte>
-        success: '&a S-a setat cu succes &b [name] &decesele lui &b [number] & a.'
+        success: '<green>S-a setat cu succes </green><aqua>[name] </aqua><light_purple>ecesele lui </light_purple><aqua>[number] & a.</aqua>'
       add:
         description: adaugă morți jucătorului
         parameters: <jucător> <moarte>
         success: >-
-          &a Adăugat cu succes &b [number] &a decese la &b [name], crescând
-          totalul la &b [total] &a decese.
+          <green>Adăugat cu succes </green><aqua>[number] </aqua><green>decese la </green><aqua>[name], crescând</aqua>
+          totalul la <aqua>[total] </aqua><green>decese.</green>
       remove:
         description: elimină decesele jucătorului
         parameters: <jucător> <moarte>
         success: >-
-          &a Eliminat cu succes &b [number] &a decese la &b [name], scăzând
-          totalul la &b [total] &a decese.
+          <green>Eliminat cu succes </green><aqua>[number] </aqua><green>decese la </green><aqua>[name], scăzând</aqua>
+          totalul la <aqua>[total] </aqua><green>decese.</green>
     resetname:
       description: resetați numele insulei jucătorului
-      success: '&a Resetați cu succes numele insulei lui [name].'
+      success: '<green>Resetați cu succes numele insulei lui [name].</green>'
   bentobox:
     description: Comanda de administrator BentoBox
     perms:
@@ -577,28 +599,34 @@ commands:
         YAML
     about:
       description: afișează informații despre drepturi de autor și licență
+    placeholders:
+      description: deschide browser-ul de substituenți
+    dump-placeholders:
+      description: exportă toți substituenții înregistrați într-un fișier markdown
+      dumped: '<green>Lista de substituenți scrisă în [file]</green>'
+      error: '<red>Nu s-a putut scrie lista de substituenți: [message]</red>'
     reload:
       description: reîncarcă BentoBox și toate suplimentele, setările și setările locale
       locales-reloaded: '[prefix_bentobox] și 2 limbi reîncărcate.'
       addons-reloaded: '[prefix_bentobox] și 2 addonuri reîncărcate.'
-      settings-reloaded: '[prefix_bentobox] &2 Setări reîncărcate.'
-      addon: '[prefix_bentobox] &6 Reîncărcare &b [name] &2.'
-      addon-reloaded: '[prefix_bentobox] &b [name] &2 reîncărcat.'
+      settings-reloaded: '[prefix_bentobox] <dark_green>Setări reîncărcate.</dark_green>'
+      addon: '[prefix_bentobox] <gold>Reîncărcare </gold><aqua>[name] </aqua><dark_green>.</dark_green>'
+      addon-reloaded: '[prefix_bentobox] <aqua>[name] </aqua><dark_green>reîncărcat.</dark_green>'
       warning: >-
-        [prefix_bentobox] &c Atenție: Reîncărcarea poate provoca instabilitate,
+        [prefix_bentobox] <red>Atenție: Reîncărcarea poate provoca instabilitate,</red>
         deci dacă vedeți erori după aceea, reporniți serverul.
-      unknown-addon: '[prefix_bentobox] &c Completare necunoscută!'
+      unknown-addon: '[prefix_bentobox] <red>Completare necunoscută!</red>'
       locales:
         description: reîncarcă localizările
     version:
-      plugin-version: '&2 versiunea BentoBox: &3 [version]'
+      plugin-version: '<dark_green>versiunea BentoBox: </dark_green><dark_aqua>[version]</dark_aqua>'
       description: afișează versiunile BentoBox și addons
       loaded-addons: 'Completele încărcate:'
       loaded-game-worlds: 'Lume de joc încărcate:'
-      addon-syntax: '&2 [name] &3 [version] &7 (&3 [state] &7)'
-      game-world: '&2 [name] &7 (&3 [addon] &7): &3 [worlds]'
-      server: '&2 În curs de executare &3 [name] [version] &2.'
-      database: '&2 Baza de date: &3 [database]'
+      addon-syntax: '<dark_green>[name] </dark_green><dark_aqua>[version] </dark_aqua><gray>(</gray><dark_aqua>[state] </dark_aqua><gray>)</gray>'
+      game-world: '<dark_green>[name] </dark_green><gray>(</gray><dark_aqua>[addon] </dark_aqua><gray>): </gray><dark_aqua>[worlds]</dark_aqua>'
+      server: '<dark_green>În curs de executare </dark_green><dark_aqua>[name] [version] </dark_aqua><dark_green>.</dark_green>'
+      database: '<dark_green>Baza de date: </dark_green><dark_aqua>[database]</dark_aqua>'
     manage:
       description: afișează Panoul de gestionare
     catalog:
@@ -606,84 +634,84 @@ commands:
     locale:
       description: efectuează analiza fișierelor de localizare
       see-console: >-
-        [prefix_bentobox] &a Verificați consola pentru a vedea feedback-ul.
+        [prefix_bentobox] <green>Verificați consola pentru a vedea feedback-ul.</green>
 
-        [prefix_bentobox] &a Această comandă este atât de spammy încât
+        [prefix_bentobox] <green>Această comandă este atât de spammy încât</green>
         feedback-ul nu poate fi citit din chat ...
     migrate:
       description: migrează date dintr-o bază de date în alta
-      players: '[prefix_bentobox] &6 jucători care migrează'
-      names: '[prefix_bentobox] &6 Migrarea numelor'
-      addons: '[prefix_bentobox] &6 Migrarea suplimentelor'
-      class: '[prefix_bentobox] &6 Migrarea [description]'
-      migrated: '[prefix_bentobox] &a Migrat'
-      completed: '[prefix_bentobox]&a Finalizat'
+      players: '[prefix_bentobox] <gold>jucători care migrează</gold>'
+      names: '[prefix_bentobox] <gold>Migrarea numelor</gold>'
+      addons: '[prefix_bentobox] <gold>Migrarea suplimentelor</gold>'
+      class: '[prefix_bentobox] <gold>Migrarea [description]</gold>'
+      migrated: '[prefix_bentobox] <green>Migrat</green>'
+      completed: '[prefix_bentobox]<green>Finalizat</green>'
     rank:
       description: enumerați, adăugați sau eliminați ranguri
-      parameters: '&a [lista | adauga | elimina] [referință de rang] [valoare de rang]'
+      parameters: '<green>[lista | adauga | elimina] [referință de rang] [valoare de rang]</green>'
       add:
-        success: '&a [clasament] adăugat cu valoarea [număr]'
+        success: '<green>[clasament] adăugat cu valoarea [număr]</green>'
         failure: >-
-          &c Nu s-a putut adăuga [clasament] cu valoarea [număr]. Poate un
+          <red>Nu s-a putut adăuga [clasament] cu valoarea [număr]. Poate un</red>
           duplicat?
       remove:
-        success: '&a [clasament] eliminat'
-        failure: '&c Nu s-a putut elimina [rank]. Rang necunoscut.'
-      list: '&a Clasamentele înregistrate sunt după cum urmează:'
+        success: '<green>[clasament] eliminat</green>'
+        failure: '<red>Nu s-a putut elimina [rank]. Rang necunoscut.</red>'
+      list: '<green>Clasamentele înregistrate sunt după cum urmează:</green>'
   confirmation:
-    confirm: '&c Tastați din nou comanda în &b [secunde] s &c pentru a confirma.'
-    previous-request-cancelled: '&6 Cererea de confirmare anterioară a fost anulată.'
-    request-cancelled: '&c Timpul limită de confirmare - cererea &b a fost anulată.'
+    confirm: '<red>Tastați din nou comanda în </red><aqua>[secunde] s </aqua><red>pentru a confirma.</red>'
+    previous-request-cancelled: '<gold>Cererea de confirmare anterioară a fost anulată.</gold>'
+    request-cancelled: '<red>Timpul limită de confirmare - cererea </red><aqua>a fost anulată.</aqua>'
   delay:
-    previous-command-cancelled: '&c Comanda anterioară a fost anulată'
-    stand-still: '&6 Nu vă mișcați! Se teleportează în [secunde] secunde'
-    moved-so-command-cancelled: '&c Te-ai mutat. Teleportul a fost anulat!'
+    previous-command-cancelled: '<red>Comanda anterioară a fost anulată</red>'
+    stand-still: '<gold>Nu vă mișcați! Se teleportează în [secunde] secunde</gold>'
+    moved-so-command-cancelled: '<red>Te-ai mutat. Teleportul a fost anulat!</red>'
   island:
     about:
       description: afișați detaliile licenței
     go:
       parameters: '[numarul casei]'
       description: te teleportează pe insula ta
-      teleport: '&a Teleportare pe insula ta.'
-      in-progress: '&a Teleportare în curs, așteptați...'
-      teleported: '&a Te-a transportat acasă &e # [number].'
+      teleport: '<green>Teleportare pe insula ta.</green>'
+      in-progress: '<green>Teleportare în curs, așteptați...</green>'
+      teleported: '<green>Te-a transportat acasă </green><yellow># [number].</yellow>'
       failure: >-
-        &c Teleportarea a eșuat din anumite motive. Vă rugăm să încercați din
+        <red>Teleportarea a eșuat din anumite motive. Vă rugăm să încercați din</red>
         nou mai târziu.
-      unknown-home: '&c Nume de casă necunoscut!'
+      unknown-home: '<red>Nume de casă necunoscut!</red>'
     help:
       description: comandamentul insulei principale
     spawn:
       description: te teleportează la spawn
-      teleporting: '&a Teleportare la spawn.'
-      no-spawn: '&c Nu există spawn în acest mod de joc.'
+      teleporting: '<green>Teleportare la spawn.</green>'
+      no-spawn: '<red>Nu există spawn în acest mod de joc.</red>'
     create:
       description: creați o insulă, utilizând schema opțională (necesită permisiune)
       parameters: <bluesprint>
       too-many-islands: >-
-        &c Există prea multe insule în această lume: nu există suficient spațiu
+        <red>Există prea multe insule în această lume: nu există suficient spațiu</red>
         pentru a fi create ale tale.
-      cannot-create-island: '&c Un loc nu a putut fi găsit la timp, vă rugăm să încercați din nou ...'
+      cannot-create-island: '<red>Un loc nu a putut fi găsit la timp, vă rugăm să încercați din nou ...</red>'
       unable-create-island: >-
-        &c Insula dvs. nu a putut fi generată, vă rugăm să contactați un
+        <red>Insula dvs. nu a putut fi generată, vă rugăm să contactați un</red>
         administrator.
-      creating-island: '&a Găsirea unui loc pentru insula ta ...'
-      you-cannot-make: '&c Nu mai poți face insule!'
-      max-uses: '&c Nu mai poți face din acel tip de insulă!'
+      creating-island: '<green>Găsirea unui loc pentru insula ta ...</green>'
+      you-cannot-make: '<red>Nu mai poți face insule!</red>'
+      max-uses: '<red>Nu mai poți face din acel tip de insulă!</red>'
       you-cannot-make-team: >-
-        &c Membrii echipei nu pot face insule în aceeași lume cu insula echipei
+        <red>Membrii echipei nu pot face insule în aceeași lume cu insula echipei</red>
         lor.
       pasting:
-        estimated-time: '&a Timp estimat: &b [number] &a secunde.'
-        blocks: '&a Construiți-l bloc cu bloc: &b [number] &a blocuri în toate ...'
-        entities: '&a Completarea cu entități: &b [number] &a entități în toate ...'
-        dimension-done: '&o Insulă în [lume] este construită.'
-        done: '&a Gata! Insula ta este gata și te așteaptă!'
-      pick: '&2 Alegeți o insulă'
-      cannot-afford: '&c Nu vă puteți permite acest lucru! Cost: [cost]'
-      unknown-blueprint: '&c Acel plan nu a fost încă încărcat.'
-      on-first-login: '&o Bun venit! Vom începe să vă pregătim insula în câteva secunde.'
-      you-can-teleport-to-your-island: '&a Vă puteți teleporta pe insula dvs. când doriți.'
+        estimated-time: '<green>Timp estimat: </green><aqua>[number] </aqua><green>secunde.</green>'
+        blocks: '<green>Construiți-l bloc cu bloc: </green><aqua>[number] </aqua><green>blocuri în toate ...</green>'
+        entities: '<green>Completarea cu entități: </green><aqua>[number] </aqua><green>entități în toate ...</green>'
+        dimension-done: '<italic>Insulă în [lume] este construită.</italic>'
+        done: '<green>Gata! Insula ta este gata și te așteaptă!</green>'
+      pick: '<dark_green>Alegeți o insulă</dark_green>'
+      cannot-afford: '<red>Nu vă puteți permite acest lucru! Cost: [cost]</red>'
+      unknown-blueprint: '<red>Acel plan nu a fost încă încărcat.</red>'
+      on-first-login: '<italic>Bun venit! Vom începe să vă pregătim insula în câteva secunde.</italic>'
+      you-can-teleport-to-your-island: '<green>Vă puteți teleporta pe insula dvs. când doriți.</green>'
     deletehome:
       description: ștergeți o locație de acasă
       parameters: '[numele acasă]'
@@ -695,59 +723,59 @@ commands:
     near:
       description: arată numele insulelor vecine din jurul tău
       parameters: ''
-      the-following-islands: '&a Următoarele insule sunt în apropiere:'
-      syntax: '&6 [direcție]: &a [name]'
+      the-following-islands: '<green>Următoarele insule sunt în apropiere:</green>'
+      syntax: '<gold>[direcție]: </gold><green>[name]</green>'
       north: Nord
       south: Sud
       east: Est
       west: Vest
-      no-neighbors: '&c Nu aveți insule vecine imediate!'
+      no-neighbors: '<red>Nu aveți insule vecine imediate!</red>'
     reset:
       description: reporniți insula și scoateți-o pe cea veche
       parameters: <bluesprint>
-      none-left: '&c Nu mai aveți resetări!'
-      resets-left: '&c Mai aveți &b [number] &c resetări'
+      none-left: '<red>Nu mai aveți resetări!</red>'
+      resets-left: '<red>Mai aveți </red><aqua>[number] </aqua><red>resetări</red>'
       confirmation: >-
-        &c Ești sigur că vrei să faci asta?
+        <red>Ești sigur că vrei să faci asta?</red>
 
-        &c Toți membrii insulei vor fi dați afară din insulă, va trebui să-i
+        <red>Toți membrii insulei vor fi dați afară din insulă, va trebui să-i</red>
         reinvitați după aceea.
 
-        &c Nu se mai întoarce: odată ce insula dvs. actuală este ștearsă, nu va
-        mai exista &l nici un &r &c mod de a o recupera mai târziu.
+        <red>Nu se mai întoarce: odată ce insula dvs. actuală este ștearsă, nu va</red>
+        mai exista <bold>nici un </bold><red>mod de a o recupera mai târziu.</red>
       kicked-from-island: >-
-        &c Sunteți expulzat de pe insula dvs. în [gamemode] deoarece
+        <red>Sunteți expulzat de pe insula dvs. în [gamemode] deoarece</red>
         proprietarul o resetează.
     sethome:
       description: setați punctul dvs. de teleportare de acasă
-      must-be-on-your-island: '&c Trebuie să fii pe insula ta pentru a pleca acasă!'
-      too-many-homes: '&c Nu se poate seta - insula ta este la maximum [număr] case.'
-      home-set: '&6 Casa insulei dvs. a fost setată la locația dvs. curentă.'
-      homes-are: 'Casele din &6 Island sunt:'
-      home-list-syntax: '&6 [nume]'
-      click-to-teleport: '&a Faceți clic pentru a vă teleporta!'
+      must-be-on-your-island: '<red>Trebuie să fii pe insula ta pentru a pleca acasă!</red>'
+      too-many-homes: '<red>Nu se poate seta - insula ta este la maximum [număr] case.</red>'
+      home-set: '<gold>Casa insulei dvs. a fost setată la locația dvs. curentă.</gold>'
+      homes-are: 'Casele din <gold>Island sunt:</gold>'
+      home-list-syntax: '<gold>[nume]</gold>'
+      click-to-teleport: '<green>Faceți clic pentru a vă teleporta!</green>'
       nether:
-        not-allowed: '&c Nu aveți voie să vă stabiliți casa în Olanda.'
-        confirmation: '&c Sunteți sigur că doriți să vă stabiliți casa în Olanda?'
+        not-allowed: '<red>Nu aveți voie să vă stabiliți casa în Olanda.</red>'
+        confirmation: '<red>Sunteți sigur că doriți să vă stabiliți casa în Olanda?</red>'
       the-end:
-        not-allowed: '&c Nu aveți voie să vă setați casa la sfârșit.'
-        confirmation: '&c Sigur doriți să vă setați casa la sfârșit?'
+        not-allowed: '<red>Nu aveți voie să vă setați casa la sfârșit.</red>'
+        confirmation: '<red>Sigur doriți să vă setați casa la sfârșit?</red>'
       parameters: '[numarul casei]'
     setname:
       description: stabiliți un nume pentru insula dvs.
-      name-too-short: '&c Prea scurt. Dimensiunea minimă este de [number] de caractere.'
-      name-too-long: '&c Prea mult. Dimensiunea maximă este de [number] de caractere.'
-      name-already-exists: '&c Există deja o insulă cu acest nume în acest mod de joc.'
+      name-too-short: '<red>Prea scurt. Dimensiunea minimă este de [number] de caractere.</red>'
+      name-too-long: '<red>Prea mult. Dimensiunea maximă este de [number] de caractere.</red>'
+      name-already-exists: '<red>Există deja o insulă cu acest nume în acest mod de joc.</red>'
       parameters: <nume>
-      success: '&a Setați cu succes numele insulei dvs. la &b [name] &a.'
+      success: '<green>Setați cu succes numele insulei dvs. la </green><aqua>[name] </aqua><green>.</green>'
     renamehome:
       description: redenumiți o locație de acasă
       parameters: '[numele acasă]'
-      enter-new-name: '&6 Introduceți noul nume'
-      already-exists: '&c Numele respectiv există deja, încercați un alt nume.'
+      enter-new-name: '<gold>Introduceți noul nume</gold>'
+      already-exists: '<red>Numele respectiv există deja, încercați un alt nume.</red>'
     resetname:
       description: resetează-ți numele insulei
-      success: '&a Resetați cu succes numele insulei.'
+      success: '<green>Resetați cu succes numele insulei.</green>'
     team:
       description: gestionează-ți echipa
       gui:
@@ -759,247 +787,247 @@ commands:
             description: Statutul echipei
           rank-filter:
             name: Filtru de rang
-            description: '&a Faceți clic pentru a parcurge rândurile'
+            description: '<green>Faceți clic pentru a parcurge rândurile</green>'
           invitation: Invitaţie
           invite:
             name: Invită jucător
             description: |
-              &a Jucătorii trebuie să fie în
+              <green>Jucătorii trebuie să fie în</green>
               și aceeași lume ca și tine să fii
-              &a arătat în listă.
+              <green>arătat în listă.</green>
         tips:
           LEFT:
-            name: '&b Faceți clic stânga'
-            invite: '&a pentru a invita un jucător'
+            name: '<aqua>Faceți clic stânga</aqua>'
+            invite: '<green>pentru a invita un jucător</green>'
           RIGHT:
-            name: '&b Faceți clic dreapta'
+            name: '<aqua>Faceți clic dreapta</aqua>'
           SHIFT_RIGHT:
-            name: '&b Shift Click dreapta'
-            reject: '&a a respinge'
-            kick: '&a a da cu piciorul jucătorului'
-            leave: '&a să părăsească echipa'
+            name: '<aqua>Shift Click dreapta</aqua>'
+            reject: '<green>a respinge</green>'
+            kick: '<green>a da cu piciorul jucătorului</green>'
+            leave: '<green>să părăsească echipa</green>'
           SHIFT_LEFT:
-            name: '&b Shift Click stânga'
-            accept: '&a a accepta '
+            name: '<aqua>Shift Click stânga</aqua>'
+            accept: '<green>a accepta </green>'
             setowner: |
-              &a pentru a seta proprietarul
-              &a acestui jucător
+              <green>pentru a seta proprietarul</green>
+              <green>acestui jucător</green>
       info:
         description: afișează informații detaliate despre echipa ta
         member-layout:
-          online: '&a &l o &r &f [name]'
-          offline: '&c &l o &r &f [name] &7 ([last_seen])'
-          offline-not-last-seen: '&c &l o &r &f [name]'
+          online: '<green><bold>o </bold></green><white>[name]</white>'
+          offline: '<red><bold>o </bold></red><white>[name] </white><gray>([last_seen])</gray>'
+          offline-not-last-seen: '<red><bold>o </bold></red><white>[name]</white>'
         last-seen:
-          layout: '&b [number] și 7 [unitate] în urmă'
+          layout: '<aqua>[number] și 7 [unitate] în urmă</aqua>'
           days: zile
           hours: ore
           minutes: minute
         header: |
-          &f --- &a Detalii despre echipă &f ---
-          &a Membri: &b [total] &7 / &b [max]
-          &a Membri online: &b [online]
+          <white>--- </white><green>Detalii despre echipă </green><white>---</white>
+          <green>Membri: </green><aqua>[total] </aqua><gray>/ </gray><aqua>[max]</aqua>
+          <green>Membri online: </green><aqua>[online]</aqua>
         rank-layout:
-          owner: '&6 [rank]:'
-          generic: '&6 [rank] &7 (&b [number] &7) &6:'
+          owner: '<gold>[rank]:</gold>'
+          generic: '<gold>[rank] </gold><gray>(</gray><aqua>[number] </aqua><gray>) </gray><gold>:</gold>'
       coop:
         description: creează un rang de jucător coop pe insula ta
         parameters: <player>
-        cannot-coop-yourself: '&c Nu te poți coopera!'
-        already-has-rank: '&c Player are deja un rang!'
-        you-are-a-coop-member: '&2 Ați fost cooptat de &b [name] &a.'
-        success: '&a Ați copiat &b [name] &a.'
+        cannot-coop-yourself: '<red>Nu te poți coopera!</red>'
+        already-has-rank: '<red>Player are deja un rang!</red>'
+        you-are-a-coop-member: '<dark_green>Ați fost cooptat de </dark_green><aqua>[name] </aqua><green>.</green>'
+        success: '<green>Ați copiat </green><aqua>[name] </aqua><green>.</green>'
         name-has-invited-you: |
-          &a [nume] v-a invitat
-          &a să se alăture ca membru coop
-          &a insulei lor.
+          <green>[nume] v-a invitat</green>
+          <green>să se alăture ca membru coop</green>
+          <green>insulei lor.</green>
       uncoop:
         description: eliminați un rang coop de la jucător
         parameters: <player>
-        cannot-uncoop-yourself: '&c Nu te poți desface!'
-        cannot-uncoop-member: '&c Nu poți dezactiva un membru al echipei!'
-        player-not-cooped: '&c Player nu este cooptat!'
-        you-are-no-longer-a-coop-member: '&c Nu mai sunteți membru coop al insulei [name].'
+        cannot-uncoop-yourself: '<red>Nu te poți desface!</red>'
+        cannot-uncoop-member: '<red>Nu poți dezactiva un membru al echipei!</red>'
+        player-not-cooped: '<red>Player nu este cooptat!</red>'
+        you-are-no-longer-a-coop-member: '<red>Nu mai sunteți membru coop al insulei [name].</red>'
         all-members-logged-off: >-
-          &c Toți membrii insulei s-au deconectat, astfel încât să nu mai fiți
+          <red>Toți membrii insulei s-au deconectat, astfel încât să nu mai fiți</red>
           membru coop al insulei [name].
-        success: '&b [name] &a nu mai este membru coop al insulei dvs.'
-        is-full: '&c Nu poți coopta pe nimeni altcineva.'
+        success: '<aqua>[name] </aqua><green>nu mai este membru coop al insulei dvs.</green>'
+        is-full: '<red>Nu poți coopta pe nimeni altcineva.</red>'
       trust:
         description: acordă unui jucător rang de încredere pe insula ta
         parameters: <player>
-        trust-in-yourself: '&c Ai încredere în tine!'
+        trust-in-yourself: '<red>Ai încredere în tine!</red>'
         name-has-invited-you: |
-          &a [nume] v-a invitat
-          &a să se alăture ca membru de încredere
-          &a insulei lor.
-        player-already-trusted: '&c Player este deja de încredere!'
-        you-are-trusted: '&2 Sunteți de încredere de &b [name] &a!'
-        success: '&a Ai avut încredere în &b [name] &a.'
-        is-full: '&c Nu puteți avea încredere în nimeni altcineva.'
+          <green>[nume] v-a invitat</green>
+          <green>să se alăture ca membru de încredere</green>
+          <green>insulei lor.</green>
+        player-already-trusted: '<red>Player este deja de încredere!</red>'
+        you-are-trusted: '<dark_green>Sunteți de încredere de </dark_green><aqua>[name] </aqua><green>!</green>'
+        success: '<green>Ai avut încredere în </green><aqua>[name] </aqua><green>.</green>'
+        is-full: '<red>Nu puteți avea încredere în nimeni altcineva.</red>'
       untrust:
         description: elimină rangul de jucător de încredere din jucător
         parameters: <player>
-        cannot-untrust-yourself: '&c Nu vă puteți încrede în voi înșivă!'
-        cannot-untrust-member: '&c Nu poți avea încredere într-un membru al echipei!'
-        player-not-trusted: '&c Player nu este de încredere!'
-        you-are-no-longer-trusted: '&c Nu vă mai încredere în &b [name] &a!'
-        success: '&b [name] &a nu mai este de încredere pe insula dvs.'
+        cannot-untrust-yourself: '<red>Nu vă puteți încrede în voi înșivă!</red>'
+        cannot-untrust-member: '<red>Nu poți avea încredere într-un membru al echipei!</red>'
+        player-not-trusted: '<red>Player nu este de încredere!</red>'
+        you-are-no-longer-trusted: '<red>Nu vă mai încredere în </red><aqua>[name] </aqua><green>!</green>'
+        success: '<aqua>[name] </aqua><green>nu mai este de încredere pe insula dvs.</green>'
       invite:
         description: invită un jucător să se alăture insulei tale
-        invitation-sent: '&a Invitație trimisă la &b [name] &a.'
-        removing-invite: '&c Eliminarea invitației.'
+        invitation-sent: '<green>Invitație trimisă la </green><aqua>[name] </aqua><green>.</green>'
+        removing-invite: '<red>Eliminarea invitației.</red>'
         name-has-invited-you: |
-          &a [nume] v-a invitat
-          &a să se alăture insulei lor.
+          <green>[nume] v-a invitat</green>
+          <green>să se alăture insulei lor.</green>
         to-accept-or-reject: >-
-          &o echipă Do / [label] acceptă să accepte, sau / [label] echipa
+          <italic>echipă Do / [label] acceptă să accepte, sau / [label] echipa</italic>
           respinge să respingă
         you-will-lose-your-island: |
-          &c AVERTISMENT! Vei pierde totul
-          &c insulele tale dacă accepti!
+          <red>AVERTISMENT! Vei pierde totul</red>
+          <red>insulele tale dacă accepti!</red>
         gui:
           titles:
             team-invite-panel: Invitați jucători
           button:
-            already-invited: '&c Invitat deja'
-            search: '&a Căutați un jucător'
+            already-invited: '<red>Invitat deja</red>'
+            search: '<green>Căutați un jucător</green>'
             searching: |
-              &b Căutând
-              &c [nume]
-          enter-name: '&a Introduceți numele:'
+              <aqua>Căutând</aqua>
+              <red>[nume]</red>
+          enter-name: '<green>Introduceți numele:</green>'
           tips:
             LEFT:
-              name: '&b Clic stânga'
-              search: '&a Introduceți numele jucătorului'
-              back: '&a Înapoi'
+              name: '<aqua>Clic stânga</aqua>'
+              search: '<green>Introduceți numele jucătorului</green>'
+              back: '<green>Înapoi</green>'
               invite: |
-                &a pentru a invita un jucător
-                &a să vă alăturați echipei
+                <green>pentru a invita un jucător</green>
+                <green>să vă alăturați echipei</green>
             RIGHT:
-              name: '&b Faceți clic dreapta'
-              coop: '&a pentru a coopera cu jucătorul'
+              name: '<aqua>Faceți clic dreapta</aqua>'
+              coop: '<green>pentru a coopera cu jucătorul</green>'
             SHIFT_LEFT:
-              name: '&b Shift Click stânga'
-              trust: '&a a avea încredere într-un jucător'
+              name: '<aqua>Shift Click stânga</aqua>'
+              trust: '<green>a avea încredere într-un jucător</green>'
         errors:
-          cannot-invite-self: '&c Nu vă puteți invita!'
-          cooldown: '&c Nu puteți invita acea persoană pentru încă [number] de secunde.'
-          island-is-full: '&c Insula ta este plină, nu poți invita pe altcineva.'
-          none-invited-you: '&c Nimeni nu v-a invitat: c.'
-          you-already-are-in-team: '&c Sunteți deja într-o echipă!'
-          already-on-team: '&c Jucătorul respectiv este deja într-o echipă!'
-          invalid-invite: '&c Această invitație nu mai este valabilă, îmi pare rău.'
-          you-have-already-invited: '&c Ai invitat deja acel jucător!'
+          cannot-invite-self: '<red>Nu vă puteți invita!</red>'
+          cooldown: '<red>Nu puteți invita acea persoană pentru încă [number] de secunde.</red>'
+          island-is-full: '<red>Insula ta este plină, nu poți invita pe altcineva.</red>'
+          none-invited-you: '<red>Nimeni nu v-a invitat: c.</red>'
+          you-already-are-in-team: '<red>Sunteți deja într-o echipă!</red>'
+          already-on-team: '<red>Jucătorul respectiv este deja într-o echipă!</red>'
+          invalid-invite: '<red>Această invitație nu mai este valabilă, îmi pare rău.</red>'
+          you-have-already-invited: '<red>Ai invitat deja acel jucător!</red>'
         parameters: <player>
-        you-can-invite: '&a Puteți invita [mai] jucători în plus.'
+        you-can-invite: '<green>Puteți invita [mai] jucători în plus.</green>'
         accept:
           description: acceptați o invitație
           you-joined-island: >-
-            &a Te-ai alăturat unei insule! Utilizați echipa &b /[label] și a
+            <green>Te-ai alăturat unei insule! Utilizați echipa </green><aqua>/[label] și a</aqua>
             pentru a vedea ceilalți membri.
-          name-joined-your-island: '&a [name] s-a alăturat insulei tale!'
+          name-joined-your-island: '<green>[name] s-a alăturat insulei tale!</green>'
           confirmation: |
-            &c Ești sigur că
-            &c vreau să accept asta
-            &c invita?
+            <red>Ești sigur că</red>
+            <red>vreau să accept asta</red>
+            <red>invita?</red>
         reject:
           description: respinge o invitație
-          you-rejected-invite: '&a Ați respins invitația de a vă alătura unei insule.'
-          name-rejected-your-invite: '&c [name] a respins invitația dvs. la insulă!'
+          you-rejected-invite: '<green>Ați respins invitația de a vă alătura unei insule.</green>'
+          name-rejected-your-invite: '<red>[name] a respins invitația dvs. la insulă!</red>'
         cancel:
           description: anulați invitația în așteptare pentru a vă alătura insulei
       leave:
         cannot-leave: >-
-          &c Proprietarii nu pot pleca! Deveniți mai întâi membru sau dați cu
+          <red>Proprietarii nu pot pleca! Deveniți mai întâi membru sau dați cu</red>
           piciorul tuturor membrilor.
         description: pleacă din insula ta
-        left-your-island: '&c [name] &c a părăsit insula'
-        success: '&a Ai părăsit această insulă.'
+        left-your-island: '<red>[name] </red><red>a părăsit insula</red>'
+        success: '<green>Ai părăsit această insulă.</green>'
       kick:
         description: scoateți un membru din insula dvs.
         parameters: <jucător>
-        player-kicked: '&c [Numele] te-a dat afară de pe insulă în [modul de joc]!'
-        cannot-kick: '&c Nu te poți lovi cu piciorul!'
-        cannot-kick-rank: '&c Rangul tău nu permite să-l lovești pe [nume]!'
-        success: '&b [name] &a a fost dat afară din insula dvs.'
+        player-kicked: '<red>[Numele] te-a dat afară de pe insulă în [modul de joc]!</red>'
+        cannot-kick: '<red>Nu te poți lovi cu piciorul!</red>'
+        cannot-kick-rank: '<red>Rangul tău nu permite să-l lovești pe [nume]!</red>'
+        success: '<aqua>[name] </aqua><green>a fost dat afară din insula dvs.</green>'
       demote:
         description: retrogradează un jucător pe insula ta într-un rang
         parameters: <player>
         errors:
-          cant-demote-yourself: '&c Nu te poți retrograda!'
-          cant-demote: '&c Nu poți retrograda rangurile superioare!'
-          must-be-member: '&c Jucătorul trebuie să fie membru al insulei!'
-        failure: '&c Player nu mai poate fi retrogradat!'
-        success: '&a Redus [name] la [rank]'
+          cant-demote-yourself: '<red>Nu te poți retrograda!</red>'
+          cant-demote: '<red>Nu poți retrograda rangurile superioare!</red>'
+          must-be-member: '<red>Jucătorul trebuie să fie membru al insulei!</red>'
+        failure: '<red>Player nu mai poate fi retrogradat!</red>'
+        success: '<green>Redus [name] la [rank]</green>'
       promote:
         description: promovează un jucător pe insula ta la un rang
         parameters: <player>
         errors:
-          cant-promote-yourself: '&c Nu te poți promova!'
-          cant-promote: '&c Nu poți promova peste rangul tău!'
-          must-be-member: '&c Jucătorul trebuie să fie membru al insulei!'
-        failure: '&c Player nu mai poate fi promovat!'
-        success: '&a Promovat [name] la [rank]'
+          cant-promote-yourself: '<red>Nu te poți promova!</red>'
+          cant-promote: '<red>Nu poți promova peste rangul tău!</red>'
+          must-be-member: '<red>Jucătorul trebuie să fie membru al insulei!</red>'
+        failure: '<red>Player nu mai poate fi promovat!</red>'
+        success: '<green>Promovat [name] la [rank]</green>'
       setowner:
         description: transferați-vă proprietatea insulei unui membru
         errors:
           cant-transfer-to-yourself: >-
-            &c Nu vă puteți transfera dreptul de proprietate! &7 (&o Ei bine, de
-            fapt, ai putea ... Dar nu vrem să o faci. Pentru că este inutil. &R
-            &7)
-          target-is-not-member: '&c Jucătorul respectiv nu face parte din echipa insulei tale!'
-          at-max: '&c Acel jucător are deja numărul maxim de insule permise!'
-        name-is-the-owner: '&a [name] este acum proprietarul insulei!'
+            <red>Nu vă puteți transfera dreptul de proprietate! </red><gray>(<italic>Ei bine, de</italic></gray>
+            fapt, ai putea ... Dar nu vrem să o faci. Pentru că este inutil. 
+            <gray>)</gray>
+          target-is-not-member: '<red>Jucătorul respectiv nu face parte din echipa insulei tale!</red>'
+          at-max: '<red>Acel jucător are deja numărul maxim de insule permise!</red>'
+        name-is-the-owner: '<green>[name] este acum proprietarul insulei!</green>'
         parameters: <player>
-        you-are-the-owner: '&a Acum sunteți proprietarul insulei!'
+        you-are-the-owner: '<green>Acum sunteți proprietarul insulei!</green>'
     ban:
       description: interzice un jucător de pe insula ta
       parameters: <player>
-      cannot-ban-yourself: '&c Nu vă puteți interzice!'
-      cannot-ban: '&c Acest jucător nu poate fi interzis.'
-      cannot-ban-member: '&c Lovi mai întâi membrul echipei, apoi interzice.'
+      cannot-ban-yourself: '<red>Nu vă puteți interzice!</red>'
+      cannot-ban: '<red>Acest jucător nu poate fi interzis.</red>'
+      cannot-ban-member: '<red>Lovi mai întâi membrul echipei, apoi interzice.</red>'
       cannot-ban-more-players: >-
-        &c Ați atins limita de interdicție, nu mai puteți interzice jucători din
+        <red>Ați atins limita de interdicție, nu mai puteți interzice jucători din</red>
         insula dvs.
-      player-already-banned: '&c Player este deja interzis.'
-      player-banned: '&b [name] &c este acum interzis de pe insula dvs.'
-      owner-banned-you: '&b [name] &c v-a interzis din insula lor!'
-      you-are-banned: '&b Ești interzis din această insulă!'
+      player-already-banned: '<red>Player este deja interzis.</red>'
+      player-banned: '<aqua>[name] </aqua><red>este acum interzis de pe insula dvs.</red>'
+      owner-banned-you: '<aqua>[name] </aqua><red>v-a interzis din insula lor!</red>'
+      you-are-banned: '<aqua>Ești interzis din această insulă!</aqua>'
     unban:
       description: dezabonează un jucător de pe insula ta
       parameters: <player>
-      cannot-unban-yourself: '&c Nu vă puteți dezabona!'
-      player-not-banned: '&c Player nu este interzis.'
-      player-unbanned: '&b [name] &a este acum interzis de pe insula dvs.'
-      you-are-unbanned: '&b [name] &a te-a interzis de pe insula lor!'
+      cannot-unban-yourself: '<red>Nu vă puteți dezabona!</red>'
+      player-not-banned: '<red>Player nu este interzis.</red>'
+      player-unbanned: '<aqua>[name] </aqua><green>este acum interzis de pe insula dvs.</green>'
+      you-are-unbanned: '<aqua>[name] </aqua><green>te-a interzis de pe insula lor!</green>'
     banlist:
       description: lista jucătorilor interzisi
-      noone: '&a Nimeni nu este interzis pe această insulă.'
-      the-following: '&b Următorii jucători sunt interziși:'
-      names: '&c [linie]'
-      you-can-ban: '&b Puteți interzice până la &e [number] &b mai mulți jucători.'
+      noone: '<green>Nimeni nu este interzis pe această insulă.</green>'
+      the-following: '<aqua>Următorii jucători sunt interziși:</aqua>'
+      names: '<red>[linie]</red>'
+      you-can-ban: '<aqua>Puteți interzice până la </aqua><yellow>[number] </yellow><aqua>mai mulți jucători.</aqua>'
     settings:
       description: afișează setările insulei
     language:
       description: Selecteaza limba
       parameters: '[limba]'
-      not-available: '&c Această limbă nu este disponibilă.'
-      already-selected: '&c Folosiți deja această limbă.'
+      not-available: '<red>Această limbă nu este disponibilă.</red>'
+      already-selected: '<red>Folosiți deja această limbă.</red>'
     expel:
       description: alungă un jucător din insula ta
       parameters: <player>
-      cannot-expel-yourself: '&c Nu te poți expulza singur!'
-      cannot-expel: '&c Acest jucător nu poate fi expulzat.'
-      cannot-expel-member: '&c Nu puteți expulza un membru al echipei!'
-      not-on-island: '&c Acest jucător nu se află pe insula ta!'
-      player-expelled-you: '&b [name] &c v-a expulzat de pe insulă!'
-      success: '&a Ați expulzat &b [name] &a din insulă.'
+      cannot-expel-yourself: '<red>Nu te poți expulza singur!</red>'
+      cannot-expel: '<red>Acest jucător nu poate fi expulzat.</red>'
+      cannot-expel-member: '<red>Nu puteți expulza un membru al echipei!</red>'
+      not-on-island: '<red>Acest jucător nu se află pe insula ta!</red>'
+      player-expelled-you: '<aqua>[name] </aqua><red>v-a expulzat de pe insulă!</red>'
+      success: '<green>Ați expulzat </green><aqua>[name] </aqua><green>din insulă.</green>'
     lock:
       description: blochează sau deblochează [prefix_island] ta
-      locked: '&a [prefix_island] ta este acum blocată.'
-      unlocked: '&a [prefix_island] ta este acum deblocată.'
-      you-are-locked-out: '&c Această [prefix_island] este acum blocată. Ați fost expulzat/ă.'
+      locked: '<green>[prefix_island] ta este acum blocată.</green>'
+      unlocked: '<green>[prefix_island] ta este acum deblocată.</green>'
+      you-are-locked-out: '<red>Această [prefix_island] este acum blocată. Ați fost expulzat/ă.</red>'
 ranks:
   owner: Proprietar
   sub-owner: Sub-proprietar
@@ -1056,8 +1084,8 @@ protection:
     BOOKSHELF:
       name: rafturi de cărți
       description: |-
-        &a Permite plasarea cărților
-        &a sau a lua carti.
+        <green>Permite plasarea cărților</green>
+        <green>sau a lua carti.</green>
       hint: nu poate pune o carte sau ia o carte.
     BREAK_BLOCKS:
       description: Comutare rupere
@@ -1106,19 +1134,19 @@ protection:
     CONTAINER:
       name: Containere
       description: |-
-        &o interacțiune de comutare cu cufere,
-        &o cutie de lăzi și ghivece de flori,
-        &a compostatoare și butoaie.
+        <italic>interacțiune de comutare cu cufere,</italic>
+        <italic>cutie de lăzi și ghivece de flori,</italic>
+        <green>compostatoare și butoaie.</green>
 
-        &7 Se manipulează alte containere
-        &7 de steaguri dedicate.
+        <gray>Se manipulează alte containere</gray>
+        <gray>de steaguri dedicate.</gray>
       hint: Accesul la container este dezactivat
     CHEST:
       name: Cufere și lăzi pentru cărucioare de mine
       description: |-
-        &a Comutați interacțiunea cu cufere
-        &a si piept minecaruri.
-        &a (nu include cufere prinse)
+        <green>Comutați interacțiunea cu cufere</green>
+        <green>si piept minecaruri.</green>
+        <green>(nu include cufere prinse)</green>
       hint: Accesul la piept este dezactivat
     BARREL:
       name: Butoaie
@@ -1130,9 +1158,9 @@ protection:
       hint: Crafter Access dezactivat
     BLOCK_EXPLODE_DAMAGE:
       description: |-
-        &a Permite ancore de pat și reapariție
-        &a pentru a sparge blocuri și a deteriora
-        &a entitati.
+        <green>Permite ancore de pat și reapariție</green>
+        <green>pentru a sparge blocuri și a deteriora</green>
+        <green>entitati.</green>
       name: Blocați daunele de explozie
     COMPOSTER:
       name: Compostere
@@ -1157,7 +1185,7 @@ protection:
     SHULKER_TELEPORT:
       description: |-
         &un Shulker se poate teleporta
-        &a dacă este activ.
+        <green>dacă este activ.</green>
       name: Teleportarea lui Shulker
     SMITHING:
       name: Forjărie
@@ -1182,7 +1210,7 @@ protection:
     ELYTRA:
       name: Elytra
       description: Comutați elitrele permise sau nu
-      hint: '&c AVERTISMENT: Elytra nu poate fi utilizat aici!'
+      hint: '<red>AVERTISMENT: Elytra nu poate fi utilizat aici!</red>'
     HOPPER:
       name: Buncărele
       description: Comutați interacțiunea buncărului
@@ -1196,56 +1224,56 @@ protection:
       hint: Teleportarea fructelor din cor este dezactivată
     CLEAN_SUPER_FLAT:
       description: |-
-        &a Activați curățarea oricăror
+        <green>Activați curățarea oricăror</green>
         și o bucată superplată
-        &lumi insulare
+        <bold>umi insulare</bold>
       name: Curat Super Flat
     COARSE_DIRT_TILLING:
       description: |-
-        &a comutator de prelucrare grosier
-        &a podzol murdar și de rupere
-        &a pentru a obține murdărie
+        <green>comutator de prelucrare grosier</green>
+        <green>podzol murdar și de rupere</green>
+        <green>pentru a obține murdărie</green>
       name: Prelucrarea grosierului grosier
       hint: Fără prelucrarea grosierului
     COLLECT_LAVA:
       description: |-
-        &a comutator care colectează lava
-        &a (suprascrie găleți)
+        <green>comutator care colectează lava</green>
+        <green>(suprascrie găleți)</green>
       name: Adună lava
       hint: Fără colecție de lavă
     COLLECT_WATER:
       description: |-
-        &a comutator de colectare a apei
-        &a (suprascrie găleți)
+        <green>comutator de colectare a apei</green>
+        <green>(suprascrie găleți)</green>
       name: Adună apă
       hint: Găleatele de apă sunt dezactivate
     COLLECT_POWDERED_SNOW:
       description: |-
-        &a Comutați colectarea zăpezii praf
-        &a (înlocuiește găleți)
+        <green>Comutați colectarea zăpezii praf</green>
+        <green>(înlocuiește găleți)</green>
       name: Strângeți zăpadă praf
       hint: Găleți pentru zăpadă praf dezactivate
     COMMAND_RANKS:
-      name: '&e Ranguri de comandă'
-      description: '&a Configurați clasamentul comenzilor'
+      name: '<yellow>Ranguri de comandă</yellow>'
+      description: '<green>Configurați clasamentul comenzilor</green>'
     CRAFTING:
       description: Comutați utilizarea
       name: Banci de lucru
       hint: Accesul la bancă de lucru este dezactivat
     CREEPER_DAMAGE:
       description: |
-        &a târâtor Toggle
-        &o protecție împotriva daunelor
+        <green>târâtor Toggle</green>
+        <italic>protecție împotriva daunelor</italic>
       name: Protecție împotriva daunelor de pe târâtoare
     CREEPER_GRIEFING:
       description: |
-        &a Toggle târâtor jefuit
-        &o protecție la aprindere
-        &a de către vizitatorul insulei.
+        <green>Toggle târâtor jefuit</green>
+        <italic>protecție la aprindere</italic>
+        <green>de către vizitatorul insulei.</green>
       name: Protecție dureroasă pentru târâtoare
       hint: Creeper griefing invalid
     CROP_PLANTING:
-      description: '&a Set cine poate planta semințe.'
+      description: '<green>Set cine poate planta semințe.</green>'
       name: Plantarea culturilor
       hint: Plantarea culturilor este dezactivată
     CROP_TRAMPLE:
@@ -1259,10 +1287,10 @@ protection:
     DRAGON_EGG:
       name: Oul Dragonului
       description: |-
-        &a Previne interacțiunea cu Dragon Eggs.
+        <green>Previne interacțiunea cu Dragon Eggs.</green>
 
-        &c Acest lucru nu îl protejează de ființă
-        &c plasat sau rupt.
+        <red>Acest lucru nu îl protejează de ființă</red>
+        <red>plasat sau rupt.</red>
       hint: Interacțiunea cu ouul dragonului este dezactivată
     DYE:
       description: Preveniți utilizarea coloranților
@@ -1282,19 +1310,19 @@ protection:
       hint: Cuferele Ender sunt dezactivate în această lume
     ENDERMAN_DEATH_DROP:
       description: |-
-        &a Endermen va cădea
-        &orice bloc sunt
-        &o exploatație dacă este ucisă.
+        <green>Endermen va cădea</green>
+        <italic>rice bloc sunt</italic>
+        <italic>exploatație dacă este ucisă.</italic>
       name: Căderea Mortii Endermanului
     ENDERMAN_GRIEFING:
       description: |-
-        &a Endermen poate elimina
-        &o blocuri de insule
+        <green>Endermen poate elimina</green>
+        <italic>blocuri de insule</italic>
       name: Enderman îndurerat
     ENDERMAN_TELEPORT:
       description: |-
-        &a Endermen se pot teleporta
-        &a dacă este activ.
+        <green>Endermen se pot teleporta</green>
+        <green>dacă este activ.</green>
       name: Teleportarea Enderman
     ENDER_PEARL:
       description: Comutați utilizarea
@@ -1304,10 +1332,10 @@ protection:
       description: Afișați mesajele de intrare și ieșire
       island: insula [numele]
       name: Introduceți / ieșiți din mesaje
-      now-entering: '&a Acum introduceți &b [name] &a.'
-      now-entering-your-island: '&a Acum intrând în insula ta: &b [name]'
-      now-leaving: '&a Acum plecăm de la &b [name] &a.'
-      now-leaving-your-island: '&a Acum părăsind insula ta: &b [name]'
+      now-entering: '<green>Acum introduceți </green><aqua>[name] </aqua><green>.</green>'
+      now-entering-your-island: '<green>Acum intrând în insula ta: </green><aqua>[name]</aqua>'
+      now-leaving: '<green>Acum plecăm de la </green><aqua>[name] </aqua><green>.</green>'
+      now-leaving-your-island: '<green>Acum părăsind insula ta: </green><aqua>[name]</aqua>'
     EXPERIENCE_BOTTLE_THROWING:
       name: Experimentați aruncarea cu sticle
       description: Comutați aruncarea sticlelor de experiență.
@@ -1315,8 +1343,8 @@ protection:
     FIRE_BURNING:
       name: Foc arzând
       description: |-
-        &a Comutați dacă focul poate arde
-        &a blocuri sau nu.
+        <green>Comutați dacă focul poate arde</green>
+        <green>blocuri sau nu.</green>
     FIRE_EXTINGUISH:
       description: Comutați la stingerea incendiilor
       name: Stingerea incendiului
@@ -1324,13 +1352,13 @@ protection:
     FIRE_IGNITE:
       name: Aprindere la foc
       description: |-
-        &a Comutați dacă focul poate fi aprins
-        &a de către un jucător înseamnă sau nu.
+        <green>Comutați dacă focul poate fi aprins</green>
+        <green>de către un jucător înseamnă sau nu.</green>
     FIRE_SPREAD:
       name: Extinderea focului
       description: |-
-        &a Comutați dacă focul se poate răspândi
-        &a la blocurile din apropiere sau nu.
+        <green>Comutați dacă focul se poate răspândi</green>
+        <green>la blocurile din apropiere sau nu.</green>
     FISH_SCOOPING:
       name: Scooping de pește
       description: Permiteți scoaterea peștilor folosind o găleată
@@ -1338,9 +1366,9 @@ protection:
     FLINT_AND_STEEL:
       name: Silex și oțel
       description: |-
-        &a Permite jucătorilor să aprindă focuri sau
-        &a foc de tabără cu silex și oțel
-        &a sau taxe de incendiu.
+        <green>Permite jucătorilor să aprindă focuri sau</green>
+        <green>foc de tabără cu silex și oțel</green>
+        <green>sau taxe de incendiu.</green>
       hint: Taxele de silex și oțel și foc sunt dezactivate
     FURNACE:
       description: Comutați utilizarea
@@ -1352,19 +1380,19 @@ protection:
       hint: Utilizarea porții este dezactivată
     GEO_LIMIT_MOBS:
       description: |-
-        &a Eliminați mafiotele care merg
-        &a exterior protejat
-        &a spațiu insular
-      name: '&e Limitați mob-urile la insulă'
+        <green>Eliminați mafiotele care merg</green>
+        <green>exterior protejat</green>
+        <green>spațiu insular</green>
+      name: '<yellow>Limitați mob-urile la insulă</yellow>'
     HARVEST:
       description: |-
-        &a Set cine poate recolta recoltele.
-        &a Nu uitați să permiteți elementul
+        <green>Set cine poate recolta recoltele.</green>
+        <green>Nu uitați să permiteți elementul</green>
         si un pickup!
       name: Recoltarea culturilor
       hint: Recoltarea culturilor este dezactivată
     HIVE:
-      description: '&a Comutați recoltarea stupului.'
+      description: '<green>Comutați recoltarea stupului.</green>'
       name: Recoltarea stupului
       hint: Recoltarea dezactivată
     HURT_TAMED_ANIMALS:
@@ -1388,24 +1416,24 @@ protection:
     ITEM_FRAME:
       name: Element Cadru
       description: |-
-        &o interacțiune de comutare.
-        &a Înlocuiește locul sau rupe blocurile
+        <italic>interacțiune de comutare.</italic>
+        <green>Înlocuiește locul sau rupe blocurile</green>
       hint: Utilizarea cadrului articolului este dezactivată
     ITEM_FRAME_DAMAGE:
       description: |-
-        &a Mobs poate deteriora
-        &a cadru de articol
+        <green>Mobs poate deteriora</green>
+        <green>cadru de articol</green>
       name: Daune cadru articol
     INVINCIBLE_VISITORS:
       description: |-
-        &a Configurare vizitator invincibil
-        &a setări.
-      name: '&e Vizitatori invincibili'
-      hint: '&c Vizitatorii protejați'
+        <green>Configurare vizitator invincibil</green>
+        <green>setări.</green>
+      name: '<yellow>Vizitatori invincibili</yellow>'
+      hint: '<red>Vizitatorii protejați</red>'
     ISLAND_RESPAWN:
       description: |-
-        &a jucător respawn
-        &a pe insulă
+        <green>jucător respawn</green>
+        <green>pe insulă</green>
       name: Insula respawn
     ITEM_DROP:
       description: Comutați căderea
@@ -1429,11 +1457,11 @@ protection:
     LECTERN:
       name: Ferestre
       description: |-
-        &a Permiteți plasarea cărților pe un lutru
-        &a sau să iei cărți din ea.
+        <green>Permiteți plasarea cărților pe un lutru</green>
+        <green>sau să iei cărți din ea.</green>
 
-        &c Nu împiedică jucătorii
-        &c citirea cărților.
+        <red>Nu împiedică jucătorii</red>
+        <red>citirea cărților.</red>
       hint: nu poate așeza o carte pe un lutru sau lua o carte de pe ea.
     LEVER:
       description: Comutați utilizarea
@@ -1441,32 +1469,32 @@ protection:
       hint: Utilizarea pârghiei este dezactivată
     LIMIT_MOBS:
       description: |-
-        &a Limitați entitățile din
+        <green>Limitați entitățile din</green>
         și o reproducere în acest joc
-        &a mod.
-      name: '&e Limitați tipul de entitate de reproducere'
-      can: '&a Poate genera'
-      cannot: '&c Nu se poate genera'
+        <green>mod.</green>
+      name: '<yellow>Limitați tipul de entitate de reproducere</yellow>'
+      can: '<green>Poate genera</green>'
+      cannot: '<red>Nu se poate genera</red>'
     LIQUIDS_FLOWING_OUT:
       name: Lichide care curg în afara insulelor
       description: |-
-        &a Comutați dacă lichidele pot curge în exterior
-        &a domeniu de protecție al insulei.
-        &a Dezactivarea acestuia ajută la evitarea lavei și a apei
-        &o piatră generatoare în zona dintre
-        &a două insule.
+        <green>Comutați dacă lichidele pot curge în exterior</green>
+        <green>domeniu de protecție al insulei.</green>
+        <green>Dezactivarea acestuia ajută la evitarea lavei și a apei</green>
+        <italic>piatră generatoare în zona dintre</italic>
+        <green>două insule.</green>
 
-        &c Rețineți că lichidele vor curge în continuare pe verticală.
-        &c De asemenea, nu se vor răspândi orizontal dacă
-        &c sunt plasate în afara unei insule
-        gama de protecție &c.
+        <red>Rețineți că lichidele vor curge în continuare pe verticală.</red>
+        <red>De asemenea, nu se vor răspândi orizontal dacă</red>
+        <red>sunt plasate în afara unei insule</red>
+        gama de protecție <red>.</red>
     LOCK:
       description: Comutați blocarea
       name: Insula de blocare
     CHANGE_SETTINGS:
       name: Schimbați setările
       description: |-
-        &a Permiteți să comutați ce membru
+        <green>Permiteți să comutați ce membru</green>
         &un rol poate modifica setările insulei.
     MILKING:
       description: Comutați mulsul de vacă
@@ -1486,8 +1514,8 @@ protection:
       name: Spawners monstru
     MOUNT_INVENTORY:
       description: |-
-        &a acces de comutare
-        &a pentru a monta inventarul
+        <green>acces de comutare</green>
+        <green>pentru a monta inventarul</green>
       name: Montează inventarul
       hint: Stocurile de montare sunt dezactivate
     NAME_TAG:
@@ -1497,19 +1525,19 @@ protection:
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Creatură naturală care dă naștere în afara razei de acțiune
       description: >-
-        &a Comutați dacă creaturile (animalele și
+        <green>Comutați dacă creaturile (animalele și</green>
 
         și monștri) pot genera în mod natural afară
 
-        &o zonă de protecție a unei insule.
+        <italic>zonă de protecție a unei insule.</italic>
 
 
-        &c Rețineți că nu împiedică creaturile
+        <red>Rețineți că nu împiedică creaturile</red>
 
-        &c să apară prin intermediul unui aparat de reproducere a mafiei sau a
+        <red>să apară prin intermediul unui aparat de reproducere a mafiei sau a</red>
         unui aparat de reproducere
 
-        &c ou.
+        <red>ou.</red>
     NOTE_BLOCK:
       description: Comutați utilizarea
       name: Bloc de note
@@ -1517,47 +1545,47 @@ protection:
     OBSIDIAN_SCOOPING:
       name: Îndepărtarea obsidianului
       description: |-
-        &a Permite jucătorilor să scoată obsidian
-        &a cu o găleată goală înapoi în lavă.
+        <green>Permite jucătorilor să scoată obsidian</green>
+        <green>cu o găleată goală înapoi în lavă.</green>
 
-        &a Acest lucru îi ajută pe începătorii care nu au reușit
-        &a construi generatorul lor de pietre.
+        <green>Acest lucru îi ajută pe începătorii care nu au reușit</green>
+        <green>construi generatorul lor de pietre.</green>
 
-        &o Notă: obsidianul nu poate fi recuperat
-        &a dacă există alte blocuri de obsidian
-        &a pe o rază de 2 blocuri.
-      scooping: '&a Obsidian în schimbare în lavă. Fii atent data viitoare!'
-      cooldown: '&c Trebuie să așteptați înainte de a colecta un alt bloc de obsidian.'
+        <italic>Notă: obsidianul nu poate fi recuperat</italic>
+        <green>dacă există alte blocuri de obsidian</green>
+        <green>pe o rază de 2 blocuri.</green>
+      scooping: '<green>Obsidian în schimbare în lavă. Fii atent data viitoare!</green>'
+      cooldown: '<red>Trebuie să așteptați înainte de a colecta un alt bloc de obsidian.</red>'
       obsidian-nearby: >-
-        &c Există blocuri de obsidian în apropiere, nu puteți scoate acest bloc
+        <red>Există blocuri de obsidian în apropiere, nu puteți scoate acest bloc</red>
         în lavă. ([radius])
     OFFLINE_GROWTH:
       description: |-
-        &a Când este dezactivat, plantele
-        &a nu va crește pe insule
-        &a unde toți membrii sunt offline.
-        &o Poate ajuta la reducerea decalajului.
+        <green>Când este dezactivat, plantele</green>
+        <green>nu va crește pe insule</green>
+        <green>unde toți membrii sunt offline.</green>
+        <italic>Poate ajuta la reducerea decalajului.</italic>
       name: Creștere offline
     OFFLINE_REDSTONE:
       description: |-
-        &a Când este dezactivat, redstone
-        &a nu va opera pe insule
-        &a unde toți membrii sunt offline.
-        &o Poate ajuta la reducerea decalajului.
-        &a Nu afectează insula de reproducere.
+        <green>Când este dezactivat, redstone</green>
+        <green>nu va opera pe insule</green>
+        <green>unde toți membrii sunt offline.</green>
+        <italic>Poate ajuta la reducerea decalajului.</italic>
+        <green>Nu afectează insula de reproducere.</green>
       name: Offline Redstone
     PETS_STAY_AT_HOME:
       description: |-
-        &a Când sunt active, animale de companie îmblânzite
-        &a poate merge doar la și
-        &a nu poate părăsi proprietarul
-        &o insulă de origine.
+        <green>Când sunt active, animale de companie îmblânzite</green>
+        <green>poate merge doar la și</green>
+        <green>nu poate părăsi proprietarul</green>
+        <italic>insulă de origine.</italic>
       name: Animalele de companie stau acasă
     PISTON_PUSH:
       description: |-
-        &a Activați acest lucru pentru a preveni
-        &a piston de la împingere
-        &o blocuri în afara insulei
+        <green>Activați acest lucru pentru a preveni</green>
+        <green>piston de la împingere</green>
+        <italic>blocuri în afara insulei</italic>
       name: Protecție la împingere a pistonului
     PLACE_BLOCKS:
       description: Comutați plasarea
@@ -1566,14 +1594,14 @@ protection:
     PODZOL:
       name: Producția de podzol de copac
       description: |-
-        &a Dacă este dezactivat, va preveni
-        &a producția de podzol de copac
-        &a când cresc copaci mari
+        <green>Dacă este dezactivat, va preveni</green>
+        <green>producția de podzol de copac</green>
+        <green>când cresc copaci mari</green>
     POTION_THROWING:
       name: Aruncarea poției
       description: |-
-        &a comutator care aruncă poțiuni.
-        &a Aceasta include poțiuni stropitoare și persistente.
+        <green>comutator care aruncă poțiuni.</green>
+        <green>Aceasta include poțiuni stropitoare și persistente.</green>
       hint: Aruncarea poțiilor este dezactivată
     NETHER_PORTAL:
       description: Comutați utilizarea
@@ -1589,42 +1617,42 @@ protection:
       hint: Utilizarea plăcii de presiune este dezactivată
     PVP_END:
       description: |-
-        &c Activați / dezactivați PVP
-        &c la sfârșit.
+        <red>Activați / dezactivați PVP</red>
+        <red>la sfârșit.</red>
       name: Încheiați PVP
       hint: PVP dezactivat la sfârșit
-      enabled: '&c PVP-ul de la sfârșit a fost activat.'
-      disabled: '&a PVP în cele din urmă a fost dezactivat.'
+      enabled: '<red>PVP-ul de la sfârșit a fost activat.</red>'
+      disabled: '<green>PVP în cele din urmă a fost dezactivat.</green>'
     PVP_NETHER:
       description: |-
-        &c Activați / dezactivați PVP
-        &c în Olanda.
+        <red>Activați / dezactivați PVP</red>
+        <red>în Olanda.</red>
       name: PVP Nether
       hint: PVP dezactivat în Olanda
-      enabled: '&c PVP-ul din Nether a fost activat.'
-      disabled: '&a PVP din Olanda a fost dezactivat.'
+      enabled: '<red>PVP-ul din Nether a fost activat.</red>'
+      disabled: '<green>PVP din Olanda a fost dezactivat.</green>'
     PVP_OVERWORLD:
       description: |-
-        &c Activați / dezactivați PVP
-        &c pe insulă.
+        <red>Activați / dezactivați PVP</red>
+        <red>pe insulă.</red>
       name: PVP Overworld
-      hint: '&c PVP dezactivat în Overworld'
-      enabled: '&c PVP-ul din Overworld a fost activat.'
-      disabled: '&a PVP din Overworld a fost dezactivat.'
+      hint: '<red>PVP dezactivat în Overworld</red>'
+      enabled: '<red>PVP-ul din Overworld a fost activat.</red>'
+      disabled: '<green>PVP din Overworld a fost dezactivat.</green>'
     REDSTONE:
       description: Comutați utilizarea
       name: Obiecte Redstone
       hint: Interacțiunea Redstone este dezactivată
     REMOVE_END_EXIT_ISLAND:
       description: |-
-        &a Previne ieșirea finală
-        &o insulă de generare
-        &a la coordonatele 0,0
+        <green>Previne ieșirea finală</green>
+        <italic>insulă de generare</italic>
+        <green>la coordonatele 0,0</green>
       name: Scoateți insula de ieșire finală
     REMOVE_MOBS:
       description: |-
-        &a Eliminați monștrii când
-        &o teleportare pe insulă
+        <green>Eliminați monștrii când</green>
+        <italic>teleportare pe insulă</italic>
       name: Eliminați monștrii
     RIDING:
       description: Comutați pe călărie
@@ -1640,41 +1668,41 @@ protection:
       hint: Ouă de reproducere dezactivate
     SPAWNER_SPAWN_EGGS:
       description: |-
-        &a Permite modificarea tipului de entitate al reproducătorului
-        &o folosind ouă de reproducere.
+        <green>Permite modificarea tipului de entitate al reproducătorului</green>
+        <italic>folosind ouă de reproducere.</italic>
       name: Depuneți ouă pe reproducători
       hint: >-
         schimbarea tipului de entitate al reproducătorului folosind ouă de
         reproducere nu este permisă
     SCULK_SENSOR:
       description: |-
-        &a Comută senzorul sculk
-        &o activare.
+        <green>Comută senzorul sculk</green>
+        <italic>activare.</italic>
       name: Senzor Sculk
       hint: activarea senzorului sculk este dezactivată
     SCULK_SHRIEKER:
       description: |-
-        &a Comută strigătul sculk
-        &o activare.
+        <green>Comută strigătul sculk</green>
+        <italic>activare.</italic>
       name: Sculk Screamers
       hint: Activarea strigătului sculk este dezactivată
     SIGN_EDITING:
       description: |-
-        &a Permite editarea textului
-        &a de semne
+        <green>Permite editarea textului</green>
+        <green>de semne</green>
       name: Editarea semnelor
       hint: editarea semnelor este dezactivată
     TNT_DAMAGE:
       description: |-
-        &o Permiteți carucioare miniaturale TNT și TNT
-        &a pentru a sparge blocuri și daune
-        &a entități.
+        <italic>Permiteți carucioare miniaturale TNT și TNT</italic>
+        <green>pentru a sparge blocuri și daune</green>
+        <green>entități.</green>
       name: Daune TNT
     TNT_PRIMING:
       description: |-
-        &a Previne amorsarea TNT.
-        &a Nu suprascrie
-        &o protecție din silex și oțel.
+        <green>Previne amorsarea TNT.</green>
+        <green>Nu suprascrie</green>
+        <italic>protecție din silex și oțel.</italic>
       name: Amorsare TNT
       hint: Amorsare TNT dezactivată
     TRADING:
@@ -1688,13 +1716,13 @@ protection:
     TREES_GROWING_OUTSIDE_RANGE:
       name: Copaci care cresc în afara razei de acțiune
       description: |-
-        &a Comutați dacă arborii pot crește în afara unei
+        <green>Comutați dacă arborii pot crește în afara unei</green>
         &zona de protecție a unei insule sau nu.
-        &a Nu numai că va preveni așezarea puieților
-        &o în afara zonei de protecție a unei insule de la
-        &o creștere, dar va bloca și generația
-        &a de frunze / bușteni în afara insulei, astfel
-        &o tăiere a copacului.
+        <green>Nu numai că va preveni așezarea puieților</green>
+        <italic>în afara zonei de protecție a unei insule de la</italic>
+        <italic>creștere, dar va bloca și generația</italic>
+        <green>de frunze / bușteni în afara insulei, astfel</green>
+        <italic>tăiere a copacului.</italic>
     TURTLE_EGGS:
       description: Comutați zdrobirea
       name: Ouă de broască țestoasă
@@ -1710,26 +1738,26 @@ protection:
     PREVENT_TELEPORT_WHEN_FALLING:
       name: Preveniți teleportarea atunci când cădeți
       description: |-
-        &a Împiedicați jucătorii să se teleporteze
-        &o întoarcere la insula lor folosind comenzi
-        &a dacă cad.
-      hint: '&c Nu poți face asta în timp ce cazi.'
+        <green>Împiedicați jucătorii să se teleporteze</green>
+        <italic>întoarcere la insula lor folosind comenzi</italic>
+        <green>dacă cad.</green>
+      hint: '<red>Nu poți face asta în timp ce cazi.</red>'
     VISITOR_KEEP_INVENTORY:
       name: Vizitatorii păstrează inventarul la moarte
       description: |-
-        &a Preveniți jucătorii să-și piardă
-        &a articole și experiență dacă mor mai departe
-        &a o insulă în care sunt un vizitator.
-        &o
-        Membrii &a Island încă își pierd obiectele
-        &a dacă mor pe propria lor insulă!
+        <green>Preveniți jucătorii să-și piardă</green>
+        <green>articole și experiență dacă mor mai departe</green>
+        <green>o insulă în care sunt un vizitator.</green>
+        <italic></italic>
+        Membrii <green>Island încă își pierd obiectele</green>
+        <green>dacă mor pe propria lor insulă!</green>
     SPAWN_PROTECTION:
       name: Spawn island void protection
       description: |-
-        &a When enabled, players who fall
-        &a into the void at the spawn island
-        &a will be teleported back to the
-        &a spawn point instead of dying.
+        <green>When enabled, players who fall</green>
+        <green>into the void at the spawn island</green>
+        <green>will be teleported back to the</green>
+        <green>spawn point instead of dying.</green>
     RAID_TRIGGER:
       name: Declanșare raid
       description: Setează rangul minim al insulei necesar pentru a declanșa un raid
@@ -1737,231 +1765,231 @@ protection:
     ENTITY_PORTAL_TELEPORT:
       name: Utilizarea portalului entității
       description: |-
-        &a Comută dacă entitățile (non-jucător) pot
-        &a utilizați portaluri pentru a vă teleporta
-        &a dimensiuni
+        <green>Comută dacă entitățile (non-jucător) pot</green>
+        <green>utilizați portaluri pentru a vă teleporta</green>
+        <green>dimensiuni</green>
     WIND_CHARGE:
       name: Încărcătură de vânt
       description: |-
-        &a Comută utilizarea încărcăturilor de vânt.
-        &a Dacă este dezactivat, vizitatorii nu pot
-        &a folosi încărcături de vânt pe această insulă.
+        <green>Comută utilizarea încărcăturilor de vânt.</green>
+        <green>Dacă este dezactivat, vizitatorii nu pot</green>
+        <green>folosi încărcături de vânt pe această insulă.</green>
       hint: Utilizarea încărcăturii de vânt dezactivată
     WITHER_DAMAGE:
       name: Comutați daunele ofilite
       description: |-
-        &a Dacă este activ, greaban poate
-        &a blocaj de daune și jucători
+        <green>Dacă este activ, greaban poate</green>
+        <green>blocaj de daune și jucători</green>
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
-        &a Permite ancore de pat și reapariție
-        &a pentru a sparge blocuri și a deteriora
-        &a entități în afara limitelor insulei.
+        <green>Permite ancore de pat și reapariție</green>
+        <green>pentru a sparge blocuri și a deteriora</green>
+        <green>entități în afara limitelor insulei.</green>
       name: Daune de explozie a blocului mondial
     WORLD_TNT_DAMAGE:
       description: |-
-        &o Permiteți carucioare miniaturale TNT și TNT
-        &a pentru a sparge blocuri și daune
-        &o entități în afara limitelor insulei.
+        <italic>Permiteți carucioare miniaturale TNT și TNT</italic>
+        <green>pentru a sparge blocuri și daune</green>
+        <italic>entități în afara limitelor insulei.</italic>
       name: Daune TNT mondiale
-  locked: '&c Această insulă este blocată!'
-  locked-island-bypass: '&6 Această [prefix_island] este blocată, dar ai permisiunea de a o ocoli.'
-  protected: '&c Insula protejată: [description].'
-  world-protected: '&c Protecție mondială: [description].'
-  spawn-protected: '&c Spawn protejat: [description].'
+  locked: '<red>Această insulă este blocată!</red>'
+  locked-island-bypass: '<gold>Această [prefix_island] este blocată, dar ai permisiunea de a o ocoli.</gold>'
+  protected: '<red>Insula protejată: [description].</red>'
+  world-protected: '<red>Protecție mondială: [description].</red>'
+  spawn-protected: '<red>Spawn protejat: [description].</red>'
   panel:
-    next: '&f Pagina următoare'
-    previous: '&f Pagina anterioară'
+    next: '<white>Pagina următoare</white>'
+    previous: '<white>Pagina anterioară</white>'
     mode:
       advanced:
-        name: '&6 Setări avansate'
-        description: '&a Afișează o cantitate sensibilă de setări.'
+        name: '<gold>Setări avansate</gold>'
+        description: '<green>Afișează o cantitate sensibilă de setări.</green>'
       basic:
-        name: '&a Setări de bază'
-        description: '&a Afișează cele mai utile setări.'
+        name: '<green>Setări de bază</green>'
+        description: '<green>Afișează cele mai utile setări.</green>'
       expert:
-        name: '&c Setări expert'
-        description: '&a Afișează toate setările disponibile.'
-      click-to-switch: '&e Faceți clic pe &7 pentru a comuta la &r [următor] & r &7.'
+        name: '<red>Setări expert</red>'
+        description: '<green>Afișează toate setările disponibile.</green>'
+      click-to-switch: '<yellow>Faceți clic pe </yellow><gray>pentru a comuta la </gray>[următor] & r <gray>.</gray>'
     reset-to-default:
-      name: '&c Resetați la valorile implicite'
+      name: '<red>Resetați la valorile implicite</red>'
       description: |
-        &a Resetează &c &l TOATE &r &a setările lor
-        &o valoare implicită.
+        <green>Resetează </green><red><bold>TOATE </bold></red><green>setările lor</green>
+        <italic>valoare implicită.</italic>
       confirm: confirm
-      instructions: '&a Ești sigur? Scrie &c "confirm" &a pentru a reseta totul.'
+      instructions: '<green>Ești sigur? Scrie </green><red>"confirm" </red><green>pentru a reseta totul.</green>'
     PROTECTION:
-      title: '&6 Protecție'
+      title: '<gold>Protecție</gold>'
       description: |-
-        &a Setări de protecție
-        &a pentru această insulă
+        <green>Setări de protecție</green>
+        <green>pentru această insulă</green>
     SETTING:
-      title: '&6 Setări'
+      title: '<gold>Setări</gold>'
       description: |-
-        &a Setări generale
-        &a pentru această insulă
+        <green>Setări generale</green>
+        <green>pentru această insulă</green>
     WORLD_SETTING:
-      title: '&b [world_name] &6 Setări'
-      description: '&a Setări pentru această lume a jocului'
+      title: '<aqua>[world_name] </aqua><gold>Setări</gold>'
+      description: '<green>Setări pentru această lume a jocului</green>'
     WORLD_DEFAULTS:
-      title: '&b [world_name] &6 Protecții mondiale'
+      title: '<aqua>[world_name] </aqua><gold>Protecții mondiale</gold>'
       description: |
-        &a Setări de protecție când
-        &a jucător se află în afara insulei lor
+        <green>Setări de protecție când</green>
+        <green>jucător se află în afara insulei lor</green>
     flag-item:
-      name-layout: '&a nume]'
+      name-layout: '<green>nume]</green>'
       command-instructions:
         setname: |
-          &a Selectați rangul care poate
-          &a setați numele
+          <green>Selectați rangul care poate</green>
+          <green>setați numele</green>
         ban: |
-          &a Selectați rangul care poate
+          <green>Selectați rangul care poate</green>
           interzice jucătorii
         unban: |
-          &a Selectați rangul care poate 
-          &a unban jucători
+          <green>Selectați rangul care poate</green>
+          <green>unban jucători</green>
         expel: |
-          &a Selectați rangul care poate 
-          &a expulza vizitatorii
+          <green>Selectați rangul care poate</green>
+          <green>expulza vizitatorii</green>
         team-invite: |
-          &a Selectați rangul care poate 
-          &o invitație
+          <green>Selectați rangul care poate</green>
+          <italic>invitație</italic>
         team-kick: |
-          &a Selectați rangul care poate
-          &o lovitură
+          <green>Selectați rangul care poate</green>
+          <italic>lovitură</italic>
         team-coop: |
-          &a Selectați rangul care poate 
-          &o coop
+          <green>Selectați rangul care poate</green>
+          <italic>coop</italic>
         team-trust: |
-          &a Selectați rangul care poate 
-          &o încredere
+          <green>Selectați rangul care poate</green>
+          <italic>încredere</italic>
         team-uncoop: |
-          &a Selectați rangul care poate 
-          &a uncoop
+          <green>Selectați rangul care poate</green>
+          <green>uncoop</green>
         team-untrust: |
-          &a Selectați rangul care poate 
-          &o neîncredere
+          <green>Selectați rangul care poate</green>
+          <italic>neîncredere</italic>
         team-promote: |
-          &a Selectați rangul care poate
-          &a promova rangul jucătorului
+          <green>Selectați rangul care poate</green>
+          <green>promova rangul jucătorului</green>
         team-demote: |
-          &a Selectați rangul care poate
-          &a retrogradează rangul jucătorului
+          <green>Selectați rangul care poate</green>
+          <green>retrogradează rangul jucătorului</green>
         sethome: |
-          &a Selectați rangul care poate
-          &a set case
+          <green>Selectați rangul care poate</green>
+          <green>set case</green>
         deletehome: |
-          &a Selectați rangul care poate
-          &a șterge casele
+          <green>Selectați rangul care poate</green>
+          <green>șterge casele</green>
         renamehome: |
-          &a Selectați rangul care poate
-          &a redenumi casele
+          <green>Selectați rangul care poate</green>
+          <green>redenumi casele</green>
         setcount: |
-          &a Selectați rangul care poate
-          &a schimba faza
+          <green>Selectați rangul care poate</green>
+          <green>schimba faza</green>
         border: |
-          &a Selectați rangul care poate
-          &a utilizați comanda border
+          <green>Selectați rangul care poate</green>
+          <green>utilizați comanda border</green>
       description-layout: |
-        &o descriere]
+        <italic>descriere]</italic>
 
-        &e Faceți clic stânga &7 pentru a merge în jos.
-        &e Faceți clic dreapta pe &7 pentru a merge în sus.
+        <yellow>Faceți clic stânga </yellow><gray>pentru a merge în jos.</gray>
+        <yellow>Faceți clic dreapta pe </yellow><gray>pentru a merge în sus.</gray>
 
-        &7 Permise pentru:
-      allowed-rank: '&3 - &a'
-      blocked-rank: '&3 - &c'
-      minimal-rank: '&3 - &2'
+        <gray>Permise pentru:</gray>
+      allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
+      blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
+      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        &o descriere]
+        <italic>descriere]</italic>
 
-        &e Faceți clic pe &7 pentru a deschide.
-      setting-cooldown: '&c Setarea este activată'
+        <yellow>Faceți clic pe </yellow><gray>pentru a deschide.</gray>
+      setting-cooldown: '<red>Setarea este activată</red>'
       setting-layout: |
-        &o descriere]
+        <italic>descriere]</italic>
 
-        &e Faceți clic pe &7 pentru a comuta.
+        <yellow>Faceți clic pe </yellow><gray>pentru a comuta.</gray>
 
-        &7 Setare curentă: [setting]
-      setting-active: '&a activ'
-      setting-disabled: '&c Dezactivat'
+        <gray>Setare curentă: [setting]</gray>
+      setting-active: '<green>activ</green>'
+      setting-disabled: '<red>Dezactivat</red>'
 management:
   panel:
     title: Managementul BentoBox
     views:
       gamemodes:
-        name: '&6 moduri de joc'
+        name: '<gold>moduri de joc</gold>'
         description: >-
-          &e Faceți clic pe &a pentru a afișa modurile de joc încărcate în
+          <yellow>Faceți clic pe </yellow><green>pentru a afișa modurile de joc încărcate în</green>
           prezent
         blueprints:
-          name: '&6 Planuri'
-          description: '&a Deschide meniul Plan de administrare.'
+          name: '<gold>Planuri</gold>'
+          description: '<green>Deschide meniul Plan de administrare.</green>'
         gamemode:
-          name: '&f [name]'
+          name: '<white>[name]</white>'
           description: |
-            &a Insulele: &b [islands]
+            <green>Insulele: </green><aqua>[islands]</aqua>
       addons:
-        name: '&6 Adăugiri'
-        description: '&e Faceți clic pe &a pentru a afișa suplimentele încărcate în prezent'
+        name: '<gold>Adăugiri</gold>'
+        description: '<yellow>Faceți clic pe </yellow><green>pentru a afișa suplimentele încărcate în prezent</green>'
       hooks:
-        name: '&6 Cârlige'
-        description: '&e Faceți clic pe &a pentru a afișa Cârlige încărcate în prezent'
+        name: '<gold>Cârlige</gold>'
+        description: '<yellow>Faceți clic pe </yellow><green>pentru a afișa Cârlige încărcate în prezent</green>'
     actions:
       reload:
-        name: '&c Reîncarcă'
-        description: '&e Faceți clic pe &c &l de două ori &r &a pentru a reîncărca BentoBox'
+        name: '<red>Reîncarcă</red>'
+        description: '<yellow>Faceți clic pe </yellow><red><bold>de două ori </bold></red><green>pentru a reîncărca BentoBox</green>'
     buttons:
       catalog:
-        name: '&6 Catalog de Addons'
-        description: '&a Deschide catalogul de suplimente'
+        name: '<gold>Catalog de Addons</gold>'
+        description: '<green>Deschide catalogul de suplimente</green>'
       credits:
-        name: '&6 credite'
-        description: '&a Deschide creditele pentru BentoBox'
+        name: '<gold>credite</gold>'
+        description: '<green>Deschide creditele pentru BentoBox</green>'
       empty-here:
-        name: '&b Aici pare gol aici ...'
-        description: '&a Ce se întâmplă dacă aruncați o privire la catalogul nostru?'
+        name: '<aqua>Aici pare gol aici ...</aqua>'
+        description: '<green>Ce se întâmplă dacă aruncați o privire la catalogul nostru?</green>'
     information:
       state:
-        name: '&6 Compatibilitate'
+        name: '<gold>Compatibilitate</gold>'
         description:
           COMPATIBLE: |
-            &a Running &e [name] [version] &a.
+            <green>Running </green><yellow>[name] [version] </yellow><green>.</green>
 
-            &a BentoBox rulează în prezent pe un
-            &a &l COMPATIBIL &r &a software de server și
-            &o versiune.
+            <green>BentoBox rulează în prezent pe un</green>
+            <green><bold>COMPATIBIL </bold></green><green>software de server și</green>
+            <italic>versiune.</italic>
 
-            &a Caracteristicile sale sunt complet concepute pentru a
-            &o alergare în acest mediu.
+            <green>Caracteristicile sale sunt complet concepute pentru a</green>
+            <italic>alergare în acest mediu.</italic>
           SUPPORTED: |
-            &a Running &e [name] [version] &a.
+            <green>Running </green><yellow>[name] [version] </yellow><green>.</green>
 
-            &a BentoBox rulează în prezent pe un
-            &a &l SPRIJINIT &r &a software de server și
-            &o versiune.
+            <green>BentoBox rulează în prezent pe un</green>
+            <green><bold>SPRIJINIT </bold></green><green>software de server și</green>
+            <italic>versiune.</italic>
 
-            &a Majoritatea funcțiilor sale vor funcționa fără probleme
-            &a în acest mediu.
+            <green>Majoritatea funcțiilor sale vor funcționa fără probleme</green>
+            <green>în acest mediu.</green>
           NOT_SUPPORTED: |
-            &a Running &e [name] [version] &a.
+            <green>Running </green><yellow>[name] [version] </yellow><green>.</green>
 
-            &a BentoBox rulează în prezent pe un
-            &6 &l NU ESTE SUPORT &r &a software de server sau
-            &o versiune.
+            <green>BentoBox rulează în prezent pe un</green>
+            <gold><bold>NU ESTE SUPORT </bold></gold><green>software de server sau</green>
+            <italic>versiune.</italic>
 
-            &a În timp ce majoritatea funcțiilor sale vor rula
-            &a corect, &6 erori specifice platformei sau
-            &6 probleme sunt de așteptat &a.
+            <green>În timp ce majoritatea funcțiilor sale vor rula</green>
+            <green>corect, </green><gold>erori specifice platformei sau</gold>
+            <gold>probleme sunt de așteptat </gold><green>.</green>
           INCOMPATIBLE: |
-            &a Running &e [name] [version] &a.
+            <green>Running </green><yellow>[name] [version] </yellow><green>.</green>
 
-            &a BentoBox rulează în prezent pe un
-            &c &l INCOMPATIBIL &r &a software de server sau
-            &o versiune.
+            <green>BentoBox rulează în prezent pe un</green>
+            <red><bold>INCOMPATIBIL </bold></red><green>software de server sau</green>
+            <italic>versiune.</italic>
 
-            &c Pot apărea comportamente ciudate și erori
-            &c și cele mai multe funcții pot fi instabile.
+            <red>Pot apărea comportamente ciudate și erori</red>
+            <red>și cele mai multe funcții pot fi instabile.</red>
 catalog:
   panel:
     GAMEMODES:
@@ -1970,33 +1998,33 @@ catalog:
       title: Catalog Addons
     views:
       gamemodes:
-        name: '&6 moduri de joc'
+        name: '<gold>moduri de joc</gold>'
         description: |
-          &e Faceți clic pe &a pentru a naviga prin
-          &a Gamemodes oficial disponibil.
+          <yellow>Faceți clic pe </yellow><green>pentru a naviga prin</green>
+          <green>Gamemodes oficial disponibil.</green>
       addons:
-        name: '&6 Addons'
+        name: '<gold>Addons</gold>'
         description: |
-          &e Faceți clic pe &a pentru a naviga prin
-          &a supliment oficial disponibil.
+          <yellow>Faceți clic pe </yellow><green>pentru a naviga prin</green>
+          <green>supliment oficial disponibil.</green>
     icon:
       description-template: |
-        &8 [topic]
-        &o [install]
+        <dark_gray>[topic]</dark_gray>
+        <italic>[install]</italic>
 
-        &7 &o [description]
+        <gray><italic>[description]</italic></gray>
 
-        &e Faceți clic pe &a pentru a obține linkul către
-        &o ultimă versiune.
+        <yellow>Faceți clic pe </yellow><green>pentru a obține linkul către</green>
+        <italic>ultimă versiune.</italic>
       already-installed: Deja instalat!
       install-now: Instaleaza acum!
     empty-here:
-      name: '&b Aici pare gol aici ...'
+      name: '<aqua>Aici pare gol aici ...</aqua>'
       description: |
-        &c BentoBox nu s-a putut conecta la GitHub.
+        <red>BentoBox nu s-a putut conecta la GitHub.</red>
 
-        &o Permiteți BentoBox să se conecteze la GitHub în
-        &a configurația sau încercați din nou mai târziu.
+        <italic>Permiteți BentoBox să se conecteze la GitHub în</italic>
+        <green>configurația sau încercați din nou mai târziu.</green>
 enums:
   DamageCause:
     CONTACT: Contact
@@ -2033,69 +2061,107 @@ enums:
     WORLD_BORDER: Frontiera Mondială
 panel:
   credits:
-    title: '&8 [name] &2 credite'
+    title: '<dark_gray>[name] </dark_gray><dark_green>credite</dark_green>'
     contributor:
-      name: '&a [name]'
-      description: '&a Angajamente: &b [commits]'
+      name: '<green>[name]</green>'
+      description: '<green>Angajamente: </green><aqua>[commits]</aqua>'
     empty-here:
-      name: '&c Acesta pare gol aici ...'
+      name: '<red>Acesta pare gol aici ...</red>'
       description: |
-        &c BentoBox nu a putut să adune Contribuitorii
-        &c pentru acest Addon.
+        <red>BentoBox nu a putut să adune Contribuitorii</red>
+        <red>pentru acest Addon.</red>
 
-        &o Permiteți BentoBox să se conecteze la GitHub în
-        &a configurația sau încercați din nou mai târziu.
+        <italic>Permiteți BentoBox să se conecteze la GitHub în</italic>
+        <green>configurația sau încercați din nou mai târziu.</green>
 panels:
   island_homes:
-    title: '&2&l Casele tale de pe insula'
+    title: '<dark_green><bold>Casele tale de pe insula</bold></dark_green>'
     buttons:
-      name: '&l [nume]'
+      name: '<bold>[nume]</bold>'
   island_creation:
-    title: '&2&l Alegeți o insulă'
+    title: '<dark_green><bold>Alegeți o insulă</bold></dark_green>'
     buttons:
       bundle:
-        name: '&l [nume]'
+        name: '<bold>[nume]</bold>'
         description: '[descriere]'
-        uses: '&a Folosit [număr]/[max]'
-        unlimited: '&a Utilizări nelimitate permise'
-        cost: '&e Cost: [cost]'
+        uses: '<green>Folosit [număr]/[max]</green>'
+        unlimited: '<green>Utilizări nelimitate permise</green>'
+        cost: '<yellow>Cost: [cost]</yellow>'
   language:
-    title: '&2&l Selectați limba dvs'
-    edited: '&c Schimbat în [lang]'
+    title: '<dark_green><bold>Selectați limba dvs</bold></dark_green>'
+    edited: '<red>Schimbat în [lang]</red>'
     buttons:
       language:
-        name: '&f&l [nume]'
+        name: '<white><bold>[nume]</bold></white>'
         description: |-
           [autori]
           |[selectat]
-        authors: '&7 autori: '
-        author: '&7 - &b [nume]'
-        selected: '&a Selectat în prezent.'
+        authors: '<gray>autori: </gray>'
+        author: '<gray>- </gray><aqua>[nume]</aqua>'
+        selected: '<green>Selectat în prezent.</green>'
+  placeholder:
+    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    buttons:
+      bentobox:
+        name: '<white><bold>BentoBox</bold></white>'
+        description: '<gray>[number] substituenți</gray>'
+      addon:
+        name: '<white><bold>[name]</bold></white>'
+        description: '<gray>[number] substituenți</gray>'
+  placeholder-list:
+    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    buttons:
+      leaf:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        disabled: '<red><italic>(dezactivat)</italic></red>'
+        hint: '<yellow>Click </yellow><gray>pentru a comuta.</gray>'
+      folder:
+        name: '<white><bold>[label]</bold></white>'
+        description: '<gray>[count] substituenți</gray>'
+        hint: '<yellow>Click </yellow><gray>pentru a explora.</gray>'
+      leaf-folder:
+        hint: '<yellow>Click stânga </yellow><gray>pentru a comuta. · </gray><yellow>Click dreapta </yellow><gray>pentru a explora.</gray>'
+      series:
+        name: '<aqua>[placeholder]</aqua>'
+        description: '<gray>[description]</gray>'
+        range: '<dark_gray>#[min] – #[max] · [count] elemente</dark_gray>'
+        disabled: '<red><italic>(unele dezactivate)</italic></red>'
+        hint: '<yellow>Click </yellow><gray>pentru a comuta toate.</gray>'
+        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
+        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(gol)</dark_gray>'
+      leaf-series:
+        hint: '<yellow>Click stânga </yellow><gray>pentru a comuta. · </gray><yellow>Click dreapta </yellow><gray>pentru a comuta toate.</gray>'
+      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
+      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(gol)</dark_gray>'
+      back:
+        name: '<white><bold>Înapoi</bold></white>'
+        description: '<gray>Înapoi la lista de addon-uri</gray>'
   buttons:
     previous:
-      name: '&f&l Pagina anterioară'
-      description: '&7 Comutați la pagina [număr].'
+      name: '<white><bold>Pagina anterioară</bold></white>'
+      description: '<gray>Comutați la pagina [număr].</gray>'
     next:
-      name: '&f&l Pagina următoare'
-      description: '&7 Comutați la pagina [număr].'
+      name: '<white><bold>Pagina următoare</bold></white>'
+      description: '<gray>Comutați la pagina [număr].</gray>'
   tips:
-    click-to-next: '&e Faceți clic pe &7 pentru următorul.'
-    click-to-previous: '&e Faceți clic pe &7 pentru anterior.'
-    click-to-choose: '&e Faceți clic pe &7 pentru a selecta.'
-    click-to-toggle: '&e Faceți clic pe &7 pentru a comuta.'
-    left-click-to-cycle-down: '&e Faceți clic stânga pe &7 pentru a merge în jos.'
-    right-click-to-cycle-up: '&e Faceți clic dreapta pe &7 pentru a merge în sus.'
+    click-to-next: '<yellow>Faceți clic pe </yellow><gray>pentru următorul.</gray>'
+    click-to-previous: '<yellow>Faceți clic pe </yellow><gray>pentru anterior.</gray>'
+    click-to-choose: '<yellow>Faceți clic pe </yellow><gray>pentru a selecta.</gray>'
+    click-to-toggle: '<yellow>Faceți clic pe </yellow><gray>pentru a comuta.</gray>'
+    left-click-to-cycle-down: '<yellow>Faceți clic stânga pe </yellow><gray>pentru a merge în jos.</gray>'
+    right-click-to-cycle-up: '<yellow>Faceți clic dreapta pe </yellow><gray>pentru a merge în sus.</gray>'
 successfully-loaded: >
 
-  &6   ____             _        ____
+  <gold>  ____             _        ____</gold>
 
-  &6  |  _ \           | |      |  _ \             &7 by &a tastybento &7 and &a
+  <gold> |  _ \           | |      |  _ \             </gold><gray>by </gray><green>tastybento </green><gray>and </gray><green></green>
   Poslovitch
 
-  &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2022
+  <gold> | |_) | ___ _ __ | |_ ___ | |_) | _____  __  </gold><gray>2017 - 2022</gray>
 
-  &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
+  <gold> |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /</gold>
 
-  &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
+  <gold> | |_) |  __/ | | | || (_) | |_) | (_) >  <   </gold><aqua>v</aqua><yellow>[version]</yellow>
 
-  &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8 Loaded in &e [time]&8 ms.
+  <gold> |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  </gold><dark_gray>Loaded in </dark_gray><yellow>[time]</yellow><dark_gray>ms.</dark_gray>

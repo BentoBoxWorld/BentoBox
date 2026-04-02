@@ -23,11 +23,25 @@ import world.bentobox.bentobox.BentoBox;
  */
 public class ItemStackTypeAdapter extends TypeAdapter<ItemStack> {
 
+    private static final int MAX_AMOUNT = 99;
+
     @Override
     public void write(JsonWriter out, ItemStack value) throws IOException {
         if (value == null) {
             out.nullValue();
             return;
+        }
+        // Clamp quantity to valid serialization range [1, 99]
+        if (value.getAmount() > MAX_AMOUNT) {
+            BentoBox.getInstance().logWarning("ItemStack " + value.getType() + " has quantity " + value.getAmount()
+                    + " which exceeds max " + MAX_AMOUNT + ". Clamping to " + MAX_AMOUNT + ".");
+            value = value.clone();
+            value.setAmount(MAX_AMOUNT);
+        } else if (value.getAmount() < 1) {
+            BentoBox.getInstance().logWarning("ItemStack " + value.getType() + " has quantity " + value.getAmount()
+                    + " which is less than 1. Clamping to 1.");
+            value = value.clone();
+            value.setAmount(1);
         }
         YamlConfiguration c = new YamlConfiguration();
         c.set("is", value);

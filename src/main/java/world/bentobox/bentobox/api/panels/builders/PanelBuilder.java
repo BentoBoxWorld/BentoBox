@@ -27,7 +27,7 @@ public class PanelBuilder {
     private World world;
 
     public PanelBuilder name(String name) {
-        this.name = Util.translateColorCodes(name);
+        this.name = name;
         return this;
     }
 

@@ -11,6 +11,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -201,7 +203,9 @@ class AdminTeamDisbandCommandTest extends CommonTestSetup {
         verify(im, never()).removePlayer(island, uuid);
         verify(im).removePlayer(island, notUUID);
         verify(user).sendMessage("commands.admin.team.disband.success", TextVariables.NAME, "tastybento");
-        checkSpigotMessage("commands.admin.team.disband.disbanded", 2);
+        // One message sent to mockPlayer (uuid member), one to p2 (notUUID member)
+        checkSpigotMessage("commands.admin.team.disband.disbanded", 1);
+        verify(p2).sendMessage(any(Component.class));
         // 2 + 1
         verify(pim, times(3)).callEvent(any());
     }

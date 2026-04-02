@@ -1,9 +1,13 @@
 package world.bentobox.bentobox.api.commands.admin.range;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,11 +114,10 @@ class AdminRangeResetCommandTest extends CommonTestSetup {
     void testExecuteConsoleNoArgs() {
         AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
         CommandSender sender = mock(CommandSender.class);
-        when(sender.spigot()).thenReturn(spigot);
         User console = User.getInstance(sender);
         arc.execute(console, "", new ArrayList<>());
-        // Show help
-        checkSpigotMessage("commands.help.header");
+        // Show help - verify message sent to console sender
+        verify(sender, atLeast(1)).sendMessage(any(Component.class));
     }
 
     /**
