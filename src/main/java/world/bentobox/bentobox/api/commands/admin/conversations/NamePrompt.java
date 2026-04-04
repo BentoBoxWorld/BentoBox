@@ -34,6 +34,8 @@ public class NamePrompt extends StringPrompt {
     @Override
     @NonNull
     public String getPromptText(@NonNull ConversationContext context) {
+        // Send via User to properly render MiniMessage/legacy formatting,
+        // since Bukkit's conversation API sends raw text without formatting.
         user.sendRawMessage(user.getTranslation("commands.island.renamehome.enter-new-name"));
         return "";
     }
