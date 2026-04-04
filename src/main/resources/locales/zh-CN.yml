@@ -1434,6 +1434,13 @@ protection:
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用末地传送门</color:#FAFAD2>'
       name: '<aqua><bold>末地传送门</bold></aqua>'
       hint: 禁止使用末地传送门
+    PAUSE_MOB_GROWTH:
+      name: 暂停生物成长
+      description: |-
+        <green>切换使用金蒲公英</green>
+        <green>暂停或恢复幼年</green>
+        <green>生物的成长</green>
+      hint: 暂停生物成长已禁用
     PRESSURE_PLATE:
       description: |-
         <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>踩在压力板上激活压力板</color:#FAFAD2>

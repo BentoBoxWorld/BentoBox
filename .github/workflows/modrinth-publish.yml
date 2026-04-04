@@ -94,6 +94,8 @@ jobs:
             1.21.9
             1.21.10
             1.21.11
+            26.1
+            26.1.1
 
           # Path to the built JAR — the Shadow plugin produces BentoBox-<version>.jar
           # Note: glob patterns are not supported; use the release tag directly.

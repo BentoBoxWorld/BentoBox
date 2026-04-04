@@ -1442,6 +1442,13 @@ protection:
       description: 允許/禁止 使用終界傳送門
       name: '<green><bold>使用終界傳送門</bold></green>'
       hint: '<red>已被禁止使用終界傳送門</red>'
+    PAUSE_MOB_GROWTH:
+      name: 暫停生物成長
+      description: |-
+        <green>切換使用金蒲公英</green>
+        <green>暫停或恢復幼年</green>
+        <green>生物的成長</green>
+      hint: 暫停生物成長已禁用
     PRESSURE_PLATE:
       description: 允許/禁止 激活壓力板
       name: '<green><bold>使用壓力板</bold></green>'

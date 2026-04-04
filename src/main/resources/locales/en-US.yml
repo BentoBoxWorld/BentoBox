@@ -1560,6 +1560,13 @@ protection:
       description: Toggle use
       name: End Portal
       hint: Portal use disabled
+    PAUSE_MOB_GROWTH:
+      name: Pause mob growth
+      description: |-
+        <green>Toggle use of golden dandelion</green>
+        <green>to pause or unpause baby</green>
+        <green>mob growth</green>
+      hint: Pausing mob growth disabled
     PRESSURE_PLATE:
       description: Toggle usage
       name: Pressure Plates

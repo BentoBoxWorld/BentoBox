@@ -1599,6 +1599,13 @@ protection:
       description: Alihkan penggunaan
       name: Portal Akhir
       hint: Penggunaan portal dinonaktifkan
+    PAUSE_MOB_GROWTH:
+      name: Jeda pertumbuhan mob
+      description: |-
+        <green>Alihkan penggunaan dandelion emas</green>
+        <green>untuk menjeda atau melanjutkan</green>
+        <green>pertumbuhan bayi mob</green>
+      hint: Jeda pertumbuhan mob dinonaktifkan
     PRESSURE_PLATE:
       description: Alihkan penggunaan
       name: Pelat Tekanan

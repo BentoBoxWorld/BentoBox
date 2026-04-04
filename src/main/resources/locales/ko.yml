@@ -1473,6 +1473,13 @@ protection:
       description: 사용가능 설정
       name: 엔더 포탈
       hint: 포탈을 이용할수 없습니다!
+    PAUSE_MOB_GROWTH:
+      name: 몹 성장 일시정지
+      description: |-
+        <green>황금 민들레를 사용하여</green>
+        <green>아기 몹의 성장을 일시정지</green>
+        <green>또는 재개하는 기능 전환</green>
+      hint: 몹 성장 일시정지 비활성화됨
     PRESSURE_PLATE:
       description: 사용가능 설정
       name: 발판

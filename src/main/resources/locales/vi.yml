@@ -1555,6 +1555,13 @@ protection:
       description: Bật/Tắt sử dụng
       name: Cổng kết thúc
       hint: Đã tắt sử dụng cổng kết thúc
+    PAUSE_MOB_GROWTH:
+      name: Tạm dừng tăng trưởng mob
+      description: |-
+        <green>Bật/Tắt sử dụng bồ công anh vàng</green>
+        <green>để tạm dừng hoặc tiếp tục</green>
+        <green>sự tăng trưởng của mob con</green>
+      hint: Tạm dừng tăng trưởng mob đã tắt
     PRESSURE_PLATE:
       description: Bật/Tắt sử dụng
       name: Đĩa cảm biến ám lực

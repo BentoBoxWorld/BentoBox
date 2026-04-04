@@ -1591,6 +1591,13 @@ protection:
       description: Abilita/disabiltia uso
       name: Portale dell'End
       hint: Uso del portale non permesso
+    PAUSE_MOB_GROWTH:
+      name: Pausa crescita mob
+      description: |-
+        <green>Attiva/disattiva l'uso del dente di</green>
+        <green>leone dorato per mettere in pausa</green>
+        <green>o riprendere la crescita dei cuccioli</green>
+      hint: Pausa crescita mob disattivata
     PRESSURE_PLATE:
       description: Abilita/disabilita uso
       name: Pedane a pressione

@@ -1538,6 +1538,13 @@ protection:
       description: Přepnout použití
       name: Endový Portál
       hint: Použití portálu zakázáno
+    PAUSE_MOB_GROWTH:
+      name: Pozastavit růst mobů
+      description: |-
+        <green>Přepnout použití zlatého pampelišky</green>
+        <green>k pozastavení nebo obnovení</green>
+        <green>růstu mláďat mobů</green>
+      hint: Pozastavení růstu mobů zakázáno
     PRESSURE_PLATE:
       description: Přepnout použití
       name: Nášlapné desky

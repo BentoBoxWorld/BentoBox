@@ -1611,6 +1611,13 @@ protection:
       description: Comutați utilizarea
       name: Finalizare portal
       hint: Utilizarea portalului este dezactivată
+    PAUSE_MOB_GROWTH:
+      name: Pauză creștere mob
+      description: |-
+        <green>Comutați utilizarea păpădiei aurii</green>
+        <green>pentru a pune în pauză sau relua</green>
+        <green>creșterea puilor de mob</green>
+      hint: Pauză creștere mob dezactivată
     PRESSURE_PLATE:
       description: Comutați utilizarea
       name: Plăci de presiune
