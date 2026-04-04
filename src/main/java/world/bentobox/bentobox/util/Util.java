@@ -1123,7 +1123,10 @@ public class Util {
         }
         // Close any remaining open tags
         for (int j = openTags.size() - 1; j >= 0; j--) {
-            result.append("</").append(openTags.get(j)).append(">");
+            String tag = openTags.get(j);
+            int parameterSeparator = tag.indexOf(':');
+            String closingTag = parameterSeparator >= 0 ? tag.substring(0, parameterSeparator) : tag;
+            result.append("</").append(closingTag).append(">");
         }
 
         return result.toString();
