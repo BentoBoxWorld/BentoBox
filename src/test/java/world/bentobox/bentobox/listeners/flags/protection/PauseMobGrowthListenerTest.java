@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import org.bukkit.Material;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -41,6 +40,14 @@ class PauseMobGrowthListenerTest extends CommonTestSetup {
         // Initialize Flags
         Flags.PAUSE_MOB_GROWTH.setDefaultSetting(false);
 
+        // Default both hands to AIR so the listener never gets a null ItemStack
+        ItemStack airMain = mock(ItemStack.class);
+        when(airMain.getType()).thenReturn(Material.AIR);
+        ItemStack airOff = mock(ItemStack.class);
+        when(airOff.getType()).thenReturn(Material.AIR);
+        when(inv.getItemInMainHand()).thenReturn(airMain);
+        when(inv.getItemInOffHand()).thenReturn(airOff);
+
         listener = new PauseMobGrowthListener();
     }
 
@@ -51,7 +58,7 @@ class PauseMobGrowthListenerTest extends CommonTestSetup {
     }
 
     /**
-     * Helper to create a mock item with the given material name.
+     * Helper to place a mock item with the given material name in the main hand.
      */
     private void setHeldItem(String materialName) {
         ItemStack mockItem = mock(ItemStack.class);
@@ -59,6 +66,17 @@ class PauseMobGrowthListenerTest extends CommonTestSetup {
         when(mockMaterial.name()).thenReturn(materialName);
         when(mockItem.getType()).thenReturn(mockMaterial);
         when(inv.getItemInMainHand()).thenReturn(mockItem);
+    }
+
+    /**
+     * Helper to place a mock item with the given material name in the off hand.
+     */
+    private void setOffHandItem(String materialName) {
+        ItemStack mockItem = mock(ItemStack.class);
+        Material mockMaterial = mock(Material.class);
+        when(mockMaterial.name()).thenReturn(materialName);
+        when(mockItem.getType()).thenReturn(mockMaterial);
+        when(inv.getItemInOffHand()).thenReturn(mockItem);
     }
 
     @Test
@@ -121,5 +139,77 @@ class PauseMobGrowthListenerTest extends CommonTestSetup {
         listener.onPlayerInteractEntity(e);
         verify(notifier, never()).notify(any(), eq("protection.protected"));
         assertFalse(e.isCancelled());
+    }
+
+    // --- Off-hand tests ----------------------------------------------------
+
+    /**
+     * A visitor using a golden dandelion from the <em>off hand</em> on a baby
+     * mob inside a protected island should have the event cancelled.
+     * This is the regression test for the bug where only the main-hand item was checked.
+     */
+    @Test
+    void testBabyAnimalWithGoldenDandelionInOffHandBlocked() {
+        setOffHandItem("GOLDEN_DANDELION");
+        Cow baby = mock(Cow.class);
+        when(baby.isAdult()).thenReturn(false);
+        when(baby.getLocation()).thenReturn(location);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, baby, EquipmentSlot.OFF_HAND);
+        listener.onPlayerInteractEntity(e);
+        verify(notifier).notify(any(), eq("protection.protected"));
+        assertTrue(e.isCancelled());
+    }
+
+    /**
+     * When the island allows the interaction, an off-hand golden dandelion on a
+     * baby mob should not be blocked.
+     */
+    @Test
+    void testBabyAnimalWithGoldenDandelionInOffHandAllowed() {
+        when(island.isAllowed(any(User.class), any())).thenReturn(true);
+        setOffHandItem("GOLDEN_DANDELION");
+        Cow baby = mock(Cow.class);
+        when(baby.isAdult()).thenReturn(false);
+        when(baby.getLocation()).thenReturn(location);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, baby, EquipmentSlot.OFF_HAND);
+        listener.onPlayerInteractEntity(e);
+        verify(notifier, never()).notify(any(), eq("protection.protected"));
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * When the active hand is the off hand but the off-hand slot is empty, the
+     * event should not be cancelled even if the main hand holds a golden dandelion.
+     */
+    @Test
+    void testOffHandEventMainHandHasDandelionNotCancelled() {
+        setHeldItem("GOLDEN_DANDELION");  // main hand has dandelion
+        // off hand has nothing (default AIR from setUp)
+        Cow baby = mock(Cow.class);
+        when(baby.isAdult()).thenReturn(false);
+        when(baby.getLocation()).thenReturn(location);
+        // Event fires for the off hand
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, baby, EquipmentSlot.OFF_HAND);
+        listener.onPlayerInteractEntity(e);
+        verify(notifier, never()).notify(any(), eq("protection.protected"));
+        assertFalse(e.isCancelled(), "Main-hand dandelion must not affect an off-hand interaction event");
+    }
+
+    /**
+     * When the active hand is the main hand but the main-hand slot is empty,
+     * the event should not be cancelled even if the off hand holds a golden dandelion.
+     */
+    @Test
+    void testMainHandEventOffHandHasDandelionNotCancelled() {
+        setOffHandItem("GOLDEN_DANDELION");  // off hand has dandelion
+        // main hand has nothing (default AIR from setUp)
+        Cow baby = mock(Cow.class);
+        when(baby.isAdult()).thenReturn(false);
+        when(baby.getLocation()).thenReturn(location);
+        // Event fires for the main hand
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, baby, EquipmentSlot.HAND);
+        listener.onPlayerInteractEntity(e);
+        verify(notifier, never()).notify(any(), eq("protection.protected"));
+        assertFalse(e.isCancelled(), "Off-hand dandelion must not affect a main-hand interaction event");
     }
 }
