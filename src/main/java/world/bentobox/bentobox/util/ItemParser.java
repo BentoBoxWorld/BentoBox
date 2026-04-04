@@ -451,8 +451,6 @@ public class ItemParser {
 
 
     /**
-     * Check if given sting is an integer.
-    /**
      * Clamp item stack amount to valid serialization range [1, 99].
      * Logs a warning if clamping occurs.
      * @param amount the requested amount
