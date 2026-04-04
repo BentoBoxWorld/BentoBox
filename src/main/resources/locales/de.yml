@@ -1610,6 +1610,13 @@ protection:
       description: Umschalten der Nutzung
       name: Ende Portal
       hint: Endportalnutzung deaktiviert
+    PAUSE_MOB_GROWTH:
+      name: Mob-Wachstum pausieren
+      description: |-
+        <green>Verwendung von goldenen Löwenzahn</green>
+        <green>zum Pausieren oder Fortsetzen</green>
+        <green>des Wachstums von Baby-Mobs umschalten</green>
+      hint: Mob-Wachstum pausieren deaktiviert
     PRESSURE_PLATE:
       description: Umschalten der Nutzung
       name: Druckplatten

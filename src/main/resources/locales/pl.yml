@@ -1558,6 +1558,13 @@ protection:
       description: Przełącz użycie
       name: Portal końcowy
       hint: Używanie portali jest jest wyłączone.
+    PAUSE_MOB_GROWTH:
+      name: Wstrzymaj wzrost mobów
+      description: |-
+        <green>Przełącz użycie złotego mlecza</green>
+        <green>do wstrzymania lub wznowienia</green>
+        <green>wzrostu młodych mobów</green>
+      hint: Wstrzymanie wzrostu mobów wyłączone
     PRESSURE_PLATE:
       description: Przełącz użycie
       name: Płytki naciskowe

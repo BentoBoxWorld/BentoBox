@@ -1575,6 +1575,13 @@ protection:
       description: Uključi/isključi upotrebu
       name: Krajnji portal
       hint: Korištenje portala onemogućeno
+    PAUSE_MOB_GROWTH:
+      name: Pauziraj rast mobova
+      description: |-
+        <green>Uključi/isključi korištenje zlatnog</green>
+        <green>maslačka za pauziranje ili nastavak</green>
+        <green>rasta mladih mobova</green>
+      hint: Pauziranje rasta mobova onemogućeno
     PRESSURE_PLATE:
       description: Uključi/isključi korištenje
       name: Tlačne ploče

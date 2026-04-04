@@ -1510,6 +1510,13 @@ protection:
       description: Kullanımı değiş.
       name: Son Portal
       hint: Portal use is disallowed
+    PAUSE_MOB_GROWTH:
+      name: Mob büyümesini duraklat
+      description: |-
+        <green>Altın karahindiba kullanarak</green>
+        <green>yavru mobların büyümesini</green>
+        <green>duraklatma veya devam ettirme</green>
+      hint: Mob büyümesini duraklatma devre dışı
     PRESSURE_PLATE:
       description: Kullanımı değiş.
       name: Basınç plakası

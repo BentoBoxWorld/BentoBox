@@ -1576,6 +1576,13 @@ protection:
       description: Permitir uso
       name: Portais do End
       hint: Uso de portais desabilitado
+    PAUSE_MOB_GROWTH:
+      name: Pausar crescimento de mobs
+      description: |-
+        <green>Alternar uso do dente-de-leão</green>
+        <green>dourado para pausar ou retomar</green>
+        <green>o crescimento de mobs bebês</green>
+      hint: Pausar crescimento de mobs desativado
     PRESSURE_PLATE:
       description: Permitir uso
       name: Placas de pressão

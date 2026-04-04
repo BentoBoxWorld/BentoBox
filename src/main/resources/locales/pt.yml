@@ -1593,6 +1593,13 @@ protection:
       description: Alternar uso
       name: Portal final
       hint: Uso do portal desativado
+    PAUSE_MOB_GROWTH:
+      name: Pausar crescimento de mobs
+      description: |-
+        <green>Alternar uso do dente-de-leão</green>
+        <green>dourado para pausar ou retomar</green>
+        <green>o crescimento de mobs bebés</green>
+      hint: Pausar crescimento de mobs desativado
     PRESSURE_PLATE:
       description: Alternar uso
       name: Placas de pressão

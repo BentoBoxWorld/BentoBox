@@ -1580,6 +1580,13 @@ protection:
       description: Modificar Uso
       name: Portal del End
       hint: El uso del portal no está permitido
+    PAUSE_MOB_GROWTH:
+      name: Pausar crecimiento de mobs
+      description: |-
+        <green>Alternar el uso del diente de león</green>
+        <green>dorado para pausar o reanudar</green>
+        <green>el crecimiento de crías de mobs</green>
+      hint: Pausar crecimiento de mobs desactivado
     PRESSURE_PLATE:
       description: Modificar uso
       name: Placas de presión
