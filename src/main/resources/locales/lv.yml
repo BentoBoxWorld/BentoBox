@@ -1576,6 +1576,13 @@ protection:
         <green>Beigu protālu</green>
       name: Beigu Portāls
       hint: Beigu portālu lietošana nav atļauta
+    PAUSE_MOB_GROWTH:
+      name: Apturēt mobu augšanu
+      description: |-
+        <green>Pārslēdz zelta pienenes izmantošanu</green>
+        <green>lai apturētu vai atsāktu</green>
+        <green>mazuļu mobu augšanu</green>
+      hint: Mobu augšanas apturēšana atspējota
     PRESSURE_PLATE:
       description: |-
         <green>Pārslēdz iespēju izmantot</green>

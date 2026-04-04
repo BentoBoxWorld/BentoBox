@@ -1623,6 +1623,13 @@ protection:
       description: Toggle gebruik
       name: Einde Portal
       hint: Portalgebruik uitgeschakeld
+    PAUSE_MOB_GROWTH:
+      name: Mob-groei pauzeren
+      description: |-
+        <green>Schakel het gebruik van gouden</green>
+        <green>paardenbloem om de groei van</green>
+        <green>baby-mobs te pauzeren of hervatten</green>
+      hint: Mob-groei pauzeren uitgeschakeld
     PRESSURE_PLATE:
       description: Schakel tussen gebruik
       name: Drukplaten

@@ -1632,6 +1632,13 @@ protection:
       description: Használat váltása
       name: Portál vége
       hint: Portálhasználat letiltva
+    PAUSE_MOB_GROWTH:
+      name: Mob növekedés szüneteltetése
+      description: |-
+        <green>Arany pitypang használatának</green>
+        <green>váltása a bébi mobok növekedésének</green>
+        <green>szüneteltetéséhez vagy folytatásához</green>
+      hint: Mob növekedés szüneteltetése letiltva
     PRESSURE_PLATE:
       description: Használat váltása
       name: Nyomólemezek

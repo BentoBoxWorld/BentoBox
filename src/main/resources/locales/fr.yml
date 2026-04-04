@@ -1609,6 +1609,13 @@ protection:
       description: Basculer l'utilisation
       name: Portail de Fin
       hint: Utilisation du portail désactivée
+    PAUSE_MOB_GROWTH:
+      name: Pause croissance des mobs
+      description: |-
+        <green>Active/désactive l'utilisation du</green>
+        <green>pissenlit doré pour mettre en pause</green>
+        <green>ou reprendre la croissance des bébés mobs</green>
+      hint: Pause de la croissance des mobs désactivée
     PRESSURE_PLATE:
       description: Basculer l'utilisation
       name: Plaques de pression
