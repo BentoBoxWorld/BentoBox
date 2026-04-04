@@ -32,13 +32,13 @@ The main plugin class is `BentoBox.java` (extends `JavaPlugin`). Almost all subs
 ### Key Packages
 
 - **`api/`** — Public API surface for addons: events, commands, panels (GUIs), user management, flags, configuration
-- **`managers/`** — Core subsystems: `IslandsManager`, `PlayersManager`, `AddonsManager`, `LocalesManager`, `FlagsManager`, `BlueprintsManager`, `HooksManager`, `PlaceholdersManager`, `RanksManager`
-- **`database/`** — Database abstraction supporting MongoDB, MySQL, MariaDB, and PostgreSQL (via HikariCP)
+- **`managers/`** — Core subsystems: `IslandsManager`, `PlayersManager`, `AddonsManager`, `LocalesManager`, `FlagsManager`, `BlueprintsManager`, `BlueprintClipboardManager`, `HooksManager`, `PlaceholdersManager`, `RanksManager`, `CommandsManager`, `IslandDeletionManager`, `IslandChunkDeletionManager`, `MapManager`, `WebManager`
+- **`database/`** — Database abstraction supporting MongoDB, MySQL, MariaDB, PostgreSQL (via HikariCP), and SQLite
 - **`blueprints/`** — Island schematic handling and pasting
 - **`listeners/`** — Bukkit event handlers (teleport, death, join/leave, panel clicks, spawn protection)
 - **`commands/`** — Admin and user command implementations
 - **`panels/`** — Inventory GUI panel system
-- **`hooks/`** — Integrations with external plugins (Vault, PlaceholderAPI, MythicMobs, Multiverse, LuckPerms, etc.)
+- **`hooks/`** — Integrations with external plugins (Vault, PlaceholderAPI, MythicMobs, Multiverse, LuckPerms, ItemsAdder, Slimefun, Oraxen, ZNPCsPlus, FancyNpcs, BlueMap, Dynmap, LangUtils, etc.)
 - **`nms/`** — NMS (Native Minecraft Server) version-specific code
 
 ### Island Data Flow
@@ -123,4 +123,4 @@ Guava (`ImmutableSet`, `ImmutableList`, etc.) is reliably available at runtime v
 - The Gradle build uses the Paper `userdev` plugin and Shadow plugin to produce a fat/shaded JAR at `build/libs/BentoBox-{version}.jar`.
 - `plugin.yml` and `config.yml` are filtered for the `${version}` placeholder at build time; locale files are copied without filtering.
 - Java preview features are enabled for both compilation and test execution.
-- Local builds produce version `3.11.2-LOCAL-SNAPSHOT`; CI builds append `-b{BUILD_NUMBER}-SNAPSHOT`; `origin/master` builds produce the bare version.
+- Local builds produce version `3.13.0-LOCAL-SNAPSHOT`; CI builds append `-b{BUILD_NUMBER}-SNAPSHOT`; `origin/master` builds produce the bare version.
