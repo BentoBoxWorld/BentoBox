@@ -485,13 +485,13 @@ public class Flag implements Comparable<Flag> {
                     TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
 
             RanksManager.getInstance().getRanks().forEach((reference, score) -> {
-
+                String rankName = user.getTranslation(reference);
                 if (score > RanksManager.BANNED_RANK && score < y) {
-                    pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
+                    pib.description(getRankTranslation(user, "protection.panel.flag-item.blocked-rank", rankName));
                 } else if (score <= RanksManager.OWNER_RANK && score > y) {
-                    pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank") + user.getTranslation(reference));
+                    pib.description(getRankTranslation(user, "protection.panel.flag-item.allowed-rank", rankName));
                 } else if (score == y) {
-                    pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
+                    pib.description(getRankTranslation(user, "protection.panel.flag-item.minimal-rank", rankName));
                 }
             });
         }
@@ -499,6 +499,19 @@ public class Flag implements Comparable<Flag> {
         return pib;
     }
 
+    /**
+     * Gets a rank translation, supporting both MiniMessage format (with [rank] placeholder)
+     * and legacy format (without placeholder, rank name concatenated at end).
+     */
+    private String getRankTranslation(User user, String key, String rankName) {
+        String translation = user.getTranslation(key, TextVariables.RANK, rankName);
+        // If [rank] placeholder was not in the locale string (legacy format),
+        // the rank name won't appear in the result — fall back to concatenation
+        if (!translation.contains(rankName)) {
+            translation = user.getTranslation(key) + rankName;
+        }
+        return translation;
+    }
 
     /**
      * @return the mode

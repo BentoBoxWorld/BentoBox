@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.user;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -39,10 +40,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import com.google.common.base.Enums;
 
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.OfflineMessageEvent;
@@ -471,7 +469,8 @@ public class User implements MetaDataAble {
         // Get translation.
         String addonPrefix = plugin.getIWM().getAddon(world)
                 .map(a -> a.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".").orElse("");
-        return Util.translateColorCodes(translate(addonPrefix, reference, variables));
+        String raw = translate(addonPrefix, reference, variables);
+        return convertToLegacy(raw);
     }
 
     /**
@@ -488,7 +487,49 @@ public class User implements MetaDataAble {
     public String getTranslation(String reference, String... variables) {
         // Get addonPrefix
         String addonPrefix = addon == null ? "" : addon.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".";
-        return Util.translateColorCodes(translate(addonPrefix, reference, variables));
+        String raw = translate(addonPrefix, reference, variables);
+        return convertToLegacy(raw);
+    }
+
+    /**
+     * Converts a raw translation string (which may contain MiniMessage tags, legacy &amp;/§ codes,
+     * or a mix of both) into a legacy §-coded string for backwards compatibility.
+     * <p>
+     * Mixed content occurs when MiniMessage locale strings have variables substituted with
+     * legacy-coded values from addons (e.g., {@code <bold>&ePlayer Name</bold>}).
+     *
+     * @param raw the raw translated string
+     * @return legacy §-coded string
+     */
+    private String convertToLegacy(String raw) {
+        // Process each line independently to preserve newlines
+        if (raw.contains("\n")) {
+            return Arrays.stream(raw.split("\n", -1))
+                    .map(this::convertLineToLegacy)
+                    .collect(Collectors.joining("\n"));
+        }
+        return convertLineToLegacy(raw);
+    }
+
+    private String convertLineToLegacy(String line) {
+        boolean hasLegacy = Util.isLegacyFormat(line);
+        boolean hasMiniMessage = line.contains("<") && line.contains(">");
+        if (hasLegacy && !hasMiniMessage) {
+            // Pure legacy — use the old path
+            @SuppressWarnings("deprecation")
+            String result = Util.translateColorCodes(line);
+            return result;
+        }
+        if (hasLegacy) {
+            // Mixed content: MiniMessage tags + legacy & codes.
+            // Replace legacy codes with MiniMessage opening tags inline (no closing tags).
+            // MiniMessage handles unclosed tags correctly — they apply until overridden.
+            // Using legacyToMiniMessage() would produce wrong nesting (e.g.,
+            // <bold><yellow>text</bold></yellow> where </yellow> leaks as literal text).
+            line = Util.replaceLegacyCodesInline(line);
+        }
+        // Parse as MiniMessage and serialize to legacy
+        return Util.componentToLegacy(Util.parseMiniMessage(line));
     }
 
     /**
@@ -641,68 +682,80 @@ public class User implements MetaDataAble {
      * @param message The message to send, containing inline commands in square brackets.
      */
     public void sendRawMessage(String message) {
-        TextComponent baseComponent = new TextComponent();
-
-        Pattern pattern = Pattern.compile("\\[(\\w+): ([^\\]]+)]|\\[\\[(.*?)\\]]");
-        Matcher matcher = pattern.matcher(message);
-
-        int lastMatchEnd = 0;
-        ClickEvent clickEvent = null;
-        HoverEvent hoverEvent = null;
-
-        while (matcher.find()) {
-            if (matcher.start() > lastMatchEnd) {
-                baseComponent.addExtra(TextComponent.fromLegacy(message.substring(lastMatchEnd, matcher.start())));
-            }
-            if (matcher.group(1) != null && matcher.group(2) != null) {
-                clickEvent = parseClickAction(matcher, baseComponent, clickEvent);
-                hoverEvent = parseHoverAction(matcher, hoverEvent);
-            } else if (matcher.group(3) != null) {
-                baseComponent.addExtra(TextComponent.fromLegacy("[[" + matcher.group(3) + "]]"));
-            }
-            lastMatchEnd = matcher.end();
-        }
-
-        if (lastMatchEnd < message.length()) {
-            baseComponent.addExtra(TextComponent.fromLegacy(message.substring(lastMatchEnd)));
-        }
-        if (clickEvent != null) {
-            baseComponent.setClickEvent(clickEvent);
-        }
-        if (hoverEvent != null) {
-            baseComponent.setHoverEvent(hoverEvent);
-        }
-
         if (sender != null) {
-            sender.spigot().sendMessage(baseComponent);
+            // Convert inline bracket commands to MiniMessage tags
+            String mmMessage = Util.convertInlineCommandsToMiniMessage(message);
+            // Auto-detect and parse legacy or MiniMessage format
+            Component component = Util.parseMiniMessageOrLegacy(mmMessage);
+            sender.sendMessage(component);
         } else {
             Bukkit.getPluginManager().callEvent(new OfflineMessageEvent(this.playerUUID, message));
         }
     }
 
-    private ClickEvent parseClickAction(Matcher matcher, TextComponent baseComponent, ClickEvent existing) {
-        String actionType = matcher.group(1).toUpperCase(Locale.ENGLISH);
-        String actionValue = matcher.group(2);
-        return switch (actionType) {
-        case "RUN_COMMAND", "SUGGEST_COMMAND", "COPY_TO_CLIPBOARD", "OPEN_URL" ->
-                existing == null ? new ClickEvent(ClickEvent.Action.valueOf(actionType), actionValue) : existing;
-        case "HOVER" -> existing; // handled separately
-        default -> {
-            baseComponent.addExtra(TextComponent.fromLegacy(matcher.group(0)));
-            yield existing;
+    /**
+     * Sends an Adventure Component directly to the user.
+     *
+     * @param component the Component to send
+     * @since 3.2.0
+     */
+    public void sendMessage(@NonNull Component component) {
+        if (sender != null) {
+            sender.sendMessage(component);
+        } else if (playerUUID != null) {
+            Bukkit.getPluginManager().callEvent(
+                    new OfflineMessageEvent(this.playerUUID, Util.componentToLegacy(component)));
         }
-        };
     }
 
-    private HoverEvent parseHoverAction(Matcher matcher, HoverEvent existing) {
-        if (existing != null) {
-            return existing;
+    /**
+     * Sends a translated message using MiniMessage TagResolvers for advanced formatting.
+     * The translation is looked up by reference, then parsed with MiniMessage using the provided resolvers.
+     *
+     * @param reference - language file reference
+     * @param resolvers - MiniMessage TagResolvers for placeholder substitution
+     * @since 3.2.0
+     */
+    public void sendMiniMessage(@NonNull String reference, @NonNull TagResolver... resolvers) {
+        Component component = getTranslationAsComponent(reference, resolvers);
+        String plain = Util.componentToPlainText(component).trim();
+        if (!plain.isEmpty()) {
+            sendMessage(component);
         }
-        String actionType = matcher.group(1).toUpperCase(Locale.ENGLISH);
-        if ("HOVER".equals(actionType)) {
-            return new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(matcher.group(2)));
-        }
-        return null;
+    }
+
+    /**
+     * Gets a translation as an Adventure Component, using MiniMessage TagResolvers.
+     *
+     * @param reference - language file reference
+     * @param resolvers - MiniMessage TagResolvers
+     * @return translated Component
+     * @since 3.2.0
+     */
+    @NonNull
+    public Component getTranslationAsComponent(@NonNull String reference, @NonNull TagResolver... resolvers) {
+        String addonPrefix = addon == null ? ""
+                : addon.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".";
+        String raw = translate(addonPrefix, reference, new String[0]);
+        // Convert legacy to MiniMessage if needed
+        String mmText = Util.isLegacyFormat(raw) ? Util.legacyToMiniMessage(raw) : raw;
+        return Util.parseMiniMessage(mmText, resolvers);
+    }
+
+    /**
+     * Gets a translation as an Adventure Component, with variable substitution.
+     *
+     * @param reference - language file reference
+     * @param variables - CharSequence target, replacement pairs
+     * @return translated Component
+     * @since 3.2.0
+     */
+    @NonNull
+    public Component getTranslationAsComponent(@NonNull String reference, @NonNull String... variables) {
+        String addonPrefix = addon == null ? ""
+                : addon.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".";
+        String raw = translate(addonPrefix, reference, variables);
+        return Util.parseMiniMessageOrLegacy(raw);
     }
 
     /**

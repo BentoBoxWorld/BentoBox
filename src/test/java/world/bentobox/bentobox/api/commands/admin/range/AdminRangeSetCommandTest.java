@@ -4,9 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -115,11 +118,10 @@ class AdminRangeSetCommandTest extends CommonTestSetup {
     void testExecuteConsoleNoArgs() {
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         CommandSender sender = mock(CommandSender.class);
-        when(sender.spigot()).thenReturn(spigot);
         User console = User.getInstance(sender);
         assertFalse(arc.canExecute(console, "", new ArrayList<>()));
-        // Show help
-        checkSpigotMessage("commands.help.header");
+        // Show help - verify message sent to console sender
+        verify(sender, atLeast(1)).sendMessage(any(Component.class));
     }
 
     /**

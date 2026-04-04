@@ -33,6 +33,7 @@ import world.bentobox.bentobox.listeners.flags.protection.LeashListener;
 import world.bentobox.bentobox.listeners.flags.protection.LecternListener;
 import world.bentobox.bentobox.listeners.flags.protection.LockAndBanListener;
 import world.bentobox.bentobox.listeners.flags.protection.PaperExperiencePickupListener;
+import world.bentobox.bentobox.listeners.flags.protection.PauseMobGrowthListener;
 import world.bentobox.bentobox.listeners.flags.protection.PhysicalInteractionListener;
 import world.bentobox.bentobox.listeners.flags.protection.PlaceBlocksListener;
 import world.bentobox.bentobox.listeners.flags.protection.PortalListener;
@@ -392,6 +393,18 @@ public final class Flags {
             defaultRank(RanksManager.MEMBER_RANK).
             clickHandler(new CycleClick(SCULKSHRIEKER, RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
             build();
+
+    /**
+     * Prevents visitors from using a golden dandelion to pause or unpause baby mob growth.
+     * Introduced in Minecraft 26.1.1.
+     * @since 3.12.2
+     * @see PauseMobGrowthListener
+     */
+    public static final Flag PAUSE_MOB_GROWTH = new Flag.Builder("PAUSE_MOB_GROWTH",
+            Enums.getIfPresent(Material.class, "GOLDEN_DANDELION").or(Material.BARRIER))
+            .listener(new PauseMobGrowthListener())
+            .mode(Flag.Mode.ADVANCED)
+            .build();
 
     /*
      * Settings flags (not protection flags)

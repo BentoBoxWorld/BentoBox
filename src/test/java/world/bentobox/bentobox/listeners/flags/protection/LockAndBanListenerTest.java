@@ -696,4 +696,99 @@ class LockAndBanListenerTest extends CommonTestSetup {
         assertFalse(ev.isCancelled());
     }
 
+    /*
+     * Notification deduplication tests
+     */
+
+    @Test
+    void testPlayerMoveIntoLockedIslandNotifiesOnlyOnce() {
+        // Make player
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        // Give player an island
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        // Place the player just outside island
+        when(mockPlayer.getLocation()).thenReturn(outside);
+
+        // Lock island for player
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
+
+        // First move attempt — should notify
+        PlayerMoveEvent e1 = new PlayerMoveEvent(mockPlayer, outside, inside);
+        listener.onPlayerMove(e1);
+        assertTrue(e1.isCancelled());
+
+        // Second move attempt — should NOT notify again
+        PlayerMoveEvent e2 = new PlayerMoveEvent(mockPlayer, outside, inside);
+        listener.onPlayerMove(e2);
+        assertTrue(e2.isCancelled());
+
+        // Verify notification was sent only once
+        verify(notifier, org.mockito.Mockito.times(1)).notify(any(), anyString());
+    }
+
+    @Test
+    void testPlayerMoveIntoBannedIslandNotifiesOnlyOnce() {
+        // Make player
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        // Give player an island
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        // Place the player just outside island
+        when(mockPlayer.getLocation()).thenReturn(outside);
+
+        // Add player to the ban list
+        when(island.isBanned(uuid)).thenReturn(true);
+
+        // First move attempt — should notify
+        PlayerMoveEvent e1 = new PlayerMoveEvent(mockPlayer, outside, inside);
+        listener.onPlayerMove(e1);
+        assertTrue(e1.isCancelled());
+
+        // Second move attempt — should NOT notify again
+        PlayerMoveEvent e2 = new PlayerMoveEvent(mockPlayer, outside, inside);
+        listener.onPlayerMove(e2);
+        assertTrue(e2.isCancelled());
+
+        // Verify notification was sent only once
+        verify(notifier, org.mockito.Mockito.times(1)).notify(any(), anyString());
+    }
+
+    @Test
+    void testPlayerReEntryNotifiesAgain() {
+        // Make player
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        // Give player an island
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        // Place the player just outside island
+        when(mockPlayer.getLocation()).thenReturn(outside);
+
+        // Lock island for player
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
+
+        // First move attempt into locked island — should notify
+        PlayerMoveEvent e1 = new PlayerMoveEvent(mockPlayer, outside, inside);
+        listener.onPlayerMove(e1);
+        assertTrue(e1.isCancelled());
+
+        // Player moves away from the island (to a different open area) — clears notification state
+        Location outside2 = mock(Location.class);
+        when(outside2.getWorld()).thenReturn(world);
+        when(outside2.getBlockX()).thenReturn(X + PROTECTION_RANGE + 50);
+        when(outside2.getBlockY()).thenReturn(Y);
+        when(outside2.getBlockZ()).thenReturn(Z);
+        when(outside2.clone()).thenReturn(outside2);
+        when(im.getProtectedIslandAt(outside2)).thenReturn(Optional.empty());
+
+        PlayerMoveEvent e2 = new PlayerMoveEvent(mockPlayer, outside, outside2);
+        listener.onPlayerMove(e2);
+        assertFalse(e2.isCancelled());
+
+        // Player attempts to enter locked island again — should notify again
+        PlayerMoveEvent e3 = new PlayerMoveEvent(mockPlayer, outside2, inside);
+        listener.onPlayerMove(e3);
+        assertTrue(e3.isCancelled());
+
+        // Verify notification was sent twice (once per entry attempt)
+        verify(notifier, org.mockito.Mockito.times(2)).notify(any(), anyString());
+    }
+
 }

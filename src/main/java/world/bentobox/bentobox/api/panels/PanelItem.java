@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Represents an item in a {@link Panel}
@@ -75,7 +76,9 @@ public class PanelItem {
     public void setDescription(List<String> description) {
         this.description = description;
         if (meta != null) {
-            meta.setLore(description);
+            meta.lore(description.stream()
+                    .map(Util::parseMiniMessageOrLegacy)
+                    .toList());
             icon.setItemMeta(meta);
         }
     }
@@ -87,7 +90,7 @@ public class PanelItem {
     public void setName(String name) {
         this.name = name;
         if (meta != null) {
-            meta.setDisplayName(name);
+            meta.displayName(name != null ? Util.parseMiniMessageOrLegacy(name) : null);
             icon.setItemMeta(meta);
         }
     }

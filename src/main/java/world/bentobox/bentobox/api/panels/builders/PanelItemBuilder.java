@@ -66,7 +66,24 @@ public class PanelItemBuilder {
     }
 
     public PanelItemBuilder name(@Nullable String name) {
-        this.name = name != null ? Util.translateColorCodes(name) : null;
+        if (name == null) {
+            this.name = null;
+            return this;
+        }
+        // Item names cannot contain newlines. If the string has newlines
+        // (e.g., from a YAML block scalar), use the first line as the name
+        // and add the remaining lines as description entries.
+        if (name.contains("\n")) {
+            String[] lines = name.split("\n");
+            this.name = lines[0];
+            for (int i = 1; i < lines.length; i++) {
+                if (!lines[i].isBlank()) {
+                    description(lines[i]);
+                }
+            }
+        } else {
+            this.name = name;
+        }
         return this;
     }
 

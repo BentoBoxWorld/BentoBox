@@ -169,8 +169,11 @@ public class ServerCompatibility {
         /**
          * @since 3.11.0
          */
-        V1_21_11(Compatibility.COMPATIBLE)
-        ,;
+        V1_21_11(Compatibility.COMPATIBLE),
+        /**
+         * @since 3.12.2
+         */
+        V26_1_1(Compatibility.COMPATIBLE),;
 
         private final Compatibility compatibility;
 
@@ -275,7 +278,10 @@ public class ServerCompatibility {
      */
     @Nullable
     public ServerVersion getServerVersion() {
-        String serverVersion = Bukkit.getServer().getBukkitVersion().split("-")[0].replace(".", "_");
+        String serverVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
+        // Handle Paper 26+ version format: "26.1.1.build.14" → "26.1.1"
+        serverVersion = serverVersion.replaceAll("\\.build\\.\\d+$", "");
+        serverVersion = serverVersion.replace(".", "_");
         try {
             return ServerVersion.valueOf("V" + serverVersion.toUpperCase(Locale.ENGLISH));
         } catch (IllegalArgumentException e) {

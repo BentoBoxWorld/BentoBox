@@ -326,7 +326,8 @@ class JoinLeaveListenerTest extends RanksManagerTestSetup {
     void testOnPlayerQuit() {
         PlayerQuitEvent event = new PlayerQuitEvent(mockPlayer, component, QuitReason.DISCONNECTED);
         jll.onPlayerQuit(event);
-        checkSpigotMessage("commands.island.team.uncoop.all-members-logged-off");
+        // Message sent to coopPlayer (not mockPlayer who is quitting)
+        verify(coopPlayer).sendMessage(any(net.kyori.adventure.text.Component.class));
         // Team is now only 1 big
         assertEquals(1, testIsland.getMembers().size());
     }

@@ -1,0 +1,102 @@
+name: Publish to Modrinth
+
+# Triggers when you publish a GitHub Release
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to publish (e.g. 3.12.1)'
+        required: true
+        type: string
+      changelog:
+        description: 'Changelog / release notes (markdown)'
+        required: false
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      # 1. Check out the repository at the release tag
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Java 21 (required by BentoBox's build)
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # 3. Cache Gradle dependencies to speed up builds
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      # 4. Build the shaded JAR
+      #    GIT_BRANCH=origin/master tells the build script to produce a clean
+      #    version number (e.g. 3.12.0) without -LOCAL-SNAPSHOT suffixes.
+      - name: Build with Gradle
+        run: ./gradlew shadowJar --no-daemon
+        env:
+          GIT_BRANCH: origin/master
+
+      # 5. Upload the JAR to Modrinth
+      #
+      #    Prerequisites — add these secrets in your GitHub repo settings
+      #    (Settings → Secrets and variables → Actions):
+      #
+      #      MODRINTH_TOKEN  — personal access token from https://modrinth.com/settings/pats
+      #                        (scope: "Create versions")
+      #      MODRINTH_PROJECT_ID — your Modrinth project ID, visible on your project page
+      #                        under the three-dot menu ("Copy ID")
+      #
+      - name: Publish to Modrinth
+        uses: cloudnode-pro/modrinth-publish@v2
+        with:
+          token: ${{ secrets.MODRINTH_TOKEN }}
+          project: ${{ secrets.MODRINTH_PROJECT_ID }}
+
+          # Use the release tag, or the manually supplied tag when triggered via workflow_dispatch
+          version: ${{ github.event.release.tag_name || inputs.tag }}
+
+          # Use the GitHub release body, or the manually supplied changelog for workflow_dispatch
+          changelog: ${{ github.event.release.body || inputs.changelog }}
+
+          # Release channel — auto-detected from version string:
+          #   *-alpha → alpha, *-beta → beta, anything else → release
+          # Override here if needed: release | beta | alpha
+          # channel: release
+
+          # BentoBox is a Paper plugin
+          loaders: |-
+            paper
+            purpur
+
+          # Minecraft versions this release supports.
+          # Update this list when you start supporting newer or older MC versions.
+          # You can use exact versions (1.21.1) or patterns (1.21.x not supported by this action).
+          game-versions: |-
+            1.21.5
+            1.21.6
+            1.21.7
+            1.21.8
+            1.21.9
+            1.21.10
+            1.21.11
+            26.1
+            26.1.1
+
+          # Path to the built JAR — the Shadow plugin produces BentoBox-<version>.jar
+          # Note: glob patterns are not supported; use the release tag directly.
+          files: build/libs/BentoBox-${{ github.event.release.tag_name || inputs.tag }}.jar

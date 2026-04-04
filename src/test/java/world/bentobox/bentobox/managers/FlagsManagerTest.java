@@ -34,7 +34,7 @@ class FlagsManagerTest extends CommonTestSetup {
     /**
      * Update this value if the number of registered listeners changes
      */
-    private static final int NUMBER_OF_LISTENERS = 58;
+    private static final int NUMBER_OF_LISTENERS = 59;
 
     @Override
     @BeforeEach
