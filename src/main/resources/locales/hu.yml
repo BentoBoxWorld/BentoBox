@@ -77,7 +77,7 @@ commands:
       parameters: <player> [[prefix_island] név]
       cleared: '<aqua>Otthon visszaállítva. [name]</aqua>'
     resets:
-      description: szerkesztheti a lejátszó visszaállítási értékeit
+      description: szerkesztheti a játékos visszaállítási értékeit
       set:
         description: beállítja, hogy ez a játékos hányszor állította vissza a szigetét
         parameters: <játekos> <visszaállitás>
@@ -193,15 +193,15 @@ commands:
         confirmation: >-
           <green>Biztos vagy benne, hogy a [name]-t akarod kijelölni a</green>
           [prefix_island] tulajdonosának a [xyz]-nél?
-        success: '<aqua>[name]</aqua><green>nem a [prefix_island] tulajdonosa.</green>'
+        success: '<aqua>[name]</aqua><green> most a [prefix_island] tulajdonosa.</green>'
         extra-islands: >-
           <red>Figyelmeztetés: ez a játékos most [number] szigettel rendelkezik.</red>
           Ez több, mint amit a beállítások vagy jogosultságok engednek: [max].
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <játékos> <méret>
+        description: Állítsa be a maximális csapatméretet egy játékos [prefix_island]-jára (0 a világ alapértelmezésre állításhoz)
+        success: '<green>Beállítva </green><aqua>[name]</aqua><green> [prefix_island] maximális csapatmérete: </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Visszaállítva </green><aqua>[name]</aqua><green> [prefix_island] maximális csapatmérete a világ alapértelmezésre (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: Admin [prefix_island] tartományának parancsa
       invalid-value:
@@ -229,25 +229,25 @@ commands:
         description: Beállítja a [prefix_island] védelmi tartományát
         success: '<green>A [prefix_island] védelmi tartományának beállítása  </green><aqua>[number]-ra/re</aqua><green>.</green>'
       reset:
-        parameters: <lejátszó>
+        parameters: <játékos>
         description: >-
           visszaállítja a [prefix_island] védett tartományát a világ alapértelmezett
           értékére
         success: '<green>Szigetvédelmi tartomány visszaállítása erre: </green><aqua>[number]</aqua><green>.</green>'
       add:
         description: növeli a [prefix_island] védett tartományát
-        parameters: <lejátszó> <tartomány>
+        parameters: <játékos> <tartomány>
         success: >-
           <green>Sikeresen megnöveltük </green><aqua>[name]</aqua><green>[prefix_island] védett tartományát </green><aqua></aqua>
           [total] <gray>-re (</gray><aqua>+[number]</aqua><gray>)</gray><green>.</green>
       remove:
         description: csökkenti a [prefix_island] védett tartományát
-        parameters: <lejátszó> <tartomány>
+        parameters: <játékos> <tartomány>
         success: >-
           <green>Sikeresen csökkentette </green><aqua>[name]</aqua><green>[prefix_island] védett tartományát </green><aqua></aqua>
           [total] <gray>-re (</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>
     register:
-      parameters: <lejátszó>
+      parameters: <játékos>
       description: regisztrálj játékost egy ismeretlen szigetre, amelyen tartózkodsz
       registered-island: '<green>[name] regisztrálva a [xyz] szigetre.</green>'
       reserved-island: '<green>fenntartott [prefix_island] a [xyz] címen a [name] számára.</green>'
@@ -273,7 +273,7 @@ commands:
           <red>A játékosnak több [prefix_island] van. Kérlek, jelöld meg,</red>
           melyiket.
     info:
-      parameters: <lejátszó>
+      parameters: <játékos>
       description: információkat kaphat a tartózkodási helyéről vagy a játékos szigetéről
       no-island: '<red>Jelenleg nem vagy szigeten...</red>'
       title: '========== [prefix_Island] információ ============'
@@ -313,7 +313,7 @@ commands:
       removing: '<green>Védelem megkerülésének eltávolítása...</green>'
       adding: '<green>Védelem bypass hozzáadása...</green>'
     switchto:
-      parameters: <lejátszó> <szám>
+      parameters: <játékos> <szám>
       description: váltsd át a játékos szigetét a kukában lévő számozottra
       out-of-range: >-
         <red>A számnak 1 és [number] között kell lennie. A szigetszámok</red>
@@ -330,10 +330,10 @@ commands:
       title: '<light_purple>=========== [prefix_Island]ek a kukában ===========</light_purple>'
       count: '<bold><light_purple>Island [number]:</light_purple></bold>'
       use-switch: >-
-        <green>Használja az <bold>[label] kapcsolót a <lejátszó> <szám></bold></green><green>gombbal a</green>
-        lejátszót a kukában lévő szigetre válthatja
+        <green>Használja az <bold>[label] kapcsolót a <játékos> <szám></bold></green><green>gombbal a</green>
+        játékost a kukában lévő szigetre válthatja
       use-emptytrash: >-
-        <green>Az <bold>[label] ürestrash [lejátszó]</bold></green><green>használatával véglegesen</green>
+        <green>Az <bold>[label] ürestrash [játékos]</bold></green><green>használatával véglegesen</green>
         eltávolíthatja a kukát
     emptytrash:
       parameters: '[játékos]'
@@ -344,7 +344,7 @@ commands:
     version:
       description: megjeleníti a BentoBox és a kiegészítők verzióit
     setrange:
-      parameters: <lejátszó> <tartomány>
+      parameters: <játékos> <tartomány>
       description: állítsa be a játékos szigetének hatótávolságát
       range-updated: '<green>Szigettartomány frissítve a következőre: </green><aqua>[number]</aqua><green>.</green>'
     placeholders:
@@ -356,7 +356,7 @@ commands:
     reload:
       description: újratölteni
     tp:
-      parameters: <lejátszó> [teleportálandó lejátszó]
+      parameters: <játékos> [teleportálandó játékos]
       description: teleportálni egy játékos szigetére
       manual: >-
         <red>Nem található biztonságos vetemedés! Manuálisan lépjen a </red><aqua></aqua>
@@ -395,15 +395,15 @@ commands:
       description: állíts be egy szigetet spawnként ehhez a játékmódhoz
       already-spawn: '<red>Ez a [prefix_island] már spawn!</red>'
       no-island-here: '<red>Itt nincs [prefix_island].</red>'
-      confirmation: '<red>Biztos, hogy ezt a szigetet kívánja beállítani a világ ivadékává?</red>'
-      success: '<green>Sikeresen beállította ezt a szigetet a világ ivadékává.</green>'
+      confirmation: '<red>Biztos, hogy ezt a szigetet kívánja beállítani spawn szigetként?</red>'
+      success: '<green>Sikeresen beállította ezt a szigetet spawn szigetként.</green>'
     setspawnpoint:
-      description: állítsa be az aktuális helyet a [prefix_island] ívási pontjaként
+      description: állítsa be az aktuális helyet a [prefix_island] spawn pontjaként
       no-island-here: '<red>Itt nincs [prefix_island].</red>'
       confirmation: >-
-        <red>Biztos benne, hogy ezt a helyet szeretné beállítani a [prefix_island] ívási</red>
+        <red>Biztos benne, hogy ezt a helyet szeretné beállítani a [prefix_island] spawn</red>
         pontjaként?
-      success: '<green>Sikeresen beállította ezt a helyet a [prefix_island] ívási pontjaként.</green>'
+      success: '<green>Sikeresen beállította ezt a helyet a [prefix_island] spawn pontjaként.</green>'
       island-spawnpoint-changed: '<green>[user] megváltoztatta a [prefix_island] spawn pontot.</green>'
     settings:
       parameters: '[player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]'
@@ -567,16 +567,16 @@ commands:
     world:
       description: Világbeállítások kezelése
     delete:
-      parameters: <lejátszó>
+      parameters: <játékos>
       description: törli a játékos szigetét
       cannot-delete-owner: '<red>A [prefix_island] összes tagját ki kell rúgni a szigetről, mielőtt törli.</red>'
       deleted-island: '<green>[prefix_island] itt: </green><yellow>[xyz] </yellow><green>sikeresen törölve.</green>'
     deletehomes:
-      parameters: <lejátszó>
+      parameters: <játékos>
       description: törli az összes elnevezett otthont egy szigetről
       warning: '<red>Az összes megnevezett otthon törlésre kerül a szigetről!</red>'
     why:
-      parameters: <lejátszó>
+      parameters: <játékos>
       description: konzolvédelem hibakeresési jelentések váltása
       turning-on: '<green>Konzolhibakeresés bekapcsolása </green><aqua>[name] számára.</aqua>'
       turning-off: '<green>A konzolhibakeresés kikapcsolása </green><aqua>[name] esetén.</aqua>'
@@ -584,7 +584,7 @@ commands:
       description: Szerkessze a játékosok halálát
       reset:
         description: visszaállítja a játékos halálát
-        parameters: <lejátszó>
+        parameters: <játékos>
         success: '<green>Sikeresen visszaállította </green><aqua>[name]</aqua><green>halálát </green><aqua>0</aqua><green>értékre.</green>'
       set:
         description: beállítja a játékos halálát
@@ -735,7 +735,7 @@ commands:
       description: sorolja fel otthonait
     info:
       description: információk megjelenítése a szigetről vagy a játékos szigetéről
-      parameters: <lejátszó>
+      parameters: <játékos>
     near:
       description: mutasd meg a körülötted lévő szomszédos [prefix_islands] nevét
       parameters: ''
@@ -773,8 +773,8 @@ commands:
       home-list-syntax: '<gold>[name]</gold>'
       click-to-teleport: '<green>Kattints a teleportáláshoz!</green>'
       nether:
-        not-allowed: '<red>Nem állíthatja be otthonát a Hollandiában.</red>'
-        confirmation: '<red>Biztos, hogy Hollandiába szeretné helyezni otthonát?</red>'
+        not-allowed: '<red>Nem állíthatja be otthonát a Pokolban.</red>'
+        confirmation: '<red>Biztos, hogy a Pokolba szeretné helyezni otthonát?</red>'
       the-end:
         not-allowed: '<red>Nem állíthatja be otthonát a végén.</red>'
         confirmation: '<red>Biztos benne, hogy a végére akarja állítani az otthonát?</red>'
@@ -851,7 +851,7 @@ commands:
           generic: '<gold>[rank] </gold><gray>(</gray><aqua>[number]</aqua><gray>)</gray><gold>:</gold>'
       coop:
         description: alakíts ki játékosszövetségi rangot a szigeteden
-        parameters: <lejátszó>
+        parameters: <játékos>
         cannot-coop-yourself: '<red>Nem tudod összefogni magad!</red>'
         already-has-rank: '<red>A játékosnak már van rangja!</red>'
         you-are-a-coop-member: '<dark_green>Önt </dark_green><aqua>[name]</aqua><green>segítette.</green>'
@@ -861,10 +861,10 @@ commands:
           tagjává.
       uncoop:
         description: távolítsa el a coop rangot a játékosból
-        parameters: <lejátszó>
+        parameters: <játékos>
         cannot-uncoop-yourself: '<red>Nem tudod kiszabadítani magad!</red>'
         cannot-uncoop-member: '<red>A csapattagokat nem lehet kibontani!</red>'
-        player-not-cooped: '<red>A lejátszó nincs összefogva!</red>'
+        player-not-cooped: '<red>A játékos nincs kooperálva!</red>'
         you-are-no-longer-a-coop-member: '<red>Ön már nem tagja [name] szigetének.</red>'
         all-members-logged-off: >-
           <red>A [prefix_island] összes tagja kijelentkezett, így Ön többé nem tagja [name]</red>
@@ -873,7 +873,7 @@ commands:
         is-full: '<red>Nem tud együttműködni senki mással.</red>'
       trust:
         description: adj egy játékosnak megbízható rangot a szigeteden
-        parameters: <lejátszó>
+        parameters: <játékos>
         trust-in-yourself: '<red>Bízz magadban!</red>'
         name-has-invited-you: >-
           <green>[name] meghívott téged, hogy csatlakozz a szigetük megbízható</green>
@@ -884,7 +884,7 @@ commands:
         is-full: '<red>Nem bízhatsz másban. Vigyázz magadra!</red>'
       untrust:
         description: távolítsa el a megbízható játékos rangját a játékosból
-        parameters: <lejátszó>
+        parameters: <játékos>
         cannot-untrust-yourself: '<red>Nem bízhatsz magadban!</red>'
         cannot-untrust-member: '<red>Nem bízhatsz meg egy csapattagban!</red>'
         player-not-trusted: 'Az <red>Player nem megbízható!</red>'
@@ -932,7 +932,7 @@ commands:
           already-on-team: '<red>Az a játékos már tagja a csapatnak!</red>'
           invalid-invite: '<red>Ez a meghívó már nem érvényes, sajnálom.</red>'
           you-have-already-invited: '<red>Már meghívtad azt a játékost!</red>'
-        parameters: <lejátszó>
+        parameters: <játékos>
         you-can-invite: '<green>Meghívhat [number] további játékost.</green>'
         accept:
           description: fogadja el a meghívást
@@ -958,14 +958,14 @@ commands:
         success: '<green>Elhagytad ezt a szigetet.</green>'
       kick:
         description: távolíts el egy tagot a szigetedről
-        parameters: <lejátszó>
+        parameters: <játékos>
         player-kicked: '<red>A [name] kirúgott a szigetről [gamemode]-ban!</red>'
-        cannot-kick: '<red>Nem rúghatod meg magad!</red>'
+        cannot-kick: '<red>Nem rúghatod ki magad!</red>'
         cannot-kick-rank: '<red>A rangod nem teszi lehetővé [name] rúgását!</red>'
         success: '<aqua>[name] </aqua><green>-t kirúgták a szigetedről.</green>'
       demote:
         description: lefokozz egy játékost a szigeteden egy ranggal lejjebb
-        parameters: <lejátszó>
+        parameters: <játékos>
         errors:
           cant-demote-yourself: '<red>Nem lefokozhatod magad!</red>'
           cant-demote: '<red>Magasabb rangokat nem lehet lefokozni!</red>'
@@ -974,9 +974,9 @@ commands:
         success: '<green>[name] lefokozva [rank]</green>'
       promote:
         description: előléptessen egy játékost a szigeten egy rangot feljebb
-        parameters: <lejátszó>
+        parameters: <játékos>
         errors:
-          cant-promote-yourself: '<red>Nem reklámozhatod magad!</red>'
+          cant-promote-yourself: '<red>Nem léptetheted elő magad!</red>'
           cant-promote: '<red>Nem léphetsz a rangod fölé!</red>'
           must-be-member: '<red>A játékosnak [prefix_an-island] tagnak kell lennie!</red>'
         failure: '<red>A játékos nem léptethető tovább!</red>'
@@ -991,14 +991,14 @@ commands:
           target-is-not-member: '<red>Az a játékos nem tagja a szigeti csapatodnak!</red>'
           at-max: '<red>Ennek a játékosnak már van a megengedett maximális számú szigete!</red>'
         name-is-the-owner: '<green>[name] mostantól a [prefix_island] tulajdonosa!</green>'
-        parameters: <lejátszó>
+        parameters: <játékos>
         you-are-the-owner: '<green>Mostantól Ön a [prefix_island] tulajdonosa!</green>'
     ban:
       description: kitilts egy játékost a szigetedről
-      parameters: <lejátszó>
+      parameters: <játékos>
       cannot-ban-yourself: '<red>Nem tilthatod ki magad!</red>'
       cannot-ban: '<red>Ezt a játékost nem lehet kitiltani.</red>'
-      cannot-ban-member: '<red>Először rúgd meg a csapattagot, majd tiltsd ki.</red>'
+      cannot-ban-member: '<red>Először rúgd ki a csapattagot, majd tiltsd ki.</red>'
       cannot-ban-more-players: >-
         <red>Elérted a kitiltási határt, nem tilthatsz ki több játékost a</red>
         szigetedről.
@@ -1008,11 +1008,11 @@ commands:
       you-are-banned: '<aqua>Ki vagy tiltva erről a szigetről!</aqua>'
     unban:
       description: tiltson le egy játékost a szigetéről
-      parameters: <lejátszó>
+      parameters: <játékos>
       cannot-unban-yourself: '<red>Nem oldhatod fel magad!</red>'
       player-not-banned: '<red>Player nincs kitiltva.</red>'
-      player-unbanned: '<aqua>[name]</aqua><green>ki van tiltva a szigetedről.</green>'
-      you-are-unbanned: '<aqua>[name]</aqua><green>kitiltotta a szigetükről!</green>'
+      player-unbanned: '<aqua>[name]</aqua><green> kitiltása feloldva a szigetedről.</green>'
+      you-are-unbanned: '<aqua>[name]</aqua><green> feloldotta a kitiltásodat a szigetükről!</green>'
     banlist:
       description: listás eltiltott játékosok
       noone: '<green>Senki sincs kitiltva ezen a szigeten.</green>'
@@ -1028,7 +1028,7 @@ commands:
       already-selected: '<red>Már használja ezt a nyelvet.</red>'
     expel:
       description: űzz ki egy játékost a szigetedről
-      parameters: <lejátszó>
+      parameters: <játékos>
       cannot-expel-yourself: '<red>Nem utasíthatod ki magad!</red>'
       cannot-expel: '<red>Ezt a játékost nem lehet kizárni.</red>'
       cannot-expel-member: '<red>Csapattagot nem zárhatsz ki!</red>'
@@ -1058,18 +1058,18 @@ protection:
       description: Engedélyezze az Allay és Copper Golem számára tárgyak átadását és elvitelét
       hint: Allay és Copper Golem interakció letiltva
     ANIMAL_NATURAL_SPAWN:
-      description: Természetes állati ívás átváltása
-      name: Állati természetes ívás
+      description: Természetes állat megjelenés váltása
+      name: Állatok természetes megjelenése
     ANIMAL_SPAWNERS_SPAWN:
-      description: Állatok ívásának átkapcsolása ívókkal
-      name: Állati ívók
+      description: Állatok megjelenésének átkapcsolása spawnerekkel
+      name: Állat spawnerek
     ANVIL:
       description: Interakció váltása
       name: Üllők
       hint: Üllőhasználat letiltva
     ARMOR_STAND:
       description: Interakció váltása
-      name: Páncél áll
+      name: Páncélállvány
       hint: Páncélállvány használat letiltva
     AXOLOTL_SCOOPING:
       name: Axolotl kiemelése
@@ -1077,8 +1077,8 @@ protection:
       hint: Az Axolotl kaparászása le van tiltva
     BEACON:
       description: Interakció váltása
-      name: Fáklyák
-      hint: Beacon használat letiltva
+      name: Jeladók
+      hint: Jeladó használat letiltva
     BELL_RINGING:
       description: Kapcsolja be a kölcsönhatást
       name: Engedélyezd a harang zúgását
@@ -1162,7 +1162,7 @@ protection:
         <green>A ládákkal való interakció váltása</green>
         <green>és láda aknakocsik.</green>
         <green>(nem tartalmazza a beszorult ládákat)</green>
-      hint: A mellkasi hozzáférés letiltva
+      hint: A láda hozzáférés letiltva
     BARREL:
       name: Hordók
       description: A hordó interakciójának váltása
@@ -1211,9 +1211,9 @@ protection:
       description: Használat váltása
       hint: Kővágás hozzáférés letiltva
     TRAPPED_CHEST:
-      name: Csapdába esett ládák
-      description: Csapdába esett mellkas interakció váltása
-      hint: A beszorult mellkashoz való hozzáférés letiltva
+      name: Csapdás ládák
+      description: Csapdás láda interakció váltása
+      hint: A csapdás láda hozzáférés letiltva
     DISPENSER:
       name: Adagolók
       description: Az adagoló interakciójának váltása
@@ -1231,8 +1231,8 @@ protection:
       description: Kapcsolja be a garat interakcióját
       hint: A garat interakciója letiltva
     CHEST_DAMAGE:
-      description: Kapcsolja be a robbanás okozta mellkasi sérülést
-      name: Mellkasi sérülés
+      description: Kapcsolja be a robbanás okozta ládasérülést
+      name: Ládasérülés
     CHORUS_FRUIT:
       description: Teleportáció váltása
       name: Kórus gyümölcsei
@@ -1242,7 +1242,7 @@ protection:
         <green>Bármelyik tisztítás engedélyezése</green>
         <green>szuperlapos darabok bekerülnek</green>
         <green>szigetvilágok</green>
-      name: Tiszta szuper lakás
+      name: Szuperlapos terep tisztítás
     COARSE_DIRT_TILLING:
       description: |-
         <green>A durva művelés váltása</green>
@@ -1276,17 +1276,17 @@ protection:
       name: Munkapadok
       hint: A munkaasztalhoz való hozzáférés letiltva
     CREEPER_DAMAGE:
-      description: |
-        <green>Toggle kúszónövény</green>
-        & sérülés elleni védelem
-      name: Kúszónövény sérülés elleni védelem
+      description: |-
+        <green>Creeper sebzés elleni</green>
+        <green>védelem váltása</green>
+      name: Creeper sebzés elleni védelem
     CREEPER_GRIEFING:
-      description: |
-        <green>Kúszónövény gyászának váltása</green>
-        &védelem gyújtáskor
+      description: |-
+        <green>Creeper rombolás elleni</green>
+        <green>védelem váltása</green>
         <green>szigetlátogató által.</green>
-      name: Kúszónövény gyászvédelem
-      hint: Kúszónövény bánat letiltva
+      name: Creeper rombolás elleni védelem
+      hint: Creeper rombolás letiltva
     CROP_PLANTING:
       description: '<green>Készlet, aki tud magokat ültetni.</green>'
       name: Növényültetés
@@ -1333,7 +1333,7 @@ protection:
       description: |-
         <green>Endermen eltávolíthatja</green>
         <green>háztömbnyire a szigetektől</green>
-      name: Enderman gyászol
+      name: Enderman rombolás
     ENDERMAN_TELEPORT:
       description: |-
         <green>Endermenek tudnak teleportálni</green>
@@ -1375,9 +1375,9 @@ protection:
         <green>Kapcsolja be, hogy a tűz továbbterjedhet-e</green>
         <green>a közeli blokkokra vagy sem.</green>
     FISH_SCOOPING:
-      name: Horgászás
-      description: Engedje meg a halak kanalazását egy vödör segítségével
-      hint: A halkaparás letiltva
+      name: Hal befogás vödörrel
+      description: Engedje meg a halak vödörrel való befogását
+      hint: Hal befogás vödörrel letiltva
     FLINT_AND_STEEL:
       name: kovakő és acél
       description: |-
@@ -1395,7 +1395,7 @@ protection:
       hint: Kapuhasználat letiltva
     GEO_LIMIT_MOBS:
       description: |-
-        <green>Távolítsa el a menő csőcseléket</green>
+        <green>Távolítsa el a mobokat</green>
         <green>kívülről védett</green>
         <green>szigettér</green>
       name: '<yellow>Korlátozza a mobokat a szigetre</yellow>'
@@ -1420,26 +1420,26 @@ protection:
     HURT_ANIMALS:
       description: Fájdalom váltása
       name: Bántott állatok
-      hint: Állatsérülés fogyatékos
+      hint: Állatsebzés letiltva
     HURT_MONSTERS:
       description: Fájdalom váltása
       name: Bánt szörnyek
-      hint: Szörnyeteg bántó mozgáskorlátozott
+      hint: Szörny sebzés letiltva
     HURT_VILLAGERS:
       description: Fájdalom váltása
       name: Bántotta a falusiakat
-      hint: Falusi lakos sérült
+      hint: Falusi sebzés letiltva
     ITEM_FRAME:
-      name: Elem keret
+      name: Tárgykeret
       description: |-
         <green>Interakció váltása.</green>
         <green>Felülbírálja a hely- vagy törésblokkokat</green>
-      hint: Elem Kerethasználat letiltva
+      hint: Tárgykeret használat letiltva
     ITEM_FRAME_DAMAGE:
       description: |-
-        <green>A csőcselék kárt okozhat</green>
-        <green>elemkeretek</green>
-      name: Tétel Keret sérülés
+        <green>A mobok kárt okozhatnak</green>
+        <green>tárgykeretekben</green>
+      name: Tárgykeret sérülés
     INVINCIBLE_VISITORS:
       description: |-
         <green>Legyőzhetetlen látogató konfigurálása</green>
@@ -1453,12 +1453,12 @@ protection:
       name: '[prefix_Island] újraszületése'
     ITEM_DROP:
       description: Ledobás váltása
-      name: Elemesés
-      hint: Az elem eldobása letiltva
+      name: Tárgy eldobás
+      hint: A tárgy eldobása letiltva
     ITEM_PICKUP:
       description: Felvétel váltása
-      name: Tétel átvétel
-      hint: Elemfelvétel letiltva
+      name: Tárgy felvétel
+      hint: Tárgy felvétel letiltva
     JUKEBOX:
       description: Használat váltása
       name: Jukebox használat
@@ -1488,9 +1488,9 @@ protection:
     LIMIT_MOBS:
       description: |-
         <green>Entitások korlátozása innen</green>
-        <green>ívás ebben a játékban</green>
+        <green>megjelenés ebben a játékban</green>
         <green>mód.</green>
-      name: '<yellow>Entitástípus spawning korlátozása</yellow>'
+      name: '<yellow>Entitástípus megjelenés korlátozása</yellow>'
       can: '<green>Lehet spawn</green>'
       cannot: '<red>Nem lehet spawn</red>'
     LIQUIDS_FLOWING_OUT:
@@ -1526,19 +1526,19 @@ protection:
     MILKING:
       description: Tehénfejés váltása
       name: Fejés
-      hint: Fejőtehén fogyatékos
+      hint: Fejés letiltva
     MINECART:
-      name: Minecars
+      name: Bányakocsik
       description: |-
         Váltó elhelyezés, törés és
         beszállás az aknakocsikba.
       hint: A Minecart interakció letiltva
     MONSTER_NATURAL_SPAWN:
-      description: Kapcsolja be a természetes szörnyek ívását
+      description: Kapcsolja be a természetes szörny megjelenést
       name: Szörny természetes spawn
     MONSTER_SPAWNERS_SPAWN:
-      description: Váltsd át a szörnyszedést a spawnerekkel
-      name: Szörnyek ívói
+      description: Váltsd át a szörny megjelenést spawnerekkel
+      name: Szörny spawnerek
     MOUNT_INVENTORY:
       description: |-
         <green>Kapcsolja be a hozzáférést</green>
@@ -1654,16 +1654,16 @@ protection:
     PVP_NETHER:
       description: |-
         <red>PVP engedélyezése/letiltása</red>
-        <red>a Hollandiában.</red>
-      name: Nem PVP
-      hint: A PVP letiltva a Hollandiában
+        <red>a Pokolban.</red>
+      name: Pokol PVP
+      hint: A PVP letiltva a Pokolban
       enabled: '<red>A PVP a Netherben engedélyezve van.</red>'
       disabled: '<green>A PVP in the Nether le van tiltva.</green>'
     PVP_OVERWORLD:
       description: |-
         <red>PVP engedélyezése/letiltása</red>
         <red>a szigeten.</red>
-      name: Overworl PVP
+      name: Overworld PVP
       hint: '<red>PVP letiltva a Overworldben</red>'
       enabled: '<red>A Overworld PVP-je engedélyezve van.</red>'
       disabled: '<green>A PVP a Overworldben le van tiltva.</green>'
@@ -1780,12 +1780,12 @@ protection:
         <green>[prefix_Island] tagjai továbbra is elveszítik tárgyaikat</green>
         <green>ha a saját szigetükön halnak meg!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Spawn sziget üresség elleni védelem
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Ha engedélyezve van, a játékosok, akik</green>
+        <green>beleesnek az ürességbe a spawn szigeten,</green>
+        <green>visszakerülnek a spawn pontra</green>
+        <green>ahelyett, hogy meghalnának.</green>
     RAID_TRIGGER:
       name: Rajtaütés indítása
       description: Beállítja a rajtaütés indításához szükséges minimális szigetrangot
@@ -1804,10 +1804,10 @@ protection:
         <green>használhatnak széltölteteket ezen a szigeten.</green>
       hint: Széltöltet használata letiltva
     WITHER_DAMAGE:
-      name: Kapcsolja be a fonáskárosodást
+      name: Wither sebzés
       description: |-
-        <green>Ha aktív, a mar képes</green>
-        <green>sebzés blokkok és játékosok</green>
+        <green>Ha aktív, a Wither képes</green>
+        <green>blokkokat és játékosokat sebezni</green>
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
         <green>Bed & Respawn horgonyok engedélyezése</green>
@@ -2061,26 +2061,26 @@ catalog:
         <green>a konfigurációt, vagy próbálja újra később.</green>
 enums:
   DamageCause:
-    CONTACT: Kapcsolatba lépni
+    CONTACT: Érintkezés
     ENTITY_ATTACK: Mob Támadás
     ENTITY_SWEEP_ATTACK: Söprő Támadás
     PROJECTILE: Lövedék
     SUFFOCATION: Fulladás
-    FALL: Esik
+    FALL: Esés
     FIRE: Tűz
     FIRE_TICK: Égő
-    MELTING: Olvasztó
+    MELTING: Olvadás
     LAVA: Láva
     DROWNING: Fulladás
     BLOCK_EXPLOSION: Blokk robbanás
     ENTITY_EXPLOSION: Entitás robbanás
-    VOID: Üres
+    VOID: Üresség
     LIGHTNING: Villám
     SUICIDE: Öngyilkosság
     STARVATION: Éhezés
     POISON: Méreg
     MAGIC: varázslat
-    WITHER: Elhervad
+    WITHER: Wither
     FALLING_BLOCK: Leeső blokk
     THORNS: Tövis
     DRAGON_BREATH: Sárkánylehellet
