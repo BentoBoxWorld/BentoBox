@@ -74,7 +74,7 @@ commands:
         unknown-island: Unbekannt [prefix_island]! [name]
     resethome:
       description: Setzen Sie das Haus des Spielers auf Standard zurück
-      parameters: <Firch> [[prefix_island] Name]
+      parameters: <Spieler> [[prefix_island] Name]
       cleared: '<aqua>Hausrücksetzen. [name]</aqua>'
     resets:
       description: Resets der Spieler bearbeiten
@@ -120,18 +120,18 @@ commands:
         <green>Scanning -Inseln in der Datenbank. Dies kann eine Weile dauern, je</green>
         nachdem, wie viele Sie haben ...
       scanning-in-progress: '<red>In Arbeit scannen, bitte warten Sie</red>'
-      none-found: '<red>Keine Inseln, um zu reinigen.</red>'
-      total-islands: '<green>Sie haben [number] Islands in Ihrer Datenbank in allen Welten.</green>'
+      none-found: '<red>Keine zu löschenden Inseln gefunden.</red>'
+      total-islands: '<green>Du hast [number] Inseln in deiner Datenbank über alle Welten.</green>'
       number-error: '<red>Eingabe muss eine Anzahl von Tagen sein</red>'
       confirm: '<light_purple>Tippe /[label] purge confirm zum Starten des Löschvorgangs ein</light_purple>'
-      completed: '<green>Lösung gestoppt</green>'
+      completed: '<green>Löschung gestoppt</green>'
       see-console-for-status: Löschung gestartet. Für den Status siehe Konsole
       no-purge-in-progress: '<red>Derzeit wird keine Löschung durchgeführt.</red>'
       regions:
         parameters: '[days]'
         description: Säuberinseln durch Löschen alter Regionendateien
         confirm: >-
-          <light_purple>Typ </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>, um mit dem Spülen zu</light_purple>
+          <light_purple>Tippe </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>, um mit dem Löschen zu</light_purple>
           beginnen
       protect:
         description: Umschalten des Insellöschschutzes
@@ -198,10 +198,10 @@ commands:
           mehr als durch die Einstellungen oder Berechtigungen erlaubt ist:
           [max].
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <Spieler> <Größe>
+        description: Maximale Teamgröße für die [prefix_island] eines Spielers festlegen (0 für Weltstandardwert)
+        success: '<green>Maximale Teamgröße von </green><aqua>[name]</aqua><green>s [prefix_island] auf </green><aqua>[number]</aqua><green> gesetzt.</green>'
+        reset: '<green>Maximale Teamgröße von </green><aqua>[name]</aqua><green>s [prefix_island] auf den Weltstandardwert zurückgesetzt (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: Admin Insel Bereichsbefehl
       invalid-value:
@@ -221,7 +221,7 @@ commands:
 
           <gray>Graue Partikel</gray><white>zeigen die maximale Inselgrenze an.</white>
 
-          Grüne Partikel<white>zeigen den voreingestellten Schutzbereich an, wenn</white>
+          <green>Grüne Partikel</green><white> zeigen den voreingestellten Schutzbereich an, wenn</white>
           der Inselschutzbereich davon abweicht.
         showing: '<dark_green>Inselbegrenzungen eingeblendet</dark_green>'
       set:
@@ -231,7 +231,7 @@ commands:
       reset:
         parameters: <spieler>
         description: Setzt den inselgeschützten Bereich auf den Weltstandard zurück
-        success: '& a Setzt den Inselschutzbereich auf & b [number] & a zurück.'
+        success: '<green>Inselschutzbereich auf </green><aqua>[number]</aqua><green> zurückgesetzt.</green>'
       add:
         description: Erhöht den Schutzbereich der Insel
         parameters: <Spieler> <Reichweite> [Inselstandort]
@@ -264,7 +264,7 @@ commands:
       unregistered-island: '<green>Unregistrierter Spieler von der Insel bei [xyz].</green>'
       errors:
         unknown-island-location: '<red>Unbekannter Inselstandort</red>'
-        specify-island-location: '<red>Gib denn Inselstandort in x,y,z Format an</red>'
+        specify-island-location: '<red>Gib den Inselstandort im x,y,z Format an</red>'
         player-has-more-than-one-island: '<red>Spieler hat mehr als eine Insel. Gib an welche.</red>'
     info:
       parameters: <spieler>
@@ -334,7 +334,7 @@ commands:
     version:
       description: BentoBox und Addon-Versionen anzeigen
     setrange:
-      parameters: <spieler> <Reiche>
+      parameters: <Spieler> <Reichweite>
       description: Die Reichweite der Spielerinsel festlegen
       range-updated: '<green>Inselbereich aktualisiert auf </green><aqua>[number]</aqua><green>.</green>'
     placeholders:
@@ -374,7 +374,7 @@ commands:
       island: '<red>Dies betrifft die Insel in [xyz], die ''[name]'' gehört.</red>'
       confirmation: '<red>Möchtest du [xyz] wirklich als Schutzzentrum festlegen?</red>'
       success: '<green>[xyz] erfolgreich als Schutzzentrum festgelegt.</green>'
-      fail: '<green>Fehler beim Festlegen von [xyz] als Schutzzentrum.</green>'
+      fail: '<red>Fehler beim Festlegen von [xyz] als Schutzzentrum.</red>'
       island-location-changed: '<green>[user] hat das Schutzzentrum der Insel in [xyz] geändert.</green>'
       xyz-error: '<red>Geben Sie drei ganzzahlige Koordinaten an: z. B. 100 120 100</red>'
     setspawn:
@@ -582,17 +582,17 @@ commands:
         success: '<green>Erfolgreiches Zurücksetzen von </green><aqua>[name]</aqua><green>''s Toden auf </green><aqua>0</aqua><green>.</green>'
       set:
         description: Legt die Tode des Spielers fest
-        parameters: <spieler> <todes>
+        parameters: <Spieler> <Tode>
         success: '<green>Erfolgreiche Einstellung von </green><aqua>[name]</aqua><green>''s Toden auf </green><aqua>[number]</aqua><green>.</green>'
       add:
         description: Fügt dem Spieler Tode hinzu
-        parameters: <spieler> <todes>
+        parameters: <Spieler> <Tode>
         success: >-
           <green>Es wurde</green><aqua>[number]</aqua><green>Tode zu </green><aqua>[name] hinzugefügt, wodurch sich</aqua>
           die Gesamtzahl auf<aqua>[total]</aqua><green>Tode erhöht.</green>
       remove:
         description: Entfernt Tode von dem Spieler
-        parameters: <spieler> <todes>
+        parameters: <Spieler> <Tode>
         success: >-
           <green>Es wurden</green><aqua>[number]</aqua><green>Tode von </green><aqua>[name] entfernt, wodurch sich die</aqua>
           Gesamtzahl auf<aqua>[total]</aqua><green>Tode verringert hat.</green>
@@ -697,7 +697,7 @@ commands:
       description: >-
         Erstellt eine Insel, mit Hilfe einer optionalen Blaupause (erfordert
         Permission)
-      parameters: <blauprint>
+      parameters: <Blaupause>
       too-many-islands: >-
         <red>Es gibt zu viele Inseln auf dieser Welt: es gibt nicht genug Platz,</red>
         um deine zu erstellen.
@@ -746,7 +746,7 @@ commands:
       no-neighbors: '<red>Du hast keine unmittelbaren Nachbarinseln!</red>'
     reset:
       description: Startet deine Insel neu und entfernt die alte
-      parameters: <blauprint>
+      parameters: <Blaupause>
       none-left: '<red>Du hast keine Resets mehr übrig!</red>'
       resets-left: '<red>Du hast</red><aqua>[number]</aqua><red>Resets übrig</red>'
       confirmation: >-
@@ -791,7 +791,7 @@ commands:
       already-exists: '<red>Dieser Name existiert bereits, versuche es mit einem anderen Namen.</red>'
     resetname:
       description: Setze deinen Inselnamen zurück
-      success: '<green>Setzen Sie Ihren Inselnamen erfolgreich zurück.</green>'
+      success: '<green>Dein Inselname wurde erfolgreich zurückgesetzt.</green>'
     team:
       description: Dein Team verwalten
       gui:
@@ -901,7 +901,7 @@ commands:
           reject um abzulehnen
         you-will-lose-your-island: |
           <red>WARNUNG! Du verlierst alle</red>
-          <red>Inseln, wenn Sie akzeptieren!</red>
+          <red>Inseln, wenn du akzeptierst!</red>
         gui:
           titles:
             team-invite-panel: Spieler einladen
@@ -965,7 +965,7 @@ commands:
       kick:
         description: Entferne ein Mitglied von deiner Insel
         parameters: <spieler>
-        player-kicked: '<red>Der [name] hat dich im [gamemode] von der Insel geworfen!</red>'
+        player-kicked: '<red>[name] hat dich im [gamemode] von der Insel geworfen!</red>'
         cannot-kick: '<red>Du kannst dich nicht selbst kicken!</red>'
         cannot-kick-rank: '<red>Dein Rang erlaubt es nicht, [name] zu kicken!</red>'
         success: '<aqua>[name]</aqua><green>wurde von deiner Insel gekickt.</green>'
@@ -993,7 +993,7 @@ commands:
           cant-transfer-to-yourself: >-
             <red>Du kannst dir das Eigentum nicht selbst übertragen! </red><gray>(<italic>Tja,</italic></gray>
             eigentlich könntest du... Aber wir wollen nicht, dass du es tust.
-            Weil es sinnlos ist.& )
+            Weil es sinnlos ist.<gray>)</gray>
           target-is-not-member: '<red>Dieser Spieler gehört nicht zu deinem Inselteam!</red>'
           at-max: >-
             <red>Dieser Spieler hat bereits die maximal zulässige Anzahl an</red>
@@ -1067,7 +1067,7 @@ protection:
       hint: Allay & Copper Golem Interaktion deaktiviert
     ANIMAL_NATURAL_SPAWN:
       description: Natürliches Spawnen von Tieren umschalten
-      name: Tier
+      name: Natürliches Tier-Spawnen
     ANIMAL_SPAWNERS_SPAWN:
       description: Schaltet das Spawnen von Tieren mit Spawnern um
       name: Tierspawner
@@ -1078,7 +1078,7 @@ protection:
     ARMOR_STAND:
       description: Interaktion umschalten
       name: Rüstungsständer
-      hint: Rüstungsständnutzung deaktiviert
+      hint: Rüstungsständernutzung deaktiviert
     AXOLOTL_SCOOPING:
       name: Axolotl beim Schöpfen
       description: Lassen Sie Axolotl mit einem Eimer schöpfen
@@ -1179,7 +1179,7 @@ protection:
         <green>Bett- und Respawn-Anker zulassen</green>
         <green>, um Blöcke zu zerstören und zu beschädigen</green>
         <green>Entitäten.</green>
-      name: Blockieren Sie Explosionsschaden
+      name: Block-Explosionsschaden
     COMPOSTER:
       name: Komposter
       description: Komposter-Interaktion umschalten
@@ -1272,8 +1272,8 @@ protection:
       name: Pulverschnee sammeln
       hint: Pulverschneesammeln deaktiviert
     COMMAND_RANKS:
-      name: '<yellow>Befehlsreihenfolge</yellow>'
-      description: '<green>Befehlsreihenfolge konfigurieren</green>'
+      name: '<yellow>Befehlsränge</yellow>'
+      description: '<green>Befehlsränge konfigurieren</green>'
     CRAFTING:
       description: Umschalten der Nutzung
       name: Werkbänke
@@ -1363,7 +1363,7 @@ protection:
       name: Feuerlöschen
       hint: Feuerlöschung deaktiviert
     FIRE_IGNITE:
-      name: Die Feuerzündung
+      name: Feuerzündung
       description: |-
         <green>Umschalten, ob das Feuer</green>
         <green>mit Nicht-Spieler-Mitteln entzündet werden kann oder nicht.</green>
@@ -1399,8 +1399,8 @@ protection:
     HARVEST:
       description: |-
         <green>Legt fest, wer Getreide ernten kann.</green>
-        <green>Vergiss nicht, das Item aufsammeln auch zuzulassen</green>
-        <green>zuzulassen!</green>
+        <green>Vergiss nicht, das Item-Aufsammeln</green>
+        <green>auch zuzulassen!</green>
       name: Ernte
       hint: Ernte deaktiviert
     HIVE:
@@ -1413,7 +1413,7 @@ protection:
         Schaden nehmen können. Deaktiviert bedeutet, dass sie nicht verletzt
         werden können.
       name: Verletze gezähmte Tiere
-      hint: Gezähmtes Tier verletzen deaktivert
+      hint: Gezähmte Tiere verletzen deaktiviert
     HURT_ANIMALS:
       description: Umschalten des Verletzens
       name: Tiere verletzen
@@ -1608,8 +1608,8 @@ protection:
       hint: Netherportalnutzung deaktiviert
     END_PORTAL:
       description: Umschalten der Nutzung
-      name: Ende Portal
-      hint: Endportalnutzung deaktiviert
+      name: End-Portal
+      hint: End-Portal-Nutzung deaktiviert
     PAUSE_MOB_GROWTH:
       name: Mob-Wachstum pausieren
       description: |-
@@ -1643,8 +1643,8 @@ protection:
         <red>auf der Insel.</red>
       name: Oberwelt PVP
       hint: '<red>PVP in der Oberwelt deaktiviert</red>'
-      enabled: '<red>Der PVP in der Oberwelt wurde aktiviert.</red>'
-      disabled: '<green>Der PVP in der Oberwelt wurde deaktiviert.</green>'
+      enabled: '<red>Das PVP in der Oberwelt wurde aktiviert.</red>'
+      disabled: '<green>Das PVP in der Oberwelt wurde deaktiviert.</green>'
     REDSTONE:
       description: Umschalten der Nutzung
       name: Redstone Items
@@ -1749,26 +1749,22 @@ protection:
     VISITOR_KEEP_INVENTORY:
       name: Besucher behalten ihr Inventar beim Tod
       description: |-
-        <green>Verhindern Sie, dass Spieler ihre</green>
+        <green>Verhindert, dass Spieler ihre</green>
         <green>Gegenstände und Erfahrungen</green>
         <green>verlieren, wenn sie auf einer Insel</green>
-        <green>sterben, auf der sie ein Besucher</green>
+        <green>sterben, auf der sie Besucher</green>
         <green>sind.</green>
         <green></green>
-        <green>Inselmitglieder verlieren immer</green>
-        <green>noch ihre Gegenstände, wenn sie</green>
+        <green>Inselmitglieder verlieren weiterhin</green>
+        <green>ihre Gegenstände, wenn sie</green>
         <green>auf ihrer eigenen Insel sterben!</green>
-        <green>Wenn sie aktiv sind, können</green>
-        <green>gezähmte Haustiere nur auf die</green>
-        <green>Heimatinsel des Besitzers gehen</green>
-        <green>und sie nicht verlassen.</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Spawn-Insel Void-Schutz
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Wenn aktiviert, werden Spieler, die</green>
+        <green>auf der Spawn-Insel in die Leere fallen,</green>
+        <green>zum Spawnpunkt zurückteleportiert,</green>
+        <green>anstatt zu sterben.</green>
     RAID_TRIGGER:
       name: Raid auslösen
       description: Legt den minimalen Inselrang fest, der zum Auslösen eines Raids benötigt wird
@@ -1851,56 +1847,56 @@ protection:
       name-layout: '<green>[name]</green>'
       command-instructions:
         setname: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Setzen Sie den Namen</green>
+          <green>Wähle den Rang, der</green>
+          <green>den Namen setzen darf</green>
         ban: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Spieler verbieten</green>
+          <green>Wähle den Rang, der</green>
+          <green>Spieler bannen darf</green>
         unban: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Unglaner Spieler</green>
+          <green>Wähle den Rang, der</green>
+          <green>Spieler entbannen darf</green>
         expel: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Besucher vertreiben</green>
+          <green>Wähle den Rang, der</green>
+          <green>Besucher vertreiben darf</green>
         team-invite: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>einladen</green>
+          <green>Wähle den Rang, der</green>
+          <green>einladen darf</green>
         team-kick: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Kick</green>
+          <green>Wähle den Rang, der</green>
+          <green>kicken darf</green>
         team-coop: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Koop</green>
+          <green>Wähle den Rang, der</green>
+          <green>kooperieren darf</green>
         team-trust: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Vertrauen</green>
+          <green>Wähle den Rang, der</green>
+          <green>vertrauen darf</green>
         team-uncoop: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Entkoppeln</green>
+          <green>Wähle den Rang, der</green>
+          <green>Kooperation beenden darf</green>
         team-untrust: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>nicht vertrauen</green>
+          <green>Wähle den Rang, der</green>
+          <green>Vertrauen entziehen darf</green>
         team-promote: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Fördern Sie den Rang des Spielers</green>
+          <green>Wähle den Rang, der</green>
+          <green>Spieler befördern darf</green>
         team-demote: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>herabstufen der Rang des Spielers</green>
+          <green>Wähle den Rang, der</green>
+          <green>Spieler herabstufen darf</green>
         sethome: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Häuser einstellen</green>
+          <green>Wähle den Rang, der</green>
+          <green>Häuser setzen darf</green>
         deletehome: |
-          <green>Wählen Sie den Rang, der kann</green>
-          vHäuser löschen
+          <green>Wähle den Rang, der</green>
+          <green>Häuser löschen darf</green>
         renamehome: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Häuser umbenennen</green>
+          <green>Wähle den Rang, der</green>
+          <green>Häuser umbenennen darf</green>
         setcount: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Ändern Sie die Phase</green>
+          <green>Wähle den Rang, der</green>
+          <green>die Phase ändern darf</green>
         border: |
-          <green>Wählen Sie den Rang, der kann</green>
-          <green>Verwenden Sie den Grenzbefehl</green>
+          <green>Wähle den Rang, der</green>
+          <green>den Border-Befehl nutzen darf</green>
       description-layout: |-
         <green>[description]</green>
 

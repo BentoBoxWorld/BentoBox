@@ -61,7 +61,7 @@ commands:
     maxhomes:
       description: 更改此[prefix_island]或玩家的[prefix_island]的房屋數量
       parameters: <number / player> <number> [[prefix_island] name]
-      max-homes-set: '<green>[name] - Set [prefix_island] max homes to [number]</green>'
+      max-homes-set: '<green>[name] - 已將[prefix_island]最大Home數設為 [number]</green>'
       errors:
         unknown-island: 未知[prefix_island]！ [name]
     resethome:
@@ -93,9 +93,9 @@ commands:
       days-one-or-more: '<red>天數必須為最少1。</red>'
       purgable-islands: '<green>找到 </green><aqua>[number]個 </aqua><green>不活動可以被清理的島嶼。</green>'
       too-many: |-
-        <aqua>這很多，可能需要很長時間才能刪除。</aqua>
-        <aqua>考慮使用區域性插件來刪除世界塊</aqua>
-        <aqua>並設置保留的陸地上的伊斯蘭國：bentobox的config.yml中。</aqua>
+        <aqua>數量很多，可能需要很長時間才能刪除。</aqua>
+        <aqua>考慮使用區域性插件來刪除世界區塊</aqua>
+        <aqua>並在 BentoBox 的 config.yml 中設置保留島嶼。</aqua>
         <aqua>然後進行清除。</aqua>
       purge-in-progress: |-
         <red>清理正在進行中。</red>
@@ -114,7 +114,7 @@ commands:
       regions:
         parameters: '[days]'
         description: 通過刪除舊區域文件清除島
-        confirm: '<light_purple>類型 </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>要開始清除</light_purple>'
+        confirm: '<light_purple>輸入 </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>開始清除</light_purple>'
       protect:
         description: 開/關 島嶼清理保護， 開啟清理保護的島嶼不會被清理。
         move-to-island: '<red>請先回到島上再進行操作!</red>'
@@ -159,7 +159,7 @@ commands:
         not-in-team: '<red>這玩家不在隊伍中。</red>'
         admin-kicked: '<red>管理員將您從隊伍中踢了出來。</red>'
         success: '<green>您已將 </green><aqua>[name] </aqua><green>從 </green><aqua>[owner] </aqua><green>的島嶼裡踢出去。</green>'
-        success-all: '<aqua>球員從這個世界上的所有球隊中撤出</aqua>'
+        success-all: '<aqua>玩家已從此世界中的所有隊伍中移除</aqua>'
       setowner:
         parameters: <player>
         description: 將島嶼所有權轉移給指定玩家
@@ -167,12 +167,12 @@ commands:
         must-be-on-island: '<red>您必須在[prefix_island]上設置所有者</red>'
         confirmation: 您確定要設置[name]在[xyz]上成為[prefix_island]的所有者嗎？
         success: '<green>已將</green><aqua>[name]</aqua><green>提升為島主。</green>'
-        extra-islands: 警告：該玩家現在擁有[number]島。這是設置或perms所允許的要多：[max]。
+        extra-islands: 警告：該玩家現在擁有 [number] 個島嶼。這超過了設置或權限所允許的數量：[max]。
       maxsize:
         parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        description: 設定玩家的[prefix_island]最大隊伍人數（使用 0 重置為世界預設值）
+        success: '<green>已將 </green><aqua>[name]</aqua><green> 的[prefix_island]最大隊伍人數設為 </green><aqua>[number]</aqua><green>。</green>'
+        reset: '<green>已將 </green><aqua>[name]</aqua><green> 的[prefix_island]最大隊伍人數重置為世界預設值（</green><aqua>[number]</aqua><green>）。</green>'
     range:
       description: 島嶼範圍管理命令
       invalid-value:
@@ -209,7 +209,7 @@ commands:
       parameters: <player>
       description: 將玩家註冊到您當前所在的無人島
       registered-island: '<green>已將玩家註冊到位於 [xyz] 的島嶼。</green>'
-      reserved-island: '<green>Reserved island at [xyz] for [name].</green>'
+      reserved-island: '<green>已為 [name] 保留位於 [xyz] 的[prefix_island]。</green>'
       already-owned: '<red>該島嶼不是無人島!</red>'
       no-island-here: '<red>這個地方沒有島嶼。確認來創建一個。</red>'
       in-deletion: '<red>這個島嶼空間正在被刪除。 請稍後再試</red>'
@@ -304,7 +304,7 @@ commands:
       manual: '<red>沒有安全傳送點!手動傳送至 </red><aqua>[location] </aqua><red>附近並解決這個問題</red>'
     tpuser:
       parameters: <teleporting player> <[prefix_island]'s player> [player's island]
-      description: 傳送一個球員到另一個球員的[prefix_island]
+      description: 將一個玩家傳送到另一個玩家的[prefix_island]
     getrank:
       parameters: <player> [island owner]
       description: 得到玩家在他們的島嶼上的階銜
@@ -455,9 +455,9 @@ commands:
           <yellow>左鍵點擊 </yellow><gray>- </gray><aqua>增加(往後移)</aqua>
           <yellow>右鍵點擊 </yellow><gray>- </gray><aqua>減少(往前移)</aqua>
         times: |-
-          <green>播放器的最大並髮用途</green>
-          <green>左鍵單擊以增加</green>
-          <green>右鍵單擊以減少</green>
+          <green>玩家最大使用次數</green>
+          <green>左鍵點擊增加</green>
+          <green>右鍵點擊減少</green>
         unlimited-times: 無限
         maximum-times: 最大[number]次
         cost: |
@@ -528,12 +528,12 @@ commands:
           <green>成功將玩家 </green><aqua>[name] </aqua><green>的死亡次數減少 </green><aqua>[number] 次。</aqua>
           <green>他現在的死亡次數為： </green><aqua>[total] </aqua><green>次。"</green>
     resetname:
-      description: 重置播放器[prefix_island]名稱
-      success: 成功重置[name]的[prefix_island]名稱。
+      description: 重置玩家的[prefix_island]名稱
+      success: '<green>成功重置 [name] 的[prefix_island]名稱。</green>'
   bentobox:
     description: BentoBox 管理員命令
     perms:
-      description: 以yaml格式顯示彎曲曲托和插件的有效perm
+      description: 以 YAML 格式顯示 BentoBox 和附加組件的有效權限
     about:
       description: 顯示版權和協議信息
     placeholders:
@@ -708,28 +708,28 @@ commands:
             description: '<green>點擊循環排名</green>'
           invitation: 邀請
           invite:
-            name: 邀請球員
+            name: 邀請玩家
             description: |-
-              <green>球員必須在</green>
-              <green>和你成為同一世界</green>
-              <green>顯示在列表中。</green>
+              <green>玩家必須在</green>
+              <green>和你相同的世界</green>
+              <green>才會顯示在列表中。</green>
         tips:
           LEFT:
             name: '<aqua>左點擊</aqua>'
-            invite: '<green>邀請球員</green>'
+            invite: '<green>邀請玩家</green>'
           RIGHT:
             name: '<aqua>右鍵單擊</aqua>'
           SHIFT_RIGHT:
-            name: '<aqua>右鍵單擊</aqua>'
+            name: '<aqua>Shift+右鍵點擊</aqua>'
             reject: '<green>拒絕</green>'
-            kick: '<green>踢球員</green>'
-            leave: '<green>離開團隊</green>'
+            kick: '<green>踢出玩家</green>'
+            leave: '<green>離開隊伍</green>'
           SHIFT_LEFT:
-            name: '<aqua>左右單擊</aqua>'
+            name: '<aqua>Shift+左鍵點擊</aqua>'
             accept: '<green>接受</green>'
             setowner: |-
-              <green>設置所有者</green>
-              <green>給這個球員</green>
+              <green>將此玩家</green>
+              <green>設為島主</green>
       info:
         description: 顯示關於您的隊伍的詳細信息
         member-layout:
@@ -794,7 +794,7 @@ commands:
         you-will-lose-your-island: '<red>警告!如果您同意, 您將失去自己的島嶼!</red>'
         gui:
           titles:
-            team-invite-panel: 邀請球員
+            team-invite-panel: 邀請玩家
           button:
             already-invited: '<red>已經邀請了</red>'
             search: '<green>搜索玩家</green>'
@@ -808,14 +808,14 @@ commands:
               search: '<green>輸入玩家的名字</green>'
               back: '<green>後退</green>'
               invite: |-
-                <green>邀請球員</green>
-                <green>加入您的團隊</green>
+                <green>邀請玩家</green>
+                <green>加入您的隊伍</green>
             RIGHT:
               name: '<aqua>右鍵單擊</aqua>'
-              coop: '<green>要騙子玩家</green>'
+              coop: '<green>設為協作者</green>'
             SHIFT_LEFT:
-              name: '<aqua>左右單擊</aqua>'
-              trust: '<green>信任球員</green>'
+              name: '<aqua>Shift+左鍵點擊</aqua>'
+              trust: '<green>信任玩家</green>'
         errors:
           cannot-invite-self: '<red>您不能邀請您自己!</red>'
           cooldown: '<red>您必須在 [number] 秒後才能邀請這個人</red>'
@@ -964,9 +964,9 @@ protection:
       name: '<green><bold>使用信標</bold></green>'
       hint: '<red>已被禁止使用信標</red>'
     BELL_RINGING:
-      description: 切換交互
-      name: 讓鈴響
-      hint: 貝爾鈴聲被禁用
+      description: 切換鐘交互
+      name: 敲鐘
+      hint: '<red>已被禁止敲鐘</red>'
     BED:
       description: 切換 床交互/使用權
       name: '<green><bold>使用床</bold></green>'
@@ -1012,17 +1012,17 @@ protection:
       name: '<green><bold>使用按鈕</bold></green>'
       hint: '<red>已被禁止使用按鈕</red>'
     CANDLES:
-      description: 切換蠟燭相互作用
+      description: 切換蠟燭交互
       name: 蠟燭
-      hint: 蠟燭互動禁用
+      hint: '<red>已被禁止與蠟燭交互</red>'
     CAKE:
       description: 允許/禁止 食用蛋糕
       name: '<green><bold>食用蛋糕</bold></green>'
       hint: '<red>已被禁止食用蛋糕</red>'
     CARTOGRAPHY:
-      name: 製圖表
-      description: 切換使用
-      hint: 製圖表訪問禁用
+      name: 製圖台
+      description: 切換製圖台使用權
+      hint: '<red>已被禁止使用製圖台</red>'
     CONTAINER:
       name: '<green><bold>使用容器</bold></green>'
       description: |-
@@ -1044,48 +1044,48 @@ protection:
       description: 允許/禁止 使用桶
       hint: '<red>已被禁止使用桶</red>'
     CRAFTER:
-      name: 手工藝者
-      description: 切換使用
-      hint: Crafter訪問禁用
+      name: 合成器
+      description: 切換合成器使用權
+      hint: '<red>已被禁止使用合成器</red>'
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         <green>允許床和重生錨</green>
-        <green>打破塊和損壞</green>
+        <green>破壞方塊和傷害</green>
         <green>實體。</green>
-      name: 阻止爆炸傷害
+      name: 方塊爆炸傷害
     COMPOSTER:
       name: '<green><bold>使用堆肥桶</bold></green>'
       description: 允許/禁止 使用堆肥桶
       hint: '<red>已被禁止使用堆肥桶</red>'
     LOOM:
-      name: 織機
-      description: 切換使用
-      hint: 織機訪問禁用
+      name: 織布機
+      description: 切換織布機使用權
+      hint: '<red>已被禁止使用織布機</red>'
     FLOWER_POT:
       name: '<green><bold>使用花盆</bold></green>'
       description: 允許/禁止 使用花盆
       hint: '<red>已被禁止使用花盆</red>'
     GRINDSTONE:
-      name: 磨石
-      description: 切換使用
-      hint: 磨石訪問禁用
+      name: 砂輪
+      description: 切換砂輪使用權
+      hint: '<red>已被禁止使用砂輪</red>'
     SHULKER_BOX:
       name: '<green><bold>使用界伏盒</bold></green>'
       description: 允許/禁止 使用界伏盒
       hint: '<red>已被禁止使用界伏盒</red>'
     SHULKER_TELEPORT:
       description: |-
-        <green>Shulker可以傳送</green>
-        <green>如果活動。</green>
-      name: Shulker teleport
+        <green>啟用後，界伏蚌</green>
+        <green>可以傳送。</green>
+      name: 界伏蚌傳送
     SMITHING:
-      name: 鍛造
-      description: 切換使用
-      hint: 鍛造訪問禁用
+      name: 鍛造台
+      description: 切換鍛造台使用權
+      hint: '<red>已被禁止使用鍛造台</red>'
     STONECUTTING:
-      name: 打擊
-      description: 切換使用
-      hint: 打擊訪問禁用
+      name: 切石機
+      description: 切換切石機使用權
+      hint: '<red>已被禁止使用切石機</red>'
     TRAPPED_CHEST:
       name: '<green><bold>使用陷阱箱</bold></green>'
       description: 允許/禁止 使用陷阱箱
@@ -1160,9 +1160,9 @@ protection:
       name: '<green><bold>苦力怕訪客保護</bold></green>'
       hint: '<red>已禁止訪客引燃的苦力怕爆炸</red>'
     CROP_PLANTING:
-      description: '<green>設定誰可以種子。</green>'
+      description: '<green>設定誰可以種植作物。</green>'
       name: 作物種植
-      hint: 作物種植障礙
+      hint: '<red>已被禁止種植作物</red>'
     CROP_TRAMPLE:
       description: 允許/禁止 踩壞農作物
       name: '<green><bold>踐踏農作物</bold></green>'
@@ -1201,9 +1201,9 @@ protection:
       name: '<green><bold>終界使者破壞</bold></green>'
     ENDERMAN_TELEPORT:
       description: |-
-        <green>Endermen可以傳送</green>
-        <green>如果活動。</green>
-      name: Enderman Teleport
+        <green>啟用後，終界使者</green>
+        <green>可以傳送。</green>
+      name: 終界使者傳送
     ENDER_PEARL:
       description: |-
         <gray>允許/禁止 使用終界珍珠</gray>
@@ -1265,18 +1265,18 @@ protection:
     HARVEST:
       description: |-
         <green>設定誰可以收穫農作物。</green>
-        <green>不要忘記允許物品</green>
-        <green>也接！</green>
+        <green>別忘了也允許</green>
+        <green>拾取物品！</green>
       name: 收穫作物
-      hint: 收穫作物殘疾
+      hint: '<red>已被禁止收穫作物</red>'
     HIVE:
       description: 允許/禁止 收集蜂蜜
       name: '<green><bold>收集蜂蜜</bold></green>'
       hint: '<red>已被禁止收集蜂蜜</red>'
     HURT_TAMED_ANIMALS:
-      description: 切換傷害。啟用意味著馴服的動物會受到傷害。殘疾意味著它們是無敵的。
+      description: 切換傷害。啟用時馴服的動物會受到傷害。禁用時它們將無敵。
       name: 傷害馴服的動物
-      hint: 馴服的動物受傷的殘疾
+      hint: '<red>已被禁止傷害馴服的動物</red>'
     HURT_ANIMALS:
       description: 允許/禁止 傷害動物
       name: '<green><bold>傷害動物</bold></green>'
@@ -1325,7 +1325,7 @@ protection:
     LEASH:
       description: 允許/禁止 使用栓繩
       name: '<green><bold>使用栓繩</bold></green>'
-      hint: 皮帶使用禁用
+      hint: '<red>已被禁止使用栓繩</red>'
     LECTERN:
       name: '<green><bold>講台上的書</bold></green>'
       description: |-
@@ -1363,7 +1363,7 @@ protection:
       description: |-
         <gray>允許/禁止 放置、摧毀和</gray>
         <gray>進入礦車"</gray>
-      hint: Minecart互動禁用
+      hint: '<red>已被禁止與礦車交互</red>'
     MONSTER_NATURAL_SPAWN:
       description: 允許/禁止 怪物自然生成
       name: '<green><bold>怪物自然生成</bold></green>'
@@ -1448,7 +1448,7 @@ protection:
         <green>切換使用金蒲公英</green>
         <green>暫停或恢復幼年</green>
         <green>生物的成長</green>
-      hint: 暫停生物成長已禁用
+      hint: '<red>暫停生物成長已禁用</red>'
     PRESSURE_PLATE:
       description: 允許/禁止 激活壓力板
       name: '<green><bold>使用壓力板</bold></green>'
@@ -1515,9 +1515,9 @@ protection:
       name: '<gray>使用伏聆嘯口</gray>'
       hint: '<red>已被禁止使用伏聆嘯口</red>'
     SIGN_EDITING:
-      description: '<green>允許文本編輯標誌</green>'
-      name: 簽名編輯
-      hint: 簽名編輯被禁用
+      description: '<green>允許編輯告示牌文字</green>'
+      name: 告示牌編輯
+      hint: '<red>已被禁止編輯告示牌</red>'
     TNT_DAMAGE:
       description: 允許/禁止 TNT和TNT礦車破壞方塊和實體
       name: '<green><bold>TNT傷害</bold></green>'
@@ -1562,18 +1562,18 @@ protection:
         <red>允許即為阻止傳送</red>
       hint: '<red>已禁止在下墜時進行傳送</red>'
     VISITOR_KEEP_INVENTORY:
-      name: 游客對死亡進行盤點
+      name: 訪客死亡保留物品
       description: |-
-        <green>防止玩家失去他們的物品和</green>
-        <green>經驗，只適用於他們死在了</green>
-        <green>他們是游客的島嶼。</green>
+        <green>防止玩家在作為訪客的島嶼</green>
+        <green>上死亡時失去物品和經驗。</green>
+        <green>僅適用於訪客身份。</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: 出生島虛空保護
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>啟用後，在出生島</green>
+        <green>掉入虛空的玩家</green>
+        <green>會被傳送回出生點</green>
+        <green>而不是死亡。</green>
     RAID_TRIGGER:
       name: 觸發突襲
       description: 設置觸發突襲所需的島嶼最低等級
@@ -1589,7 +1589,7 @@ protection:
         <green>切換風彈的使用。</green>
         <green>如果禁用，訪客將無法</green>
         <green>在該島嶼上使用風彈。</green>
-      hint: 風彈使用已禁用
+      hint: '<red>已被禁止使用風彈</red>'
     WITHER_DAMAGE:
       name: '<green><bold>凋零傷害</bold></green>'
       description: |-
@@ -1598,8 +1598,8 @@ protection:
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
         <green>允許床和重生錨</green>
-        <green>打破塊和損壞</green>
-        <green>島嶼限制之外的實體。</green>
+        <green>破壞方塊和傷害</green>
+        <green>島嶼範圍外的實體。</green>
       name: 世界方塊爆炸傷害
     WORLD_TNT_DAMAGE:
       description: |-
@@ -1637,31 +1637,31 @@ protection:
       title: '<dark_purple><bold>設置</bold></dark_purple>'
       description: '<gray>適用於該島嶼的一般設置項</gray>'
     WORLD_SETTING:
-      title: '<dark_purple><bold>用於 </dark_purple><dark_aqua><bold>[world_name] </dark_aqua><dark_purple><bold>的一般設置</bold></dark_purple></bold></bold>'
+      title: '<dark_purple><bold>用於 </bold></dark_purple><dark_aqua><bold>[world_name] </bold></dark_aqua><dark_purple><bold>的一般設置</bold></dark_purple>'
       description: '<gray>這些設置項適用於全部游戲世界</gray>'
     WORLD_DEFAULTS:
-      title: '<dark_purple><bold>用於 </dark_purple><dark_aqua><bold>[world_name] </dark_aqua><dark_purple><bold>的保護設定</bold></dark_purple></bold></bold>'
+      title: '<dark_purple><bold>用於 </bold></dark_purple><dark_aqua><bold>[world_name] </bold></dark_aqua><dark_purple><bold>的保護設定</bold></dark_purple>'
       description: '<gray>島嶼範圍外適用的保護設定</gray>'
     flag-item:
       name-layout: '<green><bold>[name]</bold></green>'
       command-instructions:
-        setname: '<green>選擇可以設置名稱</green>'
-        ban: '<green>選擇可以禁令球員</green>'
-        unban: '<green>選擇可以 Unban球員</green>'
+        setname: '<green>選擇誰可以設置名稱</green>'
+        ban: '<green>選擇誰可以封禁玩家</green>'
+        unban: '<green>選擇誰可以解封玩家</green>'
         expel: '<green>選擇誰可以驅逐訪客</green>'
-        team-invite: '<green>選擇可以邀請</green>'
-        team-kick: '<green>選擇可以踢</green>'
-        team-coop: '<green>選擇可以雞舍</green>'
-        team-trust: '<green>選擇可以相信</green>'
-        team-uncoop: '<green>選擇可以uncoop</green>'
-        team-untrust: '<green>選擇可以不信任</green>'
-        team-promote: '<green>選擇可以促進球員的等級</green>'
-        team-demote: '<green>選擇可以Demote球員的排名</green>'
-        sethome: '<green>選擇可以設置房屋</green>'
-        deletehome: '<green>選擇可以刪除房屋</green>'
-        renamehome: '<green>選擇可以重命名房屋</green>'
-        setcount: '<green>選擇可以更改階段</green>'
-        border: '<green>選擇可以使用邊境命令</green>'
+        team-invite: '<green>選擇誰可以邀請</green>'
+        team-kick: '<green>選擇誰可以踢出</green>'
+        team-coop: '<green>選擇誰可以設為協作者</green>'
+        team-trust: '<green>選擇誰可以設為信任者</green>'
+        team-uncoop: '<green>選擇誰可以取消協作</green>'
+        team-untrust: '<green>選擇誰可以取消信任</green>'
+        team-promote: '<green>選擇誰可以升階玩家</green>'
+        team-demote: '<green>選擇誰可以降階玩家</green>'
+        sethome: '<green>選擇誰可以設置Home點</green>'
+        deletehome: '<green>選擇誰可以刪除Home點</green>'
+        renamehome: '<green>選擇誰可以重命名Home點</green>'
+        setcount: '<green>選擇誰可以更改等級</green>'
+        border: '<green>選擇誰可以使用邊界命令</green>'
       description-layout: |-
         <gray>[description]</gray>
 
@@ -1744,15 +1744,15 @@ management:
             <gray>正在運行 </gray><yellow>[name] [version]</yellow><gray>。</gray>
 
             <gray><bold>BentoBox</bold></gray><gray>當前正運行在</gray>
-            <gold><bold>b不支持的</gold><gray>的服務器軟件和版本上。</gray></bold>
+            <gold><bold>不支持的</bold></gold><gray>的服務器軟件和版本上。</gray>
 
             <gray>雖然它的部分功能可以正常運行，</gray>
-            &但可能發生平台相關的錯誤。
+            <gray>但可能發生平台相關的錯誤。</gray>
           INCOMPATIBLE: |
             <gray>正在運行 </gray><yellow>[name] [version]</yellow><gray>。</gray>
 
             <gray><bold>BentoBox</bold></gray><gray>當前正運行在</gray>
-            <red><bold>不兼容 </red><gray>的服務器軟件和版本上。</gray></bold>
+            <red><bold>不兼容</bold></red><gray>的服務器軟件和版本上。</gray>
 
             <red>它並不是為此運行環境設計的，可能</red>
             <red>會發生奇怪的行為和錯誤，並且大部</red>
@@ -1785,7 +1785,7 @@ catalog:
       description: |
         <red><bold>BentoBox</bold></red> <red>無法連接到 GitHub。</red>
 
-        <green>請修改配置允許</green><aqua><bold>BentoBox</aqua><green>連接</green></bold>
+        <green>請修改配置允許</green><aqua><bold>BentoBox</bold></aqua><green>連接</green>
         <green>到互聯網， 或稍後再試。</green>
 enums:
   DamageCause:
@@ -1818,8 +1818,8 @@ enums:
     CRAMMING: 擁擠
     DRYOUT: 乾燥（魚類暴露在空氣中）
     FREEZE: 凍結
-    KILL: 殺
-    SONIC_BOOM: 聲音繁榮
+    KILL: /kill 命令
+    SONIC_BOOM: 音波衝擊
     WORLD_BORDER: 世界邊界
 panel:
   credits:
@@ -1832,7 +1832,7 @@ panel:
       description: |-
         <red><bold>BentoBox</bold></red> <red>無法收集此組件的貢獻者。</red>
 
-        <green>請修改配置允許</green><aqua><bold>BentoBox</aqua><green>連接</green></bold>
+        <green>請修改配置允許</green><aqua><bold>BentoBox</bold></aqua><green>連接</green>
         <green>到互聯網， 或稍後再試。</green>
 panels:
   island_homes:
@@ -1857,11 +1857,11 @@ panels:
         description: |-
           [authors]
           |[selected]
-        authors: '<gray>Authors: </gray>'
+        authors: '<gray>作者: </gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>當前選擇。</green>'
   placeholder:
-    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    title: '<dark_aqua><bold>佔位符瀏覽器</bold></dark_aqua>'
     buttons:
       bentobox:
         name: '<white><bold>BentoBox</bold></white>'

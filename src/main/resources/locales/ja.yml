@@ -11,7 +11,7 @@ prefixes:
   an-island: 島
   islands: 島
 general:
-  success: '<green>成否</green>'
+  success: '<green>成功！</green>'
   invalid: 無効
   beta: '<light_purple><bold>このコマンドはベータ版です。バックアップがあることを確認してください！</bold></light_purple>'
   errors:
@@ -41,7 +41,7 @@ general:
   worlds:
     overworld: オーバーワールド
     nether: ネザー
-    the-end: 終わり
+    the-end: ジ・エンド
 commands:
   help:
     header: '<gray>=========== </gray><red>[label]の ヘルプ </red><gray>===========</gray>'
@@ -79,11 +79,11 @@ commands:
       add:
         description: このプレイヤーの島リセット数を追加します
         parameters: <プレーヤー> <リセット>
-        success: '<green></green><aqua>[number]</aqua><green>resetsを</green><aqua>[name]に追加し、合計を</aqua><aqua>[total]</aqua><green>resetsに増やしました。</green>'
+        success: '<green></green><aqua>[number]</aqua><green>回のリセットを</green><aqua>[name]</aqua><green>に追加し、合計を</green><aqua>[total]</aqua><green>回に増やしました。</green>'
       remove:
         description: プレイヤーの島のリセット回数を減らします
         parameters: <プレーヤー> <リセット>
-        success: '<green></green><aqua>[番号] </aqua><green>リセットが </green><aqua>[名前] の島</aqua><green>から正常に削除され、合計が </green><aqua>[合計]</aqua><green>リセットに減少しました。</green>'
+        success: '<green></green><aqua>[number] </aqua><green>リセットが </green><aqua>[name] の島</aqua><green>から正常に削除され、合計が </green><aqua>[total]</aqua><green>リセットに減少しました。</green>'
     purge:
       parameters: '[日]'
       description: '[日]以上放棄された島をパージする'
@@ -139,7 +139,7 @@ commands:
       fix:
         description: データベース内のクロスアイランドメンバーシップをスキャンして修正
         scanning: データベースをスキャンしています...
-        duplicate-owner: '<red>プレイヤーはデータベース内に複数の島を所有しています: [名前]</red>'
+        duplicate-owner: '<red>プレイヤーはデータベース内に複数の島を所有しています: [name]</red>'
         player-has: '<red>プレイヤー[name]には[number]の島があります</red>'
         duplicate-member: '<red>プレーヤー[name]はデータベース内の複数の島のメンバーです</red>'
         rank-on-island: '<red>[rank]島の[xyz]</red>'
@@ -162,10 +162,10 @@ commands:
         success: '<aqua>[name]</aqua><green>がこの島の所有者になりました。</green>'
         extra-islands: '<red>警告：このプレーヤーは現在、[number]島を所有しています。これは、設定またはパーマで許可されている以上のものです：[max]。</red>'
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <プレイヤー> <サイズ>
+        description: プレイヤーの[prefix_island]の最大チームサイズを設定する（0でワールドデフォルトにリセット）
+        success: '<green></green><aqua>[name]</aqua><green>の[prefix_island]の最大チームサイズを</green><aqua>[number]</aqua><green>に設定しました。</green>'
+        reset: '<green></green><aqua>[name]</aqua><green>の[prefix_island]の最大チームサイズをワールドデフォルト（</green><aqua>[number]</aqua><green>）にリセットしました。</green>'
     range:
       description: 管理島の範囲コマンド
       invalid-value:
@@ -227,7 +227,7 @@ commands:
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy
       deaths: '死亡: [number]'
       resets-left: 'リセット: [number] (最大:  [total])'
-      max-homes: Max Homes：[number]
+      max-homes: '最大ホーム数: [number]'
       team-members-title: チームメンバー
       team-owner-format: '<green>[name] [rank]</green>'
       team-member-format: '<aqua>[name] [rank]</aqua>'
@@ -244,10 +244,10 @@ commands:
       purge-protected: 島はパージ保護されています
       max-protection-range: 最大の歴史的保護範囲：[range]
       protection-coords: '保護座標: [xz1] - [xz2]'
-      is-spawn: 島は産卵の島です
-      banned-players: 禁止選手
+      is-spawn: この島はスポーン島です
+      banned-players: BAN済みプレイヤー
       banned-format: '<red>[name]</red>'
-      unowned: 所有
+      unowned: 未所有
       bundle: '<green>島の作成に使用される青写真バンドル：</green><aqua>[name]</aqua>'
     switch:
       description: 保護バイパスのオン/オフを切り替えます
@@ -424,7 +424,7 @@ commands:
           prompt: 名前を入力するか、「quit」で終了します
           too-long: '<red>長すぎる</red>'
           pick-a-unique-name: よりユニークな名前を選んでください
-          stripped-char-in-unique-name: '<red>一部の文字は許可されていないため削除されました。 </red><green>新しい ID は </green><aqua>[名前]</aqua><green>になります。</green>'
+          stripped-char-in-unique-name: '<red>一部の文字は許可されていないため削除されました。 </red><green>新しい ID は </green><aqua>[name]</aqua><green>になります。</green>'
           success: 成功！
           conversation-prefix: '>'
         description:
@@ -509,7 +509,7 @@ commands:
       remove:
         description: プレイヤーの死を取り除く
         parameters: <プレイヤー> <死>
-        success: '<green></green><aqua>[number]</aqua><green>deathsを</green><aqua>[name]に正常に削除し、合計を</aqua><aqua>[total]</aqua><green>deathsに減らしました。</green>'
+        success: '<green></green><aqua>[number]</aqua><green>回の死���を</green><aqua>[name]</aqua><green>から正常に削除し、合計を</green><aqua>[total]</aqua><green>回に減らしました。</green>'
     resetname:
       description: プレイヤーの島名をリセットする
       success: '<green>[name] の島名が正常にリセットされました。</green>'
@@ -640,7 +640,7 @@ commands:
       description: 島を再起動し、古いものを削除する
       parameters: <青写真>
       none-left: あなたはもうリセットが残っている!
-      resets-left: '<red>残りには</red><aqua>[number]個の</aqua><red>resetsがあります</red>'
+      resets-left: '<red>残りリセット回数は</red><aqua>[number]回</aqua><red>です</red>'
       confirmation: |-
         <red>これを実行してもよろしいですか？</red>
         <red>すべての島のメンバーは島から追い</red>
@@ -737,21 +737,21 @@ commands:
       coop:
         description: 島でプレイヤーコープランクを確認
         parameters: <プレイヤー>
-        cannot-coop-yourself: 自分を生協することはできません!
+        cannot-coop-yourself: 自分を協力メンバーにすることはできません！
         already-has-rank: プレイヤーはすでにランクを持っている!
-        you-are-a-coop-member: あなたは [name]に閉じこもっれた
+        you-are-a-coop-member: あなたは[name]の島の協力メンバーになりました
         success: '<aqua>[name]</aqua><green>を協力メンバーにしました</green>'
         name-has-invited-you: '<green>[name] はあなたを彼らの島の協力メンバーとして招待しています。</green>'
       uncoop:
         description: プレイヤーから生協のランクを削除する
         parameters: <プレイヤー>
-        cannot-uncoop-yourself: 自分にそれを行うことはできません!
+        cannot-uncoop-yourself: 自分に対してそれを行うことはできません！
         cannot-uncoop-member: チームメンバーを uncoop ことはできません!
-        player-not-cooped: プレイヤーは閉じこもっではありません!
-        you-are-no-longer-a-coop-member: あなたはもはや[name]の島の生協のメンバーではない
-        all-members-logged-off: '<red>すべての島のメンバーがログオフしたため、あなたはもはや[name]の島の協同組合員ではありません</red>'
-        success: '<aqua>[name]</aqua><green>isはもはやあなたの島の協同組合員ではありません。</green>'
-        is-full: '<red>これ以上生協メンバーを追加することはできません</red>'
+        player-not-cooped: プレイヤーは協力メンバーではありません！
+        you-are-no-longer-a-coop-member: あなたはもう[name]の島の協力メンバーではありません
+        all-members-logged-off: '<red>すべての島のメンバーがログオフしたため、あなたはもう[name]の島の協力メンバーではありません</red>'
+        success: '<aqua>[name]</aqua><green>はもうあなたの島の協力メンバーではありません。</green>'
+        is-full: '<red>これ以上協力メンバーを追加することはできません</red>'
       trust:
         description: 島でプレイヤーに信頼できるランクを与える
         parameters: <プレイヤー>
@@ -832,7 +832,7 @@ commands:
         parameters: <プレーヤー>
         player-kicked: '<red>[gamemode] で [name] によってあなたは島から追い出されました!</red>'
         cannot-kick: 自分を削除することはできません!
-        cannot-kick-rank: '<red>あなたのランクでは [名前] をキックすることはできません!</red>'
+        cannot-kick-rank: '<red>あなたのランクでは [name] をキックすることはできません!</red>'
         success: '<aqua>[name]</aqua><green>はあなたの島から追い出されました。</green>'
       demote:
         description: ランクダウンあなたの島のプレーヤーを降格
@@ -873,14 +873,14 @@ commands:
       owner-banned-you: '[name]は、彼らの島からあなたを禁止!'
       you-are-banned: あなたはこの島から禁止されています!
     unban:
-      description: あなたの島から選手を同時
-      parameters: <プレーヤー>
-      cannot-unban-yourself: 自分を同時ことはできない!
+      description: プレイヤーの島からのBANを解除する
+      parameters: <プ��ーヤー>
+      cannot-unban-yourself: ��分のBAN解除はできません！
       player-not-banned: プレイヤーは禁止されていません
       player-unbanned: '<aqua>[name]</aqua><green>は現在、あなたの島から禁止されていません。</green>'
       you-are-unbanned: '[name]は島からあなたをブロックを解除!'
     banlist:
-      description: リスト禁止選手
+      description: BAN済みプレイヤーを一覧表示
       noone: この島では誰も禁止されていない
       the-following: 以下の選手は禁止されている
       names: '<red>[line]</red>'
@@ -911,8 +911,8 @@ ranks:
   sub-owner: サブ所有者
   member: メンバー
   trusted: 信頼
-  coop: 生協
-  visitor: 訪問 者
+  coop: 協力者
+  visitor: 訪問者
   banned: 禁止
   admin: 管理者
   mod: モデレーター
@@ -920,9 +920,9 @@ protection:
   command-is-banned: コマンドは、訪問者のために禁止され
   flags:
     ALLAY:
-      name: アレイ・Copper Golem相互作用
-      description: Allay と Copper Golem との間でアイテムの授受を許可する
-      hint: アレイ・Copper Golemインタラクションが無効になっています
+      name: アレ���・銅のゴーレムの相互作用
+      description: アレイと銅のゴーレムとの間でアイテム��授受を許可する
+      hint: アレ���・銅のゴーレムのインタラクションが無効になっていま���
     ANIMAL_NATURAL_SPAWN:
       description: 自然な動物の産卵を切り替えます
       name: 動物の自然なスポーン
@@ -939,7 +939,7 @@ protection:
       hint: アーマースタンド使用不可
     AXOLOTL_SCOOPING:
       name: ウーパールートルすくい
-      description: バケツを使ってウーバーイーツをすくえるようにする
+      description: バケツを使ってウーパールーパーをすくえるようにする
       hint: ウーパールーパーすくいが無効になっています
     BEACON:
       description: トグル使用
@@ -1030,7 +1030,7 @@ protection:
     CRAFTER:
       name: クラフター
       description: トグルの使用
-      hint: Crafter access disabled
+      hint: クラフターへのアクセスが��効になっています
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         <green>ベッドとリスポーンアンカーを許可する</green>
@@ -1230,8 +1230,8 @@ protection:
     FLINT_AND_STEEL:
       name: フリントとスチール
       description: |-
-        <green>を使用してプレイヤーに火を点ける</green>
-        &アフリントと鉄鋼または火災料。
+        <green>フリン��と鉄鋼または火薬を使用して</green>
+        <green>プレイヤーが火を点けることを許可する。</green>
       hint: フリントとスチールと火のチャージは無効です
     FURNACE:
       description: トグル使用
@@ -1249,9 +1249,9 @@ protection:
       name: '<yellow>生き物を島に限る</yellow>'
     HARVEST:
       description: |-
-        <green>作物を収穫できる人を設定します。</green>
-        <green>アイテムを許可することを忘れないでください</green>
-        &ピックアップも！
+        <green>作物を収穫で��る人を設定します。</green>
+        <green>アイテムのピックアップも許可する</green>
+        <green>ことを忘れないでください！</green>
       name: 作物の収穫
       hint: 作物の収穫が無効になっています
     HIVE:
@@ -1277,8 +1277,8 @@ protection:
     ITEM_FRAME:
       name: アイテムフレーム
       description: |-
-        <green>Toggleインタラクション。</green>
-        ブロックの配置または分割をオーバーライドします
+        <green>インタラクションを切り替えます。</green>
+        <green>ブロックの配置または破壊をオーバーライドします。</green>
       hint: アイテムフレームの使用は無効です
     ITEM_FRAME_DAMAGE:
       description: |-
@@ -1411,11 +1411,11 @@ protection:
       name: オフライン成長
     OFFLINE_REDSTONE:
       description: |-
-        <green>無効にすると、レッドストーン</green>
-        <green>willは島では機能しません</green>
-        すべてのメンバーがオフラインです。
-        <green>Mayは遅延の削減に役立ちます。</green>
-        スポーン島には影響しません。
+        <green>無効にすると、すべてのメンバーが</green>
+        <green>オフラインの場合、レッドストーンは</green>
+        <green>島では機能しません。</green>
+        <green>遅延の削減に役立つかもしれません。</green>
+        <green>スポーン島には影響しません。</green>
       name: オフラインレッドストーン
     PETS_STAY_AT_HOME:
       description: |-
@@ -1591,15 +1591,15 @@ protection:
         <green>アイテムと経験値が死亡した場合</green>
         <green>彼らが訪問者である島。</green>
         <green></green>
-        <green>アイランドのメンバーはまだアイテムを失っています</green>
-        そして、彼らが自分の島で死んだ場合！
+        <green>島のメンバーは自分の島で死んだ場合、</green>
+        <green>アイテムを失います！</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: スポーン島の奈落保護
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>有効にすると、スポーン島で奈落に</green>
+        <green>落ちたプレイヤーは死亡する代わりに</green>
+        <green>スポーンポイントにテレポート</green>
+        <green>されま���。</green>
     RAID_TRIGGER:
       name: 襲撃のトリガー
       description: 襲撃を引き起こすために必要な島の最低ランクを設定します
@@ -1607,9 +1607,9 @@ protection:
     ENTITY_PORTAL_TELEPORT:
       name: エンティティポータルの使用法
       description: |-
-        <green>エンティティ (非プレイヤー) ができるかどうかを切り替えます。</green>
-        <green>ポータルを使用して間をテレポートします</green>
-        寸法(<green>)</green>
+        <green>エンティティ（非プレイヤー）が</green>
+        <green>ポータルを使用してディメンション間を</green>
+        <green>テレポートできるかどうかを切り替えます。</green>
     WIND_CHARGE:
       name: ウィンドチャージ
       description: |-
@@ -1618,7 +1618,7 @@ protection:
         <green>ウィンドチャージを使用できません。</green>
       hint: ウィンドチャージの使用が無効
     WITHER_DAMAGE:
-      name: 許可/禁止
+      name: ウィザーダメージの切り替え
       description: |-
         <green>アクティブな場合、枯れます</green>
         <green>ブロックとプレイヤーを破損</green>
@@ -1654,10 +1654,10 @@ protection:
         description: '<green>使用可能なすべての設定を表示します。</green>'
       click-to-switch: '<yellow>クリックして[next]に切り替えます。</yellow>'
     reset-to-default:
-      name: '<red>Reset to default</red>'
+      name: '<red>デフォルトにリセット</red>'
       description: |
-        <green>Resets</green><red><bold>ALL</bold></red><green>the settings to their</green>
-        デフォルト値。
+        <green>すべての設定を</green><red><bold>デフォルト値</bold></red>
+        <green>にリセットします。</green>
       confirm: confirm
       instructions: '<green>本当にいいですか？ </green><red>"confirm" </red><green>と入力してすべてをリセットしてください。</green>'
     PROTECTION:
@@ -1854,7 +1854,7 @@ catalog:
         設定を変更するか、後で再試行してください。
 enums:
   DamageCause:
-    CONTACT: 衝突
+    CONTACT: 接触ダメージ
     ENTITY_ATTACK: エンティティ攻撃
     ENTITY_SWEEP_ATTACK: エンティティスイープ攻撃
     PROJECTILE: 発射物
@@ -1867,7 +1867,7 @@ enums:
     DROWNING: 溺死
     BLOCK_EXPLOSION: ブロック爆発
     ENTITY_EXPLOSION: エンティティの爆発
-    VOID: 無効
+    VOID: 奈落
     LIGHTNING: ライトニング
     SUICIDE: 自殺
     STARVATION: 飢餓
@@ -1880,12 +1880,12 @@ enums:
     CUSTOM: カスタム
     FLY_INTO_WALL: 壁に飛ぶ
     HOT_FLOOR: ホットフロア
-    CRAMMING: 一夜漬け
+    CRAMMING: 押し潰し
     DRYOUT: 完全に乾く
     FREEZE: フリーズ
     KILL: 殺す
     SONIC_BOOM: ソニックブーム
-    WORLD_BORDER: 世界国境
+    WORLD_BORDER: ワールドボーダー
 panel:
   credits:
     title: '<dark_gray>[name]</dark_gray><dark_green>クレジット</dark_green>'
