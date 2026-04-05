@@ -16,9 +16,9 @@ general:
   invalid: 올바르지 않음
   beta: '<light_purple><bold>이 명령은 베타입니다. 백업이 있는지 확인하십시오!</bold></light_purple>'
   errors:
-    command-cancelled: '& c 명령이 취소되었습니다.'
+    command-cancelled: '<red>명령이 취소되었습니다.</red>'
     no-permission: '<red> 당신은 이 명령어를 실행하기 위한 권한을 가지고있지 않습니다. 필요 권한 : (</red><gray>[permission]</gray><red>).</red>'
-    insufficient-rank: '& c 당신의 랭크는 그렇게하기에 충분히 높지 않습니다! (& 7 [rank] & c)'
+    insufficient-rank: '<red>당신의 랭크는 그렇게하기에 충분히 높지 않습니다! (</red><gray>[rank]</gray><red>)</red>'
     use-in-game: '<red>이 명령어는 인게임에서만 사용할 수 있습니다.</red>'
     use-in-console: '<red>이 명령은 콘솔에서만 사용할 수 있습니다.</red>'
     no-team: '<red>당신은 다른 사람의 섬에 소속되어있지 않습니다!</red>'
@@ -175,10 +175,10 @@ commands:
           <red>경고: 이 플레이어는 현재 [number] 개의 섬을 소유하고 있습니다. 이는 설정이나 권한으로 허용된 수 [max]를</red>
           초과했습니다.
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <플레이어> <크기>
+        description: 플레이어의 [prefix_island] 최대 팀 크기를 설정합니다 (0으로 월드 기본값으로 초기화)
+        success: '<green>[name]의 [prefix_island] 최대 팀 크기를 </green><aqua>[number]</aqua><green>로 설정했습니다.</green>'
+        reset: '<green>[name]의 [prefix_island] 최대 팀 크기를 월드 기본값(</green><aqua>[number]</aqua><green>)으로 초기화했습니다.</green>'
     range:
       description: 어드민 섬 범위 명령어
       invalid-value:
@@ -198,7 +198,7 @@ commands:
       set:
         parameters: <플레이어> <범위>
         description: 섬 보호범위를 설정합니다
-        success: '<green>섬위 보호범위를 </green><aqua>[number]</aqua><green>로 설정하였습니다.</green>'
+        success: '<green>섬의 보호범위를 </green><aqua>[number]</aqua><green>로 설정하였습니다.</green>'
       reset:
         parameters: <플레이어>
         description: 보호범위를 기본으로 되돌립니다
@@ -290,7 +290,7 @@ commands:
       use-emptytrash: '<green><bold>[label] emptytrash [player]</bold></green><green>를 사용하여 쓰레기통의 섬들을 삭제합니다</green>'
     emptytrash:
       parameters: '[player]'
-      description: 쓰레기통에 있는 섬을 청소하거나, or 쓰레기통에 있는 모든 주인없는 섬을 청소합니다
+      description: 쓰레기통에 있는 섬을 청소하거나, 쓰레기통에 있는 모든 주인없는 섬을 청소합니다
       success: '<green>쓰레기통을 비웠습니다</green>'
     version:
       description: BentoBox와 애드온들의 버전을 보여줍니다
@@ -551,8 +551,8 @@ commands:
       addon: '[prefix_bentobox] <aqua>[name]</aqua><gold>을(를) 리로드 하는 중입니다 .</gold>'
       addon-reloaded: '[prefix_bentobox]<aqua>[name] </aqua><dark_green>이(가) 리로드되었습니다</dark_green>'
       warning: >-
-        [prefix_bentobox] & c 경고 : 리로드하면 불안정 해질수 있으므로 나중에 오류가 발생하면 서버를 다시
-        시작하십시오.
+        [prefix_bentobox] <red>경고: 리로드하면 불안정 해질수 있으므로 나중에 오류가 발생하면 서버를 다시
+        시작하십시오.</red>
       unknown-addon: '[prefix_bentobox]<red>알수없는 애드온 입니다!</red>'
       locales:
         description: 번역 리로드
@@ -1046,7 +1046,7 @@ protection:
         <green>(트랩 상자는 포함되지 않음)</green>
       hint: '<red>상자 접근이 비활성화되었습니다</red>'
     BARREL:
-      name: 통 합
+      name: 통
       description: 배럴 상호작용 전환
       hint: 배럴 접근 비활성화됨
     CRAFTER:
@@ -1064,17 +1064,17 @@ protection:
       description: 컴포스터 상호작용 전환
       hint: 퇴비통 상호작용 비활성화됨
     LOOM:
-      name: '룸[<green>]</green>'
+      name: 베틀
       description: 사용 전환
-      hint: 루미 접속 비활성화됨
+      hint: 베틀 접근이 비활성화됨
     FLOWER_POT:
-      name: 꽃 화분 [Flower pots]
+      name: 꽃 화분
       description: 꽃 화분 상호작용 전환
       hint: 꽃 화분 상호작용 비활성화됨
     GRINDSTONE:
       name: 연마석
       description: 사용 전환
-      hint: 전환석 접근이 비활성화되었습니다
+      hint: 연마석 접근이 비활성화되었습니다
     SHULKER_BOX:
       name: 술커 박스
       description: 셔커 박스 상호작용 전환하기
@@ -1093,7 +1093,7 @@ protection:
       description: 사용 전환
       hint: 석재 절단 접근이 비활성화되었습니다.
     TRAPPED_CHEST:
-      name: 감금된 상자들
+      name: 함정 상자
       description: 잠긴 보물 상자 상호작용 전환
       hint: 트랩된 상자 접근 비활성화됨
     DISPENSER:
@@ -1131,16 +1131,16 @@ protection:
       hint: 거친 흙 경작이 금지되어 있습니다
     COLLECT_LAVA:
       description: |-
-        <green>용암을 플수 있는지 여부설정</green>
+        <green>용암을 퍼올 수 있는지 여부설정</green>
         <green>양동이 사용 설정을 덮어씁니다</green>
-      name: 용암 프기
-      hint: 용암을 플수 없습니다
+      name: 용암 퍼기
+      hint: 용암을 퍼올 수 없습니다
     COLLECT_WATER:
       description: |-
-        <green>물을 플수 있는지 여부설정</green>
+        <green>물을 퍼올 수 있는지 여부설정</green>
         <green>양동이 사용 설정을 덮어씁니다</green>
-      name: 물 프기
-      hint: 물을 플수 없습니다
+      name: 물 퍼기
+      hint: 물을 퍼올 수 없습니다
     COLLECT_POWDERED_SNOW:
       description: |-
         <green>분말 눈 수집 전환</green>
@@ -1400,7 +1400,7 @@ protection:
       description: |-
         <green>생물 (동물과</green>
         <green>몬스터) 자연스럽게 외부에서 스폰 할 수 있습니다</green>
-        & 섬의 보호 범위밖에
+        <green>섬의 보호 범위밖에</green>
 
         <red>생물을 방해하지는 않습니다.</red>
         <red>몹 스폰 또는 계란을 통해 스폰</red>
@@ -1409,7 +1409,7 @@ protection:
       name: 소리블록
       hint: 소리블록 상호작용이 금지되어있습니다
     OBSIDIAN_SCOOPING:
-      name: 흑요석 프기
+      name: 흑요석 퍼기
       description: |-
         <green>플레이어가 흑요석을 퍼 내도록 허용</green>
         <green>용암으로 다시 빈 양동이와 함께.</green>
@@ -1524,7 +1524,7 @@ protection:
       name: 몬스터를 없앰
     RIDING:
       description: 탑승 가능 여부
-      name: 동물 답승
+      name: 동물 탑승
       hint: 동물 탑승이 허용되어있지 않습니다
     SHEARING:
       description: 양털 깎기 가능여부 설정
@@ -1591,15 +1591,15 @@ protection:
       name: 차가운 걸음
       hint: 차가운 걸음 인첸트를 사용할수 없습니다
     EXPERIENCE_PICKUP:
-      name: 경험치 흭득
-      description: 경험치를 흭득할수 있는지 설정합니다
-      hint: 경험치를 흭득할수 없습니다
+      name: 경험치 획득
+      description: 경험치를 획득할수 있는지 설정합니다
+      hint: 경험치를 획득할수 없습니다
     PREVENT_TELEPORT_WHEN_FALLING:
       name: 떨어질때 tp를 할수 없게 합니다
       description: |-
         <green>플레이어가 떨어질때</green>
         <green>명령어를 사용하여 섬을 갈수</green>
-        & a 없게 합니다
+        <green>없게 합니다</green>
       hint: '<red>떨어지고 있을땐 그것을 할수 없습니다</red>'
     VISITOR_KEEP_INVENTORY:
       name: 방문자는 죽었을 때 인벤토리를 유지합니다.
@@ -1609,12 +1609,12 @@ protection:
         <green></green>
         <green>[prefix_Island] 멤버는 자신의 [prefix_island]에서 죽으면 여전히 아이템을 잃습니다!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: 스폰 섬 공허 보호
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>활성화되면, 스폰 섬에서</green>
+        <green>공허로 떨어지는 플레이어는</green>
+        <green>죽는 대신 스폰 지점으로</green>
+        <green>텔레포트됩니다.</green>
     RAID_TRIGGER:
       name: 레이드 트리거
       description: 레이드를 시작하는 데 필요한 최소 섬 등급을 설정합니다
@@ -1854,12 +1854,12 @@ catalog:
         <green>BentoBox가 구성에서 GitHub에 연결하도록 허용하거나 나중에 다시 시도하십시오.</green>
 enums:
   DamageCause:
-    CONTACT: 연락처
+    CONTACT: 접촉
     ENTITY_ATTACK: 몹 공격
     ENTITY_SWEEP_ATTACK: 스윕 공격
     PROJECTILE: 발사체
-    SUFFOCATION: 질식 [Suffocation]
-    FALL: 가을
+    SUFFOCATION: 질식
+    FALL: 낙하
     FIRE: 불
     FIRE_TICK: 불타는
     MELTING: 녹기
@@ -1880,8 +1880,8 @@ enums:
     CUSTOM: 커스텀
     FLY_INTO_WALL: 벽으로 날기
     HOT_FLOOR: 뜨거운 바닥
-    CRAMMING: 크래밍
-    DRYOUT: 드라이터
+    CRAMMING: 밀착
+    DRYOUT: 건조
     FREEZE: 동결
     KILL: 죽이기
     SONIC_BOOM: 소닉 붐
