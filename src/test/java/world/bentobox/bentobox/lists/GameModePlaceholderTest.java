@@ -225,6 +225,8 @@ class GameModePlaceholderTest extends CommonTestSetup {
                 GameModePlaceholder.VISITED_ISLAND_PROTECTION_RANGE.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.VISITED_ISLAND_PROTECTION_RANGE_DIAMETER.getReplacer().onReplace(addon,
                 user, island));
+        assertEquals("ranks.owner",
+                GameModePlaceholder.VISITED_ISLAND_RANK.getReplacer().onReplace(addon, user, island));
         assertEquals("1",
                 GameModePlaceholder.VISITED_ISLAND_TRUSTEES_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals(uuid.toString(),
@@ -253,6 +255,7 @@ class GameModePlaceholderTest extends CommonTestSetup {
         assertEquals("", GameModePlaceholder.VISITED_ISLAND_OWNER.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.VISITED_ISLAND_PROTECTION_RANGE.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.VISITED_ISLAND_PROTECTION_RANGE_DIAMETER.getReplacer().onReplace(addon, user, island));
+        assertEquals("", GameModePlaceholder.VISITED_ISLAND_RANK.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.VISITED_ISLAND_TRUSTEES_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.VISITED_ISLAND_UUID.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.VISITED_ISLAND_VISITORS_COUNT.getReplacer().onReplace(addon, user, island));

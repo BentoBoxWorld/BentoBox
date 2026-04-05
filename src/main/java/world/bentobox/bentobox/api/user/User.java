@@ -41,6 +41,7 @@ import com.google.common.base.Enums;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.title.Title;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.OfflineMessageEvent;
@@ -65,6 +66,12 @@ import world.bentobox.bentobox.util.Util;
 public class User implements MetaDataAble {
 
     private static final Map<UUID, User> users = new HashMap<>();
+
+    // Patterns for message delivery type tags in locale strings
+    private static final Pattern ACTIONBAR_PATTERN = Pattern.compile("^\\[actionbar]", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TITLE_PATTERN = Pattern.compile("^\\[title]", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SUBTITLE_PATTERN = Pattern.compile("\\[subtitle]", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SOUND_PATTERN = Pattern.compile("\\[sound:([^:\\]]+)(?::([^:\\]]+))?(?::([^:\\]]+))?]", Pattern.CASE_INSENSITIVE);
 
     // Used for particle validation
     private static final Map<Particle, Class<?>> VALIDATION_CHECK;
@@ -684,18 +691,113 @@ public class User implements MetaDataAble {
      * </pre>
      * The above message will display "Hello [not-a-command: hello] World" where clicking the message runs the "/help" command,
      * and hovering over the message shows "This is a hover text".
+     * <p>
+     * Additionally, the method supports message delivery type tags:
+     * <ul>
+     *   <li><code>[actionbar]</code> - Sends the message as an action bar message.</li>
+     *   <li><code>[title]</code> - Sends the message as a title. Optionally use <code>[subtitle]</code> to split title and subtitle.</li>
+     *   <li><code>[sound:name:volume:pitch]</code> - Plays the specified sound to the player. Volume and pitch are optional (default 1.0).</li>
+     * </ul>
      *
      * @param message The message to send, containing inline commands in square brackets.
      */
     public void sendRawMessage(String message) {
-        if (sender != null) {
-            // Convert inline bracket commands to MiniMessage tags
-            String mmMessage = Util.convertInlineCommandsToMiniMessage(message);
-            // Auto-detect and parse legacy or MiniMessage format
-            Component component = Util.parseMiniMessageOrLegacy(mmMessage);
-            sender.sendMessage(component);
-        } else {
+        if (sender == null) {
             Bukkit.getPluginManager().callEvent(new OfflineMessageEvent(this.playerUUID, message));
+            return;
+        }
+
+        // Extract and play sounds first (can combine with any delivery type)
+        String remaining = processAndStripSounds(message);
+
+        // Determine delivery type and dispatch
+        if (ACTIONBAR_PATTERN.matcher(remaining).find()) {
+            String text = ACTIONBAR_PATTERN.matcher(remaining).replaceFirst("");
+            Component component = parseToComponent(text);
+            if (sender instanceof Player player) {
+                player.sendActionBar(component);
+            } else {
+                sender.sendMessage(component);
+            }
+        } else if (TITLE_PATTERN.matcher(remaining).find()) {
+            String text = TITLE_PATTERN.matcher(remaining).replaceFirst("");
+            Component titleComponent;
+            Component subtitleComponent = Component.empty();
+            Matcher subtitleMatcher = SUBTITLE_PATTERN.matcher(text);
+            if (subtitleMatcher.find()) {
+                String titleText = text.substring(0, subtitleMatcher.start());
+                String subtitleText = text.substring(subtitleMatcher.end());
+                titleComponent = parseToComponent(titleText);
+                subtitleComponent = parseToComponent(subtitleText);
+            } else {
+                titleComponent = parseToComponent(text);
+            }
+            if (sender instanceof Player player) {
+                player.showTitle(Title.title(titleComponent, subtitleComponent));
+            } else {
+                sender.sendMessage(titleComponent);
+            }
+        } else {
+            // Default: chat message
+            Component component = parseToComponent(remaining);
+            sender.sendMessage(component);
+        }
+    }
+
+    /**
+     * Parses a message string into an Adventure Component, handling inline commands and
+     * auto-detecting legacy or MiniMessage format.
+     *
+     * @param text the message text
+     * @return the parsed Component
+     */
+    private Component parseToComponent(String text) {
+        String mmMessage = Util.convertInlineCommandsToMiniMessage(text);
+        return Util.parseMiniMessageOrLegacy(mmMessage);
+    }
+
+    /**
+     * Extracts sound tags from the message, plays them for the player, and returns
+     * the message with sound tags stripped out. Sound names use underscores in locale
+     * files for readability (e.g., {@code entity_experience_orb_pickup}), which are
+     * converted to Minecraft's dot-separated resource location format
+     * (e.g., {@code entity.experience.orb.pickup}).
+     *
+     * @param message the message possibly containing [sound:name:volume:pitch] tags
+     * @return the message with sound tags removed
+     */
+    private String processAndStripSounds(String message) {
+        Matcher matcher = SOUND_PATTERN.matcher(message);
+        StringBuilder sb = new StringBuilder();
+        while (matcher.find()) {
+            String soundName = matcher.group(1).toLowerCase(Locale.ENGLISH).replace('_', '.');
+            float volume = parseFloatOrDefault(matcher.group(2), 1.0f);
+            float pitch = parseFloatOrDefault(matcher.group(3), 1.0f);
+            if (sender instanceof Player player) {
+                player.playSound(player.getLocation(), soundName, volume, pitch);
+            }
+            matcher.appendReplacement(sb, "");
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    /**
+     * Parses a string to a float, returning a default value if the string is null
+     * or not a valid float.
+     *
+     * @param value the string to parse, may be null
+     * @param defaultValue the default value if parsing fails
+     * @return the parsed float or the default value
+     */
+    private static float parseFloatOrDefault(@Nullable String value, float defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+        try {
+            return Float.parseFloat(value);
+        } catch (NumberFormatException ignored) {
+            return defaultValue;
         }
     }
 
