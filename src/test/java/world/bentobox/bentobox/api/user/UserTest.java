@@ -932,7 +932,6 @@ class UserTest extends CommonTestSetup {
     /**
      * Verifies that bold formatting in a prefix does not leak into the
      * surrounding message text after substitution.
-     * @see <a href="https://github.com/BentoBoxWorld/BentoBox/issues/XXX">Bold text continues</a>
      */
     @Test
     void testPrefixBoldDoesNotLeak() {
