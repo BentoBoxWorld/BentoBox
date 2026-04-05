@@ -12,7 +12,7 @@ prefixes:
   islands: saliņas
 general:
   success: '<green>Darīts!</green>'
-  invalid: Nederīgs
+  invalid: Nederīgs!
   beta: '<light_purple><bold>Šī komanda ir beta versijā. Pārliecinieties, ka jums ir dublējumi!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Komanda atcleta.</red>'
@@ -116,15 +116,15 @@ commands:
       scanning-in-progress: '<red>Skenēšana notiek, lūdzu, gaidiet</red>'
       none-found: '<red>Nav atrastas salas, kuras varētu izdzēst.</red>'
       total-islands: '<green>Jums ir [number] salas jūsu datu bāzē visās pasaulēs.</green>'
-      number-error: '<red>Parametram ir jābūt dienu skatitam.</red>'
+      number-error: '<red>Parametram ir jābūt dienu skaitam.</red>'
       confirm: '<light_purple>Raksti </light_purple><yellow>[label] purge confirm</yellow><light_purple>, lai sāktu dzēšanu</light_purple>'
       completed: '<green>Dzēšana pabeigta.</green>'
-      see-console-for-status: Dzēšana uzsākta. Skati terminālī, lai redzētu satusu.
+      see-console-for-status: Dzēšana uzsākta. Skati terminālī, lai redzētu statusu.
       no-purge-in-progress: '<red>Šobrīd nav nevienas tīrīšanas procedūras.</red>'
       regions:
         parameters: '[days]'
         description: Iztīrīt salas, izdzēšot veco reģiona failus
-        confirm: '<light_purple>Type </light_purple><aqua>/[label] purge regions confirm</aqua><light_purple>, lai sāktu attīrīt</light_purple>'
+        confirm: '<light_purple>Ievadi </light_purple><aqua>/[label] purge regions confirm</aqua><light_purple>, lai sāktu attīrīt</light_purple>'
       protect:
         description: Pārslēgt salas aizsargāšanu no dzēšanas
         move-to-island: '<red>Sākumā pārvietojies uz salas!</red>'
@@ -148,7 +148,7 @@ commands:
         description: pievieno spēlētāju īpašnieka salai
         name-not-owner: '<red>[name] nav salas īpašnieks.</red>'
         name-has-island: '<red>[name] jau pieder kāda sala. Atreģistrē vai izdzēs to vispirms!</red>'
-        success: '<aqua>[name]</aqua><green>ir pieveinots </green><aqua>[owner]</aqua><green>salai.</green>'
+        success: '<aqua>[name]</aqua><green> ir pievienots </green><aqua>[owner]</aqua><green> salai.</green>'
       disband:
         parameters: <īpašnieks>
         description: izformē īpašnieka komandu
@@ -187,10 +187,10 @@ commands:
           <red>Brīdinājums: šim spēlētājam tagad pieder [number] salas. Tas ir</red>
           vairāk nekā atļautais limits pēc iestatījumiem vai atļaujām: [max].
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <spēlētājs> <izmērs>
+        description: Iestatīt maksimālo komandas izmēru spēlētāja [prefix_island] (izmantojiet 0, lai atiestatītu uz pasaules noklusējumu)
+        success: '<green>Iestatīts </green><aqua>[name]</aqua><green> [prefix_island] maksimālais komandas izmērs uz </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Atiestatīts </green><aqua>[name]</aqua><green> [prefix_island] maksimālais komandas izmērs uz pasaules noklusējumu (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: Admina salas distances komanda
       invalid-value:
@@ -304,7 +304,7 @@ commands:
         <red>Numuram jābūt starp 1 un [number]. Lieto <bold>[label] trash [player]</bold></red><red>,</red>
         lai redzētu salas numuru
       cannot-switch: '<red>Pārslēgšana neizdevās! Skaties kļūdu paziņojumu konsulē.</red>'
-      success: '<green>Spēlētāja sala veiskmīgi pārslēgta uz uzstādīto numuru.</green>'
+      success: '<green>Spēlētāja sala veiksmīgi pārslēgta uz uzstādīto numuru.</green>'
     trash:
       no-unowned-in-trash: '<red>Nav salas atkritnē bez īpašniekiem</red>'
       no-islands-in-trash: '<red>Spēlētājam nav salas atkritnē</red>'
@@ -369,7 +369,7 @@ commands:
     setspawn:
       description: uzstāda kā sākuma salu šajā pasaulē visiem spēlētājiem
       already-spawn: '<red>Šī sala jau ir uzstādīta kā sākuma sala!</red>'
-      no-island-here: '<red>Šeit nav neveinas salas.</red>'
+      no-island-here: '<red>Šeit nav nevienas salas.</red>'
       confirmation: '<red>Vai tiešām vēlies uzstādīt šo salu kā sākuma salu?</red>'
       success: '<green>Šī sala ir veiksmīgi uzstādīta kā sākuma sala šajā pasaulē.</green>'
     setspawnpoint:
@@ -414,8 +414,8 @@ commands:
           iestatiet šo plānu, lai tas iegremdētos okeāna dibenā, kad tas tiek
           ielikt.
         status: '<green>Zīmējums būs [status] </green><green>, kad to ieliks.</green>'
-        sink: '<red>izlietne</red>'
-        not-sink: '<aqua>neiegrimst</aqua>'
+        sink: '<red>iegremdēts</red>'
+        not-sink: '<aqua>neiegremdēts</aqua>'
         no-clipboard: '<red>Klipbordā nav nevienas plāna. Ielādējiet vai kopējiet kaut ko.</red>'
       delete:
         parameters: <nosaukums>
@@ -595,7 +595,7 @@ commands:
     reload:
       description: parlādēt iestatījumus, papildinājumus (ja atbalstīts) un valodas
       locales-reloaded: '<dark_green>Valodas faili pārlādēti.</dark_green>'
-      addons-reloaded: '<dark_green>Papildinājumu pārlādēti.</dark_green>'
+      addons-reloaded: '<dark_green>Papildinājumi pārlādēti.</dark_green>'
       settings-reloaded: '<dark_green>Iestatījumi pārlādēti.</dark_green>'
       addon: '<gold>Pārlādē </gold><aqua>[name]</aqua><dark_green>.</dark_green>'
       addon-reloaded: '<aqua>[name] </aqua><dark_green>pārlādēts.</dark_green>'
@@ -985,7 +985,7 @@ commands:
       description: attaino salas iestatījumus
     language:
       description: valodu izvēle
-      parameters: '[lвек]'
+      parameters: '[valoda]'
       not-available: '<red>Šī valoda nav pieejama.</red>'
       already-selected: '<red>Jūs jau izmantojat šo valodu.</red>'
     expel:
@@ -1034,9 +1034,9 @@ protection:
       name: Bruņu statīvi
       hint: Bruņu statīva lietošana atslēgta
     AXOLOTL_SCOOPING:
-      name: Axolotl izsistīšana
+      name: Axolotl izsmelšana
       description: Atļaut axolotlu izņemšanu ar spaini
-      hint: Axolotl kausēšana atspējota
+      hint: Axolotl izsmelšana atspējota
     BEACON:
       description: Pārslēdz izmantošanu
       name: Signāluguņi
@@ -1092,16 +1092,16 @@ protection:
       name: Pogas
       hint: Pogu spiešana nav atļauta
     CANDLES:
-      description: Pārlēgt sveču mijiedarbību
+      description: Pārslēgt sveču mijiedarbību
       name: Svecītes
-      hint: Sviestmaizīšu mijiedarbība atslēgta
+      hint: Sveču mijiedarbība atslēgta
     CAKE:
       description: Pārslēdz iespēju ēst kūkas
       name: Kūkas
       hint: Kūku ēšana nav atļauta
     CARTOGRAPHY:
       name: Kartogrāfijas galdi
-      description: Pārslaigāt lietošanu
+      description: Pārslēgt lietošanu
       hint: Kartogrāfijas galda piekļuve atspējota
     CONTAINER:
       name: Kontaineri
@@ -1113,7 +1113,7 @@ protection:
         <gray>ar citiem karogiem.</gray>
       hint: Konteineru atvēršana nav atļauta
     CHEST:
-      name: Lādēm un vagona lādēm
+      name: Lādes un vagona lādes
       description: |-
         <green>Pārslēgt mijiedarbību ar lādzēm</green>
         <green>un lādes vilcieniem.</green>
@@ -1126,13 +1126,13 @@ protection:
     CRAFTER:
       name: Amatnieks
       description: Pārslēgt lietošanu
-      hint: Amatnieks invalīda
+      hint: Amatnieka lietošana atspējota
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         <green>Atļaut gultām & atkārtotas atdzimšanas enkuriem</green>
         <green>sagraut blokos un nodarīt bojājumus</green>
         <green>entītijām.</green>
-      name: Bloku sprādziena bojājumu
+      name: Bloku sprādziena bojājumi
     COMPOSTER:
       name: Komposteri
       description: Pārslēgt kompostera mijiedarbību
@@ -1140,24 +1140,24 @@ protection:
     LOOM:
       name: Stelles
       description: Pārslēgt lietošanu
-      hint: Loom piekļuve atspējota
+      hint: Stellu piekļuve atspējota
     FLOWER_POT:
       name: Ziedu podi
       description: Pārslēgt puķu poda mijiedarbību
       hint: Zieda poda mijiedarbība atspējota
     GRINDSTONE:
-      name: Sasmalcināšana
+      name: Galantiņš
       description: Pārslēgt lietošanu
-      hint: Grindstone piekļuve atslēgta
+      hint: Galantiņa piekļuve atslēgta
     SHULKER_BOX:
       name: Shulker kastes
       description: Pārslēgt shulker kastes mijiedarbību
       hint: Shulker kastes piekļuve atslēgta
     SHULKER_TELEPORT:
       description: |-
-        <green>Šulker var teleports</green>
+        <green>Šulkeri var teleportēties</green>
         <green>ja ir aktīvs.</green>
-      name: Shulker teleports
+      name: Šulkeru teleportācija
     SMITHING:
       name: Kalšana
       description: Pārslēgt lietošanu
@@ -1167,9 +1167,9 @@ protection:
       description: Pārslēgt lietošanu
       hint: Akmensgriezuma piekļuve ir atspējota
     TRAPPED_CHEST:
-      name: Ieslodzītās krāsnis
-      description: Pārslēgt slēgtās krūzes mijiedarbību
-      hint: Ieslēgta slēgtā krūze piekļuve atslēgta
+      name: Slazdotās lādes
+      description: Pārslēgt slazdoto lāžu mijiedarbību
+      hint: Slazdoto lāžu piekļuve atslēgta
     DISPENSER:
       name: Izšāvēji
       description: Pārslēdz izšāvēju izmantošanu
@@ -1333,12 +1333,12 @@ protection:
       description: Pārslēdz iespēju zivis iesmelt spaiņos
       hint: Zivju iesmelšana nav atļauta
     FLINT_AND_STEEL:
-      name: Karms un dzelzs
+      name: Šķiltavas un tērauds
       description: |-
         <green>Ļauj spēlētājiem aizdedzināt</green>
-        <green>uguni izmantojot karmu un</green>
-        <green>dzelzi vai ugunsbumbas.</green>
-      hint: Karma un dzelzs un ugunsbumbas lietošana nav atļauta
+        <green>uguni izmantojot šķiltavas un</green>
+        <green>tēraudu vai ugunsbumbas.</green>
+      hint: Šķiltavu un tērauda un ugunsbumbu lietošana nav atļauta
     FURNACE:
       description: Pārslēdz iespēju lietot krāsnis
       name: Krāsns
@@ -1368,8 +1368,8 @@ protection:
       description: >-
         Pārslēgt sāpju radīšanu. Ieslēgts nozīmē, ka pieradināti dzīvnieki var
         gūt bojājumus. Izslēgts nozīmē, ka tie ir neaizskarami.
-      name: Sist tame dzīvniekus
-      hint: Apturēt tāmēto dzīvnieku ievainojumus
+      name: Sist pieradinātos dzīvniekus
+      hint: Pieradināto dzīvnieku ievainošana nav atļauta
     HURT_ANIMALS:
       description: Pārslēdz iespēju ievainot dzīvniekus
       name: Ievainot dzīvniekus
@@ -1383,7 +1383,7 @@ protection:
         <green>Pārslēdz iespēju ievainot</green>
         <green>ciemata iedzīvotājus</green>
       name: Ievainot ciematniekus
-      hint: Ciemata ievainošana ievainošana nav atļauta
+      hint: Ciematnieku ievainošana nav atļauta
     ITEM_FRAME:
       name: Priekšmetu rāmis
       description: |-
@@ -1594,7 +1594,7 @@ protection:
         <red>Ieslēgt/Izslēgt spēlētājs</red>
         <red>pret spēlētāja režīmu (PVP)</red>
         <red>Beigu pasaulē.</red>
-      name: Biegu pasaules PVP
+      name: Beigu pasaules PVP
       hint: '<red>Spēlētājs nevar izdarīt bojājumus citam spēlētājam Beigu pasaulē</red>'
       enabled: '<red>PVP Endā ir ieslēgts.</red>'
       disabled: '<green>PVP Beigās ir atspējots.</green>'
@@ -1605,8 +1605,8 @@ protection:
         <red>Ellē.</red>
       name: Elles PVP
       hint: '<red>Spēlētājs nevar izdarīt bojājumus citam spēlētājam Ellē</red>'
-      enabled: '<red>PVP ir iespējots Nīderā.</red>'
-      disabled: '<green>PVP Nīderlandē ir atspējots.</green>'
+      enabled: '<red>PVP Ellē ir iespējots.</red>'
+      disabled: '<green>PVP Ellē ir atspējots.</green>'
     PVP_OVERWORLD:
       description: |-
         <red>Ieslēgt/Izslēgt spēlētājs</red>
@@ -1614,7 +1614,7 @@ protection:
         <red>Virszemē.</red>
       name: Virszemes PVP
       hint: '<red>Spēlētājs nevar izdarīt bojājumus citam spēlētājam Virszemē</red>'
-      enabled: '<red>PVP Pārējo pasaulē ir ieslēgts.</red>'
+      enabled: '<red>PVP Virszemē ir ieslēgts.</red>'
       disabled: '<green>PVP Pasaulē ir atspējots.</green>'
     REDSTONE:
       description: |-
@@ -1693,7 +1693,7 @@ protection:
       hint: Aizdedzināt dinamītu nav atļauts
     TRADING:
       description: |-
-        <green>Pārslēdz iespēju tirogties</green>
+        <green>Pārslēdz iespēju tirgoties</green>
         <green>ar ciemata iedzīvotājiem.</green>
       name: Tirgošanās
       hint: Tirgošanās ar ciemata iedzīvotājiem nav atļauta
@@ -1720,9 +1720,9 @@ protection:
     FROST_WALKER:
       description: |-
         <green>Pārslēdz iespēju izmantot</green>
-        <green>sala staigātāja maģiju.</green>
-      name: Sala staigātājs
-      hint: Sala staigātājs šeit nav atļauts
+        <green>sals staigātāja maģiju.</green>
+      name: Sals staigātājs
+      hint: Sals staigātājs šeit nav atļauts
     EXPERIENCE_PICKUP:
       name: Pieredzes savākšana
       description: |-
@@ -1745,12 +1745,12 @@ protection:
         <green>[prefix_Island] dalībnieki joprojām zaudē savus priekšmetus</green>
         <green>, ja viņi mirst savā [prefix_island]!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Sākuma salas tukšuma aizsardzība
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Kad iespējots, spēlētāji, kas iekrīt</green>
+        <green>tukšumā sākuma salā, tiks</green>
+        <green>teleportēti atpakaļ uz sākuma</green>
+        <green>punktu, nevis mirs.</green>
     RAID_TRIGGER:
       name: Iebrukuma aktivizēšana
       description: Iestata minimālo salas rangu, kas nepieciešams iebrukuma aktivizēšanai
@@ -1769,20 +1769,20 @@ protection:
         <green>izmantot vēja lādiņus šajā salā.</green>
       hint: Vēja lādiņu izmantošana atspējota
     WITHER_DAMAGE:
-      name: Pārslēgt
+      name: Wither bojājumi
       description: |-
-        <green>Ļauj katlem saplēst blokus</green>
+        <green>Ļauj Wither saplēst blokus</green>
         <green>un bojāt radības.</green>
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
         <green>Atļaut gultas & respawn enkuriem</green>
-        <green>iznīcināt blokķus un nodarīt</green>
+        <green>iznīcināt blokus un nodarīt</green>
         <green>bojājumus entitātēm ārpus [prefix_island] robežām.</green>
       name: Pasaules bloka sprādziena bojājumi
     WORLD_TNT_DAMAGE:
       description: |-
         <green>Atļaut TNT un TNT raktuvju</green>
-        <green>lauzt blokkus un nodarīt</green>
+        <green>lauzt blokus un nodarīt</green>
         <green>ievainojumus ārpus [prefix_island] robežām.</green>
       name: Pasaule TNT kaitējums
   locked: '<red>Šī sala ir slēgta!</red>'
@@ -2016,42 +2016,37 @@ catalog:
         <green>uzstādījumos vai arī mēģini vēlāk.</green>
 enums:
   DamageCause:
-    CONTACT: Sazinieties
-    ENTITY_ATTACK: Mob uzbrukums
-    ENTITY_SWEEP_ATTACK: Sviestspēks uzbrukums
-    PROJECTILE: Izšautne
-    SUFFOCATION: Saspiestība
-    FALL: Rudens
+    CONTACT: Saskare
+    ENTITY_ATTACK: Radības uzbrukums
+    ENTITY_SWEEP_ATTACK: Vēziena uzbrukums
+    PROJECTILE: Šāviņš
+    SUFFOCATION: Nosmakšana
+    FALL: Kritiens
     FIRE: Uguns
-    FIRE_TICK: Dedzināšana
-    MELTING: Kusšana
+    FIRE_TICK: Degšana
+    MELTING: Kušana
     LAVA: Lava
-    DROWNING: Dziļūdens noslīkšana
-    BLOCK_EXPLOSION: Bloka Sprādziens
-    ENTITY_EXPLOSION: Entitātes sprādziens
-    VOID: >-
-      Izsistā vārtu stāvoklis: [state] \n\nFakts, ka spēlētājs ir izdzēsis savu
-      pasauli, atspoguļo [player] lēmumu. \n\nNekas vairs netika izdzēsts, kad
-      tas atgriezās uz [world]. \n\nNezinu, kāpēc tas aizgāja uz [location], bet
-      tas ir [explanation]. \n\nTagad [player] atpūšas unn šajā [dimension] ir
-      viss, kas palicis. \n\nNekas cits, kā tikai tukšums <gray>(dzīvība).</gray>
+    DROWNING: Noslīkšana
+    BLOCK_EXPLOSION: Bloka sprādziens
+    ENTITY_EXPLOSION: Radības sprādziens
+    VOID: Tukšums
     LIGHTNING: Zibens
     SUICIDE: Pašnāvība
     STARVATION: Izsalkums
-    POISON: Indīgums
-    MAGIC: Burvība
+    POISON: Saindēšanās
+    MAGIC: Maģija
     WITHER: Wither
-    FALLING_BLOCK: Kritušais Bloks
-    THORNS: Dzeloni
-    DRAGON_BREATH: Zirgu Elpa
+    FALLING_BLOCK: Krītošs bloks
+    THORNS: Ērkšķi
+    DRAGON_BREATH: Pūķa elpa
     CUSTOM: Pielāgots
-    FLY_INTO_WALL: Lidojiet Pret Sienu
-    HOT_FLOOR: Karstā Grīda
-    CRAMMING: Cramming
-    DRYOUT: Sausušana
-    FREEZE: Saldēt
-    KILL: Nogalini
-    SONIC_BOOM: Skaņas uzplaukums
+    FLY_INTO_WALL: Ietriekšanās sienā
+    HOT_FLOOR: Karstā grīda
+    CRAMMING: Saspiešana
+    DRYOUT: Izžūšana
+    FREEZE: Apsalšana
+    KILL: Nogalināšana
+    SONIC_BOOM: Skaņas vilnis
     WORLD_BORDER: Pasaules robeža
 panel:
   credits:
@@ -2066,7 +2061,7 @@ panel:
         <red>šim papildinājumam.</red>
 
         <green>Ļauj BentoBox savienoties ar GitHub</green>
-        <green>konfigurācijā vai mēgīni vēlāk.</green>
+        <green>konfigurācijā vai mēģini vēlāk.</green>
 panels:
   island_homes:
     title: '<dark_green><bold>Jūsu [prefix_island] mājas</bold></dark_green>'
