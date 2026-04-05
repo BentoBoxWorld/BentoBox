@@ -929,4 +929,32 @@ class UserTest extends CommonTestSetup {
         assertEquals(Optional.of(metaData), p.getMetaData());
     }
 
+    /**
+     * Verifies that bold formatting in a prefix does not leak into the
+     * surrounding message text after substitution.
+     */
+    @Test
+    void testPrefixBoldDoesNotLeak() {
+        // Prefix with bold that should be contained
+        String prefix = "<gold><bold>[BentoBox]: </bold></gold>";
+        String message = "[prefix_bentobox]Welcome to the island!";
+
+        // Return prefix for "prefixes.bentobox" key, message for the reference
+        when(testLm.get(any(), eq("prefixes.bentobox"))).thenReturn(prefix);
+        when(testLm.get(any(), eq("a.reference"))).thenReturn(message);
+        when(testLm.getAvailablePrefixes(any())).thenReturn(Set.of("bentobox"));
+
+        String result = user.getTranslation("a.reference");
+
+        // The result is a legacy §-coded string.
+        // Bold (§l) must NOT appear before "Welcome" — the reset (§r) should separate them.
+        int welcomeIdx = result.indexOf("Welcome");
+        assertTrue(welcomeIdx > 0, "Expected 'Welcome' in result: " + result);
+
+        // Check that there's a reset (§r) between the prefix and "Welcome"
+        String beforeWelcome = result.substring(0, welcomeIdx);
+        assertTrue(beforeWelcome.contains("\u00A7r"),
+                "Expected §r reset before 'Welcome' to stop bold leakage: " + result);
+    }
+
 }
