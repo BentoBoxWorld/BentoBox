@@ -326,13 +326,13 @@ public class BlueprintsManager {
         // Collect blueprint names from both new (.blueprint) and legacy (.blu) files.
         // If both formats exist for the same name, the new format takes precedence.
         Set<String> blueprintNames = new HashSet<>();
-        File[] newBps = bpf.listFiles((dir, name) -> name.endsWith(BLUEPRINT_SUFFIX));
+        File[] newBps = bpf.listFiles((dir, name) -> name.endsWith(BLUEPRINT_SUFFIX) && name.length() > BLUEPRINT_SUFFIX.length());
         if (newBps != null) {
             for (File file : newBps) {
                 blueprintNames.add(Util.sanitizeInput(file.getName().substring(0, file.getName().length() - BLUEPRINT_SUFFIX.length())));
             }
         }
-        File[] legacyBps = bpf.listFiles((dir, name) -> name.endsWith(LEGACY_BLUEPRINT_SUFFIX));
+        File[] legacyBps = bpf.listFiles((dir, name) -> name.endsWith(LEGACY_BLUEPRINT_SUFFIX) && name.length() > LEGACY_BLUEPRINT_SUFFIX.length());
         if (legacyBps != null) {
             for (File file : legacyBps) {
                 blueprintNames.add(Util.sanitizeInput(file.getName().substring(0, file.getName().length() - LEGACY_BLUEPRINT_SUFFIX.length())));
