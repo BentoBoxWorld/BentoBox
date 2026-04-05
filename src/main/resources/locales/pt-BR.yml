@@ -185,10 +185,10 @@ commands:
           <red>Atenção: este jogador agora possui [number] ilhas. Isso é mais do</red>
           que o permitido pelas configurações ou permissões: [max].
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <jogador> <tamanho>
+        description: definir o tamanho máximo da equipe para a [prefix_island] de um jogador (use 0 para redefinir para o padrão do mundo)
+        success: '<green>Tamanho máximo da equipe de </green><aqua>[name]</aqua><green> na [prefix_island] definido para </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Tamanho máximo da equipe de </green><aqua>[name]</aqua><green> na [prefix_island] redefinido para o padrão do mundo (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: administrar raio das ilhas
       invalid-value:
@@ -264,8 +264,8 @@ commands:
       resets-left: 'Reinícios: [number] (Máx: [total])'
       max-homes: 'Max casas: [number]'
       team-members-title: 'Membros da equipe:'
-      team-owner-format: '<green>[nome] [rank]</green>'
-      team-member-format: '<aqua>[nome] [ranking]</aqua>'
+      team-owner-format: '<green>[name] [rank]</green>'
+      team-member-format: '<aqua>[name] [rank]</aqua>'
       max-team-size: 'Tamanho máximo da equipe: [number]'
       max-coop-size: 'Tamanho máximo de coop: [number]'
       max-trusted-size: 'Tamanho máximo de confiança: [number]'
@@ -281,7 +281,7 @@ commands:
       protection-coords: 'Coordenadas da proteção: de [xz1] até [xz2]'
       is-spawn: Essa ilha é um spawn
       banned-players: 'Jogadores banidos:'
-      banned-format: '<red>[nome]</red>'
+      banned-format: '<red>[name]</red>'
       unowned: '<red>Sem dono</red>'
       bundle: '<green>Pacote de Blueprint usado para criar a ilha: </green><aqua>[name]</aqua>'
     switch:
@@ -306,7 +306,7 @@ commands:
       count: '<bold><light_purple>Ilha [number]:</light_purple></bold>'
       use-switch: >-
         <green>Use <bold>[label] switchto <jogador> <número></bold></green><green>para trocar a ilha de</green>
-        um jjogador para uma na lixeira
+        um jogador para uma na lixeira
       use-emptytrash: >-
         <green>Use <bold>[label] emptytrash [player]</bold></green><green>para remover itens da lixeira</green>
         permanentemente
@@ -468,7 +468,7 @@ commands:
         no-permission: Sem Permissão
         perm-required: Necessária
         no-perm-required: Não é possível definir perm para o pacote padrão
-        perm-not-required: Não nescessária
+        perm-not-required: Não necessária
         perm-format: '<yellow></yellow>'
         remove: Clique com botão direito para apagar
         blueprint-instruction: |
@@ -487,7 +487,7 @@ commands:
             <red>Alguns caracteres foram removidos porque não são permitidos. </red><green>O</green>
             novo ID será <aqua>[name]</aqua><green>.</green>
           success: Sucesso!
-          conversation-prefix: Claro! Por favor, forneça o texto que você deseja traduzir.
+          conversation-prefix: '>'
         description:
           quit: sair
           instructions: |
@@ -686,7 +686,7 @@ commands:
         estimated-time: '<green>Tempo estimado: </green><aqua>[number] </aqua><green>segundos.</green>'
         blocks: '<green>Construindo bloco por bloco: </green><aqua>[number] </aqua><green>blocos no total...</green>'
         entities: '<green>Colocando as criaturas: </green><aqua>[number] </aqua><green>criaturas no total...</green>'
-        dimension-done: '<green>[prefix_Igreja] em [mundo] está construída.</green>'
+        dimension-done: '<green>[prefix_Island] em [world] está construída.</green>'
         done: '<green>Feito! Sua ilha está pronta e esperando por você!</green>'
       pick: '<dark_green>Escolha uma ilha</dark_green>'
       cannot-afford: '<red>Você não pode pagar isso! Custo: [cost]</red>'
@@ -735,7 +735,7 @@ commands:
         [number] casas.
       home-set: '<gold>A home de sua ilha foi marcada na sua localização atual.</gold>'
       homes-are: '<gold>[prefix_Island] casas são:</gold>'
-      home-list-syntax: '<gold>[nome]</gold>'
+      home-list-syntax: '<gold>[name]</gold>'
       click-to-teleport: '<green>Clique para se teletransportar!</green>'
       nether:
         not-allowed: '<red>Você não tem permissão para marcar sua home no Nether.</red>'
@@ -848,7 +848,7 @@ commands:
         description: retirar o cargo de confiável de um jogador
         parameters: <jogador>
         cannot-untrust-yourself: '<red>Você não pode desconfiar de si mesmo!</red>'
-        cannot-untrust-member: '<red>Você não pode desconfiar de um mebro da equipe!</red>'
+        cannot-untrust-member: '<red>Você não pode desconfiar de um membro da equipe!</red>'
         player-not-trusted: '<red>Esse jogador não é considerado confiável!</red>'
         you-are-no-longer-trusted: '<red>Você não é mais um jogador confiável na ilha de </red><aqua>[name]</aqua><green>!</green>'
         success: '<aqua>[name] </aqua><green>não é mais um jogador confiável em sua ilha.</green>'
@@ -988,7 +988,7 @@ commands:
     language:
       description: selecionar idioma
       parameters: '[idioma]'
-      not-available: '<red>Esse idioma não está dispoível.</red>'
+      not-available: '<red>Esse idioma não está disponível.</red>'
       already-selected: '<red>Você já está usando esse idioma.</red>'
     expel:
       description: retirar um jogador da sua ilha
@@ -1132,7 +1132,7 @@ protection:
       hint: Acesso ao artesão desativado
     BLOCK_EXPLODE_DAMAGE:
       description: |-
-        <green>Permitir que Camas & Âncoras de Resspawn</green>
+        <green>Permitir que Camas & Âncoras de Respawn</green>
         <green>quebrem blocos e causem dano</green>
         <green>a entidades.</green>
       name: Dano de explosão de bloco
@@ -1204,7 +1204,7 @@ protection:
       name: Limpar superplano
     COARSE_DIRT_TILLING:
       description: |-
-        <green>Prermitir obtenção de</green>
+        <green>Permitir obtenção de</green>
         <green>terra ao quebrar podzol ou</green>
         <green>ao arar terra grossa</green>
       name: Terra grossa
@@ -1277,7 +1277,7 @@ protection:
     ENCHANTING:
       description: Permitir uso de mesas de encantamento
       name: Mesas de encantamento
-      hint: Uso de mesas de encantamento desatilitado
+      hint: Uso de mesas de encantamento desabilitado
     ENDER_CHEST:
       description: Permitir uso/criação
       name: Baús de Ender
@@ -1610,7 +1610,7 @@ protection:
       name: PVP no Overworld
       hint: '<red>PVP desabilitado no Overworld</red>'
       enabled: '<red>O PVP no Overworld foi habilitado.</red>'
-      disabled: '<green>O PVP no Nether foi desabilitado.</green>'
+      disabled: '<green>O PVP no Overworld foi desabilitado.</green>'
     REDSTONE:
       description: Permitir uso
       name: Itens de Redstone
@@ -1717,12 +1717,12 @@ protection:
         <green>Membros de [prefix_Island] ainda perdem seus itens</green>
         <green>se morrerem em seu próprio [prefix_island]!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Proteção contra o vazio na ilha de spawn
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Quando ativado, jogadores que caírem</green>
+        <green>no vazio na ilha de spawn</green>
+        <green>serão teleportados de volta ao</green>
+        <green>ponto de spawn em vez de morrer.</green>
     RAID_TRIGGER:
       name: Gatilho de invasão
       description: Define o rank mínimo de ilha necessário para acionar uma invasão
@@ -1747,7 +1747,7 @@ protection:
         <green>danificar blocos e jogadores</green>
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
-        <green>Permitir que Camas & Ancoras de Resspawn</green>
+        <green>Permitir que Camas & Ancoras de Respawn</green>
         <green>quebrem blocos e causem dano</green>
         <green>a entidades fora dos limites de [prefix_island].</green>
       name: Dano de explosão de bloco do mundo
@@ -1762,8 +1762,8 @@ protection:
   world-protected: '<red>Mundo protegido: [description].</red>'
   spawn-protected: '<red>Spawn protegido: [description].</red>'
   panel:
-    next: '<white>Página anterior</white>'
-    previous: '<white>Página seguinte</white>'
+    next: '<white>Próxima página</white>'
+    previous: '<white>Página anterior</white>'
     mode:
       advanced:
         name: '<gold>Configurações avançadas</gold>'
@@ -1790,8 +1790,8 @@ protection:
     SETTING:
       title: '<gold>Configurações</gold>'
       description: |-
-        <green>General settings</green>
-        <green>for this island</green>
+        <green>Configurações gerais</green>
+        <green>para esta [prefix_island]</green>
     WORLD_SETTING:
       title: '<gold>Configurações de </gold><aqua>[world_name]</aqua>'
       description: '<green>Configurações para esse mundo de jogo</green>'
@@ -1801,7 +1801,7 @@ protection:
         <green>Configurações de proteção para</green>
         <green>quando o jogador está fora de sua ilha</green>
     flag-item:
-      name-layout: '<green>[nome]</green>'
+      name-layout: '<green>[name]</green>'
       command-instructions:
         setname: |-
           <green>Selecione o cargo que pode</green>
@@ -1832,7 +1832,7 @@ protection:
           <green>descooperar</green>
         team-untrust: |-
           <green>Selecione o cargo que pode</green>
-          <green>desconfiança</green>
+          <green>remover confiança</green>
         team-promote: |-
           <green>Selecione a classificação que pode</green>
           <green>promover a classificação do jogador</green>
@@ -1990,7 +1990,7 @@ enums:
     ENTITY_SWEEP_ATTACK: Ataque de Varredura
     PROJECTILE: Projétil
     SUFFOCATION: Sufocação
-    FALL: Outono
+    FALL: Queda
     FIRE: Fogo
     FIRE_TICK: Queimando
     MELTING: Derretendo
@@ -2009,13 +2009,13 @@ enums:
     THORNS: Espinhos
     DRAGON_BREATH: Sopro do Dragão
     CUSTOM: Personalizado
-    FLY_INTO_WALL: Voe para a parede
+    FLY_INTO_WALL: Colisão com parede
     HOT_FLOOR: '<red>Piso Quente</red>'
-    CRAMMING: Cramming
+    CRAMMING: Esmagamento por entidades
     DRYOUT: Secagem
     FREEZE: Congelar
     KILL: Matar
-    SONIC_BOOM: Sonic Boom
+    SONIC_BOOM: Explosão Sônica
     WORLD_BORDER: Limite do Mundo
 panel:
   credits:
@@ -2041,7 +2041,7 @@ panels:
     buttons:
       bundle:
         name: '<bold>[name]</bold>'
-        description: '[descrição]'
+        description: '[description]'
         uses: '<green>Usado [number]/[max]</green>'
         unlimited: '<green>Usos ilimitados permitidos</green>'
         cost: '<yellow>Custo: [cost]</yellow>'
