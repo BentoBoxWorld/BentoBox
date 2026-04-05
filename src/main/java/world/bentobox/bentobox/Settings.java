@@ -340,6 +340,32 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.deletion.slow-deletion", since = "1.19.1")
     private boolean slowDeletion = false;
 
+    // Chunk pre-generation settings
+    @ConfigComment("")
+    @ConfigComment("Chunk pre-generation settings.")
+    @ConfigComment("Pre-generates chunks around predicted future island locations")
+    @ConfigComment("to reduce lag when islands are created or reset.")
+    @ConfigComment("")
+    @ConfigComment("Enable or disable chunk pre-generation.")
+    @ConfigEntry(path = "island.pregeneration.enabled", since = "3.14.0")
+    private boolean pregenEnabled = true;
+
+    @ConfigComment("Number of future islands to pre-generate chunks for, per game mode world.")
+    @ConfigComment("Higher values use more disk space but reduce the chance of lag on island creation.")
+    @ConfigEntry(path = "island.pregeneration.islands-ahead", since = "3.14.0")
+    private int pregenIslandsAhead = 3;
+
+    @ConfigComment("Maximum number of async chunk generation requests dispatched per tick batch.")
+    @ConfigComment("Lower values reduce server impact. Paper handles these asynchronously.")
+    @ConfigComment("Recommended range: 2-10.")
+    @ConfigEntry(path = "island.pregeneration.chunks-per-tick", since = "3.14.0")
+    private int pregenChunksPerTick = 4;
+
+    @ConfigComment("Ticks between pre-generation batches.")
+    @ConfigComment("1 = every tick (fastest), 20 = once per second (gentlest).")
+    @ConfigEntry(path = "island.pregeneration.tick-interval", since = "3.14.0")
+    private int pregenTickInterval = 5;
+
     @ConfigComment("By default, If the destination is not safe, the plugin will try to search for a safe spot around the destination,")
     @ConfigComment("then it will try to expand the y-coordinate up and down from the destination.")
     @ConfigComment("This setting limits how far the y-coordinate will be expanded.")
@@ -993,6 +1019,70 @@ public class Settings implements ConfigObject {
      */
     public void setSlowDeletion(boolean slowDeletion) {
         this.slowDeletion = slowDeletion;
+    }
+
+    /**
+     * @return whether chunk pre-generation is enabled
+     * @since 3.14.0
+     */
+    public boolean isPregenEnabled() {
+        return pregenEnabled;
+    }
+
+    /**
+     * @param pregenEnabled whether chunk pre-generation is enabled
+     * @since 3.14.0
+     */
+    public void setPregenEnabled(boolean pregenEnabled) {
+        this.pregenEnabled = pregenEnabled;
+    }
+
+    /**
+     * @return number of future islands to pre-generate per game mode
+     * @since 3.14.0
+     */
+    public int getPregenIslandsAhead() {
+        return pregenIslandsAhead;
+    }
+
+    /**
+     * @param pregenIslandsAhead number of future islands to pre-generate
+     * @since 3.14.0
+     */
+    public void setPregenIslandsAhead(int pregenIslandsAhead) {
+        this.pregenIslandsAhead = pregenIslandsAhead;
+    }
+
+    /**
+     * @return max async chunk generation requests per tick batch
+     * @since 3.14.0
+     */
+    public int getPregenChunksPerTick() {
+        return pregenChunksPerTick;
+    }
+
+    /**
+     * @param pregenChunksPerTick max async chunk requests per tick
+     * @since 3.14.0
+     */
+    public void setPregenChunksPerTick(int pregenChunksPerTick) {
+        this.pregenChunksPerTick = pregenChunksPerTick;
+    }
+
+    /**
+     * @return ticks between pre-generation batches
+     * @since 3.14.0
+     */
+    public int getPregenTickInterval() {
+        return pregenTickInterval;
+    }
+
+    /**
+     * @param pregenTickInterval ticks between batches
+     * @since 3.14.0
+     */
+    public void setPregenTickInterval(int pregenTickInterval) {
+        this.pregenTickInterval = pregenTickInterval;
     }
 
     /**
