@@ -169,8 +169,8 @@ commands:
         player-has: '<red>O jogador [name] tem [number] ilhas</red>'
         duplicate-member: '<red>O jogador [name] é membro de mais de uma ilha no banco de dados</red>'
         rank-on-island: '<red>[rank] na ilha em [xyz]</red>'
-        fixed: '&uma fixa'
-        done: '&uma digitalização'
+        fixed: '<green>Corrigido</green>'
+        done: '<green>Verificação concluída</green>'
       kick:
         parameters: <jogador da equipe>
         description: expulse um jogador de um time
@@ -192,10 +192,10 @@ commands:
           <red>Aviso: este jogador agora possui [number] ilhas. Isso é mais do que</red>
           o permitido pelas configurações ou permissões: [max].
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <jogador> <tamanho>
+        description: Define o tamanho máximo de equipe para a [prefix_island] de um jogador (use 0 para redefinir para o padrão do mundo)
+        success: '<green>Definido o tamanho máximo de equipe da [prefix_island] de </green><aqua>[name]</aqua><green> para </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Redefinido o tamanho máximo de equipe da [prefix_island] de </green><aqua>[name]</aqua><green> para o padrão do mundo (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: comando de intervalo da ilha de administração
       invalid-value:
@@ -288,7 +288,7 @@ commands:
       protection-coords: 'Coordenadas de Proteção: [xz1] até [xz2]'
       is-spawn: Ilha é uma ilha de spawn
       banned-players: 'Jogadores banidos:'
-      banned-format: '& c [name]'
+      banned-format: '<red>[name]</red>'
       unowned: '<red>Sem dono</red>'
       bundle: '<green>Pacote de Blueprint usado para criar a ilha: </green><aqua>[name]</aqua>'
     switch:
@@ -490,7 +490,7 @@ commands:
             <red>Alguns caracteres foram removidos porque não são permitidos. </red><green>O</green>
             novo ID será <aqua>[name]</aqua><green>.</green>
           success: Sucesso!
-          conversation-prefix: Sure! Please provide the text you would like me to translate.
+          conversation-prefix: '>'
         description:
           quit: desistir
           instructions: |
@@ -692,8 +692,8 @@ commands:
         <red>Membros da equipe não podem criar ilhas no mesmo mundo que sua equipe</red>
         [prefix_island].
       pasting:
-        estimated-time: '<green>Tempo estimado: </green><aqua>[number] </aqua><green>seconds.</green>'
-        blocks: '<green>BConstruindo bloco por bloco: </green><aqua>[number] </aqua><green>blocos em todos...</green>'
+        estimated-time: '<green>Tempo estimado: </green><aqua>[number] </aqua><green>segundos.</green>'
+        blocks: '<green>Construindo bloco por bloco: </green><aqua>[number] </aqua><green>blocos no total...</green>'
         entities: '<green>Preenchendo com entidades: </green><aqua>[number] </aqua><green>entidades em todas...</green>'
         dimension-done: '<green>Ilha em [mundo] é construída.</green>'
         done: '<green>Concluído! Sua ilha está pronta e esperando por você!</green>'
@@ -898,7 +898,7 @@ commands:
           cannot-invite-self: '<red>Você não pode se convidar!</red>'
           cooldown: '<red>Você não pode convidar essa pessoa por mais [number] segundos.</red>'
           island-is-full: '<red>Sua ilha está cheia, você não pode convidar mais ninguém.</red>'
-          none-invited-you: '<red>Ninguém convidou você: c.</red>'
+          none-invited-you: '<red>Ninguém convidou você.</red>'
           you-already-are-in-team: '<red>Você já está em uma equipe!</red>'
           already-on-team: '<red>Esse jogador já está em um time!</red>'
           invalid-invite: '<red>Esse convite não é mais válido, desculpe.</red>'
@@ -982,8 +982,8 @@ commands:
       parameters: <jogador>
       cannot-unban-yourself: '<red>Você não pode se desbanir!</red>'
       player-not-banned: '<red>O jogador não está banido.</red>'
-      player-unbanned: '<aqua>[name]</aqua><green>agora foi banido da sua ilha.</green>'
-      you-are-unbanned: '<aqua>[name]</aqua><green>retirou você da ilha deles!</green>'
+      player-unbanned: '<aqua>[name]</aqua><green> agora foi desbanido da sua ilha.</green>'
+      you-are-unbanned: '<aqua>[name]</aqua><green> retirou seu banimento da ilha deles!</green>'
     banlist:
       description: listar jogadores banidos
       noone: '<green>Ninguém está proibido nesta ilha.</green>'
@@ -1020,7 +1020,7 @@ ranks:
   visitor: Visitante
   banned: Banido
   admin: Administrador
-  mod: Modo
+  mod: Moderador
 protection:
   command-is-banned: Comando é proibido para visitantes
   flags:
@@ -1119,12 +1119,12 @@ protection:
       description: |-
         <green>Alternar interação com todos os contêineres.</green>
         <green>Inclui: barril, colmeia de abelhas, suporte de cerveja,</green>
-        e um baú, compostor, dispensador, conta-gotas,
-        e um vaso de flores, fornalha, funil, moldura de item,
-        & uma jukebox, baú de minecart, caixa shulker,
-        & um baú preso.
+        <green>baú, compostor, dispensador, conta-gotas,</green>
+        <green>vaso de flores, fornalha, funil, moldura de item,</green>
+        <green>jukebox, baú de minecart, caixa shulker,</green>
+        <green>baú preso.</green>
 
-        <gray>Alterar substituições de configurações individuais</gray>
+        <gray>Alterar configurações individuais substitui</gray>
         <gray>esta bandeira.</gray>
       hint: Acesso ao contêiner desativado
     CHEST:
@@ -1202,8 +1202,8 @@ protection:
       description: Alternar interação do funil
       hint: Interação do Hopper desativada
     CHEST_DAMAGE:
-      description: Alternar dano no peito causado por explosões
-      name: Danos no peito
+      description: Alternar dano em baús causado por explosões
+      name: Dano em baús
     CHORUS_FRUIT:
       description: Alternar teletransporte
       name: Frutas do refrão
@@ -1211,9 +1211,9 @@ protection:
     CLEAN_SUPER_FLAT:
       description: |-
         <green>Ative para limpar qualquer</green>
-        e pedaços super planos em
-        &um mundo insular
-      name: Limpo Super Plano
+        <green>pedaço super plano em</green>
+        <green>mundos de [prefix_island]</green>
+      name: Limpar Super Plano
     COARSE_DIRT_TILLING:
       description: |-
         <green>Alternar cultivo grosso</green>
@@ -1248,16 +1248,16 @@ protection:
       hint: Acesso ao ambiente de trabalho desativado
     CREEPER_DAMAGE:
       description: |
-        <green>Alternar trepadeira</green>
-        & uma proteção contra danos
-      name: Proteção contra danos à trepadeira
+        <green>Alternar dano de</green>
+        <green>creeper.</green>
+      name: Dano de creeper
     CREEPER_GRIEFING:
       description: |
-        <green>Alternar o luto da trepadeira</green>
-        &uma proteção quando aceso
-        <green>pelo visitante da ilha.</green>
-      name: Proteção contra o luto da trepadeira
-      hint: Creeper de luto desativado
+        <green>Alternar proteção contra griefing</green>
+        <green>de creeper quando aceso</green>
+        <green>por visitante da [prefix_island].</green>
+      name: Proteção contra griefing de creeper
+      hint: Griefing de creeper desativado
     CROP_PLANTING:
       description: '<green>Defina quem pode plantar sementes.</green>'
       name: Plantio de culturas
@@ -1296,10 +1296,10 @@ protection:
       hint: Os baús Ender estão desativados neste mundo
     ENDERMAN_DEATH_DROP:
       description: |-
-        <green>Endermen cairá</green>
-        <green>qualquer bloco que eles sejam</green>
-        & uma propriedade se for morto.
-      name: Queda mortal de Enderman
+        <green>Endermen soltarão</green>
+        <green>qualquer bloco que estejam</green>
+        <green>segurando se forem mortos.</green>
+      name: Drop de morte de Enderman
     ENDERMAN_GRIEFING:
       description: |-
         <green>Endermen pode remover</green>
@@ -1318,10 +1318,10 @@ protection:
       description: Exibir mensagens de entrada e saída
       island: ilha de [name]
       name: Mensagens de entrada/saída
-      now-entering: '<green>Agora digitando </green><aqua>[name]</aqua><green>.</green>'
+      now-entering: '<green>Agora entrando em </green><aqua>[name]</aqua><green>.</green>'
       now-entering-your-island: '<green>Agora entrando na sua ilha: </green><aqua>[name]</aqua>'
       now-leaving: '<green>Agora saindo da ilha de </green><aqua>[name]</aqua><green>.</green>'
-      now-leaving-your-island: '<green>Agora entrando na sua ilha: </green><aqua>[name]</aqua>'
+      now-leaving-your-island: '<green>Agora saindo da sua [prefix_island]: </green><aqua>[name]</aqua>'
     EXPERIENCE_BOTTLE_THROWING:
       name: Experimente jogar garrafas
       description: Alternar garrafas de experiência de lançamento.
@@ -1366,15 +1366,15 @@ protection:
       hint: Uso do portão desabilitado
     GEO_LIMIT_MOBS:
       description: |-
-        <green>Remova mobs que vão</green>
-        <green>parte externa protegida</green>
-        &um espaço de ilha
-      name: '<yellow>Limitar mobs à ilha</yellow>'
+        <green>Remover mobs que saem</green>
+        <green>do espaço protegido</green>
+        <green>da [prefix_island]</green>
+      name: '<yellow>Limitar mobs à [prefix_island]</yellow>'
     HARVEST:
       description: |-
         <green>Definir quem pode colher colheitas.</green>
-        <green>Não se esqueça de permitir o item</green>
-        e uma picape também!
+        <green>Não se esqueça de permitir a coleta</green>
+        <green>de itens também!</green>
       name: Colheita
       hint: Colheita desativada
     HIVE:
@@ -1408,8 +1408,8 @@ protection:
     ITEM_FRAME_DAMAGE:
       description: |-
         <green>Mobs podem danificar</green>
-        &um quadro de item
-      name: Danos na estrutura do item
+        <green>molduras de item</green>
+      name: Dano em moldura de item
     INVINCIBLE_VISITORS:
       description: |-
         <green>Configurar visitante invencível</green>
@@ -1456,8 +1456,8 @@ protection:
     LIMIT_MOBS:
       description: |-
         <green>Limitar entidades de</green>
-        <green>desova neste jogo</green>
-        &um modo.
+        <green>desova neste modo</green>
+        <green>de jogo.</green>
       name: '<yellow>Limitar geração de tipo de entidade</yellow>'
       can: '<green>Pode gerar</green>'
       cannot: '<red>Não é possível gerar</red>'
@@ -1468,7 +1468,7 @@ protection:
         <green>da faixa de proteção da ilha.</green>
         <green>Desativá-lo ajuda a evitar lava e água</green>
         <green>geração de paralelepípedos na área entre</green>
-        e duas ilhas.
+        <green>duas ilhas.</green>
 
         <red>Observe que os líquidos ainda fluirão verticalmente.</red>
         <red>Eles também não se espalharão horizontalmente se</red>
@@ -1480,8 +1480,8 @@ protection:
     CHANGE_SETTINGS:
       name: Mudar configurações
       description: |-
-        <green>Permitir mudar qual membro</green>
-        &uma função pode alterar as configurações da ilha.
+        <green>Permitir mudar qual função de</green>
+        <green>membro pode alterar as configurações da [prefix_island].</green>
     MILKING:
       description: Alternar ordenha de vaca
       name: Ordenha
@@ -1558,10 +1558,10 @@ protection:
       name: Redstone off-line
     PETS_STAY_AT_HOME:
       description: |-
-        <green>Quando ativos, animais de estimação domesticados</green>
-        <green>só pode ir para e</green>
-        <green>não pode sair do proprietário</green>
-        & uma ilha natal.
+        <green>Quando ativo, animais domesticados</green>
+        <green>só podem ir para e</green>
+        <green>não podem sair da [prefix_island]</green>
+        <green>natal do proprietário.</green>
       name: Animais de estimação ficam em casa
     PISTON_PUSH:
       description: |-
@@ -1634,10 +1634,10 @@ protection:
       hint: Interação Redstone desativada
     REMOVE_END_EXIT_ISLAND:
       description: |-
-        <green>Impede a saída final</green>
-        &uma ilha de gerar
+        <green>Impede a [prefix_island] de</green>
+        <green>saída final de gerar</green>
         <green>nas coordenadas 0,0</green>
-      name: Remover ilha de saída final
+      name: Remover [prefix_island] de saída final
     REMOVE_MOBS:
       description: |-
         <green>Remova monstros quando</green>
@@ -1665,15 +1665,15 @@ protection:
         permitido
     SCULK_SENSOR:
       description: |-
-        <green>Alterna o sensor de escultura</green>
-        &uma ativação.
-      name: Sensor de escultura
+        <green>Alterna a ativação do</green>
+        <green>sensor sculk.</green>
+      name: Sensor Sculk
       hint: a ativação do sensor sculk está desativada
     SCULK_SHRIEKER:
       description: |-
-        <green>Alterna o grito do sculk</green>
-        &uma ativação.
-      name: Sculk Gritador
+        <green>Alterna a ativação do</green>
+        <green>sculk shrieker.</green>
+      name: Sculk Shrieker
       hint: a ativação do sculk shrieker está desativada
     SIGN_EDITING:
       description: |-
@@ -1741,12 +1741,12 @@ protection:
         <green>Membros da Ilha ainda perdem seus itens</green>
         <green>se eles morrerem em sua própria ilha!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Proteção contra o vazio na ilha de spawn
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Quando ativado, jogadores que caem</green>
+        <green>no vazio na ilha de spawn</green>
+        <green>serão teletransportados de volta ao</green>
+        <green>ponto de spawn em vez de morrer.</green>
     RAID_TRIGGER:
       name: Gatilho de ataque
       description: Define o nível mínimo de ilha necessário para desencadear um ataque
@@ -1804,7 +1804,7 @@ protection:
       name: '<red>Redefinir para o padrão</red>'
       description: |
         <green>Redefine </green><red><bold>TODOS </bold></red><green>as configurações para seus</green>
-        &um valor padrão.
+        <green>valor padrão.</green>
       confirm: confirmar
       instructions: '<green>Você tem certeza? Digite </green><red>"confirmar" </red><green>para redefinir tudo.</green>'
     PROTECTION:
@@ -1824,9 +1824,9 @@ protection:
       title: '<aqua>[nome_do_mundo] </aqua><gold>Proteções mundiais</gold>'
       description: |
         <green>Configurações de proteção quando</green>
-        &um jogador está fora de sua ilha
+        <green>jogador está fora de sua [prefix_island]</green>
     flag-item:
-      name-layout: '&um nome]'
+      name-layout: '<green>[name]</green>'
       command-instructions:
         setname: |-
           <green>Selecione a classificação que pode</green>
@@ -1880,22 +1880,22 @@ protection:
           <green>Selecione a classificação que pode</green>
           <green>usar o comando de borda</green>
       description-layout: |
-        &Uma descrição]
+        <green>[description]</green>
 
-        <yellow>Clique com o botão esquerdo em </yellow><gray>para descer.</gray>
-        <yellow>Clique com o botão direito em </yellow><gray>para avançar.</gray>
+        <yellow>Clique com o botão esquerdo </yellow><gray>para descer.</gray>
+        <yellow>Clique com o botão direito </yellow><gray>para avançar.</gray>
 
         <gray>Permitido para:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        &Uma descrição]
+        <green>[description]</green>
 
         <yellow>Clique em </yellow><gray>para abrir.</gray>
       setting-cooldown: '<red>A configuração está em espera</red>'
       setting-layout: |
-        &Uma descrição]
+        <green>[description]</green>
 
         <yellow>Clique em </yellow><gray>para alternar.</gray>
 
@@ -1941,39 +1941,39 @@ management:
         name: '<gold>Compatibilidade</gold>'
         description:
           COMPATIBLE: |
-            <green>Executando </green><yellow>[name] [versão]</yellow><green>.</green>
+            <green>Executando </green><yellow>[name] [version]</yellow><green>.</green>
 
             <green>BentoBox está atualmente rodando em um</green>
             <green><bold>COMPATÍVEL </bold></green><green>software de servidor e</green>
-            &uma versão.
+            <green>versão.</green>
 
             <green>Seus recursos são totalmente projetados para</green>
-            <green>executado neste ambiente.</green>
+            <green>executar neste ambiente.</green>
           SUPPORTED: |
-            <green>Executando </green><yellow>[name] [versão]</yellow><green>.</green>
+            <green>Executando </green><yellow>[name] [version]</yellow><green>.</green>
 
             <green>BentoBox está atualmente rodando em um</green>
             <green><bold>SUPORTADO </bold></green><green>software de servidor e</green>
-            &uma versão.
+            <green>versão.</green>
 
             <green>A maioria de seus recursos funcionará perfeitamente</green>
             <green>neste ambiente.</green>
           NOT_SUPPORTED: |
-            <green>Executando </green><yellow>[name] [versão]</yellow><green>.</green>
+            <green>Executando </green><yellow>[name] [version]</yellow><green>.</green>
 
             <green>BentoBox está atualmente rodando em um</green>
             <gold><bold>NÃO SUPORTADO </bold></gold><green>software de servidor ou</green>
-            &uma versão.
+            <green>versão.</green>
 
             <green>Embora a maioria de seus recursos sejam executados</green>
             <green>corretamente, </green><gold>bugs específicos da plataforma ou</gold>
             <gold>problemas são esperados</gold><green>.</green>
           INCOMPATIBLE: |
-            <green>Executando </green><yellow>[name] [versão]</yellow><green>.</green>
+            <green>Executando </green><yellow>[name] [version]</yellow><green>.</green>
 
             <green>BentoBox está atualmente rodando em um</green>
             <red><bold>INCOMPATÍVEL </bold></red><green>software de servidor ou</green>
-            &uma versão.
+            <green>versão.</green>
 
             <red>Comportamentos estranhos e bugs podem ocorrer</red>
             <red>e a maioria dos recursos pode ser instável.</red>
@@ -2002,7 +2002,7 @@ catalog:
         <gray><italic>[descrição]</italic></gray>
 
         <yellow>Clique em </yellow><green>para obter o link para o</green>
-        e um lançamento mais recente.
+        <green>lançamento mais recente.</green>
       already-installed: Já instalado!
       install-now: Instale agora!
     empty-here:
@@ -2015,7 +2015,7 @@ catalog:
 enums:
   DamageCause:
     CONTACT: Contato
-    ENTITY_ATTACK: Ataque da multidão
+    ENTITY_ATTACK: Ataque de entidade
     ENTITY_SWEEP_ATTACK: Ataque de varredura
     PROJECTILE: Projétil
     SUFFOCATION: Asfixia
@@ -2031,16 +2031,16 @@ enums:
     LIGHTNING: Raio
     SUICIDE: Suicídio
     STARVATION: Inanição
-    POISON: Tóxico
+    POISON: Veneno
     MAGIC: Magia
     WITHER: Murchar
     FALLING_BLOCK: Bloco caindo
     THORNS: Espinhos
     DRAGON_BREATH: Bafo de dragão
     CUSTOM: Personalizado
-    FLY_INTO_WALL: Voe para dentro da parede
+    FLY_INTO_WALL: Voou contra a parede
     HOT_FLOOR: Piso Quente
-    CRAMMING: Estudando
+    CRAMMING: Aglomeração
     DRYOUT: Secar
     FREEZE: Congelar
     KILL: Matar
