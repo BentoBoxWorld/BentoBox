@@ -172,9 +172,9 @@ commands:
         extra-islands: '<red>Увага: тепер цей гравець має [number] островів. Це більше ніж дозволено налаштуваннями або пермами: [max].</red>'
       maxsize:
         parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        description: встановити максимальний розмір команди для [prefix_island] гравця (0 для скидання до типового значення світу)
+        success: '<green>Встановлено максимальний розмір команди [prefix_island] гравця </green><aqua>[name]</aqua><green> на </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Скинуто максимальний розмір команди [prefix_island] гравця </green><aqua>[name]</aqua><green> до типового значення світу (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: адмін-команда діапазону [prefix_island]
       invalid-value:
@@ -1634,12 +1634,12 @@ protection:
         <green>Учасники [prefix_Island] все одно втрачають</green>
         <green>свої предмети на власному [prefix_island]!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Захист від порожнечі на спавн-острові
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Якщо ввімкнено, гравці, які впадуть</green>
+        <green>у порожнечу на спавн-острові,</green>
+        <green>будуть телепортовані назад на точку</green>
+        <green>спавну замість смерті.</green>
     RAID_TRIGGER:
       name: Запуск рейду
       description: Встановлює мінімальний ранг острова для запуску рейду
@@ -1658,9 +1658,9 @@ protection:
         <green>використовувати вітрові заряди на цьому острові.</green>
       hint: Використання вітрових зарядів вимкнено
     WITHER_DAMAGE:
-      name: Перемикає шкоду від вітер-скелета
+      name: Шкода від візера
       description: |-
-        <green>Якщо ввімкнено, вітери можуть</green>
+        <green>Якщо ввімкнено, візери можуть</green>
         <green>пошкоджувати блоки й гравців</green>
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
@@ -1979,7 +1979,7 @@ panels:
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>Наразі обрано.</green>'
   placeholder:
-    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    title: '<dark_aqua><bold>Браузер замінників</bold></dark_aqua>'
     buttons:
       bentobox:
         name: '<white><bold>BentoBox</bold></white>'
@@ -2018,7 +2018,7 @@ panels:
         description: '<gray>Повернутися до списку аддонів</gray>'
   # The set of common buttons used in multiple panels.
   placeholder:
-    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    title: '<dark_aqua><bold>Браузер замінників</bold></dark_aqua>'
     buttons:
       bentobox:
         name: '<white><bold>BentoBox</bold></white>'
