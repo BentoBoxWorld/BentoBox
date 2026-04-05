@@ -112,7 +112,7 @@ commands:
         <green>Сканирование островов в базе данных. Это может занять некоторое время</green>
         в зависимости от того, сколько у вас количество...
       scanning-in-progress: '<red>Сканирование в процессе, пожалуйста, подождите</red>'
-      none-found: '<underlined>bsp;c Нет найдено островов для очищения.</underlined>'
+      none-found: '<green>Не найдено островов для очистки.</green>'
       total-islands: '<green>У вас [number] островов в вашей базе данных во всех мирах.</green>'
       number-error: '<red>Значение должно быть количеством дней</red>'
       confirm: '<light_purple>Введите </light_purple><aqua>/[label] purge confirm </aqua><light_purple>для начала очистки.</light_purple>'
@@ -123,7 +123,7 @@ commands:
       no-purge-in-progress: '<red>В данный момент очистка не проводится.</red>'
       regions:
         parameters: '[days]'
-        description: oстрова чистки путем удаления файлов старого региона
+        description: очистка островов путём удаления старых файлов регионов
         confirm: '<light_purple>Тип </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>чтобы начать чистку</light_purple>'
       protect:
         description: переключатель защиты острова от очистки
@@ -131,7 +131,7 @@ commands:
         protecting: '<green>Остров защищен от очистки.</green>'
         unprotecting: '<green>Защита от очистки убрана.</green>'
       stop:
-        description: оставить проводящуюся очистку
+        description: остановить проводящуюся очистку
         stopping: Очистка остановлена
       unowned:
         description: позволяет очистить острова без владельцев
@@ -139,7 +139,7 @@ commands:
       status:
         description: отображает статус очистки
         status: >-
-          <aqua>[purged] </aqua><green>остров очищено of </green><aqua>[purgeable] </aqua><gray>(</gray><aqua>[percentage]</aqua>
+          <aqua>[purged] </aqua><green>островов очищено из </green><aqua>[purgeable] </aqua><gray>(</gray><aqua>[percentage]</aqua>
           %<gray>)</gray><green>.</green>
     team:
       description: управление командой
@@ -187,10 +187,10 @@ commands:
           <red>Внимание: у этого игрока теперь есть [number] островов. Это больше,</red>
           чем разрешено настройками или правами: [max].
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <игрок> <размер>
+        description: установить максимальный размер команды для [prefix_island] игрока (0 для сброса к мировому значению по умолчанию)
+        success: '<green>Установлен максимальный размер команды </green><aqua>[name]</aqua><green> для [prefix_island] на </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Сброшен максимальный размер команды </green><aqua>[name]</aqua><green> для [prefix_island] до мирового значения по умолчанию (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: команда администратора по управлению областью острова
       invalid-value:
@@ -199,7 +199,7 @@ commands:
         same-as-before: '<red>Радиус острова уже установлен в значении </red><aqua>[number]</aqua><red>!</red>'
       display:
         already-off: '<red>Индикаторы уже выключены</red>'
-        already-on: '<red>Индикаторы уже выключены</red>'
+        already-on: '<red>Индикаторы уже включены</red>'
         description: показать/скрыть индикаторы размера острова
         hiding: '<dark_green>Скрыть индикаторы размера острова</dark_green>'
         hint: >-
@@ -283,7 +283,7 @@ commands:
       max-protection-range: 'Самый большой радиус острова за все время: [range]'
       protection-coords: 'Радиус границ острова: от [xz1] до [xz2]'
       is-spawn: Остров является точкой спавна
-      banned-players: 'Забанненые игроки:'
+      banned-players: 'Забаненные игроки:'
       banned-format: '<red>[name]</red>'
       unowned: '<red>Не владелец</red>'
       bundle: '<green>Пакет чертежей, использованный для создания острова: </green><aqua>[name]</aqua>'
@@ -413,8 +413,8 @@ commands:
       sink:
         description: установите этот чертеж, чтобы он опустился на дно океана после вставки
         status: '<green>Чертеж будет [status] </green><green>при вставке</green>'
-        sink: '<red>раковина</red>'
-        not-sink: '<aqua>не тонуть</aqua>'
+        sink: '<red>погружаться на дно</red>'
+        not-sink: '<aqua>не погружаться</aqua>'
         no-clipboard: '<red>В буфере обмена нет чертежа. Загрузите или скопируйте что-нибудь.</red>'
       delete:
         parameters: <name>
@@ -463,7 +463,7 @@ commands:
           правильно для установки
         trash: Мусор
         no-trash: Не удается удалить в мусор
-        trash-instructions: Правый клинт для удаления
+        trash-instructions: Правый клик для удаления
         no-trash-instructions: Не удается удалить пакет по умолчанию
         permission: Разрешение
         no-permission: Нет разрешения
@@ -750,7 +750,7 @@ commands:
         confirmation: '<red>Вы уверены, что хотите установить точку дома в Незере?</red>'
       the-end:
         not-allowed: '<red>Вам не разрешено устанавливать точку дома в Энд.</red>'
-        confirmation: '<red>Вы уверены, что хотите установить свой дом в [Конце]?</red>'
+        confirmation: '<red>Вы уверены, что хотите установить свой дом в Энде?</red>'
       parameters: '[имя дома]'
     setname:
       description: устанавливает название вашего острова
@@ -839,7 +839,7 @@ commands:
         all-members-logged-off: >-
           <red>Все участники острова вышли из сети, так что вы больше не</red>
           находитесь в кооперации на острове игрока [name].
-        success: '<aqua>[name] </aqua><green>is no longer a coop member of your island.</green>'
+        success: '<aqua>[name] </aqua><green>больше не является участником кооперации на вашем острове.</green>'
         is-full: '<red>Вы не можете больше добавлять в кооперацию.</red>'
       trust:
         description: сделать игрока доверенным на острове
@@ -847,7 +847,7 @@ commands:
         trust-in-yourself: '<red>Поверьте в себя!</red>'
         name-has-invited-you: '<green>[name] пригласил вас стать довереннным игроком на его острове.</green>'
         player-already-trusted: '<red>Игрок уже доверенный!</red>'
-        you-are-trusted: '<dark_green>Игрок </dark_green><aqua>[name] </aqua><green>сдеал вас доверенным!</green>'
+        you-are-trusted: '<dark_green>Игрок </dark_green><aqua>[name] </aqua><green>сделал вас доверенным!</green>'
         success: '<green>Вы сделали игрока </green><aqua>[name] </aqua><green>доверенным.</green>'
         is-full: '<red>Вы не можете доверять еще кому-либо, лимит достигнут!</red>'
       untrust:
@@ -881,7 +881,7 @@ commands:
           enter-name: '<green>Введите имя:</green>'
           tips:
             LEFT:
-              name: '&б Левый Клик'
+              name: '<aqua>Левый Клик</aqua>'
               search: '<green>Введите имя игрока</green>'
               back: '<green>Назад</green>'
               invite: |-
@@ -921,7 +921,7 @@ commands:
           description: отклонить ожидающие подтверждения приглашения посетить ваш остров
       leave:
         cannot-leave: >-
-          <red>Владелец не может покинуть остров! Сначала станьте участников, или</red>
+          <red>Владелец не может покинуть остров! Сначала станьте участником, или</red>
           удалите всех участников.
         description: покинуть свой остров
         left-your-island: '<red>[name] </red><red>покинул ваш остров</red>'
@@ -946,8 +946,8 @@ commands:
         description: повышает ранг игрока на вашем острове
         parameters: <игрок>
         errors:
-          cant-promote-yourself: '<red>Вы не можете рекламировать себя!</red>'
-          cant-promote: '<red>Вы не можете понизить себя!</red>'
+          cant-promote-yourself: '<red>Вы не можете повысить себя!</red>'
+          cant-promote: '<red>Вы не можете повышать более высокие ранги!</red>'
           must-be-member: '<red>Игрок должен быть членом [prefix_an-island]!</red>'
         failure: '<red>Игрока нельзя повысить еще выше!</red>'
         success: '<green>Игрок [name] повышен до [rank]</green>'
@@ -980,7 +980,7 @@ commands:
       description: разбанить игрока на острове
       parameters: <игрок>
       cannot-unban-yourself: '<red>Вы не можете разбанить самого себя!</red>'
-      player-not-banned: '<red>ИГрок не был забанен ранее.</red>'
+      player-not-banned: '<red>Игрок не был забанен ранее.</red>'
       player-unbanned: '<aqua>[name]</aqua><green>разбанен на вашем острове.</green>'
       you-are-unbanned: '<aqua>[name]</aqua><green>разбанил вас на своем острове!</green>'
     banlist:
@@ -1003,8 +1003,8 @@ commands:
       cannot-expel: '<red>Этот игрок не может быть выгнан.</red>'
       cannot-expel-member: '<red>Вы не можете выгнать участника группы!</red>'
       not-on-island: '<red>Этот игрок не на вашем острове!</red>'
-      player-expelled-you: '<aqua>[name]</aqua><red>был выгнан с вашего острова!</red>'
-      success: '<green>Вы были выгнаны </green><aqua>[name] </aqua><green>с его острова.</green>'
+      player-expelled-you: '<aqua>[name]</aqua><red> выгнал вас с острова!</red>'
+      success: '<green>Вы выгнали </green><aqua>[name] </aqua><green>с острова.</green>'
     lock:
       description: заблокировать или разблокировать ваш [prefix_island]
       locked: '<green>Ваш [prefix_island] теперь заблокирован.</green>'
@@ -1024,9 +1024,9 @@ protection:
   command-is-banned: Команда запрещена для посетителей
   flags:
     ALLAY:
-      name: Взаимодействие с тихонями и Copper Golem
-      description: Позволяет забирать/давать предметы тихоне и Copper Golem
-      hint: Взаимодействие с тихонями и Copper Golem запрещено
+      name: Взаимодействие с тихонями и медным големом
+      description: Позволяет забирать/давать предметы тихоне и медному голему
+      hint: Взаимодействие с тихонями и медным големом запрещено
     ANIMAL_NATURAL_SPAWN:
       description: переключатель пассивного спавна животных
       name: Пассивный спавн животных
@@ -1200,7 +1200,7 @@ protection:
       description: Переключатель возможности взаимодействовать с воронкой
       hint: Взаимодействие с воронкой запрещено
     CHEST_DAMAGE:
-      description: переключательно получения сундуками урона от взрыва
+      description: переключатель получения сундуками урона от взрыва
       name: Урон сундукам
     CHORUS_FRUIT:
       description: переключатель телепортации
@@ -1214,7 +1214,7 @@ protection:
       name: Очистить супер плоские чанки
     COARSE_DIRT_TILLING:
       description: |-
-        <green>Переключательно очистки каменистой</green>
+        <green>Переключатель очистки каменистой</green>
         <green>земли и разрушения подзола</green>
         <green>для получения земли</green>
       name: Очищение каменистой земли
@@ -1267,7 +1267,7 @@ protection:
       name: Использование дверей
       hint: Использование дверей запрещено
     DRAGON_EGG:
-      name: Яйко Дракона
+      name: Яйцо Дракона
       description: |-
         <green>Предотвращает взаимодействие с Яйцом Дракона.</green>
 
@@ -1602,10 +1602,10 @@ protection:
       hint: Взаимодействие с редстоун механизмами запрещено
     REMOVE_END_EXIT_ISLAND:
       description: |-
-        <green>Prevents the end exit</green>
-        <green>island from generating</green>
-        <green>at coordinates 0,0</green>
-      name: Remove end exit island
+        <green>Предотвращает генерацию</green>
+        <green>выходного [prefix_island] в Энде</green>
+        <green>на координатах 0,0</green>
+      name: Удалить выходной остров в Энде
     REMOVE_MOBS:
       description: |-
         <green>Удаляет монстров, когда вы</green>
@@ -1699,12 +1699,12 @@ protection:
         <green>Участники острова все еще будут терять вещи,</green>
         <green>если будут умирать на своем острове!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Защита от пустоты на острове спавна
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Если включено, игроки, упавшие</green>
+        <green>в пустоту на острове спавна,</green>
+        <green>будут телепортированы обратно на</green>
+        <green>точку спавна вместо смерти.</green>
     RAID_TRIGGER:
       name: Запуск рейда
       description: Устанавливает минимальный ранг острова для запуска рейда
@@ -1812,7 +1812,7 @@ protection:
           <green>разъединить</green>
         team-untrust: |-
           <green>Выберите ранг, который может</green>
-          <green>антрестить</green>
+          <green>убрать доверие</green>
         team-promote: |-
           <green>Выберите ранг, который может</green>
           <green>повысить ранг игрока</green>
@@ -1914,7 +1914,7 @@ management:
             <green>Запущена </green><yellow>[name] [version]</yellow><green>.</green>
 
             <green>BentoBox в настоящее время запущен на</green>
-            <gold><bold>НЕПОДДЕРЖИМЕМОЙ </bold></gold><green>версии серверного ПО</green>
+            <gold><bold>НЕПОДДЕРЖИВАЕМОЙ </bold></gold><green>версии серверного ПО</green>
 
             <green>Хотя большинство функций все равно будут работать</green>
             <green>корректно, специфичные для версии баги или иные проблемы</green>
@@ -1923,8 +1923,7 @@ management:
             <green>Запущена </green><yellow>[name] [version]</yellow><green>.</green>
 
             <green>BentoBox в настоящее время запущен на</green>
-            <red><bold>НЕСОВМЕСТИМОЙ </bold></red><green>версии серверного ПО</green>
-            <green>version.</green>
+            <red><bold>НЕСОВМЕСТИМОЙ </bold></red><green>версии серверного ПО.</green>
 
             <red>Может возникать странное поведение и ошибки,</red>
             <red>а большинство функций могут быть нестабильными.</red>
@@ -1989,14 +1988,14 @@ enums:
     THORNS: Шипы
     DRAGON_BREATH: Драконье дыхание
     CUSTOM: Пользовательское
-    FLY_INTO_WALL: Влететь в стену
+    FLY_INTO_WALL: Столкновение со стеной
     HOT_FLOOR: Горячий пол
-    CRAMMING: Зубрёжка
-    DRYOUT: Сушка
-    FREEZE: Заморозить
-    KILL: Убить
-    SONIC_BOOM: Соник Бум
-    WORLD_BORDER: Мировая граница
+    CRAMMING: Давка
+    DRYOUT: Высыхание
+    FREEZE: Замерзание
+    KILL: Убийство
+    SONIC_BOOM: Звуковой удар
+    WORLD_BORDER: Граница мира
 panel:
   credits:
     title: '<dark_gray>[name] </dark_gray><dark_green>Титры</dark_green>'
@@ -2036,9 +2035,9 @@ panels:
           |[selected]
         authors: '<gray>Авторы:</gray>'
         author: '<gray>- </gray><aqua>[name]</aqua>'
-        selected: '&а В данный момент выбрано.'
+        selected: '<green>В данный момент выбрано.</green>'
   placeholder:
-    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    title: '<dark_aqua><bold>Браузер заполнителей</bold></dark_aqua>'
     buttons:
       bentobox:
         name: '<white><bold>BentoBox</bold></white>'
