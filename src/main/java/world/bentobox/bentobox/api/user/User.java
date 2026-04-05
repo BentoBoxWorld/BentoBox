@@ -758,7 +758,10 @@ public class User implements MetaDataAble {
 
     /**
      * Extracts sound tags from the message, plays them for the player, and returns
-     * the message with sound tags stripped out.
+     * the message with sound tags stripped out. Sound names use underscores in locale
+     * files for readability (e.g., {@code entity_experience_orb_pickup}), which are
+     * converted to Minecraft's dot-separated resource location format
+     * (e.g., {@code entity.experience.orb.pickup}).
      *
      * @param message the message possibly containing [sound:name:volume:pitch] tags
      * @return the message with sound tags removed
@@ -767,24 +770,9 @@ public class User implements MetaDataAble {
         Matcher matcher = SOUND_PATTERN.matcher(message);
         StringBuilder sb = new StringBuilder();
         while (matcher.find()) {
-            // Convert underscores to dots and lowercase for Minecraft sound resource location format
             String soundName = matcher.group(1).toLowerCase(Locale.ENGLISH).replace('_', '.');
-            float volume = 1.0f;
-            float pitch = 1.0f;
-            if (matcher.group(2) != null) {
-                try {
-                    volume = Float.parseFloat(matcher.group(2));
-                } catch (NumberFormatException ignored) {
-                    // Use default
-                }
-            }
-            if (matcher.group(3) != null) {
-                try {
-                    pitch = Float.parseFloat(matcher.group(3));
-                } catch (NumberFormatException ignored) {
-                    // Use default
-                }
-            }
+            float volume = parseFloatOrDefault(matcher.group(2), 1.0f);
+            float pitch = parseFloatOrDefault(matcher.group(3), 1.0f);
             if (sender instanceof Player player) {
                 player.playSound(player.getLocation(), soundName, volume, pitch);
             }
@@ -792,6 +780,25 @@ public class User implements MetaDataAble {
         }
         matcher.appendTail(sb);
         return sb.toString();
+    }
+
+    /**
+     * Parses a string to a float, returning a default value if the string is null
+     * or not a valid float.
+     *
+     * @param value the string to parse, may be null
+     * @param defaultValue the default value if parsing fails
+     * @return the parsed float or the default value
+     */
+    private static float parseFloatOrDefault(@Nullable String value, float defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+        try {
+            return Float.parseFloat(value);
+        } catch (NumberFormatException ignored) {
+            return defaultValue;
+        }
     }
 
     /**
