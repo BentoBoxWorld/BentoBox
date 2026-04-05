@@ -57,7 +57,7 @@ commands:
     page: '<gray>Pagina </gray><yellow>[page]</yellow><gray> van </gray><yellow>[total]</yellow>'
     parameters: '[command]'
     description: help commando
-    console: Troosten
+    console: Console
   admin:
     help:
       description: admin commando
@@ -65,13 +65,13 @@ commands:
       description: >-
         wijzig het aantal toegestane huizen op deze [prefix_island] of het huis
         van de speler [prefix_island]
-      parameters: <number / player> <number> [[prefix_eiland] naam]
+      parameters: <number / player> <number> [[prefix_island] naam]
       max-homes-set: '<green>[name] - Zet [prefix_island] maximaal aantal huizen op [number]</green>'
       errors:
         unknown-island: Onbekend [prefix_island]! [name]
     resethome:
       description: Reset het thuis van de speler naar standaard
-      parameters: <player> [[prefix_eiland] naam]
+      parameters: <player> [[prefix_island] naam]
       cleared: '<aqua>Thuis reset. [name]</aqua>'
     resets:
       description: bewerk resets van de spelers
@@ -88,8 +88,8 @@ commands:
         description: telt op bij het aantal keren dat deze speler zijn eiland reset
         parameters: <speler> <resets>
         success: >-
-          <green>Met succes toegevoegd </green><aqua>[number] </aqua><green>wordt gereset naar & b [name],</green>
-          waardoor het totaal wordt verhoogd naar <aqua>[total] </aqua><green>wordt gereset.</green>
+          <green>Met succes </green><aqua>[number] </aqua><green>resets toegevoegd aan </green><aqua>[name],</aqua>
+          waardoor het totaal wordt verhoogd naar <aqua>[total] </aqua><green>resets.</green>
       remove:
         description: verwijdert uit hoe vaak deze speler zijn eiland reset
         parameters: <speler> <resets>
@@ -141,12 +141,11 @@ commands:
         stopping: De zuivering stoppen
       unowned:
         description: zuiveren van eilanden die geen eigendom zijn
-        unowned-islands: '<green>Found </green><aqua>[number]</aqua><green>eilanden zonder eigendom.</green>'
+        unowned-islands: '<green>Gevonden </green><aqua>[number]</aqua><green> eilanden zonder eigendom.</green>'
       status:
         description: geeft de status van de zuivering weer
         status: >-
-          <aqua>[purged] </aqua><green>eilanden gezuiverd uit </green><aqua>[purgeable] </aqua><gray>(& b</gray>
-          [percentage]% <gray>) </gray><green>.</green>
+          <aqua>[purged] </aqua><green>eilanden gezuiverd uit </green><aqua>[purgeable] </aqua><gray>(</gray><aqua>[percentage]%</aqua><gray>) </gray><green>.</green>
     team:
       description: team beheren
       add:
@@ -195,10 +194,10 @@ commands:
           <red>Waarschuwing: deze speler bezit nu [number] eilanden. Dit is meer</red>
           dan toegestaan volgens de instellingen of permissies: [max].
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <speler> <grootte>
+        description: stel de maximale teamgrootte in voor het [prefix_island] van een speler (gebruik 0 om naar de standaard te resetten)
+        success: '<green>De maximale teamgrootte van </green><aqua>[name]</aqua><green>''s [prefix_island] ingesteld op </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>De maximale teamgrootte van </green><aqua>[name]</aqua><green>''s [prefix_island] gereset naar de standaard (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: admin eilandbereik commando
       invalid-value:
@@ -246,7 +245,7 @@ commands:
       description: registreer speler op het eiland waar je je bevindt
       registered-island: '<green>geregistreerde [name] op het eiland op [xyz].</green>'
       reserved-island: '<green>gereserveerd eiland op [xyz] voor [name].</green>'
-      already-owned: '<red>Island is al eigendom van een andere speler!</red>'
+      already-owned: '<red>Eiland is al eigendom van een andere speler!</red>'
       no-island-here: '<red>Er is hier geen eiland. Bevestig om er een te maken.</red>'
       in-deletion: '<red>Deze eilandruimte wordt momenteel verwijderd. Probeer later.</red>'
       cannot-make-island: >-
@@ -286,7 +285,7 @@ commands:
       island-protection-center: 'Beschermingsgebied centrum: [xyz]'
       island-center: 'Eilandcentrum: [xyz]'
       island-coords: 'Eilandcoördinaten: [xz1] tot [xz2]'
-      islands-in-trash: '<light_purple>Player heeft eilanden in de prullenbak.</light_purple>'
+      islands-in-trash: '<light_purple>Speler heeft eilanden in de prullenbak.</light_purple>'
       protection-range: 'Beschermingsbereik: [range]'
       protection-range-bonus-title: '<aqua>Inclusief deze bonussen:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
@@ -354,7 +353,7 @@ commands:
       parameters: <player> [speler om te teleporteren]
       description: teleporteer naar het eiland van een speler
       manual: >-
-        <red>Geen veilige warp gevonden! Handmatig tp in de buurt van </red><aqua>[locatie]</aqua>
+        <red>Geen veilige warp gevonden! Handmatig tp in de buurt van </red><aqua>[location]</aqua>
         <red>en bekijk het</red>
     tpuser:
       parameters: <teleporting player> <[prefix_island]'s player> [player's island]
@@ -420,7 +419,7 @@ commands:
       file-exists: '<red>Bestand bestaat al, overschrijven?</red>'
       no-such-file: '<red>Zo''n bestand bestaat niet!</red>'
       could-not-load: '<red>Kon dat bestand niet laden!</red>'
-      could-not-save: '<red>Hmm, er is iets misgegaan bij het opslaan van dat bestand: [bericht]</red>'
+      could-not-save: '<red>Hmm, er is iets misgegaan bij het opslaan van dat bestand: [message]</red>'
       set-pos1: '<green>positie 1 ingesteld op [vector]</green>'
       set-pos2: '<green>positie 2 ingesteld op [vector]</green>'
       set-different-pos: '<red>Stel een andere locatie in - deze positie is al ingesteld!</red>'
@@ -571,7 +570,7 @@ commands:
       cannot-delete-owner: >-
         <red>Alle eilandleden moeten van het eiland worden verwijderd voordat ze</red>
         het kunnen verwijderen.
-      deleted-island: '<green>Island at </green><yellow>[xyz] </yellow><green>is succesvol verwijderd.</green>'
+      deleted-island: '<green>Eiland op </green><yellow>[xyz] </yellow><green>is succesvol verwijderd.</green>'
     deletehomes:
       parameters: <speler>
       description: verwijdert alle benoemde huizen van [prefix_an-island]
@@ -722,7 +721,7 @@ commands:
         estimated-time: '<green>Geschatte tijd: </green><aqua>[number]</aqua><green>seconden.</green>'
         blocks: '<green>Building it blok voor blok: </green><aqua>[number] </aqua><green>blokken in totaal ...</green>'
         entities: '<green>Het vullen met entiteiten: </green><aqua>[number]</aqua><green>entiteiten in totaal ...</green>'
-        dimension-done: '<green>[prefix_Island] in [wereld] is gebouwd.</green>'
+        dimension-done: '<green>[prefix_Island] in [world] is gebouwd.</green>'
         done: '<green>Klaar! Je eiland staat klaar en wacht op je!</green>'
       pick: '<dark_green>Kies een eiland</dark_green>'
       cannot-afford: '<red>Je kunt dit niet betalen! Kosten: [cost]</red>'
@@ -774,7 +773,7 @@ commands:
       home-list-syntax: '<gold>[name]</gold>'
       click-to-teleport: '<green>Klik om te teleporteren!</green>'
       nether:
-        not-allowed: '<red>Het is niet toegestaan om uw huis in Nederland te plaatsen.</red>'
+        not-allowed: '<red>Het is niet toegestaan om uw huis in de Nether te plaatsen.</red>'
         confirmation: '<red>Weet u zeker dat u uw huis in de Nether wilt plaatsen?</red>'
       the-end:
         not-allowed: '<red>Je mag je huis niet op het einde zetten.</red>'
@@ -799,7 +798,7 @@ commands:
       description: beheer je team
       gui:
         titles:
-          team-panel: Teamaanmanagement
+          team-panel: Teambeheer
         buttons:
           status:
             name: Status
@@ -869,7 +868,7 @@ commands:
         all-members-logged-off: >-
           <red>Alle leden van het eiland hebben zich afgemeld, zodat u niet langer</red>
           een coöperatief lid bent van het eiland van [name].
-        success: '<aqua>[name] </aqua><green>is niet langer lid van de kippenhok van uw eiland.</green>'
+        success: '<aqua>[name] </aqua><green>is niet langer coop-lid van uw eiland.</green>'
         is-full: '<red>Je kunt niemand anders opsluiten.</red>'
       trust:
         description: geef een speler een vertrouwde rang op je eiland
@@ -878,7 +877,7 @@ commands:
         name-has-invited-you: >-
           <green>[name] heeft je uitgenodigd om lid te worden van een vertrouwd lid</green>
           van hun eiland.
-        player-already-trusted: '<red>Player is al vertrouwd!</red>'
+        player-already-trusted: '<red>Speler is al vertrouwd!</red>'
         you-are-trusted: '<dark_green>U wordt vertrouwd door </dark_green><aqua>[name] </aqua><green>!</green>'
         success: '<green>U vertrouwde </green><aqua>[name] </aqua><green>.</green>'
         is-full: '<red>Je kunt niemand anders vertrouwen.</red>'
@@ -916,7 +915,7 @@ commands:
               back: '<green>Terug</green>'
               invite: |-
                 <green>om een speler uit te nodigen</green>
-                <green>om je team te verwijen</green>
+                <green>om lid te worden van je team</green>
             RIGHT:
               name: '<aqua>Rechts Klikken</aqua>'
               coop: '<green>om speler te coöpereren</green>'
@@ -929,7 +928,7 @@ commands:
             <red>Je kunt die persoon niet voor nog een [number]seconden</red>
             uitnodigen.
           island-is-full: '<red>Je eiland is vol, je kunt niemand anders uitnodigen.</red>'
-          none-invited-you: '<red>Niemand heeft je uitgenodigd: c.</red>'
+          none-invited-you: '<red>Niemand heeft je uitgenodigd.</red>'
           you-already-are-in-team: '<red>Je zit al in een team!</red>'
           already-on-team: '<red>Die speler zit al in een team!</red>'
           invalid-invite: '<red>Die uitnodiging is niet langer geldig, sorry.</red>'
@@ -1015,11 +1014,11 @@ commands:
       parameters: <speler>
       cannot-unban-yourself: '<red>Je kunt jezelf niet ongedaan maken!</red>'
       player-not-banned: '<red>Speler is niet verbannen.</red>'
-      player-unbanned: '<aqua>[name] </aqua><green>is nu uitgesloten van uw eiland.</green>'
-      you-are-unbanned: '<aqua>[name] </aqua><green>verbannen u van hun eiland!</green>'
+      player-unbanned: '<aqua>[name] </aqua><green>is nu niet meer verbannen van uw eiland.</green>'
+      you-are-unbanned: '<aqua>[name] </aqua><green>heeft uw verbanning van hun eiland opgeheven!</green>'
     banlist:
       description: lijst verbannen spelers
-      noone: '<green>Niemand is verboden op dit eiland.</green>'
+      noone: '<green>Niemand is verbannen van dit eiland.</green>'
       the-following: '<aqua>De volgende spelers zijn uitgesloten:</aqua>'
       names: '<red>[line]</red>'
       you-can-ban: '<aqua>Je kunt tot </aqua><yellow>[number]</yellow><aqua>meer spelers bannen.</aqua>'
@@ -1051,7 +1050,7 @@ ranks:
   trusted: Vertrouwd
   coop: Coop
   visitor: Bezoeker
-  banned: Verboden
+  banned: Verbannen
   admin: Beheerder
   mod: Mod
 protection:
@@ -1073,7 +1072,7 @@ protection:
       hint: Gebruik van aambeeld uitgeschakeld
     ARMOR_STAND:
       description: Wissel interactie
-      name: Armor staat
+      name: Wapenstandaards
       hint: Gebruik van pantserstandaard uitgeschakeld
     AXOLOTL_SCOOPING:
       name: Axolotl Scheppen
@@ -1169,9 +1168,9 @@ protection:
       description: Schakel vateninteractie in/uit
       hint: Toegang tot vat uitgeschakeld
     CRAFTER:
-      name: Knutsel
-      description: Gebruik
-      hint: Knutsel uitgeschakeld
+      name: Crafter
+      description: Schakel gebruik in/uit
+      hint: Crafter uitgeschakeld
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         <green>Sta Bed & Respawn Ankers toe</green>
@@ -1232,12 +1231,12 @@ protection:
       description: Schakel tussen trechterinteractie
       hint: Vultrechterinteractie uitgeschakeld
     CHEST_DAMAGE:
-      description: Schakel borstschade door explosies om
-      name: Borstschade
+      description: Schakel kistschade door explosies om
+      name: Kistschade
     CHORUS_FRUIT:
       description: Schakel teleportatie in
-      name: Koor fruit
-      hint: Koorfruit teleporteren uitgeschakeld
+      name: Chorusfruit
+      hint: Chorusfruit teleporteren uitgeschakeld
     CLEAN_SUPER_FLAT:
       description: |-
         <green>Schakel in om alles op te schonen</green>
@@ -1278,16 +1277,16 @@ protection:
       hint: Toegang tot werkbank uitgeschakeld
     CREEPER_DAMAGE:
       description: |
-        <green>Toggle klimplant</green>
-        <green>bescherming tegen schade</green>
-      name: Bescherming tegen schade door kruipers
+        <green>Schakel creeper-</green>
+        <green>schadebescherming in/uit</green>
+      name: Creeper-schadebescherming
     CREEPER_GRIEFING:
       description: |
-        <green>Toggle klimplant verdriet</green>
-        <green>bescherming bij ontsteking</green>
+        <green>Schakel creeper-griefing-</green>
+        <green>bescherming in/uit bij ontsteking</green>
         <green>door eilandbezoeker.</green>
-      name: Creeper rouwende bescherming
-      hint: Creeper verdriet uitgeschakeld
+      name: Creeper-griefingbescherming
+      hint: Creeper-griefing uitgeschakeld
     CROP_PLANTING:
       description: '<green>Stel in wie zaden kan planten.</green>'
       name: Gewasplanting
@@ -1301,7 +1300,7 @@ protection:
       name: Gebruik deuren
       hint: Deurinteractie uitgeschakeld
     DRAGON_EGG:
-      name: Draken Ei
+      name: Drakenei
       description: |-
         <green>Voorkomt interactie met drakeneieren.</green>
 
@@ -1326,15 +1325,15 @@ protection:
       hint: Ender-kisten zijn uitgeschakeld in deze wereld
     ENDERMAN_DEATH_DROP:
       description: |-
-        <green>Enderman zal vallen</green>
-        <green>willekeurig blok dat ze zijn</green>
-        <green>bedrijf als het wordt gedood.</green>
-      name: Enderman Dooddruppel
+        <green>Enderman laat het blok vallen</green>
+        <green>dat ze vasthouden</green>
+        <green>als ze worden gedood.</green>
+      name: Enderman doodsdrop
     ENDERMAN_GRIEFING:
       description: |-
         <green>Enderman kan verwijderen</green>
         <green>blokken van eilanden</green>
-      name: Enderman verdrietig
+      name: Enderman-griefing
     ENDERMAN_TELEPORT:
       description: |-
         <green>Eindermanen kunnen teleporteren</green>
@@ -1355,9 +1354,9 @@ protection:
     EXPERIENCE_BOTTLE_THROWING:
       name: Ervaar het gooien van flessen
       description: Wissel met het werpen van ervaringsflessen.
-      hint: Ervaar flessen met een handicap
+      hint: Ervaringsflessen gooien uitgeschakeld
     FIRE_BURNING:
-      name: Brandend vuur
+      name: Vuurverbranding
       description: |-
         <green>Omschakelen of vuur kan branden</green>
         <green>blokken of niet.</green>
@@ -1415,7 +1414,7 @@ protection:
       description: >-
         Schakel schade aan. Ingeschakeld betekent dat tamme dieren schade kunnen
         oplopen. Uitgeschakeld betekent dat ze onoverwinnelijk zijn.
-      name: Betrijp tamme dieren
+      name: Verwond tamme dieren
       hint: Getemde dieren schade uitschakelen
     HURT_ANIMALS:
       description: Schakel pijn uit
@@ -1428,9 +1427,9 @@ protection:
     HURT_VILLAGERS:
       description: Schakel pijn uit
       name: Dorpsbewoners pijn doen
-      hint: Dorpeling met een handicap
+      hint: Dorpelingen verwonden uitgeschakeld
     ITEM_FRAME:
-      name: Voorwerp kader
+      name: Itemframes
       description: |-
         <green>Toggle-interactie.</green>
         <green>Overrides plaatsen of breken blokken</green>
@@ -1439,7 +1438,7 @@ protection:
       description: |-
         <green>Mobs kunnen schade toebrengen</green>
         <green>itemframes</green>
-      name: Schade aan het frame van het item
+      name: Itemframe-schade
     INVINCIBLE_VISITORS:
       description: |-
         <green>onoverwinnelijke bezoeker configureren</green>
@@ -1457,8 +1456,8 @@ protection:
       hint: Het verwijderen van items is uitgeschakeld
     ITEM_PICKUP:
       description: Schakel ophalen
-      name: Afhalen van artikelen
-      hint: Ophalen van artikel is uitgeschakeld
+      name: Items oppakken
+      hint: Items oppakken is uitgeschakeld
     JUKEBOX:
       description: Schakel tussen gebruik
       name: Jukebox-gebruik
@@ -1532,14 +1531,14 @@ protection:
       description: |-
         <green>Toggle-toegang</green>
         <green>om inventaris op te zetten</green>
-      name: Monteer inventaris
-      hint: Het opbouwen van voorraden is uitgeschakeld
+      name: Rij-inventaris
+      hint: Toegang tot rij-inventaris is uitgeschakeld
     NAME_TAG:
       name: Naamplaatjes
       description: Toggle gebruik
       hint: Interactie met naamlabel uitgeschakeld
     NATURAL_SPAWNING_OUTSIDE_RANGE:
-      name: Natuurlijk wezen paait buiten bereik
+      name: Natuurlijke spawning buiten bereik
       description: |-
         <green>Omschakelen of wezens (dieren en</green>
         <green>monsters) kunnen van nature buiten spawnen</green>
@@ -1550,8 +1549,8 @@ protection:
         <red>ei.</red>
     NOTE_BLOCK:
       description: Toggle gebruik
-      name: Kladblok
-      hint: Noteblock-interactie uitgeschakeld
+      name: Nootblok
+      hint: Nootblok-interactie uitgeschakeld
     OBSIDIAN_SCOOPING:
       name: Obsidiaan scheppen
       description: |-
@@ -1647,9 +1646,9 @@ protection:
         <red>PVP in- / uitschakelen</red>
         <red>in de Nether.</red>
       name: Nether PVP
-      hint: PVP uitgeschakeld in Nederland
-      enabled: '<red>De PVP in Nederland is ingeschakeld.</red>'
-      disabled: '<green>De PVP in Nederland is uitgeschakeld.</green>'
+      hint: PVP uitgeschakeld in de Nether
+      enabled: '<red>De PVP in de Nether is ingeschakeld.</red>'
+      disabled: '<green>De PVP in de Nether is uitgeschakeld.</green>'
     PVP_OVERWORLD:
       description: |-
         <red>PVP in- / uitschakelen</red>
@@ -1660,7 +1659,7 @@ protection:
       disabled: '<green>De PVP in the Overworld is uitgeschakeld.</green>'
     REDSTONE:
       description: Toggle gebruik
-      name: Redstone-artikelen
+      name: Redstone-items
       hint: Redstone-interactie uitgeschakeld
     REMOVE_END_EXIT_ISLAND:
       description: |-
@@ -1683,13 +1682,13 @@ protection:
       hint: Scheren is uitgeschakeld
     SPAWN_EGGS:
       description: Toggle gebruik
-      name: Paaien eieren
-      hint: Broedeieren uitgeschakeld
+      name: Spawn-eieren
+      hint: Spawn-eieren uitgeschakeld
     SPAWNER_SPAWN_EGGS:
       description: |-
         <green>Maakt het mogelijk om het entiteitstype van een spawner te wijzigen</green>
         <green>het gebruik van spawn-eieren.</green>
-      name: Paaien eieren op spawners
+      name: Spawn-eieren op spawners
       hint: >-
         het wijzigen van het entiteitstype van een spawner met spawn-eieren is
         niet toegestaan
@@ -1769,12 +1768,12 @@ protection:
         <green>[prefix_Island] leden verliezen nog steeds hun items</green>
         <green>als ze sterven op hun eigen [prefix_island]!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Spawn-eiland leegtebescherming
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Wanneer ingeschakeld, worden spelers die</green>
+        <green>in de leegte vallen bij het spawn-eiland</green>
+        <green>teruggeteleporteerd naar het spawnpunt</green>
+        <green>in plaats van te sterven.</green>
     RAID_TRIGGER:
       name: Aanval activeren
       description: Stelt de minimale eilandrang in die nodig is om een aanval te activeren
@@ -1793,10 +1792,10 @@ protection:
         <green>geen windladingen gebruiken op dit eiland.</green>
       hint: Gebruik van windladingen uitgeschakeld
     WITHER_DAMAGE:
-      name: Schakel schoftschade in
+      name: Wither-schade
       description: |-
-        <green>Indien actief, kan de schoft</green>
-        <green>schadeblokken en spelers</green>
+        <green>Indien actief, kan de wither</green>
+        <green>blokken en spelers beschadigen</green>
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
         <green>Sta Bed & Respawn Ankers toe</green>
@@ -1811,9 +1810,9 @@ protection:
       name: Wereld TNT-schade
   locked: '<red>Dit eiland is op slot!</red>'
   locked-island-bypass: '<gold>Dit [prefix_island] is op slot, maar je hebt toestemming om dit te negeren.</gold>'
-  protected: '<red>Eiland beschermd: [omschrijving].</red>'
-  world-protected: '<red>Wereld beschermd: [omschrijving].</red>'
-  spawn-protected: '<red>Spawn beschermd: [omschrijving].</red>'
+  protected: '<red>Eiland beschermd: [description].</red>'
+  world-protected: '<red>Wereld beschermd: [description].</red>'
+  spawn-protected: '<red>Spawn beschermd: [description].</red>'
   panel:
     next: '<white>Volgende pagina</white>'
     previous: '<white>Vorige pagina</white>'
@@ -1827,7 +1826,7 @@ protection:
       expert:
         name: '<red>Expertinstellingen</red>'
         description: '<green>Geeft alle beschikbare instellingen weer.</green>'
-      click-to-switch: '<yellow>Klik op </yellow><gray>om over te schakelen naar de </gray>[volgende] <gray>.</gray>'
+      click-to-switch: '<yellow>Klik op </yellow><gray>om over te schakelen naar de </gray>[next] <gray>.</gray>'
     reset-to-default:
       name: '<red>Reset naar standaard</red>'
       description: |
@@ -1854,7 +1853,7 @@ protection:
         <green>Beveiligingsinstellingen wanneer</green>
         <green>speler is buiten zijn eiland</green>
     flag-item:
-      name-layout: '<green>naam]</green>'
+      name-layout: '<green>[name]</green>'
       command-instructions:
         setname: |-
           <green>Selecteer de rang die de</green>
@@ -2024,8 +2023,8 @@ catalog:
           <green>beschikbare officiële add-ons.</green>
     icon:
       description-template: |
-        <dark_gray>[onderwerp]</dark_gray>
-        <green>[installeren]</green>
+        <dark_gray>[topic]</dark_gray>
+        <green>[install]</green>
 
         <gray><italic>[description]</italic></gray>
 
@@ -2053,9 +2052,9 @@ enums:
     MELTING: Smeltend
     LAVA: Lava
     DROWNING: Verdrinking
-    BLOCK_EXPLOSION: Blokkeer explosie
+    BLOCK_EXPLOSION: Blokexplosie
     ENTITY_EXPLOSION: Entiteitsexplosie
-    VOID: Ongeldig
+    VOID: De Leegte
     LIGHTNING: Bliksem
     SUICIDE: Zelfmoord
     STARVATION: Verhongering
@@ -2065,7 +2064,7 @@ enums:
     FALLING_BLOCK: Vallend blok
     THORNS: Doornen
     DRAGON_BREATH: Draken adem
-    CUSTOM: Op maat
+    CUSTOM: Aangepast
     FLY_INTO_WALL: Vlieg in de muur
     HOT_FLOOR: Hete vloer
     CRAMMING: Proppen
@@ -2078,8 +2077,8 @@ panel:
   credits:
     title: '<dark_gray>[name] </dark_gray><dark_green>credits</dark_green>'
     contributor:
-      name: '<green>naam]</green>'
-      description: '<green>Verbindingen: </green><aqua>[commits]</aqua>'
+      name: '<green>[name]</green>'
+      description: '<green>Bijdragen: </green><aqua>[commits]</aqua>'
     empty-here:
       name: '<red>Dit ziet er hier leeg uit ...</red>'
       description: |
@@ -2098,7 +2097,7 @@ panels:
     buttons:
       bundle:
         name: '<bold>[name]</bold>'
-        description: '[beschrijving]'
+        description: '[description]'
         uses: '<green>Gebruikt [number]/[max]</green>'
         unlimited: '<green>Onbeperkt aantal gebruiken toegestaan</green>'
         cost: '<yellow>Kosten: [cost]</yellow>'
