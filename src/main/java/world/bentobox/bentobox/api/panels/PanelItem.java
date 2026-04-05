@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
@@ -78,6 +81,7 @@ public class PanelItem {
         if (meta != null) {
             meta.lore(description.stream()
                     .map(Util::parseMiniMessageOrLegacy)
+                    .map(PanelItem::removeDefaultItalic)
                     .toList());
             icon.setItemMeta(meta);
         }
@@ -90,7 +94,7 @@ public class PanelItem {
     public void setName(String name) {
         this.name = name;
         if (meta != null) {
-            meta.displayName(name != null ? Util.parseMiniMessageOrLegacy(name) : null);
+            meta.displayName(name != null ? removeDefaultItalic(Util.parseMiniMessageOrLegacy(name)) : null);
             icon.setItemMeta(meta);
         }
     }
@@ -191,6 +195,21 @@ public class PanelItem {
          * @return true if the click event should be cancelled
          */
         boolean onClick(Panel panel, User user, ClickType clickType, int slot);
+    }
+
+    /**
+     * Removes the default italic styling that Minecraft applies to item display names and lore.
+     * If the component does not explicitly set italic, this method sets it to false to prevent
+     * the Minecraft client from applying its default italic rendering.
+     *
+     * @param component the component to process
+     * @return the component with italic explicitly disabled if it was not already set
+     */
+    private static Component removeDefaultItalic(Component component) {
+        if (component.decoration(TextDecoration.ITALIC) == TextDecoration.State.NOT_SET) {
+            return component.decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+        }
+        return component;
     }
 
     public void setHead(ItemStack itemStack) {

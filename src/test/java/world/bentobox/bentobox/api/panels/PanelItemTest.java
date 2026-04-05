@@ -12,6 +12,9 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -19,6 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -209,6 +213,52 @@ class PanelItemTest extends CommonTestSetup {
         verify(itemMeta).addItemFlags(ItemFlag.HIDE_PLACED_ON);
         verify(itemMeta).addItemFlags(ItemFlag.HIDE_ENCHANTS);
         verify(ph, times(3)).setItemMeta(itemMeta);
+    }
+
+    /**
+     * Test that setName sets italic to false on the component to prevent
+     * Minecraft's default italic rendering on item display names.
+     */
+    @Test
+    void testSetNameDisablesDefaultItalic() {
+        ItemStack itemStack = mock(ItemStack.class);
+        ItemMeta itemMeta = mock(ItemMeta.class);
+        when(itemStack.getType()).thenReturn(Material.STONE);
+        when(itemStack.getItemMeta()).thenReturn(itemMeta);
+        when(pib.getIcon()).thenReturn(itemStack);
+        when(pib.getName()).thenReturn("<red>Test Name</red>");
+
+        PanelItem item = new PanelItem(pib);
+
+        ArgumentCaptor<Component> captor = ArgumentCaptor.forClass(Component.class);
+        verify(itemMeta).displayName(captor.capture());
+        Component nameComponent = captor.getValue();
+        assertEquals(TextDecoration.State.FALSE, nameComponent.decoration(TextDecoration.ITALIC));
+    }
+
+    /**
+     * Test that setDescription sets italic to false on each lore component to prevent
+     * Minecraft's default italic rendering on item lore.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    void testSetDescriptionDisablesDefaultItalic() {
+        ItemStack itemStack = mock(ItemStack.class);
+        ItemMeta itemMeta = mock(ItemMeta.class);
+        when(itemStack.getType()).thenReturn(Material.STONE);
+        when(itemStack.getItemMeta()).thenReturn(itemMeta);
+        when(pib.getIcon()).thenReturn(itemStack);
+        when(pib.getDescription()).thenReturn(List.of("<green>Line 1</green>", "<red>Line 2</red>"));
+
+        PanelItem item = new PanelItem(pib);
+
+        ArgumentCaptor<List<Component>> captor = ArgumentCaptor.forClass(List.class);
+        verify(itemMeta).lore(captor.capture());
+        List<Component> loreComponents = captor.getValue();
+        assertEquals(2, loreComponents.size());
+        for (Component c : loreComponents) {
+            assertEquals(TextDecoration.State.FALSE, c.decoration(TextDecoration.ITALIC));
+        }
     }
 
 }

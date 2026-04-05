@@ -1074,18 +1074,28 @@ public class Util {
                                 || mmTag.equals("underlined") || mmTag.equals("strikethrough")
                                 || mmTag.equals("obfuscated");
                         if (!isDecoration) {
-                            // Close previous color tags (not decorations)
+                            // Close previous color tags (not decorations).
+                            // To maintain proper MiniMessage nesting, close any decoration
+                            // tags that sit inside color tags first, then reopen them after.
+                            List<String> decorationsToReopen = new ArrayList<>();
                             for (int j = openTags.size() - 1; j >= 0; j--) {
                                 String tag = openTags.get(j);
-                                if (!tag.equals("bold") && !tag.equals("italic") && !tag.equals("underlined")
-                                        && !tag.equals("strikethrough") && !tag.equals("obfuscated")
-                                        && !tag.startsWith("color:")) {
+                                if (tag.equals("bold") || tag.equals("italic") || tag.equals("underlined")
+                                        || tag.equals("strikethrough") || tag.equals("obfuscated")) {
+                                    // Close decoration temporarily to maintain nesting
                                     result.append("</").append(tag).append(">");
+                                    decorationsToReopen.add(0, tag);
                                     openTags.remove(j);
-                                } else if (tag.startsWith("color:")) {
+                                } else {
+                                    // Named color or color:# tag — close it
                                     result.append("</").append(tag).append(">");
                                     openTags.remove(j);
                                 }
+                            }
+                            // Reopen decorations so they continue through the new color
+                            for (String dec : decorationsToReopen) {
+                                result.append("<").append(dec).append(">");
+                                openTags.add(dec);
                             }
                         }
                         result.append("<").append(mmTag).append(">");
@@ -1099,14 +1109,25 @@ public class Util {
                 int end = text.indexOf('>', i);
                 if (end != -1) {
                     String colorTag = text.substring(i + 1, end);
-                    // Close previous color tags
+                    // Close previous color tags, preserving decoration nesting
+                    List<String> decorationsToReopen = new ArrayList<>();
                     for (int j = openTags.size() - 1; j >= 0; j--) {
                         String tag = openTags.get(j);
-                        if (!tag.equals("bold") && !tag.equals("italic") && !tag.equals("underlined")
-                                && !tag.equals("strikethrough") && !tag.equals("obfuscated")) {
+                        if (tag.equals("bold") || tag.equals("italic") || tag.equals("underlined")
+                                || tag.equals("strikethrough") || tag.equals("obfuscated")) {
+                            // Close decoration temporarily to maintain nesting
+                            result.append("</").append(tag).append(">");
+                            decorationsToReopen.add(0, tag);
+                            openTags.remove(j);
+                        } else {
                             result.append("</").append(tag).append(">");
                             openTags.remove(j);
                         }
+                    }
+                    // Reopen decorations so they continue through the new color
+                    for (String dec : decorationsToReopen) {
+                        result.append("<").append(dec).append(">");
+                        openTags.add(dec);
                     }
                     result.append("<").append(colorTag).append(">");
                     openTags.add(colorTag);
