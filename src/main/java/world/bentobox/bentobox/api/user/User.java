@@ -574,6 +574,12 @@ public class User implements MetaDataAble {
         for (String prefix : plugin.getLocalesManager().getAvailablePrefixes(this)) {
             String prefixTranslation = getTranslation("prefixes." + prefix);
 
+            // Append a formatting reset so prefix decorations (bold, italic, etc.)
+            // don't leak into the surrounding message text.
+            if (Util.isLegacyFormat(prefixTranslation)) {
+                prefixTranslation += "\u00A7r";
+            }
+
             // Replace the prefix in the actual message
             translation = translation.replace("[prefix_" + prefix + "]", prefixTranslation);
         }
