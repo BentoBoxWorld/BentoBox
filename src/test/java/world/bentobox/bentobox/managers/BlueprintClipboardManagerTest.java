@@ -94,7 +94,7 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
             }""";
 
     private void zip(File targetFile) throws IOException {
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + BlueprintsManager.BLUEPRINT_SUFFIX))) {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + BlueprintsManager.LEGACY_BLUEPRINT_SUFFIX))) {
             zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
             try (FileInputStream inputStream = new FileInputStream(targetFile)) {
                 final byte[] buffer = new byte[1024];
@@ -191,7 +191,7 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
         } catch (Exception e) {
             assertTrue(e instanceof IOException);
         } finally {
-            verify(plugin).logError("Could not load blueprint file - does not exist : test.blu");
+            verify(plugin).logError("Could not load blueprint file - does not exist : test.blueprint");
         }
     }
 
@@ -201,7 +201,7 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
     @Test
     void testLoadBlueprintNoFileInZip() throws IOException {
         blueprintFolder.mkdirs();
-        // Make a blueprint file
+        // Make a blueprint file that is not a valid zip (legacy .blu file)
         YamlConfiguration config = new YamlConfiguration();
         config.set("hello", "this is a test");
         File configFile = new File(blueprintFolder, "blueprint.blu");
@@ -219,6 +219,29 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
+     * Tests loading a .blueprint file with invalid JSON content.
+     */
+    @Test
+    void testLoadBlueprintFileJsonError() throws IOException {
+        blueprintFolder.mkdirs();
+        // Make a blueprint file with invalid JSON content
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("hello", "this is a test");
+        File configFile = new File(blueprintFolder, BLUEPRINT + BlueprintsManager.BLUEPRINT_SUFFIX);
+        config.save(configFile);
+        BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
+        try {
+            bcm.loadBlueprint(BLUEPRINT);
+        } catch (Exception e) {
+            assertTrue(e instanceof IOException);
+        } finally {
+            verify(plugin).logError("Blueprint has JSON error: blueprint.blueprint");
+        }
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
+     * Tests loading a legacy .blu file with invalid JSON content inside the zip.
      */
     @Test
     void testLoadBlueprintFileInZipJSONError() throws IOException {
@@ -242,6 +265,26 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
+     * Tests loading a .blueprint file with no bedrock.
+     */
+    @Test
+    void testLoadBlueprintFileNoBedrock() throws IOException {
+        blueprintFolder.mkdirs();
+        // Make a plain JSON blueprint file
+        File configFile = new File(blueprintFolder, BLUEPRINT + BlueprintsManager.BLUEPRINT_SUFFIX);
+        Files.writeString(configFile.toPath(), jsonNoBedrock, StandardOpenOption.CREATE);
+        BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
+        Blueprint bp = bcm.loadBlueprint(BLUEPRINT);
+        verify(plugin).logWarning("Blueprint blueprint.blueprint had no bedrock block in it so one was added automatically in the center. You should check it.");
+        // Verify bedrock was placed in the center of the blueprint
+        assertEquals(5, bp.getBedrock().getBlockX());
+        assertEquals(5, bp.getBedrock().getBlockY());
+        assertEquals(5, bp.getBedrock().getBlockZ());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
+     * Tests loading a legacy .blu file with no bedrock.
      */
     @Test
     void testLoadBlueprintFileInZipNoBedrock() throws IOException {
@@ -262,6 +305,27 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
+     * Tests loading a .blueprint (plain JSON) file.
+     */
+    @Test
+    void testLoadBlueprintFile() throws IOException {
+        blueprintFolder.mkdirs();
+        // Make a plain JSON blueprint file
+        File configFile = new File(blueprintFolder, BLUEPRINT + BlueprintsManager.BLUEPRINT_SUFFIX);
+        Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
+        BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
+        Blueprint bp = bcm.loadBlueprint(BLUEPRINT);
+        assertEquals(-2, bp.getBedrock().getBlockX());
+        assertEquals(-16, bp.getBedrock().getBlockY());
+        assertEquals(-1, bp.getBedrock().getBlockZ());
+        assertTrue(bp.getAttached().isEmpty());
+        assertTrue(bp.getEntities().isEmpty());
+        assertEquals(2, bp.getBlocks().size());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
+     * Tests loading a legacy .blu (zipped) file.
      */
     @Test
     void testLoadBlueprintFileInZip() throws IOException {
@@ -282,16 +346,35 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
+     * Tests that the new .blueprint format takes precedence over legacy .blu when both exist.
+     */
+    @Test
+    void testLoadBlueprintPrefersNewFormatOverLegacy() throws IOException {
+        blueprintFolder.mkdirs();
+        // Create a new format .blueprint file
+        File jsonFile = new File(blueprintFolder, BLUEPRINT + BlueprintsManager.BLUEPRINT_SUFFIX);
+        Files.writeString(jsonFile.toPath(), json, StandardOpenOption.CREATE);
+        // Also create a legacy .blu file (should be ignored)
+        File legacyFile = new File(blueprintFolder, BLUEPRINT);
+        Files.writeString(legacyFile.toPath(), json, StandardOpenOption.CREATE);
+        zip(legacyFile);
+        BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
+        Blueprint bp = bcm.loadBlueprint(BLUEPRINT);
+        assertEquals(-2, bp.getBedrock().getBlockX());
+        // Verify the plain JSON file still exists (not deleted like the temp zip file would be)
+        assertTrue(jsonFile.exists());
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#load(java.lang.String)}.
      */
     @Test
     void testLoadString() throws IOException {
         blueprintFolder.mkdirs();
-        // Make a blueprint file
-        File configFile = new File(blueprintFolder, BLUEPRINT);
+        // Make a plain JSON blueprint file
+        File configFile = new File(blueprintFolder, BLUEPRINT + BlueprintsManager.BLUEPRINT_SUFFIX);
         Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
-        // Zip it
-        zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         bcm.load(BLUEPRINT);
         Blueprint bp = bcm.getClipboard().getBlueprint();
@@ -309,11 +392,9 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
     @Test
     void testLoadUserString() throws IOException {
         blueprintFolder.mkdirs();
-        // Make a blueprint file
-        File configFile = new File(blueprintFolder, BLUEPRINT);
+        // Make a plain JSON blueprint file
+        File configFile = new File(blueprintFolder, BLUEPRINT + BlueprintsManager.BLUEPRINT_SUFFIX);
         Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
-        // Zip it
-        zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         User user = mock(User.class);
         assertTrue(bcm.load(user, BLUEPRINT));
@@ -329,7 +410,7 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
         User user = mock(User.class);
         assertFalse(bcm.load(user, BLUEPRINT));
         verify(user).sendMessage("commands.admin.blueprint.could-not-load");
-        verify(plugin).logError("Could not load blueprint file - does not exist : blueprint.blu");
+        verify(plugin).logError("Could not load blueprint file - does not exist : blueprint.blueprint");
     }
 
     /**
@@ -339,16 +420,14 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
     void testSave() throws IOException {
         // Load a blueprint, then save it
         blueprintFolder.mkdirs();
-        // Make a blueprint file
-        File configFile = new File(blueprintFolder, BLUEPRINT);
+        // Make a plain JSON blueprint file
+        File configFile = new File(blueprintFolder, BLUEPRINT + BlueprintsManager.BLUEPRINT_SUFFIX);
         Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
-        // Zip it
-        zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         bcm.load(BLUEPRINT);
         User user = mock(User.class);
         assertTrue(bcm.save(user, "test1234", ""));
-        File bp = new File(blueprintFolder, "test1234.blu");
+        File bp = new File(blueprintFolder, "test1234.blueprint");
         assertTrue(bp.exists());
         verify(user).sendMessage("general.success");
     }
@@ -360,16 +439,14 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
     void testSaveBadChars() throws IOException {
         // Load a blueprint, then save it
         blueprintFolder.mkdirs();
-        // Make a blueprint file
-        File configFile = new File(blueprintFolder, BLUEPRINT);
+        // Make a plain JSON blueprint file
+        File configFile = new File(blueprintFolder, BLUEPRINT + BlueprintsManager.BLUEPRINT_SUFFIX);
         Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
-        // Zip it
-        zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         bcm.load(BLUEPRINT);
         User user = mock(User.class);
         assertTrue(bcm.save(user, Util.sanitizeInput("test.1234/../../film"), ""));
-        File bp = new File(blueprintFolder, "test.1234_.._.._film.blu");
+        File bp = new File(blueprintFolder, "test.1234_.._.._film.blueprint");
         assertTrue(bp.exists());
         verify(user).sendMessage("general.success");
     }
@@ -381,16 +458,14 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
     void testSaveForeignChars() throws IOException {
         // Load a blueprint, then save it
         blueprintFolder.mkdirs();
-        // Make a blueprint file
-        File configFile = new File(blueprintFolder, BLUEPRINT);
+        // Make a plain JSON blueprint file
+        File configFile = new File(blueprintFolder, BLUEPRINT + BlueprintsManager.BLUEPRINT_SUFFIX);
         Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
-        // Zip it
-        zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         bcm.load(BLUEPRINT);
         User user = mock(User.class);
         assertTrue(bcm.save(user, "日本語の言葉", ""));
-        File bp = new File(blueprintFolder, "日本語の言葉.blu");
+        File bp = new File(blueprintFolder, "日本語の言葉.blueprint");
         assertTrue(bp.exists());
         verify(user).sendMessage("general.success");
     }
@@ -402,17 +477,15 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
     void testSaveForeignBadChars() throws IOException {
         // Load a blueprint, then save it
         blueprintFolder.mkdirs();
-        // Make a blueprint file
-        File configFile = new File(blueprintFolder, BLUEPRINT);
+        // Make a plain JSON blueprint file
+        File configFile = new File(blueprintFolder, BLUEPRINT + BlueprintsManager.BLUEPRINT_SUFFIX);
         Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
-        // Zip it
-        zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         bcm.load(BLUEPRINT);
         User user = mock(User.class);
 
         assertTrue(bcm.save(user, Util.sanitizeInput("日本語の言葉/../../../config"), ""));
-        File bp = new File(blueprintFolder, "日本語の言葉_.._.._.._config.blu");
+        File bp = new File(blueprintFolder, "日本語の言葉_.._.._.._config.blueprint");
         assertTrue(bp.exists());
         verify(user).sendMessage("general.success");
     }
@@ -438,7 +511,7 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
         Blueprint blueprint = new Blueprint();
         blueprint.setName("test123");
         assertTrue(bcm.saveBlueprint(blueprint));
-        File bp = new File(blueprintFolder, "test123.blu");
+        File bp = new File(blueprintFolder, "test123.blueprint");
         assertTrue(bp.exists());
     }
 

@@ -56,8 +56,9 @@ public class AdminBlueprintRenameCommand extends ConfirmableCommand
         // Check if the 'from' file exists
         AdminBlueprintCommand parent = (AdminBlueprintCommand) this.getParent();
         File fromFile = new File(parent.getBlueprintsFolder(), from + BlueprintsManager.BLUEPRINT_SUFFIX);
+        File fromFileLegacy = new File(parent.getBlueprintsFolder(), from + BlueprintsManager.LEGACY_BLUEPRINT_SUFFIX);
 
-        if (!fromFile.exists())
+        if (!fromFile.exists() && !fromFileLegacy.exists())
         {
             user.sendMessage("commands.admin.blueprint.no-such-file");
             return false;
@@ -78,8 +79,9 @@ public class AdminBlueprintRenameCommand extends ConfirmableCommand
 
         // Check if the 'to' file exists
         File toFile = new File(parent.getBlueprintsFolder(), to + BlueprintsManager.BLUEPRINT_SUFFIX);
+        File toFileLegacy = new File(parent.getBlueprintsFolder(), to + BlueprintsManager.LEGACY_BLUEPRINT_SUFFIX);
 
-        if (toFile.exists())
+        if (toFile.exists() || toFileLegacy.exists())
         {
             // Ask for confirmation to overwrite
             this.askConfirmation(user,

@@ -51,10 +51,17 @@ public class AdminBlueprintListCommand extends CompositeCommand
             return false;
         }
 
-        FilenameFilter blueprintFilter = (File dir, String name) -> name.endsWith(BlueprintsManager.BLUEPRINT_SUFFIX);
+        FilenameFilter blueprintFilter = (File dir, String name) ->
+                name.endsWith(BlueprintsManager.BLUEPRINT_SUFFIX) || name.endsWith(BlueprintsManager.LEGACY_BLUEPRINT_SUFFIX);
 
         List<String> blueprintList = Arrays.stream(Objects.requireNonNull(blueprints.list(blueprintFilter))).
-                map(name -> name.substring(0, name.length() - BlueprintsManager.BLUEPRINT_SUFFIX.length())).
+                map(name -> {
+                    if (name.endsWith(BlueprintsManager.BLUEPRINT_SUFFIX)) {
+                        return name.substring(0, name.length() - BlueprintsManager.BLUEPRINT_SUFFIX.length());
+                    }
+                    return name.substring(0, name.length() - BlueprintsManager.LEGACY_BLUEPRINT_SUFFIX.length());
+                }).
+                distinct().
                 toList();
 
         if (blueprintList.isEmpty())

@@ -17,7 +17,7 @@ import world.bentobox.bentobox.util.Util;
 public class AdminBlueprintLoadCommand extends CompositeCommand {
 
     private static final FilenameFilter BLUEPRINT_FILTER = (File dir, String name) -> name
-            .endsWith(BlueprintsManager.BLUEPRINT_SUFFIX);
+            .endsWith(BlueprintsManager.BLUEPRINT_SUFFIX) || name.endsWith(BlueprintsManager.LEGACY_BLUEPRINT_SUFFIX);
 
     public AdminBlueprintLoadCommand(AdminBlueprintCommand parent) {
         super(parent, "load");
@@ -54,11 +54,22 @@ public class AdminBlueprintLoadCommand extends CompositeCommand {
         AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
         File folder = parent.getBlueprintsFolder();
         if (folder.exists()) {
-            options = Arrays.stream(Objects.requireNonNull(folder.list(BLUEPRINT_FILTER))).map(n -> n.substring(0, n.length() - 4)) // remove .blu from filename
+            options = Arrays.stream(Objects.requireNonNull(folder.list(BLUEPRINT_FILTER)))
+                    .map(AdminBlueprintLoadCommand::removeBlueprintSuffix)
                     .toList();
         }
         String lastArg = !args.isEmpty() ? args.getLast() : "";
 
         return Optional.of(Util.tabLimit(options, lastArg));
+    }
+
+    private static String removeBlueprintSuffix(String name) {
+        if (name.endsWith(BlueprintsManager.BLUEPRINT_SUFFIX)) {
+            return name.substring(0, name.length() - BlueprintsManager.BLUEPRINT_SUFFIX.length());
+        }
+        if (name.endsWith(BlueprintsManager.LEGACY_BLUEPRINT_SUFFIX)) {
+            return name.substring(0, name.length() - BlueprintsManager.LEGACY_BLUEPRINT_SUFFIX.length());
+        }
+        return name;
     }
 }
