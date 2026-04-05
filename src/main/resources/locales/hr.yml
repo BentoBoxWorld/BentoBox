@@ -11,7 +11,7 @@ prefixes:
   an-island: otok
   islands: ostrva
 general:
-  success: '&uspjeh!'
+  success: '<green>Uspjeh!</green>'
   invalid: Neispravno
   beta: '<light_purple><bold>Ova je naredba u beta verziji. Obavezno imate sigurnosne kopije!</bold></light_purple>'
   errors:
@@ -188,10 +188,10 @@ commands:
           <red>Upozorenje: ovaj igrač sada posjeduje [number] otoka. To je više od</red>
           dopuštenog prema postavkama ili dozvolama: [max].
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <igrač> <veličina>
+        description: postavite maksimalnu veličinu tima za igračev [prefix_island] (koristite 0 za vraćanje na zadanu vrijednost svijeta)
+        success: '<green>Postavljeno </green><aqua>[name]</aqua><green> [prefix_island] maksimalna veličina tima na </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Vraćeno </green><aqua>[name]</aqua><green> [prefix_island] maksimalna veličina tima na zadanu vrijednost svijeta (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: admin island range command
       invalid-value:
@@ -243,7 +243,7 @@ commands:
       cannot-make-island: >-
         <red>Ovdje se ne može smjestiti otok, nažalost. Pogledajte konzolu za</red>
         moguće pogreške.
-      island-is-spawn: '<gold>Otok je mrijest. Jesi li siguran? Ponovno unesite naredbu za potvrdu.</gold>'
+      island-is-spawn: '<gold>Otok je spawn. Jeste li sigurni? Ponovno unesite naredbu za potvrdu.</gold>'
     unregister:
       parameters: <vlasnik> [x,y,z]
       description: odjaviti vlasnika s otoka, ali zadržati otočne blokove
@@ -259,7 +259,7 @@ commands:
       title: '========== Informacije o otoku ============'
       island-uuid: 'UUID: [uuid]'
       owner: 'Vlasnik: [owner] ([uuid])'
-      last-login: 'Zadnja prijava: [datum]'
+      last-login: 'Zadnja prijava: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy
       deaths: 'Smrti: [number]'
       resets-left: 'Poništavanje: [number] (Maksimalno: [total])'
@@ -280,7 +280,7 @@ commands:
       purge-protected: Otok je zaštićen od čišćenja
       max-protection-range: 'Najveći povijesni raspon zaštite: [range]'
       protection-coords: 'Koordinate zaštite: [xz1] do [xz2]'
-      is-spawn: Otok je otok za mrijest
+      is-spawn: Otok je spawn otok
       banned-players: 'Zabranjeni igrači:'
       banned-format: '<red>[name]</red>'
       unowned: '<red>Neposjedovan</red>'
@@ -361,19 +361,19 @@ commands:
       xyz-error: '<red>Navedite tri cjelobrojne koordinate: npr. 100 120 100</red>'
     setspawn:
       description: postavite otok kao spawn za ovaj gamemode
-      already-spawn: '<red>Ovaj otok je već mrijest!</red>'
+      already-spawn: '<red>Ovaj otok je već spawn!</red>'
       no-island-here: '<red>Ovdje nema otoka.</red>'
       confirmation: >-
         <red>Jeste li sigurni da želite postaviti ovaj otok kao mjesto nastanka</red>
         ovog svijeta?
-      success: '<green>Uspješno postavite ovaj otok kao mrijest za ovaj svijet.</green>'
+      success: '<green>Uspješno postavite ovaj otok kao spawn za ovaj svijet.</green>'
     setspawnpoint:
-      description: postavite trenutnu lokaciju kao točku mrijesta za ovaj otok
+      description: postavite trenutnu lokaciju kao spawn točku za ovaj otok
       no-island-here: '<red>Ovdje nema otoka.</red>'
       confirmation: >-
         <red>Jeste li sigurni da želite postaviti ovu lokaciju kao točku</red>
         mriještenja za ovaj otok?
-      success: '<green>Uspješno postavite ovu lokaciju kao točku mrijesta za ovaj otok.</green>'
+      success: '<green>Uspješno postavite ovu lokaciju kao spawn točku za ovaj otok.</green>'
       island-spawnpoint-changed: '<green>[user] je promijenio točku pojavljivanja otoka.</green>'
     settings:
       parameters: >-
@@ -389,7 +389,7 @@ commands:
       file-exists: '<red>Datoteka već postoji, prepisati?</red>'
       no-such-file: '<red>Nema takve datoteke!</red>'
       could-not-load: '<red>Nije moguće učitati tu datoteku!</red>'
-      could-not-save: '<red>Hmm, nešto nije u redu prilikom spremanja te datoteke: [poruka]</red>'
+      could-not-save: '<red>Hmm, nešto nije u redu prilikom spremanja te datoteke: [message]</red>'
       set-pos1: '<green>Pozicija 1 postavljena na [vector]</green>'
       set-pos2: '<green>Položaj 2 postavljen na [vector]</green>'
       set-different-pos: '<red>Postavite drugu lokaciju - ova pozicija je već postavljena!</red>'
@@ -441,7 +441,7 @@ commands:
         parameters: <naziv nacrta> <novi naziv>
         description: preimenovati nacrt
         success: >-
-          <green>Nacrt </green><aqua>[old] </aqua><green>je uspješno preimenovan u </green><aqua>[prikaz]</aqua><green>. Naziv</green>
+          <green>Nacrt </green><aqua>[old] </aqua><green>je uspješno preimenovan u </green><aqua>[display]</aqua><green>. Naziv</green>
           datoteke sada je <aqua>[name]</aqua><green>.</green>
         pick-different-name: '<red>Navedite naziv koji se razlikuje od trenutnog naziva nacrta.</red>'
       management:
@@ -482,7 +482,7 @@ commands:
             <red>Neki su znakovi uklonjeni jer nisu dopušteni. </red><green>Novi ID će biti</green>
             <aqua>[name]</aqua><green>.</green>
           success: Uspjeh!
-          conversation-prefix: Sure, please provide the text you would like translated to Croatian.
+          conversation-prefix: '>'
         description:
           quit: prestati
           instructions: |
@@ -622,7 +622,7 @@ commands:
       players: '[prefix_bentobox]<gold>Migracija igrača</gold>'
       names: '[prefix_bentobox]<gold>Premještanje imena</gold>'
       addons: '[prefix_bentobox]<gold>Migrirajući dodaci</gold>'
-      class: '[prefix_bentobox]<gold>Migracija [opis]</gold>'
+      class: '[prefix_bentobox]<gold>Migracija [description]</gold>'
       migrated: '[prefix_bentobox]<green>Migrirano</green>'
       completed: '[prefix_bentobox]<green>Završeno</green>'
     rank:
@@ -638,7 +638,7 @@ commands:
         failure: '<red>Neuspješno uklanjanje [rank]. Nepoznata titula.</red>'
       list: '<green>Registrirane rangove su sljedeće:</green>'
   confirmation:
-    confirm: '<red>Ponovno upišite naredbu unutar </red><aqua>[sekundi]s</aqua><red>za potvrdu.</red>'
+    confirm: '<red>Ponovno upišite naredbu unutar </red><aqua>[seconds]s</aqua><red>za potvrdu.</red>'
     previous-request-cancelled: '<gold>Prethodni zahtjev za potvrdu otkazan.</gold>'
     request-cancelled: '<red>Istek potvrde - </red><aqua>zahtjev otkazan.</aqua>'
   delay:
@@ -661,8 +661,8 @@ commands:
     help:
       description: glavna otočka komanda
     spawn:
-      description: teleportirati vas u mrijest
-      teleporting: '<green>Teleportira vas u mrijest.</green>'
+      description: teleportirati vas na spawn
+      teleporting: '<green>Teleportira vas na spawn.</green>'
       no-spawn: '<red>U ovom modu igre nema spawn-a.</red>'
     create:
       description: stvorite otok, koristeći izborni nacrt (zahtijeva dopuštenje)
@@ -682,7 +682,7 @@ commands:
         estimated-time: '<green>Procijenjeno vrijeme: </green><aqua>[number] </aqua><green>sekundi.</green>'
         blocks: '<green>Izgradnja blok po blok: </green><aqua>[number] </aqua><green>blokova u svim...</green>'
         entities: '<green>Popunjavanje entitetima: </green><aqua>[number] </aqua><green>entiteta u svim...</green>'
-        dimension-done: '<green>otok u [svijetu] je izgrađen.</green>'
+        dimension-done: '<green>otok u [world] je izgrađen.</green>'
         done: '<green>Gotovo! Vaš otok je spreman i čeka vas!</green>'
       pick: '<dark_green>Odaberite otok</dark_green>'
       cannot-afford: '<red>Ne možete si to priuštiti! Cijena: [cost]</red>'
@@ -791,7 +791,7 @@ commands:
         description: prikazati detaljne informacije o vašem timu
         member-layout:
           online: '<green><bold>o </bold></green><white>[name]</white>'
-          offline: '<red><bold>o </bold></red><white>[name] </white><gray>([posljednje_viđeno])</gray>'
+          offline: '<red><bold>o </bold></red><white>[name] </white><gray>([last_seen])</gray>'
           offline-not-last-seen: '<red><bold>o </bold></red><white>[name]</white>'
         last-seen:
           layout: '<aqua>[number] </aqua><gray>[unit] prije</gray>'
@@ -972,7 +972,7 @@ commands:
       description: popis zabranjenih igrača
       noone: '<green>Nitko nije zabranjen na ovom otoku.</green>'
       the-following: '<aqua>Sljedeći igrači su zabranjeni:</aqua>'
-      names: '<red>[redak]</red>'
+      names: '<red>[line]</red>'
       you-can-ban: '<aqua>Možete zabraniti do </aqua><yellow>[number] </yellow><aqua>više igrača.</aqua>'
     settings:
       description: prikaz postavki otoka
@@ -1000,7 +1000,7 @@ ranks:
   sub-owner: Podvlasnik
   member: Član
   trusted: Pouzdan
-  coop: Kavez
+  coop: Suradnik
   visitor: Posjetitelj
   banned: zabranjeno
   admin: Administrator
@@ -1014,10 +1014,10 @@ protection:
       hint: Interakcija Allay i Copper Golem onemogućena
     ANIMAL_NATURAL_SPAWN:
       description: Uključi/isključi prirodno mriještenje životinja
-      name: Prirodni mrijest životinja
+      name: Prirodno pojavljivanje životinja
     ANIMAL_SPAWNERS_SPAWN:
-      description: Prebacivanje mriještenja životinja pomoću mrijesta
-      name: Mrijest životinja
+      description: Prebacivanje pojavljivanja životinja pomoću spawnera
+      name: Spawner životinja
     ANVIL:
       description: Uključi/isključi interakciju
       name: Nakovnji
@@ -1103,10 +1103,10 @@ protection:
       description: |-
         <green>Prebaci interakciju sa svim spremnicima.</green>
         <green>Uključuje: bačvu, pčelinju košnicu, stalak za kuhanje,</green>
-        & škrinja, komposter, dozator, kapaljka,
-        & teglica za cvijeće, peć, spremnik, okvir predmeta,
-        & jukebox, škrinja s kolicima, kutija za šulkere,
-        &zarobljena škrinja.
+        <green>škrinja, komposter, dozator, kapaljka,</green>
+        <green>teglica za cvijeće, peć, spremnik, okvir predmeta,</green>
+        <green>jukebox, škrinja s kolicima, kutija za šulkere,</green>
+        <green>zarobljena škrinja.</green>
 
         <gray>Promjena pojedinačnih postavki nadjačava</gray>
         <gray>ovu zastavu.</gray>
@@ -1123,7 +1123,7 @@ protection:
       description: Uključivanje interakcije bačve
       hint: Pristup bačvi onemogućen
     CRAFTER:
-      name: Rafter
+      name: Crafter
       description: Upotreba prebacivanja
       hint: Crafter pristup onemogućen
     BLOCK_EXPLODE_DAMAGE:
@@ -1187,10 +1187,10 @@ protection:
       hint: Interakcija lijevka onemogućena
     CHEST_DAMAGE:
       description: Uključite/isključite oštećenja prsa od eksplozija
-      name: Oštećenje prsnog koša
+      name: Oštećenje škrinja
     CHORUS_FRUIT:
       description: Uključi/isključi teleportaciju
-      name: Zbor voće
+      name: Chorus voće
       hint: Teleportiranje Chorus voća onemogućeno
     CLEAN_SUPER_FLAT:
       description: |-
@@ -1233,12 +1233,12 @@ protection:
     CREEPER_DAMAGE:
       description: |
         <green>Preklopni puzavac</green>
-        & zaštita od oštećenja
+        <green>zaštita od oštećenja</green>
       name: Zaštita od oštećenja puzavice
     CREEPER_GRIEFING:
       description: |
         <green>Uključi/isključi žalovanje puzavice</green>
-        zaštita pri paljenju
+        <green>zaštita pri paljenju</green>
         <green>od posjetitelja otoka.</green>
       name: Creeper griefing zaštita
       hint: Creeper žalovanje onemogućeno
@@ -1283,17 +1283,17 @@ protection:
         <green>Endermen će pasti</green>
         <green>bilo koji blok su</green>
         <green>holding ako je ubijen.</green>
-      name: Krajmanov pad smrti
+      name: Enderman ispuštanje pri smrti
     ENDERMAN_GRIEFING:
       description: |-
         <green>Endermen može ukloniti</green>
         <green>blokova od otoka</green>
-      name: Enderman tuguje
+      name: Enderman griefing
     ENDERMAN_TELEPORT:
       description: |-
         <green>Endermen se može teleportirati</green>
         <green>ako je aktivan.</green>
-      name: Endermanov teleport
+      name: Enderman teleportacija
     ENDER_PEARL:
       description: Uključi/isključi upotrebu
       name: EnderBiseri
@@ -1307,7 +1307,7 @@ protection:
       now-leaving: '<green>Sada napuštam </green><aqua>[name]</aqua><green>.</green>'
       now-leaving-your-island: '<green>Sada napuštam vaš otok: </green><aqua>[name]</aqua>'
     EXPERIENCE_BOTTLE_THROWING:
-      name: Doživite bacanje boce
+      name: Bacanje boca iskustva
       description: Uključi/isključi bacanje boca iskustva.
       hint: Boce iskustva onemogućene
     FIRE_BURNING:
@@ -1358,7 +1358,7 @@ protection:
       description: |-
         <green>Postavite tko može žeti usjeve.</green>
         <green>Ne zaboravite dopustiti stavku</green>
-        i preuzimanje također!
+        <green>i preuzimanje također!</green>
       name: Berba usjeva
       hint: Žetva usjeva onemogućena
     HIVE:
@@ -1382,7 +1382,7 @@ protection:
     HURT_VILLAGERS:
       description: Prebaci ranjavanje
       name: Povrijeđeni seljani
-      hint: Seljanin ozlijeđen invalid
+      hint: Ranjavanje seljana onemogućeno
     ITEM_FRAME:
       name: Okvir predmeta
       description: |-
@@ -1441,7 +1441,7 @@ protection:
       description: |-
         <green>Ograniči entitete od</green>
         <green>spawning u ovoj igri</green>
-        & način rada.
+        <green>način rada.</green>
       name: '<yellow>Ograničite stvaranje tipa entiteta</yellow>'
       can: '<green>Može se mrijestiti</green>'
       cannot: '<red>Ne može se pojaviti</red>'
@@ -1465,7 +1465,7 @@ protection:
       name: Promijeniti postavke
       description: |-
         <green>Dopusti promjenu člana</green>
-        &uloga može promijeniti postavke otoka.
+        <green>uloga može promijeniti postavke otoka.</green>
     MILKING:
       description: Uključi/isključi mužnju krava
       name: Mužnja
@@ -1478,7 +1478,7 @@ protection:
       hint: Interakcija s kolicima je onemogućena
     MONSTER_NATURAL_SPAWN:
       description: Uključi/isključi pojavu prirodnog čudovišta
-      name: Čudovišni prirodni mrijest
+      name: Prirodno pojavljivanje čudovišta
     MONSTER_SPAWNERS_SPAWN:
       description: Prebacivanje mriještenja čudovišta pomoću mriještenja
       name: Mrijesti čudovišta
@@ -1536,14 +1536,14 @@ protection:
         <green>neće poslovati na otocima</green>
         <green>gdje su svi članovi izvan mreže.</green>
         <green>Može pomoći u smanjenju kašnjenja.</green>
-        <green>Ne utječe na otok mrijesta.</green>
-      name: Offline Crvena kamenčina
+        <green>Ne utječe na spawn otok.</green>
+      name: Offline Redstone
     PETS_STAY_AT_HOME:
       description: |-
         <green>Kada je aktivan, pripitomljeni ljubimci</green>
         <green>može ići samo u i</green>
-        <green>ne može napustiti vlasnika</green>
-        odni otok.
+        <green>ne može napustiti vlasnikov</green>
+        <green>otok.</green>
       name: Kućni ljubimci ostaju kod kuće
     PISTON_PUSH:
       description: |-
@@ -1635,13 +1635,13 @@ protection:
       hint: Šišanje onemogućeno
     SPAWN_EGGS:
       description: Uključi/isključi upotrebu
-      name: Mrijest jaja
-      hint: Mrijest jaja onemogućena
+      name: Spawn jaja
+      hint: Spawn jaja onemogućena
     SPAWNER_SPAWN_EGGS:
       description: |-
         <green>Omogućuje promjenu vrste entiteta spawnera</green>
-        <green>pomoću jajašca mrijesta.</green>
-      name: Mrijest jaja na mrijestionicama
+        <green>pomoću spawn jaja.</green>
+      name: Spawn jaja na spawnerima
       hint: promjena tipa entiteta spawnera korištenjem spawn jaja nije dopuštena
     SCULK_SENSOR:
       description: |-
@@ -1686,7 +1686,7 @@ protection:
       name: Drveće raste izvan dometa
       description: |-
         <green>Uključivanje/isključivanje može li drveće rasti izvan</green>
-        Domet zaštite otoka ili ne.
+        <green>dometa zaštite otoka ili ne.</green>
         <green>Ne samo da će spriječiti postavljanje sadnica</green>
         <green>izvan dometa zaštite otoka od</green>
         <green>raste, ali će također blokirati generaciju</green>
@@ -1701,7 +1701,7 @@ protection:
       name: Frost Walker
       hint: Frost Walker onemogućen
     EXPERIENCE_PICKUP:
-      name: Doživite preuzimanje
+      name: Preuzimanje iskustva
       description: Uključi/isključi preuzimanje kugle iskustva
       hint: Preuzimanje iskustva onemogućeno
     PREVENT_TELEPORT_WHEN_FALLING:
@@ -1718,15 +1718,15 @@ protection:
         <green>predmeti i iskustvo ako umru na</green>
         <green>otok na kojem su oni posjetitelji.</green>
         <green></green>
-        Članovi <green>Islanda i dalje gube svoje predmete</green>
+        <green>Članovi otoka i dalje gube svoje predmete</green>
         <green>ako umru na vlastitom otoku!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Zaštita od praznine na spawn otoku
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Kada je omogućeno, igrači koji padnu</green>
+        <green>u prazninu na spawn otoku</green>
+        <green>bit će teleportirani natrag na</green>
+        <green>točku pojavljivanja umjesto da umru.</green>
     RAID_TRIGGER:
       name: Pokretanje racije
       description: Postavlja minimalni rang otoka potreban za pokretanje racije
@@ -1745,9 +1745,9 @@ protection:
         <green>koristiti vjetrene naboje na ovom otoku.</green>
       hint: Upotreba vjetrenih naboja onemogućena
     WITHER_DAMAGE:
-      name: Prebaci oštećenje venuća
+      name: Prebaci Wither oštećenje
       description: |-
-        <green>Ako je aktivan, greben može</green>
+        <green>Ako je aktivan, Wither može</green>
         <green>oštetiti blokove i igrače</green>
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
@@ -1763,9 +1763,9 @@ protection:
       name: Svjetska TNT šteta
   locked: '<red>Ovaj otok je zaključan!</red>'
   locked-island-bypass: '<gold>Ovaj [prefix_island] je zaključan, ali imate dozvolu za pristup.</gold>'
-  protected: '<red>Otok zaštićen: [opis].</red>'
-  world-protected: '<red>Svijet zaštićen: [opis].</red>'
-  spawn-protected: '<red>Spawn zaštićeno: [opis].</red>'
+  protected: '<red>Otok zaštićen: [description].</red>'
+  world-protected: '<red>Svijet zaštićen: [description].</red>'
+  spawn-protected: '<red>Spawn zaštićeno: [description].</red>'
   panel:
     next: '<white>Sljedeća stranica</white>'
     previous: '<white>Prethodna stranica</white>'
@@ -1779,12 +1779,12 @@ protection:
       expert:
         name: '<red>Stručne postavke</red>'
         description: '<green>Prikazuje sve dostupne postavke.</green>'
-      click-to-switch: '<yellow>Kliknite </yellow><gray>za prebacivanje na </gray>[sljedeće]<gray>.</gray>'
+      click-to-switch: '<yellow>Kliknite </yellow><gray>za prebacivanje na </gray>[next]<gray>.</gray>'
     reset-to-default:
       name: '<red>Vrati na zadano</red>'
       description: |
         <green>Resetira </green><red><bold>SVE </bold></red><green>postavke na njihove</green>
-        &zadana vrijednost.
+        <green>zadana vrijednost.</green>
       confirm: potvrdi
       instructions: '<green>Jeste li sigurni? Upisite </green><red>"potvrdi" </red><green>da biste resetirali sve.</green>'
     PROTECTION:
@@ -1798,15 +1798,15 @@ protection:
         <green>Opće postavke</green>
         <green>za ovaj otok</green>
     WORLD_SETTING:
-      title: '<aqua>[ime_svijeta] </aqua><gold>Postavke</gold>'
+      title: '<aqua>[world_name] </aqua><gold>Postavke</gold>'
       description: '<green>Postavke za ovaj svijet igre</green>'
     WORLD_DEFAULTS:
       title: '<aqua>[world_name] </aqua><gold>Svjetske zaštite</gold>'
       description: |
         <green>Postavke zaštite kada</green>
-        & igrač je izvan svog otoka
+        <green>igrač je izvan svog otoka</green>
     flag-item:
-      name-layout: '&ime]'
+      name-layout: '<green>[name]</green>'
       command-instructions:
         setname: |-
           <green>Odaberite rang koji može</green>
@@ -1860,7 +1860,7 @@ protection:
           <green>Odaberite rang koji može</green>
           <green>koristiti naredbu za granicu</green>
       description-layout: |
-        <italic>pis]</italic>
+        <green>[description]</green>
 
         <yellow>Lijevi klik </yellow><gray>za kretanje prema dolje.</gray>
         <yellow>Desni klik </yellow><gray>za kretanje prema gore.</gray>
@@ -1870,16 +1870,16 @@ protection:
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <italic>pis]</italic>
+        <green>[description]</green>
 
         <yellow>Kliknite </yellow><gray>za otvaranje.</gray>
       setting-cooldown: '<red>Postavka je na hlađenju</red>'
       setting-layout: |
-        <italic>pis]</italic>
+        <green>[description]</green>
 
         <yellow>Kliknite </yellow><gray>za prebacivanje.</gray>
 
-        <gray>Trenutna postavka: [postavka]</gray>
+        <gray>Trenutna postavka: [setting]</gray>
       setting-active: '<green>Aktivan</green>'
       setting-disabled: '<red>Onemogućeno</red>'
 management:
@@ -1895,7 +1895,7 @@ management:
         gamemode:
           name: '<white>[name]</white>'
           description: |
-            <green>Otoci: </green><aqua>[otoci]</aqua>
+            <green>Otoci: </green><aqua>[islands]</aqua>
       addons:
         name: '<gold>Dodaci</gold>'
         description: '<yellow>Kliknite </yellow><green>za prikaz trenutno učitanih dodataka</green>'
@@ -1973,16 +1973,16 @@ catalog:
         name: '<gold>Dodaci</gold>'
         description: |
           <yellow>Kliknite </yellow><green>za pregledavanje</green>
-          & dostupni službeni dodaci.
+          <green>dostupni službeni dodaci.</green>
     icon:
       description-template: |
-        <dark_gray>[tema]</dark_gray>
-        <green>[instaliraj]</green>
+        <dark_gray>[topic]</dark_gray>
+        <green>[install]</green>
 
-        <gray><italic>[opis]</italic></gray>
+        <gray><italic>[description]</italic></gray>
 
         <yellow>Kliknite </yellow><green>da biste dobili vezu na</green>
-        & najnovije izdanje.
+        <green>najnovije izdanje.</green>
       already-installed: Već instalirano!
       install-now: Sada instalirati!
     empty-here:
@@ -1995,8 +1995,8 @@ catalog:
 enums:
   DamageCause:
     CONTACT: Kontakt
-    ENTITY_ATTACK: Napad mafije
-    ENTITY_SWEEP_ATTACK: Napad s metlom
+    ENTITY_ATTACK: Napad entiteta
+    ENTITY_SWEEP_ATTACK: Zamašni napad
     PROJECTILE: Projektil
     SUFFOCATION: Gušenje
     FALL: Pad
@@ -2005,15 +2005,15 @@ enums:
     MELTING: Topljenje
     LAVA: Lava
     DROWNING: Utapanje
-    BLOCK_EXPLOSION: Blokiraj eksploziju
+    BLOCK_EXPLOSION: Eksplozija bloka
     ENTITY_EXPLOSION: Eksplozija entiteta
-    VOID: Poništiti
+    VOID: Praznina
     LIGHTNING: Munja
     SUICIDE: Samoubojstvo
     STARVATION: Gladovanje
     POISON: Otrov
-    MAGIC: magija
-    WITHER: uvenuti
+    MAGIC: Magija
+    WITHER: Wither
     FALLING_BLOCK: Padajući blok
     THORNS: Trnje
     DRAGON_BREATH: Zmajev dah
@@ -2124,4 +2124,4 @@ successfully-loaded: >
   |_) | ___ _ __ | |_ ___ | |_) | _____ __ <gray>2017. - 2023 </gray><gold>| _ < / _ \ '_ \|</gold>
   __/ _ \| _ < / _ \ \/ / <gold>| |_) | __/ | | | || (_) | |_) | (_) > < </gold><aqua>v</aqua><yellow></yellow>
   [version] <gold>|____/ \___|_| |_|\__\___/|____/ \___/_/\_\ </gold><dark_gray>Učitano za </dark_gray><yellow></yellow>
-  [vrijeme]<dark_gray>ms.</dark_gray>
+  [time]<dark_gray>ms.</dark_gray>
