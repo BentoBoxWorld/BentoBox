@@ -1791,6 +1791,11 @@ protection:
       description: |
         <green>Protection settings when</green>
         <green>player is outside their [prefix_island]</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Island Defaults</gold>'
+      description: |
+        <green>Default protection settings</green>
+        <green>for new [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       # Add commands to this list as required

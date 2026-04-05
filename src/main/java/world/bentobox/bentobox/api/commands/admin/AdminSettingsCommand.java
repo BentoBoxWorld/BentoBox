@@ -21,6 +21,7 @@ import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.panels.settings.IslandDefaultSettingsTab;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.panels.settings.WorldDefaultSettingsTab;
 import world.bentobox.bentobox.util.Util;
@@ -224,6 +225,7 @@ public class AdminSettingsCommand extends CompositeCommand {
             .world(getWorld())
                     .tab(1, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING, Flag.Mode.EXPERT))
             .tab(2, new WorldDefaultSettingsTab(getWorld(), user))
+            .tab(3, new IslandDefaultSettingsTab(getWorld(), user))
             .startingSlot(1)
             .size(54)
             .build().openPanel();
