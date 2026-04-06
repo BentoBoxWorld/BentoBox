@@ -132,18 +132,12 @@ public class PanelItem {
             return;
         }
         if (meta != null) {
-            try {
-                meta.setEnchantmentGlintOverride(glow);
-            } catch (NoSuchMethodError e) {
-                // Try the old way
-                if (meta != null) {
-                    if (glow) {
-                        meta.addEnchant(Enchantment.LURE, 0, glow);
-                    } else {
-                        meta.removeEnchant(Enchantment.LURE);
-                    }
-                    icon.setItemMeta(meta);
-                }
+            // 1.20.4 backport: setEnchantmentGlintOverride was added in 1.20.5,
+            // so always use the legacy enchant trick.
+            if (glow) {
+                meta.addEnchant(Enchantment.LURE, 0, true);
+            } else {
+                meta.removeEnchant(Enchantment.LURE);
             }
             icon.setItemMeta(meta);
 
