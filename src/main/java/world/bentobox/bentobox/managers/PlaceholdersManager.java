@@ -2,6 +2,7 @@ package world.bentobox.bentobox.managers;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.user.User;
@@ -137,6 +139,8 @@ public class PlaceholdersManager {
         registerTeamMemberPlaceholders(addon);
         // Register potential island names and member info
         registerOwnedIslandPlaceholders(addon);
+        // Register flag placeholders for all currently registered flags
+        registerFlagPlaceholders(addon);
     }
 
     private void registerOwnedIslandPlaceholders(@NonNull GameModeAddon addon) {
@@ -443,6 +447,85 @@ public class PlaceholdersManager {
      */
     public void unregisterAll() {
         getPlaceholderAPIHook().ifPresent(PlaceholderAPIHook::unregisterAll);
+    }
+
+    // -------------------------------------------------------------------------
+    // Flag placeholders
+    // -------------------------------------------------------------------------
+
+    /**
+     * Registers flag placeholders for all currently registered flags.
+     * <p>
+     * For each flag, a placeholder named {@code flag_<FLAG_ID_LOWERCASE>} is registered.
+     * The value depends on the flag type:
+     * <ul>
+     *     <li>{@link Flag.Type#PROTECTION} — returns the translated rank name of the minimum rank allowed</li>
+     *     <li>{@link Flag.Type#SETTING} — returns {@code true} or {@code false}</li>
+     *     <li>{@link Flag.Type#WORLD_SETTING} — returns {@code true} or {@code false}</li>
+     * </ul>
+     *
+     * @param addon the game mode addon to register flag placeholders for
+     * @since 3.13.0
+     */
+    private void registerFlagPlaceholders(@NonNull GameModeAddon addon) {
+        if (plugin.getFlagsManager() == null) {
+            return;
+        }
+        plugin.getFlagsManager().getFlags().forEach(flag -> registerFlagPlaceholder(addon, flag));
+    }
+
+    /**
+     * Registers a single flag placeholder for a game mode addon.
+     * <p>
+     * The placeholder name is {@code flag_<FLAG_ID_LOWERCASE>}. If a placeholder
+     * with that name is already registered for the addon, this method does nothing.
+     *
+     * @param addon the game mode addon
+     * @param flag the flag to register a placeholder for
+     * @since 3.13.0
+     */
+    public void registerFlagPlaceholder(@NonNull GameModeAddon addon, @NonNull Flag flag) {
+        String placeholderName = "flag_" + flag.getID().toLowerCase(Locale.ENGLISH);
+        if (isPlaceholder(addon, placeholderName)) {
+            return;
+        }
+        String description = getFlagPlaceholderDescription(flag);
+        registerPlaceholder(addon, placeholderName, description, user -> resolveFlagValue(addon, user, flag));
+    }
+
+    private String getFlagPlaceholderDescription(@NonNull Flag flag) {
+        return switch (flag.getType()) {
+            case PROTECTION ->
+                    "Minimum rank required for " + flag.getID() + " on the player's island";
+            case SETTING ->
+                    "Whether " + flag.getID() + " is enabled on the player's island (true/false)";
+            case WORLD_SETTING ->
+                    "Whether " + flag.getID() + " is enabled in the world (true/false)";
+        };
+    }
+
+    private String resolveFlagValue(@NonNull GameModeAddon addon, @Nullable User user, @NonNull Flag flag) {
+        if (flag.getType() == Flag.Type.WORLD_SETTING) {
+            return String.valueOf(flag.isSetForWorld(addon.getOverWorld()));
+        }
+        // SETTING and PROTECTION flags need the island
+        if (user == null) {
+            return "";
+        }
+        Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
+        if (island == null) {
+            return "";
+        }
+        if (flag.getType() == Flag.Type.SETTING) {
+            return String.valueOf(island.isAllowed(flag));
+        }
+        // PROTECTION flag - return the translated rank name
+        int rankValue = island.getFlag(flag);
+        String rankRef = RanksManager.getInstance().getRank(rankValue);
+        if (rankRef.isEmpty()) {
+            return "";
+        }
+        return user.getTranslationOrNothing(rankRef);
     }
 
     // -------------------------------------------------------------------------
