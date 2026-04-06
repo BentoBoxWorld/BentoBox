@@ -114,11 +114,12 @@ public class ObsidianScoopingListener extends FlagListener {
         if (!getIWM().inWorld(b.getLocation()) || !Flags.OBSIDIAN_SCOOPING.isSetForWorld(b.getWorld())) {
             return false;
         }
-        int duration = BentoBox.getInstance().getSettings().getObsidianScoopingLavaTipDuration();
+        BentoBox bentoBox = BentoBox.getInstance();
+        int duration = bentoBox.getSettings().getObsidianScoopingLavaTipDuration();
         if (duration <= 0) {
             return false;
         }
-        int radius = BentoBox.getInstance().getSettings().getObsidianScoopingRadius();
+        int radius = bentoBox.getSettings().getObsidianScoopingRadius();
         // Check if this obsidian is solitary (could be scooped)
         if (radius > 0 && getBlocksAround(b, radius).stream().anyMatch(block -> block.getType().equals(Material.OBSIDIAN))) {
             return false;
@@ -129,7 +130,7 @@ public class ObsidianScoopingListener extends FlagListener {
             return false;
         }
         // Get the lava tip text from the locale
-        String tipText = BentoBox.getInstance().getLocalesManager().getOrDefault(LAVA_TIP_REFERENCE, "");
+        String tipText = bentoBox.getLocalesManager().getOrDefault(LAVA_TIP_REFERENCE, "");
         if (tipText.isEmpty()) {
             return false;
         }
@@ -142,7 +143,7 @@ public class ObsidianScoopingListener extends FlagListener {
             td.setGravity(false);
         });
         // Schedule removal after the configured duration
-        Bukkit.getScheduler().runTaskLater(BentoBox.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(bentoBox, () -> {
             if (hologram.isValid()) {
                 hologram.remove();
             }
