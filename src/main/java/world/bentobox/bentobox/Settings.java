@@ -402,6 +402,13 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.obsidian-scooping-cooldown", since = "3.11.4")
     private int obsidianScoopingCooldown = 1;
 
+    @ConfigComment("How long (in seconds) to show a hologram tip above newly formed obsidian")
+    @ConfigComment("that can be scooped back into lava. The hologram reminds players they can")
+    @ConfigComment("right-click obsidian with an empty bucket to recover lava.")
+    @ConfigComment("Set to 0 or less to disable the tip entirely. Default is 30 seconds.")
+    @ConfigEntry(path = "island.obsidian-scooping-lava-tip-duration", since = "3.12.0")
+    private int obsidianScoopingLavaTipDuration = 30;
+
     /* WEB */
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
     @ConfigComment("Disabling this will result in the deactivation of the update checker and of some other")
@@ -1241,6 +1248,28 @@ public class Settings implements ConfigObject {
      */
     public void setObsidianScoopingCooldown(int obsidianScoopingCooldown) {
         this.obsidianScoopingCooldown = Math.max(1, obsidianScoopingCooldown);
+    }
+
+    /**
+     * Gets the duration (in seconds) for showing the lava tip hologram above
+     * newly formed obsidian blocks that can be scooped.
+     *
+     * @return the lava tip duration in seconds; 0 or less means disabled
+     * @since 3.12.0
+     */
+    public int getObsidianScoopingLavaTipDuration() {
+        return obsidianScoopingLavaTipDuration;
+    }
+
+    /**
+     * Sets the duration (in seconds) for showing the lava tip hologram above
+     * newly formed obsidian blocks that can be scooped.
+     *
+     * @param obsidianScoopingLavaTipDuration the duration in seconds; 0 or less disables
+     * @since 3.12.0
+     */
+    public void setObsidianScoopingLavaTipDuration(int obsidianScoopingLavaTipDuration) {
+        this.obsidianScoopingLavaTipDuration = obsidianScoopingLavaTipDuration;
     }
 
     /**

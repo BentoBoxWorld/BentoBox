@@ -1508,6 +1508,7 @@ protection:
       cooldown: '<red>You must wait before scooping another obsidian block.</red>'
       obsidian-nearby: '<red>There are obsidian blocks within a [radius]-block radius
         of this obsidian. You cannot scoop it up into lava.</red>'
+      lavaTip: '<green>Scoop this up as lava with a bucket if you need it!</green>'
     OFFLINE_GROWTH:
       description: |-
         <green>When disabled, plants</green>
