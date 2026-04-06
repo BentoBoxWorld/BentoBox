@@ -405,9 +405,9 @@ public class Settings implements ConfigObject {
     @ConfigComment("How long (in seconds) to show a hologram tip above newly formed obsidian")
     @ConfigComment("that can be scooped back into lava. The hologram reminds players they can")
     @ConfigComment("right-click obsidian with an empty bucket to recover lava.")
-    @ConfigComment("Set to 0 or less to disable the tip entirely. Default is 30 seconds.")
-    @ConfigEntry(path = "island.obsidian-scooping-lava-tip-duration", since = "3.12.0")
-    private int obsidianScoopingLavaTipDuration = 30;
+    @ConfigComment("Set to 0 or less to disable the tip entirely. Default is 5 seconds.")
+    @ConfigEntry(path = "island.obsidian-scooping-lava-tip-duration", since = "3.14.0")
+    private int obsidianScoopingLavaTipDuration = 5;
 
     /* WEB */
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
