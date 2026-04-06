@@ -202,10 +202,10 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
      * Resolves the base data folder for a world, accounting for the dimension
      * subfolder layout.
      * <p>
-     * <b>Pre-26.1 (old format):</b> Nether data lives in {@code DIM-1/} and
+     * <b>Pre-Minecraft version 26.1 (old format):</b> Nether data lives in {@code DIM-1/} and
      * End data lives in {@code DIM1/} subfolders inside the world folder.
      * <p>
-     * <b>26.1.1+ (new format):</b> Each dimension has its own world folder
+     * <b>Minecraft version 26.1.1+ (new format):</b> Each dimension has its own world folder
      * under {@code dimensions/minecraft/} and data (region/, entities/, poi/)
      * lives directly in it — no DIM-1/DIM1 subfolders.
      *
