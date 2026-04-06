@@ -37,6 +37,7 @@ import org.bukkit.util.RayTraceResult;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -291,6 +292,8 @@ class ObsidianScoopingListenerTest extends CommonTestSetup {
 
     @Test
     void testObsidianFormSolitaryShowsHologram() {
+        // Set duration explicitly so the scheduled tick count is deterministic
+        plugin.getSettings().setObsidianScoopingLavaTipDuration(30);
         // Set up solitary obsidian (no nearby obsidian)
         Block airBlock = mock(Block.class);
         when(airBlock.getType()).thenReturn(Material.AIR);
@@ -318,6 +321,48 @@ class ObsidianScoopingListenerTest extends CommonTestSetup {
         verify(world).spawn(any(Location.class), eq(TextDisplay.class), any(Consumer.class));
         // Verify a delayed removal task was scheduled (30 seconds = 600 ticks)
         verify(sch).runTaskLater(any(), any(Runnable.class), eq(600L));
+    }
+
+    @Test
+    void testScoopingRemovesActiveHologramImmediately() {
+        // Spawn a hologram via BlockFormEvent
+        plugin.getSettings().setObsidianScoopingLavaTipDuration(30);
+        Block airBlock = mock(Block.class);
+        when(airBlock.getType()).thenReturn(Material.AIR);
+        when(world.getBlockAt(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(airBlock);
+
+        LocalesManager localesManager = mock(LocalesManager.class);
+        when(plugin.getLocalesManager()).thenReturn(localesManager);
+        when(localesManager.getOrDefault(any(String.class), any(String.class)))
+                .thenReturn("<green>Scoop this up!</green>");
+
+        TextDisplay mockHologram = mock(TextDisplay.class);
+        when(mockHologram.isValid()).thenReturn(true);
+        when(world.spawn(any(Location.class), eq(TextDisplay.class), any(Consumer.class))).thenReturn(mockHologram);
+
+        BukkitTask mockTask = mock(BukkitTask.class);
+        when(sch.runTaskLater(any(), any(Runnable.class), anyLong())).thenReturn(mockTask);
+
+        BlockFormEvent formEvent = createBlockFormEvent(Material.OBSIDIAN);
+        assertTrue(listener.handleObsidianForm(formEvent));
+
+        // Now scoop the same obsidian block; clickedBlock must report the same Location key
+        when(clickedBlock.getLocation()).thenReturn(location);
+        when(item.getType()).thenReturn(Material.BUCKET);
+        when(clickedBlock.getType()).thenReturn(Material.OBSIDIAN);
+
+        PlayerInteractEvent interactEvent = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item,
+                clickedBlock, BlockFace.EAST);
+        assertTrue(listener.onPlayerInteract(interactEvent));
+
+        // The scheduled task captured by runTask runs givePlayerLava synchronously in
+        // production via Bukkit; in this test we invoke it manually.
+        ArgumentCaptor<Runnable> runCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(sch).runTask(any(), runCaptor.capture());
+        runCaptor.getValue().run();
+
+        // Hologram should have been removed immediately upon scooping
+        verify(mockHologram).remove();
     }
 
     @Test

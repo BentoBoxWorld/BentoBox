@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
@@ -61,6 +62,12 @@ public class ObsidianScoopingListener extends FlagListener {
      */
     @SuppressWarnings("java:S3077") // volatile is correct here for double-checked locking lazy init
     private volatile ExpiringSet<UUID> cooldowns;
+
+    /**
+     * Active lava-tip holograms keyed by the obsidian block's location, so they can be
+     * removed immediately if the obsidian is scooped before the timed removal fires.
+     */
+    private final Map<Location, TextDisplay> activeHolograms = new ConcurrentHashMap<>();
 
     /**
      * Returns the cooldown set, initializing it lazily on first use with the
@@ -142,13 +149,31 @@ public class ObsidianScoopingListener extends FlagListener {
             td.setSeeThrough(true);
             td.setGravity(false);
         });
+        Location key = b.getLocation();
+        // Replace any existing hologram tracked at this location
+        TextDisplay previous = activeHolograms.put(key, hologram);
+        if (previous != null && previous.isValid()) {
+            previous.remove();
+        }
         // Schedule removal after the configured duration
         Bukkit.getScheduler().runTaskLater(bentoBox, () -> {
-            if (hologram.isValid()) {
+            if (activeHolograms.remove(key, hologram) && hologram.isValid()) {
                 hologram.remove();
             }
         }, duration * 20L);
         return true;
+    }
+
+    /**
+     * Removes any active lava-tip hologram associated with the given obsidian block.
+     *
+     * @param b the obsidian block being scooped
+     */
+    private void removeHologramFor(Block b) {
+        TextDisplay hologram = activeHolograms.remove(b.getLocation());
+        if (hologram != null && hologram.isValid()) {
+            hologram.remove();
+        }
     }
 
     /**
@@ -251,6 +276,8 @@ public class ObsidianScoopingListener extends FlagListener {
         }
         // Set block to air only after giving bucket
         b.setType(Material.AIR);
+        // Remove the lava tip hologram, if any, since the obsidian is gone
+        removeHologramFor(b);
     }
 
     private List<Block> getBlocksAround(Block b, int radius) {
