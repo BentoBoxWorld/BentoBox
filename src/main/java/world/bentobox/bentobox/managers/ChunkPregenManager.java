@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import world.bentobox.bentobox.BentoBox;
@@ -44,21 +45,58 @@ public class ChunkPregenManager implements Listener {
     private final List<World> activeWorlds = new ArrayList<>();
     private BukkitTask schedulerTask;
     private int roundRobinIndex;
+    /** Set true once {@link BentoBoxReadyEvent} has fired. */
+    private boolean bentoBoxReady;
+    /** Set true once {@link ServerLoadEvent} has fired (server has finished starting/reloading). */
+    private boolean serverLoaded;
+    /** Guards against running the initial pregen sweep more than once. */
+    private boolean initialPregenDone;
 
     public ChunkPregenManager(BentoBox plugin) {
         this.plugin = plugin;
     }
 
     /**
-     * Starts pre-generation for all game mode addons when BentoBox is fully loaded.
+     * Records that BentoBox is ready and tries to kick off the initial pre-gen sweep.
+     * Actual scheduling is deferred until the server has also finished starting up
+     * (see {@link #onServerLoad(ServerLoadEvent)}) so that the expensive chunk
+     * enumeration never runs on the main thread during startup.
      *
      * @param e the ready event
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
-        if (!plugin.getSettings().isPregenEnabled()) {
+        bentoBoxReady = true;
+        tryStartInitialPregen();
+    }
+
+    /**
+     * Marks the server as loaded and tries to kick off the initial pre-gen sweep.
+     * Fires on {@link ServerLoadEvent} which Paper dispatches once the server has
+     * finished its startup (or reload) sequence — at that point main-thread
+     * chunk calls are no longer blocked waiting on region/IO workers.
+     *
+     * @param e the server load event
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onServerLoad(ServerLoadEvent e) {
+        serverLoaded = true;
+        tryStartInitialPregen();
+    }
+
+    /**
+     * Runs the one-shot "schedule pregen for every game mode addon" pass, but only
+     * once both the BentoBox ready event and the server load event have fired.
+     */
+    private void tryStartInitialPregen() {
+        if (initialPregenDone || !bentoBoxReady || !serverLoaded) {
             return;
         }
+        if (!plugin.getSettings().isPregenEnabled()) {
+            initialPregenDone = true;
+            return;
+        }
+        initialPregenDone = true;
         plugin.getAddonsManager().getGameModeAddons().forEach(this::schedulePregen);
         startTask();
     }
@@ -150,7 +188,11 @@ public class ChunkPregenManager implements Listener {
             int centerChunkX = center.getBlockX() >> 4;
             int centerChunkZ = center.getBlockZ() >> 4;
 
-            // Collect chunks per world
+            // Collect chunks per world. Do NOT call Util.isChunkGenerated here — on a
+            // freshly started server that method blocks the main thread waiting for
+            // region/IO workers, and doing thousands of sequential calls stalls the
+            // server for 10+ seconds. The tick-time probe (see tick()) uses an async
+            // variant that won't block the main thread.
             List<List<ChunkCoord>> perWorld = new ArrayList<>();
             for (World w : worlds) {
                 List<ChunkCoord> chunks = new ArrayList<>();
@@ -158,9 +200,7 @@ public class ChunkPregenManager implements Listener {
                     for (int dz = -viewDistance; dz <= viewDistance; dz++) {
                         int cx = centerChunkX + dx;
                         int cz = centerChunkZ + dz;
-                        if (!Util.isChunkGenerated(w, cx, cz)) {
-                            chunks.add(new ChunkCoord(w, cx, cz));
-                        }
+                        chunks.add(new ChunkCoord(w, cx, cz));
                     }
                 }
                 perWorld.add(chunks);
@@ -293,11 +333,16 @@ public class ChunkPregenManager implements Listener {
             int batchSize = Math.max(1, chunksPerTick / activeWorlds.size());
             for (int i = 0; i < batchSize && dispatched < chunksPerTick && !queue.isEmpty(); i++) {
                 ChunkCoord coord = queue.poll();
-                // Double-check: skip if already generated since queueing
-                if (!Util.isChunkGenerated(coord.world(), coord.chunkX(), coord.chunkZ())) {
-                    Util.getChunkAtAsync(coord.world(), coord.chunkX(), coord.chunkZ());
-                    dispatched++;
-                }
+                // Async probe first (gen=false). If the chunk doesn't yet exist the
+                // future completes with null — then we fire the real generation call.
+                // Both legs are off the main thread on Paper, so no blocking occurs.
+                Util.getChunkAtAsync(coord.world(), coord.chunkX(), coord.chunkZ(), false)
+                    .thenAccept(existing -> {
+                        if (existing == null) {
+                            Util.getChunkAtAsync(coord.world(), coord.chunkX(), coord.chunkZ(), true);
+                        }
+                    });
+                dispatched++;
             }
 
             roundRobinIndex++;

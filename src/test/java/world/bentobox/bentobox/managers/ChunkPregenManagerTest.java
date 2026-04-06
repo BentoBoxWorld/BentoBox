@@ -2,6 +2,7 @@ package world.bentobox.bentobox.managers;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -18,6 +19,7 @@ import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,6 +55,8 @@ class ChunkPregenManagerTest extends CommonTestSetup {
     private IslandResettedEvent resettedEvent;
     @Mock
     private BentoBoxReadyEvent readyEvent;
+    @Mock
+    private ServerLoadEvent serverLoadEvent;
 
     private ChunkPregenManager manager;
     private Settings settings;
@@ -102,6 +106,8 @@ class ChunkPregenManagerTest extends CommonTestSetup {
         mockedUtil.when(() -> Util.isChunkGenerated(any(World.class), anyInt(), anyInt())).thenReturn(false);
         mockedUtil.when(() -> Util.getChunkAtAsync(any(World.class), anyInt(), anyInt()))
                   .thenReturn(CompletableFuture.completedFuture(null));
+        mockedUtil.when(() -> Util.getChunkAtAsync(any(World.class), anyInt(), anyInt(), anyBoolean()))
+                  .thenReturn(CompletableFuture.completedFuture(null));
 
         // plugin.log() — avoid NPE; real Settings already wired by CommonTestSetup
         doNothing().when(plugin).log(anyString());
@@ -134,14 +140,34 @@ class ChunkPregenManagerTest extends CommonTestSetup {
     @Test
     void testOnBentoBoxReady_pregenDisabled() {
         settings.setPregenEnabled(false);
+        manager.onServerLoad(serverLoadEvent);
         manager.onBentoBoxReady(readyEvent);
         verify(sch, never()).runTaskTimer(any(), any(Runnable.class), anyLong(), anyLong());
     }
 
     @Test
     void testOnBentoBoxReady_pregenEnabled() {
+        manager.onServerLoad(serverLoadEvent);
         manager.onBentoBoxReady(readyEvent);
         verify(sch).runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong());
+    }
+
+    @Test
+    void testOnBentoBoxReady_deferredUntilServerLoaded() {
+        // Ready event alone should NOT schedule anything — the server hasn't loaded yet
+        manager.onBentoBoxReady(readyEvent);
+        verify(sch, never()).runTaskTimer(any(), any(Runnable.class), anyLong(), anyLong());
+
+        // Once the server reports loaded, the initial sweep should run
+        manager.onServerLoad(serverLoadEvent);
+        verify(sch).runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong());
+    }
+
+    @Test
+    void testOnServerLoad_beforeReadyEvent_noSchedule() {
+        // Server load alone without the ready event should not schedule
+        manager.onServerLoad(serverLoadEvent);
+        verify(sch, never()).runTaskTimer(any(), any(Runnable.class), anyLong(), anyLong());
     }
 
     // -----------------------------------------------------------------------
@@ -235,8 +261,8 @@ class ChunkPregenManagerTest extends CommonTestSetup {
         verify(sch).runTaskTimer(eq(plugin), cap.capture(), anyLong(), anyLong());
         cap.getValue().run();
 
-        // At least one chunk async request should have been made
-        mockedUtil.verify(() -> Util.getChunkAtAsync(any(World.class), anyInt(), anyInt()),
+        // At least one async chunk probe should have been issued (gen=false leg)
+        mockedUtil.verify(() -> Util.getChunkAtAsync(any(World.class), anyInt(), anyInt(), anyBoolean()),
                 org.mockito.Mockito.atLeastOnce());
     }
 
@@ -277,11 +303,12 @@ class ChunkPregenManagerTest extends CommonTestSetup {
     }
 
     @Test
-    void testSchedulePregen_allChunksAlreadyGenerated_noTask() {
-        // If every chunk is already generated the queue stays empty → no task
-        mockedUtil.when(() -> Util.isChunkGenerated(any(World.class), anyInt(), anyInt())).thenReturn(true);
+    void testSchedulePregen_doesNotCallIsChunkGeneratedOnMainThread() {
+        // Regression guard: schedulePregen must never call the blocking
+        // Util.isChunkGenerated — doing so on startup stalls the main thread
+        // for 10+ seconds because CraftWorld.isChunkGenerated blocks on IO workers.
         manager.schedulePregen(addon);
-        verify(sch, never()).runTaskTimer(any(), any(Runnable.class), anyLong(), anyLong());
+        mockedUtil.verify(() -> Util.isChunkGenerated(any(World.class), anyInt(), anyInt()), never());
     }
 
     // -----------------------------------------------------------------------
@@ -371,8 +398,8 @@ class ChunkPregenManagerTest extends CommonTestSetup {
 
         cap.getValue().run(); // one tick
 
-        // Verify async chunk requests were issued
-        mockedUtil.verify(() -> Util.getChunkAtAsync(any(World.class), anyInt(), anyInt()),
+        // Verify async chunk probes were issued (new 4-arg form with gen=false)
+        mockedUtil.verify(() -> Util.getChunkAtAsync(any(World.class), anyInt(), anyInt(), anyBoolean()),
                 org.mockito.Mockito.atLeastOnce());
     }
 }
