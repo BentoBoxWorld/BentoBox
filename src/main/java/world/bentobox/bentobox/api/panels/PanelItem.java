@@ -52,6 +52,7 @@ public class PanelItem {
             meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
             meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             icon.setItemMeta(meta);
         }
 
@@ -227,6 +228,7 @@ public class PanelItem {
             meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
             meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
 
             if (originalMeta != null && originalMeta.hasCustomModelDataComponent()) {
                 meta.setCustomModelDataComponent(originalMeta.getCustomModelDataComponent());

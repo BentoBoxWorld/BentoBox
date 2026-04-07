@@ -212,6 +212,7 @@ class PanelItemTest extends CommonTestSetup {
         verify(itemMeta).addItemFlags(ItemFlag.HIDE_DESTROYS);
         verify(itemMeta).addItemFlags(ItemFlag.HIDE_PLACED_ON);
         verify(itemMeta).addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        verify(itemMeta).addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         verify(ph, times(3)).setItemMeta(itemMeta);
     }
 
