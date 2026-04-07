@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,6 +94,25 @@ class LegacyToMiniMessageTest extends CommonTestSetup {
         assertFalse(plainText.contains("<bold>"),
                 "Round-trip should not produce literal <bold>: " + plainText);
         assertEquals("Resets ALL the settings to their", plainText);
+
+        // Inspect the children of the round-tripped component: only the "ALL " segment
+        // may be bold. Bold must NOT leak into "the settings to their".
+        StringBuilder boldText = new StringBuilder();
+        collectBoldText(finalComp, false, boldText);
+        assertEquals("ALL ", boldText.toString(),
+                "Bold should only apply to 'ALL ', not leak into following segments");
+    }
+
+    private static void collectBoldText(Component component, boolean inheritedBold, StringBuilder out) {
+        TextDecoration.State state = component.decoration(TextDecoration.BOLD);
+        boolean effective = state == TextDecoration.State.TRUE
+                || (state == TextDecoration.State.NOT_SET && inheritedBold);
+        if (component instanceof net.kyori.adventure.text.TextComponent text && effective) {
+            out.append(text.content());
+        }
+        for (Component child : component.children()) {
+            collectBoldText(child, effective, out);
+        }
     }
 
     /**
