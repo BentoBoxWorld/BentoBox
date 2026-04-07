@@ -104,14 +104,51 @@ class LegacyToMiniMessageTest extends CommonTestSetup {
     }
 
     private static void collectBoldText(Component component, boolean inheritedBold, StringBuilder out) {
-        TextDecoration.State state = component.decoration(TextDecoration.BOLD);
+        collectDecoratedText(component, TextDecoration.BOLD, inheritedBold, out);
+    }
+
+    private static void collectDecoratedText(Component component, TextDecoration deco, boolean inherited, StringBuilder out) {
+        TextDecoration.State state = component.decoration(deco);
         boolean effective = state == TextDecoration.State.TRUE
-                || (state == TextDecoration.State.NOT_SET && inheritedBold);
+                || (state == TextDecoration.State.NOT_SET && inherited);
         if (component instanceof net.kyori.adventure.text.TextComponent text && effective) {
             out.append(text.content());
         }
         for (Component child : component.children()) {
-            collectBoldText(child, effective, out);
+            collectDecoratedText(child, deco, effective, out);
+        }
+    }
+
+    /**
+     * The same round-trip leak that affected bold also affected italic, underlined, strikethrough,
+     * and obfuscated, because Adventure's LegacyComponentSerializer never emits §r when *any*
+     * decoration transitions from on to off across siblings. Verify each decoration in turn.
+     */
+    @Test
+    void testRoundTripNoDecorationLeaksAcrossSiblings() {
+        TextDecoration[] decos = {
+                TextDecoration.BOLD,
+                TextDecoration.ITALIC,
+                TextDecoration.UNDERLINED,
+                TextDecoration.STRIKETHROUGH,
+                TextDecoration.OBFUSCATED
+        };
+        String[] tags = {"bold", "italic", "underlined", "strikethrough", "obfuscated"};
+
+        for (int i = 0; i < decos.length; i++) {
+            String tag = tags[i];
+            String original = "<green>before </green><red><" + tag + ">MID </" + tag + "></red><green>after</green>";
+            Component comp = Util.parseMiniMessage(original);
+            String legacy = Util.componentToLegacy(comp);
+            Component finalComp = Util.parseMiniMessageOrLegacy(legacy);
+
+            String plainText = PlainTextComponentSerializer.plainText().serialize(finalComp);
+            assertEquals("before MID after", plainText, "plain text mismatch for " + tag);
+
+            StringBuilder decoratedText = new StringBuilder();
+            collectDecoratedText(finalComp, decos[i], false, decoratedText);
+            assertEquals("MID ", decoratedText.toString(),
+                    tag + " should only apply to 'MID ', not leak into following segments");
         }
     }
 
