@@ -49,6 +49,11 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -1327,7 +1332,133 @@ public class Util {
      */
     @NonNull
     public static String componentToLegacy(@NonNull Component component) {
-        return SECTION_SERIALIZER.serialize(component);
+        StringBuilder sb = new StringBuilder();
+        // EmittedState[0] holds the last-emitted style (color + decorations) so the walker
+        // can compute transitions and emit §r where Adventure's serializer would not.
+        EmittedState state = new EmittedState();
+        appendComponentLegacy(sb, component, Style.empty(), state);
+        return sb.toString();
+    }
+
+    /**
+     * Mutable state used by {@link #appendComponentLegacy(StringBuilder, Component, Style, EmittedState)}
+     * to track the most recently emitted color and decorations. Adventure's
+     * {@link LegacyComponentSerializer} silently drops decoration-off transitions because legacy
+     * color codes have no "turn this decoration off" code — only §r resets everything. We work
+     * around that by tracking what is currently active and emitting §r ourselves when needed.
+     */
+    private static final class EmittedState {
+        TextColor color;
+        boolean bold;
+        boolean italic;
+        boolean underlined;
+        boolean strikethrough;
+        boolean obfuscated;
+        boolean isFresh = true;
+    }
+
+    private static void appendComponentLegacy(StringBuilder sb, Component component, Style inherited, EmittedState state) {
+        // merge() with default strategy lets the child component override inherited fields,
+        // and inherits the parent's fields where the child leaves them unset.
+        Style effective = inherited.merge(component.style());
+        if (component instanceof TextComponent text && !text.content().isEmpty()) {
+            emitStyleTransition(sb, effective, state);
+            sb.append(text.content());
+        }
+        for (Component child : component.children()) {
+            appendComponentLegacy(sb, child, effective, state);
+        }
+    }
+
+    private static void emitStyleTransition(StringBuilder sb, Style style, EmittedState state) {
+        boolean wantBold = style.decoration(TextDecoration.BOLD) == TextDecoration.State.TRUE;
+        boolean wantItalic = style.decoration(TextDecoration.ITALIC) == TextDecoration.State.TRUE;
+        boolean wantUnderlined = style.decoration(TextDecoration.UNDERLINED) == TextDecoration.State.TRUE;
+        boolean wantStrikethrough = style.decoration(TextDecoration.STRIKETHROUGH) == TextDecoration.State.TRUE;
+        boolean wantObfuscated = style.decoration(TextDecoration.OBFUSCATED) == TextDecoration.State.TRUE;
+        TextColor wantColor = style.color();
+
+        // Determine if we need a hard reset: any decoration that was on must turn off,
+        // or the color must change to "no color" while one was previously active.
+        boolean needReset = (state.bold && !wantBold)
+                || (state.italic && !wantItalic)
+                || (state.underlined && !wantUnderlined)
+                || (state.strikethrough && !wantStrikethrough)
+                || (state.obfuscated && !wantObfuscated)
+                || (state.color != null && wantColor == null);
+
+        if (needReset) {
+            sb.append(COLOR_CHAR).append('r');
+            state.color = null;
+            state.bold = false;
+            state.italic = false;
+            state.underlined = false;
+            state.strikethrough = false;
+            state.obfuscated = false;
+        }
+
+        // Emit color if it changed (or after a reset)
+        if (wantColor != null && (state.isFresh || !wantColor.equals(state.color) || needReset)) {
+            sb.append(legacyColorCode(wantColor));
+            state.color = wantColor;
+        }
+
+        // Emit decorations that should now be on but aren't yet
+        if (wantBold && !state.bold) {
+            sb.append(COLOR_CHAR).append('l');
+            state.bold = true;
+        }
+        if (wantItalic && !state.italic) {
+            sb.append(COLOR_CHAR).append('o');
+            state.italic = true;
+        }
+        if (wantUnderlined && !state.underlined) {
+            sb.append(COLOR_CHAR).append('n');
+            state.underlined = true;
+        }
+        if (wantStrikethrough && !state.strikethrough) {
+            sb.append(COLOR_CHAR).append('m');
+            state.strikethrough = true;
+        }
+        if (wantObfuscated && !state.obfuscated) {
+            sb.append(COLOR_CHAR).append('k');
+            state.obfuscated = true;
+        }
+        state.isFresh = false;
+    }
+
+    private static String legacyColorCode(TextColor color) {
+        // For named colors, use the standard single-character legacy code.
+        NamedTextColor named = NamedTextColor.nearestTo(color);
+        char code;
+        if (named == NamedTextColor.BLACK) code = '0';
+        else if (named == NamedTextColor.DARK_BLUE) code = '1';
+        else if (named == NamedTextColor.DARK_GREEN) code = '2';
+        else if (named == NamedTextColor.DARK_AQUA) code = '3';
+        else if (named == NamedTextColor.DARK_RED) code = '4';
+        else if (named == NamedTextColor.DARK_PURPLE) code = '5';
+        else if (named == NamedTextColor.GOLD) code = '6';
+        else if (named == NamedTextColor.GRAY) code = '7';
+        else if (named == NamedTextColor.DARK_GRAY) code = '8';
+        else if (named == NamedTextColor.BLUE) code = '9';
+        else if (named == NamedTextColor.GREEN) code = 'a';
+        else if (named == NamedTextColor.AQUA) code = 'b';
+        else if (named == NamedTextColor.RED) code = 'c';
+        else if (named == NamedTextColor.LIGHT_PURPLE) code = 'd';
+        else if (named == NamedTextColor.YELLOW) code = 'e';
+        else code = 'f';
+        // If the original color was a true hex (not a named color), emit the §x§R§R... form
+        // so it round-trips. Otherwise just emit the named code.
+        if (!(color instanceof NamedTextColor)) {
+            String hex = String.format("%06X", color.value());
+            StringBuilder out = new StringBuilder();
+            out.append(COLOR_CHAR).append('x');
+            for (int i = 0; i < 6; i++) {
+                out.append(COLOR_CHAR).append(hex.charAt(i));
+            }
+            return out.toString();
+        }
+        return COLOR_CHAR + Character.toString(code);
     }
 
     /**
