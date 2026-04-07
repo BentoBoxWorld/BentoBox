@@ -118,6 +118,14 @@ public ImmutableSet<UUID> getMemberSet() { ... }
 
 Guava (`ImmutableSet`, `ImmutableList`, etc.) is reliably available at runtime via Paper's bundled JARs and is safe to use in the public API.
 
+## MiniMessage / legacy color round-trip
+
+`User.getTranslation()` returns a legacy `§`-coded string for backwards compatibility, even when the locale entry is MiniMessage. UI code (`PanelItem.setDescription`, etc.) then re-parses that legacy string back into a Component via `Util.parseMiniMessageOrLegacy`. This MiniMessage → Component → legacy → Component round-trip is lossy by default because of an Adventure quirk:
+
+**Adventure's `LegacyComponentSerializer` never emits `§r` to turn off a decoration when a sibling component clears it.** Legacy color codes have no "decoration off" code — only `§r` resets — but Adventure simply omits the decoration code on the next sibling instead of resetting. When that legacy string is re-parsed under correct legacy semantics (decorations persist until `§r`), the decoration leaks into the following segment. This bit bold, italic, underlined, strikethrough, and obfuscated equally (#2917).
+
+`Util.componentToLegacy` is therefore **not** a thin wrapper around Adventure's serializer — it's a custom Component walker (`appendComponentLegacy` / `emitStyleTransition`) that tracks the last-emitted color and decorations and inserts `§r` whenever any decoration was on and is now off, then re-applies color afterwards. **Do not replace it with `LegacyComponentSerializer.serialize()` directly** without re-introducing the leak. The round-trip is exercised by `LegacyToMiniMessageTest`.
+
 ## Build Notes
 
 - The Gradle build uses the Paper `userdev` plugin and Shadow plugin to produce a fat/shaded JAR at `build/libs/BentoBox-{version}.jar`.
