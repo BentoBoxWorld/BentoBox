@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -12,6 +14,8 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 
@@ -212,8 +216,9 @@ class PanelItemTest extends CommonTestSetup {
         verify(itemMeta).addItemFlags(ItemFlag.HIDE_DESTROYS);
         verify(itemMeta).addItemFlags(ItemFlag.HIDE_PLACED_ON);
         verify(itemMeta).addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        verify(itemMeta).addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         verify(ph, times(3)).setItemMeta(itemMeta);
+        // Verify TooltipDisplay is applied for additional tooltip hiding
+        verify(ph).setData(eq(DataComponentTypes.TOOLTIP_DISPLAY), any(TooltipDisplay.class));
     }
 
     /**

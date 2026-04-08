@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 
@@ -52,7 +54,6 @@ public class PanelItem {
             meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
             meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             icon.setItemMeta(meta);
         }
 
@@ -64,6 +65,12 @@ public class PanelItem {
         setGlow(builtItem.isGlow());
         setInvisible(builtItem.isInvisible());
 
+        // Hide additional item-specific tooltip info (banner patterns, potion effects, etc.)
+        hideAdditionalTooltip();
+        // Refresh meta to reflect current item state including tooltip display changes
+        if (meta != null) {
+            meta = icon.getItemMeta();
+        }
     }
 
     /**
@@ -228,7 +235,6 @@ public class PanelItem {
             meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
             meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
 
             if (originalMeta != null && originalMeta.hasCustomModelDataComponent()) {
                 meta.setCustomModelDataComponent(originalMeta.getCustomModelDataComponent());
@@ -240,5 +246,42 @@ public class PanelItem {
         setName(name);
         setDescription(description);
         setGlow(glow);
+        // Hide additional item-specific tooltip info (banner patterns, potion effects, etc.)
+        hideAdditionalTooltip();
+        // Refresh meta to reflect current item state including tooltip display changes
+        if (meta != null) {
+            meta = icon.getItemMeta();
+        }
+    }
+
+    /**
+     * Hides additional item-specific tooltip information such as banner patterns, potion effects,
+     * firework effects, and other item metadata using the modern {@link TooltipDisplay} data component API.
+     * Merges with any existing tooltip display settings (e.g., from ItemFlags) to avoid overwriting them.
+     */
+    private void hideAdditionalTooltip() {
+        if (icon.getType().isAir()) {
+            return;
+        }
+        // Read existing tooltip display to preserve any ItemFlag-based hiding
+        TooltipDisplay existing = icon.getData(DataComponentTypes.TOOLTIP_DISPLAY);
+        TooltipDisplay.Builder builder = TooltipDisplay.tooltipDisplay();
+        if (existing != null) {
+            builder.hideTooltip(existing.hideTooltip());
+            builder.addHiddenComponents(
+                    existing.hiddenComponents().toArray(io.papermc.paper.datacomponent.DataComponentType[]::new));
+        }
+        // Hide additional components that don't have non-deprecated ItemFlag equivalents
+        builder.addHiddenComponents(
+                DataComponentTypes.BANNER_PATTERNS,
+                DataComponentTypes.POTION_CONTENTS,
+                DataComponentTypes.FIREWORKS,
+                DataComponentTypes.FIREWORK_EXPLOSION,
+                DataComponentTypes.JUKEBOX_PLAYABLE,
+                DataComponentTypes.SUSPICIOUS_STEW_EFFECTS,
+                DataComponentTypes.BUNDLE_CONTENTS,
+                DataComponentTypes.MAP_DECORATIONS
+        );
+        icon.setData(DataComponentTypes.TOOLTIP_DISPLAY, builder.build());
     }
 }
