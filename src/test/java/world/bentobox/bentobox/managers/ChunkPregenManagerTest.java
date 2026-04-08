@@ -147,6 +147,7 @@ class ChunkPregenManagerTest extends CommonTestSetup {
 
     @Test
     void testOnBentoBoxReady_pregenEnabled() {
+        settings.setPregenEnabled(true);
         manager.onServerLoad(serverLoadEvent);
         manager.onBentoBoxReady(readyEvent);
         verify(sch).runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong());
@@ -154,6 +155,7 @@ class ChunkPregenManagerTest extends CommonTestSetup {
 
     @Test
     void testOnBentoBoxReady_deferredUntilServerLoaded() {
+        settings.setPregenEnabled(true);
         // Ready event alone should NOT schedule anything — the server hasn't loaded yet
         manager.onBentoBoxReady(readyEvent);
         verify(sch, never()).runTaskTimer(any(), any(Runnable.class), anyLong(), anyLong());
@@ -185,6 +187,7 @@ class ChunkPregenManagerTest extends CommonTestSetup {
 
     @Test
     void testOnIslandCreated_pregenEnabled() {
+        settings.setPregenEnabled(true);
         when(createdEvent.getIsland()).thenReturn(island);
         when(island.getWorld()).thenReturn(world);
         manager.onIslandCreated(createdEvent);
@@ -206,6 +209,7 @@ class ChunkPregenManagerTest extends CommonTestSetup {
 
     @Test
     void testOnIslandResetted_pregenEnabled() {
+        settings.setPregenEnabled(true);
         when(resettedEvent.getIsland()).thenReturn(island);
         when(island.getWorld()).thenReturn(world);
         manager.onIslandResetted(resettedEvent);
