@@ -63,8 +63,9 @@ class CommandsPromptTest extends CommonTestSetup {
     void testGetPromptTextWithSessionData() {
         when(context.getSessionData("commands")).thenReturn(List.of("say hello"));
         String text = prompt.getPromptText(context);
-        // getPromptText sends via User.sendRawMessage and returns empty string
-        assertEquals("", text);
+        assertInstanceOf(String.class, text);
+        // Should contain the command text in the output
+        assertEquals(true, text.contains("say hello"));
     }
 
     @Test

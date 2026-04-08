@@ -33,18 +33,15 @@ public class DescriptionSuccessPrompt extends MessagePrompt {
         User user = User.getInstance((Player)context.getForWhom());
         @SuppressWarnings("unchecked")
         List<String> description = (List<String>)context.getSessionData("description");
-        String msg;
         if (description != null) {
             bb.setDescription(description);
             BentoBox.getInstance().getBlueprintsManager().addBlueprintBundle(addon, bb);
             BentoBox.getInstance().getBlueprintsManager().saveBlueprintBundle(addon, bb);
             new BlueprintManagementPanel(BentoBox.getInstance(), user, addon).openBB(bb);
-            msg = user.getTranslation("commands.admin.blueprint.management.description.success");
+            return user.getTranslation("commands.admin.blueprint.management.description.success");
         } else {
-            msg = user.getTranslation("commands.admin.blueprint.management.description.cancelling");
+            return user.getTranslation("commands.admin.blueprint.management.description.cancelling");
         }
-        user.sendRawMessage(msg);
-        return "";
     }
 
     @Override
