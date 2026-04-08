@@ -1255,7 +1255,7 @@ public class Settings implements ConfigObject {
      * newly formed obsidian blocks that can be scooped.
      *
      * @return the lava tip duration in seconds; 0 or less means disabled
-     * @since 3.12.0
+     * @since 3.14.0
      */
     public int getObsidianScoopingLavaTipDuration() {
         return obsidianScoopingLavaTipDuration;
@@ -1266,7 +1266,7 @@ public class Settings implements ConfigObject {
      * newly formed obsidian blocks that can be scooped.
      *
      * @param obsidianScoopingLavaTipDuration the duration in seconds; 0 or less disables
-     * @since 3.12.0
+     * @since 3.14.0
      */
     public void setObsidianScoopingLavaTipDuration(int obsidianScoopingLavaTipDuration) {
         this.obsidianScoopingLavaTipDuration = obsidianScoopingLavaTipDuration;

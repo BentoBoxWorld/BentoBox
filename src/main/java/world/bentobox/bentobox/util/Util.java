@@ -50,6 +50,9 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.KeybindComponent;
+import net.kyori.adventure.text.ScoreComponent;
+import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
@@ -1361,13 +1364,48 @@ public class Util {
         // merge() with default strategy lets the child component override inherited fields,
         // and inherits the parent's fields where the child leaves them unset.
         Style effective = inherited.merge(component.style());
-        if (component instanceof TextComponent text && !text.content().isEmpty()) {
+        String content = getComponentContent(component);
+        if (!content.isEmpty()) {
             emitStyleTransition(sb, effective, state);
-            sb.append(text.content());
+            sb.append(content);
         }
         for (Component child : component.children()) {
             appendComponentLegacy(sb, child, effective, state);
         }
+    }
+
+    /**
+     * Extracts the direct text content from a Component node without recursing into children.
+     * Used by {@link #appendComponentLegacy} so that non-TextComponent types degrade gracefully
+     * when serializing to legacy format (e.g. for offline message delivery).
+     * <ul>
+     *   <li>{@link TextComponent} — returns the literal text content.</li>
+     *   <li>{@link TranslatableComponent} — returns the {@code fallback()} text if set,
+     *       otherwise the translation key (e.g. {@code "item.minecraft.diamond_sword"}).
+     *       The key is at least recognisable; the client-side translation cannot be resolved
+     *       server-side.</li>
+     *   <li>{@link KeybindComponent} — returns the keybind id (e.g. {@code "key.jump"}).
+     *       The actual bound key is only known to the client.</li>
+     *   <li>{@link ScoreComponent} — returns the objective name; the live score value is
+     *       client-side only.</li>
+     *   <li>All other types — returns an empty string (no useful text to extract).</li>
+     * </ul>
+     */
+    private static String getComponentContent(Component component) {
+        if (component instanceof TextComponent text) {
+            return text.content();
+        } else if (component instanceof TranslatableComponent translatable) {
+            // Prefer the server-side fallback string if the addon/code set one;
+            // otherwise fall back to the raw key — still recognisable (e.g. "item.minecraft.diamond").
+            String fallback = translatable.fallback();
+            return (fallback != null && !fallback.isEmpty()) ? fallback : translatable.key();
+        } else if (component instanceof KeybindComponent keybind) {
+            return keybind.keybind();
+        } else if (component instanceof ScoreComponent score) {
+            return score.objective();
+        }
+        // SelectorComponent, NBT components — no server-resolvable text.
+        return "";
     }
 
     private static void emitStyleTransition(StringBuilder sb, Style style, EmittedState state) {
