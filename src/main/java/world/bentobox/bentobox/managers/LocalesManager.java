@@ -269,7 +269,17 @@ public class LocalesManager {
         }
         // Run through the files and store the locales
         for (File language : Objects.requireNonNull(localeDir.listFiles(ymlFilter))) {
-            Locale localeObject = Locale.forLanguageTag(language.getName().substring(0, language.getName().length() - 4));
+            String tag = language.getName().substring(0, language.getName().length() - 4);
+            Locale localeObject = Locale.forLanguageTag(tag);
+
+            // Skip files whose name does not parse to a real BCP-47 language tag.
+            // e.g. "zh_CN.yml" (underscore) yields Locale.ROOT, which would otherwise show
+            // up as a blank entry in the language selector panel.
+            if (localeObject.getLanguage().isEmpty()) {
+                plugin.logWarning("Ignoring locale file '" + localeFolder + "/" + language.getName()
+                        + "': '" + tag + "' is not a valid BCP-47 language tag (use '-' not '_').");
+                continue;
+            }
 
             try {
                 YamlConfiguration languageYaml = YamlConfiguration.loadConfiguration(language);

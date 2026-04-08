@@ -348,7 +348,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("")
     @ConfigComment("Enable or disable chunk pre-generation.")
     @ConfigEntry(path = "island.pregeneration.enabled", since = "3.14.0")
-    private boolean pregenEnabled = true;
+    private boolean pregenEnabled = false;
 
     @ConfigComment("Number of future islands to pre-generate chunks for, per game mode world.")
     @ConfigComment("Higher values use more disk space but reduce the chance of lag on island creation.")
