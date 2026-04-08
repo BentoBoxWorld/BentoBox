@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.hooks;
 
+import java.util.function.Consumer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -55,17 +57,42 @@ public class MythicMobsHook extends Hook {
      * @return true if spawn is successful
      */
     public boolean spawnMythicMob(MythicMobRecord mmr, Location spawnLocation) {
+        return spawnMythicMob(mmr, spawnLocation, null);
+    }
+
+    /**
+     * Spawn a MythicMob and run a callback once the entity has actually been spawned.
+     * <p>
+     * Spawning is delayed by 40 ticks inside this hook (to give NMS-pasted blocks time
+     * to settle), which means the caller cannot act on the spawned entity synchronously.
+     * This overload accepts a {@link Consumer} that will be invoked with the live Bukkit
+     * {@link Entity} once the mob has been spawned, so that addons (e.g. AOneBlock) can
+     * perform follow-up work such as clearing space for large hitboxes.
+     *
+     * @param mmr MythicMobRecord
+     * @param spawnLocation location
+     * @param onSpawn callback invoked with the spawned Bukkit entity; may be {@code null}
+     * @return true if the mob type exists and a spawn was scheduled
+     * @since 3.14.0
+     */
+    public boolean spawnMythicMob(MythicMobRecord mmr, Location spawnLocation, Consumer<Entity> onSpawn) {
         if (!this.isPluginAvailable()) {
             return false;
         }
         return MythicBukkit.inst().getMobManager().getMythicMob(mmr.type()).map(mob -> {
             // A delay is required before spawning, I assume because the blocks are pasted using NMS
             Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
-                // spawns mob            
+                // spawns mob
                 ActiveMob activeMob = mob.spawn(BukkitAdapter.adapt(spawnLocation), mmr.level());
                 activeMob.setDisplayName(mmr.displayName());
                 activeMob.setPower(mmr.power());
                 activeMob.setStance(mmr.stance());
+                if (onSpawn != null) {
+                    Entity bukkitEntity = activeMob.getEntity().getBukkitEntity();
+                    if (bukkitEntity != null) {
+                        onSpawn.accept(bukkitEntity);
+                    }
+                }
             }, 40L);
             return true;
         }).orElse(false);
