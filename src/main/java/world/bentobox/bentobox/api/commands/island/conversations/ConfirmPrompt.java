@@ -35,10 +35,7 @@ public class ConfirmPrompt extends StringPrompt {
     @Override
     @NonNull
     public String getPromptText(@NonNull ConversationContext context) {
-        // Send via User to properly render MiniMessage/legacy formatting,
-        // since Bukkit's conversation API sends raw text without formatting.
-        user.sendRawMessage(user.getTranslation(instructions));
-        return "";
+        return user.getTranslation(instructions);
     }
 
     @Override
