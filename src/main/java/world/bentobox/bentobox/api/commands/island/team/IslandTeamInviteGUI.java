@@ -267,8 +267,7 @@ public class IslandTeamInviteGUI {
         @Override
         @NonNull
         public String getPromptText(@NonNull ConversationContext context) {
-            user.sendRawMessage(user.getTranslation("commands.island.team.invite.gui.enter-name"));
-            return "";
+            return user.getTranslation("commands.island.team.invite.gui.enter-name");
         }
 
         @Override

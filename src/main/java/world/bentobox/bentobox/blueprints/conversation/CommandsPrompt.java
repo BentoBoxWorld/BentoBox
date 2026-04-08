@@ -44,14 +44,10 @@ public class CommandsPrompt extends StringPrompt {
                 sb.append(line);
                 sb.append(System.lineSeparator());
             }
-            // Send formatted message directly since Bukkit conversations don't parse MiniMessage
-            user.sendRawMessage(sb.toString());
-            return "";
+            return sb.toString();
         }
-        String msg = user.getTranslation("commands.admin.blueprint.management.commands.instructions",
+        return user.getTranslation("commands.admin.blueprint.management.commands.instructions",
                 TextVariables.NAME, bb.getDisplayName());
-        user.sendRawMessage(msg);
-        return "";
     }
 
     @SuppressWarnings("unchecked")

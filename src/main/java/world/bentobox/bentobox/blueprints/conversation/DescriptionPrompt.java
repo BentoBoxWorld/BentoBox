@@ -43,12 +43,9 @@ public class DescriptionPrompt extends StringPrompt {
                 sb.append(line);
                 sb.append(System.lineSeparator());
             }
-            user.sendRawMessage(sb.toString());
-            return "";
+            return sb.toString();
         }
-        String msg = user.getTranslation("commands.admin.blueprint.management.description.instructions", TextVariables.NAME, bb.getDisplayName());
-        user.sendRawMessage(msg);
-        return "";
+        return user.getTranslation("commands.admin.blueprint.management.description.instructions", TextVariables.NAME, bb.getDisplayName());
     }
 
     @SuppressWarnings("unchecked")
