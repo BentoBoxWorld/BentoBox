@@ -16,6 +16,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Represents a panel with tabs. The top row of the panel is made up of up to 9 icons that are made of {@link world.bentobox.bentobox.api.panels.Tab}s.
@@ -36,6 +37,15 @@ public class TabbedPanel extends Panel implements PanelListener {
     private int activeTab;
     private int activePage;
     private boolean closed;
+    /**
+     * True while the panel is being rebuilt during a refresh cycle.
+     * Used to distinguish refresh-triggered inventory close from a true close.
+     */
+    private boolean refreshing;
+    /**
+     * True if this panel instance has started deferring island saves.
+     */
+    private boolean deferringIslandSaves;
 
     /**
      * Construct the tabbed panel
@@ -83,6 +93,14 @@ public class TabbedPanel extends Panel implements PanelListener {
             // Request to open a non-existent tab
             throw new InvalidParameterException("Attempt to open a tab in a tabbed panel to a negative page! " + page);
         }
+        // Begin deferring island saves on first open to avoid database writes on every click
+        if (!deferringIslandSaves) {
+            Island island = getIsland();
+            if (island != null) {
+                island.beginDeferSaves();
+                deferringIslandSaves = true;
+            }
+        }
         this.activeTab = activeTab;
         this.activePage = page;
         // The items in the panel
@@ -124,8 +142,11 @@ public class TabbedPanel extends Panel implements PanelListener {
         } else {
             throw new InvalidParameterException("Unknown tab slot number " + activeTab);
         }
-        // Show it to the player
+        // Show it to the player — mark as refreshing so that the inventory close
+        // triggered by opening a new inventory is not treated as a true close.
+        this.refreshing = true;
         this.makePanel(tab.getName(), items, tpb.getSize(), tpb.getUser(), this);
+        this.refreshing = false;
     }
 
     /**
@@ -167,14 +188,19 @@ public class TabbedPanel extends Panel implements PanelListener {
     public void onInventoryClose(InventoryCloseEvent event) {
         // This flag is set every time the inventory is closed or refreshed (closed and opened)
         closed = true;
+        // Only save when the panel is truly being closed, not during a refresh cycle
+        if (!refreshing && deferringIslandSaves) {
+            Island island = getIsland();
+            if (island != null) {
+                island.endDeferSaves();
+            }
+            deferringIslandSaves = false;
+        }
     }
 
     @Override
     public void onInventoryClick(User user, InventoryClickEvent event) {
-        if (plugin.onTimeout(user, this)) {
-            event.setCancelled(true);
-            return;
-        }
+        // Note: click cooldown is now applied in PanelListenerManager before handlers run.
         // Trap top row tab clicks
         if (event.isLeftClick() && tpb.getTabs().containsKey(event.getRawSlot())
                 && (tpb.getTabs().get(event.getRawSlot()).getPermission().isEmpty()
