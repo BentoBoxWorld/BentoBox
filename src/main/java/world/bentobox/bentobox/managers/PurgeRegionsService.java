@@ -103,6 +103,63 @@ public class PurgeRegionsService {
     // ---------------------------------------------------------------
 
     /**
+     * Scans the given world for islands flagged as {@code deletable} and
+     * returns the set of region files that can be reaped immediately,
+     * ignoring region-file age.
+     *
+     * <p>Unlike {@link #scan(World, int)} this does not look at region
+     * timestamps at all: the {@code deletable} flag is the sole source of
+     * truth. A region is only returned if <em>every</em> island that
+     * overlaps it is deletable — a lone active neighbour blocks the whole
+     * region.
+     *
+     * <p>The returned {@link PurgeScanResult} uses {@code days = 0} as a
+     * sentinel meaning "no age filter" so that {@link #delete(PurgeScanResult)}
+     * and {@code deleteRegionFiles} skip their freshness re-check.
+     *
+     * <p>Runs synchronously on the calling thread and performs disk I/O.
+     * Callers must invoke this from an async task.
+     *
+     * @param world the gamemode overworld to scan
+     * @return scan result, never {@code null}
+     * @since 3.14.0
+     */
+    public PurgeScanResult scanDeleted(World world) {
+        boolean isNether = plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world);
+        boolean isEnd = plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world);
+
+        IslandGrid islandGrid = plugin.getIslands().getIslandCache().getIslandGrid(world);
+        if (islandGrid == null) {
+            return new PurgeScanResult(world, 0, new HashMap<>(), isNether, isEnd,
+                    new FilterStats(0, 0, 0, 0));
+        }
+
+        // Collect candidate region coords from every deletable island's
+        // protection bounds. A single island may straddle multiple regions.
+        Set<Pair<Integer, Integer>> candidateRegions = new HashSet<>();
+        for (Island island : plugin.getIslands().getIslandCache().getIslands(world)) {
+            if (!island.isDeletable()) continue;
+            int minRX = island.getMinProtectedX() >> 9;
+            int maxRX = (island.getMaxProtectedX() - 1) >> 9;
+            int minRZ = island.getMinProtectedZ() >> 9;
+            int maxRZ = (island.getMaxProtectedZ() - 1) >> 9;
+            for (int rx = minRX; rx <= maxRX; rx++) {
+                for (int rz = minRZ; rz <= maxRZ; rz++) {
+                    candidateRegions.add(new Pair<>(rx, rz));
+                }
+            }
+        }
+        plugin.log("Purge deleted-sweep: " + candidateRegions.size()
+                + " candidate region(s) from deletable islands in world " + world.getName());
+
+        Map<Pair<Integer, Integer>, Set<String>> deleteableRegions =
+                mapIslandsToRegions(new ArrayList<>(candidateRegions), islandGrid);
+        FilterStats stats = filterForDeletedSweep(deleteableRegions);
+        logFilterStats(stats);
+        return new PurgeScanResult(world, 0, deleteableRegions, isNether, isEnd, stats);
+    }
+
+    /**
      * Scans the given world (and its nether/end if the gamemode owns them)
      * for region files older than {@code days} and returns the set of
      * regions whose overlapping islands may all be safely deleted.
@@ -173,6 +230,72 @@ public class PurgeRegionsService {
                 + ": " + scan.deleteableRegions().size() + " region(s), "
                 + islandsRemoved + " island(s) removed");
         return ok;
+    }
+
+    // ---------------------------------------------------------------
+    // Chunk eviction
+    // ---------------------------------------------------------------
+
+    /**
+     * Unloads every loaded chunk that falls inside any region in
+     * {@code scan.deleteableRegions()} with {@code save = false}, so the
+     * in-memory chunk copy is thrown away rather than flushed back over the
+     * region files we are about to delete.
+     *
+     * <p>Each {@code r.X.Z.mca} covers a 32×32 chunk square. For every target
+     * region this iterates {@code (rX*32 .. rX*32+31, rZ*32 .. rZ*32+31)} and
+     * unloads any chunk currently loaded. Chunks that cannot be unloaded
+     * (e.g. a player is inside, or the chunk is force-loaded) are silently
+     * skipped — reaping a chunk out from under a present player would be
+     * worse than waiting for the next sweep.
+     *
+     * <p>The deleted-sweep callers (manual command + housekeeping) must
+     * invoke this on the main thread <b>before</b> dispatching the async
+     * {@link #delete(PurgeScanResult)}; otherwise Paper's autosave or shutdown
+     * will rewrite the region file with the stale in-memory chunks immediately
+     * after we delete it on disk.
+     *
+     * <p>Nether and end dimensions are evicted only when the gamemode owns
+     * them, mirroring the dimension gating in {@link #deleteRegionFiles}.
+     *
+     * @param scan a prior scan result whose regions should be evicted
+     */
+    public void evictChunks(PurgeScanResult scan) {
+        if (scan.deleteableRegions().isEmpty()) {
+            return;
+        }
+        World overworld = scan.world();
+        World netherWorld = scan.isNether() ? plugin.getIWM().getNetherWorld(overworld) : null;
+        World endWorld = scan.isEnd() ? plugin.getIWM().getEndWorld(overworld) : null;
+
+        int evicted = 0;
+        for (Pair<Integer, Integer> coords : scan.deleteableRegions().keySet()) {
+            int baseCx = coords.x() << 5;   // rX * 32
+            int baseCz = coords.z() << 5;
+            evicted += evictRegion(overworld, baseCx, baseCz);
+            if (netherWorld != null) {
+                evicted += evictRegion(netherWorld, baseCx, baseCz);
+            }
+            if (endWorld != null) {
+                evicted += evictRegion(endWorld, baseCx, baseCz);
+            }
+        }
+        plugin.log("Purge deleted: evicted " + evicted + " loaded chunk(s) from "
+                + scan.deleteableRegions().size() + " target region(s)");
+    }
+
+    private int evictRegion(World world, int baseCx, int baseCz) {
+        int count = 0;
+        for (int dx = 0; dx < 32; dx++) {
+            for (int dz = 0; dz < 32; dz++) {
+                int cx = baseCx + dx;
+                int cz = baseCz + dz;
+                if (world.isChunkLoaded(cx, cz) && world.unloadChunk(cx, cz, false)) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     // ---------------------------------------------------------------
@@ -312,6 +435,38 @@ public class PurgeRegionsService {
         }
         return new FilterStats(islandsOverLevel, islandsPurgeProtected,
                 regionsBlockedByLevel, regionsBlockedByProtection);
+    }
+
+    /**
+     * Strict filter for the deleted sweep: any non-deletable island in a
+     * region blocks the whole region. Unlike {@link #filterNonDeletableRegions}
+     * this has no age/login/level logic — only the {@code deletable} flag
+     * matters.
+     */
+    private FilterStats filterForDeletedSweep(
+            Map<Pair<Integer, Integer>, Set<String>> deleteableRegions) {
+        int regionsBlockedByProtection = 0;
+        var iter = deleteableRegions.entrySet().iterator();
+        while (iter.hasNext()) {
+            var entry = iter.next();
+            boolean block = false;
+            for (String id : entry.getValue()) {
+                Optional<Island> opt = plugin.getIslands().getIslandById(id);
+                if (opt.isEmpty()) {
+                    // Missing rows don't block — they're already gone.
+                    continue;
+                }
+                if (!opt.get().isDeletable()) {
+                    block = true;
+                    break;
+                }
+            }
+            if (block) {
+                iter.remove();
+                regionsBlockedByProtection++;
+            }
+        }
+        return new FilterStats(0, 0, 0, regionsBlockedByProtection);
     }
 
     private int[] evaluateRegionIslands(Set<String> islandIds, int days) {
@@ -506,11 +661,14 @@ public class PurgeRegionsService {
 
     private boolean deleteRegionFiles(PurgeScanResult scan) {
         int days = scan.days();
-        if (days <= 0) {
-            plugin.logError("Days is somehow zero or negative!");
+        if (days < 0) {
+            plugin.logError("Days is somehow negative!");
             return false;
         }
-        long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
+        // days == 0 is the "deleted sweep" sentinel — no age filter and no
+        // freshness recheck. days > 0 is the age-based sweep.
+        boolean ageGated = days > 0;
+        long cutoffMillis = ageGated ? System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days) : 0L;
 
         World world = scan.world();
         File base = world.getWorldFolder();
@@ -530,12 +688,16 @@ public class PurgeRegionsService {
         File endEntities = new File(endBase, ENTITIES);
         File endPoi      = new File(endBase, POI);
 
-        // Verify none of the files have been updated since the cutoff
-        for (Pair<Integer, Integer> coords : scan.deleteableRegions().keySet()) {
-            String name = "r." + coords.x() + "." + coords.z() + ".mca";
-            if (isAnyDimensionFresh(name, overworldRegion, netherRegion, endRegion, cutoffMillis,
-                    scan.isNether(), scan.isEnd())) {
-                return false;
+        // Verify none of the files have been updated since the cutoff.
+        // Skipped for the deleted sweep (ageGated == false) — the deletable
+        // flag on the island row is the sole authority there.
+        if (ageGated) {
+            for (Pair<Integer, Integer> coords : scan.deleteableRegions().keySet()) {
+                String name = "r." + coords.x() + "." + coords.z() + ".mca";
+                if (isAnyDimensionFresh(name, overworldRegion, netherRegion, endRegion, cutoffMillis,
+                        scan.isNether(), scan.isEnd())) {
+                    return false;
+                }
             }
         }
 
@@ -598,6 +760,12 @@ public class PurgeRegionsService {
 
     private void maybeDeletePlayerData(World world, UUID uuid, File playerData,
             Map<Pair<Integer, Integer>, Set<String>> deleteableRegions, int days) {
+        // Deleted sweep (days == 0) skips player-data cleanup entirely —
+        // the player might still be active, and the age-based sweep will
+        // reap orphaned .dat files later.
+        if (days <= 0) {
+            return;
+        }
         List<Island> memberOf = new ArrayList<>(plugin.getIslands().getIslands(world, uuid));
         deleteableRegions.values().forEach(ids -> memberOf.removeIf(i -> ids.contains(i.getUniqueId())));
         if (!memberOf.isEmpty()) {

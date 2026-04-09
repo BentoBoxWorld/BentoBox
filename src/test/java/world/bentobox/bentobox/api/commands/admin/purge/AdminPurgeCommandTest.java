@@ -133,7 +133,7 @@ class AdminPurgeCommandTest extends CommonTestSetup {
         assertFalse(apc.isOnlyPlayer());
         assertEquals("commands.admin.purge.parameters", apc.getParameters());
         assertEquals("commands.admin.purge.description", apc.getDescription());
-        assertEquals(7, apc.getSubCommands().size());
+        assertEquals(8, apc.getSubCommands().size());
     }
 
 

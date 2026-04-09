@@ -357,6 +357,13 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.deletion.housekeeping.region-age-days", since = "3.14.0")
     private int housekeepingRegionAgeDays = 60;
 
+    @ConfigComment("How often the deleted-islands sweep runs, in hours. This reaps region")
+    @ConfigComment("files for any island already flagged as deletable (e.g. from /is reset)")
+    @ConfigComment("and is independent of the age-based sweep above. Set to 0 to disable")
+    @ConfigComment("the deleted sweep while leaving the age sweep running.")
+    @ConfigEntry(path = "island.deletion.housekeeping.deleted-interval-hours", since = "3.14.0")
+    private int housekeepingDeletedIntervalHours = 24;
+
     // Chunk pre-generation settings
     @ConfigComment("")
     @ConfigComment("Chunk pre-generation settings.")
@@ -1104,6 +1111,24 @@ public class Settings implements ConfigObject {
      */
     public void setHousekeepingRegionAgeDays(int housekeepingRegionAgeDays) {
         this.housekeepingRegionAgeDays = housekeepingRegionAgeDays;
+    }
+
+    /**
+     * @return how often the deleted-islands sweep runs, in hours. {@code 0}
+     *         disables the deleted sweep.
+     * @since 3.14.0
+     */
+    public int getHousekeepingDeletedIntervalHours() {
+        return housekeepingDeletedIntervalHours;
+    }
+
+    /**
+     * @param housekeepingDeletedIntervalHours how often the deleted sweep runs
+     *                                         in hours. {@code 0} disables it.
+     * @since 3.14.0
+     */
+    public void setHousekeepingDeletedIntervalHours(int housekeepingDeletedIntervalHours) {
+        this.housekeepingDeletedIntervalHours = housekeepingDeletedIntervalHours;
     }
 
     /**

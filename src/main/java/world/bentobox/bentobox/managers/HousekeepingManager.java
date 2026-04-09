@@ -19,39 +19,47 @@ import world.bentobox.bentobox.managers.PurgeRegionsService.PurgeScanResult;
 
 /**
  * Periodic housekeeping: automatically runs the region-files purge against
- * every gamemode overworld on a configurable schedule.
+ * every gamemode overworld on a configurable schedule. Two independent cycles:
  *
- * <p>Enabled via {@code island.deletion.housekeeping.enabled}. The task runs
- * every {@code interval-days} days (wall-clock, not uptime) and scans for
- * regions older than {@code region-age-days}. Since player resets now
- * orphan islands instead of physically deleting their blocks, this scheduler
- * is how the disk space is eventually reclaimed.
+ * <ul>
+ *   <li><b>Age sweep</b> — runs every {@code interval-days} days and reaps
+ *       regions whose .mca files are older than {@code region-age-days}.</li>
+ *   <li><b>Deleted sweep</b> — runs every {@code deleted-interval-hours}
+ *       hours and reaps regions for any island already flagged as
+ *       {@code deletable} (e.g. from {@code /is reset}), ignoring file age.</li>
+ * </ul>
  *
- * <p>Last-run timestamp is persisted to
+ * <p>Both cycles are gated on the single {@code housekeeping.enabled} flag
+ * (default OFF) and share an {@code inProgress} guard so they never overlap.
+ *
+ * <p>Last-run timestamps are persisted to
  * {@code <plugin-data-folder>/database/housekeeping.yml} regardless of the
  * configured database backend, so the schedule survives restarts.
  *
  * <p>This manager is destructive by design: it deletes {@code .mca} region
- * files from disk. Default is OFF.
+ * files from disk.
  *
  * @since 3.14.0
  */
 public class HousekeepingManager {
 
-    private static final String LAST_RUN_KEY = "lastRunMillis";
+    private static final String LEGACY_LAST_RUN_KEY = "lastRunMillis";
+    private static final String LAST_AGE_RUN_KEY = "lastAgeRunMillis";
+    private static final String LAST_DELETED_RUN_KEY = "lastDeletedRunMillis";
     private static final long CHECK_INTERVAL_TICKS = 20L * 60L * 60L; // 1 hour
     private static final long STARTUP_DELAY_TICKS  = 20L * 60L * 5L;  // 5 minutes
 
     private final BentoBox plugin;
     private final File stateFile;
-    private volatile long lastRunMillis;
+    private volatile long lastAgeRunMillis;
+    private volatile long lastDeletedRunMillis;
     private volatile boolean inProgress;
     private BukkitTask scheduledTask;
 
     public HousekeepingManager(BentoBox plugin) {
         this.plugin = plugin;
         this.stateFile = new File(new File(plugin.getDataFolder(), "database"), "housekeeping.yml");
-        this.lastRunMillis = loadLastRun();
+        loadState();
     }
 
     // ---------------------------------------------------------------
@@ -66,20 +74,24 @@ public class HousekeepingManager {
         if (scheduledTask != null) {
             return;
         }
-        // Check hourly; each check runs the purge only if the wall-clock
-        // interval since the last run has elapsed and the feature is enabled.
         scheduledTask = Bukkit.getScheduler().runTaskTimer(plugin,
                 this::checkAndMaybeRun, STARTUP_DELAY_TICKS, CHECK_INTERVAL_TICKS);
         plugin.log("Housekeeping scheduler started (enabled="
                 + plugin.getSettings().isHousekeepingEnabled()
-                + ", interval=" + plugin.getSettings().getHousekeepingIntervalDays() + "d"
+                + ", age-interval=" + plugin.getSettings().getHousekeepingIntervalDays() + "d"
                 + ", region-age=" + plugin.getSettings().getHousekeepingRegionAgeDays() + "d"
-                + ", last-run=" + (lastRunMillis == 0 ? "never" : Instant.ofEpochMilli(lastRunMillis)) + ")");
+                + ", deleted-interval=" + plugin.getSettings().getHousekeepingDeletedIntervalHours() + "h"
+                + ", last-age-run=" + formatTs(lastAgeRunMillis)
+                + ", last-deleted-run=" + formatTs(lastDeletedRunMillis) + ")");
+    }
+
+    private static String formatTs(long millis) {
+        return millis == 0 ? "never" : Instant.ofEpochMilli(millis).toString();
     }
 
     /**
      * Stops the periodic housekeeping check. Does not clear the last-run
-     * timestamp on disk.
+     * timestamps on disk.
      */
     public synchronized void stop() {
         if (scheduledTask != null) {
@@ -96,11 +108,19 @@ public class HousekeepingManager {
     }
 
     /**
-     * @return the wall-clock timestamp (millis) of the last successful run,
-     *         or {@code 0} if the task has never run.
+     * @return wall-clock timestamp (millis) of the last successful age sweep,
+     *         or {@code 0} if it has never run.
      */
-    public long getLastRunMillis() {
-        return lastRunMillis;
+    public long getLastAgeRunMillis() {
+        return lastAgeRunMillis;
+    }
+
+    /**
+     * @return wall-clock timestamp (millis) of the last successful deleted
+     *         sweep, or {@code 0} if it has never run.
+     */
+    public long getLastDeletedRunMillis() {
+        return lastDeletedRunMillis;
     }
 
     private void checkAndMaybeRun() {
@@ -110,122 +130,222 @@ public class HousekeepingManager {
         if (!plugin.getSettings().isHousekeepingEnabled()) {
             return;
         }
+        long now = System.currentTimeMillis();
+        boolean ageDue = isAgeCycleDue(now);
+        boolean deletedDue = isDeletedCycleDue(now);
+        if (!ageDue && !deletedDue) {
+            return;
+        }
+        runNow(ageDue, deletedDue);
+    }
+
+    private boolean isAgeCycleDue(long now) {
         int intervalDays = plugin.getSettings().getHousekeepingIntervalDays();
         if (intervalDays <= 0) {
-            plugin.logWarning("Housekeeping: interval-days must be >= 1, skipping run");
-            return;
+            return false;
         }
         long intervalMillis = TimeUnit.DAYS.toMillis(intervalDays);
-        long now = System.currentTimeMillis();
-        if (lastRunMillis != 0 && (now - lastRunMillis) < intervalMillis) {
-            return;
+        return lastAgeRunMillis == 0 || (now - lastAgeRunMillis) >= intervalMillis;
+    }
+
+    private boolean isDeletedCycleDue(long now) {
+        int intervalHours = plugin.getSettings().getHousekeepingDeletedIntervalHours();
+        if (intervalHours <= 0) {
+            return false;
         }
-        runNow();
+        long intervalMillis = TimeUnit.HOURS.toMillis(intervalHours);
+        return lastDeletedRunMillis == 0 || (now - lastDeletedRunMillis) >= intervalMillis;
     }
 
     /**
-     * Triggers an immediate housekeeping cycle, regardless of the
-     * wall-clock interval (but still respecting {@code enabled}).
-     * Runs asynchronously.
+     * Triggers an immediate housekeeping cycle for both sweeps (respecting
+     * the enabled flag but ignoring the interval timers). Runs asynchronously.
      */
     public synchronized void runNow() {
+        runNow(true, true);
+    }
+
+    private synchronized void runNow(boolean runAge, boolean runDeleted) {
         if (inProgress) {
             plugin.log("Housekeeping: run requested but already in progress, ignoring");
             return;
         }
+        if (!runAge && !runDeleted) {
+            return;
+        }
         inProgress = true;
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, this::executeCycle);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                // Save worlds once per cycle — both sweeps see a consistent
+                // on-disk snapshot.
+                if (!saveAllWorlds()) {
+                    return;
+                }
+                if (runAge) {
+                    executeAgeCycle();
+                }
+                if (runDeleted) {
+                    executeDeletedCycle();
+                }
+            } catch (Exception e) {
+                plugin.logError("Housekeeping: cycle failed: " + e.getMessage());
+                plugin.logStacktrace(e);
+            } finally {
+                inProgress = false;
+            }
+        });
     }
 
     // ---------------------------------------------------------------
     // Cycle execution
     // ---------------------------------------------------------------
 
-    private void executeCycle() {
-        long startMillis = System.currentTimeMillis();
-        try {
-            int ageDays = plugin.getSettings().getHousekeepingRegionAgeDays();
-            if (ageDays <= 0) {
-                plugin.logError("Housekeeping: region-age-days must be >= 1, aborting run");
-                return;
+    private boolean saveAllWorlds() {
+        plugin.log("Housekeeping: saving all worlds before purge...");
+        CompletableFuture<Void> saved = new CompletableFuture<>();
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            try {
+                Bukkit.getWorlds().forEach(World::save);
+                saved.complete(null);
+            } catch (Exception e) {
+                saved.completeExceptionally(e);
             }
-            List<GameModeAddon> gameModes = plugin.getAddonsManager().getGameModeAddons();
-            plugin.log("Housekeeping: starting auto-purge cycle across " + gameModes.size()
-                    + " gamemode(s), region-age=" + ageDays + "d");
-            // Save worlds up-front so disk state matches memory. World.save()
-            // must run on the main thread — hop over and block the async
-            // cycle until the save completes.
-            plugin.log("Housekeeping: saving all worlds before purge...");
-            CompletableFuture<Void> saved = new CompletableFuture<>();
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                try {
-                    Bukkit.getWorlds().forEach(World::save);
-                    saved.complete(null);
-                } catch (Exception e) {
-                    saved.completeExceptionally(e);
-                }
-            });
+        });
+        try {
             saved.join();
             plugin.log("Housekeeping: world save complete");
-
-            int totalWorlds = 0;
-            int totalRegionsPurged = 0;
-            for (GameModeAddon gm : gameModes) {
-                World overworld = gm.getOverWorld();
-                if (overworld == null) {
-                    continue;
-                }
-                totalWorlds++;
-                plugin.log("Housekeeping: scanning gamemode '" + gm.getDescription().getName()
-                        + "' world '" + overworld.getName() + "'");
-                PurgeScanResult scan = plugin.getPurgeRegionsService().scan(overworld, ageDays);
-                if (scan.isEmpty()) {
-                    plugin.log("Housekeeping: nothing to purge in " + overworld.getName());
-                    continue;
-                }
-                plugin.log("Housekeeping: " + scan.deleteableRegions().size() + " region(s) and "
-                        + scan.uniqueIslandCount() + " island(s) eligible in " + overworld.getName());
-                boolean ok = plugin.getPurgeRegionsService().delete(scan);
-                if (ok) {
-                    totalRegionsPurged += scan.deleteableRegions().size();
-                } else {
-                    plugin.logError("Housekeeping: purge of " + overworld.getName()
-                            + " completed with errors");
-                }
-            }
-
-            Duration elapsed = Duration.ofMillis(System.currentTimeMillis() - startMillis);
-            plugin.log("Housekeeping: cycle complete — " + totalWorlds + " world(s) processed, "
-                    + totalRegionsPurged + " region(s) purged in " + elapsed.toSeconds() + "s");
-            lastRunMillis = System.currentTimeMillis();
-            saveLastRun();
+            return true;
         } catch (Exception e) {
-            plugin.logError("Housekeeping: cycle failed: " + e.getMessage());
-            plugin.logStacktrace(e);
-        } finally {
-            inProgress = false;
+            plugin.logError("Housekeeping: world save failed: " + e.getMessage());
+            return false;
         }
+    }
+
+    private void executeAgeCycle() {
+        long startMillis = System.currentTimeMillis();
+        int ageDays = plugin.getSettings().getHousekeepingRegionAgeDays();
+        if (ageDays <= 0) {
+            plugin.logError("Housekeeping: region-age-days must be >= 1, skipping age sweep");
+            return;
+        }
+        List<GameModeAddon> gameModes = plugin.getAddonsManager().getGameModeAddons();
+        plugin.log("Housekeeping age sweep: starting across " + gameModes.size()
+                + " gamemode(s), region-age=" + ageDays + "d");
+
+        int totalWorlds = 0;
+        int totalRegionsPurged = 0;
+        for (GameModeAddon gm : gameModes) {
+            World overworld = gm.getOverWorld();
+            if (overworld == null) {
+                continue;
+            }
+            totalWorlds++;
+            plugin.log("Housekeeping age sweep: scanning '" + gm.getDescription().getName()
+                    + "' world '" + overworld.getName() + "'");
+            PurgeScanResult scan = plugin.getPurgeRegionsService().scan(overworld, ageDays);
+            totalRegionsPurged += runDeleteIfNonEmpty(scan, overworld, "age sweep");
+        }
+
+        Duration elapsed = Duration.ofMillis(System.currentTimeMillis() - startMillis);
+        plugin.log("Housekeeping age sweep: complete — " + totalWorlds + " world(s) processed, "
+                + totalRegionsPurged + " region(s) purged in " + elapsed.toSeconds() + "s");
+        lastAgeRunMillis = System.currentTimeMillis();
+        saveState();
+    }
+
+    private void executeDeletedCycle() {
+        long startMillis = System.currentTimeMillis();
+        List<GameModeAddon> gameModes = plugin.getAddonsManager().getGameModeAddons();
+        plugin.log("Housekeeping deleted sweep: starting across " + gameModes.size() + " gamemode(s)");
+
+        int totalWorlds = 0;
+        int totalRegionsPurged = 0;
+        for (GameModeAddon gm : gameModes) {
+            World overworld = gm.getOverWorld();
+            if (overworld == null) {
+                continue;
+            }
+            totalWorlds++;
+            plugin.log("Housekeeping deleted sweep: scanning '" + gm.getDescription().getName()
+                    + "' world '" + overworld.getName() + "'");
+            PurgeScanResult scan = plugin.getPurgeRegionsService().scanDeleted(overworld);
+            // Evict in-memory chunks on the main thread before the async delete,
+            // so Paper's autosave can't re-flush them over the deleted region files.
+            if (!scan.isEmpty()) {
+                evictChunksOnMainThread(scan);
+            }
+            totalRegionsPurged += runDeleteIfNonEmpty(scan, overworld, "deleted sweep");
+        }
+
+        Duration elapsed = Duration.ofMillis(System.currentTimeMillis() - startMillis);
+        plugin.log("Housekeeping deleted sweep: complete — " + totalWorlds + " world(s) processed, "
+                + totalRegionsPurged + " region(s) purged in " + elapsed.toSeconds() + "s");
+        lastDeletedRunMillis = System.currentTimeMillis();
+        saveState();
+    }
+
+    private void evictChunksOnMainThread(PurgeScanResult scan) {
+        CompletableFuture<Void> done = new CompletableFuture<>();
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            try {
+                plugin.getPurgeRegionsService().evictChunks(scan);
+                done.complete(null);
+            } catch (Exception e) {
+                done.completeExceptionally(e);
+            }
+        });
+        try {
+            done.join();
+        } catch (Exception e) {
+            plugin.logError("Housekeeping: chunk eviction failed: " + e.getMessage());
+        }
+    }
+
+    private int runDeleteIfNonEmpty(PurgeScanResult scan, World overworld, String label) {
+        if (scan.isEmpty()) {
+            plugin.log("Housekeeping " + label + ": nothing to purge in " + overworld.getName());
+            return 0;
+        }
+        plugin.log("Housekeeping " + label + ": " + scan.deleteableRegions().size() + " region(s) and "
+                + scan.uniqueIslandCount() + " island(s) eligible in " + overworld.getName());
+        boolean ok = plugin.getPurgeRegionsService().delete(scan);
+        if (!ok) {
+            plugin.logError("Housekeeping " + label + ": purge of " + overworld.getName()
+                    + " completed with errors");
+            return 0;
+        }
+        return scan.deleteableRegions().size();
     }
 
     // ---------------------------------------------------------------
     // Persistence
     // ---------------------------------------------------------------
 
-    private long loadLastRun() {
+    private void loadState() {
         if (!stateFile.exists()) {
-            return 0L;
+            lastAgeRunMillis = 0L;
+            lastDeletedRunMillis = 0L;
+            return;
         }
         try {
             YamlConfiguration yaml = YamlConfiguration.loadConfiguration(stateFile);
-            return yaml.getLong(LAST_RUN_KEY, 0L);
+            // Migrate legacy single-cycle key: if the new key is absent but
+            // the old one is present, adopt it as the age-cycle timestamp.
+            if (yaml.contains(LAST_AGE_RUN_KEY)) {
+                lastAgeRunMillis = yaml.getLong(LAST_AGE_RUN_KEY, 0L);
+            } else {
+                lastAgeRunMillis = yaml.getLong(LEGACY_LAST_RUN_KEY, 0L);
+            }
+            lastDeletedRunMillis = yaml.getLong(LAST_DELETED_RUN_KEY, 0L);
         } catch (Exception e) {
             plugin.logError("Housekeeping: could not read " + stateFile.getAbsolutePath()
                     + ": " + e.getMessage());
-            return 0L;
+            lastAgeRunMillis = 0L;
+            lastDeletedRunMillis = 0L;
         }
     }
 
-    private void saveLastRun() {
+    private void saveState() {
         try {
             File parent = stateFile.getParentFile();
             if (parent != null && !parent.exists() && !parent.mkdirs()) {
@@ -233,7 +353,8 @@ public class HousekeepingManager {
                 return;
             }
             YamlConfiguration yaml = new YamlConfiguration();
-            yaml.set(LAST_RUN_KEY, lastRunMillis);
+            yaml.set(LAST_AGE_RUN_KEY, lastAgeRunMillis);
+            yaml.set(LAST_DELETED_RUN_KEY, lastDeletedRunMillis);
             yaml.save(stateFile);
         } catch (IOException e) {
             plugin.logError("Housekeeping: could not write " + stateFile.getAbsolutePath()
