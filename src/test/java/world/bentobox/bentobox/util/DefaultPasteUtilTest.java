@@ -456,10 +456,10 @@ class DefaultPasteUtilTest extends CommonTestSetup {
 
         DefaultPasteUtil.writeSign(island, block, bpBlock, Side.FRONT);
 
-        verify(signSide).setLine(0, "line0");
-        verify(signSide).setLine(1, "line1");
-        verify(signSide).setLine(2, "line2");
-        verify(signSide).setLine(3, "line3");
+        verify(signSide).line(0, Component.text("line0"));
+        verify(signSide).line(1, Component.text("line1"));
+        verify(signSide).line(2, Component.text("line2"));
+        verify(signSide).line(3, Component.text("line3"));
         verify(signSide).setGlowingText(true);
         verify(signState).update();
     }
@@ -477,7 +477,7 @@ class DefaultPasteUtilTest extends CommonTestSetup {
         verify(block).setType(Material.AIR);
         verify(island).setSpawnPoint(eq(Environment.NORMAL), any(org.bukkit.Location.class));
         // Normal paste logic must NOT run
-        verify(signSide, never()).setLine(any(Integer.class), anyString());
+        verify(signSide, never()).line(any(Integer.class), any(Component.class));
     }
 
     @Test
@@ -505,7 +505,7 @@ class DefaultPasteUtilTest extends CommonTestSetup {
         DefaultPasteUtil.writeSign(island, block, bpBlock, Side.BACK);
 
         verify(block, never()).setType(any());
-        verify(signSide).setLine(0, "[spawn_here]");
+        verify(signSide).line(0, Component.text("[spawn_here]"));
     }
 
     @Test
@@ -516,7 +516,7 @@ class DefaultPasteUtilTest extends CommonTestSetup {
         DefaultPasteUtil.writeSign(null, block, bpBlock, Side.FRONT);
 
         verify(block, never()).setType(any());
-        verify(signSide).setLine(0, "[spawn_here]");
+        verify(signSide).line(0, Component.text("[spawn_here]"));
     }
 
     @Test
@@ -556,6 +556,6 @@ class DefaultPasteUtilTest extends CommonTestSetup {
         DefaultPasteUtil.writeSign(island, block, bpBlock, Side.FRONT);
 
         // Should complete without error (WallSign branch taken)
-        verify(signSide).setLine(0, "text");
+        verify(signSide).line(0, Component.text("text"));
     }
 }
