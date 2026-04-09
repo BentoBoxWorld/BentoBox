@@ -297,6 +297,21 @@ class PlaceholdersManagerTest extends CommonTestSetup {
         verify(hook, never()).unregisterAll();
     }
 
+    @Test
+    void testUnregisterAllAddon() {
+        pm.unregisterAll(addon);
+        verify(hook).unregisterAll(addon);
+    }
+
+    @Test
+    void testUnregisterAllAddonNoHook() {
+        when(hm.getHook("PlaceholderAPI")).thenReturn(Optional.empty());
+        pm = new PlaceholdersManager(plugin);
+
+        pm.unregisterAll(addon);
+        verify(hook, never()).unregisterAll(addon);
+    }
+
     // ---------------------------------------------------------------
     // getRegisteredBentoBoxPlaceholders tests
     // ---------------------------------------------------------------
