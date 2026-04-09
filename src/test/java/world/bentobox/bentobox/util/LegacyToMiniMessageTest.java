@@ -187,4 +187,102 @@ class LegacyToMiniMessageTest extends CommonTestSetup {
                 "Plain text should not contain literal </bold>: " + plainText);
         assertEquals("Bold Red", plainText);
     }
+
+    /**
+     * Regression for <a href="https://github.com/BentoBoxWorld/AOneBlock/issues/495">
+     * AOneBlock#495</a>: a MiniMessage locale string with a space between two colored
+     * segments must retain the space after going through the componentToLegacy →
+     * legacyToMiniMessage round-trip used by {@code User.sendMessage}.
+     */
+    @Test
+    void testInterSegmentSpacePreservedAcrossRoundTrip() {
+        String mm = "<red>Slow down.</red> <green>Click slower.</green>";
+        Component c = Util.parseMiniMessage(mm);
+        String legacy = Util.componentToLegacy(c);
+
+        // componentToLegacy emits the §r-space-§a pattern for the inter-segment whitespace
+        assertTrue(legacy.contains("\u00A7r "),
+                "expected reset-then-space in legacy form, got: " + legacy);
+
+        // Round-trip back through legacyToMiniMessage — the space must survive
+        String mmAgain = Util.legacyToMiniMessage(legacy);
+        assertFalse(mmAgain.contains("</red><green>"),
+                "space was eaten between segments: " + mmAgain);
+
+        Component c2 = Util.parseMiniMessage(mmAgain);
+        String plain = PlainTextComponentSerializer.plainText().serialize(c2);
+        assertEquals("Slow down. Click slower.", plain);
+    }
+
+    /**
+     * Backwards compat: the legacy locale hack of stripping one space after a
+     * color/decoration code must still work. Old locale files use {@code &c This is red}
+     * so primitive auto-translators wouldn't glue the code onto the word.
+     */
+    @Test
+    void testLegacyLocaleHackStillStripsSpaceAfterColorCode() {
+        String mm = Util.legacyToMiniMessage("&c This is red");
+        assertEquals("<red>This is red</red>", mm);
+    }
+
+    /**
+     * The locale hack must NOT apply to {@code &r}. &amp;r is a format terminator and any
+     * following space is intentional literal whitespace.
+     */
+    @Test
+    void testLegacyResetDoesNotStripFollowingSpace() {
+        String mm = Util.legacyToMiniMessage("&cHello&r world");
+        String plain = PlainTextComponentSerializer.plainText().serialize(Util.parseMiniMessage(mm));
+        assertEquals("Hello world", plain);
+    }
+
+    /**
+     * Regression for <a href="https://github.com/BentoBoxWorld/AOneBlock/issues/495">
+     * AOneBlock#495</a>: a "Page [page] of [total]" template with alternating colors.
+     * The round-trip emits {@code §7Page §e1§7 of §e4}. The second {@code §7} is
+     * preceded by a digit, not by a boundary, so the space after it is content and
+     * must be preserved.
+     */
+    @Test
+    void testMidTextColorCodeDoesNotStripContentSpace() {
+        String mm = "<gray>Page </gray><yellow>1</yellow><gray> of </gray><yellow>4</yellow>";
+        // Forward: MiniMessage → componentToLegacy
+        Component c = Util.parseMiniMessage(mm);
+        String legacy = Util.componentToLegacy(c);
+        // Round-trip: legacy → Component
+        Component finalComp = Util.parseMiniMessageOrLegacy(legacy);
+        String plain = PlainTextComponentSerializer.plainText().serialize(finalComp);
+        assertEquals("Page 1 of 4", plain);
+    }
+
+    /**
+     * Same scenario exercised through {@code replaceLegacyCodesInline} (the mixed-content
+     * path used when MiniMessage templates contain legacy-coded variable substitutions).
+     */
+    @Test
+    void testMidTextCodeInReplaceLegacyCodesInlinePreservesSpace() {
+        // Mixed content: MiniMessage tags with legacy codes embedded (e.g. from a variable).
+        String mixed = "<gray>Page </gray>&e1&7 of &e4";
+        String result = Util.replaceLegacyCodesInline(mixed);
+        // The &7 here is preceded by "1" (mid-text), so the space after it must survive.
+        String plain = PlainTextComponentSerializer.plainText().serialize(Util.parseMiniMessage(result));
+        assertEquals("Page 1 of 4", plain);
+    }
+
+    /**
+     * {@code stripSpaceAfterColorCodes} (used by the deprecated {@code translateColorCodes}
+     * pure-legacy path) must use the same boundary rule.
+     */
+    @Test
+    @SuppressWarnings("deprecation")
+    void testStripSpaceAfterColorCodesRespectsBoundary() {
+        // Boundary cases: strip applies
+        assertEquals("\u00A7cHello", Util.stripSpaceAfterColorCodes("\u00A7c Hello"));
+        assertEquals("\u00A7l\u00A7cBold", Util.stripSpaceAfterColorCodes("\u00A7l\u00A7c Bold"));
+        // Mid-text: must NOT strip
+        assertEquals("\u00A77Page \u00A7e1\u00A77 of \u00A7e4",
+                Util.stripSpaceAfterColorCodes("\u00A77Page \u00A7e1\u00A77 of \u00A7e4"));
+        // Reset must NOT strip
+        assertEquals("\u00A7r world", Util.stripSpaceAfterColorCodes("\u00A7r world"));
+    }
 }
