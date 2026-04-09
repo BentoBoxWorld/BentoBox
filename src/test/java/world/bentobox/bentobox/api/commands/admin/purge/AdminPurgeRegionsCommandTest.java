@@ -42,6 +42,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.PurgeRegionsService;
 import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.managers.island.IslandGrid;
 
@@ -122,6 +123,10 @@ class AdminPurgeRegionsCommandTest extends CommonTestSetup {
         // Addons manager (used by canDeleteIsland for Level check)
         when(plugin.getAddonsManager()).thenReturn(addonsManager);
         when(addonsManager.getAddonByName("Level")).thenReturn(Optional.empty());
+
+        // Real PurgeRegionsService wired over the mocked plugin — exercises
+        // the extracted scan/filter/delete logic exactly as the command does.
+        when(plugin.getPurgeRegionsService()).thenReturn(new PurgeRegionsService(plugin));
 
         // Create commands
         apc = new AdminPurgeCommand(ac);

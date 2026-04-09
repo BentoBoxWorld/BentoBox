@@ -32,7 +32,9 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.ChunkPregenManager;
+import world.bentobox.bentobox.managers.HousekeepingManager;
 import world.bentobox.bentobox.managers.IslandDeletionManager;
+import world.bentobox.bentobox.managers.PurgeRegionsService;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -72,6 +74,8 @@ public class BentoBox extends JavaPlugin implements Listener {
     private MapManager mapManager;
     private IslandDeletionManager islandDeletionManager;
     private ChunkPregenManager chunkPregenManager;
+    private PurgeRegionsService purgeRegionsService;
+    private HousekeepingManager housekeepingManager;
     private WebManager webManager;
 
     // Settings
@@ -142,6 +146,9 @@ public class BentoBox extends JavaPlugin implements Listener {
             return;
         }
         islandsManager = new IslandsManager(this);
+
+        // Shared purge-regions logic (command + housekeeping)
+        purgeRegionsService = new PurgeRegionsService(this);
 
         // Start head getter
         headGetter = new HeadGetter(this);
@@ -233,6 +240,10 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         webManager = new WebManager(this);
 
+        // Housekeeping: auto-purge of unused region files (default OFF)
+        housekeepingManager = new HousekeepingManager(this);
+        housekeepingManager.start();
+
         final long enableTime = System.currentTimeMillis() - enableStart;
 
         // Show banner
@@ -307,6 +318,9 @@ public class BentoBox extends JavaPlugin implements Listener {
         }
         if (chunkPregenManager != null) {
             chunkPregenManager.shutdown();
+        }
+        if (housekeepingManager != null) {
+            housekeepingManager.stop();
         }
 
     }
@@ -564,6 +578,23 @@ public class BentoBox extends JavaPlugin implements Listener {
      */
     public ChunkPregenManager getChunkPregenManager() {
         return chunkPregenManager;
+    }
+
+    /**
+     * @return the shared {@link PurgeRegionsService} used by the purge
+     *         regions command and the housekeeping scheduler.
+     * @since 3.14.0
+     */
+    public PurgeRegionsService getPurgeRegionsService() {
+        return purgeRegionsService;
+    }
+
+    /**
+     * @return the {@link HousekeepingManager}, or {@code null} if not yet initialized.
+     * @since 3.14.0
+     */
+    public HousekeepingManager getHousekeepingManager() {
+        return housekeepingManager;
     }
 
     /**

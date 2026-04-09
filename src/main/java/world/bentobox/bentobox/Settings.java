@@ -319,26 +319,43 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.delete-speed", since = "1.7.0")
     private int deleteSpeed = 1;
 
-    // Island deletion related settings
-    @ConfigComment("Toggles whether islands, when players are resetting them, should be kept in the world or deleted.")
-    @ConfigComment("* If set to 'true', whenever a player resets his island, his previous island will become unowned and won't be deleted from the world.")
-    @ConfigComment("  You can, however, still delete those unowned islands through purging.")
-    @ConfigComment("  On bigger servers, this can lead to an increasing world size.")
-    @ConfigComment("  Yet, this allows admins to retrieve a player's old island in case of an improper use of the reset command.")
-    @ConfigComment("  Admins can indeed re-add the player to his old island by registering him to it.")
-    @ConfigComment("* If set to 'false', whenever a player resets his island, his previous island will be deleted from the world.")
-    @ConfigComment("  This is the default behaviour.")
-    @ConfigEntry(path = "island.deletion.keep-previous-island-on-reset", since = "1.13.0")
+    /**
+     * @deprecated No longer bound to config. Reset always soft-deletes now.
+     *             Slated for removal.
+     */
+    @Deprecated(since = "3.14.0", forRemoval = true)
     private boolean keepPreviousIslandOnReset = false;
 
-    @ConfigComment("Toggles how the islands are deleted.")
-    @ConfigComment("* If set to 'false', all islands will be deleted at once.")
-    @ConfigComment("  This is fast but may cause an impact on the performance")
-    @ConfigComment("  as it'll load all the chunks of the in-deletion islands.")
-    @ConfigComment("* If set to 'true', the islands will be deleted one by one.")
-    @ConfigComment("  This is slower but will not cause any impact on the performance.")
-    @ConfigEntry(path = "island.deletion.slow-deletion", since = "1.19.1")
+    /**
+     * @deprecated No longer bound to config. The chunk-by-chunk deletion
+     *             pipeline has been removed. Slated for removal.
+     */
+    @Deprecated(since = "3.14.0", forRemoval = true)
     private boolean slowDeletion = false;
+
+    // Island deletion housekeeping
+    @ConfigComment("Housekeeping: periodic auto-purge of unused region files.")
+    @ConfigComment("When a player resets their island, the old island is no longer physically")
+    @ConfigComment("deleted. Instead it is orphaned (marked deletable) and the region files on")
+    @ConfigComment("disk are reclaimed later by a scheduled purge. This avoids the brittle")
+    @ConfigComment("chunk-copy mechanism that required pristine seed worlds.")
+    @ConfigComment("")
+    @ConfigComment("WARNING: housekeeping deletes .mca region files from disk. It uses the same")
+    @ConfigComment("protections as the /bbox purge regions command (online players, island level,")
+    @ConfigComment("purge-protected flag, spawn islands, unowned-but-not-deletable islands are all")
+    @ConfigComment("skipped) but is destructive by design. Default is OFF.")
+    @ConfigComment("Enable the scheduled housekeeping task.")
+    @ConfigEntry(path = "island.deletion.housekeeping.enabled", since = "3.14.0")
+    private boolean housekeepingEnabled = false;
+
+    @ConfigComment("How often the housekeeping task runs, in days.")
+    @ConfigEntry(path = "island.deletion.housekeeping.interval-days", since = "3.14.0")
+    private int housekeepingIntervalDays = 30;
+
+    @ConfigComment("Minimum age (in days) of region files considered for purge. Passed to the")
+    @ConfigComment("same scanner the /bbox purge regions command uses.")
+    @ConfigEntry(path = "island.deletion.housekeeping.region-age-days", since = "3.14.0")
+    private int housekeepingRegionAgeDays = 60;
 
     // Chunk pre-generation settings
     @ConfigComment("")
@@ -828,22 +845,27 @@ public class Settings implements ConfigObject {
 
     /**
      * Returns whether islands, when reset, should be kept or deleted.
-     * 
+     *
      * @return {@code true} if islands, when reset, should be kept; {@code false}
      *         otherwise.
      * @since 1.13.0
+     * @deprecated Reset always soft-deletes now. Physical cleanup is handled
+     *             by the housekeeping auto-purge. Slated for removal.
      */
+    @Deprecated(since = "3.14.0", forRemoval = true)
     public boolean isKeepPreviousIslandOnReset() {
         return keepPreviousIslandOnReset;
     }
 
     /**
      * Sets whether islands, when reset, should be kept or deleted.
-     * 
+     *
      * @param keepPreviousIslandOnReset {@code true} if islands, when reset, should
      *                                  be kept; {@code false} otherwise.
      * @since 1.13.0
+     * @deprecated See {@link #isKeepPreviousIslandOnReset()}.
      */
+    @Deprecated(since = "3.14.0", forRemoval = true)
     public void setKeepPreviousIslandOnReset(boolean keepPreviousIslandOnReset) {
         this.keepPreviousIslandOnReset = keepPreviousIslandOnReset;
     }
@@ -1014,7 +1036,11 @@ public class Settings implements ConfigObject {
      * Is slow deletion boolean.
      *
      * @return the boolean
+     * @deprecated The chunk-by-chunk deletion pipeline is being removed. This
+     *             setting no longer has any effect and will be deleted in a
+     *             future release. Configure the housekeeping auto-purge instead.
      */
+    @Deprecated(since = "3.14.0", forRemoval = true)
     public boolean isSlowDeletion() {
         return slowDeletion;
     }
@@ -1023,9 +1049,61 @@ public class Settings implements ConfigObject {
      * Sets slow deletion.
      *
      * @param slowDeletion the slow deletion
+     * @deprecated See {@link #isSlowDeletion()}.
      */
+    @Deprecated(since = "3.14.0", forRemoval = true)
     public void setSlowDeletion(boolean slowDeletion) {
         this.slowDeletion = slowDeletion;
+    }
+
+    /**
+     * @return whether the periodic housekeeping task (auto-purge of unused
+     *         region files) is enabled.
+     * @since 3.14.0
+     */
+    public boolean isHousekeepingEnabled() {
+        return housekeepingEnabled;
+    }
+
+    /**
+     * @param housekeepingEnabled whether the periodic housekeeping task is enabled.
+     * @since 3.14.0
+     */
+    public void setHousekeepingEnabled(boolean housekeepingEnabled) {
+        this.housekeepingEnabled = housekeepingEnabled;
+    }
+
+    /**
+     * @return how often the housekeeping task runs, in days.
+     * @since 3.14.0
+     */
+    public int getHousekeepingIntervalDays() {
+        return housekeepingIntervalDays;
+    }
+
+    /**
+     * @param housekeepingIntervalDays how often the housekeeping task runs, in days.
+     * @since 3.14.0
+     */
+    public void setHousekeepingIntervalDays(int housekeepingIntervalDays) {
+        this.housekeepingIntervalDays = housekeepingIntervalDays;
+    }
+
+    /**
+     * @return minimum age (in days) of region files considered for auto-purge.
+     * @since 3.14.0
+     */
+    public int getHousekeepingRegionAgeDays() {
+        return housekeepingRegionAgeDays;
+    }
+
+    /**
+     * @param housekeepingRegionAgeDays minimum age (in days) of region files
+     *                                  considered for auto-purge.
+     * @since 3.14.0
+     */
+    public void setHousekeepingRegionAgeDays(int housekeepingRegionAgeDays) {
+        this.housekeepingRegionAgeDays = housekeepingRegionAgeDays;
     }
 
     /**
