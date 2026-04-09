@@ -305,23 +305,13 @@ public class IslandsManager {
         if (removeBlocks) {
             // Remove players from island
             removePlayersFromIsland(island);
-            // Mark island as deletable
+            // Mark island as deletable - physical cleanup is handled later by
+            // the region-file purge (see PurgeRegionsService / HousekeepingManager).
             island.setDeletable(true);
-            if (!plugin.getSettings().isKeepPreviousIslandOnReset()) {            
-                // Remove island from the cache
-                islandCache.deleteIslandFromCache(island);
-                // Remove blocks from world
-                IslandDeletion id = new IslandDeletion(island);
-                plugin.getIslandDeletionManager().getIslandChunkDeletionManager().add(id);
-                // Tell other servers
-                MultiLib.notify("bentobox-deleteIsland", getGson().toJson(id));
-                // Delete the island from the database
-                handler.deleteObject(island);
-            } else {
-                handler.saveObject(island);
-                // Fire the deletion event immediately
-                IslandEvent.builder().deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
-            }
+            handler.saveObject(island);
+            // Fire the deletion event immediately so listeners (hooks, maps, etc.)
+            // can update now that the island is orphaned.
+            IslandEvent.builder().deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
         }
     }
     
