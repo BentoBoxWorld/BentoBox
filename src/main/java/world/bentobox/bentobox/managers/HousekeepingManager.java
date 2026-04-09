@@ -155,6 +155,7 @@ public class HousekeepingManager {
             // Save worlds up-front so disk state matches memory. World.save()
             // must run on the main thread — hop over and block the async
             // cycle until the save completes.
+            plugin.log("Housekeeping: saving all worlds before purge...");
             CompletableFuture<Void> saved = new CompletableFuture<>();
             Bukkit.getScheduler().runTask(plugin, () -> {
                 try {
@@ -165,6 +166,7 @@ public class HousekeepingManager {
                 }
             });
             saved.join();
+            plugin.log("Housekeeping: world save complete");
 
             int totalWorlds = 0;
             int totalRegionsPurged = 0;

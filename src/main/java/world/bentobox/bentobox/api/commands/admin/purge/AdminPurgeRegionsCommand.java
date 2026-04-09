@@ -87,7 +87,9 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
         user.sendMessage("commands.admin.purge.scanning");
         // Save all worlds to update any region files
+        getPlugin().log("Purge: saving all worlds before scanning region files...");
         Bukkit.getWorlds().forEach(World::save);
+        getPlugin().log("Purge: world save complete");
 
         inPurge = true;
         final int finalDays = days;
@@ -113,7 +115,9 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         toBeConfirmed = false;
         // Flush in-memory chunk state on the main thread before the async
         // delete — World.save() is not safe to call off-main.
+        getPlugin().log("Purge: saving all worlds before deleting region files...");
         Bukkit.getWorlds().forEach(World::save);
+        getPlugin().log("Purge: world save complete, dispatching deletion");
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
             boolean ok = getPlugin().getPurgeRegionsService().delete(scan);
             Bukkit.getScheduler().runTask(getPlugin(), () ->
