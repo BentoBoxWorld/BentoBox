@@ -39,12 +39,14 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
         if (args.isEmpty()) {
             this.askConfirmation(user, user.getTranslation("commands.bentobox.reload.warning"), () -> {
 
-                // Clear placeholders that this reload will rebuild. Addon-owned
-                // placeholders (e.g. from the Level addon) are intentionally
-                // preserved because reload does not re-invoke addons (#2930).
+                // Clear only BentoBox-core placeholders. Addon-owned placeholders
+                // (both gamemode defaults and any custom ones addons register
+                // themselves) are intentionally preserved because reload does
+                // not re-invoke addons (#2930). registerDefaultPlaceholders
+                // below is idempotent, so any newly-added flag placeholders
+                // will still be picked up.
                 PlaceholdersManager pm = getPlugin().getPlaceholdersManager();
                 pm.unregisterAll();
-                getPlugin().getAddonsManager().getGameModeAddons().forEach(pm::unregisterAll);
 
                 // Close all open panels
                 PanelListenerManager.closeAllPanels();
