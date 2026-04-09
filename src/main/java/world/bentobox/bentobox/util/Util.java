@@ -704,7 +704,14 @@ public class Util {
     @NonNull
     public static String stripSpaceAfterColorCodes(String textToStrip) {
         if (textToStrip == null) return "";
-        textToStrip = textToStrip.replaceAll("(\u00A7.)[\\s]", "$1");
+        // The legacy locale hack of writing "&c Hello" (with an intentional space so
+        // primitive auto-translators wouldn't glue "&c" onto "Hello") only applies when
+        // the §X code appears at a boundary — start of string, after whitespace, or
+        // immediately after another §X code. Mid-text codes (e.g. "Page §e1§7 of §e4"
+        // where §7 is preceded by a digit) must NOT strip the following space, because
+        // that space is content, not the hack. Also skip §r (reset) in all cases.
+        // See https://github.com/BentoBoxWorld/AOneBlock/issues/495.
+        textToStrip = textToStrip.replaceAll("(?<=^|\\s|\u00A7.)(\u00A7[^rR])\\s", "$1");
         return textToStrip;
     }
 
@@ -1059,16 +1066,28 @@ public class Util {
         StringBuilder result = new StringBuilder();
         List<String> openTags = new ArrayList<>();
         int i = 0;
+        // Tracks whether the previous character emitted was part of a legacy code we just
+        // consumed. Used for the boundary check on the legacy-space-stripping hack.
+        boolean justConsumedCode = false;
         while (i < text.length()) {
             if (i + 1 < text.length() && text.charAt(i) == '&') {
                 char code = Character.toLowerCase(text.charAt(i + 1));
                 String mmTag = LEGACY_TO_MM_MAP.get(code);
                 if (mmTag != null) {
+                    // Boundary check: the legacy locale hack only applies when the &X code
+                    // appears at a natural boundary — start of the string, after whitespace,
+                    // or immediately after another legacy code. Mid-text codes (e.g. "Page
+                    // §e1§7 of §e4" — the §7 is preceded by "1") must NOT strip the
+                    // following space, because that space is content, not the locale hack.
+                    // See https://github.com/BentoBoxWorld/AOneBlock/issues/495.
+                    boolean atBoundary = i == 0 || justConsumedCode
+                            || Character.isWhitespace(text.charAt(i - 1));
                     i += 2;
-                    // Strip space after color code (the locale hack)
-                    if (i < text.length() && text.charAt(i) == ' ') {
+                    // &r is a format terminator; any following space is always intentional.
+                    if (!"reset".equals(mmTag) && atBoundary && i < text.length() && text.charAt(i) == ' ') {
                         i++;
                     }
+                    justConsumedCode = true;
                     if ("reset".equals(mmTag)) {
                         // Close all open tags
                         for (int j = openTags.size() - 1; j >= 0; j--) {
@@ -1116,6 +1135,10 @@ public class Util {
             if (text.charAt(i) == '<' && text.substring(i).startsWith("<color:#")) {
                 int end = text.indexOf('>', i);
                 if (end != -1) {
+                    // Same boundary check as named &X codes — hex was originally &#RRGGBB
+                    // in the source string, so use the same rule for its space-strip.
+                    boolean atBoundaryHex = i == 0 || justConsumedCode
+                            || Character.isWhitespace(text.charAt(i - 1));
                     String colorTag = text.substring(i + 1, end);
                     // Close previous color tags, preserving decoration nesting
                     List<String> decorationsToReopen = new ArrayList<>();
@@ -1140,14 +1163,17 @@ public class Util {
                     result.append("<").append(colorTag).append(">");
                     openTags.add(colorTag);
                     i = end + 1;
-                    // Strip space after hex color code
-                    if (i < text.length() && text.charAt(i) == ' ') {
+                    // Strip space after hex color code only at a boundary.
+                    // See https://github.com/BentoBoxWorld/AOneBlock/issues/495.
+                    if (atBoundaryHex && i < text.length() && text.charAt(i) == ' ') {
                         i++;
                     }
+                    justConsumedCode = true;
                     continue;
                 }
             }
             result.append(text.charAt(i));
+            justConsumedCode = false;
             i++;
         }
         // Close any remaining open tags
@@ -1200,21 +1226,28 @@ public class Util {
         // Replace &X codes with MiniMessage tags (opening only, no closing)
         sb = new StringBuilder();
         int i = 0;
+        // See legacyToMiniMessage for the rationale behind the boundary check.
+        boolean justConsumedCode = false;
         while (i < text.length()) {
             if (i + 1 < text.length() && text.charAt(i) == '&') {
                 char code = Character.toLowerCase(text.charAt(i + 1));
                 String mmTag = LEGACY_TO_MM_MAP.get(code);
                 if (mmTag != null) {
+                    boolean atBoundary = i == 0 || justConsumedCode
+                            || Character.isWhitespace(text.charAt(i - 1));
                     sb.append("<").append(mmTag).append(">");
                     i += 2;
-                    // Strip space after color code (locale hack)
-                    if (i < text.length() && text.charAt(i) == ' ') {
+                    // Legacy locale hack — only strip at a boundary, and never after &r.
+                    // See https://github.com/BentoBoxWorld/AOneBlock/issues/495.
+                    if (!"reset".equals(mmTag) && atBoundary && i < text.length() && text.charAt(i) == ' ') {
                         i++;
                     }
+                    justConsumedCode = true;
                     continue;
                 }
             }
             sb.append(text.charAt(i));
+            justConsumedCode = false;
             i++;
         }
         return sb.toString();
