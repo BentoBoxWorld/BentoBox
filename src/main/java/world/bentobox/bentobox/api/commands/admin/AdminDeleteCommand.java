@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.commands.island.IslandGoCommand;
@@ -17,6 +18,8 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.IslandDeletion;
+import world.bentobox.bentobox.util.DeleteIslandChunks;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminDeleteCommand extends ConfirmableCommand {
@@ -112,8 +115,30 @@ public class AdminDeleteCommand extends ConfirmableCommand {
                 .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
         user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ,
                 Util.xyz(oldIsland.getCenter().toVector()));
-        getIslands().deleteIsland(oldIsland, true, targetUUID);
 
+        // Branch on how the gamemode generates its chunks.
+        //
+        //  - New chunk generation (e.g. Boxed): chunks are expensive to
+        //    recreate, so the island is soft-deleted (marked deletable,
+        //    left in place) and PurgeRegionsService / HousekeepingManager
+        //    reaps the region files and DB row later on its schedule.
+        //
+        //  - Simple/void generation: chunks are cheap — repaint them via
+        //    the addon's own ChunkGenerator right now using the existing
+        //    DeleteIslandChunks + WorldRegenerator.regenerateSimple path,
+        //    then hard-delete the island row so it does not linger.
+        //
+        // If we can't resolve the gamemode, default to soft-delete.
+        GameModeAddon gm = getIWM().getAddon(getWorld()).orElse(null);
+        if (gm != null && !gm.isUsesNewChunkGeneration()) {
+            // DeleteIslandChunks snapshots the island bounds in its
+            // constructor, so it is safe to hard-delete the row
+            // immediately after kicking off the regen.
+            new DeleteIslandChunks(getPlugin(), new IslandDeletion(oldIsland));
+            getIslands().hardDeleteIsland(oldIsland);
+        } else {
+            getIslands().deleteIsland(oldIsland, true, targetUUID);
+        }
     }
 
     private void deletePlayer(User user) {

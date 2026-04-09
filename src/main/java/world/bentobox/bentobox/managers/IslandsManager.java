@@ -316,6 +316,36 @@ public class IslandsManager {
     }
     
     /**
+     * Hard-deletes an island: fires the pre-delete event, kicks members,
+     * nulls the owner, evicts the island from the cache, and removes the
+     * DB row. Does <b>not</b> touch world chunks — the caller is
+     * responsible for any physical cleanup (e.g. kicking off
+     * {@link world.bentobox.bentobox.util.DeleteIslandChunks}
+     * to regenerate via the addon's own {@code ChunkGenerator}).
+     *
+     * <p>Used by {@code AdminDeleteCommand} for void/simple-generator
+     * gamemodes where chunks are cheap to repaint and the island should
+     * be fully gone from the database immediately. For
+     * new-chunk-generation gamemodes, use
+     * {@link #deleteIsland(Island, boolean, UUID)} which soft-deletes
+     * and leaves the region-file purge to reap the chunks and row later.
+     *
+     * @param island the island to hard-delete, not null
+     * @since 3.14.0
+     */
+    public void hardDeleteIsland(@NonNull Island island) {
+        IslandBaseEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();
+        if (event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled())) {
+            return;
+        }
+        removePlayersFromIsland(island);
+        island.setOwner(null);
+        island.setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
+        islandCache.deleteIslandFromCache(island);
+        handler.deleteObject(island);
+    }
+
+    /**
      * Deletes an island by ID. If the id doesn't exist it will do nothing.
      * @param uniqueId island ID
      * @return true if island in database and deleted
