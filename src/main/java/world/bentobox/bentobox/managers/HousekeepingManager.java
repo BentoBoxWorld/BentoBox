@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
@@ -151,8 +152,19 @@ public class HousekeepingManager {
             List<GameModeAddon> gameModes = plugin.getAddonsManager().getGameModeAddons();
             plugin.log("Housekeeping: starting auto-purge cycle across " + gameModes.size()
                     + " gamemode(s), region-age=" + ageDays + "d");
-            // Save worlds up-front so disk state matches memory
-            Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getWorlds().forEach(World::save));
+            // Save worlds up-front so disk state matches memory. World.save()
+            // must run on the main thread — hop over and block the async
+            // cycle until the save completes.
+            CompletableFuture<Void> saved = new CompletableFuture<>();
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                try {
+                    Bukkit.getWorlds().forEach(World::save);
+                    saved.complete(null);
+                } catch (Exception e) {
+                    saved.completeExceptionally(e);
+                }
+            });
+            saved.join();
 
             int totalWorlds = 0;
             int totalRegionsPurged = 0;

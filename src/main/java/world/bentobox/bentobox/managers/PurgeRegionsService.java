@@ -136,8 +136,11 @@ public class PurgeRegionsService {
      * orphaned player data files that correspond to them.
      *
      * <p>Runs synchronously on the calling thread and performs disk I/O.
-     * Callers must invoke this from an async task. Worlds should be saved
-     * first to flush any in-memory chunk state.
+     * Callers must invoke this from an async task. Callers are also
+     * responsible for flushing in-memory chunk state by calling
+     * {@code World.save()} on the main thread <b>before</b> dispatching
+     * this method — {@code World.save()} is not safe to invoke from an
+     * async thread.
      *
      * @param scan the prior scan result
      * @return {@code true} if all file deletions succeeded; {@code false} if
@@ -147,9 +150,6 @@ public class PurgeRegionsService {
         if (scan.deleteableRegions().isEmpty()) {
             return false;
         }
-        // Save the worlds to flush any in-memory region state
-        Bukkit.getWorlds().forEach(World::save);
-
         plugin.log("Now deleting region files for world " + scan.world().getName());
         boolean ok = deleteRegionFiles(scan);
         if (!ok) {

@@ -518,4 +518,33 @@ class AdminPurgeRegionsCommandTest extends CommonTestSetup {
         verify(im).deleteIslandId("island-deletable");
         assertFalse(playerFile.toFile().exists(), "Player data file should have been deleted");
     }
+
+    /**
+     * Regression for the async {@code World.save()} crash hit on 26.1.1 Paper:
+     * {@code PurgeRegionsService.delete()} must not call
+     * {@code Bukkit.getWorlds().forEach(World::save)} because it runs on an
+     * async worker, and {@code World.save()} is main-thread-only. The world
+     * save must happen on the main thread *before* delete() is dispatched.
+     *
+     * <p>We call the service's {@code scan} + {@code delete} directly (as
+     * the async task would), then assert that {@code Bukkit.getWorlds()}
+     * was never invoked at all by the service — neither the scan nor the
+     * delete needs it.
+     */
+    @Test
+    void testServiceDoesNotCallBukkitGetWorlds() throws IOException {
+        IslandGrid grid = mock(IslandGrid.class);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
+        when(islandCache.getIslandGrid(world)).thenReturn(grid);
+
+        // Create an old empty region file the scan will pick up
+        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
+        Files.createFile(regionDir.resolve("r.0.0.mca"));
+
+        PurgeRegionsService service = new PurgeRegionsService(plugin);
+        PurgeRegionsService.PurgeScanResult scan = service.scan(world, 10);
+        service.delete(scan);
+
+        mockedBukkit.verify(Bukkit::getWorlds, never());
+    }
 }

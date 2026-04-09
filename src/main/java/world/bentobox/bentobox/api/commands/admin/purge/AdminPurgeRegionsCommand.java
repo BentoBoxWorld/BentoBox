@@ -111,6 +111,9 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         PurgeScanResult scan = lastScan;
         lastScan = null;
         toBeConfirmed = false;
+        // Flush in-memory chunk state on the main thread before the async
+        // delete — World.save() is not safe to call off-main.
+        Bukkit.getWorlds().forEach(World::save);
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
             boolean ok = getPlugin().getPurgeRegionsService().delete(scan);
             Bukkit.getScheduler().runTask(getPlugin(), () ->
