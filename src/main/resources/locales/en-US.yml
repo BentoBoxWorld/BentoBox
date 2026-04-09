@@ -280,6 +280,7 @@ commands:
       protection-range-bonus-title: '<aqua>Includes these bonues:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: '[prefix_Island] is purge protected'
+      deletable: '<red>[prefix_Island] is flagged for deletion and awaiting region purge.</red>'
       max-protection-range: 'Largest historical protection range: [range]'
       protection-coords: 'Protection coordinates: [xz1] to [xz2]'
       is-spawn: '[prefix_Island] is a spawn [prefix_island]'
@@ -1755,6 +1756,7 @@ protection:
       name: World TNT damage
   locked: '<red>This [prefix_island] is locked!</red>'
   locked-island-bypass: '<gold>This [prefix_island] is locked, but you have permission to bypass.</gold>'
+  deletable-island-admin: '<red>[Admin] This [prefix_island] is flagged for deletion and awaiting region purge.</red>'
   protected: '<red>[prefix_Island] protected: [description].</red>'
   world-protected: '<red>World protected: [description].</red>'
   spawn-protected: '<red>Spawn protected: [description].</red>'
