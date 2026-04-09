@@ -8,6 +8,7 @@ import world.bentobox.bentobox.api.panels.reader.TemplateReader;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.reload.BentoBoxReloadLocalesCommand;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
+import world.bentobox.bentobox.managers.PlaceholdersManager;
 
 /**
  * Reloads settings, addons and localization.
@@ -38,8 +39,12 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
         if (args.isEmpty()) {
             this.askConfirmation(user, user.getTranslation("commands.bentobox.reload.warning"), () -> {
 
-                // Unregister all placeholders
-                getPlugin().getPlaceholdersManager().unregisterAll();
+                // Clear placeholders that this reload will rebuild. Addon-owned
+                // placeholders (e.g. from the Level addon) are intentionally
+                // preserved because reload does not re-invoke addons (#2930).
+                PlaceholdersManager pm = getPlugin().getPlaceholdersManager();
+                pm.unregisterAll();
+                getPlugin().getAddonsManager().getGameModeAddons().forEach(pm::unregisterAll);
 
                 // Close all open panels
                 PanelListenerManager.closeAllPanels();
@@ -55,7 +60,7 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
                 user.sendMessage("commands.bentobox.reload.locales-reloaded");
 
                 // Register new default gamemode placeholders
-                getPlugin().getAddonsManager().getGameModeAddons().forEach(getPlugin().getPlaceholdersManager()::registerDefaultPlaceholders);
+                getPlugin().getAddonsManager().getGameModeAddons().forEach(pm::registerDefaultPlaceholders);
 
             });
         } else {

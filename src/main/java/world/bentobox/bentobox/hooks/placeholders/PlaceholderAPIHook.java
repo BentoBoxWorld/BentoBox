@@ -285,11 +285,30 @@ public class PlaceholderAPIHook extends PlaceholderHook {
 
     /**
      * {@inheritDoc}
+     * <p>
+     * Only clears the BentoBox-core expansion. Placeholders registered by addons
+     * via {@link #registerPlaceholder(Addon, String, PlaceholderReplacer)} are
+     * intentionally preserved, because callers like {@code /bbox reload} do not
+     * re-invoke addons and would otherwise leave addon placeholders in a stale,
+     * empty state (see #2930). To clear a specific addon's placeholders, use
+     * {@link #unregisterAll(Addon)}.
      */
     @Override
     public void unregisterAll() {
         bentoboxExpansion.getRegisteredPlaceholders().forEach(this::unregisterPlaceholder);
-        addonsExpansions.forEach((addon, exp) ->
-            exp.getRegisteredPlaceholders().forEach(ph -> this.unregisterPlaceholder(addon, ph)));
+    }
+
+    /**
+     * Unregisters all placeholders previously registered for the given addon.
+     * The expansion object stays registered with PlaceholderAPI but its
+     * internal placeholder map is emptied.
+     * @param addon the addon whose placeholders should be cleared, not null.
+     * @since 3.4.0
+     */
+    public void unregisterAll(@NonNull Addon addon) {
+        AddonPlaceholderExpansion exp = addonsExpansions.get(addon);
+        if (exp != null) {
+            exp.getRegisteredPlaceholders().forEach(exp::unregisterPlaceholder);
+        }
     }
 }

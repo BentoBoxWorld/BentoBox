@@ -442,11 +442,21 @@ public class PlaceholdersManager {
     }
 
     /**
-     * Unregisters all the placeholders.
+     * Unregisters all BentoBox-core placeholders. Placeholders registered by addons
+     * are intentionally preserved; use {@link #unregisterAll(Addon)} to clear those.
      * @since 1.15.0
      */
     public void unregisterAll() {
         getPlaceholderAPIHook().ifPresent(PlaceholderAPIHook::unregisterAll);
+    }
+
+    /**
+     * Unregisters all placeholders previously registered for the given addon.
+     * @param addon the addon whose placeholders should be cleared, not null.
+     * @since 3.4.0
+     */
+    public void unregisterAll(@NonNull Addon addon) {
+        getPlaceholderAPIHook().ifPresent(hook -> hook.unregisterAll(addon));
     }
 
     // -------------------------------------------------------------------------
