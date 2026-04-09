@@ -3,6 +3,7 @@ package world.bentobox.bentobox.managers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
@@ -172,6 +173,114 @@ public class PurgeRegionsService {
                 + ": " + scan.deleteableRegions().size() + " region(s), "
                 + islandsRemoved + " island(s) removed");
         return ok;
+    }
+
+    // ---------------------------------------------------------------
+    // Debug / testing: artificially age region files
+    // ---------------------------------------------------------------
+
+    /**
+     * Debug/testing utility. Rewrites the per-chunk timestamp table of every
+     * {@code .mca} region file in the given world's overworld (and nether/end
+     * if the gamemode owns those dimensions) so that every chunk entry looks
+     * like it was last written {@code days} days ago.
+     *
+     * <p>The purge scanner reads per-chunk timestamps from the second 4KB
+     * block of each region file's header (not file mtime), so {@code touch}
+     * cannot fake ageing. This rewrites that 4KB timestamp table in place,
+     * setting all 1024 slots to {@code now - days*86400} seconds. File mtime
+     * is not modified.
+     *
+     * <p>Runs synchronously and performs disk I/O. Callers must invoke
+     * this from an async task, and should call {@code World.save()} on the
+     * main thread first to flush in-memory chunk state.
+     *
+     * @param world the gamemode overworld whose regions should be aged
+     * @param days  how many days in the past to pretend the regions were
+     *              last written
+     * @return number of {@code .mca} files successfully rewritten across
+     *         all dimensions
+     */
+    public int ageRegions(World world, int days) {
+        boolean isNether = plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world);
+        boolean isEnd = plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world);
+
+        File worldDir = world.getWorldFolder();
+        File overworldRegion = new File(worldDir, REGION);
+
+        World netherWorld = plugin.getIWM().getNetherWorld(world);
+        File netherRegion = new File(
+                netherWorld != null ? resolveDataFolder(netherWorld) : resolveNetherFallback(worldDir), REGION);
+
+        World endWorld = plugin.getIWM().getEndWorld(world);
+        File endRegion = new File(
+                endWorld != null ? resolveDataFolder(endWorld) : resolveEndFallback(worldDir), REGION);
+
+        long targetSeconds = (System.currentTimeMillis() / 1000L) - (days * 86400L);
+        int total = 0;
+        total += ageRegionsInFolder(overworldRegion, "overworld", targetSeconds);
+        if (isNether) {
+            total += ageRegionsInFolder(netherRegion, "nether", targetSeconds);
+        }
+        if (isEnd) {
+            total += ageRegionsInFolder(endRegion, "end", targetSeconds);
+        }
+        return total;
+    }
+
+    private int ageRegionsInFolder(File folder, String dimension, long targetSeconds) {
+        if (!folder.isDirectory()) {
+            plugin.log("Age-regions: " + dimension + " folder does not exist, skipping: "
+                    + folder.getAbsolutePath());
+            return 0;
+        }
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".mca"));
+        if (files == null || files.length == 0) {
+            plugin.log("Age-regions: no .mca files in " + dimension + " folder " + folder.getAbsolutePath());
+            return 0;
+        }
+        int count = 0;
+        for (File file : files) {
+            if (writeTimestampTable(file, targetSeconds)) {
+                count++;
+            }
+        }
+        plugin.log("Age-regions: rewrote " + count + "/" + files.length + " " + dimension + " region file(s)");
+        return count;
+    }
+
+    /**
+     * Overwrites the 4KB timestamp table (bytes 4096..8191) of a Minecraft
+     * {@code .mca} file with a single repeating big-endian int timestamp.
+     *
+     * @param regionFile    the file to rewrite
+     * @param targetSeconds the Unix timestamp (seconds) to write into every slot
+     * @return {@code true} if the table was rewritten
+     */
+    private boolean writeTimestampTable(File regionFile, long targetSeconds) {
+        if (!regionFile.exists() || regionFile.length() < 8192) {
+            plugin.log("Age-regions: skipping " + regionFile.getName()
+                    + " (missing or smaller than 8192 bytes)");
+            return false;
+        }
+        byte[] table = new byte[4096];
+        int ts = (int) targetSeconds;
+        for (int i = 0; i < 1024; i++) {
+            int offset = i * 4;
+            table[offset]     = (byte) (ts >> 24);
+            table[offset + 1] = (byte) (ts >> 16);
+            table[offset + 2] = (byte) (ts >> 8);
+            table[offset + 3] = (byte)  ts;
+        }
+        try (RandomAccessFile raf = new RandomAccessFile(regionFile, "rw")) {
+            raf.seek(4096);
+            raf.write(table);
+            return true;
+        } catch (IOException e) {
+            plugin.logError("Age-regions: failed to rewrite timestamp table of "
+                    + regionFile.getAbsolutePath() + ": " + e.getMessage());
+            return false;
+        }
     }
 
     // ---------------------------------------------------------------

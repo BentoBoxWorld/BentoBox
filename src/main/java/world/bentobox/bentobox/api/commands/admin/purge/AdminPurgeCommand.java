@@ -48,6 +48,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         new AdminPurgeUnownedCommand(this);
         new AdminPurgeProtectCommand(this);
         new AdminPurgeRegionsCommand(this);
+        new AdminPurgeAgeRegionsCommand(this);
     }
 
     @Override

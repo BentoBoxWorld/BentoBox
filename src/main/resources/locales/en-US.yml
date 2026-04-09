@@ -128,6 +128,10 @@ commands:
         parameters: '[days]'
         description: 'purge islands by deleting old region files'
         confirm: '<light_purple>Type </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>to start purging</light_purple>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/test: rewrite region file timestamps so they become purgable'
+        done: '<green>Aged </green><aqua>[number]</aqua><green> region file(s) in the current world.</green>'
       protect:
         description: toggle [prefix_island] purge protection
         move-to-island: '<red>Move to [prefix_an-island] first!</red>'
