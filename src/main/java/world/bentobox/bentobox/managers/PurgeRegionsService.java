@@ -835,16 +835,6 @@ public class PurgeRegionsService {
         DimFolders ow     = new DimFolders(overworldRegion, overworldEntities, overworldPoi);
         DimFolders nether = new DimFolders(netherRegion,    netherEntities,    netherPoi);
         DimFolders end    = new DimFolders(endRegion,       endEntities,       endPoi);
-        plugin.log("Purge delete: overworld region folder = " + overworldRegion.getAbsolutePath()
-                + " (exists=" + overworldRegion.isDirectory() + ")");
-        if (scan.isNether()) {
-            plugin.log("Purge delete: nether region folder    = " + netherRegion.getAbsolutePath()
-                    + " (exists=" + netherRegion.isDirectory() + ")");
-        }
-        if (scan.isEnd()) {
-            plugin.log("Purge delete: end region folder       = " + endRegion.getAbsolutePath()
-                    + " (exists=" + endRegion.isDirectory() + ")");
-        }
         boolean allOk = true;
         for (Pair<Integer, Integer> coords : scan.deleteableRegions().keySet()) {
             String name = "r." + coords.x() + "." + coords.z() + ".mca";
@@ -876,27 +866,13 @@ public class PurgeRegionsService {
 
     private boolean deleteIfExists(File file) {
         if (!file.getParentFile().exists()) {
-            plugin.log("Purge delete: parent folder missing, skipping " + file.getAbsolutePath());
             return true;
         }
-        boolean existedBefore = file.exists();
-        long sizeBefore = existedBefore ? file.length() : -1L;
         try {
-            boolean removed = Files.deleteIfExists(file.toPath());
-            boolean existsAfter = file.exists();
-            if (existedBefore) {
-                plugin.log("Purge delete: " + file.getAbsolutePath()
-                        + " size=" + sizeBefore + "B"
-                        + " removed=" + removed
-                        + " existsAfter=" + existsAfter);
-                if (existsAfter) {
-                    plugin.logError("Purge delete: file still present after delete! " + file.getAbsolutePath());
-                    return false;
-                }
-            }
+            Files.deleteIfExists(file.toPath());
             return true;
         } catch (IOException e) {
-            plugin.logError("Failed to delete file: " + file.getAbsolutePath() + " — " + e.getMessage());
+            plugin.logError("Failed to delete file: " + file.getAbsolutePath());
             return false;
         }
     }
