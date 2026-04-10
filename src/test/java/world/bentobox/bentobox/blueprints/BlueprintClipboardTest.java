@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -206,4 +210,203 @@ class BlueprintClipboardTest extends CommonTestSetup {
         assertEquals(blueprint, bc.getBlueprint());
     }
 
+    // ---- copy edge cases ----
+
+    @Test
+    void testCopyNoPos1() {
+        bc.setPos2(new Location(world, 10, 64, 10));
+        assertFalse(bc.copy(user, false, false, false));
+        verify(user).sendMessage("commands.admin.blueprint.need-pos1-pos2");
+    }
+
+    @Test
+    void testCopyNoPos2() {
+        bc.setPos1(new Location(world, 0, 64, 0));
+        assertFalse(bc.copy(user, false, false, false));
+        verify(user).sendMessage("commands.admin.blueprint.need-pos1-pos2");
+    }
+
+    @Test
+    void testCopyWithExplicitOriginNullWorld() {
+        // When origin is set and world is null, copy should return false
+        Location noWorldLoc1 = mock(Location.class);
+        when(noWorldLoc1.getWorld()).thenReturn(null);
+        when(noWorldLoc1.getBlockY()).thenReturn(64);
+        Location noWorldLoc2 = mock(Location.class);
+        when(noWorldLoc2.getWorld()).thenReturn(null);
+        when(noWorldLoc2.getBlockY()).thenReturn(74);
+
+        // Bypass setPos1/setPos2 which would clear origin
+        // Set origin first, then use direct field access via setPos methods
+        bc.setPos1(noWorldLoc1);
+        bc.setPos2(noWorldLoc2);
+        bc.setOrigin(new Vector(0, 64, 0)); // Set origin to avoid user.getLocation() call
+        assertFalse(bc.copy(user, false, false, false));
+    }
+
+    @Test
+    void testCopySuccess() {
+        when(world.getMinHeight()).thenReturn(-64);
+        when(world.getMaxHeight()).thenReturn(320);
+
+        // Set up pos1 and pos2 with a real world
+        bc.setPos1(new Location(world, 0, 64, 0));
+        bc.setPos2(new Location(world, 2, 66, 2));
+
+        // Mock the user location for origin
+        Location userLoc = mock(Location.class);
+        when(userLoc.toVector()).thenReturn(new Vector(1, 65, 1));
+        when(user.getLocation()).thenReturn(userLoc);
+
+        // Mock async task
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenAnswer(inv -> {
+            ((Runnable) inv.getArgument(1)).run();
+            return mock(BukkitTask.class);
+        });
+        // Mock the copy task timer
+        when(sch.runTaskTimer(any(), any(Runnable.class), Mockito.anyLong(), Mockito.anyLong()))
+                .thenReturn(mock(BukkitTask.class));
+
+        assertTrue(bc.copy(user, false, false, false));
+        verify(user).sendMessage("commands.admin.blueprint.copying");
+    }
+
+    @Test
+    void testCopyWithOriginAlreadySet() {
+        when(world.getMinHeight()).thenReturn(-64);
+        when(world.getMaxHeight()).thenReturn(320);
+
+        bc.setPos1(new Location(world, 0, 64, 0));
+        bc.setPos2(new Location(world, 2, 66, 2));
+        bc.setOrigin(new Vector(0, 64, 0));
+
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenAnswer(inv -> {
+            ((Runnable) inv.getArgument(1)).run();
+            return mock(BukkitTask.class);
+        });
+        when(sch.runTaskTimer(any(), any(Runnable.class), Mockito.anyLong(), Mockito.anyLong()))
+                .thenReturn(mock(BukkitTask.class));
+
+        assertTrue(bc.copy(user, true, true, false));
+        // Origin was already set, so user.getLocation() should NOT be called
+        verify(user, never()).getLocation();
+    }
+
+    // ---- setPos1 / setPos2 height clamping ----
+
+    @Test
+    void testSetPos1ClampsToMinHeight() {
+        when(world.getMinHeight()).thenReturn(0);
+        when(world.getMaxHeight()).thenReturn(256);
+
+        Location l = new Location(world, 10, -10, 10);
+        bc.setPos1(l);
+        assertEquals(0, bc.getPos1().getBlockY());
+    }
+
+    @Test
+    void testSetPos1ClampsToMaxHeight() {
+        when(world.getMinHeight()).thenReturn(0);
+        when(world.getMaxHeight()).thenReturn(256);
+
+        Location l = new Location(world, 10, 300, 10);
+        bc.setPos1(l);
+        assertEquals(256, bc.getPos1().getBlockY());
+    }
+
+    @Test
+    void testSetPos2ClampsToMinHeight() {
+        when(world.getMinHeight()).thenReturn(-64);
+        when(world.getMaxHeight()).thenReturn(320);
+
+        Location l = new Location(world, 10, -100, 10);
+        bc.setPos2(l);
+        assertEquals(-64, bc.getPos2().getBlockY());
+    }
+
+    @Test
+    void testSetPos2ClampsToMaxHeight() {
+        when(world.getMinHeight()).thenReturn(-64);
+        when(world.getMaxHeight()).thenReturn(320);
+
+        Location l = new Location(world, 10, 400, 10);
+        bc.setPos2(l);
+        assertEquals(320, bc.getPos2().getBlockY());
+    }
+
+    @Test
+    void testSetPos1NullWorld() {
+        // Null world should use defaults: min=0, max=255
+        Location l = new Location(null, 10, -5, 10);
+        bc.setPos1(l);
+        assertEquals(0, bc.getPos1().getBlockY());
+    }
+
+    @Test
+    void testSetPos2NullWorld() {
+        Location l = new Location(null, 10, 300, 10);
+        bc.setPos2(l);
+        assertEquals(255, bc.getPos2().getBlockY());
+    }
+
+    @Test
+    void testSetPos1Null() {
+        bc.setPos1(null);
+        assertNull(bc.getPos1());
+    }
+
+    @Test
+    void testSetPos2Null() {
+        bc.setPos2(null);
+        assertNull(bc.getPos2());
+    }
+
+    @Test
+    void testSetPos1ClearsOrigin() {
+        bc.setOrigin(new Vector(1, 2, 3));
+        assertNotNull(bc.getOrigin());
+        bc.setPos1(new Location(world, 0, 64, 0));
+        assertNull(bc.getOrigin());
+    }
+
+    @Test
+    void testSetPos2ClearsOrigin() {
+        bc.setOrigin(new Vector(1, 2, 3));
+        assertNotNull(bc.getOrigin());
+        bc.setPos2(new Location(world, 0, 64, 0));
+        assertNull(bc.getOrigin());
+    }
+
+    // ---- isFull ----
+
+    @Test
+    void testIsFullAfterSetBlueprint() {
+        assertFalse(bc.isFull());
+        bc.setBlueprint(blueprint);
+        assertTrue(bc.isFull());
+    }
+
+    // ---- setBlueprint returns this (fluent) ----
+
+    @Test
+    void testSetBlueprintReturnsSelf() {
+        BlueprintClipboard result = bc.setBlueprint(blueprint);
+        assertEquals(bc, result);
+    }
+
+    // ---- getVectors edge cases ----
+
+    @Test
+    void testGetVectorsSingleBlock() {
+        BoundingBox bb = new BoundingBox(0.5, 0.5, 0.5, 0.5, 0.5, 0.5);
+        List<Vector> list = bc.getVectors(bb);
+        assertEquals(1, list.size());
+    }
+
+    @Test
+    void testGetVectorsSmallArea() {
+        BoundingBox bb = new BoundingBox(0.5, 0.5, 0.5, 2.5, 2.5, 2.5);
+        List<Vector> list = bc.getVectors(bb);
+        assertEquals(27, list.size()); // 3x3x3
+    }
 }
