@@ -106,8 +106,13 @@ public class AdminPurgeDeletedCommand extends CompositeCommand implements Listen
         getPlugin().log("Purge deleted: world save complete, dispatching deletion");
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
             boolean ok = getPlugin().getPurgeRegionsService().delete(scan);
-            Bukkit.getScheduler().runTask(getPlugin(), () ->
-                user.sendMessage(ok ? "general.success" : NONE_FOUND));
+            Bukkit.getScheduler().runTask(getPlugin(), () -> {
+                if (ok) {
+                    user.sendMessage("commands.admin.purge.deleted.deferred");
+                } else {
+                    user.sendMessage(NONE_FOUND);
+                }
+            });
         });
         return true;
     }

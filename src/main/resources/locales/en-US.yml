@@ -136,6 +136,7 @@ commands:
         parameters: ''
         description: 'purge region files for any [prefix_island] already flagged as deleted'
         confirm: '<light_purple>Type </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>to reap the region files</light_purple>'
+        deferred: '<green>Region files deleted. Island database entries will be removed on next server restart.</green>'
       protect:
         description: toggle [prefix_island] purge protection
         move-to-island: '<red>Move to [prefix_an-island] first!</red>'

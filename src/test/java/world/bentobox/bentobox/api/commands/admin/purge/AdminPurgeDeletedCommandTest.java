@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -320,9 +321,10 @@ class AdminPurgeDeletedCommandTest extends CommonTestSetup {
 
         // Confirm
         assertTrue(apdc.execute(user, "deleted", List.of("confirm")));
-        verify(user).sendMessage("general.success");
+        verify(user).sendMessage("commands.admin.purge.deleted.deferred");
         assertFalse(regionFile.toFile().exists(), "Fresh region file should be reaped by the deleted sweep");
-        verify(im).deleteIslandId("island-deletable");
+        // DB row deletion is deferred to shutdown for days==0 (deleted sweep).
+        verify(im, never()).deleteIslandId("island-deletable");
     }
 
     /**
@@ -358,7 +360,7 @@ class AdminPurgeDeletedCommandTest extends CommonTestSetup {
 
         assertTrue(apdc.execute(user, "deleted", Collections.emptyList()));
         assertTrue(apdc.execute(user, "deleted", List.of("confirm")));
-        verify(user).sendMessage("general.success");
+        verify(user).sendMessage("commands.admin.purge.deleted.deferred");
         assertTrue(playerFile.toFile().exists(),
                 "Deleted sweep must NOT remove player data — only the age sweep does");
     }

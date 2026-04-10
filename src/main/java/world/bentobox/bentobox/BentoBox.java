@@ -319,6 +319,12 @@ public class BentoBox extends JavaPlugin implements Listener {
         if (chunkPregenManager != null) {
             chunkPregenManager.shutdown();
         }
+        // Flush deferred island deletions from the deleted-sweep purge.
+        // Paper's internal chunk cache is cleared on shutdown, so the stale
+        // in-memory chunks are guaranteed gone at this point.
+        if (purgeRegionsService != null) {
+            purgeRegionsService.flushPendingDeletions();
+        }
         if (housekeepingManager != null) {
             housekeepingManager.stop();
         }
