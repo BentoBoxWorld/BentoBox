@@ -319,12 +319,6 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.delete-speed", since = "1.7.0")
     private int deleteSpeed = 1;
 
-    /**
-     * @deprecated No longer bound to config. Reset always soft-deletes now.
-     *             Slated for removal.
-     */
-    @Deprecated(since = "3.14.0", forRemoval = true)
-    private boolean keepPreviousIslandOnReset = false;
 
     /**
      * @deprecated No longer bound to config. The chunk-by-chunk deletion
@@ -848,33 +842,6 @@ public class Settings implements ConfigObject {
      */
     public void setDatabasePrefix(String databasePrefix) {
         this.databasePrefix = databasePrefix;
-    }
-
-    /**
-     * Returns whether islands, when reset, should be kept or deleted.
-     *
-     * @return {@code true} if islands, when reset, should be kept; {@code false}
-     *         otherwise.
-     * @since 1.13.0
-     * @deprecated Reset always soft-deletes now. Physical cleanup is handled
-     *             by the housekeeping auto-purge. Slated for removal.
-     */
-    @Deprecated(since = "3.14.0", forRemoval = true)
-    public boolean isKeepPreviousIslandOnReset() {
-        return keepPreviousIslandOnReset;
-    }
-
-    /**
-     * Sets whether islands, when reset, should be kept or deleted.
-     *
-     * @param keepPreviousIslandOnReset {@code true} if islands, when reset, should
-     *                                  be kept; {@code false} otherwise.
-     * @since 1.13.0
-     * @deprecated See {@link #isKeepPreviousIslandOnReset()}.
-     */
-    @Deprecated(since = "3.14.0", forRemoval = true)
-    public void setKeepPreviousIslandOnReset(boolean keepPreviousIslandOnReset) {
-        this.keepPreviousIslandOnReset = keepPreviousIslandOnReset;
     }
 
     /**

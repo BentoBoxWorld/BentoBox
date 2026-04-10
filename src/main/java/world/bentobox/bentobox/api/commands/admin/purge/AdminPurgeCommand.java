@@ -12,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandDeletedEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -91,8 +90,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
             getOldIslands(days).thenAccept(islandSet -> {
                 user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER,
                         String.valueOf(islandSet.size()));
-                if (islandSet.size() > TOO_MANY
-                        && !BentoBox.getInstance().getSettings().isKeepPreviousIslandOnReset()) {
+                if (islandSet.size() > TOO_MANY) {
                     user.sendMessage("commands.admin.purge.too-many"); // Give warning
                 }
                 if (!islandSet.isEmpty()) {
@@ -132,12 +130,10 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
                 // Round the percentage to check for specific tiers
                 int roundedPercentage = (int) Math.floor(percentage);
 
-                // Determine if this percentage should be logged: 1%, 5%, or any new multiple of 5%
-                if (!BentoBox.getInstance().getSettings().isKeepPreviousIslandOnReset() || (roundedPercentage > 0
+                // Log at 1%, 5%, and every multiple of 5% thereafter
+                if (roundedPercentage > 0
                         && (roundedPercentage == 1 || roundedPercentage % 5 == 0)
-                        && !loggedTiers.contains(roundedPercentage))) {
-
-                    // Log the message and add the tier to the logged set
+                        && !loggedTiers.contains(roundedPercentage)) {
                     getPlugin().log(count + " islands purged out of " + getPurgeableIslandsCount() + " ("
                             + percentageStr + " %)");
                     loggedTiers.add(roundedPercentage);
