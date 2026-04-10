@@ -41,6 +41,9 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     private static final String ENTITIES = "entities";
     private static final String POI = "poi";
     private static final String DIM_1 = "DIM-1";
+    private static final String DIM1 = "DIM1";
+    private static final String PLAYERS = "players";
+    private static final String PLAYERDATA = "playerdata";
     private static final String IN_WORLD = " in world ";
     private static final String WILL_BE_DELETED = " will be deleted";
     private static final String EXISTS_PREFIX = " (exists=";
@@ -152,7 +155,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
     }
 
     private void deletePlayerFromWorldFolder(String islandID) {
-        File playerData = new File(getWorld().getWorldFolder(), "playerdata");
+        File playerData = resolvePlayerDataFolder();
         getPlugin().getIslands().getIslandById(islandID)
                 .ifPresent(island -> island.getMemberSet()
                         .forEach(uuid -> maybeDeletePlayerData(uuid, playerData)));
@@ -197,11 +200,14 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
     /**
      * Resolves the base data folder for a world, accounting for the dimension
-     * subfolder that Minecraft uses for non-overworld environments.
+     * subfolder layout.
      * <p>
-     * Overworld data lives directly in the world folder, but Nether data lives
-     * in {@code DIM-1/} and End data lives in {@code DIM1/} subfolders - even
-     * when the world has its own separate folder.
+     * <b>Pre-Minecraft version 26.1 (old format):</b> Nether data lives in {@code DIM-1/} and
+     * End data lives in {@code DIM1/} subfolders inside the world folder.
+     * <p>
+     * <b>Minecraft version 26.1.1+ (new format):</b> Each dimension has its own world folder
+     * under {@code dimensions/minecraft/} and data (region/, entities/, poi/)
+     * lives directly in it — no DIM-1/DIM1 subfolders.
      *
      * @param world the world to resolve
      * @return the base folder containing region/, entities/, poi/ subfolders
@@ -214,11 +220,88 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
                 yield dim.isDirectory() ? dim : worldFolder;
             }
             case THE_END -> {
-                File dim = new File(worldFolder, "DIM1");
+                File dim = new File(worldFolder, DIM1);
                 yield dim.isDirectory() ? dim : worldFolder;
             }
             default -> worldFolder;
         };
+    }
+
+    /**
+     * Resolves the player data folder, supporting both old and new formats.
+     * <p>
+     * <b>Pre-26.1:</b> {@code <worldFolder>/playerdata/}
+     * <p>
+     * <b>26.1.1+:</b> {@code <worldRoot>/players/data/} (centralized)
+     *
+     * @return the folder containing player .dat files
+     */
+    private File resolvePlayerDataFolder() {
+        File worldFolder = getWorld().getWorldFolder();
+        // Old format
+        File oldPath = new File(worldFolder, PLAYERDATA);
+        if (oldPath.isDirectory()) {
+            return oldPath;
+        }
+        // New 26.1.1 format: walk up from dimensions/minecraft/<world>/ to world root
+        File root = worldFolder.getParentFile(); // minecraft/
+        if (root != null) root = root.getParentFile(); // dimensions/
+        if (root != null) root = root.getParentFile(); // world root
+        if (root != null) {
+            File newPath = new File(root, PLAYERS + File.separator + "data");
+            if (newPath.isDirectory()) {
+                return newPath;
+            }
+        }
+        return oldPath; // fallback
+    }
+
+    /**
+     * Resolves the nether data folder when the Nether World object is unavailable.
+     * Tries the old DIM-1 subfolder first, then the 26.1.1 sibling world folder.
+     *
+     * @param overworldFolder the overworld's world folder
+     * @return the nether base folder (may not exist)
+     */
+    private File resolveNetherFallback(File overworldFolder) {
+        // Old format: <overworld>/DIM-1/
+        File dim = new File(overworldFolder, DIM_1);
+        if (dim.isDirectory()) {
+            return dim;
+        }
+        // New 26.1.1 format: sibling folder <world>_nether in same parent
+        File parent = overworldFolder.getParentFile();
+        if (parent != null) {
+            File sibling = new File(parent, overworldFolder.getName() + "_nether");
+            if (sibling.isDirectory()) {
+                return sibling;
+            }
+        }
+        return dim; // fallback to old path
+    }
+
+    /**
+     * Resolves the end data folder when the End World object is unavailable.
+     * Tries the old DIM1 subfolder first, then the 26.1.1 sibling world folder.
+     *
+     * @param overworldFolder the overworld's world folder
+     * @return the end base folder (may not exist)
+     */
+    private File resolveEndFallback(File overworldFolder) {
+        // Old format: <overworld>/DIM1/
+        File dim = new File(overworldFolder, DIM1);
+        if (dim.isDirectory()) {
+            return dim;
+        }
+        // New 26.1.1 format: sibling folder <world>_the_end in same parent
+        File parent = overworldFolder.getParentFile();
+        if (parent != null) {
+            File sibling = new File(parent, overworldFolder.getName() + "_the_end");
+            if (sibling.isDirectory()) {
+                return sibling;
+            }
+        }
+        return dim; // fallback to old path
     }
 
     /**
@@ -261,13 +344,13 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         File overworldPoi      = new File(base, POI);
 
         World netherWorld = getPlugin().getIWM().getNetherWorld(world);
-        File netherBase     = netherWorld != null ? resolveDataFolder(netherWorld) : new File(base, DIM_1);
+        File netherBase     = netherWorld != null ? resolveDataFolder(netherWorld) : resolveNetherFallback(base);
         File netherRegion   = new File(netherBase, REGION);
         File netherEntities = new File(netherBase, ENTITIES);
         File netherPoi      = new File(netherBase, POI);
 
         World endWorld = getPlugin().getIWM().getEndWorld(world);
-        File endBase     = endWorld != null ? resolveDataFolder(endWorld) : new File(base, "DIM1");
+        File endBase     = endWorld != null ? resolveDataFolder(endWorld) : resolveEndFallback(base);
         File endRegion   = new File(endBase, REGION);
         File endEntities = new File(endBase, ENTITIES);
         File endPoi      = new File(endBase, POI);
@@ -550,11 +633,11 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         File overworldRegion = new File(worldDir, REGION);
 
         World netherWorld = getPlugin().getIWM().getNetherWorld(world);
-        File netherBase = netherWorld != null ? resolveDataFolder(netherWorld) : new File(worldDir, DIM_1);
+        File netherBase = netherWorld != null ? resolveDataFolder(netherWorld) : resolveNetherFallback(worldDir);
         File netherRegion = new File(netherBase, REGION);
 
         World endWorld = getPlugin().getIWM().getEndWorld(world);
-        File endBase = endWorld != null ? resolveDataFolder(endWorld) : new File(worldDir, "DIM1");
+        File endBase = endWorld != null ? resolveDataFolder(endWorld) : resolveEndFallback(worldDir);
         File endRegion = new File(endBase, REGION);
 
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);

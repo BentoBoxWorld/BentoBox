@@ -22,6 +22,7 @@ public class TestWorldSettings implements WorldSettings {
 
     private long epoch;
     private final Map<String, Boolean> worldFlags = new java.util.HashMap<>();
+    private final Map<String, Integer> defaultIslandFlagNames = new java.util.HashMap<>();
 
     @Override
     public GameMode getDefaultGameMode() {
@@ -39,6 +40,11 @@ public class TestWorldSettings implements WorldSettings {
     public Map<Flag, Integer> getDefaultIslandSettings() {
 
         return Collections.emptyMap();
+    }
+
+    @Override
+    public Map<String, Integer> getDefaultIslandFlagNames() {
+        return defaultIslandFlagNames;
     }
 
     @Override

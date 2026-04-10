@@ -49,6 +49,14 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.KeybindComponent;
+import net.kyori.adventure.text.ScoreComponent;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -696,7 +704,14 @@ public class Util {
     @NonNull
     public static String stripSpaceAfterColorCodes(String textToStrip) {
         if (textToStrip == null) return "";
-        textToStrip = textToStrip.replaceAll("(\u00A7.)[\\s]", "$1");
+        // The legacy locale hack of writing "&c Hello" (with an intentional space so
+        // primitive auto-translators wouldn't glue "&c" onto "Hello") only applies when
+        // the §X code appears at a boundary — start of string, after whitespace, or
+        // immediately after another §X code. Mid-text codes (e.g. "Page §e1§7 of §e4"
+        // where §7 is preceded by a digit) must NOT strip the following space, because
+        // that space is content, not the hack. Also skip §r (reset) in all cases.
+        // See https://github.com/BentoBoxWorld/AOneBlock/issues/495.
+        textToStrip = textToStrip.replaceAll("(?<=^|\\s|\u00A7.)(\u00A7[^rR])\\s", "$1");
         return textToStrip;
     }
 
@@ -1051,16 +1066,28 @@ public class Util {
         StringBuilder result = new StringBuilder();
         List<String> openTags = new ArrayList<>();
         int i = 0;
+        // Tracks whether the previous character emitted was part of a legacy code we just
+        // consumed. Used for the boundary check on the legacy-space-stripping hack.
+        boolean justConsumedCode = false;
         while (i < text.length()) {
             if (i + 1 < text.length() && text.charAt(i) == '&') {
                 char code = Character.toLowerCase(text.charAt(i + 1));
                 String mmTag = LEGACY_TO_MM_MAP.get(code);
                 if (mmTag != null) {
+                    // Boundary check: the legacy locale hack only applies when the &X code
+                    // appears at a natural boundary — start of the string, after whitespace,
+                    // or immediately after another legacy code. Mid-text codes (e.g. "Page
+                    // §e1§7 of §e4" — the §7 is preceded by "1") must NOT strip the
+                    // following space, because that space is content, not the locale hack.
+                    // See https://github.com/BentoBoxWorld/AOneBlock/issues/495.
+                    boolean atBoundary = i == 0 || justConsumedCode
+                            || Character.isWhitespace(text.charAt(i - 1));
                     i += 2;
-                    // Strip space after color code (the locale hack)
-                    if (i < text.length() && text.charAt(i) == ' ') {
+                    // &r is a format terminator; any following space is always intentional.
+                    if (!"reset".equals(mmTag) && atBoundary && i < text.length() && text.charAt(i) == ' ') {
                         i++;
                     }
+                    justConsumedCode = true;
                     if ("reset".equals(mmTag)) {
                         // Close all open tags
                         for (int j = openTags.size() - 1; j >= 0; j--) {
@@ -1074,18 +1101,28 @@ public class Util {
                                 || mmTag.equals("underlined") || mmTag.equals("strikethrough")
                                 || mmTag.equals("obfuscated");
                         if (!isDecoration) {
-                            // Close previous color tags (not decorations)
+                            // Close previous color tags (not decorations).
+                            // To maintain proper MiniMessage nesting, close any decoration
+                            // tags that sit inside color tags first, then reopen them after.
+                            List<String> decorationsToReopen = new ArrayList<>();
                             for (int j = openTags.size() - 1; j >= 0; j--) {
                                 String tag = openTags.get(j);
-                                if (!tag.equals("bold") && !tag.equals("italic") && !tag.equals("underlined")
-                                        && !tag.equals("strikethrough") && !tag.equals("obfuscated")
-                                        && !tag.startsWith("color:")) {
+                                if (tag.equals("bold") || tag.equals("italic") || tag.equals("underlined")
+                                        || tag.equals("strikethrough") || tag.equals("obfuscated")) {
+                                    // Close decoration temporarily to maintain nesting
                                     result.append("</").append(tag).append(">");
+                                    decorationsToReopen.add(0, tag);
                                     openTags.remove(j);
-                                } else if (tag.startsWith("color:")) {
+                                } else {
+                                    // Named color or color:# tag — close it
                                     result.append("</").append(tag).append(">");
                                     openTags.remove(j);
                                 }
+                            }
+                            // Reopen decorations so they continue through the new color
+                            for (String dec : decorationsToReopen) {
+                                result.append("<").append(dec).append(">");
+                                openTags.add(dec);
                             }
                         }
                         result.append("<").append(mmTag).append(">");
@@ -1098,27 +1135,45 @@ public class Util {
             if (text.charAt(i) == '<' && text.substring(i).startsWith("<color:#")) {
                 int end = text.indexOf('>', i);
                 if (end != -1) {
+                    // Same boundary check as named &X codes — hex was originally &#RRGGBB
+                    // in the source string, so use the same rule for its space-strip.
+                    boolean atBoundaryHex = i == 0 || justConsumedCode
+                            || Character.isWhitespace(text.charAt(i - 1));
                     String colorTag = text.substring(i + 1, end);
-                    // Close previous color tags
+                    // Close previous color tags, preserving decoration nesting
+                    List<String> decorationsToReopen = new ArrayList<>();
                     for (int j = openTags.size() - 1; j >= 0; j--) {
                         String tag = openTags.get(j);
-                        if (!tag.equals("bold") && !tag.equals("italic") && !tag.equals("underlined")
-                                && !tag.equals("strikethrough") && !tag.equals("obfuscated")) {
+                        if (tag.equals("bold") || tag.equals("italic") || tag.equals("underlined")
+                                || tag.equals("strikethrough") || tag.equals("obfuscated")) {
+                            // Close decoration temporarily to maintain nesting
+                            result.append("</").append(tag).append(">");
+                            decorationsToReopen.add(0, tag);
+                            openTags.remove(j);
+                        } else {
                             result.append("</").append(tag).append(">");
                             openTags.remove(j);
                         }
                     }
+                    // Reopen decorations so they continue through the new color
+                    for (String dec : decorationsToReopen) {
+                        result.append("<").append(dec).append(">");
+                        openTags.add(dec);
+                    }
                     result.append("<").append(colorTag).append(">");
                     openTags.add(colorTag);
                     i = end + 1;
-                    // Strip space after hex color code
-                    if (i < text.length() && text.charAt(i) == ' ') {
+                    // Strip space after hex color code only at a boundary.
+                    // See https://github.com/BentoBoxWorld/AOneBlock/issues/495.
+                    if (atBoundaryHex && i < text.length() && text.charAt(i) == ' ') {
                         i++;
                     }
+                    justConsumedCode = true;
                     continue;
                 }
             }
             result.append(text.charAt(i));
+            justConsumedCode = false;
             i++;
         }
         // Close any remaining open tags
@@ -1171,21 +1226,28 @@ public class Util {
         // Replace &X codes with MiniMessage tags (opening only, no closing)
         sb = new StringBuilder();
         int i = 0;
+        // See legacyToMiniMessage for the rationale behind the boundary check.
+        boolean justConsumedCode = false;
         while (i < text.length()) {
             if (i + 1 < text.length() && text.charAt(i) == '&') {
                 char code = Character.toLowerCase(text.charAt(i + 1));
                 String mmTag = LEGACY_TO_MM_MAP.get(code);
                 if (mmTag != null) {
+                    boolean atBoundary = i == 0 || justConsumedCode
+                            || Character.isWhitespace(text.charAt(i - 1));
                     sb.append("<").append(mmTag).append(">");
                     i += 2;
-                    // Strip space after color code (locale hack)
-                    if (i < text.length() && text.charAt(i) == ' ') {
+                    // Legacy locale hack — only strip at a boundary, and never after &r.
+                    // See https://github.com/BentoBoxWorld/AOneBlock/issues/495.
+                    if (!"reset".equals(mmTag) && atBoundary && i < text.length() && text.charAt(i) == ' ') {
                         i++;
                     }
+                    justConsumedCode = true;
                     continue;
                 }
             }
             sb.append(text.charAt(i));
+            justConsumedCode = false;
             i++;
         }
         return sb.toString();
@@ -1306,7 +1368,168 @@ public class Util {
      */
     @NonNull
     public static String componentToLegacy(@NonNull Component component) {
-        return SECTION_SERIALIZER.serialize(component);
+        StringBuilder sb = new StringBuilder();
+        // EmittedState[0] holds the last-emitted style (color + decorations) so the walker
+        // can compute transitions and emit §r where Adventure's serializer would not.
+        EmittedState state = new EmittedState();
+        appendComponentLegacy(sb, component, Style.empty(), state);
+        return sb.toString();
+    }
+
+    /**
+     * Mutable state used by {@link #appendComponentLegacy(StringBuilder, Component, Style, EmittedState)}
+     * to track the most recently emitted color and decorations. Adventure's
+     * {@link LegacyComponentSerializer} silently drops decoration-off transitions because legacy
+     * color codes have no "turn this decoration off" code — only §r resets everything. We work
+     * around that by tracking what is currently active and emitting §r ourselves when needed.
+     */
+    private static final class EmittedState {
+        TextColor color;
+        boolean bold;
+        boolean italic;
+        boolean underlined;
+        boolean strikethrough;
+        boolean obfuscated;
+        boolean isFresh = true;
+    }
+
+    private static void appendComponentLegacy(StringBuilder sb, Component component, Style inherited, EmittedState state) {
+        // merge() with default strategy lets the child component override inherited fields,
+        // and inherits the parent's fields where the child leaves them unset.
+        Style effective = inherited.merge(component.style());
+        String content = getComponentContent(component);
+        if (!content.isEmpty()) {
+            emitStyleTransition(sb, effective, state);
+            sb.append(content);
+        }
+        for (Component child : component.children()) {
+            appendComponentLegacy(sb, child, effective, state);
+        }
+    }
+
+    /**
+     * Extracts the direct text content from a Component node without recursing into children.
+     * Used by {@link #appendComponentLegacy} so that non-TextComponent types degrade gracefully
+     * when serializing to legacy format (e.g. for offline message delivery).
+     * <ul>
+     *   <li>{@link TextComponent} — returns the literal text content.</li>
+     *   <li>{@link TranslatableComponent} — returns the {@code fallback()} text if set,
+     *       otherwise the translation key (e.g. {@code "item.minecraft.diamond_sword"}).
+     *       The key is at least recognisable; the client-side translation cannot be resolved
+     *       server-side.</li>
+     *   <li>{@link KeybindComponent} — returns the keybind id (e.g. {@code "key.jump"}).
+     *       The actual bound key is only known to the client.</li>
+     *   <li>{@link ScoreComponent} — returns the objective name; the live score value is
+     *       client-side only.</li>
+     *   <li>All other types — returns an empty string (no useful text to extract).</li>
+     * </ul>
+     */
+    private static String getComponentContent(Component component) {
+        if (component instanceof TextComponent text) {
+            return text.content();
+        } else if (component instanceof TranslatableComponent translatable) {
+            // Prefer the server-side fallback string if the addon/code set one;
+            // otherwise fall back to the raw key — still recognisable (e.g. "item.minecraft.diamond").
+            String fallback = translatable.fallback();
+            return (fallback != null && !fallback.isEmpty()) ? fallback : translatable.key();
+        } else if (component instanceof KeybindComponent keybind) {
+            return keybind.keybind();
+        } else if (component instanceof ScoreComponent score) {
+            return score.objective();
+        }
+        // SelectorComponent, NBT components — no server-resolvable text.
+        return "";
+    }
+
+    private static void emitStyleTransition(StringBuilder sb, Style style, EmittedState state) {
+        boolean wantBold = style.decoration(TextDecoration.BOLD) == TextDecoration.State.TRUE;
+        boolean wantItalic = style.decoration(TextDecoration.ITALIC) == TextDecoration.State.TRUE;
+        boolean wantUnderlined = style.decoration(TextDecoration.UNDERLINED) == TextDecoration.State.TRUE;
+        boolean wantStrikethrough = style.decoration(TextDecoration.STRIKETHROUGH) == TextDecoration.State.TRUE;
+        boolean wantObfuscated = style.decoration(TextDecoration.OBFUSCATED) == TextDecoration.State.TRUE;
+        TextColor wantColor = style.color();
+
+        // Determine if we need a hard reset: any decoration that was on must turn off,
+        // or the color must change to "no color" while one was previously active.
+        boolean needReset = (state.bold && !wantBold)
+                || (state.italic && !wantItalic)
+                || (state.underlined && !wantUnderlined)
+                || (state.strikethrough && !wantStrikethrough)
+                || (state.obfuscated && !wantObfuscated)
+                || (state.color != null && wantColor == null);
+
+        if (needReset) {
+            sb.append(COLOR_CHAR).append('r');
+            state.color = null;
+            state.bold = false;
+            state.italic = false;
+            state.underlined = false;
+            state.strikethrough = false;
+            state.obfuscated = false;
+        }
+
+        // Emit color if it changed (or after a reset)
+        if (wantColor != null && (state.isFresh || !wantColor.equals(state.color) || needReset)) {
+            sb.append(legacyColorCode(wantColor));
+            state.color = wantColor;
+        }
+
+        // Emit decorations that should now be on but aren't yet
+        if (wantBold && !state.bold) {
+            sb.append(COLOR_CHAR).append('l');
+            state.bold = true;
+        }
+        if (wantItalic && !state.italic) {
+            sb.append(COLOR_CHAR).append('o');
+            state.italic = true;
+        }
+        if (wantUnderlined && !state.underlined) {
+            sb.append(COLOR_CHAR).append('n');
+            state.underlined = true;
+        }
+        if (wantStrikethrough && !state.strikethrough) {
+            sb.append(COLOR_CHAR).append('m');
+            state.strikethrough = true;
+        }
+        if (wantObfuscated && !state.obfuscated) {
+            sb.append(COLOR_CHAR).append('k');
+            state.obfuscated = true;
+        }
+        state.isFresh = false;
+    }
+
+    private static String legacyColorCode(TextColor color) {
+        // For named colors, use the standard single-character legacy code.
+        NamedTextColor named = NamedTextColor.nearestTo(color);
+        char code;
+        if (named == NamedTextColor.BLACK) code = '0';
+        else if (named == NamedTextColor.DARK_BLUE) code = '1';
+        else if (named == NamedTextColor.DARK_GREEN) code = '2';
+        else if (named == NamedTextColor.DARK_AQUA) code = '3';
+        else if (named == NamedTextColor.DARK_RED) code = '4';
+        else if (named == NamedTextColor.DARK_PURPLE) code = '5';
+        else if (named == NamedTextColor.GOLD) code = '6';
+        else if (named == NamedTextColor.GRAY) code = '7';
+        else if (named == NamedTextColor.DARK_GRAY) code = '8';
+        else if (named == NamedTextColor.BLUE) code = '9';
+        else if (named == NamedTextColor.GREEN) code = 'a';
+        else if (named == NamedTextColor.AQUA) code = 'b';
+        else if (named == NamedTextColor.RED) code = 'c';
+        else if (named == NamedTextColor.LIGHT_PURPLE) code = 'd';
+        else if (named == NamedTextColor.YELLOW) code = 'e';
+        else code = 'f';
+        // If the original color was a true hex (not a named color), emit the §x§R§R... form
+        // so it round-trips. Otherwise just emit the named code.
+        if (!(color instanceof NamedTextColor)) {
+            String hex = String.format("%06X", color.value());
+            StringBuilder out = new StringBuilder();
+            out.append(COLOR_CHAR).append('x');
+            for (int i = 0; i < 6; i++) {
+                out.append(COLOR_CHAR).append(hex.charAt(i));
+            }
+            return out.toString();
+        }
+        return COLOR_CHAR + Character.toString(code);
     }
 
     /**

@@ -45,6 +45,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
 
+import net.kyori.adventure.text.Component;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
@@ -361,6 +363,76 @@ class UserTest extends CommonTestSetup {
         user = User.getInstance((CommandSender)null);
         user.sendRawMessage(raw);
         checkSpigotMessage(raw, 0);
+    }
+
+    @Test
+    void testSendRawMessageActionBar() {
+        user.sendRawMessage("[actionbar]Teleporting...");
+        verify(mockPlayer).sendActionBar(any(Component.class));
+        // Should not be sent as a chat message
+        verify(mockPlayer, never()).sendMessage(any(Component.class));
+    }
+
+    @Test
+    void testSendRawMessageActionBarCaseInsensitive() {
+        user.sendRawMessage("[ACTIONBAR]Teleporting...");
+        verify(mockPlayer).sendActionBar(any(Component.class));
+    }
+
+    @Test
+    void testSendRawMessageTitle() {
+        user.sendRawMessage("[title]Teleporting...");
+        verify(mockPlayer).showTitle(any(net.kyori.adventure.title.Title.class));
+        verify(mockPlayer, never()).sendMessage(any(Component.class));
+    }
+
+    @Test
+    void testSendRawMessageTitleWithSubtitle() {
+        user.sendRawMessage("[title]Teleporting...[subtitle]Wait a second.");
+        verify(mockPlayer).showTitle(any(net.kyori.adventure.title.Title.class));
+        verify(mockPlayer, never()).sendMessage(any(Component.class));
+    }
+
+    @Test
+    void testSendRawMessageSound() {
+        when(mockPlayer.getLocation()).thenReturn(location);
+        user.sendRawMessage("[sound:entity_experience_orb_pickup:1:1]Hello!");
+        verify(mockPlayer).playSound(any(Location.class), eq("entity.experience.orb.pickup"), eq(1.0f), eq(1.0f));
+        // Message should still be sent as chat
+        checkSpigotMessage("Hello!");
+    }
+
+    @Test
+    void testSendRawMessageSoundWithTitle() {
+        when(mockPlayer.getLocation()).thenReturn(location);
+        user.sendRawMessage("[sound:entity_experience_orb_pickup:1:1][title]Teleporting...[subtitle]Wait a second.");
+        verify(mockPlayer).playSound(any(Location.class), eq("entity.experience.orb.pickup"), eq(1.0f), eq(1.0f));
+        verify(mockPlayer).showTitle(any(net.kyori.adventure.title.Title.class));
+    }
+
+    @Test
+    void testSendRawMessageSoundDefaultVolumeAndPitch() {
+        when(mockPlayer.getLocation()).thenReturn(location);
+        user.sendRawMessage("[sound:entity_experience_orb_pickup]Hello!");
+        verify(mockPlayer).playSound(any(Location.class), eq("entity.experience.orb.pickup"), eq(1.0f), eq(1.0f));
+    }
+
+    @Test
+    void testSendRawMessageInvalidSound() {
+        when(mockPlayer.getLocation()).thenReturn(location);
+        // Even invalid sound names get passed through - Minecraft will silently ignore them
+        user.sendRawMessage("[sound:not_a_real_sound:1:1]Hello!");
+        verify(mockPlayer).playSound(any(Location.class), eq("not.a.real.sound"), eq(1.0f), eq(1.0f));
+        // Message should still be sent
+        checkSpigotMessage("Hello!");
+    }
+
+    @Test
+    void testSendRawMessageActionBarFallbackForNonPlayer() {
+        // Non-player sender should get the message as regular chat
+        User senderUser = User.getInstance(sender);
+        senderUser.sendRawMessage("[actionbar]Teleporting...");
+        verify(sender).sendMessage(any(Component.class));
     }
 
     @Test
@@ -927,6 +999,34 @@ class UserTest extends CommonTestSetup {
         Map<String, MetaDataValue> metaData = new HashMap<>();
         p.setMetaData(metaData);
         assertEquals(Optional.of(metaData), p.getMetaData());
+    }
+
+    /**
+     * Verifies that bold formatting in a prefix does not leak into the
+     * surrounding message text after substitution.
+     */
+    @Test
+    void testPrefixBoldDoesNotLeak() {
+        // Prefix with bold that should be contained
+        String prefix = "<gold><bold>[BentoBox]: </bold></gold>";
+        String message = "[prefix_bentobox]Welcome to the island!";
+
+        // Return prefix for "prefixes.bentobox" key, message for the reference
+        when(testLm.get(any(), eq("prefixes.bentobox"))).thenReturn(prefix);
+        when(testLm.get(any(), eq("a.reference"))).thenReturn(message);
+        when(testLm.getAvailablePrefixes(any())).thenReturn(Set.of("bentobox"));
+
+        String result = user.getTranslation("a.reference");
+
+        // The result is a legacy §-coded string.
+        // Bold (§l) must NOT appear before "Welcome" — the reset (§r) should separate them.
+        int welcomeIdx = result.indexOf("Welcome");
+        assertTrue(welcomeIdx > 0, "Expected 'Welcome' in result: " + result);
+
+        // Check that there's a reset (§r) between the prefix and "Welcome"
+        String beforeWelcome = result.substring(0, welcomeIdx);
+        assertTrue(beforeWelcome.contains("\u00A7r"),
+                "Expected §r reset before 'Welcome' to stop bold leakage: " + result);
     }
 
 }

@@ -4,28 +4,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.RayTraceResult;
+
+import net.kyori.adventure.text.Component;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.ExpiringSet;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Enables changing of obsidian back into lava
@@ -33,6 +42,17 @@ import world.bentobox.bentobox.util.ExpiringSet;
  * @author tastybento
  */
 public class ObsidianScoopingListener extends FlagListener {
+
+    private static final String LAVA_TIP_REFERENCE = "protection.flags.OBSIDIAN_SCOOPING.lavaTip";
+
+    /**
+     * The preferred order for hologram placement: above, sides, then below.
+     */
+    private static final BlockFace[] HOLOGRAM_FACES = {
+        BlockFace.UP,
+        BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST,
+        BlockFace.DOWN
+    };
 
     /**
      * Cooldown to prevent lava duplication by rapid obsidian scooping.
@@ -42,6 +62,12 @@ public class ObsidianScoopingListener extends FlagListener {
      */
     @SuppressWarnings("java:S3077") // volatile is correct here for double-checked locking lazy init
     private volatile ExpiringSet<UUID> cooldowns;
+
+    /**
+     * Active lava-tip holograms keyed by the obsidian block's location, so they can be
+     * removed immediately if the obsidian is scooped before the timed removal fires.
+     */
+    private final Map<Location, TextDisplay> activeHolograms = new ConcurrentHashMap<>();
 
     /**
      * Returns the cooldown set, initializing it lazily on first use with the
@@ -69,6 +95,106 @@ public class ObsidianScoopingListener extends FlagListener {
     public void onPlayerInteractEvent(final PlayerInteractEvent e) {
         onPlayerInteract(e);
     }
+
+    /**
+     * Shows a hologram tip when obsidian forms from lava and water mixing,
+     * if the obsidian could potentially be scooped back into lava.
+     *
+     * @param e the block form event
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onObsidianForm(final BlockFormEvent e) {
+        handleObsidianForm(e);
+    }
+
+    /**
+     * Handles obsidian formation and shows a lava tip hologram if applicable.
+     *
+     * @param e the block form event
+     * @return true if a hologram was spawned, false otherwise
+     */
+    boolean handleObsidianForm(final BlockFormEvent e) {
+        if (!Material.OBSIDIAN.equals(e.getNewState().getType())) {
+            return false;
+        }
+        Block b = e.getBlock();
+        if (!getIWM().inWorld(b.getLocation()) || !Flags.OBSIDIAN_SCOOPING.isSetForWorld(b.getWorld())) {
+            return false;
+        }
+        BentoBox bentoBox = BentoBox.getInstance();
+        int duration = bentoBox.getSettings().getObsidianScoopingLavaTipDuration();
+        if (duration <= 0) {
+            return false;
+        }
+        int radius = bentoBox.getSettings().getObsidianScoopingRadius();
+        // Check if this obsidian is solitary (could be scooped)
+        if (radius > 0 && getBlocksAround(b, radius).stream().anyMatch(block -> block.getType().equals(Material.OBSIDIAN))) {
+            return false;
+        }
+        // Find a suitable location for the hologram
+        Location holoLoc = findHologramLocation(b);
+        if (holoLoc == null) {
+            return false;
+        }
+        // Get the lava tip text from the locale
+        String tipText = bentoBox.getLocalesManager().getOrDefault(LAVA_TIP_REFERENCE, "");
+        if (tipText.isEmpty()) {
+            return false;
+        }
+        Component tipComponent = Util.parseMiniMessage(tipText);
+        // Spawn a TextDisplay hologram
+        TextDisplay hologram = b.getWorld().spawn(holoLoc, TextDisplay.class, td -> {
+            td.text(tipComponent);
+            td.setBillboard(Display.Billboard.CENTER);
+            td.setSeeThrough(true);
+            td.setGravity(false);
+        });
+        Location key = b.getLocation();
+        // Replace any existing hologram tracked at this location
+        TextDisplay previous = activeHolograms.put(key, hologram);
+        if (previous != null && previous.isValid()) {
+            previous.remove();
+        }
+        // Schedule removal after the configured duration
+        Bukkit.getScheduler().runTaskLater(bentoBox, () -> {
+            if (activeHolograms.remove(key, hologram) && hologram.isValid()) {
+                hologram.remove();
+            }
+        }, duration * 20L);
+        return true;
+    }
+
+    /**
+     * Removes any active lava-tip hologram associated with the given obsidian block.
+     *
+     * @param b the obsidian block being scooped
+     */
+    private void removeHologramFor(Block b) {
+        TextDisplay hologram = activeHolograms.remove(b.getLocation());
+        if (hologram != null && hologram.isValid()) {
+            hologram.remove();
+        }
+    }
+
+    /**
+     * Finds a suitable location for a hologram near the given block.
+     * Prefers above the block, then sides, then below.
+     * A location is suitable if the block there is air or a liquid.
+     *
+     * @param b the obsidian block
+     * @return a suitable location, or null if none found
+     */
+    Location findHologramLocation(Block b) {
+        for (BlockFace face : HOLOGRAM_FACES) {
+            Block relative = b.getRelative(face);
+            Material type = relative.getType();
+            if (type.isAir() || relative.isLiquid()) {
+                return relative.getLocation().add(0.5, 0.5, 0.5);
+            }
+        }
+        return null;
+    }
+
     /**
      * Enables changing of obsidian back into lava
      *
@@ -150,6 +276,8 @@ public class ObsidianScoopingListener extends FlagListener {
         }
         // Set block to air only after giving bucket
         b.setType(Material.AIR);
+        // Remove the lava tip hologram, if any, since the obsidian is gone
+        removeHologramFor(b);
     }
 
     private List<Block> getBlocksAround(Block b, int radius) {

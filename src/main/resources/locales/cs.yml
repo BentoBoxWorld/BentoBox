@@ -13,7 +13,7 @@ prefixes:
 general:
   success: '<green>Povedlo se!</green>'
   invalid: Neplatné
-  beta: '<light_purple><bold>Este comando está en beta. ¡Asegúrate de tener copias de seguridad!</bold></light_purple>'
+  beta: '<light_purple><bold>Tento příkaz je v beta verzi. Ujisti se, že máš zálohy!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Příkaz zrušen.</red>'
     no-permission: '<red>Nemáš oprávnění k provedení tohoto příkazu (</red><gray>[permission]</gray><red>).</red>'
@@ -139,7 +139,7 @@ commands:
     team:
       description: řídit týmy
       add:
-        parameters: <Kional> <Player>
+        parameters: <Vlastník> <Player>
         description: přidat hráče k týmu vlastníka
         name-not-owner: '<red>[name] není vlastník.</red>'
         name-has-island: '<red>[name] má ostrov. Nejdříve ho odregistruj nebo smaž!</red>'
@@ -219,7 +219,7 @@ commands:
           <green>Úspěšně zvětšena chráněná oblast ostrova hráče </green><aqua>[name]</aqua><green>na </green><aqua></aqua>
           [total] <gray>(</gray><aqua>+[number]</aqua><gray>)</gray><green>.</green>
       remove:
-        description: decreases the island protected range
+        description: zmenší chráněnou oblast ostrova
         parameters: <player> <range>
         success: >-
           <green>Úspěšně zmenšena chráněná oblast ostrova hráče </green><aqua>[name]</aqua><green>na </green><aqua></aqua>
@@ -328,7 +328,7 @@ commands:
         <red>Nebyl nalezen bezpečný warp! Teleportuj se manuálně na </red><aqua>[location]</aqua>
         <red>a podívej se na to</red>
     tpuser:
-      parameters: <Teleporting Player> <[prefix_island] s přehrávačem> [player's island]
+      parameters: <Teleportovaný hráč> <[prefix_island] hráče> [hráčův ostrov]
       description: Teleport hráče na [prefix_island] jiného hráče
     getrank:
       parameters: <player> [island owner]
@@ -399,8 +399,8 @@ commands:
       sink:
         description: Položte tento plán, aby se ponořil do oceánského dna
         status: '<green>Blueprint bude [status], když je vložen</green>'
-        sink: '<red>dřez</red>'
-        not-sink: '<aqua>ne ponořit</aqua>'
+        sink: '<red>ponořit</red>'
+        not-sink: '<aqua>neponořit</aqua>'
         no-clipboard: '<red>Ve schránce není žádný plán. Načíst nebo zkopírovat něco.</red>'
       delete:
         parameters: <name>
@@ -489,8 +489,8 @@ commands:
           <green>Klikni pravým myšítkem ke snížení</green>
         times: |
           <green>Max souběžné použití hráčem</green>
-          <green>Levý kliknutí na přírůstek</green>
-          <green>Kliknutím pravým tlačítkem pravým tlačítkem</green>
+          <green>Levý klik pro zvýšení</green>
+          <green>Pravý klik pro snížení</green>
         unlimited-times: Neomezený
         maximum-times: Max [number] krát
         cost: |
@@ -532,7 +532,7 @@ commands:
         možné smazat.
       deleted-island: '<green>Ostrov na </green><yellow>[xyz] </yellow><green>byl úspěšně smazán.</green>'
     deletehomes:
-      parameters: <přehrávač>
+      parameters: <hráč>
       description: odstraní všechny pojmenované domy z ostrova
       warning: '<red>Všechny pojmenované domy budou z ostrova smazány!</red>'
     why:
@@ -655,7 +655,7 @@ commands:
       no-spawn: '<red>V tomto světě není žádný spawn.</red>'
     create:
       description: vytvořit ostrov, s použitím volitelné předlohy (vyžaduje oprávnění)
-      parameters: <Lueprint>
+      parameters: <Předloha>
       too-many-islands: >-
         <red>Je zde příliš mnoho ostrovů v tomto světě: není zde dostatek místa k</red>
         vytvoření toho tvého.
@@ -700,7 +700,7 @@ commands:
       no-neighbors: '<red>Nemáš bezprostřední sousední ostrovy!</red>'
     reset:
       description: restartuj svůj ostrov a smaž svůj předchozí
-      parameters: <Lueprint>
+      parameters: <Předloha>
       none-left: '<red>Již jsi vyčerpal počet svých restartů!</red>'
       resets-left: '<red>Ještě máš </red><aqua>[number] </aqua><red>zbývajících restartů</red>'
       confirmation: |-
@@ -753,26 +753,26 @@ commands:
           rank-filter:
             name: Rank filtr
             description: '<green>Kliknutím do řad cyklu</green>'
-          invitation: Pozvání
+          invitation: Pozvánka
           invite:
-            name: Pozvěte hráče
+            name: Pozvat hráče
             description: |
-              <green>Hráči musí být v</green>
-              <green>stejný svět jako ty</green>
-              <green>Zobrazeno v seznamu.</green>
+              <green>Hráči musí být ve</green>
+              <green>stejném světě jako ty,</green>
+              <green>aby se zobrazili v seznamu.</green>
         tips:
           LEFT:
-            name: '<aqua>Kliknutí na levé straně</aqua>'
+            name: '<aqua>Levý klik</aqua>'
             invite: '<green>pozvat hráče</green>'
           RIGHT:
-            name: '<aqua>Kliknutí pravým tlačítkem</aqua>'
+            name: '<aqua>Pravý klik</aqua>'
           SHIFT_RIGHT:
-            name: '<aqua>Posuňte kliknutím pravým tlačítkem</aqua>'
+            name: '<aqua>Shift + pravý klik</aqua>'
             reject: '<green>odmítnout</green>'
-            kick: '<green>kopat hráče</green>'
+            kick: '<green>vyhodit hráče</green>'
             leave: '<green>opustit tým</green>'
           SHIFT_LEFT:
-            name: '<aqua>Posuňte kliknutí doleva</aqua>'
+            name: '<aqua>Shift + levý klik</aqua>'
             accept: '<green>přijmout</green>'
             setowner: |
               <green>nastavit vlastníka</green>
@@ -840,7 +840,7 @@ commands:
         to-accept-or-reject: >-
           <green>Proveď /[label] team accept k přijetí žádosti, nebo /[label] team</green>
           reject k odmítnutí
-        you-will-lose-your-island: '<red>VAROVÁNÍ! Ztatíš svůj ostrov, když žádost přijmeš!</red>'
+        you-will-lose-your-island: '<red>VAROVÁNÍ! Ztratíš svůj ostrov, když žádost přijmeš!</red>'
         gui:
           titles:
             team-invite-panel: Pozvěte hráče
@@ -853,17 +853,17 @@ commands:
           enter-name: '<green>Zadejte název:</green>'
           tips:
             LEFT:
-              name: '<aqua>Kliknutí na levé straně</aqua>'
+              name: '<aqua>Levý klik</aqua>'
               search: '<green>Zadejte jméno hráče</green>'
-              back: '<green>Zadní</green>'
+              back: '<green>Zpět</green>'
               invite: |
                 <green>pozvat hráče</green>
                 <green>připojit se ke svému týmu</green>
             RIGHT:
-              name: '<aqua>Kliknutí pravým tlačítkem</aqua>'
-              coop: '<green>coop hráči</green>'
+              name: '<aqua>Pravý klik</aqua>'
+              coop: '<green>kooperovat s hráčem</green>'
             SHIFT_LEFT:
-              name: '<aqua>Posuňte kliknutí doleva</aqua>'
+              name: '<aqua>Shift + levý klik</aqua>'
               trust: '<green>důvěřovat hráči</green>'
         errors:
           cannot-invite-self: '<red>Nemůžeš pozvat sám sebe!</red>'
@@ -901,7 +901,7 @@ commands:
       kick:
         description: odstranit člena tvého ostrova
         parameters: <Player>
-        player-kicked: '<red>[name] vás vykoplo z ostrova v [gamemode]!</red>'
+        player-kicked: '<red>[name] tě vykopl z ostrova v [gamemode]!</red>'
         cannot-kick: '<red>Nemůžeš vykopnout sám sebe!</red>'
         cannot-kick-rank: '<red>Vaše hodnost nedovoluje kopnout [name]!</red>'
         success: '<aqua>[name] </aqua><green>byl vykopnut z tvého ostrova.</green>'
@@ -918,7 +918,7 @@ commands:
         description: povýšit hráče na tvém ostrově
         parameters: <Player>
         errors:
-          cant-promote-yourself: '<red>Nemůžete se propagovat!</red>'
+          cant-promote-yourself: '<red>Nemůžeš povýšit sám sebe!</red>'
           cant-promote: '<red>Nemůžete povýšit nad svou hodnost!</red>'
           must-be-member: '<red>Hráč musí být [prefix_an-island] člen!</red>'
         failure: '<red>Hráče již nelze nadále povýšit!</red>'
@@ -999,11 +999,11 @@ protection:
       description: Povolit dávání a odebírání předmětů do/z Allay a Copper Golem
       hint: Interakce Allay a Copper Golem zakázána
     ANIMAL_NATURAL_SPAWN:
-      description: Přepnout přirozené tření zvířat
-      name: Přírodní potěr zvířat
+      description: Přepnout přirozené spawnování zvířat
+      name: Přirozené spawnování zvířat
     ANIMAL_SPAWNERS_SPAWN:
-      description: Přepínat tření zvířat pomocí jiker
-      name: Živočišní jikry
+      description: Přepnout spawnování zvířat pomocí spawnerů
+      name: Spawnery zvířat
     ANVIL:
       description: Přepnout interakce
       name: Kovadliny
@@ -1022,8 +1022,8 @@ protection:
       hint: Použití majáku zakázáno
     BELL_RINGING:
       description: Přepínač interakce
-      name: Nechte zvonit zvonění
-      hint: Bell Ringing Deaktived
+      name: Zvonění zvonů
+      hint: Zvonění zakázáno
     BED:
       description: Přepnout interakce
       name: Postele
@@ -1047,7 +1047,7 @@ protection:
         Přepnout spawners lámání.
         Přepíše příznak Break Blocks.
       name: Rozbít spawnery
-      hint: Rozbití potěru zakázáno
+      hint: Rozbití spawnerů zakázáno
     BREAK_HOPPERS:
       description: |-
         Rozbití násypek.
@@ -1093,20 +1093,20 @@ protection:
         <gray>vlastními vlaječkami.</gray>
       hint: Přístup do kontejnerů zakázán
     CHEST:
-      name: Truhly a truhly s minecart
+      name: Truhly a vozíky s truhlou
       description: |-
         <green>Přepínání interakce s truhlami</green>
-        <green>a hrudní minové vozíky.</green>
-        <green>(nezahrnuje uvězněné truhly)</green>
-      hint: Přístup na hruď zakázán
+        <green>a vozíky s truhlou.</green>
+        <green>(nezahrnuje pastičkové truhly)</green>
+      hint: Přístup k truhlám zakázán
     BARREL:
       name: Sudy
       description: Přepnout interakci sudu
       hint: Přístup do sudu zakázán
     CRAFTER:
       name: Crafter
-      description: Přepínač
-      hint: Crafter Access deaktivovaný
+      description: Přepnout použití
+      hint: Přístup ke Crafteru zakázán
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         <green>Povolit kotvy Bed & Respawn</green>
@@ -1135,7 +1135,7 @@ protection:
       hint: Přístup ke schránce Shulker zakázán
     SHULKER_TELEPORT:
       description: |-
-        & Shulker se může teleportovat
+        <green>Shulker se může teleportovat</green>
         <green>pokud je aktivní.</green>
       name: Shulker Teleport
     SMITHING:
@@ -1147,15 +1147,15 @@ protection:
       description: Přepnout použití
       hint: Přístup ke kamenictví zakázán
     TRAPPED_CHEST:
-      name: Uvězněné truhly
-      description: Přepnout interakci se zachyceným hrudníkem
-      hint: Zablokovaný přístup k hrudi je zakázán
+      name: Pastičkové truhly
+      description: Přepnout interakci s pastičkovými truhlami
+      hint: Přístup k pastičkovým truhlám zakázán
     DISPENSER:
       name: Dávkovače
       description: Přepnout interakce dávkovače
       hint: Interakce dávkovače zakázána
     DROPPER:
-      name: Povadače
+      name: Podavače
       description: Přepnout interakce podavače
       hint: Interakce podavače zakázána
     ELYTRA:
@@ -1201,9 +1201,9 @@ protection:
     COLLECT_POWDERED_SNOW:
       description: |-
         <green>Přepnout sběr prachového sněhu</green>
-        <green>(přepsat segmenty)</green>
-      name: Sbírejte prachový sníh
-      hint: Vyřazeny lopaty na prachový sníh
+        <green>(přepisuje Kbelíky)</green>
+      name: Sběr prachového sněhu
+      hint: Sběr prachového sněhu zakázán
     COMMAND_RANKS:
       name: '<yellow>Hodnosti příkazů</yellow>'
       description: '<green>Konfigurovat hodnosti příkazů</green>'
@@ -1225,7 +1225,7 @@ protection:
     CROP_TRAMPLE:
       description: Přepnout ničení plodin
       name: Ničení plodin
-      hint: Ničení podin zakázáno
+      hint: Ničení plodin zakázáno
     DOOR:
       description: Přepnout použití dvěří
       name: Použití dveří
@@ -1283,7 +1283,7 @@ protection:
       now-leaving: '<green>Právě odcházíš od </green><aqua>[name]</aqua><green>.</green>'
       now-leaving-your-island: '<green>Právě odcházíš ze svého ostrova: </green><aqua>[name]</aqua>'
     EXPERIENCE_BOTTLE_THROWING:
-      name: Házení zkošenostními lahvičkami
+      name: Házení zkušenostními lahvičkami
       description: Přepnout házení zkušenostními lahvičkami.
       hint: Zkušenostní lahvičky zakázány
     FIRE_BURNING:
@@ -1332,8 +1332,8 @@ protection:
     HARVEST:
       description: |-
         <green>Nastavte, kdo může sklízet plodiny.</green>
-        <green>Nezapomeňte položku povolit</green>
-        & také vyzvednutí!
+        <green>Nezapomeňte povolit</green>
+        <green>také sběr předmětů!</green>
       name: Sklizeň plodin
       hint: Sklizeň plodin zakázána
     HIVE:
@@ -1342,10 +1342,10 @@ protection:
       hint: Sklizeň zakázána
     HURT_TAMED_ANIMALS:
       description: >-
-        Toggle bolí. Povoleno znamená, že zkroucená zvířata mohou poškodit.
-        Zakázáno znamená, že jsou neporazitelné.
-      name: Zraněné zkrocené zvířata
-      hint: Zkromané zvíře bolí deaktivované
+        Přepnout zranitelnost. Povoleno znamená, že ochočená zvířata mohou být zraněna.
+        Zakázáno znamená, že jsou nezranitelná.
+      name: Ubližovat ochočeným zvířatům
+      hint: Ubližování ochočeným zvířatům zakázáno
     HURT_ANIMALS:
       description: Přepnout ubližování
       name: Ubližovat zvířatům
@@ -1398,7 +1398,7 @@ protection:
     LEASH:
       description: Přepnout použití
       name: Použití vodítka
-      hint: Vodítko používat deaktivované
+      hint: Použití vodítka zakázáno
     LECTERN:
       name: Čtecí pulty
       description: |-
@@ -1410,15 +1410,15 @@ protection:
     LEVER:
       description: Přepnout použití
       name: Použití páčky
-      hint: Piužití páčky zakázáno
+      hint: Použití páčky zakázáno
     LIMIT_MOBS:
       description: |-
-        <green>Omezit entity od</green>
-        a spawnování v této hře
-        <green>režim.</green>
+        <green>Omezit spawnování entit</green>
+        <green>v tomto herním</green>
+        <green>režimu.</green>
       name: '<yellow>Omezte spawnování typu entity</yellow>'
-      can: '<green>Může se plodit</green>'
-      cannot: '<red>Nelze spustit</red>'
+      can: '<green>Může se spawnovat</green>'
+      cannot: '<red>Nemůže se spawnovat</red>'
     LIQUIDS_FLOWING_OUT:
       name: Přetékání kapalin mimo ostrov
       description: |-
@@ -1437,8 +1437,8 @@ protection:
     CHANGE_SETTINGS:
       name: Změnit nastavení
       description: |-
-        <green>Povolit přepnutí kterého člena</green>
-        ole může změnit nastavení ostrova.
+        <green>Povolit přepnutí, která</green>
+        <green>role může změnit nastavení ostrova.</green>
     MILKING:
       description: Přepnout dojení krav
       name: Dojení
@@ -1448,11 +1448,11 @@ protection:
       description: Přepnout interakce s vozíky
       hint: Interakce s vozíky zakázány
     MONSTER_NATURAL_SPAWN:
-      description: Přepnout přirozené tření monster
-      name: Přirozený potěr monster
+      description: Přepnout přirozené spawnování monster
+      name: Přirozené spawnování monster
     MONSTER_SPAWNERS_SPAWN:
-      description: Přepněte tření monster pomocí spawnerů
-      name: Spawnři monster
+      description: Přepnout spawnování monster pomocí spawnerů
+      name: Spawnery monster
     MOUNT_INVENTORY:
       description: |-
         <green>Přepnout přístup</green>
@@ -1495,18 +1495,18 @@ protection:
       name: Offline růst
     OFFLINE_REDSTONE:
       description: |-
-        <green>Je-li zakázáno, rudit</green>
+        <green>Je-li zakázáno, redstone</green>
         <green>nebude funkční na ostrovech, jejichž</green>
         <green>členové jsou všichni offline.</green>
         <green>Může pomoci snížit lagy.</green>
         <green>Neplatí pro spawn ostrov.</green>
-      name: Offline Rudit
+      name: Offline Redstone
     PETS_STAY_AT_HOME:
       description: |-
         <green>Když je aktivní, ochočená zvířata</green>
-        <green>může jít pouze do a</green>
-        <green>nemůže opustit vlastníka</green>
-        & domovský ostrov.
+        <green>mohou být pouze na</green>
+        <green>domovském ostrově vlastníka</green>
+        <green>a nemohou ho opustit.</green>
       name: Domácí mazlíčci zůstávají doma
     PISTON_PUSH:
       description: |-
@@ -1575,8 +1575,8 @@ protection:
       disabled: '<green>PVP v Overworldu bylo zakázáno.</green>'
     REDSTONE:
       description: Přepnout použití
-      name: Ruditové předměty
-      hint: Interakce s ruditem zakázány
+      name: Redstone předměty
+      hint: Interakce s redstone zakázány
     REMOVE_END_EXIT_ISLAND:
       description: |-
         <green>Zabraňuje vytváření výstupního</green>
@@ -1614,16 +1614,16 @@ protection:
       hint: aktivace senzoru sculku je zakázána
     SCULK_SHRIEKER:
       description: |-
-        <green>Přepíná sculk křičel</green>
-        <green>aktivace.</green>
+        <green>Přepíná aktivaci</green>
+        <green>sculk shriekeru.</green>
       name: Sculk Shrieker
       hint: Sculk Shrieker aktivace je zakázána
     SIGN_EDITING:
       description: |-
         <green>Umožňuje úpravy textu</green>
-        <green>znaků</green>
-      name: Editace znamení
-      hint: editace znaku je zakázána
+        <green>na cedulích</green>
+      name: Editace cedulí
+      hint: Editace cedulí je zakázána
     TNT_DAMAGE:
       description: |-
         <green>Povolit TNT a TNT vozíkům</green>
@@ -1672,21 +1672,21 @@ protection:
         <green>pokud padají.</green>
       hint: '<red>Nemůžeš toto provést, když padáš.</red>'
     VISITOR_KEEP_INVENTORY:
-      name: Návštěvníci vedou inventář na smrt
+      name: Návštěvníci si ponechají inventář po smrti
       description: |-
-        <green>Zabraňte hráčům, aby ztratili své</green>
-        & předměty a zkušenosti, pokud zemřou
-        <green>ostrov, na kterém jsou návštěvníci.</green>
+        <green>Zabraňuje hráčům ztratit své</green>
+        <green>předměty a zkušenosti, pokud zemřou</green>
+        <green>na ostrově, kde jsou návštěvníky.</green>
         <green></green>
-        Členové <green>Island stále ztrácejí své předměty</green>
+        <green>Členové ostrova stále ztrácejí své předměty,</green>
         <green>pokud zemřou na svém vlastním ostrově!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Ochrana spawn ostrova před prázdnotou
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Když je aktivní, hráči, kteří spadnou</green>
+        <green>do prázdnoty na spawn ostrově,</green>
+        <green>budou teleportováni zpět na</green>
+        <green>spawn místo namísto smrti.</green>
     RAID_TRIGGER:
       name: Spuštění nájezdu
       description: Nastavuje minimální rank ostrova potřebný ke spuštění nájezdu
@@ -1694,9 +1694,9 @@ protection:
     ENTITY_PORTAL_TELEPORT:
       name: Použití portálu entity
       description: |-
-        <green>Přepíná, pokud mohou entity (nehráče).</green>
-        <green>pomocí portálů se mezi nimi teleportovat</green>
-        <green>rozměry</green>
+        <green>Přepíná, zda se mohou entity (ne hráči)</green>
+        <green>teleportovat pomocí portálů</green>
+        <green>mezi dimenzemi.</green>
     WIND_CHARGE:
       name: Větrný výboj
       description: |-
@@ -1770,55 +1770,55 @@ protection:
       command-instructions:
         setname: |
           <green>Vyberte hodnost, která může</green>
-          <green>Nastavte název</green>
+          <green>nastavit název</green>
         ban: |
           <green>Vyberte hodnost, která může</green>
-          <green>zakázat hráči</green>
+          <green>zakázat přístup hráči</green>
         unban: |
           <green>Vyberte hodnost, která může</green>
-          <green>Unban hráči</green>
+          <green>povolit přístup hráči</green>
         expel: |
           <green>Vyberte hodnost, která může</green>
-          <green>Vyloučit návštěvníci</green>
+          <green>vykázat návštěvníky</green>
         team-invite: |
           <green>Vyberte hodnost, která může</green>
           <green>pozvat</green>
         team-kick: |
           <green>Vyberte hodnost, která může</green>
-          <green>kop</green>
+          <green>vykopnout hráče</green>
         team-coop: |
           <green>Vyberte hodnost, která může</green>
-          <green>coop</green>
+          <green>kooperovat</green>
         team-trust: |
           <green>Vyberte hodnost, která může</green>
-          <green>důvěra</green>
+          <green>důvěřovat</green>
         team-uncoop: |
           <green>Vyberte hodnost, která může</green>
-          <green>nekoop</green>
+          <green>zrušit kooperaci</green>
         team-untrust: |
           <green>Vyberte hodnost, která může</green>
-          <green>nedůvěra</green>
+          <green>zrušit důvěru</green>
         team-promote: |
           <green>Vyberte hodnost, která může</green>
-          <green>Propagujte hodnost hráče</green>
+          <green>povýšit hodnost hráče</green>
         team-demote: |
           <green>Vyberte hodnost, která může</green>
-          <green>Demote pozice hráče</green>
+          <green>degradovat hodnost hráče</green>
         sethome: |
           <green>Vyberte hodnost, která může</green>
-          vNastavit domy
+          <green>nastavit domy</green>
         deletehome: |
           <green>Vyberte hodnost, která může</green>
           <green>smazat domy</green>
         renamehome: |
           <green>Vyberte hodnost, která může</green>
-          <green>Přejmenování domů</green>
+          <green>přejmenovat domy</green>
         setcount: |
           <green>Vyberte hodnost, která může</green>
           <green>změnit fázi</green>
         border: |
           <green>Vyberte hodnost, která může</green>
-          <green>Použijte příkaz Border</green>
+          <green>použít příkaz Border</green>
       description-layout: |
         <green>[description]</green>
 
@@ -1943,34 +1943,34 @@ catalog:
 enums:
   DamageCause:
     CONTACT: Kontakt
-    ENTITY_ATTACK: Útok davů
-    ENTITY_SWEEP_ATTACK: Útok zametání
+    ENTITY_ATTACK: Útok entity
+    ENTITY_SWEEP_ATTACK: Plošný útok
     PROJECTILE: Projektil
     SUFFOCATION: Udušení
-    FALL: Podzim
-    FIRE: oheň
-    FIRE_TICK: Hořící
+    FALL: Pád
+    FIRE: Oheň
+    FIRE_TICK: Hoření
     MELTING: Tání
     LAVA: Láva
-    DROWNING: Topit se
+    DROWNING: Utopení
     BLOCK_EXPLOSION: Bloková exploze
     ENTITY_EXPLOSION: Exploze entity
-    VOID: Neplatné
+    VOID: Prázdnota
     LIGHTNING: Blesk
     SUICIDE: Sebevražda
     STARVATION: Hladovění
     POISON: Jed
     MAGIC: Kouzlo
-    WITHER: vadnout
+    WITHER: Wither
     FALLING_BLOCK: Padající blok
     THORNS: Trny
     DRAGON_BREATH: Dračí dech
-    CUSTOM: Zvyk
-    FLY_INTO_WALL: Letět do zdi
+    CUSTOM: Vlastní
+    FLY_INTO_WALL: Náraz do zdi
     HOT_FLOOR: Horká podlaha
     CRAMMING: Napěchování
-    DRYOUT: Vyschnout
-    FREEZE: Zmrazit
+    DRYOUT: Vyschnutí
+    FREEZE: Zmrznutí
     KILL: Zabít
     SONIC_BOOM: Sonic Boom
     WORLD_BORDER: Světová hranice

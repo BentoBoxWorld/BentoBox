@@ -70,7 +70,24 @@ public class FlagsManager {
         flags.put(flag, addon);
         // If there is a listener which is not already registered, register it into Bukkit if the plugin is fully loaded
         flag.getListener().ifPresent(this::registerListener);
+        // Register flag placeholder for all active game mode addons
+        registerFlagPlaceholder(flag);
         return true;
+    }
+
+    /**
+     * Registers a flag placeholder for all active game mode addons.
+     * This is called when a new flag is registered to ensure dynamically added
+     * flags (e.g., from addons) also get placeholders.
+     * @param flag the flag to register a placeholder for
+     * @since 3.13.0
+     */
+    private void registerFlagPlaceholder(@NonNull Flag flag) {
+        PlaceholdersManager pm = plugin.getPlaceholdersManager();
+        if (pm == null || plugin.getAddonsManager() == null) {
+            return;
+        }
+        plugin.getAddonsManager().getGameModeAddons().forEach(gma -> pm.registerFlagPlaceholder(gma, flag));
     }
 
     /**

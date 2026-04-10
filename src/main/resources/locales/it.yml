@@ -12,7 +12,7 @@ prefixes:
   islands: isole
 general:
   success: '<green>Successo!</green>'
-  invalid: Invalido
+  invalid: Non valido
   beta: '<light_purple><bold>Questo comando è in beta. Assicurati di avere backup!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Comando annullato.</red>'
@@ -29,8 +29,8 @@ general:
       <red>Non è stato possibile trovare un luogo sicuro per teletrasportarti</red>
       nell'isola.
     not-owner: '<red>Non sei il proprietario della tua isola!</red>'
-    player-is-not-owner: '<aqua>[name] </aqua><red>is non è il proprietario di nessuna isola!</red>'
-    not-in-team: '&Quel giocatore non è nel tuo team!'
+    player-is-not-owner: '<aqua>[name] </aqua><red>non è il proprietario di nessuna isola!</red>'
+    not-in-team: '<red>Quel giocatore non è nel tuo team!</red>'
     offline-player: '<red>Quel giocatore è offline o non esiste.</red>'
     unknown-player: '<red>[name] è un giocatore sconosciuto!</red>'
     general: '<red>Quel comando non è ancora pronto - contatta un''admin</red>'
@@ -52,7 +52,7 @@ commands:
     end: '<gray>=================================</gray>'
     page: '<gray>Pagina </gray><yellow>[page]</yellow><gray> di </gray><yellow>[total]</yellow>'
     parameters: '[command]'
-    description: commando di aiuto
+    description: comando di aiuto
     console: Console
   admin:
     help:
@@ -192,12 +192,12 @@ commands:
           <red>Attenzione: questo giocatore possiede ora [number] isole. Questo è</red>
           più di quanto consentito dalle impostazioni o dai permessi: [max].
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <giocatore> <dimensione>
+        description: Imposta la dimensione massima del team per il [prefix_island] di un giocatore (usa 0 per ripristinare il valore predefinito del mondo)
+        success: '<green>Impostata la dimensione massima del team di </green><aqua>[name]</aqua><green> per [prefix_island] a </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Ripristinata la dimensione massima del team di </green><aqua>[name]</aqua><green> per [prefix_island] al valore predefinito del mondo (</green><aqua>[number]</aqua><green>).</green>'
     range:
-      description: Admin island range command
+      description: Comando admin per il raggio dell'isola
       invalid-value:
         too-low: '<red>Il raggio di protezione deve essere più grande di </red><aqua>1</aqua><red>!</red>'
         too-high: >-
@@ -292,7 +292,7 @@ commands:
       is-spawn: L'isola è un'isola di spawn
       banned-players: 'Giocatori banditi:'
       banned-format: '<red>[name]</red>'
-      unowned: '&Senza proprietario'
+      unowned: '<red>Senza proprietario</red>'
       bundle: '<green>Pacchetto Blueprint utilizzato per creare l''isola: </green><aqua>[name]</aqua>'
     switch:
       description: attiva/disattiva il bypass della protezione
@@ -319,10 +319,10 @@ commands:
       title: '<light_purple>=========== Isole nel Cestino ===========</light_purple>'
       count: '<bold><light_purple>Isola [number]:</light_purple></bold>'
       use-switch: >-
-        &Usa <bold>[label] switchto <player> <number></bold><green>per scambiare l'isola del</green>
-        player con quella nel cestino
+        <green>Usa <bold>[label] switchto <player> <number></bold> per scambiare l'isola del</green>
+        giocatore con quella nel cestino
       use-emptytrash: >-
-        &Usa <bold>[label] emptytrash [player]</bold><green>per rimuovere permanentemente le</green>
+        <green>Usa <bold>[label] emptytrash [player]</bold> per rimuovere permanentemente le</green>
         isole nel cestino
     emptytrash:
       parameters: '[player]'
@@ -355,7 +355,7 @@ commands:
       description: teleporta un giocatore all'[prefix_island] di un altro giocatore
     getrank:
       parameters: <player>
-      description: ottieni il rabngo di un player nella sua isola
+      description: ottieni il rango di un giocatore nella sua isola
       rank-is: '<green>Il rango è [rank] nella sua isola.</green>'
     setrank:
       parameters: <player> <rank>
@@ -416,12 +416,12 @@ commands:
         impostata!
       need-pos1-pos2: '<red>Imposta la posizione 1 e la posizione 2 prima!</red>'
       copying: '<aqua>Copiando i blocchi...</aqua>'
-      copied-blocks: '<red>opiati [number] blocchi nella clipboard</red>'
+      copied-blocks: '<green>Copiati [number] blocchi nella clipboard</green>'
       look-at-a-block: '<red>Guarda verso un blocco entro 20 blocchi per impostare una posizione</red>'
       mid-copy: >-
         <red>Sei in mezzo al processo di copia. Aspetta finchè la copia non è</red>
         completata.
-      copied-percent: '<red>opiati [number]%</red>'
+      copied-percent: '<green>Copiati [number]%</green>'
       copy:
         parameters: '[air]'
         description: >-
@@ -574,7 +574,7 @@ commands:
       parameters: <giocatore>
       description: abilita/disabilita i report di debug di protezione nella console
       turning-on: Abilitando il debug in console per [name].
-      turning-off: Disbilitando il debug in console per [name].
+      turning-off: Disabilitando il debug in console per [name].
     deaths:
       description: modifica le morti di un giocatore
       reset:
@@ -730,7 +730,7 @@ commands:
       description: mostra info riguardo la tua isola o riguardo quella di un giocatore
       parameters: <player>
     near:
-      description: smostra il nome delle isole adiacenti alla tua
+      description: mostra il nome delle isole adiacenti alla tua
       parameters: ''
       the-following-islands: '<green>Le seguenti isole sono adiacenti:</green>'
       syntax: '<gold>[direction]: </gold><green>[name]</green>'
@@ -1247,7 +1247,7 @@ protection:
     COLLECT_POWDERED_SNOW:
       description: |-
         <green>Attiva la raccolta della neve in polvere</green>
-        <green>(sovrascrivi noci)</green>
+        <green>(sovrascrive i Secchi)</green>
       name: Raccogli neve in polvere
       hint: Secchi di neve in polvere disabilitati
     COMMAND_RANKS:
@@ -1255,7 +1255,7 @@ protection:
       description: '<green>Configura i comandi dei ranghi</green>'
     CRAFTING:
       description: Abilita/disabilita uso
-      name: Banchi da alvoro
+      name: Banchi da lavoro
       hint: Uso di banchi da lavoro vietato
     CREEPER_DAMAGE:
       description: Abilita/disabilita danni dei creeper
@@ -1279,10 +1279,10 @@ protection:
     DRAGON_EGG:
       name: Uovo di drago
       description: |-
-        <green>Prevents interaction with Dragon Eggs.</green>
+        <green>Impedisce l'interazione con le Uova di Drago.</green>
 
-        <red>This does not protect it from being</red>
-        <red>placed or broken.</red>
+        <red>Non protegge dal piazzamento</red>
+        <red>o dalla rottura.</red>
       hint: No interazioni con uovo di drago
     DYE:
       description: Evita l'uso di coloranti
@@ -1349,12 +1349,12 @@ protection:
     FIRE_SPREAD:
       name: Espansione di fuochi
       description: |-
-        <green>Toggle whether fire can spread</green>
-        <green>to nearby blocks or not.</green>
+        <green>Scegli se il fuoco può espandersi</green>
+        <green>ai blocchi vicini oppure no.</green>
     FISH_SCOOPING:
       name: Raccolta di pesci
       description: Permetti la raccolta dei pesci utilizzando un secchio
-      hint: Raccolta di pesci disablitata
+      hint: Raccolta di pesci disabilitata
     FLINT_AND_STEEL:
       name: Acciarino
       description: |-
@@ -1561,7 +1561,7 @@ protection:
         <green>possono solo andare e</green>
         <green>non possono lasciare la casa del proprietario</green>
         <green>[prefix_island].</green>
-      name: I animali domestici restano a casa
+      name: Gli animali domestici restano a casa
     PISTON_PUSH:
       description: |-
         <green>Attiva questa opzione per evitare che i</green>
@@ -1639,7 +1639,7 @@ protection:
     REMOVE_MOBS:
       description: |-
         <green>Rimuovi i mostri durante</green>
-        <green>il teletrasposrto all'isola</green>
+        <green>il teletrasporto all'isola</green>
       name: Rimuovi i mostri
     RIDING:
       description: Abilita/disabilita cavalcatura
@@ -1735,12 +1735,12 @@ protection:
         <green>I membri di [prefix_Island] perdono comunque i loro oggetti</green>
         <green>se muoiono nella propria [prefix_island]!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Protezione dal vuoto nell'isola spawn
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Quando attivo, i giocatori che cadono</green>
+        <green>nel vuoto nell'isola spawn</green>
+        <green>verranno teletrasportati al punto</green>
+        <green>di spawn invece di morire.</green>
     RAID_TRIGGER:
       name: Attivazione incursione
       description: Imposta il rango minimo dell'isola richiesto per attivare un'incursione
@@ -1963,13 +1963,13 @@ catalog:
       gamemodes:
         name: '<gold>Modalità di gioco</gold>'
         description: |
-          <yellow>Click </yellow><green>to browse through the</green>
-          <green>available official Gamemodes.</green>
+          <yellow>Clicca </yellow><green>per sfogliare le</green>
+          <green>Modalità di gioco ufficiali disponibili.</green>
       addons:
         name: '<gold>Addons</gold>'
         description: |
-          <yellow>Click </yellow><green>to browse through the</green>
-          <green>available official Addons.</green>
+          <yellow>Clicca </yellow><green>per sfogliare gli</green>
+          <green>Addons ufficiali disponibili.</green>
     icon:
       description-template: |
         <dark_gray>[topic]</dark_gray>
@@ -2000,26 +2000,26 @@ enums:
     FIRE_TICK: Bruciando
     MELTING: Fusione
     LAVA: '<dark_red>Lava</dark_red>'
-    DROWNING: Affogare
+    DROWNING: Annegamento
     BLOCK_EXPLOSION: Esplosione di Blocchi
     ENTITY_EXPLOSION: Esplosione dell'Entità
     VOID: Vuoto
     LIGHTNING: Fulmine
     SUICIDE: Suicidio
-    STARVATION: Carestia
+    STARVATION: Fame
     POISON: Veleno
     MAGIC: Magia
     WITHER: Wither
     FALLING_BLOCK: Blocco Cadente
-    THORNS: Rami
+    THORNS: Spine
     DRAGON_BREATH: Respiro di Drago
     CUSTOM: Personalizzato
-    FLY_INTO_WALL: Vola Dentro al Muro
+    FLY_INTO_WALL: Impatto col Muro
     HOT_FLOOR: Pavimento Caldo
     CRAMMING: Cramming
     DRYOUT: Asciugatura
-    FREEZE: Congela
-    KILL: Uccidi
+    FREEZE: Congelamento
+    KILL: Uccisione
     SONIC_BOOM: Boom Sonico
     WORLD_BORDER: Confine del Mondo
 panel:
@@ -2027,7 +2027,7 @@ panel:
     title: '<dark_gray>[name] </dark_gray><dark_green>Crediti</dark_green>'
     contributor:
       name: '<green>[name]</green>'
-      description: '<green>Commissioni: </green><aqua>[commits]</aqua>'
+      description: '<green>Commit: </green><aqua>[commits]</aqua>'
     empty-here:
       name: '<red>Sembra vuoto qui...</red>'
       description: >-

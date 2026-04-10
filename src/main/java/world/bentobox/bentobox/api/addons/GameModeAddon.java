@@ -199,4 +199,21 @@ public abstract class GameModeAddon extends Addon {
     public boolean isEnforceEqualRanges() {
         return true;
     }
+
+    /**
+     * Returns the number of islands to pre-generate chunks for in this game mode.
+     * <p>
+     * Override this method to customize pre-generation for your addon:
+     * <ul>
+     *   <li>{@code -1} — use the global BentoBox setting (default)</li>
+     *   <li>{@code 0} — disable pre-generation for this addon</li>
+     *   <li>positive value — pre-generate this many islands ahead</li>
+     * </ul>
+     *
+     * @return number of islands ahead, -1 for global default, 0 to disable
+     * @since 3.14.0
+     */
+    public int getPregenIslandsAhead() {
+        return -1;
+    }
 }

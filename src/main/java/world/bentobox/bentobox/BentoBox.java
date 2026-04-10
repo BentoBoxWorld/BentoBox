@@ -31,6 +31,7 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.HooksManager;
+import world.bentobox.bentobox.managers.ChunkPregenManager;
 import world.bentobox.bentobox.managers.IslandDeletionManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -70,6 +71,7 @@ public class BentoBox extends JavaPlugin implements Listener {
     private PlaceholdersManager placeholdersManager;
     private MapManager mapManager;
     private IslandDeletionManager islandDeletionManager;
+    private ChunkPregenManager chunkPregenManager;
     private WebManager webManager;
 
     // Settings
@@ -283,6 +285,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         BentoBoxListenerRegistrar registrar = new BentoBoxListenerRegistrar(this);
         registrar.register();
         islandDeletionManager = registrar.getIslandDeletionManager();
+        chunkPregenManager = registrar.getChunkPregenManager();
     }
 
     @Override
@@ -302,7 +305,9 @@ public class BentoBox extends JavaPlugin implements Listener {
         if (islandsManager != null) {
             islandsManager.shutdown();
         }
-
+        if (chunkPregenManager != null) {
+            chunkPregenManager.shutdown();
+        }
 
     }
 
@@ -551,6 +556,14 @@ public class BentoBox extends JavaPlugin implements Listener {
      */
     public IslandDeletionManager getIslandDeletionManager() {
         return islandDeletionManager;
+    }
+
+    /**
+     * @return the chunkPregenManager
+     * @since 3.14.0
+     */
+    public ChunkPregenManager getChunkPregenManager() {
+        return chunkPregenManager;
     }
 
     /**

@@ -172,7 +172,7 @@ commands:
           données
         rank-on-island: '<red>[rank] sur l''île à [xyz]</red>'
         fixed: '<green>Fixe</green>'
-        done: '&Un scanner'
+        done: '<green>Analyse terminée</green>'
       kick:
         parameters: <joueur>
         description: Kicker le joueur de son équipe
@@ -197,10 +197,10 @@ commands:
           plus que ce qui est autorisé par les paramètres ou les permissions :
           [max].
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <joueur> <taille>
+        description: Définir la taille max d'équipe pour l'[prefix_island] d'un joueur (0 pour revenir au défaut du monde)
+        success: '<green>Taille max d''équipe de </green><aqua>[name]</aqua><green> sur [prefix_island] définie à </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Taille max d''équipe de </green><aqua>[name]</aqua><green> sur [prefix_island] réinitialisée au défaut du monde (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: rayon de la zone de protection de l'île
       invalid-value:
@@ -296,14 +296,14 @@ commands:
       max-trusted-size: 'Taille maximale de confiance : [number]'
       island-protection-center: "Centre de la zone de protection\_: [xyz]"
       island-center: "Centre de l'île\_: [xyz]"
-      island-coords: 'Coordonnées de l''île : [xz1] to [xz2]'
+      island-coords: 'Coordonnées de l''île : [xz1] à [xz2]'
       islands-in-trash: '<light_purple>Le joueur a des îles dans la Corbeille.</light_purple>'
       protection-range: 'Rayon de protection : [range]'
       protection-range-bonus-title: "<aqua>Comprend ces bonus\_:</aqua>"
       protection-range-bonus: "Bonus\_:\_[number]"
       purge-protected: L'île est protégée contre la purge
       max-protection-range: 'La plus grande gamme de protection historique: [range]'
-      protection-coords: 'Coordonnées de protection: [xz1] to [xz2]'
+      protection-coords: 'Coordonnées de protection : [xz1] à [xz2]'
       is-spawn: L'île est un spawn
       banned-players: 'Joueurs bannis : '
       banned-format: '<red>[name]</red>'
@@ -381,7 +381,7 @@ commands:
       description: définir le rang d'un joueur sur son île ou sur celle du propriétaire
       unknown-rank: '<red>Rang inconnu!</red>'
       not-possible: '<red>Le classement doit être supérieur à celui du visiteur.</red>'
-      rank-set: '<green>Rang défini de </green><aqua>[from] </aqua><green>à </green><aqua>[to] &</aqua><green>sur l''île de </green><aqua>[name]</aqua><green>.</green>'
+      rank-set: '<green>Rang défini de </green><aqua>[from] </aqua><green>à </green><aqua>[to] </aqua><green>sur l''île de </green><aqua>[name]</aqua><green>.</green>'
     setprotectionlocation:
       parameters: '[coordonnées x y z]'
       description: >-
@@ -516,7 +516,7 @@ commands:
             <red>Certains caractères ont été supprimés car ils ne sont pas</red>
             autorisés. <green>Le nouvel identifiant sera </green><aqua>[name]</aqua><green>.</green>
           success: Succès!
-          conversation-prefix: Sure! Please provide the text you would like to have translated.
+          conversation-prefix: '>'
         description:
           quit: quitter
           instructions: >-
@@ -565,7 +565,7 @@ commands:
         config.yml
       confirm: '<dark_red>Cela réinitialisera les flags par défaut pour toutes les îles!</dark_red>'
       success: '<green>Réinitialisation des flags de toutes les îles aux valeurs par défaut.</green>'
-      success-one: '<green>flag[name] défini par défaut pour toutes</green>'
+      success-one: '<green>Flag [name] défini par défaut pour toutes les îles.</green>'
     world:
       description: Gérer les paramètres du monde
     delete:
@@ -680,7 +680,7 @@ commands:
       list: '<green>Les rangs enregistrés sont les suivants :</green>'
   confirmation:
     confirm: >-
-      <red>Entrez à nouveau la commande dans </red><aqua>[secondes] secondes </aqua><red>pour</red>
+      <red>Entrez à nouveau la commande dans </red><aqua>[seconds] secondes </aqua><red>pour</red>
       confirmer.
     previous-request-cancelled: '<gold>La demande de confirmation est annulée.</gold>'
     request-cancelled: '<red>Délai de confirmation dépassé - </red><aqua>demande annulée.</aqua>'
@@ -727,13 +727,13 @@ commands:
         estimated-time: '<green>Durée estimée : </green><aqua>[number] </aqua><green>secondes.</green>'
         blocks: '<green>Construire bloc par bloc: </green><aqua>[number] </aqua><green>blocs en tout ...</green>'
         entities: '<green>Remplissage avec des entités : </green><aqua>[number] </aqua><green>entités en tout ...</green>'
-        dimension-done: '&Une île dans [world] est construite.'
+        dimension-done: '<green>L''île dans [world] est construite.</green>'
         done: '<green>C''est fait! Votre île est prête et vous attend!</green>'
       pick: '<dark_green>Choisissez une île</dark_green>'
       cannot-afford: '<red>Vous ne pouvez pas vous le permettre ! Coût : [cost]</red>'
       unknown-blueprint: '<red>Ce blueprint n''existe pas.</red>'
       on-first-login: >-
-        <aqua>ienvenue! Nous commencerons à préparer votre île dans quelques</aqua>
+        <aqua>Bienvenue ! Nous commencerons à préparer votre île dans quelques</aqua>
         secondes.
       you-can-teleport-to-your-island: '<green>Vous pouvez vous téléporter sur votre île quand vous le désirez.</green>'
     deletehome:
@@ -840,7 +840,7 @@ commands:
         description: afficher des informations détaillées sur votre équipe
         member-layout:
           online: '<green><bold>o </bold></green><white>[name]</white>'
-          offline: '<green><bold>o </bold></green><white>[name] </white><gray>([last_seen])</gray>'
+          offline: '<red><bold>o </bold></red><white>[name] </white><gray>([last_seen])</gray>'
           offline-not-last-seen: '<red><bold>o </bold></red><white>[name]</white>'
         last-seen:
           layout: '<gray>il y a </gray><aqua>[number] </aqua><gray>[unit]</gray>'
@@ -898,7 +898,7 @@ commands:
         name-has-invited-you: '<aqua>[name] </aqua><green>vous a invité à rejoindre son île.</green>'
         to-accept-or-reject: >-
           <green>Faites </green><aqua>/[label] team accept </aqua><green>pour accepter ou </green><aqua>/[label] team</aqua>
-          reject] <green>pour refuser.</green>
+          reject <green>pour refuser.</green>
         you-will-lose-your-island: '<red>ATTENTION ! Vous perdrez votre île actuelle si vous acceptez !</red>'
         gui:
           titles:
@@ -962,9 +962,9 @@ commands:
       kick:
         description: supprimer un membre de votre île
         parameters: <joueur>
-        player-kicked: "<red>Le [name] vous a expulsé de l'île en [mode de jeu]\_!</red>"
-        cannot-kick: '<red>Vous ne pouvez pas vous botter!</red>'
-        cannot-kick-rank: "<red>Votre rang ne vous permet pas de donner un coup de pied à [name]\_!</red>"
+        player-kicked: '<red>[name] vous a expulsé de l''île en [gamemode] !</red>'
+        cannot-kick: '<red>Vous ne pouvez pas vous expulser vous-même !</red>'
+        cannot-kick-rank: '<red>Votre rang ne vous permet pas d''expulser [name] !</red>'
         success: '<aqua>[name] </aqua><green>a été exclu de votre île.</green>'
       demote:
         description: rétrograder un joueur de votre île à un rang inférieur
@@ -974,7 +974,7 @@ commands:
           cant-demote: "<red>Vous ne pouvez pas rétrograder des rangs supérieurs\_!</red>"
           must-be-member: '<red>Le joueur doit être membre de [prefix_an-island]!</red>'
         failure: '<red>Le joueur ne peut plus être rétrogradé!</red>'
-        success: '&un [name] rétrogradé à [rank]'
+        success: '<green>[name] rétrogradé à [rank]</green>'
       promote:
         description: promouvoir un joueur de votre île à un rang supérieur
         parameters: <joueur>
@@ -983,7 +983,7 @@ commands:
           cant-promote: "<red>Vous ne pouvez pas promouvoir au-dessus de votre rang\_!</red>"
           must-be-member: '<red>Le joueur doit être membre de [prefix_an-island]!</red>'
         failure: '<red>Le joueur ne peut plus être promu!</red>'
-        success: '&un [name] promu au [rank]'
+        success: '<green>[name] promu au [rank]</green>'
       setowner:
         description: transférer la propriété de votre île à un membre
         errors:
@@ -1001,24 +1001,24 @@ commands:
       parameters: <joueur>
       cannot-ban-yourself: '<red>Vous ne pouvez pas vous interdire!</red>'
       cannot-ban: '<red>Ce joueur ne peut pas être banni.</red>'
-      cannot-ban-member: '<red>Frappez d''abord le membre de l''équipe, puis bannissez.</red>'
+      cannot-ban-member: '<red>Expulsez d''abord le membre de l''équipe, puis bannissez.</red>'
       cannot-ban-more-players: >-
         <red>Vous avez atteint la limite d'interdiction, vous ne pouvez plus</red>
         interdire d'autres joueurs de votre île.
-      player-already-banned: '<red>Player est déjà banni.</red>'
+      player-already-banned: '<red>Le joueur est déjà banni.</red>'
       player-banned: '<aqua>[name] </aqua><red>est désormais banni de votre île.</red>'
       owner-banned-you: '<aqua>[name] </aqua><red>vous a banni de leur île!</red>'
       you-are-banned: '<aqua>Vous êtes banni de cette île!</aqua>'
     unban:
       description: débannir un joueur de votre île
       parameters: <joueur>
-      cannot-unban-yourself: '<red>Vous ne pouvez pas vous défaire!</red>'
-      player-not-banned: '<red>Le lecteur n''est pas interdit.</red>'
-      player-unbanned: '<aqua>[name] </aqua><green>est désormais interdit sur votre île.</green>'
-      you-are-unbanned: '<aqua>[name] </aqua><green>vous a banni de leur île!</green>'
+      cannot-unban-yourself: '<red>Vous ne pouvez pas vous débannir vous-même !</red>'
+      player-not-banned: '<red>Ce joueur n''est pas banni.</red>'
+      player-unbanned: '<aqua>[name] </aqua><green>n''est plus banni de votre île.</green>'
+      you-are-unbanned: '<aqua>[name] </aqua><green>vous a débanni de son île !</green>'
     banlist:
       description: lister les joueurs bannis
-      noone: '<green>Personne n''est interdit sur cette île.</green>'
+      noone: '<green>Personne n''est banni de cette île.</green>'
       the-following: '<aqua>Les joueurs suivants sont bannis:</aqua>'
       names: '<red>[line]</red>'
       you-can-ban: '<aqua>Vous pouvez bannir jusqu''à </aqua><yellow>[number] </yellow><aqua>joueurs supplémentaires.</aqua>'
@@ -1061,11 +1061,11 @@ protection:
       description: Autoriser le don et le transport d'objets vers/depuis Allay et Copper Golem
       hint: Interaction Allay & Copper Golem désactivée
     ANIMAL_NATURAL_SPAWN:
-      description: Activer/désactiver le frai naturel des animaux
-      name: Frai naturel des animaux
+      description: Activer/désactiver l'apparition naturelle des animaux
+      name: Apparition naturelle des animaux
     ANIMAL_SPAWNERS_SPAWN:
-      description: Activer/désactiver le frai des animaux avec des géniteurs
-      name: reproducteurs d'animaux
+      description: Activer/désactiver l'apparition des animaux avec des spawners
+      name: Spawners d'animaux
     ANVIL:
       description: Autoriser l'utilisation des enclumes
       name: Enclumes
@@ -1123,9 +1123,9 @@ protection:
       name: Alambics
       hint: Brassage désactivé
     BUCKET:
-      description: vous ne pouvez pas utiliser les alambics
+      description: Autoriser l'utilisation des seaux
       name: Seaux
-      hint: Utilisation du godet désactivée
+      hint: Utilisation des seaux désactivée
     BUTTON:
       description: Autoriser l'interaction avec les boutons
       name: Boutons
@@ -1145,34 +1145,34 @@ protection:
     CONTAINER:
       name: Conteneurs
       description: |-
-        et une interaction Toggle avec les coffres,
-        &un shulker boîtes et pots de fleurs,
-        &un composteurs et des barils.
+        <green>Activer/désactiver l'interaction avec les coffres,</green>
+        <green>boîtes de Shulker, pots de fleurs,</green>
+        <green>composteurs et barils.</green>
 
-        <gray>D'autres conteneurs sont manipulés</gray>
+        <gray>D'autres conteneurs sont gérés</gray>
         <gray>par des drapeaux dédiés.</gray>
       hint: vous ne pouvez pas ouvrir les conteneurs
     CHEST:
       name: Coffres et coffres de minecart
       description: |-
         <green>Activer/désactiver l'interaction avec les coffres</green>
-        &un et des minecarts de coffre.
+        <green>et les minecarts de coffre.</green>
         <green>(n'inclut pas les coffres piégés)</green>
-      hint: Accès à la coffre désactivé
+      hint: Accès au coffre désactivé
     BARREL:
       name: Barils
-      description: Activer/désactiver l'interaction du canon
+      description: Activer/désactiver l'interaction du baril
       hint: Accès au baril désactivé
     CRAFTER:
-      name: Artisan
-      description: Faire de l'utilisation
-      hint: Crafter Accès désactivé
+      name: Crafter
+      description: Basculer l'utilisation
+      hint: Accès au Crafter désactivé
     BLOCK_EXPLODE_DAMAGE:
       description: |-
         <green>Autoriser les ancres de lit et de réapparition</green>
         <green>pour briser les blocs et endommager</green>
         <green>entités.</green>
-      name: Bloquer les dégâts d'explosion
+      name: Dégâts d'explosion de bloc
     COMPOSTER:
       name: Composteurs
       description: Activer/Désactiver l'interaction du composteur
@@ -1195,7 +1195,7 @@ protection:
       hint: Accès à la boîte Shulker désactivé
     SHULKER_TELEPORT:
       description: |-
-        &un Shulker peut se téléporter
+        <green>Le Shulker peut se téléporter</green>
         <green>si actif.</green>
       name: Téléportation de Shulker
     SMITHING:
@@ -1215,7 +1215,7 @@ protection:
       description: Autoriser l'interaction avec dispensers
       hint: vous ne pouvez pas interagir avec les dispensers
     DROPPER:
-      name: Tirants
+      name: Droppers
       description: Autoriser l'interaction avec les droppers
       hint: vous ne pouvez pas interagir avec les droppers
     ELYTRA:
@@ -1231,31 +1231,31 @@ protection:
       name: Dégâts de Coffre
     CHORUS_FRUIT:
       description: Activer/désactiver la téléportation
-      name: Fruits de chœur
-      hint: Téléportation des fruits du choeur désactivée
+      name: Fruits de Chorus
+      hint: Téléportation des fruits de Chorus désactivée
     CLEAN_SUPER_FLAT:
       description: |-
-        <green>Activer pour nettoyer tout</green>
-        <light_purple>es morceaux super plats dans</light_purple>
-        &un monde insulaire
+        <green>Activer pour nettoyer tous</green>
+        <green>les chunks super plats dans</green>
+        <green>les mondes d'îles</green>
       name: Nettoyer Super Plat
     COARSE_DIRT_TILLING:
       description: |-
-        &Un basculement grossier du labour
-        &un podzol sale et cassant
-        <green>pour obtenir la saleté</green>
+        <green>Activer/désactiver le labourage de</green>
+        <green>la terre grossière et la destruction</green>
+        <green>du podzol pour obtenir de la terre</green>
       name: Labour de terre grossière
       hint: Pas de labour de terre friche
     COLLECT_LAVA:
       description: |-
-        &un Toggle collecte de lave
-        <green>(remplacer les compartiments)</green>
+        <green>Activer/désactiver la collecte de lave</green>
+        <green>(remplace les Seaux)</green>
       name: Collecter de la lave
       hint: Pas de collecte de lave
     COLLECT_WATER:
       description: |-
-        &un Toggle collectant l'eau
-        <green>(remplacer les compartiments)</green>
+        <green>Activer/désactiver la collecte d'eau</green>
+        <green>(remplace les Seaux)</green>
       name: Collecter de l'eau
       hint: Seaux d'eau désactivés
     COLLECT_POWDERED_SNOW:
@@ -1272,19 +1272,19 @@ protection:
       name: Tables de crafting
       hint: Accès au plan de travail désactivé
     CREEPER_DAMAGE:
-      description: Toggle creeper damage
+      description: Activer/désactiver les dégâts de Creeper
       name: Dégâts de Creeper
     CREEPER_GRIEFING:
-      description: Toggle creeper griefing
-      name: Creeper griefing
-      hint: Creeper chagrin désactivé
+      description: Activer/désactiver le griefing de Creeper
+      name: Griefing de Creeper
+      hint: Griefing de Creeper désactivé
     CROP_PLANTING:
       description: '<green>Définir qui peut planter des graines.</green>'
       name: Plantation de cultures
       hint: Plantation de cultures désactivée
     CROP_TRAMPLE:
       description: Basculer le piétinement des cultures
-      name: '&p&Écraser les cultures'
+      name: Piétinement des cultures
       hint: Piétinement des cultures désactivé
     DOOR:
       description: Bascule l'utilisation de la porte
@@ -1316,14 +1316,14 @@ protection:
       hint: Les coffres de l'Ender sont désactivés dans ce monde.
     ENDERMAN_DEATH_DROP:
       description: |-
-        &un Endermen tombera
-        et un bloc qu'ils sont
-        &un holding s'il est tué.
+        <green>Les Endermen lâcheront</green>
+        <green>tout bloc qu'ils tiennent</green>
+        <green>s'ils sont tués.</green>
       name: Drop de mort d'Enderman
     ENDERMAN_GRIEFING:
       description: |-
-        &un Endermen peut supprimer
-        &un pâté de maisons des îles
+        <green>Les Endermen peuvent retirer</green>
+        <green>des blocs des îles</green>
       name: Griefing par des Endermen
     ENDERMAN_TELEPORT:
       description: |-
@@ -1331,7 +1331,7 @@ protection:
         <green>si actif.</green>
       name: Téléportation Enderman
     ENDER_PEARL:
-      description: Faire de l'utilisation
+      description: Basculer l'utilisation
       name: Perles d'Ender
       hint: Utilisation d'Enderpearl désactivée
     ENTER_EXIT_MESSAGES:
@@ -1349,8 +1349,8 @@ protection:
     FIRE_BURNING:
       name: Feu qui brûle
       description: |-
-        <green>bascule si le feu peut brûler</green>
-        &un bloc ou non.
+        <green>Bascule si le feu peut brûler</green>
+        <green>des blocs ou non.</green>
     FIRE_EXTINGUISH:
       description: Basculer l'extinction des feux
       name: Éteindre le feu
@@ -1370,7 +1370,7 @@ protection:
       description: Autoriser la capture de poissons avec un seau
       hint: Écopage de poisson désactivé
     FLINT_AND_STEEL:
-      name: Minerai de silex et d'acier
+      name: Briquet
       description: |-
         <green>Autorise les joueurs à allumer des</green>
         <green>feux ou des feux de camp en utilisant</green>
@@ -1386,12 +1386,15 @@ protection:
       hint: Utilisation de la porte désactivée
     GEO_LIMIT_MOBS:
       description: |-
-        <green>Supprimer les mobs qui partent</green>
-        &un extérieur protégé
-        &un espace insulaire
+        <green>Supprimer les mobs qui sortent</green>
+        <green>de l'espace protégé</green>
+        <green>de l'île</green>
       name: '<yellow>Limiter les foules à l''île</yellow>'
     HARVEST:
-      description: "<green>Définir qui peut récolter les récoltes.\n</green><green>N'oubliez pas d'autoriser l'élément\n& un pick-up aussi\_!</green>"
+      description: |-
+        <green>Définir qui peut récolter les cultures.</green>
+        <green>N'oubliez pas d'autoriser le ramassage</green>
+        <green>d'objets aussi !</green>
       name: Récolte des cultures
       hint: Récolte désactivée
     HIVE:
@@ -1406,37 +1409,37 @@ protection:
       hint: Animal apprivoisé blessé désactivé
     HURT_ANIMALS:
       description: Activer/Désactiver les dégâts
-      name: '<red>Animaux blessés</red>'
-      hint: Animal blessé handicapé
+      name: Blesser les animaux
+      hint: Blesser les animaux désactivé
     HURT_MONSTERS:
       description: Activer/Désactiver les dégâts
-      name: Monstres blessés
-      hint: Monstre blessé désactivé
+      name: Blesser les monstres
+      hint: Blesser les monstres désactivé
     HURT_VILLAGERS:
       description: Activer/désactiver les dégâts
-      name: Villagers blessés
-      hint: Villageois blessé handicapé
+      name: Blesser les villageois
+      hint: Blesser les villageois désactivé
     ITEM_FRAME:
       name: Cadre d'objet
       description: |-
-        <green>une interaction Toggle.</green>
-        <green>Remplace le lieu ou brise les blocs</green>
+        <green>Activer/désactiver l'interaction.</green>
+        <green>Remplace le placement ou la destruction de blocs</green>
       hint: L'utilisation du cadre d'objet est désactivée
     ITEM_FRAME_DAMAGE:
       description: |-
-        <green>un Mobs peut endommager</green>
-        <green>un élément cadres</green>
+        <green>Les mobs peuvent endommager</green>
+        <green>les cadres d'objet</green>
       name: Dégât de Cadre d'Objet
     INVINCIBLE_VISITORS:
       description: |-
-        <red>onfigurer un visiteur invincible</red>
-        &un paramètres.
+        <green>Configurer les paramètres</green>
+        <green>des visiteurs invincibles.</green>
       name: '<yellow>Visiteurs invincibles</yellow>'
       hint: '<red>Visiteurs protégés</red>'
     ISLAND_RESPAWN:
       description: |-
-        <green>Joueurs réapparaissent</green>
-        &un sur l'île
+        <green>Les joueurs réapparaissent</green>
+        <green>sur l'île</green>
       name: Island respawn
     ITEM_DROP:
       description: Basculer le lâcher
@@ -1486,8 +1489,8 @@ protection:
         <green>Basculez si les liquides peuvent s'écouler à l'extérieur</green>
         <green>de la gamme de protection de l'île.</green>
         <green>Le désactiver permet d'éviter la lave et l'eau</green>
-        <green>pavé générateur dans la zone entre</green>
-        <light_purple>eux îles.</light_purple>
+        <green>de générer de la pierre entre</green>
+        <green>deux îles.</green>
 
         <red>Notez que les liquides continueront de couler verticalement.</red>
         <red>Ils ne se répandront pas non plus horizontalement si</red>
@@ -1495,19 +1498,19 @@ protection:
         <red>plage de protection.</red>
     LOCK:
       description: Basculer le verrou
-      name: Lock island
+      name: Verrouiller l'île
     CHANGE_SETTINGS:
       name: Modifier les paramètres
       description: |-
-        <green>Autoriser le changement de membre</green>
-        &un rôle peut modifier les paramètres de l'îlot.
+        <green>Autoriser quel rôle de membre</green>
+        <green>peut modifier les paramètres de l'île.</green>
     MILKING:
       description: Activer/désactiver la traite des vaches
       name: Traite
-      hint: Vaches laitières handicapées
+      hint: Traite des vaches désactivée
     MINECART:
       name: Chariots minecarts
-      description: Toggle minecart interactions
+      description: Activer/désactiver les interactions avec les minecarts
       hint: Interaction Minecart désactivée
     MONSTER_NATURAL_SPAWN:
       description: Activer/désactiver l'apparition naturelle des monstres
@@ -1517,8 +1520,8 @@ protection:
       name: Générateurs de monstres
     MOUNT_INVENTORY:
       description: |-
-        &un accès Toggle
-        <green>pour monter l'inventaire</green>
+        <green>Activer/désactiver l'accès</green>
+        <green>à l'inventaire de monture</green>
       name: Inventaire de monture
       hint: Inventaire de montage désactivé
     NAME_TAG:
@@ -1528,9 +1531,9 @@ protection:
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Apparition de créatures naturelles en dehors de la portée
       description: |-
-        <green>Basculez si les créatures (animaux et</green>
-        et un monstre) peuvent apparaître naturellement à l'extérieur
-        <bold>a plage de protection d'une île.</bold>
+        <green>Bascule si les créatures (animaux et</green>
+        <green>monstres) peuvent apparaître naturellement en dehors</green>
+        <green>de la plage de protection d'une île.</green>
 
         <red>Notez que cela n'empêche pas les créatures</red>
         <red>pour se reproduire via un générateur de mob ou un spawn</red>
@@ -1561,7 +1564,7 @@ protection:
     OFFLINE_GROWTH:
       description: |-
         <green>Lorsque désactivé, les plantes</green>
-        <green>ne poussera pas sur les îles</green>
+        <green>ne pousseront pas sur les îles</green>
         <green>où tous les membres sont hors ligne.</green>
         <green>Peut aider à réduire le décalage.</green>
       name: Croissance Hors Ligne
@@ -1575,10 +1578,10 @@ protection:
       name: Redstone Hors Ligne
     PETS_STAY_AT_HOME:
       description: |-
-        <green>Lorsqu'il est actif, animaux apprivoisés</green>
-        <green>ne peut aller qu'à et</green>
-        <green>ne peut pas quitter le propriétaire</green>
-        &une île natale.
+        <green>Lorsqu'actif, les animaux apprivoisés</green>
+        <green>ne peuvent aller que sur</green>
+        <green>l'île du propriétaire et</green>
+        <green>ne peuvent pas la quitter.</green>
       name: Les animaux restent à la maison
     PISTON_PUSH:
       description: |-
@@ -1598,7 +1601,7 @@ protection:
     POTION_THROWING:
       name: Lancer de potions
       description: |-
-        <green>actier/désactiver le jet des potions.</green>
+        <green>Activer/désactiver le jet des potions.</green>
         <green>Cela inclut les éclaboussures et les potions persistantes.</green>
       hint: Lancer des potions désactivé
     NETHER_PORTAL:
@@ -1607,7 +1610,7 @@ protection:
       hint: Utilisation du portail désactivée
     END_PORTAL:
       description: Basculer l'utilisation
-      name: Portail de Fin
+      name: Portail de l'End
       hint: Utilisation du portail désactivée
     PAUSE_MOB_GROWTH:
       name: Pause croissance des mobs
@@ -1653,7 +1656,7 @@ protection:
         <green>Empêche la sortie de The_End</green>
         <green>de se générer</green>
         <green>aux coordonnées 0,0</green>
-      name: Remove end exit island
+      name: Supprimer l'île de sortie de l'End
     REMOVE_MOBS:
       description: |-
         <green>Supprimer des monstres lorsque</green>
@@ -1662,7 +1665,7 @@ protection:
     RIDING:
       description: Basculer le monture
       name: Montée d'animaux
-      hint: Equitation pour animaux handicapés
+      hint: Monter les animaux désactivé
     SHEARING:
       description: Activer/désactiver la tonte
       name: Tondre
@@ -1681,20 +1684,20 @@ protection:
         autorisé.
     SCULK_SENSOR:
       description: |-
-        <green>Active/désactive le capteur Sculk</green>
-        &une activation.
+        <green>Active/désactive l'activation</green>
+        <green>du capteur Sculk.</green>
       name: Capteur Sculk
       hint: l'activation du capteur Sculk est désactivée
     SCULK_SHRIEKER:
       description: |-
-        <green>Active/désactive le crieur de Sculk</green>
-        &une activation.
+        <green>Active/désactive l'activation</green>
+        <green>du crieur de Sculk.</green>
       name: Hurleur de Sculk
       hint: l'activation du Sculk Shrieker est désactivée
     SIGN_EDITING:
       description: |-
         <green>Permet l'édition de texte</green>
-        <green>de signes</green>
+        <green>des panneaux</green>
       name: Édition de panneaux
       hint: l'édition des panneaux est désactivée
     TNT_DAMAGE:
@@ -1723,7 +1726,7 @@ protection:
       description: |-
         <green>Activer / désactiver la croissance des arbres en dehors d'une</green>
         <green>plage de protection d'une île ou non.</green>
-        <green>Non seulement cela empêchera les jeunes arbres plcés hors de la</green>
+        <green>Non seulement cela empêchera les jeunes arbres placés hors de la</green>
         <green>plage de protection d'une île de</green>
         <green>grandir, mais il va également bloquer la génération</green>
         <green>de feuilles / bûches en dehors de l'île, donc cela</green>
@@ -1749,14 +1752,20 @@ protection:
       hint: '<red>Vous ne pouvez pas faire cela en tombant.</red>'
     VISITOR_KEEP_INVENTORY:
       name: Les visiteurs gardent l'inventaire au décès
-      description: "<green>Empêcher les joueurs de perdre leur\n</green><green>objets et expérience s'ils meurent\n</green><green>une île dans laquelle ils sont un visiteur.\n&un\nLes membres de </green><green>Island perdent toujours leurs objets\n</green><green>s'ils meurent sur leur propre île\_!</green>"
-    SPAWN_PROTECTION:
-      name: Spawn island void protection
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Empêche les joueurs de perdre leurs</green>
+        <green>objets et leur expérience s'ils meurent</green>
+        <green>sur une île où ils sont visiteurs.</green>
+        <green></green>
+        <green>Les membres de l'île perdent toujours leurs objets</green>
+        <green>s'ils meurent sur leur propre île !</green>
+    SPAWN_PROTECTION:
+      name: Protection du vide sur l'île spawn
+      description: |-
+        <green>Lorsqu'activé, les joueurs qui tombent</green>
+        <green>dans le vide sur l'île spawn</green>
+        <green>seront téléportés au point</green>
+        <green>de spawn au lieu de mourir.</green>
     RAID_TRIGGER:
       name: Déclencheur de raid
       description: Définit le rang minimum d'île requis pour déclencher un raid
@@ -1843,7 +1852,7 @@ protection:
           <green>définir le nom</green>
         ban: |-
           <green>Sélectionnez le rang qui peut</green>
-          bannir des joueurs
+          <green>bannir des joueurs</green>
         unban: |-
           <green>Sélectionnez le rang qui peut</green>
           <green>débannir les joueurs</green>
@@ -1949,7 +1958,7 @@ management:
             <green><bold>COMPATIBLE </bold></green><green>.</green>
 
             <green>Ses fonctionnalités sont entièrement conçues pour</green>
-            <green>course dans cet environnement.</green>
+            <green>fonctionner dans cet environnement.</green>
           SUPPORTED: |
             <green>Tourne sous </green><yellow>[name] [version] </yellow><green>.</green>
 
@@ -2016,33 +2025,33 @@ catalog:
 enums:
   DamageCause:
     CONTACT: Contact
-    ENTITY_ATTACK: Attaque de foule
+    ENTITY_ATTACK: Attaque d'entité
     ENTITY_SWEEP_ATTACK: Attaque par balayage
     PROJECTILE: Projectiles
     SUFFOCATION: Étouffement
-    FALL: Automne
+    FALL: Chute
     FIRE: Feu
     FIRE_TICK: Brûlant
     MELTING: Fusion
     LAVA: Lave
     DROWNING: Noyade
-    BLOCK_EXPLOSION: Bloquer l'explosion
+    BLOCK_EXPLOSION: Explosion de bloc
     ENTITY_EXPLOSION: Explosion d'entité
     VOID: Vide
     LIGHTNING: Foudre
     SUICIDE: Suicide
-    STARVATION: famine
+    STARVATION: Famine
     POISON: Poison
-    MAGIC: la magie
-    WITHER: Flétrir
+    MAGIC: Magie
+    WITHER: Wither
     FALLING_BLOCK: Bloc qui tombe
-    THORNS: Les épines
+    THORNS: Épines
     DRAGON_BREATH: Souffle du dragon
-    CUSTOM: Coutume
+    CUSTOM: Personnalisé
     FLY_INTO_WALL: Voler dans le mur
     HOT_FLOOR: Plancher chaud
     CRAMMING: Bourrage
-    DRYOUT: Déssecher
+    DRYOUT: Assèchement
     FREEZE: Gel
     KILL: Tuer
     SONIC_BOOM: Boom Sonique

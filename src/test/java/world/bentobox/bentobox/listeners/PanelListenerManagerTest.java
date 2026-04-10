@@ -42,6 +42,7 @@ import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.panels.PanelListener;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 
 /**
@@ -391,6 +392,66 @@ class PanelListenerManagerTest extends CommonTestSetup {
     void testGetOpenPanels() {
         PanelListenerManager.getOpenPanels().put(uuid, panel);
         assertSame(panel, PanelListenerManager.getOpenPanels().get(uuid));
+    }
+
+    /**
+     * Test that clicks are blocked when TabbedPanel listener is on timeout
+     */
+    @Test
+    void testOnInventoryClickTabbedPanelTimeout() {
+        // Set up panel with a TabbedPanel listener
+        TabbedPanel tabbedPanel = mock(TabbedPanel.class);
+        when(panel.getListener()).thenReturn(Optional.of(tabbedPanel));
+        PanelListenerManager.getOpenPanels().put(uuid, panel);
+
+        // Mock BentoBox.onTimeout to return true (on timeout)
+        when(plugin.onTimeout(any(User.class), eq(panel))).thenReturn(true);
+
+        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
+        plm.onInventoryClick(e);
+
+        // Click handler and panel listener should NOT be called when on timeout
+        verify(ch, never()).onClick(any(), any(), any(), eq(0));
+        verify(tabbedPanel, never()).onInventoryClick(any(), any());
+    }
+
+    /**
+     * Test that clicks proceed when TabbedPanel listener is not on timeout
+     */
+    @Test
+    void testOnInventoryClickTabbedPanelNoTimeout() {
+        // Set up panel with a TabbedPanel listener
+        TabbedPanel tabbedPanel = mock(TabbedPanel.class);
+        when(panel.getListener()).thenReturn(Optional.of(tabbedPanel));
+        PanelListenerManager.getOpenPanels().put(uuid, panel);
+
+        // Mock BentoBox.onTimeout to return false (no timeout)
+        when(plugin.onTimeout(any(User.class), eq(panel))).thenReturn(false);
+
+        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
+        plm.onInventoryClick(e);
+
+        // Click handler and panel listener should be called
+        verify(ch).onClick(eq(panel), any(User.class), eq(click), eq(0));
+        verify(tabbedPanel).onInventoryClick(any(), any());
+    }
+
+    /**
+     * Test that non-TabbedPanel listeners don't get timeout checks
+     */
+    @Test
+    void testOnInventoryClickNonTabbedPanelNoTimeoutCheck() {
+        // Regular panel listener (not TabbedPanel)
+        PanelListenerManager.getOpenPanels().put(uuid, panel);
+
+        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
+        plm.onInventoryClick(e);
+
+        // Click handler should be called regardless of timeout
+        verify(ch).onClick(eq(panel), any(User.class), eq(click), eq(0));
+        verify(pl).onInventoryClick(any(), any());
+        // onTimeout should NOT be called for non-TabbedPanel
+        verify(plugin, never()).onTimeout(any(User.class), any(Panel.class));
     }
 
 }

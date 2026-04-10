@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.hooks;
 
+import java.util.function.Consumer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -55,18 +57,65 @@ public class MythicMobsHook extends Hook {
      * @return true if spawn is successful
      */
     public boolean spawnMythicMob(MythicMobRecord mmr, Location spawnLocation) {
+        return spawnMythicMob(mmr, spawnLocation, null);
+    }
+
+    /**
+     * Spawn a MythicMob and run a callback once the entity has actually been spawned.
+     * <p>
+     * Delegates to {@link #spawnMythicMob(MythicMobRecord, Location, Consumer, long)}
+     * with a 40-tick delay — the historical behaviour, required by blueprint-paste
+     * callers so blocks settle before mobs land on them.
+     *
+     * @param mmr MythicMobRecord
+     * @param spawnLocation location
+     * @param onSpawn callback invoked with the spawned Bukkit entity; may be {@code null}
+     * @return true if the mob type exists and a spawn was scheduled
+     * @since 3.14.0
+     */
+    public boolean spawnMythicMob(MythicMobRecord mmr, Location spawnLocation, Consumer<Entity> onSpawn) {
+        return spawnMythicMob(mmr, spawnLocation, onSpawn, 40L);
+    }
+
+    /**
+     * Spawn a MythicMob with an explicit scheduler delay.
+     * <p>
+     * Blueprint-paste callers need a short delay so NMS-pasted blocks settle
+     * before mobs land on them; synchronous callers (e.g. AOneBlock's
+     * {@code MythicMobCustomBlock}) can pass {@code 0} to spawn immediately on
+     * the current tick. When {@code delayTicks <= 0} the spawn runs inline and
+     * the {@code onSpawn} callback is invoked synchronously.
+     *
+     * @param mmr MythicMobRecord
+     * @param spawnLocation location
+     * @param onSpawn callback invoked with the spawned Bukkit entity; may be {@code null}
+     * @param delayTicks ticks to wait before spawning; {@code <= 0} = spawn immediately
+     * @return true if the mob type exists and a spawn was scheduled (or ran)
+     * @since 3.15.0
+     */
+    public boolean spawnMythicMob(MythicMobRecord mmr, Location spawnLocation,
+            Consumer<Entity> onSpawn, long delayTicks) {
         if (!this.isPluginAvailable()) {
             return false;
         }
         return MythicBukkit.inst().getMobManager().getMythicMob(mmr.type()).map(mob -> {
-            // A delay is required before spawning, I assume because the blocks are pasted using NMS
-            Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
-                // spawns mob            
+            Runnable spawn = () -> {
                 ActiveMob activeMob = mob.spawn(BukkitAdapter.adapt(spawnLocation), mmr.level());
                 activeMob.setDisplayName(mmr.displayName());
                 activeMob.setPower(mmr.power());
                 activeMob.setStance(mmr.stance());
-            }, 40L);
+                if (onSpawn != null) {
+                    Entity bukkitEntity = activeMob.getEntity().getBukkitEntity();
+                    if (bukkitEntity != null) {
+                        onSpawn.accept(bukkitEntity);
+                    }
+                }
+            };
+            if (delayTicks <= 0L) {
+                spawn.run();
+            } else {
+                Bukkit.getScheduler().runTaskLater(getPlugin(), spawn, delayTicks);
+            }
             return true;
         }).orElse(false);
     }

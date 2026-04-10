@@ -12,9 +12,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
@@ -28,6 +30,7 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
@@ -294,6 +297,21 @@ class PlaceholdersManagerTest extends CommonTestSetup {
         verify(hook, never()).unregisterAll();
     }
 
+    @Test
+    void testUnregisterAllAddon() {
+        pm.unregisterAll(addon);
+        verify(hook).unregisterAll(addon);
+    }
+
+    @Test
+    void testUnregisterAllAddonNoHook() {
+        when(hm.getHook("PlaceholderAPI")).thenReturn(Optional.empty());
+        pm = new PlaceholdersManager(plugin);
+
+        pm.unregisterAll(addon);
+        verify(hook, never()).unregisterAll(addon);
+    }
+
     // ---------------------------------------------------------------
     // getRegisteredBentoBoxPlaceholders tests
     // ---------------------------------------------------------------
@@ -489,5 +507,77 @@ class PlaceholdersManagerTest extends CommonTestSetup {
         pm = new PlaceholdersManager(plugin);
 
         assertTrue(pm.isPlaceholderEnabled(addon, "addon_ph"));
+    }
+
+    // ---------------------------------------------------------------
+    // registerFlagPlaceholders tests
+    // ---------------------------------------------------------------
+
+    @Test
+    void testRegisterDefaultPlaceholdersWithFlags() {
+        // Set up FlagsManager with some flags
+        FlagsManager flagsManager = mock(FlagsManager.class);
+        Flag protectionFlag = new Flag.Builder("BREAK_BLOCKS", Material.STONE_PICKAXE).build();
+        Flag settingFlag = new Flag.Builder("PVP_OVERWORLD", Material.ARROW).type(Flag.Type.SETTING).build();
+        Flag worldSettingFlag = new Flag.Builder("ENDER_CHEST", Material.ENDER_CHEST).type(Flag.Type.WORLD_SETTING).build();
+        when(flagsManager.getFlags()).thenReturn(List.of(protectionFlag, settingFlag, worldSettingFlag));
+        when(plugin.getFlagsManager()).thenReturn(flagsManager);
+
+        pm.registerDefaultPlaceholders(addon);
+
+        // GameModePlaceholder.values().length + 304 (team/island) + 3 (flag placeholders)
+        verify(hook, times(GameModePlaceholder.values().length + 304 + 3))
+                .registerPlaceholder(any(GameModeAddon.class), anyString(), anyString(), any(PlaceholderReplacer.class));
+    }
+
+    @Test
+    void testRegisterFlagPlaceholderProtection() {
+        Flag protectionFlag = new Flag.Builder("BREAK_BLOCKS", Material.STONE_PICKAXE).build();
+        pm.registerFlagPlaceholder(addon, protectionFlag);
+
+        verify(hook).registerPlaceholder(eq(addon), eq("flag_break_blocks"),
+                eq("Minimum rank required for BREAK_BLOCKS on the player's island"),
+                any(PlaceholderReplacer.class));
+    }
+
+    @Test
+    void testRegisterFlagPlaceholderSetting() {
+        Flag settingFlag = new Flag.Builder("PVP_OVERWORLD", Material.ARROW).type(Flag.Type.SETTING).build();
+        pm.registerFlagPlaceholder(addon, settingFlag);
+
+        verify(hook).registerPlaceholder(eq(addon), eq("flag_pvp_overworld"),
+                eq("Whether PVP_OVERWORLD is enabled on the player's island (true/false)"),
+                any(PlaceholderReplacer.class));
+    }
+
+    @Test
+    void testRegisterFlagPlaceholderWorldSetting() {
+        Flag worldSettingFlag = new Flag.Builder("ENDER_CHEST", Material.ENDER_CHEST).type(Flag.Type.WORLD_SETTING).build();
+        pm.registerFlagPlaceholder(addon, worldSettingFlag);
+
+        verify(hook).registerPlaceholder(eq(addon), eq("flag_ender_chest"),
+                eq("Whether ENDER_CHEST is enabled in the world (true/false)"),
+                any(PlaceholderReplacer.class));
+    }
+
+    @Test
+    void testRegisterFlagPlaceholderSkipsDuplicate() {
+        when(hook.isPlaceholder(addon, "flag_break_blocks")).thenReturn(true);
+        Flag protectionFlag = new Flag.Builder("BREAK_BLOCKS", Material.STONE_PICKAXE).build();
+        pm.registerFlagPlaceholder(addon, protectionFlag);
+
+        // Should not register because it's already registered
+        verify(hook, never()).registerPlaceholder(eq(addon), eq("flag_break_blocks"),
+                anyString(), any(PlaceholderReplacer.class));
+    }
+
+    @Test
+    void testRegisterFlagPlaceholdersNullFlagsManager() {
+        when(plugin.getFlagsManager()).thenReturn(null);
+        // Should not throw
+        pm.registerDefaultPlaceholders(addon);
+        // Only the standard game mode placeholders + team/island placeholders should be registered (no flag ones)
+        verify(hook, times(GameModePlaceholder.values().length + 304))
+                .registerPlaceholder(any(GameModeAddon.class), anyString(), anyString(), any(PlaceholderReplacer.class));
     }
 }

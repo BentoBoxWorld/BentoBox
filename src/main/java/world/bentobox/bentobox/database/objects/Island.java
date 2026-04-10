@@ -67,6 +67,14 @@ public class Island implements DataObject, MetaDataAble {
      */
     private boolean changed;
 
+    /**
+     * Counter for deferred saves. When positive, {@link #setChanged()} will mark
+     * the island as dirty but will not trigger an immediate database save.
+     * This is used by the settings panel to batch all flag changes into a single
+     * save when the panel is closed.
+     */
+    private transient int deferSaveCount = 0;
+
     /** True if this island is deleted and pending deletion from the database
      * @deprecated
      */
@@ -1699,12 +1707,16 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Indicates the fields have been changed. Used to optimize saving on shutdown and notify other servers
+     * Indicates the fields have been changed. Used to optimize saving on shutdown and notify other servers.
+     * If saves are currently deferred (via {@link #beginDeferSaves()}), the island is
+     * marked as dirty but no database write occurs until {@link #endDeferSaves()} is called.
      */
     public void setChanged() {
         this.setUpdatedDate(System.currentTimeMillis());
         this.changed = true;
-        IslandsManager.updateIsland(this);
+        if (deferSaveCount <= 0) {
+            IslandsManager.updateIsland(this);
+        }
     }
 
     /**
@@ -1712,6 +1724,44 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void clearChanged() {
         this.changed = false;
+    }
+
+    /**
+     * Begin deferring database saves. While deferred, {@link #setChanged()} will
+     * mark the island as dirty but will not trigger an immediate database write.
+     * This is intended for batching multiple flag changes (e.g. from the settings
+     * panel) into a single save when {@link #endDeferSaves()} is called.
+     * <p>
+     * Calls to this method must be balanced with calls to {@link #endDeferSaves()}.
+     * Multiple callers may defer simultaneously (reference-counted).
+     *
+     * @since 3.14.0
+     */
+    public void beginDeferSaves() {
+        deferSaveCount++;
+    }
+
+    /**
+     * End deferring database saves. Decrements the defer counter; when it reaches
+     * zero the island is saved if it has been marked as changed.
+     *
+     * @since 3.14.0
+     */
+    public void endDeferSaves() {
+        if (deferSaveCount > 0) {
+            deferSaveCount--;
+        }
+        if (deferSaveCount == 0 && changed) {
+            IslandsManager.updateIsland(this);
+        }
+    }
+
+    /**
+     * @return true if saves are currently being deferred
+     * @since 3.14.0
+     */
+    public boolean isDeferSaves() {
+        return deferSaveCount > 0;
     }
 
     /**

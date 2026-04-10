@@ -382,14 +382,15 @@ public class DefaultPasteUtil {
             Optional<User> user = Optional.ofNullable(island.getOwner()).map(User::getInstance);
             if (user.isPresent()) {
                 for (int i = 0; i < 4; i++) {
-                    signSide.setLine(i, Util.translateColorCodes(plugin.getLocalesManager().getOrDefault(user.get(),
-                            addonName + ".sign.line" + i, "").replace(TextVariables.NAME, name)));
+                    String raw = plugin.getLocalesManager().getOrDefault(user.get(),
+                            addonName + ".sign.line" + i, "").replace(TextVariables.NAME, name);
+                    signSide.line(i, Util.parseMiniMessageOrLegacy(raw));
                 }
             }
         } else {
             // Just paste
             for (int i = 0; i < 4; i++) {
-                signSide.setLine(i, lines.get(i));
+                signSide.line(i, Util.parseMiniMessageOrLegacy(lines.get(i)));
             }
         }
     }

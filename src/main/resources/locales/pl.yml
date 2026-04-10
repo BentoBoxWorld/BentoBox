@@ -119,7 +119,7 @@ commands:
       total-islands: '<green>Masz [number] wysp w swojej bazie danych we wszystkich światach.</green>'
       number-error: '<red>Argument musi być liczbą dni</red>'
       confirm: '<light_purple>Użyj [label] purge confirm, by rozpocząć proces usuwania wysp</light_purple>'
-      completed: '<green>Proces usuwania wysp został anulowany.</green>'
+      completed: '<green>Proces usuwania wysp został zakończony.</green>'
       see-console-for-status: >-
         Rozpoczęto proces czyszczenia wysp. Uruchom konsolę w celu sprawdzenia
         szczegółowego statusu.
@@ -127,7 +127,7 @@ commands:
       regions:
         parameters: '[days]'
         description: Oczyszcz wyspy, usuwając stare pliki regionu
-        confirm: '<light_purple>Typ </light_purple><aqua>/[label] purgę regions confirm </aqua><light_purple>aby rozpocząć czyszczenie</light_purple>'
+        confirm: '<light_purple>Wpisz </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>aby rozpocząć czyszczenie</light_purple>'
       protect:
         description: Przełącz ochronę przed usuwaniem opuszczonych wysp
         move-to-island: '<red>Najpierw przenieś się na wyspę!</red>'
@@ -170,7 +170,7 @@ commands:
           bazie danych
         rank-on-island: '<red>[rangę] na [prefix_island] w [xyz]</red>'
         fixed: '<green>Naprawiono</green>'
-        done: '<green>Skanuj</green>'
+        done: '<green>Gotowe</green>'
       kick:
         parameters: <gracz z drużyny>
         description: wyrzuć gracza z drużyny
@@ -192,10 +192,10 @@ commands:
           <red>Uwaga: ten gracz posiada teraz [number] wysp. To więcej niż</red>
           dozwolone według ustawień lub uprawnień: [max].
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <gracz> <rozmiar>
+        description: Ustaw maksymalny rozmiar drużyny dla [prefix_island] gracza (użyj 0, aby przywrócić domyślne ustawienia świata)
+        success: '<green>Ustawiono maksymalny rozmiar drużyny </green><aqua>[name]</aqua><green> na [prefix_island] na </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>Zresetowano maksymalny rozmiar drużyny </green><aqua>[name]</aqua><green> na [prefix_island] do domyślnych ustawień świata (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: administracyjna komenda obszaru ochrony wysp
       invalid-value:
@@ -414,8 +414,8 @@ commands:
       sink:
         description: ustaw ten szablon, aby zanurzył się na dno oceanu po wklejeniu
         status: '<green>Plan będzie [status] </green><green>po wklejeniu</green>'
-        sink: '<red>zlew</red>'
-        not-sink: '<aqua>nie tonie</aqua>'
+        sink: '<red>tonąć</red>'
+        not-sink: '<aqua>nie tonąć</aqua>'
         no-clipboard: '<red>Nie ma schematu w schowku. Załaduj lub skopiuj coś.</red>'
       delete:
         parameters: <nazwa>
@@ -580,7 +580,7 @@ commands:
           <green>Pomyślnie usunięto </green><aqua>[number] </aqua><green>śmierci graczowi </green><aqua>[name],</aqua>
           zmniejszając ich sumę do <aqua>[total]</aqua><green>śmierci.</green>
     resetname:
-      description: reset gracz [prefix_island] nazwa
+      description: zresetuj nazwę [prefix_island] gracza
       success: '<green>Pomyślnie zresetowano nazwę [prefix_island] dla [name].</green>'
   bentobox:
     description: komenda administracyjna BentoBoxa
@@ -606,7 +606,7 @@ commands:
         jeśli później pojawią się błędy, uruchom ponownie serwer.
       unknown-addon: '<red>Nieznany dodatek!</red>'
       locales:
-        description: przeładowuje locale[locale]
+        description: przeładowuje pliki językowe
     version:
       plugin-version: '<dark_green>Wersja BentoBoxa: </dark_green><dark_aqua>[version]</dark_aqua>'
       description: wyświetla wersje BentoBoxa i jego dodatków
@@ -753,7 +753,7 @@ commands:
     setname:
       description: ustaw nazwę swojej wyspy
       name-too-short: '<red>Zbyt krótka. Minimalna długość to [number] znaków.</red>'
-      name-too-long: '<red>Zbyt krótka. Minimalna długość to [number] znaków.</red>'
+      name-too-long: '<red>Zbyt długa. Maksymalna długość to [number] znaków.</red>'
       name-already-exists: '<red>W tym trybie gry jest już wyspa o tej nazwie.</red>'
       parameters: <nazwa>
       success: '<green>Pomyślnie ustawiono nazwę twojej wyspy na </green><aqua>[name]</aqua><green>.</green>'
@@ -884,7 +884,7 @@ commands:
                 <green>, aby zaprosić gracza</green>
                 <green>, aby dołączyć do swojego zespołu</green>
             RIGHT:
-              name: '<aqua>Kliknij prawym przyciskiem мыши</aqua>'
+              name: '<aqua>Kliknij prawym przyciskiem myszy</aqua>'
               coop: '<green>aby zaprosić gracza do kooperacji</green>'
             SHIFT_LEFT:
               name: '<aqua>Przesuń lewy przycisk myszy</aqua>'
@@ -1070,14 +1070,14 @@ protection:
       description: |-
         Przełącz łamanie spawnerów.  
         Nadpisuje flagę Łamanie Bloków.
-      name: Złamać spawnerów
-      hint: Złamanie spawnera wyłączone
+      name: Łamanie spawnerów
+      hint: Łamanie spawnerów wyłączone
     BREAK_HOPPERS:
       description: |-
-        Przełączanie zbijania ich hoppers.  
-        Nadpisuje flagę Zbijanie Bloków.
-      name: Złam hoppers
-      hint: Wyłączono niszczenie hoppers
+        Przełączanie niszczenia lejów.
+        Nadpisuje flagę Niszczenie Bloków.
+      name: Łamanie lejów
+      hint: Niszczenie lejów wyłączone
     BREEDING:
       description: Przełącz interakcje
       name: Rozmnażanie zwierząt
@@ -1314,7 +1314,7 @@ protection:
     FIRE_EXTINGUISH:
       description: Przełącz gaszenie ognia
       name: Gaszenie ognia
-      hint: Gaszenie ognia jest jest wyłączone.
+      hint: Gaszenie ognia jest wyłączone.
     FIRE_IGNITE:
       name: Zapłon ognia
       description: |-
@@ -1324,23 +1324,23 @@ protection:
       name: Rozprzestrzenianie ognia
       description: Przełącz rozprzestrzenianie
     FISH_SCOOPING:
-      name: Łowienie ryb
-      description: Zezwól na łowienie ryb za pomocą wiadra
-      hint: Łowienie ryb jest jest wyłączone.
+      name: Zbieranie ryb wiadrem
+      description: Zezwól na zbieranie ryb za pomocą wiadra
+      hint: Zbieranie ryb wiadrem jest wyłączone.
     FLINT_AND_STEEL:
       name: Krzesiwo
       description: |-
         <green>Pozwól graczom zapalać ogień</green>
         <green>za pomocą krzesiwa.</green>
-      hint: Używanie krzesiwa jest jest wyłączone.
+      hint: Używanie krzesiwa jest wyłączone.
     FURNACE:
       description: Przełącz użycie
       name: Piec
-      hint: Używanie piecy jest jest wyłączone.
+      hint: Używanie piecy jest wyłączone.
     GATE:
       description: Przełącz użycie
       name: Furtki
-      hint: Używanie furtek jest jest wyłączone.
+      hint: Używanie furtek jest wyłączone.
     GEO_LIMIT_MOBS:
       description: |-
         <green>Usuń moby wychodzące</green>
@@ -1367,22 +1367,22 @@ protection:
     HURT_ANIMALS:
       description: Przełącz zabijanie zwierząt
       name: Zabijanie zwierząt
-      hint: Zabijanie zwierząt jest jest wyłączone.
+      hint: Zabijanie zwierząt jest wyłączone.
     HURT_MONSTERS:
       description: Przełącz zabijanie potworów
       name: Zabijanie potworów
-      hint: Zabijanie potworów jest jest wyłączone.
+      hint: Zabijanie potworów jest wyłączone.
     HURT_VILLAGERS:
       description: Przełącz zabijanie osadników
       name: Zabijanie osadników
-      hint: Zabijanie osadników jest jest wyłączone.
+      hint: Zabijanie osadników jest wyłączone.
     ITEM_FRAME:
       name: Ramka na przedmioty
       description: |-
         <green>Przełącz interakcję.</green>
         <green>Nadpisuje ustawienie stawiania</green>
         <green>i niszczenia bloków</green>
-      hint: Używanie ramek na przedmioty jest jest wyłączone.
+      hint: Używanie ramek na przedmioty jest wyłączone.
     ITEM_FRAME_DAMAGE:
       description: |-
         <green>Moby mogą uszkodzić</green>
@@ -1410,7 +1410,7 @@ protection:
     JUKEBOX:
       description: Przełącz użycie
       name: Szafa grająca
-      hint: Używanie szafy grającej jest jest wyłączone.
+      hint: Używanie szafy grającej jest wyłączone.
     LEAF_DECAY:
       name: Gnicie liści
       description: Pozwól liściom na naturalne gnicie
@@ -1430,7 +1430,7 @@ protection:
     LEVER:
       description: Przełącz użycie
       name: Dźwignie
-      hint: Używanie dźwigni jest jest wyłączone.
+      hint: Używanie dźwigni jest wyłączone.
     LIMIT_MOBS:
       description: |-
         <green>Ogranicz liczbę jednostek,</green>
@@ -1463,11 +1463,11 @@ protection:
     MILKING:
       description: Przełącz dojenie krów
       name: Dojenie
-      hint: Dojenie krów jest jest wyłączone.
+      hint: Dojenie krów jest wyłączone.
     MINECART:
       name: Wagoniki
       description: Przełącz interakcje z wagonikami
-      hint: Używanie wagoników jest jest wyłączone.
+      hint: Używanie wagoników jest wyłączone.
     MONSTER_NATURAL_SPAWN:
       description: Włącz lub wyłącz naturalne pojawianie się potworów
       name: Naturalne pojawienie się potworów
@@ -1549,15 +1549,15 @@ protection:
     POTION_THROWING:
       name: Rzucanie mikstur
       description: '<green>Przełącz rzucanie mikstur trwałych i rzucanych.</green>'
-      hint: Rzucanie mikstur jest jest wyłączone.
+      hint: Rzucanie mikstur jest wyłączone.
     NETHER_PORTAL:
       description: Przełącz użycie
       name: Portal do Netheru
-      hint: Używanie portali jest jest wyłączone.
+      hint: Używanie portali jest wyłączone.
     END_PORTAL:
       description: Przełącz użycie
       name: Portal końcowy
-      hint: Używanie portali jest jest wyłączone.
+      hint: Używanie portali jest wyłączone.
     PAUSE_MOB_GROWTH:
       name: Wstrzymaj wzrost mobów
       description: |-
@@ -1576,7 +1576,7 @@ protection:
       name: PVP w kresie
       hint: '<red>PVP jest wyłączone w świecie kresu.</red>'
       enabled: '<red>PVP w świecie kresu zostało włączone.</red>'
-      disabled: '<green>PVP w świecie kresu zostało jest wyłączone.</green>'
+      disabled: '<green>PVP w świecie kresu zostało wyłączone.</green>'
     PVP_NETHER:
       description: |-
         <red>Włącz / wyłącz PVP</red>
@@ -1584,7 +1584,7 @@ protection:
       name: PVP w piekle
       hint: '<red>PVP jest wyłączone w piekle.</red>'
       enabled: '<red>PVP w piekle zostało włączone.</red>'
-      disabled: '<green>PVP w piekle zostało jest wyłączone.</green>'
+      disabled: '<green>PVP w piekle zostało wyłączone.</green>'
     PVP_OVERWORLD:
       description: |-
         <red>Włącz / wyłącz PVP</red>
@@ -1592,7 +1592,7 @@ protection:
       name: PVP na wyspie
       hint: '<red>PVP jest wyłączone na wyspie.</red>'
       enabled: '<red>PVP na wyspie zostało włączone.</red>'
-      disabled: '<red>PVP na wyspie zostało jest wyłączone.</red>'
+      disabled: '<green>PVP na wyspie zostało wyłączone.</green>'
     REDSTONE:
       description: Przełącz dostęp
       name: Przedmioty redstone
@@ -1611,7 +1611,7 @@ protection:
     RIDING:
       description: Przełącz ujeżdzanie zwierząt
       name: Ujeżdzanie zwierząt
-      hint: Ujeżdzanie zwierząt jest jest wyłączone.
+      hint: Ujeżdzanie zwierząt jest wyłączone.
     SHEARING:
       description: Przełącz strzyżenie owiec
       name: Strzyżenie owiec
@@ -1625,7 +1625,7 @@ protection:
         <green>Pozwala zmienić typ jednostki spawnera</green>
         <green>za pomocą jaja spawnującego.</green>
       name: Zmiana spawnerów jajami spawnującymi
-      hint: Zmienianie typu spawnera jajem jest jest wyłączone.
+      hint: Zmienianie typu spawnera jajem jest wyłączone.
     SCULK_SENSOR:
       description: '<green>Przełącza aktywację sensora sculk.</green>'
       name: Czujnik Sculk
@@ -1652,7 +1652,7 @@ protection:
         <green>To ustawienie nie nadpisuje</green>
         <green>ochrony przed użyciem krzesia.</green>
       name: Używanie TNT
-      hint: Używanie TNT jest jest wyłączone.
+      hint: Używanie TNT jest wyłączone.
     TRADING:
       description: Przełącz handlowanie
       name: Handlowanie z osadnikami
@@ -1674,7 +1674,7 @@ protection:
     TURTLE_EGGS:
       description: Przełącz niszczenie
       name: Żółwie jaja
-      hint: Niszczenie żółwich jaj jest jest wyłączone.
+      hint: Niszczenie żółwich jaj jest wyłączone.
     FROST_WALKER:
       description: Przełącz zaklęcie Mroźny Piechur
       name: Mroźny Piechur
@@ -1682,7 +1682,7 @@ protection:
     EXPERIENCE_PICKUP:
       name: Podnoszenie doświadczenia
       description: Przełącz podnoszenie doświadczenia
-      hint: Podnoszenie doświadczenia jest jest wyłączone.
+      hint: Podnoszenie doświadczenia jest wyłączone.
     PREVENT_TELEPORT_WHEN_FALLING:
       name: Zapobiegaj teleportacji podczas spadania
       description: |-
@@ -1704,12 +1704,12 @@ protection:
 
         <green>jeśli umrą na swoim własnym [prefix_island]!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Ochrona przed pustką na wyspie spawnu
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Gdy włączone, gracze którzy wpadną</green>
+        <green>w pustkę na wyspie spawnu</green>
+        <green>zostaną przeteleportowani z powrotem</green>
+        <green>do punktu spawnu zamiast zginąć.</green>
     RAID_TRIGGER:
       name: Wyzwalanie najazdu
       description: Ustawia minimalny rang wyspy wymagany do wyzwolenia najazdu
@@ -1986,18 +1986,18 @@ enums:
     STARVATION: Głód
     POISON: Zatrucie
     MAGIC: Magia
-    WITHER: Zgniatacz
+    WITHER: Wither
     FALLING_BLOCK: Spadający Blok
     THORNS: Kolce
     DRAGON_BREATH: Oddech Smoka
-    CUSTOM: Zwyczaj
-    FLY_INTO_WALL: Lecieć w Ścianę
+    CUSTOM: Niestandardowe
+    FLY_INTO_WALL: Zderzenie ze Ścianą
     HOT_FLOOR: Gorąca Podłoga
-    CRAMMING: Cramming
+    CRAMMING: Ściśnięcie
     DRYOUT: Wysuszenie
-    FREEZE: Zatrzymaj się
-    KILL: Zabij
-    SONIC_BOOM: Sonic Boom
+    FREEZE: Zamrożenie
+    KILL: Komenda /kill
+    SONIC_BOOM: Fala Uderzeniowa
     WORLD_BORDER: Granica Świata
 panel:
   credits:
@@ -2024,7 +2024,7 @@ panels:
     buttons:
       bundle:
         name: '<bold>[name]</bold>'
-        description: '[opis]'
+        description: '[description]'
         uses: '<green>Użyto [number]/[max]</green>'
         unlimited: '<green>Nielimitowane użycia dozwolone</green>'
         cost: '<yellow>Koszt: [cost]</yellow>'
@@ -2041,7 +2041,7 @@ panels:
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>Obecnie wybrane.</green>'
   placeholder:
-    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    title: '<dark_aqua><bold>Przeglądarka symboli zastępczych</bold></dark_aqua>'
     buttons:
       bentobox:
         name: '<white><bold>BentoBox</bold></white>'

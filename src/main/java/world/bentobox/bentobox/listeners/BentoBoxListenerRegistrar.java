@@ -5,6 +5,7 @@ import org.bukkit.plugin.PluginManager;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
 import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
+import world.bentobox.bentobox.managers.ChunkPregenManager;
 import world.bentobox.bentobox.managers.IslandDeletionManager;
 
 /**
@@ -15,6 +16,7 @@ public class BentoBoxListenerRegistrar {
 
     private final BentoBox plugin;
     private IslandDeletionManager islandDeletionManager;
+    private ChunkPregenManager chunkPregenManager;
 
     public BentoBoxListenerRegistrar(BentoBox plugin) {
         this.plugin = plugin;
@@ -37,6 +39,8 @@ public class BentoBoxListenerRegistrar {
         manager.registerEvents(plugin, plugin);
         islandDeletionManager = new IslandDeletionManager(plugin);
         manager.registerEvents(islandDeletionManager, plugin);
+        chunkPregenManager = new ChunkPregenManager(plugin);
+        manager.registerEvents(chunkPregenManager, plugin);
         manager.registerEvents(new PrimaryIslandListener(plugin), plugin);
     }
 
@@ -45,5 +49,13 @@ public class BentoBoxListenerRegistrar {
      */
     public IslandDeletionManager getIslandDeletionManager() {
         return islandDeletionManager;
+    }
+
+    /**
+     * @return the {@link ChunkPregenManager} created during registration.
+     * @since 3.14.0
+     */
+    public ChunkPregenManager getChunkPregenManager() {
+        return chunkPregenManager;
     }
 }

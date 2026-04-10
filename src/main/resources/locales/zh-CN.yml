@@ -32,7 +32,7 @@ general:
     no-safe-location-found: '<red>试图将你传送到岛屿上时找不到安全的落脚点.</red>'
     not-owner: '<red>你不是这座岛屿的岛主!</red>'
     player-is-not-owner: '<aqua>[name]</aqua><red>不是这座岛屿的岛主!</red>'
-    not-in-team: '<red>该玩家在你的团队中!</red>'
+    not-in-team: '<red>该玩家不在你的团队中!</red>'
     offline-player: '<red>该玩家已离线或不存在.</red>'
     unknown-player: '<red>未知玩家: [name]!</red>'
     general: '<red>该命令尚未就绪 - 请联系管理员</red>'
@@ -169,9 +169,9 @@ commands:
         extra-islands: '<red>警告: 该玩家当前拥有[number]个岛屿, 最多仅可以拥有[max]个岛屿.</red>'
       maxsize:
         parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        description: 设置玩家的 [prefix_island] 最大团队人数 (使用 0 重置为世界默认值)
+        success: '<green>已将</green><aqua>[name]</aqua><green>的 [prefix_island] 最大团队人数设置为 </green><aqua>[number]</aqua><green>.</green>'
+        reset: '<green>已将</green><aqua>[name]</aqua><green>的 [prefix_island] 最大团队人数重置为世界默认值 (</green><aqua>[number]</aqua><green>).</green>'
     range:
       description: 岛屿保护范围管理员命令
       invalid-value:
@@ -226,7 +226,7 @@ commands:
         player-has-more-than-one-island: '<red>玩家拥有多个岛屿, 请指定一个岛屿.</red>'
     info:
       parameters: <玩家>
-      description: 获取当前岛屿或指定玩家的都信息
+      description: 获取当前岛屿或指定玩家的岛屿信息
       no-island: '<red>你当前没有岛屿...</red>'
       title: '========== 岛屿信息 ============'
       island-uuid: 'UUID: [uuid]'
@@ -248,7 +248,7 @@ commands:
       islands-in-trash: '<light_purple>岛屿在垃圾桶中.</light_purple>'
       protection-range: '岛屿保护范围: [range]'
       protection-range-bonus-title: '<aqua>包含以下奖励:</aqua>'
-      protection-range-bonus: '奖金: [number]'
+      protection-range-bonus: '奖励: [number]'
       purge-protected: '<green>岛屿处于清理保护状态</green>'
       max-protection-range: '历史最大保护范围: [range]'
       protection-coords: '岛屿保护界线: [xz1] 至 [xz2]'
@@ -303,7 +303,7 @@ commands:
       manual: '<red>没有找到安全的落脚点! 请手动传送至</red><aqua>[location]</aqua><red>附近检查原因.</red>'
     tpuser:
       parameters: <传送玩家> <[prefix_island]的玩家> [玩家的岛]
-      description: 将玩家传送到另一个玩家的 [&prefix_island]
+      description: 将玩家传送到另一个玩家的 [prefix_island]
     getrank:
       parameters: <player> [island owner]
       description: 获取指定玩家的身份等级
@@ -318,7 +318,7 @@ commands:
       parameters: '<gray>[x y z coords]</gray>'
       description: 将当前位置或指定坐标作为岛屿保护的中心点
       island: '<red>这将影响玩家</red><aqua>[name]</aqua><red>位于</red><aqua>[xyz]</aqua><red>的岛屿.</red>'
-      confirmation: '&你确定要将<aqua>[xyz]</aqua><red>设置为当前岛屿保护的中心点吗?</red>'
+      confirmation: '<red>你确定要将</red><aqua>[xyz]</aqua><red>设置为当前岛屿保护的中心点吗?</red>'
       success: '<green>成功将</green><aqua>[xyz]</aqua><green>设置为当前岛屿保护的中心点.</green>'
       fail: |-
         <red>未能将</red><aqua>[xyz]</aqua><red>设置为当前岛屿保护的中心点!</red>
@@ -366,7 +366,7 @@ commands:
         description: 复制两个选取点所示区域内的所有非空气方块(如果有[air]参数则包含空气方块)
       sink:
         description: 将此蓝图设置为粘贴时沉入海底。
-        status: '<green>蓝图会在粘贴时 [status] </green><green></green>'
+        status: '<green>蓝图会在粘贴时 [status]</green>'
         sink: '<red>沉没</red>'
         not-sink: '<aqua>不下沉</aqua>'
         no-clipboard: '<red>剪贴板中没有蓝图。加载或复制一些东西。</red>'
@@ -437,7 +437,7 @@ commands:
           <gray>它将出现在玩家创建岛屿界面中</gray>
         name:
           quit: 退出
-          prompt: 请输入蓝图方案名称, 或输入&退出取消创建蓝图方案
+          prompt: 请输入蓝图方案名称, 或输入'退出'取消创建蓝图方案
           too-long: '<red>蓝图方案名称过长, 请确保在32个字符以内.</red>'
           pick-a-unique-name: '<red>该蓝图方案名称已存在, 请换一个名称.</red>'
           stripped-char-in-unique-name: '<red>其中的非法字符已被删除, 岛屿方案名称为: </red><aqua>[name]</aqua><green>.</green>'
@@ -448,7 +448,7 @@ commands:
           instructions: |-
             <gray>请为</gray><aqua>[name]</aqua><gray>蓝图方案输入描述</gray>
             <gray>每输入一次为一行</gray>
-            <gray>最后输入&退出</gray><gray>退出编辑</gray>
+            <gray>最后输入'退出'</gray><gray>退出编辑</gray>
           default-color: ''
           success: '<green>蓝图方案描述添加成功!</green>'
           cancelling: '<red>取消编辑蓝图方案描述!</red>'
@@ -1051,9 +1051,9 @@ protection:
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>打开木桶</color:#FAFAD2>'
       hint: 禁止打开木桶
     CRAFTER:
-      name: 手工艺者
-      description: 切换使用
-      hint: Crafter访问禁用
+      name: 合成器
+      description: 切换合成器的使用
+      hint: 禁止使用合成器
     BLOCK_EXPLODE_DAMAGE:
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>床与重生锚破坏方块和对实体造成伤害</color:#FAFAD2>'
       name: '<aqua><bold>爆炸伤害与破坏</bold></aqua>'
@@ -1569,12 +1569,11 @@ protection:
         <red>禁止</red><color:#FAFAD2>时: 玩家在他人岛屿死亡掉落</color:#FAFAD2>
         <dark_red>岛屿成员在自己的岛屿上死亡时仍然会掉落物品和经验</dark_red>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: 出生岛虚空保护
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>启用后, 在出生岛掉入虚空的</green>
+        <green>玩家将被传送回出生点,</green>
+        <green>而不会死亡.</green>
     RAID_TRIGGER:
       name: 触发袭击
       description: 设置触发袭击所需的岛屿最低等级
@@ -1861,7 +1860,7 @@ panels:
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>当前已选择该语言</green>'
   placeholder:
-    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    title: '<dark_aqua><bold>占位符浏览器</bold></dark_aqua>'
     buttons:
       bentobox:
         name: '<white><bold>BentoBox</bold></white>'

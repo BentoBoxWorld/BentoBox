@@ -468,11 +468,11 @@ public class AddonsManager {
         addon.setState(Addon.State.INCOMPATIBLE);
         plugin.logWarning("Skipping " + addon.getDescription().getName()
                 + " as it is incompatible with the current version of BentoBox or of server software...");
-        plugin.logWarning("NOTE: The addon is referring to no longer existing classes.");
-        plugin.logWarning("NOTE: DO NOT report this as a bug from BentoBox.");
+        plugin.logWarning("Do you need to update your BentoBox?");
+        plugin.logWarning("NOTE: DO NOT report this as a bug to BentoBox before you update the software.");
         StringBuilder a = new StringBuilder();
         addon.getDescription().getAuthors().forEach(author -> a.append(author).append(" "));
-        plugin.logError("Please report this stack trace to the addon's author(s): " + a);
+        plugin.logError("If you really think this is an error, report this stack trace to the addon's author(s): " + a);
         plugin.logStacktrace(e);
     }
 

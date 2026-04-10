@@ -707,6 +707,66 @@ class IslandTest extends CommonTestSetup {
     }
 
     @Test
+    void testBeginDeferSaves() {
+        assertFalse(island.isDeferSaves());
+        island.beginDeferSaves();
+        assertTrue(island.isDeferSaves());
+    }
+
+    @Test
+    void testEndDeferSaves() {
+        island.beginDeferSaves();
+        assertTrue(island.isDeferSaves());
+        island.endDeferSaves();
+        assertFalse(island.isDeferSaves());
+    }
+
+    @Test
+    void testSetChangedWhileDeferred() {
+        island.beginDeferSaves();
+        island.clearChanged();
+        // setChanged should mark as changed but not trigger save while deferred
+        island.setChanged();
+        assertTrue(island.isChanged());
+        assertTrue(island.isDeferSaves());
+    }
+
+    @Test
+    void testEndDeferSavesTriggersUpdateWhenChanged() {
+        island.beginDeferSaves();
+        island.clearChanged();
+        island.setChanged();
+        assertTrue(island.isChanged());
+        // End deferring - since changed is true, this will attempt to save
+        island.endDeferSaves();
+        assertFalse(island.isDeferSaves());
+    }
+
+    @Test
+    void testNestedDeferSaves() {
+        // Multiple callers can defer simultaneously (reference-counted)
+        island.beginDeferSaves();
+        island.beginDeferSaves();
+        assertTrue(island.isDeferSaves());
+        island.endDeferSaves();
+        assertTrue(island.isDeferSaves()); // Still deferred (one remaining)
+        island.endDeferSaves();
+        assertFalse(island.isDeferSaves()); // Now fully ended
+    }
+
+    @Test
+    void testEndDeferSavesNeverGoesNegative() {
+        // Calling endDeferSaves without beginDeferSaves should not go negative
+        island.endDeferSaves();
+        assertFalse(island.isDeferSaves());
+        // Subsequent begin/end should still work
+        island.beginDeferSaves();
+        assertTrue(island.isDeferSaves());
+        island.endDeferSaves();
+        assertFalse(island.isDeferSaves());
+    }
+
+    @Test
     void testSetName() {
         island.setName("MyIsland");
         assertEquals("MyIsland", island.getName());

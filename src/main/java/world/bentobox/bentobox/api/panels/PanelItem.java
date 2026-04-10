@@ -4,6 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.TooltipDisplay;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
@@ -60,6 +65,12 @@ public class PanelItem {
         setGlow(builtItem.isGlow());
         setInvisible(builtItem.isInvisible());
 
+        // Hide additional item-specific tooltip info (banner patterns, potion effects, etc.)
+        hideAdditionalTooltip();
+        // Refresh meta to reflect current item state including tooltip display changes
+        if (meta != null) {
+            meta = icon.getItemMeta();
+        }
     }
 
     /**
@@ -78,6 +89,7 @@ public class PanelItem {
         if (meta != null) {
             meta.lore(description.stream()
                     .map(Util::parseMiniMessageOrLegacy)
+                    .map(PanelItem::removeDefaultItalic)
                     .toList());
             icon.setItemMeta(meta);
         }
@@ -90,7 +102,7 @@ public class PanelItem {
     public void setName(String name) {
         this.name = name;
         if (meta != null) {
-            meta.displayName(name != null ? Util.parseMiniMessageOrLegacy(name) : null);
+            meta.displayName(name != null ? removeDefaultItalic(Util.parseMiniMessageOrLegacy(name)) : null);
             icon.setItemMeta(meta);
         }
     }
@@ -193,6 +205,21 @@ public class PanelItem {
         boolean onClick(Panel panel, User user, ClickType clickType, int slot);
     }
 
+    /**
+     * Removes the default italic styling that Minecraft applies to item display names and lore.
+     * If the component does not explicitly set italic, this method sets it to false to prevent
+     * the Minecraft client from applying its default italic rendering.
+     *
+     * @param component the component to process
+     * @return the component with italic explicitly disabled if it was not already set
+     */
+    private static Component removeDefaultItalic(Component component) {
+        if (component.decoration(TextDecoration.ITALIC) == TextDecoration.State.NOT_SET) {
+            return component.decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+        }
+        return component;
+    }
+
     public void setHead(ItemStack itemStack) {
         // update amount before replacing.
         itemStack.setAmount(this.icon.getAmount());
@@ -219,5 +246,42 @@ public class PanelItem {
         setName(name);
         setDescription(description);
         setGlow(glow);
+        // Hide additional item-specific tooltip info (banner patterns, potion effects, etc.)
+        hideAdditionalTooltip();
+        // Refresh meta to reflect current item state including tooltip display changes
+        if (meta != null) {
+            meta = icon.getItemMeta();
+        }
+    }
+
+    /**
+     * Hides additional item-specific tooltip information such as banner patterns, potion effects,
+     * firework effects, and other item metadata using the modern {@link TooltipDisplay} data component API.
+     * Merges with any existing tooltip display settings (e.g., from ItemFlags) to avoid overwriting them.
+     */
+    private void hideAdditionalTooltip() {
+        if (icon.getType().isAir()) {
+            return;
+        }
+        // Read existing tooltip display to preserve any ItemFlag-based hiding
+        TooltipDisplay existing = icon.getData(DataComponentTypes.TOOLTIP_DISPLAY);
+        TooltipDisplay.Builder builder = TooltipDisplay.tooltipDisplay();
+        if (existing != null) {
+            builder.hideTooltip(existing.hideTooltip());
+            builder.addHiddenComponents(
+                    existing.hiddenComponents().toArray(io.papermc.paper.datacomponent.DataComponentType[]::new));
+        }
+        // Hide additional components that don't have non-deprecated ItemFlag equivalents
+        builder.addHiddenComponents(
+                DataComponentTypes.BANNER_PATTERNS,
+                DataComponentTypes.POTION_CONTENTS,
+                DataComponentTypes.FIREWORKS,
+                DataComponentTypes.FIREWORK_EXPLOSION,
+                DataComponentTypes.JUKEBOX_PLAYABLE,
+                DataComponentTypes.SUSPICIOUS_STEW_EFFECTS,
+                DataComponentTypes.BUNDLE_CONTENTS,
+                DataComponentTypes.MAP_DECORATIONS
+        );
+        icon.setData(DataComponentTypes.TOOLTIP_DISPLAY, builder.build());
     }
 }

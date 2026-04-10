@@ -1508,6 +1508,9 @@ protection:
       cooldown: '<red>You must wait before scooping another obsidian block.</red>'
       obsidian-nearby: '<red>There are obsidian blocks within a [radius]-block radius
         of this obsidian. You cannot scoop it up into lava.</red>'
+      lavaTip: |-
+        <orange>Scoop this up with a bucket</orange>
+        <orange>as lava again if you need it!</orange>
     OFFLINE_GROWTH:
       description: |-
         <green>When disabled, plants</green>
@@ -1791,6 +1794,11 @@ protection:
       description: |
         <green>Protection settings when</green>
         <green>player is outside their [prefix_island]</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Island Defaults</gold>'
+      description: |
+        <green>Default protection settings</green>
+        <green>for new [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       # Add commands to this list as required

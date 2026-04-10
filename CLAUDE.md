@@ -32,13 +32,13 @@ The main plugin class is `BentoBox.java` (extends `JavaPlugin`). Almost all subs
 ### Key Packages
 
 - **`api/`** — Public API surface for addons: events, commands, panels (GUIs), user management, flags, configuration
-- **`managers/`** — Core subsystems: `IslandsManager`, `PlayersManager`, `AddonsManager`, `LocalesManager`, `FlagsManager`, `BlueprintsManager`, `HooksManager`, `PlaceholdersManager`, `RanksManager`
-- **`database/`** — Database abstraction supporting MongoDB, MySQL, MariaDB, and PostgreSQL (via HikariCP)
+- **`managers/`** — Core subsystems: `IslandsManager`, `PlayersManager`, `AddonsManager`, `LocalesManager`, `FlagsManager`, `BlueprintsManager`, `BlueprintClipboardManager`, `HooksManager`, `PlaceholdersManager`, `RanksManager`, `CommandsManager`, `IslandDeletionManager`, `IslandChunkDeletionManager`, `MapManager`, `WebManager`
+- **`database/`** — Database abstraction supporting MongoDB, MySQL, MariaDB, PostgreSQL (via HikariCP), and SQLite
 - **`blueprints/`** — Island schematic handling and pasting
 - **`listeners/`** — Bukkit event handlers (teleport, death, join/leave, panel clicks, spawn protection)
 - **`commands/`** — Admin and user command implementations
 - **`panels/`** — Inventory GUI panel system
-- **`hooks/`** — Integrations with external plugins (Vault, PlaceholderAPI, MythicMobs, Multiverse, LuckPerms, etc.)
+- **`hooks/`** — Integrations with external plugins (Vault, PlaceholderAPI, MythicMobs, Multiverse, LuckPerms, ItemsAdder, Slimefun, Oraxen, ZNPCsPlus, FancyNpcs, BlueMap, Dynmap, LangUtils, etc.)
 - **`nms/`** — NMS (Native Minecraft Server) version-specific code
 
 ### Island Data Flow
@@ -118,9 +118,17 @@ public ImmutableSet<UUID> getMemberSet() { ... }
 
 Guava (`ImmutableSet`, `ImmutableList`, etc.) is reliably available at runtime via Paper's bundled JARs and is safe to use in the public API.
 
+## MiniMessage / legacy color round-trip
+
+`User.getTranslation()` returns a legacy `§`-coded string for backwards compatibility, even when the locale entry is MiniMessage. UI code (`PanelItem.setDescription`, etc.) then re-parses that legacy string back into a Component via `Util.parseMiniMessageOrLegacy`. This MiniMessage → Component → legacy → Component round-trip is lossy by default because of an Adventure quirk:
+
+**Adventure's `LegacyComponentSerializer` never emits `§r` to turn off a decoration when a sibling component clears it.** Legacy color codes have no "decoration off" code — only `§r` resets — but Adventure simply omits the decoration code on the next sibling instead of resetting. When that legacy string is re-parsed under correct legacy semantics (decorations persist until `§r`), the decoration leaks into the following segment. This bit bold, italic, underlined, strikethrough, and obfuscated equally (#2917).
+
+`Util.componentToLegacy` is therefore **not** a thin wrapper around Adventure's serializer — it's a custom Component walker (`appendComponentLegacy` / `emitStyleTransition`) that tracks the last-emitted color and decorations and inserts `§r` whenever any decoration was on and is now off, then re-applies color afterwards. **Do not replace it with `LegacyComponentSerializer.serialize()` directly** without re-introducing the leak. The round-trip is exercised by `LegacyToMiniMessageTest`.
+
 ## Build Notes
 
 - The Gradle build uses the Paper `userdev` plugin and Shadow plugin to produce a fat/shaded JAR at `build/libs/BentoBox-{version}.jar`.
 - `plugin.yml` and `config.yml` are filtered for the `${version}` placeholder at build time; locale files are copied without filtering.
 - Java preview features are enabled for both compilation and test execution.
-- Local builds produce version `3.11.2-LOCAL-SNAPSHOT`; CI builds append `-b{BUILD_NUMBER}-SNAPSHOT`; `origin/master` builds produce the bare version.
+- Local builds produce version `3.13.0-LOCAL-SNAPSHOT`; CI builds append `-b{BUILD_NUMBER}-SNAPSHOT`; `origin/master` builds produce the bare version.

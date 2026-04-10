@@ -18,7 +18,7 @@ general:
   errors:
     command-cancelled: '<dark_red>Komut iptal edildi!</dark_red>'
     no-permission: '<dark_red>Bu izne sahip degilsin! Ada açamıyorsan </dark_red><yellow>/ada</yellow>'
-    insufficient-rank: '<red>Rankınız bunu yapacak kadar yüksek değil! (& 7 [rank] & c)</red>'
+    insufficient-rank: '<red>Rankınız bunu yapacak kadar yüksek değil! (<gray>[rank]</gray>)</red>'
     use-in-game: '<dark_red>Bu komutu sadece oyundayken kullanabilirsin!</dark_red>'
     use-in-console: '<red>Bu komut yalnızca konsolda kullanılabilir.</red>'
     no-team: '<dark_red>Bir takımda değilsin!</dark_red>'
@@ -32,7 +32,7 @@ general:
     not-in-team: '<dark_red>Oyuncu senin takımında degil!</dark_red>'
     offline-player: '<dark_red>Oyuncu çevrimdışı ya da yok.</dark_red>'
     unknown-player: '<yellow>[name] </yellow><dark_red>adlı bir oyuncu yok!</dark_red>'
-    general: '<aqua>u komut henüz hazır değil. - Admin ile iteşimie geç!</aqua>'
+    general: '<aqua>Bu komut henüz hazır değil. - Admin ile iletişime geç!</aqua>'
     unknown-command: '<dark_red>Bilinmeyen komut. </dark_red><aqua>/[label] help</aqua>'
     wrong-world: '<dark_red>Bu komudu kullanmak için adanda olmalısın!</dark_red>'
     you-must-wait: '<dark_red>Komut yazabilmek için </dark_red><yellow>[number] </yellow><dark_red>saniye beklemelisin!</dark_red>'
@@ -40,7 +40,7 @@ general:
     not-on-island: '<red>[prefix_island] üzerinde değilsin!</red>'
     slow-down: '<red>Yavaş ol. Daha yavaş tıkla.</red>'
   worlds:
-    overworld: Aşırı Dünya
+    overworld: Üst Dünya
     nether: Nether
     the-end: Son
 commands:
@@ -60,7 +60,7 @@ commands:
       description: >-
         bu [prefix_island] veya oyuncunun [prefix_island] için izin verilen ev
         sayısını değiştir
-      parameters: <number / player> <number> [[prefix_adası] isim]
+      parameters: <number / player> <number> [[prefix_island] isim]
       max-homes-set: '<green>[name] - [prefix_island] maksimum ev sayısını [number] olarak ayarla</green>'
       errors:
         unknown-island: Bilinmeyen [prefix_island]! [name]
@@ -187,9 +187,9 @@ commands:
           izinler tarafından izin verilen [max] miktarından fazladır.
       maxsize:
         parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        description: Bir oyuncunun [prefix_island] maksimum takım boyutunu ayarla (dünya varsayılanına sıfırlamak için 0 kullan)
+        success: '<green>[name] oyuncusunun [prefix_island] maksimum takım boyutu </green><aqua>[number]</aqua><green> olarak ayarlandı.</green>'
+        reset: '<green>[name] oyuncusunun [prefix_island] maksimum takım boyutu dünya varsayılanına (</green><aqua>[number]</aqua><green>) sıfırlandı.</green>'
     range:
       description: Admin ada menzili ayarlama
       invalid-value:
@@ -299,7 +299,7 @@ commands:
       out-of-range: >-
         <red>Sayı 1 ila [number] arasında olmalıdır. </red><light_purple>[player] </light_purple><blue>Çöp olan ada</blue>
         numaralarını görmek için <dark_blue>[label]</dark_blue>
-      cannot-switch: '<red>Switch failed. See console log for error.</red>'
+      cannot-switch: '<red>Değiştirme başarısız oldu. Hata için konsol kaydına bakın.</red>'
       success: '<green>Başarıyla oyuncunun adasını belirtilen ada değiştirdi..</green>'
     trash:
       no-unowned-in-trash: '<red>Çöpte sahipsiz ada yok.</red>'
@@ -432,7 +432,7 @@ commands:
         description: Taslağın orta noktası olduğun pozisyon olarak belirler.
       paste:
         description: Panodaki taslağı olduğun bölgeye yapıştırır.
-        pasting: '&Yapıştırılıyor...'
+        pasting: '<aqua>Yapıştırılıyor...</aqua>'
       pos1:
         description: Kare bir alan için 1. pozisyonu ayarlar.
       pos2:
@@ -814,7 +814,7 @@ commands:
         all-members-logged-off: >-
           <dark_red>Tum ada oyuncuları cevrımdısı. Isci yetkin </dark_red><yellow>[name]</yellow><dark_red>adasından</dark_red>
           alındı!
-        success: '<light_purple>[name] </light_purple><green>9artık adanda işçi değil!</green>'
+        success: '<light_purple>[name] </light_purple><green>artık adanda işçi değil!</green>'
         is-full: '<red>Başkasını kooperatif üyesi yapamazsınız.</red>'
       trust:
         description: Adana arkadas ekle
@@ -884,8 +884,8 @@ commands:
             bakabilirsin!
           name-joined-your-island: '<light_purple>[name] </light_purple><aqua>adana katıldı!</aqua>'
           confirmation: |-
-            <red>Are you sure you want to accept this invite?</red>
-            <red><bold>You will <underlined>LOSE </underlined></bold></red><red><bold>your current island!</bold></red>
+            <red>Bu daveti kabul etmek istediğine emin misin?</red>
+            <red><bold>Mevcut adanı <underlined>KAYBEDECEKSİN</underlined>!</bold></red>
         reject:
           description: Daveti reddet
           you-rejected-invite: '<blue>Ada katılma istegini reddettin!</blue>'
@@ -917,7 +917,7 @@ commands:
         description: Adandaki üyelerin yetkisini yükselt.
         parameters: <player>
         errors:
-          cant-promote-yourself: '<red>Kendini tanıtamazsın!</red>'
+          cant-promote-yourself: '<red>Kendini terfi ettiremezsin!</red>'
           cant-promote: '<red>Rütbenizin üstüne terfi edemezsiniz!</red>'
           must-be-member: '<red>Oyuncu [prefix_an-island] üyesi olmalıdır!</red>'
         failure: '<dark_red>Oyuncunun rankı daha fazla artıralamıyor!</dark_red>'
@@ -1095,7 +1095,7 @@ protection:
       hint: Varil erişimi devre dışı bırakıldı
     CRAFTER:
       name: Zanaatkar
-      description: Kullanım kullanımı
+      description: Zanaatkar kullanımını aç/kapat
       hint: Zanaatkar devre dışı
     BLOCK_EXPLODE_DAMAGE:
       description: |-
@@ -1138,7 +1138,7 @@ protection:
       hint: Taş kesim erişimi devre dışı bırakıldı
     TRAPPED_CHEST:
       name: Kapana kısılmış sandıklar
-      description: Sıkışmış göğüs etkileşimini aç/kapat
+      description: Tuzaklı sandık etkileşimini aç/kapat
       hint: Kapana kısılmış sandık erişimi devre dışı
     DISPENSER:
       name: Fırlatıcı
@@ -1161,7 +1161,7 @@ protection:
       name: Sandık hasarı
     CHORUS_FRUIT:
       description: Işınlanma kullanımı değiş.
-      name: Nakarat meyvesi
+      name: Koro Meyvesi
       hint: Işınlanma kapalı
     CLEAN_SUPER_FLAT:
       description: |-
@@ -1173,7 +1173,7 @@ protection:
       description: |-
         <green>Çapa ile iri taneli toprak</green>
         <green>topraği sürmeyi kapar/açar.</green>
-        <green>obtain dirt</green>
+        <green>toprak elde etme</green>
       name: İri taneli toprak sürme
       hint: İri taneli toprağı sürme kapalı.
     COLLECT_LAVA:
@@ -1325,7 +1325,7 @@ protection:
       description: >-
         Zarar verme aç/kapa. Etkin olduğunda, evcil hayvanlar hasar alabilir.
         Devre dışı olduğunda, onları yok edilemez hale getirir.
-      name: Zarar verme [tamed animals]
+      name: Evcil hayvanlara zarar verme
       hint: Ehlileştirilmiş hayvan zarar verme devre dışı
     HURT_ANIMALS:
       description: Hasar alımını değiş
@@ -1350,7 +1350,7 @@ protection:
       name: Item Frame Hasarı
     INVINCIBLE_VISITORS:
       description: '<green>Ziyaretçi ayarlarını ayarlar.</green>'
-      name: '<yellow>Görünmez misafirler</yellow>'
+      name: '<yellow>Yenilmez misafirler</yellow>'
       hint: '<red>Misafirler korunuyor.</red>'
     ISLAND_RESPAWN:
       description: |-
@@ -1368,14 +1368,14 @@ protection:
     JUKEBOX:
       description: Kullanımını değiş.
       name: Müzik kutusu kullanımı.
-      hint: No jukebox use allowed
+      hint: Müzik kutusu kullanımına izin verilmez
     LEAF_DECAY:
       name: Yaprak düşümü
       description: Yaprak düşümünü değiş.
     LEASH:
       description: Kullanımını değiş.
-      name: Kayış kullanımı
-      hint: Kulaklık kullanımı devre dışı bırakıldı
+      name: Tasma kullanımı
+      hint: Tasma kullanımı devre dışı bırakıldı
     LECTERN:
       name: Kürsü
       description: |-
@@ -1452,7 +1452,7 @@ protection:
     NOTE_BLOCK:
       description: Kullanımını değiş.
       name: Nota bloğu
-      hint: No note block use
+      hint: Nota bloğu kullanımına izin verilmez
     OBSIDIAN_SCOOPING:
       name: Obsidiyeni lava dönüştürme
       description: |-
@@ -1505,11 +1505,11 @@ protection:
     NETHER_PORTAL:
       description: Kullanımı değiş.
       name: Cehennem Portalı
-      hint: Portal use is disallowed
+      hint: Portal kullanımına izin verilmez
     END_PORTAL:
       description: Kullanımı değiş.
       name: Son Portal
-      hint: Portal use is disallowed
+      hint: Portal kullanımına izin verilmez
     PAUSE_MOB_GROWTH:
       name: Mob büyümesini duraklat
       description: |-
@@ -1614,11 +1614,11 @@ protection:
     TURTLE_EGGS:
       description: Kırılmayı değiş.
       name: Kaplumbağa yumurtası
-      hint: Turtle eggs cannot be crushed!
+      hint: Kaplumbağa yumurtaları ezilemez!
     FROST_WALKER:
-      description: Kığırlaştırıcı büyüsünü kapat/aç.
-      name: Kığırlaştırıcı
-      hint: Frost Walker cannot be used here
+      description: Buz Yürüyücü büyüsünü kapat/aç.
+      name: Buz Yürüyücü
+      hint: Buz Yürüyücü burada kullanılamaz
     EXPERIENCE_PICKUP:
       name: XP yerden al
       description: XP alışını değiş.
@@ -1630,21 +1630,21 @@ protection:
         <green>adaya geri dönme komudunu engeller.</green>
       hint: '<red>Adandan aşağaya düşerken adana geri ışınlanamazsın!</red>'
     VISITOR_KEEP_INVENTORY:
-      name: Ziyaretçiler ölümle ilgili envanter tutuyor
+      name: Ziyaretçiler ölümde envanterini korur
       description: |-
-        <green>Prevent players from losing their</green>
-        <green>items and experience if they die on</green>
-        <green>an island in which they are a visitor.</green>
+        <green>Ziyaretçi olarak bulundukları bir adada</green>
+        <green>ölen oyuncuların eşyalarını ve</green>
+        <green>deneyim puanlarını kaybetmesini önler.</green>
         <green></green>
-        <green>Island members still lose their items</green>
-        <green>if they die on their own island!</green>
+        <green>Ada üyeleri kendi adalarında ölürse</green>
+        <green>eşyalarını kaybetmeye devam eder!</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Doğma adası boşluk koruması
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Etkinleştirildiğinde, doğma adasında</green>
+        <green>boşluğa düşen oyuncular ölmek</green>
+        <green>yerine doğma noktasına geri</green>
+        <green>ışınlanır.</green>
     RAID_TRIGGER:
       name: Baskın tetikleyici
       description: Baskın tetiklemek için gereken minimum ada rütbesini belirler
@@ -1653,7 +1653,7 @@ protection:
       name: Varlık portal kullanımı
       description: |-
         <green>Varlıkların (oyuncu olmayan) boyutlar arasında</green>
-        <green>teleporto olmak için portalları</green>
+        <green>teleport olmak için portalları</green>
         <green>kullanıp kullanamayacağını açık/kapalı yapar</green>
     WIND_CHARGE:
       name: Rüzgar şarjı
@@ -1669,9 +1669,9 @@ protection:
         <green>ve adalara hasar verebilir.</green>
     WORLD_BLOCK_EXPLODE_DAMAGE:
       description: |-
-        <green>Allow Bed & Respawn Anchors</green>
-        <green>to break blocks and damage</green>
-        <green>entities outside of island limits.</green>
+        <green>Yatak ve Yeniden Doğma Çapalarının</green>
+        <green>ada sınırları dışındaki blokları</green>
+        <green>kırmasına ve varlıklara zarar vermesine izin ver.</green>
       name: Dünya bloğu patlama hasarı
     WORLD_TNT_DAMAGE:
       description: |-
@@ -1754,7 +1754,7 @@ protection:
       description-layout: |
         <green>[description]</green>
 
-        <gray>Allowed for:</gray>
+        <gray>İzin verilenler:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><dark_red></dark_red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
@@ -1775,7 +1775,7 @@ management:
         description: '<green>Tıkla ve yüklü oyun modlarını gör.</green>'
         blueprints:
           name: '<gold>Taslaklar</gold>'
-          description: '<green>Opens the Admin Blueprint menu.</green>'
+          description: '<green>Yönetici Taslak menüsünü açar.</green>'
         gamemode:
           name: '<white>[name]</white>'
           description: |
@@ -1845,8 +1845,8 @@ catalog:
       gamemodes:
         name: '<gold>Oyun Modları</gold>'
         description: |
-          <yellow>Click </yellow><green>to browse through the</green>
-          <green>available official Gamemodes.</green>
+          <yellow>Tıkla </yellow><green>mevcut resmi Oyun Modlarına</green>
+          <green>göz atmak için.</green>
       addons:
         name: '<gold>Eklentiler</gold>'
         description: |
@@ -1894,12 +1894,12 @@ enums:
     THORNS: Dikenler
     DRAGON_BREATH: Ejderha Nefesi
     CUSTOM: Özel
-    FLY_INTO_WALL: Duvara Yapışma
+    FLY_INTO_WALL: Duvara Uçma
     HOT_FLOOR: Sıcak Zemin
     CRAMMING: Sıkışma
     DRYOUT: Kuruma
     FREEZE: Donma
-    KILL: Öldür
+    KILL: Öldürme
     SONIC_BOOM: Sonik patlama
     WORLD_BORDER: Dünya Sınırı
 panel:
@@ -1907,7 +1907,7 @@ panel:
     title: '<dark_gray>[name] </dark_gray><dark_green>Emeği geçenler</dark_green>'
     contributor:
       name: '<green>[name]</green>'
-      description: '<green>Commits: </green><aqua>[commits]</aqua>'
+      description: '<green>Katkılar: </green><aqua>[commits]</aqua>'
     empty-here:
       name: '<red>Burası boş gibi gözüküyor...</red>'
       description: |-
@@ -1941,7 +1941,7 @@ panels:
         author: '<gray>- </gray><aqua>[name]</aqua>'
         selected: '<green>Şu anda seçili.</green>'
   placeholder:
-    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    title: '<dark_aqua><bold>Yer Tutucu Tarayıcısı</bold></dark_aqua>'
     buttons:
       bentobox:
         name: '<white><bold>BentoBox</bold></white>'
@@ -1983,7 +1983,7 @@ panels:
       name: '<white><bold>Önceki Sayfa</bold></white>'
       description: '<gray>[number] sayfaya geçiş yap</gray>'
     next:
-      name: '<white><bold>Son Sayfa</bold></white>'
+      name: '<white><bold>Sonraki Sayfa</bold></white>'
       description: '<gray>[number] sayfaya geç</gray>'
   tips:
     click-to-next: '<yellow>Tıkla </yellow><gray>sonraki için.</gray>'

@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
@@ -89,14 +88,36 @@ public class BlueprintClipboardManager {
      * Loads a blueprint
      * @param fileName - the sanitized filename without the suffix
      * @return the blueprint
-     * @throws IOException exception if there's an issue loading or unzipping
+     * @throws IOException exception if there's an issue loading
      */
     public Blueprint loadBlueprint(String fileName) throws IOException {
-        File zipFile = new File(blueprintFolder, fileName + BlueprintsManager.BLUEPRINT_SUFFIX);
-        if (!zipFile.exists()) {
-            plugin.logError(LOAD_ERROR + zipFile.getName());
-            throw new IOException(LOAD_ERROR + zipFile.getName());
+        // Try the new plain JSON format first (.blueprint)
+        File jsonFile = new File(blueprintFolder, fileName + BlueprintsManager.BLUEPRINT_SUFFIX);
+        if (jsonFile.exists()) {
+            return loadBlueprintFromJson(jsonFile, fileName);
         }
+        // Fall back to legacy zipped format (.blu)
+        File zipFile = new File(blueprintFolder, fileName + BlueprintsManager.LEGACY_BLUEPRINT_SUFFIX);
+        if (zipFile.exists()) {
+            return loadBlueprintFromZip(zipFile, fileName);
+        }
+        plugin.logError(LOAD_ERROR + fileName + BlueprintsManager.BLUEPRINT_SUFFIX);
+        throw new IOException(LOAD_ERROR + fileName + BlueprintsManager.BLUEPRINT_SUFFIX);
+    }
+
+    private Blueprint loadBlueprintFromJson(File jsonFile, String fileName) throws IOException {
+        Blueprint bp;
+        try (FileReader fr = new FileReader(jsonFile, StandardCharsets.UTF_8)) {
+            bp = gson.fromJson(fr, Blueprint.class);
+        } catch (Exception e) {
+            plugin.logError("Blueprint has JSON error: " + jsonFile.getName());
+            plugin.logStacktrace(e);
+            throw new IOException("Blueprint has JSON error: " + jsonFile.getName());
+        }
+        return checkBedrock(bp, fileName + BlueprintsManager.BLUEPRINT_SUFFIX);
+    }
+
+    private Blueprint loadBlueprintFromZip(File zipFile, String fileName) throws IOException {
         unzip(zipFile.getCanonicalPath());
         File file = new File(blueprintFolder, fileName);
         if (!file.exists()) {
@@ -110,14 +131,16 @@ public class BlueprintClipboardManager {
             plugin.logError("Blueprint has JSON error: " + zipFile.getName());
             plugin.logStacktrace(e);
             throw new IOException("Blueprint has JSON error: " + zipFile.getName());
-            
         }
         Files.delete(file.toPath());
-        // Bedrock check and set
+        return checkBedrock(bp, fileName + BlueprintsManager.LEGACY_BLUEPRINT_SUFFIX);
+    }
+
+    private Blueprint checkBedrock(Blueprint bp, String fileName) {
         if (bp.getBedrock() == null) {
             bp.setBedrock(new Vector(bp.getxSize() / 2, bp.getySize() / 2, bp.getzSize() / 2));
             bp.getBlocks().put(bp.getBedrock(), new BlueprintBlock(Material.BEDROCK.createBlockData().getAsString()));
-            plugin.logWarning("Blueprint " + fileName + BlueprintsManager.BLUEPRINT_SUFFIX + " had no bedrock block in it so one was added automatically in the center. You should check it.");
+            plugin.logWarning("Blueprint " + fileName + " had no bedrock block in it so one was added automatically in the center. You should check it.");
         }
         return bp;
     }
@@ -165,7 +188,7 @@ public class BlueprintClipboardManager {
     }
 
     /**
-     * Save a blueprint
+     * Save a blueprint as a plain JSON file
      * @param blueprint - blueprint
      * @return true if successful, false if not
      */
@@ -174,18 +197,12 @@ public class BlueprintClipboardManager {
             plugin.logError("Blueprint name was empty - could not save it");
             return false;
         }
-        File file = new File(blueprintFolder, blueprint.getName());
+        File file = new File(blueprintFolder, blueprint.getName() + BlueprintsManager.BLUEPRINT_SUFFIX);
         String toStore = gson.toJson(blueprint, Blueprint.class);
         try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8)) {
             fileWriter.write(toStore);
         } catch (IOException e) {
-            plugin.logError("Could not save temporary blueprint file: " + file.getName());
-            return false;
-        }
-        try {
-            zip(file);
-        } catch (IOException e) {
-            plugin.logError("Could not zip temporary blueprint file: " + file.getName());
+            plugin.logError("Could not save blueprint file: " + file.getName());
             return false;
         }
         return true;
@@ -228,25 +245,6 @@ public class BlueprintClipboardManager {
             while (read != -1) {
                 bos.write(bytesIn, 0, read);
                 read = zipInputStream.read(bytesIn);
-            }
-        }
-    }
-
-    private void zip(File targetFile) throws IOException {
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getCanonicalPath() + BlueprintsManager.BLUEPRINT_SUFFIX))) {
-            zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
-            try (FileInputStream inputStream = new FileInputStream(targetFile)) {
-                final byte[] buffer = new byte[1024];
-                int length = inputStream.read(buffer);
-                while (length >= 0) {
-                    zipOutputStream.write(buffer, 0, length);
-                    length = inputStream.read(buffer);
-                }
-            }
-            try {
-                Files.delete(targetFile.toPath());
-            } catch (Exception e) {
-                plugin.logError(e.getMessage());
             }
         }
     }

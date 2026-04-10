@@ -224,6 +224,26 @@ island:
     #   This is slower but will not cause any impact on the performance.
     # Added since 1.19.1.
     slow-deletion: false
+  pregeneration:
+    # Chunk pre-generation settings.
+    # Pre-generates chunks around predicted future island locations
+    # to reduce lag when islands are created or reset.
+    # Enable or disable chunk pre-generation.
+    # Added since 3.14.0.
+    enabled: false
+    # Number of future islands to pre-generate chunks for, per game mode world.
+    # Higher values use more disk space but reduce the chance of lag on island creation.
+    # Added since 3.14.0.
+    islands-ahead: 3
+    # Maximum number of async chunk generation requests dispatched per tick batch.
+    # Lower values reduce server impact. Paper handles these asynchronously.
+    # Recommended range: 2-10.
+    # Added since 3.14.0.
+    chunks-per-tick: 4
+    # Ticks between pre-generation batches.
+    # 1 = every tick (fastest), 20 = once per second (gentlest).
+    # Added since 3.14.0.
+    tick-interval: 5
   # By default, If the destination is not safe, the plugin will try to search for a safe spot around the destination,
   # then it will try to expand the y-coordinate up and down from the destination.
   # This setting limits how far the y-coordinate will be expanded.

@@ -61,7 +61,12 @@ import world.bentobox.bentobox.util.Util;
 public class BlueprintsManager {
 
     private static final String BLUEPRINT_BUNDLE_SUFFIX = ".json";
-    public static final String BLUEPRINT_SUFFIX = ".blu";
+    public static final String BLUEPRINT_SUFFIX = ".blueprint";
+    /**
+     * Legacy blueprint suffix for backward compatibility with zipped .blu files.
+     * @since 3.2.0
+     */
+    public static final String LEGACY_BLUEPRINT_SUFFIX = ".blu";
     public static final String DEFAULT_BUNDLE_NAME = "default";
     @NonNull
     public static final String FOLDER_NAME = "blueprints";
@@ -142,6 +147,7 @@ public class BlueprintsManager {
         try (JarFile jar = new JarFile(addon.getFile())) {
             Util.listJarFiles(jar, FOLDER_NAME, BLUEPRINT_BUNDLE_SUFFIX).forEach(name -> addon.saveResource(name, false));
             Util.listJarFiles(jar, FOLDER_NAME, BLUEPRINT_SUFFIX).forEach(name -> addon.saveResource(name, false));
+            Util.listJarFiles(jar, FOLDER_NAME, LEGACY_BLUEPRINT_SUFFIX).forEach(name -> addon.saveResource(name, false));
         } catch (IOException e) {
             plugin.logError("Could not load blueprint files from addon jar " + e.getMessage());
         }
@@ -317,17 +323,27 @@ public class BlueprintsManager {
             plugin.logError("There is no blueprint folder for addon " + addon.getDescription().getName());
             bpf.mkdirs();
         }
-        File[] bps = bpf.listFiles((dir, name) -> name.endsWith(BLUEPRINT_SUFFIX));
+        // Collect blueprint names from both new (.blueprint) and legacy (.blu) files.
+        // If both formats exist for the same name, the new format takes precedence.
+        Set<String> blueprintNames = new HashSet<>();
+        File[] newBps = bpf.listFiles((dir, name) -> name.endsWith(BLUEPRINT_SUFFIX) && name.length() > BLUEPRINT_SUFFIX.length());
+        if (newBps != null) {
+            for (File file : newBps) {
+                blueprintNames.add(Util.sanitizeInput(file.getName().substring(0, file.getName().length() - BLUEPRINT_SUFFIX.length())));
+            }
+        }
+        File[] legacyBps = bpf.listFiles((dir, name) -> name.endsWith(LEGACY_BLUEPRINT_SUFFIX) && name.length() > LEGACY_BLUEPRINT_SUFFIX.length());
+        if (legacyBps != null) {
+            for (File file : legacyBps) {
+                blueprintNames.add(Util.sanitizeInput(file.getName().substring(0, file.getName().length() - LEGACY_BLUEPRINT_SUFFIX.length())));
+            }
+        }
 
-        if (bps == null || bps.length == 0) {
+        if (blueprintNames.isEmpty()) {
             plugin.logError("No blueprints found for " + addon.getDescription().getName());
             return;
         }
-        for (File file : bps) {
-
-            // Input sanitization is required for weirdos that edit files manually.
-            String fileName = Util.sanitizeInput(file.getName().substring(0, file.getName().length() - BLUEPRINT_SUFFIX.length()));
-
+        for (String fileName : blueprintNames) {
             try {
                 Blueprint bp = new BlueprintClipboardManager(plugin, bpf).loadBlueprint(fileName);
                 bp.setName(fileName);
@@ -426,12 +442,14 @@ public class BlueprintsManager {
             {
                 it.remove();
 
-                File file = new File(this.getBlueprintsFolder(addon), b.getName() + BLUEPRINT_SUFFIX);
+                File newFile = new File(this.getBlueprintsFolder(addon), b.getName() + BLUEPRINT_SUFFIX);
+                File legacyFile = new File(this.getBlueprintsFolder(addon), b.getName() + LEGACY_BLUEPRINT_SUFFIX);
 
-                // Delete the file
+                // Delete both new and legacy format files
                 try
                 {
-                    Files.deleteIfExists(file.toPath());
+                    Files.deleteIfExists(newFile.toPath());
+                    Files.deleteIfExists(legacyFile.toPath());
                 }
                 catch (IOException e)
                 {
@@ -479,7 +497,7 @@ public class BlueprintsManager {
             bp = getBlueprints(addon).get("island");
             plugin.logError("Blueprint bundle has no normal world blueprint, using default");
             if (bp == null) {
-                plugin.logError("NO DEFAULT BLUEPRINT FOUND! Make sure 'island.blu' exists!");
+                plugin.logError("NO DEFAULT BLUEPRINT FOUND! Make sure 'island.blueprint' exists!");
             }
         }
         // Paste
@@ -646,13 +664,14 @@ public class BlueprintsManager {
         }
 
         File bpf = this.getBlueprintsFolder(addon);
-        // Get the filename
-        File fileName = new File(bpf, bp.getName() + BLUEPRINT_SUFFIX);
-        // Delete the old file
+        // Delete old files in both new and legacy formats
+        File newFile = new File(bpf, bp.getName() + BLUEPRINT_SUFFIX);
+        File legacyFile = new File(bpf, bp.getName() + LEGACY_BLUEPRINT_SUFFIX);
 
         try
         {
-            Files.deleteIfExists(fileName.toPath());
+            Files.deleteIfExists(newFile.toPath());
+            Files.deleteIfExists(legacyFile.toPath());
         }
         catch (IOException e)
         {

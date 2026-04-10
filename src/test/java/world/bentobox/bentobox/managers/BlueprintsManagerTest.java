@@ -116,12 +116,12 @@ class BlueprintsManagerTest extends CommonTestSetup {
     }
 
     /**
-     * Zips {@code sourceFile} into {@code <parent>/<entryName>.blu}, then
-     * deletes the original file. Mirrors what BlueprintClipboardManager does.
+     * Zips {@code sourceFile} into {@code <parent>/<entryName>.blu} (legacy format), then
+     * deletes the original file. Mirrors what the old BlueprintClipboardManager used to do.
      */
     private void zipBlueprint(File sourceFile, String entryName) throws IOException {
         File zipFile = new File(sourceFile.getParentFile(),
-                entryName + BlueprintsManager.BLUEPRINT_SUFFIX);
+                entryName + BlueprintsManager.LEGACY_BLUEPRINT_SUFFIX);
         try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile));
                 FileInputStream fis = new FileInputStream(sourceFile)) {
             zos.putNextEntry(new ZipEntry(sourceFile.getName()));
@@ -446,7 +446,22 @@ class BlueprintsManagerTest extends CommonTestSetup {
     @Test
     void testLoadBlueprintsLoadsFile() throws IOException {
         blueprintsFolder.mkdirs();
-        // Write the raw JSON, then zip it into "island.blu"
+        // Write the raw JSON as a plain .blueprint file
+        File jsonFile = new File(blueprintsFolder, "island" + BlueprintsManager.BLUEPRINT_SUFFIX);
+        Files.writeString(jsonFile.toPath(), BLUEPRINT_JSON);
+
+        manager.loadBlueprints(addon);
+
+        Map<String, Blueprint> blueprints = manager.getBlueprints(addon);
+        assertEquals(1, blueprints.size());
+        assertTrue(blueprints.containsKey("island"));
+        verify(plugin).log("Loaded blueprint 'island' for TestAddon");
+    }
+
+    @Test
+    void testLoadBlueprintsLoadsLegacyBluFile() throws IOException {
+        blueprintsFolder.mkdirs();
+        // Write the raw JSON, then zip it into "island.blu" (legacy format)
         File jsonFile = new File(blueprintsFolder, "island");
         Files.writeString(jsonFile.toPath(), BLUEPRINT_JSON);
         zipBlueprint(jsonFile, "island");
@@ -550,7 +565,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
     @Test
     void testRenameBlueprintNewName() throws IOException {
         blueprintsFolder.mkdirs();
-        // Create the "old" .blu file so deleteIfExists has something to remove.
+        // Create the "old" .blueprint file so deleteIfExists has something to remove.
         File oldFile = new File(blueprintsFolder,
                 "island" + BlueprintsManager.BLUEPRINT_SUFFIX);
         Files.writeString(oldFile.toPath(), "dummy");

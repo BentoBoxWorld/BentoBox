@@ -19,6 +19,7 @@ import org.bukkit.inventory.InventoryView;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
@@ -52,6 +53,13 @@ public class PanelListenerManager implements Listener {
 
                 // Get the panel itself
                 Panel panel = openPanels.get(user.getUniqueId());
+                // Apply click cooldown for TabbedPanel before handlers run.
+                // This prevents rapid clicks from triggering expensive flag changes
+                // and panel rebuilds.
+                if (panel.getListener().filter(TabbedPanel.class::isInstance).isPresent()
+                        && BentoBox.getInstance().onTimeout(user, panel)) {
+                    return;
+                }
                 // Check that they clicked on a specific item
                 PanelItem pi = panel.getItems().get(event.getRawSlot());
                 if (pi != null) {

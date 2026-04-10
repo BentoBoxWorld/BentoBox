@@ -1,54 +1,66 @@
+# ######################################################################################## #
+# Это YML файл. Будьте осторожны при редактировании. Проверяйте свои правки                #
+# в YAML валидаторе, например, на http://yaml-online-parser.appspot.com                    #
+# ######################################################################################## #
+
 meta:
   authors:
-    - Moltanica_
-    - ' '
+  - Moltanica_
+  - Vinrey123
   banner: BLUE_BANNER:1:STRIPE_RIGHT:WHITE:STRIPE_LEFT:RED
+
 prefixes:
-  bentobox: '<gold>BentoBox </gold><gray><bold>> </bold></gray>'
+  bentobox: <gold>BentoBox </gold><gray><bold>> </bold></gray>
   island: остров
   Island: Остров
   Islands: Острова
   an-island: остров
   islands: острова
 general:
-  success: '<green>Успешно!</green>'
+  success: <green>Успешно!</green>
   invalid: Некорректно
-  beta: '<light_purple><bold>Эта команда в бета -версии. Убедитесь, что у вас есть резервные копии!</bold></light_purple>'
+  beta: <light_purple><bold>Эта команда в бета-версии. Убедитесь, что у вас есть резервные
+    копии!</bold></light_purple>
   errors:
-    command-cancelled: '<red>Команда отменена.</red>'
-    no-permission: '<red>У вас нет разрешения на извлечение этой команды (</red><gray>[permission]</gray><red>).</red>'
-    insufficient-rank: '<red>Вашего ранга недостаточно чтобы сделать это! (</red><gray>[rank]</gray><red>)</red>'
-    use-in-game: '<red>Эта команда доступна только в самой игре.</red>'
-    use-in-console: '<red>Эта команда доступна только в консоли.</red>'
-    no-team: '<red>Вы не состоите в команде!</red>'
-    no-island: '<red>У вас нет своего острова!</red>'
-    player-has-island: '<red>Игрок уже имеет острова!</red>'
-    player-has-no-island: '<red>Этот игрок не имеет острова!</red>'
-    already-have-island: '<red>У вас уже есть остров!</red>'
-    no-safe-location-found: '<red>Не удалось найти безопасное место при телепортации на остров.</red>'
-    not-owner: '<red>Вы не являетесь владельцем этого острова!</red>'
-    player-is-not-owner: '<aqua>[name] </aqua><red>не является владельцем острова!</red>'
-    not-in-team: '<red>Этот игрок не состоит в вашей команде!</red>'
-    offline-player: '<red>Указанный игрок не в сети либо не существует.</red>'
-    unknown-player: 'Не обнаружена игрока с ником <red>[name]!</red>'
-    general: '<red>Эта команда еще не готова - свяжитесь с администрацией.</red>'
-    unknown-command: '<red>Неизвестная команда. Введите </red><aqua>/[label] help </aqua><red>для помощи.</red>'
-    wrong-world: '<red>Вы находитесь в неправильном мире для совершения действия!</red>'
-    you-must-wait: '<red>Вы должны подождать [number] прежде чем пробовать команду снова.</red>'
-    must-be-positive-number: '<red>[number] не является корректным положительным значением.</red>'
-    not-on-island: '<red>Вы не на острове!</red>'
-    slow-down: '<red>Помедленнее. Кликайте медленнее.</red>'
+    command-cancelled: <red>Команда отменена.</red>
+    no-permission: <red>У вас нет разрешения на извлечение этой команды (<gray>[permission]</gray>).</red>
+    insufficient-rank: <red>Вашего ранга недостаточно чтобы сделать это! (<gray>[rank]</gray>)</red>
+    use-in-game: <red>Эта команда доступна только в самой игре.</red>
+    use-in-console: <red>Эта команда доступна только в консоли.</red>
+    no-team: <red>Вы не состоите в команде!</red>
+    no-island: <red>У вас нет своего острова!</red>
+    player-has-island: <red>Игрок уже имеет острова!</red>
+    player-has-no-island: <red>Этот игрок не имеет острова!</red>
+    already-have-island: <red>У вас уже есть остров!</red>
+    no-safe-location-found: <red>Не удалось найти безопасное место при телепортации
+      на остров.</red>
+    not-owner: <red>Вы не являетесь владельцем этого острова!</red>
+    player-is-not-owner: <red><aqua>[name] </aqua>не является владельцем острова!</red>
+    not-in-team: <red>Этот игрок не состоит в вашей команде!</red>
+    offline-player: <red>Указанный игрок не в сети либо не существует.</red>
+    unknown-player: <red>Не обнаружена игрока с ником [name]!</red>
+    general: <red>Эта команда ещё не готова - свяжитесь с администрацией.</red>
+    unknown-command: <red>Неизвестная команда. Введите <aqua>/[label] help </aqua>для
+      помощи.</red>
+    wrong-world: <red>Вы находитесь в неправильном мире для совершения действия!</red>
+    you-must-wait: <red>Вы должны подождать [number] прежде чем пробовать команду
+      снова.</red>
+    must-be-positive-number: <red>[number] не является корректным положительным значением.</red>
+    not-on-island: <red>Вы не на острове!</red>
+    slow-down: <red>Помедленнее...</red>
   worlds:
     overworld: Верхний мир
     nether: Незер
-    the-end: Край
+    the-end: Энд
+
 commands:
+  # Параметры в <> являются обязательными, параметры в [] — необязательными.
   help:
-    header: '<gray>=========== </gray><red>[label] помощь </red><gray>===========</gray>'
+    header: <gray>=========== <red>[label] помощь </red>===========</gray>
     syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>: </gray><yellow>[description]</yellow>'
     syntax-no-parameters: '<aqua>[usage]</aqua><gray>: </gray><yellow>[description]</yellow>'
-    end: '<gray>=================================</gray>'
-    page: '<gray>Страница </gray><yellow>[page]</yellow><gray> из </gray><yellow>[total]</yellow>'
+    end: <gray>=================================</gray>
+    page: <gray>Страница <yellow>[page]</yellow> из <yellow>[total]</yellow></gray>
     parameters: '[command]'
     description: команда помощи
     console: Консоль
@@ -56,209 +68,201 @@ commands:
     help:
       description: команды администратора
     maxhomes:
-      description: >-
-        измените количество домов, разрешенных на этом [prefix_island] или у
-        игрока [prefix_island]
-      parameters: <number / player> <number> [[prefix_island] имя]
-      max-homes-set: >-
-        <green>[name] - Установить [prefix_island] максимальное количество домов на</green>
-        [number]
+      description: измените количество домов, разрешенных на этом [prefix_island]
+        или у игрока [prefix_island]
+      parameters: <число / игрок> <число> [имя [prefix_island]а]
+      max-homes-set: <green>[name] - Установить [prefix_island] максимальное количество
+        домов на</green> [number]
       errors:
         unknown-island: Неизвестный [prefix_island]! [name]
     resethome:
       description: Сбросить домашнюю точку игрока к умолчанию
-      parameters: <игрок> [[префикс_острова] имя]
-      cleared: '<aqua>Сброс домашней точки. [name]</aqua>'
+      parameters: <игрок> [имя]
+      cleared: <aqua>Сброс домашней точки. [name]</aqua>
     resets:
       description: редактирует количество сбросов игрока
       set:
         description: устанавливает сколько раз игроки могут сбрасывать остров
-        parameters: <игрок> <сбрасывает>
-        success: '<aqua>Игрок [name]</aqua><green>сбросил остров </green><aqua>[number] </aqua><green>раза.</green>'
+        parameters: <игрок> <сбросы>
+        success: <green><aqua>[name] </aqua>сбросил остров <aqua>[number] </aqua>раз(а).</green>
       reset:
         description: устанавливает количество сбросов игрока на 0
         parameters: <игрок>
-        success-everyone: '<green>Успешно сброшено количество сбросов до </green><aqua>0</aqua><green>.</green>'
-        success: '<green>Успешно сброшено количество сбросов игрока </green><aqua>[name]</aqua><green>до </green><aqua>0</aqua><green>.</green>'
+        success-everyone: <green>Сброшено количество сбросов до <aqua>0</aqua>.</green>
+        success: <green>Сброшено количество сбросов <aqua>[name]</aqua>до <aqua>0</aqua>.</green>
       add:
-        description: добавляет этому игроку указанное количество сбросов
-        parameters: <игрок> <сбрасывает>
-        success: >-
-          <green>Успешно добавлено </green><aqua>[number] </aqua><green>сбросов игроку </green><aqua>[name], увеличив</aqua>
-          общее количество сбросов до <aqua>[total].</aqua>
+        description: добавляет игроку указанное количество сбросов
+        parameters: <игрок> <сбросы>
+        success: <green>Добавлен(о) <aqua>[number] </aqua>сброс(а/ов) <aqua>[name]</aqua>,
+          увеличив общее количество сбросов до <aqua>[total].</aqua></green>
       remove:
         description: уменьшает количество сбросов острова у игрока
-        parameters: <игрок> <сбрасывает>
-        success: >-
-          <green>Успешно уменьшено количество сбросов на </green><aqua>[number] </aqua><green>у игрока</green>
-          <aqua>[name] </aqua><green>, уменьшив общее количество сбросов до значения </green><aqua>[total].</aqua>
+        parameters: <игрок> <сбросы>
+        success: <green>Уменьшено количество сбросов на <aqua>[number] </aqua>у <aqua>[name]</aqua>,
+          уменьшив общее количество сбросов до <aqua>[total]</aqua>.</green>
     purge:
       parameters: '[days]'
       description: стирает остров, заброшенный на более чем [days] дней
       days-one-or-more: Должно быть хотя бы 1 или больше
-      purgable-islands: '<green>Найдено </green><aqua>[number] </aqua><green>подходящих для очистки островов.</green>'
-      too-many: >-
+      purgable-islands: <green>Найден(о) <aqua>[number] </aqua>подходящ(ий/их) для
+        очистки остров(а/ов).</green>
+      too-many: |-
         <aqua>Это много, и это может занять очень много времени для удаления.</aqua>
-
-        <aqua>Рассмотрите возможность использования плагина Regionerator для</aqua>
-        удаления чанков мира
-
-        <aqua>и установки keep-previous-island-on-reset: true в config.yml</aqua>
-        BentoBox.
-
+        <aqua>Рассмотрите возможность использования плагина Regionerator для удаления чанков мира</aqua>
+        <aqua>и установки keep-previous-island-on-reset: true в config.yml BentoBox.</aqua>
         <aqua>Затем выполните очистку.</aqua>
-      purge-in-progress: '<red>Очистка в процессе. Используйте </red><aqua>/[label] purge stop </aqua><red>для отмены.</red>'
-      scanning: >-
-        <green>Сканирование островов в базе данных. Это может занять некоторое время</green>
-        в зависимости от того, сколько у вас количество...
-      scanning-in-progress: '<red>Сканирование в процессе, пожалуйста, подождите</red>'
-      none-found: '<underlined>bsp;c Нет найдено островов для очищения.</underlined>'
-      total-islands: '<green>У вас [number] островов в вашей базе данных во всех мирах.</green>'
-      number-error: '<red>Значение должно быть количеством дней</red>'
-      confirm: '<light_purple>Введите </light_purple><aqua>/[label] purge confirm </aqua><light_purple>для начала очистки.</light_purple>'
-      completed: '<green>Очистка остановлена.</green>'
-      see-console-for-status: >-
-        <green>Очистка начата. Смотрите в консоль для статуса или используйте </green><aqua></aqua>
-        /[label] purge status<green>.</green>
-      no-purge-in-progress: '<red>В данный момент очистка не проводится.</red>'
+      purge-in-progress: <red>Очистка в процессе. Используйте <aqua>/[label] purge
+        stop </aqua>для отмены.</red>
+      scanning: <green>Сканирование островов в базе данных. Это может занять некоторое
+        время в зависимости от того, сколько у вас количество...</green>
+      scanning-in-progress: <red>Сканирование в процессе, пожалуйста, подождите</red>
+      none-found: <green>Не найдено островов для очистки.</green>
+      total-islands: <green>У вас [number] островов в вашей базе данных во всех мирах.</green>
+      number-error: <red>Значение должно быть количеством дней</red>
+      confirm: <light_purple>Введите <aqua>/[label] purge confirm </aqua>для начала
+        очистки.</light_purple>
+      completed: <green>Очистка остановлена.</green>
+      see-console-for-status: <green>Очистка начата. Смотрите в консоль для статуса
+        или используйте <aqua>/[label] purge status</aqua>.</green>
+      no-purge-in-progress: <red>В данный момент очистка не проводится.</red>
       regions:
         parameters: '[days]'
-        description: oстрова чистки путем удаления файлов старого региона
-        confirm: '<light_purple>Тип </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>чтобы начать чистку</light_purple>'
+        description: очистка островов путём удаления старых файлов регионов
+        confirm: <light_purple>Тип <aqua>/[label] purge regions confirm </aqua>чтобы
+          начать чистку.</light_purple>
       protect:
         description: переключатель защиты острова от очистки
-        move-to-island: '<red>Для начала вернитесь на остров!</red>'
-        protecting: '<green>Остров защищен от очистки.</green>'
-        unprotecting: '<green>Защита от очистки убрана.</green>'
+        move-to-island: <red>Для начала вернитесь на остров!</red>
+        protecting: <green>Остров защищен от очистки.</green>
+        unprotecting: <green>Защита от очистки убрана.</green>
       stop:
-        description: оставить проводящуюся очистку
+        description: остановить проводящуюся очистку
         stopping: Очистка остановлена
       unowned:
         description: позволяет очистить острова без владельцев
-        unowned-islands: '<green>Найдено </green><aqua>[number] </aqua><green>остров без владельца.</green>'
+        unowned-islands: <green>Найден(о) <aqua>[number] </aqua> остров(а/ов) без
+          владельца.</green>
       status:
         description: отображает статус очистки
-        status: >-
-          <aqua>[purged] </aqua><green>остров очищено of </green><aqua>[purgeable] </aqua><gray>(</gray><aqua>[percentage]</aqua>
-          %<gray>)</gray><green>.</green>
+        status: <green><aqua>[purged] </aqua>островов очищено из <aqua>[purgeable]
+          </aqua><gray>(<aqua>[percentage]%</aqua>)</gray>.</green>
     team:
       description: управление командой
       add:
         parameters: <владелец> <игрок>
         description: добавляет игрока в команду владельца
-        name-not-owner: '<red>[name] не является владельцем.</red>'
-        name-has-island: >-
-          <red>[name] имеет или имел остров. Разрегистрируйте или удалите его</red>
-          сначала!
-        success: '<aqua>[name] </aqua><green>был успешно добавлен на остров игрока </green><aqua>[owner].</aqua>'
+        name-not-owner: <red>[name] не является владельцем.</red>
+        name-has-island: <red>[name] имеет или имел остров. Разрегистрируйте или удалите
+          его!</red>
+        success: <green><aqua>[name] </aqua>был успешно добавлен на остров игрока
+          <aqua>[owner]</aqua>.</green>
       disband:
         parameters: <владелец>
         description: распустить команду владельца острова
-        use-disband-owner: '<red>Не владелец! Используйте disband [owner].</red>'
-        disbanded: '<red>Администратор распустил вашу команду!</red>'
-        success: '<green>Команда игрока </green><aqua>[name] </aqua><green>была распущена.</green>'
+        use-disband-owner: <red>Не владелец! Используйте disband [owner].</red>
+        disbanded: <red>Администратор распустил вашу команду!</red>
+        success: <green>Команда игрока <aqua>[name] </aqua>была распущена.</green>
       fix:
         description: сканирует и исправляет присутствие на более чем 1 острове одновременно
         scanning: Сканируем базу данных...
         duplicate-owner: '<red>Игрок владеет более чем одним островом: [name]</red>'
-        player-has: '<red>Игрок [name] имеет [number] островов</red>'
-        duplicate-member: '<red>Игрок [name] является участником более чем 1 острова в базе данных</red>'
-        rank-on-island: '<red>[rank] на острове по координатам [xyz]</red>'
-        fixed: '<green>Исправлено</green>'
-        done: '<green>Скан</green>'
+        player-has: <red>Игрок [name] имеет [number] островов</red>
+        duplicate-member: <red>Игрок [name] является участником более чем 1 острова
+          в базе данных</red>
+        rank-on-island: <red>[rank] на острове по координатам [xyz]</red>
+        fixed: <green>Исправлено</green>
+        done: <green>Скан</green>
       kick:
         parameters: <игрок команды>
         description: выгнать игрока из команды
-        cannot-kick-owner: '<red>Вы не можете выгнать владельца. Сначала выгоните участников.</red>'
-        not-in-team: '<red>Этот игрок не в вашей команде.</red>'
-        admin-kicked: '<red>Администратор выгнал вас из команды.</red>'
-        success: '<aqua>[name] </aqua><green>был выгнан с острова игрока </green><aqua>[owner].</aqua>'
-        success-all: '<aqua>Игрок удалён из всех команд в этом мире</aqua>'
+        cannot-kick-owner: <red>Вы не можете выгнать владельца. Сначала выгоните участников.</red>
+        not-in-team: <red>Этот игрок не в вашей команде.</red>
+        admin-kicked: <red>Администратор выгнал вас из команды.</red>
+        success: <green><aqua>[name] </aqua>был выгнан с острова игрока <aqua>[owner]</aqua>.</green>
+        success-all: <aqua>Игрок удалён из всех команд в этом мире</aqua>
       setowner:
         parameters: <игрок>
         description: передает статус владельца между игроками
-        already-owner: '<red>[name] уже является владельцем острова!</red>'
-        must-be-on-island: '<red>Вы должны быть на [prefix_island], чтобы установить владельца</red>'
-        confirmation: >-
-          <green>Вы уверены, что хотите сделать [name] владельцем [prefix_island] на</green>
-          [xyz]?
-        success: '<aqua>[name] </aqua><green>теперь является владельцем острова.</green>'
-        extra-islands: >-
-          <red>Внимание: у этого игрока теперь есть [number] островов. Это больше,</red>
-          чем разрешено настройками или правами: [max].
+        already-owner: <red>[name] уже является владельцем острова!</red>
+        must-be-on-island: <red>Вы должны быть на [prefix_island], чтобы установить
+          владельца</red>
+        confirmation: <green>Вы уверены, что хотите сделать [name] владельцем [prefix_island]
+          на [xyz]?</green>
+        success: <green><aqua>[name] </aqua>теперь является владельцем острова.</green>
+        extra-islands: '<red>Внимание: у этого игрока теперь есть [number] островов.
+          Это больше, чем разрешено настройками или правами: [max].</red>'
       maxsize:
-        parameters: <player> <size>
-        description: Set the max team size for a player's [prefix_island] (use 0 to reset to world default)
-        success: '<green>Set </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to </green><aqua>[number]</aqua><green>.</green>'
-        reset: '<green>Reset </green><aqua>[name]</aqua><green>''s [prefix_island] max team size to the world default (</green><aqua>[number]</aqua><green>).</green>'
+        parameters: <игрок> <размер>
+        description: установить максимальный размер команды для [prefix_island] игрока
+          (0 для сброса к мировому значению по умолчанию)
+        success: <green>Установлен максимальный размер команды <aqua>[name] </aqua>для
+          [prefix_island] на <aqua>[number]</aqua>.</green>
+        reset: <green>Сброшен максимальный размер команды <aqua>[name] </aqua>для
+          [prefix_island] до мирового значения по умолчанию (<aqua>[number]</aqua>).</green>
     range:
       description: команда администратора по управлению областью острова
       invalid-value:
-        too-low: '<red>Радиус острова должен быть больше </red><aqua>1</aqua><red>!</red>'
-        too-high: '<red>Радиус острова должен быть равен или меньше чем </red><aqua>[number]</aqua><red>!</red>'
-        same-as-before: '<red>Радиус острова уже установлен в значении </red><aqua>[number]</aqua><red>!</red>'
+        too-low: <red>Радиус острова должен быть больше <aqua>1</aqua>!</red>
+        too-high: <red>Радиус острова должен быть равен или меньше чем <aqua>[number]</aqua>!</red>
+        same-as-before: <red>Радиус острова уже установлен в значении <aqua>[number]</aqua>!</red>
       display:
-        already-off: '<red>Индикаторы уже выключены</red>'
-        already-on: '<red>Индикаторы уже выключены</red>'
+        already-off: <red>Индикаторы уже выключены</red>
+        already-on: <red>Индикаторы уже включены</red>
         description: показать/скрыть индикаторы размера острова
-        hiding: '<dark_green>Скрыть индикаторы размера острова</dark_green>'
-        hint: >-
+        hiding: <dark_green>Скрыть индикаторы размера острова</dark_green>
+        hint: |-
           <red>Красные иконки барьера </red><white>показывают текущую границу острова.</white>
-
           <gray>Серые частицы </gray><white>показывают максимально возможную область.</white>
-
-          <green>Зеленые частицы </green><white>показывают границу по умолчанию, если текущая</white>
-          область отличается от таковой.
-        showing: '<dark_green>Отображение индикаторов области</dark_green>'
+          <green>Зеленые частицы <white>показывают границу по умолчанию, если текущая</white> область отличается от таковой.</green>
+        showing: <dark_green>Отображение индикаторов области</dark_green>
       set:
-        parameters: <player> <range>
+        parameters: <игрок> <радиус>
         description: устанавливает радиус острова
-        success: '<green>Установлен радиус острова </green><aqua>[number]</aqua><green>.</green>'
+        success: <green>Установлен радиус острова <aqua>[number]</aqua>.</green>
       reset:
         parameters: <игрок>
         description: сбрасывает радиус острова до значения по умолчанию
-        success: '<green>Радиус острова сброшен до значения </green><aqua>[number]</aqua><green>.</green>'
+        success: <green>Радиус острова сброшен до значения <aqua>[number]</aqua>.</green>
       add:
         description: увеличивает радиус острова
-        parameters: <player> <range>
-        success: >-
-          <green>Радиус острова игрока </green><aqua>[name] </aqua><green>успешно увеличен до значения</green>
-          <aqua>[total] </aqua><gray>(</gray><aqua>+[number]</aqua><gray>)</gray><green>.</green>
+        parameters: <игрок> <радиус>
+        success: <green>Радиус острова игрока <aqua>[name] </aqua>успешно увеличен
+          до <aqua>[total] </aqua><gray>(<aqua>+[number]</aqua>)</gray>.</green>
       remove:
         description: уменьшает радиус острова
-        parameters: <player> <range>
-        success: >-
-          <green>Радиус острова игрока </green><aqua>[name] </aqua><green>успешно уменьшен до значения</green>
-          <aqua>[total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>
+        parameters: <игрок> <радиус>
+        success: <green>Радиус острова игрока <aqua>[name] </aqua>успешно уменьшен
+          до </green> <aqua>[total] </aqua><gray>(<aqua>-[number]</aqua>)</gray>.</green>
     register:
       parameters: <игрок>
       description: регистрирует игрока на острове без владельца, на котором вы находитесь
-      registered-island: >-
-        <green>Игрок [name] зарегистрирован на острове, находящемся на координатах</green>
-        [xyz].
-      reserved-island: '<green>Остров на координатах [xyz] зарезервирован для [name].</green>'
-      already-owned: '<red>Остров уже принадлежит другому игроку!</red>'
-      no-island-here: '<red>Здесь нет острова. Подтвердите для создания острова.</red>'
-      in-deletion: '<red>Это пространство для острова уже было удалено. Попробуйте позднее.</red>'
-      cannot-make-island: >-
-        <red>Остров не может быть размещен здесь, извините. Посмотрите в консоль за</red>
-        возможными ошибками.
-      island-is-spawn: >-
-        <gold>Остров является спавном. Вы уверены? Введите команду снова для</gold>
-        подтверждения.
+      registered-island: <green>Игрок [name] зарегистрирован на острове, находящемся
+        на координатах [xyz].</green>
+      reserved-island: <green>Остров на координатах [xyz] зарезервирован для [name].</green>
+      already-owned: <red>Остров уже принадлежит другому игроку!</red>
+      no-island-here: <red>Здесь нет острова. Подтвердите для создания острова.</red>
+      in-deletion: <red>Это пространство для острова уже было удалено. Попробуйте
+        позднее.</red>
+      cannot-make-island: <red>Остров не может быть размещён здесь, извините. Посмотрите
+        в консоль за возможными ошибками.</red>
+      island-is-spawn: <gold>Остров является спавном. Вы уверены? Введите команду
+        снова для подтверждения.</gold>
     unregister:
       parameters: <владелец> [x,y,z]
       description: разрегистрирует остров, но сохраняет блоки на острове
-      unregistered-island: '<green>Игрок [name] разрегистрирован с острова на координатах [xyz].</green>'
+      unregistered-island: <green>Игрок [name] разрегистрирован с острова на координатах
+        [xyz].</green>
       errors:
-        unknown-island-location: '<red>Неизвестная [prefix_island] локация</red>'
-        specify-island-location: '<red>Укажите местоположение [prefix_island] в формате x,y,z</red>'
-        player-has-more-than-one-island: '<red>Игрок имеет более одного [prefix_island]. Укажите, какой именно.</red>'
+        unknown-island-location: <red>Неизвестная [prefix_island] локация</red>
+        specify-island-location: <red>Укажите местоположение [prefix_island] в формате
+          x,y,z</red>
+        player-has-more-than-one-island: <red>Игрок имеет более одного [prefix_island].
+          Укажите, какой именно.</red>
     info:
       parameters: <игрок>
       description: получите информацию где вы или на чьем вы острове
-      no-island: '<red>Вы не на острове в данный момент...</red>'
-      title: '========== Информация об острове ============'
+      no-island: <red>Вы не на острове в данный момент...</red>
+      title: ========== Информация об острове ============
       island-uuid: 'UUID: [uuid]'
       owner: 'Владелец: [owner] ([uuid])'
       last-login: 'Последний вход: [date]'
@@ -267,189 +271,183 @@ commands:
       resets-left: 'Сбросов: [number] (Максимум: [total])'
       max-homes: 'Максимальное количество домов: [number]'
       team-members-title: 'Состав команды:'
-      team-owner-format: '<green>[name] [rank]</green>'
-      team-member-format: '<aqua>[name] [rank]</aqua>'
+      team-owner-format: <green>[name] [rank]</green>
+      team-member-format: <aqua>[name] [rank]</aqua>
       max-team-size: 'Максимальный размер команды: [number]'
       max-coop-size: 'Максимальный размер кооперации: [number]'
       max-trusted-size: 'Максимальный размер доверенных: [number]'
       island-protection-center: 'Центр острова: [xyz]'
       island-center: 'Центр острова: [xyz]'
       island-coords: 'Координаты острова: от [xz1] до [xz2]'
-      islands-in-trash: '<light_purple>Игрок имеет остров в мусоре.</light_purple>'
+      islands-in-trash: <light_purple>Игрок имеет остров в мусоре.</light_purple>
       protection-range: 'Радиус острова: [range]'
-      protection-range-bonus-title: '<aqua>Включая указанный бонус:</aqua>'
+      protection-range-bonus-title: <aqua>Включая указанный бонус:</aqua>
       protection-range-bonus: 'Бонус: [number]'
       purge-protected: Остров защищен от очистки
       max-protection-range: 'Самый большой радиус острова за все время: [range]'
       protection-coords: 'Радиус границ острова: от [xz1] до [xz2]'
       is-spawn: Остров является точкой спавна
-      banned-players: 'Забанненые игроки:'
-      banned-format: '<red>[name]</red>'
-      unowned: '<red>Не владелец</red>'
-      bundle: '<green>Пакет чертежей, использованный для создания острова: </green><aqua>[name]</aqua>'
+      banned-players: 'Забаненные игроки:'
+      banned-format: <red>[name]</red>
+      unowned: <red>Не владелец</red>
+      bundle: '<green>Пакет чертежей, использованный для создания острова: <aqua>[name]</aqua></green>'
     switch:
       description: переключатель вкл/выкл обхода защиты
-      op: >-
-        <red>Операторы сервера всегда имеют обход защиты. Снимите себя с</red>
-        операторства и повторите снова.
-      removing: '<green>Убираем защиту от обхода...</green>'
-      adding: '<green>Добавляем защиту от обхода...</green>'
+      op: <red>Операторы сервера всегда имеют обход защиты. Снимите себя с операторства
+        и повторите снова.</red>
+      removing: <green>Убираем защиту от обхода...</green>
+      adding: <green>Добавляем защиту от обхода...</green>
     switchto:
       parameters: <игрок> <число>
       description: причисляет остров игрока к мусорным островам
-      out-of-range: >-
-        <red>Номер должен быть между 1 и [number]. Используйте <bold>[label] trash</bold></red>
-        [player] <red>для просмотра значений.</red>
-      cannot-switch: '<red>Переключение не удалось. Смотрите логи в консоли для поиска ошибки.</red>'
-      success: '<green>Остров игрока успешно переключен в режим мусорного.</green>'
+      out-of-range: <red>Номер должен быть между 1 и [number]. Используйте [label]
+        trash [player] для просмотра значений.</red>
+      cannot-switch: <red>Переключение не удалось. Смотрите логи в консоли для поиска
+        ошибки.</red>
+      success: <green>Остров игрока успешно переключен в режим мусорного.</green>
     trash:
-      no-unowned-in-trash: '<red>В мусорке нет островов без владельца</red>'
-      no-islands-in-trash: '<red>Игрок не имеет островов в мусорке</red>'
+      no-unowned-in-trash: <red>В мусорке нет островов без владельца</red>
+      no-islands-in-trash: <red>Игрок не имеет островов в мусорке</red>
       parameters: '[игрок]'
       description: показывает острова без владельца и мусорные острова
-      title: '<light_purple>=========== Мусорные острова ===========</light_purple>'
-      count: '<bold><light_purple>Остров [number]:</light_purple></bold>'
-      use-switch: >-
-        <green>Используйте <bold>[label] switchto <player> <number></bold></green><green>для переключения</green>
-        к острову игрока
-      use-emptytrash: >-
-        <green>Используйте <bold>[label] emptytrash [player]</bold></green><green>для постоянного</green>
-        удаления мусорных предметов
+      title: <light_purple>=========== Мусорные острова ===========</light_purple>
+      count: <light_purple><bold>Остров [number]:</bold></light_purple>
+      use-switch: <green>Используйте [label] switchto <player> <number> для переключения
+        к острову игрока</green>
+      use-emptytrash: <green>Используйте [label] emptytrash [player] для постоянного
+        удаления мусорных предметов</green>
     emptytrash:
       parameters: '[игрок]'
       description: Очистить мусор для игрока или все незащищенные острова в мусоре
-      success: '<green>Мусор успешно опустошен.</green>'
+      success: <green>Мусор успешно опустошен.</green>
     version:
       description: отображает версию BentoBox и дополнений к нему
     setrange:
       parameters: <игрок> <диапазон>
       description: устанавливает радиус острова игрока
-      range-updated: '<green>Радиус острова игрока обновлен до значения </green><aqua>[number] </aqua><green>.</green>'
+      range-updated: <green>Радиус острова игрока обновлен до <aqua>[number]</aqua>.</green>
     placeholders:
       description: открыть браузер заполнителей
     dump-placeholders:
       description: экспортировать все зарегистрированные заполнители в markdown файл
-      dumped: '<green>Список заполнителей записан в [file]</green>'
+      dumped: <green>Список заполнителей записан в [file]</green>
       error: '<red>Не удалось записать список заполнителей: [message]</red>'
     reload:
       description: перезагрузка
     tp:
-      parameters: <player> [player to teleport]
+      parameters: <игрок> [[prefix_island] игрока]
       description: телепорт на остров игрока
-      manual: >-
-        <red>Безопасная точка телепортации не обнаружена! Вручную телепортируйтесь</red>
-        рядом с <aqua>[location] </aqua><red>и проверьте обстановку</red>
+      manual: <red>Безопасная точка телепортации не обнаружена! Вручную телепортируйтесь
+        рядом с <aqua>[location] </aqua>и проверьте обстановку</red>
     tpuser:
-      parameters: <телепортирующийся игрок> <[prefix_island]'s игрок> [остров игрока]
+      parameters: <телепортирующийся игрок> <игрок [prefix_island]а> [[prefix_island]
+        игрока]
       description: телепортировать игрока на [prefix_island] другого игрока
     getrank:
-      parameters: <player> [island owner]
+      parameters: <игрок> [владелец [prefix_island]а]
       description: отображает ранг игрока на его острове или острове владельца
-      rank-is: '<green>Ранг </green><aqua>[rank] </aqua><green>на острове игрока </green><aqua>[name]</aqua><green>.</green>'
+      rank-is: <green>Ранг <aqua>[rank] </aqua>на острове игрока <aqua>[name]</aqua>.</green>
     setrank:
-      parameters: <player> <rank> [island owner]
+      parameters: <игрок> <ранг> [владелец [prefix_island]а]
       description: устанавливает ранг игрока на их острове или острове владельца
-      unknown-rank: '<red>Неизвестный ранг!</red>'
-      not-possible: '<red>Ранг должен быть больше чем у посетителя.</red>'
-      rank-set: >-
-        <green>Ранг установлен между </green><aqua>[from] </aqua><green>и </green><aqua>[to] </aqua><green>на острове игрока</green>
-        <aqua>[name]</aqua><green>.</green>
+      unknown-rank: <red>Неизвестный ранг!</red>
+      not-possible: <red>Ранг должен быть больше чем у посетителя.</red>
+      rank-set: <green>Ранг установлен между <aqua>[from] </aqua>и <aqua>[to] </aqua>на
+        острове игрока <aqua>[name]</aqua>.</green>
     setprotectionlocation:
-      parameters: '[x y z coords]'
-      description: >-
-        устанавливает текущую локацию или координаты [x y z] как центральную
+      parameters: '[x y z координаты]'
+      description: устанавливает текущую локацию или координаты [x y z] как центральную
         точку острова
-      island: >-
-        <red>Это повлияет на остров игрока [name], находящийся на координатах</red>
-        [xyz].
-      confirmation: '<red>Вы уверены, что хотите установить [xyz] как центр острова?</red>'
-      success: '<green>Успешно установлено [xyz] как центр острова.</green>'
-      fail: '<red>Не удалось установить [xyz] как центр острова.</red>'
-      island-location-changed: '<green>[user] изменил радиус острова на координаты [xyz].</green>'
+      island: <red>Это повлияет на остров игрока [name], находящийся на координатах
+        [xyz].</red>
+      confirmation: <red>Вы уверены, что хотите установить [xyz] как центр острова?</red>
+      success: <green>Успешно установлено [xyz] как центр острова.</green>
+      fail: <red>Не удалось установить [xyz] как центр острова.</red>
+      island-location-changed: <green>[user] изменил радиус острова на координаты
+        [xyz].</green>
       xyz-error: '<red>Укажите 3 целых значения: например, 100 120 100</red>'
     setspawn:
       description: устанавливает остров в качестве спавна в данном игровом режиме
-      already-spawn: '<red>Этот остров уже является спавном!</red>'
-      no-island-here: '<red>Здесь нет острова.</red>'
-      confirmation: '<red>Вы уверены, что хотите установить этот остров как спавн в этом режиме?</red>'
-      success: '<green>Остров успешно установлен в качестве спавна в этом мире.</green>'
+      already-spawn: <red>Этот остров уже является спавном!</red>
+      no-island-here: <red>Здесь нет острова.</red>
+      confirmation: <red>Вы уверены, что хотите установить этот остров как спавн в
+        этом режиме?</red>
+      success: <green>Остров успешно установлен в качестве спавна в этом мире.</green>
     setspawnpoint:
       description: устанавливает текущую точку как точку спавна на указанном острове
-      no-island-here: '<red>Здесь нет острова.</red>'
-      confirmation: >-
-        <red>Вы уверен, что хотите сделать текущую точку как точку спавна на</red>
-        указанном острове?
-      success: '<green>Точка спавна на данном острове успешно установлена.</green>'
-      island-spawnpoint-changed: '<green>[user] изменил точку спавна на своем острове.</green>'
+      no-island-here: <red>Здесь нет острова.</red>
+      confirmation: <red>Вы уверен, что хотите сделать текущую точку как точку спавна
+        на указанном острове?</red>
+      success: <green>Точка спавна на данном острове успешно установлена.</green>
+      island-spawnpoint-changed: <green>[user] изменил точку спавна на своем острове.</green>
     settings:
-      parameters: >-
-        [игрок]/[флаг мира]/спавн-остров [флаг/активировать/отключить]
-        [ранг/активировать/отключить]
+      parameters: '[игрок]/[флаг мира]/спавн-остров [флаг/активировать/отключить]
+        [ранг/активировать/отключить]'
       description: открывает окно настроек или выводит список
-      unknown-setting: '<red>Неизвестная настройка</red>'
+      unknown-setting: <red>Неизвестная настройка</red>
     blueprint:
-      parameters: <load/copy/paste/pos1/pos2/save>
+      parameters: <загрузить/скопировать/вставить/pos1/pos2/сохранить>
       description: взаимодействие с планами
-      bedrock-required: '<red>Как минимум 1 блок бедрока должен быть в плане!</red>'
-      copy-first: '<red>Сначала скопируйте!</red>'
-      file-exists: '<red>Файл уже существует, перезаписать?</red>'
-      no-such-file: '<red>Нет нужного файла!</red>'
-      could-not-load: '<red>Не удалось загрузить файл!</red>'
-      could-not-save: '<red>Хмм, что-то пошло не так при сохранении файла: [message]</red>'
-      set-pos1: '<green>Позиция 1 установлена как [vector]</green>'
-      set-pos2: '<green>Позиция 2 установлена как [vector]</green>'
-      set-different-pos: '<red>Установите иную позицию - эта позиция уже установлена!</red>'
-      need-pos1-pos2: '<red>Установите pos1 и pos2 сначала!</red>'
-      copying: '<aqua>Копируем блоки...</aqua>'
-      copied-blocks: '<aqua>Скопировано [number] блоков в буфер обмена</aqua>'
-      look-at-a-block: '<red>Посмотрите на блок в пределах 20 блоков, чтобы установить</red>'
-      mid-copy: '<red>Вы в режиме копирования. Подождите ее окончания.</red>'
-      copied-percent: '<gold>Скопировано [number]%</gold>'
+      bedrock-required: <red>Как минимум 1 блок бедрока должен быть в плане!</red>
+      copy-first: <red>Сначала скопируйте!</red>
+      file-exists: <red>Файл уже существует, перезаписать?</red>
+      no-such-file: <red>Нет нужного файла!</red>
+      could-not-load: <red>Не удалось загрузить файл!</red>
+      could-not-save: '<red>Хм, что-то пошло не так при сохранении файла: [message]</red>'
+      set-pos1: <green>Позиция 1 установлена как [vector]</green>
+      set-pos2: <green>Позиция 2 установлена как [vector]</green>
+      set-different-pos: <red>Установите иную позицию - эта позиция уже установлена!</red>
+      need-pos1-pos2: <red>Установите pos1 и pos2 сначала!</red>
+      copying: <aqua>Копируем блоки...</aqua>
+      copied-blocks: <aqua>Скопировано [number] блоков в буфер обмена</aqua>
+      look-at-a-block: <red>Посмотрите на блок в пределах 20 блоков, чтобы установить</red>
+      mid-copy: <red>Вы в режиме копирования. Подождите ее окончания.</red>
+      copied-percent: <gold>Скопировано [number]%</gold>
       copy:
-        parameters: '[air]'
-        description: >-
-          скопируйте в буфер обмена установленные pos1, pos2 и, возможно, блоки
-          возлуха
+        parameters: '[воздух] [биом] [нет воды]'
+        description: скопируйте в буфер обмена установленные pos1, pos2 и, возможно,
+          блоки возлуха
       sink:
-        description: установите этот чертеж, чтобы он опустился на дно океана после вставки
-        status: '<green>Чертеж будет [status] </green><green>при вставке</green>'
-        sink: '<red>раковина</red>'
-        not-sink: '<aqua>не тонуть</aqua>'
-        no-clipboard: '<red>В буфере обмена нет чертежа. Загрузите или скопируйте что-нибудь.</red>'
+        description: установите этот чертеж, чтобы он опустился на дно океана после
+          вставки
+        status: <green>Чертёж будет [status] при вставке</green>
+        sink: <red>погружаться на дно</red>
+        not-sink: <aqua>не погружаться</aqua>
+        no-clipboard: <red>В буфере обмена нет чертежа. Загрузите или скопируйте что-нибудь.</red>
       delete:
-        parameters: <name>
+        parameters: <имя>
         description: удалить план
-        no-blueprint: '<aqua>[name] </aqua><red>не существует.</red>'
-        confirmation: |
+        no-blueprint: <red><aqua>[name] </aqua>не существует.</red>
+        confirmation: |-
           <red>Вы уверены, что хотите удалить этот план?</red>
           <red>После удаления нет возможности восстановить.</red>
-        success: '<green>План </green><aqua>[name] </aqua><green>успешно удален.</green>'
+        success: <green>План <aqua>[name] </aqua>успешно удален.</green>
       load:
         parameters: <имя>
         description: загрузить план в буфер обмена
       list:
         description: список доступных планов
-        no-blueprints: '<red>В папке планов сами планы отсутствуют!</red>'
-        available-blueprints: '<green>Указанные планы доступны для загрузки:</green>'
+        no-blueprints: <red>В папке планов сами планы отсутствуют!</red>
+        available-blueprints: <green>Указанные планы доступны для загрузки:</green>
       origin:
         description: установите источник плана в свою позицию
       paste:
         description: вставьте буфер обмена в свое местоположение
-        pasting: '<green>Вставляем...</green>'
+        pasting: <green>Вставляем...</green>
       pos1:
         description: установить 1-й угол кубоида в буфере обмена
       pos2:
         description: установить 2-й угол кубоидного буфера обмена
       save:
-        parameters: <синий план имя>
+        parameters: <имя чертежа>
         description: сохранить скопированное в буфере обмена
       rename:
-        parameters: <синий план> <новое имя>
+        parameters: <чертёж> <новое имя>
         description: переименовать план
-        success: >-
-          <green>План </green><aqua>[old] </aqua><green>был успешно переименован в </green><aqua>[display]</aqua><green>. Название</green>
-          файла теперь <aqua>[name] </aqua><green>.</green>
-        pick-different-name: '<red>Укажите имя, отличное от имени уже существующего плана.</red>'
+        success: <green>План <aqua>[old] </aqua>был успешно переименован <aqua>[display]</aqua>.
+          Название файла теперь <aqua>[name]</aqua>.</green>
+        pick-different-name: <red>Укажите имя, отличное от имени уже существующего
+          плана.</red>
       management:
         back: Назад
         instruction: Нажмите на план, затем кликните сюда.
@@ -458,21 +456,21 @@ commands:
         rename: Правый клик для переименования
         edit-description: Нажмите для редактирования описания
         world-name-syntax: '[name] мир'
-        world-instructions: |
+        world-instructions: |-
           Установите план
           правильно для установки
         trash: Мусор
         no-trash: Не удается удалить в мусор
-        trash-instructions: Правый клинт для удаления
+        trash-instructions: Правый клик для удаления
         no-trash-instructions: Не удается удалить пакет по умолчанию
         permission: Разрешение
         no-permission: Нет разрешения
         perm-required: Требуется
         no-perm-required: Невозможно установить разрешения для сборника по умолчанию
         perm-not-required: Не требуется
-        perm-format: '<yellow></yellow>'
-        remove: Правый клик для удаления
-        blueprint-instruction: |
+        perm-format: <yellow></yellow>
+        remove: ПКМ для удаления
+        blueprint-instruction: |-
           Нажмите для выбора,
           затем добавьте в сборника.
           Правый клик для переименования.
@@ -480,107 +478,104 @@ commands:
         new-bundle: Новый сборник
         new-bundle-instructions: Кликните для создания нового сборника
         name:
-          quit: выход
-          prompt: Введите имя, или 'quit' для выхода
-          too-long: '<red>Слишком длинное имя. Установить можно до 32 знаков.</red>'
+          quit: выйти
+          prompt: Введите имя, или "выйти" для выхода
+          too-long: <red>Слишком длинное имя. Установить можно до 32 знаков.</red>
           pick-a-unique-name: Пожалуйста, выберите более уникальное имя.
-          stripped-char-in-unique-name: >-
-            <red>Некоторые недопустимые символы удалены. </red><green>Новый ID будет </green><aqua>[name]</aqua>
-            <green>.</green>
+          stripped-char-in-unique-name: <red>Некоторые недопустимые символы удалены.
+            </red><green>Новый ID будет <aqua>[name]</aqua>.</green>
           success: Успех!
           conversation-prefix: '>'
         description:
-          quit: выход
-          instructions: |
+          quit: выйти
+          instructions: |-
             введите многострочное описание для [name]
-            и 'quit' на линии, чтобы закончить.
+            и "выйти" на линии, чтобы закончить.
           default-color: ''
           success: Успех!
           cancelling: Отмена
-        slot: '<white>Предпочтительный слот [number]</white>'
-        slot-instructions: |
-          <green>Щелкните левой кнопкой мыши, чтобы увеличить</green>
-          <green>Щелкните правой кнопкой мыши, чтобы уменьшить</green>
+        slot: <white>Предпочтительный слот [number]</white>
+        slot-instructions: |-
+          <green>ЛКМ, чтобы увеличить</green>
+          <green>ПКМ, чтобы уменьшить</green>
         times: |-
           <green>Макс. одновременные использования игроком</green>
-          <green>Левый клик для увеличения</green>
-          <green>Правый клик для уменьшения</green>
+          <green>ЛКМ для увеличения</green>
+          <green>ПКМ для уменьшения</green>
         unlimited-times: Неограниченно
         maximum-times: Максимум [number] раз
-        cost: |
+        cost: |-
           <green>Стоимость [prefix_Island]</green>
           <green>ЛКМ +1</green>
           <green>ПКМ -1</green>
           <green>Shift для +/-100</green>
         no-cost: Бесплатно
         cost-amount: 'Стоимость: [cost]'
-        next-page: '<white>Следующая страница</white>'
-        previous-page: '<white>Предыдущая страница</white>'
+        next-page: <white>Следующая страница</white>
+        previous-page: <white>Предыдущая страница</white>
         edit-commands: Нажмите для редактирования команд
         no-commands: Команды не установлены
         commands:
-          quit: выход
+          quit: выйти
           clear: очистить
-          instructions: |
+          instructions: |-
             <white>Введите команды для выполнения при вставке чертежа [name].</white>
             <white>Поддерживает заполнители <green>[player]</green> и <green>[owner]</green>.</white>
             <white>Добавьте <green>[SUDO]</green> для выполнения от имени игрока.</white>
-            <white>Введите 'очистить' для удаления всех команд в этой сессии.</white>
-            <white>Введите 'выход' на отдельной строке для завершения.</white>
+            <white>Введите "очистить" для удаления всех команд в этой сессии.</white>
+            <white>Введите "выйти" на отдельной строке для завершения.</white>
           default-color: ''
           success: Успех!
           cancelling: Отмена
     resetflags:
       parameters: '[флаг]'
-      description: >-
-        Сбрасывает все настройки флагов на всех островах до значений по
+      description: Сбрасывает все настройки флагов на всех островах до значений по
         умолчанию из файла config.yml
-      confirm: '<dark_red>Это сбросит флаги до значений по умолчанию на всех островах!</dark_red>'
-      success: '<green>Флаги успешно сброшены до значений по умолчанию на всех островах.</green>'
-      success-one: '<green>Флаг [name] сброшен до значения по умолчанию на всех островах.</green>'
+      confirm: <dark_red>Это сбросит флаги до значений по умолчанию на всех островах!</dark_red>
+      success: <green>Флаги успешно сброшены до значений по умолчанию на всех островах.</green>
+      success-one: <green>Флаг [name] сброшен до значения по умолчанию на всех островах.</green>
     world:
       description: управление настройками мира
     delete:
       parameters: <игрок>
       description: удаление острова игрока
-      cannot-delete-owner: '<red>Все участники острова будут изгнаны перед удалением.</red>'
-      deleted-island: '<green>Остров на координатах </green><yellow>[xyz] </yellow><green>успешно удален.</green>'
+      cannot-delete-owner: <red>Все участники острова будут изгнаны перед удалением.</red>
+      deleted-island: <green>Остров на координатах <yellow>[xyz] </yellow>успешно
+        удален.</green>
     deletehomes:
       parameters: <игрок>
       description: удаляет все установленные точки дома на острове
-      warning: '<red>Все точки дома удалены с острова!</red>'
+      warning: <red>Все точки дома удалены с острова!</red>
     why:
       parameters: <игрок>
       description: включить отчет об отладке защиты консоли
-      turning-on: '<green>Включен режим отладки в консоли для </green><aqua>[name].</aqua>'
-      turning-off: '<green>Выключен режим отладки в консоли для </green><aqua>[name].</aqua>'
+      turning-on: <green>Включен режим отладки в консоли для <aqua>[name]</aqua>.</green>
+      turning-off: <green>Выключен режим отладки в консоли для <aqua>[name]</aqua>.</green>
     deaths:
       description: редактирует количество смертей у игроков
       reset:
         description: сбрасывает количество смертей игрока
         parameters: <игрок>
-        success: '<green>Успешно сброшено количество смертей игрока </green><aqua>[name] </aqua><green>до </green><aqua>0</aqua><green>.</green>'
+        success: <green>Успешно сброшено количество смертей игрока <aqua>[name] </aqua>до
+          <aqua>0</aqua>.</green>
       set:
         description: устанавливает количество смертей у игрока
         parameters: <игрок> <смерти>
-        success: >-
-          <green>Успешно установлено количество смертей игрока </green><aqua>[name]</aqua><green>на значение</green>
-          <aqua>[number] </aqua><green>.</green>
+        success: <green>Успешно установлено количество смертей игрока <aqua>[name]
+          </aqua>на значение <aqua>[number]</aqua>.</green>
       add:
         description: добавляет смерти игроку
         parameters: <игрок> <смерти>
-        success: >-
-          <aqua>[number] смертей успешно добавлено игроку </aqua><aqua>[name], увеличив общее</aqua>
-          количество до <aqua>[total] </aqua><green>смертей.</green>
+        success: <aqua>[number] смертей успешно добавлено игроку [name], увеличив
+          общее количество до [total] смертей.</aqua>
       remove:
         description: убрать смерти у игрока
         parameters: <игрок> <смерти>
-        success: >-
-          <aqua>[number] </aqua><green>смертей успешно убрано у игрока </green><aqua>[name], уменьшив общее</aqua>
-          количество до <aqua>[total] </aqua><green>смертей.</green>
+        success: <green><aqua>[number] </aqua>смертей успешно убрано у игрока <aqua>[name]</aqua>,
+          уменьшив общее количество до <aqua>[total] </aqua>смертей.</green>
     resetname:
       description: сбрасывает название острова игрока
-      success: '<green>Успешно сброшено имя острова [name].</green>'
+      success: <green>Успешно сброшено имя острова [name].</green>
   bentobox:
     description: BentoBox команды администратора
     perms:
@@ -591,42 +586,38 @@ commands:
       description: открыть браузер заполнителей
     dump-placeholders:
       description: экспортировать все зарегистрированные заполнители в markdown файл
-      dumped: '<green>Список заполнителей записан в [file]</green>'
+      dumped: <green>Список заполнителей записан в [file]</green>
       error: '<red>Не удалось записать список заполнителей: [message]</red>'
     reload:
       description: перезагружает BentoBox и все аддоны, настройки и файлы локализации
-      locales-reloaded: '[prefix_bentobox]<dark_green>Языки обновлены.</dark_green>'
+      locales-reloaded: '[prefix_bentobox]<dark_green>Локализация обновлена.</dark_green>'
       addons-reloaded: '[prefix_bentobox]<dark_green>Дополнения перезагружены.</dark_green>'
       settings-reloaded: '[prefix_bentobox]<dark_green>Настройки перезагружены.</dark_green>'
-      addon: '[prefix_bentobox]<gold>Перезагрузка </gold><aqua>[name]</aqua><dark_green>.</dark_green>'
+      addon: '[prefix_bentobox]<dark_green>Перезагрузка <aqua>[name]</aqua>.</dark_green>'
       addon-reloaded: '[prefix_bentobox]<aqua>[name] </aqua><dark_green>перезагружен.</dark_green>'
-      warning: >-
-        [prefix_bentobox]<red>Предупреждение: Перезагрузка может привести к</red>
-        нестабильной работе, так что если вы видите ошибки - перезагрузите
-        сервер.
+      warning: '[prefix_bentobox]<red>Перезагрузка может привести к нестабильной работе,
+        так что если вы видите ошибки - перезагрузите сервер.</red>'
       unknown-addon: '[prefix_bentobox]<red>неизвестный аддон!</red>'
       locales:
         description: перезагрузка файлов локализации
     version:
-      plugin-version: '<dark_green>Версия BentoBox: </dark_green><dark_aqua>[version]</dark_aqua>'
+      plugin-version: '<dark_green>Версия BentoBox: <dark_aqua>[version]</dark_aqua></dark_green>'
       description: отображает версию BentoBox и дополнений
       loaded-addons: 'Загруженные аддоны:'
       loaded-game-worlds: 'Загруженные миры:'
-      addon-syntax: '<dark_green>[name] </dark_green><dark_aqua>[version] </dark_aqua><gray>(</gray><dark_aqua>[state]</dark_aqua><gray>)</gray>'
-      game-world: '<dark_green>[name] </dark_green><gray>(</gray><dark_aqua>[addon]</dark_aqua><gray>): </gray><dark_aqua>[worlds]</dark_aqua>'
-      server: '<dark_green>Запущено </dark_green><dark_aqua>[name] [version]</dark_aqua><dark_green>.</dark_green>'
-      database: '<dark_green>База данных: </dark_green><dark_aqua>[database]</dark_aqua>'
+      addon-syntax: <dark_green>[name] <dark_aqua>[version] </dark_aqua><gray>(<dark_aqua>[state]</dark_aqua>)</gray></dark_green>
+      game-world: '<dark_green>[name] <gray>(<dark_aqua>[addon]</dark_aqua>): </gray><dark_aqua>[worlds]</dark_aqua></dark_green>'
+      server: <dark_green>Запущено <dark_aqua>[name] [version]</dark_aqua>.</dark_green>
+      database: '<dark_green>База данных: <dark_aqua>[database]</dark_aqua></dark_green>'
     manage:
       description: отображает панель управления
     catalog:
       description: отображает каталог
     locale:
       description: выполняет анализ файлов локализации
-      see-console: >-
+      see-console: |-
         [prefix_bentobox]<green>Проверьте консоль для получения обратной связи.</green>
-
-        [prefix_bentobox]<green>Эта команда так много спамит, что нельзя получить</green>
-        ответ в чате...
+        [prefix_bentobox]<green>Эта команда так много спамит, что нельзя получить ответ в чате...</green>
     migrate:
       description: мигрирует базу данных из одного места в другое
       players: '[prefix_bentobox]<gold>Миграция игроков</gold>'
@@ -637,73 +628,70 @@ commands:
       completed: '[prefix_bentobox]<green>Завершено</green>'
     rank:
       description: список, добавить или удалить ранги
-      parameters: '<green>[list | add | remove] [ссылка на ранг] [значение ранга]</green>'
+      parameters: <green>[список | добавить | удалить] [образец ранга] [значение ранг]</green>
       add:
-        success: '<green>Добавлено [rank] со значением [number]</green>'
-        failure: >-
-          <red>Не удалось добавить [rank] со значением [number]. Возможно,</red>
-          дубликат?
+        success: <green>Добавлено [rank] со значением [number]</green>
+        failure: <red>Не удалось добавить [rank] со значением [number]. Возможно,
+          дубликат?</red>
       remove:
-        success: '<green>Удалено [rank]</green>'
-        failure: '<red>Не удалось удалить [rank]. Неизвестный ранг.</red>'
-      list: '<green>Зарегистрированные ранги следующие:</green>'
+        success: <green>Удалено [rank]</green>
+        failure: <red>Не удалось удалить [rank]. Неизвестный ранг.</red>
+      list: <green>Зарегистрированные ранги следующие:</green>
   confirmation:
-    confirm: '<red>Введите команду снова в течение </red><aqua>[seconds] секунд </aqua><red>для подтверждения.</red>'
-    previous-request-cancelled: '<gold>Предыдущий запрос на подтверждение был отменён.</gold>'
-    request-cancelled: '<red>Время подтверждения истекло - </red><aqua>запрос отменён.</aqua>'
+    confirm: <red>Подтвердите, повторив команду в течение <aqua>[seconds] секунд</aqua>.</red>
+    previous-request-cancelled: <gold>Предыдущий запрос на подтверждение был отменён.</gold>
+    request-cancelled: <red>Время подтверждения истекло - <aqua>запрос отменён</aqua>.</red>
   delay:
-    previous-command-cancelled: '<red>Предыдущая команда была отменена</red>'
-    stand-still: '<gold>Не двигайтесь! Телепортация через [seconds] секунды</gold>'
-    moved-so-command-cancelled: '<red>Вы сдвинулись. Телепортация отменена!</red>'
+    previous-command-cancelled: <red>Предыдущая команда была отменена</red>
+    stand-still: <gold>Не двигайтесь! Телепортация через [seconds] секунды</gold>
+    moved-so-command-cancelled: <red>Вы сдвинулись. Телепортация отменена!</red>
   island:
     about:
       description: показать сведения о лицензии
     go:
-      parameters: '[дом имя]'
+      parameters: '[имя дома]'
       description: телепортация на свой остров
-      teleport: '<green>Телепортируемся на ваш остров.</green>'
-      in-progress: '<green>Телепортация в процессе, пожалуйста, подождите...</green>'
-      teleported: '<green>Вы успешно телепортировали на точку дома </green><yellow>[number].</yellow>'
-      failure: >-
-        <red>Телепортация не удалась по какой-то причине. Пожалуйста, попробуйте</red>
-        снова позже.
-      unknown-home: '<red>Неизвестное название точки дома!</red>'
+      teleport: <green>Телепортируемся на ваш остров.</green>
+      in-progress: <green>Телепортация в процессе, пожалуйста, подождите...</green>
+      teleported: <green>Вы успешно телепортировали на точку дома <yellow>[number].</yellow></green>
+      failure: <red>Телепортация не удалась по какой-то причине. Пожалуйста, попробуйте
+        снова позже.</red>
+      unknown-home: <red>Неизвестное название точки дома!</red>
     help:
       description: основная команда режима
     spawn:
       description: телепортация на спавн
-      teleporting: '<green>Телепортируемся на спавн.</green>'
-      no-spawn: '<red>В этом режиме игры нет спавна.</red>'
+      teleporting: <green>Телепортируемся на спавн.</green>
+      no-spawn: <red>В этом режиме игры нет спавна.</red>
     create:
       description: создайте остров, используя специальный план (требуется разрешение)
-      parameters: <синий план>
-      too-many-islands: >-
-        <red>В этом мире слишком много островов: здесь нет места для создания</red>
-        вашего острова.
-      cannot-create-island: '<red>Место не найдено в данный момент, попробуйте еще раз позднее...</red>'
-      unable-create-island: '<red>Ваш остров не был создан, свяжитесь с администрацией.</red>'
-      creating-island: '<green>Поиск места для создания острова...</green>'
-      you-cannot-make: '<red>Вы не можете создать больше островов!</red>'
-      max-uses: '<red>Вы не можете создать больше такого типа [prefix_island]!</red>'
-      you-cannot-make-team: >-
-        <red>Участники команды не могут создавать острова в том же мире, что и их</red>
-        команда [prefix_island].
+      parameters: <чертёж>
+      too-many-islands: '<red>В этом мире слишком много островов: здесь нет места
+        для создания вашего острова.</red>'
+      cannot-create-island: <red>Место не найдено в данный момент, попробуйте ещё
+        раз позднее...</red>
+      unable-create-island: <red>Ваш остров не был создан, свяжитесь с администрацией.</red>
+      creating-island: <green>Поиск места для создания острова...</green>
+      you-cannot-make: <red>Вы не можете создать больше островов!</red>
+      max-uses: <red>Вы не можете создать больше такого типа [prefix_island]!</red>
+      you-cannot-make-team: <red>Участники команды не могут создавать острова в том
+        же мире, что и их команда [prefix_island].</red>
       pasting:
-        estimated-time: '<green>Расчетное время: </green><aqua>[number] </aqua><green>секунд.</green>'
-        blocks: '<green>Строим блок за блоком: </green><aqua>[number] </aqua><green>блоков всего...</green>'
-        entities: '<green>Наполняем сущностями: </green><aqua>[number] </aqua><green>сущностей всего...</green>'
-        dimension-done: '<green>Остров в [world] построен.</green>'
-        done: '<green>Готово! Ваш остров готов и ожидает вас!</green>'
-      pick: '<dark_green>Выберите остров</dark_green>'
+        estimated-time: '<green>Расчетное время: <aqua>[number] </aqua>секунд.</green>'
+        blocks: '<green>Строим блок за блоком: <aqua>[number] </aqua>блоков всего...</green>'
+        entities: '<green>Наполняем сущностями: <aqua>[number] </aqua>сущностей всего...</green>'
+        dimension-done: <green>Остров в [world] построен.</green>
+        done: <green>Готово! Ваш остров готов и ожидает вас!</green>
+      pick: <dark_green>Выберите остров</dark_green>
       cannot-afford: '<red>Вы не можете себе это позволить! Стоимость: [cost]</red>'
-      unknown-blueprint: '<red>Этот план еще не был загружен.</red>'
-      on-first-login: >-
-        <green>Добро пожаловать! Мы начнём готовить ваш остров через несколько</green>
-        секунд.
-      you-can-teleport-to-your-island: '<green>Вы можете телепортироваться на остров когда вам будет угодно.</green>'
+      unknown-blueprint: <red>Этот план ещё не был загружен.</red>
+      on-first-login: <green>Добро пожаловать! Мы начнём готовить ваш остров через
+        несколько</green> секунд.
+      you-can-teleport-to-your-island: <green>Вы можете телепортироваться на остров
+        когда вам будет угодно.</green>
     deletehome:
       description: удалить точку дома
-      parameters: '[название дома]'
+      parameters: '[имя дома]'
     homes:
       description: список ваших точек дома
     info:
@@ -712,61 +700,53 @@ commands:
     near:
       description: показывает название островов, находящихся рядом с вами
       parameters: ''
-      the-following-islands: '<green>Следующие острова неподалеку:</green>'
-      syntax: '<gold>[direction]: </gold><green>[name]</green>'
+      the-following-islands: <green>Следующие острова неподалеку:</green>
+      syntax: '<gold>[direction]: <green>[name]</green></gold>'
       north: Север
       south: Юг
       east: Восток
       west: Запад
-      no-neighbors: '<red>Островов поблизости не обнаружено!</red>'
+      no-neighbors: <red>Островов поблизости не обнаружено!</red>
     reset:
-      description: удаляет старый остров и дает новый
-      parameters: <чертеж>
-      none-left: '<red>У вас больше не осталось сбросов!</red>'
-      resets-left: '<red>У вас осталось </red><aqua>[number] </aqua><red>сбросов</red>'
-      confirmation: >-
-        <red>Вы уверены, что хотите сделать это?</red>
-
-        <red>Все участники будут удалены с острова, вам будет необходимо</red>
-        пригласить их заново.
-
-        <red>Здесь нет пути назад: после удаления острова, у вас <bold>НЕ БУДЕТ </bold></red><red></red>
-        возможности восстановить его.
-      kicked-from-island: >-
-        <red>Вы были удалены с острова в режиме [gamemode], так как владелец</red>
-        сбросил его.
+      description: удаляет старый остров и выдаёт новый
+      parameters: <чертёж>
+      none-left: <red>У вас больше не осталось сбросов!</red>
+      resets-left: <red>У вас осталось <aqua>[number] </aqua>сбросов</red>
+      confirmation: <red>Все участники будут удалены с острова. После удаления острова
+        восстановить его будет невозможно.</red>
+      kicked-from-island: <red>Вы были удалены с острова в режиме [gamemode], так
+        как владелец сбросил его.</red>
     sethome:
       description: устанавливает точку телепортации дома
-      must-be-on-your-island: '<red>Вы должны быть на своем острове для установки этого!</red>'
-      too-many-homes: >-
-        <red>Невозможно установить - вы достигли максимального количества</red>
-        ([number]) точек дома.
-      home-set: '<gold>Ваше местоположение на острове установлено как точка дома.</gold>'
-      homes-are: '<gold>Точки дома на острове:</gold>'
-      home-list-syntax: '<gold>[name]</gold>'
-      click-to-teleport: '<green>Нажмите для телепортации!</green>'
+      must-be-on-your-island: <red>Вы должны быть на своем острове для установки этого!</red>
+      too-many-homes: <red>Невозможно установить - вы достигли максимального количества
+        ([number]) точек дома.</red>
+      home-set: <gold>Ваше местоположение на острове установлено как точка дома.</gold>
+      homes-are: <gold>Точки дома на острове:</gold>
+      home-list-syntax: <gold>[name]</gold>
+      click-to-teleport: <green>Нажмите для телепортации!</green>
       nether:
-        not-allowed: '<red>Запрещено устанавливать точки дома в Незере.</red>'
-        confirmation: '<red>Вы уверены, что хотите установить точку дома в Незере?</red>'
+        not-allowed: <red>Запрещено устанавливать точки дома в Незере.</red>
+        confirmation: <red>Вы уверены, что хотите установить точку дома в Незере?</red>
       the-end:
-        not-allowed: '<red>Вам не разрешено устанавливать точку дома в Энд.</red>'
-        confirmation: '<red>Вы уверены, что хотите установить свой дом в [Конце]?</red>'
+        not-allowed: <red>Вам не разрешено устанавливать точку дома в Энд.</red>
+        confirmation: <red>Вы уверены, что хотите установить свой дом в Энде?</red>
       parameters: '[имя дома]'
     setname:
       description: устанавливает название вашего острова
-      name-too-short: '<red>Слишком коротко. Минимальная длина [number] символов.</red>'
-      name-too-long: '<red>Слишком много символов. Максимальная длина [number] символов.</red>'
-      name-already-exists: '<red>В этом игровом режиме уже есть остров с таким названием.</red>'
+      name-too-short: <red>Слишком коротко. Минимальная длина [number] символов.</red>
+      name-too-long: <red>Слишком много символов. Максимальная длина [number] символов.</red>
+      name-already-exists: <red>В этом игровом режиме уже есть остров с таким названием.</red>
       parameters: <имя>
-      success: '<green>Ваше название острова успешно установлено как [name]</green><green>.</green>'
+      success: <green>Ваше название острова успешно установлено как [name]</green><green>.</green>
     renamehome:
       description: переименовывает точку дома
       parameters: '[имя дома]'
-      enter-new-name: '<gold>Введите новое имя</gold>'
-      already-exists: '<red>Это имя уже существует, попробуйте иное.</red>'
+      enter-new-name: <gold>Введите новое имя</gold>
+      already-exists: <red>Это имя уже существует, попробуйте иное.</red>
     resetname:
       description: сбрасывает имя острова
-      success: '<green>Название вашего острова успешно сброшено.</green>'
+      success: <green>Название вашего острова успешно сброшено.</green>
     team:
       description: управляет командой
       gui:
@@ -778,7 +758,7 @@ commands:
             description: Статус команды
           rank-filter:
             name: Фильтр по рангу
-            description: '<green>Нажмите, чтобы сменить ранг</green>'
+            description: <green>Нажмите, чтобы сменить ранг</green>
           invitation: Приглашение
           invite:
             name: Пригласить игрока
@@ -788,231 +768,231 @@ commands:
               <green>отображаться в списке.</green>
         tips:
           LEFT:
-            name: '<aqua>Левый клик</aqua>'
-            invite: '<green>пригласить игрока</green>'
+            name: <aqua>ЛКМ</aqua>
+            invite: <green>пригласить игрока</green>
           RIGHT:
-            name: '<aqua>Щелкните правой кнопкой мыши</aqua>'
+            name: <aqua>ПКМ</aqua>
           SHIFT_RIGHT:
-            name: '<aqua>Сдвиг + Правая кнопка мыши</aqua>'
-            reject: '<green>для отклонения</green>'
-            kick: '<green>для кика игрока</green>'
-            leave: '<green>покинуть команду</green>'
+            name: <aqua>Shift + ПКМ</aqua>
+            reject: <green>для отклонения</green>
+            kick: <green>для кика игрока</green>
+            leave: <green>покинуть команду</green>
           SHIFT_LEFT:
-            name: '<aqua>Левый Shift Клик</aqua>'
-            accept: '<green>для принятия</green>'
+            name: <aqua>Shift + ЛКМ</aqua>
+            accept: <green>для принятия</green>
             setowner: |-
               <green>установить владельца</green>
               <green>к этому игроку</green>
       info:
         description: отображает подробную информацию о вашей команде
         member-layout:
-          online: '<green><bold> о </bold></green><white>[name]</white>'
-          offline: '<red><bold> o </bold></red><white>[name] </white><gray>([last_seen])</gray>'
-          offline-not-last-seen: '<red><bold> o </bold></red><white>[name]</white>'
+          online: <green><bold> о </bold></green><white>[name]</white>
+          offline: <red><bold> o </bold></red><white>[name] </white><gray>([last_seen])</gray>
+          offline-not-last-seen: <red><bold> o </bold></red><white>[name]</white>
         last-seen:
-          layout: '<aqua>[number] </aqua><gray>[unit]</gray>'
+          layout: <aqua>[number] </aqua><gray>[unit]</gray>
           days: дней
           hours: часов
           minutes: минут
-        header: |
-          <white>--- </white><green>Информация о команде </green><white>---</white>
-          <green>Участники: </green><aqua>[total]</aqua><gray>/</gray><aqua>[max]</aqua>
-          <green>Онлайн участники: </green><aqua>[online]</aqua>
+        header: |-
+          <white>--- <green>Информация о команде </green>---</white>
+          <green>Участники: <aqua>[total]</aqua><gray>/</gray><aqua>[max]</aqua></green>
+          <green>Онлайн: <aqua>[online]</aqua></green>
         rank-layout:
-          owner: '<gold>[rank]:</gold>'
-          generic: '<gold>[rank] </gold><gray>(</gray><aqua>[number]</aqua><gray>)</gray><gold>:</gold>'
+          owner: <gold>[rank]:</gold>
+          generic: <gold>[rank] <gray>(<aqua>[number]</aqua>)</gray>:</gold>
       coop:
         description: создать кооперацию игроков на острове
         parameters: <игрок>
-        cannot-coop-yourself: '<red>Вы не можете быть командой с собой!</red>'
-        already-has-rank: '<red>Игрок уже имеет этот ранг!</red>'
-        you-are-a-coop-member: '<dark_green>Вы уже скооперированы с </dark_green><aqua>[name]</aqua><green>.</green>'
-        success: '<green>Вы скооперированы с </green><aqua>[name]</aqua><green>.</green>'
-        name-has-invited-you: '<green>[name] пригласил вас присоединиться к команде на его острове.</green>'
+        cannot-coop-yourself: <red>Вы не можете быть командой с собой!</red>
+        already-has-rank: <red>Игрок уже имеет этот ранг!</red>
+        you-are-a-coop-member: <dark_green>Вы уже скооперированы с <aqua>[name]</aqua>.</dark_green>
+        success: <green>Вы скооперированы с <aqua>[name]</aqua>.</green>
+        name-has-invited-you: <green>[name] пригласил вас присоединиться к команде
+          на его острове.</green>
       uncoop:
         description: убирает кооперацию игроков на острове
         parameters: <игрок>
-        cannot-uncoop-yourself: '<red>Вы не можете расфирмовать команду из самого себя!</red>'
-        cannot-uncoop-member: '<red>Вы не можете раскооперировать участника!</red>'
-        player-not-cooped: '<red>Игрок не скооперирован!</red>'
-        you-are-no-longer-a-coop-member: '<red>Вы больше не в кооперации игроков на острове игрока [name]</red>'
-        all-members-logged-off: >-
-          <red>Все участники острова вышли из сети, так что вы больше не</red>
-          находитесь в кооперации на острове игрока [name].
-        success: '<aqua>[name] </aqua><green>is no longer a coop member of your island.</green>'
-        is-full: '<red>Вы не можете больше добавлять в кооперацию.</red>'
+        cannot-uncoop-yourself: <red>Вы не можете расфирмовать команду из самого себя!</red>
+        cannot-uncoop-member: <red>Вы не можете раскооперировать участника!</red>
+        player-not-cooped: <red>Игрок не скооперирован!</red>
+        you-are-no-longer-a-coop-member: <red>Вы больше не в кооперации игроков на
+          острове игрока [name]</red>
+        all-members-logged-off: <red>Все участники острова вышли из сети, так что
+          вы больше не находитесь в кооперации на острове игрока [name].</red>
+        success: <green><aqua>[name] </aqua>больше не является участником кооперации
+          на вашем острове.</green>
+        is-full: <red>Вы не можете больше добавлять в кооперацию.</red>
       trust:
         description: сделать игрока доверенным на острове
         parameters: <игрок>
-        trust-in-yourself: '<red>Поверьте в себя!</red>'
-        name-has-invited-you: '<green>[name] пригласил вас стать довереннным игроком на его острове.</green>'
-        player-already-trusted: '<red>Игрок уже доверенный!</red>'
-        you-are-trusted: '<dark_green>Игрок </dark_green><aqua>[name] </aqua><green>сдеал вас доверенным!</green>'
-        success: '<green>Вы сделали игрока </green><aqua>[name] </aqua><green>доверенным.</green>'
-        is-full: '<red>Вы не можете доверять еще кому-либо, лимит достигнут!</red>'
+        trust-in-yourself: <red>Поверьте в себя!</red>
+        name-has-invited-you: <green>[name] пригласил вас стать довереннным игроком
+          на его острове.</green>
+        player-already-trusted: <red>Игрок уже доверенный!</red>
+        you-are-trusted: <green><aqua>[name] </aqua>сделал вас доверенным!</green>
+        success: <green>Вы сделали <aqua>[name] </aqua>доверенным.</green>
+        is-full: <red>Лимит на доверенных игроков достиг максимума!</red>
       untrust:
         description: убрать статус доверенного игрока
         parameters: <игрок>
-        cannot-untrust-yourself: '<red>Вы не можете перестать верить в себя!</red>'
-        cannot-untrust-member: '<red>Вы не можете раздоверить участника</red>'
-        player-not-trusted: '<red>Игрок больше не доверенный!</red>'
-        you-are-no-longer-trusted: '<red>Вы больше не являетесь доверенным игроком у </red><aqua>[name] </aqua><green>!</green>'
-        success: '<aqua>[name] </aqua><green>больше не является доверенным на вашему острове.</green>'
+        cannot-untrust-yourself: <red>Вы не можете перестать верить в себя!</red>
+        cannot-untrust-member: <red>Вы не можете раздоверить участника</red>
+        player-not-trusted: <red>Игрок больше не доверенный!</red>
+        you-are-no-longer-trusted: <red>Вы больше не являетесь доверенным игроком
+          у <aqua>[name] </aqua>!</red>
+        success: <red><aqua>[name] </aqua>больше не является доверенным на вашему
+          острове.</red>
       invite:
         description: приглашает игрока посетить ваш остров
-        invitation-sent: '<green>Приглашение отправлено игроку </green><aqua>[name]</aqua><green>.</green>'
-        removing-invite: '<red>Удаление приглашения.</red>'
-        name-has-invited-you: '<green>[name] пригласил вас посетить его остров.</green>'
-        to-accept-or-reject: >-
-          <green>Введите /[label] team accept чтобы принять либо /[label] team reject</green>
-          для отказа
-        you-will-lose-your-island: >-
-          <red>ВНИМАНИЕ! Вы ПОТЕРЯЕТЕ ваш остров (вместе с инвентарем) в случае</red>
-          принятия!
+        invitation-sent: <green>Приглашение отправлено игроку <aqua>[name]</aqua>.</green>
+        removing-invite: <red>Удаление приглашения.</red>
+        name-has-invited-you: <green>[name] пригласил вас посетить его остров.</green>
+        to-accept-or-reject: <green>Введите /[label] team accept чтобы принять либо
+          /[label] team reject для отказа.</green>
+        you-will-lose-your-island: <red>ВНИМАНИЕ! Вы потеряете свой остров в случае
+          принятия!</red>
         gui:
           titles:
             team-invite-panel: Пригласить игроков
           button:
-            already-invited: '<red>Приглашен уже</red>'
-            search: '<green>Найти игрока</green>'
+            already-invited: <red>Уже приглашён</red>
+            search: <green>Найти игрока</green>
             searching: |-
               <aqua>Поиск за</aqua>
               <red>[name]</red>
-          enter-name: '<green>Введите имя:</green>'
+          enter-name: <green>Введите имя:</green>
           tips:
             LEFT:
-              name: '&б Левый Клик'
-              search: '<green>Введите имя игрока</green>'
-              back: '<green>Назад</green>'
+              name: <aqua>ЛКМ</aqua>
+              search: <green>Введите имя игрока</green>
+              back: <green>Назад</green>
               invite: |-
                 <green>, чтобы пригласить игрока</green>
                 <green>, чтобы присоединиться к вашей команде</green>
             RIGHT:
-              name: '<aqua>Правая кнопка мыши</aqua>'
-              coop: '<green>к совместной игре с игроком</green>'
+              name: <aqua>ПКМ</aqua>
+              coop: <green>к совместной игре с игроком</green>
             SHIFT_LEFT:
-              name: '<aqua>Сдвиньте Левую Кнопку Мыши</aqua>'
-              trust: '<green>доверять игроку</green>'
+              name: <aqua>Shift + ЛКМ</aqua>
+              trust: <green>доверять игроку</green>
         errors:
-          cannot-invite-self: '<red>Вы не можете пригласить самого себя!</red>'
-          cooldown: '<red>Вы не можете пригласить этого игрока в течение [number] секунд.</red>'
-          island-is-full: '<red>Ваш остров полон, вы не можете больше никого пригласить.</red>'
-          none-invited-you: '<red>Вас никто не пригласил :c.</red>'
-          you-already-are-in-team: '<red>Вы уже в команде!</red>'
-          already-on-team: '<red>Этот игрок уже в команде!</red>'
-          invalid-invite: '<red>Приглашение больше не действует, извините.</red>'
-          you-have-already-invited: '<red>Вы уже пригласили этого игрока!</red>'
+          cannot-invite-self: <red>Вы не можете пригласить самого себя!</red>
+          cooldown: <red>Вы не можете пригласить этого игрока в течение [number] секунд.</red>
+          island-is-full: <red>Ваш остров полон, вы не можете больше никого пригласить.</red>
+          none-invited-you: <red>Вас никто не пригласил.</red>
+          you-already-are-in-team: <red>Вы уже в команде!</red>
+          already-on-team: <red>Этот игрок уже в команде!</red>
+          invalid-invite: <red>Приглашение больше не действует.</red>
+          you-have-already-invited: <red>Вы уже пригласили этого игрока!</red>
         parameters: <игрок>
-        you-can-invite: '<green>Вы можете пригласить еще [number] игроков.</green>'
+        you-can-invite: <green>Вы можете пригласить ещё [number] игроков.</green>
         accept:
           description: принятие приглашения
-          you-joined-island: >-
-            <green>Вы присоединились к острову! Используйте </green><aqua>/[label] team </aqua><green>чтобы</green>
-            видеть других участников.
-          name-joined-your-island: '<green>[name] присоединился к вашему острову!</green>'
+          you-joined-island: <green>Вы присоединились к острову! Используйте <aqua>/[label]
+            team </aqua>чтобы видеть других участников.</green>
+          name-joined-your-island: <green>[name] присоединился к вашему острову!</green>
           confirmation: |-
             <red>Вы уверены, что хотите принять это приглашение?</red>
-            <red><bold>Вы <underlined>ПОТЕРЯЕТЕ </underlined></bold></red><red><bold>ваш текущий остров!</bold></red>
+            <red><bold>Вы ПОТЕРЯЕТЕ ваш текущий остров!</bold></red>
         reject:
           description: отказ от приглашения
-          you-rejected-invite: '<green>Вы отклонили приглашение посетить остров.</green>'
-          name-rejected-your-invite: '<red>[name] отклонил ваш запрос на присоединение!</red>'
+          you-rejected-invite: <green>Вы отклонили приглашение посетить остров.</green>
+          name-rejected-your-invite: <red>[name] отклонил ваш запрос на присоединение!</red>
         cancel:
-          description: отклонить ожидающие подтверждения приглашения посетить ваш остров
+          description: отклонить ожидающие подтверждения приглашения посетить ваш
+            остров
       leave:
-        cannot-leave: >-
-          <red>Владелец не может покинуть остров! Сначала станьте участников, или</red>
-          удалите всех участников.
+        cannot-leave: <red>Владелец не может покинуть остров! Сначала станьте участником,
+          или удалите всех участников.</red>
         description: покинуть свой остров
-        left-your-island: '<red>[name] </red><red>покинул ваш остров</red>'
-        success: '<green>Вы покинули этот остров.</green>'
+        left-your-island: <red>[name] покинул ваш остров</red>
+        success: <green>Вы покинули этот остров.</green>
       kick:
         description: удалить участника с острова
         parameters: <игрок>
-        player-kicked: '<red>[name] был удален с вашего острова в режиме [gamemode]!</red>'
-        cannot-kick: '<red>Вы не можете удалить самого себя!</red>'
-        cannot-kick-rank: '<red>Ваш статус не позволяет удалить игрока [name]!</red>'
-        success: '<aqua>[name] </aqua><green>был удален с вашего острова.</green>'
+        player-kicked: <red>[name] был удален с вашего острова в режиме [gamemode]!</red>
+        cannot-kick: <red>Вы не можете удалить самого себя!</red>
+        cannot-kick-rank: <red>Ваш статус не позволяет удалить игрока [name]!</red>
+        success: <green><aqua>[name] </aqua>был удален с вашего острова.</green>
       demote:
         description: понижает ранг игрока на вашем острове
         parameters: <игрок>
         errors:
-          cant-demote-yourself: '<red>Вы не можете понизить себя!</red>'
-          cant-demote: '<red>Вы не можете понижать более высокие ранги!</red>'
-          must-be-member: '<red>Игрок должен быть участником [prefix_an-island]!</red>'
-        failure: '<red>Игрока нельзя опустить еще ниже!</red>'
-        success: '<green>Игрок [name] понижен до [rank]</green>'
+          cant-demote-yourself: <red>Вы не можете понизить себя!</red>
+          cant-demote: <red>Вы не можете понижать более высокие ранги!</red>
+          must-be-member: <red>Игрок должен быть участником [prefix_an-island]!</red>
+        failure: <red>Игрока нельзя опустить ещё ниже!</red>
+        success: <green>Игрок [name] понижен до [rank]</green>
       promote:
         description: повышает ранг игрока на вашем острове
         parameters: <игрок>
         errors:
-          cant-promote-yourself: '<red>Вы не можете рекламировать себя!</red>'
-          cant-promote: '<red>Вы не можете понизить себя!</red>'
-          must-be-member: '<red>Игрок должен быть членом [prefix_an-island]!</red>'
-        failure: '<red>Игрока нельзя повысить еще выше!</red>'
-        success: '<green>Игрок [name] повышен до [rank]</green>'
+          cant-promote-yourself: <red>Вы не можете повысить себя!</red>
+          cant-promote: <red>Вы не можете повышать более высокие ранги!</red>
+          must-be-member: <red>Игрок должен быть членом [prefix_an-island]!</red>
+        failure: <red>Игрока нельзя повысить ещё выше!</red>
+        success: <green>Игрок [name] повышен до [rank]</green>
       setowner:
         description: передать право собственности на остров участнику
         errors:
-          cant-transfer-to-yourself: >-
-            <red>Вы не можете передать остров самому себе! </red><gray>(<italic>Хотя, по факту, вы</italic></gray>
-            можете... Но мы не будем этого делать. Потому что это
-            бессмысленно.<gray>)</gray>
-          target-is-not-member: '<red>Этот игрок не является частью вашей команды!</red>'
-          at-max: >-
-            <red>Этот игрок уже имеет максимальное количество островов, которое</red>
-            ему разрешено!
-        name-is-the-owner: '<green>[name] теперь является владельцем острова!</green>'
+          cant-transfer-to-yourself: <red>Вы не можете передать остров самому себе!</red>
+          target-is-not-member: <red>Этот игрок не является частью вашей команды!</red>
+          at-max: <red>Этот игрок уже имеет максимальное количество островов, которое
+            ему разрешено!</red>
+        name-is-the-owner: <green>[name] теперь является владельцем острова!</green>
         parameters: <игрок>
-        you-are-the-owner: '<green>Вы теперь владелец острова!</green>'
+        you-are-the-owner: <green>Вы теперь владелец острова!</green>
     ban:
       description: забанить игрока на острове
       parameters: <игрок>
-      cannot-ban-yourself: '<red>Вы не можете забанить самого себя!</red>'
-      cannot-ban: '<red>Этот игрок не может быть забанен.</red>'
-      cannot-ban-member: '<red>Сначала кикните участника, а потом баньте.</red>'
-      cannot-ban-more-players: '<red>Вы достигли лимита банов, вы можете более банить игроков на острове.</red>'
-      player-already-banned: '<red>Игрок уже забанен.</red>'
-      player-banned: '<aqua>[name]</aqua><red>теперь забанен на вашем острове.</red>'
-      owner-banned-you: '<aqua>[name]</aqua><red>забанил вас на своем острове!</red>'
-      you-are-banned: '<aqua>Вы забанены на этом острове!</aqua>'
+      cannot-ban-yourself: <red>Вы не можете забанить самого себя!</red>
+      cannot-ban: <red>Этот игрок не может быть забанен.</red>
+      cannot-ban-member: <red>Сначала кикните участника, а потом баньте.</red>
+      cannot-ban-more-players: <red>Вы достигли лимита банов, вы можете более банить
+        игроков на острове.</red>
+      player-already-banned: <red>Игрок уже забанен.</red>
+      player-banned: <red><aqua>[name]</aqua>теперь забанен на вашем острове.</red>
+      owner-banned-you: <red><aqua>[name]</aqua>забанил вас на своем острове!</red>
+      you-are-banned: <aqua>Вы забанены на этом острове!</aqua>
     unban:
       description: разбанить игрока на острове
       parameters: <игрок>
-      cannot-unban-yourself: '<red>Вы не можете разбанить самого себя!</red>'
-      player-not-banned: '<red>ИГрок не был забанен ранее.</red>'
-      player-unbanned: '<aqua>[name]</aqua><green>разбанен на вашем острове.</green>'
-      you-are-unbanned: '<aqua>[name]</aqua><green>разбанил вас на своем острове!</green>'
+      cannot-unban-yourself: <red>Вы не можете разбанить самого себя!</red>
+      player-not-banned: <red>Игрок не был забанен ранее.</red>
+      player-unbanned: <green><aqua>[name]</aqua>разбанен на вашем острове.</green>
+      you-are-unbanned: <green><aqua>[name]</aqua>разбанил вас на своем острове!</green>
     banlist:
       description: список забаненных игроков
-      noone: '<green>Никто не забанен на этом острове.</green>'
-      the-following: '<aqua>Следующие игроки забанены:</aqua>'
-      names: '<red>[line]</red>'
-      you-can-ban: '<aqua>Вы можете забанить еще </aqua><yellow>[number] </yellow><aqua>игроков.</aqua>'
+      noone: <green>Никто не забанен на этом острове.</green>
+      the-following: <aqua>Следующие игроки забанены:</aqua>
+      names: <red>[line]</red>
+      you-can-ban: <aqua>Вы можете забанить ещё <yellow>[number] </yellow>игроков.</aqua>
     settings:
       description: отображает настройки острова
     language:
       description: выбрать язык
       parameters: '[язык]'
-      not-available: '<red>Этот язык недоступен.</red>'
-      already-selected: '<red>Вы уже выбрали этот язык.</red>'
+      not-available: <red>Этот язык недоступен.</red>
+      already-selected: <red>Вы уже выбрали этот язык.</red>
     expel:
       description: выгоняет игрока с вашего острова
       parameters: <игрок>
-      cannot-expel-yourself: '<red>Вы не можете выгнать сами себя!</red>'
-      cannot-expel: '<red>Этот игрок не может быть выгнан.</red>'
-      cannot-expel-member: '<red>Вы не можете выгнать участника группы!</red>'
-      not-on-island: '<red>Этот игрок не на вашем острове!</red>'
-      player-expelled-you: '<aqua>[name]</aqua><red>был выгнан с вашего острова!</red>'
-      success: '<green>Вы были выгнаны </green><aqua>[name] </aqua><green>с его острова.</green>'
+      cannot-expel-yourself: <red>Вы не можете выгнать сами себя!</red>
+      cannot-expel: <red>Этот игрок не может быть выгнан.</red>
+      cannot-expel-member: <red>Вы не можете выгнать участника группы!</red>
+      not-on-island: <red>Этот игрок не на вашем острове!</red>
+      player-expelled-you: <red><aqua>[name] </aqua>выгнал вас с острова!</red>
+      success: <green>Вы выгнали <aqua>[name] </aqua>с острова.</green>
     lock:
       description: заблокировать или разблокировать ваш [prefix_island]
-      locked: '<green>Ваш [prefix_island] теперь заблокирован.</green>'
-      unlocked: '<green>Ваш [prefix_island] теперь разблокирован.</green>'
-      you-are-locked-out: '<red>Этот [prefix_island] теперь заблокирован. Вы были выгнаны.</red>'
+      locked: <green>Ваш [prefix_island] теперь заблокирован.</green>
+      unlocked: <green>Ваш [prefix_island] теперь разблокирован.</green>
+      you-are-locked-out: <red>Этот [prefix_island] теперь заблокирован. Вы были выгнаны.</red>
+
 ranks:
   owner: Владелец
-  sub-owner: Семи-владелец
+  sub-owner: Заместитель
   member: Участник
   trusted: Доверенный
   coop: Кооперация
@@ -1020,483 +1000,569 @@ ranks:
   banned: Забаненный
   admin: Администрация
   mod: Модератор
+
 protection:
   command-is-banned: Команда запрещена для посетителей
   flags:
     ALLAY:
-      name: Взаимодействие с тихонями и Copper Golem
-      description: Позволяет забирать/давать предметы тихоне и Copper Golem
-      hint: Взаимодействие с тихонями и Copper Golem запрещено
+      name: Взаимодействие с тихоней и медным големом
+      description: |-
+        <green>Позволяет забирать или давать предметы</green>
+        <green>тихоне или медному голему</green>
+      hint: Взаимодействие с тихоней и медным големом запрещено!
     ANIMAL_NATURAL_SPAWN:
-      description: переключатель пассивного спавна животных
-      name: Пассивный спавн животных
+      name: Появление животных
+      description: |-
+        <green>Переключает естественное</green>
+        <green>появление нейтральных животных</green>
     ANIMAL_SPAWNERS_SPAWN:
-      description: переключатель спавна животных из спавнеров
-      name: Спавнеры животных
+      name: Рассадник животных
+      description: |-
+        <green>Переключает появление</green>
+        <green>животных из рассадника</green>
     ANVIL:
-      description: Переключатель возможности взаимодействовать
-      name: Наковальни
-      hint: Использование наковален запрещено
+      name: Наковальня
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с наковальней</green>
+      hint: Взаимодействие с наковальней запрещено!
     ARMOR_STAND:
-      description: Переключатель возможности взаимодействовать
-      name: Стойки для брони
-      hint: Использование стоек для брони запрещено
+      name: Стойка для брони
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>со стойкой для брони</green>
+      hint: Взаимодействие со стойкой для брони запрещено!
     AXOLOTL_SCOOPING:
       name: Сбор аксолотлей
-      description: Позволяет собирать аксолотлей, используя ведро
-      hint: Сбор аксолотлей запрещен.
+      description: |-
+        <green>Переключает возможность собирать</green>
+        <green>аксолотлей, используя ведро</green>
+      hint: Возможность собирать аксолотлей в ведро запрещена!
     BEACON:
-      description: Переключатель возможности взаимодействовать
-      name: Маяки
-      hint: Использование маяков запрещено.
+      name: Маяк
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с маяком</green>
+      hint: Взаимодействие с маяком запрещено!
     BELL_RINGING:
-      description: Переключить взаимодействие
-      name: Разрешить звон колокола
-      hint: Звонок отключен
+      name: Колокол
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с колоколом</green>
+      hint: Взаимодействие с колоколом запрещено!
     BED:
-      description: Переключатель возможности взаимодействовать
-      name: Кровати
-      hint: Использование кроватей запрещено.
+      name: Кровать
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с кроватью</green>
+      hint: Взаимодействие с кроватью запрещено!
     BOAT:
-      name: Лодки
+      name: Лодка
       description: |-
-        <green>Переключатель размещения, ломания и</green>
-        <green>входа в лодку.</green>
-      hint: Взаимодействие с лодками запрещено.
+        <green>Переключает размещения, ломания</green>
+        <green>и посадку в лодку</green>
+      hint: Взаимодействие с лодкой запрещено!
     BOOKSHELF:
-      name: Книжные полки
+      name: Резная книжная полка
       description: |-
-        <green>Позволяет класть или</green>
-        <green>вытаскивать книги.</green>
-      hint: Взаимодействие с книжными полками запрещено.
+        <green>Переключает взаимодействие</green>
+        <green>с резной книжной полкой</green>
+      hint: Взаимодействие с резной книжной полкой запрещено!
     BREAK_BLOCKS:
-      description: переключатель разрушения
       name: Разрушение блоков
-      hint: Разрушение блоков запрещено
+      description: Переключает разрушение блоков
+      hint: Разрушение блоков запрещено!
     BREAK_SPAWNERS:
-      description: |-
-        <green>Переключатель разрушения спавнеров.</green>
-        <green>Перезаписывает значение флага "разрушение блоков".</green>
-      name: Разрушение спавнеров
-      hint: Разрушение спавнеров запрещено
+      name: Разрушение рассадника монстров
+      description: Переключает разрушение рассадника монстров
+      hint: Разрушение рассадника монстров запрещено!
     BREAK_HOPPERS:
-      description: |-
-        <green>Переключатель разрушения воронок.</green>
-        <green>Перезаписывает значения флага "разрушение блоков".</green>
       name: Разрушение воронок
-      hint: Разрушение воронок запрещено
+      description: Переключает разрушение воронок
+      hint: Разрушение воронок запрещено!
     BREEDING:
-      description: переключатель размножения
-      name: Размножение животных
-      hint: Животных нельзя разводить
+      name: Разведение животных
+      description: Переключает разведение животных
+      hint: Разведение животных запрещено!
     BREWING:
-      description: Переключатель возможности взаимодействовать
       name: Зельеварка
-      hint: Зельеваркой пользоваться нельзя
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с зельеваркой</green>
+      hint: Взаимодействие с зельеваркой запрещено!
     BUCKET:
-      description: Переключатель возможности взаимодействовать
       name: Ведро
-      hint: Использование вёдер запрещено
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с ведром</green>
+      hint: Взаимодействие с ведром запрещено!
     BUTTON:
-      description: переключатель нажатия
-      name: Кнопки
-      hint: Использование кнопок запрещено
+      name: Кнопка
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с кнопкой</green>
+      hint: Взаимодействие с кнопкой запрещено!
     CANDLES:
-      description: Переключить взаимодействие с [candle]
-      name: Свечи
-      hint: 'Взаимодействие с [<red>свечами] отключено</red>'
+      name: Свеча
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>со свечой</green>
+      hint: Взаимодействие со свечой запрещено!
     CAKE:
-      description: Переключатель возможности взаимодействовать с тортами
-      name: Торты
-      hint: Поедание тортов запрещено
+      name: Торт
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с тортом</green>
+      hint: Взаимодействие с тортом запрещено!
     CARTOGRAPHY:
-      name: Картографические столы
-      description: Переключить использование
-      hint: Доступ к столу картографии отключен
+      name: Стол картографа
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>со столом картографа</green>
+      hint: Взаимодействие со столом картографа запрещено!
     CONTAINER:
-      name: ВСЕ контейнеры
+      name: Все контейнеры
       description: |-
-        <green>Переключатель возможности взаимодействовать со всеми контейнерами.</green>
-        <green>Включает: бочка, улей, зельеварка,</green>
-        <green>сундук, компостница, раздатчик, выбрасыватель,</green>
-        <green>цветочный горшок, печка, воронка, рамка,</green>
-        <green>музыкальный блок, грузовая вагонетка, шалкеровый ящик,</green>
-        <green>сундук-ловушка.</green>
+        <green>Переключает взаимодействие</green>
+        <green>со всеми контейнерами.</green>
 
-        <gray>Изменение индивидуальных настроек перезаписывает</gray>
-        <gray>данный флаг.</gray>
-      hint: Доступ к контейнерам запрещен
+        <green>Включает в себя: бочка, улей, зельеварка, сундук,</green>
+        <green>компостница, печка, выбрасыватель, проигрыватель,</green>
+        <green>цветочный горшок, раздатчик, рамка, сундук-ловушка,</green>
+        <green>воронка, грузовая вагонетка, шалкеровый ящик.</green>
+
+        <gray>Изменение отдельных настроек</gray>
+        <gray>перезаписывает данный флаг</gray>
+      hint: Взаимодействие с контейнером запрещено!
     CHEST:
-      name: Сундуки и грузовые вагонетки
+      name: Сундук и грузовая вагонетка
       description: |-
-        <green>Переключатель возможности взаимодействовать с сундуками</green>
-        <green>и грузовыми вагонетками.</green>
-        <green>(не включает сундук-ловушку)</green>
-      hint: Доступ к сундукам запрещен
+        <green>Переключает взаимодействие с сундуками</green>
+        <green>и грузовыми вагонетками</green>
+      hint: Взаимодействие с сундуком или грузовой вагонеткой запрещено!
     BARREL:
       name: Бочка
-      description: Переключатель возможности взаимодействовать с бочками
-      hint: Доступ к бочкам запрещен
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с бочкой</green>
+      hint: Взаимодействие с бочкой запрещено!
     CRAFTER:
-      name: Крафт
-      description: Использование переключения
-      hint: Крафт отключен
+      name: Сборщик
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>со сборщиком</green>
+      hint: Взаимодействие со сборщиком запрещено!
     BLOCK_EXPLODE_DAMAGE:
+      name: Урон от взрыва
       description: |-
         <green>Позволяет кроватям и якорям возрождения</green>
         <green>разрушать блоки и наносить урон сущностям</green>
-      name: Урон от взрыва
     COMPOSTER:
       name: Компостница
-      description: Переключатель возможности взаимодействовать с компостницей
-      hint: Взаимодействие с компостницей запрещено
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с компостницей</green>
+      hint: Взаимодействие с компостницей запрещено!
     LOOM:
       name: Ткацкий станок
-      description: Переключить использование
-      hint: Доступ к ткацкому станку отключен
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с ткацким станком</green>
+      hint: Взаимодействие с ткацким станком запрещено!
     FLOWER_POT:
       name: Цветочный горшок
-      description: Переключатель возможности взаимодействовать с цветочными горшками
-      hint: Взаимодействие с цветочными горшками запрещено
-    GRINDSTONE:
-      name: Заточная станция
-      description: Переключить использование
-      hint: Доступ к Заточная станция отключен
-    SHULKER_BOX:
-      name: Шалкеровые ящики
-      description: Переключатель возможности взаимодействовать с шалкеровыми ящиками
-      hint: Доступ к шалкеровым ящикам запрещен
-    SHULKER_TELEPORT:
       description: |-
-        <green>Шалкеры могут телепортироваться</green>
-        <green>если активно.</green>
+        <green>Переключает взаимодействие</green>
+        <green>с цветочным горшком</green>
+      hint: Взаимодействие с цветочным горшком запрещено!
+    GRINDSTONE:
+      name: Точило
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с точилом</green>
+      hint: Взаимодействие с точилом запрещено!
+    SHULKER_BOX:
+      name: Шалкеровый ящик
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с шалкеровым ящиком</green>
+      hint: Взаимодействие с шалкеровым ящиком запрещено!
+    SHULKER_TELEPORT:
       name: Телепортация шалкеров
+      description: Переключает телепортацию шалкеров
     SMITHING:
-      name: Кузнечное дело
-      description: Переключить использование
-      hint: Доступ к кузнице отключен
+      name: Стол кузнеца
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>со столом кузнеца</green>
+      hint: Взаимодействие со столом кузнеца запрещено!
     STONECUTTING:
-      name: Резка камня
-      description: Переключить использование
-      hint: Доступ к резке камня отключен
+      name: Камнерез
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с камнерезом</green>
+      hint: Взаимодействие с камнерезом запрещено!
     TRAPPED_CHEST:
       name: Сундук-ловушка
-      description: Переключатель возможности взаимодействовать с сундуком-ловушкой
-      hint: Взаимодействие с сундуком-ловушкой запрещено
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с сундуком-ловушкой</green>
+      hint: Взаимодействие с сундуком-ловушкой запрещено!
     DISPENSER:
       name: Раздатчик
-      description: Переключатель возможности взаимодействовать с раздатчиком
-      hint: Взаимодействие с раздатчиком запрещено
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с раздатчиком</green>
+      hint: Взаимодействие с раздатчиком запрещено!
     DROPPER:
       name: Выбрасыватель
-      description: Переключатель возможности взаимодействовать с выбрасывателем
-      hint: Взаимодействие с выбрасывателем запрещено
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с выбрасывателем</green>
+      hint: Взаимодействие с выбрасывателем запрещено!
     ELYTRA:
       name: Элитры
-      description: Переключатель возможности использовать элитр
-      hint: '<red>Элитры не могут быть использованы здесь!</red>'
+      description: Переключает использование элитр
+      hint: Использование элитр запрещено!
     HOPPER:
-      name: Воронки
-      description: Переключатель возможности взаимодействовать с воронкой
-      hint: Взаимодействие с воронкой запрещено
+      name: Воронка
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с воронкой</green>
+      hint: Взаимодействие с воронкой запрещено!
     CHEST_DAMAGE:
-      description: переключательно получения сундуками урона от взрыва
-      name: Урон сундукам
+      name: Урон по сундукам
+      description: Переключает получение урона от взрыва по сундукам
     CHORUS_FRUIT:
-      description: переключатель телепортации
-      name: Плоды хоруса
-      hint: Телепортация с использованием плодов хоруса запрещена
+      name: Плод хоруса
+      description: |-
+        <green>Переключает телепортацию после</green>
+        <green>съедания плода хоруса</green>
+      hint: Телепортация после съедания плода хоруса запрещена!
     CLEAN_SUPER_FLAT:
+      name: Очищать супер плоские чанки
       description: |-
         <green>Позволяет очистить любые</green>
-        <green>супер плоские чанки в</green>
-        <green>мире</green>
-      name: Очистить супер плоские чанки
+        <green>супер плоские чанки в мирах</green>
     COARSE_DIRT_TILLING:
+      name: Обработка каменистой земли
       description: |-
-        <green>Переключательно очистки каменистой</green>
-        <green>земли и разрушения подзола</green>
-        <green>для получения земли</green>
-      name: Очищение каменистой земли
-      hint: Запрещено очищать землю
+        <green>Переключает обработку каменистой земли</green>
+        <green>и разрушения подзола ля получения земли</green>
+      hint: Обработка каменистой земли запрещена!
     COLLECT_LAVA:
-      description: |-
-        <green>Переключатель сбора лавы</green>
-        <green>(перезаписывает флаг "Ведро")</green>
       name: Сбор лавы
-      hint: Нельзя собирать лаву
+      description: |-
+        <green>Переключает сбор лавы</green>
+        <green>(перезаписывает флаг "Ведро")</green>
+      hint: Сбор лавы запрещён!
     COLLECT_WATER:
-      description: |-
-        <green>Переключатель сбора воды</green>
-        <green>(перезаписывает флаг "Ведро")</green>
       name: Сбор воды
-      hint: Сбор воды запрещен
-    COLLECT_POWDERED_SNOW:
       description: |-
-        <green>Переключатель сбора рыхлого снега</green>
+        <green>Переключает сбор воды</green>
         <green>(перезаписывает флаг "Ведро")</green>
+      hint: Сбор воды запрещён!
+    COLLECT_POWDERED_SNOW:
       name: Сбор рыхлого снега
-      hint: Сбор рыхлого снега запрещен
-    COMMAND_RANKS:
-      name: '<yellow>Командный ранг</yellow>'
-      description: '<green>Управление командным рангом</green>'
-    CRAFTING:
-      description: Переключатель возможности использовать
-      name: Верстак
-      hint: Доступ к верстаку запрещен
-    CREEPER_DAMAGE:
-      description: |
-        <green>Переключатель урон от крипера</green>
-      name: Защита от урона крипера
-    CREEPER_GRIEFING:
-      description: |
-        <green>Переключатель возможности</green>
-        <green>посетителю поджечь крипера</green>
-      name: Защита от грифа крипером
-      hint: Поджигание крипера запрещено
-    CROP_PLANTING:
-      description: '<green>Установите, кто может сажать саженцы.</green>'
-      name: Посадка саженцев
-      hint: Посадка саженцев запрещена
-    CROP_TRAMPLE:
-      description: переключатель возможности топтать саженцы
-      name: Топтание саженцев
-      hint: Топтание саженцев невозможно
-    DOOR:
-      description: Переключатель возможности использовать дверей
-      name: Использование дверей
-      hint: Использование дверей запрещено
-    DRAGON_EGG:
-      name: Яйко Дракона
       description: |-
-        <green>Предотвращает взаимодействие с Яйцом Дракона.</green>
-
-        <red>Это не защищает его от установки или разрушения</red>
-      hint: Взаимодействие с Яйцом Дракона запрещено
+        <green>Переключает сбор рыхлого снега</green>
+        <green>(перезаписывает флаг "Ведро")</green>
+      hint: Сбор рыхлого снега запрещён!
+    COMMAND_RANKS:
+      name: <yellow>Командный ранг</yellow>
+      description: <green>Управление командами</green>
+    CRAFTING:
+      name: Верстак
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с верстаком</green>
+      hint: Взаимодействие с верстаком запрещено!
+    CREEPER_DAMAGE:
+      name: Защита от взрыва крипера
+      description: Переключает взрыв от крипера
+    CREEPER_GRIEFING:
+      name: Защита от поджога крипера
+      description: Переключает поджог крипера
+      hint: Поджигание крипера запрещено!
+    CROP_PLANTING:
+      name: Посадка саженцев
+      description: Переключает посадку саженцев
+      hint: Посадка саженцев запрещена!
+    CROP_TRAMPLE:
+      name: Топтание посевов
+      description: Переключает топтание посевов
+      hint: Топтание посевов запрещено!
+    DOOR:
+      name: Дверь
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с дверью</green>
+      hint: Взаимодействие с дверью запрещено!
+    DRAGON_EGG:
+      name: Яйцо дракона
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с яйцом дракона</green>
+      hint: Взаимодействие с яйцом дракона запрещено!
     DYE:
-      description: предотвращает использование красителей
-      name: Использование красителей
-      hint: Использование красителей запрещено
+      name: Краситель
+      description: |-
+        <green>Переключает использование</green>
+        <green>красителей</green>
+      hint: Использование красителей запрещено!
     EGGS:
-      description: переключатель возможности бросания яиц
       name: Бросание яиц
-      hint: Бросание яиц запрещено
+      description: Переключает бросание яиц
+      hint: Бросание яиц запрещено!
     ENCHANTING:
-      description: Переключатель возможности использовать
-      name: Стол зачарования
-      hint: Стол зачарования недоступен
+      name: Чародейский стол
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с чародейским столом</green>
+      hint: Взаимодействие с чародейским столом запрещено!
     ENDER_CHEST:
-      description: Переключатель возможности использовать/крафта
-      name: Эндер сундук
-      hint: Эндер сундук отключен в этом мире
+      name: Эндер-сундук
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с эндер-сундуком</green>
+      hint: Взаимодействие с эндер-сундуком запрещено!
     ENDERMAN_DEATH_DROP:
+      name: Дроп эндермена при смерти
       description: |-
         <green>Эндермен будет бросать</green>
         <green>любой блок, что он держит</green>
         <green>когда будет убит.</green>
-      name: Дроп эндермена при смерти
     ENDERMAN_GRIEFING:
+      name: Гриф от эндермена
       description: |-
-        <green>Эндермены могут собирать блоки</green>
-        <green>на острове</green>
-      name: Гриф эндерменом
+        <green>Эндермены могут собирать</green>
+        <green>блоки на острове</green>
     ENDERMAN_TELEPORT:
-      description: '<green>Эндермены могут телепортироваться, если активно</green>'
-      name: Телепорт эндермена
+      name: Телепортация эндерменов
+      description: Переключает телепортацию эндерменов
     ENDER_PEARL:
-      description: Переключатель возможности использовать
-      name: Эндерперл
-      hint: Использование эндерперла запрещено
+      name: Эндер-жемчуг
+      description: |-
+        <green>Переключает использование</green>
+        <green>эндер-жемчуга</green>
+      hint: Использование эндер-жемчуга запрещено!
     ENTER_EXIT_MESSAGES:
+      name: Сообщения входа/выхода
       description: Отображает сообщение о входе/выходе с острова
       island: Остров
-      name: Сообщения входа/выхода
-      now-entering: '<green>Вы вошли на </green><aqua>[name]</aqua><green>.</green>'
-      now-entering-your-island: '<green>Вы вошли на свой остров.</green>'
-      now-leaving: '<green>Вы вышли с </green><aqua>[name]</aqua><green>.</green>'
-      now-leaving-your-island: '<green>Вы покинули свой остров.</green>'
+      now-entering: <green>Вы вошли на <aqua>[name]</aqua>.</green>
+      now-entering-your-island: <green>Вы вошли на свой остров.</green>
+      now-leaving: <green>Вы вышли с <aqua>[name]</aqua>.</green>
+      now-leaving-your-island: <green>Вы покинули свой остров.</green>
     EXPERIENCE_BOTTLE_THROWING:
-      name: Бросание бутыльков опыта
-      description: переключатель бросания бутыльков опыта
-      hint: Бросание бутыльков опыта запрещено
+      name: Пузырёк опыта
+      description: |-
+        <green>Переключает бросание</green>
+        <green>пузырька опыта</green>
+      hint: Бросание пузырька опыта запрещено!
     FIRE_BURNING:
       name: Горение
-      description: '<green>Переключение возможности огня...гореть</green>'
+      description: Переключает огню гореть
     FIRE_EXTINGUISH:
-      description: переключатель тушения огня
       name: Тушение огня
-      hint: Тушение огня запрещено
+      description: Переключает тушение огня
+      hint: Тушение огня запрещено!
     FIRE_IGNITE:
       name: Поджог
-      description: '<green>Переключатель возможности огню загореться не от игрока</green>'
+      description: Переключает случайный поджог
     FIRE_SPREAD:
       name: Распространение огня
       description: |-
-        <green>Переключатель возможности огню распространяться</green>
-        <green>на близлежащие блоки.</green>
+        <green>Переключает распространение огня</green>
+        <green>на близлежащие блоки</green>
     FISH_SCOOPING:
       name: Сбор рыбы
-      description: переключатель возможности собирать рыбу ведром
-      hint: Нельзя собирать рыбу ведром
+      description: Переключает сбор рыбы ведром
+      hint: Сбор рыбы ведром запрещён!
     FLINT_AND_STEEL:
       name: Огниво
       description: |-
-        <green>Переключатель возможности игрокам</green>
-        <green>поджигать блоки или костры, используя</green>
-        <green>огниво или огненный заряд.</green>
-      hint: Запрещено использовать огниво и/или огненный заряд
+        <green>Переключает игрокам поджигать блоки</green>
+        <green>или костры, используя огниво или</green>
+        <green>огненный заряд</green>
+      hint: Использование огнива или огненного заряда запрещено!
     FURNACE:
-      description: Переключатель возможности использовать
       name: Печь
-      hint: Использование печи запрещено
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с печкой</green>
+      hint: Взаимодействие с печкой запрещено!
     GATE:
-      description: Переключатель возможности использовать
-      name: Ворота
-      hint: Использование ворот запрещено
+      name: Калитка
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с калиткой</green>
+      hint: Взаимодействие с калиткой запрещено!
     GEO_LIMIT_MOBS:
+      name: <yellow>Лимит мобов на острове</yellow>
       description: |-
         <green>Удалять мобов, которые</green>
         <green>вышли за пределы острова</green>
-      name: '<yellow>Лимит мобов на острове</yellow>'
     HARVEST:
-      description: |-
-        <green>Установите, кто может собирать урожай.</green>
-        <green>Не забудьте активировать подбор предметов!</green>
       name: Сбор урожая
-      hint: Сбор урожая запрещен
+      description: Переключает сбор урожая
+      hint: Сбор урожая запрещён!
     HIVE:
-      description: переключатель сбора урожая с ульев
       name: Сбор урожая с ульев
-      hint: Сбор урожая с ульев запрещен
+      description: Переключает сбор урожая с ульев
+      hint: Сбор урожая с ульев запрещён!
     HURT_TAMED_ANIMALS:
-      description: >-
-        Переключить вред. Включено означает, что прирученные животные могут
-        получать урон. Выключено означает, что они неуязвимы.
-      name: Наносит урон прирученным животным
-      hint: Прирученное животное нанесение урона отключено
+      name: Урон по прирученным животным
+      description: |-
+        <green>Переключает нанесение урона</green>
+        <green>по прирученным животным</green>
+      hint: Урон по прирученным животным запрещён!
     HURT_ANIMALS:
-      description: переключатель урона
       name: Урон по животным
-      hint: Урон по животным нанести нельзя
+      description: |-
+        <green>Переключает нанесение</green>
+        <green>урона по животным</green>
+      hint: Урон по животным запрещён!
     HURT_MONSTERS:
-      description: переключатель урона
       name: Урон по монстрам
-      hint: Урон по монстрам нанести нельзя
+      description: |-
+        <green>Переключает нанесение</green>
+        <green>урона по монстрам</green>
+      hint: Урон по монстрам запрещён!
     HURT_VILLAGERS:
-      description: переключатель урона
       name: Урон по крестьянинам
-      hint: Урон по крестьянинам нанести нельзя
+      description: |-
+        <green>Переключает нанесение</green>
+        <green>урона по крестьянинам</green>
+      hint: Урон по крестьянинам запрещён!
     ITEM_FRAME:
       name: Рамка
       description: |-
-        <green>Переключатель возможности взаимодействовать.</green>
-        <green>Перезаписывает флаг ломания или установки блоков</green>
-      hint: Использование рамок запрещено
+        <green>Переключает взаимодействие</green>
+        <green>с рамкой</green>
+      hint: Взаимодействие с рамкой запрещено!
     ITEM_FRAME_DAMAGE:
-      description: '<green>Мобы могут ломать рамки</green>'
       name: Урон по рамкам
+      description: |-
+        <green>Переключает урон</green>
+        <green>по рамкам от мобов</green>
     INVINCIBLE_VISITORS:
-      description: '<green>Конфигурация неуязвимости посетителей</green>'
-      name: '<yellow>Неуязвимые посетители</yellow>'
-      hint: '<red>Посетители защищены</red>'
+      name: <yellow>Неуязвимые посетители</yellow>
+      description: |-
+        <green>Конфигурация неуязвимости</green>
+        <green>посетителей</green>
+      hint: Посетитель защищён!
     ISLAND_RESPAWN:
-      description: '<green>Игроки респавнятся на острове</green>'
       name: Респавн на острове
+      description: Игроки респавнятся на острове
     ITEM_DROP:
-      description: переключатель выбрасывания
       name: Выбрасывание предметов
-      hint: Выбрасывание предметов запрещено
+      description: Переключает выбрасывание предметов
+      hint: Выбрасывание предметов запрещено!
     ITEM_PICKUP:
-      description: переключатель подбирания
       name: Подбирание предметов
-      hint: Подбирание предметов запрещено
+      description: Переключает подбирание предметов
+      hint: Подбирание предметов запрещено!
     JUKEBOX:
-      description: Переключатель возможности использовать
-      name: Использование проигрывателя
-      hint: Использование проигрывателя запрещено
+      name: Проигрыватель
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с проигрывателем</green>
+      hint: Взаимодействие с проигрывателем запрещено!
     LEAF_DECAY:
       name: Гниение листьев
-      description: Позволяет листьям естественным образом гнить
+      description: |-
+        <green>Переключает листьям гнить</green>
+        <green>естественным образом</green>
     LEASH:
-      description: Переключатель возможности использовать
-      name: Использование поводка
-      hint: Использование поводка отключено
+      name: Поводок
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с поводком</green>
+      hint: Взаимодействие с поводком запрещено!
     LECTERN:
-      name: Кафедры
+      name: Кафедра
       description: |-
-        <green>Позволяет положить/извлечь книгу из кафедры</green>
-
-        <red>Не предотвращает возможность прочесть книгу</red>
-      hint: Невозможно положить/извлечь книгу из кафедры
+        <green>Переключает взаимодействие</green>
+        <green>с кафедрой</green>
+      hint: Взаимодействие с кафедрой запрещено!
     LEVER:
-      description: Переключатель возможности использовать
-      name: Использование рычага
-      hint: Использование рычага запрещено
-    LIMIT_MOBS:
+      name: Рычаг
       description: |-
-        <green>Ограничение на количество</green>
-        <green>мобов, спавящихся в этом игровом режиме</green>
-      name: '<yellow>Лимит на количество мобов</yellow>'
-      can: '<green>Могут спавниться</green>'
-      cannot: '<red>Не могут спавниться</red>'
+        <green>Переключает взаимодействие</green>
+        <green>с рычагом</green>
+      hint: Взаимодействие с рычагом запрещено!
+    LIMIT_MOBS:
+      name: <yellow>Лимит на количество мобов</yellow>
+      description: |-
+        <green>Ограничение на количество мобов,</green>
+        <green>спавящихся в этом игровом режиме</green>
+      can: <green>Могут спавниться</green>
+      cannot: <red>Не могут спавниться</red>
     LIQUIDS_FLOWING_OUT:
       name: Жидкости вытекают за край острова
       description: |-
-        <green>Переключатель возможности жидкостям</green>
+        <green>Переключает возможность жидкостям</green>
         <green>вытекать за пределы острова.</green>
-        <green>Отключение этого позволяет избежать</green>
-        <green>создание булыжника между двумя островами</green>
 
-        <red>Учтите, что жидкости все еще будут течь вертикально.</red>
+        <green>Отключение этого позволяет избежать</green>
+        <green>создание булыжника между двумя островами.</green>
+
+        <red>Учтите, что жидкости всё ещё будут течь вертикально.</red>
         <red>Они также не будут распространяться горизонтально</red>
-        <red>если расположены за границей острова.</red>
+        <red>если расположены за границей острова</red>
     LOCK:
-      description: переключатель блокировки
-      name: Блокировка острова
+      name: Блокировка
+      description: Переключает блокировку острова
     CHANGE_SETTINGS:
       name: Изменение настроек
       description: |-
-        <green>Позволяет переключаться между</green>
-        <green>участниками или ролями, кто может менять настройки.</green>
+        <green>Переключает изменение</green>
+        <green>настроек участникам</green>
     MILKING:
-      description: Переключатель дойки
       name: Дойка
-      hint: Дойка коров запрещена
+      description: Переключает доение
+      hint: Доение запрещено!
     MINECART:
-      name: Вагонетки
+      name: Вагонетка
       description: |-
-        <green>Переключатель установки, ломания</green>
-        <green>и входа в вагонетку.</green>
-      hint: Взаимодействие с вагонетками запрещено
+        <green>Переключает установку, ломание</green>
+        <green>и посадку в вагонетку</green>
+      hint: Взаимодействие с вагонетками запрещено!
     MONSTER_NATURAL_SPAWN:
-      description: переключатель пассивного спавна монстров
-      name: Пассивный спавн монстров
-    MONSTER_SPAWNERS_SPAWN:
-      description: переключатель спавна монстров через спавнера
-      name: Спавнера монстров
-    MOUNT_INVENTORY:
+      name: Появление монстров
       description: |-
-        <green>Переключатель доступа</green>
-        <green>к инвентарю животного</green>
-      name: Инвентарь животного
-      hint: Инвентарь животного недоступен
+        <green>Переключает естественное</green>
+        <green>появление монстров</green>
+    MONSTER_SPAWNERS_SPAWN:
+      name: Рассадник монстров
+      description: |-
+        <green>Переключает появление</green>
+        <green>монстров из рассадника</green>
+    MOUNT_INVENTORY:
+      name: Инвентарь верхового животного
+      description: |-
+        <green>Переключает доступ к инвентарю</green>
+        <green>верхового животного</green>
+      hint: Инвентарь верхового животного недоступен!
     NAME_TAG:
       name: Бирка
-      description: Переключатель возможности использовать
-      hint: Использование бирки запрещено
+      description: Переключает использование бирки
+      hint: Использование бирки запрещено!
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Пассивный спавн за пределами острова
       description: |-
-        <green>Переключатель возможности сущностям</green>
-        <green>(монстры и мобы) пассивно спавниться</green>
-        <green>за пределами острова.</green>
+        <green>Переключает возможность сущностям</green>
+        <green>пассивно появляться за пределами острова.</green>
 
         <red>Учтите, что это не влияет на спавн через</red>
-        <red>спавнера или яйца призыва.</red>
+        <red>рассадник или яйца призыва</red>
     NOTE_BLOCK:
-      description: Переключатель возможности использовать
       name: Нотный блок
-      hint: Взаимодействие с нотным блоком запрещено
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с нотным блоком</green>
+      hint: Взаимодействие с нотным блоком запрещено!
     OBSIDIAN_SCOOPING:
       name: Сбор обсидиана
       description: |-
@@ -1505,210 +1571,220 @@ protection:
 
         <green>Учтите: обсидиан нельзя собрать</green>
         <green>если рядом находится другой обсидиан</green>
-        <green>в радиусе 2 блоков.</green>
-      scooping: '<green>Обсидиан превращен в лаву. Будьте осторожны в следующий раз!</green>'
-      cooldown: '<red>Вы должны подождать, прежде чем зачерпнуть ещё один блок обсидиана.</red>'
-      obsidian-nearby: >-
-        <red>В радиусе 2 блоков есть еще обсидиан, вы не можете собрать этот блок</red>
-        в лаву ([radius])
+        <green>в радиусе 2 блоков</green>
+      scooping: <green>Обсидиан был превращён в лаву.</green>
+      cooldown: <red>Подождите несколько секунд, чтобы зачерпнуть снова.</red>
+      obsidian-nearby: <red>В радиусе [radius] блоков есть ещё обсидиан.</red>
     OFFLINE_GROWTH:
+      name: Офлайн-рост
       description: |-
         <green>Когда отключено, растения</green>
-        <green>не будут пассивно расти</green>
-        <green>когда все участники не в сети.</green>
-        <green>Может снизить лаги.</green>
-      name: Оффлайн рост
+        <green>не будут пассивно расти,</green>
+        <green>если все участники не в сети.</green>
+        <green>Может снизить лаги</green>
     OFFLINE_REDSTONE:
+      name: Офлайн-редстоун
       description: |-
-        <green>Когда отключено, редстоун</green>
-        <green>механизмы не будут работать</green>
-        <green>когда все участники не в сети.</green>
-        <green>Может снизить лаги.</green>
-        <green>Не влияет на остров спавна.</green>
-      name: Оффлайн редстоун
+        <green>Когда отключено, редстоун-механизмы</green>
+        <green>не работают, если все участники не в сети.</green>
+        <green>Может снизить лаги</green>
     PETS_STAY_AT_HOME:
+      name: Питомцы остаются дома
       description: |-
         <green>Когда активно, прирученные питомцы</green>
         <green>могут перемещаться только по вашему</green>
-        <green>острову и не могут его покинуть.</green>
-      name: Питомцы остаются дома
+        <green>острову и не могут его покинуть</green>
     PISTON_PUSH:
+      name: Защита от толкания поршнями
       description: |-
         <green>Включите это для предотвращения</green>
-        <green>толкания блоков за пределы острова.</green>
-      name: Защита от толкания поршнями
+        <green>толкания блоков за пределы острова</green>
     PLACE_BLOCKS:
-      description: Переключатель возможности взаимодействовать
       name: Установка блоков
-      hint: Установка блоков запрещена
+      description: Переключает установку блоков
+      hint: Установка блоков запрещена!
     PODZOL:
-      name: Производство древесного подзола
+      name: Производство подзола
       description: |-
-        <green>Если отключено, предотвратит</green>
-        <green>производство древесного подзола</green>
-        <green>при росте больших деревьев</green>
+        <green>Если отключено, предотвратит производство</green>
+        <green>подзола при росте больших деревьев</green>
     POTION_THROWING:
       name: Бросание зелий
-      description: |-
-        <green>Переключатель бросания зелий.</green>
-        <green>Включает взрывные и туманные зелья.</green>
-      hint: Бросание зелий запрещено
+      description: Переключает бросание зелий
+      hint: Бросание зелий запрещено!
     NETHER_PORTAL:
-      description: Переключатель возможности использовать
       name: Портал в Незер
-      hint: Использование портала запрещено
+      description: Переключает телепортацию в Незер
+      hint: Телепортация в Незер запрещена!
     END_PORTAL:
-      description: Переключатель возможности использовать
-      name: Портал в Край
-      hint: Использование портала в Край запрещено
+      name: Портал в Энд
+      description: Переключает телепортацию в Энд
+      hint: Телепортация в Энд запрещена!
     PAUSE_MOB_GROWTH:
       name: Приостановка роста мобов
       description: |-
-        <green>Переключение использования золотого</green>
+        <green>Переключает использование золотого</green>
         <green>одуванчика для приостановки или</green>
         <green>возобновления роста детёнышей мобов</green>
-      hint: Приостановка роста мобов отключена
+      hint: Приостановка роста мобов запрещена!
     PRESSURE_PLATE:
-      description: Переключатель возможности использовать
-      name: Нажимные плиты
-      hint: Взаимодействие с нажимными плитами запрещено
+      name: Нажимная плита
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с нажимной плитой</green>
+      hint: Взаимодействие с нажимными плитами запрещено!
     PVP_END:
+      name: Урон по игрокам в Энде
       description: |-
-        <red>Вкл/Выкл PVP</red>
-        <red>в Краю.</red>
-      name: PVP в Краю
-      hint: PVP в Краю отключено
-      enabled: '<red>PVP в Краю было активировано.</red>'
-      disabled: '<green>PVP в Краю было отключено.</green>'
+        <red>Переключает урон по</red>
+        <red>игрокам в Энде</red>
+      hint: Урон по игрокам в Энде отключен!
+      enabled: <red>Урон по игрокам в Энде был активирован.</red>
+      disabled: <green>Урон по игрокам в Энде был деактивирован.</green>
     PVP_NETHER:
+      name: Урон по игрокам в Незере
       description: |-
-        <red>Вкл/Выкл PVP</red>
-        <red>в Незере.</red>
-      name: Незер PVP
-      hint: PVP отключено в Незере
-      enabled: '<red>PVP в Незере было активировано.</red>'
-      disabled: '<green>PVP в Незере было отключено.</green>'
+        <red>Переключает урон по</red>
+        <red>игрокам в Незере</red>
+      hint: Урон по игрокам в Незере отключен!
+      enabled: <red>Урон по игрокам в Незере был активирован.</red>
+      disabled: <green>Урон по игрокам в Незере был деактивирован.</green>
     PVP_OVERWORLD:
+      name: Урон по игрокам в Верхнем мире
       description: |-
-        <red>Вкл/Выкл PVP</red>
-        <red>на острове.</red>
-      name: PVP в верхнем мире
-      hint: '<red>PVP отключено в верхнем мире</red>'
-      enabled: '<red>PVP в верхнем мире было активировано.</red>'
-      disabled: '<green>PVP в верхнем мире было отключено.</green>'
+        <red>Переключает урон по</red>
+        <red>игрокам в Верхнем мире</red>
+      hint: Урон по игрокам в Верхнем мире отключен!
+      enabled: <red>Урон по игрокам в Верхнем мире был активирован.</red>
+      disabled: <green>Урон по игрокам в Верхнем мире был деактивирован.</green>
     REDSTONE:
-      description: Переключатель возможности использовать
-      name: Редстоун механизмы
-      hint: Взаимодействие с редстоун механизмами запрещено
-    REMOVE_END_EXIT_ISLAND:
+      name: Редстоуновые механизмы
       description: |-
-        <green>Prevents the end exit</green>
-        <green>island from generating</green>
-        <green>at coordinates 0,0</green>
-      name: Remove end exit island
+        <green>Переключает взаимодействие</green>
+        <green>с редстоуновыми механизмами</green>
+      hint: Взаимодействие с редстоуновыми механизмами запрещено!
+    REMOVE_END_EXIT_ISLAND:
+      name: Удалить выходной остров в Энде
+      description: |-
+        <green>Предотвращает генерацию</green>
+        <green>выходного острова в Энде</green>
     REMOVE_MOBS:
+      name: Удаление монстров
       description: |-
         <green>Удаляет монстров, когда вы</green>
         <green>телепортируетесь на остров</green>
-      name: Удаление монстров
     RIDING:
-      description: переключатель езды
       name: Езда на животных
-      hint: Езда на животных запрещена
+      description: Переключает езду на животных
+      hint: Езда на животных запрещена!
     SHEARING:
-      description: переключатель стрижки
       name: Стрижка
-      hint: Стрижка запрещена
+      description: Переключает стрижку
+      hint: Стрижка запрещена!
     SPAWN_EGGS:
-      description: Переключатель возможности использовать
       name: Яйца призыва
-      hint: Использование яиц призыва запрещено
+      description: |-
+        <green>Переключает использование</green>
+        <green>яиц призыва</green>
+      hint: Использование яиц призыва запрещено!
     SPAWNER_SPAWN_EGGS:
+      name: Яйца призыва в рассаднике
       description: |-
-        <green>Позволяет изменять тип сущности в спавнере,</green>
-        <green>используя яйцо призыва.</green>
-      name: Яйца призыва в спавнере
-      hint: Изменение сущности в спавнере недоступно
+        <green>Позволяет изменять тип сущности в рассаднике,</green>
+        <green>используя яйцо призыва</green>
+      hint: Изменение сущности в рассаднике запрещено!
     SCULK_SENSOR:
+      name: Скалк-сенсор
       description: |-
-        <green>Переключатель активации</green>
-        <green>сенсора.</green>
-      name: Скалк сенсор
-      hint: Активация скалк сенсора запрещена
+        <green>Переключает активацию</green>
+        <green>скалк-сенсора</green>
+      hint: Активация скалк-сенсора запрещена!
     SCULK_SHRIEKER:
-      description: '<green>Переключатель активации скалк-крикуна</green>'
-      name: Скалк-крикун
-      hint: Активация скалк-крикуна запрещена
+      name: Скалковый крикун
+      description: |-
+        <green>Переключает активацию</green>
+        <green>скалкового крикуна</green>
+      hint: Активация скалкового крикуна запрещена!
     SIGN_EDITING:
-      description: '<green>Позволяет редактировать текст на табличках</green>'
       name: Редактирование табличек
-      hint: Редактирование табличек запрещено
+      description: |-
+        <green>Переключает редактирование</green>
+        <green>текста на табличках</green>
+      hint: Редактирование табличек запрещено!
     TNT_DAMAGE:
+      name: Урон от динамита
       description: |-
-        <green>Позволяет TNT и вагонеткам с динамитом</green>
-        <green>взрывать блоки и наносить урон</green>
-        <green>сущностям.</green>
-      name: TNT урон
+        <green>Позволяет динамиту и вагонеткам с динамитом</green>
+        <green>взрывать блоки и наносить урон сущностям</green>
     TNT_PRIMING:
-      description: |-
-        <green>Предотвращает поджог TNT.</green>
-        <green>Это не перезаписывает</green>
-        <green>защиту от поджога.</green>
-      name: TNT поджог
-      hint: TNT поджог запрещен
+      name: Поджог динамита
+      description: Предотвращает поджог динамита
+      hint: Поджог динамита запрещён!
     TRADING:
-      description: переключатель торговли
-      name: Торговля с жителями
-      hint: Торговля с жителями запрещена
+      name: Торговля с крестьянинами
+      description: |-
+        <green>Переключает торговлю</green>
+        <green>с крестьянинами</green>
+      hint: Торговля с крестьянинами запрещена!
     TRAPDOOR:
-      description: переключатель доступа
-      name: Люки
-      hint: Использование люков запрещено
+      name: Люк
+      description: |-
+        <green>Переключает взаимодействие</green>
+        <green>с люком</green>
+      hint: Взаимодействие с люком запрещено!
     TREES_GROWING_OUTSIDE_RANGE:
       name: Рост деревьев за пределы острова
       description: |-
-        <green>Переключатель возможности деревьям</green>
+        <green>Переключает возможность деревьям</green>
         <green>расти за пределы острова.</green>
+
         <green>Активация позволит спавниться за островам листьям</green>
         <green>и древесине, а отключение также предотвратит посадку саженцев,</green>
         <green>но деревья будут выглядеть обрезанными</green>
     TURTLE_EGGS:
-      description: переключатель разрушения
-      name: Черепашьи яйца
-      hint: Разрушение черепашьих яиц запрещено
+      name: Черепашье яйцо
+      description: |-
+        <green>Переключает разрушение</green>
+        <green>черепашьих яиц</green>
+      hint: Разрушение черепашьих яиц запрещено!
     FROST_WALKER:
-      description: переключатель зачарования Ледоход
       name: Ледоход
-      hint: Ледоход не будет работать здесь
+      description: |-
+        <green>Переключает использование</green>
+        <green>зачарования ледоход</green>
+      hint: Использование зачарования ледоход здесь запрещено!
     EXPERIENCE_PICKUP:
       name: Подбор опыта
-      description: переключатель возможности подбирать опыт
-      hint: Подбор опыта запрещен
+      description: |-
+        <green>Переключает возможность</green>
+        <green>подбирать опыт</green>
+      hint: Подбор опыта запрещён!
     PREVENT_TELEPORT_WHEN_FALLING:
       name: Предотвращать телепортацию во время падения
       description: |-
         <green>Предотвращает использование команды телепортации</green>
         <green>назад на остров во время падения</green>
-      hint: '<red>Вы не можете использовать это во время падения.</red>'
+      hint: Вы не можете использовать это во время падения!
     VISITOR_KEEP_INVENTORY:
       name: Посетители сохраняют инвентарь после смерти
       description: |-
         <green>Предотвращает потерю посетителями инвентаря</green>
-        <green>и опыта, если они умрут на чужом острове</green>
-        <green></green>
-        <green>Участники острова все еще будут терять вещи,</green>
-        <green>если будут умирать на своем острове!</green>
+        <green>и опыта, если они умрут на чужом острове.</green>
+
+        <green>Участники острова всё ещё будут терять вещи,</green>
+        <green>если будут умирать на своём острове</green>
     SPAWN_PROTECTION:
-      name: Spawn island void protection
+      name: Защита от пустоты
       description: |-
-        <green>When enabled, players who fall</green>
-        <green>into the void at the spawn island</green>
-        <green>will be teleported back to the</green>
-        <green>spawn point instead of dying.</green>
+        <green>Если включено, игроки, упавшие в пустоту,</green>
+        <green>будут телепортированы обратно на точку</green>
+        <green>спавна вместо смерти</green>
     RAID_TRIGGER:
-      name: Запуск рейда
-      description: Устанавливает минимальный ранг острова для запуска рейда
-      hint: Запуск рейда не разрешён
+      name: Рейд
+      description: |-
+        <green>Устанавливает минимальный</green>
+        <green>ранг для запуска рейда</green>
+      hint: Запуск рейда запрещён!
     ENTITY_PORTAL_TELEPORT:
       name: Использование портала сущностями
       description: |-
@@ -1717,78 +1793,86 @@ protection:
     WIND_CHARGE:
       name: Заряд ветра
       description: |-
-        <green>Переключает использование зарядов ветра.</green>
-        <green>Если отключено, посетители не могут</green>
-        <green>использовать заряды ветра на этом острове.</green>
-      hint: Использование зарядов ветра отключено
+        <green>Переключает использование</green>
+        <green>зарядов ветра</green>
+      hint: Использование зарядов ветра запрещено!
     WITHER_DAMAGE:
       name: Урон от Визера
       description: |-
-        <green>Активация позволит Визеру</green>
-        <green>разрушать блоки и наносить урон сущностям</green>
+        <green>Активация позволит Визеру разрушать</green>
+        <green>блоки и наносить урон сущностям</green>
     WORLD_BLOCK_EXPLODE_DAMAGE:
+      name: Разрушение блоков взрывом кровати
       description: |-
         <green>Позволяет кроватям и якорю возрождения</green>
         <green>разрушать блоки и наносить урон сущностям</green>
-        <green>за пределами острова.</green>
-      name: Разрушение блоков взрывом кровати
+        <green>за пределами острова</green>
     WORLD_TNT_DAMAGE:
+      name: Разрушение блоков через динамит
       description: |-
-        <green>Позволяет TNT и вагонетке с динамитом</green>
+        <green>Позволяет динамиту и вагонетке с динамитом</green>
         <green>разрушать блоки и наносить урон сущностям</green>
-        <green>за пределами острова.</green>
-      name: Разрушение блоков через TNT
-  locked: '<red>Этот остров заблокирован!</red>'
-  locked-island-bypass: '<gold>Этот [prefix_island] заблокирован, но у вас есть разрешение на вход.</gold>'
-  protected: '<red>Остров защищен: [description].</red>'
-  world-protected: '<red>Мир защищен: [description].</red>'
-  spawn-protected: '<red>Спавн защищен: [description].</red>'
+        <green>за пределами острова</green>
+  locked: <red>Этот остров заблокирован!</red>
+  locked-island-bypass: <gold>Этот [prefix_island] заблокирован, но у вас есть разрешение
+    на вход.</gold>
+  protected: '<red>Остров защищён: [description].</red>'
+  world-protected: '<red>Мир защищён: [description].</red>'
+  spawn-protected: '<red>Спавн защищён: [description].</red>'
+  
   panel:
-    next: '<white>Следующая страница</white>'
-    previous: '<white>Предыдущая страница</white>'
+    next: <white>Следующая страница</white>
+    previous: <white>Предыдущая страница</white>
     mode:
       advanced:
-        name: '<gold>Расширенные настройки</gold>'
-        description: '<green>Отображает больше настроек.</green>'
+        name: <gold>Расширенные настройки</gold>
+        description: <green>Отображает больше настроек.</green>
       basic:
-        name: '<green>Базовые настройки</green>'
-        description: '<green>Показывает самые нужные настройки.</green>'
+        name: <green>Базовые настройки</green>
+        description: <green>Показывает самые нужные настройки.</green>
       expert:
-        name: '<red>Экспертные настройки</red>'
-        description: '<green>Показывает все доступные настройки.</green>'
-      click-to-switch: '<yellow>Нажмите, </yellow><gray>для переключения </gray>[next]<gray>.</gray>'
+        name: <red>Экспертные настройки</red>
+        description: <green>Показывает все доступные настройки.</green>
+      click-to-switch: <gray><yellow>Нажмите</yellow>, чтобы переключить [next].</gray>
     reset-to-default:
-      name: '<red>Сбросить значение</red>'
-      description: |
-        <green>Сбрасывает </green><red><bold>ВСЕ </bold></red><green>настройки к их</green>
+      name: <red>Сбросить значение</red>
+      description: |-
+        <green>Сбрасывает <red><bold>ВСЕ </bold></red>настройки к их</green>
         <green>значениям по умолчанию.</green>
       confirm: подтвердить
-      instructions: '<green>Вы уверены? Введите </green><red>"подтвердить" </red><green>, чтобы сбросить все.</green>'
+      instructions: <green>Введите <red>"подтвердить"</red>, чтобы сбросить все.</green>
     PROTECTION:
-      title: '<gold>Настройки защиты</gold>'
-      description: '<green>Настройки защиты для этого острова</green>'
+      title: <gold>Основные настройки</gold>
+      description: <green>Настройки защиты для этого острова.</green>
     SETTING:
-      title: '<gold>Настройки</gold>'
-      description: |-
-        <green>Основные настройки</green>
-        <green>для этого острова</green>
+      title: <gold>Дополнительные настройки</gold>
+      description: <green>Настройки защиты для этого острова.</green>
     WORLD_SETTING:
-      title: '<aqua>[world_name] </aqua><gold>настройки</gold>'
-      description: '<green>Настройки для этого игрового мира</green>'
+      title: <gold><aqua>[world_name] </aqua>настройки</gold>
+      description: <green>Настройки для этого игрового мира.</green>
     WORLD_DEFAULTS:
-      title: '<aqua>[world_name] </aqua><gold>защита мира</gold>'
+      title: <gold><aqua>[world_name] </aqua>защита мира</gold>
       description: |
         <green>Настройки защиты для случаев,</green>
         <green>когда игроки вне их острова</green>
+    ISLAND_DEFAULTS:
+      title: <aqua>[world_name] </aqua><gold>по умолчанию</gold>
+      description: |
+        <green>Настройки защиты по умолчанию</green>
+        <green>для новых [prefix_island]ов</green>
     flag-item:
-      name-layout: '<green>[name]</green>'
+      name-layout: <green>[name]</green>
+      # Добавляйте команды в этот список по мере необходимости.
       command-instructions:
+        lock: |-
+          <green>Выберите ранг, который может</green>
+          <green>блокировать остров</green>
         setname: |-
           <green>Выберите ранг, который может</green>
           <green>установить имя</green>
         ban: |-
           <green>Выберите ранг, который может</green>
-          банить игроков
+          <green>банить игроков</green>
         unban: |-
           <green>Выберите ранг, который может</green>
           <green>разбанить игроков</green>
@@ -1812,7 +1896,7 @@ protection:
           <green>разъединить</green>
         team-untrust: |-
           <green>Выберите ранг, который может</green>
-          <green>антрестить</green>
+          <green>убрать доверие</green>
         team-promote: |-
           <green>Выберите ранг, который может</green>
           <green>повысить ранг игрока</green>
@@ -1834,97 +1918,98 @@ protection:
         border: |-
           <green>Выберите ранг, который может</green>
           <green>использовать команду границы</green>
-      description-layout: |
-        <green>[description]</green>
+      description-layout: |-
+        <green>[description].
 
-        <yellow>Левый клик </yellow><gray>для движения вниз.</gray>
-        <yellow>Правый клик </yellow><gray>для движения вверх.</gray>
+        <yellow>ЛКМ </yellow><gray>для движения вниз.</gray>
+        <yellow>ПКМ </yellow><gray>для движения вверх.</gray>
 
         <gray>Разрешено для:</gray>
-      allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
-      blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
-      minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: |
-        <green>[description]</green>
+      allowed-rank: <dark_aqua>- </dark_aqua><green>[rank]</green>
+      blocked-rank: <dark_aqua>- </dark_aqua><red>[rank]</red>
+      minimal-rank: <dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>
+      menu-layout: |-
+        <green>[description].
 
-        <yellow>Нажмите </yellow><gray>для открытия.</gray>
-      setting-cooldown: '<red>Настройка на перезарядке</red>'
-      setting-layout: |
-        <green>[description]</green>
+        <gray><yellow>Нажмите</yellow>, чтобы открыть.</gray>
+      setting-cooldown: <red>Настройка на перезарядке</red>
+      setting-layout: |-
+        <green>[description].
 
-        <yellow>Нажмите </yellow><gray>для переключения.</gray>
+        <gray><yellow>Нажмите</yellow>, чтобы переключить.</gray>
 
         <gray>Текущая настройка: [setting]</gray>
-      setting-active: '<green>Активно</green>'
-      setting-disabled: '<red>Отключено</red>'
+      setting-active: <green>Включено</green>
+      setting-disabled: <red>Отключено</red>
+
 management:
   panel:
     title: Управление BentoBox
     views:
       gamemodes:
-        name: '<gold>Игровые режимы</gold>'
-        description: '<yellow>Нажмите </yellow><green>для отображения загруженных игровых режимов</green>'
+        name: <gold>Игровые режимы</gold>
+        description: <green><yellow>Нажмите </yellow>для отображения загруженных игровых
+          режимов</green>
         blueprints:
-          name: '<gold>Чертежи</gold>'
-          description: '<green>Открывает админское меню управления чертежами.</green>'
+          name: <gold>Чертежи</gold>
+          description: <green>Открывает админское меню управления чертежами.</green>
         gamemode:
-          name: '<white>[name]</white>'
-          description: |
-            <green>Острова: </green><aqua>[islands]</aqua>
+          name: <white>[name]</white>
+          description: '<green>Острова: <aqua>[islands]</aqua></green>'
       addons:
-        name: '<gold>Дополнения</gold>'
-        description: '<yellow>Нажмите </yellow><green>для отображения загруженных дополнений</green>'
+        name: <gold>Дополнения</gold>
+        description: <green><yellow>Нажмите </yellow>для отображения загруженных дополнений</green>
       hooks:
-        name: '<gold>Хуки</gold>'
-        description: '<yellow>Нажмите </yellow><green>для отображения загруженных хуков</green>'
+        name: <gold>Хуки</gold>
+        description: <green><yellow>Нажмите </yellow>для отображения загруженных хуков</green>
     actions:
       reload:
-        name: '<red>Перезагрузка</red>'
-        description: '<yellow>Нажмите </yellow><red><bold>дважды </bold></red><green>для перезагрузки BentoBox</green>'
+        name: <red>Перезагрузка</red>
+        description: <green><yellow>Нажмите </yellow><red><bold>дважды </bold></red>для
+          перезагрузки BentoBox</green>
     buttons:
       catalog:
-        name: '<gold>Каталог дополнений</gold>'
-        description: '<green>Открывает каталог дополнений</green>'
+        name: <gold>Каталог дополнений</gold>
+        description: <green>Открывает каталог дополнений</green>
       credits:
-        name: '<gold>Титры</gold>'
-        description: '<green>Открывает титры BentoBox</green>'
+        name: <gold>Титры</gold>
+        description: <green>Открывает титры BentoBox</green>
       empty-here:
-        name: '<aqua>Кажется, здесь ничего нет...</aqua>'
-        description: '<green>Что, если вы посмотрите наш каталог?</green>'
+        name: <aqua>Кажется, здесь ничего нет...</aqua>
+        description: <green>Что, если вы посмотрите наш каталог?</green>
     information:
       state:
-        name: '<gold>Совместимость</gold>'
+        name: <gold>Совместимость</gold>
         description:
-          COMPATIBLE: |
-            <green>Запущена </green><yellow>[name] [version]</yellow><green>.</green>
+          COMPATIBLE: |-
+            <green>Запущена <yellow>[name] [version]</yellow>.</green>
 
             <green>BentoBox в настоящее время запущен на</green>
-            <green><bold>СОВМЕСТИМОЙ </bold></green><green>версии серверного ПО</green>
+            <green><bold>СОВМЕСТИМОЙ </bold>версии серверного ПО</green>
 
             <green>Его функции полностью разработаны</green>
             <green>для работы в этой среде.</green>
-          SUPPORTED: |
-            <green>Запущена </green><yellow>[name] [version]</yellow><green>.</green>
+          SUPPORTED: |-
+            <green>Запущена <yellow>[name] [version]</yellow>.</green>
 
             <green>BentoBox в настоящее время запущен на</green>
-            <green><bold>ПОДДЕРЖИВАЕМОЙ </bold></green><green>версии серверного ПО</green>
+            <green><bold>ПОДДЕРЖИВАЕМОЙ </bold>версии серверного ПО</green>
 
             <green>Большинство функций работают как надо в этой среде</green>
-          NOT_SUPPORTED: |
-            <green>Запущена </green><yellow>[name] [version]</yellow><green>.</green>
+          NOT_SUPPORTED: |-
+            <green>Запущена <yellow>[name] [version]</yellow>.</green>
 
             <green>BentoBox в настоящее время запущен на</green>
-            <gold><bold>НЕПОДДЕРЖИМЕМОЙ </bold></gold><green>версии серверного ПО</green>
+            <gold><bold>НЕПОДДЕРЖИВАЕМОЙ </bold>версии серверного ПО</gold>
 
             <green>Хотя большинство функций все равно будут работать</green>
             <green>корректно, специфичные для версии баги или иные проблемы</green>
-            <gold>вполне вероятны.</gold>
-          INCOMPATIBLE: |
-            <green>Запущена </green><yellow>[name] [version]</yellow><green>.</green>
+            <green>вполне вероятны.</green>
+          INCOMPATIBLE: |-
+            <green>Запущена <yellow>[name] [version]</yellow>.</green>
 
             <green>BentoBox в настоящее время запущен на</green>
-            <red><bold>НЕСОВМЕСТИМОЙ </bold></red><green>версии серверного ПО</green>
-            <green>version.</green>
+            <red><bold>НЕСОВМЕСТИМОЙ </bold>версии серверного ПО.</red>
 
             <red>Может возникать странное поведение и ошибки,</red>
             <red>а большинство функций могут быть нестабильными.</red>
@@ -1936,33 +2021,34 @@ catalog:
       title: Каталог дополнений
     views:
       gamemodes:
-        name: '<gold>Игровые режимы</gold>'
-        description: |
-          <yellow>Нажмите </yellow><green>для просмотра</green>
+        name: <gold>Игровые режимы</gold>
+        description: |-
+          <green><yellow>Нажмите </yellow>для просмотра</green>
           <green>доступных официальных игровых режимов.</green>
       addons:
-        name: '<gold>Дополнения</gold>'
-        description: |
-          <yellow>Нажмите </yellow><green>для просмотра</green>
+        name: <gold>Дополнения</gold>
+        description: |-
+          <green><yellow>Нажмите </yellow>для просмотра</green>
           <green>доступных официальных дополнений.</green>
     icon:
-      description-template: |
+      description-template: |-
         <dark_gray>[topic]</dark_gray>
         <green>[install]</green>
 
         <gray><italic>[description]</italic></gray>
 
-        <yellow>Нажмите </yellow><green>для получения ссылки</green>
+        <green><yellow>Нажмите </yellow>для получения ссылки</green>
         <green>на последний релиз.</green>
       already-installed: Уже установлено!
       install-now: Установлено!
+    
     empty-here:
-      name: '<aqua>Кажется, здесь ничего нет...</aqua>'
-      description: |
+      name: <aqua>Кажется, здесь ничего нет...</aqua>
+      description: |-
         <red>BentoBox не подключен к GitHub.</red>
 
-        <green>Позвольте BentoBox подключиться к GitHub в</green>
-        <green>конфигурации или попробуйте позднее.</green>
+        <green>Позвольте BentoBox подключиться к GitHub</green>
+        <green>в конфигурации или попробуйте позднее.</green>
 enums:
   DamageCause:
     CONTACT: Контакт
@@ -1989,118 +2075,136 @@ enums:
     THORNS: Шипы
     DRAGON_BREATH: Драконье дыхание
     CUSTOM: Пользовательское
-    FLY_INTO_WALL: Влететь в стену
+    FLY_INTO_WALL: Столкновение со стеной
     HOT_FLOOR: Горячий пол
-    CRAMMING: Зубрёжка
-    DRYOUT: Сушка
-    FREEZE: Заморозить
-    KILL: Убить
-    SONIC_BOOM: Соник Бум
-    WORLD_BORDER: Мировая граница
+    CRAMMING: Давка
+    DRYOUT: Высыхание
+    FREEZE: Замерзание
+    KILL: Убийство
+    SONIC_BOOM: Звуковой удар
+    WORLD_BORDER: Граница мира
+
 panel:
   credits:
-    title: '<dark_gray>[name] </dark_gray><dark_green>Титры</dark_green>'
+    title: <dark_gray>[name] </dark_gray><dark_green>Титры</dark_green>
     contributor:
-      name: '<green>[name]</green>'
+      name: <green>[name]</green>
       description: '<green>Коммиты: </green><aqua>[commits]</aqua>'
     empty-here:
-      name: '<red>Кажется, здесь ничего нет...</red>'
-      description: |
+      name: <red>Кажется, здесь ничего нет...</red>
+      description: |-
         <red>BentoBox не смог найти участников</red>
         <red>для этого дополнения.</red>
 
-        <green>Позвольте BentoBox подключиться к GitHub в</green>
-        <green>конфигурации или попробуйте позднее.</green>
+        <green>Позвольте BentoBox подключиться к GitHub</green>
+        <green>в конфигурации или попробуйте позднее.</green>
+# В этом разделе приведены значения для панелей BentoBox.
 panels:
+  # Раздел переводов, используемых в панели дома.
   island_homes:
-    title: '<dark_green><bold>Ваши [prefix_island] дома</bold></dark_green>'
+    title: <dark_green><bold>Ваши [prefix_island] дома</bold></dark_green>
     buttons:
-      name: '<bold>[name]</bold>'
+      # Эта кнопка служит для отображения островов, на которые можно телепортироваться.
+      name: <bold>[name]</bold>
+  # Раздел переводов, используемых в панели создания
   island_creation:
-    title: '<dark_green><bold>Выберите [prefix_an-island]</bold></dark_green>'
+    title: <dark_green><bold>Выберите [prefix_an-island]</bold></dark_green>
     buttons:
+      # Эта кнопка служит для отображения набора чертежей на панели создания острова.
       bundle:
-        name: '<bold>[name]</bold>'
+        name: <bold>[name]</bold>
         description: '[description]'
-        uses: '<green>Использовано [number]/[max]</green>'
-        unlimited: '<green>Неограниченное количество использований разрешено</green>'
+        uses: <green>Использовано [number]/[max]</green>
+        unlimited: <green>Неограниченное количество использований разрешено</green>
         cost: '<yellow>Стоимость: [cost]</yellow>'
   language:
-    title: '<dark_green><bold>Выберите ваш язык</bold></dark_green>'
-    edited: '<red>Изменено на [lang]</red>'
+    title: <dark_green><bold>Выберите ваш язык</bold></dark_green>
+    edited: <red>Изменено на [lang]</red>
     buttons:
+      # Эта кнопка служит для отображения различных языковых настроек, доступных на панели выбора языка.
       language:
-        name: '<white><bold>[name]</bold></white>'
+        name: <white><bold>[name]</bold></white>
         description: |-
           [authors]
           |[selected]
-        authors: '<gray>Авторы:</gray>'
-        author: '<gray>- </gray><aqua>[name]</aqua>'
-        selected: '&а В данный момент выбрано.'
+        authors: <gray>Авторы:</gray>
+        author: <gray>- </gray><aqua>[name]</aqua>
+        selected: <green>Выбрано в данный момент.</green>
+  # Раздел переводов, используемый на панели «Предпросмотра заполнителей» (список дополнений верхнего уровня)
   placeholder:
-    title: '<dark_aqua><bold>Placeholder Browser</bold></dark_aqua>'
+    title: <dark_aqua><bold>Предпросмотр заполнителей</bold></dark_aqua>
     buttons:
+      # Кнопка, представляющая группу заполнителей ядра BentoBox.
       bentobox:
-        name: '<white><bold>BentoBox</bold></white>'
-        description: '<gray>[number] заполнителей</gray>'
+        name: <white><bold>BentoBox</bold></white>
+        description: <gray>[number] заполнителей</gray>
+      # Кнопка, представляющая группу-заполнитель для одного аддона; [name] = название аддона, [number] = количество.
       addon:
-        name: '<white><bold>[name]</bold></white>'
-        description: '<gray>[number] заполнителей</gray>'
+        name: <white><bold>[name]</bold></white>
+        description: <gray>[number] заполнителей</gray>
+  # Раздел переводов, используемый на панели «Список заполнителей» (список заполнителей для каждого источника)
   placeholder-list:
-    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
+    title: <dark_aqua><bold>[name]</bold></dark_aqua>
     buttons:
+      # LEAF — один заполнитель; [placeholder] = полная строка %expansion_id_key%
       leaf:
-        name: '<aqua>[placeholder]</aqua>'
-        description: '<gray>[description]</gray>'
-        disabled: '<red><italic>(отключено)</italic></red>'
-        hint: '<yellow>Нажмите </yellow><gray>для переключения.</gray>'
+        name: <aqua>[placeholder]</aqua>
+        description: <gray>[description]</gray>
+        disabled: <red><italic>(отключено)</italic></red>
+        hint: <yellow>Нажмите </yellow><gray>для переключения.</gray>
+      # FOLDER — группа подзаполнителей; [label] = сжатый сегмент, [count] = общее количество элементов
       folder:
-        name: '<white><bold>[label]</bold></white>'
-        description: '<gray>[count] заполнителей</gray>'
-        hint: '<yellow>Нажмите </yellow><gray>для просмотра.</gray>'
+        name: <white><bold>[label]</bold></white>
+        description: <gray>[count] заполнителей</gray>
+        hint: <yellow>Нажмите </yellow><gray>для просмотра.</gray>
+      # LEAF_FOLDER — заполнитель и папка; нажмите ЛКМ, чтобы переключить, нажмите ПКМ, чтобы открыть.
       leaf-folder:
-        hint: '<yellow>ЛКМ </yellow><gray>для переключения. · </gray><yellow>ПКМ </yellow><gray>для просмотра.</gray>'
+        hint: <gray><yellow>ЛКМ </yellow>для переключения. · <yellow>ПКМ </yellow>для
+          просмотра.</gray>
+      # SERIES — свернутый числовой ряд; [placeholder] содержит {N}, [count]/[min]/[max] = информация о диапазоне.
       series:
-        name: '<aqua>[placeholder]</aqua>'
-        description: '<gray>[description]</gray>'
+        name: <aqua>[placeholder]</aqua>
+        description: <gray>[description]</gray>
         range: '<dark_gray>#[min] – #[max] · [count] элементов</dark_gray>'
-        disabled: '<red><italic>(некоторые отключены)</italic></red>'
-        hint: '<yellow>Нажмите </yellow><gray>для переключения всех.</gray>'
-        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
-        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(пусто)</dark_gray>'
+        disabled: <red><italic>(некоторые отключены)</italic></red>
+        hint: <yellow>Нажмите </yellow><gray>для переключения всех.</gray>
+        # Примеры значений для ряда; [index] = числовой суффикс, [value] = вычисленное значение.
+        sample: <dark_gray>#[index] → </dark_gray><white>[value]</white>
+        sample-empty: <dark_gray>#[index] → </dark_gray><dark_gray>(пусто)</dark_gray>
+      # LEAF_SERIES — заполнитель и серия; нажмите ЛКМ, чтобы переключить отображение листа, нажмите ПКМ, чтобы переключить отображение всех.
       leaf-series:
-        hint: '<yellow>ЛКМ </yellow><gray>для переключения. · </gray><yellow>ПКМ </yellow><gray>для переключения всех.</gray>'
-      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
-      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(пусто)</dark_gray>'
+        hint: <gray><yellow>ЛКМ </yellow>для переключения. · <yellow>ПКМ </yellow>для
+          переключения всех.</gray>
+      # Текущее значение заполнителя для проигрывателя просмотра.
+      value: <dark_gray>→ </dark_gray><white>[value]</white>
+      value-empty: <dark_gray>→ </dark_gray><dark_gray>(пусто)</dark_gray>
       back:
-        name: '<white><bold>Назад</bold></white>'
-        description: '<gray>Вернуться к списку аддонов</gray>'
+        name: <white><bold>Назад</bold></white>
+        description: <gray>Вернуться к списку аддонов</gray>
+  # Набор общих кнопок, используемых на нескольких панелях.
   buttons:
+    # Кнопка, используемая в интерфейсах, которая позволяет вернуться на предыдущую страницу.
     previous:
-      name: '<white><bold>Предыдущая страница</bold></white>'
-      description: '<gray>Перейти на [number] страницу</gray>'
+      name: <white><bold>Предыдущая страница</bold></white>
+      description: <gray>Перейти на [number] страницу.</gray>
+    # Кнопка, используемая в интерфейсах, которая позволяет перейти на следующую страницу.
     next:
-      name: '<white><bold>Следующая страница</bold></white>'
-      description: '<gray>Перейти на [number] страницу</gray>'
+      name: <white><bold>Следующая страница</bold></white>
+      description: <gray>Перейти на [number] страницу.</gray>
   tips:
-    click-to-next: '<yellow>Нажмите </yellow><gray>, чтобы продолжить.</gray>'
-    click-to-previous: '<yellow>Нажмите </yellow><gray>для предыдущего.</gray>'
-    click-to-choose: '<yellow>Щелкните </yellow><gray>, чтобы выбрать.</gray>'
-    click-to-toggle: '<yellow>Нажмите </yellow><gray>, чтобы переключить.</gray>'
-    left-click-to-cycle-down: '<yellow>Левый Щелчок </yellow><gray>, чтобы прокрутить вниз.</gray>'
-    right-click-to-cycle-up: '<yellow>Щелкните правой кнопкой мыши </yellow><gray>, чтобы прокрутить вверх.</gray>'
-successfully-loaded: >
+    click-to-next: <gray><yellow>Нажмите</yellow>, чтобы перейти на следующую страницу.</gray>
+    click-to-previous: <gray><yellow>Нажмите</yellow>, чтобы перейти на предыдущую
+      страницу.</gray>
+    click-to-choose: <gray><yellow>Нажмите</yellow>, чтобы выбрать.</gray>
+    click-to-toggle: <gray><yellow>Нажмите</yellow>, чтобы переключить.</gray>
+    left-click-to-cycle-down: <gray><yellow>ЛКМ</yellow>, чтобы прокрутить вниз.</gray>
+    right-click-to-cycle-up: <gray><yellow>ПКМ</yellow>, чтобы прокрутить вверх.</gray>
 
-  <gold>  ____             _        ____</gold>
+successfully-loaded: |2
 
-  <gold> |  _ \           | |      |  _ \             </gold><gray>by </gray><green>tastybento </green><gray>and </gray><green></green>
-  Poslovitch
-
-  <gold> | |_) | ___ _ __ | |_ ___ | |_) | _____  __  </gold><gray>2017 - 2023</gray>
-
-  <gold> |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /</gold>
-
-  <gold> | |_) |  __/ | | | || (_) | |_) | (_) >  <   </gold><aqua>v</aqua><yellow>[version]</yellow>
-
-  <gold> |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  </gold><dark_gray>Загружено за </dark_gray><yellow>[time]</yellow><dark_gray></dark_gray>
-  ms.
+  <gold>  ____             _        ____              </gold>
+  <gold> |  _ \           | |      |  _ \             </gold><gray>автор <green>tastybento </green>и <green>Poslovitch</green></gray>
+  <gold> | |_) | ___ _ __ | |_ ___ | |_) | _____  __  </gold><gray>2017 - 2026</gray>
+  <gold> |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /  </gold>
+  <gold> | |_) |  __/ | | | || (_) | |_) | (_) >  <   </gold><aqua>в</aqua><yellow>[version]</yellow>
+  <gold> |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  </gold><dark_gray>Загружено за <yellow>[time]</yellow>мс.</dark_gray>
