@@ -77,6 +77,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.DatabaseSetup;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
@@ -1713,5 +1714,573 @@ class IslandsManagerTest extends CommonTestSetup {
         // Verify that direct teleportAsync was NOT called (SafeSpotTeleport handles it instead)
         mockedUtil.verify(() -> Util.teleportAsync(eq(player), eq(homeLoc)), never());
         verify(user).sendMessage("commands.island.go.teleport");
+    }
+
+    // ---- getIsland(World, User) ----
+
+    @Test
+    void testGetIslandWorldUser() {
+        islandsManager.setIslandCache(islandCache);
+        when(user.getUniqueId()).thenReturn(uuid);
+        Island result = islandsManager.getIsland(world, user);
+        assertNotNull(result);
+    }
+
+    @Test
+    void testGetIslandWorldNullUser() {
+        assertNull(islandsManager.getIsland(world, (User) null));
+    }
+
+    @Test
+    void testGetIslandWorldUserNullUuid() {
+        when(user.getUniqueId()).thenReturn(null);
+        assertNull(islandsManager.getIsland(world, user));
+    }
+
+    // ---- getIslands(World, User) ----
+
+    @Test
+    void testGetIslandsWorldUser() {
+        islandsManager.setIslandCache(islandCache);
+        when(user.getUniqueId()).thenReturn(uuid);
+        List<Island> result = islandsManager.getIslands(world, user);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    // ---- getIslands(World, UUID) ----
+
+    @Test
+    void testGetIslandsWorldUuid() {
+        islandsManager.setIslandCache(islandCache);
+        List<Island> result = islandsManager.getIslands(world, uuid);
+        assertNotNull(result);
+    }
+
+    // ---- getIslands(UUID) - all worlds ----
+
+    @Test
+    void testGetIslandsUuid() {
+        islandsManager.setIslandCache(islandCache);
+        when(islandCache.getIslands(uuid)).thenReturn(List.of(island));
+        List<Island> result = islandsManager.getIslands(uuid);
+        assertEquals(1, result.size());
+    }
+
+    // ---- getOwnedIslands ----
+
+    @Test
+    void testGetOwnedIslandsWorldUser() {
+        islandsManager.setIslandCache(islandCache);
+        when(user.getUniqueId()).thenReturn(uuid);
+        when(island.getOwner()).thenReturn(uuid);
+        Set<Island> result = islandsManager.getOwnedIslands(world, user);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGetOwnedIslandsWorldUserNullUuid() {
+        when(user.getUniqueId()).thenReturn(null);
+        Set<Island> result = islandsManager.getOwnedIslands(world, user);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetOwnedIslandsWorldUuid() {
+        islandsManager.setIslandCache(islandCache);
+        when(island.getOwner()).thenReturn(uuid);
+        Set<Island> result = islandsManager.getOwnedIslands(world, uuid);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGetOwnedIslandsNotOwner() {
+        islandsManager.setIslandCache(islandCache);
+        when(island.getOwner()).thenReturn(UUID.randomUUID()); // different owner
+        Set<Island> result = islandsManager.getOwnedIslands(world, uuid);
+        assertTrue(result.isEmpty());
+    }
+
+    // ---- getIsland(World, UUID) with online player ----
+
+    @Test
+    void testGetIslandWorldUuidOnlinePlayerOnIsland() {
+        islandsManager.setIslandCache(islandCache);
+        mockedBukkit.when(() -> Bukkit.getPlayer(uuid)).thenReturn(player);
+        when(player.isOnline()).thenReturn(true);
+        when(player.getLocation()).thenReturn(location);
+        when(location.getWorld()).thenReturn(world);
+        // Island at location matches world and player is in team
+        when(island.getWorld()).thenReturn(world);
+        when(island.inTeam(uuid)).thenReturn(true);
+
+        Island result = islandsManager.getIsland(world, uuid);
+        assertEquals(island, result);
+    }
+
+    @Test
+    void testGetIslandWorldUuidOnlinePlayerNotOnIsland() {
+        islandsManager.setIslandCache(islandCache);
+        mockedBukkit.when(() -> Bukkit.getPlayer(uuid)).thenReturn(player);
+        when(player.isOnline()).thenReturn(true);
+        when(player.getLocation()).thenReturn(location);
+        when(location.getWorld()).thenReturn(world);
+        // Player not in team on this island
+        when(island.getWorld()).thenReturn(world);
+        when(island.inTeam(uuid)).thenReturn(false);
+
+        // Should fall back to cache
+        Island result = islandsManager.getIsland(world, uuid);
+        assertNotNull(result);
+    }
+
+    @Test
+    void testGetIslandWorldUuidOfflinePlayer() {
+        islandsManager.setIslandCache(islandCache);
+        mockedBukkit.when(() -> Bukkit.getPlayer(uuid)).thenReturn(null);
+
+        Island result = islandsManager.getIsland(world, uuid);
+        assertEquals(island, result);
+    }
+
+    @Test
+    void testGetIslandWorldUuidNullWorld() {
+        assertNull(islandsManager.getIsland(null, uuid));
+    }
+
+    // ---- isIslandAt ----
+
+    @Test
+    void testIsIslandAt() {
+        islandsManager.setIslandCache(islandCache);
+        when(islandCache.isIslandAt(location)).thenReturn(true);
+        assertTrue(islandsManager.isIslandAt(location));
+    }
+
+    @Test
+    void testIsIslandAtNotInWorld() {
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
+        assertFalse(islandsManager.isIslandAt(location));
+    }
+
+    // ---- getIslands() - all islands from DB ----
+
+    @Test
+    void testGetAllIslands() {
+        Collection<Island> result = islandsManager.getIslands();
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    // ---- getIslands(World) ----
+
+    @Test
+    void testGetIslandsWorld() {
+        // 'is' already has its world set to staticWorld in setUp
+        is.setWorld(world);
+        Collection<Island> result = islandsManager.getIslands(world);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    // ---- getIslandCount(World) ----
+
+    @Test
+    void testGetIslandCountWorld() {
+        islandsManager.setIslandCache(islandCache);
+        when(islandCache.size(world)).thenReturn(5L);
+        assertEquals(5L, islandsManager.getIslandCount(world));
+    }
+
+    // ---- loadIsland(String) ----
+
+    @Test
+    void testLoadIslandString() throws Exception {
+        String uid = "test-id";
+        when(h.loadObject(uid)).thenReturn(is);
+        Optional<Island> result = islandsManager.loadIsland(uid);
+        assertTrue(result.isPresent());
+    }
+
+    @Test
+    void testLoadIslandStringNotFound() throws Exception {
+        when(h.loadObject("missing")).thenReturn(null);
+        Optional<Island> result = islandsManager.loadIsland("missing");
+        assertTrue(result.isEmpty());
+    }
+
+    // ---- deleteIslandId ----
+
+    @Test
+    void testDeleteIslandIdExists() {
+        when(h.objectExists("test-id")).thenReturn(true);
+        assertTrue(islandsManager.deleteIslandId("test-id"));
+        verify(h).deleteID("test-id");
+    }
+
+    @Test
+    void testDeleteIslandIdNotExists() {
+        when(h.objectExists("missing")).thenReturn(false);
+        assertFalse(islandsManager.deleteIslandId("missing"));
+        verify(h, never()).deleteID("missing");
+    }
+
+    // ---- hasIsland ----
+
+    @Test
+    void testHasIslandWorldUser() {
+        islandsManager.setIslandCache(islandCache);
+        when(user.getUniqueId()).thenReturn(uuid);
+        when(islandCache.hasIsland(world, uuid)).thenReturn(true);
+        assertTrue(islandsManager.hasIsland(world, user));
+    }
+
+    @Test
+    void testHasIslandWorldUuid() {
+        islandsManager.setIslandCache(islandCache);
+        when(islandCache.hasIsland(world, uuid)).thenReturn(true);
+        assertTrue(islandsManager.hasIsland(world, uuid));
+    }
+
+    @Test
+    void testHasIslandWorldUuidFalse() {
+        islandsManager.setIslandCache(islandCache);
+        when(islandCache.hasIsland(world, uuid)).thenReturn(false);
+        assertFalse(islandsManager.hasIsland(world, uuid));
+    }
+
+    // ---- isOwner (deprecated, delegates to hasIsland) ----
+
+    @Test
+    void testIsOwner() {
+        islandsManager.setIslandCache(islandCache);
+        when(islandCache.hasIsland(world, uuid)).thenReturn(true);
+        assertTrue(islandsManager.isOwner(world, uuid));
+    }
+
+    // ---- inTeam ----
+
+    @Test
+    void testInTeam() {
+        islandsManager.setIslandCache(islandCache);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid, UUID.randomUUID()));
+        when(island.inTeam(uuid)).thenReturn(true);
+        assertTrue(islandsManager.inTeam(world, uuid));
+    }
+
+    @Test
+    void testInTeamFalse() {
+        islandsManager.setIslandCache(islandCache);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
+        assertFalse(islandsManager.inTeam(world, uuid));
+    }
+
+    // ---- setHomeLocation overloads ----
+
+    @Test
+    void testSetHomeLocationUserLocation() {
+        islandsManager.setIslandCache(islandCache);
+        when(user.getUniqueId()).thenReturn(uuid);
+        when(island.getHome("")).thenReturn(null);
+        assertTrue(islandsManager.setHomeLocation(user, location));
+    }
+
+    @Test
+    void testSetHomeLocationUserLocationName() {
+        islandsManager.setIslandCache(islandCache);
+        when(user.getUniqueId()).thenReturn(uuid);
+        when(island.getHome("myHome")).thenReturn(null);
+        assertTrue(islandsManager.setHomeLocation(user, location, "myHome"));
+    }
+
+    @Test
+    void testSetHomeLocationUuidLocationName() {
+        islandsManager.setIslandCache(islandCache);
+        when(island.getHome("test")).thenReturn(null);
+        assertTrue(islandsManager.setHomeLocation(uuid, location, "test"));
+    }
+
+    @Test
+    void testSetHomeLocationUuidLocation() {
+        islandsManager.setIslandCache(islandCache);
+        when(island.getHome("")).thenReturn(null);
+        assertTrue(islandsManager.setHomeLocation(uuid, location));
+    }
+
+    @Test
+    void testSetHomeLocationIslandLocationName() {
+        when(island.getHome("base")).thenReturn(null);
+        assertTrue(islandsManager.setHomeLocation(island, location, "base"));
+        verify(island).addHome("base", location);
+    }
+
+    @Test
+    void testSetHomeLocationIslandSameLocation() {
+        when(island.getHome("base")).thenReturn(location);
+        assertFalse(islandsManager.setHomeLocation(island, location, "base"));
+    }
+
+    @Test
+    void testSetHomeLocationNullIsland() {
+        assertFalse(islandsManager.setHomeLocation((Island) null, location, "base"));
+    }
+
+    // ---- getHomeLocation overloads ----
+
+    @Test
+    void testGetHomeLocationWorldUuid() {
+        islandsManager.setIslandCache(islandCache);
+        when(island.getHome("")).thenReturn(location);
+        Location result = islandsManager.getHomeLocation(world, uuid);
+        assertEquals(location, result);
+    }
+
+    @Test
+    void testGetHomeLocationWorldUuidNoIsland() {
+        islandsManager.setIslandCache(islandCache);
+        when(islandCache.getIsland(any(), any())).thenReturn(null);
+        assertNull(islandsManager.getHomeLocation(world, uuid));
+    }
+
+    @Test
+    void testGetHomeLocationWorldUserName() {
+        islandsManager.setIslandCache(islandCache);
+        when(user.getUniqueId()).thenReturn(uuid);
+        when(island.getHomes()).thenReturn(Map.of("myHome", location));
+        when(island.getHome("myHome")).thenReturn(location);
+        Location result = islandsManager.getHomeLocation(world, user, "myHome");
+        assertEquals(location, result);
+    }
+
+    @Test
+    void testGetHomeLocationWorldUuidName() {
+        islandsManager.setIslandCache(islandCache);
+        when(island.getHomes()).thenReturn(Map.of("test", location));
+        when(island.getHome("test")).thenReturn(location);
+        Location result = islandsManager.getHomeLocation(world, uuid, "test");
+        assertEquals(location, result);
+    }
+
+    @Test
+    void testGetHomeLocationWorldUuidNameNotFound() {
+        islandsManager.setIslandCache(islandCache);
+        when(island.getHomes()).thenReturn(Map.of());
+        Location result = islandsManager.getHomeLocation(world, uuid, "missing");
+        assertNull(result);
+    }
+
+    @Test
+    void testGetHomeLocationIsland() {
+        when(island.getHome("")).thenReturn(location);
+        Location result = islandsManager.getHomeLocation(island);
+        assertEquals(location, result);
+    }
+
+    @Test
+    void testGetHomeLocationIslandName() {
+        when(island.getHome("base")).thenReturn(location);
+        Location result = islandsManager.getHomeLocation(island, "base");
+        assertEquals(location, result);
+    }
+
+    @Test
+    void testGetHomeLocationIslandNameFallsBackToCenter() {
+        when(island.getHome("missing")).thenReturn(null);
+        when(island.getProtectionCenter()).thenReturn(location);
+        Location result = islandsManager.getHomeLocation(island, "missing");
+        assertEquals(location, result);
+    }
+
+    // ---- removeHomeLocation ----
+
+    @Test
+    void testRemoveHomeLocation() {
+        when(island.removeHome("test")).thenReturn(true);
+        assertTrue(islandsManager.removeHomeLocation(island, "test"));
+    }
+
+    // ---- renameHomeLocation ----
+
+    @Test
+    void testRenameHomeLocation() {
+        when(island.renameHome("old", "new")).thenReturn(true);
+        assertTrue(islandsManager.renameHomeLocation(island, "old", "new"));
+    }
+
+    // ---- getHomeLocations ----
+
+    @Test
+    void testGetHomeLocations() {
+        Map<String, Location> homes = Map.of("home1", location);
+        when(island.getHomes()).thenReturn(homes);
+        assertEquals(homes, islandsManager.getHomeLocations(island));
+    }
+
+    // ---- isHomeLocation ----
+
+    @Test
+    void testIsHomeLocation() {
+        when(island.getHomes()).thenReturn(Map.of("base", location));
+        assertTrue(islandsManager.isHomeLocation(island, "base"));
+    }
+
+    @Test
+    void testIsHomeLocationFalse() {
+        when(island.getHomes()).thenReturn(Map.of());
+        assertFalse(islandsManager.isHomeLocation(island, "nonexistent"));
+    }
+
+    // ---- getNumberOfHomesIfAdded ----
+
+    @Test
+    void testGetNumberOfHomesIfAddedNew() {
+        when(island.getHomes()).thenReturn(Map.of("home1", location));
+        // "newhome" doesn't exist, so count = existing + 1
+        assertEquals(2, islandsManager.getNumberOfHomesIfAdded(island, "newhome"));
+    }
+
+    @Test
+    void testGetNumberOfHomesIfAddedExisting() {
+        when(island.getHomes()).thenReturn(Map.of("home1", location));
+        // "home1" already exists, count stays the same
+        assertEquals(1, islandsManager.getNumberOfHomesIfAdded(island, "home1"));
+    }
+
+    // ---- clearSpawn ----
+
+    @Test
+    void testClearSpawn() {
+        // First set a spawn
+        islandsManager.setSpawn(island);
+        // Now clear it
+        islandsManager.clearSpawn(world);
+        verify(island).setSpawn(false);
+        assertTrue(islandsManager.getSpawn(world).isEmpty());
+    }
+
+    @Test
+    void testClearSpawnNoSpawn() {
+        // Clear when no spawn set - should not throw
+        islandsManager.clearSpawn(world);
+        assertTrue(islandsManager.getSpawn(world).isEmpty());
+    }
+
+    // ---- removePlayer overloads ----
+
+    @Test
+    void testRemovePlayerWorldUser() {
+        islandsManager.setIslandCache(islandCache);
+        when(user.getUniqueId()).thenReturn(uuid);
+        when(islandCache.removePlayer(world, uuid)).thenReturn(Set.of(island));
+        islandsManager.removePlayer(world, user);
+        verify(islandCache).removePlayer(world, uuid);
+    }
+
+    @Test
+    void testRemovePlayerIslandUuid() {
+        islandsManager.setIslandCache(islandCache);
+        islandsManager.removePlayer(island, uuid);
+        verify(islandCache).removePlayer(island, uuid);
+    }
+
+    // ---- isSaveTaskRunning ----
+
+    @Test
+    void testIsSaveTaskRunning() {
+        // Default state should be false
+        assertFalse(islandsManager.isSaveTaskRunning());
+    }
+
+    // ---- setJoinTeam ----
+
+    @Test
+    void testSetJoinTeamAddsPlayerAndSaves() {
+        islandsManager.setIslandCache(islandCache);
+        UUID newPlayer = UUID.randomUUID();
+        islandsManager.setJoinTeam(island, newPlayer);
+        verify(island).addMember(newPlayer);
+        verify(islandCache).addPlayer(newPlayer, island);
+        verify(island).log(any());
+    }
+
+    // ---- getIslandById overloads ----
+
+    @Test
+    void testGetIslandByIdNotFound() {
+        islandsManager.setIslandCache(islandCache);
+        when(islandCache.getIslandById("missing")).thenReturn(null);
+        assertTrue(islandsManager.getIslandById("missing").isEmpty());
+    }
+
+    @Test
+    void testGetIslandByIdWithCache() {
+        islandsManager.setIslandCache(islandCache);
+        when(islandCache.getIslandById("id", false)).thenReturn(island);
+        Optional<Island> result = islandsManager.getIslandById("id", false);
+        assertTrue(result.isPresent());
+    }
+
+    // ---- isIslandId ----
+
+    @Test
+    void testIsIslandId() {
+        islandsManager.setIslandCache(islandCache);
+        when(islandCache.isIslandId("test-id")).thenReturn(true);
+        assertTrue(islandsManager.isIslandId("test-id"));
+    }
+
+    @Test
+    void testIsIslandIdFalse() {
+        islandsManager.setIslandCache(islandCache);
+        when(islandCache.isIslandId("missing")).thenReturn(false);
+        assertFalse(islandsManager.isIslandId("missing"));
+    }
+
+    // ---- resetAllFlags ----
+
+    @Test
+    void testResetAllFlags() {
+        islandsManager.setIslandCache(islandCache);
+        islandsManager.resetAllFlags(world);
+        verify(islandCache).resetAllFlags(world);
+    }
+
+    // ---- resetFlag ----
+
+    @Test
+    void testResetFlag() {
+        islandsManager.setIslandCache(islandCache);
+        islandsManager.resetFlag(world, Flags.BREAK_BLOCKS);
+        verify(islandCache).resetFlag(world, Flags.BREAK_BLOCKS);
+    }
+
+    // ---- getNumberOfConcurrentIslands ----
+
+    @Test
+    void testGetNumberOfConcurrentIslands() {
+        islandsManager.setIslandCache(islandCache);
+        assertEquals(1, islandsManager.getNumberOfConcurrentIslands(uuid, world));
+    }
+
+    // ---- getPrimaryIsland ----
+
+    @Test
+    void testGetPrimaryIsland() {
+        islandsManager.setIslandCache(islandCache);
+        Island result = islandsManager.getPrimaryIsland(world, uuid);
+        assertEquals(island, result);
+    }
+
+    // ---- getIslandsASync ----
+
+    @Test
+    void testGetIslandsASync() {
+        CompletableFuture<List<Island>> future = CompletableFuture.completedFuture(List.of(is));
+        when(h.loadObjectsASync()).thenReturn(future);
+        CompletableFuture<List<Island>> result = islandsManager.getIslandsASync();
+        assertNotNull(result);
+        assertEquals(1, result.join().size());
     }
 }
