@@ -143,6 +143,7 @@ public class Flag implements Comparable<Flag> {
     private final Type type;
     private boolean setting;
     private final int defaultRank;
+    private final int minimumRank;
     private final PanelItem.ClickHandler clickHandler;
     private final boolean subPanel;
     private Set<GameModeAddon> gameModes = new HashSet<>();
@@ -161,6 +162,7 @@ public class Flag implements Comparable<Flag> {
         this.type = builder.type;
         this.setting = builder.defaultSetting;
         this.defaultRank = builder.defaultRank;
+        this.minimumRank = builder.minimumRank;
         this.clickHandler = builder.clickHandler;
         this.subPanel = builder.usePanel;
         if (builder.gameModeAddon != null) {
@@ -282,6 +284,23 @@ public class Flag implements Comparable<Flag> {
      */
     public int getDefaultRank() {
         return defaultRank;
+    }
+
+    /**
+     * @return the minimum rank that may be selected for this flag in the settings
+     * cycle click. Defaults to {@link RanksManager#VISITOR_RANK}.
+     * @since 3.13.0
+     */
+    public int getMinimumRank() {
+        return minimumRank;
+    }
+
+    /**
+     * @return the click handler associated with this flag's panel item
+     * @since 3.13.0
+     */
+    public PanelItem.ClickHandler getClickHandler() {
+        return clickHandler;
     }
 
     /**
@@ -592,6 +611,7 @@ public class Flag implements Comparable<Flag> {
         // Default settings
         private boolean defaultSetting = false;
         private int defaultRank = RanksManager.MEMBER_RANK;
+        private int minimumRank = RanksManager.VISITOR_RANK;
 
         // ClickHandler - default depends on the type
         private PanelItem.ClickHandler clickHandler;
@@ -674,6 +694,19 @@ public class Flag implements Comparable<Flag> {
          */
         public Builder defaultRank(int defaultRank) {
             this.defaultRank = defaultRank;
+            return this;
+        }
+
+        /**
+         * Set the minimum rank that may be selected for this {@link Type#PROTECTION} flag
+         * in the settings cycle click. The default is {@link RanksManager#VISITOR_RANK}.
+         * The cycle click listener will not allow ranks below this value to be chosen.
+         * @param minimumRank minimum rank value (e.g. {@link RanksManager#MEMBER_RANK})
+         * @return Builder
+         * @since 3.13.0
+         */
+        public Builder minimumRank(int minimumRank) {
+            this.minimumRank = minimumRank;
             return this;
         }
 
@@ -764,12 +797,18 @@ public class Flag implements Comparable<Flag> {
          * @return Flag
          */
         public Flag build() {
+            // Ensure the default rank is not below the minimum selectable rank
+            if (defaultRank < minimumRank) {
+                BentoBox.getInstance().logWarning("Flag " + id + " defaultRank (" + defaultRank
+                        + ") is below minimumRank (" + minimumRank + "); raising defaultRank to minimumRank.");
+                defaultRank = minimumRank;
+            }
             // If no clickHandler has been set, then apply default ones
             if (clickHandler == null) {
                 clickHandler = switch (type) {
                 case SETTING -> new IslandToggleClick(id);
                 case WORLD_SETTING -> new WorldToggleClick(id);
-                default -> new CycleClick(id);
+                default -> new CycleClick(id, minimumRank, RanksManager.OWNER_RANK);
                 };
             }
             Flag flag = new Flag(this);
