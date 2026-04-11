@@ -110,7 +110,8 @@ public class AdminPurgeDeletedCommand extends CompositeCommand implements Listen
                 if (ok) {
                     user.sendMessage("commands.admin.purge.deleted.deferred");
                 } else {
-                    user.sendMessage(NONE_FOUND);
+                    getPlugin().log("Purge deleted: failed to delete one or more region files after a non-empty scan");
+                    user.sendMessage("commands.admin.purge.failed");
                 }
             });
         });
