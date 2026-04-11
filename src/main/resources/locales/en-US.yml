@@ -1509,8 +1509,8 @@ protection:
       obsidian-nearby: '<red>There are obsidian blocks within a [radius]-block radius
         of this obsidian. You cannot scoop it up into lava.</red>'
       lavaTip: |-
-        <orange>Scoop this up with a bucket</orange>
-        <orange>as lava again if you need it!</orange>
+        <gold>Scoop this up with a bucket</gold>
+        <gold>as lava again if you need it!</gold>
     OFFLINE_GROWTH:
       description: |-
         <green>When disabled, plants</green>
