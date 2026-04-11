@@ -120,6 +120,7 @@ commands:
       see-console-for-status: '<green>Purge started. See console for status or use </green><aqua>
         /[label] purge status</aqua><green>.</green>'
       no-purge-in-progress: '<red>There is currently no purge in progress.</red>'
+      failed: '<red>Purge completed with errors. Some region files could not be deleted. Check the server log for details.</red>'
       regions:
         parameters: '[days]'
         description: 'purge islands by deleting old region files'

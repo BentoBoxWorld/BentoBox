@@ -306,7 +306,7 @@ public class HousekeepingManager {
             plugin.log("Housekeeping " + label + ": nothing to purge in " + overworld.getName());
             return 0;
         }
-        plugin.log("Housekeeping " + label + ": " + scan.deleteableRegions().size() + " region(s) and "
+        plugin.log("Housekeeping " + label + ": " + scan.deletableRegions().size() + " region(s) and "
                 + scan.uniqueIslandCount() + " island(s) eligible in " + overworld.getName());
         boolean ok = plugin.getPurgeRegionsService().delete(scan);
         if (!ok) {
@@ -314,7 +314,7 @@ public class HousekeepingManager {
                     + " completed with errors");
             return 0;
         }
-        return scan.deleteableRegions().size();
+        return scan.deletableRegions().size();
     }
 
     // ---------------------------------------------------------------

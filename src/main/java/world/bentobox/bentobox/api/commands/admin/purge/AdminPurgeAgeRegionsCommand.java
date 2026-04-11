@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.api.commands.admin.purge;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -78,7 +77,7 @@ public class AdminPurgeAgeRegionsCommand extends CompositeCommand implements Lis
 
         running = true;
         final int finalDays = days;
-        CompletableFuture.runAsync(() -> {
+        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
             try {
                 int count = getPlugin().getPurgeRegionsService().ageRegions(getWorld(), finalDays);
                 Bukkit.getScheduler().runTask(getPlugin(), () -> {

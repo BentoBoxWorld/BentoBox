@@ -120,14 +120,20 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
         getPlugin().log("Purge: world save complete, dispatching deletion");
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
             boolean ok = getPlugin().getPurgeRegionsService().delete(scan);
-            Bukkit.getScheduler().runTask(getPlugin(), () ->
-                user.sendMessage(ok ? "general.success" : NONE_FOUND));
+            Bukkit.getScheduler().runTask(getPlugin(), () -> {
+                if (ok) {
+                    user.sendMessage("general.success");
+                } else {
+                    getPlugin().log("Purge: failed to delete one or more region files");
+                    user.sendMessage("commands.admin.purge.failed");
+                }
+            });
         });
         return true;
     }
 
     private void displayResultsAndPrompt(PurgeScanResult scan) {
-        Set<Island> uniqueIslands = scan.deleteableRegions().values().stream()
+        Set<Island> uniqueIslands = scan.deletableRegions().values().stream()
                 .flatMap(Set::stream)
                 .map(getPlugin().getIslands()::getIslandById)
                 .flatMap(Optional::stream)
@@ -135,7 +141,7 @@ public class AdminPurgeRegionsCommand extends CompositeCommand implements Listen
 
         uniqueIslands.forEach(this::displayIsland);
 
-        scan.deleteableRegions().entrySet().stream()
+        scan.deletableRegions().entrySet().stream()
             .filter(e -> e.getValue().isEmpty())
             .forEach(e -> displayEmptyRegion(e.getKey()));
 

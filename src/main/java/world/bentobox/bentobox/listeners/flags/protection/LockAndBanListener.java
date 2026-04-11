@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
@@ -125,6 +126,14 @@ public class LockAndBanListener extends FlagListener {
         if (!checkAndNotify(e.getPlayer(), e.getPlayer().getLocation()).isAllowed()) {
             eject(e.getPlayer());
         }
+    }
+
+    // Quit cleanup — prevent unbounded growth of notification tracking sets
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+        notifiedPlayers.remove(uuid);
+        deletableNotified.remove(uuid);
     }
 
     /**

@@ -145,7 +145,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
 
         PurgeScanResult result = service.scanDeleted(world);
         assertFalse(result.isEmpty());
-        assertEquals(1, result.deleteableRegions().size());
+        assertEquals(1, result.deletableRegions().size());
         assertEquals(0, result.days());
     }
 
@@ -171,7 +171,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(im.getIslandById("del")).thenReturn(Optional.of(deletable));
 
         PurgeScanResult result = service.scanDeleted(world);
-        assertEquals(2, result.deleteableRegions().size(),
+        assertEquals(2, result.deletableRegions().size(),
                 "Island straddling r.0.0 and r.1.0 should produce two candidate regions");
     }
 
@@ -233,7 +233,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
 
         PurgeScanResult result = service.scanDeleted(world);
         assertFalse(result.isEmpty(), "Ghost island (no DB row) must not block the reap");
-        assertEquals(1, result.deleteableRegions().size());
+        assertEquals(1, result.deletableRegions().size());
     }
 
     /**

@@ -119,7 +119,7 @@ public class AdminPurgeDeletedCommand extends CompositeCommand implements Listen
     }
 
     private void displayResultsAndPrompt(PurgeScanResult scan) {
-        Set<Island> uniqueIslands = scan.deleteableRegions().values().stream()
+        Set<Island> uniqueIslands = scan.deletableRegions().values().stream()
                 .flatMap(Set::stream)
                 .map(getPlugin().getIslands()::getIslandById)
                 .flatMap(Optional::stream)
