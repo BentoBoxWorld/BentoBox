@@ -1855,7 +1855,7 @@ protection:
           <green>Selecione a classificação que pode</green>
           <green>usar o comando de borda</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Clique Esquerdo </yellow><gray>para alternar para baixo.</gray>
         <yellow>Clique Direito </yellow><gray>para alternar para cima.</gray>
@@ -1865,12 +1865,12 @@ protection:
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Clique </yellow><gray>para abrir.</gray>
       setting-cooldown: '<red>A configuração está em cooldown</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Clique </yellow><gray>para alternar.</gray>
 

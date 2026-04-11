@@ -1898,7 +1898,7 @@ protection:
           <green>Selectați rangul care poate</green>
           <green>utilizați comanda border</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Faceți clic stânga </yellow><gray>pentru a merge în jos.</gray>
         <yellow>Faceți clic dreapta pe </yellow><gray>pentru a merge în sus.</gray>
@@ -1908,12 +1908,12 @@ protection:
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Faceți clic pe </yellow><gray>pentru a deschide.</gray>
       setting-cooldown: '<red>Setarea este activată</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Faceți clic pe </yellow><gray>pentru a comuta.</gray>
 

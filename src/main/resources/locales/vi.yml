@@ -1835,7 +1835,7 @@ protection:
           <green>Chọn cấp bậc có thể</green>
           <green>sử dụng lệnh biên giới</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Chuột trái </yellow><gray>để cuộn xuống.</gray>
         <yellow>Chuột phải </yellow><gray>để cuộn lên.</gray>
@@ -1845,12 +1845,12 @@ protection:
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Nhấp </yellow><gray>để mở.</gray>
       setting-cooldown: '<red>Tùy chỉnh đang trong thời gian chờ</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Nhấp </yellow><gray>để chỉnh.</gray>
 

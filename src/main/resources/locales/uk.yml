@@ -1761,7 +1761,7 @@ protection:
           <green>Оберіть ранг, який може</green>
           <green>використовувати команду межі</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>ЛКМ </yellow><gray>— перегортати вниз.</gray>
         <yellow>ПКМ </yellow><gray>— перегортати вгору.</gray>
@@ -1771,12 +1771,12 @@ protection:
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Клік </yellow><gray>для відкриття.</gray>
       setting-cooldown: '<red>Налаштування на кулдау́ні</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Клік </yellow><gray>для перемикання.</gray>
 

@@ -1898,16 +1898,16 @@ protection:
           <green>Wähle den Rang, der</green>
           <green>den Border-Befehl nutzen darf</green>
       description-layout: |-
-        <green>[description]</green>
+        [description]
 
         <gray>Erlaubt für:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '<green>[description]</green>'
+      menu-layout: '[description]'
       setting-cooldown: '<red>Einstellung ist auf Abklingzeit</red>'
       setting-layout: |-
-        <green>[description]</green>
+        [description]
 
         <gray>Aktuelle Einstellung: [setting]</gray>
       setting-active: '<green>Aktiviert</green>'
