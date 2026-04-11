@@ -1729,16 +1729,16 @@ protection:
           <green>できるランクを選択します</green>
           <green>Borderコマンドを使用します</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <gray>許可:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '<green>[description]</green>'
+      menu-layout: '[description]'
       setting-cooldown: '<red>クールダウン中です</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <gray>現在の設定: [setting]</gray>
       setting-active: 有効

@@ -7,18 +7,39 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_BentoBox&metric=security_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_BentoBox)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_BentoBox&metric=bugs)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_BentoBox)
 
-## About BentoBox
+# SkyBlock, OneBlock, AcidIsland, and more - all in one plugin
 
-### Description
+[![Discord](https://img.shields.io/discord/272499714048524288.svg?logo=discord)](https://discord.bentobox.world)
 
-BentoBox is a powerful Bukkit library plugin that provides core features for island-style games like SkyBlock, AcidIsland, SkyGrid and others. 
-These games are added to it via its **unique Addon system**. Further, non-game addons can provide features across games, such as challenges or warps. This enables admins to mix and match games and features to customize their server. It also enables the same code to be run 
-across games, reducing bugs and speeding updates across all games. For coders, 
-BentoBox has a **powerful API** allows for quick and easy development of these addons and simplifies complex aspects such as island protection, GUIs, and team management.
+BentoBox powers island-style game modes for Paper servers. Pick the game modes you want, drop them in, and you're running. No forks, no outdated code — one actively maintained platform that stays current with every Minecraft release.
 
-BentoBox is **[free](https://www.gnu.org/philosophy/free-sw.en.html) and open-source software** so join us to make this platform grow, become even more powerful and popular! Admins can pay to support BentoBox and Addons via donations and sponsorship.   
+**Game modes available:**
 
-Start now to create the server you've dreamed of!
+- **BSkyBlock** — classic SkyBlock, successor to the original ASkyBlock
+- **AOneBlock** — the popular OneBlock experience
+- **AcidIsland** — survive in a sea of acid
+- **Boxed** — expand your world by completing advancements
+- **CaveBlock** — underground survival
+- **SkyGrid** — scattered blocks, maximum adventure
+- **Poseidon** — underwater island challenge
+- And more community-created game modes
+
+**Why server admins choose BentoBox:**
+
+- Run multiple game modes on one server with shared features (challenges, warps, levels, leaderboards)
+- 20+ addons let you customize exactly the experience you want
+- Actively maintained and always up to date with the latest Minecraft version
+- Free and open source — used on 1,100+ servers worldwide
+- Rich API for developers who want to build custom addons
+
+[Full Documentation](https://docs.bentobox.world)
+
+# Installation
+
+1. Place the BentoBox jar in your plugins folder
+2. Start the server
+3. Download the game mode and feature addons you want from [this site](https://hangar.papermc.io/BentoboxWorld/) or [download.bentobox.world](https://download.bentobox.world) and place them in the `plugins/BentoBox/addons` folder
+4. Restart the server — you're good to go
 
 ## Addons
 These are some popular Gamemodes:
@@ -39,13 +60,8 @@ There are also plenty of other official or community-made Addons you can try and
 * Start reading: [https://docs.bentobox.world](https://docs.bentobox.world)
 * For developers: [Javadocs](https://ci.codemc.io/job/BentoBoxWorld/job/BentoBox/ws/target/apidocs/index.html)
 
-## Downloads
-
-### Webtool
-A [webtool](https://download.bentobox.world/) is currently being developed to allow you to easily setup BentoBox and Addons on your server.
-
-### Direct links
-* [Download](https://github.com/BentoBoxWorld/BentoBox/releases)
+## Bugs or Issues
+[File bugs on GitHub](https://github.com/BentoBoxWorld/BentoBox/issues). Confused? Ask on Discord. Note: we are **not** a company, so please be kind with your requests.
 
 ### Developers
 * [Jenkins](https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/) (**untested and mostly unstable builds**)
@@ -116,12 +132,3 @@ dependencies {
 ```
 **Note:** Due to a Gradle issue with versions for Maven, you need to use -SNAPSHOT at the end.
 
-### History
-
-[tastybento](https://github.com/tastybento) created ASkyBlock and AcidIsland that shared the same codebase. These plugins became very popular but became hard to maintain.
-[Poslovitch](https://github.com/Poslovitch) was running a Skyblock server before starting to contribute regularly to ASkyBlock's codebase. He proposed the idea of completely rewriting ASkyBlock
-to make it easier to maintain and richer in features. In May 2017, this became the *BSkyBlock* project. As development progressed it became clear that a lot of the new core features could be used by other
-island-style games and so that core functionality was split off and renamed *BentoBox* and the addon system was created. The addons for BSkyBlock and AcidIsland became very simple to develop and much smaller. 
-The community started to grow and we added new game modes like SkyGrid and CaveBlock by BONNe. BONNe also took over maintenance of Challenges and Biomes and contributed to other addons.  
-
-In December 2019, Poslovitch launched the BentoBox collection on SpigotMC and the story continues! 

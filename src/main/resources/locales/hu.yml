@@ -1921,7 +1921,7 @@ protection:
           <green>Válaszd ki azt a rangot, amelyik</green>
           <green>használhatja a határ parancsot</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Bal klikk a </yellow><gray>gombra a lefelé léptetéshez.</gray>
         <yellow>Kattintson a jobb gombbal a </yellow><gray>gombra a felfelé lépéshez.</gray>
@@ -1931,12 +1931,12 @@ protection:
       blocked-rank: '<dark_aqua>- stb</dark_aqua>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Kattintson a </yellow><gray>gombra a megnyitáshoz.</gray>
       setting-cooldown: '<red>A beállítás lehűlés alatt van</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Kattintson a </yellow><gray>gombra a váltáshoz.</gray>
 

@@ -1820,16 +1820,16 @@ protection:
           <green>Vyberte hodnost, která může</green>
           <green>použít příkaz Border</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <gray>Povoleno pro:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '<green>[description]</green>'
+      menu-layout: '[description]'
       setting-cooldown: '<red>Nastavení má cooldown</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <gray>Nynější nastavení: [setting]</gray>
       setting-active: '<green>Povoleno</green>'

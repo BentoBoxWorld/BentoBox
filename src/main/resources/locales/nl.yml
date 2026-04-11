@@ -1907,7 +1907,7 @@ protection:
           <green>Selecteer de rang die</green>
           <green>het bordercommando kan gebruiken</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Links klikken </yellow><gray>om naar beneden te bladeren.</gray>
         <yellow>Klik met de rechtermuisknop </yellow><gray>om omhoog te bladeren.</gray>
@@ -1917,12 +1917,12 @@ protection:
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Klik op </yellow><gray>om te openen.</gray>
       setting-cooldown: '<red>Instelling staat op afkoeling</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Klik op </yellow><gray>om te schakelen.</gray>
 

@@ -126,9 +126,110 @@ Guava (`ImmutableSet`, `ImmutableList`, etc.) is reliably available at runtime v
 
 `Util.componentToLegacy` is therefore **not** a thin wrapper around Adventure's serializer — it's a custom Component walker (`appendComponentLegacy` / `emitStyleTransition`) that tracks the last-emitted color and decorations and inserts `§r` whenever any decoration was on and is now off, then re-applies color afterwards. **Do not replace it with `LegacyComponentSerializer.serialize()` directly** without re-introducing the leak. The round-trip is exercised by `LegacyToMiniMessageTest`.
 
+### Multi-line strings must be parsed as a single unit
+
+`User.convertToLegacy` parses the **whole** translated string at once — never per-line. MiniMessage tags can span newlines (e.g. a `<green>...\n...</green>` block from a multi-line YAML entry, or a multi-line value substituted into a `<green>[description]</green>` template). Splitting on `\n` before parsing orphans close tags: the line `bar</green>` has no opening, and MiniMessage renders `</green>` as **literal text** in the lore. Adventure preserves newlines through `text.content()`, so a single parse handles everything correctly.
+
+### Locale templates: do not wrap placeholders in MiniMessage tags
+
+A template like `<green>[description]</green>` looks harmless but is a trap. Translation placeholders are substituted **as legacy `§`-coded strings** before re-parsing, and they may contain their own colors and newlines. Wrapping them re-introduces the multi-line orphaning problem above and forces the wrapper color over content that already has its own. Leave placeholders bare (`[description]`) and let the value bring its own colors. The `protection.panel.flag-item.{description,menu,setting}-layout` keys all follow this rule across every bundled locale.
+
+### Splitting legacy strings on a literal character collapses same-color runs
+
+`componentToLegacy` does not re-emit a color code when an adjacent text segment has the same color — it relies on the §-code carrying over within the contiguous string. Code that takes a translated legacy string and then `.split("\\|")` (or any literal-character split) breaks this carry-over: subsequent segments lose their color prefix and render in default. If a panel uses `|`-as-line-separator on a translated value, it must propagate the active `§color`/`§format` codes across the split itself, or set lore via Adventure `Component`s instead of legacy `String`s. (See `addon-level/.../DonationPanel.java#splitWithStyleCarryover` for a working pattern.) Bukkit's deprecated `meta.setLore(List<String>)` also does not suppress Minecraft's default lore italic — `meta.lore(List<Component>)` with the `removeDefaultItalic` helper does.
+
 ## Build Notes
 
 - The Gradle build uses the Paper `userdev` plugin and Shadow plugin to produce a fat/shaded JAR at `build/libs/BentoBox-{version}.jar`.
 - `plugin.yml` and `config.yml` are filtered for the `${version}` placeholder at build time; locale files are copied without filtering.
 - Java preview features are enabled for both compilation and test execution.
 - Local builds produce version `3.13.0-LOCAL-SNAPSHOT`; CI builds append `-b{BUILD_NUMBER}-SNAPSHOT`; `origin/master` builds produce the bare version.
+
+## Dependency Source Lookup
+
+When you need to inspect source code for a dependency (e.g., BentoBox, addons):
+
+1. **Check local Maven repo first**: `~/.m2/repository/` — sources jars are named `*-sources.jar`
+2. **Check the workspace**: Look for sibling directories or Git submodules that may contain the dependency as a local project (e.g., `../bentoBox`, `../addon-*`)
+3. **Check Maven local cache for already-extracted sources** before downloading anything
+4. Only download a jar or fetch from the internet if the above steps yield nothing useful
+
+Prefer reading `.java` source files directly from a local Git clone over decompiling or extracting a jar.
+
+In general, the latest version of BentoBox should be targeted.
+
+## Project Layout
+
+Related projects are checked out as siblings under `~/git/`:
+
+**Core:**
+- `bentobox/` — core BentoBox framework
+
+**Game modes:**
+- `addon-acidisland/` — AcidIsland game mode
+- `addon-bskyblock/` — BSkyBlock game mode
+- `Boxed/` — Boxed game mode (expandable box area)
+- `CaveBlock/` — CaveBlock game mode
+- `OneBlock/` — AOneBlock game mode
+- `SkyGrid/` — SkyGrid game mode
+- `RaftMode/` — Raft survival game mode
+- `StrangerRealms/` — StrangerRealms game mode
+- `Brix/` — plot game mode
+- `parkour/` — Parkour game mode
+- `poseidon/` — Poseidon game mode
+- `gg/` — gg game mode
+
+**Addons:**
+- `addon-level/` — island level calculation
+- `addon-challenges/` — challenges system
+- `addon-welcomewarpsigns/` — warp signs
+- `addon-limits/` — block/entity limits
+- `addon-invSwitcher/` / `invSwitcher/` — inventory switcher
+- `addon-biomes/` / `Biomes/` — biomes management
+- `Bank/` — island bank
+- `Border/` — world border for islands
+- `Chat/` — island chat
+- `CheckMeOut/` — island submission/voting
+- `ControlPanel/` — game mode control panel
+- `Converter/` — ASkyBlock to BSkyBlock converter
+- `DimensionalTrees/` — dimension-specific trees
+- `discordwebhook/` — Discord integration
+- `Downloads/` — BentoBox downloads site
+- `DragonFights/` — per-island ender dragon fights
+- `ExtraMobs/` — additional mob spawning rules
+- `FarmersDance/` — twerking crop growth
+- `GravityFlux/` — gravity addon
+- `Greenhouses-addon/` — greenhouse biomes
+- `IslandFly/` — island flight permission
+- `IslandRankup/` — island rankup system
+- `Likes/` — island likes/dislikes
+- `Limits/` — block/entity limits
+- `lost-sheep/` — lost sheep adventure
+- `MagicCobblestoneGenerator/` — custom cobblestone generator
+- `PortalStart/` — portal-based island start
+- `pp/` — pp addon
+- `Regionerator/` — region management
+- `Residence/` — residence addon
+- `TopBlock/` — top ten for OneBlock
+- `TwerkingForTrees/` — twerking tree growth
+- `Upgrades/` — island upgrades (Vault)
+- `Visit/` — island visiting
+- `weblink/` — web link addon
+- `CrowdBound/` — CrowdBound addon
+
+**Data packs:**
+- `BoxedDataPack/` — advancement datapack for Boxed
+
+**Documentation & tools:**
+- `docs/` — main documentation site
+- `docs-chinese/` — Chinese documentation
+- `docs-french/` — French documentation
+- `BentoBoxWorld.github.io/` — GitHub Pages site
+- `website/` — website
+- `translation-tool/` — translation tool
+
+Check these for source before any network fetch.
+
+## Key Dependencies (source locations)
+
+- `world.bentobox:bentobox` → `~/git/bentobox/src/`

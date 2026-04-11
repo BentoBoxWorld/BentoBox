@@ -1752,16 +1752,16 @@ protection:
           <green>Sınır komutunu</green>
           <green>kullanabilecek rütbeyi seçin</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <gray>İzin verilenler:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><dark_red></dark_red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '<green>[description]</green>'
+      menu-layout: '[description]'
       setting-cooldown: '<red>Ayar bekleme süresinde!</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <gray>Geçerli ayar: [setting]</gray>
       setting-active: '<blue>Aktif</blue>'

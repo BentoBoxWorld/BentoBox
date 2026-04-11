@@ -1873,7 +1873,7 @@ protection:
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '<green>[description]</green>'
+      menu-layout: '[description]'
       setting-cooldown: '<red>Impostazioni in cooldown</red>'
       setting-layout: '<green>[description]  </green><gray>Impostazione corrente: [setting]</gray>'
       setting-active: '<green>Attivo</green>'

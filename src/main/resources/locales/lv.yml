@@ -1887,16 +1887,16 @@ protection:
           <green>Izvēlies rangu, kas var</green>
           <green>izmantot robežas komandu</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <gray>Atļauts priekš:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '<green>[description]</green>'
+      menu-layout: '[description]'
       setting-cooldown: '<red>Iestatījumu maiņa ir ierobežota.</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <gray>Šībrīža iestatījumi: [setting]</gray>
       setting-active: '<green>Aktīvs</green>'

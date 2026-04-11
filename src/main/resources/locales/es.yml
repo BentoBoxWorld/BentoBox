@@ -1862,15 +1862,15 @@ protection:
           <green>Selecciona el rango que puede</green>
           <green>usar el comando de borde</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
         <gray>Permitido para:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '<green>[description]</green>'
+      menu-layout: '[description]'
       setting-cooldown: '<red>La configuración está en enfriamiento</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <gray>Configuración actual: [setting]</gray>
       setting-active: '<green>Activo</green>'

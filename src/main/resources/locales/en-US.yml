@@ -1509,8 +1509,8 @@ protection:
       obsidian-nearby: '<red>There are obsidian blocks within a [radius]-block radius
         of this obsidian. You cannot scoop it up into lava.</red>'
       lavaTip: |-
-        <orange>Scoop this up with a bucket</orange>
-        <orange>as lava again if you need it!</orange>
+        <gold>Scoop this up with a bucket</gold>
+        <gold>as lava again if you need it!</gold>
     OFFLINE_GROWTH:
       description: |-
         <green>When disabled, plants</green>
@@ -1841,7 +1841,7 @@ protection:
           <green>Select the rank that can</green>
           <green>use the border command</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Left Click </yellow><gray>to cycle downwards.</gray>
         <yellow>Right Click </yellow><gray>to cycle upwards.</gray>
@@ -1851,12 +1851,12 @@ protection:
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Click </yellow><gray>to open.</gray>
       setting-cooldown: '<red>Setting is on cooldown</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Click </yellow><gray>to toggle.</gray>
 
