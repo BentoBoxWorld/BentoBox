@@ -34,9 +34,13 @@ import world.bentobox.level.Level;
  * {@code /bbox admin purge regions} command and the periodic
  * {@link HousekeepingManager} auto-purge task.
  *
- * <p>All public methods perform blocking disk I/O and must be called from an
- * async thread. The service does not interact with players or issue
- * confirmations — the caller is responsible for any user-facing UX.
+ * <p>Threading requirements are method-specific. Methods that scan, read, or
+ * delete region data perform blocking disk I/O and should be called from an
+ * async thread. Methods that interact with Bukkit world or chunk APIs must be
+ * called from the main server thread.
+ *
+ * <p>The service does not interact with players or issue confirmations — the
+ * caller is responsible for any user-facing UX.
  *
  * <p>Extracted from {@code AdminPurgeRegionsCommand} so the command and the
  * scheduler can share a single code path for scanning, filtering, and
