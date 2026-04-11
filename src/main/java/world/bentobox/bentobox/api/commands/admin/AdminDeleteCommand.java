@@ -123,19 +123,19 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         //    left in place) and PurgeRegionsService / HousekeepingManager
         //    reaps the region files and DB row later on its schedule.
         //
-        //  - Simple/void generation: chunks are cheap — repaint them via
-        //    the addon's own ChunkGenerator right now using the existing
-        //    DeleteIslandChunks + WorldRegenerator.regenerateSimple path,
-        //    then hard-delete the island row so it does not linger.
+        //  - Simple/void generation: chunks are cheap — hard-delete the
+        //    island first so the cancellable delete path can veto the
+        //    operation before any chunk work starts, then repaint them via
+        //    the addon's own ChunkGenerator using the existing
+        //    DeleteIslandChunks + WorldRegenerator.regenerateSimple path.
         //
         // If we can't resolve the gamemode, default to soft-delete.
         GameModeAddon gm = getIWM().getAddon(getWorld()).orElse(null);
         if (gm != null && !gm.isUsesNewChunkGeneration()) {
-            // DeleteIslandChunks snapshots the island bounds in its
-            // constructor, so it is safe to hard-delete the row
-            // immediately after kicking off the regen.
-            new DeleteIslandChunks(getPlugin(), new IslandDeletion(oldIsland));
             getIslands().hardDeleteIsland(oldIsland);
+            // DeleteIslandChunks snapshots the island bounds from oldIsland,
+            // so it can safely run after the row has been hard-deleted.
+            new DeleteIslandChunks(getPlugin(), new IslandDeletion(oldIsland));
         } else {
             getIslands().deleteIsland(oldIsland, true, targetUUID);
         }
