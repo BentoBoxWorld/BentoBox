@@ -38,6 +38,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -396,5 +397,57 @@ class FlagTest extends RanksManagerTestSetup {
         Flag bbb = new Flag.Builder("BBB", Material.ACACIA_DOOR).type(Flag.Type.PROTECTION).build();
         assertTrue(aaa.compareTo(bbb) < bbb.compareTo(aaa));
         assertEquals(0, aaa.compareTo(aaa));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getMinimumRank()}.
+     */
+    @Test
+    void testMinimumRankDefaultsToVisitor() {
+        Flag flag = new Flag.Builder("minDefault", Material.ACACIA_DOOR).type(Flag.Type.PROTECTION).build();
+        assertEquals(RanksManager.VISITOR_RANK, flag.getMinimumRank());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag.Builder#minimumRank(int)}.
+     */
+    @Test
+    void testMinimumRankSetViaBuilder() {
+        Flag flag = new Flag.Builder("minMember", Material.ACACIA_DOOR)
+                .type(Flag.Type.PROTECTION)
+                .minimumRank(RanksManager.MEMBER_RANK)
+                .build();
+        assertEquals(RanksManager.MEMBER_RANK, flag.getMinimumRank());
+    }
+
+    /**
+     * The auto-assigned CycleClick for a PROTECTION flag must be configured with the
+     * Builder's minimumRank, so the click cycle skips ranks below the minimum.
+     */
+    @Test
+    void testMinimumRankPropagatesToCycleClick() throws Exception {
+        Flag flag = new Flag.Builder("minCycle", Material.ACACIA_DOOR)
+                .type(Flag.Type.PROTECTION)
+                .minimumRank(RanksManager.MEMBER_RANK)
+                .build();
+        PanelItem.ClickHandler handler = flag.getClickHandler();
+        assertTrue(handler instanceof CycleClick, "Expected auto-assigned CycleClick handler");
+        java.lang.reflect.Field minRankField = CycleClick.class.getDeclaredField("minRank");
+        minRankField.setAccessible(true);
+        assertEquals(RanksManager.MEMBER_RANK, minRankField.getInt(handler));
+    }
+
+    /**
+     * If defaultRank is set below minimumRank, build() should clamp it up to minimumRank
+     * so the flag's default value is selectable.
+     */
+    @Test
+    void testDefaultRankClampedToMinimumRank() {
+        Flag flag = new Flag.Builder("clamp", Material.ACACIA_DOOR)
+                .type(Flag.Type.PROTECTION)
+                .defaultRank(RanksManager.VISITOR_RANK)
+                .minimumRank(RanksManager.MEMBER_RANK)
+                .build();
+        assertEquals(RanksManager.MEMBER_RANK, flag.getDefaultRank());
     }
 }

@@ -1860,7 +1860,7 @@ protection:
           <green>Odaberite rang koji može</green>
           <green>koristiti naredbu za granicu</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Lijevi klik </yellow><gray>za kretanje prema dolje.</gray>
         <yellow>Desni klik </yellow><gray>za kretanje prema gore.</gray>
@@ -1870,12 +1870,12 @@ protection:
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Kliknite </yellow><gray>za otvaranje.</gray>
       setting-cooldown: '<red>Postavka je na hlađenju</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Kliknite </yellow><gray>za prebacivanje.</gray>
 

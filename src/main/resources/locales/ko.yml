@@ -1734,7 +1734,7 @@ protection:
           <green>경계를 설정할 수 있는</green>
           <green>순위를 선택하세요</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>좌클릭으로 </yellow><gray>아래쪽으로 순환합니다.</gray>
         <yellow>우클릭으로 </yellow><gray>위쪽으로 순환합니다.</gray>
@@ -1744,12 +1744,12 @@ protection:
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>클릭하여 </yellow><gray>엽니다.</gray>
       setting-cooldown: '<red>설정이 재사용 대기 중임</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>클릭하여 </yellow><gray>설정합니다.</gray>
 

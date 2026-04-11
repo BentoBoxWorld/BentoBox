@@ -1880,7 +1880,7 @@ protection:
           <green>Selecione a classificação que pode</green>
           <green>usar o comando de borda</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Clique com o botão esquerdo </yellow><gray>para descer.</gray>
         <yellow>Clique com o botão direito </yellow><gray>para avançar.</gray>
@@ -1890,12 +1890,12 @@ protection:
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Clique em </yellow><gray>para abrir.</gray>
       setting-cooldown: '<red>A configuração está em espera</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Clique em </yellow><gray>para alternar.</gray>
 

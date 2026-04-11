@@ -1899,16 +1899,16 @@ protection:
           <green>Sélectionnez le grade qui peut</green>
           <green>utiliser la commande de bordure</green>
       description-layout: |-
-        <green>[description]</green>
+        [description]
 
         <gray>Autorisé pour :</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '<green>[description]</green>'
+      menu-layout: '[description]'
       setting-cooldown: '<red>Le paramètre est en cours de recharge</red>'
       setting-layout: |-
-        <green>[description]</green>
+        [description]
 
         <gray>Réglage actuel : [setting]</gray>
       setting-active: '<green>actif</green>'

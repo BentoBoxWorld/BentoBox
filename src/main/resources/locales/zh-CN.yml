@@ -1681,7 +1681,7 @@ protection:
           <green>更改阶段的等级</green>
         border: '<green>选择可以使用边界命令的等级</green>'
       description-layout: |-
-        <green>[description]</green>
+        [description]
 
         <yellow>左键 </yellow><gray>向下循环选择</gray>
         <yellow>右键 </yellow><gray>向上循环选择</gray>
@@ -1691,12 +1691,12 @@ protection:
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>点击 </yellow><gray>打开配置界面</gray>
       setting-cooldown: '<red>设置正在冷却中</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>点击 </yellow><gray>切换状态</gray>
 

@@ -1840,16 +1840,16 @@ protection:
           <green>Wybierz rangę, która może</green>
           <green>używać komendy granicy</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <gray>Dozwolony dla:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '<green>[description]</green>'
+      menu-layout: '[description]'
       setting-cooldown: '<red>To ustawienie jest na cooldownie.</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <gray>Obecne ustawienie: [setting]</gray>
       setting-active: '<green>Aktywny</green>'

@@ -1886,7 +1886,7 @@ protection:
           <green>Pilih peringkat yang dapat</green>
           <green>menggunakan perintah batas</green>
       description-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Klik Kiri </yellow><gray>untuk beralih ke bawah.</gray>
         <yellow>Klik Kanan </yellow><gray>untuk beralih ke atas.</gray>
@@ -1896,12 +1896,12 @@ protection:
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
       menu-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Klik </yellow><gray>untuk membuka.</gray>
       setting-cooldown: '<red>Pengaturan sedang dalam cooldown</red>'
       setting-layout: |
-        <green>[description]</green>
+        [description]
 
         <yellow>Klik </yellow><gray>untuk beralih.</gray>
 

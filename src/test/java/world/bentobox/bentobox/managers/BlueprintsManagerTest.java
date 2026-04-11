@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -616,5 +617,230 @@ class BlueprintsManagerTest extends CommonTestSetup {
         File savedFile = new File(blueprintsFolder, BUNDLE_NAME + ".json");
         String content = Files.readString(savedFile.toPath());
         assertTrue(content.contains("say hello [player]"), "Commands should be serialised into JSON");
+    }
+
+    // -----------------------------------------------------------------------
+    // loadBlueprintBundles
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testLoadBlueprintBundlesNoFolder() {
+        // No blueprints folder — should create defaults
+        manager.loadBlueprintBundles(addon);
+
+        // After loading, it should not be in the "loading" set anymore
+        assertTrue(manager.isBlueprintsLoaded());
+    }
+
+    @Test
+    void testLoadBlueprintBundlesWithValidBundle() throws IOException {
+        blueprintsFolder.mkdirs();
+
+        // Create a valid bundle JSON file
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId(BUNDLE_NAME);
+        bb.setDisplayName("Test Bundle");
+        Blueprint islandBp = new Blueprint();
+        islandBp.setName("island");
+        bb.setBlueprint(World.Environment.NORMAL, islandBp);
+
+        // Save using the manager (runs synchronously with our mock)
+        manager.saveBlueprintBundle(addon, bb);
+
+        // Also write a blueprint file so loadBlueprints doesn't log error
+        File jsonFile = new File(blueprintsFolder, "island" + BlueprintsManager.BLUEPRINT_SUFFIX);
+        Files.writeString(jsonFile.toPath(), BLUEPRINT_JSON);
+
+        // Now load bundles
+        manager.loadBlueprintBundles(addon);
+
+        Map<String, BlueprintBundle> bundles = manager.getBlueprintBundles(addon);
+        assertEquals(1, bundles.size());
+        assertTrue(bundles.containsKey(BUNDLE_NAME));
+    }
+
+    @Test
+    void testLoadBlueprintBundlesDuplicateUniqueId() throws IOException {
+        blueprintsFolder.mkdirs();
+
+        // Create two bundle files with the same uniqueId
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId(BUNDLE_NAME);
+        bb.setDisplayName("Bundle 1");
+        manager.saveBlueprintBundle(addon, bb);
+
+        // Create a second file with same uniqueId but different filename
+        File secondFile = new File(blueprintsFolder, "copy.json");
+        String content = Files.readString(new File(blueprintsFolder, BUNDLE_NAME + ".json").toPath());
+        Files.writeString(secondFile.toPath(), content);
+
+        // Write a blueprint so loadBlueprints works
+        File bpFile = new File(blueprintsFolder, "island" + BlueprintsManager.BLUEPRINT_SUFFIX);
+        Files.writeString(bpFile.toPath(), BLUEPRINT_JSON);
+
+        manager.loadBlueprintBundles(addon);
+
+        // Only one should be loaded, duplicate should be warned
+        Map<String, BlueprintBundle> bundles = manager.getBlueprintBundles(addon);
+        assertEquals(1, bundles.size());
+    }
+
+    // -----------------------------------------------------------------------
+    // saveBlueprintBundles (saves all)
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testSaveBlueprintBundlesSavesAll() throws IOException {
+        blueprintsFolder.mkdirs();
+
+        BlueprintBundle bb1 = new BlueprintBundle();
+        bb1.setUniqueId("bundle1");
+        manager.addBlueprintBundle(addon, bb1);
+
+        BlueprintBundle bb2 = new BlueprintBundle();
+        bb2.setUniqueId("bundle2");
+        manager.addBlueprintBundle(addon, bb2);
+
+        manager.saveBlueprintBundles();
+
+        assertTrue(new File(blueprintsFolder, "bundle1.json").exists());
+        assertTrue(new File(blueprintsFolder, "bundle2.json").exists());
+    }
+
+    // -----------------------------------------------------------------------
+    // saveBlueprintBundle error handling
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testSaveBlueprintBundleCreatesFolder() {
+        // Don't create blueprintsFolder — saveBlueprintBundle should create it
+        assertFalse(blueprintsFolder.exists());
+
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId(BUNDLE_NAME);
+        manager.saveBlueprintBundle(addon, bb);
+
+        assertTrue(blueprintsFolder.exists());
+        assertTrue(new File(blueprintsFolder, BUNDLE_NAME + ".json").exists());
+    }
+
+    // -----------------------------------------------------------------------
+    // paste with valid blueprint
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testPasteNoOverworldBlueprint() {
+        // Bundle is registered and blueprints map exists, but overworld blueprint is missing
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId(BUNDLE_NAME);
+        bb.setBlueprints(Map.of(World.Environment.NORMAL, "nonexistent"));
+        manager.addBlueprintBundle(addon, bb);
+
+        // Add a blueprint (but not the one the bundle references)
+        Blueprint bp = new Blueprint();
+        bp.setName("other");
+        manager.addBlueprint(addon, bp);
+
+        boolean result = manager.paste(addon, island, BUNDLE_NAME, null, true);
+        // Should log error about no default blueprint
+        verify(plugin).logError("Blueprint bundle has no normal world blueprint, using default");
+    }
+
+    @Test
+    void testPaste3ArgDelegates() {
+        // The 3-arg paste(addon, island, name) delegates to paste(addon, island, name, null, true)
+        // With no bundle registered, both should return false
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId(BUNDLE_NAME);
+        manager.addBlueprintBundle(addon, bb);
+
+        // No blueprints loaded
+        manager.paste(addon, island, BUNDLE_NAME);
+        verify(plugin).logError("No blueprints loaded for bundle 'default'!");
+    }
+
+    // -----------------------------------------------------------------------
+    // extractDefaultBlueprints — no file
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testExtractDefaultBlueprintsNoJarFile() {
+        // addon.getFile() returns null by default, so extracting should handle gracefully
+        assertFalse(blueprintsFolder.exists());
+        when(addon.getFile()).thenReturn(new File("nonexistent.jar"));
+        manager.extractDefaultBlueprints(addon);
+        // Should log error about jar
+        verify(plugin).logError(anyString());
+    }
+
+    // -----------------------------------------------------------------------
+    // deleteBlueprint removes from bundles too
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testDeleteBlueprintAlsoDeletesLegacyFile() throws IOException {
+        blueprintsFolder.mkdirs();
+        Blueprint bp = new Blueprint();
+        bp.setName("island");
+        manager.addBlueprint(addon, bp);
+
+        // Create both modern and legacy files
+        File modernFile = new File(blueprintsFolder, "island" + BlueprintsManager.BLUEPRINT_SUFFIX);
+        File legacyFile = new File(blueprintsFolder, "island" + BlueprintsManager.LEGACY_BLUEPRINT_SUFFIX);
+        Files.writeString(modernFile.toPath(), "dummy");
+        Files.writeString(legacyFile.toPath(), "dummy");
+
+        manager.deleteBlueprint(addon, "island");
+
+        assertFalse(modernFile.exists());
+        assertFalse(legacyFile.exists());
+    }
+
+    // -----------------------------------------------------------------------
+    // renameBlueprint edge cases
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testRenameBlueprintNoOldFile() {
+        // Rename should work even if old file doesn't exist on disk
+        Blueprint bp = new Blueprint();
+        bp.setName("island");
+        manager.addBlueprint(addon, bp);
+
+        manager.renameBlueprint(addon, bp, "newname", "New Name");
+
+        assertEquals("newname", bp.getName());
+        assertTrue(manager.getBlueprints(addon).containsKey("newname"));
+        assertFalse(manager.getBlueprints(addon).containsKey("island"));
+    }
+
+    // -----------------------------------------------------------------------
+    // validate edge cases
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testValidateCaseSensitive() {
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId(BUNDLE_NAME);
+        manager.addBlueprintBundle(addon, bb);
+
+        // validate uses exact key match
+        assertNull(manager.validate(addon, "DEFAULT"));
+        assertEquals(BUNDLE_NAME, manager.validate(addon, BUNDLE_NAME));
+    }
+
+    // -----------------------------------------------------------------------
+    // isBlueprintsLoaded during loading
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testIsBlueprintsLoadedFalseDuringLoad() {
+        // Override scheduler to NOT run the task, simulating async in-progress
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenReturn(mock(BukkitTask.class));
+
+        manager.loadBlueprintBundles(addon);
+
+        // Loading flag should be set (not yet cleared since task didn't run)
+        assertFalse(manager.isBlueprintsLoaded());
     }
 }

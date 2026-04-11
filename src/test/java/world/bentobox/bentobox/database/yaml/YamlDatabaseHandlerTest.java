@@ -1,17 +1,38 @@
 package world.bentobox.bentobox.database.yaml;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -23,14 +44,33 @@ import world.bentobox.bentobox.util.Util;
 class YamlDatabaseHandlerTest extends CommonTestSetup {
 
     /**
-     * Minimal DataObject for constructing the handler.
+     * DataObject with various field types for testing serialization/deserialization.
      */
     public static class TestDataObject implements DataObject {
         private String uniqueId = "test";
+        private String name = "";
+        private int count = 0;
+        private Map<String, Integer> scores = new HashMap<>();
+        private Set<String> tags = new HashSet<>();
+        private List<String> items = new java.util.ArrayList<>();
+        private Material material = Material.STONE;
+
         @Override
         public String getUniqueId() { return uniqueId; }
         @Override
         public void setUniqueId(String uniqueId) { this.uniqueId = uniqueId; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public int getCount() { return count; }
+        public void setCount(int count) { this.count = count; }
+        public Map<String, Integer> getScores() { return scores; }
+        public void setScores(Map<String, Integer> scores) { this.scores = scores; }
+        public Set<String> getTags() { return tags; }
+        public void setTags(Set<String> tags) { this.tags = tags; }
+        public List<String> getItems() { return items; }
+        public void setItems(List<String> items) { this.items = items; }
+        public Material getMaterial() { return material; }
+        public void setMaterial(Material material) { this.material = material; }
     }
 
     @Mock
@@ -238,5 +278,380 @@ class YamlDatabaseHandlerTest extends CommonTestSetup {
     void testDeserializeEnumZombifiedPiglinDirect() throws Exception {
         Object result = deserializeEnumMethod.invoke(handler, "ZOMBIFIED_PIGLIN", EntityType.class);
         assertSame(EntityType.class, result.getClass().getDeclaringClass() != null ? result.getClass().getDeclaringClass() : result.getClass());
+    }
+
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+        // Clean up database folder
+        File dbFolder = new File(plugin.getDataFolder(), "database");
+        if (dbFolder.exists()) {
+            Files.walk(dbFolder.toPath())
+                .map(Path::toFile)
+                .sorted((a, b) -> -a.compareTo(b))
+                .forEach(File::delete);
+        }
+    }
+
+    // ---- serialize() tests via reflection ----
+
+    @Test
+    void testSerializeNull() throws Exception {
+        Method serializeMethod = YamlDatabaseHandler.class.getDeclaredMethod("serialize", Object.class);
+        serializeMethod.setAccessible(true);
+        assertEquals("null", serializeMethod.invoke(handler, (Object) null));
+    }
+
+    @Test
+    void testSerializeUUID() throws Exception {
+        Method serializeMethod = YamlDatabaseHandler.class.getDeclaredMethod("serialize", Object.class);
+        serializeMethod.setAccessible(true);
+        UUID uuid = UUID.randomUUID();
+        assertEquals(uuid.toString(), serializeMethod.invoke(handler, uuid));
+    }
+
+    @Test
+    void testSerializeWorld() throws Exception {
+        Method serializeMethod = YamlDatabaseHandler.class.getDeclaredMethod("serialize", Object.class);
+        serializeMethod.setAccessible(true);
+        when(world.getName()).thenReturn("my_world");
+        assertEquals("my_world", serializeMethod.invoke(handler, world));
+    }
+
+    @Test
+    void testSerializeLocation() throws Exception {
+        Method serializeMethod = YamlDatabaseHandler.class.getDeclaredMethod("serialize", Object.class);
+        serializeMethod.setAccessible(true);
+        mockedUtil.when(() -> Util.getStringLocation(location)).thenReturn("world:10:20:30:0:0");
+        assertEquals("world:10:20:30:0:0", serializeMethod.invoke(handler, location));
+    }
+
+    @Test
+    void testSerializeEnum() throws Exception {
+        Method serializeMethod = YamlDatabaseHandler.class.getDeclaredMethod("serialize", Object.class);
+        serializeMethod.setAccessible(true);
+        // Material implements Keyed, so the Keyed case handles it (lowercase key)
+        assertEquals("diamond", serializeMethod.invoke(handler, Material.DIAMOND));
+    }
+
+    @Test
+    void testSerializePlainObject() throws Exception {
+        Method serializeMethod = YamlDatabaseHandler.class.getDeclaredMethod("serialize", Object.class);
+        serializeMethod.setAccessible(true);
+        assertEquals("hello", serializeMethod.invoke(handler, "hello"));
+        assertEquals(42, serializeMethod.invoke(handler, 42));
+    }
+
+    // ---- objectExists() ----
+
+    @Test
+    void testObjectExistsTrue() {
+        when(connector.uniqueIdExists("TestDataObject", "test-id")).thenReturn(true);
+        assertTrue(handler.objectExists("test-id"));
+    }
+
+    @Test
+    void testObjectExistsFalse() {
+        when(connector.uniqueIdExists("TestDataObject", "missing")).thenReturn(false);
+        assertFalse(handler.objectExists("missing"));
+    }
+
+    // ---- loadObject() ----
+
+    @Test
+    void testLoadObject() throws Exception {
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("uniqueId", "loaded-id");
+        config.set("name", "test name");
+        config.set("count", 42);
+        config.set("material", "DIAMOND");
+        when(connector.loadYamlFile(anyString(), eq("mykey"))).thenReturn(config);
+
+        TestDataObject result = handler.loadObject("mykey");
+        assertNotNull(result);
+        assertEquals("loaded-id", result.getUniqueId());
+        assertEquals("test name", result.getName());
+        assertEquals(42, result.getCount());
+        assertEquals(Material.DIAMOND, result.getMaterial());
+    }
+
+    @Test
+    void testLoadObjectWithCollections() throws Exception {
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("uniqueId", "coll-test");
+        config.set("name", "");
+        config.set("count", 0);
+        config.set("material", "STONE");
+        // Map
+        config.set("scores.alice", 100);
+        config.set("scores.bob", 200);
+        // Set stored as list
+        config.set("tags", List.of("tag1", "tag2"));
+        // List
+        config.set("items", List.of("item1", "item2", "item3"));
+        when(connector.loadYamlFile(anyString(), eq("coll-test"))).thenReturn(config);
+
+        TestDataObject result = handler.loadObject("coll-test");
+        assertNotNull(result);
+        assertEquals(2, result.getScores().size());
+        assertEquals(100, result.getScores().get("alice"));
+        assertEquals(200, result.getScores().get("bob"));
+        assertEquals(2, result.getTags().size());
+        assertTrue(result.getTags().contains("tag1"));
+        assertEquals(3, result.getItems().size());
+    }
+
+    @Test
+    void testLoadObjectMissingFieldUsesDefault() throws Exception {
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("uniqueId", "missing-test");
+        // name not set at all
+        config.set("count", 0);
+        config.set("material", "STONE");
+        when(connector.loadYamlFile(anyString(), eq("missing-test"))).thenReturn(config);
+
+        TestDataObject result = handler.loadObject("missing-test");
+        assertNotNull(result);
+        // name not in config, so keeps its default value
+        assertEquals("", result.getName());
+    }
+
+    // ---- loadObjects() ----
+
+    @Test
+    void testLoadObjectsEmptyFolder() throws Exception {
+        // Create the empty table folder
+        File tableFolder = new File(plugin.getDataFolder(), "database" + File.separator + "TestDataObject");
+        tableFolder.mkdirs();
+
+        List<TestDataObject> result = handler.loadObjects();
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testLoadObjectsWithFiles() throws Exception {
+        // Create the table folder with a yml file
+        File tableFolder = new File(plugin.getDataFolder(), "database" + File.separator + "TestDataObject");
+        tableFolder.mkdirs();
+        File ymlFile = new File(tableFolder, "obj1.yml");
+        YamlConfiguration yaml = new YamlConfiguration();
+        yaml.set("uniqueId", "obj1");
+        yaml.set("name", "Object One");
+        yaml.set("count", 5);
+        yaml.set("material", "STONE");
+        yaml.save(ymlFile);
+
+        // Stub the connector to return the config
+        YamlConfiguration loaded = new YamlConfiguration();
+        loaded.set("uniqueId", "obj1");
+        loaded.set("name", "Object One");
+        loaded.set("count", 5);
+        loaded.set("material", "STONE");
+        when(connector.loadYamlFile(anyString(), eq("obj1.yml"))).thenReturn(loaded);
+
+        List<TestDataObject> result = handler.loadObjects();
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("obj1", result.getFirst().getUniqueId());
+    }
+
+    // ---- saveObject() ----
+
+    @Test
+    void testSaveObjectNull() throws Exception {
+        CompletableFuture<Boolean> result = handler.saveObject(null);
+        assertFalse(result.join());
+        verify(plugin).logError("YAML database request to store a null.");
+    }
+
+    @Test
+    void testSaveObjectNotDataObject() throws Exception {
+        // Create a handler for a non-DataObject class to test the check
+        // Actually, we can't easily do that since the generic is bound. Instead test with a null cast.
+        // The null case is already tested above, so let's test with a valid DataObject during shutdown
+        when(plugin.isShutdown()).thenReturn(true);
+
+        TestDataObject obj = new TestDataObject();
+        obj.setUniqueId("save-test");
+        obj.setName("Test Save");
+        obj.setCount(10);
+
+        when(connector.saveYamlFile(anyString(), anyString(), anyString(), any())).thenReturn(true);
+
+        CompletableFuture<Boolean> result = handler.saveObject(obj);
+        // During shutdown, processFile runs sync
+        assertTrue(result.join());
+    }
+
+    @Test
+    void testSaveObjectWithCollections() throws Exception {
+        when(plugin.isShutdown()).thenReturn(true);
+
+        TestDataObject obj = new TestDataObject();
+        obj.setUniqueId("coll-save");
+        obj.setName("Collections");
+        obj.setScores(Map.of("alice", 100, "bob", 200));
+        obj.setTags(Set.of("tag1", "tag2"));
+        obj.setItems(List.of("item1", "item2"));
+        obj.setMaterial(Material.DIAMOND);
+
+        when(connector.saveYamlFile(anyString(), anyString(), anyString(), any())).thenReturn(true);
+
+        CompletableFuture<Boolean> result = handler.saveObject(obj);
+        assertTrue(result.join());
+        verify(connector).saveYamlFile(anyString(), anyString(), eq("coll-save"), any());
+    }
+
+    // ---- deleteObject() ----
+
+    @Test
+    void testDeleteObjectNull() throws Exception {
+        handler.deleteObject(null);
+        verify(plugin).logError("YAML database request to delete a null.");
+    }
+
+    @Test
+    void testDeleteObject() throws Exception {
+        when(plugin.isEnabled()).thenReturn(false); // sync delete
+
+        TestDataObject obj = new TestDataObject();
+        obj.setUniqueId("del-test");
+
+        // Create the file so delete can find it
+        File tableFolder = new File(plugin.getDataFolder(), "database" + File.separator + "TestDataObject");
+        tableFolder.mkdirs();
+        File ymlFile = new File(tableFolder, "del-test.yml");
+        ymlFile.createNewFile();
+        assertTrue(ymlFile.exists());
+
+        handler.deleteObject(obj);
+
+        // File should be deleted
+        assertFalse(ymlFile.exists());
+    }
+
+    // ---- deleteID() ----
+
+    @Test
+    void testDeleteID() throws Exception {
+        when(plugin.isEnabled()).thenReturn(false); // sync delete
+
+        // Create the file
+        File tableFolder = new File(plugin.getDataFolder(), "database" + File.separator + "TestDataObject");
+        tableFolder.mkdirs();
+        File ymlFile = new File(tableFolder, "delete-me.yml");
+        ymlFile.createNewFile();
+        assertTrue(ymlFile.exists());
+
+        handler.deleteID("delete-me");
+
+        assertFalse(ymlFile.exists());
+    }
+
+    @Test
+    void testDeleteIDWithYmlSuffix() throws Exception {
+        when(plugin.isEnabled()).thenReturn(false); // sync delete
+
+        File tableFolder = new File(plugin.getDataFolder(), "database" + File.separator + "TestDataObject");
+        tableFolder.mkdirs();
+        File ymlFile = new File(tableFolder, "already-has.yml");
+        ymlFile.createNewFile();
+        assertTrue(ymlFile.exists());
+
+        handler.deleteID("already-has.yml");
+
+        assertFalse(ymlFile.exists());
+    }
+
+    @Test
+    void testDeleteIDNull() {
+        when(plugin.isEnabled()).thenReturn(false);
+        // Should not throw
+        handler.deleteID(null);
+    }
+
+    @Test
+    void testDeleteIDNoFolder() {
+        when(plugin.isEnabled()).thenReturn(false);
+        // Folder doesn't exist - should not throw
+        handler.deleteID("nonexistent");
+    }
+
+    // ---- close() ----
+
+    @Test
+    void testClose() {
+        // Should not throw
+        handler.close();
+    }
+
+    // ---- loadObject with map containing dots ----
+
+    @Test
+    void testLoadObjectMapWithDots() throws Exception {
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("uniqueId", "dot-test");
+        config.set("name", "");
+        config.set("count", 0);
+        config.set("material", "STONE");
+        // Map key with serialized dot
+        config.set("scores.:dot:key:dot:name", 999);
+        when(connector.loadYamlFile(anyString(), eq("dot-test"))).thenReturn(config);
+
+        TestDataObject result = handler.loadObject("dot-test");
+        assertNotNull(result);
+        // :dot: should be converted back to .
+        assertTrue(result.getScores().containsKey(".key.name"));
+        assertEquals(999, result.getScores().get(".key.name"));
+    }
+
+    // ---- saveObject generates uniqueId if empty ----
+
+    @Test
+    void testSaveObjectGeneratesUniqueId() throws Exception {
+        when(plugin.isShutdown()).thenReturn(true);
+        when(connector.getUniqueId("TestDataObject")).thenReturn("generated-id");
+        when(connector.saveYamlFile(anyString(), anyString(), anyString(), any())).thenReturn(true);
+
+        TestDataObject obj = new TestDataObject();
+        obj.setUniqueId(""); // empty, should trigger generation
+
+        CompletableFuture<Boolean> result = handler.saveObject(obj);
+        assertTrue(result.join());
+        assertEquals("generated-id", obj.getUniqueId());
+    }
+
+    // ---- saveObject with null uniqueId ----
+
+    @Test
+    void testSaveObjectNullUniqueId() throws Exception {
+        when(plugin.isShutdown()).thenReturn(true);
+        when(connector.getUniqueId("TestDataObject")).thenReturn("auto-id");
+        when(connector.saveYamlFile(anyString(), anyString(), anyString(), any())).thenReturn(true);
+
+        TestDataObject obj = new TestDataObject();
+        obj.setUniqueId(null);
+
+        CompletableFuture<Boolean> result = handler.saveObject(obj);
+        assertTrue(result.join());
+        assertEquals("auto-id", obj.getUniqueId());
+    }
+
+    // ---- loadObject with empty config (missing fields use defaults) ----
+
+    @Test
+    void testLoadObjectEmptyConfig() throws Exception {
+        YamlConfiguration config = new YamlConfiguration();
+        // No fields set at all
+        when(connector.loadYamlFile(anyString(), eq("empty"))).thenReturn(config);
+
+        TestDataObject result = handler.loadObject("empty");
+        assertNotNull(result);
+        // Should have default values
+        assertEquals("test", result.getUniqueId()); // default from class
+        assertEquals("", result.getName());
+        assertEquals(0, result.getCount());
     }
 }

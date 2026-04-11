@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.api.user;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -509,34 +508,29 @@ public class User implements MetaDataAble {
      * @return legacy §-coded string
      */
     private String convertToLegacy(String raw) {
-        // Process each line independently to preserve newlines
-        if (raw.contains("\n")) {
-            return Arrays.stream(raw.split("\n", -1))
-                    .map(this::convertLineToLegacy)
-                    .collect(Collectors.joining("\n"));
-        }
-        return convertLineToLegacy(raw);
-    }
-
-    private String convertLineToLegacy(String line) {
-        boolean hasLegacy = Util.isLegacyFormat(line);
-        boolean hasMiniMessage = line.contains("<") && line.contains(">");
+        boolean hasLegacy = Util.isLegacyFormat(raw);
+        boolean hasMiniMessage = raw.contains("<") && raw.contains(">");
         if (hasLegacy && !hasMiniMessage) {
             // Pure legacy — use the old path
             @SuppressWarnings("deprecation")
-            String result = Util.translateColorCodes(line);
+            String result = Util.translateColorCodes(raw);
             return result;
         }
+        // Process the whole string at once (not per line). MiniMessage tags can span
+        // newlines — splitting first would orphan close tags (e.g. <green>foo\nbar</green>
+        // becomes "<green>foo" and "bar</green>", and "</green>" with no opening would
+        // be rendered as literal text). Component text preserves newlines through
+        // serialization, so a single parse is correct.
         if (hasLegacy) {
             // Mixed content: MiniMessage tags + legacy & codes.
             // Replace legacy codes with MiniMessage opening tags inline (no closing tags).
             // MiniMessage handles unclosed tags correctly — they apply until overridden.
             // Using legacyToMiniMessage() would produce wrong nesting (e.g.,
             // <bold><yellow>text</bold></yellow> where </yellow> leaks as literal text).
-            line = Util.replaceLegacyCodesInline(line);
+            raw = Util.replaceLegacyCodesInline(raw);
         }
         // Parse as MiniMessage and serialize to legacy
-        return Util.componentToLegacy(Util.parseMiniMessage(line));
+        return Util.componentToLegacy(Util.parseMiniMessage(raw));
     }
 
     /**
