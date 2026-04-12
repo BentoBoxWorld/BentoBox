@@ -797,8 +797,10 @@ public class Flag implements Comparable<Flag> {
          * @return Flag
          */
         public Flag build() {
-            // Ensure the default rank is not below the minimum selectable rank
-            if (defaultRank < minimumRank) {
+            // Ensure the default rank is not below the minimum selectable rank.
+            // Only applies to PROTECTION flags — SETTING/WORLD_SETTING flags use -1
+            // as a valid "disabled" state (Island.isAllowed checks >= 0).
+            if (type == Type.PROTECTION && defaultRank < minimumRank) {
                 BentoBox.getInstance().logWarning("Flag " + id + " defaultRank (" + defaultRank
                         + ") is below minimumRank (" + minimumRank + "); raising defaultRank to minimumRank.");
                 defaultRank = minimumRank;
