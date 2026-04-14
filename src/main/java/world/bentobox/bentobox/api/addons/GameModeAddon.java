@@ -211,7 +211,7 @@ public abstract class GameModeAddon extends Addon {
      * </ul>
      *
      * @return number of islands ahead, -1 for global default, 0 to disable
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public int getPregenIslandsAhead() {
         return -1;

@@ -42,6 +42,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.PurgeRegionsService;
 import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.managers.island.IslandGrid;
 
@@ -122,6 +123,10 @@ class AdminPurgeRegionsCommandTest extends CommonTestSetup {
         // Addons manager (used by canDeleteIsland for Level check)
         when(plugin.getAddonsManager()).thenReturn(addonsManager);
         when(addonsManager.getAddonByName("Level")).thenReturn(Optional.empty());
+
+        // Real PurgeRegionsService wired over the mocked plugin — exercises
+        // the extracted scan/filter/delete logic exactly as the command does.
+        when(plugin.getPurgeRegionsService()).thenReturn(new PurgeRegionsService(plugin));
 
         // Create commands
         apc = new AdminPurgeCommand(ac);
@@ -512,5 +517,34 @@ class AdminPurgeRegionsCommandTest extends CommonTestSetup {
         verify(user).sendMessage("general.success");
         verify(im).deleteIslandId("island-deletable");
         assertFalse(playerFile.toFile().exists(), "Player data file should have been deleted");
+    }
+
+    /**
+     * Regression for the async {@code World.save()} crash hit on 26.1.1 Paper:
+     * {@code PurgeRegionsService.delete()} must not call
+     * {@code Bukkit.getWorlds().forEach(World::save)} because it runs on an
+     * async worker, and {@code World.save()} is main-thread-only. The world
+     * save must happen on the main thread *before* delete() is dispatched.
+     *
+     * <p>We call the service's {@code scan} + {@code delete} directly (as
+     * the async task would), then assert that {@code Bukkit.getWorlds()}
+     * was never invoked at all by the service — neither the scan nor the
+     * delete needs it.
+     */
+    @Test
+    void testServiceDoesNotCallBukkitGetWorlds() throws IOException {
+        IslandGrid grid = mock(IslandGrid.class);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
+        when(islandCache.getIslandGrid(world)).thenReturn(grid);
+
+        // Create an old empty region file the scan will pick up
+        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
+        Files.createFile(regionDir.resolve("r.0.0.mca"));
+
+        PurgeRegionsService service = new PurgeRegionsService(plugin);
+        PurgeRegionsService.PurgeScanResult scan = service.scan(world, 10);
+        service.delete(scan);
+
+        mockedBukkit.verify(Bukkit::getWorlds, never());
     }
 }

@@ -71,7 +71,7 @@ public class MythicMobsHook extends Hook {
      * @param spawnLocation location
      * @param onSpawn callback invoked with the spawned Bukkit entity; may be {@code null}
      * @return true if the mob type exists and a spawn was scheduled
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public boolean spawnMythicMob(MythicMobRecord mmr, Location spawnLocation, Consumer<Entity> onSpawn) {
         return spawnMythicMob(mmr, spawnLocation, onSpawn, 40L);

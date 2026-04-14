@@ -319,26 +319,52 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.delete-speed", since = "1.7.0")
     private int deleteSpeed = 1;
 
-    // Island deletion related settings
-    @ConfigComment("Toggles whether islands, when players are resetting them, should be kept in the world or deleted.")
-    @ConfigComment("* If set to 'true', whenever a player resets his island, his previous island will become unowned and won't be deleted from the world.")
-    @ConfigComment("  You can, however, still delete those unowned islands through purging.")
-    @ConfigComment("  On bigger servers, this can lead to an increasing world size.")
-    @ConfigComment("  Yet, this allows admins to retrieve a player's old island in case of an improper use of the reset command.")
-    @ConfigComment("  Admins can indeed re-add the player to his old island by registering him to it.")
-    @ConfigComment("* If set to 'false', whenever a player resets his island, his previous island will be deleted from the world.")
-    @ConfigComment("  This is the default behaviour.")
-    @ConfigEntry(path = "island.deletion.keep-previous-island-on-reset", since = "1.13.0")
-    private boolean keepPreviousIslandOnReset = false;
 
-    @ConfigComment("Toggles how the islands are deleted.")
-    @ConfigComment("* If set to 'false', all islands will be deleted at once.")
-    @ConfigComment("  This is fast but may cause an impact on the performance")
-    @ConfigComment("  as it'll load all the chunks of the in-deletion islands.")
-    @ConfigComment("* If set to 'true', the islands will be deleted one by one.")
-    @ConfigComment("  This is slower but will not cause any impact on the performance.")
-    @ConfigEntry(path = "island.deletion.slow-deletion", since = "1.19.1")
+    /**
+     * @deprecated No longer bound to config. The chunk-by-chunk deletion
+     *             pipeline has been removed. Slated for removal.
+     */
+    @Deprecated(since = "3.14.0", forRemoval = true)
     private boolean slowDeletion = false;
+
+    // Island deletion housekeeping
+    @ConfigComment("Housekeeping: periodic auto-purge of unused region files.")
+    @ConfigComment("When a player resets their island, the old island is orphaned (marked")
+    @ConfigComment("deletable) and its region files are reclaimed later by a scheduled purge.")
+    @ConfigComment("")
+    @ConfigComment("WARNING: housekeeping deletes .mca region files from disk. It uses the same")
+    @ConfigComment("protections as the /bbox purge regions command (online players, island level,")
+    @ConfigComment("purge-protected flag, spawn islands, and unowned-but-not-deletable islands are")
+    @ConfigComment("all skipped) but is destructive by design.")
+    @ConfigComment("")
+    @ConfigComment("--- Deleted-island sweep (safe, on by default) ---")
+    @ConfigComment("Reaps region files for islands explicitly marked deletable (e.g. /is reset).")
+    @ConfigComment("Only removes islands that BentoBox itself soft-deleted — never touches")
+    @ConfigComment("active or unvisited islands. Enable this and leave age-sweep off for a")
+    @ConfigComment("'just works' experience that reclaims disk space from reset islands.")
+    @ConfigEntry(path = "island.deletion.housekeeping.deleted-sweep.enabled", since = "3.15.0")
+    private boolean housekeepingDeletedEnabled = true;
+
+    @ConfigComment("How often the deleted-island sweep runs, in hours.")
+    @ConfigEntry(path = "island.deletion.housekeeping.deleted-sweep.interval-hours", since = "3.15.0")
+    private int housekeepingDeletedIntervalHours = 24;
+
+    @ConfigComment("")
+    @ConfigComment("--- Age-based sweep (opt-in, more aggressive) ---")
+    @ConfigComment("Reaps region files whose .mca files are older than min-age-days, regardless")
+    @ConfigComment("of whether those islands are marked deletable. Can remove islands that were")
+    @ConfigComment("never reset but simply abandoned. Disabled by default — enable only if you")
+    @ConfigComment("want automatic reclamation of all old, unvisited islands.")
+    @ConfigEntry(path = "island.deletion.housekeeping.age-sweep.enabled", since = "3.15.0")
+    private boolean housekeepingAgeEnabled = false;
+
+    @ConfigComment("How often the age-based sweep runs, in days.")
+    @ConfigEntry(path = "island.deletion.housekeeping.age-sweep.interval-days", since = "3.15.0")
+    private int housekeepingIntervalDays = 30;
+
+    @ConfigComment("Minimum age (in days) of region files eligible for the age-based purge.")
+    @ConfigEntry(path = "island.deletion.housekeeping.age-sweep.min-age-days", since = "3.15.0")
+    private int housekeepingRegionAgeDays = 60;
 
     // Chunk pre-generation settings
     @ConfigComment("")
@@ -827,28 +853,6 @@ public class Settings implements ConfigObject {
     }
 
     /**
-     * Returns whether islands, when reset, should be kept or deleted.
-     * 
-     * @return {@code true} if islands, when reset, should be kept; {@code false}
-     *         otherwise.
-     * @since 1.13.0
-     */
-    public boolean isKeepPreviousIslandOnReset() {
-        return keepPreviousIslandOnReset;
-    }
-
-    /**
-     * Sets whether islands, when reset, should be kept or deleted.
-     * 
-     * @param keepPreviousIslandOnReset {@code true} if islands, when reset, should
-     *                                  be kept; {@code false} otherwise.
-     * @since 1.13.0
-     */
-    public void setKeepPreviousIslandOnReset(boolean keepPreviousIslandOnReset) {
-        this.keepPreviousIslandOnReset = keepPreviousIslandOnReset;
-    }
-
-    /**
      * Returns a MongoDB client connection URI to override default connection
      * options.
      *
@@ -1014,7 +1018,11 @@ public class Settings implements ConfigObject {
      * Is slow deletion boolean.
      *
      * @return the boolean
+     * @deprecated The chunk-by-chunk deletion pipeline is being removed. This
+     *             setting no longer has any effect and will be deleted in a
+     *             future release. Configure the housekeeping auto-purge instead.
      */
+    @Deprecated(since = "3.14.0", forRemoval = true)
     public boolean isSlowDeletion() {
         return slowDeletion;
     }
@@ -1023,14 +1031,128 @@ public class Settings implements ConfigObject {
      * Sets slow deletion.
      *
      * @param slowDeletion the slow deletion
+     * @deprecated See {@link #isSlowDeletion()}.
      */
+    @Deprecated(since = "3.14.0", forRemoval = true)
     public void setSlowDeletion(boolean slowDeletion) {
         this.slowDeletion = slowDeletion;
     }
 
     /**
+     * Returns whether islands, when reset, should be kept or deleted.
+     *
+     * @return always {@code false} — islands are now soft-deleted on reset and
+     *         their region files reaped asynchronously by the housekeeping purge.
+     * @since 1.13.0
+     * @deprecated No longer configurable. Islands are soft-deleted on reset.
+     *             This method always returns {@code false} and will be removed
+     *             in a future release.
+     */
+    @Deprecated(since = "3.15.0", forRemoval = true)
+    public boolean isKeepPreviousIslandOnReset() {
+        return false;
+    }
+
+    /**
+     * No-op — the keep-previous-island setting is no longer configurable.
+     *
+     * @param keepPreviousIslandOnReset ignored
+     * @since 1.13.0
+     * @deprecated No longer configurable. Islands are soft-deleted on reset.
+     */
+    @Deprecated(since = "3.15.0", forRemoval = true)
+    public void setKeepPreviousIslandOnReset(boolean keepPreviousIslandOnReset) {
+        // no-op
+    }
+
+    /**
+     * @return whether the deleted-island sweep is enabled (reaps regions for
+     *         islands explicitly flagged deletable, e.g. from {@code /is reset}).
+     * @since 3.15.0
+     */
+    public boolean isHousekeepingDeletedEnabled() {
+        return housekeepingDeletedEnabled;
+    }
+
+    /**
+     * @param housekeepingDeletedEnabled whether the deleted-island sweep is enabled.
+     * @since 3.15.0
+     */
+    public void setHousekeepingDeletedEnabled(boolean housekeepingDeletedEnabled) {
+        this.housekeepingDeletedEnabled = housekeepingDeletedEnabled;
+    }
+
+    /**
+     * @return whether the age-based sweep is enabled (reaps regions for islands
+     *         whose .mca files are older than {@link #getHousekeepingRegionAgeDays()}).
+     * @since 3.15.0
+     */
+    public boolean isHousekeepingAgeEnabled() {
+        return housekeepingAgeEnabled;
+    }
+
+    /**
+     * @param housekeepingAgeEnabled whether the age-based sweep is enabled.
+     * @since 3.15.0
+     */
+    public void setHousekeepingAgeEnabled(boolean housekeepingAgeEnabled) {
+        this.housekeepingAgeEnabled = housekeepingAgeEnabled;
+    }
+
+    /**
+     * @return how often the age-based sweep runs, in days.
+     * @since 3.15.0
+     */
+    public int getHousekeepingIntervalDays() {
+        return housekeepingIntervalDays;
+    }
+
+    /**
+     * @param housekeepingIntervalDays how often the age-based sweep runs, in days.
+     * @since 3.15.0
+     */
+    public void setHousekeepingIntervalDays(int housekeepingIntervalDays) {
+        this.housekeepingIntervalDays = housekeepingIntervalDays;
+    }
+
+    /**
+     * @return minimum age (in days) of region files eligible for the age-based purge.
+     * @since 3.15.0
+     */
+    public int getHousekeepingRegionAgeDays() {
+        return housekeepingRegionAgeDays;
+    }
+
+    /**
+     * @param housekeepingRegionAgeDays minimum age (in days) of region files
+     *                                  considered for auto-purge.
+     * @since 3.15.0
+     */
+    public void setHousekeepingRegionAgeDays(int housekeepingRegionAgeDays) {
+        this.housekeepingRegionAgeDays = housekeepingRegionAgeDays;
+    }
+
+    /**
+     * @return how often the deleted-islands sweep runs, in hours. {@code 0}
+     *         disables the deleted sweep.
+     * @since 3.15.0
+     */
+    public int getHousekeepingDeletedIntervalHours() {
+        return housekeepingDeletedIntervalHours;
+    }
+
+    /**
+     * @param housekeepingDeletedIntervalHours how often the deleted sweep runs
+     *                                         in hours. {@code 0} disables it.
+     * @since 3.15.0
+     */
+    public void setHousekeepingDeletedIntervalHours(int housekeepingDeletedIntervalHours) {
+        this.housekeepingDeletedIntervalHours = housekeepingDeletedIntervalHours;
+    }
+
+    /**
      * @return whether chunk pre-generation is enabled
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public boolean isPregenEnabled() {
         return pregenEnabled;
@@ -1038,7 +1160,7 @@ public class Settings implements ConfigObject {
 
     /**
      * @param pregenEnabled whether chunk pre-generation is enabled
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public void setPregenEnabled(boolean pregenEnabled) {
         this.pregenEnabled = pregenEnabled;
@@ -1046,7 +1168,7 @@ public class Settings implements ConfigObject {
 
     /**
      * @return number of future islands to pre-generate per game mode
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public int getPregenIslandsAhead() {
         return pregenIslandsAhead;
@@ -1054,7 +1176,7 @@ public class Settings implements ConfigObject {
 
     /**
      * @param pregenIslandsAhead number of future islands to pre-generate
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public void setPregenIslandsAhead(int pregenIslandsAhead) {
         this.pregenIslandsAhead = pregenIslandsAhead;
@@ -1062,7 +1184,7 @@ public class Settings implements ConfigObject {
 
     /**
      * @return max async chunk generation requests per tick batch
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public int getPregenChunksPerTick() {
         return pregenChunksPerTick;
@@ -1070,7 +1192,7 @@ public class Settings implements ConfigObject {
 
     /**
      * @param pregenChunksPerTick max async chunk requests per tick
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public void setPregenChunksPerTick(int pregenChunksPerTick) {
         this.pregenChunksPerTick = pregenChunksPerTick;
@@ -1078,7 +1200,7 @@ public class Settings implements ConfigObject {
 
     /**
      * @return ticks between pre-generation batches
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public int getPregenTickInterval() {
         return pregenTickInterval;
@@ -1086,7 +1208,7 @@ public class Settings implements ConfigObject {
 
     /**
      * @param pregenTickInterval ticks between batches
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public void setPregenTickInterval(int pregenTickInterval) {
         this.pregenTickInterval = pregenTickInterval;
@@ -1255,7 +1377,7 @@ public class Settings implements ConfigObject {
      * newly formed obsidian blocks that can be scooped.
      *
      * @return the lava tip duration in seconds; 0 or less means disabled
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public int getObsidianScoopingLavaTipDuration() {
         return obsidianScoopingLavaTipDuration;
@@ -1266,7 +1388,7 @@ public class Settings implements ConfigObject {
      * newly formed obsidian blocks that can be scooped.
      *
      * @param obsidianScoopingLavaTipDuration the duration in seconds; 0 or less disables
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public void setObsidianScoopingLavaTipDuration(int obsidianScoopingLavaTipDuration) {
         this.obsidianScoopingLavaTipDuration = obsidianScoopingLavaTipDuration;

@@ -106,11 +106,7 @@ commands:
       description: purge [prefix_Islands] abandoned for more than [days]
       days-one-or-more: '<red>Must be at least 1 day or more</red>'
       purgable-islands: '<green>Found </green><aqua>[number] </aqua><green>purgable [prefix_Islands].</green>'
-      too-many: |
-        <aqua>This is a lot and could take a very long time to delete.</aqua>
-        <aqua>Consider using Regionerator plugin for deleting world chunks</aqua>
-        <aqua>and setting keep-previous-island-on-reset: true in BentoBox's config.yml.</aqua>
-        <aqua>Then run a purge.</aqua>
+      too-many: '<aqua>This is a lot of [prefix_Islands]. The purge will soft-delete them and housekeeping will clean up the region files on schedule.</aqua>'
       purge-in-progress: '<red>Purging in progress. Use </red><aqua>/[label] purge stop </aqua><red>to
         cancel.</red>'
       scanning: '<green>Scanning [prefix_Islands] in the database. This may take a while depending
@@ -124,10 +120,20 @@ commands:
       see-console-for-status: '<green>Purge started. See console for status or use </green><aqua>
         /[label] purge status</aqua><green>.</green>'
       no-purge-in-progress: '<red>There is currently no purge in progress.</red>'
+      failed: '<red>Purge completed with errors. Some region files could not be deleted. Check the server log for details.</red>'
       regions:
         parameters: '[days]'
         description: 'purge islands by deleting old region files'
         confirm: '<light_purple>Type </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>to start purging</light_purple>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/test: rewrite region file timestamps so they become purgable'
+        done: '<green>Aged </green><aqua>[number]</aqua><green> region file(s) in the current world.</green>'
+      deleted:
+        parameters: ''
+        description: 'purge region files for any [prefix_island] already flagged as deleted'
+        confirm: '<light_purple>Type </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>to reap the region files</light_purple>'
+        deferred: '<green>Region files deleted. Island database entries will be removed on next server restart.</green>'
       protect:
         description: toggle [prefix_island] purge protection
         move-to-island: '<red>Move to [prefix_an-island] first!</red>'
@@ -276,6 +282,7 @@ commands:
       protection-range-bonus-title: '<aqua>Includes these bonues:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: '[prefix_Island] is purge protected'
+      deletable: '<red>[prefix_Island] is flagged for deletion and awaiting region purge.</red>'
       max-protection-range: 'Largest historical protection range: [range]'
       protection-coords: 'Protection coordinates: [xz1] to [xz2]'
       is-spawn: '[prefix_Island] is a spawn [prefix_island]'
@@ -1751,6 +1758,7 @@ protection:
       name: World TNT damage
   locked: '<red>This [prefix_island] is locked!</red>'
   locked-island-bypass: '<gold>This [prefix_island] is locked, but you have permission to bypass.</gold>'
+  deletable-island-admin: '<red>[Admin] This [prefix_island] is flagged for deletion and awaiting region purge.</red>'
   protected: '<red>[prefix_Island] protected: [description].</red>'
   world-protected: '<red>World protected: [description].</red>'
   spawn-protected: '<red>Spawn protected: [description].</red>'

@@ -206,16 +206,6 @@ island:
   # Added since 1.7.0.
   delete-speed: 100
   deletion:
-    # Toggles whether islands, when players are resetting them, should be kept in the world or deleted.
-    # * If set to 'true', whenever a player resets his island, his previous island will become unowned and won't be deleted from the world.
-    #   You can, however, still delete those unowned islands through purging.
-    #   On bigger servers, this can lead to an increasing world size.
-    #   Yet, this allows admins to retrieve a player's old island in case of an improper use of the reset command.
-    #   Admins can indeed re-add the player to his old island by registering him to it.
-    # * If set to 'false', whenever a player resets his island, his previous island will be deleted from the world.
-    #   This is the default behaviour.
-    # Added since 1.13.0.
-    keep-previous-island-on-reset: false
     # Toggles how the islands are deleted.
     # * If set to 'false', all islands will be deleted at once.
     #   This is fast but may cause an impact on the performance
