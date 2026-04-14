@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -48,8 +49,14 @@ public class IconChanger implements PanelListener {
             Entry<Integer, Blueprint> selected = blueprintManagementPanel.getSelected();
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             if (selected == null) {
-                // Change the Bundle Icon
-                bb.setIcon(icon);
+                // Change the Bundle Icon — prefer item model key over plain material so that
+                // datapacked items (e.g. paper[item_model="myserver:island_tropical"]) are stored correctly.
+                ItemMeta meta = event.getCurrentItem().getItemMeta();
+                if (meta != null && meta.hasItemModel()) {
+                    bb.setIcon(meta.getItemModel().toString());
+                } else {
+                    bb.setIcon(icon);
+                }
                 // Save it
                 plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
 
