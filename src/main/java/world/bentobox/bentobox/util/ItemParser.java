@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.inventory.ItemStack;
@@ -43,6 +44,61 @@ public class ItemParser {
     private static final int MAX_AMOUNT = 99;
 
     private ItemParser() {} // private constructor to hide the implicit public one.
+
+    /**
+     * Resolves an icon string to a {@link Material}.
+     * Accepts plain material names (e.g. {@code "DIAMOND"}), vanilla namespaced keys
+     * (e.g. {@code "minecraft:diamond"}), and custom item-model keys
+     * (e.g. {@code "myserver:island_tropical"}). Custom model keys that are not
+     * recognised vanilla materials fall back to {@link Material#PAPER}.
+     * @param icon the icon string, may be null
+     * @return resolved Material, never null
+     * @since 3.0.0
+     */
+    public static Material parseIconMaterial(@Nullable String icon) {
+        if (icon == null) {
+            return Material.PAPER;
+        }
+        Material m = Material.matchMaterial(icon);
+        return m != null ? m : Material.PAPER;
+    }
+
+    /**
+     * Resolves an icon string to an {@link ItemStack}.
+     * <ul>
+     *   <li>Plain material name or vanilla namespaced key → {@code new ItemStack(material)}</li>
+     *   <li>Custom item-model key (namespace:key not matching any vanilla material) →
+     *       PAPER base item with the model applied via {@link ItemMeta#setItemModel(NamespacedKey)}</li>
+     * </ul>
+     * @param icon the icon string, may be null
+     * @return resolved ItemStack, never null
+     * @since 3.0.0
+     */
+    public static ItemStack parseIconItemStack(@Nullable String icon) {
+        if (icon == null) {
+            return new ItemStack(Material.PAPER);
+        }
+        Material m = Material.matchMaterial(icon);
+        if (m != null) {
+            return new ItemStack(m);
+        }
+        // Contains a colon but isn't a vanilla material → treat as a custom item model key
+        if (icon.contains(":")) {
+            ItemStack item = new ItemStack(Material.PAPER);
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                String[] parts = icon.split(":", 2);
+                try {
+                    meta.setItemModel(new NamespacedKey(parts[0], parts[1]));
+                    item.setItemMeta(meta);
+                } catch (IllegalArgumentException ignored) {
+                    // Invalid namespace/key format — return plain PAPER
+                }
+            }
+            return item;
+        }
+        return new ItemStack(Material.PAPER);
+    }
     /**
      * Parse given string to ItemStack.
      * @param text String value of item stack.

@@ -7,11 +7,13 @@ import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.inventory.ItemStack;
 
 import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.database.objects.DataObject;
+import world.bentobox.bentobox.util.ItemParser;
 
 /**
  * Represents a bundle of three {@link Blueprint}s.
@@ -21,16 +23,20 @@ import world.bentobox.bentobox.database.objects.DataObject;
  */
 public class BlueprintBundle implements DataObject {
 
+    private static final String DEFAULT_ICON = "PAPER";
+
     /**
      * The unique id of this bundle
      */
     @Expose
     private String uniqueId;
     /**
-     * Icon of the bundle
+     * Icon of the bundle. Supports plain material names (e.g. "DIAMOND"),
+     * vanilla namespaced materials (e.g. "minecraft:diamond"), and custom
+     * item model keys (e.g. "myserver:island_tropical").
      */
     @Expose
-    private Material icon = Material.PAPER;
+    private String icon = DEFAULT_ICON;
     /**
      * Name on the icon
      */
@@ -97,16 +103,49 @@ public class BlueprintBundle implements DataObject {
         this.uniqueId = uniqueId;
     }
     /**
-     * @return the icon
+     * Returns the base Material for this bundle's icon.
+     * Resolves plain names ("DIAMOND") and vanilla namespaced keys ("minecraft:diamond")
+     * via {@link Material#matchMaterial}. For custom item-model keys that are not
+     * valid vanilla materials (e.g. "myserver:island_tropical"), returns {@link Material#PAPER}
+     * as the base item — use {@link #getIconItemStack()} to get the full item with model data.
+     * @return the icon material, never null
      */
     public Material getIcon() {
-        return icon;
+        return ItemParser.parseIconMaterial(icon);
     }
+
     /**
-     * @param icon the icon to set
+     * Returns an {@link ItemStack} representing this bundle's icon.
+     * <ul>
+     *   <li>Plain material name (e.g. {@code "DIAMOND"}) → {@code new ItemStack(Material.DIAMOND)}</li>
+     *   <li>Vanilla namespaced material (e.g. {@code "minecraft:diamond"}) → same as above</li>
+     *   <li>Custom item-model key (e.g. {@code "myserver:island_tropical"}) → PAPER base item
+     *       with the model key set via {@link ItemMeta#setItemModel}</li>
+     * </ul>
+     * @return ItemStack for this bundle's icon, never null
+     * @since 3.0.0
+     */
+    public ItemStack getIconItemStack() {
+        return ItemParser.parseIconItemStack(icon);
+    }
+
+    /**
+     * Sets the icon from a Material (backward-compatible setter).
+     * @param icon the icon material to set; if null, defaults to {@link Material#PAPER}
      */
     public void setIcon(Material icon) {
-        this.icon = icon;
+        this.icon = icon != null ? icon.name() : DEFAULT_ICON;
+    }
+
+    /**
+     * Sets the icon from a string. Accepts plain material names (e.g. {@code "DIAMOND"}),
+     * vanilla namespaced materials (e.g. {@code "minecraft:diamond"}), and custom item-model
+     * keys (e.g. {@code "myserver:island_tropical"}).
+     * @param icon the icon string; if null, defaults to {@code "PAPER"}
+     * @since 3.0.0
+     */
+    public void setIcon(String icon) {
+        this.icon = icon != null ? icon : DEFAULT_ICON;
     }
     /**
      * @return the displayName
