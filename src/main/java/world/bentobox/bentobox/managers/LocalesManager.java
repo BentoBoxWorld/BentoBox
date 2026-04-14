@@ -282,8 +282,8 @@ public class LocalesManager {
                             + "' has been renamed to '" + fixedTag + ".yml' to conform to BCP-47 (use '-' not '_').");
                     language = fixedFile;
                 } else if (fixedFile.exists()) {
-                    plugin.logWarning("Locale file '" + localeFolder + "/" + language.getName()
-                            + "' uses '_' instead of '-'; ignoring it because '" + fixedTag + ".yml' already exists.");
+                    plugin.logWarning("Duplicate locale file '" + localeFolder + "/" + language.getName()
+                            + "': '" + fixedTag + ".yml' already exists and will be used instead. Please remove the underscore version.");
                     continue;
                 } else {
                     plugin.logWarning("Locale file '" + localeFolder + "/" + language.getName()
