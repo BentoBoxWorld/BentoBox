@@ -90,9 +90,35 @@ public class IslandEvent extends IslandBaseEvent {
          */
         DELETE_CHUNKS,
         /**
-         * Fired after all island chunks have been deleted or set for regeneration by the server
+         * Fired when an island is logically/effectively deleted — that is, when it is
+         * no longer reachable or usable by players. This fires immediately:
+         * <ul>
+         *   <li>For a <b>soft-delete</b> (e.g. {@code /is reset} on new-chunk-generation
+         *       gamemodes): fires as soon as the island is marked {@code deletable=true}
+         *       in the database, which is at reset time. The region files on disk may not
+         *       be reclaimed until later (see {@link #PURGED}).</li>
+         *   <li>For a <b>hard-delete</b> (e.g. {@code /bbox admin delete} on void/simple
+         *       gamemodes): fires after the database row is removed.</li>
+         *   <li>For an <b>age-sweep</b> purge of an island that was never explicitly reset:
+         *       fires when the database row is finally removed.</li>
+         * </ul>
+         * Addon listeners should use this event to clean up their own per-island data
+         * (caches, database rows, etc.).
          */
         DELETED,
+        /**
+         * Fired when an island's region files <em>and</em> database row have been
+         * physically removed from disk and the database. This always follows a
+         * {@link #DELETED} event, but may be separated from it by hours or days
+         * (e.g. when the housekeeping purge runs).
+         *
+         * <p>Most addons do not need this event — use {@link #DELETED} for cleanup.
+         * {@code PURGED} is intended for addons that specifically track region-file
+         * or disk-space state.
+         *
+         * @since 3.15.0
+         */
+        PURGED,
         /**
          * Fired when a player enters an island
          */

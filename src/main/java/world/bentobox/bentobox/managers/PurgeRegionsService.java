@@ -23,6 +23,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
+import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.island.IslandGrid;
 import world.bentobox.bentobox.managers.island.IslandGrid.IslandData;
@@ -268,10 +270,25 @@ public class PurgeRegionsService {
                     continue;
                 }
                 deletePlayerFromWorldFolder(scan.world(), islandID, scan.deletableRegions(), scan.days());
+                // For the age sweep, DELETED may never have fired (the island was
+                // pruned by age, not by an explicit /is reset). Fire it now so addons
+                // (Level, OneBlock, etc.) can clean up their per-island data.
+                if (!island.isDeletable()) {
+                    IslandEvent.builder()
+                            .island(island)
+                            .reason(Reason.DELETED)
+                            .build();
+                }
                 plugin.getIslands().getIslandCache().deleteIslandFromCache(islandID);
                 if (plugin.getIslands().deleteIslandId(islandID)) {
                     plugin.log("Island ID " + islandID + " deleted from cache and database");
                     islandsRemoved++;
+                    // Fire PURGED so addons that track physical storage state know
+                    // the region files and DB row are both gone.
+                    IslandEvent.builder()
+                            .island(island)
+                            .reason(Reason.PURGED)
+                            .build();
                 }
             }
         }
@@ -300,9 +317,17 @@ public class PurgeRegionsService {
         plugin.log("Flushing " + pendingDeletions.size() + " deferred island deletion(s)...");
         int count = 0;
         for (String islandID : pendingDeletions) {
+            // Capture island before cache eviction so we can build the event.
+            // DELETED was already fired at soft-delete time; PURGED signals that
+            // the DB row is now physically removed.
+            Optional<Island> opt = plugin.getIslands().getIslandById(islandID);
             plugin.getIslands().getIslandCache().deleteIslandFromCache(islandID);
             if (plugin.getIslands().deleteIslandId(islandID)) {
                 count++;
+                opt.ifPresent(island -> IslandEvent.builder()
+                        .island(island)
+                        .reason(Reason.PURGED)
+                        .build());
             }
         }
         pendingDeletions.clear();
