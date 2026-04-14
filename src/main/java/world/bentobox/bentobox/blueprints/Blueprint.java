@@ -5,16 +5,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.util.Vector;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
+import world.bentobox.bentobox.util.ItemParser;
 
 /**
  * Stores all details of a blueprint
@@ -22,6 +21,8 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
  *
  */
 public class Blueprint {
+
+    private static final String DEFAULT_ICON = "PAPER";
 
     /**
      * Unique name for this blueprint. The filename will be this plus the blueprint suffix
@@ -36,7 +37,7 @@ public class Blueprint {
      * item model keys (e.g. "myserver:island_tropical").
      */
     @Expose
-    private String icon = "PAPER";
+    private String icon = DEFAULT_ICON;
     @Expose
     private List<String> description;
     @Expose
@@ -93,11 +94,7 @@ public class Blueprint {
      * @return the icon material, never null
      */
     public @NonNull Material getIcon() {
-        if (icon == null) {
-            return Material.PAPER;
-        }
-        Material m = Material.matchMaterial(icon);
-        return m != null ? m : Material.PAPER;
+        return ItemParser.parseIconMaterial(icon);
     }
 
     /**
@@ -106,34 +103,13 @@ public class Blueprint {
      *   <li>Plain material name (e.g. {@code "DIAMOND"}) → {@code new ItemStack(Material.DIAMOND)}</li>
      *   <li>Vanilla namespaced material (e.g. {@code "minecraft:diamond"}) → same as above</li>
      *   <li>Custom item-model key (e.g. {@code "myserver:island_tropical"}) → PAPER base item
-     *       with the model key set via {@link ItemMeta#setItemModel(NamespacedKey)}</li>
+     *       with the model key set via {@link ItemMeta#setItemModel}</li>
      * </ul>
      * @return ItemStack for this blueprint's icon, never null
      * @since 3.0.0
      */
     public @NonNull ItemStack getIconItemStack() {
-        if (icon == null) {
-            return new ItemStack(Material.PAPER);
-        }
-        Material m = Material.matchMaterial(icon);
-        if (m != null) {
-            return new ItemStack(m);
-        }
-        if (icon.contains(":")) {
-            ItemStack item = new ItemStack(Material.PAPER);
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                String[] parts = icon.split(":", 2);
-                try {
-                    meta.setItemModel(new NamespacedKey(parts[0], parts[1]));
-                    item.setItemMeta(meta);
-                } catch (IllegalArgumentException ignored) {
-                    // Invalid namespace/key format — fall through and return plain PAPER
-                }
-            }
-            return item;
-        }
-        return new ItemStack(Material.PAPER);
+        return ItemParser.parseIconItemStack(icon);
     }
 
     /**
@@ -142,7 +118,7 @@ public class Blueprint {
      * @return blueprint
      */
     public Blueprint setIcon(Material icon) {
-        this.icon = icon != null ? icon.name() : "PAPER";
+        this.icon = icon != null ? icon.name() : DEFAULT_ICON;
         return this;
     }
 
@@ -155,7 +131,7 @@ public class Blueprint {
      * @since 3.0.0
      */
     public Blueprint setIcon(String icon) {
-        this.icon = icon != null ? icon : "PAPER";
+        this.icon = icon != null ? icon : DEFAULT_ICON;
         return this;
     }
     /**

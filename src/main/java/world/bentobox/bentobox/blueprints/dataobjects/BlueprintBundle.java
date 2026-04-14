@@ -6,15 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.database.objects.DataObject;
+import world.bentobox.bentobox.util.ItemParser;
 
 /**
  * Represents a bundle of three {@link Blueprint}s.
@@ -23,6 +22,8 @@ import world.bentobox.bentobox.database.objects.DataObject;
  * @author Poslovitch, tastybento
  */
 public class BlueprintBundle implements DataObject {
+
+    private static final String DEFAULT_ICON = "PAPER";
 
     /**
      * The unique id of this bundle
@@ -35,7 +36,7 @@ public class BlueprintBundle implements DataObject {
      * item model keys (e.g. "myserver:island_tropical").
      */
     @Expose
-    private String icon = "PAPER";
+    private String icon = DEFAULT_ICON;
     /**
      * Name on the icon
      */
@@ -110,11 +111,7 @@ public class BlueprintBundle implements DataObject {
      * @return the icon material, never null
      */
     public Material getIcon() {
-        if (icon == null) {
-            return Material.PAPER;
-        }
-        Material m = Material.matchMaterial(icon);
-        return m != null ? m : Material.PAPER;
+        return ItemParser.parseIconMaterial(icon);
     }
 
     /**
@@ -123,36 +120,13 @@ public class BlueprintBundle implements DataObject {
      *   <li>Plain material name (e.g. {@code "DIAMOND"}) → {@code new ItemStack(Material.DIAMOND)}</li>
      *   <li>Vanilla namespaced material (e.g. {@code "minecraft:diamond"}) → same as above</li>
      *   <li>Custom item-model key (e.g. {@code "myserver:island_tropical"}) → PAPER base item
-     *       with the model key set via {@link ItemMeta#setItemModel(NamespacedKey)}</li>
+     *       with the model key set via {@link ItemMeta#setItemModel}</li>
      * </ul>
      * @return ItemStack for this bundle's icon, never null
      * @since 3.0.0
      */
     public ItemStack getIconItemStack() {
-        if (icon == null) {
-            return new ItemStack(Material.PAPER);
-        }
-        // matchMaterial handles plain names ("DIAMOND") and namespaced vanilla ("minecraft:diamond")
-        Material m = Material.matchMaterial(icon);
-        if (m != null) {
-            return new ItemStack(m);
-        }
-        // Contains a colon but isn't a vanilla material → treat as a custom item model key
-        if (icon.contains(":")) {
-            ItemStack item = new ItemStack(Material.PAPER);
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                String[] parts = icon.split(":", 2);
-                try {
-                    meta.setItemModel(new NamespacedKey(parts[0], parts[1]));
-                    item.setItemMeta(meta);
-                } catch (IllegalArgumentException ignored) {
-                    // Invalid namespace/key format — fall through and return plain PAPER
-                }
-            }
-            return item;
-        }
-        return new ItemStack(Material.PAPER);
+        return ItemParser.parseIconItemStack(icon);
     }
 
     /**
@@ -160,7 +134,7 @@ public class BlueprintBundle implements DataObject {
      * @param icon the icon material to set; if null, defaults to {@link Material#PAPER}
      */
     public void setIcon(Material icon) {
-        this.icon = icon != null ? icon.name() : "PAPER";
+        this.icon = icon != null ? icon.name() : DEFAULT_ICON;
     }
 
     /**
@@ -171,7 +145,7 @@ public class BlueprintBundle implements DataObject {
      * @since 3.0.0
      */
     public void setIcon(String icon) {
-        this.icon = icon != null ? icon : "PAPER";
+        this.icon = icon != null ? icon : DEFAULT_ICON;
     }
     /**
      * @return the displayName
