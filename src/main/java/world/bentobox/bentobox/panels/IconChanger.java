@@ -61,9 +61,14 @@ public class IconChanger implements PanelListener {
                 plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
 
             } else {
-                // Change the Blueprint icon
+                // Change the Blueprint icon — same model-key detection as for bundles
                 Blueprint bp = selected.getValue();
-                bp.setIcon(icon);
+                ItemMeta bpMeta = event.getCurrentItem().getItemMeta();
+                if (bpMeta != null && bpMeta.hasItemModel()) {
+                    bp.setIcon(bpMeta.getItemModel().toString());
+                } else {
+                    bp.setIcon(icon);
+                }
                 // Save it
                 plugin.getBlueprintsManager().saveBlueprint(addon, bp);
             }

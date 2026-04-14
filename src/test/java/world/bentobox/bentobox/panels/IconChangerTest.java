@@ -108,7 +108,7 @@ class IconChangerTest extends CommonTestSetup {
     }
 
     /**
-     * Clicking a plain item when a blueprint is selected changes the blueprint icon, not the bundle.
+     * Clicking a plain item when a blueprint is selected changes the blueprint icon by Material.
      */
     @Test
     void testOnInventoryClickBlueprintSelected() {
@@ -117,6 +117,9 @@ class IconChangerTest extends CommonTestSetup {
 
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.BEACON);
+        ItemMeta meta = mock(ItemMeta.class);
+        when(meta.hasItemModel()).thenReturn(false);
+        when(item.getItemMeta()).thenReturn(meta);
         when(event.getCurrentItem()).thenReturn(item);
         when(event.getRawSlot()).thenReturn(45);
 
@@ -126,6 +129,31 @@ class IconChangerTest extends CommonTestSetup {
         verify(bpManager).saveBlueprint(addon, bp);
         verify(bb, never()).setIcon(any(Material.class));
         verify(bb, never()).setIcon(any(String.class));
+    }
+
+    /**
+     * Clicking a custom item model item when a blueprint is selected stores the model key string.
+     */
+    @Test
+    void testOnInventoryClickBlueprintItemModel() {
+        Blueprint bp = mock(Blueprint.class);
+        when(bmp.getSelected()).thenReturn(new AbstractMap.SimpleEntry<>(1, bp));
+
+        ItemStack item = mock(ItemStack.class);
+        when(item.getType()).thenReturn(Material.PAPER);
+        ItemMeta meta = mock(ItemMeta.class);
+        NamespacedKey modelKey = new NamespacedKey("myserver", "island_tropical");
+        when(meta.hasItemModel()).thenReturn(true);
+        when(meta.getItemModel()).thenReturn(modelKey);
+        when(item.getItemMeta()).thenReturn(meta);
+        when(event.getCurrentItem()).thenReturn(item);
+        when(event.getRawSlot()).thenReturn(45);
+
+        iconChanger.onInventoryClick(user, event);
+
+        verify(bp).setIcon("myserver:island_tropical");
+        verify(bp, never()).setIcon(any(Material.class));
+        verify(bpManager).saveBlueprint(addon, bp);
     }
 
     /**

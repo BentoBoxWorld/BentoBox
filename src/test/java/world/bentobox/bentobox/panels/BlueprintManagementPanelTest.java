@@ -171,6 +171,7 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
     void testGetBlueprintItemWithDisplayNameAndIcon() {
         when(blueprint.getDisplayName()).thenReturn("Display Name");
         when(blueprint.getIcon()).thenReturn(Material.BEACON);
+        when(blueprint.getIconItemStack()).thenReturn(new ItemStack(Material.BEACON));
         PanelItem pi = bmp.getBlueprintItem(addon, 0, bb, blueprint);
         assertEquals("Display Name", pi.getName());
         assertEquals(Material.BEACON, pi.getItem().getType());
@@ -184,6 +185,7 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
     void testGetBlueprintItemWithDisplayNameAndIconInWorldSlot() {
         when(blueprint.getDisplayName()).thenReturn("Display Name");
         when(blueprint.getIcon()).thenReturn(Material.BEACON);
+        when(blueprint.getIconItemStack()).thenReturn(new ItemStack(Material.BEACON));
         PanelItem pi = bmp.getBlueprintItem(addon, 5, bb, blueprint);
         assertEquals("Display Name", pi.getName());
         assertEquals(Material.BEACON, pi.getItem().getType());

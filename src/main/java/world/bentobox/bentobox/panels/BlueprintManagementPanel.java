@@ -458,7 +458,7 @@ public class BlueprintManagementPanel {
         return new PanelItemBuilder()
                 .name(blueprint.getDisplayName() == null ? blueprint.getName() : blueprint.getDisplayName())
                 .description(desc)
-                .icon(blueprint.getIcon())
+                .icon(blueprint.getIconItemStack())
                 .glow(selected != null && pos == selected.getKey())
                 .clickHandler((panel, u, clickType, slot) -> {
                     // Handle the world squares

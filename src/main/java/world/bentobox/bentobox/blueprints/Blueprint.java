@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.util.Vector;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.gson.annotations.Expose;
@@ -27,8 +30,13 @@ public class Blueprint {
     private @NonNull String name = "";
     @Expose
     private String displayName;
+    /**
+     * Icon of the blueprint. Supports plain material names (e.g. "DIAMOND"),
+     * vanilla namespaced materials (e.g. "minecraft:diamond"), and custom
+     * item model keys (e.g. "myserver:island_tropical").
+     */
     @Expose
-    private @NonNull Material icon = Material.PAPER;
+    private String icon = "PAPER";
     @Expose
     private List<String> description;
     @Expose
@@ -77,17 +85,77 @@ public class Blueprint {
         return this;
     }
     /**
-     * @return the icon
+     * Returns the base Material for this blueprint's icon.
+     * Resolves plain names ("DIAMOND") and vanilla namespaced keys ("minecraft:diamond")
+     * via {@link Material#matchMaterial}. For custom item-model keys that are not
+     * valid vanilla materials (e.g. "myserver:island_tropical"), returns {@link Material#PAPER}
+     * as the base item — use {@link #getIconItemStack()} to get the full item with model data.
+     * @return the icon material, never null
      */
     public @NonNull Material getIcon() {
-        return icon;
+        if (icon == null) {
+            return Material.PAPER;
+        }
+        Material m = Material.matchMaterial(icon);
+        return m != null ? m : Material.PAPER;
     }
+
     /**
-     * @param icon the icon to set
+     * Returns an {@link ItemStack} representing this blueprint's icon.
+     * <ul>
+     *   <li>Plain material name (e.g. {@code "DIAMOND"}) → {@code new ItemStack(Material.DIAMOND)}</li>
+     *   <li>Vanilla namespaced material (e.g. {@code "minecraft:diamond"}) → same as above</li>
+     *   <li>Custom item-model key (e.g. {@code "myserver:island_tropical"}) → PAPER base item
+     *       with the model key set via {@link ItemMeta#setItemModel(NamespacedKey)}</li>
+     * </ul>
+     * @return ItemStack for this blueprint's icon, never null
+     * @since 3.0.0
+     */
+    public @NonNull ItemStack getIconItemStack() {
+        if (icon == null) {
+            return new ItemStack(Material.PAPER);
+        }
+        Material m = Material.matchMaterial(icon);
+        if (m != null) {
+            return new ItemStack(m);
+        }
+        if (icon.contains(":")) {
+            ItemStack item = new ItemStack(Material.PAPER);
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                String[] parts = icon.split(":", 2);
+                try {
+                    meta.setItemModel(new NamespacedKey(parts[0], parts[1]));
+                    item.setItemMeta(meta);
+                } catch (IllegalArgumentException ignored) {
+                    // Invalid namespace/key format — fall through and return plain PAPER
+                }
+            }
+            return item;
+        }
+        return new ItemStack(Material.PAPER);
+    }
+
+    /**
+     * Sets the icon from a Material (backward-compatible setter).
+     * @param icon the icon material to set; if null, defaults to {@link Material#PAPER}
      * @return blueprint
      */
     public Blueprint setIcon(Material icon) {
-        this.icon = icon;
+        this.icon = icon != null ? icon.name() : "PAPER";
+        return this;
+    }
+
+    /**
+     * Sets the icon from a string. Accepts plain material names (e.g. {@code "DIAMOND"}),
+     * vanilla namespaced materials (e.g. {@code "minecraft:diamond"}), and custom item-model
+     * keys (e.g. {@code "myserver:island_tropical"}).
+     * @param icon the icon string; if null, defaults to {@code "PAPER"}
+     * @return blueprint
+     * @since 3.0.0
+     */
+    public Blueprint setIcon(String icon) {
+        this.icon = icon != null ? icon : "PAPER";
         return this;
     }
     /**
