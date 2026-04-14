@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.event.Listener;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -28,9 +26,9 @@ import world.bentobox.bentobox.util.Util;
  * <p>Heavy lifting is delegated to {@link PurgeRegionsService#scanDeleted(World)}
  * and {@link PurgeRegionsService#delete(PurgeScanResult)}.
  *
- * @since 3.14.0
+ * @since 3.15.0
  */
-public class AdminPurgeDeletedCommand extends CompositeCommand implements Listener {
+public class AdminPurgeDeletedCommand extends CompositeCommand {
 
     private static final String NONE_FOUND = "commands.admin.purge.none-found";
 
@@ -41,7 +39,6 @@ public class AdminPurgeDeletedCommand extends CompositeCommand implements Listen
 
     public AdminPurgeDeletedCommand(CompositeCommand parent) {
         super(parent, "deleted");
-        getAddon().registerListener(this);
     }
 
     @Override

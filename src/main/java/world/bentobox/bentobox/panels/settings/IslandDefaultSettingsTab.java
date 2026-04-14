@@ -20,7 +20,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  * Implements a {@link Tab} that enables the default island protection settings to be changed.
  * These are the protection flag rank values that new islands will receive.
  * @author tastybento
- * @since 3.14.0
+ * @since 3.15.0
  */
 public class IslandDefaultSettingsTab extends SettingsTab implements Tab {
 

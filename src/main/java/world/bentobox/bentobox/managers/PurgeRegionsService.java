@@ -47,7 +47,7 @@ import world.bentobox.level.Level;
  * deleting region files across the overworld + optional nether/end
  * dimensions.
  *
- * @since 3.14.0
+ * @since 3.15.0
  */
 public class PurgeRegionsService {
 
@@ -137,7 +137,7 @@ public class PurgeRegionsService {
      *
      * @param world the gamemode overworld to scan
      * @return scan result, never {@code null}
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public PurgeScanResult scanDeleted(World world) {
         boolean isNether = plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world);

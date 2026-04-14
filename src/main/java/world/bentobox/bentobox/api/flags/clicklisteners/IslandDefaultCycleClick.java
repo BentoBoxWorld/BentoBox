@@ -17,7 +17,7 @@ import world.bentobox.bentobox.util.Util;
  * Left-clicks increase the default island protection rank, right-clicks decrease it.
  * This modifies the default rank that new islands will receive for a protection flag.
  * @author tastybento
- * @since 3.14.0
+ * @since 3.15.0
  */
 public class IslandDefaultCycleClick implements PanelItem.ClickHandler {
 

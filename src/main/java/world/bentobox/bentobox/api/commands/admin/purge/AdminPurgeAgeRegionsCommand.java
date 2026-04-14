@@ -22,7 +22,7 @@ import world.bentobox.bentobox.api.user.User;
  *
  * <p>Usage: {@code /<admin> purge age-regions <days>}
  *
- * @since 3.14.0
+ * @since 3.15.0
  */
 public class AdminPurgeAgeRegionsCommand extends CompositeCommand implements Listener {
 

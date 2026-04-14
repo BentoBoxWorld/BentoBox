@@ -135,12 +135,11 @@ class AdminPurgeDeletedCommandTest extends CommonTestSetup {
     }
 
     /**
-     * The command is registered as a listener both during AdminPurgeCommand.setup()
-     * and again when constructed directly in the test.
+     * The command is not registered as a listener — it has no event handlers.
      */
     @Test
     void testConstructor() {
-        verify(addon, times(2)).registerListener(any(AdminPurgeDeletedCommand.class));
+        assertEquals("admin.purge.deleted", apdc.getPermission());
     }
 
     @Test

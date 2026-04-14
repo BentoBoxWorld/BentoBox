@@ -169,7 +169,7 @@ class HousekeepingManagerTest extends CommonTestSetup {
      */
     @Test
     void testSaveStateRoundTripsBothKeys() {
-        settings.setHousekeepingEnabled(true);
+        settings.setHousekeepingAgeEnabled(true);
         settings.setHousekeepingIntervalDays(1);
         settings.setHousekeepingRegionAgeDays(30);
         settings.setHousekeepingDeletedIntervalHours(1);
@@ -200,7 +200,8 @@ class HousekeepingManagerTest extends CommonTestSetup {
      */
     @Test
     void testDisabledFeatureSkipsAllCycles() throws Exception {
-        settings.setHousekeepingEnabled(false);
+        settings.setHousekeepingDeletedEnabled(false);
+        settings.setHousekeepingAgeEnabled(false);
 
         HousekeepingManager hm = new HousekeepingManager(plugin);
         // Invoke the internal hourly check via reflection so we go through
@@ -217,7 +218,7 @@ class HousekeepingManagerTest extends CommonTestSetup {
      */
     @Test
     void testRunNowDispatchesBothCycles() {
-        settings.setHousekeepingEnabled(true);
+        settings.setHousekeepingAgeEnabled(true);
         settings.setHousekeepingRegionAgeDays(30);
 
         when(purgeService.scan(eq(world), eq(30))).thenReturn(emptyScan(30));
@@ -236,7 +237,7 @@ class HousekeepingManagerTest extends CommonTestSetup {
      */
     @Test
     void testDeletedIntervalZeroDisablesDeletedCycle() throws Exception {
-        settings.setHousekeepingEnabled(true);
+        settings.setHousekeepingAgeEnabled(true);
         settings.setHousekeepingIntervalDays(1);
         settings.setHousekeepingRegionAgeDays(30);
         settings.setHousekeepingDeletedIntervalHours(0); // disabled
@@ -255,7 +256,6 @@ class HousekeepingManagerTest extends CommonTestSetup {
      */
     @Test
     void testAgeIntervalZeroDisablesAgeCycle() throws Exception {
-        settings.setHousekeepingEnabled(true);
         settings.setHousekeepingIntervalDays(0); // disabled
         settings.setHousekeepingDeletedIntervalHours(1);
 
@@ -274,7 +274,6 @@ class HousekeepingManagerTest extends CommonTestSetup {
      */
     @Test
     void testBothCyclesRecentlyRunIsNoop() throws Exception {
-        settings.setHousekeepingEnabled(true);
         settings.setHousekeepingIntervalDays(30);
         settings.setHousekeepingDeletedIntervalHours(24);
 
@@ -299,7 +298,6 @@ class HousekeepingManagerTest extends CommonTestSetup {
      */
     @Test
     void testOnlyDeletedCycleDueDispatchesDeletedOnly() throws Exception {
-        settings.setHousekeepingEnabled(true);
         settings.setHousekeepingIntervalDays(30);
         settings.setHousekeepingDeletedIntervalHours(24);
 

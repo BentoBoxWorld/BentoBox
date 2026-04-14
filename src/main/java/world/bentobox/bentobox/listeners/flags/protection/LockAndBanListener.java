@@ -21,6 +21,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
@@ -213,7 +214,7 @@ public class LockAndBanListener extends FlagListener {
             return;
         }
         boolean deletable = getIslands().getProtectedIslandAt(loc)
-                .map(i -> i.isDeletable()).orElse(false);
+                .map(Island::isDeletable).orElse(false);
         if (deletable) {
             if (deletableNotified.add(player.getUniqueId())) {
                 User.getInstance(player).notify("protection.deletable-island-admin");

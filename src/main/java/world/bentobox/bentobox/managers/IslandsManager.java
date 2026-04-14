@@ -331,7 +331,7 @@ public class IslandsManager {
      * and leaves the region-file purge to reap the chunks and row later.
      *
      * @param island the island to hard-delete, not null
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public void hardDeleteIsland(@NonNull Island island) {
         IslandBaseEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();
@@ -343,6 +343,7 @@ public class IslandsManager {
         island.setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
         islandCache.deleteIslandFromCache(island);
         handler.deleteObject(island);
+        IslandEvent.builder().deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
     }
 
     /**

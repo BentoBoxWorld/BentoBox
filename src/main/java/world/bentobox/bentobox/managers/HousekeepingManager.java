@@ -6,7 +6,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -39,7 +41,7 @@ import world.bentobox.bentobox.managers.PurgeRegionsService.PurgeScanResult;
  * <p>This manager is destructive by design: it deletes {@code .mca} region
  * files from disk.
  *
- * @since 3.14.0
+ * @since 3.15.0
  */
 public class HousekeepingManager {
 
@@ -76,11 +78,12 @@ public class HousekeepingManager {
         }
         scheduledTask = Bukkit.getScheduler().runTaskTimer(plugin,
                 this::checkAndMaybeRun, STARTUP_DELAY_TICKS, CHECK_INTERVAL_TICKS);
-        plugin.log("Housekeeping scheduler started (enabled="
-                + plugin.getSettings().isHousekeepingEnabled()
+        plugin.log("Housekeeping scheduler started (deleted-sweep="
+                + plugin.getSettings().isHousekeepingDeletedEnabled()
+                + ", deleted-interval=" + plugin.getSettings().getHousekeepingDeletedIntervalHours() + "h"
+                + ", age-sweep=" + plugin.getSettings().isHousekeepingAgeEnabled()
                 + ", age-interval=" + plugin.getSettings().getHousekeepingIntervalDays() + "d"
                 + ", region-age=" + plugin.getSettings().getHousekeepingRegionAgeDays() + "d"
-                + ", deleted-interval=" + plugin.getSettings().getHousekeepingDeletedIntervalHours() + "h"
                 + ", last-age-run=" + formatTs(lastAgeRunMillis)
                 + ", last-deleted-run=" + formatTs(lastDeletedRunMillis) + ")");
     }
@@ -127,12 +130,9 @@ public class HousekeepingManager {
         if (inProgress) {
             return;
         }
-        if (!plugin.getSettings().isHousekeepingEnabled()) {
-            return;
-        }
         long now = System.currentTimeMillis();
-        boolean ageDue = isAgeCycleDue(now);
-        boolean deletedDue = isDeletedCycleDue(now);
+        boolean ageDue = plugin.getSettings().isHousekeepingAgeEnabled() && isAgeCycleDue(now);
+        boolean deletedDue = plugin.getSettings().isHousekeepingDeletedEnabled() && isDeletedCycleDue(now);
         if (!ageDue && !deletedDue) {
             return;
         }
@@ -212,11 +212,18 @@ public class HousekeepingManager {
             }
         });
         try {
-            saved.join();
+            saved.get(2, TimeUnit.MINUTES);
             plugin.log("Housekeeping: world save complete");
             return true;
-        } catch (Exception e) {
-            plugin.logError("Housekeeping: world save failed: " + e.getMessage());
+        } catch (TimeoutException e) {
+            plugin.logError("Housekeeping: world save timed out after 2 minutes, aborting cycle");
+            return false;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            plugin.logError("Housekeeping: world save interrupted: " + e.getMessage());
+            return false;
+        } catch (ExecutionException e) {
+            plugin.logError("Housekeeping: world save failed: " + e.getCause().getMessage());
             return false;
         }
     }
