@@ -414,7 +414,7 @@ public class IslandCreationPanel extends AbstractPanel
         }
         else
         {
-            builder.icon(bundle.getIcon());
+            builder.icon(bundle.getIconItemStack());
         }
 
         if (template.title() != null)

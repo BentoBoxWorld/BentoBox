@@ -20,6 +20,7 @@ import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.junit.jupiter.api.AfterEach;
@@ -128,6 +129,7 @@ class IslandCreationPanelTest extends CommonTestSetup {
         when(bundle1.getUniqueId()).thenReturn("default");
         when(bundle1.getDisplayName()).thenReturn("Default");
         when(bundle1.getIcon()).thenReturn(Material.GRASS_BLOCK);
+        when(bundle1.getIconItemStack()).thenReturn(new ItemStack(Material.GRASS_BLOCK));
         when(bundle1.getDescription()).thenReturn(Collections.singletonList("Default island"));
         when(bundle1.getSlot()).thenReturn(0);
         when(bundle1.isRequirePermission()).thenReturn(false);
@@ -138,6 +140,7 @@ class IslandCreationPanelTest extends CommonTestSetup {
         when(bundle2.getUniqueId()).thenReturn("nether");
         when(bundle2.getDisplayName()).thenReturn("Nether");
         when(bundle2.getIcon()).thenReturn(Material.NETHERRACK);
+        when(bundle2.getIconItemStack()).thenReturn(new ItemStack(Material.NETHERRACK));
         when(bundle2.getDescription()).thenReturn(Collections.singletonList("Nether island"));
         when(bundle2.getSlot()).thenReturn(1);
         when(bundle2.isRequirePermission()).thenReturn(false);
@@ -148,6 +151,7 @@ class IslandCreationPanelTest extends CommonTestSetup {
         when(bundle3.getUniqueId()).thenReturn("end");
         when(bundle3.getDisplayName()).thenReturn("End");
         when(bundle3.getIcon()).thenReturn(Material.END_STONE);
+        when(bundle3.getIconItemStack()).thenReturn(new ItemStack(Material.END_STONE));
         when(bundle3.getDescription()).thenReturn(Collections.singletonList("End island"));
         when(bundle3.getSlot()).thenReturn(2);
         when(bundle3.isRequirePermission()).thenReturn(false);

@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.google.gson.annotations.Expose;
 
@@ -27,10 +30,12 @@ public class BlueprintBundle implements DataObject {
     @Expose
     private String uniqueId;
     /**
-     * Icon of the bundle
+     * Icon of the bundle. Supports plain material names (e.g. "DIAMOND"),
+     * vanilla namespaced materials (e.g. "minecraft:diamond"), and custom
+     * item model keys (e.g. "myserver:island_tropical").
      */
     @Expose
-    private Material icon = Material.PAPER;
+    private String icon = "PAPER";
     /**
      * Name on the icon
      */
@@ -97,16 +102,76 @@ public class BlueprintBundle implements DataObject {
         this.uniqueId = uniqueId;
     }
     /**
-     * @return the icon
+     * Returns the base Material for this bundle's icon.
+     * Resolves plain names ("DIAMOND") and vanilla namespaced keys ("minecraft:diamond")
+     * via {@link Material#matchMaterial}. For custom item-model keys that are not
+     * valid vanilla materials (e.g. "myserver:island_tropical"), returns {@link Material#PAPER}
+     * as the base item — use {@link #getIconItemStack()} to get the full item with model data.
+     * @return the icon material, never null
      */
     public Material getIcon() {
-        return icon;
+        if (icon == null) {
+            return Material.PAPER;
+        }
+        Material m = Material.matchMaterial(icon);
+        return m != null ? m : Material.PAPER;
     }
+
     /**
-     * @param icon the icon to set
+     * Returns an {@link ItemStack} representing this bundle's icon.
+     * <ul>
+     *   <li>Plain material name (e.g. {@code "DIAMOND"}) → {@code new ItemStack(Material.DIAMOND)}</li>
+     *   <li>Vanilla namespaced material (e.g. {@code "minecraft:diamond"}) → same as above</li>
+     *   <li>Custom item-model key (e.g. {@code "myserver:island_tropical"}) → PAPER base item
+     *       with the model key set via {@link ItemMeta#setItemModel(NamespacedKey)}</li>
+     * </ul>
+     * @return ItemStack for this bundle's icon, never null
+     * @since 3.0.0
+     */
+    public ItemStack getIconItemStack() {
+        if (icon == null) {
+            return new ItemStack(Material.PAPER);
+        }
+        // matchMaterial handles plain names ("DIAMOND") and namespaced vanilla ("minecraft:diamond")
+        Material m = Material.matchMaterial(icon);
+        if (m != null) {
+            return new ItemStack(m);
+        }
+        // Contains a colon but isn't a vanilla material → treat as a custom item model key
+        if (icon.contains(":")) {
+            ItemStack item = new ItemStack(Material.PAPER);
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                String[] parts = icon.split(":", 2);
+                try {
+                    meta.setItemModel(new NamespacedKey(parts[0], parts[1]));
+                    item.setItemMeta(meta);
+                } catch (IllegalArgumentException ignored) {
+                    // Invalid namespace/key format — fall through and return plain PAPER
+                }
+            }
+            return item;
+        }
+        return new ItemStack(Material.PAPER);
+    }
+
+    /**
+     * Sets the icon from a Material (backward-compatible setter).
+     * @param icon the icon material to set; if null, defaults to {@link Material#PAPER}
      */
     public void setIcon(Material icon) {
-        this.icon = icon;
+        this.icon = icon != null ? icon.name() : "PAPER";
+    }
+
+    /**
+     * Sets the icon from a string. Accepts plain material names (e.g. {@code "DIAMOND"}),
+     * vanilla namespaced materials (e.g. {@code "minecraft:diamond"}), and custom item-model
+     * keys (e.g. {@code "myserver:island_tropical"}).
+     * @param icon the icon string; if null, defaults to {@code "PAPER"}
+     * @since 3.0.0
+     */
+    public void setIcon(String icon) {
+        this.icon = icon != null ? icon : "PAPER";
     }
     /**
      * @return the displayName
