@@ -1056,20 +1056,7 @@ public class Util {
 
         // Convert BungeeCord/Spigot §x§R§R§G§G§B§B hex format (now &x&R&R...) to &#RRGGBB
         // so the HEX_PATTERN step below handles all hex input uniformly.
-        // This format is emitted by LegacyComponentSerializer.useUnusualXRepeatedCharacterHexFormat()
-        // and must be re-parsed here because legacyToMiniMessage does not recognise &x sequences.
-        Matcher bungeeMatcher = BUNGEE_HEX_PATTERN.matcher(text);
-        if (bungeeMatcher.find()) {
-            StringBuilder bungeeBuffer = new StringBuilder();
-            bungeeMatcher.reset();
-            while (bungeeMatcher.find()) {
-                // "&x&2&3&8&a&f&0" → strip "&x" prefix and remaining "&" chars → "238af0"
-                String digits = bungeeMatcher.group(0).substring(2).replace("&", "");
-                bungeeMatcher.appendReplacement(bungeeBuffer, "&#" + digits);
-            }
-            bungeeMatcher.appendTail(bungeeBuffer);
-            text = bungeeBuffer.toString();
-        }
+        text = normalizeBungeeHex(text);
 
         // Convert hex codes &#RRGGBB → <color:#RRGGBB>
         Matcher hexMatcher = HEX_PATTERN.matcher(text);
@@ -1236,17 +1223,7 @@ public class Util {
         // Normalize § to &
         text = text.replace('\u00A7', '&');
         // Convert BungeeCord/Spigot &x&R&R&G&G&B&B hex format to &#RRGGBB (see legacyToMiniMessage)
-        Matcher bungeeMatcher = BUNGEE_HEX_PATTERN.matcher(text);
-        if (bungeeMatcher.find()) {
-            StringBuilder bungeeBuffer = new StringBuilder();
-            bungeeMatcher.reset();
-            while (bungeeMatcher.find()) {
-                String digits = bungeeMatcher.group(0).substring(2).replace("&", "");
-                bungeeMatcher.appendReplacement(bungeeBuffer, "&#" + digits);
-            }
-            bungeeMatcher.appendTail(bungeeBuffer);
-            text = bungeeBuffer.toString();
-        }
+        text = normalizeBungeeHex(text);
         // Replace hex codes &#RRGGBB → <color:#RRGGBB>
         Matcher hexMatcher = HEX_PATTERN.matcher(text);
         StringBuilder sb = new StringBuilder();
@@ -1566,6 +1543,30 @@ public class Util {
             return out.toString();
         }
         return COLOR_CHAR + Character.toString(code);
+    }
+
+    /**
+     * Converts the BungeeCord/Spigot {@code &x&R&R&G&G&B&B} repeated-character hex format
+     * (produced after {@code §} → {@code &} normalisation) to the {@code &#RRGGBB} form
+     * that {@link #HEX_PATTERN} understands.
+     *
+     * @param text input string with {@code &} normalised from {@code §}
+     * @return string with {@code &x&R&R&G&G&B&B} sequences replaced by {@code &#RRGGBB}
+     */
+    private static String normalizeBungeeHex(@NonNull String text) {
+        Matcher m = BUNGEE_HEX_PATTERN.matcher(text);
+        if (!m.find()) {
+            return text;
+        }
+        StringBuilder sb = new StringBuilder();
+        m.reset();
+        while (m.find()) {
+            // "&x&2&3&8&a&f&0" → strip "&x" prefix and remaining "&" chars → "238af0"
+            String digits = m.group(0).substring(2).replace("&", "");
+            m.appendReplacement(sb, "&#" + digits);
+        }
+        m.appendTail(sb);
+        return sb.toString();
     }
 
     /**
