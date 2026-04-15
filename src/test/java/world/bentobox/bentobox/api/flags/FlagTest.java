@@ -450,4 +450,17 @@ class FlagTest extends RanksManagerTestSetup {
                 .build();
         assertEquals(RanksManager.MEMBER_RANK, flag.getDefaultRank());
     }
+
+    /**
+     * SETTING flags should allow -1 (disabled) as defaultRank without clamping,
+     * since Island.isAllowed() uses >= 0 as the enabled threshold.
+     */
+    @Test
+    void testSettingFlagAllowsNegativeDefaultRank() {
+        Flag flag = new Flag.Builder("pvp_test", Material.ARROW)
+                .type(Flag.Type.SETTING)
+                .defaultRank(-1)
+                .build();
+        assertEquals(-1, flag.getDefaultRank());
+    }
 }

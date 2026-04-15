@@ -272,9 +272,28 @@ public class LocalesManager {
             String tag = language.getName().substring(0, language.getName().length() - 4);
             Locale localeObject = Locale.forLanguageTag(tag);
 
-            // Skip files whose name does not parse to a real BCP-47 language tag.
-            // e.g. "zh_CN.yml" (underscore) yields Locale.ROOT, which would otherwise show
-            // up as a blank entry in the language selector panel.
+            // If the tag uses underscores (e.g. pt_BR) it won't parse as a valid BCP-47 tag.
+            // Silently fix it: rename the file to use '-' and load it under the corrected locale.
+            if (localeObject.getLanguage().isEmpty() && tag.contains("_")) {
+                String fixedTag = tag.replace('_', '-');
+                File fixedFile = new File(language.getParentFile(), fixedTag + ".yml");
+                if (!fixedFile.exists() && language.renameTo(fixedFile)) {
+                    plugin.logWarning("Locale file '" + localeFolder + "/" + language.getName()
+                            + "' has been renamed to '" + fixedTag + ".yml' to conform to BCP-47 (use '-' not '_').");
+                    language = fixedFile;
+                } else if (fixedFile.exists()) {
+                    plugin.logWarning("Duplicate locale file '" + localeFolder + "/" + language.getName()
+                            + "': '" + fixedTag + ".yml' already exists and will be used instead. Please remove the underscore version.");
+                    continue;
+                } else {
+                    plugin.logWarning("Locale file '" + localeFolder + "/" + language.getName()
+                            + "' uses '_' instead of '-' and could not be renamed; loading it as '" + fixedTag + "'.");
+                }
+                tag = fixedTag;
+                localeObject = Locale.forLanguageTag(tag);
+            }
+
+            // Skip files that still don't parse to a real BCP-47 language tag after the fix attempt.
             if (localeObject.getLanguage().isEmpty()) {
                 plugin.logWarning("Ignoring locale file '" + localeFolder + "/" + language.getName()
                         + "': '" + tag + "' is not a valid BCP-47 language tag (use '-' not '_').");
