@@ -2,6 +2,7 @@ package world.bentobox.bentobox.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.kyori.adventure.text.Component;
@@ -284,5 +285,46 @@ class LegacyToMiniMessageTest extends CommonTestSetup {
                 Util.stripSpaceAfterColorCodes("\u00A77Page \u00A7e1\u00A77 of \u00A7e4"));
         // Reset must NOT strip
         assertEquals("\u00A7r world", Util.stripSpaceAfterColorCodes("\u00A7r world"));
+    }
+
+    /**
+     * Regression for <a href="https://github.com/BentoBoxWorld/BentoBox/issues/2943">BentoBox#2943</a>:
+     * hex colors using the {@code &#RRGGBB} format were broken because
+     * {@code translateColorCodes} serialises them to the BungeeCord
+     * {@code §x§R§R§G§G§B§B} format, which {@code legacyToMiniMessage} (and
+     * {@code replaceLegacyCodesInline}) did not recognise.  The colour was then
+     * corrupted to a sequence of named colours (&amp;2, &amp;3, …) instead of
+     * the intended hex value.
+     */
+    @Test
+    void testBungeeCordHexFormatRoundTrip() {
+        // Simulate the full path: user writes &#238af0&l in a locale file.
+        // convertToLegacy (pure-legacy path) calls translateColorCodes which
+        // serialises to §x§2§3§8§a§f§0§l.  sendRawMessage then calls
+        // parseMiniMessageOrLegacy which must reconstruct the original colour.
+        String bungeeHex = "\u00A7x\u00A72\u00A73\u00A78\u00A7a\u00A7f\u00A70\u00A7l";
+        Component component = Util.parseMiniMessageOrLegacy(bungeeHex + "test");
+        // The component must carry the original hex colour, not a named-colour approximation.
+        net.kyori.adventure.text.format.TextColor color = component.children().isEmpty()
+                ? component.color()
+                : component.children().get(0).color();
+        assertNotNull(color, "Expected a colour on the component");
+        assertEquals(0x238af0, color.value(), "Hex colour #238af0 must survive the BungeeCord round-trip");
+    }
+
+    /**
+     * {@code &#RRGGBB&l} (the raw user-written format) must also round-trip correctly
+     * through {@code legacyToMiniMessage}.
+     */
+    @Test
+    void testRawHexWithBoldRoundTrip() {
+        String mm = Util.legacyToMiniMessage("&#238af0&lBold text");
+        Component component = Util.parseMiniMessage(mm);
+        // Must have the correct hex colour
+        net.kyori.adventure.text.format.TextColor color = component.color() != null
+                ? component.color()
+                : component.children().isEmpty() ? null : component.children().get(0).color();
+        assertNotNull(color, "Expected a colour");
+        assertEquals(0x238af0, color.value());
     }
 }

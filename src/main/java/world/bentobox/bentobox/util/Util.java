@@ -99,6 +99,13 @@ public class Util {
     private static final Pattern LEGACY_HEX_CODE_PATTERN = Pattern.compile("&#[0-9a-fA-F]{3,6}|\u00A7x(\u00A7[0-9a-fA-F]){6}");
 
     /**
+     * Pattern to match the BungeeCord/Spigot {@code &x&R&R&G&G&B&B} hex format
+     * (after {@code §} has been normalised to {@code &}).
+     * Produced by {@link LegacyComponentSerializer} with {@code useUnusualXRepeatedCharacterHexFormat()}.
+     */
+    private static final Pattern BUNGEE_HEX_PATTERN = Pattern.compile("&x(&[0-9a-fA-F]){6}");
+
+    /**
      * MiniMessage instance for parsing MiniMessage-formatted strings.
      */
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
@@ -1047,6 +1054,10 @@ public class Util {
         // First, normalize § to & for uniform processing
         String text = legacy.replace('\u00A7', '&');
 
+        // Convert BungeeCord/Spigot §x§R§R§G§G§B§B hex format (now &x&R&R...) to &#RRGGBB
+        // so the HEX_PATTERN step below handles all hex input uniformly.
+        text = normalizeBungeeHex(text);
+
         // Convert hex codes &#RRGGBB → <color:#RRGGBB>
         Matcher hexMatcher = HEX_PATTERN.matcher(text);
         StringBuilder sb = new StringBuilder();
@@ -1211,6 +1222,8 @@ public class Util {
     public static String replaceLegacyCodesInline(@NonNull String text) {
         // Normalize § to &
         text = text.replace('\u00A7', '&');
+        // Convert BungeeCord/Spigot &x&R&R&G&G&B&B hex format to &#RRGGBB (see legacyToMiniMessage)
+        text = normalizeBungeeHex(text);
         // Replace hex codes &#RRGGBB → <color:#RRGGBB>
         Matcher hexMatcher = HEX_PATTERN.matcher(text);
         StringBuilder sb = new StringBuilder();
@@ -1530,6 +1543,30 @@ public class Util {
             return out.toString();
         }
         return COLOR_CHAR + Character.toString(code);
+    }
+
+    /**
+     * Converts the BungeeCord/Spigot {@code &x&R&R&G&G&B&B} repeated-character hex format
+     * (produced after {@code §} → {@code &} normalisation) to the {@code &#RRGGBB} form
+     * that {@link #HEX_PATTERN} understands.
+     *
+     * @param text input string with {@code &} normalised from {@code §}
+     * @return string with {@code &x&R&R&G&G&B&B} sequences replaced by {@code &#RRGGBB}
+     */
+    private static String normalizeBungeeHex(@NonNull String text) {
+        Matcher m = BUNGEE_HEX_PATTERN.matcher(text);
+        if (!m.find()) {
+            return text;
+        }
+        StringBuilder sb = new StringBuilder();
+        m.reset();
+        while (m.find()) {
+            // "&x&2&3&8&a&f&0" → strip "&x" prefix and remaining "&" chars → "238af0"
+            String digits = m.group(0).substring(2).replace("&", "");
+            m.appendReplacement(sb, "&#" + digits);
+        }
+        m.appendTail(sb);
+        return sb.toString();
     }
 
     /**
