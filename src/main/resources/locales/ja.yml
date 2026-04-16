@@ -609,7 +609,7 @@ commands:
       you-cannot-make-team: '<red>チームメンバーは、チーム[prefix_island]と同じ世界で島を作ることはできません。</red>'
       pasting:
         estimated-time: '<green>推定時間：</green><aqua>[number]s。</aqua>'
-        blocks: '<green>ブロックごとに構築します。 合計</green><aqua>[numbber]</aqua><green>ブロック。</green>'
+        blocks: '<green>ブロックごとに構築します。 合計</green><aqua>[number]</aqua><green>ブロック。</green>'
         entities: '<green>それを生き物で満たす。 合計</green><aqua>[number]</aqua><green>体のクリーチャー。</green>'
         dimension-done: '<green>[world]に島が建設されます。</green>'
         done: '<green>完了しました。あなたの島の準備が整い、あなたを待っています！</green>'
