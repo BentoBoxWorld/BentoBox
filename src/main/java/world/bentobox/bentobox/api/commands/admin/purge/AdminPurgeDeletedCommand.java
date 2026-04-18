@@ -61,8 +61,7 @@ public class AdminPurgeDeletedCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         this.user = user;
-        if (!args.isEmpty() && args.getFirst().equalsIgnoreCase("confirm")
-                && toBeConfirmed && this.user.equals(user)) {
+        if (!args.isEmpty() && args.getFirst().equalsIgnoreCase("confirm") && toBeConfirmed) {
             return deleteEverything();
         }
         toBeConfirmed = false;

@@ -29,6 +29,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 
 import com.google.common.collect.ImmutableSet;
@@ -150,21 +152,10 @@ class AdminPurgeCommandTest extends CommonTestSetup {
         assertTrue(apc.canExecute(user, "purge", List.of("10")));
     }
 
-    @Test
-    void testExecuteNotANumber() {
-        assertFalse(apc.execute(user, "purge", List.of("notanumber")));
-        verify(user).sendMessage("commands.admin.purge.days-one-or-more");
-    }
-
-    @Test
-    void testExecuteZeroDays() {
-        assertFalse(apc.execute(user, "purge", List.of("0")));
-        verify(user).sendMessage("commands.admin.purge.days-one-or-more");
-    }
-
-    @Test
-    void testExecuteNegativeDays() {
-        assertFalse(apc.execute(user, "purge", List.of("-3")));
+    @ParameterizedTest
+    @ValueSource(strings = {"notanumber", "0", "-3"})
+    void testExecuteInvalidDays(String arg) {
+        assertFalse(apc.execute(user, "purge", List.of(arg)));
         verify(user).sendMessage("commands.admin.purge.days-one-or-more");
     }
 
@@ -179,9 +170,7 @@ class AdminPurgeCommandTest extends CommonTestSetup {
 
     @Test
     void testExecuteEmptyGrid() {
-        IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
-        when(islandCache.getIslandGrid(world)).thenReturn(grid);
+        wireEmptyGrid();
 
         assertTrue(apc.execute(user, "purge", List.of("10")));
         verify(user).sendMessage("commands.admin.purge.scanning");
@@ -190,10 +179,7 @@ class AdminPurgeCommandTest extends CommonTestSetup {
 
     @Test
     void testExecuteNoRegionFiles() throws IOException {
-        IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
-        when(islandCache.getIslandGrid(world)).thenReturn(grid);
-
+        wireEmptyGrid();
         Files.createDirectories(tempDir.resolve("region"));
 
         assertTrue(apc.execute(user, "purge", List.of("10")));
@@ -203,12 +189,8 @@ class AdminPurgeCommandTest extends CommonTestSetup {
 
     @Test
     void testExecuteOldRegionFileNoIslands() throws IOException {
-        IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
-        when(islandCache.getIslandGrid(world)).thenReturn(grid);
-
-        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
-        Files.createFile(regionDir.resolve("r.0.0.mca"));
+        wireEmptyGrid();
+        createRegionFile();
 
         assertTrue(apc.execute(user, "purge", List.of("10")));
         verify(user).sendMessage("commands.admin.purge.scanning");
@@ -218,13 +200,9 @@ class AdminPurgeCommandTest extends CommonTestSetup {
 
     @Test
     void testExecuteConfirmDeletesRegions() throws IOException {
-        IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
-        when(islandCache.getIslandGrid(world)).thenReturn(grid);
-
-        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
-        Path regionFile = regionDir.resolve("r.0.0.mca");
-        Files.createFile(regionFile);
+        wireEmptyGrid();
+        Path regionFile = tempDir.resolve("region").resolve("r.0.0.mca");
+        createRegionFile();
 
         assertTrue(apc.execute(user, "purge", List.of("10")));
         verify(user).sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, "bsb");
@@ -243,10 +221,7 @@ class AdminPurgeCommandTest extends CommonTestSetup {
 
     @Test
     void testExecuteRecentRegionFileExcluded() throws IOException {
-        IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
-        when(islandCache.getIslandGrid(world)).thenReturn(grid);
-
+        wireEmptyGrid();
         Path regionDir = Files.createDirectories(tempDir.resolve("region"));
         File regionFile = regionDir.resolve("r.0.0.mca").toFile();
 
@@ -268,27 +243,9 @@ class AdminPurgeCommandTest extends CommonTestSetup {
 
     @Test
     void testExecuteIslandWithRecentLoginIsExcluded() throws IOException {
-        UUID ownerUUID = UUID.randomUUID();
-        when(island.getUniqueId()).thenReturn("island-1");
-        when(island.getOwner()).thenReturn(ownerUUID);
-        when(island.isOwned()).thenReturn(true);
-        when(island.isDeletable()).thenReturn(false);
-        when(island.isPurgeProtected()).thenReturn(false);
-        when(island.isSpawn()).thenReturn(false);
-        when(island.getMemberSet()).thenReturn(ImmutableSet.of(ownerUUID));
-        when(island.getCenter()).thenReturn(location);
-
-        IslandGrid.IslandData data = new IslandGrid.IslandData("island-1", 0, 0, 100);
-        Collection<IslandGrid.IslandData> islandList = List.of(data);
-        IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(islandList);
-        when(islandCache.getIslandGrid(world)).thenReturn(grid);
-        when(im.getIslandById("island-1")).thenReturn(Optional.of(island));
-
+        UUID ownerUUID = wireIsland("island-1", false, false, false);
         when(pm.getLastLoginTimestamp(ownerUUID)).thenReturn(System.currentTimeMillis());
-
-        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
-        Files.createFile(regionDir.resolve("r.0.0.mca"));
+        createRegionFile();
 
         assertTrue(apc.execute(user, "purge", List.of("10")));
         verify(user).sendMessage("commands.admin.purge.none-found");
@@ -296,26 +253,9 @@ class AdminPurgeCommandTest extends CommonTestSetup {
 
     @Test
     void testExecuteSpawnIslandNotPurged() throws IOException {
-        UUID ownerUUID = UUID.randomUUID();
-        when(island.getUniqueId()).thenReturn("island-spawn");
-        when(island.getOwner()).thenReturn(ownerUUID);
-        when(island.isOwned()).thenReturn(true);
-        when(island.isDeletable()).thenReturn(false);
-        when(island.isPurgeProtected()).thenReturn(false);
-        when(island.isSpawn()).thenReturn(true);
-        when(island.getMemberSet()).thenReturn(ImmutableSet.of(ownerUUID));
-
-        IslandGrid.IslandData data = new IslandGrid.IslandData("island-spawn", 0, 0, 100);
-        Collection<IslandGrid.IslandData> islandList = List.of(data);
-        IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(islandList);
-        when(islandCache.getIslandGrid(world)).thenReturn(grid);
-        when(im.getIslandById("island-spawn")).thenReturn(Optional.of(island));
-
+        UUID ownerUUID = wireIsland("island-spawn", false, false, true);
         when(pm.getLastLoginTimestamp(ownerUUID)).thenReturn(0L);
-
-        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
-        Files.createFile(regionDir.resolve("r.0.0.mca"));
+        createRegionFile();
 
         assertTrue(apc.execute(user, "purge", List.of("10")));
         verify(user).sendMessage("commands.admin.purge.none-found");
@@ -323,26 +263,9 @@ class AdminPurgeCommandTest extends CommonTestSetup {
 
     @Test
     void testExecutePurgeProtectedIslandNotPurged() throws IOException {
-        UUID ownerUUID = UUID.randomUUID();
-        when(island.getUniqueId()).thenReturn("island-protected");
-        when(island.getOwner()).thenReturn(ownerUUID);
-        when(island.isOwned()).thenReturn(true);
-        when(island.isDeletable()).thenReturn(false);
-        when(island.isPurgeProtected()).thenReturn(true);
-        when(island.isSpawn()).thenReturn(false);
-        when(island.getMemberSet()).thenReturn(ImmutableSet.of(ownerUUID));
-
-        IslandGrid.IslandData data = new IslandGrid.IslandData("island-protected", 0, 0, 100);
-        Collection<IslandGrid.IslandData> islandList = List.of(data);
-        IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(islandList);
-        when(islandCache.getIslandGrid(world)).thenReturn(grid);
-        when(im.getIslandById("island-protected")).thenReturn(Optional.of(island));
-
+        UUID ownerUUID = wireIsland("island-protected", false, true, false);
         when(pm.getLastLoginTimestamp(ownerUUID)).thenReturn(0L);
-
-        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
-        Files.createFile(regionDir.resolve("r.0.0.mca"));
+        createRegionFile();
 
         assertTrue(apc.execute(user, "purge", List.of("10")));
         verify(user).sendMessage("commands.admin.purge.none-found");
@@ -350,25 +273,8 @@ class AdminPurgeCommandTest extends CommonTestSetup {
 
     @Test
     void testExecuteDeletableIslandIncluded() throws IOException {
-        UUID ownerUUID = UUID.randomUUID();
-        when(island.getUniqueId()).thenReturn("island-deletable");
-        when(island.getOwner()).thenReturn(ownerUUID);
-        when(island.isOwned()).thenReturn(true);
-        when(island.isDeletable()).thenReturn(true);
-        when(island.isPurgeProtected()).thenReturn(false);
-        when(island.isSpawn()).thenReturn(false);
-        when(island.getMemberSet()).thenReturn(ImmutableSet.of(ownerUUID));
-        when(island.getCenter()).thenReturn(location);
-
-        IslandGrid.IslandData data = new IslandGrid.IslandData("island-deletable", 0, 0, 100);
-        Collection<IslandGrid.IslandData> islandList = List.of(data);
-        IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(islandList);
-        when(islandCache.getIslandGrid(world)).thenReturn(grid);
-        when(im.getIslandById("island-deletable")).thenReturn(Optional.of(island));
-
-        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
-        Files.createFile(regionDir.resolve("r.0.0.mca"));
+        wireIsland("island-deletable", true, false, false);
+        createRegionFile();
 
         assertTrue(apc.execute(user, "purge", List.of("10")));
         verify(user).sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER, "1");
@@ -377,23 +283,7 @@ class AdminPurgeCommandTest extends CommonTestSetup {
 
     @Test
     void testExecuteConfirmDeletesPlayerData() throws IOException {
-        UUID ownerUUID = UUID.randomUUID();
-        when(island.getUniqueId()).thenReturn("island-deletable");
-        when(island.getOwner()).thenReturn(ownerUUID);
-        when(island.isOwned()).thenReturn(true);
-        when(island.isDeletable()).thenReturn(true);
-        when(island.isPurgeProtected()).thenReturn(false);
-        when(island.isSpawn()).thenReturn(false);
-        when(island.getMemberSet()).thenReturn(ImmutableSet.of(ownerUUID));
-        when(island.getCenter()).thenReturn(location);
-
-        IslandGrid.IslandData data = new IslandGrid.IslandData("island-deletable", 0, 0, 100);
-        Collection<IslandGrid.IslandData> islandList = List.of(data);
-        IslandGrid grid = mock(IslandGrid.class);
-        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(islandList);
-        when(islandCache.getIslandGrid(world)).thenReturn(grid);
-        when(im.getIslandById("island-deletable")).thenReturn(Optional.of(island));
-
+        UUID ownerUUID = wireIsland("island-deletable", true, false, false);
         when(im.getIslands(world, ownerUUID)).thenReturn(List.of(island));
 
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
@@ -404,8 +294,7 @@ class AdminPurgeCommandTest extends CommonTestSetup {
 
         when(im.deleteIslandId("island-deletable")).thenReturn(true);
 
-        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
-        Files.createFile(regionDir.resolve("r.0.0.mca"));
+        createRegionFile();
         Path playerDataDir = Files.createDirectories(tempDir.resolve("playerdata"));
         Path playerFile = playerDataDir.resolve(ownerUUID + ".dat");
         Files.createFile(playerFile);
@@ -417,5 +306,40 @@ class AdminPurgeCommandTest extends CommonTestSetup {
         verify(user).sendMessage("general.success");
         verify(im).deleteIslandId("island-deletable");
         assertFalse(playerFile.toFile().exists(), "Player data file should have been deleted");
+    }
+
+    /**
+     * Wires the shared {@code island} mock with the given id and flags, puts it
+     * in an IslandGrid at (0,0), and returns the generated owner UUID.
+     */
+    private UUID wireIsland(String id, boolean deletable, boolean purgeProtected, boolean spawn) {
+        UUID ownerUUID = UUID.randomUUID();
+        when(island.getUniqueId()).thenReturn(id);
+        when(island.getOwner()).thenReturn(ownerUUID);
+        when(island.isOwned()).thenReturn(true);
+        when(island.isDeletable()).thenReturn(deletable);
+        when(island.isPurgeProtected()).thenReturn(purgeProtected);
+        when(island.isSpawn()).thenReturn(spawn);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(ownerUUID));
+        when(island.getCenter()).thenReturn(location);
+
+        IslandGrid.IslandData data = new IslandGrid.IslandData(id, 0, 0, 100);
+        Collection<IslandGrid.IslandData> islandList = List.of(data);
+        IslandGrid grid = mock(IslandGrid.class);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(islandList);
+        when(islandCache.getIslandGrid(world)).thenReturn(grid);
+        when(im.getIslandById(id)).thenReturn(Optional.of(island));
+        return ownerUUID;
+    }
+
+    private void createRegionFile() throws IOException {
+        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
+        Files.createFile(regionDir.resolve("r.0.0.mca"));
+    }
+
+    private void wireEmptyGrid() {
+        IslandGrid grid = mock(IslandGrid.class);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
+        when(islandCache.getIslandGrid(world)).thenReturn(grid);
     }
 }
