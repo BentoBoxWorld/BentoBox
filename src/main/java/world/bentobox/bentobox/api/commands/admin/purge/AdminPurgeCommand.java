@@ -4,12 +4,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -33,16 +28,10 @@ import world.bentobox.bentobox.util.Util;
  *
  * <p>Heavy lifting is delegated to {@link PurgeRegionsService}.
  */
-public class AdminPurgeCommand extends CompositeCommand {
+public class AdminPurgeCommand extends AbstractPurgeCommand {
 
-    private static final String NONE_FOUND = "commands.admin.purge.none-found";
     private static final String IN_WORLD = " in world ";
     private static final String WILL_BE_DELETED = " will be deleted";
-
-    private volatile boolean inPurge;
-    private boolean toBeConfirmed;
-    private User user;
-    private PurgeScanResult lastScan;
 
     public AdminPurgeCommand(CompositeCommand parent) {
         super(parent, "purge");
@@ -62,8 +51,7 @@ public class AdminPurgeCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        if (inPurge) {
-            user.sendMessage("commands.admin.purge.purge-in-progress", TextVariables.LABEL, this.getTopLabel());
+        if (!super.canExecute(user, label, args)) {
             return false;
         }
         if (args.isEmpty()) {
@@ -93,75 +81,33 @@ public class AdminPurgeCommand extends CompositeCommand {
             return false;
         }
 
-        user.sendMessage("commands.admin.purge.scanning");
-        getPlugin().log("Purge: saving all worlds before scanning region files...");
-        Bukkit.getWorlds().forEach(World::save);
-        getPlugin().log("Purge: world save complete");
-
-        inPurge = true;
         final int finalDays = days;
-        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            try {
-                PurgeRegionsService service = getPlugin().getPurgeRegionsService();
-                lastScan = service.scan(getWorld(), finalDays);
-                displayResultsAndPrompt(lastScan);
-            } finally {
-                inPurge = false;
-            }
-        });
+        runScanAndPrompt(() -> getPlugin().getPurgeRegionsService().scan(getWorld(), finalDays));
         return true;
     }
 
-    private boolean deleteEverything() {
-        if (lastScan == null || lastScan.isEmpty()) {
-            user.sendMessage(NONE_FOUND);
-            return false;
-        }
-        PurgeScanResult scan = lastScan;
-        lastScan = null;
-        toBeConfirmed = false;
-        getPlugin().log("Purge: saving all worlds before deleting region files...");
-        Bukkit.getWorlds().forEach(World::save);
-        getPlugin().log("Purge: world save complete, dispatching deletion");
-        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            boolean ok = getPlugin().getPurgeRegionsService().delete(scan);
-            Bukkit.getScheduler().runTask(getPlugin(), () -> {
-                if (ok) {
-                    user.sendMessage("general.success");
-                } else {
-                    getPlugin().log("Purge: failed to delete one or more region files");
-                    user.sendMessage("commands.admin.purge.failed");
-                }
-            });
-        });
-        return true;
+    @Override
+    protected String logPrefix() {
+        return "Purge";
     }
 
-    private void displayResultsAndPrompt(PurgeScanResult scan) {
-        Set<Island> uniqueIslands = scan.deletableRegions().values().stream()
-                .flatMap(Set::stream)
-                .map(getPlugin().getIslands()::getIslandById)
-                .flatMap(Optional::stream)
-                .collect(Collectors.toSet());
+    @Override
+    protected String successMessageKey() {
+        return "general.success";
+    }
 
+    @Override
+    protected void sendConfirmPrompt() {
+        user.sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, this.getTopLabel());
+        user.sendMessage("general.beta");
+    }
+
+    @Override
+    protected void logScanContents(Set<Island> uniqueIslands, PurgeScanResult scan) {
         uniqueIslands.forEach(this::displayIsland);
-
         scan.deletableRegions().entrySet().stream()
             .filter(e -> e.getValue().isEmpty())
             .forEach(e -> displayEmptyRegion(e.getKey()));
-
-        if (scan.isEmpty()) {
-            Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
-        } else {
-            Bukkit.getScheduler().runTask(getPlugin(), () -> {
-                user.sendMessage("commands.admin.purge.purgable-islands",
-                        TextVariables.NUMBER, String.valueOf(uniqueIslands.size()));
-                user.sendMessage("commands.admin.purge.confirm",
-                        TextVariables.LABEL, this.getTopLabel());
-                user.sendMessage("general.beta");
-                toBeConfirmed = true;
-            });
-        }
     }
 
     private void displayIsland(Island island) {
