@@ -19,9 +19,9 @@ import world.bentobox.bentobox.util.Util;
  * Admin command to reap region files for every island already flagged as
  * {@code deletable}, ignoring region-file age entirely.
  *
- * <p>Counterpart to {@link AdminPurgeRegionsCommand} which filters on the
- * age of the .mca files. This command trusts the {@code deletable} flag
- * set by {@code /is reset} (and Phase 2 soft-delete) and reaps immediately.
+ * <p>Counterpart to {@link AdminPurgeCommand} which filters on the age of
+ * the .mca files. This command trusts the {@code deletable} flag set by
+ * {@code /is reset} (and Phase 2 soft-delete) and reaps immediately.
  *
  * <p>Heavy lifting is delegated to {@link PurgeRegionsService#scanDeleted(World)}
  * and {@link PurgeRegionsService#delete(PurgeScanResult)}.

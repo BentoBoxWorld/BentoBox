@@ -1,39 +1,51 @@
 package world.bentobox.bentobox.api.commands.admin.purge;
 
-import java.util.HashSet;
-import java.util.Iterator;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.World;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.events.island.IslandDeletedEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.PurgeRegionsService;
+import world.bentobox.bentobox.managers.PurgeRegionsService.PurgeScanResult;
+import world.bentobox.bentobox.util.Pair;
+import world.bentobox.bentobox.util.Util;
 
-public class AdminPurgeCommand extends CompositeCommand implements Listener {
+/**
+ * Admin command to purge abandoned islands by deleting their region files
+ * directly from disk.
+ *
+ * <p>Since 3.15.0 this command <em>does not</em> soft-delete islands via the
+ * DB pipeline the way older versions did — it scans {@code .mca} region files
+ * older than {@code <days>}, filters out spawn, purge-protected and still-active
+ * islands, and deletes the underlying files. This is what the former
+ * {@code /bbox admin purge regions} subcommand used to do; the two have been
+ * merged because disk-freeing is the only form of purge that matters.
+ *
+ * <p>Heavy lifting is delegated to {@link PurgeRegionsService}.
+ */
+public class AdminPurgeCommand extends CompositeCommand {
 
-    private static final Long YEAR2000 = 946713600L;
-    private static final int TOO_MANY = 1000;
-    private int count;
-    private boolean inPurge;
-    private boolean scanning;
+    private static final String NONE_FOUND = "commands.admin.purge.none-found";
+    private static final String IN_WORLD = " in world ";
+    private static final String WILL_BE_DELETED = " will be deleted";
+
+    private volatile boolean inPurge;
     private boolean toBeConfirmed;
-    private Iterator<String> it;
     private User user;
-    private Set<String> islands = new HashSet<>();
-    private final Set<Integer> loggedTiers = new HashSet<>(); // Set to store logged percentage tiers
+    private PurgeScanResult lastScan;
 
     public AdminPurgeCommand(CompositeCommand parent) {
         super(parent, "purge");
-        getAddon().registerListener(this);
     }
 
     @Override
@@ -42,27 +54,19 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.purge.parameters");
         setDescription("commands.admin.purge.description");
-        new AdminPurgeStatusCommand(this);
-        new AdminPurgeStopCommand(this);
         new AdminPurgeUnownedCommand(this);
         new AdminPurgeProtectCommand(this);
-        new AdminPurgeRegionsCommand(this);
         new AdminPurgeAgeRegionsCommand(this);
         new AdminPurgeDeletedCommand(this);
     }
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        if (scanning) {
-            user.sendMessage("commands.admin.purge.scanning-in-progress");
-            return false;
-        }
         if (inPurge) {
             user.sendMessage("commands.admin.purge.purge-in-progress", TextVariables.LABEL, this.getTopLabel());
             return false;
         }
         if (args.isEmpty()) {
-            // Show help
             showHelp(this, user);
             return false;
         }
@@ -71,177 +75,125 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (args.getFirst().equalsIgnoreCase("confirm") && toBeConfirmed && this.user.equals(user)) {
-            removeIslands();
-            return true;
-        }
-        // Clear tbc
-        toBeConfirmed = false;
-        islands.clear();
         this.user = user;
+        if (args.getFirst().equalsIgnoreCase("confirm") && toBeConfirmed && this.user.equals(user)) {
+            return deleteEverything();
+        }
+        toBeConfirmed = false;
+
+        int days;
         try {
-            int days = Integer.parseInt(args.getFirst());
-            if (days < 1) {
+            days = Integer.parseInt(args.getFirst());
+            if (days <= 0) {
                 user.sendMessage("commands.admin.purge.days-one-or-more");
                 return false;
             }
-            user.sendMessage("commands.admin.purge.scanning");
-            scanning = true;
-            getOldIslands(days).thenAccept(islandSet -> {
-                user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER,
-                        String.valueOf(islandSet.size()));
-                if (islandSet.size() > TOO_MANY) {
-                    user.sendMessage("commands.admin.purge.too-many"); // Give warning
-                }
-                if (!islandSet.isEmpty()) {
-                    toBeConfirmed = true;
-                    user.sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, this.getTopLabel());
-                    islands = islandSet;
-                } else {
-                    user.sendMessage("commands.admin.purge.none-found");
-                }
-                scanning = false;
-            });
-
         } catch (NumberFormatException e) {
-            user.sendMessage("commands.admin.purge.number-error");
+            user.sendMessage("commands.admin.purge.days-one-or-more");
             return false;
         }
+
+        user.sendMessage("commands.admin.purge.scanning");
+        getPlugin().log("Purge: saving all worlds before scanning region files...");
+        Bukkit.getWorlds().forEach(World::save);
+        getPlugin().log("Purge: world save complete");
+
+        inPurge = true;
+        final int finalDays = days;
+        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+            try {
+                PurgeRegionsService service = getPlugin().getPurgeRegionsService();
+                lastScan = service.scan(getWorld(), finalDays);
+                displayResultsAndPrompt(lastScan);
+            } finally {
+                inPurge = false;
+            }
+        });
         return true;
     }
 
-    void removeIslands() {
-        inPurge = true;
-        user.sendMessage("commands.admin.purge.see-console-for-status", TextVariables.LABEL, this.getTopLabel());
-        it = islands.iterator();
-        count = 0;
-        loggedTiers.clear(); // % reporting
-        // Delete first island
-        deleteIsland();
-    }
-
-    private void deleteIsland() {
-        if (it.hasNext()) {
-            getIslands().getIslandById(it.next()).ifPresent(i -> {
-                getIslands().deleteIsland(i, true, null);
-                count++;
-                float percentage = ((float) count / getPurgeableIslandsCount()) * 100;
-                String percentageStr = String.format("%.1f", percentage);
-                // Round the percentage to check for specific tiers
-                int roundedPercentage = (int) Math.floor(percentage);
-
-                // Log at 1%, 5%, and every multiple of 5% thereafter
-                if (roundedPercentage > 0
-                        && (roundedPercentage == 1 || roundedPercentage % 5 == 0)
-                        && !loggedTiers.contains(roundedPercentage)) {
-                    getPlugin().log(count + " islands purged out of " + getPurgeableIslandsCount() + " ("
-                            + percentageStr + " %)");
-                    loggedTiers.add(roundedPercentage);
+    private boolean deleteEverything() {
+        if (lastScan == null || lastScan.isEmpty()) {
+            user.sendMessage(NONE_FOUND);
+            return false;
+        }
+        PurgeScanResult scan = lastScan;
+        lastScan = null;
+        toBeConfirmed = false;
+        getPlugin().log("Purge: saving all worlds before deleting region files...");
+        Bukkit.getWorlds().forEach(World::save);
+        getPlugin().log("Purge: world save complete, dispatching deletion");
+        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+            boolean ok = getPlugin().getPurgeRegionsService().delete(scan);
+            Bukkit.getScheduler().runTask(getPlugin(), () -> {
+                if (ok) {
+                    user.sendMessage("general.success");
+                } else {
+                    getPlugin().log("Purge: failed to delete one or more region files");
+                    user.sendMessage("commands.admin.purge.failed");
                 }
             });
-        } else {
-            user.sendMessage("commands.admin.purge.completed");
-            inPurge = false;
-        }
-
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    void onIslandDeleted(IslandDeletedEvent e) {
-        if (inPurge) {
-            // Run after one tick - you cannot run millions of events in one tick otherwise the server shuts down
-            Bukkit.getScheduler().runTaskLater(getPlugin(), this::deleteIsland, 2L); // 10 a second
-        }
-    }
-
-    /**
-     * Gets a set of islands that are older than the parameter in days
-     * @param days days
-     * @return set of islands
-     */
-    CompletableFuture<Set<String>> getOldIslands(int days) {
-        CompletableFuture<Set<String>> result = new CompletableFuture<>();
-        // Process islands in one pass, logging and adding to the set if applicable
-        getPlugin().getIslands().getIslandsASync().thenAccept(list -> {
-            user.sendMessage("commands.admin.purge.total-islands", TextVariables.NUMBER, String.valueOf(list.size()));
-            Set<String> oldIslands = new HashSet<>();
-            list.stream()
-                .filter(i -> !i.isSpawn()).filter(i -> !i.isPurgeProtected())
-                .filter(i -> i.getWorld() != null) // to handle currently unloaded world islands
-                    .filter(i -> i.getWorld().equals(this.getWorld())) // Island needs to be in this world
-                    .filter(Island::isOwned) // The island needs to be owned
-                    .filter(i -> i.getMemberSet().stream().allMatch(member -> checkLastLoginTimestamp(days, member)))
-                    .forEach(i -> oldIslands.add(i.getUniqueId())); // Add the unique island ID to the set
-
-            result.complete(oldIslands);
         });
-        return result;
+        return true;
     }
 
-    private boolean checkLastLoginTimestamp(int days, UUID member) {
-        long daysInMilliseconds = days * 24L * 3600 * 1000; // Calculate days in milliseconds
-        Long lastLoginTimestamp = getPlayers().getLastLoginTimestamp(member);
-        // If no valid last login time is found, or it's before the year 2000, try to fetch from Bukkit
-        if (lastLoginTimestamp == null || lastLoginTimestamp < YEAR2000) {
-            lastLoginTimestamp = Bukkit.getOfflinePlayer(member).getLastSeen();
+    private void displayResultsAndPrompt(PurgeScanResult scan) {
+        Set<Island> uniqueIslands = scan.deletableRegions().values().stream()
+                .flatMap(Set::stream)
+                .map(getPlugin().getIslands()::getIslandById)
+                .flatMap(Optional::stream)
+                .collect(Collectors.toSet());
 
-            // If still invalid, set the current timestamp to mark the user for eventual purging
-            if (lastLoginTimestamp < YEAR2000) {
-                getPlayers().setLoginTimeStamp(member, System.currentTimeMillis());
-                return false; // User will be purged in the future
-            } else {
-                // Otherwise, update the last login timestamp with the valid value from Bukkit
-                getPlayers().setLoginTimeStamp(member, lastLoginTimestamp);
-            }
+        uniqueIslands.forEach(this::displayIsland);
+
+        scan.deletableRegions().entrySet().stream()
+            .filter(e -> e.getValue().isEmpty())
+            .forEach(e -> displayEmptyRegion(e.getKey()));
+
+        if (scan.isEmpty()) {
+            Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
+        } else {
+            Bukkit.getScheduler().runTask(getPlugin(), () -> {
+                user.sendMessage("commands.admin.purge.purgable-islands",
+                        TextVariables.NUMBER, String.valueOf(uniqueIslands.size()));
+                user.sendMessage("commands.admin.purge.confirm",
+                        TextVariables.LABEL, this.getTopLabel());
+                user.sendMessage("general.beta");
+                toBeConfirmed = true;
+            });
         }
-        // Check if the difference between now and the last login is greater than the allowed days
-        return System.currentTimeMillis() - lastLoginTimestamp > daysInMilliseconds;
     }
 
-
-    /**
-     * @return the inPurge
-     */
-    boolean isInPurge() {
-        return inPurge;
+    private void displayIsland(Island island) {
+        if (island.isDeletable()) {
+            getPlugin().log("Deletable island at " + Util.xyz(island.getCenter().toVector())
+                    + IN_WORLD + getWorld().getName() + WILL_BE_DELETED);
+            return;
+        }
+        if (island.getOwner() == null) {
+            getPlugin().log("Unowned island at " + Util.xyz(island.getCenter().toVector())
+                    + IN_WORLD + getWorld().getName() + WILL_BE_DELETED);
+            return;
+        }
+        getPlugin().log("Island at " + Util.xyz(island.getCenter().toVector()) + IN_WORLD + getWorld().getName()
+                + " owned by " + getPlugin().getPlayers().getName(island.getOwner())
+                + " who last logged in "
+                + formatLocalTimestamp(getPlugin().getPlayers().getLastLoginTimestamp(island.getOwner()))
+                + WILL_BE_DELETED);
     }
 
-    /**
-     * Stop the purge
-     */
-    void stop() {
-        inPurge = false;
+    private void displayEmptyRegion(Pair<Integer, Integer> region) {
+        getPlugin().log("Empty region at r." + region.x() + "." + region.z() + IN_WORLD
+                + getWorld().getName() + " will be deleted (no islands)");
     }
 
-    /**
-     * @param user the user to set
-     */
-    void setUser(User user) {
-        this.user = user;
-    }
-
-    /**
-     * @param islands the islands to set
-     */
-    void setIslands(Set<String> islands) {
-        this.islands = islands;
-    }
-
-    /**
-     * Returns the amount of purged islands.
-     * @return the amount of islands that have been purged.
-     * @since 1.13.0
-     */
-    int getPurgedIslandsCount() {
-        return this.count;
-    }
-
-    /**
-     * Returns the amount of islands that can be purged.
-     * @return the amount of islands that can be purged.
-     * @since 1.13.0
-     */
-    int getPurgeableIslandsCount() {
-        return this.islands.size();
+    private String formatLocalTimestamp(Long millis) {
+        if (millis == null) {
+            return "(unknown or never recorded)";
+        }
+        Instant instant = Instant.ofEpochMilli(millis);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                .withZone(ZoneId.systemDefault());
+        return formatter.format(instant);
     }
 }
