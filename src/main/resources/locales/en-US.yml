@@ -103,28 +103,14 @@ commands:
           [prefix_island]</aqua><green>, decreasing the total to </green><aqua>[total]</aqua><green>resets.</green>'
     purge:
       parameters: '[days]'
-      description: purge [prefix_Islands] abandoned for more than [days]
+      description: 'delete region files for [prefix_Islands] untouched for more than [days] days (frees disk)'
       days-one-or-more: '<red>Must be at least 1 day or more</red>'
       purgable-islands: '<green>Found </green><aqua>[number] </aqua><green>purgable [prefix_Islands].</green>'
-      too-many: '<aqua>This is a lot of [prefix_Islands]. The purge will soft-delete them and housekeeping will clean up the region files on schedule.</aqua>'
-      purge-in-progress: '<red>Purging in progress. Use </red><aqua>/[label] purge stop </aqua><red>to
-        cancel.</red>'
-      scanning: '<green>Scanning [prefix_Islands] in the database. This may take a while depending
-        on how many you have...</green>'
-      scanning-in-progress: '<red>Scanning in progress, please wait</red>'
+      purge-in-progress: '<red>Purging in progress. Please wait for it to finish.</red>'
+      scanning: '<green>Scanning region files. This may take a while depending on world size...</green>'
       none-found: '<red>No [prefix_Islands] found to purge.</red>'
-      total-islands: '<green>You have [number] [prefix_Islands] in your database in all worlds.</green>'
-      number-error: '<red>Argument must be a number of days</red>'
       confirm: '<light_purple>Type </light_purple><aqua>/[label] purge confirm </aqua><light_purple>to start purging</light_purple>'
-      completed: '<green>Purging stopped.</green>'
-      see-console-for-status: '<green>Purge started. See console for status or use </green><aqua>
-        /[label] purge status</aqua><green>.</green>'
-      no-purge-in-progress: '<red>There is currently no purge in progress.</red>'
       failed: '<red>Purge completed with errors. Some region files could not be deleted. Check the server log for details.</red>'
-      regions:
-        parameters: '[days]'
-        description: 'purge islands by deleting old region files'
-        confirm: '<light_purple>Type </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>to start purging</light_purple>'
       age-regions:
         parameters: '[days]'
         description: 'debug/test: rewrite region file timestamps so they become purgable'
@@ -139,16 +125,11 @@ commands:
         move-to-island: '<red>Move to [prefix_an-island] first!</red>'
         protecting: '<green>Protecting [prefix_island] from purge.</green>'
         unprotecting: '<green>Removing purge protection.</green>'
-      stop:
-        description: stop a purge in progress
-        stopping: Stopping the purge
       unowned:
-        description: purge unowned islands
-        unowned-islands: '<green>Found </green><aqua>[number] </aqua><green>unowned islands.</green>'
-      status:
-        description: displays the status of the purge
-        status: '<aqua>[purged] </aqua><green>islands purged out of </green><aqua>[purgeable] </aqua><gray>(</gray><aqua>[percentage]
-          %</aqua><gray>)</gray><green>.</green>'
+        parameters: ''
+        description: flag unowned [prefix_Islands] as deletable so they can be reaped
+        unowned-islands: '<green>Found </green><aqua>[number] </aqua><green>unowned [prefix_Islands].</green>'
+        flagged: '<green>Flagged </green><aqua>[number] </aqua><green>[prefix_island](s) as deletable. Run </green><aqua>/[label] purge deleted</aqua><green> to reap the region files.</green>'
     team:
       description: manage teams
       add:

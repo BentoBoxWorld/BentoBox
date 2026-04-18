@@ -4,52 +4,55 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
-import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.CommonTestSetup;
-import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.events.island.IslandDeletedEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.PurgeRegionsService;
+import world.bentobox.bentobox.managers.island.IslandCache;
+import world.bentobox.bentobox.managers.island.IslandGrid;
 
 /**
- * @author tastybento
+ * Tests for {@link AdminPurgeCommand}.
  *
+ * <p>Since 3.15.0 the top-level purge command does a region-files purge
+ * (formerly {@code /bbox admin purge regions}). Tests drive it through the
+ * async scheduler mock and assert against the real {@link PurgeRegionsService}.
  */
 class AdminPurgeCommandTest extends CommonTestSetup {
 
@@ -57,56 +60,68 @@ class AdminPurgeCommandTest extends CommonTestSetup {
     private CompositeCommand ac;
     @Mock
     private User user;
-
-    private AdminPurgeCommand apc;
     @Mock
     private Addon addon;
     @Mock
+    private BukkitScheduler scheduler;
+    @Mock
+    private IslandCache islandCache;
+    @Mock
     private PlayersManager pm;
     @Mock
-    private BukkitScheduler scheduler;
+    private AddonsManager addonsManager;
+
+    @TempDir
+    Path tempDir;
+
+    private AdminPurgeCommand apc;
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        // Mock the method to immediately run the Runnable
-        when(scheduler.runTaskLater(eq(plugin), any(Runnable.class), anyLong())).thenAnswer(invocation -> {
-            Runnable task = invocation.getArgument(1);
-            task.run(); // Immediately run the Runnable
-            return null; // or return a mock of the Task if needed
+
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(invocation -> {
+            invocation.<Runnable>getArgument(1).run();
+            return null;
+        });
+        when(scheduler.runTask(eq(plugin), any(Runnable.class))).thenAnswer(invocation -> {
+            invocation.<Runnable>getArgument(1).run();
+            return null;
         });
         mockedBukkit.when(Bukkit::getScheduler).thenReturn(scheduler);
+        mockedBukkit.when(Bukkit::getWorlds).thenReturn(Collections.emptyList());
 
-        // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
         when(ac.getWorld()).thenReturn(world);
-
         when(ac.getAddon()).thenReturn(addon);
         when(ac.getTopLabel()).thenReturn("bsb");
 
-        // No islands by default
-        when(im.getIslands()).thenReturn(Collections.emptyList());
-        when(im.getIslandsASync()).thenReturn(CompletableFuture.completedFuture(Collections.emptyList()));
-
-        // IWM
+        when(iwm.isNetherGenerate(world)).thenReturn(false);
+        when(iwm.isNetherIslands(world)).thenReturn(false);
+        when(iwm.isEndGenerate(world)).thenReturn(false);
+        when(iwm.isEndIslands(world)).thenReturn(false);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+        when(iwm.getNetherWorld(world)).thenReturn(null);
+        when(iwm.getEndWorld(world)).thenReturn(null);
 
-        // Island
-        when(island.isOwned()).thenReturn(true); // Default owned
-        when(location.toVector()).thenReturn(new Vector(1, 2, 3));
-        when(island.getCenter()).thenReturn(location);
-
-        // Player manager
         when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getName(any())).thenReturn("name");
+        when(pm.getName(any())).thenReturn("PlayerName");
 
-        Settings settings = new Settings();
-        // Settings
-        when(plugin.getSettings()).thenReturn(settings);
+        when(im.getIslandCache()).thenReturn(islandCache);
+        when(islandCache.getIslandGrid(world)).thenReturn(null);
 
-        // Command
+        when(world.getWorldFolder()).thenReturn(tempDir.toFile());
+
+        when(island.getCenter()).thenReturn(location);
+        when(location.toVector()).thenReturn(new Vector(0, 0, 0));
+
+        when(plugin.getAddonsManager()).thenReturn(addonsManager);
+        when(addonsManager.getAddonByName("Level")).thenReturn(Optional.empty());
+
+        when(plugin.getPurgeRegionsService()).thenReturn(new PurgeRegionsService(plugin));
+
         apc = new AdminPurgeCommand(ac);
     }
 
@@ -116,273 +131,215 @@ class AdminPurgeCommandTest extends CommonTestSetup {
         super.tearDown();
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#AdminPurgeCommand(CompositeCommand)}.
-     */
-    @Test
-    void testConstructor() {
-        verify(addon).registerListener(apc);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#setup()}.
-     */
     @Test
     void testSetup() {
         assertEquals("admin.purge", apc.getPermission());
         assertFalse(apc.isOnlyPlayer());
         assertEquals("commands.admin.purge.parameters", apc.getParameters());
         assertEquals("commands.admin.purge.description", apc.getDescription());
-        assertEquals(8, apc.getSubCommands().size());
+        // 4 explicit subcommands (unowned, protect, age-regions, deleted) + help
+        assertEquals(5, apc.getSubCommands().size());
     }
 
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
     @Test
-    void testCanExecuteUserStringListOfStringEmptyArgs() {
-        assertFalse(apc.canExecute(user, "", Collections.emptyList()));
-        verify(user).sendMessage("commands.help.header",
-                "[label]",
-                "BSkyBlock");
+    void testCanExecuteEmptyArgs() {
+        assertFalse(apc.canExecute(user, "purge", Collections.emptyList()));
+        verify(user).sendMessage(eq("commands.help.header"), any(), any());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
     @Test
-    void testCanExecuteUserStringListOfStringWithArg() {
-        assertTrue(apc.canExecute(user, "", Collections.singletonList("23")));
+    void testCanExecuteWithArgs() {
+        assertTrue(apc.canExecute(user, "purge", List.of("10")));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    void testExecuteUserStringListOfStringNotNumber() {
-        assertFalse(apc.execute(user, "", Collections.singletonList("abc")));
-        verify(user).sendMessage("commands.admin.purge.number-error");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    void testExecuteUserStringListOfStringZero() {
-        assertFalse(apc.execute(user, "", Collections.singletonList("0")));
+    @ParameterizedTest
+    @ValueSource(strings = {"notanumber", "0", "-3"})
+    void testExecuteInvalidDays(String arg) {
+        assertFalse(apc.execute(user, "purge", List.of(arg)));
         verify(user).sendMessage("commands.admin.purge.days-one-or-more");
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
     @Test
-    void testExecuteUserStringListOfStringNoIslands() {
-        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
-    }
+    void testExecuteNullIslandGrid() {
+        when(islandCache.getIslandGrid(world)).thenReturn(null);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    void testExecuteUserStringListOfStringNoIslandsPurgeProtected() {
-        when(island.isPurgeProtected()).thenReturn(true);
-        when(im.getIslands()).thenReturn(Collections.singleton(island));
-        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    void testExecuteUserStringListOfStringNoIslandsWrongWorld() {
-        when(island.isPurgeProtected()).thenReturn(false);
-        when(island.getWorld()).thenReturn(mock(World.class));
-        when(im.getIslands()).thenReturn(Collections.singleton(island));
-        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    void testExecuteUserStringListOfStringNoIslandsUnowned() {
-        when(island.isPurgeProtected()).thenReturn(false);
-        when(island.getWorld()).thenReturn(world);
-        when(island.getOwner()).thenReturn(null);
-        when(island.isUnowned()).thenReturn(true);
-        when(island.isOwned()).thenReturn(false);
-        when(im.getIslands()).thenReturn(Collections.singleton(island));
-        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
-    }
-
-    /**
-     * Makes sure that no spawn islands are deleted
-     */
-    @Test
-    void testExecuteUserStringListOfStringOnlyIslandSpawn() {
-        when(island.isPurgeProtected()).thenReturn(false);
-        when(island.getWorld()).thenReturn(world);
-        when(island.isSpawn()).thenReturn(true);
-        when(im.getIslands()).thenReturn(Collections.singleton(island));
-        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @SuppressWarnings("deprecation")
-    @Test
-    void testExecuteUserStringListOfStringNoIslandsTeamIsland() {
-        when(island.isPurgeProtected()).thenReturn(false);
-        when(island.getWorld()).thenReturn(world);
-        when(island.getOwner()).thenReturn(UUID.randomUUID());
-        when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID(), UUID.randomUUID()));
-        when(im.getIslands()).thenReturn(Collections.singleton(island));
-
-        // All players are up to date
-         OfflinePlayer op = mock(OfflinePlayer.class);
-        when(op.getLastPlayed()).thenReturn(System.currentTimeMillis());
-        mockedBukkit.when(() -> Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
-
-        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    void testExecuteUserStringListOfStringNoIslandsRecentLogin() {
-        when(island.isPurgeProtected()).thenReturn(false);
-        when(island.getWorld()).thenReturn(world);
-        when(island.getOwner()).thenReturn(UUID.randomUUID());
-        when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
-        when(im.getIslands()).thenReturn(Collections.singleton(island));
-        OfflinePlayer op = mock(OfflinePlayer.class);
-        when(op.getLastPlayed()).thenReturn(System.currentTimeMillis());
-        mockedBukkit.when(() -> Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
-        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
-        verify(user).sendMessage("commands.admin.purge.purgable-islands", "[number]", "0");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    void testExecuteUserStringListOfStringIslandsFound() {
-        when(island.isPurgeProtected()).thenReturn(false);
-        when(island.getWorld()).thenReturn(world);
-        when(island.getOwner()).thenReturn(UUID.randomUUID());
-        when(island.isOwned()).thenReturn(true);
-        when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
-        when(im.getIslandsASync()).thenReturn(CompletableFuture.completedFuture(List.of(island)));
-        when(pm.getLastLoginTimestamp(any())).thenReturn(962434800L);
-        assertTrue(apc.execute(user, "", Collections.singletonList("10"))); // 10 days ago
+        assertTrue(apc.execute(user, "purge", List.of("10")));
         verify(user).sendMessage("commands.admin.purge.scanning");
-        verify(user).sendMessage("commands.admin.purge.total-islands", "[number]", "1");
-        verify(user, never()).sendMessage("commands.admin.purge.none-found");
+        verify(user).sendMessage("commands.admin.purge.none-found");
+    }
+
+    @Test
+    void testExecuteEmptyGrid() {
+        wireEmptyGrid();
+
+        assertTrue(apc.execute(user, "purge", List.of("10")));
+        verify(user).sendMessage("commands.admin.purge.scanning");
+        verify(user).sendMessage("commands.admin.purge.none-found");
+    }
+
+    @Test
+    void testExecuteNoRegionFiles() throws IOException {
+        wireEmptyGrid();
+        Files.createDirectories(tempDir.resolve("region"));
+
+        assertTrue(apc.execute(user, "purge", List.of("10")));
+        verify(user).sendMessage("commands.admin.purge.scanning");
+        verify(user).sendMessage("commands.admin.purge.none-found");
+    }
+
+    @Test
+    void testExecuteOldRegionFileNoIslands() throws IOException {
+        wireEmptyGrid();
+        createRegionFile();
+
+        assertTrue(apc.execute(user, "purge", List.of("10")));
+        verify(user).sendMessage("commands.admin.purge.scanning");
+        verify(user).sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER, "0");
         verify(user).sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, "bsb");
     }
 
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#removeIslands()}.
-     */
     @Test
-    void testRemoveIslands() {
-        @NonNull
-        Optional<Island> opIsland = Optional.of(island);
-        when(im.getIslandById(any())).thenReturn(opIsland);
-        testExecuteUserStringListOfStringIslandsFound();
-        assertTrue(apc.execute(user, "", Collections.singletonList("confirm")));
-        verify(im).deleteIsland(island, true, null);
-        verify(plugin).log(any());
-        verify(user).sendMessage("commands.admin.purge.see-console-for-status", "[label]", "bsb");
+    void testExecuteConfirmDeletesRegions() throws IOException {
+        wireEmptyGrid();
+        Path regionFile = tempDir.resolve("region").resolve("r.0.0.mca");
+        createRegionFile();
+
+        assertTrue(apc.execute(user, "purge", List.of("10")));
+        verify(user).sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, "bsb");
+
+        assertTrue(apc.execute(user, "purge", List.of("confirm")));
+        verify(user).sendMessage("general.success");
+        assertFalse(regionFile.toFile().exists(), "Region file should have been deleted");
+    }
+
+    @Test
+    void testExecuteConfirmWithoutPriorScan() {
+        assertFalse(apc.execute(user, "purge", List.of("confirm")));
+        verify(user).sendMessage("commands.admin.purge.days-one-or-more");
+        verify(user, never()).sendMessage("general.success");
+    }
+
+    @Test
+    void testExecuteRecentRegionFileExcluded() throws IOException {
+        wireEmptyGrid();
+        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
+        File regionFile = regionDir.resolve("r.0.0.mca").toFile();
+
+        byte[] data = new byte[8192];
+        int nowSeconds = (int) (System.currentTimeMillis() / 1000L);
+        for (int i = 0; i < 1024; i++) {
+            int offset = 4096 + i * 4;
+            data[offset]     = (byte) (nowSeconds >> 24);
+            data[offset + 1] = (byte) (nowSeconds >> 16);
+            data[offset + 2] = (byte) (nowSeconds >> 8);
+            data[offset + 3] = (byte)  nowSeconds;
+        }
+        Files.write(regionFile.toPath(), data);
+
+        assertTrue(apc.execute(user, "purge", List.of("10")));
+        verify(user).sendMessage("commands.admin.purge.scanning");
+        verify(user).sendMessage("commands.admin.purge.none-found");
+    }
+
+    @Test
+    void testExecuteIslandWithRecentLoginIsExcluded() throws IOException {
+        UUID ownerUUID = wireIsland("island-1", false, false, false);
+        when(pm.getLastLoginTimestamp(ownerUUID)).thenReturn(System.currentTimeMillis());
+        createRegionFile();
+
+        assertTrue(apc.execute(user, "purge", List.of("10")));
+        verify(user).sendMessage("commands.admin.purge.none-found");
+    }
+
+    @Test
+    void testExecuteSpawnIslandNotPurged() throws IOException {
+        UUID ownerUUID = wireIsland("island-spawn", false, false, true);
+        when(pm.getLastLoginTimestamp(ownerUUID)).thenReturn(0L);
+        createRegionFile();
+
+        assertTrue(apc.execute(user, "purge", List.of("10")));
+        verify(user).sendMessage("commands.admin.purge.none-found");
+    }
+
+    @Test
+    void testExecutePurgeProtectedIslandNotPurged() throws IOException {
+        UUID ownerUUID = wireIsland("island-protected", false, true, false);
+        when(pm.getLastLoginTimestamp(ownerUUID)).thenReturn(0L);
+        createRegionFile();
+
+        assertTrue(apc.execute(user, "purge", List.of("10")));
+        verify(user).sendMessage("commands.admin.purge.none-found");
+    }
+
+    @Test
+    void testExecuteDeletableIslandIncluded() throws IOException {
+        wireIsland("island-deletable", true, false, false);
+        createRegionFile();
+
+        assertTrue(apc.execute(user, "purge", List.of("10")));
+        verify(user).sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER, "1");
+        verify(user).sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, "bsb");
+    }
+
+    @Test
+    void testExecuteConfirmDeletesPlayerData() throws IOException {
+        UUID ownerUUID = wireIsland("island-deletable", true, false, false);
+        when(im.getIslands(world, ownerUUID)).thenReturn(List.of(island));
+
+        OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
+        when(offlinePlayer.isOp()).thenReturn(false);
+        when(offlinePlayer.getLastSeen()).thenReturn(0L);
+        mockedBukkit.when(() -> Bukkit.getOfflinePlayer(ownerUUID)).thenReturn(offlinePlayer);
+        when(pm.getLastLoginTimestamp(ownerUUID)).thenReturn(0L);
+
+        when(im.deleteIslandId("island-deletable")).thenReturn(true);
+
+        createRegionFile();
+        Path playerDataDir = Files.createDirectories(tempDir.resolve("playerdata"));
+        Path playerFile = playerDataDir.resolve(ownerUUID + ".dat");
+        Files.createFile(playerFile);
+
+        assertTrue(apc.execute(user, "purge", List.of("10")));
+        verify(user).sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, "bsb");
+
+        assertTrue(apc.execute(user, "purge", List.of("confirm")));
+        verify(user).sendMessage("general.success");
+        verify(im).deleteIslandId("island-deletable");
+        assertFalse(playerFile.toFile().exists(), "Player data file should have been deleted");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#onIslandDeleted(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent)}.
+     * Wires the shared {@code island} mock with the given id and flags, puts it
+     * in an IslandGrid at (0,0), and returns the generated owner UUID.
      */
-    @Test
-    void testOnIslandDeletedNotInPurge() {
-        IslandDeletedEvent e = mock(IslandDeletedEvent.class);
-        apc.onIslandDeleted(e);
-        verify(user, Mockito.never()).sendMessage(any());
-        verify(plugin, Mockito.never()).log(any());
+    private UUID wireIsland(String id, boolean deletable, boolean purgeProtected, boolean spawn) {
+        UUID ownerUUID = UUID.randomUUID();
+        when(island.getUniqueId()).thenReturn(id);
+        when(island.getOwner()).thenReturn(ownerUUID);
+        when(island.isOwned()).thenReturn(true);
+        when(island.isDeletable()).thenReturn(deletable);
+        when(island.isPurgeProtected()).thenReturn(purgeProtected);
+        when(island.isSpawn()).thenReturn(spawn);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(ownerUUID));
+        when(island.getCenter()).thenReturn(location);
+
+        IslandGrid.IslandData data = new IslandGrid.IslandData(id, 0, 0, 100);
+        Collection<IslandGrid.IslandData> islandList = List.of(data);
+        IslandGrid grid = mock(IslandGrid.class);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(islandList);
+        when(islandCache.getIslandGrid(world)).thenReturn(grid);
+        when(im.getIslandById(id)).thenReturn(Optional.of(island));
+        return ownerUUID;
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#onIslandDeleted(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent)}.
-     */
-    @Test
-    void testOnIslandDeletedPurgeCompleted() {
-        testRemoveIslands();
-        IslandDeletedEvent e = mock(IslandDeletedEvent.class);
-        apc.onIslandDeleted(e);
-        verify(user).sendMessage("commands.admin.purge.completed");
-        verify(plugin, Mockito.never()).log("");
+    private void createRegionFile() throws IOException {
+        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
+        Files.createFile(regionDir.resolve("r.0.0.mca"));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#isInPurge()}.
-     */
-    @Test
-    void testIsInPurge() {
-        assertFalse(apc.isInPurge());
-        testRemoveIslands();
-        assertTrue(apc.isInPurge());
+    private void wireEmptyGrid() {
+        IslandGrid grid = mock(IslandGrid.class);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
+        when(islandCache.getIslandGrid(world)).thenReturn(grid);
     }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#stop()}.
-     */
-    @Test
-    void testStop() {
-        testRemoveIslands();
-        assertTrue(apc.isInPurge());
-        apc.stop();
-        assertFalse(apc.isInPurge());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#setUser(world.bentobox.bentobox.api.user.User)}.
-     */
-    @Test
-    void testSetUser() {
-        apc.setUser(user);
-        apc.removeIslands();
-        verify(user, Mockito.times(1)).sendMessage(anyString());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#getOldIslands(int)}
-     * @throws TimeoutException 
-     * @throws ExecutionException 
-     * @throws InterruptedException 
-     */
-    @Test
-    void testGetOldIslands() throws InterruptedException, ExecutionException, TimeoutException {
-        assertTrue(apc.execute(user, "", Collections.singletonList("10"))); // 10 days ago
-        // First, ensure that the result is empty
-        CompletableFuture<Set<String>> result = apc.getOldIslands(10);
-        Set<String> set = result.join();
-        assertTrue(set.isEmpty());
-        // Mocking Islands and their retrieval
-        Island island1 = mock(Island.class);
-        Island island2 = mock(Island.class);
-        
-        when(im.getIslandsASync()).thenReturn(CompletableFuture.completedFuture(List.of(island1, island2)));
-        // Now, check again after mocking islands
-        CompletableFuture<Set<String>> futureWithIslands = apc.getOldIslands(10);
-        assertTrue(futureWithIslands.get(5, TimeUnit.SECONDS).isEmpty()); // Adjust this assertion based on the expected behavior of getOldIslands
-
-    }
-
 }

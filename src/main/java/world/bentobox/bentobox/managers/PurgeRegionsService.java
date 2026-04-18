@@ -44,10 +44,10 @@ import world.bentobox.level.Level;
  * <p>The service does not interact with players or issue confirmations — the
  * caller is responsible for any user-facing UX.
  *
- * <p>Extracted from {@code AdminPurgeRegionsCommand} so the command and the
- * scheduler can share a single code path for scanning, filtering, and
- * deleting region files across the overworld + optional nether/end
- * dimensions.
+ * <p>Shared code path for scanning, filtering, and deleting region files
+ * across the overworld + optional nether/end dimensions. Used by
+ * {@code /bbox admin purge} (the top-level command), {@code purge deleted},
+ * and the periodic {@link HousekeepingManager}.
  *
  * @since 3.15.0
  */
