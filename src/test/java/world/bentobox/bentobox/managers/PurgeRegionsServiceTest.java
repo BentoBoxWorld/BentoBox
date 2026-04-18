@@ -106,6 +106,19 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
     }
 
     /**
+     * A world with no island grid returns an empty age-sweep result
+     * rather than crashing.
+     */
+    @Test
+    void testScanNullGrid() {
+        when(islandCache.getIslandGrid(world)).thenReturn(null);
+
+        PurgeScanResult result = service.scan(world, 30);
+        assertTrue(result.isEmpty());
+        assertEquals(30, result.days());
+    }
+
+    /**
      * A world with only non-deletable islands yields no candidate regions.
      */
     @Test

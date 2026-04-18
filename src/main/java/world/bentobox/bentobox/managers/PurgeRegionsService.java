@@ -147,6 +147,8 @@ public class PurgeRegionsService {
 
         IslandGrid islandGrid = plugin.getIslands().getIslandCache().getIslandGrid(world);
         if (islandGrid == null) {
+            plugin.logWarning("Purge deleted-sweep: no island grid for world " + world.getName()
+                    + " — skipping scan");
             return new PurgeScanResult(world, 0, new HashMap<>(), isNether, isEnd,
                     new FilterStats(0, 0, 0, 0));
         }
@@ -194,6 +196,8 @@ public class PurgeRegionsService {
 
         IslandGrid islandGrid = plugin.getIslands().getIslandCache().getIslandGrid(world);
         if (islandGrid == null) {
+            plugin.logWarning("Purge age-sweep: no island grid for world " + world.getName()
+                    + " — skipping scan");
             return new PurgeScanResult(world, days, new HashMap<>(), isNether, isEnd,
                     new FilterStats(0, 0, 0, 0));
         }
