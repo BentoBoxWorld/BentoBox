@@ -106,6 +106,19 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
     }
 
     /**
+     * A world with no island grid returns an empty age-sweep result
+     * rather than crashing.
+     */
+    @Test
+    void testScanNullGrid() {
+        when(islandCache.getIslandGrid(world)).thenReturn(null);
+
+        PurgeScanResult result = service.scan(world, 30);
+        assertTrue(result.isEmpty());
+        assertEquals(30, result.days());
+    }
+
+    /**
      * A world with only non-deletable islands yields no candidate regions.
      */
     @Test
@@ -301,7 +314,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         Map<Pair<Integer, Integer>, Set<String>> regions = new HashMap<>();
         regions.put(new Pair<>(0, 0), Set.of("del"));
         PurgeScanResult scan = new PurgeScanResult(world, 0, regions, false, false,
-                new FilterStats(0, 0, 0, 0));
+                new FilterStats(0, 0, 0, 0), Set.of());
 
         when(world.isChunkLoaded(anyInt(), anyInt())).thenReturn(false);
         when(world.isChunkLoaded(5, 7)).thenReturn(true);
@@ -327,7 +340,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         Map<Pair<Integer, Integer>, Set<String>> regions = new HashMap<>();
         regions.put(new Pair<>(1, -1), Set.of("del"));
         PurgeScanResult scan = new PurgeScanResult(world, 0, regions, false, false,
-                new FilterStats(0, 0, 0, 0));
+                new FilterStats(0, 0, 0, 0), Set.of());
 
         when(world.isChunkLoaded(anyInt(), anyInt())).thenReturn(false);
         // The bottom-left corner of r.1.-1 is (32, -32); the top-right is (63, -1).
@@ -374,7 +387,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         Map<Pair<Integer, Integer>, Set<String>> regions = new HashMap<>();
         regions.put(new Pair<>(0, 0), Set.of("spans"));
         PurgeScanResult scan = new PurgeScanResult(world, 30, regions, false, false,
-                new FilterStats(0, 0, 0, 0));
+                new FilterStats(0, 0, 0, 0), Set.of());
 
         boolean ok = service.delete(scan);
         assertTrue(ok);
@@ -409,7 +422,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         Map<Pair<Integer, Integer>, Set<String>> regions = new HashMap<>();
         regions.put(new Pair<>(0, 0), Set.of("tiny"));
         PurgeScanResult scan = new PurgeScanResult(world, 30, regions, false, false,
-                new FilterStats(0, 0, 0, 0));
+                new FilterStats(0, 0, 0, 0), Set.of());
 
         boolean ok = service.delete(scan);
         assertTrue(ok);
@@ -450,7 +463,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         Map<Pair<Integer, Integer>, Set<String>> regions = new HashMap<>();
         regions.put(new Pair<>(0, 0), Set.of("tiny", "spans"));
         PurgeScanResult scan = new PurgeScanResult(world, 30, regions, false, false,
-                new FilterStats(0, 0, 0, 0));
+                new FilterStats(0, 0, 0, 0), Set.of());
 
         boolean ok = service.delete(scan);
         assertTrue(ok);
@@ -466,7 +479,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
     @Test
     void testEvictChunksEmptyScanIsNoop() {
         PurgeScanResult scan = new PurgeScanResult(world, 0, new HashMap<>(), false, false,
-                new FilterStats(0, 0, 0, 0));
+                new FilterStats(0, 0, 0, 0), Set.of());
 
         service.evictChunks(scan);
 
@@ -499,7 +512,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         Map<Pair<Integer, Integer>, Set<String>> regions = new HashMap<>();
         regions.put(new Pair<>(0, 0), Set.of("del1"));
         PurgeScanResult scan = new PurgeScanResult(world, 0, regions, false, false,
-                new FilterStats(0, 0, 0, 0));
+                new FilterStats(0, 0, 0, 0), Set.of());
 
         boolean ok = service.delete(scan);
         assertTrue(ok);
@@ -544,7 +557,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         regions.put(new Pair<>(0, 0), Set.of("del1"));
         regions.put(new Pair<>(1, 0), Set.of("del2"));
         PurgeScanResult scan = new PurgeScanResult(world, 0, regions, false, false,
-                new FilterStats(0, 0, 0, 0));
+                new FilterStats(0, 0, 0, 0), Set.of());
 
         service.delete(scan);
         // Both deferred — not yet deleted.
@@ -558,6 +571,112 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         verify(islandCache, times(1)).deleteIslandFromCache("del1");
         verify(islandCache, times(1)).deleteIslandFromCache("del2");
         assertTrue(service.getPendingDeletions().isEmpty());
+    }
+
+    /**
+     * Deleted sweep: when an island's chunks appear in BOTH a successfully deleted
+     * region AND a blocked region (it straddles the boundary), the DB row must NOT
+     * be added to {@code pendingDeletions}. The island stays {@code deletable=true}
+     * in the DB so the next sweep can retry once the blocking island is gone.
+     *
+     * <p>This is the fix for the "ghost blocks" bug where soft-deleted islands near
+     * a region boundary left orphaned blocks in the blocked region file.
+     */
+    @Test
+    void testDeletedSweepRetainsDBRowForStraddlingIsland() throws IOException {
+        Island straddles = mock(Island.class);
+        when(straddles.getUniqueId()).thenReturn("strad");
+        when(straddles.isDeletable()).thenReturn(true);
+        when(im.getIslandById("strad")).thenReturn(Optional.of(straddles));
+
+        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
+        // r.0.0.mca was in the deleted set — this file gets reaped.
+        Files.write(regionDir.resolve("r.0.0.mca"), new byte[0]);
+
+        // The island is in both r.0.0 (deletable region) and r.0.-1 (blocked).
+        Map<Pair<Integer, Integer>, Set<String>> regions = new HashMap<>();
+        regions.put(new Pair<>(0, 0), Set.of("strad"));
+        // straddlingIslandIds contains "strad" — its chunks in the blocked region remain.
+        PurgeScanResult scan = new PurgeScanResult(world, 0, regions, false, false,
+                new FilterStats(0, 0, 0, 1), Set.of("strad"));
+
+        boolean ok = service.delete(scan);
+        assertTrue(ok);
+        // DB row must NOT be deferred to shutdown — the island has orphaned chunks.
+        assertFalse(service.getPendingDeletions().contains("strad"),
+                "Straddling island must not be added to pendingDeletions");
+        // DB row must not be removed immediately either.
+        verify(im, never()).deleteIslandId(anyString());
+        verify(islandCache, never()).deleteIslandFromCache(anyString());
+    }
+
+    /**
+     * Deleted sweep: an island that is NOT in the straddling set (all its regions
+     * were successfully deleted) must still be deferred to shutdown normally.
+     */
+    @Test
+    void testDeletedSweepDefersNonStraddlingIslandToShutdown() throws IOException {
+        Island clean = mock(Island.class);
+        when(clean.getUniqueId()).thenReturn("clean");
+        when(clean.isDeletable()).thenReturn(true);
+        when(im.getIslandById("clean")).thenReturn(Optional.of(clean));
+
+        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
+        Files.write(regionDir.resolve("r.0.0.mca"), new byte[0]);
+
+        Map<Pair<Integer, Integer>, Set<String>> regions = new HashMap<>();
+        regions.put(new Pair<>(0, 0), Set.of("clean"));
+        // "clean" is NOT in straddling — all its regions were deleted.
+        PurgeScanResult scan = new PurgeScanResult(world, 0, regions, false, false,
+                new FilterStats(0, 0, 0, 0), Set.of());
+
+        boolean ok = service.delete(scan);
+        assertTrue(ok);
+        assertTrue(service.getPendingDeletions().contains("clean"),
+                "Non-straddling island must be added to pendingDeletions for shutdown");
+        verify(im, never()).deleteIslandId(anyString());
+    }
+
+    /**
+     * {@link PurgeRegionsService#scanDeleted} must populate
+     * {@link PurgeScanResult#straddlingIslandIds()} with deletable islands that
+     * appear in a region blocked by a non-deletable neighbour.
+     */
+    @Test
+    void testScanDeletedPopulatesStraddlingIslandIds() throws IOException {
+        Island deletable = mock(Island.class);
+        when(deletable.getUniqueId()).thenReturn("del");
+        when(deletable.isDeletable()).thenReturn(true);
+        // Protection box spans r.0.0 and r.1.0 (X = 500..700).
+        when(deletable.getMinProtectedX()).thenReturn(500);
+        when(deletable.getMaxProtectedX()).thenReturn(700);
+        when(deletable.getMinProtectedZ()).thenReturn(0);
+        when(deletable.getMaxProtectedZ()).thenReturn(100);
+
+        Island active = mock(Island.class);
+        when(active.getUniqueId()).thenReturn("act");
+        when(active.isDeletable()).thenReturn(false);
+
+        when(islandCache.getIslands(world)).thenReturn(List.of(deletable));
+
+        // r.0.0 → only the deletable island; r.1.0 → deletable + active (blocks it).
+        IslandGrid grid = mock(IslandGrid.class);
+        when(grid.getIslandsInBounds(eq(0), anyInt(), eq(511), anyInt()))
+                .thenReturn(List.of(new IslandData("del", 500, 0, 200)));
+        when(grid.getIslandsInBounds(eq(512), anyInt(), eq(1023), anyInt()))
+                .thenReturn(List.of(
+                        new IslandData("del", 500, 0, 200),
+                        new IslandData("act", 600, 0, 100)));
+        when(islandCache.getIslandGrid(world)).thenReturn(grid);
+        when(im.getIslandById("del")).thenReturn(Optional.of(deletable));
+        when(im.getIslandById("act")).thenReturn(Optional.of(active));
+
+        PurgeScanResult result = service.scanDeleted(world);
+
+        // r.0.0 survives the filter; r.1.0 is blocked.
+        assertEquals(1, result.deletableRegions().size(), "Only r.0.0 should survive");
+        assertTrue(result.straddlingIslandIds().contains("del"),
+                "del must be in straddlingIslandIds because it appears in blocked r.1.0");
     }
 
     /**
@@ -583,7 +702,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         Map<Pair<Integer, Integer>, Set<String>> regions = new HashMap<>();
         regions.put(new Pair<>(0, 0), Set.of("tiny"));
         PurgeScanResult scan = new PurgeScanResult(world, 30, regions, false, false,
-                new FilterStats(0, 0, 0, 0));
+                new FilterStats(0, 0, 0, 0), Set.of());
 
         service.delete(scan);
         // Age sweep: immediate deletion, not deferred.

@@ -96,7 +96,8 @@ public class PurgeRegionsService {
             Map<Pair<Integer, Integer>, Set<String>> deletableRegions,
             boolean isNether,
             boolean isEnd,
-            FilterStats stats) {
+            FilterStats stats,
+            Set<String> straddlingIslandIds) {
         public boolean isEmpty() {
             return deletableRegions.isEmpty();
         }
@@ -114,6 +115,10 @@ public class PurgeRegionsService {
 
     /** Groups the three folder types (region, entities, poi) for one world dimension. */
     private record DimFolders(File region, File entities, File poi) {}
+
+    /** Return type for {@link #filterForDeletedSweep}: filter statistics plus the set of
+     *  deletable island IDs whose chunks lie in a region that was blocked by a live neighbour. */
+    private record DeleteSweepFilter(FilterStats stats, Set<String> straddlingIds) {}
 
     // ---------------------------------------------------------------
     // Public API
@@ -147,8 +152,10 @@ public class PurgeRegionsService {
 
         IslandGrid islandGrid = plugin.getIslands().getIslandCache().getIslandGrid(world);
         if (islandGrid == null) {
+            plugin.logWarning("Purge deleted-sweep: no island grid for world " + world.getName()
+                    + " — skipping scan");
             return new PurgeScanResult(world, 0, new HashMap<>(), isNether, isEnd,
-                    new FilterStats(0, 0, 0, 0));
+                    new FilterStats(0, 0, 0, 0), Set.of());
         }
 
         // Collect candidate region coords from every deletable island's
@@ -171,9 +178,14 @@ public class PurgeRegionsService {
 
         Map<Pair<Integer, Integer>, Set<String>> deletableRegions =
                 mapIslandsToRegions(new ArrayList<>(candidateRegions), islandGrid);
-        FilterStats stats = filterForDeletedSweep(deletableRegions);
-        logFilterStats(stats);
-        return new PurgeScanResult(world, 0, deletableRegions, isNether, isEnd, stats);
+        DeleteSweepFilter filterResult = filterForDeletedSweep(deletableRegions);
+        logFilterStats(filterResult.stats());
+        if (!filterResult.straddlingIds().isEmpty()) {
+            plugin.log("Purge deleted-sweep: " + filterResult.straddlingIds().size()
+                    + " island(s) straddle a blocked region — DB row(s) retained for next sweep");
+        }
+        return new PurgeScanResult(world, 0, deletableRegions, isNether, isEnd,
+                filterResult.stats(), filterResult.straddlingIds());
     }
 
     /**
@@ -194,15 +206,17 @@ public class PurgeRegionsService {
 
         IslandGrid islandGrid = plugin.getIslands().getIslandCache().getIslandGrid(world);
         if (islandGrid == null) {
+            plugin.logWarning("Purge age-sweep: no island grid for world " + world.getName()
+                    + " — skipping scan");
             return new PurgeScanResult(world, days, new HashMap<>(), isNether, isEnd,
-                    new FilterStats(0, 0, 0, 0));
+                    new FilterStats(0, 0, 0, 0), Set.of());
         }
 
         List<Pair<Integer, Integer>> oldRegions = findOldRegions(world, days, isNether, isEnd);
         Map<Pair<Integer, Integer>, Set<String>> deletableRegions = mapIslandsToRegions(oldRegions, islandGrid);
         FilterStats stats = filterNonDeletableRegions(deletableRegions, days);
         logFilterStats(stats);
-        return new PurgeScanResult(world, days, deletableRegions, isNether, isEnd, stats);
+        return new PurgeScanResult(world, days, deletableRegions, isNether, isEnd, stats, Set.of());
     }
 
     /**
@@ -248,6 +262,16 @@ public class PurgeRegionsService {
             Island island = opt.get();
 
             if (scan.days() == 0) {
+                if (scan.straddlingIslandIds().contains(islandID)) {
+                    // This island has chunks in a region that was blocked by an
+                    // active neighbour island — those blocks are still on disk.
+                    // Retaining the DB row (deletable=true) lets the next
+                    // deleted-sweep retry once the blocker is itself gone.
+                    islandsDeferred++;
+                    plugin.log("Island ID " + islandID
+                            + " straddles a blocked region \u2014 DB row retained for next purge sweep");
+                    continue;
+                }
                 // Deleted sweep: region files are gone from disk but Paper
                 // may still serve stale chunk data from its internal memory
                 // cache. Defer DB row removal to plugin shutdown when the
@@ -602,15 +626,22 @@ public class PurgeRegionsService {
      * region blocks the whole region. Unlike {@link #filterNonDeletableRegions}
      * this has no age/login/level logic — only the {@code deletable} flag
      * matters.
+     *
+     * <p>When a region is blocked, any <em>deletable</em> islands in that region
+     * are recorded as "straddling" — they have chunks in a blocked region that
+     * cannot be reaped this sweep. Their DB rows must be retained so the next
+     * sweep can retry once the blocking island is itself deleted.
      */
-    private FilterStats filterForDeletedSweep(
+    private DeleteSweepFilter filterForDeletedSweep(
             Map<Pair<Integer, Integer>, Set<String>> deletableRegions) {
         int regionsBlockedByProtection = 0;
+        Set<String> straddling = new HashSet<>();
         var iter = deletableRegions.entrySet().iterator();
         while (iter.hasNext()) {
             var entry = iter.next();
+            Set<String> ids = entry.getValue();
             boolean block = false;
-            for (String id : entry.getValue()) {
+            for (String id : ids) {
                 Optional<Island> opt = plugin.getIslands().getIslandById(id);
                 if (opt.isEmpty()) {
                     // Missing rows don't block — they're already gone.
@@ -622,11 +653,19 @@ public class PurgeRegionsService {
                 }
             }
             if (block) {
+                // Collect the deletable islands whose chunks lie in this blocked
+                // region — they straddle the boundary between a reaped region and
+                // this blocked one, so their blocks remain on disk here.
+                for (String id : ids) {
+                    plugin.getIslands().getIslandById(id)
+                            .filter(Island::isDeletable)
+                            .ifPresent(i -> straddling.add(i.getUniqueId()));
+                }
                 iter.remove();
                 regionsBlockedByProtection++;
             }
         }
-        return new FilterStats(0, 0, 0, regionsBlockedByProtection);
+        return new DeleteSweepFilter(new FilterStats(0, 0, 0, regionsBlockedByProtection), straddling);
     }
 
     private int[] evaluateRegionIslands(Set<String> islandIds, int days) {
