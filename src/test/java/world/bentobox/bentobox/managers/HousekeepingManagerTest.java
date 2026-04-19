@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
@@ -326,7 +327,7 @@ class HousekeepingManagerTest extends CommonTestSetup {
 
     private static PurgeScanResult emptyScan(int days) {
         return new PurgeScanResult(mock(World.class), days, Collections.emptyMap(),
-                false, false, new FilterStats(0, 0, 0, 0));
+                false, false, new FilterStats(0, 0, 0, 0), Set.of());
     }
 
     /** Reflective access to the package-private {@code checkAndMaybeRun} so
