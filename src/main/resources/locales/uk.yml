@@ -72,26 +72,26 @@ commands:
         unknown-island: Невідомий [prefix_island]! [name]
     resethome:
       description: Скинути дім гравця за замовчуванням
-      parameters: <player> [[prefix_island] name]
+      parameters: <гравець> [[prefix_island] name]
       cleared: '<aqua>Дім скинуто. [name]</aqua>'
     resets:
       description: редагувати лічильник перезапусків гравця
       set:
         description: встановлює, скільки разів гравець перезапускав свій [prefix_island]
-        parameters: <player> <resets>
+        parameters: <гравець> <resets>
         success: '<aqua>[name]</aqua><green>— лічильник перезапусків [prefix_island] тепер </green><aqua>[number]</aqua><green>.</green>'
       reset:
         description: встановлює лічильник перезапусків [prefix_island] гравця в 0
-        parameters: <player>
+        parameters: <гравець>
         success-everyone: '<green>Успішно скинуто лічильник перезапусків </green><aqua>всім</aqua><green>до </green><aqua>0</aqua><green>.</green>'
         success: '<green>Успішно скинуто лічильник перезапусків </green><aqua>[name]</aqua><green>до </green><aqua>0</aqua><green>.</green>'
       add:
         description: додає перезапуски до лічильника [prefix_island] цього гравця
-        parameters: <player> <resets>
+        parameters: <гравець> <resets>
         success: '<green>Успішно додано </green><aqua>[number] </aqua><green>перезапуск(и/ів) для </green><aqua>[name], збільшуючи загалом до </aqua><aqua>[total]</aqua><green>.</green>'
       remove:
         description: зменшує лічильник перезапусків [prefix_island] гравця
-        parameters: <player> <resets>
+        parameters: <гравець> <resets>
         success: '<green>Успішно видалено </green><aqua>[number] </aqua><green>перезапуск(и/ів) із [prefix_island] </green><aqua>[name]</aqua><green>, зменшивши загалом до </green><aqua>[total]</aqua><green>.</green>'
     purge:
       parameters: '[days]'
@@ -117,6 +117,16 @@ commands:
         parameters: '[days]'
         description: 'очищення островів шляхом видалення старих файлів регіонів'
         confirm: '<light_purple>Введіть </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>щоб почати очищення</light_purple>'
+      failed: '<red>Очищення завершено з помилками. Деякі файли регіонів не вдалося видалити. Перевірте журнал сервера для отримання деталей.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'налагодження/тест: перезапис часових міток файлів регіонів, щоб зробити їх доступними для очищення'
+        done: '<green>Застаріло </green><aqua>[number]</aqua><green> файл(ів) регіонів у поточному світі.</green>'
+      deleted:
+        parameters: ''
+        description: 'очистити файли регіонів для будь-якого [prefix_island], вже позначеного як видаленого'
+        confirm: '<light_purple>Введіть </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>щоб видалити файли регіонів</light_purple>'
+        deferred: '<green>Файли регіонів видалено. Записи бази даних островів будуть видалені при наступному перезапуску сервера.</green>'
       protect:
         description: перемикання захисту [prefix_island] від очищення
         move-to-island: '<red>Спершу перейдіть на [prefix_an-island]!</red>'
@@ -128,13 +138,15 @@ commands:
       unowned:
         description: очистити острови без власників
         unowned-islands: '<green>Знайдено </green><aqua>[number] </aqua><green>островів без власників.</green>'
+        parameters: ''
+        flagged: '<green>Позначено </green><aqua>[number] </aqua><green>[prefix_island](s) як видаляльні. Запустіть </green><aqua>/[label] purge deleted</aqua><green>, щоб видалити файли регіонів.</green>'
       status:
         description: показати статус очищення
         status: '<aqua>[purged] </aqua><green>островів очищено з </green><aqua>[purgeable] </aqua><gray>(</gray><aqua>[percentage] %</aqua><gray>)</gray><green>.</green>'
     team:
       description: керування командами
       add:
-        parameters: <owner> <player>
+        parameters: <owner> <гравець>
         description: додати гравця до команди власника
         name-not-owner: '<red>[name] не є власником.</red>'
         name-has-island: '<red>[name] має [prefix_an-island]. Спершу зніміть реєстрацію або видаліть!</red>'
@@ -163,7 +175,7 @@ commands:
         success: '<aqua>[name] </aqua><green>вигнано з [prefix_island] гравця </green><aqua>[owner]</aqua><green>.</green>'
         success-all: '<aqua>Гравця видалено з усіх команд у цьому світі</aqua>'
       setowner:
-        parameters: <player>
+        parameters: <гравець>
         description: передати право власності [prefix_island] гравцю
         already-owner: '<red>[name] уже власник цього [prefix_island]!</red>'
         must-be-on-island: '<red>Ви маєте бути на цьому [prefix_island], щоб призначити власника</red>'
@@ -171,7 +183,7 @@ commands:
         success: '<aqua>[name]</aqua><green>тепер власник цього [prefix_island].</green>'
         extra-islands: '<red>Увага: тепер цей гравець має [number] островів. Це більше ніж дозволено налаштуваннями або пермами: [max].</red>'
       maxsize:
-        parameters: <player> <size>
+        parameters: <гравець> <size>
         description: встановити максимальний розмір команди для [prefix_island] гравця (0 для скидання до типового значення світу)
         success: '<green>Встановлено максимальний розмір команди [prefix_island] гравця </green><aqua>[name]</aqua><green> на </green><aqua>[number]</aqua><green>.</green>'
         reset: '<green>Скинуто максимальний розмір команди [prefix_island] гравця </green><aqua>[name]</aqua><green> до типового значення світу (</green><aqua>[number]</aqua><green>).</green>'
@@ -192,23 +204,23 @@ commands:
           <green>Зелені частинки </green><white>показують типовий захист, якщо він відрізняється.</white>
         showing: '<dark_green>Показую індикатори діапазону</dark_green>'
       set:
-        parameters: <player> <range> [[prefix_island] location]
+        parameters: <гравець> <range> [[prefix_island] location]
         description: встановити діапазон захисту [prefix_island]
         success: '<green>Встановлено діапазон захисту [prefix_island] на </green><aqua>[number]</aqua><green>.</green>'
       reset:
-        parameters: <player>
+        parameters: <гравець>
         description: скинути діапазон захисту [prefix_island] до значення світу за замовчуванням
         success: '<green>Скинуто діапазон захисту [prefix_island] до </green><aqua>[number]</aqua><green>.</green>'
       add:
         description: збільшити діапазон захисту [prefix_island]
-        parameters: <player> <range> [[prefix_island] location]
+        parameters: <гравець> <range> [[prefix_island] location]
         success: '<green>Успішно збільшено діапазон захисту [prefix_island] </green><aqua>[name]</aqua><green>до </green><aqua>[total] </aqua><gray>(</gray><aqua>+[number]</aqua><gray>)</gray><green>.</green>'
       remove:
         description: зменшити діапазон захисту [prefix_island]
-        parameters: <player> <range> [[prefix_island] location]
+        parameters: <гравець> <range> [[prefix_island] location]
         success: '<green>Успішно зменшено діапазон захисту [prefix_island] </green><aqua>[name]</aqua><green>до </green><aqua>[total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>'
     register:
-      parameters: <player>
+      parameters: <гравець>
       description: зареєструвати гравця на безхазяйному [prefix_island], на якому ви стоїте
       registered-island: '<green>Зареєстровано [name] на [prefix_island] за [xyz].</green>'
       reserved-island: '<green>Зарезервовано [prefix_island] за [xyz] для [name].</green>'
@@ -226,7 +238,7 @@ commands:
         specify-island-location: '<red>Вкажіть локацію [prefix_island] у форматі x,y,z</red>'
         player-has-more-than-one-island: '<red>У гравця більше ніж один [prefix_island]. Уточніть який.</red>'
     info:
-      parameters: <player>
+      parameters: <гравець>
       description: отримати інформацію про місце розташування або [prefix_island] гравця
       no-island: '<red>Зараз ви не на [prefix_an-island]...</red>'
       title: ========== Інфо про [prefix_Island] ============
@@ -251,6 +263,7 @@ commands:
       protection-range-bonus-title: '<aqua>Включає ці бонуси:</aqua>'
       protection-range-bonus: 'Бонус: [number]'
       purge-protected: '[prefix_Island] захищено від очищення'
+      deletable: '<red>[prefix_Island] позначено для видалення та очікує очищення регіону.</red>'
       max-protection-range: 'Найбільший історичний діапазон захисту: [range]'
       protection-coords: 'Координати захисту: [xz1] до [xz2]'
       is-spawn: '[prefix_Island] є спавн-[prefix_island]'
@@ -264,7 +277,7 @@ commands:
       removing: '<green>Вимикаю обхід захисту...</green>'
       adding: '<green>Вмикаю обхід захисту...</green>'
     switchto:
-      parameters: <player> <number>
+      parameters: <гравець> <number>
       description: перемкнути [prefix_island] гравця на пронумерований у кошику
       out-of-range: '<red>Номер має бути від 1 до [number]. Використайте <bold>[label] trash [player] </bold></red><red>щоб побачити номери [prefix_island]</red>'
       cannot-switch: '<red>Не вдалося перемкнути. Див. лог консолі для помилок.</red>'
@@ -272,20 +285,20 @@ commands:
     trash:
       no-unowned-in-trash: '<red>Немає безхазяйних островів у кошику</red>'
       no-islands-in-trash: '<red>У гравця немає островів у кошику</red>'
-      parameters: '[player]'
+      parameters: '[гравець]'
       description: показати безхазяйні острови або острови гравця в кошику
       title: '<light_purple>=========== Острови в кошику ===========</light_purple>'
       count: '<bold><light_purple>[prefix_Island] [number]:</light_purple></bold>'
       use-switch: '<green>Використайте <bold>[label] switchto <player> <number></bold></green><green>щоб перемкнути гравця на [prefix_island] з кошика</green>'
       use-emptytrash: '<green>Використайте <bold>[label] emptytrash [player]</bold></green><green>щоб остаточно видалити елементи з кошика</green>'
     emptytrash:
-      parameters: '[player]'
+      parameters: '[гравець]'
       description: Очистити кошик для гравця або всі безхазяйні острови в кошику
       success: '<green>Кошик успішно очищено.</green>'
     version:
       description: показати версії BentoBox та аддонів
     setrange:
-      parameters: <player> <range>
+      parameters: <гравець> <range>
       description: встановити діапазон [prefix_island] гравця
       range-updated: '<green>Діапазон [prefix_Island] оновлено до </green><aqua>[number]</aqua><green>.</green>'
     placeholders:
@@ -297,18 +310,18 @@ commands:
     reload:
       description: перезавантажити
     tp:
-      parameters: <player> [player's island]
+      parameters: <гравець> [острів гравця]
       description: телепортуватися на [prefix_island] гравця
       manual: '<red>Безпечну точку варпу не знайдено! Ручний TP поблизу </red><aqua>[location] </aqua><red>і перевірка</red>'
     tpuser:
-      parameters: <teleporting player> <[prefix_island]'s player> [player's island]
+      parameters: <гравець що телепортується> <[prefix_island]'s player> [острів гравця]
       description: телепортувати гравця на [prefix_island] іншого гравця
     getrank:
-      parameters: <player> [[prefix_island] owner]
+      parameters: <гравець> [[prefix_island] owner]
       description: отримати ранг гравця на його [prefix_island] або на [prefix_island] власника
       rank-is: '<green>Ранг </green><aqua>[rank] </aqua><green>на [prefix_island] гравця </green><aqua>[name]</aqua><green>.</green>'
     setrank:
-      parameters: <player> <rank> [[prefix_island] owner]
+      parameters: <гравець> <rank> [[prefix_island] owner]
       description: встановити ранг гравцю на його [prefix_island] або на [prefix_island] власника
       unknown-rank: '<red>Невідомий ранг!</red>'
       not-possible: '<red>Ранг має бути вищий за «відвідувач».</red>'
@@ -335,7 +348,7 @@ commands:
       success: '<green>Успішно встановлено цю локацію точкою спавну для цього [prefix_island].</green>'
       island-spawnpoint-changed: '<green>[user] змінив точку спавну [prefix_island].</green>'
     settings:
-      parameters: '[player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]'
+      parameters: '[гравець]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]'
       description: відкрити GUI налаштувань або встановити налаштування
       unknown-setting: '<red>Невідоме налаштування</red>'
     blueprint:
@@ -484,16 +497,16 @@ commands:
     world:
       description: Керування налаштуваннями світу
     delete:
-      parameters: <player>
+      parameters: <гравець>
       description: видалити [prefix_island] гравця
       cannot-delete-owner: '<red>Усі учасники [prefix_island] мають бути вигнані до видалення.</red>'
       deleted-island: '<green>[prefix_Island] за </green><yellow>[xyz] </yellow><green>успішно видалено.</green>'
     deletehomes:
-      parameters: <player>
+      parameters: <гравець>
       description: видалити всі названі домівки на [prefix_an-island]
       warning: '<red>Усі названі домівки будуть видалені з [prefix_island]!</red>'
     why:
-      parameters: <player>
+      parameters: <гравець>
       description: увімк./вимк. налагоджувальні звіти захисту в консолі
       turning-on: '<green>Увімкнено консольний дебаг для </green><aqua>[name].</aqua>'
       turning-off: '<green>Вимкнено консольний дебаг для </green><aqua>[name].</aqua>'
@@ -501,19 +514,19 @@ commands:
       description: редагувати кількість смертей гравців
       reset:
         description: скинути смерті гравця
-        parameters: <player>
+        parameters: <гравець>
         success: '<green>Успішно скинуто смерті </green><aqua>[name]</aqua><green>до </green><aqua>0</aqua><green>.</green>'
       set:
         description: встановити кількість смертей гравця
-        parameters: <player> <deaths>
+        parameters: <гравець> <deaths>
         success: '<green>Успішно встановлено смерті </green><aqua>[name]</aqua><green>на </green><aqua>[number]</aqua><green>.</green>'
       add:
         description: додати смерті гравцю
-        parameters: <player> <deaths>
+        parameters: <гравець> <deaths>
         success: '<green>Успішно додано </green><aqua>[number] </aqua><green>смерт(і/ей) для </green><aqua>[name], разом тепер </aqua><aqua>[total]</aqua><green>.</green>'
       remove:
         description: забрати смерті у гравця
-        parameters: <player> <deaths>
+        parameters: <гравець> <deaths>
         success: '<green>Успішно видалено </green><aqua>[number] </aqua><green>смерт(і/ей) у </green><aqua>[name], разом тепер </aqua><aqua>[total]</aqua><green>.</green>'
     resetname:
       description: скинути назву [prefix_island] гравця
@@ -589,7 +602,7 @@ commands:
     about:
       description: показати дані ліцензії
     go:
-      parameters: '[home name]'
+      parameters: '[назва дому]'
       description: телепортуватися на ваш [prefix_island]
       teleport: '<green>Телепортую на ваш [prefix_island].</green>'
       in-progress: '<green>Виконується телепорт, зачекайте...</green>'
@@ -625,12 +638,12 @@ commands:
       you-can-teleport-to-your-island: '<green>Ви зможете телепортуватися на свій [prefix_island], коли забажаєте.</green>'
     deletehome:
       description: видалити локацію дому
-      parameters: '[home name]'
+      parameters: '[назва дому]'
     homes:
       description: показати список ваших домівок
     info:
       description: показати інформацію про ваш [prefix_island] або [prefix_island] гравця
-      parameters: <player>
+      parameters: <гравець>
     near:
       description: показати назви сусідніх [prefix_islands] навколо вас
       parameters: ''
@@ -665,7 +678,7 @@ commands:
       the-end:
         not-allowed: '<red>Не можна встановлювати дім у Краю.</red>'
         confirmation: '<red>Ви впевнені, що хочете встановити дім у Краю?</red>'
-      parameters: '[home name]'
+      parameters: '[назва дому]'
     setname:
       description: встановити назву для вашого [prefix_island]
       name-too-short: '<red>Надто коротко. Мінімум [number] символів.</red>'
@@ -675,7 +688,7 @@ commands:
       success: '<green>Успішно встановлено назву вашого [prefix_island] на </green><aqua>[name]</aqua><green>.</green>'
     renamehome:
       description: перейменувати локацію дому
-      parameters: '[home name]'
+      parameters: '[назва дому]'
       enter-new-name: '<gold>Введіть нову назву</gold>'
       already-exists: '<red>Така назва вже існує, спробуйте іншу.</red>'
     resetname:
@@ -737,7 +750,7 @@ commands:
           generic: '<gold>[rank] </gold><gray>(</gray><aqua>[number]</aqua><gray>)</gray><gold>:</gold>'
       coop:
         description: надати гравцю ранг «співпраця» на вашому [prefix_island]
-        parameters: <player>
+        parameters: <гравець>
         cannot-coop-yourself: '<red>Не можна коопити самого себе!</red>'
         already-has-rank: '<red>У гравця вже є ранг!</red>'
         you-are-a-coop-member: '<dark_green>Вас коопнув </dark_green><aqua>[name]</aqua><green>.</green>'
@@ -748,7 +761,7 @@ commands:
           <green>до свого [prefix_island].</green>
       uncoop:
         description: забрати в гравця ранг «співпраця»
-        parameters: <player>
+        parameters: <гравець>
         cannot-uncoop-yourself: '<red>Не можна зняти кооп із себе!</red>'
         cannot-uncoop-member: '<red>Не можна зняти кооп з учасника команди!</red>'
         player-not-cooped: '<red>Гравець не у статусі кооп!</red>'
@@ -758,7 +771,7 @@ commands:
         is-full: '<red>Ви не можете коопити більше нікого.</red>'
       trust:
         description: надати гравцю ранг «довірений» на вашому [prefix_island]
-        parameters: <player>
+        parameters: <гравець>
         trust-in-yourself: '<red>Довіряйте собі!</red>'
         name-has-invited-you: |
           <green>[name] запросив(ла) вас</green>
@@ -770,7 +783,7 @@ commands:
         is-full: '<red>Ви більше нікого не можете зробити довіреним. Будьте пильні!</red>'
       untrust:
         description: зняти статус «довірений» з гравця
-        parameters: <player>
+        parameters: <гравець>
         cannot-untrust-yourself: '<red>Не можна зняти довіру з себе!</red>'
         cannot-untrust-member: '<red>Не можна знімати довіру з учасника команди!</red>'
         player-not-trusted: '<red>Гравець не є довіреним!</red>'
@@ -820,7 +833,7 @@ commands:
           already-on-team: '<red>Цей гравець уже в команді!</red>'
           invalid-invite: '<red>Це запрошення вже недійсне, вибачте.</red>'
           you-have-already-invited: '<red>Ви вже запросили цього гравця!</red>'
-        parameters: <player>
+        parameters: <гравець>
         you-can-invite: '<green>Ви можете запросити ще [number] гравців.</green>'
         accept:
           description: прийняти запрошення
@@ -843,14 +856,14 @@ commands:
         success: '<green>Ви покинули цей [prefix_island].</green>'
       kick:
         description: видалити учасника з вашого [prefix_island]
-        parameters: <player>
+        parameters: <гравець>
         player-kicked: '<red>[name] вигнав(ла) вас із [prefix_island] у [gamemode]!</red>'
         cannot-kick: '<red>Не можна вигнати самого себе!</red>'
         cannot-kick-rank: '<red>Ваш ранг не дозволяє вигнати [name]!</red>'
         success: '<aqua>[name] </aqua><green>вигнано з вашого [prefix_island].</green>'
       demote:
         description: знизити ранг гравця на вашому [prefix_island]
-        parameters: <player>
+        parameters: <гравець>
         errors:
           cant-demote-yourself: '<red>Не можна знизити ранг самому собі!</red>'
           cant-demote: '<red>Не можна знижувати ранги, вищі за ваш!</red>'
@@ -859,7 +872,7 @@ commands:
         success: '<green>Знижено [name] до [rank]</green>'
       promote:
         description: підвищити ранг гравця на вашому [prefix_island]
-        parameters: <player>
+        parameters: <гравець>
         errors:
           cant-promote-yourself: '<red>Не можна підвищити самого себе!</red>'
           cant-promote: '<red>Не можна підвищувати вище вашого рангу!</red>'
@@ -873,11 +886,11 @@ commands:
           target-is-not-member: '<red>Цей гравець не є частиною вашої команди [prefix_island]!</red>'
           at-max: '<red>У цього гравця вже максимум дозволених [prefix_islands]!</red>'
         name-is-the-owner: '<green>[name] тепер власник [prefix_island]!</green>'
-        parameters: <player>
+        parameters: <гравець>
         you-are-the-owner: '<green>Тепер ви — власник [prefix_island]!</green>'
     ban:
       description: заблокувати гравця на вашому [prefix_island]
-      parameters: <player>
+      parameters: <гравець>
       cannot-ban-yourself: '<red>Не можна заблокувати самого себе!</red>'
       cannot-ban: '<red>Цього гравця не можна заблокувати.</red>'
       cannot-ban-member: '<red>Спершу виженіть учасника команди, потім блокуйте.</red>'
@@ -888,7 +901,7 @@ commands:
       you-are-banned: '<aqua>Ви заблоковані на цьому [prefix_island]!</aqua>'
     unban:
       description: розблокувати гравця на вашому [prefix_island]
-      parameters: <player>
+      parameters: <гравець>
       cannot-unban-yourself: '<red>Не можна розблокувати самого себе!</red>'
       player-not-banned: '<red>Гравець не заблокований.</red>'
       player-unbanned: '<aqua>[name]</aqua><green>тепер розблокований на вашому [prefix_island].</green>'
@@ -903,12 +916,12 @@ commands:
       description: показати налаштування [prefix_island]
     language:
       description: обрати мову
-      parameters: '[language]'
+      parameters: '[мова]'
       not-available: '<red>Ця мова недоступна.</red>'
       already-selected: '<red>Ви вже використовуєте цю мову.</red>'
     expel:
       description: вигнати гравця з вашого [prefix_island]
-      parameters: <player>
+      parameters: <гравець>
       cannot-expel-yourself: '<red>Не можна вигнати самого себе!</red>'
       cannot-expel: '<red>Цього гравця не можна вигнати.</red>'
       cannot-expel-member: '<red>Не можна виганяти учасника команди!</red>'
@@ -1440,6 +1453,9 @@ protection:
       scooping: '<green>Перетворюю обсидіан назад у лаву. Будьте уважні наступного разу!</green>'
       cooldown: '<red>Потрібно зачекати, перш ніж зачерпнути ще один блок обсидіану.</red>'
       obsidian-nearby: '<red>Поруч є блоки обсидіану — не можна зачерпнути цей блок. ([radius])</red>'
+      lavaTip: |-
+        <gold>Підбери це відром</gold>
+        <gold>знову як лаву, якщо вона тобі потрібна!</gold>
     OFFLINE_GROWTH:
       description: |-
         <green>Якщо вимкнено, рослини</green>
@@ -1676,6 +1692,7 @@ protection:
       name: Світова шкода від ТНТ
   locked: '<red>Цей [prefix_island] заблоковано!</red>'
   locked-island-bypass: '<gold>Цей [prefix_island] заблоковано, але у вас є дозвіл на вхід.</gold>'
+  deletable-island-admin: '<red>[Admin] Цей [prefix_island] позначено для видалення та очікує очищення регіону.</red>'
   protected: '<red>[prefix_Island] захищено: [description].</red>'
   world-protected: '<red>Світ захищено: [description].</red>'
   spawn-protected: '<red>Спавн захищено: [description].</red>'
@@ -1719,6 +1736,11 @@ protection:
       description: |
         <green>Налаштування захисту, коли</green>
         <green>гравець поза межами свого [prefix_island]</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Налаштування острова за замовчуванням</gold>'
+      description: |
+        <green>Налаштування захисту за замовчуванням</green>
+        <green>для нових [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       # Add commands to this list as required

@@ -131,6 +131,16 @@ commands:
         confirm: >-
           <light_purple>Type </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>om te beginnen met</light_purple>
           spoelen
+      failed: '<red>Opschonen voltooid met fouten. Sommige regiobestanden konden niet worden verwijderd. Controleer het serverlogboek voor details.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/test: regiobestandstijdstempels herschrijven zodat ze verwijderbaar worden'
+        done: '<green>Verouderd </green><aqua>[number]</aqua><green> regiobestand(en) in de huidige wereld.</green>'
+      deleted:
+        parameters: ''
+        description: 'verwijder regiobestanden voor elke [prefix_island] die al als verwijderd is gemarkeerd'
+        confirm: '<light_purple>Typ </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>om de regiobestanden te verwijderen</light_purple>'
+        deferred: '<green>Regiobestanden verwijderd. Eiland database-vermeldingen worden verwijderd bij de volgende herstart van de server.</green>'
       protect:
         description: schakel de bescherming tegen het doorspoelen van het eiland in
         move-to-island: '<red>Ga eerst naar een eiland!</red>'
@@ -142,6 +152,8 @@ commands:
       unowned:
         description: zuiveren van eilanden die geen eigendom zijn
         unowned-islands: '<green>Gevonden </green><aqua>[number]</aqua><green> eilanden zonder eigendom.</green>'
+        parameters: ''
+        flagged: '<green>Gemarkeerd </green><aqua>[number] </aqua><green>[prefix_island](s) als verwijderbaar. Voer </green><aqua>/[label] purge deleted</aqua><green> uit om de regiobestanden te verwijderen.</green>'
       status:
         description: geeft de status van de zuivering weer
         status: >-
@@ -290,6 +302,7 @@ commands:
       protection-range-bonus-title: '<aqua>Inclusief deze bonussen:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: Het eiland is beschermd tegen zuivering
+      deletable: '<red>[prefix_Island] is gemarkeerd voor verwijdering en wacht op regioopschoning.</red>'
       max-protection-range: 'Grootste historische beschermingsbereik: [range]'
       protection-coords: 'Beschermingscoördinaten: [xz1] tot [xz2]'
       is-spawn: Eiland is een spawn-eiland
@@ -1568,6 +1581,9 @@ protection:
         keer!
       cooldown: '<red>Je moet wachten voordat je nog een obsidiaanblok kunt scheppen.</red>'
       obsidian-nearby: >-
+      lavaTip: |-
+        <gold>Schep dit op met een emmer</gold>
+        <gold>als lava weer als je het nodig hebt!</gold>
         <red>Er zijn obsidiaanblokken in de buurt, je kunt dit blok niet in lava</red>
         scheppen. ([radius])
     OFFLINE_GROWTH:
@@ -1810,6 +1826,7 @@ protection:
       name: Wereld TNT-schade
   locked: '<red>Dit eiland is op slot!</red>'
   locked-island-bypass: '<gold>Dit [prefix_island] is op slot, maar je hebt toestemming om dit te negeren.</gold>'
+  deletable-island-admin: '<red>[Admin] Dit [prefix_island] is gemarkeerd voor verwijdering en wacht op regioopschoning.</red>'
   protected: '<red>Eiland beschermd: [description].</red>'
   world-protected: '<red>Wereld beschermd: [description].</red>'
   spawn-protected: '<red>Spawn beschermd: [description].</red>'
@@ -1852,6 +1869,11 @@ protection:
       description: |
         <green>Beveiligingsinstellingen wanneer</green>
         <green>speler is buiten zijn eiland</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Eiland standaardinstellingen</gold>'
+      description: |
+        <green>Standaard beveiligingsinstellingen</green>
+        <green>voor nieuwe [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

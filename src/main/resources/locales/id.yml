@@ -127,6 +127,16 @@ commands:
         parameters: '[days]'
         description: pulau Purge dengan menghapus file wilayah lama
         confirm: '<light_purple>Jenis </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>untuk mulai membersihkan</light_purple>'
+      failed: '<red>Pembersihan selesai dengan kesalahan. Beberapa file region tidak dapat dihapus. Periksa log server untuk detailnya.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/test: tulis ulang stempel waktu file region agar dapat dibersihkan'
+        done: '<green>Menua </green><aqua>[number]</aqua><green> file region di dunia saat ini.</green>'
+      deleted:
+        parameters: ''
+        description: 'bersihkan file region untuk [prefix_island] mana pun yang sudah ditandai sebagai dihapus'
+        confirm: '<light_purple>Ketik </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>untuk menghapus file region</light_purple>'
+        deferred: '<green>File region dihapus. Entri database pulau akan dihapus saat server dinyalakan ulang berikutnya.</green>'
       protect:
         description: beralih perlindungan pembersihan pulau
         move-to-island: '<red>Pindah ke pulau dulu!</red>'
@@ -138,6 +148,8 @@ commands:
       unowned:
         description: membersihkan pulau-pulau yang tidak dimiliki
         unowned-islands: '<green>Ditemukan </green><aqua>[number] </aqua><green>pulau yang tidak dimiliki.</green>'
+        parameters: ''
+        flagged: '<green>Menandai </green><aqua>[number] </aqua><green>[prefix_island](s) sebagai dapat dihapus. Jalankan </green><aqua>/[label] purge deleted</aqua><green> untuk menghapus file region.</green>'
       status:
         description: menampilkan status pembersihan
         status: >-
@@ -285,6 +297,7 @@ commands:
       protection-range-bonus-title: '<aqua>Termasuk bonus berikut:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: Pulau dilindungi dari pembersihan
+      deletable: '<red>[prefix_Island] ditandai untuk dihapus dan menunggu pembersihan region.</red>'
       max-protection-range: 'Kisaran perlindungan historis terbesar: [range]'
       protection-coords: 'Koordinat perlindungan: [xz1] hingga [xz2]'
       is-spawn: Pulau adalah pulau bibit
@@ -1543,6 +1556,9 @@ protection:
       scooping: '<green>Mengubah obsidian kembali menjadi lava. Lain kali hati-hati!</green>'
       cooldown: '<red>Anda harus menunggu sebelum mengambil blok obsidian lagi.</red>'
       obsidian-nearby: >-
+      lavaTip: |-
+        <gold>Ambil ini dengan ember</gold>
+        <gold>sebagai lava lagi jika Anda membutuhkannya!</gold>
         <red>Ada blok obsidian di dekatnya, Anda tidak dapat memasukkan blok ini</red>
         ke dalam lava. ([radius])
     OFFLINE_GROWTH:
@@ -1787,6 +1803,7 @@ protection:
       name: Kerusakan TNT dunia
   locked: '<red>Pulau ini terkunci!</red>'
   locked-island-bypass: '<gold>[prefix_Island] ini terkunci, tetapi kamu memiliki izin untuk melewatinya.</gold>'
+  deletable-island-admin: '<red>[Admin] [prefix_island] ini ditandai untuk dihapus dan menunggu pembersihan region.</red>'
   protected: '<red>[prefix_Island] dilindungi: [description].</red>'
   world-protected: '<red>Dunia dilindungi: [description].</red>'
   spawn-protected: '<red>Spawn dilindungi: [description].</red>'
@@ -1831,6 +1848,11 @@ protection:
       description: |
         <green>Pengaturan perlindungan saat</green>
         <green>pemain berada di luar [prefix_island] mereka</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Default Pulau</gold>'
+      description: |
+        <green>Pengaturan perlindungan default</green>
+        <green>untuk [prefix_island]s baru</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

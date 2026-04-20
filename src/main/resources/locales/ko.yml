@@ -117,6 +117,16 @@ commands:
         parameters: '[days]'
         description: 오래된 지역 파일을 삭제하여 섬을 제거합니다
         confirm: '<light_purple>유형 </light_purple><aqua>/[label] purge regions confirm</aqua>'
+      failed: '<red>정리가 오류로 완료되었습니다. 일부 지역 파일을 삭제할 수 없습니다. 서버 로그에서 자세한 내용을 확인하세요.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: '디버그/테스트: 지역 파일의 타임스탬프를 다시 써서 삭제 가능하게 만들기'
+        done: '<green>현재 세계에서 </green><aqua>[number]</aqua><green>개의 지역 파일을 오래된 것으로 만들었습니다.</green>'
+      deleted:
+        parameters: ''
+        description: '이미 삭제됨으로 표시된 [prefix_island]의 지역 파일 정리'
+        confirm: '<light_purple>지역 파일을 제거하려면 </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>을 입력하세요</light_purple>'
+        deferred: '<green>지역 파일이 삭제되었습니다. 섬 데이터베이스 항목은 다음 서버 재시작 시 제거됩니다.</green>'
       protect:
         description: 섬 청소 보호 여부를 설정합니다
         move-to-island: '<red>섬으로 먼저 이동하세요!</red>'
@@ -128,6 +138,8 @@ commands:
       unowned:
         description: 소유주가 없는 섬들을 청소합니다
         unowned-islands: '<aqua>[number]개의 </aqua><green>소유주가 없는 섬을 찾았습니다</green>'
+        parameters: ''
+        flagged: '<green>삭제 가능으로 표시된 </green><aqua>[number] </aqua><green>개의 [prefix_island](s). 지역 파일을 제거하려면 </green><aqua>/[label] purge deleted</aqua><green>를 실행하세요.</green>'
       status:
         description: 청소 상태를 보여줍니다
         status: >-
@@ -259,6 +271,7 @@ commands:
       protection-range-bonus-title: '<aqua>다음 보너스가 포함됩니다:</aqua>'
       protection-range-bonus: '보너스: [number]'
       purge-protected: 섬은 청소로부터 보호됩니다
+      deletable: '<red>[prefix_Island]이(가) 삭제 예정으로 표시되었으며 지역 정리를 기다리고 있습니다.</red>'
       max-protection-range: '가장 컷던 보호범위: [range]'
       protection-coords: '보호 좌표: [xz1] 에서 [xz2] 까지'
       is-spawn: 섬은 스폰섬입니다
@@ -1423,6 +1436,9 @@ protection:
       scooping: '<green>혹요석을 다시 용암으로 바꿨습니다! 다음번엔 주의하세요!</green>'
       cooldown: '<red>다른 흑요석 블록을 퍼올리려면 잠시 기다려야 합니다.</red>'
       obsidian-nearby: '<red>옵시디언이 근처에 있지만 용암으론 다시 바꿀수 없습니다 ([radius])</red>'
+      lavaTip: |-
+        <gold>양동이로 이것을 퍼담으세요</gold>
+        <gold>다시 용암으로 필요하다면!</gold>
     OFFLINE_GROWTH:
       description: |-
         <green>비활성화되면 식물은</green>
@@ -1652,6 +1668,7 @@ protection:
       name: 월드 TNT 피해
   locked: '<red>이 섬은 잠겨있습니다!</red>'
   locked-island-bypass: '<gold>이 [prefix_island]은 잠겨있지만, 당신은 우회할 권한이 있습니다.</gold>'
+  deletable-island-admin: '<red>[Admin] 이 [prefix_island]이(가) 삭제 예정으로 표시되었으며 지역 정리를 기다리고 있습니다.</red>'
   protected: '<red>섬 보호: [description].</red>'
   world-protected: '<red>월드 보호: [description].</red>'
   spawn-protected: '<red>스폰 보호: [description].</red>'
@@ -1687,6 +1704,11 @@ protection:
       title: '<aqua>[world_name] </aqua><gold>월드 보호</gold>'
       description: |
         <green>플레이어가 자신의 섬 밖에 있을 때 보호 설정</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>섬 기본값</gold>'
+      description: |
+        <green>기본 보호 설정</green>
+        <green>새로운 [prefix_island]s을(를) 위한</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

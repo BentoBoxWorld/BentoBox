@@ -130,6 +130,16 @@ commands:
         description: очистка островов путём удаления старых файлов регионов
         confirm: <light_purple>Тип <aqua>/[label] purge regions confirm </aqua>чтобы
           начать чистку.</light_purple>
+      failed: '<red>Очистка завершена с ошибками. Некоторые файлы регионов не удалось удалить. Подробности смотрите в журнале сервера.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'отладка/тест: перезаписать временные метки файлов регионов, чтобы они стали пригодными для очистки'
+        done: '<green>Устаревших </green><aqua>[number]</aqua><green> файл(ов) регионов в текущем мире.</green>'
+      deleted:
+        parameters: ''
+        description: 'очистить файлы регионов для любого [prefix_island], уже помеченного как удалённый'
+        confirm: '<light_purple>Введите </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>чтобы удалить файлы регионов</light_purple>'
+        deferred: '<green>Файлы регионов удалены. Записи базы данных островов будут удалены при следующем перезапуске сервера.</green>'
       protect:
         description: переключатель защиты острова от очистки
         move-to-island: <red>Для начала вернитесь на остров!</red>
@@ -142,6 +152,8 @@ commands:
         description: позволяет очистить острова без владельцев
         unowned-islands: <green>Найден(о) <aqua>[number] </aqua> остров(а/ов) без
           владельца.</green>
+        parameters: ''
+        flagged: '<green>Помечено </green><aqua>[number] </aqua><green>[prefix_island](s) как удаляемые. Запустите </green><aqua>/[label] purge deleted</aqua><green>, чтобы удалить файлы регионов.</green>'
       status:
         description: отображает статус очистки
         status: <green><aqua>[purged] </aqua>островов очищено из <aqua>[purgeable]
@@ -284,6 +296,7 @@ commands:
       protection-range-bonus-title: <aqua>Включая указанный бонус:</aqua>
       protection-range-bonus: 'Бонус: [number]'
       purge-protected: Остров защищен от очистки
+      deletable: '<red>[prefix_Island] помечен для удаления и ожидает очистки региона.</red>'
       max-protection-range: 'Самый большой радиус острова за все время: [range]'
       protection-coords: 'Радиус границ острова: от [xz1] до [xz2]'
       is-spawn: Остров является точкой спавна
@@ -1575,6 +1588,9 @@ protection:
       scooping: <green>Обсидиан был превращён в лаву.</green>
       cooldown: <red>Подождите несколько секунд, чтобы зачерпнуть снова.</red>
       obsidian-nearby: <red>В радиусе [radius] блоков есть ещё обсидиан.</red>
+      lavaTip: |-
+        <gold>Зачерпни это ведром</gold>
+        <gold>снова как лаву, если она тебе нужна!</gold>
     OFFLINE_GROWTH:
       name: Офлайн-рост
       description: |-
@@ -1816,6 +1832,7 @@ protection:
   locked: <red>Этот остров заблокирован!</red>
   locked-island-bypass: <gold>Этот [prefix_island] заблокирован, но у вас есть разрешение
     на вход.</gold>
+  deletable-island-admin: '<red>[Admin] Этот [prefix_island] помечен для удаления и ожидает очистки региона.</red>'
   protected: '<red>Остров защищён: [description].</red>'
   world-protected: '<red>Мир защищён: [description].</red>'
   spawn-protected: '<red>Спавн защищён: [description].</red>'

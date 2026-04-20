@@ -128,6 +128,16 @@ commands:
         parameters: '[days]'
         description: Oczyszcz wyspy, usuwając stare pliki regionu
         confirm: '<light_purple>Wpisz </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>aby rozpocząć czyszczenie</light_purple>'
+      failed: '<red>Czyszczenie zakończone błędami. Niektórych plików regionów nie można usunąć. Sprawdź dziennik serwera, aby uzyskać szczegółowe informacje.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/test: nadpisz znaczniki czasu plików regionów, aby mogły zostać wyczyszczone'
+        done: '<green>Zestarzano </green><aqua>[number]</aqua><green> plik(ów) regionów w bieżącym świecie.</green>'
+      deleted:
+        parameters: ''
+        description: 'wyczyść pliki regionów dla każdej [prefix_island] oznaczonej jako usuniętej'
+        confirm: '<light_purple>Wpisz </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>aby usunąć pliki regionów</light_purple>'
+        deferred: '<green>Pliki regionów usunięte. Wpisy bazy danych wyspy zostaną usunięte przy następnym restarcie serwera.</green>'
       protect:
         description: Przełącz ochronę przed usuwaniem opuszczonych wysp
         move-to-island: '<red>Najpierw przenieś się na wyspę!</red>'
@@ -139,6 +149,8 @@ commands:
       unowned:
         description: Usuń niezamieszkane wyspy (wymaga potwierdzenia)
         unowned-islands: '<green>Znaleziono [number] wysp</green>'
+        parameters: ''
+        flagged: '<green>Oznaczono </green><aqua>[number] </aqua><green>[prefix_island](s) jako do usunięcia. Uruchom </green><aqua>/[label] purge deleted</aqua><green>, aby usunąć pliki regionów.</green>'
       status:
         description: wyświetla status oczyszczenia
         status: >-
@@ -281,6 +293,7 @@ commands:
       protection-range-bonus-title: '<aqua>Zawiera te bonusy:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: Wyspa jest chroniona przed usunięciem
+      deletable: '<red>[prefix_Island] jest oznaczony do usunięcia i oczekuje na czyszczenie regionu.</red>'
       max-protection-range: 'Największy obszar ochrony: [range]'
       protection-coords: 'Współrzędne ochrony: [xz1] to [xz2]'
       is-spawn: Wyspa jest wyspą odradzania
@@ -1507,6 +1520,9 @@ protection:
       scooping: '<green>Zmieniam obsydian z powrotem w lawę. Następnym razem uważaj!</green>'
       cooldown: '<red>Musisz poczekać, zanim będziesz mógł zebrać kolejny blok obsydianu.</red>'
       obsidian-nearby: >-
+      lavaTip: |-
+        <gold>Nabierz to wiadrem</gold>
+        <gold>jako lawę ponownie, jeśli jej potrzebujesz!</gold>
         <red>W pobliżu znajdują się obsydianowe bloki, nie można zebrać tego bloku</red>
         w lawę. ([radius])
     OFFLINE_GROWTH:
@@ -1745,6 +1761,7 @@ protection:
       name: Świat uszkodzenia TNT
   locked: '<red>Ta wyspa jest zamknięta!</red>'
   locked-island-bypass: '<gold>Ta [prefix_island] jest zamknięta, ale masz uprawnienia, by ją ominąć.</gold>'
+  deletable-island-admin: '<red>[Admin] Ta [prefix_island] jest oznaczona do usunięcia i oczekuje na czyszczenie regionu.</red>'
   protected: '<red>Wyspa chroniona: [description]</red>'
   world-protected: '<red>Świat chroniony: [description]</red>'
   spawn-protected: '<red>Spawn chroniony: [description]</red>'
@@ -1785,6 +1802,11 @@ protection:
       description: |
         <green>Ustawienia ochrony, gdy</green>
         <green>gracz znajduje się poza swoją wyspą</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Domyślne ustawienia wyspy</gold>'
+      description: |
+        <green>Domyślne ustawienia ochrony</green>
+        <green>dla nowych [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:
