@@ -351,9 +351,7 @@ commands:
       success: '<green>成功将当前位置设置为该岛屿出生点.</green>'
       island-spawnpoint-changed: '<green>[user]更改了岛屿出生点.</green>'
     settings:
-      parameters: >-
-        [player]/[world flag]/spawn-island [flag/active/disable]
-        [rank/active/disable]
+      parameters: '[玩家]/[世界标志]/spawn-island [标志/启用/禁用] [等级/启用/禁用]'
       description: 打开设置面板或使用命令调整岛屿设置
       unknown-setting: '<red>未知设置</red>'
     blueprint:

@@ -306,7 +306,7 @@ commands:
     trash:
       no-unowned-in-trash: '<red>V koši nejsou žádné nevlastněné ostrovy</red>'
       no-islands-in-trash: '<red>Hráč nemá žádný ostrov v koši</red>'
-      parameters: '[player]'
+      parameters: '[hráč]'
       description: ukázat nevlastněné nebo hráčské ostrovy v koši
       title: '<light_purple>=========== Ostrovy v koši ===========</light_purple>'
       count: '<bold><light_purple>Ostrov [number]:</light_purple></bold>'
@@ -317,7 +317,7 @@ commands:
         <green>Použij <bold>[label] emptytrash [player]</bold></green><green> k trvalému smazání</green>
         položek
     emptytrash:
-      parameters: '[player]'
+      parameters: '[hráč]'
       description: Vysypat koš hráče, nebo všech nevlastněných ostrovů
       success: '<green>Koš byl úspěšně vysypán.</green>'
     version:
@@ -530,7 +530,7 @@ commands:
           success: Úspěch!
           cancelling: Rušení
     resetflags:
-      parameters: '[flag]'
+      parameters: '[příznak]'
       description: Obnov vlaječky všech ostrovů na výchozí nastavení v souboru config.yml
       confirm: '<dark_red>Toto obnoví vlaječku/-y všech ostrovů na výchozí hodnotu!</dark_red>'
       success: '<green>Výchozí hodnoty vlaječek všech ostrovů úspěšně obnoveny.</green>'

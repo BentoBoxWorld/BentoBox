@@ -316,7 +316,7 @@ commands:
     trash:
       no-unowned-in-trash: '<red>No hay islas sin propietario en la basura</red>'
       no-islands-in-trash: '<red>El jugador no tiene islas en la basura</red>'
-      parameters: '[player]'
+      parameters: '[jugador]'
       description: Mostrar islas sin propietarios o islas de jugadores en la basura
       title: '<light_purple>=========== Islas en la Basura ===========</light_purple>'
       count: '<bold><light_purple>Isla [number]:</light_purple></bold>'
@@ -327,7 +327,7 @@ commands:
         <green>Usa <bold>[label] emptytrash [player]</bold></green><green>para eliminar de forma</green>
         permanente los elementos de la papelera
     emptytrash:
-      parameters: '[player]'
+      parameters: '[jugador]'
       description: Borrar basura para el jugador, o todas las islas sin dueño en la basura
       success: '<green>La basura se vació con éxito.</green>'
     version:
@@ -351,7 +351,7 @@ commands:
         <red>No se ha encontrado un warp seguro! Manualmente teletransportado cerca</red>
         de <aqua>[location] puedes echarle un vistazo</aqua>
     tpuser:
-      parameters: <teleporting player> <[prefix_island]'s player> [player's island]
+      parameters: '<jugador en teleportación> <jugador de [prefix_island]> [isla del jugador]'
       description: teletransportar a un jugador a la [prefix_island] de otro jugador
     getrank:
       parameters: <player>
@@ -724,7 +724,7 @@ commands:
       you-can-teleport-to-your-island: '<green>Puedes teletransportarte a tu isla cuando lo desees.</green>'
     deletehome:
       description: eliminar una ubicación de hogar
-      parameters: '[home name]'
+      parameters: '[nombre de casa]'
     homes:
       description: lista tus hogares
     info:
@@ -782,7 +782,7 @@ commands:
       success: '<green>Establezca con éxito el nombre de su isla en </green><aqua>[name] </aqua><green>.</green>'
     renamehome:
       description: renombrar una ubicación de hogar
-      parameters: '[home name]'
+      parameters: '[nombre de casa]'
       enter-new-name: '<gold>Introduce el nuevo nombre</gold>'
       already-exists: '<red>Ese nombre ya existe, prueba con otro nombre.</red>'
     resetname:

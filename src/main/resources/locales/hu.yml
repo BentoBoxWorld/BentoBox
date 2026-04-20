@@ -419,7 +419,7 @@ commands:
       success: '<green>Sikeresen beállította ezt a helyet a [prefix_island] spawn pontjaként.</green>'
       island-spawnpoint-changed: '<green>[user] megváltoztatta a [prefix_island] spawn pontot.</green>'
     settings:
-      parameters: '[player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]'
+      parameters: '[játékos]/[világ jelző]/spawn-island [jelző/aktív/letiltás] [rang/aktív/letiltás]'
       description: nyissa meg a beállítások GUI-ját vagy állítsa be a beállításokat
       unknown-setting: '<red>Ismeretlen beállítás</red>'
     blueprint:

@@ -356,7 +356,7 @@ commands:
         <red>Nie znaleziono bezpiecznego warpu. Teleportuj się ręcznie do</red>
         lokalizacji <aqua>[location] </aqua><red>i sprawdź go.</red>
     tpuser:
-      parameters: <teleporting player> <[prefix_island]'s player> [player's island]
+      parameters: '<teleportujący gracz> <gracz [prefix_island]a> [wyspa gracza]'
       description: teleportuj gracza na [prefix_island] innego gracza
     getrank:
       parameters: <gracz>
@@ -1001,7 +1001,7 @@ commands:
       description: wyświetl ustawienia wyspy
     language:
       description: wybierz język
-      parameters: '[language]'
+      parameters: '[język]'
       not-available: '<red>Ten język nie jest dostępny.</red>'
       already-selected: '<red>Już używasz tego języka.</red>'
     expel:

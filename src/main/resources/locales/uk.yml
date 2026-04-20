@@ -489,7 +489,7 @@ commands:
           success: Успіх!
           cancelling: Скасування
     resetflags:
-      parameters: '[flag]'
+      parameters: '[прапорець]'
       description: Скинути всі [prefix_Islands] до типових прапорів у config.yml
       confirm: '<dark_red>Це скине прапори до типових для всіх [prefix_Islands]!</dark_red>'
       success: '<green>Успішно скинуто прапори всіх [prefix_Islands] до типових налаштувань.</green>'

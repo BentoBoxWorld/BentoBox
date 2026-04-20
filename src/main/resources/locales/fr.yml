@@ -572,7 +572,7 @@ commands:
           success: Succès !
           cancelling: Annulation
     resetflags:
-      parameters: '[flag]'
+      parameters: '[indicateur]'
       description: >-
         Réinitialiser toutes les îles aux flags par défaut dans le fichier
         config.yml

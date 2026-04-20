@@ -307,7 +307,7 @@ commands:
       description: プレイヤーの島にテレポート
       manual: '<red>安全なワープが見つかりません![location]の近くに手動でテレポートします。</red>'
     tpuser:
-      parameters: <teleporting player> <[prefix_island]'s player> [player's island]
+      parameters: '<テレポートするプレーヤー> <[prefix_island]のプレーヤー> [プレーヤーの島]'
       description: プレーヤーを別のプレイヤーの[prefix_island]にテレポートする
     getrank:
       parameters: <プレーヤー>
@@ -482,7 +482,7 @@ commands:
           success: 成功！
           cancelling: キャンセル中
     resetflags:
-      parameters: '[flag]'
+      parameters: '[フラグ]'
       description: すべての島をconfig.ymlのデフォルトのフラグ設定にリセットします
       confirm: '<dark_red>これにより、すべての島のフラグがデフォルトにリセットされます！</dark_red>'
       success: '<green>すべての島のフラグをデフォルト設定に正常にリセットします。</green>'

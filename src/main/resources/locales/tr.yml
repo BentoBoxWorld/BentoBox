@@ -317,7 +317,7 @@ commands:
     trash:
       no-unowned-in-trash: '<red>Çöpte sahipsiz ada yok.</red>'
       no-islands-in-trash: '<red>Oyuncunun çöpte adası yok.</red>'
-      parameters: '[player]'
+      parameters: '[oyuncu]'
       description: Çöp kutusundaki sahipsiz veya oyuncuların adını gösterir.
       title: '<light_purple>=========== Çöpteki adalar ===========</light_purple>'
       count: '<bold><light_purple>Ada [number]:</light_purple></bold>'
@@ -328,7 +328,7 @@ commands:
         <bold>[label] <blue>kullanarak </blue><light_purple>[player] </light_purple><blue>tüm eşyalarını sonsuza kadar</blue></bold>
         silebilirsiniz.
     emptytrash:
-      parameters: '[player]'
+      parameters: '[oyuncu]'
       description: Oyuncu için çöpleri veya çöp kutusundaki tüm sahipsiz adaları temizleyin
       success: '<green>Çöp kutusu başarıyla boşaltıldı.</green>'
     version:

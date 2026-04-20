@@ -316,7 +316,7 @@ commands:
       description: 傳送到玩家的島嶼
       manual: '<red>沒有安全傳送點!手動傳送至 </red><aqua>[location] </aqua><red>附近並解決這個問題</red>'
     tpuser:
-      parameters: <teleporting player> <[prefix_island]'s player> [player's island]
+      parameters: '<傳送玩家> <[prefix_island]的玩家> [玩家的島嶼]'
       description: 將一個玩家傳送到另一個玩家的[prefix_island]
     getrank:
       parameters: <player> [island owner]
@@ -352,9 +352,7 @@ commands:
       success: '<green>成功將所處位置設置為該島嶼的出生點。</green>'
       island-spawnpoint-changed: '<aqua>[user] </aqua><green>更改了島嶼出生點。</green>'
     settings:
-      parameters: >-
-        [player]/[world flag]/spawn-island [flag/active/disable]
-        [rank/active/disable]
+      parameters: '[玩家]/[世界旗標]/spawn-island [旗標/啟用/停用] [等級/啟用/停用]'
       description: 打開設置面板或使用命令調整島嶼設置
       unknown-setting: '<red>未知設置項</red>'
     blueprint:

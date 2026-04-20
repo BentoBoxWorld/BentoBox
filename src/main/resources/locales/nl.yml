@@ -369,7 +369,7 @@ commands:
         <red>Geen veilige warp gevonden! Handmatig tp in de buurt van </red><aqua>[location]</aqua>
         <red>en bekijk het</red>
     tpuser:
-      parameters: <teleporting player> <[prefix_island]'s player> [player's island]
+      parameters: '<teleporterende speler> <speler van [prefix_island]> [eiland van speler]'
       description: teleporteer een speler naar het [prefix_island] van een andere speler
     getrank:
       parameters: <player> [eilandeigenaar]

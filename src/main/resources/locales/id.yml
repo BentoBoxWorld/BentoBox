@@ -404,9 +404,7 @@ commands:
       success: '<green>Berhasil menetapkan lokasi ini sebagai titik pemijahan pulau ini.</green>'
       island-spawnpoint-changed: '<green>[user] mengubah titik spawn pulau.</green>'
     settings:
-      parameters: >-
-        [player]/[world flag]/spawn-island [flag/active/disable]
-        [rank/active/disable]
+      parameters: '[pemain]/[bendera dunia]/spawn-island [bendera/aktif/nonaktif] [peringkat/aktif/nonaktif]'
       description: buka pengaturan GUI atau atur pengaturan
       unknown-setting: '<red>Pengaturan tidak diketahui</red>'
     blueprint:
@@ -1013,7 +1011,7 @@ commands:
       description: menampilkan pengaturan pulau
     language:
       description: pilih bahasa
-      parameters: '[language]'
+      parameters: '[bahasa]'
       not-available: '<red>Bahasa ini tidak tersedia.</red>'
       already-selected: '<red>Anda sudah menggunakan bahasa ini.</red>'
     expel:

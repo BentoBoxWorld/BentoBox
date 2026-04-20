@@ -327,7 +327,7 @@ commands:
     trash:
       no-unowned-in-trash: '<red>Non ci sono isole senza proprietario nel cestino</red>'
       no-islands-in-trash: '<red>Il giocatore non ha isole nel cestino</red>'
-      parameters: '[player]'
+      parameters: '[giocatore]'
       description: mostra le isole senza proprietario o le isole del giocatore nel cestino
       title: '<light_purple>=========== Isole nel Cestino ===========</light_purple>'
       count: '<bold><light_purple>Isola [number]:</light_purple></bold>'
@@ -338,7 +338,7 @@ commands:
         <green>Usa <bold>[label] emptytrash [player]</bold> per rimuovere permanentemente le</green>
         isole nel cestino
     emptytrash:
-      parameters: '[player]'
+      parameters: '[giocatore]'
       description: >-
         Pulisci il cestino del player, o tutte le isole senza proprietario nel
         cestino
@@ -565,7 +565,7 @@ commands:
           success: Successo!
           cancelling: Annullamento
     resetflags:
-      parameters: '[flag]'
+      parameters: '[bandiera]'
       description: Reimposta le impostazioni di tutte le isole a quelle in config.yml
       confirm: '<dark_red>Questo resetterà tutte le flag di tutte le isole ai valori default!</dark_red>'
       success: '<green>Resettato con successo le flag di tutte le isole ai valori default.</green>'
@@ -736,7 +736,7 @@ commands:
       you-can-teleport-to-your-island: '<green>Puoi teletrasportarti alla isola quando puoi.</green>'
     deletehome:
       description: cancellare una posizione casa
-      parameters: '[home name]'
+      parameters: '[nome casa]'
     homes:
       description: elenca le tue
     info:
@@ -796,7 +796,7 @@ commands:
       success: '<green>Cambiato il nome della tua isola in </green><aqua>[name]</aqua><green>.</green>'
     renamehome:
       description: rinominare una posizione di casa
-      parameters: '[home name]'
+      parameters: '[nome casa]'
       enter-new-name: '<gold>Inserisci il nuovo nome</gold>'
       already-exists: '<red>Quel nome esiste già, prova con un altro nome.</red>'
     resetname:

@@ -534,7 +534,7 @@ commands:
           success: Thành công!
           cancelling: Đang hủy
     resetflags:
-      parameters: '[flag]'
+      parameters: '[cờ]'
       description: Đặt lại tất cả các đảo về cài đặt cờ mặc định trong config.yml
       confirm: '<dark_red>Điều này sẽ đặt lại cờ về mặc định cho tất cả các hòn đảo!</dark_red>'
       success: >-

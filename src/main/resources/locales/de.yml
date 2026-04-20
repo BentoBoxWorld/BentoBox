@@ -558,7 +558,7 @@ commands:
           success: Erfolg!
           cancelling: Abbrechen
     resetflags:
-      parameters: '[flag]'
+      parameters: '[Flagge]'
       description: >-
         Alle Inseln in der config.yml auf Standard-Flag-Einstellungen
         zurücksetzen

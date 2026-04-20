@@ -295,14 +295,14 @@ commands:
     trash:
       no-unowned-in-trash: '<red>주인없는섬이 쓰레기통에 없습니다</red>'
       no-islands-in-trash: '<red>플레이어는 쓰레기통에 섬이 없습니다</red>'
-      parameters: '[player]'
+      parameters: '[플레이어]'
       description: 주인 없는 섬이나 플레이어의 쓰레기통에있는 섬을 보여줍니다
       title: '<light_purple>=========== 쓰레기통에 있는 섬 ===========</light_purple>'
       count: '<bold><light_purple>섬 [number]:</light_purple></bold>'
       use-switch: '<green><bold>[label] switchto <player> <number></bold></green><green>를 사용하여 쓰레기통에 있는 섬으로 교체합니다.</green>'
       use-emptytrash: '<green><bold>[label] emptytrash [player]</bold></green><green>를 사용하여 쓰레기통의 섬들을 삭제합니다</green>'
     emptytrash:
-      parameters: '[player]'
+      parameters: '[플레이어]'
       description: 쓰레기통에 있는 섬을 청소하거나, 쓰레기통에 있는 모든 주인없는 섬을 청소합니다
       success: '<green>쓰레기통을 비웠습니다</green>'
     version:
@@ -498,7 +498,7 @@ commands:
           success: 성공!
           cancelling: 취소 중
     resetflags:
-      parameters: '[flag]'
+      parameters: '[플래그]'
       description: 컨피그의 모든 플래그를 초기화 합니다
       confirm: '<dark_red>모든 섬에 대해 플래그를 기본값으로 재설정합니다!</dark_red>'
       success: '<green>모든섬의 플래그를 기본값으로 초기화 하였습니다</green>'
