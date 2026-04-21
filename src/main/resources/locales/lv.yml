@@ -125,6 +125,16 @@ commands:
         parameters: '[days]'
         description: Iztīrīt salas, izdzēšot veco reģiona failus
         confirm: '<light_purple>Ievadi </light_purple><aqua>/[label] purge regions confirm</aqua><light_purple>, lai sāktu attīrīt</light_purple>'
+      failed: '<red>Tīrīšana pabeigta ar kļūdām. Dažus reģionu failus nevarēja izdzēst. Pārbaudiet servera žurnālu, lai uzzinātu detaļas.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'atkļūdošana/tests: pārrakstiet reģionu failu laika zīmogus, lai tie būtu notīrāmi'
+        done: '<green>Novecināti </green><aqua>[number]</aqua><green> reģionu fails(-i) pašreizējā pasaulē.</green>'
+      deleted:
+        parameters: ''
+        description: 'notīrīt reģionu failus jebkuram [prefix_island], kas jau atzīmēts kā dzēsts'
+        confirm: '<light_purple>Ierakstiet </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>, lai noņemtu reģionu failus</light_purple>'
+        deferred: '<green>Reģionu faili dzēsti. Salu datu bāzes ieraksti tiks noņemti nākamajā servera restartēšanas reizē.</green>'
       protect:
         description: Pārslēgt salas aizsargāšanu no dzēšanas
         move-to-island: '<red>Sākumā pārvietojies uz salas!</red>'
@@ -136,6 +146,8 @@ commands:
       unowned:
         description: Dzēst bezīpašnieku salas - nepieciešams apstiprinājums
         unowned-islands: '<light_purple>Atrastas [number] salas</light_purple>'
+        parameters: ''
+        flagged: '<green>Atzīmēti </green><aqua>[number] </aqua><green>[prefix_island](s) kā dzēšami. Palaidiet </green><aqua>/[label] purge deleted</aqua><green>, lai noņemtu reģionu failus.</green>'
       status:
         description: parāda attīrīšanas statusu
         status: >-
@@ -285,6 +297,7 @@ commands:
       protection-range-bonus-title: '<aqua>Ietver šos bonusus:</aqua>'
       protection-range-bonus: 'Bonuss: [number]'
       purge-protected: Sala ir aizsargāta no dzēšanas
+      deletable: '<red>[prefix_Island] ir atzīmēts dzēšanai un gaida reģiona notīrīšanu.</red>'
       max-protection-range: 'Lielākā aizsardzības distance salas vēsturē: [range]'
       protection-coords: 'Aizsardzības koordinātes: no [xz1] līdz [xz2]'
       is-spawn: Šī ir sākuma sala
@@ -1517,6 +1530,9 @@ protection:
       scooping: '<green>Pārvēršot obsidianu atpakaļ lavā. Nākamreiz esi uzmanīgs!</green>'
       cooldown: '<red>Jums jāgaida, pirms varat uzsūkt vēl vienu obsidiāna bloku.</red>'
       obsidian-nearby: '<red>Netālu ir obsidiāna bloki, tu nevar uzsūkt šo bloku lavā. ([radius])</red>'
+      lavaTip: |-
+        <gold>Uzņem to ar spaini</gold>
+        <gold>kā lavu atkal, ja tas tev ir vajadzīgs!</gold>
     OFFLINE_GROWTH:
       description: |-
         <green>Kad ir izslēgts, augi neaugs uz</green>
@@ -1787,6 +1803,7 @@ protection:
       name: Pasaule TNT kaitējums
   locked: '<red>Šī sala ir slēgta!</red>'
   locked-island-bypass: '<gold>Šī [prefix_island] ir slēgta, bet jums ir atļauja to apiet.</gold>'
+  deletable-island-admin: '<red>[Admin] Šī [prefix_island] ir atzīmēta dzēšanai un gaida reģiona notīrīšanu.</red>'
   protected: '<red>Sala ir aizsargāta: [description]</red>'
   world-protected: '<red>Pasaule aizsargāta: [description]</red>'
   spawn-protected: '<red>Sākuma sala ir aizsargāta: [description]</red>'
@@ -1832,6 +1849,11 @@ protection:
         <green>Aizsardzības iestatījumi kuri ir</green>
         <green>aktīvi, ja spēlētājs ir ārpus</green>
         <green>savas salas</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Salas noklusējuma iestatījumi</gold>'
+      description: |
+        <green>Noklusējuma aizsardzības iestatījumi</green>
+        <green>jaunajām [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

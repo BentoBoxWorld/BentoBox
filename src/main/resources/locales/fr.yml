@@ -130,6 +130,16 @@ commands:
         parameters: '[days]'
         description: purge îles en supprimant les anciens fichiers régionaux
         confirm: '<light_purple>Type </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>pour commencer la purge</light_purple>'
+      failed: '<red>Purge terminée avec des erreurs. Certains fichiers de région n''ont pas pu être supprimés. Consultez le journal du serveur.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/test: réécrire les horodatages des fichiers de région pour qu''ils soient purgables'
+        done: '<green>Vieillis </green><aqua>[number]</aqua><green> fichier(s) de région dans le monde actuel.</green>'
+      deleted:
+        parameters: ''
+        description: 'purger les fichiers de région pour tout [prefix_island] déjà marqué comme supprimé'
+        confirm: '<light_purple>Tapez </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>pour supprimer les fichiers de région</light_purple>'
+        deferred: '<green>Fichiers de région supprimés. Les entrées de la base de données des îles seront supprimées au prochain redémarrage du serveur.</green>'
       protect:
         description: activer/désactiver la protection de l'île contre la purge
         move-to-island: '<red>Déplacez-vous d''abord sur une île.</red>'
@@ -141,6 +151,8 @@ commands:
       unowned:
         description: supprimer les îles sans propriétaire
         unowned-islands: '<green>Trouvé </green><aqua>[number] </aqua><green>îles sans propriétaire.</green>'
+        parameters: ''
+        flagged: '<green>Marqué </green><aqua>[number] </aqua><green>[prefix_island](s) comme supprimable(s). Exécutez </green><aqua>/[label] purge deleted</aqua><green> pour supprimer les fichiers de région.</green>'
       status:
         description: affiche l'état de la purge
         status: >-
@@ -302,6 +314,7 @@ commands:
       protection-range-bonus-title: "<aqua>Comprend ces bonus\_:</aqua>"
       protection-range-bonus: "Bonus\_:\_[number]"
       purge-protected: L'île est protégée contre la purge
+      deletable: '<red>[prefix_Island] est marquée pour suppression et en attente de la purge de région.</red>'
       max-protection-range: 'La plus grande gamme de protection historique: [range]'
       protection-coords: 'Coordonnées de protection : [xz1] à [xz2]'
       is-spawn: L'île est un spawn
@@ -559,7 +572,7 @@ commands:
           success: Succès !
           cancelling: Annulation
     resetflags:
-      parameters: '[flag]'
+      parameters: '[indicateur]'
       description: >-
         Réinitialiser toutes les îles aux flags par défaut dans le fichier
         config.yml
@@ -1559,6 +1572,9 @@ protection:
         !
       cooldown: '<red>Vous devez attendre avant de ramasser un autre bloc d''obsidienne.</red>'
       obsidian-nearby: >-
+      lavaTip: |-
+        <gold>Récupère cela avec un seau</gold>
+        <gold>comme de la lave à nouveau si vous en avez besoin !</gold>
         <red>Il y a d'autres blocs d'obsidienne à proximité, vous ne pouvez pas</red>
         transformer ce bloc en lave. ([radius])
     OFFLINE_GROWTH:
@@ -1802,6 +1818,7 @@ protection:
       name: Dommages mondiaux au TNT
   locked: '<red>Cette île est verrouillée!</red>'
   locked-island-bypass: '<gold>Cette [prefix_island] est verrouillée, mais vous avez la permission de la traverser.</gold>'
+  deletable-island-admin: '<red>[Admin] Cette [prefix_island] est marquée pour suppression et en attente de la purge de région.</red>'
   protected: '<red>Île protégée: [description]</red>'
   world-protected: '<red>Monde protégé: [description]</red>'
   spawn-protected: '<red>Spawn protégé: [description]</red>'
@@ -1844,6 +1861,11 @@ protection:
       description: |
         <green>Paramètres de protection lorsque</green>
         <green>le joueur est en dehors de leur île</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Paramètres par défaut de l''île</gold>'
+      description: |
+        <green>Paramètres de protection par défaut</green>
+        <green>pour les nouvelles [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

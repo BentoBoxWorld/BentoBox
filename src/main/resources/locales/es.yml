@@ -126,6 +126,16 @@ commands:
         parameters: '[days]'
         description: Purge Islas eliminando archivos de región antiguas
         confirm: '<light_purple>Tipo </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>para comenzar a purgar</light_purple>'
+      failed: '<red>Purga completada con errores. Algunos archivos de región no pudieron eliminarse. Revisa el registro del servidor.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/prueba: reescribe las marcas de tiempo de los archivos de región para que sean eliminables'
+        done: '<green>Se envejecieron </green><aqua>[number]</aqua><green> archivo(s) de región en el mundo actual.</green>'
+      deleted:
+        parameters: ''
+        description: 'purgar archivos de región de cualquier [prefix_island] ya marcada como eliminada'
+        confirm: '<light_purple>Escribe </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>para eliminar los archivos de región</light_purple>'
+        deferred: '<green>Archivos de región eliminados. Las entradas de la base de datos de islas se eliminarán en el próximo reinicio del servidor.</green>'
       protect:
         description: Activar protección de purga de isla
         move-to-island: '<red>¡Muévete primero a una isla!</red>'
@@ -137,6 +147,8 @@ commands:
       unowned:
         description: Purga islas sin dueño - requiere confirmación
         unowned-islands: '<light_purple>Encontradas [number] islas</light_purple>'
+        parameters: ''
+        flagged: '<green>Marcadas </green><aqua>[number] </aqua><green>[prefix_island](s) como eliminables. Ejecuta </green><aqua>/[label] purge deleted</aqua><green> para eliminar los archivos de región.</green>'
       status:
         description: muestra el estado de la purga
         status: >-
@@ -280,6 +292,7 @@ commands:
       protection-range-bonus-title: '<aqua>Incluye estos bonificaciones:</aqua>'
       protection-range-bonus: 'Bonificación: [number]'
       purge-protected: La isla está protegida por purga
+      deletable: '<red>[prefix_Island] está marcada para eliminación y está en espera de purga de región.</red>'
       max-protection-range: 'El mayor rango de protección histórica: [range]'
       protection-coords: 'Coordenadas de protección: [xz1] a [xz2]'
       is-spawn: La isla es el spawn
@@ -303,7 +316,7 @@ commands:
     trash:
       no-unowned-in-trash: '<red>No hay islas sin propietario en la basura</red>'
       no-islands-in-trash: '<red>El jugador no tiene islas en la basura</red>'
-      parameters: '[player]'
+      parameters: '[jugador]'
       description: Mostrar islas sin propietarios o islas de jugadores en la basura
       title: '<light_purple>=========== Islas en la Basura ===========</light_purple>'
       count: '<bold><light_purple>Isla [number]:</light_purple></bold>'
@@ -314,7 +327,7 @@ commands:
         <green>Usa <bold>[label] emptytrash [player]</bold></green><green>para eliminar de forma</green>
         permanente los elementos de la papelera
     emptytrash:
-      parameters: '[player]'
+      parameters: '[jugador]'
       description: Borrar basura para el jugador, o todas las islas sin dueño en la basura
       success: '<green>La basura se vació con éxito.</green>'
     version:
@@ -338,7 +351,7 @@ commands:
         <red>No se ha encontrado un warp seguro! Manualmente teletransportado cerca</red>
         de <aqua>[location] puedes echarle un vistazo</aqua>
     tpuser:
-      parameters: <teleporting player> <[prefix_island]'s player> [player's island]
+      parameters: '<jugador en teleportación> <jugador de [prefix_island]> [isla del jugador]'
       description: teletransportar a un jugador a la [prefix_island] de otro jugador
     getrank:
       parameters: <player>
@@ -711,7 +724,7 @@ commands:
       you-can-teleport-to-your-island: '<green>Puedes teletransportarte a tu isla cuando lo desees.</green>'
     deletehome:
       description: eliminar una ubicación de hogar
-      parameters: '[home name]'
+      parameters: '[nombre de casa]'
     homes:
       description: lista tus hogares
     info:
@@ -769,7 +782,7 @@ commands:
       success: '<green>Establezca con éxito el nombre de su isla en </green><aqua>[name] </aqua><green>.</green>'
     renamehome:
       description: renombrar una ubicación de hogar
-      parameters: '[home name]'
+      parameters: '[nombre de casa]'
       enter-new-name: '<gold>Introduce el nuevo nombre</gold>'
       already-exists: '<red>Ese nombre ya existe, prueba con otro nombre.</red>'
     resetname:
@@ -1528,6 +1541,9 @@ protection:
       scooping: '<green>obsidiana cambio de vuelta a lava. ¡Ten mas cuidado la próxima vez!</green>'
       cooldown: '<red>Debes esperar antes de recoger otro bloque de obsidiana.</red>'
       obsidian-nearby: >-
+      lavaTip: |-
+        <gold>Recógelo con un cubo</gold>
+        <gold>como lava de nuevo si la necesitas!</gold>
         <red>Hay bloques de obsidiana cerca, no puedes recoger este bloque en</red>
         lava. ([radius])
     OFFLINE_GROWTH:
@@ -1765,6 +1781,7 @@ protection:
       name: Daño mundial de TNT
   locked: '<red>Esta isla esta cerrada!</red>'
   locked-island-bypass: '<gold>Esta [prefix_island] está cerrada, pero tienes permiso para acceder.</gold>'
+  deletable-island-admin: '<red>[Admin] Esta [prefix_island] está marcada para eliminación y está en espera de purga de región.</red>'
   protected: '<red>Isla protegida: [description]</red>'
   world-protected: '<red>Mundo protegido: [description]</red>'
   spawn-protected: '<red>Spawn protegido: [description]</red>'
@@ -1807,6 +1824,11 @@ protection:
       description: |-
         <green>Configuración de protección cuando</green>
         <green>el jugador está fuera de su isla</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Valores predeterminados de isla</gold>'
+      description: |
+        <green>Configuración de protección predeterminada</green>
+        <green>para nuevas [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

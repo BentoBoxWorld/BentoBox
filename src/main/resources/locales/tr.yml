@@ -126,6 +126,16 @@ commands:
         confirm: >-
           <light_purple>Temizlemeyi başlatmak için </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple></light_purple>
           yazın
+      failed: '<red>Temizleme hatalarla tamamlandı. Bazı bölge dosyaları silinemedi. Ayrıntılar için sunucu günlüğünü kontrol edin.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'hata ayıklama/test: bölge dosyalarının zaman damgalarını yeniden yaz, böylece temizlenebilir olsunlar'
+        done: '<green>Mevcut dünyada </green><aqua>[number]</aqua><green> bölge dosyası eskitildi.</green>'
+      deleted:
+        parameters: ''
+        description: 'zaten silinmiş olarak işaretlenmiş herhangi bir [prefix_island] için bölge dosyalarını temizle'
+        confirm: '<light_purple>Bölge dosyalarını kaldırmak için </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>yazın</light_purple>'
+        deferred: '<green>Bölge dosyaları silindi. Ada veritabanı girişleri sonraki sunucu yeniden başlatmasında kaldırılacaktır.</green>'
       protect:
         description: Adanın anti-silinmesini kapat/aç.
         move-to-island: '<red>İlk önce adaya git!</red>'
@@ -137,6 +147,8 @@ commands:
       unowned:
         description: Sahipsiz adaları temizler.
         unowned-islands: '<green>[number] </green><dark_purple>silinebilecek ada bulundu!</dark_purple>'
+        parameters: ''
+        flagged: '<green>İşaretlendi </green><aqua>[number] </aqua><green>[prefix_island](s) silinebilir olarak. Bölge dosyalarını kaldırmak için </green><aqua>/[label] purge deleted</aqua><green> komutunu çalıştırın.</green>'
       status:
         description: temizlemenin durumunu gösterir
         status: >-
@@ -279,6 +291,7 @@ commands:
       protection-range-bonus-title: '<aqua>Bu bonusları içerir:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: Bu ada silinmelere karşı korunuyor.
+      deletable: '<red>[prefix_Island] silmek için işaretlendi ve bölge temizlenmesini bekliyor.</red>'
       max-protection-range: '<aqua>Önceki en büyük koruma alanı: [range]</aqua>'
       protection-coords: '<aqua>Koruma kordinatları: [xz1] ile [xz2] arasında.</aqua>'
       is-spawn: '<aqua>Bu ada başlangıç adası</aqua>'
@@ -304,7 +317,7 @@ commands:
     trash:
       no-unowned-in-trash: '<red>Çöpte sahipsiz ada yok.</red>'
       no-islands-in-trash: '<red>Oyuncunun çöpte adası yok.</red>'
-      parameters: '[player]'
+      parameters: '[oyuncu]'
       description: Çöp kutusundaki sahipsiz veya oyuncuların adını gösterir.
       title: '<light_purple>=========== Çöpteki adalar ===========</light_purple>'
       count: '<bold><light_purple>Ada [number]:</light_purple></bold>'
@@ -315,7 +328,7 @@ commands:
         <bold>[label] <blue>kullanarak </blue><light_purple>[player] </light_purple><blue>tüm eşyalarını sonsuza kadar</blue></bold>
         silebilirsiniz.
     emptytrash:
-      parameters: '[player]'
+      parameters: '[oyuncu]'
       description: Oyuncu için çöpleri veya çöp kutusundaki tüm sahipsiz adaları temizleyin
       success: '<green>Çöp kutusu başarıyla boşaltıldı.</green>'
     version:
@@ -1462,6 +1475,9 @@ protection:
       scooping: '<gold>Obsidyen lava dönüştürüldü, daha dikkatli ol!</gold>'
       cooldown: '<red>Başka bir obsidyen bloğu almadan önce beklemelisiniz.</red>'
       obsidian-nearby: '<red>Etrafta başka obsidyenler varken bu obsidyeni lava dönüştüremezsin! ([radius])</red>'
+      lavaTip: |-
+        <gold>Bunu bir kova ile topla</gold>
+        <gold>tekrar lav olarak, ihtiyacın olursa!</gold>
     OFFLINE_GROWTH:
       description: |-
         <green>Eğer deaktif olursa</green>
@@ -1681,6 +1697,7 @@ protection:
       name: Dünya TNT hasarı
   locked: '<dark_red>Bu ada kilitli!</dark_red>'
   locked-island-bypass: '<gold>Bu [prefix_island] kilitli, ancak geçiş izniniz var.</gold>'
+  deletable-island-admin: '<red>[Admin] Bu [prefix_island] silmek için işaretlendi ve bölge temizlenmesini bekliyor.</red>'
   protected: '<dark_red>Ada korunuyor: [description]</dark_red>'
   world-protected: '<red>Dünya korunuyor: [description]</red>'
   spawn-protected: '<dark_red>Spawn koruması: [description]</dark_red>'
@@ -1715,6 +1732,11 @@ protection:
     WORLD_DEFAULTS:
       title: '<dark_purple>[world_name] </dark_purple><gold>Dünya ayarı</gold>'
       description: '<green>Oyuncu adasının dışındayken koruma ayarları</green>'
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Ada Varsayılanları</gold>'
+      description: |
+        <green>Varsayılan koruma ayarları</green>
+        <green>yeni [prefix_island]s için</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

@@ -115,6 +115,16 @@ commands:
         parameters: '[days]'
         description: 通過刪除舊區域文件清除島
         confirm: '<light_purple>輸入 </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>開始清除</light_purple>'
+      failed: '<red>清除完成但有錯誤。部分區域檔案無法刪除。請查看伺服器日誌以了解詳情。</red>'
+      age-regions:
+        parameters: '[days]'
+        description: '調試/測試：重寫區域檔案的時間戳記，使其可被清除'
+        done: '<green>已在當前世界中使 </green><aqua>[number]</aqua><green> 個區域檔案過期。</green>'
+      deleted:
+        parameters: ''
+        description: '清除已標記為刪除的任意 [prefix_island] 的區域檔案'
+        confirm: '<light_purple>輸入 </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>以刪除區域檔案</light_purple>'
+        deferred: '<green>區域檔案已刪除。島嶼資料庫條目將在下次伺服器重啟時刪除。</green>'
       protect:
         description: 開/關 島嶼清理保護， 開啟清理保護的島嶼不會被清理。
         move-to-island: '<red>請先回到島上再進行操作!</red>'
@@ -126,6 +136,8 @@ commands:
       unowned:
         description: 清理被遺棄(無主)的島嶼
         unowned-islands: '<green>找到 </green><aqua>[number] </aqua><green>個被遺棄(無主)的島嶼。</green>'
+        parameters: ''
+        flagged: '<green>已將 </green><aqua>[number] </aqua><green>個 [prefix_island](s) 標記為可刪除。執行 </green><aqua>/[label] purge deleted</aqua><green> 以清除區域檔案。</green>'
       status:
         description: 顯示清理狀態
         status: '<green>共有 </green><aqua>[purgeable]個 </aqua><green>可清理，已清理 </green><aqua>[purged]個 </aqua><green></green><gray>(</gray><aqua>[percentage] %</aqua><gray>)</gray><green>。</green>'
@@ -251,6 +263,7 @@ commands:
       protection-range-bonus-title: '<aqua>包括以下加成:</aqua>'
       protection-range-bonus: '加成: [number]'
       purge-protected: 島嶼已被加入清理白名單 不會被自動清理
+      deletable: '<red>[prefix_Island] 已被標記為刪除，正在等待區域清除。</red>'
       max-protection-range: '最大紀錄過的保護範圍: [range]'
       protection-coords: 保護邊界：[xz1] 至 [xz2]
       is-spawn: 此島嶼是初始島
@@ -303,7 +316,7 @@ commands:
       description: 傳送到玩家的島嶼
       manual: '<red>沒有安全傳送點!手動傳送至 </red><aqua>[location] </aqua><red>附近並解決這個問題</red>'
     tpuser:
-      parameters: <teleporting player> <[prefix_island]'s player> [player's island]
+      parameters: '<傳送玩家> <[prefix_island]的玩家> [玩家的島嶼]'
       description: 將一個玩家傳送到另一個玩家的[prefix_island]
     getrank:
       parameters: <player> [island owner]
@@ -339,9 +352,7 @@ commands:
       success: '<green>成功將所處位置設置為該島嶼的出生點。</green>'
       island-spawnpoint-changed: '<aqua>[user] </aqua><green>更改了島嶼出生點。</green>'
     settings:
-      parameters: >-
-        [player]/[world flag]/spawn-island [flag/active/disable]
-        [rank/active/disable]
+      parameters: '[玩家]/[世界旗標]/spawn-island [旗標/啟用/停用] [等級/啟用/停用]'
       description: 打開設置面板或使用命令調整島嶼設置
       unknown-setting: '<red>未知設置項</red>'
     blueprint:
@@ -1398,6 +1409,9 @@ protection:
       scooping: '<green>已將黑曜石變回熔岩。 下次請小心！</green>'
       cooldown: '<red>你必須等待一段時間才能再次收集黑曜石。</red>'
       obsidian-nearby: '<red>附近有其它黑曜石， 這個黑曜石不能變回熔岩。 ([radius])</red>'
+      lavaTip: |-
+        <gold>用桶舀起來</gold>
+        <gold>如果需要的話可以再次變成熔岩！</gold>
     OFFLINE_GROWTH:
       description: |-
         <gray>允許/禁止 所有成員都已離線</gray>
@@ -1608,6 +1622,7 @@ protection:
       name: '<green><bold>世界TNT傷害</bold></green>'
   locked: '<red>本島嶼已被鎖定!</red>'
   locked-island-bypass: '<gold>本[prefix_island]已被鎖定，但您有權限繞過。</gold>'
+  deletable-island-admin: '<red>[Admin] 這個 [prefix_island] 已被標記為刪除，正在等待區域清除。</red>'
   protected: '<red>島嶼保護：[description]</red>'
   world-protected: '<red>世界保護: [description].</red>'
   spawn-protected: '<red>生成保護：[description]</red>'
@@ -1642,6 +1657,11 @@ protection:
     WORLD_DEFAULTS:
       title: '<dark_purple><bold>用於 </bold></dark_purple><dark_aqua><bold>[world_name] </bold></dark_aqua><dark_purple><bold>的保護設定</bold></dark_purple>'
       description: '<gray>島嶼範圍外適用的保護設定</gray>'
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>島嶼預設設定</gold>'
+      description: |
+        <green>預設保護設定</green>
+        <green>適用於新的 [prefix_island]s</green>
     flag-item:
       name-layout: '<green><bold>[name]</bold></green>'
       command-instructions:
