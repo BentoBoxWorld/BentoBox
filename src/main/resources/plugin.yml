@@ -28,6 +28,7 @@ softdepend:
   - FancyNpcs
   - FancyHolograms
   - BlueMap
+  - CraftEngine
 
 libraries:
   - mysql:mysql-connector-java:${mysql.version}
