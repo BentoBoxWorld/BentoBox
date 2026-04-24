@@ -301,7 +301,8 @@ public class LocalesManager {
             }
 
             try {
-                YamlConfiguration languageYaml = YamlConfiguration.loadConfiguration(language);
+                YamlConfiguration languageYaml = new YamlConfiguration();
+                languageYaml.load(language);
 
                 if (languages.containsKey(localeObject)) {
                     // Merge into current language
@@ -310,10 +311,12 @@ public class LocalesManager {
                     // New language
                     languages.put(localeObject, new BentoBoxLocale(localeObject, languageYaml));
                 }
+            } catch (InvalidConfigurationException e) {
+                plugin.logError("Could not load locale file '" + localeFolder + "/" + language.getName() + "': " + e.getMessage());
+                plugin.logError("The file contains invalid YAML. Delete it and restart to regenerate, or fix the syntax. English will be used as a fallback.");
             } catch (Exception e) {
-                plugin.logError("Could not load '" + language.getName() + "' : " + e.getMessage()
-                + " with the following cause '" + e.getCause() + "'." +
-                        " The file has likely an invalid YML format or has been made unreadable during the process.");
+                plugin.logError("Could not load locale file '" + localeFolder + "/" + language.getName() + "': " + e.getMessage());
+                plugin.logError("English will be used as a fallback for affected players.");
             }
         }
     }
