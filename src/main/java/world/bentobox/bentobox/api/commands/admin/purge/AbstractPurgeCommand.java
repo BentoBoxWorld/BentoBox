@@ -79,20 +79,35 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
         toBeConfirmed = false;
         getPlugin().log(logPrefix() + ": saving all worlds before deleting region files...");
         Bukkit.getWorlds().forEach(World::save);
-        beforeDelete(scan);
-        getPlugin().log(logPrefix() + ": world save complete, dispatching deletion");
-        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            boolean ok = getPlugin().getPurgeRegionsService().delete(scan);
-            Bukkit.getScheduler().runTask(getPlugin(), () -> {
-                if (ok) {
-                    user.sendMessage(successMessageKey());
-                } else {
-                    getPlugin().log(logPrefix() + ": failed to delete one or more region files");
-                    user.sendMessage("commands.admin.purge.failed");
+        inPurge = true;
+        try {
+            beforeDelete(scan);
+            getPlugin().log(logPrefix() + ": world save complete, dispatching deletion");
+            Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+                boolean ok = false;
+                try {
+                    ok = getPlugin().getPurgeRegionsService().delete(scan);
+                } finally {
+                    boolean deleteSucceeded = ok;
+                    Bukkit.getScheduler().runTask(getPlugin(), () -> {
+                        try {
+                            if (deleteSucceeded) {
+                                user.sendMessage(successMessageKey());
+                            } else {
+                                getPlugin().log(logPrefix() + ": failed to delete one or more region files");
+                                user.sendMessage("commands.admin.purge.failed");
+                            }
+                        } finally {
+                            inPurge = false;
+                        }
+                    });
                 }
             });
-        });
-        return true;
+            return true;
+        } catch (RuntimeException e) {
+            inPurge = false;
+            throw e;
+        }
     }
 
     private void displayResultsAndPrompt(PurgeScanResult scan) {
