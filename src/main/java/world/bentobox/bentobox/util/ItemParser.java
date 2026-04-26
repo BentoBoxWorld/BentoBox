@@ -53,7 +53,7 @@ public class ItemParser {
      * recognised vanilla materials fall back to {@link Material#PAPER}.
      * @param icon the icon string, may be null
      * @return resolved Material, never null
-     * @since 3.0.0
+     * @since 3.15.0
      */
     public static Material parseIconMaterial(@Nullable String icon) {
         if (icon == null) {
@@ -72,7 +72,7 @@ public class ItemParser {
      * </ul>
      * @param icon the icon string, may be null
      * @return resolved ItemStack, never null
-     * @since 3.0.0
+     * @since 3.15.0
      */
     public static ItemStack parseIconItemStack(@Nullable String icon) {
         if (icon == null) {

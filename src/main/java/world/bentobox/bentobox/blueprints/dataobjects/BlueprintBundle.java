@@ -123,7 +123,7 @@ public class BlueprintBundle implements DataObject {
      *       with the model key set via {@link ItemMeta#setItemModel}</li>
      * </ul>
      * @return ItemStack for this bundle's icon, never null
-     * @since 3.0.0
+     * @since 3.15.0
      */
     public ItemStack getIconItemStack() {
         return ItemParser.parseIconItemStack(icon);
@@ -142,7 +142,7 @@ public class BlueprintBundle implements DataObject {
      * vanilla namespaced materials (e.g. {@code "minecraft:diamond"}), and custom item-model
      * keys (e.g. {@code "myserver:island_tropical"}).
      * @param icon the icon string; if null, defaults to {@code "PAPER"}
-     * @since 3.0.0
+     * @since 3.15.0
      */
     public void setIcon(String icon) {
         this.icon = icon != null ? icon : DEFAULT_ICON;

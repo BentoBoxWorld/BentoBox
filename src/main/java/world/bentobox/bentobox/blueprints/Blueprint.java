@@ -106,7 +106,7 @@ public class Blueprint {
      *       with the model key set via {@link ItemMeta#setItemModel}</li>
      * </ul>
      * @return ItemStack for this blueprint's icon, never null
-     * @since 3.0.0
+     * @since 3.15.0
      */
     public @NonNull ItemStack getIconItemStack() {
         return ItemParser.parseIconItemStack(icon);
@@ -128,7 +128,7 @@ public class Blueprint {
      * keys (e.g. {@code "myserver:island_tropical"}).
      * @param icon the icon string; if null, defaults to {@code "PAPER"}
      * @return blueprint
-     * @since 3.0.0
+     * @since 3.15.0
      */
     public Blueprint setIcon(String icon) {
         this.icon = icon != null ? icon : DEFAULT_ICON;
