@@ -337,6 +337,61 @@ public abstract sealed class AbstractTeleportListener
 
 
     /**
+     * Builds the End obsidian arrival platform at the given destination.
+     * <p>
+     * Vanilla creates the platform at the fixed {@code ServerLevel.END_SPAWN_POINT}
+     * (around 100, 50, 0). When BentoBox redirects the player to a different
+     * location in The End via {@link org.bukkit.event.player.PlayerPortalEvent#setTo(Location)},
+     * no platform exists at the destination and the player falls into the void.
+     * This method places a 5x5 obsidian floor with 3 layers of clear space above so
+     * the player has a safe landing.
+     *
+     * @param destination location in The End where the player will arrive.
+     */
+    protected void createEndPlatform(@NonNull Location destination)
+    {
+        World world = destination.getWorld();
+        if (world == null || !World.Environment.THE_END.equals(world.getEnvironment()))
+        {
+            return;
+        }
+
+        int baseX = destination.getBlockX();
+        int baseY = destination.getBlockY();
+        int baseZ = destination.getBlockZ();
+
+        // 5x5 obsidian floor one block below the player's feet.
+        for (int dx = -2; dx <= 2; dx++)
+        {
+            for (int dz = -2; dz <= 2; dz++)
+            {
+                Block block = world.getBlockAt(baseX + dx, baseY - 1, baseZ + dz);
+                if (!Material.OBSIDIAN.equals(block.getType()))
+                {
+                    block.setType(Material.OBSIDIAN, false);
+                }
+            }
+        }
+
+        // 3 layers of clear space above the platform so the player can stand.
+        for (int dy = 0; dy < 3; dy++)
+        {
+            for (int dx = -2; dx <= 2; dx++)
+            {
+                for (int dz = -2; dz <= 2; dz++)
+                {
+                    Block block = world.getBlockAt(baseX + dx, baseY + dy, baseZ + dz);
+                    if (!block.isEmpty())
+                    {
+                        block.setType(Material.AIR, false);
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
      * This method returns spawn location for given world.
      * @param world World which spawn point must be returned.
      * @return Spawn location for world or null.
