@@ -127,6 +127,16 @@ commands:
         parameters: '[days]'
         description: purge Quần đảo bằng cách xóa các tập tin khu vực cũ
         confirm: '<light_purple>Loại </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>để bắt đầu thanh trừng</light_purple>'
+      failed: '<red>Dọn dẹp hoàn thành với lỗi. Một số tệp vùng không thể xóa. Kiểm tra nhật ký máy chủ để biết chi tiết.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'gỡ lỗi/kiểm tra: viết lại dấu thời gian của tệp vùng để chúng có thể được dọn dẹp'
+        done: '<green>Đã làm cũ </green><aqua>[number]</aqua><green> tệp vùng trong thế giới hiện tại.</green>'
+      deleted:
+        parameters: ''
+        description: 'dọn dẹp các tệp vùng cho bất kỳ [prefix_island] nào đã được đánh dấu là đã xóa'
+        confirm: '<light_purple>Nhập </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>để xóa các tệp vùng</light_purple>'
+        deferred: '<green>Các tệp vùng đã được xóa. Các mục cơ sở dữ liệu đảo sẽ bị xóa khi khởi động lại máy chủ tiếp theo.</green>'
       protect:
         description: bật bảo vệ đảo khỏi bị xóa
         move-to-island: '<red>Di chuyển về đảo trước!</red>'
@@ -138,6 +148,8 @@ commands:
       unowned:
         description: xóa đảo không chủ
         unowned-islands: '<green>Đã tìm thấy </green><aqua>[number] </aqua><green>đảo không chủ.</green>'
+        parameters: ''
+        flagged: '<green>Đã đánh dấu </green><aqua>[number] </aqua><green>[prefix_island](s) là có thể xóa. Chạy </green><aqua>/[label] purge deleted</aqua><green> để xóa các tệp vùng.</green>'
       status:
         description: xem trạng thái của quá trình xóa
         status: >-
@@ -278,6 +290,7 @@ commands:
       protection-range-bonus-title: '<aqua>Bao gồm những phần thưởng này:</aqua>'
       protection-range-bonus: 'Thưởng: [number]'
       purge-protected: Đảo đang được bảo vệ khỏi bị xóa
+      deletable: '<red>[prefix_Island] được đánh dấu là cần xóa và đang chờ dọn dẹp vùng.</red>'
       max-protection-range: 'Độ dài bảo vệ lớn nhất: [range]'
       protection-coords: 'Tọa độ bảo vệ: [xz1] to [xz2]'
       is-spawn: Đảo là điểm triệu hồi
@@ -521,7 +534,7 @@ commands:
           success: Thành công!
           cancelling: Đang hủy
     resetflags:
-      parameters: '[flag]'
+      parameters: '[cờ]'
       description: Đặt lại tất cả các đảo về cài đặt cờ mặc định trong config.yml
       confirm: '<dark_red>Điều này sẽ đặt lại cờ về mặc định cho tất cả các hòn đảo!</dark_red>'
       success: >-
@@ -1503,6 +1516,9 @@ protection:
       scooping: '<green>Đang chuyển hắc diệm thạch thành nham thạch. Lần sau hãy cẩn thận!</green>'
       cooldown: '<red>Bạn phải đợi trước khi có thể xúc thêm hắc diệm thạch.</red>'
       obsidian-nearby: '<red>Có hắc diệm thạch xung quanh. Bạn không thể xúc thành nham thạch. ([radius])</red>'
+      lavaTip: |-
+        <gold>Hãy múc nó bằng xô</gold>
+        <gold>thành dung nham một lần nữa nếu cần!</gold>
     OFFLINE_GROWTH:
       description: |-
         <green>Khi tắt, cây trồng</green>
@@ -1738,6 +1754,7 @@ protection:
       name: Sát thương từ TNT ngoài đảo
   locked: '<red>Đảo đã khóa!</red>'
   locked-island-bypass: '<gold>[prefix_Island] này đã bị khóa, nhưng bạn có quyền đi qua.</gold>'
+  deletable-island-admin: '<red>[Admin] [prefix_island] này được đánh dấu là cần xóa và đang chờ dọn dẹp vùng.</red>'
   protected: '<red>Đảo đã bảo vệ: [description].</red>'
   world-protected: '<red>Thế giới đã bảo vệ: [description].</red>'
   spawn-protected: '<red>Điểm triệu hồi đã bảo vệ: [description].</red>'
@@ -1780,6 +1797,11 @@ protection:
       description: |
         <green>Tùy chỉnh bảo vệ khi</green>
         <green>người chơi ở ngoài đảo</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Mặc định đảo</gold>'
+      description: |
+        <green>Cài đặt bảo vệ mặc định</green>
+        <green>cho các [prefix_island]s mới</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

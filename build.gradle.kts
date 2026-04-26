@@ -46,7 +46,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 group = "world.bentobox" // From <groupId>
 
 // Base properties from <properties>
-val buildVersion = "3.14.2"
+val buildVersion = "3.15.0"
 val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
@@ -108,6 +108,7 @@ val gsonRecordTypeAdapterFactoryVersion = "0.3.0"
 val jdtAnnotationVersion = "2.2.600"
 val multilibVersion = "1.1.13"
 val oraxenVersion = "1.193.1"
+val craftEngineVersion = "0.0.67"
 val blueMapApiVersion = "v2.6.2"
 val dynmapApiVersion = "3.4"
 
@@ -190,6 +191,7 @@ repositories {
     maven("https://maven.devs.beer/") { name = "MatteoDev" }
     maven("https://repo.mikeprimm.com/") { name = "Dynmap" }
     maven("https://repo.oraxen.com/releases") { name = "Oraxen" } // Custom items plugin
+    maven("https://repo.momirealms.net/releases/") { name = "MomiRealms" } // CraftEngine custom block plugin
     maven("https://repo.codemc.org/repository/bentoboxworld/") { name = "BentoBoxWorld-Repo" }
     maven("https://repo.extendedclip.com/releases/") { name = "Placeholder-API-Releases" }
 }
@@ -248,6 +250,8 @@ dependencies {
     testImplementation("us.dynmap:dynmap-api:$dynmapApiVersion") {
         exclude(group = "org.bukkit", module = "bukkit")
     }
+    compileOnly("net.momirealms:craft-engine-bukkit:$craftEngineVersion")
+    compileOnly("net.momirealms:craft-engine-core:$craftEngineVersion")
     compileOnly("io.th0rgal:oraxen:$oraxenVersion") {
         exclude(group = "me.gabytm.util", module = "actions-spigot")
         exclude(group = "org.jetbrains", module = "annotations")

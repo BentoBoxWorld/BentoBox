@@ -138,6 +138,16 @@ commands:
         parameters: '[days]'
         description: tisztítsa meg a szigeteket a régi régiófájlok törlésével
         confirm: '<light_purple>Type </light_purple><aqua>/[label] purge regions confirm</aqua>'
+      failed: '<red>A tisztítás hibákkal fejeződött be. Néhány régiófájl nem törölhető. Részletekért lásd a szervernaplót.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/teszt: régiófájlok időbélyegeinek átírása, hogy törölhetők legyenek'
+        done: '<green>Korított </green><aqua>[number]</aqua><green> régiófájl(ok) az aktuális világban.</green>'
+      deleted:
+        parameters: ''
+        description: 'régiófájlok törlése bármely [prefix_island]-hoz, amely már töröltként van jelölve'
+        confirm: '<light_purple>Írja be: </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>a régiófájlok eltávolításához</light_purple>'
+        deferred: '<green>Régiófájlok törölve. A sziget adatbázis bejegyzések a szerver következő újraindításakor törlődnek.</green>'
       protect:
         description: '[prefix_Island] törlés elleni védelmének engedélyezése'
         move-to-island: '<red>Először menj egy szigetre!</red>'
@@ -149,6 +159,8 @@ commands:
       unowned:
         description: Tulajdonos nélküli [prefix_islands] törlése.
         unowned-islands: '<green>Megtalálva </green><aqua>[number] </aqua><green>tulajdonos nélküli [prefix_island].</green>'
+        parameters: ''
+        flagged: '<green>Megjelölve </green><aqua>[number] </aqua><green>[prefix_island](s) törölhetőként. Futtassa a </green><aqua>/[label] purge deleted</aqua><green> parancsot a régiófájlok eltávolításához.</green>'
       status:
         description: Törlés státuszának kijelzése.
         status: >-
@@ -298,6 +310,7 @@ commands:
       protection-range-bonus-title: '<aqua>A következő bónuszokat tartalmazza:</aqua>'
       protection-range-bonus: 'Bónusz: [number]'
       purge-protected: A [prefix_island] takarítással védett
+      deletable: '<red>[prefix_Island] törlésre van jelölve és régiómegtisztításra vár.</red>'
       max-protection-range: 'Legnagyobb történelmi védelmi tartomány: [range]'
       protection-coords: 'Védelmi koordináták: [xz1] – [xz2]'
       is-spawn: A [prefix_island] spawn [prefix_island]
@@ -406,7 +419,7 @@ commands:
       success: '<green>Sikeresen beállította ezt a helyet a [prefix_island] spawn pontjaként.</green>'
       island-spawnpoint-changed: '<green>[user] megváltoztatta a [prefix_island] spawn pontot.</green>'
     settings:
-      parameters: '[player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]'
+      parameters: '[játékos]/[világ jelző]/spawn-island [jelző/aktív/letiltás] [rang/aktív/letiltás]'
       description: nyissa meg a beállítások GUI-ját vagy állítsa be a beállításokat
       unknown-setting: '<red>Ismeretlen beállítás</red>'
     blueprint:
@@ -1578,6 +1591,9 @@ protection:
       scooping: '<green>Az obszidián visszaváltása lávává. Legyen óvatos legközelebb!</green>'
       cooldown: '<red>Várnia kell, mielőtt újabb obszidián blokkot meríthet.</red>'
       obsidian-nearby: >-
+      lavaTip: |-
+        <gold>Vedd fel vödörrel</gold>
+        <gold>lávává újra, ha szükséged van rá!</gold>
         <red>Obszidián blokkok vannak a közelben, ezt a tömböt nem lehet lávába</red>
         szedni. ([radius])
     OFFLINE_GROWTH:
@@ -1822,6 +1838,7 @@ protection:
       name: Világ TNT kár
   locked: '<red>Ez a [prefix_island] le van zárva!</red>'
   locked-island-bypass: '<gold>Ez a [prefix_island] le van zárva, de van engedélyed a belépésre.</gold>'
+  deletable-island-admin: '<red>[Admin] Ez a [prefix_island] törlésre van jelölve és régiómegtisztításra vár.</red>'
   protected: '<red>[prefix_Island] védett: [description].</red>'
   world-protected: '<red>Világvédett: [description].</red>'
   spawn-protected: '<red>Spawn védett: [description].</red>'
@@ -1866,6 +1883,11 @@ protection:
       description: |
         <green>Védelmi beállítások mikor</green>
         <green>játékos a szigetén kívül van</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Sziget alapértelmezések</gold>'
+      description: |
+        <green>Alapértelmezett védelmi beállítások</green>
+        <green>az új [prefix_island]ok számára</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

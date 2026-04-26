@@ -53,7 +53,7 @@ public class BentoBoxListenerRegistrar {
 
     /**
      * @return the {@link ChunkPregenManager} created during registration.
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public ChunkPregenManager getChunkPregenManager() {
         return chunkPregenManager;

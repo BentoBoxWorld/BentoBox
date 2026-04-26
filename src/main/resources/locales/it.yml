@@ -128,6 +128,16 @@ commands:
         parameters: '[days]'
         description: purge Isole eliminando i vecchi file della regione
         confirm: '<light_purple>Tipo </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>di iniziare lo spurgo</light_purple>'
+      failed: '<red>Pulizia completata con errori. Alcuni file di regione non possono essere eliminati. Controlla il log del server per i dettagli.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/test: riscrivi i timestamp dei file di regione per renderli eliminabili'
+        done: '<green>Invecchiati </green><aqua>[number]</aqua><green> file di regione nel mondo attuale.</green>'
+      deleted:
+        parameters: ''
+        description: 'pulisci i file di regione per qualsiasi [prefix_island] già contrassegnata come eliminata'
+        confirm: '<light_purple>Digita </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>per eliminare i file di regione</light_purple>'
+        deferred: '<green>File di regione eliminati. Le voci del database delle isole verranno rimosse al prossimo riavvio del server.</green>'
       protect:
         description: Abilita o disabilita la protezione isola dalla purga
         move-to-island: '<red>Spostati su una isola prima!</red>'
@@ -139,6 +149,8 @@ commands:
       unowned:
         description: Purga le isole senza proprietario - richiede conferma
         unowned-islands: '<light_purple>Trovate [number] isole</light_purple>'
+        parameters: ''
+        flagged: '<green>Contrassegnate </green><aqua>[number] </aqua><green>[prefix_island](s) come eliminabili. Esegui </green><aqua>/[label] purge deleted</aqua><green> per rimuovere i file di regione.</green>'
       status:
         description: visualizza lo stato della purga
         status: >-
@@ -287,6 +299,7 @@ commands:
       protection-range-bonus-title: '<aqua>Include questi bonus:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: La isola è protetta dalla purga
+      deletable: '<red>[prefix_Island] è contrassegnata per l''eliminazione e in attesa di pulizia della regione.</red>'
       max-protection-range: 'Raggio di protezione più grande avuto: [range]'
       protection-coords: 'Coordinate di protezione: [xz1] to [xz2]'
       is-spawn: L'isola è un'isola di spawn
@@ -314,7 +327,7 @@ commands:
     trash:
       no-unowned-in-trash: '<red>Non ci sono isole senza proprietario nel cestino</red>'
       no-islands-in-trash: '<red>Il giocatore non ha isole nel cestino</red>'
-      parameters: '[player]'
+      parameters: '[giocatore]'
       description: mostra le isole senza proprietario o le isole del giocatore nel cestino
       title: '<light_purple>=========== Isole nel Cestino ===========</light_purple>'
       count: '<bold><light_purple>Isola [number]:</light_purple></bold>'
@@ -325,7 +338,7 @@ commands:
         <green>Usa <bold>[label] emptytrash [player]</bold> per rimuovere permanentemente le</green>
         isole nel cestino
     emptytrash:
-      parameters: '[player]'
+      parameters: '[giocatore]'
       description: >-
         Pulisci il cestino del player, o tutte le isole senza proprietario nel
         cestino
@@ -552,7 +565,7 @@ commands:
           success: Successo!
           cancelling: Annullamento
     resetflags:
-      parameters: '[flag]'
+      parameters: '[bandiera]'
       description: Reimposta le impostazioni di tutte le isole a quelle in config.yml
       confirm: '<dark_red>Questo resetterà tutte le flag di tutte le isole ai valori default!</dark_red>'
       success: '<green>Resettato con successo le flag di tutte le isole ai valori default.</green>'
@@ -723,7 +736,7 @@ commands:
       you-can-teleport-to-your-island: '<green>Puoi teletrasportarti alla isola quando puoi.</green>'
     deletehome:
       description: cancellare una posizione casa
-      parameters: '[home name]'
+      parameters: '[nome casa]'
     homes:
       description: elenca le tue
     info:
@@ -783,7 +796,7 @@ commands:
       success: '<green>Cambiato il nome della tua isola in </green><aqua>[name]</aqua><green>.</green>'
     renamehome:
       description: rinominare una posizione di casa
-      parameters: '[home name]'
+      parameters: '[nome casa]'
       enter-new-name: '<gold>Inserisci il nuovo nome</gold>'
       already-exists: '<red>Quel nome esiste già, prova con un altro nome.</red>'
     resetname:
@@ -1539,6 +1552,9 @@ protection:
       scooping: '<green>Recuperando la ossidiana in lava. Stai attento la prossima volta!</green>'
       cooldown: '<red>Devi aspettare prima di raccogliere un altro blocco di ossidiana.</red>'
       obsidian-nearby: >-
+      lavaTip: |-
+        <gold>Raccoglilo con un secchio</gold>
+        <gold>di nuovo come lava se ne hai bisogno!</gold>
         <red>Ci sono blocchi di ossidiana vicini, non puoi riciclare questo blocco</red>
         in lava. ([radius])
     OFFLINE_GROWTH:
@@ -1775,6 +1791,7 @@ protection:
       name: Danno TNT nel mondo
   locked: '<red>Quest''isola è bloccata!</red>'
   locked-island-bypass: '<gold>Questa [prefix_island] è bloccata, ma hai il permesso di accedervi.</gold>'
+  deletable-island-admin: '<red>[Admin] Questa [prefix_island] è contrassegnata per l''eliminazione e in attesa di pulizia della regione.</red>'
   protected: '<red>Isola protetta: [description]</red>'
   world-protected: '<red>Mondo protetto: [description]</red>'
   spawn-protected: '<red>Spawn protetto: [description]</red>'
@@ -1815,6 +1832,11 @@ protection:
       description: |-
         <green>Impostazioni protezione quando un</green>
         <green>giocatore è fuori dalla propria isola</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Impostazioni predefinite isola</gold>'
+      description: |
+        <green>Impostazioni di protezione predefinite</green>
+        <green>per le nuove [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

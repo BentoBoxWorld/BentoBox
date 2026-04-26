@@ -1735,7 +1735,7 @@ public class Island implements DataObject, MetaDataAble {
      * Calls to this method must be balanced with calls to {@link #endDeferSaves()}.
      * Multiple callers may defer simultaneously (reference-counted).
      *
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public void beginDeferSaves() {
         deferSaveCount++;
@@ -1745,7 +1745,7 @@ public class Island implements DataObject, MetaDataAble {
      * End deferring database saves. Decrements the defer counter; when it reaches
      * zero the island is saved if it has been marked as changed.
      *
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public void endDeferSaves() {
         if (deferSaveCount > 0) {
@@ -1758,7 +1758,7 @@ public class Island implements DataObject, MetaDataAble {
 
     /**
      * @return true if saves are currently being deferred
-     * @since 3.14.0
+     * @since 3.15.0
      */
     public boolean isDeferSaves() {
         return deferSaveCount > 0;

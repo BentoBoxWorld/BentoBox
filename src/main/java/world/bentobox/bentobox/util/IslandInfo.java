@@ -119,6 +119,9 @@ public class IslandInfo {
         if (island.isPurgeProtected()) {
             user.sendMessage("commands.admin.info.purge-protected");
         }
+        if (island.isDeletable()) {
+            user.sendMessage("commands.admin.info.deletable");
+        }
         // Show bundle info if available
         island.getMetaData("bundle").ifPresent(mdv -> user.sendMessage("commands.admin.info.bundle", TextVariables.NAME, mdv.asString()));
         // Fire info event to allow other addons to add to info

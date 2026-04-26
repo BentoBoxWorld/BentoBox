@@ -35,6 +35,9 @@ $RECYCLE.BIN/
 *.ear
 hs_err_pid*
 
+ # Paper NMS
+.paper-nms/
+
  # Maven
 target/
 pom.xml.tag

@@ -132,6 +132,16 @@ commands:
         parameters: '[days]'
         description: insulele de purjare prin ștergerea fișierelor din regiunea veche
         confirm: '<light_purple>Tip </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>să înceapă purjarea</light_purple>'
+      failed: '<red>Curățarea finalizată cu erori. Unele fișiere de regiune nu au putut fi șterse. Verificați jurnalul serverului pentru detalii.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/test: rescrie marcajele de timp ale fișierelor de regiune pentru a le face purgabile'
+        done: '<green>Îmbătrânit </green><aqua>[number]</aqua><green> fișier(e) de regiune în lumea curentă.</green>'
+      deleted:
+        parameters: ''
+        description: 'curățați fișierele de regiune pentru orice [prefix_island] deja marcată ca ștearsă'
+        confirm: '<light_purple>Tastați </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>pentru a elimina fișierele de regiune</light_purple>'
+        deferred: '<green>Fișierele de regiune au fost șterse. Intrările din baza de date ale insulelor vor fi eliminate la repornirea serverului.</green>'
       protect:
         description: comutați protecția de purjare a insulei
         move-to-island: '<red>Mutați-vă mai întâi pe o insulă!</red>'
@@ -143,6 +153,8 @@ commands:
       unowned:
         description: curățați insulele neproprietate
         unowned-islands: '<green>S-au găsit [number] insule neproprietate. </green>'
+        parameters: ''
+        flagged: '<green>Marcate </green><aqua>[number] </aqua><green>[prefix_island](s) ca ștergabile. Rulați </green><aqua>/[label] purge deleted</aqua><green> pentru a elimina fișierele de regiune.</green>'
       status:
         description: afișează starea purjării
         status: >-
@@ -288,6 +300,7 @@ commands:
       protection-range-bonus-title: '<aqua>Include aceste bonusuri:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: Insula este protejată de purjare
+      deletable: '<red>[prefix_Island] este marcată pentru ștergere și așteaptă curățarea regiunii.</red>'
       max-protection-range: 'Cea mai mare gamă de protecție istorică: [range]'
       protection-coords: 'Coordonate de protecție: de la [xz1] la [xz2]'
       is-spawn: Insula este o insulă spawn
@@ -1557,6 +1570,9 @@ protection:
       scooping: '<green>Obsidian în schimbare în lavă. Fii atent data viitoare!</green>'
       cooldown: '<red>Trebuie să așteptați înainte de a colecta un alt bloc de obsidian.</red>'
       obsidian-nearby: >-
+      lavaTip: |-
+        <gold>Ia-l cu o găleată</gold>
+        <gold>din nou ca lavă dacă ai nevoie!</gold>
         <red>Există blocuri de obsidian în apropiere, nu puteți scoate acest bloc</red>
         în lavă. ([radius])
     OFFLINE_GROWTH:
@@ -1801,6 +1817,7 @@ protection:
       name: Daune TNT mondiale
   locked: '<red>Această insulă este blocată!</red>'
   locked-island-bypass: '<gold>Această [prefix_island] este blocată, dar ai permisiunea de a o ocoli.</gold>'
+  deletable-island-admin: '<red>[Admin] Această [prefix_island] este marcată pentru ștergere și așteaptă curățarea regiunii.</red>'
   protected: '<red>Insula protejată: [description].</red>'
   world-protected: '<red>Protecție mondială: [description].</red>'
   spawn-protected: '<red>Spawn protejat: [description].</red>'
@@ -1843,6 +1860,11 @@ protection:
       description: |
         <green>Setări de protecție când</green>
         <green>jucător se află în afara insulei lor</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Setări implicite insulă</gold>'
+      description: |
+        <green>Setări de protecție implicite</green>
+        <green>pentru noile [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

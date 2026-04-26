@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
@@ -20,6 +21,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
@@ -36,6 +38,14 @@ public class LockAndBanListener extends FlagListener {
      * to avoid spamming the same message on every move event.
      */
     private final Set<UUID> notifiedPlayers = new HashSet<>();
+
+    /**
+     * Tracks ops who have already been notified that they are standing on an
+     * island flagged for deletion (awaiting region purge), to avoid spamming
+     * the notice on every move event. Cleared when the op leaves a deletable
+     * island.
+     */
+    private final Set<UUID> deletableNotified = new HashSet<>();
 
     /**
      * Result of checking the island for locked state or player bans
@@ -119,6 +129,14 @@ public class LockAndBanListener extends FlagListener {
         }
     }
 
+    // Quit cleanup — prevent unbounded growth of notification tracking sets
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+        notifiedPlayers.remove(uuid);
+        deletableNotified.remove(uuid);
+    }
+
     /**
      * Check if a player is banned or the island is locked
      * @param player - player
@@ -177,7 +195,33 @@ public class LockAndBanListener extends FlagListener {
                 User.getInstance(player).notify("protection.locked-island-bypass");
             }
         }
+        notifyIfDeletable(player, loc);
         return result;
+    }
+
+    /**
+     * Notify ops that the island they just entered is flagged for deletion
+     * and awaiting the region purge. Regular players see nothing — this is
+     * an admin-only heads-up so server staff know the visible chunks will
+     * be reaped the next time housekeeping runs.
+     *
+     * <p>Fires at most once per entry, using the same "move out to reset"
+     * pattern as the lock notification.
+     */
+    private void notifyIfDeletable(@NonNull Player player, Location loc) {
+        if (!player.isOp()) {
+            deletableNotified.remove(player.getUniqueId());
+            return;
+        }
+        boolean deletable = getIslands().getProtectedIslandAt(loc)
+                .map(Island::isDeletable).orElse(false);
+        if (deletable) {
+            if (deletableNotified.add(player.getUniqueId())) {
+                User.getInstance(player).notify("protection.deletable-island-admin");
+            }
+        } else {
+            deletableNotified.remove(player.getUniqueId());
+        }
     }
 
     /**

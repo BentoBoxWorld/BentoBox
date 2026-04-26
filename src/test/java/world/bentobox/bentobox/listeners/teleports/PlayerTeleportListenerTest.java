@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -250,6 +251,58 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         // Verify player velocity and fall distance were reset
         verify(mockPlayer, times(1)).setVelocity(new Vector(0, 0, 0));
         verify(mockPlayer, times(1)).setFallDistance(0);
+    }
+
+    /**
+     * Verifies that {@link AbstractTeleportListener#createEndPlatform(Location)} lays a 5x5
+     * obsidian floor and clears 5x5x3 of air above it when the destination is in The End.
+     * Regression test for AOneBlock issue #433.
+     */
+    @Test
+    void testCreateEndPlatformBuildsFloorAndClearsAirInEnd() {
+        World endWorld = mock(World.class);
+        when(endWorld.getEnvironment()).thenReturn(Environment.THE_END);
+        Location dest = mock(Location.class);
+        when(dest.getWorld()).thenReturn(endWorld);
+        when(dest.getBlockX()).thenReturn(50);
+        when(dest.getBlockY()).thenReturn(70);
+        when(dest.getBlockZ()).thenReturn(-30);
+
+        Block obsidianSlot = mock(Block.class);
+        when(obsidianSlot.getType()).thenReturn(Material.AIR);
+        Block airSlot = mock(Block.class);
+        when(airSlot.isEmpty()).thenReturn(false);
+        when(airSlot.getType()).thenReturn(Material.STONE);
+
+        // Floor row at y = 69 (baseY - 1) - mock with non-obsidian to force setType.
+        when(endWorld.getBlockAt(anyInt(), eq(69), anyInt())).thenReturn(obsidianSlot);
+        // Player-occupied space at y = 70..72 - mock with non-empty so setType is called.
+        when(endWorld.getBlockAt(anyInt(), eq(70), anyInt())).thenReturn(airSlot);
+        when(endWorld.getBlockAt(anyInt(), eq(71), anyInt())).thenReturn(airSlot);
+        when(endWorld.getBlockAt(anyInt(), eq(72), anyInt())).thenReturn(airSlot);
+
+        ptl.createEndPlatform(dest);
+
+        // 5x5 = 25 obsidian blocks placed.
+        verify(obsidianSlot, times(25)).setType(Material.OBSIDIAN, false);
+        // 5x5x3 = 75 air blocks cleared.
+        verify(airSlot, times(75)).setType(Material.AIR, false);
+    }
+
+    /**
+     * The platform helper must be a no-op outside The End — otherwise we'd corrupt blocks
+     * in the overworld or nether.
+     */
+    @Test
+    void testCreateEndPlatformDoesNothingOutsideEnd() {
+        World normalWorld = mock(World.class);
+        when(normalWorld.getEnvironment()).thenReturn(Environment.NORMAL);
+        Location dest = mock(Location.class);
+        when(dest.getWorld()).thenReturn(normalWorld);
+
+        ptl.createEndPlatform(dest);
+
+        verify(normalWorld, times(0)).getBlockAt(anyInt(), anyInt(), anyInt());
     }
 
     /**

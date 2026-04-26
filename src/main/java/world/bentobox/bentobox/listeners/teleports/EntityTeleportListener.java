@@ -247,6 +247,16 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
         this.getIsland(event.getTo()).ifPresent(island ->
             event.setSearchRadius(this.calculateSearchRadius(event.getTo(), island)));
 
+        // Vanilla always builds the end arrival platform at the fixed END_SPAWN_POINT,
+        // not at the redirected destination, so the entity would fall into the void.
+        // Build the platform manually at the actual destination.
+        if (this.isMakePortals(overWorld, environment)
+                && event.getTo() != null
+                && World.Environment.THE_END.equals(event.getTo().getWorld().getEnvironment()))
+        {
+            this.createEndPlatform(event.getTo());
+        }
+
         // Check if there is an island there or not
         if (this.isPastingMissingIslands(overWorld) &&
             this.isAllowedInConfig(overWorld, environment) &&

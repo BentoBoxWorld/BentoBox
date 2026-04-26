@@ -735,26 +735,6 @@ class SettingsTest {
 
     /**
      * Test method for
-     * {@link world.bentobox.bentobox.Settings#isKeepPreviousIslandOnReset()}.
-     */
-    @Test
-    void testIsKeepPreviousIslandOnReset() {
-        assertFalse(s.isKeepPreviousIslandOnReset());
-    }
-
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.Settings#setKeepPreviousIslandOnReset(boolean)}.
-     */
-    @Test
-    void testSetKeepPreviousIslandOnReset() {
-        assertFalse(s.isKeepPreviousIslandOnReset());
-        s.setKeepPreviousIslandOnReset(true);
-        assertTrue(s.isKeepPreviousIslandOnReset());
-    }
-
-    /**
-     * Test method for
      * {@link world.bentobox.bentobox.Settings#getMongodbConnectionUri()}.
      */
     @Test

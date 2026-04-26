@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -185,6 +186,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         if (!(e.getTarget() instanceof Player p) ||
                 !this.getIWM().inWorld(world) ||
                 e.getTarget().hasMetadata("NPC") ||
+                e.getEntity() instanceof ExperienceOrb ||
                 this.getIslands().userIsOnIsland(world, User.getInstance(e.getTarget())) ||
                 this.isPvpAllowed(p.getLocation()) ||
                 e.getReason() == EntityTargetEvent.TargetReason.TARGET_DIED ||

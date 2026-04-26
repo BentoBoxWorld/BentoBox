@@ -120,6 +120,16 @@ commands:
         parameters: '[days]'
         description: Purge Islands odstraněním souborů starého regionu
         confirm: '<light_purple>Typ </light_purple><aqua>/[label] purge regions potvrdit & d pro začátek čištění</aqua>'
+      failed: '<red>Čištění dokončeno s chybami. Některé soubory regionů nelze odstranit. Podrobnosti najdete v protokolu serveru.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/test: přepište časová razítka souborů regionů, aby byly čistitelné'
+        done: '<green>Upraveno </green><aqua>[number]</aqua><green> soubor(ů) regionů v aktuálním světě.</green>'
+      deleted:
+        parameters: ''
+        description: 'vyčistit soubory regionů pro jakýkoliv [prefix_island], který je označen jako smazaný'
+        confirm: '<light_purple>Napište </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>pro smazání souborů regionů</light_purple>'
+        deferred: '<green>Soubory regionů smazány. Záznamy databáze ostrovů budou odstraněny při příštím restartu serveru.</green>'
       protect:
         description: Přepnout protekci proti čištění
         move-to-island: '<red>Nejdříve se přesuň na ostrov!</red>'
@@ -131,6 +141,8 @@ commands:
       unowned:
         description: Vyčistit nevlastněné ostrovy - vyžaduje potvrzení
         unowned-islands: '<light_purple>Nalezeno [number] ostrovů</light_purple>'
+        parameters: ''
+        flagged: '<green>Označeno </green><aqua>[number] </aqua><green>[prefix_island](s) jako smazatelné. Spusťte </green><aqua>/[label] purge deleted</aqua><green> pro smazání souborů regionů.</green>'
       status:
         description: zobrazuje stav čištění
         status: >-
@@ -270,6 +282,7 @@ commands:
       protection-range-bonus-title: '<aqua>Zahrnuje tyto bonusy:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: Ostrov je chráněn proti smazání
+      deletable: '<red>[prefix_Island] je označen pro smazání a čeká na vyčištění regionu.</red>'
       max-protection-range: 'Největší historická chráněná oblast: [range]'
       protection-coords: 'Chráněné souřadnice: [xz1] - [xz2]'
       is-spawn: Ostrov je spawn
@@ -293,7 +306,7 @@ commands:
     trash:
       no-unowned-in-trash: '<red>V koši nejsou žádné nevlastněné ostrovy</red>'
       no-islands-in-trash: '<red>Hráč nemá žádný ostrov v koši</red>'
-      parameters: '[player]'
+      parameters: '[hráč]'
       description: ukázat nevlastněné nebo hráčské ostrovy v koši
       title: '<light_purple>=========== Ostrovy v koši ===========</light_purple>'
       count: '<bold><light_purple>Ostrov [number]:</light_purple></bold>'
@@ -304,7 +317,7 @@ commands:
         <green>Použij <bold>[label] emptytrash [player]</bold></green><green> k trvalému smazání</green>
         položek
     emptytrash:
-      parameters: '[player]'
+      parameters: '[hráč]'
       description: Vysypat koš hráče, nebo všech nevlastněných ostrovů
       success: '<green>Koš byl úspěšně vysypán.</green>'
     version:
@@ -517,7 +530,7 @@ commands:
           success: Úspěch!
           cancelling: Rušení
     resetflags:
-      parameters: '[flag]'
+      parameters: '[příznak]'
       description: Obnov vlaječky všech ostrovů na výchozí nastavení v souboru config.yml
       confirm: '<dark_red>Toto obnoví vlaječku/-y všech ostrovů na výchozí hodnotu!</dark_red>'
       success: '<green>Výchozí hodnoty vlaječek všech ostrovů úspěšně obnoveny.</green>'
@@ -1486,6 +1499,9 @@ protection:
       scooping: '<green>Změna obsidiánu zpět na lávu. Příště pozor!</green>'
       cooldown: '<red>Musíte počkat, než budete moci nabrat další obsidiánový blok.</red>'
       obsidian-nearby: '<red>Nedaleko jsou obsidiánové bloky, tento blok nemůžete nabrat do lávy. ([radius])</red>'
+      lavaTip: |-
+        <gold>Naberte to do kýble</gold>
+        <gold>jako lávou znovu, pokud ji potřebujete!</gold>
     OFFLINE_GROWTH:
       description: |-
         <green>Je-li zakázáno, rostliny</green>
@@ -1723,6 +1739,7 @@ protection:
       name: Světové poškození TNT
   locked: '<red>Tento ostrov je zamčen!</red>'
   locked-island-bypass: '<gold>Tento [prefix_island] je zamčen, ale máte povolení ho obejít.</gold>'
+  deletable-island-admin: '<red>[Admin] Tento [prefix_island] je označen pro smazání a čeká na vyčištění regionu.</red>'
   protected: '<red>Ostrov chráněn: [description]</red>'
   world-protected: '<red>Svět chráněn: [description]</red>'
   spawn-protected: '<red>Spawn chráněn: [description]</red>'
@@ -1765,6 +1782,11 @@ protection:
       description: |
         <green>Protekční nastavení, pokud je</green>
         <green>hráč mimo svůj ostrov</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Výchozí nastavení ostrova</gold>'
+      description: |
+        <green>Výchozí nastavení ochrany</green>
+        <green>pro nové [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

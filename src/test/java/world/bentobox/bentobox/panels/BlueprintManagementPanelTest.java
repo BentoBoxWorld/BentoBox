@@ -17,6 +17,7 @@ import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,6 +81,7 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
         when(bb.getUniqueId()).thenReturn("test");
         when(bb.getDisplayName()).thenReturn("test");
         when(bb.getIcon()).thenReturn(Material.STONE);
+        when(bb.getIconItemStack()).thenReturn(new ItemStack(Material.STONE));
         when(bb.getDescription()).thenReturn(Collections.singletonList("A description"));
         when(bb.getCommands()).thenReturn(Collections.emptyList());
         when(bb.getSlot()).thenReturn(5);
@@ -87,12 +89,14 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
         when(bb2.getUniqueId()).thenReturn("test2");
         when(bb2.getDisplayName()).thenReturn("test2");
         when(bb2.getIcon()).thenReturn(Material.ACACIA_BOAT);
+        when(bb2.getIconItemStack()).thenReturn(new ItemStack(Material.ACACIA_BOAT));
         when(bb2.getDescription()).thenReturn(Collections.singletonList("A description 2"));
         when(bb2.getSlot()).thenReturn(-5);
         // Too large slot for panel
         when(bb3.getUniqueId()).thenReturn("test3");
         when(bb3.getDisplayName()).thenReturn("test3");
         when(bb3.getIcon()).thenReturn(Material.BAKED_POTATO);
+        when(bb3.getIconItemStack()).thenReturn(new ItemStack(Material.BAKED_POTATO));
         when(bb3.getDescription()).thenReturn(Collections.singletonList("A description 3"));
         when(bb3.getSlot()).thenReturn(65);
 
@@ -167,6 +171,7 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
     void testGetBlueprintItemWithDisplayNameAndIcon() {
         when(blueprint.getDisplayName()).thenReturn("Display Name");
         when(blueprint.getIcon()).thenReturn(Material.BEACON);
+        when(blueprint.getIconItemStack()).thenReturn(new ItemStack(Material.BEACON));
         PanelItem pi = bmp.getBlueprintItem(addon, 0, bb, blueprint);
         assertEquals("Display Name", pi.getName());
         assertEquals(Material.BEACON, pi.getItem().getType());
@@ -180,6 +185,7 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
     void testGetBlueprintItemWithDisplayNameAndIconInWorldSlot() {
         when(blueprint.getDisplayName()).thenReturn("Display Name");
         when(blueprint.getIcon()).thenReturn(Material.BEACON);
+        when(blueprint.getIconItemStack()).thenReturn(new ItemStack(Material.BEACON));
         PanelItem pi = bmp.getBlueprintItem(addon, 5, bb, blueprint);
         assertEquals("Display Name", pi.getName());
         assertEquals(Material.BEACON, pi.getItem().getType());
@@ -224,6 +230,7 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
             when(bundle.getUniqueId()).thenReturn("bundle" + i);
             when(bundle.getDisplayName()).thenReturn("Bundle " + String.format("%02d", i));
             when(bundle.getIcon()).thenReturn(Material.STONE);
+            when(bundle.getIconItemStack()).thenReturn(new ItemStack(Material.STONE));
             when(bundle.getDescription()).thenReturn(Collections.singletonList("Desc"));
             map.put("bundle" + i, bundle);
         }

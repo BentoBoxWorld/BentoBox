@@ -34,7 +34,7 @@ import world.bentobox.bentobox.util.Util;
  * round-robining between worlds to ensure fairness and prevent server overload.
  *
  * @author tastybento
- * @since 3.14.0
+ * @since 3.15.0
  */
 public class ChunkPregenManager implements Listener {
 

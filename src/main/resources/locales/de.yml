@@ -133,6 +133,16 @@ commands:
         confirm: >-
           <light_purple>Tippe </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>, um mit dem Löschen zu</light_purple>
           beginnen
+      failed: '<red>Bereinigung mit Fehlern abgeschlossen. Einige Regionsdateien konnten nicht gelöscht werden. Einzelheiten im Serverprotokoll.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/test: Zeitstempel von Regionsdateien neu schreiben, damit sie gelöscht werden können'
+        done: '<green>Gealtert </green><aqua>[number]</aqua><green> Regionsdatei(en) in der aktuellen Welt.</green>'
+      deleted:
+        parameters: ''
+        description: 'Regionsdateien für [prefix_island] bereinigen, die bereits als gelöscht markiert sind'
+        confirm: '<light_purple>Geben Sie </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>ein, um die Regionsdateien zu entfernen</light_purple>'
+        deferred: '<green>Regionsdateien gelöscht. Insel-Datenbankeinträge werden beim nächsten Serverneustart entfernt.</green>'
       protect:
         description: Umschalten des Insellöschschutzes
         move-to-island: '<red>Erst auf eine Insel gehen!</red>'
@@ -144,6 +154,8 @@ commands:
       unowned:
         description: Löschen freier Inseln - Bestätigung erforderlich
         unowned-islands: '<light_purple>[number] Inseln gefunden</light_purple>'
+        parameters: ''
+        flagged: '<green>Markiert </green><aqua>[number] </aqua><green>[prefix_island](s) als löschbar. Führen Sie </green><aqua>/[label] purge deleted</aqua><green> aus, um die Regionsdateien zu entfernen.</green>'
       status:
         description: Zeigt den Status der Bereinigung an
         status: >-
@@ -292,6 +304,7 @@ commands:
       protection-range-bonus-title: '<aqua>Beinhaltet diese Boni:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: Die Insel ist löschgeschützt
+      deletable: '<red>[prefix_Island] ist zum Löschen markiert und wartet auf die Regionbereinigung.</red>'
       max-protection-range: 'Größter historischer Schutzbereich: [range]'
       protection-coords: 'Schutz-Koordinaten: [xz1] bis [xz2]'
       is-spawn: Die Insel ist eine Spawn-Insel
@@ -545,7 +558,7 @@ commands:
           success: Erfolg!
           cancelling: Abbrechen
     resetflags:
-      parameters: '[flag]'
+      parameters: '[Flagge]'
       description: >-
         Alle Inseln in der config.yml auf Standard-Flag-Einstellungen
         zurücksetzen
@@ -1556,6 +1569,9 @@ protection:
       scooping: '<green>Obsidian wieder in Lava verwandelt. Sei nächstes Mal vorsichtig!</green>'
       cooldown: '<red>Du musst warten, bevor du einen weiteren Obsidianblock schöpfen kannst.</red>'
       obsidian-nearby: >-
+      lavaTip: |-
+        <gold>Schöpfe es mit einem Eimer</gold>
+        <gold>wieder als Lava, falls du sie brauchst!</gold>
         <red>Es gibt Obsidianblöcke in der Nähe, du kannst diesen Block nicht in</red>
         Lava umwandeln. ([radius])
     OFFLINE_GROWTH:
@@ -1801,6 +1817,7 @@ protection:
       name: Welt-TNT-Schaden
   locked: '<red>Diese Insel ist gesperrt!</red>'
   locked-island-bypass: '<gold>Diese [prefix_island] ist gesperrt, aber du hast die Erlaubnis, sie zu betreten.</gold>'
+  deletable-island-admin: '<red>[Admin] Diese [prefix_island] ist zum Löschen markiert und wartet auf die Regionbereinigung.</red>'
   protected: '<red>Insel geschützt: [description]</red>'
   world-protected: '<red>Welt geschützt: [description]</red>'
   spawn-protected: '<red>Spawn geschützt: [description]</red>'
@@ -1843,6 +1860,11 @@ protection:
       description: |-
         <green>Schutzeinstellungen, wenn</green>
         <green>Spieler außerhalb ihrer Insel sind</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Insel-Standardeinstellungen</gold>'
+      description: |
+        <green>Standard-Schutzeinstellungen</green>
+        <green>für neue [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

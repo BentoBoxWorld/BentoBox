@@ -26,9 +26,13 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -291,4 +295,59 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
         verify(im).homeTeleportAsync(any(), eq(mockPlayer));
         verify(pim).callEvent(any(InvincibleVistorFlagDamageRemovalEvent.class));
     }
+
+    /**
+     * Test that onVisitorTargeting cancels mob targeting of a visitor when ENTITY_ATTACK is in IV settings.
+     */
+    @Test
+    void testOnVisitorTargetingCancelsMobTargeting() {
+        ivSettings.add(DamageCause.ENTITY_ATTACK.name());
+        Zombie zombie = mock(Zombie.class);
+        when(zombie.getWorld()).thenReturn(world);
+        EntityTargetLivingEntityEvent e = new EntityTargetLivingEntityEvent(zombie, mockPlayer, TargetReason.CLOSEST_PLAYER);
+        listener.onVisitorTargeting(e);
+        assertTrue(e.isCancelled());
+    }
+
+    /**
+     * Test that onVisitorTargeting does NOT cancel experience orb targeting of a visitor.
+     * XP orbs should still be able to track visitors for pickup, regardless of IV settings.
+     */
+    @Test
+    void testOnVisitorTargetingDoesNotCancelExperienceOrbTargeting() {
+        ivSettings.add(DamageCause.ENTITY_ATTACK.name());
+        ExperienceOrb orb = mock(ExperienceOrb.class);
+        when(orb.getWorld()).thenReturn(world);
+        EntityTargetLivingEntityEvent e = new EntityTargetLivingEntityEvent(orb, mockPlayer, TargetReason.CLOSEST_PLAYER);
+        listener.onVisitorTargeting(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test that onVisitorTargeting does not cancel when entity_attack is not in IV settings.
+     */
+    @Test
+    void testOnVisitorTargetingNotInIvSettings() {
+        // ENTITY_ATTACK is not in ivSettings by default
+        Zombie zombie = mock(Zombie.class);
+        when(zombie.getWorld()).thenReturn(world);
+        EntityTargetLivingEntityEvent e = new EntityTargetLivingEntityEvent(zombie, mockPlayer, TargetReason.CLOSEST_PLAYER);
+        listener.onVisitorTargeting(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test that onVisitorTargeting does not cancel when user is on their own island.
+     */
+    @Test
+    void testOnVisitorTargetingNotVisitor() {
+        ivSettings.add(DamageCause.ENTITY_ATTACK.name());
+        when(im.userIsOnIsland(any(), any())).thenReturn(true);
+        Zombie zombie = mock(Zombie.class);
+        when(zombie.getWorld()).thenReturn(world);
+        EntityTargetLivingEntityEvent e = new EntityTargetLivingEntityEvent(zombie, mockPlayer, TargetReason.CLOSEST_PLAYER);
+        listener.onVisitorTargeting(e);
+        assertFalse(e.isCancelled());
+    }
+
 }

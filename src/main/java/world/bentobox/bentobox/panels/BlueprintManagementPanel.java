@@ -134,7 +134,7 @@ public class BlueprintManagementPanel {
             PanelItem item = new PanelItemBuilder()
                     .name(bb.getDisplayName())
                     .description(t("edit"), t("rename"))
-                    .icon(bb.getIcon())
+                    .icon(bb.getIconItemStack())
                     .clickHandler((panel, u, clickType, s) -> {
                         u.closeInventory();
                         if (clickType.equals(ClickType.RIGHT)) {
@@ -350,7 +350,7 @@ public class BlueprintManagementPanel {
         return new PanelItemBuilder()
                 .name(t("edit-description"))
                 .description(bb.getDescription())
-                .icon(bb.getIcon())
+                .icon(bb.getIconItemStack())
                 .clickHandler((panel, u, clickType, slot) -> {
                     u.closeInventory();
                     // Description conversation
@@ -458,7 +458,7 @@ public class BlueprintManagementPanel {
         return new PanelItemBuilder()
                 .name(blueprint.getDisplayName() == null ? blueprint.getName() : blueprint.getDisplayName())
                 .description(desc)
-                .icon(blueprint.getIcon())
+                .icon(blueprint.getIconItemStack())
                 .glow(selected != null && pos == selected.getKey())
                 .clickHandler((panel, u, clickType, slot) -> {
                     // Handle the world squares

@@ -132,6 +132,16 @@ commands:
         parameters: '[days]'
         description: purge Islands excluindo arquivos da região antiga
         confirm: '<light_purple>tipo </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>para começar a limpar</light_purple>'
+      failed: '<red>Limpeza concluída com erros. Alguns ficheiros de região não puderam ser eliminados. Consulte o registo do servidor para obter detalhes.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/teste: reescreva os carimbos de data/hora dos ficheiros de região para que possam ser purgados'
+        done: '<green>Envelhecidos </green><aqua>[number]</aqua><green> ficheiro(s) de região no mundo atual.</green>'
+      deleted:
+        parameters: ''
+        description: 'limpar ficheiros de região de qualquer [prefix_island] já marcada como eliminada'
+        confirm: '<light_purple>Escreva </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>para remover os ficheiros de região</light_purple>'
+        deferred: '<green>Ficheiros de região eliminados. As entradas da base de dados da ilha serão removidas no próximo reinício do servidor.</green>'
       protect:
         description: alternar proteção contra exclusão de ilha
         move-to-island: '<red>Vá para uma ilha primeiro!</red>'
@@ -143,6 +153,8 @@ commands:
       unowned:
         description: Excluir ilhas sem dono
         unowned-islands: '<green>Encontrado </green><aqua>[number] </aqua><green>ilhas sem dono.</green>'
+        parameters: ''
+        flagged: '<green>Marcadas </green><aqua>[number] </aqua><green>[prefix_island](s) como elimináveis. Execute </green><aqua>/[label] purge deleted</aqua><green> para remover os ficheiros de região.</green>'
       status:
         description: exibe o status da limpeza
         status: >-
@@ -284,6 +296,7 @@ commands:
       protection-range-bonus-title: '<aqua>Inclui estes bônus:</aqua>'
       protection-range-bonus: 'Bônus: [number]'
       purge-protected: Ilha é protegida de exclusão
+      deletable: '<red>[prefix_Island] está marcada para eliminação e aguarda a purga de região.</red>'
       max-protection-range: 'Maior histórico de alcance de proteção: [range]'
       protection-coords: 'Coordenadas de Proteção: [xz1] até [xz2]'
       is-spawn: Ilha é uma ilha de spawn
@@ -1539,6 +1552,9 @@ protection:
         vez!
       cooldown: '<red>Deve esperar antes de recolher outro bloco de obsidiana.</red>'
       obsidian-nearby: >-
+      lavaTip: |-
+        <gold>Recolhe isso com um balde</gold>
+        <gold>como lava novamente se precisar!</gold>
         <red>Existem blocos de obsidiana próximos, você não pode transformar este</red>
         bloco em lava. ([radius])
     OFFLINE_GROWTH:
@@ -1783,6 +1799,7 @@ protection:
       name: Danos mundiais de TNT
   locked: '<red>Esta ilha está trancada!</red>'
   locked-island-bypass: '<gold>Esta [prefix_island] está trancada, mas tem permissão para aceder.</gold>'
+  deletable-island-admin: '<red>[Admin] Esta [prefix_island] está marcada para eliminação e aguarda a purga de região.</red>'
   protected: '<red>Ilha protegida: [descrição].</red>'
   world-protected: '<red>Protegido mundialmente: [descrição].</red>'
   spawn-protected: '<red>Spawn protegido: [descrição].</red>'
@@ -1825,6 +1842,11 @@ protection:
       description: |
         <green>Configurações de proteção quando</green>
         <green>jogador está fora de sua [prefix_island]</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Predefinições da ilha</gold>'
+      description: |
+        <green>Definições de proteção predefinidas</green>
+        <green>para novas [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

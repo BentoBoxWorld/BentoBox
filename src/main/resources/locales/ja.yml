@@ -108,6 +108,16 @@ commands:
         parameters: '[days]'
         description: 古い地域ファイルを削除して島をパージします
         confirm: '<light_purple>タイプ </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>を開始することを確認します</light_purple>'
+      failed: '<red>パージがエラーで完了しました。一部のリージョンファイルを削除できませんでした。詳細はサーバーログを確認してください。</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'デバッグ/テスト: リージョンファイルのタイムスタンプを書き換えてパージ可能にする'
+        done: '<green>現在のワールドの </green><aqua>[number]</aqua><green> 個のリージョンファイルを古くしました。</green>'
+      deleted:
+        parameters: ''
+        description: '削除済みとしてフラグされた [prefix_island] のリージョンファイルをパージする'
+        confirm: '<light_purple>リージョンファイルを削除するには </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>と入力してください</light_purple>'
+        deferred: '<green>リージョンファイルを削除しました。島のデータベースエントリは次回のサーバー再起動時に削除されます。</green>'
       protect:
         description: アイランドパージ保護の切り替え
         move-to-island: '<red>最初に島に移動してください！</red>'
@@ -119,6 +129,8 @@ commands:
       unowned:
         description: 未所有の島を削除-確認が必要
         unowned-islands: '<light_purple>[number]島を見つけました。</light_purple>'
+        parameters: ''
+        flagged: '<green>[number] </green><aqua>[prefix_island](s)</aqua><green> を削除可能としてフラグしました。リージョンファイルを削除するには </green><aqua>/[label] purge deleted</aqua><green> を実行してください。</green>'
       status:
         description: パージのステータスを表示します
         status: '<aqua>パージされた[purgeable] 個の島のうち[purged]個の島 </aqua><gray>(</gray><aqua>[percentage] %</aqua><gray>)</gray><green>.</green>'
@@ -242,6 +254,7 @@ commands:
       protection-range-bonus-title: '<aqua>以下の特典が含まれます:</aqua>'
       protection-range-bonus: 'ボーナス: [number]'
       purge-protected: 島はパージ保護されています
+      deletable: '<red>[prefix_Island] は削除のフラグが立てられており、リージョンパージを待っています。</red>'
       max-protection-range: 最大の歴史的保護範囲：[range]
       protection-coords: '保護座標: [xz1] - [xz2]'
       is-spawn: この島はスポーン島です
@@ -294,7 +307,7 @@ commands:
       description: プレイヤーの島にテレポート
       manual: '<red>安全なワープが見つかりません![location]の近くに手動でテレポートします。</red>'
     tpuser:
-      parameters: <teleporting player> <[prefix_island]'s player> [player's island]
+      parameters: '<テレポートするプレーヤー> <[prefix_island]のプレーヤー> [プレーヤーの島]'
       description: プレーヤーを別のプレイヤーの[prefix_island]にテレポートする
     getrank:
       parameters: <プレーヤー>
@@ -469,7 +482,7 @@ commands:
           success: 成功！
           cancelling: キャンセル中
     resetflags:
-      parameters: '[flag]'
+      parameters: '[フラグ]'
       description: すべての島をconfig.ymlのデフォルトのフラグ設定にリセットします
       confirm: '<dark_red>これにより、すべての島のフラグがデフォルトにリセットされます！</dark_red>'
       success: '<green>すべての島のフラグをデフォルト設定に正常にリセットします。</green>'
@@ -609,7 +622,7 @@ commands:
       you-cannot-make-team: '<red>チームメンバーは、チーム[prefix_island]と同じ世界で島を作ることはできません。</red>'
       pasting:
         estimated-time: '<green>推定時間：</green><aqua>[number]s。</aqua>'
-        blocks: '<green>ブロックごとに構築します。 合計</green><aqua>[numbber]</aqua><green>ブロック。</green>'
+        blocks: '<green>ブロックごとに構築します。 合計</green><aqua>[number]</aqua><green>ブロック。</green>'
         entities: '<green>それを生き物で満たす。 合計</green><aqua>[number]</aqua><green>体のクリーチャー。</green>'
         dimension-done: '<green>[world]に島が建設されます。</green>'
         done: '<green>完了しました。あなたの島の準備が整い、あなたを待っています！</green>'
@@ -1402,6 +1415,9 @@ protection:
       scooping: '<green>黒曜石を溶岩に戻す。次回は気をつけて！</green>'
       cooldown: '<red>次の黒曜石ブロックをすくうには、しばらく待つ必要があります。</red>'
       obsidian-nearby: '<red>近くに黒曜石のブロックがあり、このブロックを溶岩にすくい上げることはできません。 ([radius])</red>'
+      lavaTip: |-
+        <gold>バケツですくい取ってください</gold>
+        <gold>また溶岩として使いたいなら！</gold>
     OFFLINE_GROWTH:
       description: |-
         <green>無効にすると、すべてのメンバーが</green>
@@ -1636,6 +1652,7 @@ protection:
       name: 世界のTNTダメージ
   locked: 島はロックされている!
   locked-island-bypass: '<gold>この[prefix_island]はロックされていますが、あなたはバイパスする権限を持っています。</gold>'
+  deletable-island-admin: '<red>[Admin] この[prefix_island]は削除のフラグが立てられており、リージョンパージを待っています。</red>'
   protected: '島保護: [description]'
   world-protected: '<red>世界保護: [description]</red>'
   spawn-protected: '<red>保護されたスポーン: [description]</red>'
@@ -1674,6 +1691,11 @@ protection:
       description: |-
         <green>プレイヤーが島の</green>
         <green>外にいるときの保護設定</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>島のデフォルト設定</gold>'
+      description: |
+        <green>デフォルトの保護設定</green>
+        <green>新しい[prefix_island]のための</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

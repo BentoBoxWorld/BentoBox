@@ -128,6 +128,16 @@ commands:
         parameters: '[days]'
         description: očistite otoke brisanjem datoteka stare regije
         confirm: '<light_purple>Tip </light_purple><aqua>/[label] purge regions confirm </aqua><light_purple>da se pokrenu čišćenje</light_purple>'
+      failed: '<red>Čišćenje završeno s greškama. Neke datoteke regija nije moguće izbrisati. Provjerite dnevnik poslužitelja.</red>'
+      age-regions:
+        parameters: '[days]'
+        description: 'debug/test: prepišite vremenske oznake datoteka regija da bi bile čistive'
+        done: '<green>Stareno </green><aqua>[number]</aqua><green> datoteka regija u trenutnom svijetu.</green>'
+      deleted:
+        parameters: ''
+        description: 'pročistite datoteke regija za bilo koji [prefix_island] koji je već označen za brisanje'
+        confirm: '<light_purple>Unesite </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>za brisanje datoteka regija</light_purple>'
+        deferred: '<green>Datoteke regija obrisane. Unosi baze podataka otoka bit će uklonjeni pri sljedećem ponovnom pokretanju poslužitelja.</green>'
       protect:
         description: isključiti island purge protection
         move-to-island: '<red>Prvo se preseli na otok!</red>'
@@ -139,6 +149,8 @@ commands:
       unowned:
         description: očistiti neposjedovane otoke
         unowned-islands: '<green>Pronađeni </green><aqua>[number] </aqua><green>otoci bez posjeda.</green>'
+        parameters: ''
+        flagged: '<green>Označeno </green><aqua>[number] </aqua><green>[prefix_island](s) kao obrisivo. Pokrenite </green><aqua>/[label] purge deleted</aqua><green> za brisanje datoteka regija.</green>'
       status:
         description: prikazuje status čišćenja
         status: >-
@@ -278,6 +290,7 @@ commands:
       protection-range-bonus-title: '<aqua>Uključuje ove bonuse:</aqua>'
       protection-range-bonus: 'Bonus: [number]'
       purge-protected: Otok je zaštićen od čišćenja
+      deletable: '<red>[prefix_Island] je označen za brisanje i čeka čišćenje regije.</red>'
       max-protection-range: 'Najveći povijesni raspon zaštite: [range]'
       protection-coords: 'Koordinate zaštite: [xz1] do [xz2]'
       is-spawn: Otok je spawn otok
@@ -301,7 +314,7 @@ commands:
     trash:
       no-unowned-in-trash: '<red>Nema otoka bez vlasnika u smeću</red>'
       no-islands-in-trash: '<red>Igrač nema otoka u smeću</red>'
-      parameters: '[player]'
+      parameters: '[igrač]'
       description: prikaži otoke koji nisu u vlasništvu ili igračeve otoke u smeću
       title: '<light_purple>=========== Otoci u smeću ===========</light_purple>'
       count: '<bold><light_purple>otok [number]:</light_purple></bold>'
@@ -312,7 +325,7 @@ commands:
         <green>Koristite <bold>[label] emptytrash [player]</bold></green><green>za trajno uklanjanje</green>
         stavki iz smeća
     emptytrash:
-      parameters: '[player]'
+      parameters: '[igrač]'
       description: Očisti smeće za igrača ili sve otoke koji nisu u vlasništvu u smeće
       success: '<green>Otpad je uspješno ispražnjen.</green>'
     version:
@@ -1521,6 +1534,9 @@ protection:
       scooping: '<green>Pretvaranje opsidijana natrag u lavu. Budite oprezni sljedeći put!</green>'
       cooldown: '<red>Morate pričekati prije nego što možete pokupiti još jedan blok opsidijana.</red>'
       obsidian-nearby: >-
+      lavaTip: |-
+        <gold>Skupi ovo vedrom</gold>
+        <gold>kao lava ponovo ako vam treba!</gold>
         <red>U blizini su blokovi od opsidijana, ne možete zagrabiti ovaj blok u</red>
         lavu. ([radius])
     OFFLINE_GROWTH:
@@ -1763,6 +1779,7 @@ protection:
       name: Svjetska TNT šteta
   locked: '<red>Ovaj otok je zaključan!</red>'
   locked-island-bypass: '<gold>Ovaj [prefix_island] je zaključan, ali imate dozvolu za pristup.</gold>'
+  deletable-island-admin: '<red>[Admin] Ova [prefix_island] je označena za brisanje i čeka čišćenje regije.</red>'
   protected: '<red>Otok zaštićen: [description].</red>'
   world-protected: '<red>Svijet zaštićen: [description].</red>'
   spawn-protected: '<red>Spawn zaštićeno: [description].</red>'
@@ -1805,6 +1822,11 @@ protection:
       description: |
         <green>Postavke zaštite kada</green>
         <green>igrač je izvan svog otoka</green>
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>Zadane postavke otoka</gold>'
+      description: |
+        <green>Zadane postavke zaštite</green>
+        <green>za nove [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:

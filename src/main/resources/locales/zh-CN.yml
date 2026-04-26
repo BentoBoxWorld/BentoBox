@@ -114,6 +114,16 @@ commands:
         parameters: '[days]'
         description: 通过删除旧区域文件清除岛
         confirm: '<light_purple>输入</light_purple><aqua>“/[label] purge region confirmed”</aqua><light_purple>开始清除</light_purple>'
+      failed: '<red>清除完成但有错误。某些区域文件无法删除。请查看服务器日志以了解详情。</red>'
+      age-regions:
+        parameters: '[days]'
+        description: '调试/测试：重写区域文件的时间戳，使其可被清除'
+        done: '<green>已在当前世界中使 </green><aqua>[number]</aqua><green> 个区域文件过期。</green>'
+      deleted:
+        parameters: ''
+        description: '清除已标记为删除的任意 [prefix_island] 的区域文件'
+        confirm: '<light_purple>输入 </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>以删除区域文件</light_purple>'
+        deferred: '<green>区域文件已删除。岛屿数据库条目将在下次服务器重启时删除。</green>'
       protect:
         description: 开/关 岛屿清理保护, 开启清理保护的岛屿不会被清理.
         move-to-island: '<red>你身处的位置并没有岛屿, 请到要操作的岛上再试!</red>'
@@ -125,6 +135,8 @@ commands:
       unowned:
         description: 清理被遗弃(无主)的岛屿
         unowned-islands: '<green>发现</green><aqua>[number]</aqua><green>个被遗弃(无主)的岛屿.</green>'
+        parameters: ''
+        flagged: '<green>已将 </green><aqua>[number] </aqua><green>个 [prefix_island](s) 标记为可删除。运行 </green><aqua>/[label] purge deleted</aqua><green> 以清除区域文件。</green>'
       status:
         description: 显示清理状态
         status: '<green>共有</green><aqua>[purgeable]</aqua><green>个岛屿可清理, 已清理</green><aqua>[purged]</aqua><green>个</green><gray>(</gray><aqua>[percentage] %</aqua><gray>)</gray><green>.</green>'
@@ -250,6 +262,7 @@ commands:
       protection-range-bonus-title: '<aqua>包含以下奖励:</aqua>'
       protection-range-bonus: '奖励: [number]'
       purge-protected: '<green>岛屿处于清理保护状态</green>'
+      deletable: '<red>[prefix_Island] 已被标记为删除，正在等待区域清除。</red>'
       max-protection-range: '历史最大保护范围: [range]'
       protection-coords: '岛屿保护界线: [xz1] 至 [xz2]'
       is-spawn: '<green>为出生点岛屿</green>'
@@ -338,9 +351,7 @@ commands:
       success: '<green>成功将当前位置设置为该岛屿出生点.</green>'
       island-spawnpoint-changed: '<green>[user]更改了岛屿出生点.</green>'
     settings:
-      parameters: >-
-        [player]/[world flag]/spawn-island [flag/active/disable]
-        [rank/active/disable]
+      parameters: '[玩家]/[世界标志]/spawn-island [标志/启用/禁用] [等级/启用/禁用]'
       description: 打开设置面板或使用命令调整岛屿设置
       unknown-setting: '<red>未知设置</red>'
     blueprint:
@@ -1390,6 +1401,9 @@ protection:
       scooping: '<green>已将黑曜石变回熔岩.</green>'
       cooldown: '<red>你必须等待一段时间才能再次收集黑曜石。</red>'
       obsidian-nearby: '<red>附近有其它黑曜石, 这个黑曜石不能变回熔岩. ([radius])</red>'
+      lavaTip: |-
+        <gold>用桶舀起来</gold>
+        <gold>如果需要的话可以再次变成熔岩！</gold>
     OFFLINE_GROWTH:
       description: |-
         <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>所有成员离线岛屿上的植物继续生长</color:#FAFAD2>
@@ -1606,6 +1620,7 @@ protection:
       name: '<aqua><bold>边界TNT保护</bold></aqua>'
   locked: '<red>这个岛屿已被锁定!</red>'
   locked-island-bypass: '<gold>这个[prefix_island]已被锁定，但你有权限绕过。</gold>'
+  deletable-island-admin: '<red>[Admin] 这个 [prefix_island] 已被标记为删除，正在等待区域清除。</red>'
   protected: '<red>岛屿保护: [description].</red>'
   world-protected: '<red>世界保护: [description].</red>'
   spawn-protected: '<red>出生点保护: [description].</red>'
@@ -1640,6 +1655,11 @@ protection:
     WORLD_DEFAULTS:
       title: '<aqua><bold>[world_name] </aqua><gold><bold>世界保护</bold></gold></bold>'
       description: '<color:#FAFAD2>世界默认权限设置</color:#FAFAD2>'
+    ISLAND_DEFAULTS:
+      title: '<aqua>[world_name] </aqua><gold>岛屿默认设置</gold>'
+      description: |
+        <green>默认保护设置</green>
+        <green>适用于新的 [prefix_island]s</green>
     flag-item:
       name-layout: '<green>[name]</green>'
       command-instructions:
